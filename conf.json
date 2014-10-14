@@ -1,0 +1,17 @@
+{
+    "source": {
+        "include": ["src/"],
+        "exclude": [],
+        "includePattern": ".+\\.js(doc)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": ["plugins/markdown"],
+    "markdown": {
+        "parser": "gfm",
+        "hardwrap": true
+    },
+    "opts": {
+        "recurse": true,
+        "private": true
+    }
+}

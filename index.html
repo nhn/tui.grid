@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sample 1</title>
+	<link rel="stylesheet" type="text/css" href="css/Grid.css" />
+</head>
+<body>
+<div class="grid_wrapper uio_grid" id="wrapper1">
+</div>
+<div>
+	<div class="grid_wrapper uio_grid" style="width:700px" id="wrapper2">
+	</div>
+</div>
+</body>
+
+<script type="text/javascript" src="./libs/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="./libs/underscore.js"></script>
+<script type="text/javascript" src="./libs/backbone.js"></script>
+<script type="text/javascript" src="./js/data/dummy_data.js"></script>
+
+
+<script type="text/javascript" src="./src/core/base.js"></script>
+
+<script type="text/javascript" src="./src/model/model.js"></script>
+<script type="text/javascript" src="./src/model/view-model.js"></script>
+
+<script type="text/javascript" src="./src/view/frame.js"></script>
+<script type="text/javascript" src="./src/view/rows.js"></script>
+<script type="text/javascript" src="./src/view/cells.js"></script>
+<script type="text/javascript" src="./src/view/extra/clipboard.js"></script>
+
+<script type="text/javascript" src="./src/grid.js"></script>
+
+<!--<script type="text/javascript" src="../dist/grid.js"></script>-->
+
+<script>
+	var grid1 = new Grid({
+		el : $("#wrapper1"),
+		columnModelList : dummy_data.columnModel
+	});
+	grid1.setRowList(dummy_data.rowList);
+
+	var grid2 = new Grid({
+		el : $("#wrapper2"),
+		columnModelList : dummy_data.columnModel
+	});
+	grid2.setRowList(dummy_data.rowListTest);
+//	setTimeout(function(){
+////		grid1.setCell(1, 'columnName1', "A");
+////		grid1.setCell(1, 'columnName3', "C");
+////		grid1.setCell(1, 'columnName6', "B");
+//	},1000);
+//
+//	setTimeout(function(){
+//		grid1.sort('columnName8');
+//	},2000);
+//	setTimeout(function(){
+//		grid1.sort('columnName7');
+//	},3000);
+//	setTimeout(function(){
+//		grid1.sort('columnName1');
+//		grid1.setColumnIndex(6);
+//	},4000);
+//
+	setTimeout(function(){
+		grid1.setColumnIndex(6);
+	},1000);
+	setTimeout(function(){
+		grid1.sort('columnName1');
+		grid1.setColumnIndex(3);
+	},2000);
+//	setTimeout(function(){
+//		grid1.setRowList([]);
+//	},3000);
+
+//
+//
+
+//	setTimeout(function(){
+//		grid1.setColumnIndex(5);
+//		grid2.setColumnIndex(4);
+//	}, 1000);
+//	setTimeout(function(){
+//		grid1.setColumnIndex(6);
+////		grid2.setColumnIndex(5);
+//	}, 1000);
+//
+//
+//	setTimeout(function(){
+//		grid1.setRowList([]);
+//
+//	}, 3000);
+//
+//
+//	setTimeout(function(){
+//		grid1.setRowList(dummy_data.rowListTest);
+//
+//	}, 4000);
+//	setTimeout(function(){
+//		console.log("####PREPEND");
+//		grid1.prependRow([{
+//			"columnName1" : "ASDFGJOAWef11",
+//			"columnName2" : "ASDFGJOAWef12",
+//			"columnName3" : "ASDFGJOAWef13",
+//			"columnName4" : "ASDFGJOAWef14",
+//			"columnName5" : "ASDFGJOAWef15",
+//			"columnName6" : "ASDFGJOAWef16",
+//			"columnName7" : "ASDFGJOAWef17",
+//			"columnName8" : "ASDFGJOAWef18"
+//		},
+//		{
+//			"columnName1" : "ASDFGJOAWef11",
+//			"columnName2" : "ASDFGJOAWef12",
+//			"columnName3" : "ASDFGJOAWef13",
+//			"columnName4" : "ASDFGJOAWef14",
+//			"columnName5" : "ASDFGJOAWef15",
+//			"columnName6" : "ASDFGJOAWef16",
+//			"columnName7" : "ASDFGJOAWef17",
+//			"columnName8" : "ASDFGJOAWef18"
+//		}]);
+//	}, 2000);
+//	setTimeout(function(){
+//		grid1.setRowList(dummy_data.rowListTest);
+//	}, 3000);
+//	grid.setCell("1", "columnName1",312312);
+
+
+
+</script>
+</html>
