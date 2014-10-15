@@ -1,3 +1,7 @@
+//    View.RowRenderer = View.Base.extend({
+//
+//    });
+
     View.Row = View.Base.extend({
         tagName: 'tr',
         events: {
@@ -114,7 +118,9 @@
         }
     });
 
-
+    /**
+     * RowList View
+     */
     View.RowList = View.Base.extend({
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);

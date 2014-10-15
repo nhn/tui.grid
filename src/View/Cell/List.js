@@ -3,16 +3,16 @@
      * @type {*|void}
      */
     View.Cell.List = View.Cell.Interface.extend({
-        shouldRenderList : ['isEditable', 'optionList'],
-        eventHandler : {
+        shouldRenderList: ['isEditable', 'optionList'],
+        eventHandler: {
         },
-        initialize : function(){
+        initialize: function() {
             View.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
         }
     });
@@ -23,24 +23,24 @@
      * @type {*|void}
      */
     View.Cell.List.Select = View.Cell.List.extend({
-        initialize: function (attributes) {
+        initialize: function(attributes) {
             View.Cell.List.prototype.initialize.apply(this, arguments);
         },
-        eventHandler : {
-            "click" : "onClick",
-            "change select" : "onChange"
+        eventHandler: {
+            'click' : 'onClick',
+            'change select' : 'onChange'
         },
 
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 html = '';
 
-            html += '<select name="'+Util.getUniqueKey()+'">';
-            for(var i = 0, list = columnModel.editOption.list; i < list.length; i++){
+            html += '<select name="' + Util.getUniqueKey() + '">';
+            for (var i = 0, list = columnModel.editOption.list; i < list.length; i++) {
                 html += '<option ';
-                html += 'value="'+list[i].value + '"';
+                html += 'value="' + list[i].value + '"';
 
-                if(cellData.value == list[i].value){
+                if (cellData.value == list[i].value) {
                     html += ' selected';
                 }
                 html += ' >';
@@ -51,12 +51,12 @@
             return html;
 
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             $target.find('select').val(cellData.value);
         },
-        onClick : function(clickEvent){
+        onClick: function(clickEvent) {
         },
-        onChange : function(changeEvent){
+        onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddr($target);
 
@@ -70,18 +70,18 @@
      * @type {*|void}
      */
     View.Cell.List.Button = View.Cell.List.extend({
-        initialize: function (attributes) {
+        initialize: function(attributes) {
             View.Cell.List.prototype.initialize.apply(this, arguments);
         },
-        eventHandler : {
-            "click" : "onClick",
-            "change input" : "onChange"
+        eventHandler: {
+            'click' : 'onClick',
+            'change input' : 'onChange'
         },
-        template : {
-            input : _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%>>'),
-            label : _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
+        template: {
+            input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%>>'),
+            label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
@@ -89,53 +89,53 @@
                 name = Util.getUniqueKey(),
                 id;
 
-            for(var i = 0, list = columnModel.editOption.list; i < list.length; i++){
+            for (var i = 0, list = columnModel.editOption.list; i < list.length; i++) {
                 id = name + '_' + list[i].value;
                 html += this.template.input({
-                    type : columnModel.editOption.type,
-                    name : name,
-                    id : id,
-                    value : list[i].value,
-                    checked : $.inArray(''+list[i].value, checkedList) === -1 ? '' : 'checked'
+                    type: columnModel.editOption.type,
+                    name: name,
+                    id: id,
+                    value: list[i].value,
+                    checked: $.inArray('' + list[i].value, checkedList) === -1 ? '' : 'checked'
                 });
-                if(list[i].text){
+                if (list[i].text) {
                     html += this.template.label({
-                        id : id,
-                        text : list[i].text
+                        id: id,
+                        text: list[i].text
                     });
                 }
             }
 
             return html;
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             //TODO
         },
-        _getEditType : function($target){
+        _getEditType: function($target) {
             var columnName = this._getColumnName($target),
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 type = columnModel.editOption.type;
 
             return type;
         },
-        onClick : function(clickEvent){
+        onClick: function(clickEvent) {
         },
-        _getCheckedList : function($target){
-            var $checkedList = $target.closest('td').find('input[type='+this._getEditType($target)+']:checked'),
+        _getCheckedList: function($target) {
+            var $checkedList = $target.closest('td').find('input[type=' + this._getEditType($target) + ']:checked'),
                 checkedList = [];
 
-            for(var i = 0; i < $checkedList.length; i++){
+            for (var i = 0; i < $checkedList.length; i++) {
                 checkedList.push($checkedList.eq(i).val());
             }
 
             return checkedList;
         },
-        onChange : function(changeEvent){
+        onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddr($target);
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target));
         },
-        _getInputEl : function(value){
-            return this.$el.find('input[type='+this.type+'][value="'+value+'"]');
+        _getInputEl: function(value) {
+            return this.$el.find('input[type=' + this.type + '][value="' + value + '"]');
         }
     });
