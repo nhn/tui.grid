@@ -1,6 +1,6 @@
     var Config = {
-        plugins : {
-            'clipboard' : View.Plugin.Clipboard,
+        plugins: {
+            'clipboard' : View.Plugin.Clipboard
 
         }
     };

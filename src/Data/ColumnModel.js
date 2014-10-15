@@ -3,75 +3,75 @@
      * @type {*|void}
      */
     Data.ColumnModel = Model.Base.extend({
-        defaults : {
-            keyColumnName : null,
-            columnFixIndex : 0,		//columnFixIndex
-            columnModelList : [],
-            visibleList : [],
+        defaults: {
+            keyColumnName: null,
+            columnFixIndex: 0,		//columnFixIndex
+            columnModelList: [],
+            visibleList: [],
 
-            columnModelMap : {}
+            columnModelMap: {}
         },
-        initialize : function(attributes){
+        initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
-            this.on("change", this._onChange, this);
+            this.on('change', this._onChange, this);
         },
-        _appendDefaultColumn : function(data){
+        _appendDefaultColumn: function(data) {
             var columnModelList = $.extend(true, [], data),
                 prependList = [],
                 selectType = this.grid.option('selectType'),
-                hasNumber  = false,
+                hasNumber = false,
                 hasChecked = false,
                 preparedColumnModel = {
                     '_number' : {
-                        columnName : '_number',
-                        title : 'No.',
-                        width : 60
+                        columnName: '_number',
+                        title: 'No.',
+                        width: 60
                     },
                     '_button' : {
-                        columnName : '_button',
-                        editOption : {
-                            type : selectType,
-                            list : [{
-                                value : 'selected'
+                        columnName: '_button',
+                        editOption: {
+                            type: selectType,
+                            list: [{
+                                value: 'selected'
                             }]
                         },
-                        width : 50
+                        width: 50
                     }
                 };
 
-            if(selectType === 'checkbox'){
+            if (selectType === 'checkbox') {
                 preparedColumnModel['_button'].title = '<input type="checkbox"/>';
-            }else if (selectType === 'radio'){
+            }else if (selectType === 'radio') {
                 preparedColumnModel['_button'].title = '선택';
-            }else{
+            }else {
                 preparedColumnModel['_button'].isHidden = true;
             }
 
-            _.each(columnModelList, function(columnModel, idx){
+            _.each(columnModelList, function(columnModel, idx) {
                 var columnName = columnModel.columnName;
-                if(columnName === '_number'){
+                if (columnName === '_number') {
                     columnModelList[idx] = $.extend(columnModel, preparedColumnModel['_number']);
                     hasNumber = true;
-                }else if(columnName === '_button'){
+                }else if (columnName === '_button') {
                     columnModelList[idx] = $.extend(columnModel, preparedColumnModel['_button']);
                     hasChecked = true;
                 }
             }, this);
 
-            if(!hasNumber){
+            if (!hasNumber) {
                 prependList.push(preparedColumnModel['_number']);
             }
-            if(!hasChecked){
+            if (!hasChecked) {
                 prependList.push(preparedColumnModel['_button']);
             }
             columnModelList = _.union(prependList, columnModelList);
             return columnModelList;
         },
-        getColumnModelList : function(whichSide){
+        getColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnModelList = [],
-                columnFixIndex = this.get("columnFixIndex");
-            switch(whichSide){
+                columnFixIndex = this.get('columnFixIndex');
+            switch (whichSide) {
                 case 'L':
                     columnModelList = this.get('visibleList').slice(0, columnFixIndex);
                     break;
@@ -84,28 +84,28 @@
             }
             return columnModelList;
         },
-        getColumnModel : function(columnName){
+        getColumnModel: function(columnName) {
             return this.get('columnModelMap')[columnName];
         },
-        _getVisibleList : function(){
-            return _.filter(this.get("columnModelList"), function(item){return !item['isHidden']});
+        _getVisibleList: function() {
+            return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});
         },
-        _onChange : function(model){
-            if(model.changed['columnModelList']){
+        _onChange: function(model) {
+            if (model.changed['columnModelList']) {
                 this.set({
-                    columnModelList : this._appendDefaultColumn(model.changed['columnModelList'])
+                    columnModelList: this._appendDefaultColumn(model.changed['columnModelList'])
                 },{
-                    silent : true
+                    silent: true
                 });
             }
             var visibleList = this._getVisibleList();
             this.set({
-                visibleList : visibleList,
-                lsideList : visibleList.slice(0, this.get('columnFixIndex')),
-                rsideList : visibleList.slice(this.get('columnFixIndex')),
-                columnModelMap : _.indexBy(this.get('columnModelList'), 'columnName')
+                visibleList: visibleList,
+                lsideList: visibleList.slice(0, this.get('columnFixIndex')),
+                rsideList: visibleList.slice(this.get('columnFixIndex')),
+                columnModelMap: _.indexBy(this.get('columnModelList'), 'columnName')
             }, {
-                silent : true
+                silent: true
             });
         }
 

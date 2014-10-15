@@ -1,8 +1,8 @@
     View.CellFactory = View.Base.extend({
-        initialize : function(attributes, options){
+        initialize: function(attributes, options) {
             View.Base.prototype.initialize.apply(this, arguments);
             var args = {
-                grid : this.grid
+                grid: this.grid
             };
             var instances = {
                 'mainButton' : new View.Cell.MainButton(args),
@@ -15,12 +15,12 @@
 
 
             this.setOwnProperties({
-                instances : instances
+                instances: instances
             });
         },
-        getInstance : function(editType){
+        getInstance: function(editType) {
             var instance = null;
-            switch (editType){
+            switch (editType) {
                 case 'mainButton' :
                     instance = this.instances[editType];
                     break;

@@ -3,37 +3,37 @@
      * @type {*|void}
      */
     Model.Dimension = Model.Base.extend({
-        models : null,
-        columnModel : null,
-        defaults : {
-            width : 0,
+        models: null,
+        columnModel: null,
+        defaults: {
+            width: 0,
 
-            headerHeight : 0,
-            bodyHeight : 0,
+            headerHeight: 0,
+            bodyHeight: 0,
 
-            rowHeight : 0,
+            rowHeight: 0,
 
-            rsideWidth : 0,
-            lsideWidth : 0,
-            columnWidthList : []
+            rsideWidth: 0,
+            lsideWidth: 0,
+            columnWidthList: []
         },
-        initialize : function(attributes){
+        initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.columnModel = this.grid.columnModel;
-            this.listenTo(this.columnModel , "change", this._onWidthChange);
-            this.on("change:width", this._onWidthChange, this);
+            this.listenTo(this.columnModel, 'change', this._onWidthChange);
+            this.on('change:width', this._onWidthChange, this);
             this._setColumnWidth();
             this._setBodyHeight();
             this._setHeaderHeight();
 
             this.setOwnProperties({
-                timeoutIdForResize : 0
+                timeoutIdForResize: 0
             });
             $(window).on('resize', $.proxy(this._onWindowResize, this));
         },
-        _onWindowResize : function(resizeEvent){
+        _onWindowResize: function(resizeEvent) {
             clearTimeout(this.timeoutIdForResize);
-            this.timeoutIdForResize = setTimeout($.proxy(function(){
+            this.timeoutIdForResize = setTimeout($.proxy(function() {
                 var width = Math.max(this.grid.option('minimumWidth'), this.grid.$el.css('width', '100%').width());
                 this.set('width', width);
             }, this), 100);
@@ -45,48 +45,48 @@
          * @param model
          * @private
          */
-        _onWidthChange : function(model){
+        _onWidthChange: function(model) {
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidth(this._calculateColumnWidthList(curColumnWidthList));
         },
-        _setBodyHeight : function(){
+        _setBodyHeight: function() {
 //            var height = (this.get('rowHeight') + 1) * this.grid.option('displayRowCount') - 2;
             var height = Util.getTBodyHeight(this.grid.option('displayRowCount'), this.get('rowHeight'));
             //TODO scroll height 예외처리
             height += this.grid.scrollBarSize;
             this.set('bodyHeight', height);
         },
-        getDisplayRowCount : function(){
+        getDisplayRowCount: function() {
 //            Math.ceil(this.get('bodyHeight') / this.get('rowHeight'));
             return Util.getDisplayRowCount(this.get('bodyHeight'), this.get('rowHeight'));
         },
-        _setHeaderHeight : function(){
+        _setHeaderHeight: function() {
             //@todo calculate header height
             var height = this.grid.option('headerHeight');
             this.set('headerHeight', height);
         },
 
-        _setColumnWidth : function(columnWidthList){
+        _setColumnWidth: function(columnWidthList) {
             var rsideWidth, lsideWidth = 0,
                 columnWidthList = columnWidthList || this._getOriginalWidthList(),
-                totalWidth = this.get("width"),
-                columnFixIndex = this.columnModel.get("columnFixIndex");
-            for(var i = 0, len=columnWidthList.length; i < len; i++){
-                if(i < columnFixIndex){
-                    lsideWidth += columnWidthList[i]+1;
+                totalWidth = this.get('width'),
+                columnFixIndex = this.columnModel.get('columnFixIndex');
+            for (var i = 0, len = columnWidthList.length; i < len; i++) {
+                if (i < columnFixIndex) {
+                    lsideWidth += columnWidthList[i] + 1;
                 }
             }
             lsideWidth += 1;
             rsideWidth = totalWidth - lsideWidth;
             this.set({
-                rsideWidth : rsideWidth,
-                lsideWidth : lsideWidth,
-                columnWidthList : columnWidthList
+                rsideWidth: rsideWidth,
+                lsideWidth: lsideWidth,
+                columnWidthList: columnWidthList
             });
             this.trigger('columnWidthChanged');
         },
 
-        setColumnWidth : function(index, width){
+        setColumnWidth: function(index, width) {
             width = Math.max(width, this.grid.option('minimumColumnWidth'));
 
             var curColumnWidthList = this.get('columnWidthList');
@@ -100,12 +100,12 @@
 
 
 
-        getColumnWidthList : function(whichSide){
+        getColumnWidthList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
-            var columnFixIndex = this.columnModel.get("columnFixIndex");
+            var columnFixIndex = this.columnModel.get('columnFixIndex');
             var columnList = [];
 
-            switch(whichSide){
+            switch (whichSide) {
                 case 'L':
                     columnList = this.get('columnWidthList').slice(0, columnFixIndex);
                     break;
@@ -113,7 +113,7 @@
                     columnList = this.get('columnWidthList').slice(columnFixIndex);
                     break;
                 default :
-                    columnList = this.get('columnWidthList')
+                    columnList = this.get('columnWidthList');
                     break;
             }
             return columnList;
@@ -121,16 +121,16 @@
         /**
          * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
          *
-         * @returns {*}
+         * @return {*}
          * @private
          */
-        _getOriginalWidthList : function(){
-            var columnModelList = this.columnModel.get("visibleList"),
+        _getOriginalWidthList: function() {
+            var columnModelList = this.columnModel.get('visibleList'),
                 columnWidthList = [];
-            for(var i = 0, len=columnModelList.length; i < len; i++){
-                if(columnModelList[i].width){
+            for (var i = 0, len = columnModelList.length; i < len; i++) {
+                if (columnModelList[i].width) {
                     columnWidthList.push(columnModelList[i].width);
-                }else{
+                }else {
                     columnWidthList.push(-1);
                 }
             }
@@ -143,23 +143,23 @@
          * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
          *
          * @param columnWidthList
-         * @returns {Array}
+         * @return {Array}
          * @private
          */
-        _calculateColumnWidthList : function(columnWidthList){
+        _calculateColumnWidthList: function(columnWidthList) {
             var remainWidth, unassignedWidth, remainDividedWidth,
                 newColumnWidthList = [],
-                totalWidth = this.get("width"),
+                totalWidth = this.get('width'),
                 width = 0,
                 currentWidth = 0,
                 unassignedCount = 0;
 
-            for(var i = 0, len=columnWidthList.length; i < len; i++){
-                if(columnWidthList[i] > 0){
+            for (var i = 0, len = columnWidthList.length; i < len; i++) {
+                if (columnWidthList[i] > 0) {
                     width = Math.max(this.grid.option('minimumColumnWidth'), columnWidthList[i]);
                     newColumnWidthList.push(width);
                     currentWidth += width;
-                }else{
+                }else {
                     newColumnWidthList.push(-1);
                     unassignedCount++;
                 }
@@ -168,7 +168,7 @@
             remainWidth = totalWidth - currentWidth;
 
 
-            if(totalWidth > currentWidth && unassignedCount === 0){
+            if (totalWidth > currentWidth && unassignedCount === 0) {
 //                remainDividedWidth = Math.floor(remainWidth / newColumnWidthList.length);
 //                for(var i = 0, len=newColumnWidthList.length; i < len; i++){
 //                    newColumnWidthList[i] += remainDividedWidth;
@@ -176,18 +176,18 @@
 //                        newColumnWidthList[i] += (remainWidth - (remainDividedWidth * len));
 //                    }
 //                }
-                newColumnWidthList[newColumnWidthList.length-1] += remainWidth;
+                newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
             }
 
-            if(totalWidth > currentWidth){
+            if (totalWidth > currentWidth) {
                 remainWidth = totalWidth - currentWidth;
                 unassignedWidth = Math.max(this.grid.option('minimumColumnWidth'), Math.floor(remainWidth / unassignedCount));
-            }else{
+            }else {
                 unassignedWidth = this.grid.option('minimumColumnWidth');
             }
 
-            for(var i = 0, len=newColumnWidthList.length; i < len; i++){
-                if(newColumnWidthList[i] === -1){
+            for (var i = 0, len = newColumnWidthList.length; i < len; i++) {
+                if (newColumnWidthList[i] === -1) {
                     newColumnWidthList[i] = unassignedWidth;
                 }
             }
