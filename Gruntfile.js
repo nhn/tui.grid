@@ -1,24 +1,24 @@
 //Grunt is just JavaScript running in node, after all...
 module.exports = function(grunt) {
 
-  // All upfront config goes in a massive nested object.
-  grunt.initConfig({
-    // You can set arbitrary key-value pairs.
-    distFolder: 'dist',
-    // You can also set the value of a key as parsed JSON.
-    // Allows us to reference properties we declared in package.json.
-    pkg: grunt.file.readJSON('package.json'),
-    // Grunt tasks are associated with specific properties.
-    // these names generally match their npm package name.
-    concat: {
-      // Specify some options, usually specific to each plugin.
-      options: {
-		banner : "(function(){\n",
-		footer : "\n})();"
-      },
-      // 'dist' is what is called a "target."
-      // It's a way of specifying different sub-tasks or modes.
-      dist: {
+    // All upfront config goes in a massive nested object.
+    grunt.initConfig({
+        // You can set arbitrary key-value pairs.
+        distFolder: 'dist',
+        // You can also set the value of a key as parsed JSON.
+        // Allows us to reference properties we declared in package.json.
+        pkg: grunt.file.readJSON('package.json'),
+        // Grunt tasks are associated with specific properties.
+        // these names generally match their npm package name.
+        concat: {
+        // Specify some options, usually specific to each plugin.
+        options: {
+            banner: '(function(){\n',
+            footer: '\n})();'
+        },
+        // 'dist' is what is called a "target."
+        // It's a way of specifying different sub-tasks or modes.
+        dist: {
         // The files to concatenate:
         // Notice the wildcard, which is automatically expanded.
         src: [
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
             'src/View/Cell/*.js',
             'src/View/Extra/*.js',
             'src/*.js'
-		],
+        ],
         // The destination file:
         // Notice the angle-bracketed ERB-like templating,
         // which allows you to reference other properties.
@@ -43,40 +43,38 @@ module.exports = function(grunt) {
         dest: '<%= distFolder %>/Grid.js'
         // You can reference any grunt config property you want.
         // Ex: '<%= concat.options.separator %>' instead of ';'
-      }
-    },
-    uglify : {
-        my_target: {
-            files: {
-                '<%= distFolder %>/Grid.min.js' : '<%= distFolder %>/Grid.js'
+        }
+        },
+        uglify: {
+            my_target: {
+                files: {
+                    '<%= distFolder %>/Grid.min.js' : '<%= distFolder %>/Grid.js'
+                }
+            }
+        },
+        copy: {
+            main: {
+                files: [
+                    {expand: true, flatten: true, src: ['css/*'], dest: '<%= distFolder %>/', filter: 'isFile'}
+                ]
+            }
+        },
+        zip: {
+            main: {
+                src: ['<%= distFolder %>/*'],
+                dest: '<%= distFolder %>/Grid.zip'
             }
         }
-    },
-    copy : {
-        main: {
-            files :[
-                {expand: true, flatten: true, src: ['css/*'], dest: '<%= distFolder %>/', filter: 'isFile'}
-            ]
-        }
-    },
-    zip: {
-        main: {
-            src: ['<%= distFolder %>/*'],
-            dest: '<%= distFolder %>/Grid.zip'
-        }
-    }
-  }); // The end of grunt.initConfig
+    }); // The end of grunt.initConfig
 
-  // We've set up each task's configuration.
-  // Now actually load the tasks.
-  // This will do a lookup similar to node's require() function.
-  grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-zip');
+    // We've set up each task's configuration.
+    // Now actually load the tasks.
+    // This will do a lookup similar to node's require() function.
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-zip');
 
-
-
-  // Register our own custom task alias.
-  grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
+    // Register our own custom task alias.
+    grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
 };
