@@ -11,6 +11,7 @@
 
 
     View.Cell.MainButton = View.Cell.Interface.extend({
+        cellType: 'main',
         shouldRenderList: ['isEditable', 'optionList'],
         eventHandler: {
             'mousedown' : '_onMouseDown',

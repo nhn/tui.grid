@@ -1,18 +1,30 @@
+    /**
+     * Cell Factory
+     */
     View.CellFactory = View.Base.extend({
         initialize: function(attributes, options) {
             View.Base.prototype.initialize.apply(this, arguments);
             var args = {
                 grid: this.grid
             };
-            var instances = {
-                'mainButton' : new View.Cell.MainButton(args),
+            this._initializeInstances();
+        },
+        _initializeInstances: function() {
+            var instances = {},
+                args = {
+                    grid: this.grid
+                },
+                instanceList = [
+                    new View.Cell.MainButton(args),
+                    new View.Cell.Normal(args),
+                    new View.Cell.Text(args),
+                    new View.Cell.List.Button(args),
+                    new View.Cell.List.Select(args)
+                ];
 
-                'normal' : new View.Cell.Normal(args),
-                'text' : new View.Cell.Text(args),
-                'button' : new View.Cell.List.Button(args),
-                'select' : new View.Cell.List.Select(args)
-            };
-
+            _.each(instanceList, function(instance, name) {
+                instances[instance.cellType] = instance;
+            }, this);
 
             this.setOwnProperties({
                 instances: instances
@@ -21,7 +33,7 @@
         getInstance: function(editType) {
             var instance = null;
             switch (editType) {
-                case 'mainButton' :
+                case 'main' :
                     instance = this.instances[editType];
                     break;
                 case 'text' :
@@ -40,5 +52,25 @@
             }
 
             return instance;
+        },
+        attachHandler: function() {
+            var $tdList = this.grid.$el.find('td'),
+                $td,
+                cellType;
+            for (var i = 0; i < $tdList.length; i++) {
+                $td = $tdList.eq(i);
+                cellType = $td.attr('cellType');
+                this.instances[cellType].attachHandler($td);
+            }
+        },
+        detachHandler: function() {
+            var $tdList = this.grid.$el.find('td'),
+                $td,
+                cellType;
+            for (var i = 0; i < $tdList.length; i++) {
+                $td = $tdList.eq(i);
+                cellType = $td.attr('cellType');
+                this.instances[cellType].detachHandler($td);
+            }
         }
     });

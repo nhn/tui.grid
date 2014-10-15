@@ -1,4 +1,5 @@
     View.Cell.Text = View.Cell.Interface.extend({
+        cellType: 'text',
         shouldRenderList: ['isEditable', 'optionList'],
         initialize: function(attributes, options) {
             View.Cell.Interface.prototype.initialize.apply(this, arguments);

@@ -100,7 +100,7 @@
             var startIdx = this.get('startIdx');
             var endIdx = this.get('endIdx');
             var start = new Date();
-            console.log('render', startIdx, endIdx);
+//            console.log('render', startIdx, endIdx);
             for (var i = startIdx; i < endIdx + 1; i++) {
                 var rowModel = this.grid.dataModel.at(i);
                 var rowKey = rowModel.get('rowKey');
@@ -133,7 +133,7 @@
                 parse: true
             });
             var end = new Date();
-            console.log('render done', end - start);
+//            console.log('render done', end - start);
             if (this.isColumnModelChanged === true) {
                 this.trigger('columnModelChanged');
                 this.isColumnModelChanged = false;

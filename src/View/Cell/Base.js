@@ -1,22 +1,37 @@
     View.Cell.Base = View.Base.extend({
+        cellType: 'normal',
         eventHandler: {},
         shouldRenderList: ['isEditable', 'optionList', 'value'],
         initialize: function(attributes, options) {
-            var eventHandler = {};
             View.Base.prototype.initialize.apply(this, arguments);
+            this._initializeEventHandler();
+        },
+        _initializeEventHandler: function() {
+            var eventHandler = {},
+                count = 0;
+
             _.each(this.eventHandler, function(methodName, eventName) {
-                eventHandler[eventName] = $.proxy(this[methodName], this);
+                var tmp = eventName.split(' '),
+                    event = tmp[0],
+                    selector = tmp[1] || '';
+
+                eventHandler[event] = {
+                    selector: selector,
+                    handler: $.proxy(this[methodName], this)
+                };
+                count++;
             }, this);
             this.setOwnProperties({
-                _eventHandler: eventHandler
+                _eventHandler: eventHandler,
+                hasEvent: !!count
             });
         },
-
         baseTemplate: _.template('<td ' +
             ' columnName="<%=columnName%>"' +
             ' rowSpan="<%=rowSpan%>"' +
             ' class="<%=className%>"' +
             ' <%=attributes%>' +
+            ' cellType="<%=cellType%>"' +
             '>' +
             '<%=content%>' +
             '</td>'),
@@ -41,31 +56,25 @@
                 this.setElementAttribute(cellData, $target);
             }
         },
-        _attachHandler: function($target) {
-            _.each(this._eventHandler, function(handler, name) {
-                var tmp = name.split(' '),
-                    eventName = tmp[0],
-                    selector = tmp[1] || '';
-
+        attachHandler: function($target) {
+            _.each(this._eventHandler, function(obj, eventName) {
+                var handler = obj.handler,
+                    selector = obj.selector,
+                    $el = $target;
                 if (selector) {
-                    $target = $target.find(selector);
+                    $el = $target.find(selector);
                 }
-
-                $target.off(eventName).on(eventName, handler);
-//                console.log('$target', $target.length, $target.html(), handler);
+                $el.bind(eventName, handler);
             }, this);
         },
-        _detachHandler: function($target) {
-            _.each(this._eventHandler, function(handler, name) {
-                var tmp = name.split(' '),
-                    eventName = tmp[0],
-                    selector = tmp[1] || '';
-
+        detachHandler: function($target) {
+            _.each(this._eventHandler, function(obj, eventName) {
+                var selector = obj.selector,
+                    $el = $target;
                 if (selector) {
-                    $target = $target.find(selector);
+                    $el = $target.find(selector);
                 }
-
-                $target.off(eventName);
+                $el.unbind(eventName);
             }, this);
         },
         _setFocusedClass: function(cellData, $target) {
@@ -76,9 +85,9 @@
 
         },
         render: function(cellData, $target) {
-            this._detachHandler($target);
+            this.detachHandler($target);
             $target.html(this.getContentHtml(cellData));
-            this._attachHandler($target);
+            this.attachHandler($target);
         },
 
         getHtml: function(cellData) {
@@ -99,6 +108,7 @@
                 rowSpan: cellData.rowSpan,
                 className: classNameList.join(' '),
                 attributes: this.getAttributes(cellData),
+                cellType: this.cellType,
                 content: this.getContentHtml(cellData)
             });
         },
@@ -136,7 +146,7 @@
         _getCellElement: function(columnName, $tr) {
             return $tr.find('td[columnName="' + columnName + '"]');
         },
-        _getCellAddr: function($target) {
+        _getCellAddress: function($target) {
             return {
                 rowKey: this._getRowKey($target),
                 columnName: this._getColumnName($target)
@@ -146,6 +156,7 @@
 
 
     View.Cell.Interface = View.Cell.Base.extend({
+        cellType: 'normal',
         shouldRenderList: ['isEditable', 'optionList', 'value'],
         eventHandler: {
         },

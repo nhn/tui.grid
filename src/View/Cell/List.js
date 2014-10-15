@@ -23,6 +23,7 @@
      * @type {*|void}
      */
     View.Cell.List.Select = View.Cell.List.extend({
+        cellType: 'select',
         initialize: function(attributes) {
             View.Cell.List.prototype.initialize.apply(this, arguments);
         },
@@ -58,7 +59,7 @@
         },
         onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                cellAddr = this._getCellAddr($target);
+                cellAddr = this._getCellAddress($target);
 
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
         }
@@ -70,6 +71,7 @@
      * @type {*|void}
      */
     View.Cell.List.Button = View.Cell.List.extend({
+        cellType: 'button',
         initialize: function(attributes) {
             View.Cell.List.prototype.initialize.apply(this, arguments);
         },
@@ -132,7 +134,7 @@
         },
         onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                cellAddr = this._getCellAddr($target);
+                cellAddr = this._getCellAddress($target);
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target));
         },
         _getInputEl: function(value) {
