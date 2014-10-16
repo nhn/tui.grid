@@ -5,21 +5,23 @@
      * @type {{Layout: {}, Data: {}, Cell: {}}}
      */
     var View = {
+            CellFactory: null,
             Layout: {
             },
-            Data: {
+            Renderer: {
+                Row: null,
+                Cell: {}
             },
-            Cell: {
-            },
-            Plugin: {
+            Extra: {
             }
         },
         Model = {},
         Data = {},
         Collection = {};
 
-
-
+    /**
+     * Model Base Class
+     */
     Model.Base = Backbone.Model.extend({
         initialize: function(attributes, options) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
@@ -33,7 +35,9 @@
             }, this);
         }
     });
-
+    /**
+     * Collection Base Class
+     */
     Collection.Base = Backbone.Collection.extend({
         initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
@@ -48,7 +52,9 @@
         }
     });
 
-
+    /**
+     * View base class
+     */
     View.Base = Backbone.View.extend({
         initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
@@ -62,7 +68,7 @@
                 this.name = 'PugException';
                 this.message = message || 'error';
 //                this.methodName = methodName;
-                this.caller = arguments.caller;
+//                this.caller = arguments.caller;
             };
             error.prototype = new Error();
             return new error();
@@ -70,7 +76,7 @@
         /**
          * setOwnPropertieserties
          *
-         * @param properties
+         * @param {object} properties
          */
         setOwnProperties: function(properties) {
             _.each(properties, function(value, key) {
@@ -80,9 +86,9 @@
 
         /**
          * create view
-         * @param clazz
-         * @param params
-         * @return {clazz}
+         * @param {class} clazz
+         * @param {object} params
+         * @return {class} clazz
          */
         createView: function(clazz, params) {
             var instance = new clazz(params);
@@ -106,6 +112,181 @@
                     this.__viewList.pop().destroy();
                 }
             }
+        }
+    });
+    /**
+     * Renderer Base Class
+     */
+    View.Base.Renderer = View.Base.extend({
+        eventHandler: {},
+        initialize: function(attributes) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this._initializeEventHandler();
+        },
+        /**
+         * eventHandler 초기화
+         * @private
+         */
+        _initializeEventHandler: function() {
+            var eventHandler = {};
+            _.each(this.eventHandler, function(methodName, eventName) {
+                var tmp = eventName.split(' '),
+                    event = tmp[0],
+                    selector = tmp[1] || '';
+
+                eventHandler[event] = {
+                    selector: selector,
+                    handler: $.proxy(this[methodName], this)
+                };
+            }, this);
+            this.setOwnProperties({
+                _eventHandler: eventHandler
+            });
+        },
+        _attachHandler: function($el) {
+            _.each(this._eventHandler, function(obj, eventName) {
+                var handler = obj.handler,
+                    selector = obj.selector,
+                    $target = $el;
+                if (selector) {
+                    $target = $el.find(selector);
+                }
+                $target.on(eventName, handler);
+            }, this);
+        },
+        _detachHandler: function($el) {
+            _.each(this._eventHandler, function(obj, eventName) {
+                var handler = obj.handler,
+                    selector = obj.selector,
+                    $target = $el;
+                if (selector) {
+                    $target = $el.find(selector);
+                }
+                $target.off(eventName, handler);
+            }, this);
+        },
+        getHtml: function() {
+            throw this.error('implement getHtml() method');
+        }
+    });
+    /**
+     * Cell Renderer Base
+     */
+    View.Base.Renderer.Cell = View.Base.Renderer.extend({
+        cellType: 'normal',
+        eventHandler: {},
+        shouldRenderList: ['isEditable', 'optionList', 'value'],
+        initialize: function(attributes, options) {
+            View.Base.Renderer.prototype.initialize.apply(this, arguments);
+            this._initializeEventHandler();
+        },
+        baseTemplate: _.template('<td ' +
+            ' columnName="<%=columnName%>"' +
+            ' rowSpan="<%=rowSpan%>"' +
+            ' class="<%=className%>"' +
+            ' <%=attributes%>' +
+            ' cellType="<%=cellType%>"' +
+            '>' +
+            '<%=content%>' +
+            '</td>'),
+        onModelChange: function(cellData, $tr) {
+            var $target = this._getCellElement(cellData.columnName, $tr),
+                shouldRender = false;
+
+            this._setFocusedClass(cellData, $target);
+
+            for (var i = 0; i < this.shouldRenderList.length; i++) {
+                if ($.inArray(this.shouldRenderList[i], cellData.changed) !== -1) {
+                    shouldRender = true;
+                    break;
+                }
+            }
+            if (shouldRender === true) {
+                this.render(cellData, $target);
+            }else {
+                this.setElementAttribute(cellData, $target);
+            }
+        },
+        attachHandler: function($target) {
+            this._attachHandler($target);
+        },
+        detachHandler: function($target) {
+            this._detachHandler($target);
+        },
+        _setFocusedClass: function(cellData, $target) {
+            (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
+            (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
+        },
+        setElementAttribute: function(cellData, $target) {
+
+        },
+        render: function(cellData, $target) {
+            this._detachHandler($target);
+            $target.html(this.getContentHtml(cellData));
+            this._attachHandler($target);
+        },
+
+        getHtml: function(cellData) {
+            var classNameList = [];
+
+            if (cellData.className) {
+                classNameList.push(cellData.className);
+            }
+            if (cellData.selected === true) {
+                classNameList.push('selected');
+            }
+            if (cellData.focused === true) {
+                classNameList.push('focused');
+            }
+
+            return this.baseTemplate({
+                columnName: cellData.columnName,
+                rowSpan: cellData.rowSpan,
+                className: classNameList.join(' '),
+                attributes: this.getAttributes(cellData),
+                cellType: this.cellType,
+                content: this.getContentHtml(cellData)
+            });
+        },
+        getAttributesString: function(attributes) {
+            var str = '';
+            _.each(attributes, function(value, key) {
+                str += ' ' + key + '="' + value + '"';
+            }, this);
+            return str;
+        },
+        getEventHandler: function() {
+            return this._eventHandler;
+        },
+
+        /**
+         * implement this.
+         * @private
+         */
+        getContentHtml: function(cellData) {
+            return cellData.value;
+        },
+        /**
+         * implement this.
+         * @private
+         */
+        getAttributes: function(cellData) {
+            return '';
+        },
+        _getColumnName: function($target) {
+            return $target.closest('td').attr('columnName');
+        },
+        _getRowKey: function($target) {
+            return $target.closest('tr').attr('key');
+        },
+        _getCellElement: function(columnName, $tr) {
+            return $tr.find('td[columnName="' + columnName + '"]');
+        },
+        _getCellAddress: function($target) {
+            return {
+                rowKey: this._getRowKey($target),
+                columnName: this._getColumnName($target)
+            };
         }
     });
 
@@ -156,7 +337,7 @@
          * @return {String} 원래 문자로 변환된 문자열
          * @example
          var htmlEntityString = "A &#039;quote&#039; is &lt;b&gt;bold&lt;/b&gt;"
-         var result = pug.utility.decodeHTMLEntity(htmlEntityString); //결과값 : "A 'quote' is <b>bold</b>"
+         var result = Util.decodeHTMLEntity(htmlEntityString); //결과값 : "A 'quote' is <b>bold</b>"
          */
         decodeHTMLEntity: function(html) {
             var entities = {'&quot;' : '"', '&amp;' : '&', '&lt;' : '<', '&gt;' : '>', '&#39;' : '\'', '&nbsp;' : ' '};
@@ -171,7 +352,8 @@
          * @return {String} html HTML Entity 타입의 문자열로 변환된 문자열
          * @example
          var htmlEntityString = "<script> alert('test');</script><a href='test'>"
-         var result = pug.utility.encodeHTMLEntity(htmlEntityString); //결과값 : "&lt;script&gt; alert('test');&lt;/script&gt;&lt;a href='test'&gt;"
+         var result = Util.encodeHTMLEntity(htmlEntityString);
+         //결과값 : "&lt;script&gt; alert('test');&lt;/script&gt;&lt;a href='test'&gt;"
          */
         encodeHTMLEntity: function(str) {
             var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
@@ -690,6 +872,153 @@
         }
     });
 
+    /**
+     * View 에서 Rendering 시 바라보는 객체
+     * @type {*|void}
+     */
+    Model.Renderer = Model.Base.extend({
+        defaults: {
+            top: 0,
+            scrollTop: 0,
+            scrollLeft: 0,
+
+            startIdx: 0,
+            endIdx: 0,
+
+            lside: null,
+            rside: null
+        },
+        initialize: function(attributes) {
+            Model.Base.prototype.initialize.apply(this, arguments);
+
+            this.setOwnProperties({
+                timeoutIdForRefresh: 0,
+                isColumnModelChanged: false
+            });
+
+            //원본 rowList 의 상태 값 listening
+            this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
+            this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
+
+            //lside 와 rside 별 Collection 생성
+            var lside = new Model.RowList({
+                grid: this.grid
+            });
+            var rside = new Model.RowList({
+                grid: this.grid
+            });
+            this.set({
+                lside: lside,
+                rside: rside
+            });
+        },
+
+
+        getCollection: function(whichSide) {
+            whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
+            var collection;
+            switch (whichSide) {
+                case 'L':
+                    collection = this.get('lside');
+                    break;
+                case 'R':
+                    collection = this.get('rside');
+                    break;
+                default :
+                    collection = this.get('rside');
+                    break;
+            }
+            return collection;
+        },
+        _onColumnModelChange: function() {
+            this.set({
+                'scrollTop' : 0,
+                'top' : 0,
+                'startIdx' : 0,
+                'endIdx' : 0
+            });
+            this.isColumnModelChanged = true;
+            clearTimeout(this.timeoutIdForRefresh);
+            this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
+        },
+        _onRowListChange: function() {
+            clearTimeout(this.timeoutIdForRefresh);
+            this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
+        },
+        _setRenderingRange: function() {
+            this.set({
+                'startIdx' : 0,
+                'endIdx' : this.grid.dataModel.length - 1
+            });
+        },
+        refresh: function() {
+            this.trigger('beforeRefresh');
+
+            this._setRenderingRange();
+            //TODO : rendering 해야할 데이터만 가져온다.
+            var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+                columnList = this.grid.columnModel.get('visibleList'),
+                columnNameList = _.pluck(columnList, 'columnName');
+
+            var lsideColumnList = columnNameList.slice(0, columnFixIndex),
+                rsideColumnList = columnNameList.slice(columnFixIndex);
+
+
+
+            var lsideRowList = [],
+                rsideRowList = [];
+
+            var lsideRow = [];
+            var rsideRow = [];
+
+            var startIdx = this.get('startIdx');
+            var endIdx = this.get('endIdx');
+            var start = new Date();
+//            console.log('render', startIdx, endIdx);
+            for (var i = startIdx; i < endIdx + 1; i++) {
+                var rowModel = this.grid.dataModel.at(i);
+                var rowKey = rowModel.get('rowKey');
+                //데이터 초기화
+                lsideRow = {
+                    '_extraData' : rowModel.get('_extraData'),
+                    'rowKey' : rowKey
+                };
+                rsideRow = {
+                    '_extraData' : rowModel.get('_extraData'),
+                    'rowKey' : rowKey
+                };
+
+                //lside 데이터 먼저 채운다.
+                _.each(lsideColumnList, function(columnName) {
+                    lsideRow[columnName] = rowModel.get(columnName);
+                }, this);
+
+                _.each(rsideColumnList, function(columnName) {
+                    rsideRow[columnName] = rowModel.get(columnName);
+                }, this);
+
+                lsideRowList.push(lsideRow);
+                rsideRowList.push(rsideRow);
+            }
+            this.get('lside').set(lsideRowList, {
+                parse: true
+            });
+            this.get('rside').set(rsideRowList, {
+                parse: true
+            });
+            var end = new Date();
+//            console.log('render done', end - start);
+            if (this.isColumnModelChanged === true) {
+                this.trigger('columnModelChanged');
+                this.isColumnModelChanged = false;
+            }else {
+                this.trigger('rowListChanged');
+            }
+
+            this.trigger('afterRefresh');
+        }
+    });
+
     Model.Cell = Model.Base.extend({
         defaults: {
             rowKey: '',
@@ -955,153 +1284,6 @@
         }
     });
 
-    /**
-     * View 에서 Rendering 시 바라보는 객체
-     * @type {*|void}
-     */
-    Model.Renderer = Model.Base.extend({
-        defaults: {
-            top: 0,
-            scrollTop: 0,
-            scrollLeft: 0,
-
-            startIdx: 0,
-            endIdx: 0,
-
-            lside: null,
-            rside: null
-        },
-        initialize: function(attributes) {
-            Model.Base.prototype.initialize.apply(this, arguments);
-
-            this.setOwnProperties({
-                timeoutIdForRefresh: 0,
-                isColumnModelChanged: false
-            });
-
-            //원본 rowList 의 상태 값 listening
-            this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
-            this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
-
-            //lside 와 rside 별 Collection 생성
-            var lside = new Model.RowList({
-                grid: this.grid
-            });
-            var rside = new Model.RowList({
-                grid: this.grid
-            });
-            this.set({
-                lside: lside,
-                rside: rside
-            });
-        },
-
-
-        getCollection: function(whichSide) {
-            whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
-            var collection;
-            switch (whichSide) {
-                case 'L':
-                    collection = this.get('lside');
-                    break;
-                case 'R':
-                    collection = this.get('rside');
-                    break;
-                default :
-                    collection = this.get('rside');
-                    break;
-            }
-            return collection;
-        },
-        _onColumnModelChange: function() {
-            this.set({
-                'scrollTop' : 0,
-                'top' : 0,
-                'startIdx' : 0,
-                'endIdx' : 0
-            });
-            this.isColumnModelChanged = true;
-            clearTimeout(this.timeoutIdForRefresh);
-            this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
-        },
-        _onRowListChange: function() {
-            clearTimeout(this.timeoutIdForRefresh);
-            this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
-        },
-        _setRenderingRange: function() {
-            this.set({
-                'startIdx' : 0,
-                'endIdx' : this.grid.dataModel.length - 1
-            });
-        },
-        refresh: function() {
-            this.trigger('beforeRefresh');
-
-            this._setRenderingRange();
-            //TODO : rendering 해야할 데이터만 가져온다.
-            var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-                columnList = this.grid.columnModel.get('visibleList'),
-                columnNameList = _.pluck(columnList, 'columnName');
-
-            var lsideColumnList = columnNameList.slice(0, columnFixIndex),
-                rsideColumnList = columnNameList.slice(columnFixIndex);
-
-
-
-            var lsideRowList = [],
-                rsideRowList = [];
-
-            var lsideRow = [];
-            var rsideRow = [];
-
-            var startIdx = this.get('startIdx');
-            var endIdx = this.get('endIdx');
-            var start = new Date();
-            console.log('render', startIdx, endIdx);
-            for (var i = startIdx; i < endIdx + 1; i++) {
-                var rowModel = this.grid.dataModel.at(i);
-                var rowKey = rowModel.get('rowKey');
-                //데이터 초기화
-                lsideRow = {
-                    '_extraData' : rowModel.get('_extraData'),
-                    'rowKey' : rowKey
-                };
-                rsideRow = {
-                    '_extraData' : rowModel.get('_extraData'),
-                    'rowKey' : rowKey
-                };
-
-                //lside 데이터 먼저 채운다.
-                _.each(lsideColumnList, function(columnName) {
-                    lsideRow[columnName] = rowModel.get(columnName);
-                }, this);
-
-                _.each(rsideColumnList, function(columnName) {
-                    rsideRow[columnName] = rowModel.get(columnName);
-                }, this);
-
-                lsideRowList.push(lsideRow);
-                rsideRowList.push(rsideRow);
-            }
-            this.get('lside').set(lsideRowList, {
-                parse: true
-            });
-            this.get('rside').set(rsideRowList, {
-                parse: true
-            });
-            var end = new Date();
-            console.log('render done', end - start);
-            if (this.isColumnModelChanged === true) {
-                this.trigger('columnModelChanged');
-                this.isColumnModelChanged = false;
-            }else {
-                this.trigger('rowListChanged');
-            }
-
-            this.trigger('afterRefresh');
-        }
-    });
-
     Model.Renderer.Smart = Model.Renderer.extend({
         initialize: function() {
             Model.Renderer.prototype.initialize.apply(this, arguments);
@@ -1124,7 +1306,8 @@
                 bodyHeight = this.grid.dimensionModel.get('bodyHeight'),
                 displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
                 startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIdx = Math.min(this.grid.dataModel.length - 1, Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
+                endIdx = Math.min(this.grid.dataModel.length - 1,
+                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
             if (!this.grid.dataModel.isSortedByField()) {
                 var minList = [];
                 var maxList = [];
@@ -1340,6 +1523,64 @@
         }
     });
 
+    View.Layout.Frame = View.Base.extend({
+        tagName: 'div',
+        className: 'lside_area',
+        initialize: function(attributes) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this);
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.setOwnProperties({
+                header: null,
+                body: null
+            });
+        },
+        render: function() {
+            this.destroyChildren();
+            this.trigger('beforeRender');
+            this.beforeRender();
+
+            var header = this.header = this.createView(View.Layout.Header, {
+                grid: this.grid,
+                whichSide: this.whichSide
+            });
+            var body = this.body = this.createView(View.Layout.Body, {
+                grid: this.grid,
+                whichSide: this.whichSide
+            });
+
+            this.$el
+                .append(header.render().el)
+                .append(body.render().el);
+
+            this.afterRender();
+            this.trigger('afterRender');
+            return this;
+        },
+        beforeRender: function() {
+            //@TODO: override this function
+        },
+        afterRender: function() {
+            //@TODO: override this function
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * body layout 뷰
      *
@@ -1429,80 +1670,6 @@
         }
     });
 
-    View.CellFactory = View.Base.extend({
-        initialize: function(attributes, options) {
-            View.Base.prototype.initialize.apply(this, arguments);
-            var args = {
-                grid: this.grid
-            };
-            var instances = {
-                'mainButton' : new View.Cell.MainButton(args),
-
-                'normal' : new View.Cell.Normal(args),
-                'text' : new View.Cell.Text(args),
-                'button' : new View.Cell.List.Button(args),
-                'select' : new View.Cell.List.Select(args)
-            };
-
-
-            this.setOwnProperties({
-                instances: instances
-            });
-        },
-        getInstance: function(editType) {
-            var instance = null;
-            switch (editType) {
-                case 'mainButton' :
-                    instance = this.instances[editType];
-                    break;
-                case 'text' :
-                    instance = this.instances[editType];
-                    break;
-                case 'select':
-                    instance = this.instances[editType];
-                    break;
-                case 'radio' :
-                case 'checkbox' :
-                    instance = this.instances['button'];
-                    break;
-                default :
-                    instance = this.instances['normal'];
-                    break;
-            }
-
-            return instance;
-        }
-    });
-
-    View.Clipboard = View.Base.extend({
-        staticData: null,
-        tagName: 'textarea',
-        className: 'clipboard',
-        events: {
-            'keydown' : '_onKeydown'
-        },
-        initialize: function(attributes, option) {
-            View.Base.prototype.initialize.apply(this, arguments);
-        },
-        activate: function() {
-            this.listenTo(this.grid, 'afterRender', this.appendTo, this);
-            this.listenTo(this.grid, 'mousedown', this._onGridMouseDown, this);
-        },
-        appendTo: function() {
-            this.grid.$el.append(this.render().el);
-        },
-        render: function() {
-            return this;
-        },
-        _onGridMouseDown: function() {
-            this.$el.focus();
-        },
-        _onKeydown: function(keydownEvent) {
-            console.log('onkeydown rowList', this.grid);
-            console.log('clipboard', keydownEvent);
-        }
-    });
-
     View.Layout.Footer = View.Base.extend({
         tagName: 'div',
         className: 'footer',
@@ -1535,7 +1702,9 @@
         }
     });
 
-
+    /**
+     * 우측 frame view
+     */
     View.Layout.Frame.Rside = View.Layout.Frame.extend({
         className: 'rside_area',
         initialize: function(attributes) {
@@ -1579,7 +1748,6 @@
                 this.$el.append(virtualScrollBar.render().el);
                 console.log(this.$el.html());
             }
-
         }
     });
 
@@ -1633,65 +1801,6 @@
             this.$el.find('.content').height(height);
         }
     });
-
-
-    View.Layout.Frame = View.Base.extend({
-        tagName: 'div',
-        className: 'lside_area',
-        initialize: function(attributes) {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this);
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
-            this.setOwnProperties({
-                header: null,
-                body: null
-            });
-        },
-        render: function() {
-            this.destroyChildren();
-            this.trigger('beforeRender');
-            this.beforeRender();
-
-            var header = this.header = this.createView(View.Layout.Header, {
-                grid: this.grid,
-                whichSide: this.whichSide
-            });
-            var body = this.body = this.createView(View.Layout.Body, {
-                grid: this.grid,
-                whichSide: this.whichSide
-            });
-
-            this.$el
-                .append(header.render().el)
-                .append(body.render().el);
-
-            this.afterRender();
-            this.trigger('afterRender');
-            return this;
-        },
-        beforeRender: function() {
-            //@TODO: override this function
-        },
-        afterRender: function() {
-            //@TODO: override this function
-        }
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Header 레이아웃 View
@@ -2042,43 +2151,94 @@
         }
     });
 
-    View.Row = View.Base.extend({
-        tagName: 'tr',
-        events: {
+
+    /**
+     * Row Renderer
+     * 성능 향상을 위해 Row Rendering 을 위한 클래스 생성
+     */
+    View.Renderer.Row = View.Base.Renderer.extend({
+        eventHandler: {
             'click' : '_onClick',
             'mousedown' : '_onMouseDown'
         },
-        destroy: function() {
-            this.destroyChildren();
-            this._detachHandler();
-            this.remove();
-        },
+        /**
+         * TR 마크업 생성시 사용할 템플릿
+         */
+        baseTemplate: _.template('' +
+            '<tr ' +
+            'key="<%=key%>" ' +
+            'style="height: <%=height%>px;">' +
+            '<%=contents%>' +
+            '</tr>'),
+        /**
+         * 초기화 함수
+         * @param {object} attributes
+         */
         initialize: function(attributes) {
-            View.Base.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.prototype.initialize.apply(this, arguments);
 
             var whichSide = (attributes && attributes.whichSide) || 'R';
 
             this.setOwnProperties({
+                $parent: attributes.$parent,        //부모 element
+                collection: attributes.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
                 columnModelList: this.grid.columnModel.getColumnModelList(whichSide),
-                renderer: [],
-                eventHandlerList: []
+                cellHandlerList: []
             });
-            this.listenTo(this.model, 'change', this._onModelChange, this);
+
+            //listener 등록
+            this.collection.forEach(function(row) {
+                this.listenTo(row, 'change', this._onModelChange, this);
+            }, this);
+        },
+        /**
+         * attachHandler
+         * event handler 를 전체 tr에 한번에 붙인다.
+         */
+        attachHandler: function() {
+            var $tr,
+                $trList = this.$parent.find('tr');
+            for (var i = 0; i < $trList.length; i++) {
+                $tr = $trList.eq(i);
+                this._attachHandler($tr);
+            }
+            this.grid.cellFactory.attachHandler(this.$parent);
+        },
+        /**
+         * detach eventHandler
+         * event handler 를 전체 tr에서 제거한다.
+         */
+        detachHandler: function() {
+            var $target, $tr,
+                $trList = this.$parent.find('tr');
+            for (var i = 0; i < $trList.length; i++) {
+                $tr = $trList.eq(i);
+                this._detachHandler($tr);
+            }
+            this.grid.cellFactory.detachHandler(this.$parent);
         },
         _onClick: function(clickEvent) {
-
+            console.log('click', clickEvent);
         },
+        /**
+         * mousedown 이벤트 핸들러
+         * @param {event} mouseDownEvent
+         * @private
+         */
         _onMouseDown: function(mouseDownEvent) {
-            var $target = $(mouseDownEvent.target).closest('td');
-            this.grid.dataModel.focusCell(this.model.get('rowKey'), $target.attr('columnName'));
+            var $td = $(mouseDownEvent.target).closest('td'),
+                $tr = $(mouseDownEvent.target).closest('tr'),
+                columnName = $td.attr('columnName'),
+                rowKey = $tr.attr('key');
+            this.grid.dataModel.focusCell(rowKey, columnName);
             if (this.grid.option('selectType') === 'radio') {
-                this.grid.checkRow(this.model.get('rowKey'));
+                this.grid.checkRow(rowKey);
             }
         },
         /**
-         * model 변경시
-         * @param model
+         * model 변경 시
+         * @param {object} model
          * @private
          */
         _onModelChange: function(model) {
@@ -2086,281 +2246,99 @@
                 if (columnName !== '_extraData') {
                     var editType = this.getEditType(columnName),
                         cellInstance = this.grid.cellFactory.getInstance(editType);
-                        cellInstance.onModelChange(cellData, this.$el);
+                    cellInstance.onModelChange(cellData, this._getTrElement(cellData.rowKey));
                 }
             }, this);
-            //
         },
-        _attachHandler: function() {
-            var selector, cellInstance, $target;
-//            console.log('this.eventHandlerList', this.eventHandlerList);
-            for (var i = 0; i < this.eventHandlerList.length; i++) {
-                selector = this.eventHandlerList[i].selector;
-                cellInstance = this.eventHandlerList[i].cellInstance;
-                $target = this.$el.find(selector);
-//                console.log('@@@$target', $target.length);
-                cellInstance._attachHandler($target);
-            }
+        /**
+         * tr 엘리먼트를 찾아서 반환한다.
+         * @param {string|number} rowKey
+         * @return {jquery}
+         * @private
+         */
+        _getTrElement: function(rowKey) {
+            return this.$parent.find('tr[key="' + rowKey + '"]');
         },
-        _detachHandler: function() {
-            var selector, cellInstance;
-
-            for (var i = 0; i < this.eventHandlerList.length; i++) {
-                selector = this.eventHandlerList[i].selector;
-                cellInstance = this.eventHandlerList[i].cellInstance;
-                cellInstance._detachHandler(this.$el.find(selector));
-            }
-        },
+        /**
+         * 컬럼 모델로부터 editType 을 반환한다.
+         * @param {string} columnName
+         * @return {string}
+         */
         getEditType: function(columnName) {
             var columnModel = this.grid.columnModel.getColumnModel(columnName);
-            return (columnName === '_button') ? 'mainButton' : columnModel['editOption'] && columnModel['editOption']['type'];
+            return (columnName === '_button') ? 'main' : columnModel['editOption'] && columnModel['editOption']['type'];
         },
-        render: function() {
-            this.destroyChildren();
-            //todo : detach event handler
-            this._detachHandler();
-
-            this.$el.css({
-                height: this.grid.dimensionModel.get('rowHeight')
-            }).attr({
-                key: this.model.get('rowKey')
-            });
-            this.$el.html('');
-
-
-            var columnModelList = this.columnModelList;
-
-            var columnName, cellData,
-                model, columnModel, editType, cellInstance,
+        /**
+         * html 마크업을 반환
+         * @param {object} model
+         * @return {string} html html 스트링
+         */
+        getHtml: function(model) {
+            var columnModelList = this.columnModelList,
+                columnName, cellData, editType, cellInstance,
                 html = '';
-            this.eventHandlerList = [];
-
+            this.cellHandlerList = [];
             for (var i = 0, len = columnModelList.length; i < len; i++) {
                 columnName = columnModelList[i]['columnName'];
-                cellData = this.model.get(columnName);
+                cellData = model.get(columnName);
                 if (cellData && cellData['isMainRow']) {
                     editType = this.getEditType(columnName);
                     cellInstance = this.grid.cellFactory.getInstance(editType);
                     html += cellInstance.getHtml(cellData);
-                    this.eventHandlerList.push({
+                    this.cellHandlerList.push({
                         selector: 'td[columnName="' + columnName + '"]',
                         cellInstance: cellInstance
                     });
                 }
             }
-
-
-            this.$el.prepend(html);
-            this._attachHandler();
-            //todo : attach event handler
-            return this;
-
-        }
-    });
-
-
-    View.RowList = View.Base.extend({
-        initialize: function(attributes) {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.setOwnProperties({
-                whichSide: (attributes && attributes.whichSide) || 'R',
-                timeoutIdForCollection: 0
-            });
-
-            this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
-        },
-        render: function() {
-            this.destroyChildren();
-            this.$el.html('');
-            this.addAll();
-            return this;
-        },
-
-        addOne: function(row) {
-            var rowView = this.createView(View.Row, {
-                grid: this.grid,
-                model: row,
-                whichSide: this.whichSide
-            });
-            this.$el.append(rowView.render().el);
-        },
-        addAll: function() {
-            var start = new Date();
-            console.log('View.RowList.addAll start');
-            var $documentFragment = $(document.createDocumentFragment());
-            this.collection.forEach(function(row) {
-                var rowView = this.createView(View.Row, {
-                    grid: this.grid,
-                    model: row,
-                    whichSide: this.whichSide
-                });
-                $documentFragment.append(rowView.render().el);
-            }, this);
-            this.$el.html('');
-            this.$el.prepend($documentFragment);
-            var end = new Date();
-            console.log('View.RowList.addAll end', end - start);
-        }
-    });
-
-    View.Cell.Base = View.Base.extend({
-        eventHandler : {},
-        shouldRenderList : ['isEditable', 'optionList', 'value'],
-        initialize : function(attributes, options){
-            var eventHandler = {};
-            View.Base.prototype.initialize.apply(this, arguments);
-            _.each(this.eventHandler, function(methodName, eventName){
-                eventHandler[eventName] = $.proxy(this[methodName], this);
-            }, this);
-            this.setOwnProperties({
-                _eventHandler : eventHandler
-            });
-        },
-
-        baseTemplate : _.template('<td ' +
-            ' columnName="<%=columnName%>"' +
-            ' rowSpan="<%=rowSpan%>"' +
-            ' class="<%=className%>"' +
-            ' <%=attributes%>' +
-            '>' +
-            '<%=content%>' +
-            '</td>'),
-
-
-        onModelChange : function(cellData, $tr){
-
-            var $target = this._getCellElement(cellData.columnName, $tr),
-                shouldRender = false;
-
-            this._setFocusedClass(cellData, $target);
-
-            for(var i = 0; i < this.shouldRenderList.length; i++){
-                if($.inArray(this.shouldRenderList[i], cellData.changed) !== -1){
-                    shouldRender = true;
-                    break;
-                }
-            }
-            if(shouldRender === true){
-                this.render(cellData, $target);
-            }else{
-                this.setElementAttribute(cellData, $target);
-            }
-        },
-        _attachHandler : function($target){
-            _.each(this._eventHandler, function(handler, name){
-                var tmp = name.split(' '),
-                    eventName = tmp[0],
-                    selector = tmp[1] || '';
-
-                if(selector){
-                    $target = $target.find(selector);
-                }
-
-                $target.off(eventName).on(eventName, handler);
-//                console.log('$target', $target.length, $target.html(), handler);
-            }, this);
-        },
-        _detachHandler : function($target){
-            _.each(this._eventHandler, function(handler, name){
-                var tmp = name.split(' '),
-                    eventName = tmp[0],
-                    selector = tmp[1] || '';
-
-                if(selector){
-                    $target = $target.find(selector);
-                }
-
-                $target.off(eventName);
-            }, this);
-        },
-        _setFocusedClass : function(cellData, $target){
-            (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
-            (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
-        },
-        setElementAttribute : function(cellData, $target){
-
-        },
-        render : function(cellData, $target){
-            this._detachHandler($target);
-            $target.html(this.getContentHtml(cellData));
-            this._attachHandler($target);
-        },
-
-        getHtml : function(cellData){
-            var classNameList = [];
-
-            if(cellData.className){
-                classNameList.push(cellData.className);
-            }
-            if(cellData.selected === true) {
-                classNameList.push('selected');
-            }
-            if(cellData.focused === true){
-                classNameList.push('focused');
-            }
-
             return this.baseTemplate({
-                columnName : cellData.columnName,
-                rowSpan : cellData.rowSpan,
-                className : classNameList.join(' '),
-                attributes : this.getAttributes(cellData),
-                content : this.getContentHtml(cellData)
+                key: model.get('rowKey'),
+                height: this.grid.dimensionModel.get('rowHeight'),
+                contents: html
             });
-        },
-        getAttributesString : function(attributes){
-            var str = '';
-            _.each(attributes, function(value, key){
-                str += ' ' + key + '="'+value+'"';
-            }, this);
-            return str;
-        },
-        getEventHandler : function(){
-            return this._eventHandler;
-        },
-
-        /**
-         * implement this.
-         * @private
-         */
-        getContentHtml : function(cellData){
-            return cellData.value;
-        },
-        /**
-         * implement this.
-         * @private
-         */
-        getAttributes : function(cellData){
-            return '';
-        },
-        _getColumnName : function($target){
-            return $target.closest('td').attr('columnName');
-        },
-        _getRowKey : function($target){
-            return $target.closest('tr').attr('key');
-        },
-        _getCellElement : function(columnName, $tr){
-            return $tr.find('td[columnName="' + columnName + '"]');
-        },
-        _getCellAddr : function($target){
-            return {
-                rowKey : this._getRowKey($target),
-                columnName : this._getColumnName($target)
-            };
         }
     });
-
-
-    View.Cell.Interface = View.Cell.Base.extend({
-        shouldRenderList : ['isEditable', 'optionList', 'value'],
-        eventHandler : {
+    /**
+     *  Cell Interface
+     *  상속받아 cell renderer를 구현한다.
+     */
+    View.Base.Renderer.Cell.Interface = View.Base.Renderer.Cell.extend({
+        /**
+         * Cell factory 에서 전체 td에 eventHandler 를 attach, detach 할 때 구분자로 사용할 cellType
+         */
+        cellType: 'normal',
+        /**
+         * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록
+         */
+        shouldRenderList: ['isEditable', 'optionList', 'value'],
+        /**
+         * event handler
+         */
+        eventHandler: {},
+        initialize: function() {
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
         },
-        initialize : function(){
-            View.Cell.Base.prototype.initialize.apply(this, arguments);
-        },
-        getContentHtml : function(cellData){
+        /**
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * @param {object} cellData
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
+         */
+        getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
-        setElementAttribute : function(cellData, $target){
+        /**
+         * model의 shouldRenderList 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * @param {object} cellData
+         * @param {jquery} $target
+         */
+        setElementAttribute: function(cellData, $target) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
         }
     });
@@ -2371,17 +2349,17 @@
      *  editOption 에 list 를 가지고 있는 형태
      * @type {*|void}
      */
-    View.Cell.List = View.Cell.Interface.extend({
-        shouldRenderList : ['isEditable', 'optionList'],
-        eventHandler : {
+    View.Renderer.Cell.List = View.Base.Renderer.Cell.Interface.extend({
+        shouldRenderList: ['isEditable', 'optionList'],
+        eventHandler: {
         },
-        initialize : function(){
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+        initialize: function() {
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
         }
     });
@@ -2391,25 +2369,26 @@
      * editType select
      * @type {*|void}
      */
-    View.Cell.List.Select = View.Cell.List.extend({
-        initialize: function (attributes) {
-            View.Cell.List.prototype.initialize.apply(this, arguments);
+    View.Renderer.Cell.List.Select = View.Renderer.Cell.List.extend({
+        cellType: 'select',
+        initialize: function(attributes) {
+            View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
         },
-        eventHandler : {
-            "click" : "onClick",
-            "change select" : "onChange"
+        eventHandler: {
+            'click' : 'onClick',
+            'change select' : 'onChange'
         },
 
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 html = '';
 
-            html += '<select name="'+Util.getUniqueKey()+'">';
-            for(var i = 0, list = columnModel.editOption.list; i < list.length; i++){
+            html += '<select name="' + Util.getUniqueKey() + '">';
+            for (var i = 0, list = columnModel.editOption.list; i < list.length; i++) {
                 html += '<option ';
-                html += 'value="'+list[i].value + '"';
+                html += 'value="' + list[i].value + '"';
 
-                if(cellData.value == list[i].value){
+                if (cellData.value == list[i].value) {
                     html += ' selected';
                 }
                 html += ' >';
@@ -2420,14 +2399,14 @@
             return html;
 
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             $target.find('select').val(cellData.value);
         },
-        onClick : function(clickEvent){
+        onClick: function(clickEvent) {
         },
-        onChange : function(changeEvent){
+        onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                cellAddr = this._getCellAddr($target);
+                cellAddr = this._getCellAddress($target);
 
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
         }
@@ -2438,19 +2417,20 @@
      * editType = radio || checkbox
      * @type {*|void}
      */
-    View.Cell.List.Button = View.Cell.List.extend({
-        initialize: function (attributes) {
-            View.Cell.List.prototype.initialize.apply(this, arguments);
+    View.Renderer.Cell.List.Button = View.Renderer.Cell.List.extend({
+        cellType: 'button',
+        initialize: function(attributes) {
+            View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
         },
-        eventHandler : {
-            "click" : "onClick",
-            "change input" : "onChange"
+        eventHandler: {
+            'click' : 'onClick',
+            'change input' : 'onChange'
         },
-        template : {
-            input : _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%>>'),
-            label : _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
+        template: {
+            input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%>>'),
+            label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
@@ -2458,126 +2438,130 @@
                 name = Util.getUniqueKey(),
                 id;
 
-            for(var i = 0, list = columnModel.editOption.list; i < list.length; i++){
+            for (var i = 0, list = columnModel.editOption.list; i < list.length; i++) {
                 id = name + '_' + list[i].value;
                 html += this.template.input({
-                    type : columnModel.editOption.type,
-                    name : name,
-                    id : id,
-                    value : list[i].value,
-                    checked : $.inArray(''+list[i].value, checkedList) === -1 ? '' : 'checked'
+                    type: columnModel.editOption.type,
+                    name: name,
+                    id: id,
+                    value: list[i].value,
+                    checked: $.inArray('' + list[i].value, checkedList) === -1 ? '' : 'checked'
                 });
-                if(list[i].text){
+                if (list[i].text) {
                     html += this.template.label({
-                        id : id,
-                        text : list[i].text
+                        id: id,
+                        text: list[i].text
                     });
                 }
             }
 
             return html;
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             //TODO
         },
-        _getEditType : function($target){
+        _getEditType: function($target) {
             var columnName = this._getColumnName($target),
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 type = columnModel.editOption.type;
 
             return type;
         },
-        onClick : function(clickEvent){
+        onClick: function(clickEvent) {
         },
-        _getCheckedList : function($target){
-            var $checkedList = $target.closest('td').find('input[type='+this._getEditType($target)+']:checked'),
+        _getCheckedList: function($target) {
+            var $checkedList = $target.closest('td').find('input[type=' + this._getEditType($target) + ']:checked'),
                 checkedList = [];
 
-            for(var i = 0; i < $checkedList.length; i++){
+            for (var i = 0; i < $checkedList.length; i++) {
                 checkedList.push($checkedList.eq(i).val());
             }
 
             return checkedList;
         },
-        onChange : function(changeEvent){
+        onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                cellAddr = this._getCellAddr($target);
+                cellAddr = this._getCellAddress($target);
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target));
         },
-        _getInputEl : function(value){
-            return this.$el.find('input[type='+this.type+'][value="'+value+'"]');
+        _getInputEl: function(value) {
+            return this.$el.find('input[type=' + this.type + '][value="' + value + '"]');
         }
     });
-    View.Cell.Normal = View.Cell.Interface.extend({
-        initialize : function(attributes, options){
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+
+    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.Interface.extend({
+        initialize: function(attributes, options) {
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
-        getContentHtml : function(cellData, $target){
+        getContentHtml: function(cellData, $target) {
             return cellData.value;
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
         }
     });
 
 
-    View.Cell.MainButton = View.Cell.Interface.extend({
-        shouldRenderList : ['isEditable', 'optionList'],
-        eventHandler : {
-            "mousedown" : "_onMouseDown",
-            "change input" : "_onChange"
+    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.Interface.extend({
+        cellType: 'main',
+        shouldRenderList: ['isEditable', 'optionList'],
+        eventHandler: {
+            'mousedown' : '_onMouseDown',
+            'change input' : '_onChange'
         },
-        initialize : function(attributes, options){
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+        initialize: function(attributes, options) {
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
-        template : _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%>/>'),
-        getContentHtml : function(cellData){
+        template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%>/>'),
+        getContentHtml: function(cellData) {
             return this.template({
-                type : this.grid.option('selectType'),
-                name : this.grid.id,
-                checked : (!!cellData.value) ? 'checked' : ''
+                type: this.grid.option('selectType'),
+                name: this.grid.id,
+                checked: (!!cellData.value) ? 'checked' : ''
             });
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
             $target.find('input').prop('checked', !!cellData.value);
         },
-        getAttributes : function(cellData){
+        getAttributes: function(cellData) {
             return this.getAttributesString({
-                align : 'center'
+                align: 'center'
             });
         },
-        _onChange : function(changeEvent){
+        _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 rowKey = this._getRowKey($target),
                 columnName = this._getColumnName($target);
             this.grid.setValue(rowKey, columnName, $target.prop('checked'));
         },
-        _onMouseDown : function(mouseDownEvent){
+        _onMouseDown: function(mouseDownEvent) {
             var $target = $(mouseDownEvent.target);
-            if(!$target.is('input')){
+            if (!$target.is('input')) {
                 $target.find('input').trigger('click');
             }
         }
     });
-    View.Cell.Text = View.Cell.Interface.extend({
-        shouldRenderList : ['isEditable', 'optionList'],
-        initialize : function(attributes, options){
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+
+    View.Renderer.Cell.Text = View.Base.Renderer.Cell.Interface.extend({
+        cellType: 'text',
+        shouldRenderList: ['isEditable', 'optionList'],
+        initialize: function(attributes, options) {
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
-        template : _.template('<input type="text" value="<%=value%>" name="<%=name%>" />'),
-        eventHandler : {
-            "blur input" : "onBlur"
+        template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" />'),
+        eventHandler: {
+            'blur input' : 'onBlur'
         },
-        getContentHtml : function(cellData){
+        getContentHtml: function(cellData) {
             return this.template({
-                value : Util.encodeHTMLEntity(cellData.value),
-                name : Util.getUniqueKey(),
-                checked : (!!cellData.value) ? 'checked' : ''
+                value: Util.encodeHTMLEntity(cellData.value),
+                name: Util.getUniqueKey(),
+                checked: (!!cellData.value) ? 'checked' : ''
             });
         },
-        setElementAttribute : function(cellData, $target){
+        setElementAttribute: function(cellData, $target) {
 
         },
-        onBlur : function(blurEvent){
+        onBlur: function(blurEvent) {
             var $target = $(blurEvent.target),
                 rowKey = this._getRowKey($target),
                 columnName = this._getColumnName($target);
@@ -2585,107 +2569,109 @@
             this.grid.setValue(rowKey, columnName, $target.val());
         }
     });
+
     View.Extra.Log = View.Base.extend({
-        events : {
+        events: {
             'click input' : 'clear'
         },
-        initialize : function(attributes){
+        initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                maxCount : 20,
-                logs : [],
-                buffer : '',
-                lastTime : -1,
-                timeoutIdForLogs :0,
-                width : 500,
-                height : 200,
-                opacity : 0.8
+                maxCount: 20,
+                logs: [],
+                buffer: '',
+                lastTime: -1,
+                timeoutIdForLogs: 0,
+                width: 500,
+                height: 200,
+                opacity: 0.8
             });
         },
-        activate : function(){
-            if(this.grid.option('debug') === true){
-                this.listenTo(this.grid, "afterRender", this.appendTo, this);
+        activate: function() {
+            if (this.grid.option('debug') === true) {
+                this.listenTo(this.grid, 'afterRender', this.appendTo, this);
             }
         },
-        appendTo : function(){
+        appendTo: function() {
             this.grid.$el.append(this.render().el);
         },
-        render : function(){
+        render: function() {
             this.$el.css({
                 'position' : 'absolute',
                 'right' : '25px',
                 'top' : '25px',
                 'opacity' : this.opacity,
                 'background' : 'yellow',
-                'width' : this.width+'px',
-                'height' : this.height+'px',
+                'width' : this.width + 'px',
+                'height' : this.height + 'px',
                 'overflow' : 'auto'
             });
             return this;
         },
-        clear : function(){
+        clear: function() {
 //            this.buffer = '';
 //            this.$el.html('');
         },
-        write : function(text){
+        write: function(text) {
 
-            if(!this.buffer){
-                this.buffer = "";
+            if (!this.buffer) {
+                this.buffer = '';
             }
             clearTimeout(this.timeoutIdForLogs);
             var str = this.buffer;
 
             var d = new Date();
-            var timeStamp = "["+d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()+"] ";
+            var timeStamp = '['+ d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + '] ';
             var elapsed = 0;
 
-            if(this.lastTime > 0){
+            if (this.lastTime > 0) {
                 elapsed = d - this.lastTime;
             }
 
             this.lastTime = d;
 
 
-            var lineList = str.split("<br>");
-            if(lineList.length > this.maxCount){
+            var lineList = str.split('<br>');
+            if (lineList.length > this.maxCount) {
                 lineList.pop();
             }
 
-            lineList.unshift('<b>'+timeStamp + text + ' :elapsed ['+elapsed+']</b>');
-            this.buffer = lineList.join("<br>");
-            this.timeoutIdForLogs = setTimeout($.proxy(function(){
+            lineList.unshift('<b>' + timeStamp + text + ' :elapsed [' + elapsed + ']</b>');
+            this.buffer = lineList.join('<br>');
+            this.timeoutIdForLogs = setTimeout($.proxy(function() {
                 this.$el.html(this.buffer);
             }, this), 100);
         }
     });
+
     View.Extra.Selection = View.Base.extend({
-        events : {
+        events: {
         },
-        initialize : function(attributes, option){
+        initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-				whichSide : attributes && attributes.whichSide || 'R',
-                lside : null,
-                rside : null,
-                range : {
-                    column : [0, 1],
-                    row : [2, 3]
+				whichSide: attributes && attributes.whichSide || 'R',
+                lside: null,
+                rside: null,
+                range: {
+                    column: [0, 1],
+                    row: [2, 3]
                 }
 			});
         },
-        activate : function(){
-            this.listenTo(this.grid.view.rside, "afterRender", this.appendToRside, "a");
-            this.listenTo(this.grid.view.lside, "afterRender", this.appendToLside, "b");
+        activate: function() {
+            this.listenTo(this.grid.view.rside, 'afterRender', this.appendToRside, 'a');
+            this.listenTo(this.grid.view.lside, 'afterRender', this.appendToLside, 'b');
         },
-        appendToRside : function(){
+        appendToRside: function() {
             this.rside = this.appendTo(this.grid.view.rside.body, View.Extra.Selection.Layer.Rside);
             this.show();
         },
-        appendToLside : function(){
+        appendToLside: function() {
             this.lside = this.appendTo(this.grid.view.lside.body, View.Extra.Selection.Layer.Lside);
 
         },
-        appendTo : function(view, clazz){
+        appendTo: function(view, clazz) {
 //            var layer = new clazz({
 //                grid : this.grid,
 //                columnWidthList : this.grid.dimensionModel.getColumnWidthList(view.whichSide)
@@ -2696,35 +2682,35 @@
         },
 
 
-        startSelection : function(rowIndex, columnIndex){
+        startSelection: function(rowIndex, columnIndex) {
             this.range.row[0] = this.range.row[1] = rowIndex;
             this.range.column[0] = this.range.column[1] = columnIndex;
         },
-        updateSelectionRange : function(rowIndex, columnIndex){
+        updateSelectionRange: function(rowIndex, columnIndex) {
             this.range.row[1] = rowIndex;
             this.range.column[1] = columnIndex;
         },
-        endSelection : function(){
+        endSelection: function() {
             this.range.row[0] = this.range.row[1] = this.range.column[0] = this.range.column[1] = -1;
         },
 
-        show : function(){
+        show: function() {
             var rowHeight = this.grid.dimensionModel.get('rowHeight'),
                 startRow = Math.min.apply(Math, this.range.row),
                 endRow = Math.max.apply(Math, this.range.row),
                 startColumn = Math.min.apply(Math, this.range.column),
                 endColumn = Math.max.apply(Math, this.range.column),
                 top = Util.getTBodyHeight(startRow, rowHeight),
-                height = Util.getTBodyHeight(endRow-startRow, rowHeight) - 3;
+                height = Util.getTBodyHeight(endRow - startRow, rowHeight) - 3;
 
             console.log('this.lside.$el', this.lside);
             this.lside.show(startRow, endRow, startColumn, endColumn);
             this.rside.show(startRow, endRow, startColumn, endColumn);
 
             this.lside.$el.css({
-                top : top+'px',
-                width : 100 + 'px',
-                height : height + 'px',
+                top: top + 'px',
+                width: 100 + 'px',
+                height: height + 'px',
                 display: 'block'
             });
 
@@ -2758,76 +2744,221 @@
 
 
     View.Extra.Selection.Layer = View.Base.extend({
-        tagName : 'div',
-        className : 'selection_layer',
-        initialize : function(attributes, option){
+        tagName: 'div',
+        className: 'selection_layer',
+        initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.listenTo(this.grid.renderModel, "change:scrollTop", this._onScrollTopChange, this);
-			this.listenTo(this.grid.renderModel, "beforeRefresh", this._onBeforeRefresh, this);
-            this.listenTo(this.grid.renderModel, "change:top", this._onTopChange, this);
+            this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+			this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
+            this.listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this);
             this.setOwnProperties({
-                columnWidthList : attributes.columnWidthList
+                columnWidthList: attributes.columnWidthList
             });
         },
-        _onScrollTopChange : function(){
+        _onScrollTopChange: function() {
 
         },
-        _onBeforeRefresh : function(){
+        _onBeforeRefresh: function() {
 
         },
-        _onTopChange : function(){
+        _onTopChange: function() {
 
         },
-        render : function(){
+        render: function() {
             console.log('@@Selection layer render');
             return this;
         }
     });
 
     View.Extra.Selection.Layer.Lside = View.Extra.Selection.Layer.extend({
-        initialize : function(attributes, option){
+        initialize: function(attributes, option) {
             View.Extra.Selection.Layer.prototype.initialize.apply(this, arguments);
             console.log('LSIDE : ', this.columnWidthList);
         },
-        _onScrollTopChange : function(){
+        _onScrollTopChange: function() {
 
         },
-        _onBeforeRefresh : function(){
+        _onBeforeRefresh: function() {
 
         },
-        _onTopChange : function(){
+        _onTopChange: function() {
             console.log(this.$el.length);
         },
-        show : function(startRow, endRow, startColumn, endColumn){
+        show: function(startRow, endRow, startColumn, endColumn) {
 
         }
     });
 
     View.Extra.Selection.Layer.Rside = View.Extra.Selection.Layer.extend({
-        initialize : function(attributes, option){
+        initialize: function(attributes, option) {
             View.Extra.Selection.Layer.prototype.initialize.apply(this, arguments);
             console.log('RSIDE : ', this.columnWidthList);
         },
-        _onScrollTopChange : function(){
+        _onScrollTopChange: function() {
 
         },
-        _onBeforeRefresh : function(){
+        _onBeforeRefresh: function() {
 
         },
-        _onTopChange : function(){
+        _onTopChange: function() {
 
         },
-        show : function(startRow, endRow, startColumn, endColumn){
+        show: function(startRow, endRow, startColumn, endColumn) {
 
         }
     });
 
-    var Config = {
-        plugins: {
-            'clipboard' : View.Plugin.Clipboard
 
+    /**
+     * Cell Factory
+     */
+    View.CellFactory = View.Base.extend({
+        initialize: function(attributes, options) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            var args = {
+                grid: this.grid
+            };
+            this._initializeInstances();
+        },
+        _initializeInstances: function() {
+            var instances = {},
+                args = {
+                    grid: this.grid
+                },
+                instanceList = [
+                    new View.Renderer.Cell.MainButton(args),
+                    new View.Renderer.Cell.Normal(args),
+                    new View.Renderer.Cell.Text(args),
+                    new View.Renderer.Cell.List.Button(args),
+                    new View.Renderer.Cell.List.Select(args)
+                ];
+
+            _.each(instanceList, function(instance, name) {
+                instances[instance.cellType] = instance;
+            }, this);
+
+            this.setOwnProperties({
+                instances: instances
+            });
+        },
+        getInstance: function(editType) {
+            var instance = null;
+            switch (editType) {
+                case 'main' :
+                    instance = this.instances[editType];
+                    break;
+                case 'text' :
+                    instance = this.instances[editType];
+                    break;
+                case 'select':
+                    instance = this.instances[editType];
+                    break;
+                case 'radio' :
+                case 'checkbox' :
+                    instance = this.instances['button'];
+                    break;
+                default :
+                    instance = this.instances['normal'];
+                    break;
+            }
+
+            return instance;
+        },
+        attachHandler: function($parent) {
+            var $tdList = $parent.find('td'),
+                $td,
+                cellType;
+            for (var i = 0; i < $tdList.length; i++) {
+                $td = $tdList.eq(i);
+                cellType = $td.attr('cellType');
+                this.instances[cellType].attachHandler($td);
+            }
+        },
+        detachHandler: function($parent) {
+            var $tdList = $parent.find('td'),
+                $td,
+                cellType;
+            for (var i = 0; i < $tdList.length; i++) {
+                $td = $tdList.eq(i);
+                cellType = $td.attr('cellType');
+                this.instances[cellType].detachHandler($td);
+            }
         }
-    };
+    });
+
+    View.Clipboard = View.Base.extend({
+        staticData: null,
+        tagName: 'textarea',
+        className: 'clipboard',
+        events: {
+            'keydown' : '_onKeydown'
+        },
+        initialize: function(attributes, option) {
+            View.Base.prototype.initialize.apply(this, arguments);
+        },
+        activate: function() {
+            this.listenTo(this.grid, 'afterRender', this.appendTo, this);
+            this.listenTo(this.grid, 'mousedown', this._onGridMouseDown, this);
+        },
+        appendTo: function() {
+            this.grid.$el.append(this.render().el);
+        },
+        render: function() {
+            return this;
+        },
+        _onGridMouseDown: function() {
+            this.$el.focus();
+        },
+        _onKeydown: function(keydownEvent) {
+            console.log('onkeydown rowList', this.grid);
+            console.log('clipboard', keydownEvent);
+        }
+    });
+
+
+
+    /**
+     * Collection 의 변화를 감지하는 클래스
+     */
+    View.RowList = View.Base.extend({
+        initialize: function(attributes) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                whichSide: (attributes && attributes.whichSide) || 'R',
+                timeoutIdForCollection: 0,
+                rowRenderer: null
+            });
+            this._createRowRenderer();
+            this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+        },
+
+        _createRowRenderer: function() {
+            this.rowRenderer = this.createView(View.Renderer.Row, {
+                grid: this.grid,
+                $parent: this.$el,
+                collection: this.collection,
+                whichSide: this.whichSide
+            });
+        },
+        render: function() {
+            var html = '';
+            var start = new Date();
+            console.log('View.RowList.render start');
+            this.rowRenderer.detachHandler();
+            this.destroyChildren();
+            this._createRowRenderer();
+            //get html string
+            this.collection.forEach(function(row) {
+                html += this.rowRenderer.getHtml(row);
+            }, this);
+            this.$el.html('').prepend(html);
+            this.rowRenderer.attachHandler();
+
+            var end = new Date();
+            console.log('View.RowList.addAll end', end - start);
+            return this;
+        }
+    });
 
 
 
