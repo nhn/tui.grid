@@ -20,7 +20,8 @@
                 bodyHeight = this.grid.dimensionModel.get('bodyHeight'),
                 displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
                 startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIdx = Math.min(this.grid.dataModel.length - 1, Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
+                endIdx = Math.min(this.grid.dataModel.length - 1,
+                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
             if (!this.grid.dataModel.isSortedByField()) {
                 var minList = [];
                 var maxList = [];

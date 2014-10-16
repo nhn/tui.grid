@@ -11,7 +11,7 @@
                 Row: null,
                 Cell: {}
             },
-            Plugin: {
+            Extra: {
             }
         },
         Model = {},

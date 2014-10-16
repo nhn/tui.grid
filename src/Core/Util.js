@@ -24,7 +24,7 @@
          * @return {String} 원래 문자로 변환된 문자열
          * @example
          var htmlEntityString = "A &#039;quote&#039; is &lt;b&gt;bold&lt;/b&gt;"
-         var result = pug.utility.decodeHTMLEntity(htmlEntityString); //결과값 : "A 'quote' is <b>bold</b>"
+         var result = Util.decodeHTMLEntity(htmlEntityString); //결과값 : "A 'quote' is <b>bold</b>"
          */
         decodeHTMLEntity: function(html) {
             var entities = {'&quot;' : '"', '&amp;' : '&', '&lt;' : '<', '&gt;' : '>', '&#39;' : '\'', '&nbsp;' : ' '};
@@ -39,7 +39,8 @@
          * @return {String} html HTML Entity 타입의 문자열로 변환된 문자열
          * @example
          var htmlEntityString = "<script> alert('test');</script><a href='test'>"
-         var result = pug.utility.encodeHTMLEntity(htmlEntityString); //결과값 : "&lt;script&gt; alert('test');&lt;/script&gt;&lt;a href='test'&gt;"
+         var result = Util.encodeHTMLEntity(htmlEntityString);
+         //결과값 : "&lt;script&gt; alert('test');&lt;/script&gt;&lt;a href='test'&gt;"
          */
         encodeHTMLEntity: function(str) {
             var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};

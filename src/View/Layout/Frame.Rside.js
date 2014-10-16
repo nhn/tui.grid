@@ -1,4 +1,6 @@
-
+    /**
+     * 우측 frame view
+     */
     View.Layout.Frame.Rside = View.Layout.Frame.extend({
         className: 'rside_area',
         initialize: function(attributes) {
@@ -42,7 +44,6 @@
                 this.$el.append(virtualScrollBar.render().el);
                 console.log(this.$el.html());
             }
-
         }
     });
 
