@@ -15,11 +15,11 @@
                     grid: this.grid
                 },
                 instanceList = [
-                    new View.Cell.MainButton(args),
-                    new View.Cell.Normal(args),
-                    new View.Cell.Text(args),
-                    new View.Cell.List.Button(args),
-                    new View.Cell.List.Select(args)
+                    new View.Renderer.Cell.MainButton(args),
+                    new View.Renderer.Cell.Normal(args),
+                    new View.Renderer.Cell.Text(args),
+                    new View.Renderer.Cell.List.Button(args),
+                    new View.Renderer.Cell.List.Select(args)
                 ];
 
             _.each(instanceList, function(instance, name) {
@@ -53,8 +53,8 @@
 
             return instance;
         },
-        attachHandler: function() {
-            var $tdList = this.grid.$el.find('td'),
+        attachHandler: function($parent) {
+            var $tdList = $parent.find('td'),
                 $td,
                 cellType;
             for (var i = 0; i < $tdList.length; i++) {
@@ -63,8 +63,8 @@
                 this.instances[cellType].attachHandler($td);
             }
         },
-        detachHandler: function() {
-            var $tdList = this.grid.$el.find('td'),
+        detachHandler: function($parent) {
+            var $tdList = $parent.find('td'),
                 $td,
                 cellType;
             for (var i = 0; i < $tdList.length; i++) {

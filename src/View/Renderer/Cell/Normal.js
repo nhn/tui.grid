@@ -1,6 +1,6 @@
-    View.Cell.Normal = View.Cell.Interface.extend({
+    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.Interface.extend({
         initialize: function(attributes, options) {
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
         getContentHtml: function(cellData, $target) {
             return cellData.value;
@@ -10,7 +10,7 @@
     });
 
 
-    View.Cell.MainButton = View.Cell.Interface.extend({
+    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.Interface.extend({
         cellType: 'main',
         shouldRenderList: ['isEditable', 'optionList'],
         eventHandler: {
@@ -18,7 +18,7 @@
             'change input' : '_onChange'
         },
         initialize: function(attributes, options) {
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
         template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%>/>'),
         getContentHtml: function(cellData) {

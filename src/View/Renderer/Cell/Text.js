@@ -1,8 +1,8 @@
-    View.Cell.Text = View.Cell.Interface.extend({
+    View.Renderer.Cell.Text = View.Base.Renderer.Cell.Interface.extend({
         cellType: 'text',
         shouldRenderList: ['isEditable', 'optionList'],
         initialize: function(attributes, options) {
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
         template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" />'),
         eventHandler: {

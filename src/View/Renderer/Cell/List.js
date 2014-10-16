@@ -2,12 +2,12 @@
      *  editOption 에 list 를 가지고 있는 형태
      * @type {*|void}
      */
-    View.Cell.List = View.Cell.Interface.extend({
+    View.Renderer.Cell.List = View.Base.Renderer.Cell.Interface.extend({
         shouldRenderList: ['isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {
-            View.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
         getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
@@ -22,10 +22,10 @@
      * editType select
      * @type {*|void}
      */
-    View.Cell.List.Select = View.Cell.List.extend({
+    View.Renderer.Cell.List.Select = View.Renderer.Cell.List.extend({
         cellType: 'select',
         initialize: function(attributes) {
-            View.Cell.List.prototype.initialize.apply(this, arguments);
+            View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
         },
         eventHandler: {
             'click' : 'onClick',
@@ -70,10 +70,10 @@
      * editType = radio || checkbox
      * @type {*|void}
      */
-    View.Cell.List.Button = View.Cell.List.extend({
+    View.Renderer.Cell.List.Button = View.Renderer.Cell.List.extend({
         cellType: 'button',
         initialize: function(attributes) {
-            View.Cell.List.prototype.initialize.apply(this, arguments);
+            View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
         },
         eventHandler: {
             'click' : 'onClick',
