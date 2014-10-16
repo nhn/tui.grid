@@ -25,15 +25,17 @@ module.exports = function(grunt) {
             'src/Core/*.js',
             'src/Data/*.js',
 
-            'src/Model/Cell.js',
-            'src/Model/Dimension.js',
             'src/Model/Renderer.js',
-            'src/Model/Renderer.Smart.js',
-            'src/Model/RowList.js',
+            'src/Model/*',
 
-            'src/View/*.js',
-            'src/View/Cell/*.js',
+            'src/View/Layout/Frame.js',
+            'src/View/Layout/*',
+
+            'src/View/Renderer/*',
+            'src/View/Renderer/Cell/Interface.js',
+            'src/View/Renderer/Cell/*',
             'src/View/Extra/*.js',
+            'src/View/*.js',
             'src/*.js'
         ],
         // The destination file:
