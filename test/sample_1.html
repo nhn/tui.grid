@@ -52,21 +52,23 @@
 <script type="text/javascript" src="../src/Model/Renderer.js"></script>
 <script type="text/javascript" src="../src/Model/Renderer.Smart.js"></script>
 
+
+<script type="text/javascript" src="../src/View/Layout/Frame.js"></script>
+<script type="text/javascript" src="../src/View/Layout/Frame.Lside.js"></script>
+<script type="text/javascript" src="../src/View/Layout/Frame.Rside.js"></script>
+<script type="text/javascript" src="../src/View/Layout/Header.js"></script>
+<script type="text/javascript" src="../src/View/Layout/Body.js"></script>
+<script type="text/javascript" src="../src/View/Layout/Footer.js"></script>
+
+
+<script type="text/javascript" src="../src/View/Renderer/Cell/Interface.js"></script>
+<script type="text/javascript" src="../src/View/Renderer/Cell/Normal.js"></script>
+<script type="text/javascript" src="../src/View/Renderer/Cell/List.js"></script>
+<script type="text/javascript" src="../src/View/Renderer/Cell/Text.js"></script>
+<script type="text/javascript" src="../src/View/Renderer/Row.js"></script>
+
 <script type="text/javascript" src="../src/View/CellFactory.js"></script>
-<script type="text/javascript" src="../src/View/Frame.js"></script>
-<script type="text/javascript" src="../src/View/Frame.Lside.js"></script>
-<script type="text/javascript" src="../src/View/Frame.Rside.js"></script>
-<script type="text/javascript" src="../src/View/Header.js"></script>
-<script type="text/javascript" src="../src/View/Body.js"></script>
-<script type="text/javascript" src="../src/View/Footer.js"></script>
 <script type="text/javascript" src="../src/View/RowList.js"></script>
-
-
-<script type="text/javascript" src="../src/View/Cell/Base.js"></script>
-<script type="text/javascript" src="../src/View/Cell/Normal.js"></script>
-<script type="text/javascript" src="../src/View/Cell/List.js"></script>
-<script type="text/javascript" src="../src/View/Cell/Text.js"></script>
-
 
 <!--<script type="text/javascript" src="../src/View/Extra/VirtualScrollBar.js"></script>-->
 <script type="text/javascript" src="../src/View/Clipboard.js"></script>
@@ -122,8 +124,12 @@
 		]
 //		keyColumnName : 'columnName6'
 	});
-	getDummyData(dummy_data.columnModel_2, 2000, function(data){
+	getDummyData(dummy_data.columnModel_2, 5000, function(data){
+		var start = new Date();
+		console.log('setRowListStart');
 		grid2.setRowList(data);
+		var end = new Date();
+		console.log('setRowListEnd', end-start);
 	});
 
 //	grid2.setRowList(dummy_data.rowListTest);
