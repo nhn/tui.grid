@@ -88,7 +88,7 @@
          * create view
          * @param {class} clazz
          * @param {object} params
-         * @return {class} clazz
+         * @return {class} instance
          */
         createView: function(clazz, params) {
             var instance = new clazz(params);
@@ -100,7 +100,15 @@
             this.__viewList.push(instance);
             return instance;
         },
-
+        addView: function(instance){
+            if (!this.hasOwnProperty('__viewList')) {
+                this.setOwnProperties({
+                    __viewList: []
+                });
+            }
+            this.__viewList.push(instance);
+            return instance;
+        },
         destroy: function() {
             this.destroyChildren();
             this.remove();
@@ -185,7 +193,7 @@
             ' rowSpan="<%=rowSpan%>"' +
             ' class="<%=className%>"' +
             ' <%=attributes%>' +
-            ' cellType="<%=cellType%>"' +
+            ' data-cell-type="<%=cellType%>"' +
             '>' +
             '<%=content%>' +
             '</td>'),
@@ -322,6 +330,32 @@
             return Math.floor(((tbodyHeight - 1) / rowCount));
         },
         /**
+         * html Tag 문자가 포함되었는지 확인
+         * @param {String} string
+         * @return {boolean}
+         */
+        hasTagString: function(string) {
+            return /[<>&"']/.test(string);
+        },
+        /**
+         * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
+         * @param {string} htmlString
+         * @return {*}
+         */
+        stripTags: function(htmlString) {
+            htmlString = htmlString.replace(/[\n\r\t]/g, '');
+            if (this.hasTagString(htmlString)) {
+                if (/<img/.test(htmlString)) {
+                    var matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/);
+                    htmlString = matchResult ? matchResult[1] : '';
+                } else {
+                    htmlString = htmlString.replace(/<button.*?<\/button>/g, '');
+                }
+                htmlString = this.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, ''));
+            }
+            return htmlString;
+        },
+        /**
          * Create unique key
          * @return {string}
          * @private
@@ -432,6 +466,21 @@
             columnModelList = _.union(prependList, columnModelList);
             return columnModelList;
         },
+        /**
+         * columnName 에 해당하는 index를 반환한다.
+         * @param {string} columnName
+         * @return {number} index
+         */
+        indexOfColumnName: function(columnName) {
+            var columnModelList = this.get('columnModelList'),
+                i = 0, len = columnModelList.length;
+            for (; i < len; i++) {
+                if (columnModelList[i]['columnName'] === columnName) {
+                    return i;
+                }
+            }
+            return -1;
+        },
         getColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnModelList = [],
@@ -451,6 +500,15 @@
         },
         getColumnModel: function(columnName) {
             return this.get('columnModelMap')[columnName];
+        },
+        /**
+         * 컬럼 모델로부터 editType 을 반환한다.
+         * @param {string} columnName
+         * @return {string}
+         */
+        getEditType: function(columnName) {
+            var columnModel = this.getColumnModel(columnName);
+            return (columnName === '_button') ? 'main' : columnModel['editOption'] && columnModel['editOption']['type'];
         },
         _getVisibleList: function() {
             return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});
@@ -499,13 +557,65 @@
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
          */
         getRowSpanData: function(columnName) {
-            var extraData = this.get('_extraData');
-            var defaultData = {
-                count: 0,
-                isMainRow: true,
-                mainRowKey: this.get('rowKey')
-            };
-            return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+            var extraData = this.get('_extraData'), defaultData;
+            if (!columnName) {
+                return extraData['rowSpanData'];
+            }else {
+                extraData = this.get('_extraData');
+                defaultData = {
+                    count: 0,
+                    isMainRow: true,
+                    mainRowKey: this.get('rowKey')
+                };
+                return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+            }
+        },
+        /**
+         * html string 을 encoding 한다.
+         * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
+         *
+         * @param {String} columnName
+         * @return {String}
+         * @private
+         */
+        getTagFiltered: function(columnName) {
+            var columnModel = this.grid.columnModel.getColumnModel(columnName),
+                editType = this.grid.columnModel.getEditType(columnName),
+                value = this.get(columnName),
+                notUseHtmlEntity = columnModel.notUseHtmlEntity;
+            if (!notUseHtmlEntity && (!editType || editType === 'text') && Util.hasTagString(value)) {
+                value = Util.encodeHTMLEntity(value);
+            }
+            return value;
+        },
+        /**
+         * 화면에 보여지는 데이터를 반환한다.
+         * @param {String} columnName
+         * @return {*}
+         */
+        getVisibleText: function(columnName) {
+            var columnModel = this.grid.columnModel,
+                value = this.get(columnName),
+                editType, model,
+                listTypeMap = {
+                    'select': true,
+                    'radio': true,
+                    'checkbox': true
+                };
+
+            if (columnModel) {
+                editType = columnModel.getEditType(columnName);
+                model = columnModel.getColumnModel(columnName);
+                //list type 의 editType 이 존재하는 경우
+                if (listTypeMap[editType]) {
+                    value = _.findWhere(model.editOption.list, {value: value}).text;
+                } else {
+                    if (typeof model.formatter === 'function') {
+                        value = Util.stripTags(model.formatter(value, this.toJSON(), model));
+                    }
+                }
+            }
+            return value;
         }
 
     });
@@ -537,6 +647,14 @@
         },
         test1: function() {
     //            console.log(arguments);
+        },
+        /**
+         * rowKey 의 index를 가져온다.
+         * @param rowKey
+         * @return {number}
+         */
+        indexOfRowKey: function(rowKey) {
+            return this.indexOf(this.get(rowKey));
         },
         _onSort: function() {
             console.log('sort');
@@ -584,7 +702,7 @@
                         if (!rowSpanData['isMainRow']) {
                             this.get(rowSpanData['mainRowKey']).set(columnName, value);
                         }else {
-                            var index = this.indexOf(this.get(row.get('rowKey')));
+                            var index = this.indexOfRowKey(row.get('rowKey'));
                             for (var i = 0; i < rowSpanData['count'] - 1; i++) {
                                 this.at(i + 1 + index).set(columnName, value);
                             }
@@ -881,7 +999,7 @@
             top: 0,
             scrollTop: 0,
             scrollLeft: 0,
-
+            maxScrollLeft: 0,
             startIdx: 0,
             endIdx: 0,
 
@@ -899,7 +1017,7 @@
             //원본 rowList 의 상태 값 listening
             this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
             this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
-
+            this.on('change', this.test, this);
             //lside 와 rside 별 Collection 생성
             var lside = new Model.RowList({
                 grid: this.grid
@@ -912,8 +1030,9 @@
                 rside: rside
             });
         },
-
-
+        test: function(model) {
+            console.log('change', model.changed);
+        },
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var collection;
@@ -1094,6 +1213,9 @@
         models: null,
         columnModel: null,
         defaults: {
+            offsetLeft: 0,
+            offsetTop: 0,
+
             width: 0,
 
             headerHeight: 0,
@@ -1103,62 +1225,60 @@
 
             rsideWidth: 0,
             lsideWidth: 0,
-            columnWidthList: []
+            columnWidthList: [],
+
+            maxScrollLeft: 0
         },
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.columnModel = this.grid.columnModel;
             this.listenTo(this.columnModel, 'change', this._onWidthChange);
+
             this.on('change:width', this._onWidthChange, this);
             this._setColumnWidth();
             this._setBodyHeight();
-            this._setHeaderHeight();
-
-            this.setOwnProperties({
-                timeoutIdForResize: 0
-            });
-            $(window).on('resize', $.proxy(this._onWindowResize, this));
         },
-        _onWindowResize: function(resizeEvent) {
-            clearTimeout(this.timeoutIdForResize);
-            this.timeoutIdForResize = setTimeout($.proxy(function() {
-                var width = Math.max(this.grid.option('minimumWidth'), this.grid.$el.css('width', '100%').width());
-                this.set('width', width);
-            }, this), 100);
+
+        /**
+         * 현재 화면에 보이는 row 개수를 반환
+         * @return {number}
+         */
+        getDisplayRowCount: function() {
+            return Util.getDisplayRowCount(this.get('bodyHeight'), this.get('rowHeight'));
         },
         /**
          * _onWidthChange
          *
          * width 값 변경시 각 column 별 너비를 계산하는 로직
-         * @param model
+         * @param {object} model
          * @private
          */
         _onWidthChange: function(model) {
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidth(this._calculateColumnWidthList(curColumnWidthList));
         },
+        /**
+         * body height 계산
+         * @private
+         */
         _setBodyHeight: function() {
-//            var height = (this.get('rowHeight') + 1) * this.grid.option('displayRowCount') - 2;
             var height = Util.getTBodyHeight(this.grid.option('displayRowCount'), this.get('rowHeight'));
             //TODO scroll height 예외처리
             height += this.grid.scrollBarSize;
             this.set('bodyHeight', height);
         },
-        getDisplayRowCount: function() {
-//            Math.ceil(this.get('bodyHeight') / this.get('rowHeight'));
-            return Util.getDisplayRowCount(this.get('bodyHeight'), this.get('rowHeight'));
-        },
-        _setHeaderHeight: function() {
-            //@todo calculate header height
-            var height = this.grid.option('headerHeight');
-            this.set('headerHeight', height);
-        },
-
+        /**
+         * columnWidth 를 계산하여 저장한다.
+         * @param {Array} columnWidthList
+         * @private
+         */
         _setColumnWidth: function(columnWidthList) {
             var rsideWidth, lsideWidth = 0,
-                columnWidthList = columnWidthList || this._getOriginalWidthList(),
                 totalWidth = this.get('width'),
                 columnFixIndex = this.columnModel.get('columnFixIndex');
+
+            columnWidthList = columnWidthList || this._getOriginalWidthList();
+
             for (var i = 0, len = columnWidthList.length; i < len; i++) {
                 if (i < columnFixIndex) {
                     lsideWidth += columnWidthList[i] + 1;
@@ -1173,21 +1293,39 @@
             });
             this.trigger('columnWidthChanged');
         },
-
+        /**
+         * 실제 너비를 계산한다.
+         * @param {String} whichSide
+         * @return {Number}
+         */
+        getTotalWidth: function(whichSide) {
+            var columnWidthList = this.getColumnWidthList(whichSide),
+                i, len = columnWidthList.length,
+                totalWidth = 0;
+            for (i = 0; i < len; i++) {
+                totalWidth += columnWidthList[i] + 1;
+            }
+            return totalWidth;
+        },
+        /**
+         * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
+         * @param {Number} index
+         * @param {Number} width
+         */
         setColumnWidth: function(index, width) {
             width = Math.max(width, this.grid.option('minimumColumnWidth'));
+            var curColumnWidthList = this.get('columnWidthList'),
+                calculatedColumnWidthList;
 
-            var curColumnWidthList = this.get('columnWidthList');
             curColumnWidthList[index] = width;
-            var calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
-
-
-
+            calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
             this._setColumnWidth(calculatedColumnWidthList);
         },
-
-
-
+        /**
+         * L side 와 R side 에 따른 columnWidthList 를 반환한다.
+         * @param {String} whichSide 생략했을 때 전체 columnList 반환
+         * @return {Array}
+         */
         getColumnWidthList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnFixIndex = this.columnModel.get('columnFixIndex');
@@ -1209,7 +1347,7 @@
         /**
          * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
          *
-         * @return {*}
+         * @return {Array}
          * @private
          */
         _getOriginalWidthList: function() {
@@ -1226,11 +1364,10 @@
             return this._calculateColumnWidthList(columnWidthList);
         },
 
-
         /**
          * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
          *
-         * @param columnWidthList
+         * @param {Array} columnWidthList
          * @return {Array}
          * @private
          */
@@ -1257,13 +1394,6 @@
 
 
             if (totalWidth > currentWidth && unassignedCount === 0) {
-//                remainDividedWidth = Math.floor(remainWidth / newColumnWidthList.length);
-//                for(var i = 0, len=newColumnWidthList.length; i < len; i++){
-//                    newColumnWidthList[i] += remainDividedWidth;
-//                    if(i === len-1){
-//                        newColumnWidthList[i] += (remainWidth - (remainDividedWidth * len));
-//                    }
-//                }
                 newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
             }
 
@@ -1597,7 +1727,8 @@
                 '    </table>' +
                 '</div>'),
         events: {
-            'scroll' : '_onScroll'
+            'scroll': '_onScroll',
+            'mousedown': '_onMouseDown'
         },
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -1605,10 +1736,15 @@
                 whichSide: attributes && attributes.whichSide || 'R'
             });
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
             this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
             this.listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
         },
+        /**
+         * columnWidth change 핸들러
+         * @private
+         */
         _onColumnWidthChanged: function() {
             var columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide),
                 $colList = this.$el.find('col');
@@ -1616,7 +1752,21 @@
                 $colList.eq(i).css('width', columnWidthList[i] + 'px');
             }
         },
+        /**
+         * MouseDown event handler
+         * @param {event} mouseDownEvent
+         * @private
+         */
+        _onMouseDown: function(mouseDownEvent) {
+            this.grid.selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        },
+        /**
+         * Scroll Event Handler
+         * @param {event} scrollEvent
+         * @private
+         */
         _onScroll: function(scrollEvent) {
+            console.log('body scroll', scrollEvent);
             var obj = {};
             obj['scrollTop'] = scrollEvent.target.scrollTop;
             if (this.whichSide === 'R') {
@@ -1624,11 +1774,36 @@
             }
             this.grid.renderModel.set(obj);
         },
+        /**
+         * Render model 의 Scroll left 변경 핸들러
+         * @param {object} model
+         * @param {Number} value
+         * @private
+         */
+        _onScrollLeftChange: function(model, value) {
+            if (this.whichSide === 'R') {
+                this.el.scrollLeft = value;
+                console.log('this.el.scrollLeft', this.el.scrollLeft, value);
+            }
+        },
+        /**
+         * Render model 의 Scroll top 변경 핸들러
+         * @param {object} model
+         * @param {Number} value
+         * @private
+         */
         _onScrollTopChange: function(model, value) {
             this.el.scrollTop = value;
         },
+
+        /**
+         * Render model 의 top 변경 핸들러
+         * @param {object} model
+         * @param {Number} value
+         * @private
+         */
         _onTopChange: function(model, value) {
-            this.$el.children().css('top', value + 'px');
+            this.$el.children('.table_container').css('top', value + 'px');
         },
         _onBeforeRefresh: function() {
             this.el.scrollTop = this.grid.renderModel.get('scrollTop');
@@ -1637,23 +1812,26 @@
             return this.grid.renderModel.getCollection(this.whichSide);
         },
         render: function() {
+            var selection, rowList;
             this.destroyChildren();
-
             this.$el.css({
-                height: this.grid.dimensionModel.get('bodyHeight')
-            });
-            this.$el.html(this.template({
-                colGroup: this._getColGroupMarkup()
-            }));
+                    height: this.grid.dimensionModel.get('bodyHeight')
+                }).html(this.template({
+                    colGroup: this._getColGroupMarkup()
+                }));
 
-            var rowList = this.createView(View.RowList, {
+            rowList = this.createView(View.RowList, {
                 grid: this.grid,
                 collection: this._getViewCollection(),
                 el: this.$el.find('tbody'),
                 whichSide: this.whichSide
             });
-
             rowList.render();
+
+            //selection 을 랜더링한다.
+            selection = this.addView(this.grid.selection.createLayer(this.whichSide));
+            this.$el.append(selection.render().el);
+
             return this;
         },
         _getColGroupMarkup: function() {
@@ -1765,12 +1943,14 @@
             this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
             this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+
         },
         template: _.template('<div class="content"></div>'),
         events: {
             'scroll' : '_onScroll'
         },
         _onScroll: function(scrollEvent) {
+            console.log('frame scroll', scrollEvent);
             this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
         },
         _onDimensionChange: function(model) {
@@ -1778,8 +1958,14 @@
                 this.render();
             }
         },
+
         _onScrollTopChange: function(model, value) {
+            var scrollTop;
             this.el.scrollTop = value;
+            scrollTop = this.el.scrollTop;
+            if (scrollTop !== value) {
+                this.grid.renderModel.set('scrollTop', scrollTop);
+            }
         },
         render: function() {
             this.$el.css({
@@ -2231,7 +2417,7 @@
                 $tr = $(mouseDownEvent.target).closest('tr'),
                 columnName = $td.attr('columnName'),
                 rowKey = $tr.attr('key');
-            this.grid.dataModel.focusCell(rowKey, columnName);
+            this.grid.focusCell(rowKey, columnName);
             if (this.grid.option('selectType') === 'radio') {
                 this.grid.checkRow(rowKey);
             }
@@ -2242,9 +2428,10 @@
          * @private
          */
         _onModelChange: function(model) {
+            var columnModel = this.grid.columnModel;
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
-                    var editType = this.getEditType(columnName),
+                    var editType = columnModel.getEditType(columnName),
                         cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, this._getTrElement(cellData.rowKey));
                 }
@@ -2259,15 +2446,7 @@
         _getTrElement: function(rowKey) {
             return this.$parent.find('tr[key="' + rowKey + '"]');
         },
-        /**
-         * 컬럼 모델로부터 editType 을 반환한다.
-         * @param {string} columnName
-         * @return {string}
-         */
-        getEditType: function(columnName) {
-            var columnModel = this.grid.columnModel.getColumnModel(columnName);
-            return (columnName === '_button') ? 'main' : columnModel['editOption'] && columnModel['editOption']['type'];
-        },
+
         /**
          * html 마크업을 반환
          * @param {object} model
@@ -2275,6 +2454,8 @@
          */
         getHtml: function(model) {
             var columnModelList = this.columnModelList,
+                columnModel = this.grid.columnModel,
+                cellFactory = this.grid.cellFactory,
                 columnName, cellData, editType, cellInstance,
                 html = '';
             this.cellHandlerList = [];
@@ -2282,8 +2463,8 @@
                 columnName = columnModelList[i]['columnName'];
                 cellData = model.get(columnName);
                 if (cellData && cellData['isMainRow']) {
-                    editType = this.getEditType(columnName);
-                    cellInstance = this.grid.cellFactory.getInstance(editType);
+                    editType = columnModel.getEditType(columnName);
+                    cellInstance = cellFactory.getInstance(editType);
                     html += cellInstance.getHtml(cellData);
                     this.cellHandlerList.push({
                         selector: 'td[columnName="' + columnName + '"]',
@@ -2489,20 +2670,52 @@
         }
     });
 
+    /**
+     * editOption 이 적용되지 않은 cell 의 renderer
+     * @class
+     */
     View.Renderer.Cell.Normal = View.Base.Renderer.Cell.Interface.extend({
         initialize: function(attributes, options) {
             View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
+        /**
+         * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
+         * @param {object} cellData
+         * @param {jQuery} $target
+         * @return {String}
+         */
         getContentHtml: function(cellData, $target) {
-            return cellData.value;
+            var columnName = cellData.columnName,
+                columnModel = this.grid.columnModel.getColumnModel(columnName),
+                value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(columnName),
+                rowKey = cellData.rowKey;
+
+            if (typeof columnModel.formatter === 'function') {
+                value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
+            }
+            return value;
         },
+        /**
+         * model 의 onChange 시, innerHTML 변경 없이, element attribute 만 변경해야 할 때 수행된다.
+         * @param {object} cellData
+         * @param {jQuery} $target
+         */
         setElementAttribute: function(cellData, $target) {
         }
     });
 
-
+    /**
+     * checkbox 혹은 radiobox 형태의 Main Button renderer
+     * @class
+     */
     View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.Interface.extend({
+        /**
+         * event Handler attach 하기 위한 cell type
+         */
         cellType: 'main',
+        /**
+         * rendering 해야하는 cellData 의 변경 목록
+         */
         shouldRenderList: ['isEditable', 'optionList'],
         eventHandler: {
             'mousedown' : '_onMouseDown',
@@ -2511,8 +2724,17 @@
         initialize: function(attributes, options) {
             View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
+        /**
+         * rendering 시 사용할 template
+         */
         template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%>/>'),
-        getContentHtml: function(cellData) {
+        /**
+         * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
+         * @param {object} cellData
+         * @param {jQuery} $target
+         * @return {String}
+         */
+        getContentHtml: function(cellData, $target) {
             return this.template({
                 type: this.grid.option('selectType'),
                 name: this.grid.id,
@@ -2552,8 +2774,9 @@
             'blur input' : 'onBlur'
         },
         getContentHtml: function(cellData) {
+            var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName);
             return this.template({
-                value: Util.encodeHTMLEntity(cellData.value),
+                value: value,
                 name: Util.getUniqueKey(),
                 checked: (!!cellData.value) ? 'checked' : ''
             });
@@ -2737,9 +2960,6 @@
 //                display: 'block'
 //            });
         }
-
-
-
     });
 
 
@@ -2870,7 +3090,7 @@
                 cellType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.attr('cellType');
+                cellType = $td.data('cell-type');
                 this.instances[cellType].attachHandler($td);
             }
         },
@@ -2880,7 +3100,7 @@
                 cellType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.attr('cellType');
+                cellType = $td.data('cell-type');
                 this.instances[cellType].detachHandler($td);
             }
         }
@@ -2960,6 +3180,519 @@
         }
     });
 
+    /**
+     *  selection layer 의 컨트롤을 담당하는 틀래스
+     *  @class
+     */
+    View.Selection = View.Base.extend({
+        events: {},
+        initialize: function(attributes, option) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                //메서드 호출시 range 값
+                range: {
+                    column: [-1, -1],
+                    row: [-1, -1]
+                },
+                //rowspan 처리후 Selection box 의 range
+                spannedRange: {
+                    column: [-1, -1],
+                    row: [-1, -1]
+                },
+                lside: null,
+                rside: null,
+
+                pageX: 0,
+                pageY: 0,
+
+                intervalIdForAutoScroll: 0
+            });
+        },
+        /**
+         * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
+         * @param {Number} pageX
+         * @param {Number} pageY
+         */
+        attachMouseEvent: function(pageX, pageY) {
+            this.endSelection();
+            this.setOwnProperties({
+                pageX: pageX,
+                pageY: pageY
+            });
+            $(document).on('mousemove', $.proxy(this._onMouseMove, this));
+            $(document).on('mouseup', $.proxy(this._onMouseUp, this));
+            $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+        },
+        /**
+         * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
+         */
+        detachMouseEvent: function() {
+            clearInterval(this.intervalIdForAutoScroll);
+            this.getSelectionString();
+            $(document).off('mousemove', $.proxy(this._onMouseMove, this));
+            $(document).off('mouseup', $.proxy(this._onMouseUp, this));
+            $(document).off('selectstart', $.proxy(this._onSelectStart, this));
+        },
+        /**
+         * mouse move event handler
+         * @param {event} mouseMoveEvent
+         * @private
+         */
+        _onMouseMove: function(mouseMoveEvent) {
+            var pos;
+            clearInterval(this.intervalIdForAutoScroll);
+            if (this._hasSelection()) {
+                pos = this._getIndexFromMousePosition(mouseMoveEvent.pageX, mouseMoveEvent.pageY);
+                this.updateSelection(pos.row, pos.column);
+                if (this._isScrollable(pos.overflowX, pos.overflowY)) {
+                    this.intervalIdForAutoScroll = setInterval($.proxy(this._adjustScroll, this, pos.overflowX, pos.overflowY));
+                }
+            } else if (this._getDistance(mouseMoveEvent) > 10) {
+                pos = this._getIndexFromMousePosition(this.pageX, this.pageY);
+                this.startSelection(pos.row, pos.column);
+            }
+        },
+        _isScrollable: function(overflowX, overflowY) {
+            return !(overflowX === 0 && overflowY === 0);
+        },
+        /**
+         *
+         * @param {Number} overflowX
+         * @param {Number} overflowY
+         * @private
+         */
+        _adjustScroll: function(overflowX, overflowY) {
+            var renderModel = this.grid.renderModel,
+                scrollLeft = renderModel.get('scrollLeft'),
+                maxScrollLeft = renderModel.get('maxScrollLeft'),
+                scrollTop = renderModel.get('scrollTop');
+            if (overflowX < 0) {
+                renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft - 40), maxScrollLeft));
+            } else if (overflowX > 0) {
+                renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft + 40), maxScrollLeft));
+            }
+
+            if (overflowY < 0) {
+                renderModel.set('scrollTop', Math.max(0, scrollTop - 40));
+            } else if (overflowY > 0) {
+                renderModel.set('scrollTop', Math.max(0, scrollTop + 40));
+            }
+        },
+        /**
+         * mousedown 이 일어난 지점부터의 거리를 구한다.
+         * @param {event} mouseMoveEvent
+         * @return {number|*}
+         * @private
+         */
+        _getDistance: function(mouseMoveEvent) {
+            var pageX = mouseMoveEvent.pageX,
+                pageY = mouseMoveEvent.pageY,
+                x = Math.abs(this.pageX - pageX),
+                y = Math.abs(this.pageY - pageY);
+            return Math.round(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+        },
+        /**
+         * mouse up event handler
+         * @param {event} mouseUpEvent
+         * @private
+         */
+        _onMouseUp: function(mouseUpEvent) {
+            this.detachMouseEvent();
+        },
+        /**
+         * 마우스 위치 정보에 해당하는 row 와 column index 를 반환한다.
+         * @param {Number} pageX
+         * @param {Number} pageY
+         * @return {{row: number, column: number, overflowX: number, overflowY: number}}
+         * @private
+         */
+        _getIndexFromMousePosition: function(pageX, pageY) {
+            var containerPos = this._getContainerPosition(pageX, pageY),
+                dimensionModel = this.grid.dimensionModel,
+                renderModel = this.grid.renderModel,
+                columnWidthList = dimensionModel.getColumnWidthList(),
+                scrollTop = renderModel.get('scrollTop'),
+                scrollLeft = renderModel.get('scrollLeft'),
+                totalColumnWidth = dimensionModel.getTotalWidth(),
+                dataPosY = containerPos.pageY + scrollTop,
+                dataPosX = containerPos.pageX,
+                overflowX = 0,
+                overflowY = 0,
+                isLside = (dimensionModel.get('lsideWidth') > containerPos.pageX),
+                len = columnWidthList.length,
+                curWidth = 0,
+                height = this.grid.option('scrollX') ?
+                    dimensionModel.get('bodyHeight') - this.grid.scrollBarSize : dimensionModel.get('bodyHeight'),
+                width = this.grid.option('scrollY') ?
+                    dimensionModel.get('width') - this.grid.scrollBarSize : dimensionModel.get('width'),
+                rowIdx, columnIdx, i;
+
+
+            if (!isLside) {
+                dataPosX = dataPosX + scrollLeft;
+            }
+            rowIdx = Math.max(0, Math.min(Math.floor(dataPosY / (dimensionModel.get('rowHeight') + 1)), this.grid.dataModel.length - 1));
+
+            if (containerPos.pageY < 0) {
+                overflowY = -1;
+            } else if (containerPos.pageY > height) {
+                overflowY = 1;
+            }
+
+            if (containerPos.pageX < 0) {
+                overflowX = -1;
+            } else if (containerPos.pageX > width) {
+                overflowX = 1;
+            }
+
+            if (dataPosX < 0) {
+                columnIdx = 0;
+            } else if (totalColumnWidth < dataPosX) {
+                columnIdx = len - 1;
+            } else {
+                for (i = 0; i < len; i++) {
+                    curWidth += columnWidthList[i] + 1;
+                    if (dataPosX <= curWidth) {
+                        columnIdx = i;
+                        break;
+                    }
+                }
+            }
+
+            return {
+                row: rowIdx,
+                column: columnIdx,
+                overflowX: overflowX,
+                overflowY: overflowY
+            };
+        },
+        /**
+         * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
+         * @param {Number} pageX
+         * @param {Number} pageY
+         * @return {{pageX: number, pageY: number}}
+         * @private
+         */
+        _getContainerPosition: function(pageX, pageY) {
+            var dimensionModel = this.grid.dimensionModel,
+                containerPosX = pageX - dimensionModel.get('offsetLeft'),
+                containerPosY = pageY - (dimensionModel.get('offsetTop') + dimensionModel.get('headerHeight') + 2);
+
+            return {
+                pageX: containerPosX,
+                pageY: containerPosY
+            };
+        },
+        /**
+         * select start event handler
+         * @param {event} selectStartEvent
+         * @private
+         */
+        _onSelectStart: function(selectStartEvent) {
+            selectStartEvent.preventDefault();
+        },
+        /**
+         *
+         */
+        getSelectionString: function() {
+            var columnModelList = this.grid.columnModel.get('columnModelList')
+                    .slice(this.spannedRange.column[0], this.spannedRange.column[1] + 1),
+                columnMap = {},
+                len = columnModelList.length,
+                columnList = [],
+                tmpString = [],
+                strings = [],
+                columnLen, i, j, rowList, string;
+
+            for (i = 0; i < len; i++) {
+                columnList.push(columnModelList[i]['columnName']);
+            }
+            rowList = this.grid.dataModel.slice(this.spannedRange.row[0], this.spannedRange.row[1] + 1);
+
+            len = rowList.length;
+            columnLen = columnList.length;
+            for (i = 0; i < len; i++) {
+                tmpString = [];
+                for (j = 0; j < columnLen; j++) {
+                    tmpString.push(rowList[i].getVisibleText(columnList[j]));
+                }
+                strings.push(tmpString.join('\t'));
+            }
+            string = strings.join('\n');
+        },
+        createLayer: function(whichSide) {
+            var clazz = whichSide === 'R' ? View.Selection.Layer.Rside : View.Selection.Layer.Lside,
+                layer = this._getLayer(whichSide);
+
+            layer && layer.destroy ? layer.destroy() : null;
+            layer = this.createView(clazz, {
+                grid: this.grid,
+                columnWidthList: this.grid.dimensionModel.getColumnWidthList(whichSide)
+            });
+            whichSide === 'R' ? this.rside = layer : this.lside = layer;
+            return layer;
+        },
+        _getLayer: function(whichSide) {
+            return whichSide === 'R' ? this.rside : this.lside;
+        },
+        startSelection: function(rowIndex, columnIndex) {
+            this.range.row[0] = this.range.row[1] = rowIndex;
+            this.range.column[0] = this.range.column[1] = columnIndex;
+            this.show();
+        },
+        updateSelection: function(rowIndex, columnIndex) {
+            this.range.row[1] = rowIndex;
+            this.range.column[1] = columnIndex;
+            this.show();
+        },
+        endSelection: function() {
+            this.range.row[0] = this.range.row[1] = this.range.column[0] = this.range.column[1] = -1;
+            this.spannedRange.row[0] = this.spannedRange.row[1] = this.spannedRange.column[0] = this.spannedRange.column[1] = -1;
+            this.hide();
+        },
+        _hasSelection: function() {
+            return !(this.range.row[0] === -1);
+        },
+        show: function() {
+            if (this._hasSelection()) {
+                var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+                    rowHeight = this.grid.dimensionModel.get('rowHeight'),
+                    startRow = Math.min.apply(Math, this.range.row),
+                    endRow = Math.max.apply(Math, this.range.row),
+                    startColumn = Math.min.apply(Math, this.range.column),
+                    endColumn = Math.max.apply(Math, this.range.column);
+
+                var spannedRange = {
+                    row: [startRow, endRow],
+                    column: [startColumn, endColumn]
+                };
+
+                var tmpRowRange = $.extend([], spannedRange.row);
+
+                do {
+                    tmpRowRange = $.extend([], spannedRange.row);
+                    spannedRange = this._getRowSpannedIndex(spannedRange);
+                } while (spannedRange.row[0] !== tmpRowRange[0] ||
+                    spannedRange.row[1] !== tmpRowRange[1]);
+
+                this.spannedRange = spannedRange;
+                this.lside.show(spannedRange);
+                this.rside.show({
+                    row: spannedRange.row,
+                    column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
+                });
+            }
+        },
+        /**
+         * rowSpan 된 Index range 를 반환한다.
+         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         * @private
+         */
+        _getRowSpannedIndex: function(spannedRange) {
+            var columnModelList = this.grid.columnModel.get('columnModelList')
+                    .slice(spannedRange.column[0], spannedRange.column[1] + 1),
+                dataModel = this.grid.dataModel,
+                len = columnModelList.length,
+                startIndexList = [spannedRange.row[0]],
+                endIndexList = [spannedRange.row[1]],
+                startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
+                endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
+                columnName, param,
+                newSpannedRange = $.extend({}, spannedRange);
+
+            /**
+             * row start index 기준으로 recursive 하게 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
+             * @param {object} param
+             */
+            function concatRowSpanIndexFromStart(param) {
+                var startIndex = param.startIndex,
+                    endIndex = param.endIndex,
+                    rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
+                    startIndexList = param.startIndexList,
+                    endIndexList = param.endIndexList,
+                    spannedIndex;
+
+                if (rowSpanData) {
+                    if (!rowSpanData['isMainRow']) {
+                        spannedIndex = startIndex + rowSpanData['count'];
+                        startIndexList.push(spannedIndex);
+                    } else {
+                        spannedIndex = startIndex + rowSpanData['count'] - 1;
+                        if (spannedIndex > endIndex) {
+                            endIndexList.push(spannedIndex);
+                        }
+                    }
+                }
+            }
+            /**
+             * row end index 기준으로 recursive 하게 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
+             * @param {object} param
+             */
+            function concatRowSpanIndexFromEnd(param) {
+                var endIndex = param.endIndex,
+                    columnName = param.columnName,
+                    rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
+                    endIndexList = param.endIndexList,
+                    dataModel = param.dataModel,
+                    spannedIndex, tmpRowSpanData;
+
+                if (rowSpanData) {
+                    if (!rowSpanData['isMainRow']) {
+                        spannedIndex = endIndex + rowSpanData['count'];
+                        tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
+                        spannedIndex += tmpRowSpanData['count'] - 1;
+                        if (spannedIndex > endIndex) {
+                            endIndexList.push(spannedIndex);
+                        }
+                    } else {
+                        spannedIndex = endIndex + rowSpanData['count'] - 1;
+                        endIndexList.push(spannedIndex);
+                    }
+                }
+            }
+
+            for (var i = 0; i < len; i++) {
+                columnName = columnModelList[i]['columnName'];
+                param = {
+                    columnName: columnName,
+                    startIndex: spannedRange.row[0],
+                    endIndex: spannedRange.row[1],
+                    endRowSpanDataMap: endRowSpanDataMap,
+                    startRowSpanDataMap: startRowSpanDataMap,
+                    startIndexList: startIndexList,
+                    endIndexList: endIndexList,
+                    dataModel: dataModel
+                };
+                concatRowSpanIndexFromStart(param);
+                concatRowSpanIndexFromEnd(param);
+            }
+
+            newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
+
+            return newSpannedRange;
+        },
+        hide: function() {
+            this.lside.hide();
+            this.rside.hide();
+        }
+    });
+
+    /**
+     * 실제 selection layer view
+     * @class
+     */
+    View.Selection.Layer = View.Base.extend({
+        tagName: 'div',
+        className: 'selection_layer',
+        initialize: function(attributes, option) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+            this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList, this);
+            this.setOwnProperties({
+                columnWidthList: attributes.columnWidthList,
+                spannedRange: {
+                    row: [-1, -1],
+                    column: [-1, -1]
+                },
+                whichSide: 'R'
+            });
+        },
+        _updateColumnWidthList: function() {
+            this.columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide);
+        },
+        _onScrollTopChange: function() {
+
+        },
+        _onBeforeRefresh: function() {
+
+        },
+        /**
+         * top 값과 height 값을 반환한다.
+         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         * @return {{display: string, width: string, height: string, top: string, left: string}}
+         * @private
+         */
+        _getGeometryStyles: function(spannedRange) {
+            spannedRange = spannedRange || this.indexObj;
+            var style, i,
+                columnWidthList = this.columnWidthList,
+                rowRange = spannedRange.row,
+                columnRange = spannedRange.column,
+                rowHeight = this.grid.dimensionModel.get('rowHeight'),
+//                top = Util.getTBodyHeight(rowRange[0], rowHeight) + this.grid.renderModel.get('top'),
+                top = Util.getTBodyHeight(rowRange[0], rowHeight) + 1,
+                height = Util.getTBodyHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 3,
+                len = columnWidthList.length,
+                display = 'block',
+                left = 0,
+                width = 0;
+
+            for (i = 0; i < columnRange[1] + 1 && i < len; i++) {
+                if (i < columnRange[0]) {
+                    left += columnWidthList[i] + 1;
+                } else {
+                    width += columnWidthList[i] + 1;
+                }
+            }
+            width -= 1;
+
+            if (width <= 0 || height <= 0) {
+                display = 'none';
+            }
+
+            style = {
+                display: display,
+                width: width + 'px',
+                height: height + 'px',
+                top: top + 'px',
+                left: left + 'px'
+            };
+            return style;
+        },
+        /**
+         *
+         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         */
+        show: function(spannedRange) {
+            this.indexObj = spannedRange;
+            this.$el.css(this._getGeometryStyles(spannedRange));
+        },
+        /**
+         * selection 을 숨긴다.
+         */
+        hide: function() {
+            this.$el.css('display', 'none');
+        },
+        render: function() {
+            return this;
+        }
+    });
+    /**
+     * 왼쪽 selection layer
+     * @class
+     */
+    View.Selection.Layer.Lside = View.Selection.Layer.extend({
+        initialize: function(attributes, option) {
+            View.Selection.Layer.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                whichSide: 'L'
+            });
+        }
+    });
+    /**
+     * 오른쪽 selection layer
+     * @class
+     */
+    View.Selection.Layer.Rside = View.Selection.Layer.extend({
+        initialize: function(attributes, option) {
+            View.Selection.Layer.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                whichSide: 'R'
+            });
+        }
+    });
+
 
 
     var Grid = window.Grid = View.Base.extend({
@@ -3009,20 +3742,23 @@
             options = $.extend(defaultOptions, options);
 
             this.setOwnProperties({
-                'columnModel' : null,
-                'dataModel' : null,
-                'renderModel' : null,
-                'layoutModel' : null,
+                'cellFactory': null,
+                'selection': null,
+                'columnModel': null,
+                'dataModel': null,
+                'renderModel': null,
+                'layoutModel': null,
 
-                'view' : {
-                    'lside' : null,
-                    'rside' : null,
-                    'footer' : null,
-                    'clipboard' : null
+                'view': {
+                    'lside': null,
+                    'rside': null,
+                    'footer': null,
+                    'clipboard': null
                 },
 
                 'id' : id,
-                'options' : options
+                'options' : options,
+                'timeoutIdForResize': 0
             });
 
             this._initializeModel();
@@ -3031,14 +3767,57 @@
 
             this._initializeScrollBar();
 
+            this._attachExtraEvent();
+
             this.render();
 
+            this._updateLayoutData();
+
+        },
+        /**
+         * event 속성에 정의되지 않은 이벤트 attach 하는 메서드
+         * @private
+         */
+        _attachExtraEvent: function() {
+            $(window).on('resize', $.proxy(this._onWindowResize, this));
+        },
+        /**
+         * window resize  이벤트 핸들러
+         * @param {event} resizeEvent
+         * @private
+         */
+        _onWindowResize: function(resizeEvent) {
+            clearTimeout(this.timeoutIdForResize);
+            this.timeoutIdForResize = setTimeout($.proxy(function() {
+                var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
+                this.dimensionModel.set('width', width);
+            }, this), 100);
         },
         _initializeListener: function() {
-//            this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
+            this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
+        },
+        /**
+         * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
+         * @private
+         */
+        _updateLayoutData: function() {
+            var offset = this.$el.offset(),
+                rsideTotalWidth = this.dimensionModel.getTotalWidth('R'),
+                maxScrollLeft = rsideTotalWidth - this.dimensionModel.get('rsideWidth');
+
+            this.renderModel.set({
+                maxScrollLeft: maxScrollLeft
+            });
+            this.dimensionModel.set({
+                offsetTop: offset.top,
+                offsetLeft: offset.left,
+                width: this.$el.width(),
+                height: this.$el.height()
+            });
         },
         _onWidthChange: function(width) {
-            this.$el.css('width', width + 'px');
+//            this.$el.css('width', width + 'px');
+            this._updateLayoutData();
         },
         option: function(key, value) {
             if (value === undefined) {
@@ -3049,10 +3828,11 @@
             }
         },
         _onClick: function(clickEvent) {
-//            var $target = $(clickEvent.target);
-//            if(!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))){
-//                this.view.clipboard.$el.focus();
-//            }
+            var $target = $(clickEvent.target);
+            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
+                this.view.clipboard.$el.focus();
+                this.selection.show();
+            }
         },
         _onMouseDown: function(mouseDownEvent) {
             var $target = $(mouseDownEvent.target);
@@ -3069,6 +3849,8 @@
          * @private
          */
         _initializeModel: function() {
+            var offset = this.$el.offset();
+
             //define column model
             this.columnModel = new Data.ColumnModel({
                 grid: this,
@@ -3080,10 +3862,14 @@
             //define layout model
             this.dimensionModel = new Model.Dimension({
                 grid: this,
+                offsetTop: offset.top,
+                offsetLeft: offset.left,
                 width: this.$el.width(),
                 height: this.$el.height(),
+                headerHeight: this.option('headerHeight'),
                 rowHeight: this.option('rowHeight')
             });
+
 //            //define rowList
             this.dataModel = new Data.RowList({
                 grid: this
@@ -3112,6 +3898,10 @@
                 grid: this
             });
 
+            this.selection = this.createView(View.Selection, {
+                grid: this
+            });
+
             //define header & body area
             this.view.lside = this.createView(View.Layout.Frame.Lside, {
                 grid: this
@@ -3128,6 +3918,8 @@
             this.view.clipboard = this.createView(View.Clipboard, {
                 grid: this
             });
+
+
         },
 
         _initializeScrollBar: function() {
@@ -3256,6 +4048,9 @@
         uncheckAllRow: function() {
             this.dataModel.setColumnValue('_button', false);
         },
+        focusCell: function(rowKey, columnName) {
+            this.dataModel.focusCell(rowKey, columnName);
+        },
         /**
          * @deprecated
          * @param whichSide
@@ -3284,4 +4079,7 @@
         return this.prototype.__instance[id];
     };
 
+View.Base.extend({
+
+});
 })();
