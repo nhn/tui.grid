@@ -9,8 +9,9 @@
             'blur input' : 'onBlur'
         },
         getContentHtml: function(cellData) {
+            var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName);
             return this.template({
-                value: Util.encodeHTMLEntity(cellData.value),
+                value: value,
                 name: Util.getUniqueKey(),
                 checked: (!!cellData.value) ? 'checked' : ''
             });

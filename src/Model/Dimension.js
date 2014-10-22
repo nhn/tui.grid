@@ -6,6 +6,9 @@
         models: null,
         columnModel: null,
         defaults: {
+            offsetLeft: 0,
+            offsetTop: 0,
+
             width: 0,
 
             headerHeight: 0,
@@ -15,62 +18,60 @@
 
             rsideWidth: 0,
             lsideWidth: 0,
-            columnWidthList: []
+            columnWidthList: [],
+
+            maxScrollLeft: 0
         },
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.columnModel = this.grid.columnModel;
             this.listenTo(this.columnModel, 'change', this._onWidthChange);
+
             this.on('change:width', this._onWidthChange, this);
             this._setColumnWidth();
             this._setBodyHeight();
-            this._setHeaderHeight();
-
-            this.setOwnProperties({
-                timeoutIdForResize: 0
-            });
-            $(window).on('resize', $.proxy(this._onWindowResize, this));
         },
-        _onWindowResize: function(resizeEvent) {
-            clearTimeout(this.timeoutIdForResize);
-            this.timeoutIdForResize = setTimeout($.proxy(function() {
-                var width = Math.max(this.grid.option('minimumWidth'), this.grid.$el.css('width', '100%').width());
-                this.set('width', width);
-            }, this), 100);
+
+        /**
+         * 현재 화면에 보이는 row 개수를 반환
+         * @return {number}
+         */
+        getDisplayRowCount: function() {
+            return Util.getDisplayRowCount(this.get('bodyHeight'), this.get('rowHeight'));
         },
         /**
          * _onWidthChange
          *
          * width 값 변경시 각 column 별 너비를 계산하는 로직
-         * @param model
+         * @param {object} model
          * @private
          */
         _onWidthChange: function(model) {
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidth(this._calculateColumnWidthList(curColumnWidthList));
         },
+        /**
+         * body height 계산
+         * @private
+         */
         _setBodyHeight: function() {
-//            var height = (this.get('rowHeight') + 1) * this.grid.option('displayRowCount') - 2;
             var height = Util.getTBodyHeight(this.grid.option('displayRowCount'), this.get('rowHeight'));
             //TODO scroll height 예외처리
             height += this.grid.scrollBarSize;
             this.set('bodyHeight', height);
         },
-        getDisplayRowCount: function() {
-//            Math.ceil(this.get('bodyHeight') / this.get('rowHeight'));
-            return Util.getDisplayRowCount(this.get('bodyHeight'), this.get('rowHeight'));
-        },
-        _setHeaderHeight: function() {
-            //@todo calculate header height
-            var height = this.grid.option('headerHeight');
-            this.set('headerHeight', height);
-        },
-
+        /**
+         * columnWidth 를 계산하여 저장한다.
+         * @param {Array} columnWidthList
+         * @private
+         */
         _setColumnWidth: function(columnWidthList) {
             var rsideWidth, lsideWidth = 0,
-                columnWidthList = columnWidthList || this._getOriginalWidthList(),
                 totalWidth = this.get('width'),
                 columnFixIndex = this.columnModel.get('columnFixIndex');
+
+            columnWidthList = columnWidthList || this._getOriginalWidthList();
+
             for (var i = 0, len = columnWidthList.length; i < len; i++) {
                 if (i < columnFixIndex) {
                     lsideWidth += columnWidthList[i] + 1;
@@ -85,21 +86,39 @@
             });
             this.trigger('columnWidthChanged');
         },
-
+        /**
+         * 실제 너비를 계산한다.
+         * @param {String} whichSide
+         * @return {Number}
+         */
+        getTotalWidth: function(whichSide) {
+            var columnWidthList = this.getColumnWidthList(whichSide),
+                i, len = columnWidthList.length,
+                totalWidth = 0;
+            for (i = 0; i < len; i++) {
+                totalWidth += columnWidthList[i] + 1;
+            }
+            return totalWidth;
+        },
+        /**
+         * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
+         * @param {Number} index
+         * @param {Number} width
+         */
         setColumnWidth: function(index, width) {
             width = Math.max(width, this.grid.option('minimumColumnWidth'));
+            var curColumnWidthList = this.get('columnWidthList'),
+                calculatedColumnWidthList;
 
-            var curColumnWidthList = this.get('columnWidthList');
             curColumnWidthList[index] = width;
-            var calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
-
-
-
+            calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
             this._setColumnWidth(calculatedColumnWidthList);
         },
-
-
-
+        /**
+         * L side 와 R side 에 따른 columnWidthList 를 반환한다.
+         * @param {String} whichSide 생략했을 때 전체 columnList 반환
+         * @return {Array}
+         */
         getColumnWidthList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnFixIndex = this.columnModel.get('columnFixIndex');
@@ -121,7 +140,7 @@
         /**
          * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
          *
-         * @return {*}
+         * @return {Array}
          * @private
          */
         _getOriginalWidthList: function() {
@@ -138,11 +157,10 @@
             return this._calculateColumnWidthList(columnWidthList);
         },
 
-
         /**
          * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
          *
-         * @param columnWidthList
+         * @param {Array} columnWidthList
          * @return {Array}
          * @private
          */
@@ -169,13 +187,6 @@
 
 
             if (totalWidth > currentWidth && unassignedCount === 0) {
-//                remainDividedWidth = Math.floor(remainWidth / newColumnWidthList.length);
-//                for(var i = 0, len=newColumnWidthList.length; i < len; i++){
-//                    newColumnWidthList[i] += remainDividedWidth;
-//                    if(i === len-1){
-//                        newColumnWidthList[i] += (remainWidth - (remainDividedWidth * len));
-//                    }
-//                }
                 newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
             }
 

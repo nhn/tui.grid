@@ -77,7 +77,7 @@
                 $tr = $(mouseDownEvent.target).closest('tr'),
                 columnName = $td.attr('columnName'),
                 rowKey = $tr.attr('key');
-            this.grid.dataModel.focusCell(rowKey, columnName);
+            this.grid.focusCell(rowKey, columnName);
             if (this.grid.option('selectType') === 'radio') {
                 this.grid.checkRow(rowKey);
             }
@@ -88,9 +88,10 @@
          * @private
          */
         _onModelChange: function(model) {
+            var columnModel = this.grid.columnModel;
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
-                    var editType = this.getEditType(columnName),
+                    var editType = columnModel.getEditType(columnName),
                         cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, this._getTrElement(cellData.rowKey));
                 }
@@ -105,15 +106,7 @@
         _getTrElement: function(rowKey) {
             return this.$parent.find('tr[key="' + rowKey + '"]');
         },
-        /**
-         * 컬럼 모델로부터 editType 을 반환한다.
-         * @param {string} columnName
-         * @return {string}
-         */
-        getEditType: function(columnName) {
-            var columnModel = this.grid.columnModel.getColumnModel(columnName);
-            return (columnName === '_button') ? 'main' : columnModel['editOption'] && columnModel['editOption']['type'];
-        },
+
         /**
          * html 마크업을 반환
          * @param {object} model
@@ -121,6 +114,8 @@
          */
         getHtml: function(model) {
             var columnModelList = this.columnModelList,
+                columnModel = this.grid.columnModel,
+                cellFactory = this.grid.cellFactory,
                 columnName, cellData, editType, cellInstance,
                 html = '';
             this.cellHandlerList = [];
@@ -128,8 +123,8 @@
                 columnName = columnModelList[i]['columnName'];
                 cellData = model.get(columnName);
                 if (cellData && cellData['isMainRow']) {
-                    editType = this.getEditType(columnName);
-                    cellInstance = this.grid.cellFactory.getInstance(editType);
+                    editType = columnModel.getEditType(columnName);
+                    cellInstance = cellFactory.getInstance(editType);
                     html += cellInstance.getHtml(cellData);
                     this.cellHandlerList.push({
                         selector: 'td[columnName="' + columnName + '"]',

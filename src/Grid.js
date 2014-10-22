@@ -47,20 +47,23 @@
             options = $.extend(defaultOptions, options);
 
             this.setOwnProperties({
-                'columnModel' : null,
-                'dataModel' : null,
-                'renderModel' : null,
-                'layoutModel' : null,
+                'cellFactory': null,
+                'selection': null,
+                'columnModel': null,
+                'dataModel': null,
+                'renderModel': null,
+                'layoutModel': null,
 
-                'view' : {
-                    'lside' : null,
-                    'rside' : null,
-                    'footer' : null,
-                    'clipboard' : null
+                'view': {
+                    'lside': null,
+                    'rside': null,
+                    'footer': null,
+                    'clipboard': null
                 },
 
                 'id' : id,
-                'options' : options
+                'options' : options,
+                'timeoutIdForResize': 0
             });
 
             this._initializeModel();
@@ -69,14 +72,57 @@
 
             this._initializeScrollBar();
 
+            this._attachExtraEvent();
+
             this.render();
 
+            this._updateLayoutData();
+
+        },
+        /**
+         * event 속성에 정의되지 않은 이벤트 attach 하는 메서드
+         * @private
+         */
+        _attachExtraEvent: function() {
+            $(window).on('resize', $.proxy(this._onWindowResize, this));
+        },
+        /**
+         * window resize  이벤트 핸들러
+         * @param {event} resizeEvent
+         * @private
+         */
+        _onWindowResize: function(resizeEvent) {
+            clearTimeout(this.timeoutIdForResize);
+            this.timeoutIdForResize = setTimeout($.proxy(function() {
+                var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
+                this.dimensionModel.set('width', width);
+            }, this), 100);
         },
         _initializeListener: function() {
-//            this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
+            this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
+        },
+        /**
+         * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
+         * @private
+         */
+        _updateLayoutData: function() {
+            var offset = this.$el.offset(),
+                rsideTotalWidth = this.dimensionModel.getTotalWidth('R'),
+                maxScrollLeft = rsideTotalWidth - this.dimensionModel.get('rsideWidth');
+
+            this.renderModel.set({
+                maxScrollLeft: maxScrollLeft
+            });
+            this.dimensionModel.set({
+                offsetTop: offset.top,
+                offsetLeft: offset.left,
+                width: this.$el.width(),
+                height: this.$el.height()
+            });
         },
         _onWidthChange: function(width) {
-            this.$el.css('width', width + 'px');
+//            this.$el.css('width', width + 'px');
+            this._updateLayoutData();
         },
         option: function(key, value) {
             if (value === undefined) {
@@ -87,10 +133,11 @@
             }
         },
         _onClick: function(clickEvent) {
-//            var $target = $(clickEvent.target);
-//            if(!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))){
-//                this.view.clipboard.$el.focus();
-//            }
+            var $target = $(clickEvent.target);
+            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
+                this.view.clipboard.$el.focus();
+                this.selection.show();
+            }
         },
         _onMouseDown: function(mouseDownEvent) {
             var $target = $(mouseDownEvent.target);
@@ -107,6 +154,8 @@
          * @private
          */
         _initializeModel: function() {
+            var offset = this.$el.offset();
+
             //define column model
             this.columnModel = new Data.ColumnModel({
                 grid: this,
@@ -118,10 +167,14 @@
             //define layout model
             this.dimensionModel = new Model.Dimension({
                 grid: this,
+                offsetTop: offset.top,
+                offsetLeft: offset.left,
                 width: this.$el.width(),
                 height: this.$el.height(),
+                headerHeight: this.option('headerHeight'),
                 rowHeight: this.option('rowHeight')
             });
+
 //            //define rowList
             this.dataModel = new Data.RowList({
                 grid: this
@@ -150,6 +203,10 @@
                 grid: this
             });
 
+            this.selection = this.createView(View.Selection, {
+                grid: this
+            });
+
             //define header & body area
             this.view.lside = this.createView(View.Layout.Frame.Lside, {
                 grid: this
@@ -166,6 +223,8 @@
             this.view.clipboard = this.createView(View.Clipboard, {
                 grid: this
             });
+
+
         },
 
         _initializeScrollBar: function() {
@@ -293,6 +352,9 @@
         },
         uncheckAllRow: function() {
             this.dataModel.setColumnValue('_button', false);
+        },
+        focusCell: function(rowKey, columnName) {
+            this.dataModel.focusCell(rowKey, columnName);
         },
         /**
          * @deprecated

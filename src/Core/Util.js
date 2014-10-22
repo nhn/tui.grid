@@ -9,6 +9,32 @@
             return Math.floor(((tbodyHeight - 1) / rowCount));
         },
         /**
+         * html Tag 문자가 포함되었는지 확인
+         * @param {String} string
+         * @return {boolean}
+         */
+        hasTagString: function(string) {
+            return /[<>&"']/.test(string);
+        },
+        /**
+         * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
+         * @param {string} htmlString
+         * @return {*}
+         */
+        stripTags: function(htmlString) {
+            htmlString = htmlString.replace(/[\n\r\t]/g, '');
+            if (this.hasTagString(htmlString)) {
+                if (/<img/.test(htmlString)) {
+                    var matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/);
+                    htmlString = matchResult ? matchResult[1] : '';
+                } else {
+                    htmlString = htmlString.replace(/<button.*?<\/button>/g, '');
+                }
+                htmlString = this.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, ''));
+            }
+            return htmlString;
+        },
+        /**
          * Create unique key
          * @return {string}
          * @private

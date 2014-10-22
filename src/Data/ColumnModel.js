@@ -67,6 +67,21 @@
             columnModelList = _.union(prependList, columnModelList);
             return columnModelList;
         },
+        /**
+         * columnName 에 해당하는 index를 반환한다.
+         * @param {string} columnName
+         * @return {number} index
+         */
+        indexOfColumnName: function(columnName) {
+            var columnModelList = this.get('columnModelList'),
+                i = 0, len = columnModelList.length;
+            for (; i < len; i++) {
+                if (columnModelList[i]['columnName'] === columnName) {
+                    return i;
+                }
+            }
+            return -1;
+        },
         getColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnModelList = [],
@@ -86,6 +101,15 @@
         },
         getColumnModel: function(columnName) {
             return this.get('columnModelMap')[columnName];
+        },
+        /**
+         * 컬럼 모델로부터 editType 을 반환한다.
+         * @param {string} columnName
+         * @return {string}
+         */
+        getEditType: function(columnName) {
+            var columnModel = this.getColumnModel(columnName);
+            return (columnName === '_button') ? 'main' : columnModel['editOption'] && columnModel['editOption']['type'];
         },
         _getVisibleList: function() {
             return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});

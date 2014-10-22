@@ -61,12 +61,14 @@
             this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
             this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+
         },
         template: _.template('<div class="content"></div>'),
         events: {
             'scroll' : '_onScroll'
         },
         _onScroll: function(scrollEvent) {
+            console.log('frame scroll', scrollEvent);
             this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
         },
         _onDimensionChange: function(model) {
@@ -74,8 +76,14 @@
                 this.render();
             }
         },
+
         _onScrollTopChange: function(model, value) {
+            var scrollTop;
             this.el.scrollTop = value;
+            scrollTop = this.el.scrollTop;
+            if (scrollTop !== value) {
+                this.grid.renderModel.set('scrollTop', scrollTop);
+            }
         },
         render: function() {
             this.$el.css({

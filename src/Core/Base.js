@@ -87,7 +87,7 @@
          * create view
          * @param {class} clazz
          * @param {object} params
-         * @return {class} clazz
+         * @return {class} instance
          */
         createView: function(clazz, params) {
             var instance = new clazz(params);
@@ -99,7 +99,15 @@
             this.__viewList.push(instance);
             return instance;
         },
-
+        addView: function(instance){
+            if (!this.hasOwnProperty('__viewList')) {
+                this.setOwnProperties({
+                    __viewList: []
+                });
+            }
+            this.__viewList.push(instance);
+            return instance;
+        },
         destroy: function() {
             this.destroyChildren();
             this.remove();
@@ -184,7 +192,7 @@
             ' rowSpan="<%=rowSpan%>"' +
             ' class="<%=className%>"' +
             ' <%=attributes%>' +
-            ' cellType="<%=cellType%>"' +
+            ' data-cell-type="<%=cellType%>"' +
             '>' +
             '<%=content%>' +
             '</td>'),

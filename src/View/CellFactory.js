@@ -59,7 +59,7 @@
                 cellType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.attr('cellType');
+                cellType = $td.data('cell-type');
                 this.instances[cellType].attachHandler($td);
             }
         },
@@ -69,7 +69,7 @@
                 cellType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.attr('cellType');
+                cellType = $td.data('cell-type');
                 this.instances[cellType].detachHandler($td);
             }
         }

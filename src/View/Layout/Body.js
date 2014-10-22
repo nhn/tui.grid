@@ -14,7 +14,8 @@
                 '    </table>' +
                 '</div>'),
         events: {
-            'scroll' : '_onScroll'
+            'scroll': '_onScroll',
+            'mousedown': '_onMouseDown'
         },
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -22,10 +23,15 @@
                 whichSide: attributes && attributes.whichSide || 'R'
             });
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
             this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
             this.listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
         },
+        /**
+         * columnWidth change 핸들러
+         * @private
+         */
         _onColumnWidthChanged: function() {
             var columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide),
                 $colList = this.$el.find('col');
@@ -33,7 +39,21 @@
                 $colList.eq(i).css('width', columnWidthList[i] + 'px');
             }
         },
+        /**
+         * MouseDown event handler
+         * @param {event} mouseDownEvent
+         * @private
+         */
+        _onMouseDown: function(mouseDownEvent) {
+            this.grid.selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        },
+        /**
+         * Scroll Event Handler
+         * @param {event} scrollEvent
+         * @private
+         */
         _onScroll: function(scrollEvent) {
+            console.log('body scroll', scrollEvent);
             var obj = {};
             obj['scrollTop'] = scrollEvent.target.scrollTop;
             if (this.whichSide === 'R') {
@@ -41,11 +61,36 @@
             }
             this.grid.renderModel.set(obj);
         },
+        /**
+         * Render model 의 Scroll left 변경 핸들러
+         * @param {object} model
+         * @param {Number} value
+         * @private
+         */
+        _onScrollLeftChange: function(model, value) {
+            if (this.whichSide === 'R') {
+                this.el.scrollLeft = value;
+                console.log('this.el.scrollLeft', this.el.scrollLeft, value);
+            }
+        },
+        /**
+         * Render model 의 Scroll top 변경 핸들러
+         * @param {object} model
+         * @param {Number} value
+         * @private
+         */
         _onScrollTopChange: function(model, value) {
             this.el.scrollTop = value;
         },
+
+        /**
+         * Render model 의 top 변경 핸들러
+         * @param {object} model
+         * @param {Number} value
+         * @private
+         */
         _onTopChange: function(model, value) {
-            this.$el.children().css('top', value + 'px');
+            this.$el.children('.table_container').css('top', value + 'px');
         },
         _onBeforeRefresh: function() {
             this.el.scrollTop = this.grid.renderModel.get('scrollTop');
@@ -54,23 +99,26 @@
             return this.grid.renderModel.getCollection(this.whichSide);
         },
         render: function() {
+            var selection, rowList;
             this.destroyChildren();
-
             this.$el.css({
-                height: this.grid.dimensionModel.get('bodyHeight')
-            });
-            this.$el.html(this.template({
-                colGroup: this._getColGroupMarkup()
-            }));
+                    height: this.grid.dimensionModel.get('bodyHeight')
+                }).html(this.template({
+                    colGroup: this._getColGroupMarkup()
+                }));
 
-            var rowList = this.createView(View.RowList, {
+            rowList = this.createView(View.RowList, {
                 grid: this.grid,
                 collection: this._getViewCollection(),
                 el: this.$el.find('tbody'),
                 whichSide: this.whichSide
             });
-
             rowList.render();
+
+            //selection 을 랜더링한다.
+            selection = this.addView(this.grid.selection.createLayer(this.whichSide));
+            this.$el.append(selection.render().el);
+
             return this;
         },
         _getColGroupMarkup: function() {

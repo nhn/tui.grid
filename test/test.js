@@ -115,9 +115,9 @@ function insertButton(gridInstance, $wrapper, $result) {
             gridInstance.setColumnIndex(2);
         },
         'test' : function() {
-//				gridInstance.setValue(0, 'columnName1', '3');
-            gridInstance.setColumnValue('columnName1', '3');
-            gridInstance.sort('columnName5');
+				gridInstance.setValue(0, 'columnName1', '<script>alert("test");</script>');
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
         }
     };
 
@@ -135,8 +135,6 @@ function insertButton(gridInstance, $wrapper, $result) {
         $wrapper.append($button);
     }
 }
-
-
 
 
 //	var grid2 = new Grid({

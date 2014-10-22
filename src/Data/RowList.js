@@ -21,13 +21,65 @@
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
          */
         getRowSpanData: function(columnName) {
-            var extraData = this.get('_extraData');
-            var defaultData = {
-                count: 0,
-                isMainRow: true,
-                mainRowKey: this.get('rowKey')
-            };
-            return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+            var extraData = this.get('_extraData'), defaultData;
+            if (!columnName) {
+                return extraData['rowSpanData'];
+            }else {
+                extraData = this.get('_extraData');
+                defaultData = {
+                    count: 0,
+                    isMainRow: true,
+                    mainRowKey: this.get('rowKey')
+                };
+                return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+            }
+        },
+        /**
+         * html string 을 encoding 한다.
+         * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
+         *
+         * @param {String} columnName
+         * @return {String}
+         * @private
+         */
+        getTagFiltered: function(columnName) {
+            var columnModel = this.grid.columnModel.getColumnModel(columnName),
+                editType = this.grid.columnModel.getEditType(columnName),
+                value = this.get(columnName),
+                notUseHtmlEntity = columnModel.notUseHtmlEntity;
+            if (!notUseHtmlEntity && (!editType || editType === 'text') && Util.hasTagString(value)) {
+                value = Util.encodeHTMLEntity(value);
+            }
+            return value;
+        },
+        /**
+         * 화면에 보여지는 데이터를 반환한다.
+         * @param {String} columnName
+         * @return {*}
+         */
+        getVisibleText: function(columnName) {
+            var columnModel = this.grid.columnModel,
+                value = this.get(columnName),
+                editType, model,
+                listTypeMap = {
+                    'select': true,
+                    'radio': true,
+                    'checkbox': true
+                };
+
+            if (columnModel) {
+                editType = columnModel.getEditType(columnName);
+                model = columnModel.getColumnModel(columnName);
+                //list type 의 editType 이 존재하는 경우
+                if (listTypeMap[editType]) {
+                    value = _.findWhere(model.editOption.list, {value: value}).text;
+                } else {
+                    if (typeof model.formatter === 'function') {
+                        value = Util.stripTags(model.formatter(value, this.toJSON(), model));
+                    }
+                }
+            }
+            return value;
         }
 
     });
@@ -59,6 +111,14 @@
         },
         test1: function() {
     //            console.log(arguments);
+        },
+        /**
+         * rowKey 의 index를 가져온다.
+         * @param rowKey
+         * @return {number}
+         */
+        indexOfRowKey: function(rowKey) {
+            return this.indexOf(this.get(rowKey));
         },
         _onSort: function() {
             console.log('sort');
@@ -106,7 +166,7 @@
                         if (!rowSpanData['isMainRow']) {
                             this.get(rowSpanData['mainRowKey']).set(columnName, value);
                         }else {
-                            var index = this.indexOf(this.get(row.get('rowKey')));
+                            var index = this.indexOfRowKey(row.get('rowKey'));
                             for (var i = 0; i < rowSpanData['count'] - 1; i++) {
                                 this.at(i + 1 + index).set(columnName, value);
                             }

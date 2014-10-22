@@ -7,7 +7,7 @@
             top: 0,
             scrollTop: 0,
             scrollLeft: 0,
-
+            maxScrollLeft: 0,
             startIdx: 0,
             endIdx: 0,
 
@@ -25,7 +25,7 @@
             //원본 rowList 의 상태 값 listening
             this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
             this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
-
+            this.on('change', this.test, this);
             //lside 와 rside 별 Collection 생성
             var lside = new Model.RowList({
                 grid: this.grid
@@ -38,8 +38,9 @@
                 rside: rside
             });
         },
-
-
+        test: function(model) {
+            console.log('change', model.changed);
+        },
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var collection;
