@@ -53,7 +53,6 @@
          * @private
          */
         _onScroll: function(scrollEvent) {
-            console.log('body scroll', scrollEvent);
             var obj = {};
             obj['scrollTop'] = scrollEvent.target.scrollTop;
             if (this.whichSide === 'R') {
@@ -70,7 +69,6 @@
         _onScrollLeftChange: function(model, value) {
             if (this.whichSide === 'R') {
                 this.el.scrollLeft = value;
-                console.log('this.el.scrollLeft', this.el.scrollLeft, value);
             }
         },
         /**

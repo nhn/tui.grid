@@ -210,33 +210,39 @@
             selectStartEvent.preventDefault();
         },
         /**
-         *
+         *  현재 selection 범위에 대한 string 을 반환한다.
+         *  @return {String}
          */
         getSelectionString: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList')
                     .slice(this.spannedRange.column[0], this.spannedRange.column[1] + 1),
-                columnMap = {},
+                filteringMap = {
+                    '_button': true
+                },
                 len = columnModelList.length,
-                columnList = [],
+                columnNameList = [],
                 tmpString = [],
                 strings = [],
                 columnLen, i, j, rowList, string;
 
             for (i = 0; i < len; i++) {
-                columnList.push(columnModelList[i]['columnName']);
+                columnNameList.push(columnModelList[i]['columnName']);
             }
             rowList = this.grid.dataModel.slice(this.spannedRange.row[0], this.spannedRange.row[1] + 1);
 
             len = rowList.length;
-            columnLen = columnList.length;
+            columnLen = columnNameList.length;
             for (i = 0; i < len; i++) {
                 tmpString = [];
                 for (j = 0; j < columnLen; j++) {
-                    tmpString.push(rowList[i].getVisibleText(columnList[j]));
+                    if (!filteringMap[columnNameList[j]]) {
+                        tmpString.push(rowList[i].getVisibleText(columnNameList[j]));
+                    }
                 }
                 strings.push(tmpString.join('\t'));
             }
             string = strings.join('\n');
+            return string;
         },
         createLayer: function(whichSide) {
             var clazz = whichSide === 'R' ? View.Selection.Layer.Rside : View.Selection.Layer.Lside,
@@ -287,6 +293,7 @@
 
                 var tmpRowRange = $.extend([], spannedRange.row);
 
+                //startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.
                 do {
                     tmpRowRange = $.extend([], spannedRange.row);
                     spannedRange = this._getRowSpannedIndex(spannedRange);
@@ -319,7 +326,7 @@
                 newSpannedRange = $.extend({}, spannedRange);
 
             /**
-             * row start index 기준으로 recursive 하게 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
+             * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
              * @param {object} param
              */
             function concatRowSpanIndexFromStart(param) {
@@ -343,7 +350,7 @@
                 }
             }
             /**
-             * row end index 기준으로 recursive 하게 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
+             * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
              * @param {object} param
              */
             function concatRowSpanIndexFromEnd(param) {

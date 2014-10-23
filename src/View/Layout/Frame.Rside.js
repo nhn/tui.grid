@@ -42,7 +42,7 @@
                     grid: this.grid
                 });
                 this.$el.append(virtualScrollBar.render().el);
-                console.log(this.$el.html());
+//                console.log(this.$el.html());
             }
         }
     });
@@ -68,7 +68,6 @@
             'scroll' : '_onScroll'
         },
         _onScroll: function(scrollEvent) {
-            console.log('frame scroll', scrollEvent);
             this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
         },
         _onDimensionChange: function(model) {
