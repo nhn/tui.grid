@@ -149,9 +149,9 @@
             this.on('sort', this.onSort, this);
         },
         onSort: function() {
-            var focused = this.grid.dataModel.getFocused();
+            var focused = this.grid.focusModel.which();
             if (focused.rowKey !== null) {
-                this.grid.dataModel.focusCell();
+                this.grid.focus();
             }
         }
     });

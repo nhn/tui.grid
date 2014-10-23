@@ -77,7 +77,7 @@
                 $tr = $(mouseDownEvent.target).closest('tr'),
                 columnName = $td.attr('columnName'),
                 rowKey = $tr.attr('key');
-            this.grid.focusCell(rowKey, columnName);
+            this.grid.focus(rowKey, columnName);
             if (this.grid.option('selectType') === 'radio') {
                 this.grid.checkRow(rowKey);
             }

@@ -17,7 +17,7 @@
          * getRowSpanData
          *
          * rowSpan 관련 data 가져온다.
-         * @param columnName
+         * @param {String} columnName
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
          */
         getRowSpanData: function(columnName) {
@@ -53,6 +53,47 @@
             return value;
         },
         /**
+         * type 인자에 맞게 value type 을 convert 한다.
+         * List 형태에서 editOption.list 에서 검색을 위해 value type 해당 type 에 맞게 변환한다.
+         * @param {Number|String} value
+         * @param {String} type
+         * @return {Number|String}
+         * @private
+         */
+        _convertValueType: function(value, type) {
+            if (type === 'string') {
+                return value.toString();
+            } else if (type === 'number') {
+                return parseInt(value, 10);
+            } else {
+                return value;
+            }
+        },
+        /**
+         * List type 의 경우 실제 데이터와 editOption.list 의 데이터가 다르기 때문에
+         * text 로 전환해서 리턴할 때 처리를 하여 변환한다.
+         *
+         * @param {Number|String} value
+         * @param {Object} columnModel
+         * @return {string}
+         * @private
+         */
+        _getListTypeVisibleText: function(value, columnModel) {
+            var typeExpected, valueList;
+            typeExpected = typeof columnModel.editOption.list[0].value;
+            valueList = value.toString().split(',');
+            if (typeExpected !== typeof valueList[0]) {
+                _.each(valueList, function(value, index) {
+                    valueList[index] = this._convertValueType(value, typeExpected);
+                }, this);
+            }
+            _.each(valueList, function(value, index) {
+                valueList[index] = _.findWhere(columnModel.editOption.list, {value: value}).text;
+            }, this);
+
+            return valueList.join(',');
+        },
+        /**
          * 화면에 보여지는 데이터를 반환한다.
          * @param {String} columnName
          * @return {*}
@@ -72,10 +113,15 @@
                 model = columnModel.getColumnModel(columnName);
                 //list type 의 editType 이 존재하는 경우
                 if (listTypeMap[editType]) {
-                    value = _.findWhere(model.editOption.list, {value: value}).text;
+                    if (model.editOption && model.editOption.list && model.editOption.list[0].value) {
+                        value = this._getListTypeVisibleText(value, model);
+                    } else {
+                       throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
+                    }
                 } else {
+                    //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
                     if (typeof model.formatter === 'function') {
-                        value = Util.stripTags(model.formatter(value, this.toJSON(), model));
+                        value = Util.stripTags(model.formatter(this.getTagFiltered(columnName), this.toJSON(), model));
                     }
                 }
             }
@@ -83,7 +129,10 @@
         }
 
     });
-
+    /**
+     * 실제 데이터 RowList 콜렉션
+     * @class
+     */
     Data.RowList = Collection.Base.extend({
         model: Data.Row,
 
@@ -91,10 +140,10 @@
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 _sortKey: 'rowKey',
-                _focused: {
-                    'rowKey' : null,
-                    'columnName' : ''
-                },
+//                _focused: {
+//                    'rowKey' : null,
+//                    'columnName' : ''
+//                },
                 _originalRowList: [],
                 _startIndex: attributes.startIndex || 1,
                 _privateProperties: [
@@ -103,6 +152,7 @@
                     '_extraData'
                 ]
             });
+            this.listenTo(this.grid.focusModel, 'change', this._onFocusChange, this);
             this.on('change', this._onChange, this);
             this.on('change:_button', this._onCheckChange, this);
     //            this.on('sort add remove reset', this._onSort, this);
@@ -114,8 +164,8 @@
         },
         /**
          * rowKey 의 index를 가져온다.
-         * @param rowKey
-         * @return {number}
+         * @param {Number|String} rowKey
+         * @return {Number}
          */
         indexOfRowKey: function(rowKey) {
             return this.indexOf(this.get(rowKey));
@@ -268,40 +318,22 @@
                 return false;
             }
         },
-        selectRow: function(rowKey, silent) {
-            if (this.unselectRow().setExtraData(rowKey, { selected: true}, silent)) {
-                this._focused['rowKey'] = rowKey;
-            }
-//            console.log('select:', this.get(rowKey).attributes);
-            return this;
-        },
-        unselectRow: function(silent) {
-            if (this.setExtraData(this._focused['rowKey'], { selected: false }, silent)) {
-                this._focused['rowKey'] = null;
-            }
-            return this;
-        },
-        focusCell: function(rowKey, columnName) {
-            rowKey = rowKey === undefined ? this._focused['rowKey'] : rowKey;
-            columnName = columnName === undefined ? this._focused['columnName'] : columnName;
+        _onFocusChange: function(focusModel) {
+            console.log('onFocusChange', focusModel.changed);
+            var selected = true,
+                rowKey = focusModel.get('rowKey');
+            _.each(focusModel.changed, function(value, name) {
+                if (name === 'rowKey') {
+                    if (value === null) {
+                        value = focusModel.previous('rowKey');
+                        selected = false;
+                    }
+                    this.setExtraData(value, { selected: selected});
 
-            this.blurCell().selectRow(rowKey);
-            if (columnName) {
-                this._focused['columnName'] = columnName;
-                this.setExtraData(rowKey, { focused: columnName});
-            }
-            return this;
-        },
-        blurCell: function() {
-            var rowKey = this._focused['rowKey'];
-            if (rowKey !== undefined && rowKey !== null) {
-                this._focused['columnName'] = '';
-                this.setExtraData(rowKey, { focused: ''});
-            }
-            return this;
-        },
-        getFocused: function() {
-            return _.clone(this._focused);
+                } else if (name === 'columnName') {
+                    this.setExtraData(rowKey, { focused: value});
+                }
+            }, this);
         },
 
         parse: function(data) {

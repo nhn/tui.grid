@@ -12,7 +12,31 @@
             'click' : '_onClick',
             'mousedown' : '_onMouseDown'
         },
-
+        keyMap: {
+            'TAB': 9,
+            'ENTER': 13,
+            'CTRL': 17,
+            'ESC': 27,
+            'LEFT_ARROW': 37,
+            'UP_ARROW': 38,
+            'RIGHT_ARROW': 39,
+            'DOWN_ARROW': 40,
+            'CHAR_A': 65,
+            'CHAR_C': 67,
+            'CHAR_F': 70,
+            'CHAR_R': 82,
+            'CHAR_V': 86,
+            'LEFT_WINDOW_KEY': 91,
+            'F5': 116,
+            'BACKSPACE': 8,
+            'SPACE': 32,
+            'PAGE_UP': 33,
+            'PAGE_DOWN': 34,
+            'HOME': 36,
+            'END': 35,
+            'DEL': 46,
+            'UNDEFINED': 229
+        },
         initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             var id = Util.getUniqueKey();
@@ -53,6 +77,7 @@
                 'dataModel': null,
                 'renderModel': null,
                 'layoutModel': null,
+                'focusModel': null,
 
                 'view': {
                     'lside': null,
@@ -133,13 +158,16 @@
             }
         },
         _onClick: function(clickEvent) {
+
             var $target = $(clickEvent.target);
-            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
+            console.log('grid click',$target);
+            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
                 this.view.clipboard.$el.focus();
                 this.selection.show();
             }
         },
         _onMouseDown: function(mouseDownEvent) {
+            console.log('grid mousedown');
             var $target = $(mouseDownEvent.target);
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
                 mouseDownEvent.preventDefault();
@@ -175,10 +203,17 @@
                 rowHeight: this.option('rowHeight')
             });
 
-//            //define rowList
+            // define focus model
+            this.focusModel = new Model.Focus({
+                grid: this
+            });
+
+            //define rowList
             this.dataModel = new Data.RowList({
                 grid: this
             });
+
+
 
             if (this.option('notUseSmartRendering') === true) {
                 this.renderModel = new Model.Renderer({
@@ -353,8 +388,11 @@
         uncheckAllRow: function() {
             this.dataModel.setColumnValue('_button', false);
         },
-        focusCell: function(rowKey, columnName) {
-            this.dataModel.focusCell(rowKey, columnName);
+        focus: function(rowKey, columnName) {
+            this.focusModel.focus(rowKey, columnName);
+        },
+        blur: function() {
+            this.focusModel.blur();
         },
         /**
          * @deprecated

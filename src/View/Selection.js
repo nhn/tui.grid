@@ -23,7 +23,8 @@
                 pageX: 0,
                 pageY: 0,
 
-                intervalIdForAutoScroll: 0
+                intervalIdForAutoScroll: 0,
+                _isShown: false
             });
         },
         /**
@@ -46,7 +47,7 @@
          */
         detachMouseEvent: function() {
             clearInterval(this.intervalIdForAutoScroll);
-            this.getSelectionString();
+            this.getSelectionToString();
             $(document).off('mousemove', $.proxy(this._onMouseMove, this));
             $(document).off('mouseup', $.proxy(this._onMouseUp, this));
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
@@ -62,7 +63,7 @@
             if (this._hasSelection()) {
                 pos = this._getIndexFromMousePosition(mouseMoveEvent.pageX, mouseMoveEvent.pageY);
                 this.updateSelection(pos.row, pos.column);
-                if (this._isScrollable(pos.overflowX, pos.overflowY)) {
+                if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
                     this.intervalIdForAutoScroll = setInterval($.proxy(this._adjustScroll, this, pos.overflowX, pos.overflowY));
                 }
             } else if (this._getDistance(mouseMoveEvent) > 10) {
@@ -70,7 +71,14 @@
                 this.startSelection(pos.row, pos.column);
             }
         },
-        _isScrollable: function(overflowX, overflowY) {
+        /**
+         * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환.
+         * @param {Number} overflowX
+         * @param {Number} overflowY
+         * @return {boolean}
+         * @private
+         */
+        _isAutoScrollable: function(overflowX, overflowY) {
             return !(overflowX === 0 && overflowY === 0);
         },
         /**
@@ -184,36 +192,12 @@
                 overflowY: overflowY
             };
         },
-        /**
-         * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
-         * @return {{pageX: number, pageY: number}}
-         * @private
-         */
-        _getContainerPosition: function(pageX, pageY) {
-            var dimensionModel = this.grid.dimensionModel,
-                containerPosX = pageX - dimensionModel.get('offsetLeft'),
-                containerPosY = pageY - (dimensionModel.get('offsetTop') + dimensionModel.get('headerHeight') + 2);
 
-            return {
-                pageX: containerPosX,
-                pageY: containerPosY
-            };
-        },
-        /**
-         * select start event handler
-         * @param {event} selectStartEvent
-         * @private
-         */
-        _onSelectStart: function(selectStartEvent) {
-            selectStartEvent.preventDefault();
-        },
         /**
          *  현재 selection 범위에 대한 string 을 반환한다.
          *  @return {String}
          */
-        getSelectionString: function() {
+        getSelectionToString: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList')
                     .slice(this.spannedRange.column[0], this.spannedRange.column[1] + 1),
                 filteringMap = {
@@ -244,6 +228,11 @@
             string = strings.join('\n');
             return string;
         },
+        /**
+         * 실제로 랜더링될 selection layer view 를 생성 후 반환한다.
+         * @param {String} whichSide
+         * @return {*}
+         */
         createLayer: function(whichSide) {
             var clazz = whichSide === 'R' ? View.Selection.Layer.Rside : View.Selection.Layer.Lside,
                 layer = this._getLayer(whichSide);
@@ -256,50 +245,69 @@
             whichSide === 'R' ? this.rside = layer : this.lside = layer;
             return layer;
         },
-        _getLayer: function(whichSide) {
-            return whichSide === 'R' ? this.rside : this.lside;
+        /**
+         * 전체 영역을 선택한다.
+         */
+        selectAll: function() {
+            this.startSelection(0, 0);
+            this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getColumnModelList().length - 1);
         },
+        /**
+         * selection 영역 선택을 시작한다.
+         * @param {Number} rowIndex
+         * @param {Number} columnIndex
+         */
         startSelection: function(rowIndex, columnIndex) {
             this.range.row[0] = this.range.row[1] = rowIndex;
             this.range.column[0] = this.range.column[1] = columnIndex;
             this.show();
         },
+        /**
+         * selection 영역 선택을 확장한다.
+         * @param {Number} rowIndex
+         * @param {Number} columnIndex
+         */
         updateSelection: function(rowIndex, columnIndex) {
             this.range.row[1] = rowIndex;
             this.range.column[1] = columnIndex;
             this.show();
         },
+        /**
+         * selection 영역 선택을 종료하고 selection 데이터를 초기화한다.
+         */
         endSelection: function() {
             this.range.row[0] = this.range.row[1] = this.range.column[0] = this.range.column[1] = -1;
             this.spannedRange.row[0] = this.spannedRange.row[1] = this.spannedRange.column[0] = this.spannedRange.column[1] = -1;
             this.hide();
         },
-        _hasSelection: function() {
-            return !(this.range.row[0] === -1);
-        },
+        /**
+         * 현재 selection range 정보를 기반으로 selection Layer 를 노출한다.
+         */
         show: function() {
             if (this._hasSelection()) {
-                var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+                this._isShown = true;
+                var tmpRowRange,
+                    columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
                     rowHeight = this.grid.dimensionModel.get('rowHeight'),
                     startRow = Math.min.apply(Math, this.range.row),
                     endRow = Math.max.apply(Math, this.range.row),
                     startColumn = Math.min.apply(Math, this.range.column),
-                    endColumn = Math.max.apply(Math, this.range.column);
-
-                var spannedRange = {
-                    row: [startRow, endRow],
-                    column: [startColumn, endColumn]
-                };
-
-                var tmpRowRange = $.extend([], spannedRange.row);
-
-                //startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.
-                do {
+                    endColumn = Math.max.apply(Math, this.range.column),
+                    spannedRange = {
+                        row: [startRow, endRow],
+                        column: [startColumn, endColumn]
+                    };
+                if (!this.grid.dataModel.isSortedByField()) {
                     tmpRowRange = $.extend([], spannedRange.row);
-                    spannedRange = this._getRowSpannedIndex(spannedRange);
-                } while (spannedRange.row[0] !== tmpRowRange[0] ||
-                    spannedRange.row[1] !== tmpRowRange[1]);
 
+                    //startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.
+                    do {
+                        tmpRowRange = $.extend([], spannedRange.row);
+                        spannedRange = this._getRowSpannedIndex(spannedRange);
+                    } while (spannedRange.row[0] !== tmpRowRange[0] ||
+                        spannedRange.row[1] !== tmpRowRange[1]);
+
+                }
                 this.spannedRange = spannedRange;
                 this.lside.show(spannedRange);
                 this.rside.show({
@@ -308,6 +316,65 @@
                 });
             }
         },
+        /**
+         * selection layer 를 숨긴다. 데이터는 초기화 되지 않는다.
+         */
+        hide: function() {
+            this._isShown = false;
+            this.lside.hide();
+            this.rside.hide();
+        },
+        /**
+         * 현재 selection 레이어가 노출되어 있는지 확인한다.
+         * @return {boolean|*}
+         */
+        isShown: function() {
+            return this._isShown;
+        },
+        /**
+         * Selection Layer View 를 반환한다.
+         * @param {String} whichSide
+         * @return {*|View.Selection.rside}
+         * @private
+         */
+        _getLayer: function(whichSide) {
+            return whichSide === 'R' ? this.rside : this.lside;
+        },
+        /**
+         * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
+         * @param {Number} pageX
+         * @param {Number} pageY
+         * @return {{pageX: number, pageY: number}}
+         * @private
+         */
+        _getContainerPosition: function(pageX, pageY) {
+            var dimensionModel = this.grid.dimensionModel,
+                containerPosX = pageX - dimensionModel.get('offsetLeft'),
+                containerPosY = pageY - (dimensionModel.get('offsetTop') + dimensionModel.get('headerHeight') + 2);
+
+            return {
+                pageX: containerPosX,
+                pageY: containerPosY
+            };
+        },
+        /**
+         * select start event handler
+         * @param {event} selectStartEvent
+         * @private
+         */
+        _onSelectStart: function(selectStartEvent) {
+            selectStartEvent.preventDefault();
+        },
+
+        /**
+         * selection 데이터가 존재하는지 확인한다.
+         * @return {boolean}
+         * @private
+         */
+        _hasSelection: function() {
+            return !(this.range.row[0] === -1);
+        },
+
         /**
          * rowSpan 된 Index range 를 반환한다.
          * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
@@ -395,10 +462,6 @@
             newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
 
             return newSpannedRange;
-        },
-        hide: function() {
-            this.lside.hide();
-            this.rside.hide();
         }
     });
 

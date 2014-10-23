@@ -84,6 +84,7 @@
             label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
         getContentHtml: function(cellData) {
+            console.log('button render');
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
@@ -133,9 +134,11 @@
             return checkedList;
         },
         onChange: function(changeEvent) {
+
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target);
-            this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target));
+            console.log('onChange', this._getCheckedList($target));
+            this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target).join(','));
         },
         _getInputEl: function(value) {
             return this.$el.find('input[type=' + this.type + '][value="' + value + '"]');

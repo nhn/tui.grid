@@ -5,7 +5,7 @@
     Data.ColumnModel = Model.Base.extend({
         defaults: {
             keyColumnName: null,
-            columnFixIndex: 0,		//columnFixIndex
+            columnFixIndex: 0,  //columnFixIndex
             columnModelList: [],
             visibleList: [],
 
