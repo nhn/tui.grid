@@ -83,26 +83,28 @@
 
             this._setRenderingRange();
             //TODO : rendering 해야할 데이터만 가져온다.
-            var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+            var len, i,
+                columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
                 columnList = this.grid.columnModel.get('visibleList'),
-                columnNameList = _.pluck(columnList, 'columnName');
+                columnNameList = _.pluck(columnList, 'columnName'),
 
-            var lsideColumnList = columnNameList.slice(0, columnFixIndex),
-                rsideColumnList = columnNameList.slice(columnFixIndex);
+                lsideColumnList = columnNameList.slice(0, columnFixIndex),
+                rsideColumnList = columnNameList.slice(columnFixIndex),
+
+                lsideRowList = [],
+                rsideRowList = [],
+
+                lsideRow = [],
+                rsideRow = [],
+                startIdx = this.get('startIdx'),
+                endIdx = this.get('endIdx');
 
 
 
-            var lsideRowList = [],
-                rsideRowList = [];
-
-            var lsideRow = [];
-            var rsideRow = [];
-
-            var startIdx = this.get('startIdx');
-            var endIdx = this.get('endIdx');
             var start = new Date();
+
 //            console.log('render', startIdx, endIdx);
-            for (var i = startIdx; i < endIdx + 1; i++) {
+            for (i = startIdx; i < endIdx + 1; i++) {
                 var rowModel = this.grid.dataModel.at(i);
                 var rowKey = rowModel.get('rowKey');
                 //데이터 초기화
@@ -127,12 +129,19 @@
                 lsideRowList.push(lsideRow);
                 rsideRowList.push(rsideRow);
             }
-            this.get('lside').set(lsideRowList, {
+            this.get('lside').clear().set(lsideRowList, {
                 parse: true
             });
-            this.get('rside').set(rsideRowList, {
+            this.get('rside').clear().set(rsideRowList, {
                 parse: true
             });
+
+            i = startIdx;
+            len = rsideRowList.length + startIdx;
+            for (; i < len; i++) {
+                this.executeRelation(i);
+            }
+
             var end = new Date();
 //            console.log('render done', end - start);
             if (this.isColumnModelChanged === true) {
@@ -143,5 +152,38 @@
             }
 
             this.trigger('afterRefresh');
+        },
+        /**
+         * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.
+         * @param {String} columnName
+         * @return {Collection}
+         * @private
+         */
+        _getRowListDivision: function(columnName) {
+            var lside = this.get('lside'),
+                rside = this.get('rside');
+
+            if (lside.at(0) && lside.at(0).get(columnName)) {
+                return lside;
+            } else {
+                return rside;
+            }
+        },
+        /**
+         * rowIndex 에 해당하는 relation 을 수행한다.
+         * @param {Number} rowIndex
+         */
+        executeRelation: function(rowIndex) {
+            var relationResult = this.grid.dataModel.at(rowIndex).getRelationResult(),
+                renderIdx = rowIndex - this.get('startIdx'),
+                rowModel;
+
+            _.each(relationResult, function(changes, columnName) {
+                rowModel = this._getRowListDivision(columnName).at(renderIdx);
+                if (rowModel) {
+                    this._getRowListDivision(columnName).at(renderIdx).setCell(columnName, changes);
+                }
+            }, this);
         }
+
     });

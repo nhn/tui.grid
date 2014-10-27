@@ -250,7 +250,7 @@
          */
         selectAll: function() {
             this.startSelection(0, 0);
-            this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getColumnModelList().length - 1);
+            this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
         },
         /**
          * selection 영역 선택을 시작한다.

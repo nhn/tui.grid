@@ -11,14 +11,12 @@
             var rowKey = attributes && attributes['rowKey'];
 
             if (this.grid.dataModel.get(rowKey)) {
-//                this.listenTo(this.grid.dataModel.get(rowKey), 'change:_extraData', this._onExtraDataChange, this);
                 this.listenTo(this.grid.dataModel.get(rowKey), 'change', this._onModelChange, this);
                 this.listenTo(this.grid.dataModel.get(rowKey), 'restore', this._onModelChange, this);
-
             }
         },
-
         _onModelChange: function(model) {
+//            console.log('_onModelChange', this.collection);
             _.each(model.changed, function(value, columnName) {
                 if (columnName === '_extraData') {
                     this.correctRowSpanData(value);
@@ -66,7 +64,6 @@
         },
         parse: function(data) {
             //affect option 을 먼저 수행한다.
-            this.executeAffectOption(data);
             var columnModel = this.collection.grid.columnModel.get('columnModelList');
             var rowKey = data['rowKey'];
             _.each(data, function(value, columnName) {
@@ -97,13 +94,11 @@
                         rowSpan: rowSpanData.count,
                         isMainRow: rowSpanData.isMainRow,
                         mainRowKey: rowSpanData.mainRowKey,
-                        isEditable: false,
-                        optionList: [],
-
                         //Change attribute properties
+                        isEditable: true,
                         isDisabled: false,
+                        optionList: [],
                         className: '',
-
                         focused: focused,
                         selected: selected,
 
@@ -111,29 +106,41 @@
                     };
                 }
             }, this);
+//            this.executeAffectList(data);
             return data;
         },
-        executeAffectOption: function(data) {
-            //@TODO: 컬럼 모델에 정의된 affect option을 수행한다.
-        },
+
         /**
          * Cell 의 값을 변경한다.
-         * @param columnName
-         * @param param
+         * @param {String} columnName
+         * @param {{key: value}} param
          */
         setCell: function(columnName, param) {
+            console.log('setCell', columnName, param);
             if (this.get(columnName)) {
+                console.log('in!');
                 var data = _.clone(this.get(columnName)),
                     isValueChanged = false,
-                    changed = [];
+                    changed = [],
+                    rowIndex,
+                    rowKey = this.get(columnName)['rowKey'];
 
                 for (var name in param) {
-                    isValueChanged = (name === 'value') ? true : isValueChanged;
-                    data[name] = param[name];
-                    changed.push(name);
+                    if (data[name] !== param[name]) {
+                        isValueChanged = (name === 'value') ? true : isValueChanged;
+                        data[name] = param[name];
+                        changed.push(name);
+                    }
                 }
-                data['changed'] = changed;
-                this.set(columnName, data);
+                if (changed.length) {
+                    data['changed'] = changed;
+                    this.set(columnName, data);
+                    if (isValueChanged) {
+                        //value 가 변경되었을 경우 relation 을 수행한다.
+                        rowIndex = this.grid.dataModel.indexOfRowKey(rowKey);
+                        this.grid.renderModel.executeRelation(rowIndex);
+                    }
+                }
             }
         }
     });

@@ -27,7 +27,9 @@
             this.setOwnProperties({
                 grid: grid
             });
+
         },
+
         setOwnProperties: function(properties) {
             _.each(properties, function(value, key) {
                 this[key] = value;
@@ -43,6 +45,12 @@
             this.setOwnProperties({
                 grid: grid
             });
+        },
+        clear: function() {
+            this.each(function(model) {
+                model.stopListening();
+            });
+            return this;
         },
         setOwnProperties: function(properties) {
             _.each(properties, function(value, key) {
@@ -99,7 +107,7 @@
             this.__viewList.push(instance);
             return instance;
         },
-        addView: function(instance){
+        addView: function(instance) {
             if (!this.hasOwnProperty('__viewList')) {
                 this.setOwnProperties({
                     __viewList: []
@@ -208,6 +216,7 @@
                     break;
                 }
             }
+
             if (shouldRender === true) {
                 this.render(cellData, $target);
             }else {
@@ -229,7 +238,7 @@
         },
         render: function(cellData, $target) {
             this._detachHandler($target);
-            $target.html(this.getContentHtml(cellData));
+            $target.data('cell-type', this.cellType).html(this.getContentHtml(cellData));
             this._attachHandler($target);
         },
 

@@ -29,7 +29,7 @@
                 $parent: attributes.$parent,        //부모 element
                 collection: attributes.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
-                columnModelList: this.grid.columnModel.getColumnModelList(whichSide),
+                columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
                 cellHandlerList: []
             });
 
@@ -88,11 +88,14 @@
          * @private
          */
         _onModelChange: function(model) {
-            var columnModel = this.grid.columnModel;
+
+            var columnModel = this.grid.columnModel,
+                editType, cellInstance;
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
-                    var editType = columnModel.getEditType(columnName),
-                        cellInstance = this.grid.cellFactory.getInstance(editType);
+                    //editable 프로퍼티가 false 라면 normal type 으로 설정한다.
+                    editType = this._getEditType(columnName, cellData);
+                    cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, this._getTrElement(cellData.rowKey));
                 }
             }, this);
@@ -106,7 +109,16 @@
         _getTrElement: function(rowKey) {
             return this.$parent.find('tr[key="' + rowKey + '"]');
         },
-
+        /**
+         * cellData 의 idEditable 프로퍼티에 따른 editType 을 반환한다.
+         * @param {String} columnName
+         * @param {Object} cellData
+         * @return {String}
+         * @private
+         */
+        _getEditType: function(columnName, cellData) {
+            return !cellData.isEditable ? 'normal' : this.grid.columnModel.getEditType(columnName);
+        },
         /**
          * html 마크업을 반환
          * @param {object} model
@@ -123,7 +135,7 @@
                 columnName = columnModelList[i]['columnName'];
                 cellData = model.get(columnName);
                 if (cellData && cellData['isMainRow']) {
-                    editType = columnModel.getEditType(columnName);
+                    editType = this._getEditType(columnName, cellData);
                     cellInstance = cellFactory.getInstance(editType);
                     html += cellInstance.getHtml(cellData);
                     this.cellHandlerList.push({

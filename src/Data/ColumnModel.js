@@ -9,7 +9,8 @@
             columnModelList: [],
             visibleList: [],
 
-            columnModelMap: {}
+            columnModelMap: {},
+            relationListMap: {}
         },
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
@@ -70,10 +71,12 @@
         /**
          * columnName 에 해당하는 index를 반환한다.
          * @param {string} columnName
+         * @param {Boolean} isVisible (default:true)
          * @return {number} index
          */
-        indexOfColumnName: function(columnName) {
-            var columnModelList = this.get('columnModelList'),
+        indexOfColumnName: function(columnName, isVisible) {
+            isVisible = (isVisible === undefined);
+            var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList'),
                 i = 0, len = columnModelList.length;
             for (; i < len; i++) {
                 if (columnModelList[i]['columnName'] === columnName) {
@@ -82,7 +85,7 @@
             }
             return -1;
         },
-        getColumnModelList: function(whichSide) {
+        getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnModelList = [],
                 columnFixIndex = this.get('columnFixIndex');
@@ -114,6 +117,28 @@
         _getVisibleList: function() {
             return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});
         },
+        /**
+         * 각 columnModel 의 relationList 를 모아 relationListMap 를 생성하여 반환한다.
+         * @return {*}
+         * @private
+         */
+        _getRelationMart: function() {
+            var columnModelList = this.get('columnModelList'),
+                columnName, columnModel, relationList,
+                relationListMap = {},
+                i, len = columnModelList.length;
+
+            for (i = 0; i < len; i++) {
+                columnName = columnModelList[i]['columnName'];
+
+                if (columnModelList[i].relationList) {
+                    relationList = columnModelList[i].relationList;
+                    relationListMap[columnName] = relationList;
+                }
+            }
+            return relationListMap;
+
+        },
         _onChange: function(model) {
             if (model.changed['columnModelList']) {
                 this.set({
@@ -123,11 +148,13 @@
                 });
             }
             var visibleList = this._getVisibleList();
+
             this.set({
                 visibleList: visibleList,
                 lsideList: visibleList.slice(0, this.get('columnFixIndex')),
                 rsideList: visibleList.slice(this.get('columnFixIndex')),
-                columnModelMap: _.indexBy(this.get('columnModelList'), 'columnName')
+                columnModelMap: _.indexBy(this.get('columnModelList'), 'columnName'),
+                relationListMap: this._getRelationMart()
             }, {
                 silent: true
             });

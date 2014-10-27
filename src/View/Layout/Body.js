@@ -123,7 +123,7 @@
             var columnModel = this.grid.columnModel,
                 dimensionModel = this.grid.dimensionModel,
                 columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-                columnModelList = columnModel.getColumnModelList(this.whichSide);
+                columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
 
             var html = '';
             for (var i = 0, len = columnWidthList.length; i < len; i++) {

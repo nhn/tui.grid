@@ -1,3 +1,7 @@
+    /**
+     * Row Data 모델
+     * @class
+     */
     Data.Row = Model.Base.extend({
         idAttribute: 'rowKey',
         defaults: {
@@ -9,9 +13,6 @@
         },
         initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
-            this.on('change', this.onChange, this);
-        },
-        onChange: function() {
         },
         /**
          * getRowSpanData
@@ -79,8 +80,13 @@
          * @private
          */
         _getListTypeVisibleText: function(value, columnModel) {
-            var typeExpected, valueList;
-            typeExpected = typeof columnModel.editOption.list[0].value;
+            var columnName = columnModel['columnName'],
+                resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
+                editOptionList = resultOptionList && resultOptionList['optionList'] ?
+                    resultOptionList['optionList'] : columnModel.editOption.list,
+                typeExpected, valueList;
+
+            typeExpected = typeof editOptionList[0].value;
             valueList = value.toString().split(',');
             if (typeExpected !== typeof valueList[0]) {
                 _.each(valueList, function(value, index) {
@@ -88,10 +94,65 @@
                 }, this);
             }
             _.each(valueList, function(value, index) {
-                valueList[index] = _.findWhere(columnModel.editOption.list, {value: value}).text;
+                valueList[index] = _.findWhere(editOptionList, {value: value}).text;
             }, this);
 
             return valueList.join(',');
+        },
+        /**
+         * getRelationResult
+         * 컬럼모델에 정의된 relation 을 수행한 결과를 반환한다.
+         *
+         * @param {Array}   callbackList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisable', 'isEditable'])
+         * @return {{columnName: {attribute: resultValue}}}
+         */
+        getRelationResult: function(callbackList) {
+            callbackList = callbackList || ['optionListChange', 'isDisable', 'isEditable'];
+
+            var callback, attribute, columnList,
+                value,
+                rowKey = this.get('rowKey'),
+                rowData = this.toJSON(),
+                relationListMap = this.grid.columnModel.get('relationListMap'),
+                relationResult = {};
+
+            //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
+            // relationListMap 구조 {columnName : relationList}
+            _.each(relationListMap, function(relationList, columnName) {
+                value = rowData[columnName];
+
+                //relationList 를 순회하며 수행한다.
+                _.each(relationList, function(relation) {
+                    columnList = relation.columnList;
+
+                    //각 relation 에 걸려있는 콜백들을 수행한다.
+                    _.each(callbackList, function(callbackName) {
+                        callback = relation[callbackName];
+                        if (typeof callback === 'function') {
+                            attribute = '';
+                            switch (callbackName) {
+                                case 'optionListChange':
+                                    attribute = 'optionList';
+                                    break;
+                                case 'isDisable':
+                                    attribute = 'isDisabled';
+                                    break;
+                                case 'isEditable':
+                                    attribute = 'isEditable';
+                                    break;
+                            }
+                            if (attribute) {
+                                //relation 에 걸려있는 컬럼들의 값을 변경한다.
+                                _.each(columnList, function(targetColumnName) {
+                                    relationResult[targetColumnName] = relationResult[targetColumnName] || {};
+                                    relationResult[targetColumnName][attribute] = callback(value, rowData);
+                                }, this);
+                            }
+                        }
+                    }, this);
+                }, this);
+            }, this);
+            return relationResult;
         },
         /**
          * 화면에 보여지는 데이터를 반환한다.

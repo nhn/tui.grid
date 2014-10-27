@@ -69,7 +69,7 @@
         nextColumnName: function() {
             var index,
                 columnModel = this.grid.columnModel,
-                columnModelList = columnModel.getColumnModelList();
+                columnModelList = columnModel.getVisibleColumnModelList();
             if (this.has()) {
                 index = columnModel.indexOfColumnName(this.get('columnName')) + 1;
                 return columnModelList[index] && columnModelList[index]['columnName'];
@@ -78,7 +78,7 @@
         prevColumnName: function() {
             var index,
                 columnModel = this.grid.columnModel,
-                columnModelList = columnModel.getColumnModelList();
+                columnModelList = columnModel.getVisibleColumnModelList();
             if (this.has()) {
                 index = columnModel.indexOfColumnName(this.get('columnName')) + 1;
                 return columnModelList[index] && columnModelList[index]['columnName'];

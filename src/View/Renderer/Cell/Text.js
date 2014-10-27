@@ -4,7 +4,7 @@
         initialize: function(attributes, options) {
             View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
         },
-        template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" />'),
+        template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
         eventHandler: {
             'blur input' : 'onBlur'
         },
@@ -12,12 +12,12 @@
             var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName);
             return this.template({
                 value: value,
-                name: Util.getUniqueKey(),
-                checked: (!!cellData.value) ? 'checked' : ''
+                disabled: cellData.isDisabled ? 'disabled' : '',
+                name: Util.getUniqueKey()
             });
         },
         setElementAttribute: function(cellData, $target) {
-
+            $target.find('input').prop('disabled', cellData.isDisabled);
         },
         onBlur: function(blurEvent) {
             var $target = $(blurEvent.target),

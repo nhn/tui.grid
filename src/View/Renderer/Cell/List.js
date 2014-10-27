@@ -14,6 +14,10 @@
         },
         setElementAttribute: function(cellData, $target) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
+        },
+        _getOptionList: function(cellData) {
+            var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
+            return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
         }
     });
 
@@ -33,11 +37,13 @@
         },
 
         getContentHtml: function(cellData) {
-            var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
-                html = '';
+            var list = this._getOptionList(cellData),
+                html = '',
+                len = list.length;
 
             html += '<select name="' + Util.getUniqueKey() + '">';
-            for (var i = 0, list = columnModel.editOption.list; i < list.length; i++) {
+
+            for (var i = 0; i < len; i++) {
                 html += '<option ';
                 html += 'value="' + list[i].value + '"';
 
@@ -84,15 +90,17 @@
             label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
         getContentHtml: function(cellData) {
-            console.log('button render');
-            var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
+            var list = this._getOptionList(cellData),
+                len = list.length,
+                columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
                 html = '',
                 name = Util.getUniqueKey(),
+
                 id;
 
-            for (var i = 0, list = columnModel.editOption.list; i < list.length; i++) {
+            for (var i = 0; i < len; i++) {
                 id = name + '_' + list[i].value;
                 html += this.template.input({
                     type: columnModel.editOption.type,
