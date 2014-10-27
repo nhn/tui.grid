@@ -49,7 +49,9 @@
         clear: function() {
             this.each(function(model) {
                 model.stopListening();
+                model = null;
             });
+
             return this;
         },
         setOwnProperties: function(properties) {

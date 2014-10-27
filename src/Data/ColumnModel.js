@@ -15,6 +15,7 @@
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.on('change', this._onChange, this);
+
         },
         _appendDefaultColumn: function(data) {
             var columnModelList = $.extend(true, [], data),
@@ -84,6 +85,13 @@
                 }
             }
             return -1;
+        },
+        /**
+         * columnName 이 L Side 에 있는 column 인지 반환한다.
+         * @param {String} columnName
+         */
+        isLside: function(columnName) {
+            return this.get('columnFixIndex') < this.indexOfColumnName(columnName);
         },
         getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;

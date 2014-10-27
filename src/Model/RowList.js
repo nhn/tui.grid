@@ -61,6 +61,7 @@
                     }
                 }, this);
             }
+            console.log(this.collection);
         },
         parse: function(data) {
             //affect option 을 먼저 수행한다.
@@ -116,9 +117,7 @@
          * @param {{key: value}} param
          */
         setCell: function(columnName, param) {
-            console.log('setCell', columnName, param);
             if (this.get(columnName)) {
-                console.log('in!');
                 var data = _.clone(this.get(columnName)),
                     isValueChanged = false,
                     changed = [],
@@ -153,9 +152,9 @@
         model: Model.Row,
         initialize: function(attributes) {
             Collection.Base.prototype.initialize.apply(this, arguments);
-            this.on('sort', this.onSort, this);
+            this.on('reset', this._onReset, this);
         },
-        onSort: function() {
+        _onReset: function() {
             var focused = this.grid.focusModel.which();
             if (focused.rowKey !== null) {
                 this.grid.focus();

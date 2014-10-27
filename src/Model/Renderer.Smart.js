@@ -8,11 +8,14 @@
             });
         },
         _onScrollTopChange: function(model, value) {
-
-            if (this._shouldRender() === true) {
+            if (this._isRenderable() === true) {
                 this.refresh();
             }
         },
+        /**
+         * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
+         * @private
+         */
         _setRenderingRange: function() {
             var top,
                 scrollTop = this.get('scrollTop'),
@@ -25,7 +28,6 @@
             if (!this.grid.dataModel.isSortedByField()) {
                 var minList = [];
                 var maxList = [];
-    //            console.log('bf',startIdx, endIdx, scrollTop, top, displayRowCount);
                 _.each(this.grid.dataModel.at(startIdx).get('_extraData')['rowSpanData'], function(data, columnName) {
                     if (!data.isMainRow) {
                         minList.push(data.count);
@@ -56,7 +58,7 @@
 
         },
 
-        _shouldRender: function() {
+        _isRenderable: function() {
             var scrollTop = this.get('scrollTop'),
                 rowHeight = this.grid.dimensionModel.get('rowHeight'),
                 bodyHeight = this.grid.dimensionModel.get('bodyHeight'),

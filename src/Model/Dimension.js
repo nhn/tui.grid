@@ -31,7 +31,55 @@
             this._setColumnWidth();
             this._setBodyHeight();
         },
+        /**
+         * 계산한 cell의 위치를 리턴한다.
+         * @param {Number|String} rowKey
+         * @param {String} columnName
+         * @return {{top: *, left: number, right: *, bottom: *}}
+         */
+        getCellPosition: function(rowKey, columnName) {
+            var top, left = 0, right, bottom, i = 0,
+                dataModel = this.grid.dataModel,
+                offsetLeft = this.get('offsetLeft'),
+                offsetTop = this.get('offsetTop'),
+                rowHeight = this.get('rowHeight'),
+                rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
+                rowIdx, spanCount,
+                columnWidthList = this.get('columnWidthList'),
+                columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+                columnIdx = this.grid.columnModel.indexOfColumnName(columnName);
 
+
+
+            if (!rowSpanData.isMainRow) {
+                rowKey = rowSpanData.mainRowKey;
+                rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
+            }
+
+            spanCount = rowSpanData.count || 1;
+
+            rowIdx = dataModel.indexOfRowKey(rowKey);
+
+            top = Util.getTBodyHeight(rowIdx, rowHeight);
+            bottom = top + Util.getTBodyHeight(spanCount, rowHeight) - 1;
+
+            if (columnFixIndex <= columnIdx) {
+                i = columnFixIndex;
+            }
+
+            for (; i < columnIdx; i++) {
+                left += columnWidthList[i] + 1;
+            }
+
+            right = columnWidthList[i] + 1;
+
+            return {
+                top: top,
+                left: left,
+                right: right,
+                bottom: bottom
+            };
+        },
         /**
          * 현재 화면에 보이는 row 개수를 반환
          * @return {number}

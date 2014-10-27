@@ -379,18 +379,36 @@
         setEditOptionList: function(rowKey, columnName, optionList) {
 
         },
+        /**
+         * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+         */
         checkRow: function(rowKey) {
             this.setValue(rowKey, '_button', true);
         },
+        /**
+         * 전체 행을 선택한다
+         */
         checkAllRow: function() {
             this.dataModel.setColumnValue('_button', true);
         },
+        /**
+         * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택해제한다.
+         */
         uncheckAllRow: function() {
             this.dataModel.setColumnValue('_button', false);
         },
-        focus: function(rowKey, columnName) {
-            this.focusModel.focus(rowKey, columnName);
+        /**
+         * rowKey, columnName에 해당하는 컬럼에 포커싱한다.
+         * @param {Number|String} rowKey
+         * @param {String} columnName
+         * @param {Boolean} isScrollable
+         */
+        focus: function(rowKey, columnName, isScrollable) {
+            this.focusModel.focus(rowKey, columnName, isScrollable);
         },
+        /**
+         * 현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다
+         */
         blur: function() {
             this.focusModel.blur();
         },

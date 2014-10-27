@@ -72,6 +72,11 @@
             clearTimeout(this.timeoutIdForRefresh);
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
+        /**
+         * rendering 할 index 범위를 결정한다.
+         * Smart rendering 을 사용하지 않을 경우 전체 범위로 랜더링한다.
+         * @private
+         */
         _setRenderingRange: function() {
             this.set({
                 'startIdx' : 0,
@@ -129,10 +134,10 @@
                 lsideRowList.push(lsideRow);
                 rsideRowList.push(rsideRow);
             }
-            this.get('lside').clear().set(lsideRowList, {
+            this.get('lside').clear().reset(lsideRowList, {
                 parse: true
             });
-            this.get('rside').clear().set(rsideRowList, {
+            this.get('rside').clear().reset(rsideRowList, {
                 parse: true
             });
 

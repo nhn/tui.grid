@@ -30,13 +30,19 @@
                 collection: attributes.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
                 columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
-                cellHandlerList: []
+                cellHandlerList: [],
+                _isEventAttached: false
             });
 
             //listener 등록
             this.collection.forEach(function(row) {
                 this.listenTo(row, 'change', this._onModelChange, this);
             }, this);
+        },
+        destroy: function() {
+            this.detachHandler();
+            this.destroyChildren();
+            this.remove();
         },
         /**
          * attachHandler
@@ -50,19 +56,22 @@
                 this._attachHandler($tr);
             }
             this.grid.cellFactory.attachHandler(this.$parent);
+            this._isEventAttached = true;
         },
         /**
          * detach eventHandler
          * event handler 를 전체 tr에서 제거한다.
          */
         detachHandler: function() {
-            var $target, $tr,
-                $trList = this.$parent.find('tr');
-            for (var i = 0; i < $trList.length; i++) {
-                $tr = $trList.eq(i);
-                this._detachHandler($tr);
+            if (this._isEventAttached) {
+                var $target, $tr,
+                    $trList = this.$parent.find('tr');
+                for (var i = 0; i < $trList.length; i++) {
+                    $tr = $trList.eq(i);
+                    this._detachHandler($tr);
+                }
+                this.grid.cellFactory.detachHandler(this.$parent);
             }
-            this.grid.cellFactory.detachHandler(this.$parent);
         },
         _onClick: function(clickEvent) {
             console.log('click', clickEvent);
@@ -88,7 +97,6 @@
          * @private
          */
         _onModelChange: function(model) {
-
             var columnModel = this.grid.columnModel,
                 editType, cellInstance;
             _.each(model.changed, function(cellData, columnName) {

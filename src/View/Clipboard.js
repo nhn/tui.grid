@@ -1,3 +1,7 @@
+    /**
+     * clipboard view class
+     * @class
+     */
     View.Clipboard = View.Base.extend({
         tagName: 'textarea',
         className: 'clipboard',
@@ -6,10 +10,18 @@
             'focus': '_onFocus',
             'blur': '_onBlur'
         },
-        _onFocus: function(){
+        /**
+         * clipboard focus event handler
+         * @private
+         */
+        _onFocus: function() {
             console.log('clipboard focus');
         },
-        _onBlur: function(){
+        /**
+         * clipboard blur event handler
+         * @private
+         */
+        _onBlur: function() {
             console.log('clipboard blur');
         },
         initialize: function(attributes, option) {
@@ -36,13 +48,13 @@
             var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
             if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
-                this._typeWithShiftAndCtrl(keyDownEvent);
+                this._keyInWithShiftAndCtrl(keyDownEvent);
             } else if (keyDownEvent.shiftKey) {
-                this._typeWithShift(keyDownEvent);
+                this._keyInWithShift(keyDownEvent);
             } else if (keyDownEvent.ctrlKey || keyDownEvent.metaKey) {
-                this._typeWithCtrl(keyDownEvent);
+                this._keyInWithCtrl(keyDownEvent);
             } else {
-                this._typeWith(keyDownEvent);
+                this._keyIn(keyDownEvent);
             }
 
         },
@@ -51,17 +63,24 @@
          * @param {event} keyDownEvent
          * @private
          */
-        _typeWith: function(keyDownEvent) {
-            var keyMap = this.grid.keyMap,
+        _keyIn: function(keyDownEvent) {
+            var grid = this.grid,
+                keyMap = grid.keyMap,
+                focusModel = grid.focusModel,
+                focused = focusModel.which(),
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             switch (keyCode) {
                 case keyMap['UP_ARROW']:
+                    grid.focus(focusModel.prevRowKey(), focused.columnName, true);
                     break;
                 case keyMap['DOWN_ARROW']:
+                    grid.focus(focusModel.nextRowKey(), focused.columnName, true);
                     break;
                 case keyMap['LEFT_ARROW']:
+                    grid.focus(focused.rowKey, focusModel.prevColumnName(), true);
                     break;
                 case keyMap['RIGHT_ARROW']:
+                    grid.focus(focused.rowKey, focusModel.nextColumnName(), true);
                     break;
                 case keyMap['ENTER']:
                     break;
@@ -77,7 +96,7 @@
          * @param {event} keyDownEvent
          * @private
          */
-        _typeWithShiftAndCtrl: function(keyDownEvent) {
+        _keyInWithShiftAndCtrl: function(keyDownEvent) {
             var keyMap = this.grid.keyMap,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             switch (keyCode) {
@@ -103,7 +122,7 @@
          * @param {event} keyDownEvent
          * @private
          */
-        _typeWithShift: function(keyDownEvent) {
+        _keyInWithShift: function(keyDownEvent) {
             var keyMap = this.grid.keyMap,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             switch (keyCode) {
@@ -129,7 +148,7 @@
          * @param {event} keyDownEvent
          * @private
          */
-        _typeWithCtrl: function(keyDownEvent) {
+        _keyInWithCtrl: function(keyDownEvent) {
             var keyMap = this.grid.keyMap,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             switch (keyCode) {
