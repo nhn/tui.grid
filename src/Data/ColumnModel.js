@@ -87,6 +87,16 @@
             return -1;
         },
         /**
+         * index 에 해당하는 columnModel 을 반환한다.
+         * @param {Number} index
+         * @param {Boolean} isVisible
+         * @returns {*}
+         */
+        at: function(index, isVisible) {
+            var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
+            return columnModelList[index];
+        },
+        /**
          * columnName 이 L Side 에 있는 column 인지 반환한다.
          * @param {String} columnName
          */

@@ -33,11 +33,11 @@
          * @param {Number} pageY
          */
         attachMouseEvent: function(pageX, pageY) {
-            this.endSelection();
             this.setOwnProperties({
                 pageX: pageX,
                 pageY: pageY
             });
+            this.grid.updateLayoutData();
             $(document).on('mousemove', $.proxy(this._onMouseMove, this));
             $(document).on('mouseup', $.proxy(this._onMouseUp, this));
             $(document).on('selectstart', $.proxy(this._onSelectStart, this));
@@ -60,14 +60,15 @@
         _onMouseMove: function(mouseMoveEvent) {
             var pos;
             clearInterval(this.intervalIdForAutoScroll);
-            if (this._hasSelection()) {
-                pos = this._getIndexFromMousePosition(mouseMoveEvent.pageX, mouseMoveEvent.pageY);
+            if (this.hasSelection()) {
+                pos = this.getIndexFromMousePosition(mouseMoveEvent.pageX, mouseMoveEvent.pageY);
                 this.updateSelection(pos.row, pos.column);
+                this.grid.focusAt(pos.row, pos.column);
                 if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
                     this.intervalIdForAutoScroll = setInterval($.proxy(this._adjustScroll, this, pos.overflowX, pos.overflowY));
                 }
             } else if (this._getDistance(mouseMoveEvent) > 10) {
-                pos = this._getIndexFromMousePosition(this.pageX, this.pageY);
+                pos = this.getIndexFromMousePosition(this.pageX, this.pageY);
                 this.startSelection(pos.row, pos.column);
             }
         },
@@ -130,9 +131,8 @@
          * @param {Number} pageX
          * @param {Number} pageY
          * @return {{row: number, column: number, overflowX: number, overflowY: number}}
-         * @private
          */
-        _getIndexFromMousePosition: function(pageX, pageY) {
+        getIndexFromMousePosition: function(pageX, pageY) {
             var containerPos = this._getContainerPosition(pageX, pageY),
                 dimensionModel = this.grid.dimensionModel,
                 renderModel = this.grid.renderModel,
@@ -284,7 +284,7 @@
          * 현재 selection range 정보를 기반으로 selection Layer 를 노출한다.
          */
         show: function() {
-            if (this._hasSelection()) {
+            if (this.hasSelection()) {
                 this._isShown = true;
                 var tmpRowRange,
                     columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
@@ -371,7 +371,7 @@
          * @return {boolean}
          * @private
          */
-        _hasSelection: function() {
+        hasSelection: function() {
             return !(this.range.row[0] === -1);
         },
 

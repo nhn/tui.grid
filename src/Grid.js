@@ -2,9 +2,10 @@
 
     var Grid = window.Grid = View.Base.extend({
         scrollBarSize: 17,
+        minimumHeight: 150, //그리드의 최소 높이값
         lside: null,
         rside: null,
-        footer: null,
+        toolbar: null,
         cellFactory: null,
 
 
@@ -62,13 +63,18 @@
 
                 scrollX: true,
                 scrollY: true,
-                useDataCopy: true
+                useDataCopy: true,
+
+                toolbar: {
+                    hasResizeHandler: true,
+                    hasControlPannel: true
+                }
             };
 
 
 
 
-            options = $.extend(defaultOptions, options);
+            options = $.extend(true, defaultOptions, options);
 
             this.setOwnProperties({
                 'cellFactory': null,
@@ -82,7 +88,7 @@
                 'view': {
                     'lside': null,
                     'rside': null,
-                    'footer': null,
+                    'toolbar': null,
                     'clipboard': null
                 },
 
@@ -101,7 +107,7 @@
 
             this.render();
 
-            this._updateLayoutData();
+            this.updateLayoutData();
 
         },
         /**
@@ -125,12 +131,13 @@
         },
         _initializeListener: function() {
             this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
+            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight);
         },
         /**
          * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
          * @private
          */
-        _updateLayoutData: function() {
+        updateLayoutData: function() {
             var offset = this.$el.offset(),
                 rsideTotalWidth = this.dimensionModel.getTotalWidth('R'),
                 maxScrollLeft = rsideTotalWidth - this.dimensionModel.get('rsideWidth');
@@ -142,13 +149,18 @@
                 offsetTop: offset.top,
                 offsetLeft: offset.left,
                 width: this.$el.width(),
-                height: this.$el.height()
+                height: this.$el.height(),
+                toolbarHeight: this.view.toolbar.$el.height()
             });
         },
-        _onWidthChange: function(width) {
-//            this.$el.css('width', width + 'px');
-            this._updateLayoutData();
+        /**
+         * width 변경시 layout data 를 update 한다.
+         * @private
+         */
+        _onWidthChange: function() {
+            this.updateLayoutData();
         },
+
         option: function(key, value) {
             if (value === undefined) {
                 return this.options[key];
@@ -158,9 +170,7 @@
             }
         },
         _onClick: function(clickEvent) {
-
             var $target = $(clickEvent.target);
-            console.log('grid click',$target);
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
                 this.view.clipboard.$el.focus();
                 this.selection.show();
@@ -251,7 +261,7 @@
                 grid: this
             });
 
-            this.view.footer = this.createView(View.Layout.Footer, {
+            this.view.toolbar = this.createView(View.Layout.Toolbar, {
                 grid: this
             });
 
@@ -274,15 +284,26 @@
          */
         render: function() {
             this.trigger('beforeRender');
+
             this.$el.attr('instanceId', this.id)
                 .append(this.view.lside.render().el)
                 .append(this.view.rside.render().el)
-                .append(this.view.footer.render().el)
+                .append(this.view.toolbar.render().el)
                 .append(this.view.clipboard.render().el);
 
+            this._setHeight();
             this.trigger('afterRender');
         },
-
+        _setHeight: function() {
+            var bodyHeight = this.dimensionModel.get('bodyHeight'),
+                headerHeight = this.dimensionModel.get('headerHeight'),
+                toolbarHeight = this.view.toolbar.$el.height(),
+                height = toolbarHeight + headerHeight + bodyHeight;
+            this.$el.css('height', height + 'px');
+            this.dimensionModel.set({
+                toolbarHeight: toolbarHeight
+            });
+        },
         /**
          * setRowList
          *
@@ -405,6 +426,15 @@
          */
         focus: function(rowKey, columnName, isScrollable) {
             this.focusModel.focus(rowKey, columnName, isScrollable);
+        },
+        /**
+         * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
+         * @param {Number|String} rowIndex
+         * @param {String} columnIndex
+         * @param {Boolean} isScrollable
+         */
+        focusAt: function(rowIndex, columnIndex, isScrollable) {
+            this.focus(this.dataModel.at(rowIndex).get('rowKey'), this.columnModel.at(columnIndex)['columnName'], isScrollable);
         },
         /**
          * 현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다

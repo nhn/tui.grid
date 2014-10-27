@@ -27,6 +27,10 @@
             this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
             this.listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this);
+        },
+        _onBodyHeightChange: function(model, value) {
+            this.$el.css('height', value + 'px');
         },
         /**
          * columnWidth change 핸들러
@@ -45,7 +49,21 @@
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
-            this.grid.selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+            var focused, pos, selection = this.grid.selection;
+            if (mouseDownEvent.shiftKey) {
+                focused = this.grid.focusModel.indexOf(true);
+                if (!selection.hasSelection()) {
+                    selection.startSelection(focused.rowIdx, focused.columnIdx);
+                }
+
+                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                selection.updateSelection(pos.row, pos.column);
+                this.grid.focusAt(pos.row, pos.column);
+            } else {
+                selection.endSelection();
+                this.grid.selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+            }
         },
         /**
          * Scroll Event Handler

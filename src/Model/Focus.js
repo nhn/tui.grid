@@ -6,10 +6,26 @@
     Model.Focus = Model.Base.extend({
         defaults: {
             rowKey: null,
-            columnName: ''
+            columnName: '',
+            prevRowKey: null,
+            prevColumnName: ''
         },
         initialize: function(attributes, options) {
             Model.Base.prototype.initialize.apply(this, arguments);
+        },
+        _savePrevious: function() {
+            if (this.get('rowKey') !== null) {
+                this.set('prevRowKey', this.get('rowKey'));
+            }
+            if (this.get('columnName')) {
+                this.set('prevColumnName', this.get('columnName'));
+            }
+        },
+        _clearPrevious: function() {
+            this.set({
+                prevRowKey: null,
+                prevColumnName: ''
+            });
         },
         /**
          * 행을 select 한다.
@@ -40,6 +56,8 @@
         focus: function(rowKey, columnName, isScrollable) {
             rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
             columnName = columnName === undefined ? this.get('columnName') : columnName;
+            this._savePrevious();
+
             if (rowKey !== this.get('rowKey')) {
                 this.blur().select(rowKey);
             }
@@ -87,18 +105,32 @@
          * @return {Model.Focus}
          */
         blur: function() {
+//            console.log("*********************************");
+//            this._clearPrevious();
             if (this.get('rowKey') !== null) {
                 this.set('columnName', '');
             }
             return this;
         },
         /**
-         * 현재 focus 된 element 를 반환한다.
+         * 현재 focus 정보를 반환한다.
          */
         which: function() {
             return {
                 rowKey: this.get('rowKey'),
                 columnName: this.get('columnName')
+            };
+        },
+        /**
+         * 현재 focus 정보를 index 기준으로 반환한다.
+         */
+        indexOf: function(isPrevious) {
+            var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
+                columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
+
+            return {
+                rowIdx: this.grid.dataModel.indexOfRowKey(rowKey),
+                columnIdx: this.grid.columnModel.indexOfColumnName(columnName)
             };
         },
         /**
@@ -145,6 +177,22 @@
          */
         _getRowSpanData: function(rowKey, columnName) {
             return this.grid.dataModel.get(rowKey).getRowSpanData(columnName);
+        },
+        nextRowIndex: function() {
+            var rowKey = this.nextRowKey();
+            return this.grid.dataModel.indexOfRowKey(rowKey);
+        },
+        prevRowIndex: function() {
+            var rowKey = this.prevRowKey();
+            return this.grid.dataModel.indexOfRowKey(rowKey);
+        },
+        nextColumnIndex: function() {
+            var columnName = this.nextColumnName();
+            return this.grid.columnModel.indexOfColumnName(columnName);
+        },
+        prevColumnIndex: function() {
+            var columnName = this.prevColumnName();
+            return this.grid.columnModel.indexOfColumnName(columnName);
         },
         /**
          * keyEvent 발생 시 다음 rowKey 를 반환한다.

@@ -13,6 +13,7 @@
 
             headerHeight: 0,
             bodyHeight: 0,
+            toolbarHeight: 0,
 
             rowHeight: 0,
 
@@ -85,7 +86,7 @@
          * @return {number}
          */
         getDisplayRowCount: function() {
-            return Util.getDisplayRowCount(this.get('bodyHeight'), this.get('rowHeight'));
+            return Util.getDisplayRowCount(this.get('bodyHeight') - this.get('toolbarHeight'), this.get('rowHeight'));
         },
         /**
          * _onWidthChange
@@ -97,6 +98,13 @@
         _onWidthChange: function(model) {
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidth(this._calculateColumnWidthList(curColumnWidthList));
+        },
+        /**
+         * scrollX 높이를 구한다.
+         * @return {number}
+         */
+        getScrollXSize: function() {
+            return !!this.grid.option('scrollX') * this.grid.scrollBarSize;
         },
         /**
          * body height 계산

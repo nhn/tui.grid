@@ -1,13 +1,14 @@
     Model.Renderer.Smart = Model.Renderer.extend({
         initialize: function() {
             Model.Renderer.prototype.initialize.apply(this, arguments);
-            this.on('change:scrollTop', this._onScrollTopChange, this);
+            this.on('change:scrollTop', this._onChange, this);
+            this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onChange, this);
             this.setOwnProperties({
                 hiddenRowCount: 10,
                 criticalPoint: 3
             });
         },
-        _onScrollTopChange: function(model, value) {
+        _onChange: function() {
             if (this._isRenderable() === true) {
                 this.refresh();
             }
@@ -48,7 +49,7 @@
                 }
             }
 
-            top = (startIdx === 0) ? 0 : Util.getTBodyHeight(startIdx, rowHeight) + 1;
+            top = (startIdx === 0) ? 0 : Util.getTBodyHeight(startIdx, rowHeight) - 1;
 
             this.set({
                 top: top,
@@ -68,7 +69,7 @@
                 displayEndIdx = Math.min(this.grid.dataModel.length - 1, Math.floor((scrollTop + bodyHeight) / (rowHeight + 1))),
                 startIdx = this.get('startIdx'),
                 endIdx = this.get('endIdx');
-
+            console.log('#########GAP', endIdx - startIdx, displayRowCount);
             if ((startIdx !== 0 && startIdx + this.criticalPoint > displayStartIdx) ||
                 endIdx !== rowCount - 1 && (endIdx < rowCount && (endIdx - this.criticalPoint < displayEndIdx))) {
                 console.log(startIdx + this.criticalPoint, displayStartIdx);

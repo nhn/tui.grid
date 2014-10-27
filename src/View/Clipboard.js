@@ -67,8 +67,12 @@
             var grid = this.grid,
                 keyMap = grid.keyMap,
                 focusModel = grid.focusModel,
+                selection = grid.selection,
                 focused = focusModel.which(),
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+
+            selection.endSelection();
+
             switch (keyCode) {
                 case keyMap['UP_ARROW']:
                     grid.focus(focusModel.prevRowKey(), focused.columnName, true);
@@ -118,21 +122,44 @@
             keyDownEvent.preventDefault();
         },
         /**
+         * keyIn 으로 selection 영역을 update 한다. focus 로직도 함께 수행한다.
+         * @param {Number} rowIndex
+         * @param {Number} columnIndex
+         * @private
+         */
+        _updateSelectionByKeyIn: function(rowIndex, columnIndex) {
+            var selection = this.grid.selection,
+                focused = this.grid.focusModel.indexOf();
+
+            if (!selection.hasSelection()) {
+                selection.startSelection(focused.rowIdx, focused.columnIdx);
+            }
+            selection.updateSelection(rowIndex, columnIndex);
+            this.grid.focusAt(rowIndex, columnIndex, true);
+        },
+        /**
          * shift 가 눌린 상태에서의 key down event handler
          * @param {event} keyDownEvent
          * @private
          */
         _keyInWithShift: function(keyDownEvent) {
             var keyMap = this.grid.keyMap,
+                selection = this.grid.selection,
+                focusModel = this.grid.focusModel,
+                focused = this.grid.focusModel.indexOf(),
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             switch (keyCode) {
                 case keyMap['UP_ARROW']:
+                    this._updateSelectionByKeyIn(focusModel.prevRowIndex(), focused.columnIdx);
                     break;
                 case keyMap['DOWN_ARROW']:
+                    this._updateSelectionByKeyIn(focusModel.nextRowIndex(), focused.columnIdx);
                     break;
                 case keyMap['LEFT_ARROW']:
+                    this._updateSelectionByKeyIn(focused.rowIdx, focusModel.prevColumnIndex());
                     break;
                 case keyMap['RIGHT_ARROW']:
+                    this._updateSelectionByKeyIn(focused.rowIdx, focusModel.nextColumnIndex());
                     break;
                 case keyMap['ENTER']:
                     break;
