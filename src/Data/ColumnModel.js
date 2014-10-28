@@ -101,7 +101,7 @@
          * @param {String} columnName
          */
         isLside: function(columnName) {
-            return this.get('columnFixIndex') < this.indexOfColumnName(columnName);
+            return this.get('columnFixIndex') > this.indexOfColumnName(columnName);
         },
         getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;

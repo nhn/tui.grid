@@ -36,16 +36,16 @@
 
         /**
          * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
-         * @private
          */
-        updateRowSpanned: function() {
+        updateRowSpanned: function(isRowSpanDataOnly) {
             if (this.collection) {
                 var columnModel = this.grid.columnModel.getVisibleColumnModelList(),
                     model = this.grid.dataModel.get(this.get('rowKey')),
                     extraData = model.get('_extraData'),
                     selected = extraData['selected'] || false,
                     focusedColumnName = extraData['focused'],
-                    rowState = model.getRowState();
+                    rowState = model.getRowState(),
+                    param;
 
                 _.each(columnModel, function(column, key) {
                     var mainRowKey,
@@ -57,22 +57,21 @@
 
                     if (cellData) {
                         if (!this.grid.dataModel.isSortedByField()) {
-                            rowModel = this.collection.get(cellData['mainRowKey']);
-                            if (rowModel) {
-                                rowModel.setCell(columnName, {
-                                    focused: focused,
-                                    selected: selected,
-                                    isDisabled: isDisabled,
-                                    className: rowState.classNameList.join(' ')
-                                });
+                            if (!cellData['isMainRow']) {
+                                rowModel = this.collection.get(cellData['mainRowKey']);
                             }
-                        }else {
-                            rowModel.setCell(columnName, {
+                        }
+
+                        if (rowModel && !isRowSpanDataOnly || (isRowSpanDataOnly && !cellData['isMainRow'])) {
+                            param = {
                                 focused: focused,
                                 selected: selected,
-                                isDisabled: isDisabled,
                                 className: rowState.classNameList.join(' ')
-                            });
+                            };
+                            if (isDisabled) {
+                                param.isDisabled = true;
+                            }
+                            rowModel.setCell(columnName, param);
                         }
                     }
                 }, this);

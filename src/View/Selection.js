@@ -550,7 +550,13 @@
          * selection 을 숨긴다.
          */
         hide: function() {
-            this.$el.css('display', 'none');
+            this.$el.css({
+                display: 'none',
+                width: '0px',
+                height: '0px',
+                top: 0,
+                left: 0
+            });
         },
         render: function() {
             return this;

@@ -54,6 +54,7 @@
          * @return {Model.Focus}
          */
         focus: function(rowKey, columnName, isScrollable) {
+            console.log('#####focus', rowKey, columnName);
             rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
             columnName = columnName === undefined ? this.get('columnName') : columnName;
             this._savePrevious();
@@ -223,6 +224,9 @@
             return rowKey;
         },
         isEditable: function(rowKey, columnName) {
+            rowKey = rowKey !== undefined ? rowKey : this.get('rowKey');
+            columnName = columnName !== undefined ? columnName : this.get('columnName');
+
             var columnModel = this.grid.columnModel,
                 dataModel = this.grid.dataModel,
                 editType = columnModel.getEditType(columnName),

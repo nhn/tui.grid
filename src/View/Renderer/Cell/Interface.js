@@ -18,7 +18,10 @@
         initialize: function() {
             View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
         },
-        edit: function() {
+        focusIn: function() {
+
+        },
+        focusOut: function() {
 
         },
         /**

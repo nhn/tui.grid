@@ -172,7 +172,7 @@
         _onClick: function(clickEvent) {
             var $target = $(clickEvent.target);
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
-                this.view.clipboard.$el.focus();
+                this.focusClipboard();
                 this.selection.show();
             }
         },
@@ -183,6 +183,9 @@
                 mouseDownEvent.preventDefault();
                 this.trigger('mousedown', mouseDownEvent);
             }
+        },
+        focusClipboard: function() {
+            this.view.clipboard.$el.focus();
         },
         /**
          * _initializeModel
@@ -303,6 +306,16 @@
             this.dimensionModel.set({
                 toolbarHeight: toolbarHeight
             });
+        },
+        /**
+         * cell element (TD) 를 반환한다.
+         * @param {Number|String}   rowKey
+         * @param {String}  columnName
+         * @return {Element}
+         */
+        getCellElement: function(rowKey, columnName) {
+            var $frame = this.columnModel.isLside(columnName) ? this.view.lside.$el : this.view.rside.$el;
+            return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
         },
         /**
          * setRowList

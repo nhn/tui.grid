@@ -514,7 +514,7 @@
                 result[i]['_extraData'] = result[i]['_extraData'] || {};
 
 //                result[i]['_extraData']['rowState'] = (i % 5 === 0) ? 'DISABLED' : '';
-                result[i]['_extraData']['rowState'] = (i % 3 === 0) ? 'DISABLED_CHECK' : '';
+//                result[i]['_extraData']['rowState'] = (i % 3 === 0) ? 'DISABLED_CHECK' : '';
 
                 rowState = result[i]['_extraData'] && result[i]['_extraData']['rowState'];
                 result[i]['rowKey'] = rowKey;

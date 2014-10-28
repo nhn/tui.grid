@@ -70,6 +70,7 @@
                 selection = grid.selection,
                 focused = focusModel.which(),
                 displayRowCount = grid.dimensionModel.getDisplayRowCount(),
+                cellInstance,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
             selection.endSelection();
@@ -94,6 +95,10 @@
                     grid.focus(focusModel.nextRowKey(displayRowCount - 1), focused.columnName, true);
                     break;
                 case keyMap['ENTER']:
+                    if (focusModel.isEditable()) {
+                        cellInstance = grid.cellFactory.getInstance(grid.columnModel.getEditType(focused.columnName));
+                        cellInstance.focusIn(this.grid.getCellElement(focused.rowKey, focused.columnName));
+                    }
                     break;
                 case keyMap['TAB']:
                     break;
