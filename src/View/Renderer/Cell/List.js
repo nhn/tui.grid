@@ -146,7 +146,6 @@
 
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target);
-            console.log('onChange', this._getCheckedList($target));
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target).join(','));
         },
         _getInputEl: function(value) {

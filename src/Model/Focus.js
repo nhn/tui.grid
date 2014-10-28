@@ -68,7 +68,6 @@
                 //todo scrolltop 및 left 값 조정하는 로직 필요.
                 this._adjustScroll();
             }
-            console.log('editable', this.isEditable(this.get('rowKey'), this.get('columnName')));
             return this;
         },
         _adjustScroll: function() {

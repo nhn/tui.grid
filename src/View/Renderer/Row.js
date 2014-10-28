@@ -138,7 +138,6 @@
                 columnName, cellData, editType, cellInstance,
                 html = '';
             this.cellHandlerList = [];
-            console.log('model', model);
             for (var i = 0, len = columnModelList.length; i < len; i++) {
                 columnName = columnModelList[i]['columnName'];
                 cellData = model.get(columnName);

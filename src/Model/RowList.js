@@ -25,7 +25,7 @@
                 if (columnName === '_extraData') {
                     // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 rowSpan 된
                     // row model 에 연결된 focus, select, disable 를 업데이트 한다.
-                    this._updateRowSpanned(model, value);
+                    this.updateRowSpanned();
                 }else {
                     this.setCell(columnName, {
                         value: value
@@ -36,16 +36,17 @@
 
         /**
          * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
-         * @param {Object} model dataModelCollection 의 모델
-         * @param {Object} extraData
          * @private
          */
-        _updateRowSpanned: function(model, extraData) {
+        updateRowSpanned: function() {
             if (this.collection) {
-                var selected = extraData['selected'] || false,
+                var columnModel = this.grid.columnModel.getVisibleColumnModelList(),
+                    model = this.grid.dataModel.get(this.get('rowKey')),
+                    extraData = model.get('_extraData'),
+                    selected = extraData['selected'] || false,
                     focusedColumnName = extraData['focused'],
-                    columnModel = this.grid.columnModel.getVisibleColumnModelList(),
                     rowState = model.getRowState();
+
                 _.each(columnModel, function(column, key) {
                     var mainRowKey,
                         columnName = column['columnName'],
@@ -53,7 +54,6 @@
                         rowModel = this,
                         focused = (columnName === focusedColumnName),
                         isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
-
 
                     if (cellData) {
                         if (!this.grid.dataModel.isSortedByField()) {
@@ -77,7 +77,6 @@
                     }
                 }, this);
             }
-            console.log(this.collection);
         },
         parse: function(data) {
             //affect option 을 먼저 수행한다.
@@ -150,7 +149,6 @@
                         changed.push(name);
                     }
                 }
-                console.log('setCell', param);
                 if (changed.length) {
                     data['changed'] = changed;
                     this.set(columnName, data);
@@ -175,9 +173,12 @@
             this.on('reset', this._onReset, this);
         },
         _onReset: function() {
-            var focused = this.grid.focusModel.which();
-            if (focused.rowKey !== null) {
-                this.grid.focus();
+            var focused = this.grid.focusModel.which(),
+                model = this.get(focused.rowKey);
+            //랜더링시 rowSpan 된 view 들의 정보를 업데이트한다.
+            if (model) {
+                model.updateRowSpanned();
             }
         }
+
     });

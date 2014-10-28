@@ -26,7 +26,6 @@
             var $target = $(blurEvent.target),
                 rowKey = this._getRowKey($target),
                 columnName = this._getColumnName($target);
-            console.log($target.val());
             this.grid.setValue(rowKey, columnName, $target.val());
         }
     });

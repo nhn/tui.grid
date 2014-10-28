@@ -64,7 +64,6 @@
          */
         getContentHtml: function(cellData, $target) {
             var isDisabled = cellData.isDisabled;
-            console.log('button!!!', isDisabled);
             return this.template({
                 type: this.grid.option('selectType'),
                 name: this.grid.id,
