@@ -68,7 +68,7 @@
                 //todo scrolltop 및 left 값 조정하는 로직 필요.
                 this._adjustScroll();
             }
-
+            console.log('editable', this.isEditable(this.get('rowKey'), this.get('columnName')));
             return this;
         },
         _adjustScroll: function() {
@@ -86,7 +86,6 @@
                     scrollTop: position.top
                 });
             } else if (position.bottom > bodyHeight + scrollTop - (this.grid.option('scrollX') * this.grid.scrollBarSize)) {
-
                 renderModel.set({
                     scrollTop: position.bottom - bodyHeight + (this.grid.option('scrollX') * this.grid.scrollBarSize)
                 });
@@ -178,12 +177,12 @@
         _getRowSpanData: function(rowKey, columnName) {
             return this.grid.dataModel.get(rowKey).getRowSpanData(columnName);
         },
-        nextRowIndex: function() {
-            var rowKey = this.nextRowKey();
+        nextRowIndex: function(offset) {
+            var rowKey = this.nextRowKey(offset);
             return this.grid.dataModel.indexOfRowKey(rowKey);
         },
-        prevRowIndex: function() {
-            var rowKey = this.prevRowKey();
+        prevRowIndex: function(offset) {
+            var rowKey = this.prevRowKey(offset);
             return this.grid.dataModel.indexOfRowKey(rowKey);
         },
         nextColumnIndex: function() {
@@ -198,34 +197,73 @@
          * keyEvent 발생 시 다음 rowKey 를 반환한다.
          * @return {Number|String}
          */
-        nextRowKey: function() {
+        nextRowKey: function(offset) {
             var focused = this.which(),
-                count,
-                rowSpanData = this._getRowSpanData(focused.rowKey, focused.columnName);
+                rowKey = focused.rowKey,
+                count, rowSpanData;
 
-            if (rowSpanData.isMainRow && rowSpanData.count > 0) {
-                return this.findRowKey(rowSpanData.count);
-            } else if (!rowSpanData.isMainRow) {
-                count = rowSpanData.count;
-                rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
-                return this.findRowKey(rowSpanData.count + count);
+            offset = typeof offset === 'number' ? offset : 1;
+            if (offset > 1) {
+                rowKey = this.findRowKey(offset);
+                rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+                if (!rowSpanData.isMainRow) {
+                    rowKey = this.findRowKey(rowSpanData.count + offset);
+                }
             } else {
-                return this.findRowKey(1);
+                rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+                if (rowSpanData.isMainRow && rowSpanData.count > 0) {
+                    rowKey = this.findRowKey(rowSpanData.count);
+                } else if (!rowSpanData.isMainRow) {
+                    count = rowSpanData.count;
+                    rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
+                    rowKey = this.findRowKey(rowSpanData.count + count);
+                } else {
+                    rowKey = this.findRowKey(1);
+                }
+            }
+            return rowKey;
+        },
+        isEditable: function(rowKey, columnName) {
+            var columnModel = this.grid.columnModel,
+                dataModel = this.grid.dataModel,
+                editType = columnModel.getEditType(columnName),
+                row, relationResult;
+
+            rowKey = rowKey !== undefined ? rowKey : this.get('rowKey');
+            columnName = columnName !== undefined ? columnName : this.get('columnName');
+
+            if (!editType) {
+                return false;
+            } else {
+                row = dataModel.get(rowKey);
+                relationResult = row.getRelationResult()[columnName];
+                return !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
             }
         },
         /**
          * keyEvent 발생 시 이전 rowKey 를 반환한다.
          * @return {Number|String}
          */
-        prevRowKey: function() {
+        prevRowKey: function(offset) {
             var focused = this.which(),
-                rowSpanData = this._getRowSpanData(focused.rowKey, focused.columnName);
-
-            if (!rowSpanData.isMainRow) {
-                return this.findRowKey(rowSpanData.count - 1);
+                rowKey = focused.rowKey,
+                rowSpanData;
+            offset = typeof offset === 'number' ? offset : 1;
+            if (offset > 1) {
+                rowKey = this.findRowKey(-1 * offset);
+                rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+                if (!rowSpanData.isMainRow) {
+                    rowKey = this.findRowKey(rowSpanData.count + offset);
+                }
             } else {
-                return this.findRowKey(-1);
+                rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
+                if (!rowSpanData.isMainRow) {
+                    rowKey = this.findRowKey(rowSpanData.count - 1);
+                } else {
+                    rowKey = this.findRowKey(-1);
+                }
             }
+            return rowKey;
         },
         /**
          * keyEvent 발생 시 다음 columnName 을 반환한다.

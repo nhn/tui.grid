@@ -8,6 +8,9 @@
         eventHandler: {
             'blur input' : 'onBlur'
         },
+        edit: function($td) {
+            $td.find('input').focus();
+        },
         getContentHtml: function(cellData) {
             var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName);
             return this.template({

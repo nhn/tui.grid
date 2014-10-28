@@ -64,9 +64,12 @@
         },
         /**
          * mousedown 이벤트 핸들러
+         * @param {event} mouseDownEvent
          * @private
          */
-        _onMouseDown: function() {
+        _onMouseDown: function(mouseDownEvent) {
+            mouseDownEvent.preventDefault();
+            $(document.body).css('cursor', 'row-resize');
             this.grid.updateLayoutData();
             this._attachMouseEvent();
         },
@@ -93,6 +96,7 @@
          * @private
          */
         _onMouseUp: function() {
+            $(document.body).css('cursor', 'default');
             this._detachMouseEvent();
         },
         /**
@@ -100,7 +104,8 @@
          * @return {boolean}
          * @private
          */
-        _onSelectStart: function() {
+        _onSelectStart: function(e) {
+            e.preventDefault();
             return false;
         },
         render: function() {

@@ -32,16 +32,18 @@
             View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
         },
         eventHandler: {
-            'click' : 'onClick',
-            'change select' : 'onChange'
+            'change select' : '_onChange'
         },
 
         getContentHtml: function(cellData) {
             var list = this._getOptionList(cellData),
                 html = '',
+                isDisabled = cellData.isDisabled,
                 len = list.length;
 
-            html += '<select name="' + Util.getUniqueKey() + '">';
+            html += '<select name="' + Util.getUniqueKey() + '"';
+            html += isDisabled ? ' disabled ' : '';
+            html += '>';
 
             for (var i = 0; i < len; i++) {
                 html += '<option ';
@@ -61,9 +63,7 @@
         setElementAttribute: function(cellData, $target) {
             $target.find('select').val(cellData.value);
         },
-        onClick: function(clickEvent) {
-        },
-        onChange: function(changeEvent) {
+        _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target);
 
@@ -82,11 +82,10 @@
             View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
         },
         eventHandler: {
-            'click' : 'onClick',
-            'change input' : 'onChange'
+            'change input' : '_onChange'
         },
         template: {
-            input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%>>'),
+            input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%> <%=disabled%> />'),
             label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
         getContentHtml: function(cellData) {
@@ -97,7 +96,7 @@
                 checkedList = ('' + value).split(','),
                 html = '',
                 name = Util.getUniqueKey(),
-
+                isDisabled = cellData.isDisabled,
                 id;
 
             for (var i = 0; i < len; i++) {
@@ -107,7 +106,8 @@
                     name: name,
                     id: id,
                     value: list[i].value,
-                    checked: $.inArray('' + list[i].value, checkedList) === -1 ? '' : 'checked'
+                    checked: $.inArray('' + list[i].value, checkedList) === -1 ? '' : 'checked',
+                    disabled: isDisabled ? 'disabled' : ''
                 });
                 if (list[i].text) {
                     html += this.template.label({
@@ -119,6 +119,9 @@
 
             return html;
         },
+        edit: function($td) {
+            $td.find('input').focus();
+        },
         setElementAttribute: function(cellData, $target) {
             //TODO
         },
@@ -128,8 +131,6 @@
                 type = columnModel.editOption.type;
 
             return type;
-        },
-        onClick: function(clickEvent) {
         },
         _getCheckedList: function($target) {
             var $checkedList = $target.closest('td').find('input[type=' + this._getEditType($target) + ']:checked'),
@@ -141,7 +142,7 @@
 
             return checkedList;
         },
-        onChange: function(changeEvent) {
+        _onChange: function(changeEvent) {
 
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target);

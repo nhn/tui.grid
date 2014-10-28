@@ -67,6 +67,7 @@
 .uio_grid table td a{color:#002caf}
 .uio_grid table td.editable{background-color:#ffffef}
 .uio_grid table td.selected{background-color:#f8f8f8;font-weight:bold}
+.uio_grid table td.disabled{color:#b0b0b0}
 .uio_grid table td.invalidated_row{background:#ffe1e1;}
 .uio_grid table td.invalidated_column, .uio_grid table td.invalidated_column input, .uio_grid table td.invalidated_column select{color:#ff0202}
 .uio_grid table td.focused{padding:0 9px;border:dotted 1px #190000;}

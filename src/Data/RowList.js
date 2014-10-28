@@ -15,6 +15,43 @@
             Model.Base.prototype.initialize.apply(this, arguments);
         },
         /**
+         * extraData 로 부터 rowState 를 object 형태로 리턴한다.
+         * @return {{isDisabled: boolean, isDisabledCheck: boolean}}
+         * @private
+         */
+        getRowState: function() {
+            var extraData = this.get('_extraData'),
+                rowState = extraData && extraData['rowState'],
+                isDisabledCheck = false,
+                isDisabled = false,
+                isChecked = false,
+                classNameList = [];
+
+            if (rowState) {
+                switch (rowState) {
+                    case 'DISABLED':
+                        isDisabled = true;
+                        break;
+                    case 'DISABLED_CHECK':
+                        isDisabledCheck = true;
+                        break;
+                    case 'CHECKED':
+                        isChecked = true;
+                }
+            }
+            isDisabledCheck = isDisabled ? isDisabled : isDisabledCheck;
+            if (isDisabled) {
+                classNameList.push('disabled');
+            }
+
+            return {
+                isDisabled: isDisabled,
+                isDisabledCheck: isDisabledCheck,
+                isChecked: isChecked,
+                classNameList: classNameList
+            };
+        },
+        /**
          * getRowSpanData
          *
          * rowSpan 관련 data 가져온다.
@@ -103,11 +140,11 @@
          * getRelationResult
          * 컬럼모델에 정의된 relation 을 수행한 결과를 반환한다.
          *
-         * @param {Array}   callbackList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisable', 'isEditable'])
+         * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisable', 'isEditable'])
          * @return {{columnName: {attribute: resultValue}}}
          */
-        getRelationResult: function(callbackList) {
-            callbackList = callbackList || ['optionListChange', 'isDisable', 'isEditable'];
+        getRelationResult: function(callbackNameList) {
+            callbackNameList = callbackNameList || ['optionListChange', 'isDisable', 'isEditable'];
 
             var callback, attribute, columnList,
                 value,
@@ -126,7 +163,7 @@
                     columnList = relation.columnList;
 
                     //각 relation 에 걸려있는 콜백들을 수행한다.
-                    _.each(callbackList, function(callbackName) {
+                    _.each(callbackNameList, function(callbackName) {
                         callback = relation[callbackName];
                         if (typeof callback === 'function') {
                             attribute = '';
@@ -244,6 +281,7 @@
         _isPrivateProperty: function(name) {
             return $.inArray(name, this._privateProperties) !== -1;
         },
+
         _onChange: function(row) {
             var getChangeEvent = function(row, columnName) {
                 return {
@@ -289,8 +327,10 @@
                     if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
                         columnModel.editOption.changeAfterCallback(changeEvent);
                     }
-                    //check
-                    row.set('_button', true);
+                    //check가 disable 이 아닐 경우에만.
+                    if (!row.getRowState().isDisabledCheck) {
+                        row.set('_button', true);
+                    }
                 }
             }, this);
         },
@@ -465,13 +505,20 @@
             }
 
 
-            var count, rowKey, columnModel;
+            var count, rowKey, columnModel, rowState, extraData;
 
 
             for (var i = 0; i < result.length; i++) {
                 rowKey = (keyColumnName === null) ? i : result[i][keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+
+                result[i]['_extraData'] = result[i]['_extraData'] || {};
+
+//                result[i]['_extraData']['rowState'] = (i % 5 === 0) ? 'DISABLED' : '';
+                result[i]['_extraData']['rowState'] = (i % 3 === 0) ? 'DISABLED_CHECK' : '';
+
+                rowState = result[i]['_extraData'] && result[i]['_extraData']['rowState'];
                 result[i]['rowKey'] = rowKey;
-                result[i]['_button'] = false;
+                result[i]['_button'] = rowState === 'CHECKED';
                 if (!this.isSortedByField()) {
                     //extraData 의 rowSpanData 가공
                     if (result[i]['_extraData'] && result[i]['_extraData']['rowSpan']) {

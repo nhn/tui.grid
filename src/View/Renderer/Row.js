@@ -15,6 +15,7 @@
             'key="<%=key%>" ' +
             'style="height: <%=height%>px;">' +
             '<%=contents%>' +
+            'class="<%=className%>" ' +
             '</tr>'),
         /**
          * 초기화 함수
@@ -49,12 +50,7 @@
          * event handler 를 전체 tr에 한번에 붙인다.
          */
         attachHandler: function() {
-            var $tr,
-                $trList = this.$parent.find('tr');
-            for (var i = 0; i < $trList.length; i++) {
-                $tr = $trList.eq(i);
-                this._attachHandler($tr);
-            }
+            this._attachHandler(this.$parent);
             this.grid.cellFactory.attachHandler(this.$parent);
             this._isEventAttached = true;
         },
@@ -64,12 +60,7 @@
          */
         detachHandler: function() {
             if (this._isEventAttached) {
-                var $target, $tr,
-                    $trList = this.$parent.find('tr');
-                for (var i = 0; i < $trList.length; i++) {
-                    $tr = $trList.eq(i);
-                    this._detachHandler($tr);
-                }
+                this._detachHandler(this.$parent);
                 this.grid.cellFactory.detachHandler(this.$parent);
             }
         },
@@ -98,15 +89,23 @@
          */
         _onModelChange: function(model) {
             var columnModel = this.grid.columnModel,
-                editType, cellInstance;
+                editType, cellInstance, rowState;
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
                     //editable 프로퍼티가 false 라면 normal type 으로 설정한다.
                     editType = this._getEditType(columnName, cellData);
                     cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, this._getTrElement(cellData.rowKey));
+                } else {
+                    rowState = cellData.rowState;
+                    if (rowState) {
+                        this._setRowState(rowState, this._getTrElement(cellData.rowKey));
+                    }
                 }
             }, this);
+        },
+        _setRowState: function(rowState, $tr) {
+//            $tr.addClass
         },
         /**
          * tr 엘리먼트를 찾아서 반환한다.
@@ -139,6 +138,7 @@
                 columnName, cellData, editType, cellInstance,
                 html = '';
             this.cellHandlerList = [];
+            console.log('model', model);
             for (var i = 0, len = columnModelList.length; i < len; i++) {
                 columnName = columnModelList[i]['columnName'];
                 cellData = model.get(columnName);
@@ -155,7 +155,8 @@
             return this.baseTemplate({
                 key: model.get('rowKey'),
                 height: this.grid.dimensionModel.get('rowHeight'),
-                contents: html
+                contents: html,
+                className: ''
             });
         }
     });

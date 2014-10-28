@@ -18,6 +18,9 @@
         initialize: function() {
             View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
         },
+        edit: function() {
+
+        },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * @param {object} cellData

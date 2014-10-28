@@ -55,7 +55,7 @@
         /**
          * rendering 시 사용할 template
          */
-        template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%>/>'),
+        template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
         /**
          * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
          * @param {object} cellData
@@ -63,10 +63,13 @@
          * @return {String}
          */
         getContentHtml: function(cellData, $target) {
+            var isDisabled = cellData.isDisabled;
+            console.log('button!!!', isDisabled);
             return this.template({
                 type: this.grid.option('selectType'),
                 name: this.grid.id,
-                checked: (!!cellData.value) ? 'checked' : ''
+                checked: (!!cellData.value) ? 'checked' : '',
+                disabled: isDisabled ? 'disabled' : ''
             });
         },
         setElementAttribute: function(cellData, $target) {

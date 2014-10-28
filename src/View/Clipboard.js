@@ -36,7 +36,7 @@
                 'left': 0,
                 'width': '100px',
                 'height': '100px'
-            })
+            });
             return this;
         },
         /**
@@ -69,6 +69,7 @@
                 focusModel = grid.focusModel,
                 selection = grid.selection,
                 focused = focusModel.which(),
+                displayRowCount = grid.dimensionModel.getDisplayRowCount(),
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
             selection.endSelection();
@@ -85,6 +86,12 @@
                     break;
                 case keyMap['RIGHT_ARROW']:
                     grid.focus(focused.rowKey, focusModel.nextColumnName(), true);
+                    break;
+                case keyMap['PAGE_UP']:
+                    grid.focus(focusModel.prevRowKey(displayRowCount - 1), focused.columnName, true);
+                    break;
+                case keyMap['PAGE_DOWN']:
+                    grid.focus(focusModel.nextRowKey(displayRowCount - 1), focused.columnName, true);
                     break;
                 case keyMap['ENTER']:
                     break;
@@ -147,6 +154,7 @@
                 selection = this.grid.selection,
                 focusModel = this.grid.focusModel,
                 focused = this.grid.focusModel.indexOf(),
+                displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             switch (keyCode) {
                 case keyMap['UP_ARROW']:
@@ -160,6 +168,12 @@
                     break;
                 case keyMap['RIGHT_ARROW']:
                     this._updateSelectionByKeyIn(focused.rowIdx, focusModel.nextColumnIndex());
+                    break;
+                case keyMap['PAGE_UP']:
+                    this._updateSelectionByKeyIn(focusModel.prevRowIndex(displayRowCount - 1), focused.columnIdx);
+                    break;
+                case keyMap['PAGE_DOWN']:
+                    this._updateSelectionByKeyIn(focusModel.nextRowIndex(displayRowCount - 1), focused.columnIdx);
                     break;
                 case keyMap['ENTER']:
                     break;

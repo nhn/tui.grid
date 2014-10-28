@@ -11,15 +11,21 @@
             var rowKey = attributes && attributes['rowKey'];
 
             if (this.grid.dataModel.get(rowKey)) {
-                this.listenTo(this.grid.dataModel.get(rowKey), 'change', this._onModelChange, this);
-                this.listenTo(this.grid.dataModel.get(rowKey), 'restore', this._onModelChange, this);
+                this.listenTo(this.grid.dataModel.get(rowKey), 'change', this._onDataModelChange, this);
+                this.listenTo(this.grid.dataModel.get(rowKey), 'restore', this._onDataModelChange, this);
             }
         },
-        _onModelChange: function(model) {
-//            console.log('_onModelChange', this.collection);
+        /**
+         * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
+         * @param {Object} model
+         * @private
+         */
+        _onDataModelChange: function(model) {
             _.each(model.changed, function(value, columnName) {
                 if (columnName === '_extraData') {
-                    this.correctRowSpanData(value);
+                    // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 rowSpan 된
+                    // row model 에 연결된 focus, select, disable 를 업데이트 한다.
+                    this._updateRowSpanned(model, value);
                 }else {
                     this.setCell(columnName, {
                         value: value
@@ -27,35 +33,45 @@
                 }
             }, this);
         },
-        _onExtraDataChange: function(rowModel) {
-            var extraData = rowModel.get('_extraData');
-            this.correctRowSpanData(extraData);
-        },
-        correctRowSpanData: function(extraData) {
+
+        /**
+         * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
+         * @param {Object} model dataModelCollection 의 모델
+         * @param {Object} extraData
+         * @private
+         */
+        _updateRowSpanned: function(model, extraData) {
             if (this.collection) {
-                var selected = extraData['selected'] || false;
-                var focusedColumnName = extraData['focused'];
-                var columnModel = this.grid.columnModel.get('visibleList');
+                var selected = extraData['selected'] || false,
+                    focusedColumnName = extraData['focused'],
+                    columnModel = this.grid.columnModel.getVisibleColumnModelList(),
+                    rowState = model.getRowState();
                 _.each(columnModel, function(column, key) {
                     var mainRowKey,
                         columnName = column['columnName'],
                         cellData = this.get(columnName),
                         rowModel = this,
-                        focused = (columnName === focusedColumnName);
+                        focused = (columnName === focusedColumnName),
+                        isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
+
 
                     if (cellData) {
                         if (!this.grid.dataModel.isSortedByField()) {
-                            if (this.collection.get(cellData['mainRowKey'])) {
-                                rowModel = this.collection.get(cellData['mainRowKey']);
+                            rowModel = this.collection.get(cellData['mainRowKey']);
+                            if (rowModel) {
                                 rowModel.setCell(columnName, {
                                     focused: focused,
-                                    selected: selected
+                                    selected: selected,
+                                    isDisabled: isDisabled,
+                                    className: rowState.classNameList.join(' ')
                                 });
                             }
                         }else {
                             rowModel.setCell(columnName, {
                                 focused: focused,
-                                selected: selected
+                                selected: selected,
+                                isDisabled: isDisabled,
+                                className: rowState.classNameList.join(' ')
                             });
                         }
                     }
@@ -65,17 +81,21 @@
         },
         parse: function(data) {
             //affect option 을 먼저 수행한다.
-            var columnModel = this.collection.grid.columnModel.get('columnModelList');
-            var rowKey = data['rowKey'];
+            var dataModel = this.collection.grid.dataModel,
+                rowKey = data['rowKey'];
+
             _.each(data, function(value, columnName) {
                 var rowSpanData,
                     focused = data['_extraData']['focused'] === columnName,
                     selected = !!data['_extraData']['selected'],
+                    rowState = dataModel.get(rowKey).getRowState(),
+                    isDisabled = rowState.isDisabled,
                     defaultRowSpanData = {
                         mainRowKey: rowKey,
                         count: 0,
                         isMainRow: true
                     };
+
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
 
                     if (this.collection.grid.dataModel.isSortedByField()) {
@@ -83,9 +103,8 @@
                     }else {
                         rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] && data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
                     }
+                    isDisabled = columnName === '_button' ? rowState.isDisabledCheck : isDisabled;
 
-                    var model = this.collection.grid.dataModel.get(rowKey);
-                    //@TODO: 기타 옵션 function 활용하여 editable, disabled 값을 설정한다.
                     data[columnName] = {
                         rowKey: rowKey,
                         columnName: columnName,
@@ -97,9 +116,9 @@
                         mainRowKey: rowSpanData.mainRowKey,
                         //Change attribute properties
                         isEditable: true,
-                        isDisabled: false,
+                        isDisabled: isDisabled,
                         optionList: [],
-                        className: '',
+                        className: rowState.classNameList.join(' '),
                         focused: focused,
                         selected: selected,
 
@@ -131,6 +150,7 @@
                         changed.push(name);
                     }
                 }
+                console.log('setCell', param);
                 if (changed.length) {
                     data['changed'] = changed;
                     this.set(columnName, data);

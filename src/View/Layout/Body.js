@@ -22,12 +22,14 @@
             this.setOwnProperties({
                 whichSide: attributes && attributes.whichSide || 'R'
             });
-            this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
-            this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
-            this.listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this);
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
-            this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this);
+
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+                .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
+                .listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this)
+                .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
+                .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
+                .listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
+
         },
         _onBodyHeightChange: function(model, value) {
             this.$el.css('height', value + 'px');
@@ -109,7 +111,7 @@
             this.$el.children('.table_container').css('top', value + 'px');
         },
         _onBeforeRefresh: function() {
-            this.el.scrollTop = this.grid.renderModel.get('scrollTop');
+            this.el.scrollTop = this.grid.renderModel.previous('scrollTop');
         },
         _getViewCollection: function() {
             return this.grid.renderModel.getCollection(this.whichSide);
