@@ -168,7 +168,9 @@
                 if (selector) {
                     $target = $el.find(selector);
                 }
-                $target.on(eventName, handler);
+                if ($target.length > 0) {
+                    $target.on(eventName, handler);
+                }
             }, this);
         },
         _detachHandler: function($el) {
@@ -179,7 +181,9 @@
                 if (selector) {
                     $target = $el.find(selector);
                 }
-                $target.off(eventName, handler);
+                if ($target.length > 0) {
+                    $target.off(eventName, handler);
+                }
             }, this);
         },
         getHtml: function() {
@@ -257,6 +261,7 @@
                 classNameMap = {},
                 columnName = cellData.columnName,
                 privateColumnList = ['_button', '_number'],
+                isPrivate = $.inArray(columnName, privateColumnList) !== -1,
                 i, len;
 
             if (cellData.className) {
@@ -268,8 +273,11 @@
             if (cellData.focused === true) {
                 classNameList.push('focused');
             }
-            if (cellData.isEditable === true && $.inArray(columnName, privateColumnList) === -1) {
+            if (cellData.isEditable === true && !isPrivate) {
                 classNameList.push('editable');
+            }
+            if (cellData.isDisabled === true && !isPrivate) {
+                classNameList.push('disabled');
             }
 
             len = classNameList.length;
@@ -326,6 +334,9 @@
         },
         _getCellElement: function(columnName, $tr) {
             return $tr.find('td[columnName="' + columnName + '"]');
+        },
+        _getCellData: function($tr) {
+            return this.grid.renderModel.getCellData(this._getRowKey($tr), this._getColumnName($tr));
         },
         _getCellAddress: function($target) {
             return {

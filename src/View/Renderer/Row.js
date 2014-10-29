@@ -90,6 +90,7 @@
         _onModelChange: function(model) {
             var columnModel = this.grid.columnModel,
                 editType, cellInstance, rowState;
+
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
                     //editable 프로퍼티가 false 라면 normal type 으로 설정한다.

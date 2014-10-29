@@ -38,6 +38,7 @@
                 rside: rside
             });
         },
+
         test: function(model) {
             console.log('change', model.changed);
         },
@@ -172,6 +173,14 @@
                 return lside;
             } else {
                 return rside;
+            }
+        },
+
+        getCellData: function(rowKey, columnName) {
+            var collection = this._getRowListDivision(columnName),
+                row = collection.get(rowKey);
+            if (row) {
+               return row.get(columnName);
             }
         },
         /**

@@ -172,16 +172,15 @@
         _onClick: function(clickEvent) {
             var $target = $(clickEvent.target);
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
-                this.focusClipboard();
-                this.selection.show();
+
             }
         },
         _onMouseDown: function(mouseDownEvent) {
-            console.log('grid mousedown');
             var $target = $(mouseDownEvent.target);
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
                 mouseDownEvent.preventDefault();
-                this.trigger('mousedown', mouseDownEvent);
+                this.focusClipboard();
+                this.selection.show();
             }
         },
         focusClipboard: function() {

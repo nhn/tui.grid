@@ -19,7 +19,8 @@
                     new View.Renderer.Cell.Normal(args),
                     new View.Renderer.Cell.Text(args),
                     new View.Renderer.Cell.List.Button(args),
-                    new View.Renderer.Cell.List.Select(args)
+                    new View.Renderer.Cell.List.Select(args),
+                    new View.Renderer.Cell.Text.Convertible(args)
                 ];
 
             _.each(instanceList, function(instance, name) {
@@ -37,6 +38,9 @@
                     instance = this.instances[editType];
                     break;
                 case 'text' :
+                    instance = this.instances[editType];
+                    break;
+                case 'text-convertible' :
                     instance = this.instances[editType];
                     break;
                 case 'select':
