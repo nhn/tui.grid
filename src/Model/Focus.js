@@ -233,8 +233,10 @@
                 rowKey = focused.rowKey,
                 rowSpanData;
             offset = typeof offset === 'number' ? offset : 1;
-            if (offset > 1) {
-                rowKey = this.findRowKey(-1 * offset);
+            offset *= -1;
+
+            if (offset < -1) {
+                rowKey = this.findRowKey(offset);
                 rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
                 if (!rowSpanData.isMainRow) {
                     rowKey = this.findRowKey(rowSpanData.count + offset);
