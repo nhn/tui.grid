@@ -199,7 +199,7 @@
         },
         baseTemplate: _.template('<td ' +
             ' columnName="<%=columnName%>"' +
-            ' rowSpan="<%=rowSpan%>"' +
+            ' <%=rowSpan%>' +
             ' class="<%=className%>"' +
             ' <%=attributes%>' +
             ' data-cell-type="<%=cellType%>"' +
@@ -286,7 +286,7 @@
         getHtml: function(cellData) {
             return this.baseTemplate({
                 columnName: cellData.columnName,
-                rowSpan: cellData.rowSpan,
+                rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
                 className: this._getClassNameList(cellData).join(' '),
                 attributes: this.getAttributes(cellData),
                 cellType: this.cellType,
