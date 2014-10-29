@@ -1,6 +1,6 @@
     View.Renderer.Cell.Text = View.Base.Renderer.Cell.Interface.extend({
         cellType: 'text',
-        shouldRenderList: ['isEditable', 'optionList'],
+        rerenderAttributes: ['isEditable', 'optionList'],
         eventHandler: {
             'blur input' : '_onBlur',
             'keydown input': '_onKeyDown'
@@ -17,6 +17,7 @@
             var $input = $td.find('input');
             this.originalText = $input.val();
             $input.focus();
+            Util.setCursorToEnd($input.get(0));
 
         },
         focusOut: function() {
@@ -50,9 +51,9 @@
                     break;
                 case keyMap['TAB']:
                     if (keyDownEvent.shiftKey) {
-                        //이전
+                        //이전 cell 로 focus 이동
                     } else {
-                        //이후
+                        //이후 cell 로 focus 이동
                     }
                     break;
                 default:

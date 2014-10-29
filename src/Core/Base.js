@@ -192,7 +192,7 @@
     View.Base.Renderer.Cell = View.Base.Renderer.extend({
         cellType: 'normal',
         eventHandler: {},
-        shouldRenderList: ['isEditable', 'optionList', 'value'],
+        rerenderAttributes: ['isEditable', 'optionList', 'value'],
         initialize: function(attributes, options) {
             View.Base.Renderer.prototype.initialize.apply(this, arguments);
             this._initializeEventHandler();
@@ -208,22 +208,25 @@
             '</td>'),
         onModelChange: function(cellData, $tr) {
             var $target = this._getCellElement(cellData.columnName, $tr),
-                shouldRender = false;
+                isRerender = false;
 
             this._setFocusedClass(cellData, $target);
 
-            for (var i = 0; i < this.shouldRenderList.length; i++) {
-                if ($.inArray(this.shouldRenderList[i], cellData.changed) !== -1) {
-                    shouldRender = true;
+            for (var i = 0; i < this.rerenderAttributes.length; i++) {
+                if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
+                    isRerender = true;
                     break;
                 }
             }
 
-            if (shouldRender === true) {
+            $target.attr('class', this._getClassNameList(cellData).join(' '));
+
+            if (isRerender === true) {
                 this.render(cellData, $target);
             }else {
                 this.setElementAttribute(cellData, $target);
             }
+
         },
         attachHandler: function($target) {
             this._attachHandler($target);
@@ -243,9 +246,18 @@
             $target.data('cell-type', this.cellType).html(this.getContentHtml(cellData));
             this._attachHandler($target);
         },
-
-        getHtml: function(cellData) {
-            var classNameList = [];
+        /**
+         * cellData 정보에서 className 을 추출한다.
+         * @param {Object} cellData
+         * @return {Array}
+         * @private
+         */
+        _getClassNameList: function(cellData) {
+            var classNameList = [],
+                classNameMap = {},
+                columnName = cellData.columnName,
+                privateColumnList = ['_button', '_number'],
+                i, len;
 
             if (cellData.className) {
                 classNameList.push(cellData.className);
@@ -256,11 +268,26 @@
             if (cellData.focused === true) {
                 classNameList.push('focused');
             }
+            if (cellData.isEditable === true && $.inArray(columnName, privateColumnList) === -1) {
+                classNameList.push('editable');
+            }
 
+            len = classNameList.length;
+            //중복제거
+            for (i = 0; i < len; i++) {
+                classNameMap[classNameList[i]] = true;
+            }
+            classNameList = [];
+            _.each(classNameMap, function(val, className) {
+                classNameList.push(className);
+            }, this);
+            return classNameList;
+        },
+        getHtml: function(cellData) {
             return this.baseTemplate({
                 columnName: cellData.columnName,
                 rowSpan: cellData.rowSpan,
-                className: classNameList.join(' '),
+                className: this._getClassNameList(cellData).join(' '),
                 attributes: this.getAttributes(cellData),
                 cellType: this.cellType,
                 content: this.getContentHtml(cellData)

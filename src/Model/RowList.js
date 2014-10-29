@@ -79,7 +79,8 @@
         },
         parse: function(data) {
             //affect option 을 먼저 수행한다.
-            var dataModel = this.collection.grid.dataModel,
+            var grid = this.collection.grid,
+                dataModel = grid.dataModel,
                 rowKey = data['rowKey'];
 
             _.each(data, function(value, columnName) {
@@ -88,6 +89,7 @@
                     selected = !!data['_extraData']['selected'],
                     rowState = dataModel.get(rowKey).getRowState(),
                     isDisabled = rowState.isDisabled,
+                    isEditable = grid.isEditable(rowKey, columnName),
                     defaultRowSpanData = {
                         mainRowKey: rowKey,
                         count: 0,
@@ -96,7 +98,7 @@
 
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
 
-                    if (this.collection.grid.dataModel.isSortedByField()) {
+                    if (grid.dataModel.isSortedByField()) {
                         rowSpanData = defaultRowSpanData;
                     }else {
                         rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] && data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
@@ -113,7 +115,7 @@
                         isMainRow: rowSpanData.isMainRow,
                         mainRowKey: rowSpanData.mainRowKey,
                         //Change attribute properties
-                        isEditable: true,
+                        isEditable: isEditable,
                         isDisabled: isDisabled,
                         optionList: [],
                         className: rowState.classNameList.join(' '),

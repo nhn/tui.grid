@@ -3,7 +3,7 @@
      * @type {*|void}
      */
     View.Renderer.Cell.List = View.Base.Renderer.Cell.Interface.extend({
-        shouldRenderList: ['isEditable', 'optionList'],
+        rerenderAttributes: ['isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {

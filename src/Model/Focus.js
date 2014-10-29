@@ -223,26 +223,7 @@
             }
             return rowKey;
         },
-        isEditable: function(rowKey, columnName) {
-            rowKey = rowKey !== undefined ? rowKey : this.get('rowKey');
-            columnName = columnName !== undefined ? columnName : this.get('columnName');
 
-            var columnModel = this.grid.columnModel,
-                dataModel = this.grid.dataModel,
-                editType = columnModel.getEditType(columnName),
-                row, relationResult;
-
-            rowKey = rowKey !== undefined ? rowKey : this.get('rowKey');
-            columnName = columnName !== undefined ? columnName : this.get('columnName');
-
-            if (!editType) {
-                return false;
-            } else {
-                row = dataModel.get(rowKey);
-                relationResult = row.getRelationResult()[columnName];
-                return !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
-            }
-        },
         /**
          * keyEvent 발생 시 이전 rowKey 를 반환한다.
          * @return {Number|String}

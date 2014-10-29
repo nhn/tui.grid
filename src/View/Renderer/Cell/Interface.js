@@ -10,7 +10,7 @@
         /**
          * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록
          */
-        shouldRenderList: ['isEditable', 'optionList', 'value'],
+        rerenderAttributes: ['isEditable', 'optionList', 'value'],
         /**
          * event handler
          */
@@ -18,11 +18,12 @@
         initialize: function() {
             View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
         },
-        focusIn: function() {
-
+        focusIn: function($td) {
+            //todo: cell 에서 키보드 enter 를 입력하여 focus 될 때 수행할 로직을 구현한다.
         },
         focusOut: function() {
-
+            //todo: focus in 상태에서 키보드 esc 를 입력하여 focus out 될 때 수행할 로직을 필요에 따라 override 한다.
+            this.grid.focusClipboard();
         },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
@@ -37,14 +38,16 @@
          * </select>
          */
         getContentHtml: function(cellData) {
+            //todo: rerenderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
         /**
-         * model의 shouldRenderList 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * model의 rerenderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * @param {object} cellData
          * @param {jquery} $target
          */
         setElementAttribute: function(cellData, $target) {
+            //todo: rerenderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
         }
     });

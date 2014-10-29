@@ -95,7 +95,7 @@
                     grid.focus(focusModel.nextRowKey(displayRowCount - 1), focused.columnName, true);
                     break;
                 case keyMap['ENTER']:
-                    if (focusModel.isEditable()) {
+                    if (this.grid.isEditable()) {
                         cellInstance = grid.cellFactory.getInstance(grid.columnModel.getEditType(focused.columnName));
                         cellInstance.focusIn(this.grid.getCellElement(focused.rowKey, focused.columnName));
                     }

@@ -130,7 +130,7 @@
          */
         getEditType: function(columnName) {
             var columnModel = this.getColumnModel(columnName);
-            return (columnName === '_button') ? 'main' : columnModel['editOption'] && columnModel['editOption']['type'];
+            return (columnName === '_button') ? 'main' : columnModel && columnModel['editOption'] && columnModel['editOption']['type'];
         },
         _getVisibleList: function() {
             return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});

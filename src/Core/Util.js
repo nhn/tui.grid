@@ -8,6 +8,20 @@
         getRowHeight: function(rowCount, tbodyHeight) {
             return Math.floor(((tbodyHeight - 1) / rowCount));
         },
+        setCursorToEnd: function(targetEl) {
+            targetEl.focus();
+            var length = targetEl.value.length;
+
+            if (targetEl.setSelectionRange) {
+                targetEl.setSelectionRange(length, length);
+            } else if (targetEl.createTextRange) {
+                var range = targetEl.createTextRange();
+                range.collapse(true);
+                range.moveEnd('character', length);
+                range.moveStart('character', length);
+                range.select();
+            }
+        },
         /**
          * html Tag 문자가 포함되었는지 확인
          * @param {String} string

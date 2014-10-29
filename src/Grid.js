@@ -308,6 +308,31 @@
             });
         },
         /**
+         * rowKey 와 columnName 을 받아 edit 가능한 cell 인지를 반환한다.
+         * @param {Number|String} rowKey
+         * @param {String} columnName
+         * @return {Boolean}
+         */
+        isEditable: function(rowKey, columnName) {
+            var focused = this.focusModel.which();
+
+            rowKey = rowKey !== undefined ? rowKey : focused.rowKey;
+            columnName = columnName !== undefined ? columnName : focused.columnName;
+
+            var columnModel = this.columnModel,
+                dataModel = this.dataModel,
+                editType = columnModel.getEditType(columnName),
+                row, relationResult;
+
+            if (!editType) {
+                return false;
+            } else {
+                row = dataModel.get(rowKey);
+                relationResult = row.getRelationResult()[columnName];
+                return !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
+            }
+        },
+        /**
          * cell element (TD) 를 반환한다.
          * @param {Number|String}   rowKey
          * @param {String}  columnName
