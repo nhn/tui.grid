@@ -27,7 +27,9 @@
         initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                timeoutIdForClipboard: 0
+                timeoutIdForCopy: 0,
+                timeoutIdForKeyIn: 0,
+                isLocked: false
             });
         },
         render: function() {
@@ -39,6 +41,12 @@
             });
             return this;
         },
+        _lock: function() {
+
+        },
+        _unlock: function() {
+
+        },
         /**
          * keyDown event handler
          * @param {event} keyDownEvent
@@ -46,17 +54,25 @@
          */
         _onKeydown: function(keyDownEvent) {
             var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
-                this._keyInWithShiftAndCtrl(keyDownEvent);
-            } else if (keyDownEvent.shiftKey) {
-                this._keyInWithShift(keyDownEvent);
-            } else if (keyDownEvent.ctrlKey || keyDownEvent.metaKey) {
-                this._keyInWithCtrl(keyDownEvent);
+            if (this.isLocked) {
+                keyDownEvent.prevetnDefault();
+                return false;
             } else {
-                this._keyIn(keyDownEvent);
+                clearTimeout(this.timeoutIdForKeyIn);
+                this.isLocked = true;
+                this.timeoutIdForKeyIn = setTimeout($.proxy(function(){
+                    this.isLocked = false;
+                }, this), 10);
+                if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
+                    this._keyInWithShiftAndCtrl(keyDownEvent);
+                } else if (keyDownEvent.shiftKey) {
+                    this._keyInWithShift(keyDownEvent);
+                } else if (keyDownEvent.ctrlKey || keyDownEvent.metaKey) {
+                    this._keyInWithCtrl(keyDownEvent);
+                } else {
+                    this._keyIn(keyDownEvent);
+                }
             }
-
         },
         /**
          * ctrl, shift 둘다 눌리지 않은 상태에서의 key down event 핸들러
@@ -69,36 +85,34 @@
                 focusModel = grid.focusModel,
                 selection = grid.selection,
                 focused = focusModel.which(),
+                rowKey = focused.rowKey,
+                columnName = focused.columnName,
                 displayRowCount = grid.dimensionModel.getDisplayRowCount(),
-                cellInstance,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
             selection.endSelection();
 
             switch (keyCode) {
                 case keyMap['UP_ARROW']:
-                    grid.focus(focusModel.prevRowKey(), focused.columnName, true);
+                    grid.focus(focusModel.prevRowKey(), columnName, true);
                     break;
                 case keyMap['DOWN_ARROW']:
-                    grid.focus(focusModel.nextRowKey(), focused.columnName, true);
+                    grid.focus(focusModel.nextRowKey(), columnName, true);
                     break;
                 case keyMap['LEFT_ARROW']:
-                    grid.focus(focused.rowKey, focusModel.prevColumnName(), true);
+                    grid.focus(rowKey, focusModel.prevColumnName(), true);
                     break;
                 case keyMap['RIGHT_ARROW']:
-                    grid.focus(focused.rowKey, focusModel.nextColumnName(), true);
+                    grid.focus(rowKey, focusModel.nextColumnName(), true);
                     break;
                 case keyMap['PAGE_UP']:
-                    grid.focus(focusModel.prevRowKey(displayRowCount - 1), focused.columnName, true);
+                    grid.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
                     break;
                 case keyMap['PAGE_DOWN']:
-                    grid.focus(focusModel.nextRowKey(displayRowCount - 1), focused.columnName, true);
+                    grid.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
                     break;
                 case keyMap['ENTER']:
-                    if (this.grid.isEditable()) {
-                        cellInstance = grid.cellFactory.getInstance(grid.columnModel.getEditType(focused.columnName));
-                        cellInstance.focusIn(this.grid.getCellElement(focused.rowKey, focused.columnName));
-                    }
+                    this._focusIn(rowKey, columnName);
                     break;
                 case keyMap['TAB']:
                     break;
@@ -106,6 +120,24 @@
                     break;
             }
             keyDownEvent.preventDefault();
+        },
+        /**
+         * Cell 을 편집모드로 전환한다.
+         * @param {Number|String} rowKey
+         * @param {String} columnName
+         * @private
+         */
+        _focusIn: function(rowKey, columnName){
+            var grid = this.grid,
+                cellInstance, cellData;
+            if (grid.isEditable()) {
+                cellInstance = grid.cellFactory.getInstance(grid.columnModel.getEditType(columnName));
+                if (!grid.isSorted()) {
+                    cellData = grid.renderModel.getCellData(rowKey, columnName);
+                    rowKey = cellData.mainRowKey;
+                }
+                cellInstance.focusIn(grid.getCellElement(rowKey, columnName));
+            }
         },
         /**
          * ctrl, shift 둘다 눌린 상태에서의 key down event handler
@@ -241,7 +273,7 @@
             } else {
                 this.$el.val(text).select();
             }
-            this.timeoutIdForClipboard = setTimeout($.proxy(function() {
+            this.timeoutIdForCopy = setTimeout($.proxy(function() {
                 this.$el.val('');
             }, this), 0);
         }

@@ -175,7 +175,12 @@
                 return rside;
             }
         },
-
+        /**
+         * CellData 를 가져온다.
+         * @param rowKey
+         * @param columnName
+         * @returns {*}
+         */
         getCellData: function(rowKey, columnName) {
             var collection = this._getRowListDivision(columnName),
                 row = collection.get(rowKey);

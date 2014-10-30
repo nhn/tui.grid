@@ -307,6 +307,13 @@
             });
         },
         /**
+         * 정렬이 되었는지 여부 반환
+         * @return {Boolean}
+         */
+        isSorted: function() {
+            return this.dataModel.isSortedByField();
+        },
+        /**
          * rowKey 와 columnName 을 받아 edit 가능한 cell 인지를 반환한다.
          * @param {Number|String} rowKey
          * @param {String} columnName

@@ -297,7 +297,7 @@
                         row: [startRow, endRow],
                         column: [startColumn, endColumn]
                     };
-                if (!this.grid.dataModel.isSortedByField()) {
+                if (!this.grid.isSorted()) {
                     tmpRowRange = $.extend([], spannedRange.row);
 
                     //rowSpan 처리를 위해 startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.

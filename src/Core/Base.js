@@ -211,10 +211,12 @@
             '<%=content%>' +
             '</td>'),
         onModelChange: function(cellData, $tr) {
-            var $target = this._getCellElement(cellData.columnName, $tr),
-                isRerender = false;
+            var $td = this._getCellElement(cellData.columnName, $tr),
+                isRerender = false,
+                isValueChanged = $.inArray('value', cellData.changed) !== -1,
+                hasFocusedElement;
 
-            this._setFocusedClass(cellData, $target);
+            this._setFocusedClass(cellData, $td);
 
             for (var i = 0; i < this.rerenderAttributes.length; i++) {
                 if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
@@ -223,13 +225,19 @@
                 }
             }
 
-            $target.attr('class', this._getClassNameList(cellData).join(' '));
+            $td.attr('class', this._getClassNameList(cellData).join(' '));
+
+            hasFocusedElement = !!($td.find(':focus').length);
 
             if (isRerender === true) {
-                this.render(cellData, $target);
-            }else {
-                this.setElementAttribute(cellData, $target);
+                this.render(cellData, $td, hasFocusedElement);
+                if (hasFocusedElement) {
+                    this.focusIn($td);
+                }
+            } else {
+                this.setElementAttribute(cellData, $td, hasFocusedElement);
             }
+
 
         },
         attachHandler: function($target) {
@@ -242,13 +250,13 @@
             (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
             (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
         },
-        setElementAttribute: function(cellData, $target) {
+        setElementAttribute: function(cellData, $td, $focused) {
 
         },
-        render: function(cellData, $target) {
-            this._detachHandler($target);
-            $target.data('cell-type', this.cellType).html(this.getContentHtml(cellData));
-            this._attachHandler($target);
+        render: function(cellData, $td, $focused) {
+            this._detachHandler($td);
+            $td.data('cell-type', this.cellType).html(this.getContentHtml(cellData, $td, $focused));
+            this._attachHandler($td);
         },
         /**
          * cellData 정보에서 className 을 추출한다.

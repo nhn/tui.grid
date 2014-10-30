@@ -26,7 +26,7 @@
                 startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
                 endIdx = Math.min(this.grid.dataModel.length - 1,
                     Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
-            if (!this.grid.dataModel.isSortedByField()) {
+            if (!this.grid.isSorted()) {
                 var minList = [];
                 var maxList = [];
                 _.each(this.grid.dataModel.at(startIdx).get('_extraData')['rowSpanData'], function(data, columnName) {

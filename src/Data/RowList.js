@@ -354,6 +354,10 @@
                 });
             }
         },
+        /**
+         * 정렬이 되었는지 여부 반환
+         * @return {Boolean}
+         */
         isSortedByField: function() {
             return this._sortKey !== 'rowKey';
         },

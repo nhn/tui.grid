@@ -22,6 +22,36 @@
                 range.select();
             }
         },
+        isEqual: function(target, dist) {
+            var i, len, pro;
+            if ( typeof target !== typeof dist ) {
+                return false;
+            }
+
+            if ( target instanceof Array ) {
+                len = target.length;
+                if (len !== dist.length){
+                    return false;
+                } else {
+                    for (i = 0; i < len; i++) {
+                        if (target[i] !== dist[i] ) {
+                            return false;
+                        }
+                    }
+                }
+            } else if ( typeof target === 'object') {
+                for (pro in target) {
+                    if (target[pro] !== dist[pro] ) {
+                        return false;
+                    }
+                }
+            } else {
+                if (target !== dist ) {
+                    return false;
+                }
+            }
+            return true;
+        },
         /**
          * html Tag 문자가 포함되었는지 확인
          * @param {String} string

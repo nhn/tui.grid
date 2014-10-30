@@ -2,9 +2,9 @@
      * editOption 이 적용되지 않은 cell 의 renderer
      * @class
      */
-    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.Interface.extend({
+    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.Abstract.extend({
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
         },
         /**
          * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
@@ -36,7 +36,7 @@
      * checkbox 혹은 radiobox 형태의 Main Button renderer
      * @class
      */
-    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.Interface.extend({
+    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.Abstract.extend({
         /**
          * event Handler attach 하기 위한 cell type
          */
@@ -50,7 +50,7 @@
             'change input' : '_onChange'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
         },
         /**
          * rendering 시 사용할 template

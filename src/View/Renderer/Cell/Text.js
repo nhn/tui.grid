@@ -1,7 +1,7 @@
     /**
      * text-textbox 변환 가능한 cell renderer
      */
-    View.Renderer.Cell.Text = View.Base.Renderer.Cell.Interface.extend({
+    View.Renderer.Cell.Text = View.Base.Renderer.Cell.Abstract.extend({
         cellType: 'text',
         rerenderAttributes: ['isEditable'],
         eventHandler: {
@@ -9,7 +9,7 @@
             'keydown input': '_onKeyDown'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Interface.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 originalText: ''
             });

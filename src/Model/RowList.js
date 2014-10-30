@@ -56,7 +56,7 @@
                         isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
 
                     if (cellData) {
-                        if (!this.grid.dataModel.isSortedByField()) {
+                        if (!this.grid.isSorted()) {
                             if (!cellData['isMainRow']) {
                                 rowModel = this.collection.get(cellData['mainRowKey']);
                             }
@@ -98,7 +98,7 @@
 
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
 
-                    if (grid.dataModel.isSortedByField()) {
+                    if (grid.isSorted()) {
                         rowSpanData = defaultRowSpanData;
                     }else {
                         rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] && data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
@@ -144,7 +144,8 @@
                     rowKey = this.get(columnName)['rowKey'];
 
                 for (var name in param) {
-                    if (data[name] !== param[name]) {
+
+                    if (!Util.isEqual(data[name], param[name])) {
                         isValueChanged = (name === 'value') ? true : isValueChanged;
                         data[name] = param[name];
                         changed.push(name);
