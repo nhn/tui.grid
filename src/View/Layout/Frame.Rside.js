@@ -61,14 +61,18 @@
             this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
             this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-
+            this.timeoutForScroll = 0;
         },
         template: _.template('<div class="content"></div>'),
         events: {
             'scroll' : '_onScroll'
         },
         _onScroll: function(scrollEvent) {
-            this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
+            clearTimeout(this.timeoutForScroll);
+            this.timeoutForScroll = setTimeout($.proxy(function() {
+                this.grid.renderModel.set('$scrollTarget', this.$el);
+                this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
+            }, this), 10);
         },
         _onDimensionChange: function(model) {
             if (model.changed['headerHeight'] || model.changed['bodyHeight']) {

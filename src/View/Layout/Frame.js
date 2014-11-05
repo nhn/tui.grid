@@ -12,7 +12,6 @@
         },
         render: function() {
             this.destroyChildren();
-            this.trigger('beforeRender');
             this.beforeRender();
 
             var header = this.header = this.createView(View.Layout.Header, {

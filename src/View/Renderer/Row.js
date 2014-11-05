@@ -79,7 +79,7 @@
                 rowKey = $tr.attr('key');
             this.grid.focus(rowKey, columnName);
             if (this.grid.option('selectType') === 'radio') {
-                this.grid.checkRow(rowKey);
+                this.grid.check(rowKey);
             }
         },
         /**
@@ -88,8 +88,7 @@
          * @private
          */
         _onModelChange: function(model) {
-            var columnModel = this.grid.columnModel,
-                editType, cellInstance, rowState;
+            var editType, cellInstance, rowState;
 
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
@@ -125,7 +124,11 @@
          * @private
          */
         _getEditType: function(columnName, cellData) {
-            return !cellData.isEditable ? 'normal' : this.grid.columnModel.getEditType(columnName);
+            var editType = this.grid.columnModel.getEditType(columnName);
+            if (!cellData.isEditable && columnName !== '_number') {
+                editType = 'normal';
+            }
+            return editType;
         },
         /**
          * html 마크업을 반환

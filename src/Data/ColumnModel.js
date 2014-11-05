@@ -90,7 +90,7 @@
          * index 에 해당하는 columnModel 을 반환한다.
          * @param {Number} index
          * @param {Boolean} isVisible
-         * @returns {*}
+         * @return {*}
          */
         at: function(index, isVisible) {
             var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
@@ -129,8 +129,14 @@
          * @return {string}
          */
         getEditType: function(columnName) {
-            var columnModel = this.getColumnModel(columnName);
-            return (columnName === '_button') ? 'main' : columnModel && columnModel['editOption'] && columnModel['editOption']['type'];
+            var columnModel = this.getColumnModel(columnName),
+                editType = 'normal';
+            if (columnName === '_button' || columnName === '_number') {
+                editType = columnName;
+            } else if (columnModel && columnModel['editOption'] && columnModel['editOption']['type']) {
+                editType = columnModel['editOption']['type'];
+            }
+            return editType;
         },
         _getVisibleList: function() {
             return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});

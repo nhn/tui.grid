@@ -24,8 +24,23 @@
                 pageY: 0,
 
                 intervalIdForAutoScroll: 0,
+                isEnable: true,
                 _isShown: false
             });
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+        },
+        /**
+         * selection 을 disable 한다.
+         */
+        enable: function() {
+            this.isEnable = true;
+        },
+        /**
+         * selection 을 disable 한다.
+         */
+        disable: function() {
+            this.endSelection();
+            this.isEnable = false;
         },
         /**
          * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
@@ -33,21 +48,22 @@
          * @param {Number} pageY
          */
         attachMouseEvent: function(pageX, pageY) {
-            this.setOwnProperties({
-                pageX: pageX,
-                pageY: pageY
-            });
-            this.grid.updateLayoutData();
-            $(document).on('mousemove', $.proxy(this._onMouseMove, this));
-            $(document).on('mouseup', $.proxy(this._onMouseUp, this));
-            $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+            if (this.isEnable) {
+                this.setOwnProperties({
+                    pageX: pageX,
+                    pageY: pageY
+                });
+                this.grid.updateLayoutData();
+                $(document).on('mousemove', $.proxy(this._onMouseMove, this));
+                $(document).on('mouseup', $.proxy(this._onMouseUp, this));
+                $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+            }
         },
         /**
          * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
          */
         detachMouseEvent: function() {
             clearInterval(this.intervalIdForAutoScroll);
-            this.getSelectionToString();
             $(document).off('mousemove', $.proxy(this._onMouseMove, this));
             $(document).off('mouseup', $.proxy(this._onMouseUp, this));
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
@@ -192,7 +208,9 @@
                 overflowY: overflowY
             };
         },
-
+        getRange: function() {
+            return $.extend(true, {}, this.spannedRange);
+        },
         /**
          *  현재 selection 범위에 대한 string 을 반환한다.
          *  @return {String}
@@ -279,6 +297,14 @@
             this.range.row[0] = this.range.row[1] = this.range.column[0] = this.range.column[1] = -1;
             this.spannedRange.row[0] = this.spannedRange.row[1] = this.spannedRange.column[0] = this.spannedRange.column[1] = -1;
             this.hide();
+            this.detachMouseEvent();
+        },
+        /**
+         * dimension model 의 columnWidth 가 변경되었을 경우 크기를 재 계산하여 rendering 한다.
+         * @private
+         */
+        _onColumnWidthChanged: function() {
+            this.show();
         },
         /**
          * 현재 selection range 정보를 기반으로 selection Layer 를 노출한다.
@@ -314,6 +340,8 @@
                     row: spannedRange.row,
                     column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
                 });
+                //selection 이 생성될 때에는 무조건 input 에 focus 가 가지 않도록 clipboard에 focus 를 준다.
+                this.grid.focusClipboard();
             }
         },
         /**
@@ -387,80 +415,85 @@
                 len = columnModelList.length,
                 startIndexList = [spannedRange.row[0]],
                 endIndexList = [spannedRange.row[1]],
-                startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
-                endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
-                columnName, param,
+                startRow = dataModel.at(spannedRange.row[0]),
+                endRow = dataModel.at(spannedRange.row[1]),
                 newSpannedRange = $.extend({}, spannedRange);
 
-            /**
-             * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
-             * @param {object} param
-             */
-            function concatRowSpanIndexFromStart(param) {
-                var startIndex = param.startIndex,
-                    endIndex = param.endIndex,
-                    rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
-                    startIndexList = param.startIndexList,
-                    endIndexList = param.endIndexList,
-                    spannedIndex;
+            if (startRow && endRow) {
+                var startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
+                    endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
+                    columnName, param;
 
-                if (rowSpanData) {
-                    if (!rowSpanData['isMainRow']) {
-                        spannedIndex = startIndex + rowSpanData['count'];
-                        startIndexList.push(spannedIndex);
-                    } else {
-                        spannedIndex = startIndex + rowSpanData['count'] - 1;
-                        if (spannedIndex > endIndex) {
+                /**
+                 * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
+                 * @param {object} param
+                 */
+                function concatRowSpanIndexFromStart(param) {
+                    var startIndex = param.startIndex,
+                        endIndex = param.endIndex,
+                        rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
+                        startIndexList = param.startIndexList,
+                        endIndexList = param.endIndexList,
+                        spannedIndex;
+
+                    if (rowSpanData) {
+                        if (!rowSpanData['isMainRow']) {
+                            spannedIndex = startIndex + rowSpanData['count'];
+                            startIndexList.push(spannedIndex);
+                        } else {
+                            spannedIndex = startIndex + rowSpanData['count'] - 1;
+                            if (spannedIndex > endIndex) {
+                                endIndexList.push(spannedIndex);
+                            }
+                        }
+                    }
+                }
+
+                /**
+                 * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
+                 * @param {object} param
+                 */
+                function concatRowSpanIndexFromEnd(param) {
+                    var endIndex = param.endIndex,
+                        columnName = param.columnName,
+                        rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
+                        endIndexList = param.endIndexList,
+                        dataModel = param.dataModel,
+                        spannedIndex, tmpRowSpanData;
+
+                    if (rowSpanData) {
+                        if (!rowSpanData['isMainRow']) {
+                            spannedIndex = endIndex + rowSpanData['count'];
+                            tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
+                            spannedIndex += tmpRowSpanData['count'] - 1;
+                            if (spannedIndex > endIndex) {
+                                endIndexList.push(spannedIndex);
+                            }
+                        } else {
+                            spannedIndex = endIndex + rowSpanData['count'] - 1;
                             endIndexList.push(spannedIndex);
                         }
                     }
                 }
-            }
-            /**
-             * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
-             * @param {object} param
-             */
-            function concatRowSpanIndexFromEnd(param) {
-                var endIndex = param.endIndex,
-                    columnName = param.columnName,
-                    rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
-                    endIndexList = param.endIndexList,
-                    dataModel = param.dataModel,
-                    spannedIndex, tmpRowSpanData;
 
-                if (rowSpanData) {
-                    if (!rowSpanData['isMainRow']) {
-                        spannedIndex = endIndex + rowSpanData['count'];
-                        tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-                        spannedIndex += tmpRowSpanData['count'] - 1;
-                        if (spannedIndex > endIndex) {
-                            endIndexList.push(spannedIndex);
-                        }
-                    } else {
-                        spannedIndex = endIndex + rowSpanData['count'] - 1;
-                        endIndexList.push(spannedIndex);
-                    }
+                for (var i = 0; i < len; i++) {
+                    columnName = columnModelList[i]['columnName'];
+                    param = {
+                        columnName: columnName,
+                        startIndex: spannedRange.row[0],
+                        endIndex: spannedRange.row[1],
+                        endRowSpanDataMap: endRowSpanDataMap,
+                        startRowSpanDataMap: startRowSpanDataMap,
+                        startIndexList: startIndexList,
+                        endIndexList: endIndexList,
+                        dataModel: dataModel
+                    };
+                    concatRowSpanIndexFromStart(param);
+                    concatRowSpanIndexFromEnd(param);
                 }
+
+                newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
             }
-
-            for (var i = 0; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
-                param = {
-                    columnName: columnName,
-                    startIndex: spannedRange.row[0],
-                    endIndex: spannedRange.row[1],
-                    endRowSpanDataMap: endRowSpanDataMap,
-                    startRowSpanDataMap: startRowSpanDataMap,
-                    startIndexList: startIndexList,
-                    endIndexList: endIndexList,
-                    dataModel: dataModel
-                };
-                concatRowSpanIndexFromStart(param);
-                concatRowSpanIndexFromEnd(param);
-            }
-
-            newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
-
             return newSpannedRange;
         }
     });

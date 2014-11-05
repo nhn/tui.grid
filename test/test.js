@@ -1,5 +1,5 @@
 $result = $('#result1');
-var grid1 = new Grid({
+var grid1 = new ne.Grid({
     el: $('#wrapper1'),
     columnModelList: dummy_data.columnModel_1,
     selectType: 'checkbox',
@@ -17,7 +17,7 @@ getDummyData(dummy_data.columnModel_1, 100, function(data) {
 insertButton(grid1, $('#buttonList1'), $('#result1'));
 
 
-var grid2 = new Grid({
+var grid2 = new ne.Grid({
     el: $('#wrapper2'),
     columnModelList: dummy_data.columnModel_2,
     selectType: 'radio',

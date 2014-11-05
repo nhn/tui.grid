@@ -54,7 +54,6 @@
          * @return {Model.Focus}
          */
         focus: function(rowKey, columnName, isScrollable) {
-            console.log('#####focus', rowKey, columnName);
             rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
             columnName = columnName === undefined ? this.get('columnName') : columnName;
             this._savePrevious();
@@ -78,9 +77,15 @@
                 scrollTop = renderModel.get('scrollTop'),
                 scrollLeft = renderModel.get('scrollLeft'),
                 bodyHeight = dimensionModel.get('bodyHeight'),
-                position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName);
+                lsideWidth = dimensionModel.get('lsideWidth'),
+                rsideWidth = dimensionModel.get('rsideWidth'),
+
+                position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName),
+                currentLeft = scrollLeft,
+                currentRight = scrollLeft + rsideWidth;
 
 
+            //수직 스크롤 조정
             if (position.top < scrollTop) {
                 renderModel.set({
                     scrollTop: position.top
@@ -91,13 +96,18 @@
                 });
             }
 
-            //스크롤 right 도 필요함.
+            //수평 스크롤 조정
             if (!this.grid.columnModel.isLside(focused.columnName)) {
-
+                if (position.left < currentLeft) {
+                    renderModel.set({
+                        scrollLeft: position.left
+                    });
+                } else if (position.right > currentRight) {
+                    renderModel.set({
+                        scrollLeft: position.right - rsideWidth + (this.grid.option('scrollY') * this.grid.scrollBarSize) + 1
+                    });
+                }
             }
-
-//            console.log(renderModel.get('scrollTop'), renderModel.get('scrollLeft'))
-
         },
         /**
          * blur 처리한다.
@@ -264,5 +274,20 @@
          */
         prevColumnName: function() {
             return this.findColumnName(-1);
+        },
+        firstRowKey: function() {
+            return this.grid.dataModel.at(0).get('rowKey');
+        },
+        lastRowKey: function() {
+            return this.grid.dataModel.at(this.grid.dataModel.length - 1).get('rowKey');
+        },
+        firstColumnName: function() {
+            var columnModelList = this.grid.columnModel.getVisibleColumnModelList();
+            return columnModelList[0]['columnName'];
+        },
+        lastColumnName: function() {
+            var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
+                lastIndex = columnModelList.length - 1;
+            return columnModelList[lastIndex]['columnName'];
         }
     });

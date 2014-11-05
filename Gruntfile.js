@@ -11,41 +11,58 @@ module.exports = function(grunt) {
         // Grunt tasks are associated with specific properties.
         // these names generally match their npm package name.
         concat: {
-        // Specify some options, usually specific to each plugin.
-        options: {
-            banner: '(function(){\n',
-            footer: '\n})();'
-        },
-        // 'dist' is what is called a "target."
-        // It's a way of specifying different sub-tasks or modes.
-        dist: {
-        // The files to concatenate:
-        // Notice the wildcard, which is automatically expanded.
-        src: [
-            'src/Core/*.js',
-            'src/Data/*.js',
+            // Specify some options, usually specific to each plugin.
 
-            'src/Model/Renderer.js',
-            'src/Model/*',
+            // 'dist' is what is called a "target."
+            // It's a way of specifying different sub-tasks or modes.
+            javascript: {
+                options: {
+                    banner: '(function(){\n',
+                    footer: '\n})();'
+                },
+                // The files to concatenate:
+                // Notice the wildcard, which is automatically expanded.
+                src: [
+                    'src/External/*.js',
 
-            'src/View/Layout/Frame.js',
-            'src/View/Layout/*',
+                    'src/Core/*.js',
+                    'src/Data/*.js',
 
-            'src/View/Renderer/*',
-            'src/View/Renderer/Cell/Interface.js',
-            'src/View/Renderer/Cell/*',
-            'src/View/Extra/*.js',
-            'src/View/*.js',
-            'src/*.js'
-        ],
-        // The destination file:
-        // Notice the angle-bracketed ERB-like templating,
-        // which allows you to reference other properties.
-        // This is equivalent to 'dist/main.js'.
-        dest: '<%= distFolder %>/Grid.js'
-        // You can reference any grunt config property you want.
-        // Ex: '<%= concat.options.separator %>' instead of ';'
-        }
+                    'src/Model/Renderer.js',
+                    'src/Model/*',
+
+                    'src/View/Layer/Base.js',
+                    'src/View/Layer/*.js',
+
+                    'src/View/Layout/Frame.js',
+                    'src/View/Layout/*',
+
+                    'src/View/Renderer/*',
+                    'src/View/Renderer/Cell/Base.js',
+                    'src/View/Renderer/Cell/*',
+                    'src/View/Layout/*.js',
+                    'src/View/*.js',
+
+                    'src/AddOn/*.js',
+
+                    'src/Grid.js',
+                    'src/Public.js'
+                ],
+                // The destination file:
+                // Notice the angle-bracketed ERB-like templating,
+                // which allows you to reference other properties.
+                // This is equivalent to 'dist/main.js'.
+                dest: '<%= distFolder %>/Grid.js'
+                // You can reference any grunt config property you want.
+                // Ex: '<%= concat.options.separator %>' instead of ';'
+            },
+            css: {
+                src: [
+                    'css/common.css',
+                    'css/Grid.css'
+                ],
+                dest: '<%= distFolder %>/Grid.css'
+            }
         },
         uglify: {
             my_target: {
@@ -54,13 +71,13 @@ module.exports = function(grunt) {
                 }
             }
         },
-        copy: {
-            main: {
-                files: [
-                    {expand: true, flatten: true, src: ['css/*'], dest: '<%= distFolder %>/', filter: 'isFile'}
-                ]
-            }
-        },
+//        copy: {
+//            main: {
+//                files: [
+//                    {expand: true, flatten: true, src: ['css/*'], dest: '<%= distFolder %>/', filter: 'isFile'}
+//                ]
+//            }
+//        },
         zip: {
             main: {
                 src: ['<%= distFolder %>/*'],
@@ -74,9 +91,10 @@ module.exports = function(grunt) {
     // This will do a lookup similar to node's require() function.
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-copy');
+//    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-zip');
 
     // Register our own custom task alias.
-    grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
+//    grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
+    grunt.registerTask('build', ['concat', 'uglify', 'zip']);
 };

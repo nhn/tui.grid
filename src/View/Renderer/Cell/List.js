@@ -1,14 +1,17 @@
     /**
-     *  editOption 에 list 를 가지고 있는 형태의 추상 클래스
-     * @type {*|void}
+     * editOption 에 list 를 가지고 있는 형태의 추상 클래스
+     * @implements {View.Base.Renderer.Cell.Interface}
+     * @class
      */
-    View.Renderer.Cell.List = View.Base.Renderer.Cell.Abstract.extend({
+    View.Renderer.Cell.List = View.Base.Renderer.Cell.extend({
         rerenderAttributes: ['isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {
-            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
         },
+        focusIn: function($td) {},
+        getEditType: function() {},
         getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
@@ -29,15 +32,24 @@
         }
     });
 
-
     /**
-     * editType select
-     * @type {*|void}
+     * select type 의 Cell renderer
+     *
+     * @extends {View.Renderer.Cell.List}
+     * @class
      */
     View.Renderer.Cell.List.Select = View.Renderer.Cell.List.extend({
-        cellType: 'select',
         initialize: function(attributes) {
             View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
+
+            this._setKeyDownSwitch({
+                'ESC': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'ENTER': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                }
+            });
         },
         eventHandler: {
             'change select' : '_onChange',
@@ -50,8 +62,11 @@
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
             $td.find('select').focus();
         },
+        getEditType: function() {
+            return 'select';
+        },
         getContentHtml: function(cellData, $td, hasFocusedElement) {
-            console.log('!!!!getContentHtml', cellData.optionList);
+//            console.log('!!!!getContentHtml', cellData.optionList);
             var list = this._getOptionList(cellData),
                 html = '',
                 isDisabled = cellData.isDisabled,
@@ -77,7 +92,7 @@
 
         },
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
-            console.log('!!!!setElementAttribute', cellData.optionList);
+//            console.log('!!!!setElementAttribute', cellData.optionList);
             var $select = $td.find('select');
             hasFocusedElement ? $select.blur() : null;
             $select.val(cellData.value);
@@ -94,13 +109,45 @@
 
 
     /**
-     * editType = radio || checkbox
-     * @type {*|void}
+     * checkbox, radio button type 의 Cell renderer
+     *
+     * @extends {View.Renderer.Cell.List}
+     * @class
      */
     View.Renderer.Cell.List.Button = View.Renderer.Cell.List.extend({
-        cellType: 'button',
         initialize: function(attributes) {
             View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
+            this._setKeyDownSwitch({
+                'UP_ARROW': function() {},
+                'DOWN_ARROW': function() {},
+                'PAGE_UP': function() {},
+                'PAGE_DOWN': function() {},
+                'ENTER': function(keyDownEvent, param) {
+                    param.$target.trigger('click');
+                },
+                'LEFT_ARROW': function(keyDownEvent, param) {
+                    this._focusPrevInput(param.$target);
+                },
+                'RIGHT_ARROW': function(keyDownEvent, param) {
+                    this._focusNextInput(param.$target);
+                },
+                'ESC': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'TAB': function(keyDownEvent, param) {
+                    if (keyDownEvent.shiftKey) {
+                        //이전 cell 로 focus 이동
+                        if (!this._focusPrevInput(param.$target)) {
+                            this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                        }
+                    } else {
+                        //이후 cell 로 focus 이동
+                        if (!this._focusNextInput(param.$target)) {
+                            this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                        }
+                    }
+                }
+            });
         },
         eventHandler: {
             'change input' : '_onChange',
@@ -110,74 +157,38 @@
             input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%> <%=disabled%> />'),
             label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
+        getEditType: function() {
+            return 'button';
+        },
         focusIn: function($td) {
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
             $td.find('input').eq(0).focus();
         },
-        _getNextInput: function($currentInput) {
+        _focusNextInput: function($currentInput) {
             var $next = $currentInput;
-            do{
+            do {
                 $next = $next.next();
             } while ($next.length && !$next.is('input'));
-            return $next;
+            if ($next.length) {
+                $next.focus();
+                return true;
+            } else {
+                return false;
+            }
         },
-        _getPrevInput: function($currentInput) {
+        _focusPrevInput: function($currentInput) {
             var $prev = $currentInput;
-            do{
+            do {
                 $prev = $prev.prev();
             } while ($prev.length && !$prev.is('input'));
-            return $prev;
-        },
-        /**
-         *
-         * @param {event} keyDownEvent
-         * @private
-         */
-        _onKeyDown: function(keyDownEvent) {
-            //todo: cell 종류에 따라 해당 input 에 keydown event handler 를 추가하여 구현한다.
-            var $target = $(keyDownEvent.target),
-                $next, $prev,
-                grid = this.grid,
-                keyMap = grid.keyMap,
-                isKeyIdentified = true,
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            switch (keyCode) {
-                case keyMap['UP_ARROW']:
-
-                    break;
-                case keyMap['DOWN_ARROW']:
-
-                    break;
-                case keyMap['LEFT_ARROW']:
-                    $prev = this._getPrevInput($target);
-                    $prev.length ? $prev.focus() : null;
-                    break;
-                case keyMap['RIGHT_ARROW']:
-                    $next = this._getNextInput($target);
-                    $next.length ? $next.focus() : null;
-                    break;
-                case keyMap['ESC']:
-                    this.focusOut($target);
-                    break;
-                case keyMap['ENTER']:
-                    $target.trigger('click');
-                    break;
-                case keyMap['TAB']:
-                    if (keyDownEvent.shiftKey) {
-                        //이전 cell 로 focus 이동 후 편집모드로 전환
-                    } else {
-                        //이후 cell 로 focus 이동 후 편집모드로 전환
-                    }
-                    break;
-                default:
-                    isKeyIdentified = false;
-                    break;
-            }
-            if (isKeyIdentified) {
-                keyDownEvent.preventDefault();
+            if ($prev.length) {
+                $prev.focus();
+                return true;
+            } else {
+                return false;
             }
         },
+
         getContentHtml: function(cellData) {
             var list = this._getOptionList(cellData),
                 len = list.length,
@@ -221,15 +232,8 @@
                 $td.find('input[value="' + checkedList[i] + '"]').prop('checked', true);
             }
         },
-        _getEditType: function($target) {
-            var columnName = this._getColumnName($target),
-                columnModel = this.grid.columnModel.getColumnModel(columnName),
-                type = columnModel.editOption.type;
-
-            return type;
-        },
         _getCheckedList: function($target) {
-            var $checkedList = $target.closest('td').find('input[type=' + this._getEditType($target) + ']:checked'),
+            var $checkedList = $target.closest('td').find('input:checked'),
                 checkedList = [];
 
             for (var i = 0; i < $checkedList.length; i++) {
@@ -241,7 +245,6 @@
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target);
-            console.log('button _onChange', this._getCheckedList($target).join(','));
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target).join(','));
         }
 

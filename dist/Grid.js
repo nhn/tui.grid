@@ -1,23 +1,916 @@
 (function(){
+/**
+ * @fileoverview 페이지네이션의 뷰를 생성하고, 이벤트를 건다.
+ * (pug.Pagination 에서 분리)
+ * @author 이제인(jein.yi@nhnent.com)
+ */
+
+
+var ne = ne || {};
+ne.Component = ne.Component || {};
+
+/**
+ *
+ * @constructor
+ * @param {DataObject} options 옵션 객체
+ * 		@param {Number} [options.itemCount=10] 리스트의 전체 아이템 개수
+ * 		@param {Number} [options.itemPerPage=10] 한 페이지에 표시 될 아이템의 개수를 정의한다.
+ * 		@param {Number} [options.pagePerPageList=10] 페이지 목록에 표시 될 페이지의 개수를 정의한다.
+ * 		@param {Number} [options.page=1] Pagination 컴포넌트가 로딩되었을 때 보여 주는 페이지이다. 기본값으로는 1이 설정된다. 아래의 이미지에서는 12페이지를 선택한 경우이다.
+ * 		@param {String} [options.moveUnit="pagelist"] 이전/다음 버튼을 누르는 경우 한 페이지씩(page) 또는 페이지 목록(pagelist) 단위로 이동하게 해주는 설정 값이다.
+ * 			<ul>
+ * 				<li>pagelist : nPagePerPageList로 설정한 값 기준으로 이동한다.(기본값 기준으로 10페이지)</li>
+ * 				<li>page : 한 페이지 씩 이동한다.</li>
+ * 			</ul>
+ * 		@param {Boolean}[options.isCenterAlign=false] 현재 페이지가 항상 가운데에 오도록 정렬해주는 값이다. 이전 또는 다음 버튼을 눌러서 페이지를 이동하는 경우 이동 된 페이지가 중앙에 오게 된다.<br/>※ 이 값을 true로 할 경우엔 moveUnit이 항상 "page"로 설정되어야 한다.
+ * 		@param {String} [options.insertTextNode=""] 페이지 목록에서 페이지의 마크업들을 연결해주는 문자열이다. 설정 값에 따라서 각각의 페이지를 보여주는 노드 (예 <a href="#">11</a><a href="#">12</a>에서 a태그)를 "\n" 또는 " "등으로 설정해서 변경할 수 있다. (위의 예에서는 a태그 사이의 간격이 한 줄 또는 하나의 공백문자로 변경되게 된다.)<br/>※ 주의할 점은 이 옵션에 따라 렌더링이 달라질 수 있다는 점이다.
+ * 		@param {String} [options.classPrefix=""] 클래스명 접두어
+ * 		@param {String} [options.firstItemClassName="first-child"] 페이지 목록에서 첫 번째 페이지 항목에 추가되는 클래스명
+ * 		@param {String} [options.lastItemClassName="last-child"] 페이지 목록에서 마지막 페이지 항목에 추가되는 클래스명
+ * 		@param {String} [options.pageTemplate="<a href='#'>{=page}</a>"] 1, 2, 3, .. 과 같은 페이지를 보여주는 엘리먼트를 어떤 마크업으로 보여줄 지를 설정한다. {=page}가 페이지 번호로 교체된다.
+ * 		@param {String} [options.currentPageTemplate="<strong>{=page}</strong>"] 페이지 목록에서 보여주고 있는 현재 페이지를 어떻게 보여줄 지 설정하는 마크업 템플릿이다. {=page}가 현재 페이지 번호로 교체된다.
+ * 		@param {jQueryObject} [options.$pre_endOn] 페이지 목록에서 페이지의 맨 처음으로 이동하는 버튼으로 사용되는 엘리먼트이다. 처음으로 이동할 수 있는 경우만 노출되며 값을 지정하지 않거나 pre_end 클래스 명을 가진 a 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 pre_end 클래스 명을 가지고 있는 a 엘리먼트
+ * 		@param {jQueryObject} [options.$preOn] 페이지 목록에서 이전 페이지 또는 이전 페이지목록으로 이동하는 버튼으로 사용되는 엘리먼트이다. 이전으로 이동할 수 있는 경우만 노출되며 값을 지정하지 않거나 pre 클래스 명을 가진 a 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 pre 클래스 명을 가지고 있는 a 엘리먼트
+ * 		@param {jQueryObject} [options.$nextOn] 페이지 목록에서 다음 페이지 또는 다음 페이지목록으로 이동하는 버튼으로 사용되는 엘리먼트이다. 다음으로 이동할 수 있는 경우만 노출되며 값을 지정하지 않거나 next 클래스 명을 가진 a 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 next 클래스 명을 가지고 있는 a 엘리먼트
+ * 		@param {jQueryObject} [options.$lastOn] 페이지 목록에서 페이지의 맨 마지막으로 이동하는 버튼으로 사용되는 엘리먼트이다. 마지막으로 이동할 수 있는 경우만 노출되며 값을 지정하지 않거나 next_end 클래스 명을 가진 a 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 next_end 클래스 명을 가지고 있는 a 엘리먼트
+ * 		@param {jQueryObject} [options.$pre_endOff] elFirstPageLinkOn과는 반대로 처음으로 이동할 수 없는 경우에 사용자에게 비활성화된 상태를 보여주기 위한 엘리먼트이다. 값을 지정하지 않거나 pre_end 클래스 명을 가진 span 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 pre_end 클래스 명을 가지고 있는 span 엘리먼트
+ * 		@param {jQueryObject} [options.$preOff] elPrevPageLinkOn과는 반대로 이전으로 이동할 수 없는 경우에 사용자에게 비활성화된 상태를 보여주기 위한 엘리먼트이다. 값을 지정하지 않거나 pre 클래스 명을 가진 span 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 pre 클래스 명을 가지고 있는 span 엘리먼트
+ * 		@param {jQueryObject} [options.$nextOff] elNextPageLinkOn과는 반대로 다음으로 이동할 수 없는 경우에 사용자에게 비활성화된 상태를 보여주기 위한 엘리먼트이다. 값을 지정하지 않거나 next 클래스 명을 가진 span 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 next 클래스 명을 가지고 있는 span 엘리먼트
+ * 		@param {jQueryObject} [options.$lastOff] zelLastPageLinkOn과는 반대로 마지막으로 이동할 수 없는 경우에 사용자에게 비활성화된 상태를 보여주기 위한 엘리먼트이다. 값을 지정하지 않거나 next_end 클래스 명을 가진 span 엘리먼트가 존재하지 않으면 버튼이 생성되지 않는다.<br/>기본 값 : 페이지 목록 엘리먼트 아래의 next_end 클래스 명을 가지고 있는 span 엘리먼트
+ * @param {jQueryObject} $element 페이지목록을 생성할 jQuery객체가 랩핑된 엘리먼트
+ *
+ */
+ne.Component.Pagination = function(options, $element) {
+    // 기본옵션
+    var defaultOption = {
+        itemCount: 10,
+        itemPerPage: 10,
+        pagePerPageList: 10,
+        page: 1,
+        moveUnit: 'pagelist',
+        isCenterAlign: false,
+        insertTextNode: '',
+        classPrefix: '',
+        firstItemClassName: 'first-child',
+        lastItemClassName: 'last-child',
+        pageTemplate: '<a href="#">{=page}</a>',
+        currentPageTemplate: '<strong>{=page}</strong>'
+    };
+
+    /**
+     * 옵션객체
+     * @type {Object}
+     * @private
+     */
+    this._options = $.extend(defaultOption, options);
+    /**
+     * 이벤트 핸들러 저장객체
+     *
+     * @type {Object}
+     * @private
+     */
+    this._eventHandler = {};
+
+    // 뷰 생성
+    /**
+     * 뷰객체
+     * @type {PaginationView}
+     * @private
+     */
+    this._view = new ne.Component.PaginationView(this._options, $element);
+    this._view.attachEvent('click', $.proxy(this._onClickPageList, this));
+    // 페이지 초기화(이동)
+    this.movePageTo(this._getOption('page'), false);
+
+};
+
+
+/**
+ * 페이징을 다시 그린다
+ *
+ * @param {*} itemCount 다시 그릴 페이지의 아이템 갯수
+ */
+ne.Component.Pagination.prototype.reset = function(itemCount) {
+
+    var isExist = (itemCount !== null) && (itemCount !== undefined);
+
+    if (!isExist) {
+        itemCount = this._getOption('itemCount');
+    }
+
+    this._setOption('itemCount', itemCount);
+    this.movePageTo(1, false);
+};
+
+/**
+ * 옵션값을 가져온다
+ *
+ * @param {String} optionKey 가져올 옵션 키 값
+ * @private
+ * @returns {*}
+ *
+ */
+ne.Component.Pagination.prototype._getOption = function(optionKey) {
+
+    return this._options[optionKey];
+
+};
+
+
+/**
+ * 지정한 페이지로 이동하고, 페이지 목록을 다시 그린다
+ * 이동하기 전엔 beforeMove라는 커스텀 이벤트를 발생시키고, 이동후에는 afterMove라는 커스텀 이벤터를 발생시킨다.
+ *
+ * @param {Number} targetPage 이동할 페이지
+ * @param {Boolean} isisRunCustomEvent [isisRunCustomEvent=true] 커스텀 이벤트의 발생 여부
+ */
+ne.Component.Pagination.prototype.movePageTo = function(targetPage, isRunCustomEvent) {
+
+    isRunCustomEvent = !!(isRunCustomEvent || isRunCustomEvent === undefined);
+
+    targetPage = this._convertToAvailPage(targetPage);
+
+    this._currentPage = targetPage;
+
+    if (isRunCustomEvent) {
+        /**
+         * 페이지 이동이 수행되기 직전에 발생
+         *
+         * @param {ComponentEvent} eventData
+         * @param {String} eventData.eventType 커스텀 이벤트명
+         * @param {Number} eventData.page 이동하게 될 페이지
+         * @param {Function} eventData.stop 페이지 이동을 정지한다
+         * @example
+         * paganation.attach("beforeMove", function(eventData) {
+            // 사용자  클릭의 결과로 이동한 페이지
+            var currentPage = eventData.page;
+         });
+         */
+
+        if (!this.fireEvent('beforeMove', { page: targetPage })) {
+            return;
+        }
+    }
+
+    this._paginate(targetPage);
+
+    if (isRunCustomEvent) {
+        /**
+         * 페이지 이동이 완료된 시점에서 발생
+         *
+         * @param {ComponentEvent} eventData
+         * @param {String} eventData.eventType 커스텀 이벤트명
+         * @param {Number} eventData.page 사용자 클릭의 결과로 이동한 페이지
+         * @example
+         * paganation.attach("beforeMove", function(eventData) {
+            // 사용자  클릭의 결과로 이동한 페이지
+            var currentPage = eventData.page;
+         });
+         */
+        this.fireEvent('afterMove', { page: targetPage });
+    }
+};
+
+
+/**
+ * 옵션값을 변경한다
+ *
+ * @param {String} optionKey 변경할 옵션 키 값
+ * @param {*} optionValue 변경할 옵션 값
+ * @private
+ */
+ne.Component.Pagination.prototype._setOption = function(optionKey, optionValue) {
+
+    this._options[optionKey] = optionValue;
+
+};
+
+/**
+ * 현재 페이지를 가져온다
+ *
+ * @returns {Number} 현재 페이지
+ */
+ne.Component.Pagination.prototype.getCurrentPage = function() {
+
+    return this._currentPage || this._options['page'];
+
+};
+
+/**
+ * 해당 페이지의 첫번째 아이템이 전체중 몇번째 인지 구한다
+ *
+ * @param {Number} pageNumber 해당 페이지 번호
+ * @returns {number}
+ */
+ne.Component.Pagination.prototype.getIndexOfFirstItem = function(pageNumber) {
+
+    return this._getOption('itemPerPage') * (pageNumber - 1) + 1;
+
+};
+
+/**
+ * 마지막 페이지 숫자를 구함
+ *
+ * @returns {number} 마지막 페이지 숫자
+ * @private
+ */
+ne.Component.Pagination.prototype._getLastPage = function() {
+    return Math.ceil(this._getOption('itemCount') / this._getOption('itemPerPage'));
+
+};
+
+
+/**
+ * 몇번째 페이지 리스트인지 구함
+ *
+ * @param {Number} pageNumber
+ * @return {Number} 페이지 리스트 순번
+ * @private
+ */
+ne.Component.Pagination.prototype._getPageIndex = function(pageNumber) {
+    //현재 페이지 리스트가 중앙에 와야할때
+    if (this._getOption('isCenterAlign')) {
+        var left = Math.floor(this._getOption('pagePerPageList') / 2),
+            pageIndex = pageNumber - left;
+
+        pageIndex = Math.max(pageIndex, 1);
+        pageIndex = Math.min(pageIndex, this._getLastPage());
+        return pageIndex;
+    }
+    return Math.ceil(pageNumber / this._getOption("pagePerPageList"));
+};
+
+/**
+ * 이전, 다음 버튼을 클릭할 때 제공받을 페이지 숫자를 구한다
+ *
+ * @param {String} relativeName 어떤 영역으로 옮겨갈지 정한다(pre_end, next_end, pre, next)
+ * @return {Number} 해당되는 페이지 숫자
+ * @private
+ *
+ */
+ne.Component.Pagination.prototype._getRelativePage = function(relativeName) {
+    var page = null,
+        isMovePage = this._getOption('moveUnit') === 'page',
+        currentPageIndex = this._getPageIndex(this.getCurrentPage());
+    switch (relativeName) {
+        case 'pre_end' :
+            page = 1;
+            break;
+
+        case 'next_end' :
+            page = this._getLastPage();
+            break;
+
+        case 'pre':
+            page = isMovePage ? this.getCurrentPage() - 1 : (currentPageIndex - 1) * this._getOption('pagePerPageList');
+            break;
+
+        case 'next':
+            page = isMovePage ? this.getCurrentPage() + 1 : (currentPageIndex) * this._getOption('pagePerPageList') + 1;
+            break;
+    }
+
+    return page;
+};
+
+/**
+ * 페이지 숫자를 받으면 현재 페이지 범위내로 변경하여 반환한다.
+ * 예를들어 총 페이지수가 23인데 30이라는 수를 넣으면 23을 반환받는다. 숫자가 1보다 작으면 1을 반환받는다.
+ *
+ * @param {Number} page
+ * @returns {number} 페이지 범위내로 확인된 숫자
+ * @private
+ */
+ne.Component.Pagination.prototype._convertToAvailPage = function(page) {
+    var lastPageNumber = this._getLastPage();
+    page = Math.max(page, 1);
+    page = Math.min(page, lastPageNumber);
+    return page;
+};
+
+
+/**
+ * 페이지를 그리는데 필요한 뷰셋을 만들고, 뷰에 업데이트를 요청한다
+ *
+ * @param {Number} page
+ * @private
+ */
+ne.Component.Pagination.prototype._paginate = function(page){
+
+    // 뷰의 버튼 및 페이지를 모두 제거 및 복사
+    this._view.empty();
+
+    var viewSet = {};
+
+    viewSet.lastPage = this._getLastPage();
+    viewSet.currentPageIndex = this._getPageIndex(page);
+    viewSet.lastPageListIndex = this._getPageIndex(viewSet.lastPage);
+    viewSet.page = page;
+
+    this._view.update(viewSet, page);
+};
+
+/**
+ * 페이지네이션 이벤트 핸들
+ *
+ * @param {JQueryEvent} event
+ * @private
+ */
+ne.Component.Pagination.prototype._onClickPageList = function(event) {
+
+    event.preventDefault();
+
+    var page = null,
+        targetElement = $(event.target),
+        targetPage;
+
+    if (this._view.isIn(targetElement, this._getOption('$pre_endOn'))) {
+        page = this._getRelativePage('pre_end');
+    } else if (this._view.isIn(targetElement, this._getOption('$preOn'))) {
+        page = this._getRelativePage('pre');
+    } else if (this._view.isIn(targetElement, this._getOption('$nextOn'))) {
+        page = this._getRelativePage('next');
+    } else if (this._view.isIn(targetElement, this._getOption('$lastOn'))) {
+        page = this._getRelativePage('next_end');
+    } else {
+
+        targetPage = this._view.getPageElement(targetElement);
+
+        if (targetPage && targetPage.length) {
+            page = parseInt(targetPage.text(), 10);
+        } else {
+            return;
+        }
+    }
+
+    /**
+     페이지 이동을 위한 숫자나 버튼을 클릭했을때 발생
+
+     @param {ComponentEvent} eventData
+     @param {String} eventData.eventType 커스텀 이벤트명
+     @param {Number} eventData.page 클릭해서 이동할 페이지
+     @param {Function} eventData.stop 페이지 이동을 정지한다
+
+     **/
+
+    var isFired = this.fireEvent("click", {"page" : page});
+    if (!isFired) {
+        return;
+    }
+
+    this.movePageTo(page);
+};
+
+/**
+ * 커스텀 이벤트를 등록시킨다
+ * @param {String|Object} eventType
+ * @param {Function} handlerToAttach
+ * @returns {ne.Component.Pagination}
+ */
+ne.Component.Pagination.prototype.attach = function(eventType, handlerToAttach) {
+    if (arguments.length === 1) {
+        var eventType,
+            handler;
+        for (eventType in arguments[0]) {
+            handler = arguments[0][eventType];
+            this.attach(eventType, handler);
+        }
+        return this;
+    }
+
+    var handlerList = this._eventHandler[eventType];
+    if (typeof handlerList === 'undefined'){
+        handlerList = this._eventHandler[eventType] = [];
+    }
+    handlerList.push(handlerToAttach);
+
+    return this;
+};
+
+
+
+/**
+ * 이벤트를 발생시킨다.
+ *
+ * @param {String} eventType 커스텀 이벤트명
+ * @param {Object} eventObject 커스텀 이벤트 핸들러에 전달되는 객체.
+ * @return {Boolean} 핸들러의 커스텀 이벤트객체에서 stop메서드가 수행되면 false를 리턴
+ */
+ne.Component.Pagination.prototype.fireEvent = function(eventType, eventObject) {
+    eventObject = eventObject || {};
+
+    var inlineHandler = this['on' + eventType],
+        handlerList = this._eventHandler[eventType] || [],
+        hasInlineHandler = $.isFunction(inlineHandler),
+        hasHandlerList = handlerList.length > 0;
+
+    if (!hasInlineHandler && !hasHandlerList) {
+        return true;
+    }
+
+    handlerList = handlerList.concat(); //fireEvent수행시 핸들러 내부에서 detach되어도 최초수행시의 핸들러리스트는 모두 수행하게 하기위한 복사
+    eventObject.eventType = eventType;
+
+    if (!eventObject._aExtend) {
+        eventObject._aExtend = [];
+
+        eventObject.stop = function(){
+            if (eventObject._aExtend.length > 0) {
+                eventObject._aExtend[eventObject._aExtend.length - 1].canceled = true;
+            }
+        };
+    }
+
+    eventObject._aExtend.push({
+        type: eventType,
+        canceled: false
+    });
+
+    var argument = [eventObject],
+        i,
+        length;
+
+    for (i = 2, length = arguments.length; i < length; i++){
+        argument.push(arguments[i]);
+    }
+
+    if (hasInlineHandler) {
+        inlineHandler.apply(this, argument);
+    }
+
+    if (hasHandlerList) {
+        var handler;
+        for (i = 0; (handler = handlerList[i]); i++) {
+            handler.apply(this, argument);
+        }
+    }
+
+    return !eventObject._aExtend.pop().canceled;
+};
+
+/**
+ * @fileoverview 페이지네이션, 화면에 그려지는 요소들을 관리한다
+ * (pug.Pagination 에서 분리)
+ * @author 이제인(jein.yi@nhnent.com)
+ */
+
+
+var ne = ne || {};
+ne.Component = ne.Component || {};
+
+/**
+ * @constructor
+ * @param {Object} options 옵션 객체
+ * @param {Object} $element 루트 엘리먼트
+ *
+ */
+ne.Component.PaginationView = function(options, $element) {
+    /**
+     * 페이지네이션의 루트 엘리먼트
+     *
+     * @type {jQueryObject}
+     * @private
+     */
+    this._element = $element;
+    /**
+     * 페이지네이션 지정 옵션
+     *
+     * @type {Object}
+     * @private
+     */
+    this._options = options;
+    /**
+     * 컴포넌트에 저장되는 셀렉터
+     *
+     * @type {Object}
+     * @private
+     */
+    this._elementSelector = {};
+    /**
+     * 선택된 엘리먼트들을 캐싱해두는 객체
+     *
+     * @type {Object}
+     * @private
+     */
+    this._cachedElement = {};
+    /**
+     * 발생한 이벤트를 캐싱하는 데이터
+     *
+     * @type {Object}
+     * @private
+     */
+    this._eventData = {};
+
+    $.extend(options, {
+        $pre_endOn: options['$pre_endOn'] || $('a.' + this._wrapPrefix('pre_end'), this._element),
+        $preOn: options['$preOn'] || $('a.' + this._wrapPrefix('pre'), this._element),
+        $nextOn: options['$nextOn'] || $('a.' + this._wrapPrefix('next'), this._element),
+        $lastOn: options['$lastOn'] || $('a.' + this._wrapPrefix('next_end'), this._element),
+        $pre_endOff: options['$pre_endOff'] || $('span.' + this._wrapPrefix('pre_end'), this._element),
+        $preOff: options['$preOff'] || $('span.' + this._wrapPrefix('pre'), this._element),
+        $nextOff: options['$nextOff'] || $('span.' + this._wrapPrefix('next'), this._element),
+        $lastOff: options['$lastOff'] || $('span.' + this._wrapPrefix('next_end'), this._element)
+    });
+
+    this._element.addClass(this._wrapPrefix('loaded'));
+}
+
+
+
+/**
+ * 뷰를 업데이트 한다
+ *
+ * @param {Object} viewSet 뷰갱신에 대한 값들
+ */
+ne.Component.PaginationView.prototype.update = function(viewSet) {
+    this._addTextNode();
+    this._setPageResult(viewSet.lastPage);
+
+    var options = this._options,
+        edges = this._getEdge(viewSet),
+        leftPageNumber = edges.left,
+        rightPageNumber = edges.right;
+
+    viewSet.leftPageNumber = leftPageNumber;
+    viewSet.rightPageNumber = rightPageNumber;
+
+    if (options.moveUnit === 'page') {
+        viewSet.currentPageIndex = viewSet.page;
+        viewSet.lastPageIndex = viewSet.lastPage;
+    }
+
+    this._setFirst(viewSet);
+    this._setPrev(viewSet);
+    this._setPageNumbers(viewSet);
+    this._setNext(viewSet);
+    this._setLast(viewSet);
+};
+
+/**
+ * 포함관계를 본다
+ *
+ * @param {JQueryObject} $find 포함되어있는 체크할 대상
+ * @param {JQueryObject} $parent 포함하고 있는지 체크할 대상
+ * @returns {boolean}
+ */
+ne.Component.PaginationView.prototype.isIn = function($find, $parent) {
+    if (!$parent) {
+        return false;
+    }
+    return ($find[0] === $parent[0]) ? true : $.contains($parent, $find);
+};
+
+/**
+ * 기준 엘리먼트를 구한다
+ *
+ * @returns {JQueryObject}
+ */
+ne.Component.PaginationView.prototype.getBaseElement = function() {
+    return this._element;
+};
+
+
+/**
+ * 기준엘리먼트를 초기화 시킨다
+ */
+ne.Component.PaginationView.prototype.empty = function(){
+
+    var options = this._options,
+        $pre_endOn = options.$pre_endOn,
+        $preOn = options.$preOn,
+        $nextOn = options.$nextOn,
+        $lastOn = options.$lastOn,
+        $pre_endOff = options.$pre_endOff,
+        $preOff = options.$preOff,
+        $nextOff = options.$nextOff,
+        $lastOff = options.$lastOff;
+
+    options.$pre_endOn = this._clone($pre_endOn);
+    options.$preOn = this._clone($preOn);
+    options.$lastOn = this._clone($lastOn);
+    options.$nextOn = this._clone($nextOn);
+    options.$pre_endOff = this._clone($pre_endOff);
+    options.$preOff = this._clone($preOff);
+    options.$lastOff = this._clone($lastOff);
+    options.$nextOff = this._clone($nextOff);
+
+    this._pageItemList = [];
+
+    this._element.empty();
+};
+
+
+
+/**
+ * 페이지 숫자를 담은 엘리먼트 중 원하는 엘리먼트를 찾는다.
+ *
+ * @param {jQueryObject|HTMLElement} el 목록 중에서 찾을 target 엘리먼트
+ * @return {jQueryObject} 있을 경우 해당 엘리먼트 jQuery 객체를 반환하며, 없으면 null을 반환한다.
+ */
+
+ne.Component.PaginationView.prototype.getPageElement = function(el) {
+
+    var i,
+        length,
+        pickedItem;
+
+    for (i = 0, length = this._pageItemList.length; i < length; i++) {
+        pickedItem = this._pageItemList[i];
+        if (this.isIn(el, pickedItem)) {
+            return pickedItem;
+        }
+    }
+    return null;
+};
+
+
+/**
+ * targetElement 엘리먼트에 eventType 이벤트의 콜백함수로 callback 함수를 등록한다.
+ * - 컴포넌트 내에서 _attachEventHandler() 메서드를 이용하여 이벤트를 등록하는 경우, 내부에 해당 이벤트 정보들을 저장하게 되며,
+ *   추후 컴포넌트의 destroy 시에 이 정보를 이용하여 자동으로 이벤트 해제를 수행하게 된다.
+ *
+ * @param {String} eventType 등록할 이벤트 명
+ * @param {Function} callback 해당 이벤트가 발생 시에 호출할 콜백함수
+ * @return {String} eventType 과 random 값이 "_" 로 연결된 유일한 key 값.
+ */
+ne.Component.PaginationView.prototype.attachEvent = function(eventType, callback) {
+
+    var targetElement = this._element,
+        isSavedElement = typeof(targetElement) === 'string' && this._elementSelector[targetElement];
+
+    if (isSavedElement) {
+        targetElement = this._getElement(targetElement, true);
+    }
+
+    if (targetElement && eventType && callback) {
+
+        var key = eventType + '_' + parseInt(Math.random() * 10000000, 10);
+
+        $(targetElement).bind(eventType, null, callback);
+
+        this._eventData[key] = {
+            targetElement: targetElement,
+            eventType: eventType,
+            callback: callback
+        };
+
+        return key;
+    }
+};
+
+
+/**
+ * 루트 엘리먼트객체를 돌려준다.
+ *
+ * @returns {jQueryObject}
+ */
+ne.Component.PaginationView.prototype.getElement = function() {
+
+    return this._element;
+
+};
+
+/**
+ * 클래스명에 Prefix 를 붙힘
+ * Prefix는 options.classPrefix를 참조, 붙혀질 때 기존 클래스명의 언더바(_) 문자는 하이픈(-)으로 변환됨
+ *
+ * @param {String} className
+ * @returns {*}
+ * @private
+ */
+ne.Component.PaginationView.prototype._wrapPrefix = function(className) {
+    var classPrefix = this._options['classPrefix'];
+    return classPrefix ? classPrefix + className.replace(/_/g, '-') : className;
+};
+
+/**
+ * 페이지표시 마크업 사이사이에 options.insertTextNode를 끼어넣어준다.
+ * @private
+ */
+ne.Component.PaginationView.prototype._addTextNode = function() {
+
+    var textNode = this._options['insertTextNode'];
+    this._element.append(document.createTextNode(textNode));
+
+};
+
+/**
+ * 엘리먼트 복제, html은 동일하나 jQuery객체상태를 초기화 하여 반환된다.
+ * @returns {*}
+ * @private
+ */
+ne.Component.PaginationView.prototype._clone = function($link) {
+
+    if ($link && $link.length && $link.get(0).cloneNode) {
+        return $($link.get(0).cloneNode(true));
+    }
+    return $link;
+
+};
+
+/**
+ * 페이지 결과값에 따른, 결과클래스를 입힌다.
+ * @param {Number} lastNum
+ * @private
+ */
+ne.Component.PaginationView.prototype._setPageResult = function(lastNum) {
+
+    if (lastNum === 0) {
+        this._element.addClass(this._wrapPrefix('no-result'));
+    } else if (lastNum === 1) {
+        this._element.addClass(this._wrapPrefix('only-one')).removeClass(this._wrapPrefix('no-result'));
+    } else {
+        this._element.removeClass(this._wrapPrefix('only-one')).removeClass(this._wrapPrefix('no-result'));
+    }
+
+};
+
+
+/**
+ * 현재페이지의 양 끝페이지를 구한다
+ *
+ * @param viewSet
+ * @returns {{left: *, right: *}}
+ * @private
+ */
+
+ne.Component.PaginationView.prototype._getEdge = function(viewSet) {
+
+    var options = this._options,
+        leftPageNumber,
+        rightPageNumber,
+        left;
+
+    if (options.isCenterAlign) {
+
+        left = Math.floor(options.pagePerPageList / 2);
+        leftPageNumber = viewSet.page - left;
+        leftPageNumber = Math.max(leftPageNumber, 1);
+        rightPageNumber = leftPageNumber + options.pagePerPageList - 1;
+
+        if (rightPageNumber > viewSet.lastPage) {
+            leftPageNumber = viewSet.lastPage - options.pagePerPageList + 1;
+            leftPageNumber = Math.max(leftPageNumber, 1);
+            rightPageNumber = viewSet.lastPage;
+        }
+
+    } else {
+
+        leftPageNumber = (viewSet.currentPageIndex - 1) * options.pagePerPageList + 1;
+        rightPageNumber = (viewSet.currentPageIndex) * options.pagePerPageList;
+        rightPageNumber = Math.min(rightPageNumber, viewSet.lastPage);
+
+    }
+
+    return {
+        left: leftPageNumber,
+        right: rightPageNumber
+    };
+};
+
+/**
+ * 첫번째 페이지인지 여부에 따라 첫번째페이지로 가는 링크를 노출할지 결정한다.
+ *
+ * @param {Object} viewSet
+ * @private
+ */
+ne.Component.PaginationView.prototype._setFirst = function(viewSet) {
+    var options = this._options;
+    if (viewSet.page > 1) {
+        if (options.$pre_endOn) {
+            this._element.append(options.$pre_endOn);
+            this._addTextNode();
+        }
+    } else {
+        if (options.$pre_endOff) {
+            this._element.append(options.$pre_endOff);
+            this._addTextNode();
+        }
+    }
+
+};
+
+/**
+ * 이전페이지가 있는지 여부에 따른 오브젝트 활성화
+ *
+ * @param {Object} viewSet
+ * @private
+ *
+ */
+ne.Component.PaginationView.prototype._setPrev = function(viewSet) {
+    var options = this._options;
+
+    if (viewSet.currentPageIndex > 1) {
+        if (options.$preOn) {
+            this._element.append(options.$preOn);
+            this._addTextNode();
+        }
+    } else {
+        if (options.$preOff) {
+            this._element.append(options.$preOff);
+            this._addTextNode();
+        }
+    }
+};
+
+/**
+ * 다음페이지가 있는지 여부에 따른 오브젝트 활성화
+ *
+ * @param {Obejct} viewSet
+ * @private
+ */
+ne.Component.PaginationView.prototype._setNext = function(viewSet) {
+    var options = this._options;
+
+    if (viewSet.currentPageIndex < viewSet.lastPageListIndex) {
+        if (options.$nextOn) {
+            this._element.append(options.$nextOn);
+            this._addTextNode();
+        }
+    } else {
+        if (options.$nextOff) {
+            this._element.append(options.$nextOff);
+            this._addTextNode();
+        }
+    }
+
+};
+
+/**
+ * 마지막페이지가 있는지 여부에 따른 오브젝트 활성화
+ *
+ * @param {Object} viewSet
+ * @private
+ */
+ne.Component.PaginationView.prototype._setLast = function(viewSet) {
+
+    var options = this._options;
+
+    if (viewSet.page < viewSet.lastPage) {
+        if (options.$lastOn) {
+            this._element.append(options.$lastOn);
+            this._addTextNode();
+        }
+    } else {
+        if (options.$lastOff) {
+            this._element.append(options.$lastOff);
+            this._addTextNode();
+        }
+    }
+
+};
+
+/**
+ * 페이지 넘버링을 한다
+ *
+ * @param {Object} viewSet
+ * @private
+ */
+ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
+    var $pageItem,
+        firstPage = viewSet.leftPageNumber,
+        lastPage = viewSet.rightPageNumber,
+        options = this._options,
+        i;
+
+    for (i = firstPage; i <= lastPage; i++) {
+        if (i == viewSet.page) {
+            $pageItem = $(options.currentPageTemplate.replace('{=page}', i.toString()));
+        } else {
+            $pageItem = $(options.pageTemplate.replace('{=page}', i.toString()));
+            this._pageItemList.push($pageItem);
+        }
+
+        if (i == firstPage) {
+            $pageItem.addClass(this._wrapPrefix(options['firstItemClassName']));
+        }
+        if (i == lastPage) {
+            $pageItem.addClass(this._wrapPrefix(options['lastItemClassName']));
+        }
+        this._element.append($pageItem);
+
+        this._addTextNode();
+    }
+};
+
     if (typeof window.console == 'undefined' || !window.console || !window.console.log) window.console = {'log' : function() {}, 'error' : function() {}};
     /**
-     * define ddata container
+     * define data container
      * @type {{Layout: {}, Data: {}, Cell: {}}}
      */
     var View = {
             CellFactory: null,
-            Layout: {
-            },
+            Layout: {},
+            Layer: {},
             Renderer: {
                 Row: null,
                 Cell: {}
-            },
-            Extra: {
             }
         },
         Model = {},
         Data = {},
-        Collection = {};
+        Collection = {},
+        AddOn = {};
 
     /**
      * Model Base Class
@@ -46,6 +939,7 @@
             this.setOwnProperties({
                 grid: grid
             });
+            this.reset([], {silent: true});
         },
         clear: function() {
             this.each(function(model) {
@@ -64,6 +958,7 @@
 
     /**
      * View base class
+     * @constructor
      */
     View.Base = Backbone.View.extend({
         initialize: function(attributes) {
@@ -123,7 +1018,17 @@
             this.destroyChildren();
             this.remove();
         },
-
+        createEventData: function(eventData) {
+            eventData = eventData || {};
+            eventData.stop = function() {
+                this._isStoped = true;
+            };
+            eventData.isStopped = function() {
+                return this._isStoped;
+            };
+            eventData._isStoped = eventData._isStoped || false;
+            return eventData;
+        },
         destroyChildren: function() {
             if (this.__viewList instanceof Array) {
                 while (this.__viewList.length !== 0) {
@@ -134,6 +1039,8 @@
     });
     /**
      * Renderer Base Class
+     * @extends {View.Base}
+     * @constructor
      */
     View.Base.Renderer = View.Base.extend({
         eventHandler: {},
@@ -191,188 +1098,6 @@
             throw this.error('implement getHtml() method');
         }
     });
-    /**
-     * Cell Renderer Base
-     */
-    View.Base.Renderer.Cell = View.Base.Renderer.extend({
-        cellType: 'normal',
-        eventHandler: {},
-        rerenderAttributes: ['isEditable', 'optionList', 'value'],
-        initialize: function(attributes, options) {
-            View.Base.Renderer.prototype.initialize.apply(this, arguments);
-            this._initializeEventHandler();
-        },
-        baseTemplate: _.template('<td ' +
-            ' columnName="<%=columnName%>"' +
-            ' <%=rowSpan%>' +
-            ' class="<%=className%>"' +
-            ' <%=attributes%>' +
-            ' data-cell-type="<%=cellType%>"' +
-            '>' +
-            '<%=content%>' +
-            '</td>'),
-        onModelChange: function(cellData, $tr) {
-            var $td = this._getCellElement(cellData.columnName, $tr),
-                isRerender = false,
-                isValueChanged = $.inArray('value', cellData.changed) !== -1,
-                hasFocusedElement;
-
-            this._setFocusedClass(cellData, $td);
-
-            for (var i = 0; i < this.rerenderAttributes.length; i++) {
-                if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
-                    isRerender = true;
-                    break;
-                }
-            }
-
-            $td.attr('class', this._getClassNameList(cellData).join(' '));
-
-            hasFocusedElement = !!($td.find(':focus').length);
-
-            if (isRerender === true) {
-                this.render(cellData, $td, hasFocusedElement);
-                if (hasFocusedElement) {
-                    this.focusIn($td);
-                }
-            } else {
-                this.setElementAttribute(cellData, $td, hasFocusedElement);
-            }
-
-
-        },
-        attachHandler: function($target) {
-            this._attachHandler($target);
-        },
-        detachHandler: function($target) {
-            this._detachHandler($target);
-        },
-        _setFocusedClass: function(cellData, $target) {
-            (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
-            (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
-        },
-        setElementAttribute: function(cellData, $td, $focused) {
-
-        },
-        render: function(cellData, $td, $focused) {
-            this._detachHandler($td);
-            $td.data('cell-type', this.cellType).html(this.getContentHtml(cellData, $td, $focused));
-            this._attachHandler($td);
-        },
-        /**
-         * cellData 정보에서 className 을 추출한다.
-         * @param {Object} cellData
-         * @return {Array}
-         * @private
-         */
-        _getClassNameList: function(cellData) {
-            var classNameList = [],
-                classNameMap = {},
-                columnName = cellData.columnName,
-                privateColumnList = ['_button', '_number'],
-                isPrivate = $.inArray(columnName, privateColumnList) !== -1,
-                i, len;
-
-            if (cellData.className) {
-                classNameList.push(cellData.className);
-            }
-            if (cellData.selected === true) {
-                classNameList.push('selected');
-            }
-            if (cellData.focused === true) {
-                classNameList.push('focused');
-            }
-            if (cellData.isEditable === true && !isPrivate) {
-                classNameList.push('editable');
-            }
-            if (cellData.isDisabled === true && !isPrivate) {
-                classNameList.push('disabled');
-            }
-
-            len = classNameList.length;
-            //중복제거
-            for (i = 0; i < len; i++) {
-                classNameMap[classNameList[i]] = true;
-            }
-            classNameList = [];
-            _.each(classNameMap, function(val, className) {
-                classNameList.push(className);
-            }, this);
-            return classNameList;
-        },
-        getHtml: function(cellData) {
-            return this.baseTemplate({
-                columnName: cellData.columnName,
-                rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
-                className: this._getClassNameList(cellData).join(' '),
-                attributes: this.getAttributes(cellData),
-                cellType: this.cellType,
-                content: this.getContentHtml(cellData)
-            });
-        },
-        getAttributesString: function(attributes) {
-            var str = '';
-            _.each(attributes, function(value, key) {
-                str += ' ' + key + '="' + value + '"';
-            }, this);
-            return str;
-        },
-        getEventHandler: function() {
-            return this._eventHandler;
-        },
-
-        /**
-         * implement this.
-         * @private
-         */
-        getContentHtml: function(cellData) {
-            return cellData.value;
-        },
-        /**
-         * implement this.
-         * @private
-         */
-        getAttributes: function(cellData) {
-            return '';
-        },
-        _getColumnName: function($target) {
-            return $target.closest('td').attr('columnName');
-        },
-        _getRowKey: function($target) {
-            return $target.closest('tr').attr('key');
-        },
-        _getCellElement: function(columnName, $tr) {
-            return $tr.find('td[columnName="' + columnName + '"]');
-        },
-        _getCellData: function($tr) {
-            return this.grid.renderModel.getCellData(this._getRowKey($tr), this._getColumnName($tr));
-        },
-        _getCellAddress: function($target) {
-            return {
-                rowKey: this._getRowKey($target),
-                columnName: this._getColumnName($target)
-            };
-        }
-    });
-
-    View.Base.PluginInterface = View.Base.extend({
-        $super: View.Base.PluginInterface,
-        initialize: function() {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.$super.__plugin = this;
-        },
-        activate: function() {
-
-        },
-        render: function() {
-            return this;
-        },
-        appendTo: function() {
-
-        }
-    });
-
-
 
 
 
@@ -386,45 +1111,55 @@
         getRowHeight: function(rowCount, tbodyHeight) {
             return Math.floor(((tbodyHeight - 1) / rowCount));
         },
-        setCursorToEnd: function(targetEl) {
-            targetEl.focus();
-            var length = targetEl.value.length;
+        /**
+         * input 타입의 엘리먼트의 커서를 가장 끝으로 이동한다.
+         * @param {element} target HTML input 엘리먼트
+         */
+        setCursorToEnd: function(target) {
+            target.focus();
+            var length = target.value.length;
 
-            if (targetEl.setSelectionRange) {
-                targetEl.setSelectionRange(length, length);
-            } else if (targetEl.createTextRange) {
-                var range = targetEl.createTextRange();
+            if (target.setSelectionRange) {
+                target.setSelectionRange(length, length);
+            } else if (target.createTextRange) {
+                var range = target.createTextRange();
                 range.collapse(true);
                 range.moveEnd('character', length);
                 range.moveStart('character', length);
                 range.select();
             }
         },
+        /**
+         *
+         * @param target
+         * @param dist
+         * @returns {boolean}
+         */
         isEqual: function(target, dist) {
             var i, len, pro;
-            if ( typeof target !== typeof dist ) {
+            if (typeof target !== typeof dist) {
                 return false;
             }
 
-            if ( target instanceof Array ) {
+            if (target instanceof Array) {
                 len = target.length;
-                if (len !== dist.length){
+                if (len !== dist.length) {
                     return false;
                 } else {
                     for (i = 0; i < len; i++) {
-                        if (target[i] !== dist[i] ) {
+                        if (target[i] !== dist[i]) {
                             return false;
                         }
                     }
                 }
-            } else if ( typeof target === 'object') {
+            } else if (typeof target === 'object') {
                 for (pro in target) {
-                    if (target[pro] !== dist[pro] ) {
+                    if (target[pro] !== dist[pro]) {
                         return false;
                     }
                 }
             } else {
-                if (target !== dist ) {
+                if (target !== dist) {
                     return false;
                 }
             }
@@ -490,12 +1225,184 @@
          var result = Util.encodeHTMLEntity(htmlEntityString);
          //결과값 : "&lt;script&gt; alert('test');&lt;/script&gt;&lt;a href='test'&gt;"
          */
-        encodeHTMLEntity: function(str) {
+        encodeHTMLEntity: function(html) {
             var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
-            return str.replace(/[<>&"']/g, function(m0) {
+            return html.replace(/[<>&"']/g, function(m0) {
                 return entities[m0] ? '&' + entities[m0] + ';' : m0;
             });
+        },
+        /**
+         * $form 에 정의된 인풋 엘리먼트들의 값을 모아서 DataObject 로 구성하여 반환한다.
+         * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+         * @return {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
+         **/
+        getFormData: function($form) {
+            var result = {};
+            var valueList = $form.serializeArray();
+
+            $.each(valueList, function() {
+                if (result[this.name] !== undefined) {
+                    if (!result[this.name].push) {
+                        result[this.name] = [result[this.name]];
+                    }
+                    result[this.name].push(this.value || '');
+                } else {
+                    result[this.name] = this.value || '';
+                }
+            });
+            return result;
+        },
+        /**
+         * 폼 안에 있는 모든 인풋 엘리먼트를 배열로 리턴하거나, elementName에 해당하는 인풋 엘리먼트를 리턴한다.
+         * @method getFormElement
+         * @param {jquery} $form jQuery()로 감싼 폼엘리먼트
+         * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
+         * @return {jQuery}  jQuery 로 감싼 엘리먼트를 반환한다.
+         */
+        getFormElement: function($form, elementName) {
+            if ($form) {
+                var formElement;
+                if (elementName) {
+                    formElement = $form.prop('elements')[elementName + ''];
+                } else {
+                    formElement = $form.prop('elements');
+                }
+                return $(formElement);
+            }
+        },
+        /**
+         * 파라미터로 받은 데이터 객체를 이용하여 폼에 값을 설정한다.
+         *
+         * @method setFormData
+         * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+         * @param {Object} formData 폼에 설정할 폼 데이터 객체
+         **/
+        setFormData: function($form, formData) {
+            for (var x in formData) {
+                if (formData.hasOwnProperty(x)) {
+                    this.setFormElementValue($form, x, formData[x]);
+                }
+            }
+        },
+        /**
+         * 배열의 값들을 전부 String 타입으로 변환한다.
+         * @method _changeToStringInArray
+         * @private
+         * @param {Array}  arr 변환할 배열
+         * @return {Array} 변환된 배열 결과 값
+         */
+        changeToStringInArray: function(arr) {
+            for (var i = 0; i < arr.length; i++) {
+                arr[i] = String(arr[i]);
+            }
+            return arr;
+        },
+        /**
+         * elementName에 해당하는 인풋 엘리먼트에 formValue 값을 설정한다.
+         * -인풋 엘리먼트의 이름을 기준으로 하기에 라디오나 체크박스 엘리먼트에 대해서도 쉽게 값을 설정할 수 있다.
+         * @method setValue
+         * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
+         * @param {String}  elementName 값을 설정할 인풋 엘리먼트의 이름
+         * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.
+         **/
+        setFormElementValue: function($form, elementName, formValue) {
+            var i, j, index, targetOption;
+            var elementList = this.getFormElement($form, elementName, true);
+            if (!elementList) {
+                return;
+            }
+            elementList = elementList.nodeType == 1 ? [elementList] : elementList;
+
+            for (var i = 0, targetElement; i < elementList.length; i++) {
+                targetElement = elementList[i];
+                switch (targetElement.type) {
+                    case 'radio':
+                        targetElement.checked = (targetElement.value == formValue);
+                        break;
+                    case 'checkbox':
+                        if ($.isArray(formValue)) {
+                            targetElement.checked = $.inArray(targetElement.value, this.changeToStringInArray(formValue)) !== -1;
+                        }else {
+                            targetElement.checked = (targetElement.value == formValue);
+                        }
+                        break;
+                    case 'select-one':
+                        index = -1;
+                        for (j = 0; j < targetElement.options.length; j++) {
+                            targetOption = targetElement.options[j];
+                            if (targetOption.value == formValue || targetOption.text == formValue) {
+                                index = j;
+                                continue;
+                            }
+                        }
+                        targetElement.selectedIndex = index;
+                        break;
+                    case 'select-multiple':
+                        if ($.isArray(formValue)) {
+                            formValue = this.changeToStringInArray(formValue);
+                            for (j = 0; j < targetElement.options.length; j++) {
+                                targetOption = targetElement.options[j];
+                                targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
+                                    $.inArray(targetOption.text, formValue) !== -1;
+                            }
+                        }else {
+                            index = -1;
+                            for (j = 0; j < targetElement.options.length; j++) {
+                                targetOption = targetElement.options[j];
+                                if (targetOption.value == formValue || targetOption.text == formValue) {
+                                    index = j;
+                                    continue;
+                                }
+                            }
+                            targetElement.selectedIndex = index;
+                        }
+                        break;
+                    default:
+                        targetElement.value = formValue;
+                }
+            }
+        },
+        /**
+         * object 를 query string 으로 변경한다.
+         * @param {object} dataObj
+         * @return {string} query string
+         */
+        toQueryString: function(dataObj) {
+            var name, val,
+                queryList = [];
+
+            for (name in dataObj) {
+                val = dataObj[name];
+
+                if (typeof val !== 'string' && typeof val !== 'number') {
+                    val = JSON.stringify(val);
+                }
+                val = encodeURIComponent(val);
+                queryList.push(name + '=' + val);
+            }
+            return queryList.join('&');
+        },
+        /**
+         * queryString 을 object 형태로 변형한다.
+         * @param {String} queryString
+         * @return {Object} 변환한 Object
+         */
+        toQueryObject: function(queryString) {
+            var queryList = queryString.split('&'),
+                tmp, key, val, i, len = queryList.length,
+                obj = {};
+            for (i = 0; i < len; i++) {
+                tmp = queryList[i].split('=');
+                key = tmp[0];
+                val = decodeURIComponent(tmp[1]);
+                try {
+                    val = $.parseJSON(val);
+                } catch (e) {}
+                obj[key] = val;
+            }
+            return obj;
         }
+
     };
 
     /**
@@ -590,7 +1497,7 @@
          * index 에 해당하는 columnModel 을 반환한다.
          * @param {Number} index
          * @param {Boolean} isVisible
-         * @returns {*}
+         * @return {*}
          */
         at: function(index, isVisible) {
             var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
@@ -629,8 +1536,14 @@
          * @return {string}
          */
         getEditType: function(columnName) {
-            var columnModel = this.getColumnModel(columnName);
-            return (columnName === '_button') ? 'main' : columnModel && columnModel['editOption'] && columnModel['editOption']['type'];
+            var columnModel = this.getColumnModel(columnName),
+                editType = 'normal';
+            if (columnName === '_button' || columnName === '_number') {
+                editType = columnName;
+            } else if (columnModel && columnModel['editOption'] && columnModel['editOption']['type']) {
+                editType = columnModel['editOption']['type'];
+            }
+            return editType;
         },
         _getVisibleList: function() {
             return _.filter(this.get('columnModelList'), function(item) {return !item['isHidden']});
@@ -784,7 +1697,7 @@
             if (type === 'string') {
                 return value.toString();
             } else if (type === 'number') {
-                return parseInt(value, 10);
+                return value * 1;
             } else {
                 return value;
             }
@@ -808,12 +1721,13 @@
             typeExpected = typeof editOptionList[0].value;
             valueList = value.toString().split(',');
             if (typeExpected !== typeof valueList[0]) {
-                _.each(valueList, function(value, index) {
-                    valueList[index] = this._convertValueType(value, typeExpected);
+                _.each(valueList, function(val, index) {
+                    valueList[index] = this._convertValueType(val, typeExpected);
                 }, this);
             }
-            _.each(valueList, function(value, index) {
-                valueList[index] = _.findWhere(editOptionList, {value: value}).text;
+            _.each(valueList, function(val, index) {
+                var item = _.findWhere(editOptionList, {value: val});
+                valueList[index] = item && item.text || '';
             }, this);
 
             return valueList.join(',');
@@ -920,11 +1834,8 @@
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 _sortKey: 'rowKey',
-//                _focused: {
-//                    'rowKey' : null,
-//                    'columnName' : ''
-//                },
                 _originalRowList: [],
+                _originalRowMap: {},
                 _startIndex: attributes.startIndex || 1,
                 _privateProperties: [
                     '_button',
@@ -940,7 +1851,7 @@
             this.on('all', this.test1, this);
         },
         test1: function() {
-    //            console.log(arguments);
+                console.log('#####TEST', arguments);
         },
         /**
          * rowKey 의 index를 가져온다.
@@ -951,7 +1862,6 @@
             return this.indexOf(this.get(rowKey));
         },
         _onSort: function() {
-            console.log('sort');
             this._refreshNumber();
         },
         _refreshNumber: function() {
@@ -963,7 +1873,6 @@
         _isPrivateProperty: function(name) {
             return $.inArray(name, this._privateProperties) !== -1;
         },
-
         _onChange: function(row) {
             var getChangeEvent = function(row, columnName) {
                 return {
@@ -1088,6 +1997,15 @@
                 });
             }, this);
         },
+        /**
+         * rowState 를 설정한다.
+         * @param {(Number|String)} rowKey
+         * @param {string} rowState DISABLED|DISABLED_CHECK|CHECKED
+         * @param {boolean} silent
+         */
+        setRowState: function(rowKey, rowState, silent) {
+            this.setExtraData(rowKey, {rowState: rowState}, silent);
+        },
         setExtraData: function(rowKey, value, silent) {
             var row = this.get(rowKey),
                 obj = {}, extraData;
@@ -1106,7 +2024,6 @@
             }
         },
         _onFocusChange: function(focusModel) {
-            console.log('onFocusChange', focusModel.changed);
             var selected = true,
                 rowKey = focusModel.get('rowKey');
             _.each(focusModel.changed, function(value, name) {
@@ -1124,9 +2041,47 @@
         },
 
         parse: function(data) {
-            this._originalRowList = this._parse(data);
+            data = data && data['contents'] || data;
+            this.setOriginalRowList(this._format(data));
             return this._originalRowList;
         },
+
+        /**
+         * originalRowList 와 originalRowMap 을 생성한다.
+         * @param {Array} rowList rowList 가 없을 시 현재 설정된 데이터를 originalRowList 로 저장한다.
+         * @private
+         */
+        setOriginalRowList: function(rowList) {
+            this._originalRowList = rowList || this.toJSON();
+            this._originalRowMap = _.indexBy(this._originalRowList, 'rowKey');
+        },
+        /**
+         *
+         * @param {boolean} [isClone=true]
+         * @return {Array}
+         */
+        getOriginalRowList: function(isClone) {
+            isClone = isClone === undefined ? true : isClone;
+            return isClone ? _.clone(this._originalRowList) : this._originalRowList;
+        },
+        /**
+         * original row 을 리턴한다.
+         * @param {(Number|String)} rowKey
+         * @return {Object}
+         */
+        getOriginalRow: function(rowKey) {
+            return _.clone(this._originalRowMap[rowKey]);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 데이터를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {(Number|String)}
+         */
+        getOriginal: function(rowKey, columnName) {
+            return _.clone(this._originalRowMap[rowKey][columnName]);
+        },
+
         /**
          * 내부 변수를 제거한다.
          * @param rowList
@@ -1178,10 +2133,7 @@
             }, this);
             return result;
         },
-        _parse: function(data) {
-            var result = data,
-                keyColumnName = this.grid.columnModel.get('keyColumnName');
-
+        _format: function(data) {
             function setExtraRowSpanData(extraData, columnName, rowSpanData) {
                 extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
                 extraData['rowSpanData'][columnName] = rowSpanData;
@@ -1190,55 +2142,55 @@
                 return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
             }
 
+            var rowList = data,
+                keyColumnName = this.grid.columnModel.get('keyColumnName'),
+                len = rowList.length,
+                subCount, rowSpan, extraData, row, childRow, count, rowKey, rowState, i, j;
 
-            var count, rowKey, columnModel, rowState, extraData;
 
+            for (i = 0; i < len; i++) {
+                row = rowList[i];
+                rowKey = (keyColumnName === null) ? i : row[keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+                row['rowKey'] = rowKey;
+                row['_extraData'] = rowList[i]['_extraData'] || {};
+                extraData = row['_extraData'];
+                rowSpan = row['_extraData']['rowSpan'];
+                rowState = row['_extraData']['rowState'];
 
-            for (var i = 0; i < result.length; i++) {
-                rowKey = (keyColumnName === null) ? i : result[i][keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+                //rowState 값 따라 button 의 상태를 결정한다.
+                row['_button'] = rowState === 'CHECKED';
 
-                result[i]['_extraData'] = result[i]['_extraData'] || {};
-
-//                result[i]['_extraData']['rowState'] = (i % 5 === 0) ? 'DISABLED' : '';
-//                result[i]['_extraData']['rowState'] = (i % 3 === 0) ? 'DISABLED_CHECK' : '';
-
-                rowState = result[i]['_extraData'] && result[i]['_extraData']['rowState'];
-                result[i]['rowKey'] = rowKey;
-                result[i]['_button'] = rowState === 'CHECKED';
                 if (!this.isSortedByField()) {
                     //extraData 의 rowSpanData 가공
-                    if (result[i]['_extraData'] && result[i]['_extraData']['rowSpan']) {
-                        for (var columnName in result[i]['_extraData']['rowSpan']) {
-                            if (!isSetExtraRowSpanData(result[i]['_extraData'], columnName)) {
-                                count = result[i]['_extraData']['rowSpan'][columnName];
-                                setExtraRowSpanData(result[i]['_extraData'], columnName, {
+                    if (rowSpan) {
+                        _.each(rowSpan, function(count, columnName) {
+                            if (!isSetExtraRowSpanData(extraData, columnName)) {
+                                setExtraRowSpanData(extraData, columnName, {
                                     count: count,
                                     isMainRow: true,
-                                    mainRowKey: result[i]['rowKey']
+                                    mainRowKey: rowKey
                                 });
-                                var subCount = -1;
-                                for (var j = i + 1; j < i + count; j++) {
-                                    //value 를 mainRow 의 값과 동일하게 설정
-                                    result[j][columnName] = result[i][columnName];
-                                    result[j]['_extraData'] = result[j]['_extraData'] || {};
-                                    //rowSpan 값 변경
-                                    setExtraRowSpanData(result[j]['_extraData'], columnName, {
+                                subCount = -1;
+                                for (j = i + 1; j < i + count; j++) {
+                                    childRow = rowList[j];
+                                    childRow[columnName] = row[columnName];
+                                    childRow['_extraData'] = childRow['_extraData'] || {};
+                                    setExtraRowSpanData(childRow['_extraData'], columnName, {
                                         count: subCount--,
                                         isMainRow: false,
-                                        mainRowKey: result[i]['rowKey']
+                                        mainRowKey: rowKey
                                     });
                                 }
                             }
-                        }
+                        }, this);
                     }
                 }else {
-                    if (result[i]['_extraData']) {
-                        result[i]['_extraData']['rowSpan'] = null;
+                    if (rowList[i]['_extraData']) {
+                        rowList[i]['_extraData']['rowSpan'] = null;
                     }
                 }
-
             }
-            return result;
+            return rowList;
         },
         _getEmptyRow: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList');
@@ -1253,7 +2205,7 @@
 
             var rowList,
                 modelList = [],
-                keyColumnName = this.grid.columnModel.get('key'),
+                keyColumnName = this.grid.columnModel.get('keyColumnName'),
                 len = this.length,
                 rowData = rowData || this._getEmptyRow();
 
@@ -1262,12 +2214,12 @@
                 rowData = [rowData];
             }
             //model type 으로 변경
-            rowList = this._parse(rowData);
+            rowList = this._format(rowData);
 
             _.each(rowList, function(row, index) {
                 row['rowKey'] = (keyColumnName) ? row[keyColumnName] : len + index;
-                modelList.push(new Data.Row(row));
-            },this);
+                modelList.push(new Data.Row(row, {collection: this}));
+            }, this);
             this.add(modelList, {
                 at: at,
                 merge: true
@@ -1288,11 +2240,12 @@
         defaults: {
             top: 0,
             scrollTop: 0,
+            $scrollTarget: null,
             scrollLeft: 0,
             maxScrollLeft: 0,
             startIdx: 0,
             endIdx: 0,
-
+            startNumber: 1,
             lside: null,
             rside: null
         },
@@ -1300,6 +2253,7 @@
             Model.Base.prototype.initialize.apply(this, arguments);
 
             this.setOwnProperties({
+                timeoutIdForRowListChange: 0,
                 timeoutIdForRefresh: 0,
                 isColumnModelChanged: false
             });
@@ -1307,7 +2261,7 @@
             //원본 rowList 의 상태 값 listening
             this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
             this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
-            this.on('change', this.test, this);
+
             //lside 와 rside 별 Collection 생성
             var lside = new Model.RowList({
                 grid: this.grid
@@ -1320,7 +2274,17 @@
                 rside: rside
             });
         },
-
+        initializeVariables: function() {
+            this.set({
+                top: 0,
+                scrollTop: 0,
+                $scrollTarget: null,
+                scrollLeft: 0,
+                startIdx: 0,
+                endIdx: 0,
+                startNumber: 1
+            });
+        },
         test: function(model) {
             console.log('change', model.changed);
         },
@@ -1352,6 +2316,7 @@
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
         _onRowListChange: function() {
+            this.grid.selection.endSelection();
             clearTimeout(this.timeoutIdForRefresh);
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
@@ -1381,7 +2346,6 @@
 
                 lsideRowList = [],
                 rsideRowList = [],
-
                 lsideRow = [],
                 rsideRow = [],
                 startIdx = this.get('startIdx'),
@@ -1390,7 +2354,7 @@
 
 
             var start = new Date();
-
+            var num = this.get('startNumber') + startIdx;
 //            console.log('render', startIdx, endIdx);
             for (i = startIdx; i < endIdx + 1; i++) {
                 var rowModel = this.grid.dataModel.at(i);
@@ -1407,11 +2371,19 @@
 
                 //lside 데이터 먼저 채운다.
                 _.each(lsideColumnList, function(columnName) {
-                    lsideRow[columnName] = rowModel.get(columnName);
+                    if (columnName == '_number') {
+                        lsideRow[columnName] = num++;
+                    } else {
+                        lsideRow[columnName] = rowModel.get(columnName);
+                    }
                 }, this);
 
                 _.each(rsideColumnList, function(columnName) {
-                    rsideRow[columnName] = rowModel.get(columnName);
+                    if (columnName == '_number') {
+                        rsideRow[columnName] = num++;
+                    } else {
+                        rsideRow[columnName] = rowModel.get(columnName);
+                    }
                 }, this);
 
                 lsideRowList.push(lsideRow);
@@ -1436,6 +2408,10 @@
                 this.trigger('columnModelChanged');
                 this.isColumnModelChanged = false;
             }else {
+//                clearTimeout(this.timeoutIdForRowListChange);
+//                this.timeoutIdForRowListChange = setTimeout($.proxy(function() {
+//                    this.trigger('rowListChanged');
+//                }, this), 10);
                 this.trigger('rowListChanged');
             }
 
@@ -1461,7 +2437,7 @@
          * CellData 를 가져온다.
          * @param rowKey
          * @param columnName
-         * @returns {*}
+         * @return {*}
          */
         getCellData: function(rowKey, columnName) {
             var collection = this._getRowListDivision(columnName),
@@ -1630,7 +2606,7 @@
                 left += columnWidthList[i] + 1;
             }
 
-            right = columnWidthList[i] + 1;
+            right = left + columnWidthList[i] + 1;
 
             return {
                 top: top,
@@ -1877,7 +2853,6 @@
          * @return {Model.Focus}
          */
         focus: function(rowKey, columnName, isScrollable) {
-            console.log('#####focus', rowKey, columnName);
             rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
             columnName = columnName === undefined ? this.get('columnName') : columnName;
             this._savePrevious();
@@ -1901,9 +2876,15 @@
                 scrollTop = renderModel.get('scrollTop'),
                 scrollLeft = renderModel.get('scrollLeft'),
                 bodyHeight = dimensionModel.get('bodyHeight'),
-                position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName);
+                lsideWidth = dimensionModel.get('lsideWidth'),
+                rsideWidth = dimensionModel.get('rsideWidth'),
+
+                position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName),
+                currentLeft = scrollLeft,
+                currentRight = scrollLeft + rsideWidth;
 
 
+            //수직 스크롤 조정
             if (position.top < scrollTop) {
                 renderModel.set({
                     scrollTop: position.top
@@ -1914,13 +2895,18 @@
                 });
             }
 
-            //스크롤 right 도 필요함.
+            //수평 스크롤 조정
             if (!this.grid.columnModel.isLside(focused.columnName)) {
-
+                if (position.left < currentLeft) {
+                    renderModel.set({
+                        scrollLeft: position.left
+                    });
+                } else if (position.right > currentRight) {
+                    renderModel.set({
+                        scrollLeft: position.right - rsideWidth + (this.grid.option('scrollY') * this.grid.scrollBarSize) + 1
+                    });
+                }
             }
-
-//            console.log(renderModel.get('scrollTop'), renderModel.get('scrollLeft'))
-
         },
         /**
          * blur 처리한다.
@@ -2087,6 +3073,21 @@
          */
         prevColumnName: function() {
             return this.findColumnName(-1);
+        },
+        firstRowKey: function() {
+            return this.grid.dataModel.at(0).get('rowKey');
+        },
+        lastRowKey: function() {
+            return this.grid.dataModel.at(this.grid.dataModel.length - 1).get('rowKey');
+        },
+        firstColumnName: function() {
+            var columnModelList = this.grid.columnModel.getVisibleColumnModelList();
+            return columnModelList[0]['columnName'];
+        },
+        lastColumnName: function() {
+            var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
+                lastIndex = columnModelList.length - 1;
+            return columnModelList[lastIndex]['columnName'];
         }
     });
 
@@ -2117,27 +3118,33 @@
                 displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
                 startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
                 endIdx = Math.min(this.grid.dataModel.length - 1,
-                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
+                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)),
+                startRow, endRow, minList, maxList;
+
             if (!this.grid.isSorted()) {
-                var minList = [];
-                var maxList = [];
-                _.each(this.grid.dataModel.at(startIdx).get('_extraData')['rowSpanData'], function(data, columnName) {
-                    if (!data.isMainRow) {
-                        minList.push(data.count);
-                    }
-                }, this);
+                minList = [];
+                maxList = [];
+                startRow = this.grid.dataModel.at(startIdx);
+                endRow = this.grid.dataModel.at(endIdx);
+                if (startRow && endRow) {
+                    _.each(startRow.get('_extraData')['rowSpanData'], function(data, columnName)  {
+                        if (!data.isMainRow) {
+                            minList.push(data.count);
+                        }
+                    }, this);
 
-                _.each(this.grid.dataModel.at(endIdx).get('_extraData')['rowSpanData'], function(data, columnName) {
-                    if (data.count > 0) {
-                        maxList.push(data.count);
-                    }
-                }, this);
+                    _.each(endRow.get('_extraData')['rowSpanData'], function(data, columnName) {
+                        if (data.count > 0) {
+                            maxList.push(data.count);
+                        }
+                    }, this);
 
-                if (minList.length > 0) {
-                    startIdx += Math.min.apply(Math, minList);
-                }
-                if (maxList.length > 0) {
-                    endIdx += Math.max.apply(Math, maxList);
+                    if (minList.length > 0) {
+                        startIdx += Math.min.apply(Math, minList);
+                    }
+                    if (maxList.length > 0) {
+                        endIdx += Math.max.apply(Math, maxList);
+                    }
                 }
             }
 
@@ -2361,6 +3368,90 @@
 
     });
 
+/**
+ * body layout 뷰
+ *
+ * @type {*|void}
+ */
+View.Layer.Base = View.Base.extend({
+    initialize: function(attributes) {
+        View.Base.prototype.initialize.apply(this, arguments);
+        this.setOwnProperties({
+            text: '기본 텍스트'
+        });
+        this.listenTo(this.grid.dimensionModel, 'change', this._resize, this);
+    },
+    template: _.template('' +
+        '<div>' +
+        '    <%=text%>' +
+        '    <div class="loading_img"></div>' +
+        '</div>'),
+    render: function(text) {
+        this.$el.html(this.template({
+            text: text || this.text
+        })).css('display', 'none');
+        return this;
+    },
+
+    show: function(text) {
+        this.render(text).$el.css('display', 'block')
+            .css('zIndex', 1);
+        this._resize();
+    },
+    hide: function() {
+        this.$el.css('display', 'none');
+    },
+    _resize: function() {
+        if (this.$el.css('display') === 'block') {
+            var headerHeight = this.grid.dimensionModel.get('headerHeight'),
+                bodyHeight = this.grid.dimensionModel.get('bodyHeight');
+            this.$el.css('marginTop', headerHeight + 'px')
+                .css('height', bodyHeight + 'px');
+        }
+    }
+});
+/**
+ * body layout 뷰
+ *
+ * @type {*|void}
+ */
+View.Layer.Empty = View.Layer.Base.extend({
+    className: 'no_row_layer',
+    initialize: function(attributes) {
+        View.Layer.Base.prototype.initialize.apply(this, arguments);
+        this.setOwnProperties({
+            text: '데이터가 존재하지 않습니다.'
+        });
+    },
+    template: _.template('<%=text%>')
+});
+
+/**
+ * body layout 뷰
+ *
+ * @type {*|void}
+ */
+View.Layer.Loading = View.Layer.Base.extend({
+    className: 'loading_layer',
+    initialize: function(attributes) {
+        View.Layer.Base.prototype.initialize.apply(this, arguments);
+        this.text = '요청을 처리 중입니다.';
+    },
+    template: _.template('' +
+        '<div>' +
+        '    <%=text%>' +
+        '    <div class="loading_img"></div>' +
+        '</div>')
+});
+
+View.Layer.Ready = View.Layer.Base.extend({
+    className: 'initializing_layer',
+    initialize: function(attributes) {
+        View.Layer.Base.prototype.initialize.apply(this, arguments);
+        this.text = '초기화 중 입니다.';
+    }
+});
+
     View.Layout.Frame = View.Base.extend({
         tagName: 'div',
         className: 'lside_area',
@@ -2375,7 +3466,6 @@
         },
         render: function() {
             this.destroyChildren();
-            this.trigger('beforeRender');
             this.beforeRender();
 
             var header = this.header = this.createView(View.Layout.Header, {
@@ -2499,6 +3589,7 @@
             if (this.whichSide === 'R') {
                 obj['scrollLeft'] = scrollEvent.target.scrollLeft;
             }
+            this.grid.renderModel.set('$scrollTarget', this.$el);
             this.grid.renderModel.set(obj);
         },
         /**
@@ -2660,14 +3751,18 @@
             this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
             this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-
+            this.timeoutForScroll = 0;
         },
         template: _.template('<div class="content"></div>'),
         events: {
             'scroll' : '_onScroll'
         },
         _onScroll: function(scrollEvent) {
-            this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
+            clearTimeout(this.timeoutForScroll);
+            this.timeoutForScroll = setTimeout($.proxy(function() {
+                this.grid.renderModel.set('$scrollTarget', this.$el);
+                this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
+            }, this), 10);
         },
         _onDimensionChange: function(model) {
             if (model.changed['headerHeight'] || model.changed['bodyHeight']) {
@@ -2720,15 +3815,40 @@
             View.Base.prototype.initialize.apply(this, arguments);
             this.whichSide = attributes.whichSide;
             this.viewList = [];
-            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.setOwnProperties({
+                timeoutForAllChecked: 0
+            });
+            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
+                .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this);
 
+        },
+        /**
+         * 그리드의 checkCount 가 변경되었을 때 수행하는 헨들러
+         * @private
+         */
+        _onCheckCountChange: function() {
+            if (this.grid.option('selectType') === 'checkbox') {
+                clearTimeout(this.timeoutForAllChecked);
+                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckstate, this), 10);
+            }
+        },
+        /**
+         * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
+         * @private
+         */
+        _syncCheckstate: function() {
+            if (this.grid.option('selectType') === 'checkbox') {
+                var $input = this.$el.find('th[columnname="_button"] input');
+                if ($input.length) {
+                    $input.prop('checked', this.grid.dataModel.length === this.grid.getCheckedRowList().length);
+                }
+            }
         },
         _onColumnWidthChanged: function() {
             var columnData = this._getColumnData(),
                 columnWidthList = columnData.widthList,
                 $colList = this.$el.find('col');
-//            console.log(columnWidthList[0],columnWidthList[1],columnWidthList[2]);
 
             for (var i = 0; i < $colList.length; i++) {
                 $colList.eq(i).css('width', columnWidthList[i] + 'px');
@@ -2740,9 +3860,12 @@
             }
         },
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target);
-            if ($target.closest('th').attr('columnname') === '_button') {
+            var $target = $(clickEvent.target),
+                isChecked;
 
+            if ($target.closest('th').attr('columnname') === '_button' && $target.is('input')) {
+                isChecked = $target.prop('checked');
+                isChecked ? this.grid.checkAll() : this.grid.uncheckAll();
             }
         },
         template: _.template('' +
@@ -2845,11 +3968,11 @@
                     colSpan = (colSpanList[j] > 1) ? " colSpan='" + colSpanList[j] + "'" : '';
                     rowMarkupList[j] = rowMarkupList[j] || [];
                     title = columnModel['title'];
-                    rowMarkupList[j].push('<th'+ columnName + sRole + sHeight + sRowSpan + colSpan + '>'+ title + '</th>');
+                    rowMarkupList[j].push('<th' + columnName + sRole + sHeight + sRowSpan + colSpan + '>' + title + '</th>');
                 }
             }
             for (var i = 0; i < rowMarkupList.length; i++) {
-                headerMarkupList.push('<tr>'+ rowMarkupList[i].join('') + '</tr>');
+                headerMarkupList.push('<tr>' + rowMarkupList[i].join('') + '</tr>');
             }
 
             return headerMarkupList.join('');
@@ -3062,18 +4185,23 @@
         className: 'toolbar',
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                controlPanel: null,
+                resizeHandler: null,
+                pagination: null
+            });
         },
         render: function() {
             this.destroyChildren();
             var option = this.grid.option('toolbar'),
-                resizeHandler, controlPannel;
+                resizeHandler, controlPanel, pagination;
 
             this.$el.empty();
-            if (option && option.hasControlPannel) {
-                controlPannel = this.createView(View.Layout.Toolbar.ControlPannel, {
+            if (option && option.hasControlPanel) {
+                controlPanel = this.createView(View.Layout.Toolbar.ControlPanel, {
                     grid: this.grid
                 });
-                this.$el.append(controlPannel.render().el).css('display', 'block');
+                this.$el.append(controlPanel.render().el).css('display', 'block');
             }
 
             if (option && option.hasResizeHandler) {
@@ -3082,7 +4210,53 @@
                 });
                 this.$el.append(resizeHandler.render().el).css('display', 'block');
             }
+
+            if (option && option.hasPagination) {
+                pagination = this.createView(View.Layout.Toolbar.Pagination, {
+                    grid: this.grid
+                });
+                this.$el.append(pagination.render().el).css('display', 'block');
+            }
+            this.setOwnProperties({
+                controlPanel: controlPanel,
+                resizeHandler: resizeHandler,
+                pagination: pagination
+            });
             return this;
+        }
+    });
+    /**
+     * Pagination 영역
+     * @class
+     */
+    View.Layout.Toolbar.Pagination = View.Base.extend({
+        tagName: 'div',
+        className: 'pagination',
+        template: _.template('' +
+            '<a href="#" class="pre_end">맨앞</a><a href="#" class="pre">이전</a> <a href="#" class="next">다음</a><a href="#" class="next_end">맨뒤</a>'
+        ),
+        initialize: function() {
+            View.Base.prototype.initialize.apply(this, arguments);
+
+        },
+        render: function() {
+            this.destroyChildren();
+            this.$el.empty().html(this.template());
+            this._setPaginationInstance();
+            return this;
+        },
+        _setPaginationInstance: function() {
+            var PaginationClass = ne && ne.Component && ne.Component.Pagination,
+                pagination = null;
+            if (!this.instance && PaginationClass) {
+                pagination = new PaginationClass({
+                    itemCount: 1,
+                    itemPerPage: 1
+                }, this.$el);
+            }
+            this.setOwnProperties({
+                instance: pagination
+            });
         }
     });
     /**
@@ -3170,10 +4344,10 @@
         }
     });
     /**
-     * control pannel
+     * control panel
      * @class
      */
-    View.Layout.Toolbar.ControlPannel = View.Base.extend({
+    View.Layout.Toolbar.ControlPanel = View.Base.extend({
         tagName: 'div',
         className: 'btn_setup',
         template: _.template(
@@ -3195,7 +4369,6 @@
             return this;
         }
     });
-
 
 
     /**
@@ -3279,7 +4452,7 @@
                 rowKey = $tr.attr('key');
             this.grid.focus(rowKey, columnName);
             if (this.grid.option('selectType') === 'radio') {
-                this.grid.checkRow(rowKey);
+                this.grid.check(rowKey);
             }
         },
         /**
@@ -3288,8 +4461,7 @@
          * @private
          */
         _onModelChange: function(model) {
-            var columnModel = this.grid.columnModel,
-                editType, cellInstance, rowState;
+            var editType, cellInstance, rowState;
 
             _.each(model.changed, function(cellData, columnName) {
                 if (columnName !== '_extraData') {
@@ -3325,7 +4497,11 @@
          * @private
          */
         _getEditType: function(columnName, cellData) {
-            return !cellData.isEditable ? 'normal' : this.grid.columnModel.getEditType(columnName);
+            var editType = this.grid.columnModel.getEditType(columnName);
+            if (!cellData.isEditable && columnName !== '_number') {
+                editType = 'normal';
+            }
+            return editType;
         },
         /**
          * html 마크업을 반환
@@ -3362,87 +4538,157 @@
     });
 
     /**
-     *  Cell Interface
-     *  상속받아 cell renderer를 구현한다.
+     * Cell Renderer Base
+     * @extends {View.Base.Renderer}
+     * @constructor
      */
-    View.Base.Renderer.Cell.Interface = View.Base.Renderer.Cell.extend({
+    View.Base.Renderer.Cell = View.Base.Renderer.extend({
         /**
-         * Cell factory 에서 전체 td에 eventHandler 를 attach, detach 할 때 구분자로 사용할 cellType
-         */
-        cellType: 'normal',
-        /**
-         * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록
+         * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
          */
         rerenderAttributes: ['isEditable', 'optionList', 'value'],
+
+        /**
+         * keyDownEvent 발생시 기본 동작 switch
+         */
+        _defaultKeyDownSwitch: {
+            'ESC': function(keyDownEvent, param) {
+                this.focusOut(param.$target);
+            },
+            'ENTER': function(keyDownEvent, param) {
+                this.focusOut(param.$target);
+            },
+            'TAB': function(keyDownEvent, param) {
+                this.grid.focusClipboard();
+                if (keyDownEvent.shiftKey) {
+                    //이전 cell 로 focus 이동 후 편집모드로 전환
+                    this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                } else {
+                    //이후 cell 로 focus 이동 후 편집모드로 전환
+                    this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                }
+            },
+            _default: function(keyDownEvent, param) {
+            }
+        },
         /**
          * event handler
          */
         eventHandler: {},
-        initialize: function() {
-            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+        initialize: function(attributes, options) {
+            View.Base.Renderer.prototype.initialize.apply(this, arguments);
+            this._initializeEventHandler();
+            this.setOwnProperties({
+                _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
+            });
         },
-        focusIn: function($td) {
-            //todo: cell 에서 키보드 enter 를 입력하여 focus 될 때 수행할 로직을 구현한다.
-        },
-        focusOut: function() {
-            //todo: focus in 상태에서 키보드 esc 를 입력하여 focus out 될 때 수행할 로직을 필요에 따라 override 한다.
-            this.grid.focusClipboard();
-        },
-        /**
-         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-         * @param {object} cellData
-         * @return  {string} html string
-         * @example
-         * var html = this.getContentHtml();
-         * <select>
-         *     <option value='1'>option1</option>
-         *     <option value='2'>option1</option>
-         *     <option value='3'>option1</option>
-         * </select>
-         */
-        getContentHtml: function(cellData) {
-            //todo: rerenderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-            throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
-        },
-        /**
-         * model의 rerenderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-         * @param {object} cellData
-         * @param {jquery} $target
-         */
-        setElementAttribute: function(cellData, $target) {
-            //todo: rerenderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-            throw this.error('Implement setElementAttribute(cellData, $target) method. ');
-        }
-    });
 
+        baseTemplate: _.template('<td ' +
+            ' columnName="<%=columnName%>"' +
+            ' <%=rowSpan%>' +
+            ' class="<%=className%>"' +
+            ' <%=attributes%>' +
+            ' data-edit-type="<%=editType%>"' +
+            '>' +
+            '<%=content%>' +
+            '</td>'),
 
-
-    /**
-     *  Cell Abstract
-     *  상속받아 cell renderer를 구현한다.
-     */
-    View.Base.Renderer.Cell.Abstract = View.Base.Renderer.Cell.extend({
         /**
-         * Cell factory 에서 전체 td에 eventHandler 를 attach, detach 할 때 구분자로 사용할 cellType
+         * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
+         * 필요에 따라 override 한다.
+         * @param {jQuery} $td
          */
-        cellType: 'normal',
-        /**
-         * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록
-         */
-        rerenderAttributes: ['isEditable', 'optionList', 'value'],
-        /**
-         * event handler
-         */
-        eventHandler: {},
-        initialize: function() {
-            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
-        },
-        focusIn: function($td) {
-            //todo: cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-        },
         focusOut: function($td) {
-            //todo: focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직. 필요에 따라 override 한다.
             this.grid.focusClipboard();
+        },
+        /**
+         * RowRenderer 에서 Render model 변경 감지 시 RowRenderer 에서 호출하는 onChange 핸들러
+         * @param {object} cellData
+         * @param {jQuery} $tr
+         */
+        onModelChange: function(cellData, $tr) {
+            var rowKey = $tr.attr('key'),
+                $td = this.grid.getElement(rowKey, cellData.columnName),
+                isRerender = false,
+                isValueChanged = $.inArray('value', cellData.changed) !== -1,
+                hasFocusedElement;
+
+            this._setFocusedClass(cellData, $td);
+
+            for (var i = 0; i < this.rerenderAttributes.length; i++) {
+                if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
+                    isRerender = true;
+                    break;
+                }
+            }
+
+            $td.attr('class', this._getClassNameList(cellData).join(' '));
+
+            hasFocusedElement = !!($td.find(':focus').length);
+
+            if (isRerender === true) {
+                this.render(cellData, $td, hasFocusedElement);
+                if (hasFocusedElement) {
+                    this.focusIn($td);
+                }
+            } else {
+                this.setElementAttribute(cellData, $td, hasFocusedElement);
+            }
+        },
+        /**
+         * eventHandler 를 attach 한다.
+         * @param {jQuery} $target
+         */
+        attachHandler: function($target) {
+            this._attachHandler($target);
+        },
+        /**
+         * eventHandler 를 detach 한다.
+         * @param $target
+         */
+        detachHandler: function($target) {
+            this._detachHandler($target);
+        },
+        /**
+         * 실제 rendering 한다.
+         * @param {object} cellData
+         * @param {jQuery} $td
+         * @param {Boolean} hasFocusedElement
+         */
+        render: function(cellData, $td, hasFocusedElement) {
+            this._detachHandler($td);
+            $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData, $td, hasFocusedElement));
+            this._attachHandler($td);
+        },
+
+
+        _getKeyDownSwitchVariables: function(keyDownEvent) {
+            var grid = this.grid,
+                keyCode = keyDownEvent.keyCode || keyDownEvent.which,
+                focused = grid.focusModel.which(),
+                rowKey = focused.rowKey,
+                columnName = focused.columnName;
+            return {
+                keyDownEvent: keyDownEvent,
+                $target: $(keyDownEvent.target),
+                focusModel: grid.focusModel,
+                rowKey: rowKey,
+                columnName: columnName,
+                keyName: grid.keyName[keyCode]
+            };
+        },
+        _setKeyDownSwitch: function(keyName, fn) {
+            if (typeof keyName === 'object') {
+                this._keyDownSwitch = $.extend(this._keyDownSwitch, keyName);
+            } else {
+                this._keyDownSwitch[keyName] = fn;
+            }
+        },
+        _executeKeyDownSwitch: function(keyDownEvent) {
+            var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
+                keyName = this.grid.keyName[keyCode];
+            (this._keyDownSwitch[keyName] || this._keyDownSwitch['_default']).call(this, keyDownEvent, this._getKeyDownSwitchVariables(keyDownEvent));
+            return !!this._keyDownSwitch[keyName];
         },
         /**
          *
@@ -3451,77 +4697,164 @@
          */
         _onKeyDown: function(keyDownEvent) {
             //todo: cell 종류에 따라 해당 input 에 keydown event handler 를 추가하여 구현한다.
-            var $target = $(keyDownEvent.target),
-                grid = this.grid,
-                keyMap = grid.keyMap,
-                isKeyIdentified = true,
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            switch (keyCode) {
-                case keyMap['ESC']:
-                    this.focusOut($target);
-                    break;
-                case keyMap['ENTER']:
-                    this.focusOut($target);
-                    break;
-                case keyMap['TAB']:
-                    if (keyDownEvent.shiftKey) {
-                        //이전 cell 로 focus 이동 후 편집모드로 전환
-                    } else {
-                        //이후 cell 로 focus 이동 후 편집모드로 전환
-                    }
-                    break;
-                default:
-                    isKeyIdentified = false;
-                    break;
-            }
-            if (isKeyIdentified) {
+            if (this._executeKeyDownSwitch(keyDownEvent)) {
                 keyDownEvent.preventDefault();
             }
         },
         /**
-         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * td에 selected 와 focused css 클래스를 할당한다.
          * @param {object} cellData
-         * @param {jquery} $td
-         * @param {Boolean} hasFocusedElement
-         * @return  {string} html string
-         * @example
-         * var html = this.getContentHtml();
-         * <select>
-         *     <option value='1'>option1</option>
-         *     <option value='2'>option1</option>
-         *     <option value='3'>option1</option>
-         * </select>
+         * @param {jQuery} $target
+         * @private
          */
-        getContentHtml: function(cellData, $td, hasFocusedElement) {
-            //todo: rerenderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-            throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
+        _setFocusedClass: function(cellData, $target) {
+            (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
+            (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
+        },
+
+        /**
+         * cellData 정보에서 className 을 추출한다.
+         * @param {Object} cellData
+         * @return {Array}
+         * @private
+         */
+        _getClassNameList: function(cellData) {
+            var classNameList = [],
+                classNameMap = {},
+                columnName = cellData.columnName,
+                privateColumnList = ['_button', '_number'],
+                isPrivateColumnName = $.inArray(columnName, privateColumnList) !== -1,
+                i, len;
+
+            cellData.className ? classNameList.push(cellData.className) : null;
+            cellData.selected ? classNameList.push('selected') : null;
+            cellData.focused ? classNameList.push('focused') : null;
+            cellData.isEditable && !isPrivateColumnName ? classNameList.push('editable') : null;
+            cellData.isDisabled && !isPrivateColumnName ? classNameList.push('disabled') : null;
+
+            len = classNameList.length;
+            //중복제거
+            for (i = 0; i < len; i++) {
+                classNameMap[classNameList[i]] = true;
+            }
+            classNameList = [];
+            _.each(classNameMap, function(val, className) {
+                classNameList.push(className);
+            }, this);
+            return classNameList;
         },
         /**
-         * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * RowRenderer 에서 한번에 table 을 랜더링 할 때 사용하기 위해
+         * td 단위의 html 문자열을 반환한다.
          * @param {object} cellData
-         * @param {jquery} $td
-         * @param {Boolean} hasFocusedElement
+         * @return {string}
          */
-        setElementAttribute: function(cellData, $td, hasFocusedElement) {
-            //todo: rerenderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-            throw this.error('Implement setElementAttribute(cellData, $target) method. ');
+        getHtml: function(cellData) {
+            return this.baseTemplate({
+                columnName: cellData.columnName,
+                rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
+                className: this._getClassNameList(cellData).join(' '),
+                attributes: this.getAttributes(cellData),
+                editType: this.getEditType(),
+                content: this.getContentHtml(cellData)
+            });
+        },
+        getAttributesString: function(attributes) {
+            var str = '';
+            _.each(attributes, function(value, key) {
+                str += ' ' + key + '="' + value + '"';
+            }, this);
+            return str;
+        },
+        getEventHandler: function() {
+            return this._eventHandler;
+        },
+
+        /**
+         * implement this.
+         * @private
+         */
+        getAttributes: function(cellData) {
+            return '';
+        },
+        _getColumnName: function($target) {
+            return $target.closest('td').attr('columnName');
+        },
+        _getRowKey: function($target) {
+            return $target.closest('tr').attr('key');
+        },
+        _getCellData: function($target) {
+            return this.grid.renderModel.getCellData(this._getRowKey($target), this._getColumnName($target));
+        },
+        _getCellAddress: function($target) {
+            return {
+                rowKey: this._getRowKey($target),
+                columnName: this._getColumnName($target)
+            };
         }
     });
 
 
+    /**
+     * Cell Renderer 추가 시 반드시 필요한 Interface 정의
+     * @interface
+     */
+    View.Base.Renderer.Cell.Interface = function() {};
+    /**
+     * 자기 자신의 인스턴스의 editType 을 반환한다.
+     * @return {String} editType 'normal|button|select|button|text|text-convertible'
+     */
+    View.Base.Renderer.Cell.Interface.prototype.getEditType = function() {};
+    /**
+     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+     * @param $td
+     */
+    View.Base.Renderer.Cell.Interface.prototype.focusIn = function($td) {};
+    /**
+     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직. 필요에 따라 override 한다.
+     * @param {jQuery} $td
+     */
+//    View.Base.Renderer.Cell.Interface.prototype.focusOut = function($td) {};
+    /**
+     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+     * re renderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+     * @param {object} cellData
+     * @param {jquery} $td
+     * @param {Boolean} hasFocusedElement
+     * @return  {string} html string
+     * @example
+     * var html = this.getContentHtml();
+     * <select>
+     *     <option value='1'>option1</option>
+     *     <option value='2'>option1</option>
+     *     <option value='3'>option1</option>
+     * </select>
+     */
+    View.Base.Renderer.Cell.Interface.prototype.getContentHtml = function(cellData, $td, hasFocusedElement) {};
+    /**
+     * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+     * re renderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+     * @param {object} cellData
+     * @param {jquery} $td
+     * @param {Boolean} hasFocusedElement
+     */
+    View.Base.Renderer.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
+
 
     /**
-     *  editOption 에 list 를 가지고 있는 형태의 추상 클래스
-     * @type {*|void}
+     * editOption 에 list 를 가지고 있는 형태의 추상 클래스
+     * @implements {View.Base.Renderer.Cell.Interface}
+     * @class
      */
-    View.Renderer.Cell.List = View.Base.Renderer.Cell.Abstract.extend({
+    View.Renderer.Cell.List = View.Base.Renderer.Cell.extend({
         rerenderAttributes: ['isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {
-            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
         },
+        focusIn: function($td) {},
+        getEditType: function() {},
         getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
@@ -3542,15 +4875,24 @@
         }
     });
 
-
     /**
-     * editType select
-     * @type {*|void}
+     * select type 의 Cell renderer
+     *
+     * @extends {View.Renderer.Cell.List}
+     * @class
      */
     View.Renderer.Cell.List.Select = View.Renderer.Cell.List.extend({
-        cellType: 'select',
         initialize: function(attributes) {
             View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
+
+            this._setKeyDownSwitch({
+                'ESC': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'ENTER': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                }
+            });
         },
         eventHandler: {
             'change select' : '_onChange',
@@ -3563,8 +4905,11 @@
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
             $td.find('select').focus();
         },
+        getEditType: function() {
+            return 'select';
+        },
         getContentHtml: function(cellData, $td, hasFocusedElement) {
-            console.log('!!!!getContentHtml', cellData.optionList);
+//            console.log('!!!!getContentHtml', cellData.optionList);
             var list = this._getOptionList(cellData),
                 html = '',
                 isDisabled = cellData.isDisabled,
@@ -3590,7 +4935,7 @@
 
         },
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
-            console.log('!!!!setElementAttribute', cellData.optionList);
+//            console.log('!!!!setElementAttribute', cellData.optionList);
             var $select = $td.find('select');
             hasFocusedElement ? $select.blur() : null;
             $select.val(cellData.value);
@@ -3607,13 +4952,45 @@
 
 
     /**
-     * editType = radio || checkbox
-     * @type {*|void}
+     * checkbox, radio button type 의 Cell renderer
+     *
+     * @extends {View.Renderer.Cell.List}
+     * @class
      */
     View.Renderer.Cell.List.Button = View.Renderer.Cell.List.extend({
-        cellType: 'button',
         initialize: function(attributes) {
             View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
+            this._setKeyDownSwitch({
+                'UP_ARROW': function() {},
+                'DOWN_ARROW': function() {},
+                'PAGE_UP': function() {},
+                'PAGE_DOWN': function() {},
+                'ENTER': function(keyDownEvent, param) {
+                    param.$target.trigger('click');
+                },
+                'LEFT_ARROW': function(keyDownEvent, param) {
+                    this._focusPrevInput(param.$target);
+                },
+                'RIGHT_ARROW': function(keyDownEvent, param) {
+                    this._focusNextInput(param.$target);
+                },
+                'ESC': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'TAB': function(keyDownEvent, param) {
+                    if (keyDownEvent.shiftKey) {
+                        //이전 cell 로 focus 이동
+                        if (!this._focusPrevInput(param.$target)) {
+                            this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                        }
+                    } else {
+                        //이후 cell 로 focus 이동
+                        if (!this._focusNextInput(param.$target)) {
+                            this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                        }
+                    }
+                }
+            });
         },
         eventHandler: {
             'change input' : '_onChange',
@@ -3623,74 +5000,38 @@
             input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%> <%=disabled%> />'),
             label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
+        getEditType: function() {
+            return 'button';
+        },
         focusIn: function($td) {
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
             $td.find('input').eq(0).focus();
         },
-        _getNextInput: function($currentInput) {
+        _focusNextInput: function($currentInput) {
             var $next = $currentInput;
-            do{
+            do {
                 $next = $next.next();
             } while ($next.length && !$next.is('input'));
-            return $next;
+            if ($next.length) {
+                $next.focus();
+                return true;
+            } else {
+                return false;
+            }
         },
-        _getPrevInput: function($currentInput) {
+        _focusPrevInput: function($currentInput) {
             var $prev = $currentInput;
-            do{
+            do {
                 $prev = $prev.prev();
             } while ($prev.length && !$prev.is('input'));
-            return $prev;
-        },
-        /**
-         *
-         * @param {event} keyDownEvent
-         * @private
-         */
-        _onKeyDown: function(keyDownEvent) {
-            //todo: cell 종류에 따라 해당 input 에 keydown event handler 를 추가하여 구현한다.
-            var $target = $(keyDownEvent.target),
-                $next, $prev,
-                grid = this.grid,
-                keyMap = grid.keyMap,
-                isKeyIdentified = true,
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            switch (keyCode) {
-                case keyMap['UP_ARROW']:
-
-                    break;
-                case keyMap['DOWN_ARROW']:
-
-                    break;
-                case keyMap['LEFT_ARROW']:
-                    $prev = this._getPrevInput($target);
-                    $prev.length ? $prev.focus() : null;
-                    break;
-                case keyMap['RIGHT_ARROW']:
-                    $next = this._getNextInput($target);
-                    $next.length ? $next.focus() : null;
-                    break;
-                case keyMap['ESC']:
-                    this.focusOut($target);
-                    break;
-                case keyMap['ENTER']:
-                    $target.trigger('click');
-                    break;
-                case keyMap['TAB']:
-                    if (keyDownEvent.shiftKey) {
-                        //이전 cell 로 focus 이동 후 편집모드로 전환
-                    } else {
-                        //이후 cell 로 focus 이동 후 편집모드로 전환
-                    }
-                    break;
-                default:
-                    isKeyIdentified = false;
-                    break;
-            }
-            if (isKeyIdentified) {
-                keyDownEvent.preventDefault();
+            if ($prev.length) {
+                $prev.focus();
+                return true;
+            } else {
+                return false;
             }
         },
+
         getContentHtml: function(cellData) {
             var list = this._getOptionList(cellData),
                 len = list.length,
@@ -3734,15 +5075,8 @@
                 $td.find('input[value="' + checkedList[i] + '"]').prop('checked', true);
             }
         },
-        _getEditType: function($target) {
-            var columnName = this._getColumnName($target),
-                columnModel = this.grid.columnModel.getColumnModel(columnName),
-                type = columnModel.editOption.type;
-
-            return type;
-        },
         _getCheckedList: function($target) {
-            var $checkedList = $target.closest('td').find('input[type=' + this._getEditType($target) + ']:checked'),
+            var $checkedList = $target.closest('td').find('input:checked'),
                 checkedList = [];
 
             for (var i = 0; i < $checkedList.length; i++) {
@@ -3754,7 +5088,6 @@
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target);
-            console.log('button _onChange', this._getCheckedList($target).join(','));
             this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target).join(','));
         }
 
@@ -3763,10 +5096,15 @@
     /**
      * editOption 이 적용되지 않은 cell 의 renderer
      * @class
+     * @extends {View.Base.Renderer.Cell}
+     * @implements {View.Base.Renderer.Cell.Interface}
      */
-    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.Abstract.extend({
+    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.extend({
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+        },
+        getEditType: function() {
+            return 'normal';
         },
         /**
          * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
@@ -3785,6 +5123,9 @@
             }
             return value;
         },
+        focusIn: function() {
+            this.grid.focusClipboard();
+        },
         /**
          * model 의 onChange 시, innerHTML 변경 없이, element attribute 만 변경해야 할 때 수행된다.
          * @param {object} cellData
@@ -3794,30 +5135,67 @@
         }
     });
 
+    View.Renderer.Cell.Normal.Number = View.Renderer.Cell.Normal.extend({
+        rerenderAttributes: [],
+        initialize: function(attributes, options) {
+            View.Renderer.Cell.Normal.prototype.initialize.apply(this, arguments);
+        },
+        getEditType: function() {
+            return '_number';
+        },
+        /**
+         * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
+         * @param {object} cellData
+         * @param {jQuery} $target
+         * @return {String}
+         */
+        getContentHtml: function(cellData, $target) {
+            return cellData.value;
+        }
+    });
     /**
      * checkbox 혹은 radiobox 형태의 Main Button renderer
      * @class
+     * @extends {View.Base.Renderer.Cell}
+     * @implements {View.Base.Renderer.Cell.Interface}
      */
-    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.Abstract.extend({
-        /**
-         * event Handler attach 하기 위한 cell type
-         */
-        cellType: 'main',
+    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.extend({
         /**
          * rendering 해야하는 cellData 의 변경 목록
          */
         rerenderAttributes: ['isEditable', 'optionList'],
         eventHandler: {
             'mousedown' : '_onMouseDown',
-            'change input' : '_onChange'
+            'change input' : '_onChange',
+            'keydown input' : '_onKeyDown'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+            this._setKeyDownSwitch({
+                'UP_ARROW': function() {},
+                'DOWN_ARROW': function() {},
+                'ENTER': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'LEFT_ARROW': function(keyDownEvent, param) {
+                    this._focusPrevInput(param.$target);
+                },
+                'RIGHT_ARROW': function(keyDownEvent, param) {
+                    this._focusPrevInput(param.$target);
+                },
+                'ESC': function(keyDownEvent, param) {
+                    this._restore(param.$target);
+                    this.focusOut(param.$target);
+                }
+            });
         },
         /**
          * rendering 시 사용할 template
          */
         template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
+        getEditType: function() {
+            return '_button';
+        },
         /**
          * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
          * @param {object} cellData
@@ -3833,8 +5211,25 @@
                 disabled: isDisabled ? 'disabled' : ''
             });
         },
+        focusIn: function($td) {
+//            $td.find('input').focus();
+        },
+        /**
+         * checked 를 toggle 한다.
+         * @param {jQuery} $td
+         */
+        toggle: function($td) {
+            var $input = $td.find('input');
+            if (this.grid.option('selectType') === 'checkbox') {
+                $input.trigger('click');
+            }
+        },
         setElementAttribute: function(cellData, $target) {
-            $target.find('input').prop('checked', !!cellData.value);
+            var $input = $target.find('input'),
+                isChecked = $input.prop('checked');
+            if (isChecked !== !!cellData.value) {
+                $input.prop('checked', cellData.value);
+            }
         },
         getAttributes: function(cellData) {
             return this.getAttributesString({
@@ -3843,9 +5238,8 @@
         },
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                rowKey = this._getRowKey($target),
-                columnName = this._getColumnName($target);
-            this.grid.setValue(rowKey, columnName, $target.prop('checked'));
+                rowKey = this._getRowKey($target);
+            this.grid.setValue(rowKey, '_button', $target.prop('checked'));
         },
         _onMouseDown: function(mouseDownEvent) {
             var $target = $(mouseDownEvent.target);
@@ -3857,26 +5251,50 @@
 
     /**
      * text-textbox 변환 가능한 cell renderer
+     * @extends {View.Base.Renderer.Cell}
+     * @implements {View.Base.Renderer.Cell.Interface}
+     * @class
      */
-    View.Renderer.Cell.Text = View.Base.Renderer.Cell.Abstract.extend({
-        cellType: 'text',
+    View.Renderer.Cell.Text = View.Base.Renderer.Cell.extend({
         rerenderAttributes: ['isEditable'],
         eventHandler: {
             'blur input' : '_onBlur',
-            'keydown input': '_onKeyDown'
+            'keydown input': '_onKeyDown',
+            'focus input': '_onFocus'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 originalText: ''
             });
+
+            this._setKeyDownSwitch({
+                'UP_ARROW': function() {},
+                'DOWN_ARROW': function() {},
+                'PAGE_UP': function() {},
+                'PAGE_DOWN': function() {},
+                'ENTER': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'ESC': function(keyDownEvent, param) {
+                    this._restore(param.$target);
+                    this.focusOut(param.$target);
+                }
+            });
         },
         template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        getEditType: function() {
+            return 'text';
+        },
+        _onFocus: function(focusEvent) {
+            var $input = $(focusEvent.target);
+            this.originalText = $input.val();
+            this.grid.selection.disable();
+        },
         focusIn: function($td) {
             var $input = $td.find('input');
-            this.originalText = $input.val();
-            $input.focus();
             Util.setCursorToEnd($input.get(0));
+            $input.focus().select();
 
         },
         focusOut: function() {
@@ -3891,7 +5309,11 @@
             });
         },
         setElementAttribute: function(cellData, $target) {
-            $target.find('input').prop('disabled', cellData.isDisabled);
+            var isValueChanged = $.inArray('value', cellData.changed) !== -1,
+                $input = $target.find('input');
+
+            isValueChanged ? $input.val(cellData.value) : null;
+            $input.prop('disabled', cellData.isDisabled);
         },
         /**
          * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
@@ -3911,74 +5333,45 @@
             $input.val(this.originalText);
         },
         /**
-         * keyDown event handler
-         * @param {event} keyDownEvent
-         * @private
-         */
-        _onKeyDown: function(keyDownEvent) {
-            var $target = $(keyDownEvent.target),
-                grid = this.grid,
-                keyMap = grid.keyMap,
-                isKeyIdentified = true,
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            switch (keyCode) {
-                case keyMap['ESC']:
-                    this._restore($target);
-                    this.focusOut($target);
-                    break;
-                case keyMap['ENTER']:
-                    this.focusOut($target);
-                    break;
-                case keyMap['TAB']:
-                    if (keyDownEvent.shiftKey) {
-                        //이전 cell 로 focus 이동
-                    } else {
-                        //이후 cell 로 focus 이동
-                    }
-                    break;
-                default:
-                    isKeyIdentified = false;
-                    break;
-            }
-            if (isKeyIdentified) {
-                keyDownEvent.preventDefault();
-            }
-        },
-        /**
          * blur event handler
          * @param {event} blurEvent
          * @private
          */
         _onBlur: function(blurEvent) {
-
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!blur');
             var $target = $(blurEvent.target),
                 rowKey = this._getRowKey($target),
                 columnName = this._getColumnName($target);
             if (this._isEdited($target)) {
                 this.grid.setValue(rowKey, columnName, $target.val());
             }
+            this.grid.selection.enable();
         }
     });
 
 
     /**
      * text-textbox 변환 가능한 cell renderer
+     * @extends {View.Base.Renderer.Cell.Text}
+     * @implements {View.Base.Renderer.Cell.Interface}
      * @class
      */
     View.Renderer.Cell.Text.Convertible = View.Renderer.Cell.Text.extend({
-        cellType: 'text-convertible',
-        rerenderAttributes: ['isEditable', 'optionList', 'value'],
+        rerenderAttributes: ['isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
             'blur input' : '_onBlurConvertible',
-            'keydown input': '_onKeyDown'
+            'keydown input': '_onKeyDown',
+            'focus input': '_onFocus'
         },
         initialize: function(attributes, options) {
             View.Renderer.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForClick: 0
             });
+        },
+        getEditType: function() {
+            return 'text-convertible';
         },
         focusIn: function($td) {
             this._startEdit($td);
@@ -3989,7 +5382,7 @@
         },
         getContentHtml: function(cellData) {
             var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName),
-                $td = this.grid.getCellElement(cellData.rowKey, cellData.columnName),
+                $td = this.grid.getElement(cellData.rowKey, cellData.columnName),
                 isEdit = !!($td.length && $td.data('isEdit'));
 
             if (!isEdit) {
@@ -4002,6 +5395,7 @@
                 });
             }
         },
+        setElementAttribute: function() {},
         /**
          * blur event handler
          * @param {event} blurEvent
@@ -4026,8 +5420,9 @@
                 this.render(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
-                $input.focus();
                 Util.setCursorToEnd($input.get(0));
+                $input.focus().select();
+
             }
         },
         /**
@@ -4065,242 +5460,6 @@
     });
 
 
-    View.Extra.Log = View.Base.extend({
-        events: {
-            'click input' : 'clear'
-        },
-        initialize: function(attributes) {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.setOwnProperties({
-                maxCount: 20,
-                logs: [],
-                buffer: '',
-                lastTime: -1,
-                timeoutIdForLogs: 0,
-                width: 500,
-                height: 200,
-                opacity: 0.8
-            });
-        },
-        activate: function() {
-            if (this.grid.option('debug') === true) {
-                this.listenTo(this.grid, 'afterRender', this.appendTo, this);
-            }
-        },
-        appendTo: function() {
-            this.grid.$el.append(this.render().el);
-        },
-        render: function() {
-            this.$el.css({
-                'position' : 'absolute',
-                'right' : '25px',
-                'top' : '25px',
-                'opacity' : this.opacity,
-                'background' : 'yellow',
-                'width' : this.width + 'px',
-                'height' : this.height + 'px',
-                'overflow' : 'auto'
-            });
-            return this;
-        },
-        clear: function() {
-//            this.buffer = '';
-//            this.$el.html('');
-        },
-        write: function(text) {
-
-            if (!this.buffer) {
-                this.buffer = '';
-            }
-            clearTimeout(this.timeoutIdForLogs);
-            var str = this.buffer;
-
-            var d = new Date();
-            var timeStamp = '['+ d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + '] ';
-            var elapsed = 0;
-
-            if (this.lastTime > 0) {
-                elapsed = d - this.lastTime;
-            }
-
-            this.lastTime = d;
-
-
-            var lineList = str.split('<br>');
-            if (lineList.length > this.maxCount) {
-                lineList.pop();
-            }
-
-            lineList.unshift('<b>' + timeStamp + text + ' :elapsed [' + elapsed + ']</b>');
-            this.buffer = lineList.join('<br>');
-            this.timeoutIdForLogs = setTimeout($.proxy(function() {
-                this.$el.html(this.buffer);
-            }, this), 100);
-        }
-    });
-
-    View.Extra.Selection = View.Base.extend({
-        events: {
-        },
-        initialize: function(attributes, option) {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.setOwnProperties({
-				whichSide: attributes && attributes.whichSide || 'R',
-                lside: null,
-                rside: null,
-                range: {
-                    column: [0, 1],
-                    row: [2, 3]
-                }
-			});
-        },
-        activate: function() {
-            this.listenTo(this.grid.view.rside, 'afterRender', this.appendToRside, 'a');
-            this.listenTo(this.grid.view.lside, 'afterRender', this.appendToLside, 'b');
-        },
-        appendToRside: function() {
-            this.rside = this.appendTo(this.grid.view.rside.body, View.Extra.Selection.Layer.Rside);
-            this.show();
-        },
-        appendToLside: function() {
-            this.lside = this.appendTo(this.grid.view.lside.body, View.Extra.Selection.Layer.Lside);
-
-        },
-        appendTo: function(view, clazz) {
-//            var layer = new clazz({
-//                grid : this.grid,
-//                columnWidthList : this.grid.dimensionModel.getColumnWidthList(view.whichSide)
-//            });
-//            this.addView(layer);
-//            view.$el.append(layer.render().el);
-//            return layer;
-        },
-
-
-        startSelection: function(rowIndex, columnIndex) {
-            this.range.row[0] = this.range.row[1] = rowIndex;
-            this.range.column[0] = this.range.column[1] = columnIndex;
-        },
-        updateSelectionRange: function(rowIndex, columnIndex) {
-            this.range.row[1] = rowIndex;
-            this.range.column[1] = columnIndex;
-        },
-        endSelection: function() {
-            this.range.row[0] = this.range.row[1] = this.range.column[0] = this.range.column[1] = -1;
-        },
-
-        show: function() {
-            var rowHeight = this.grid.dimensionModel.get('rowHeight'),
-                startRow = Math.min.apply(Math, this.range.row),
-                endRow = Math.max.apply(Math, this.range.row),
-                startColumn = Math.min.apply(Math, this.range.column),
-                endColumn = Math.max.apply(Math, this.range.column),
-                top = Util.getTBodyHeight(startRow, rowHeight),
-                height = Util.getTBodyHeight(endRow - startRow, rowHeight) - 3;
-
-            console.log('this.lside.$el', this.lside);
-            this.lside.show(startRow, endRow, startColumn, endColumn);
-            this.rside.show(startRow, endRow, startColumn, endColumn);
-
-            this.lside.$el.css({
-                top: top + 'px',
-                width: 100 + 'px',
-                height: height + 'px',
-                display: 'block'
-            });
-
-//                columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-//                columnWidthList = this.grid.dimensionModel.get('columnWidthList'),
-//
-//                top = Util.getTBodyHeight(startRow, rowHeight),
-//                height = Util.getTBodyHeight(endRow-startRow, rowHeight) - 3;
-//
-//
-//
-//            //좌측 영역 랜더링
-//
-//
-//            //우측 영역도 랜더링
-//            if(endColumn >= columnFixIndex){
-//
-//            }
-//
-//            this.$el.css({
-//                top : top+'px',
-//                width : 100 + 'px',
-//                height : height + 'px',
-//                display: 'block'
-//            });
-        }
-    });
-
-
-    View.Extra.Selection.Layer = View.Base.extend({
-        tagName: 'div',
-        className: 'selection_layer',
-        initialize: function(attributes, option) {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-			this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
-            this.listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this);
-            this.setOwnProperties({
-                columnWidthList: attributes.columnWidthList
-            });
-        },
-        _onScrollTopChange: function() {
-
-        },
-        _onBeforeRefresh: function() {
-
-        },
-        _onTopChange: function() {
-
-        },
-        render: function() {
-            console.log('@@Selection layer render');
-            return this;
-        }
-    });
-
-    View.Extra.Selection.Layer.Lside = View.Extra.Selection.Layer.extend({
-        initialize: function(attributes, option) {
-            View.Extra.Selection.Layer.prototype.initialize.apply(this, arguments);
-            console.log('LSIDE : ', this.columnWidthList);
-        },
-        _onScrollTopChange: function() {
-
-        },
-        _onBeforeRefresh: function() {
-
-        },
-        _onTopChange: function() {
-            console.log(this.$el.length);
-        },
-        show: function(startRow, endRow, startColumn, endColumn) {
-
-        }
-    });
-
-    View.Extra.Selection.Layer.Rside = View.Extra.Selection.Layer.extend({
-        initialize: function(attributes, option) {
-            View.Extra.Selection.Layer.prototype.initialize.apply(this, arguments);
-            console.log('RSIDE : ', this.columnWidthList);
-        },
-        _onScrollTopChange: function() {
-
-        },
-        _onBeforeRefresh: function() {
-
-        },
-        _onTopChange: function() {
-
-        },
-        show: function(startRow, endRow, startColumn, endColumn) {
-
-        }
-    });
-
-
     /**
      * Cell Factory
      */
@@ -4319,6 +5478,7 @@
                 },
                 instanceList = [
                     new View.Renderer.Cell.MainButton(args),
+                    new View.Renderer.Cell.Normal.Number(args),
                     new View.Renderer.Cell.Normal(args),
                     new View.Renderer.Cell.Text(args),
                     new View.Renderer.Cell.List.Button(args),
@@ -4327,7 +5487,7 @@
                 ];
 
             _.each(instanceList, function(instance, name) {
-                instances[instance.cellType] = instance;
+                instances[instance.getEditType()] = instance;
             }, this);
 
             this.setOwnProperties({
@@ -4335,49 +5495,34 @@
             });
         },
         getInstance: function(editType) {
-            var instance = null;
-            switch (editType) {
-                case 'main' :
-                    instance = this.instances[editType];
-                    break;
-                case 'text' :
-                    instance = this.instances[editType];
-                    break;
-                case 'text-convertible' :
-                    instance = this.instances[editType];
-                    break;
-                case 'select':
-                    instance = this.instances[editType];
-                    break;
-                case 'radio' :
-                case 'checkbox' :
+            var instance = this.instances[editType];
+            if (!instance) {
+                if (editType === 'radio' || editType === 'checkbox') {
                     instance = this.instances['button'];
-                    break;
-                default :
+                } else {
                     instance = this.instances['normal'];
-                    break;
+                }
             }
-
             return instance;
         },
         attachHandler: function($parent) {
             var $tdList = $parent.find('td'),
                 $td,
-                cellType;
+                editType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.data('cell-type');
-                this.instances[cellType].attachHandler($td);
+                editType = $td.data('edit-type');
+                this.instances[editType].attachHandler($td);
             }
         },
         detachHandler: function($parent) {
             var $tdList = $parent.find('td'),
                 $td,
-                cellType;
+                editType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.data('cell-type');
-                this.instances[cellType].detachHandler($td);
+                editType = $td.data('edit-type');
+                this.instances[editType].detachHandler($td);
             }
         }
     });
@@ -4417,20 +5562,22 @@
             });
         },
         render: function() {
-            this.$el.css({
-                'top': 0,
-                'left': 0,
-                'width': '100px',
-                'height': '100px'
-            });
+//            this.$el.css({
+//                'top': 0,
+//                'left': 0,
+//                'width': '100px',
+//                'height': '20px'
+//            });
             return this;
         },
         _lock: function() {
-
+            clearTimeout(this.timeoutIdForKeyIn);
+            this.isLocked = true;
+            this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10);
         },
         _unlock: function() {
+            this.isLocked = false;},
 
-        },
         /**
          * keyDown event handler
          * @param {event} keyDownEvent
@@ -4439,14 +5586,9 @@
         _onKeydown: function(keyDownEvent) {
             var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             if (this.isLocked) {
-                keyDownEvent.prevetnDefault();
+                keyDownEvent.preventDefault();
                 return false;
             } else {
-                clearTimeout(this.timeoutIdForKeyIn);
-                this.isLocked = true;
-                this.timeoutIdForKeyIn = setTimeout($.proxy(function(){
-                    this.isLocked = false;
-                }, this), 10);
                 if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
                     this._keyInWithShiftAndCtrl(keyDownEvent);
                 } else if (keyDownEvent.shiftKey) {
@@ -4456,6 +5598,7 @@
                 } else {
                     this._keyIn(keyDownEvent);
                 }
+                this._lock();
             }
         },
         /**
@@ -4472,9 +5615,8 @@
                 rowKey = focused.rowKey,
                 columnName = focused.columnName,
                 displayRowCount = grid.dimensionModel.getDisplayRowCount(),
+                isKeyIdentified = true,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            selection.endSelection();
 
             switch (keyCode) {
                 case keyMap['UP_ARROW']:
@@ -4495,33 +5637,134 @@
                 case keyMap['PAGE_DOWN']:
                     grid.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
                     break;
+                case keyMap['HOME']:
+                    grid.focus(rowKey, focusModel.firstColumnName(), true);
+                    break;
+                case keyMap['END']:
+                    grid.focus(rowKey, focusModel.lastColumnName(), true);
+                    break;
+                //space 와 enter 는 동일동작
+                case keyMap['SPACE']:
                 case keyMap['ENTER']:
-                    this._focusIn(rowKey, columnName);
+                    this._onEnterSpace(rowKey, columnName);
+                    break;
+                case keyMap['DEL']:
+                    this._del(rowKey, columnName);
                     break;
                 case keyMap['TAB']:
+                    grid.focusIn(rowKey, focusModel.nextColumnName(), true);
                     break;
                 case keyMap['CHAR_V']:
                     break;
+                default:
+                    isKeyIdentified = false;
             }
             keyDownEvent.preventDefault();
+            selection.endSelection();
+            return isKeyIdentified;
         },
         /**
-         * Cell 을 편집모드로 전환한다.
-         * @param {Number|String} rowKey
-         * @param {String} columnName
+         * enter 또는 space 가 입력되었을 때, 처리하는 로직
+         * @param {(number|string)} rowKey
+         * @param {string} columnName
          * @private
          */
-        _focusIn: function(rowKey, columnName){
-            var grid = this.grid,
-                cellInstance, cellData;
-            if (grid.isEditable()) {
-                cellInstance = grid.cellFactory.getInstance(grid.columnModel.getEditType(columnName));
-                if (!grid.isSorted()) {
-                    cellData = grid.renderModel.getCellData(rowKey, columnName);
-                    rowKey = cellData.mainRowKey;
-                }
-                cellInstance.focusIn(grid.getCellElement(rowKey, columnName));
+        _onEnterSpace: function(rowKey, columnName) {
+            var cellInstance,
+                grid = this.grid,
+                editType = this.grid.columnModel.getEditType(columnName);
+            if (editType === '_button') {
+                cellInstance = this.grid.cellFactory.getInstance(editType);
+                cellInstance.toggle(grid.getElement(rowKey, columnName));
+            } else {
+                grid.focusIn(rowKey, columnName);
             }
+        },
+        /**
+         * shift 가 눌린 상태에서의 key down event handler
+         * @param {event} keyDownEvent
+         * @private
+         */
+        _keyInWithShift: function(keyDownEvent) {
+            var grid = this.grid,
+                keyMap = grid.keyMap,
+                focusModel = grid.focusModel,
+                columnModelList = grid.columnModel.getVisibleColumnModelList(),
+                focusedIndex = grid.focusModel.indexOf(),
+                focused = focusModel.which(),
+                isKeyIdentified = true,
+                displayRowCount = grid.dimensionModel.getDisplayRowCount(),
+                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+
+            switch (keyCode) {
+                case keyMap['UP_ARROW']:
+                    this._updateSelectionByKeyIn(focusModel.prevRowIndex(), focusedIndex.columnIdx);
+                    break;
+                case keyMap['DOWN_ARROW']:
+                    this._updateSelectionByKeyIn(focusModel.nextRowIndex(), focusedIndex.columnIdx);
+                    break;
+                case keyMap['LEFT_ARROW']:
+                    this._updateSelectionByKeyIn(focusedIndex.rowIdx, focusModel.prevColumnIndex());
+                    break;
+                case keyMap['RIGHT_ARROW']:
+                    this._updateSelectionByKeyIn(focusedIndex.rowIdx, focusModel.nextColumnIndex());
+                    break;
+                case keyMap['PAGE_UP']:
+                    this._updateSelectionByKeyIn(focusModel.prevRowIndex(displayRowCount - 1), focusedIndex.columnIdx);
+                    break;
+                case keyMap['PAGE_DOWN']:
+                    this._updateSelectionByKeyIn(focusModel.nextRowIndex(displayRowCount - 1), focusedIndex.columnIdx);
+                    break;
+                case keyMap['HOME']:
+                    this._updateSelectionByKeyIn(focusedIndex.rowIdx, 0);
+                    break;
+                case keyMap['END']:
+                    this._updateSelectionByKeyIn(focusedIndex.rowIdx, columnModelList.length - 1);
+                    break;
+                case keyMap['ENTER']:
+                    break;
+                case keyMap['TAB']:
+                    grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
+                    break;
+                case keyMap['CHAR_V']:
+                    break;
+                default:
+                    isKeyIdentified = false;
+            }
+            keyDownEvent.preventDefault();
+            return isKeyIdentified;
+        },
+        /**
+         * ctrl 가 눌린 상태에서의 key down event handler
+         * @param {event} keyDownEvent
+         * @private
+         */
+        _keyInWithCtrl: function(keyDownEvent) {
+            var grid = this.grid,
+                keyMap = grid.keyMap,
+                focusModel = grid.focusModel,
+                isKeyIdentified = true,
+                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+
+            switch (keyCode) {
+                case keyMap['CHAR_A']:
+                    this.grid.selection.selectAll();
+                    break;
+                case keyMap['CHAR_C']:
+                    this._copyToClipboard();
+                    break;
+                case keyMap['HOME']:
+                    grid.focus(focusModel.firstRowKey(), focusModel.firstColumnName(), true);
+                    break;
+                case keyMap['END']:
+                    grid.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
+                    break;
+                case keyMap['CHAR_V']:
+                    break;
+                default:
+                    isKeyIdentified = false;
+            }
+            return isKeyIdentified;
         },
         /**
          * ctrl, shift 둘다 눌린 상태에서의 key down event handler
@@ -4529,26 +5772,58 @@
          * @private
          */
         _keyInWithShiftAndCtrl: function(keyDownEvent) {
-            var keyMap = this.grid.keyMap,
+            var grid = this.grid,
+                keyMap = grid.keyMap,
+                isKeyIdentified = true,
+                columnModelList = grid.columnModel.getVisibleColumnModelList(),
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+
             switch (keyCode) {
-                case keyMap['UP_ARROW']:
+                case keyMap['HOME']:
+                    this._updateSelectionByKeyIn(0, 0);
                     break;
-                case keyMap['DOWN_ARROW']:
+                case keyMap['END']:
+                    this._updateSelectionByKeyIn(grid.dataModel.length - 1, columnModelList.length - 1);
                     break;
-                case keyMap['LEFT_ARROW']:
-                    break;
-                case keyMap['RIGHT_ARROW']:
-                    break;
-                case keyMap['ENTER']:
-                    break;
-                case keyMap['TAB']:
-                    break;
-                case keyMap['CHAR_V']:
-                    break;
+                default:
+                    isKeyIdentified = false;
             }
+
             keyDownEvent.preventDefault();
+            return isKeyIdentified;
         },
+        /**
+         * text type 의 editOption cell 의 data 를 빈 스트링으로 세팅한다.
+         * @private
+         */
+        _del: function() {
+            var grid = this.grid,
+                selection = grid.selection,
+                dataModel = grid.dataModel,
+                focused = grid.focusModel.which(),
+                columnModelList = grid.columnModel.getVisibleColumnModelList(),
+                rowKey = focused.rowKey,
+                columnName = focused.columnName,
+                range, i, j;
+
+            if (selection.hasSelection()) {
+                //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
+                range = selection.getRange();
+                for (i = range.row[0]; i < range.row[1] + 1; i++) {
+                    rowKey = dataModel.at(i).get('rowKey');
+                    for (j = range.column[0]; j < range.column[1] + 1; j++) {
+                        columnName = columnModelList[j]['columnName'];
+                        grid.del(rowKey, columnName, true);
+                    }
+                }
+                grid.renderModel.refresh();
+            } else {
+                grid.del(rowKey, columnName);
+            }
+        },
+
+
+
         /**
          * keyIn 으로 selection 영역을 update 한다. focus 로직도 함께 수행한다.
          * @param {Number} rowIndex
@@ -4565,65 +5840,7 @@
             selection.updateSelection(rowIndex, columnIndex);
             this.grid.focusAt(rowIndex, columnIndex, true);
         },
-        /**
-         * shift 가 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
-         * @private
-         */
-        _keyInWithShift: function(keyDownEvent) {
-            var keyMap = this.grid.keyMap,
-                selection = this.grid.selection,
-                focusModel = this.grid.focusModel,
-                focused = this.grid.focusModel.indexOf(),
-                displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-            switch (keyCode) {
-                case keyMap['UP_ARROW']:
-                    this._updateSelectionByKeyIn(focusModel.prevRowIndex(), focused.columnIdx);
-                    break;
-                case keyMap['DOWN_ARROW']:
-                    this._updateSelectionByKeyIn(focusModel.nextRowIndex(), focused.columnIdx);
-                    break;
-                case keyMap['LEFT_ARROW']:
-                    this._updateSelectionByKeyIn(focused.rowIdx, focusModel.prevColumnIndex());
-                    break;
-                case keyMap['RIGHT_ARROW']:
-                    this._updateSelectionByKeyIn(focused.rowIdx, focusModel.nextColumnIndex());
-                    break;
-                case keyMap['PAGE_UP']:
-                    this._updateSelectionByKeyIn(focusModel.prevRowIndex(displayRowCount - 1), focused.columnIdx);
-                    break;
-                case keyMap['PAGE_DOWN']:
-                    this._updateSelectionByKeyIn(focusModel.nextRowIndex(displayRowCount - 1), focused.columnIdx);
-                    break;
-                case keyMap['ENTER']:
-                    break;
-                case keyMap['TAB']:
-                    break;
-                case keyMap['CHAR_V']:
-                    break;
-            }
-            keyDownEvent.preventDefault();
-        },
-        /**
-         * ctrl 가 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
-         * @private
-         */
-        _keyInWithCtrl: function(keyDownEvent) {
-            var keyMap = this.grid.keyMap,
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-            switch (keyCode) {
-                case keyMap['CHAR_A']:
-                    this.grid.selection.selectAll();
-                    break;
-                case keyMap['CHAR_C']:
-                    this._copyToClipboard();
-                    break;
-                case keyMap['CHAR_V']:
-                    break;
-            }
-        },
+
         /**
          * clipboard 의 String 을 반환한다.
          * @return {String}
@@ -4647,7 +5864,6 @@
          */
         _copyToClipboard: function() {
             var text = this._getClipboardString();
-            console.log(text);
             if (window.clipboardData) {
                 if (window.clipboardData.setData('Text', text)) {
                     this.$el.select();
@@ -4676,7 +5892,7 @@
                 rowRenderer: null
             });
             this._createRowRenderer();
-            this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+            this.listenTo(this.grid.renderModel, 'rowListChanged', this._onRowListChange, this);
         },
 
         _createRowRenderer: function() {
@@ -4687,23 +5903,43 @@
                 whichSide: this.whichSide
             });
         },
+        _onRowListChange: function() {
+            var $scrollTarget = this.grid.renderModel.get('$scrollTarget');
+            clearTimeout(this.timeoutIdForCollection);
+            if ($scrollTarget && $scrollTarget.hasClass('virtual_scrollbar')) {
+                this.timeoutIdForCollection = setTimeout($.proxy(this.render, this), 0);
+            } else {
+                this.render();
+            }
+        },
         render: function() {
-            var html = '';
+            var html = '',
+                firstRow = this.collection.at(0);
             var start = new Date();
             console.log('View.RowList.render start');
             this.rowRenderer.detachHandler();
             this.destroyChildren();
             this._createRowRenderer();
             //get html string
-            this.collection.forEach(function(row) {
-                html += this.rowRenderer.getHtml(row);
-            }, this);
+            if (firstRow && firstRow.get('rowKey') !== 'undefined') {
+                this.collection.forEach(function(row) {
+                    html += this.rowRenderer.getHtml(row);
+                }, this);
+            }
             this.$el.html('').prepend(html);
             this.rowRenderer.attachHandler();
 
             var end = new Date();
             console.log('View.RowList.addAll end', end - start);
+            this._showLayer();
             return this;
+        },
+        _showLayer: function() {
+            if (this.grid.dataModel.length) {
+                this.grid.hideGridLayer();
+            } else {
+                this.grid.showGridLayer('empty');
+            }
         }
     });
 
@@ -4733,8 +5969,23 @@
                 pageY: 0,
 
                 intervalIdForAutoScroll: 0,
+                isEnable: true,
                 _isShown: false
             });
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+        },
+        /**
+         * selection 을 disable 한다.
+         */
+        enable: function() {
+            this.isEnable = true;
+        },
+        /**
+         * selection 을 disable 한다.
+         */
+        disable: function() {
+            this.endSelection();
+            this.isEnable = false;
         },
         /**
          * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
@@ -4742,21 +5993,22 @@
          * @param {Number} pageY
          */
         attachMouseEvent: function(pageX, pageY) {
-            this.setOwnProperties({
-                pageX: pageX,
-                pageY: pageY
-            });
-            this.grid.updateLayoutData();
-            $(document).on('mousemove', $.proxy(this._onMouseMove, this));
-            $(document).on('mouseup', $.proxy(this._onMouseUp, this));
-            $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+            if (this.isEnable) {
+                this.setOwnProperties({
+                    pageX: pageX,
+                    pageY: pageY
+                });
+                this.grid.updateLayoutData();
+                $(document).on('mousemove', $.proxy(this._onMouseMove, this));
+                $(document).on('mouseup', $.proxy(this._onMouseUp, this));
+                $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+            }
         },
         /**
          * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
          */
         detachMouseEvent: function() {
             clearInterval(this.intervalIdForAutoScroll);
-            this.getSelectionToString();
             $(document).off('mousemove', $.proxy(this._onMouseMove, this));
             $(document).off('mouseup', $.proxy(this._onMouseUp, this));
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
@@ -4901,7 +6153,9 @@
                 overflowY: overflowY
             };
         },
-
+        getRange: function() {
+            return $.extend(true, {}, this.spannedRange);
+        },
         /**
          *  현재 selection 범위에 대한 string 을 반환한다.
          *  @return {String}
@@ -4988,6 +6242,14 @@
             this.range.row[0] = this.range.row[1] = this.range.column[0] = this.range.column[1] = -1;
             this.spannedRange.row[0] = this.spannedRange.row[1] = this.spannedRange.column[0] = this.spannedRange.column[1] = -1;
             this.hide();
+            this.detachMouseEvent();
+        },
+        /**
+         * dimension model 의 columnWidth 가 변경되었을 경우 크기를 재 계산하여 rendering 한다.
+         * @private
+         */
+        _onColumnWidthChanged: function() {
+            this.show();
         },
         /**
          * 현재 selection range 정보를 기반으로 selection Layer 를 노출한다.
@@ -5023,6 +6285,8 @@
                     row: spannedRange.row,
                     column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
                 });
+                //selection 이 생성될 때에는 무조건 input 에 focus 가 가지 않도록 clipboard에 focus 를 준다.
+                this.grid.focusClipboard();
             }
         },
         /**
@@ -5096,80 +6360,85 @@
                 len = columnModelList.length,
                 startIndexList = [spannedRange.row[0]],
                 endIndexList = [spannedRange.row[1]],
-                startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
-                endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
-                columnName, param,
+                startRow = dataModel.at(spannedRange.row[0]),
+                endRow = dataModel.at(spannedRange.row[1]),
                 newSpannedRange = $.extend({}, spannedRange);
 
-            /**
-             * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
-             * @param {object} param
-             */
-            function concatRowSpanIndexFromStart(param) {
-                var startIndex = param.startIndex,
-                    endIndex = param.endIndex,
-                    rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
-                    startIndexList = param.startIndexList,
-                    endIndexList = param.endIndexList,
-                    spannedIndex;
+            if (startRow && endRow) {
+                var startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
+                    endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
+                    columnName, param;
 
-                if (rowSpanData) {
-                    if (!rowSpanData['isMainRow']) {
-                        spannedIndex = startIndex + rowSpanData['count'];
-                        startIndexList.push(spannedIndex);
-                    } else {
-                        spannedIndex = startIndex + rowSpanData['count'] - 1;
-                        if (spannedIndex > endIndex) {
+                /**
+                 * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
+                 * @param {object} param
+                 */
+                function concatRowSpanIndexFromStart(param) {
+                    var startIndex = param.startIndex,
+                        endIndex = param.endIndex,
+                        rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
+                        startIndexList = param.startIndexList,
+                        endIndexList = param.endIndexList,
+                        spannedIndex;
+
+                    if (rowSpanData) {
+                        if (!rowSpanData['isMainRow']) {
+                            spannedIndex = startIndex + rowSpanData['count'];
+                            startIndexList.push(spannedIndex);
+                        } else {
+                            spannedIndex = startIndex + rowSpanData['count'] - 1;
+                            if (spannedIndex > endIndex) {
+                                endIndexList.push(spannedIndex);
+                            }
+                        }
+                    }
+                }
+
+                /**
+                 * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
+                 * @param {object} param
+                 */
+                function concatRowSpanIndexFromEnd(param) {
+                    var endIndex = param.endIndex,
+                        columnName = param.columnName,
+                        rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
+                        endIndexList = param.endIndexList,
+                        dataModel = param.dataModel,
+                        spannedIndex, tmpRowSpanData;
+
+                    if (rowSpanData) {
+                        if (!rowSpanData['isMainRow']) {
+                            spannedIndex = endIndex + rowSpanData['count'];
+                            tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
+                            spannedIndex += tmpRowSpanData['count'] - 1;
+                            if (spannedIndex > endIndex) {
+                                endIndexList.push(spannedIndex);
+                            }
+                        } else {
+                            spannedIndex = endIndex + rowSpanData['count'] - 1;
                             endIndexList.push(spannedIndex);
                         }
                     }
                 }
-            }
-            /**
-             * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
-             * @param {object} param
-             */
-            function concatRowSpanIndexFromEnd(param) {
-                var endIndex = param.endIndex,
-                    columnName = param.columnName,
-                    rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
-                    endIndexList = param.endIndexList,
-                    dataModel = param.dataModel,
-                    spannedIndex, tmpRowSpanData;
 
-                if (rowSpanData) {
-                    if (!rowSpanData['isMainRow']) {
-                        spannedIndex = endIndex + rowSpanData['count'];
-                        tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-                        spannedIndex += tmpRowSpanData['count'] - 1;
-                        if (spannedIndex > endIndex) {
-                            endIndexList.push(spannedIndex);
-                        }
-                    } else {
-                        spannedIndex = endIndex + rowSpanData['count'] - 1;
-                        endIndexList.push(spannedIndex);
-                    }
+                for (var i = 0; i < len; i++) {
+                    columnName = columnModelList[i]['columnName'];
+                    param = {
+                        columnName: columnName,
+                        startIndex: spannedRange.row[0],
+                        endIndex: spannedRange.row[1],
+                        endRowSpanDataMap: endRowSpanDataMap,
+                        startRowSpanDataMap: startRowSpanDataMap,
+                        startIndexList: startIndexList,
+                        endIndexList: endIndexList,
+                        dataModel: dataModel
+                    };
+                    concatRowSpanIndexFromStart(param);
+                    concatRowSpanIndexFromEnd(param);
                 }
+
+                newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
             }
-
-            for (var i = 0; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
-                param = {
-                    columnName: columnName,
-                    startIndex: spannedRange.row[0],
-                    endIndex: spannedRange.row[1],
-                    endRowSpanDataMap: endRowSpanDataMap,
-                    startRowSpanDataMap: startRowSpanDataMap,
-                    startIndexList: startIndexList,
-                    endIndexList: endIndexList,
-                    dataModel: dataModel
-                };
-                concatRowSpanIndexFromStart(param);
-                concatRowSpanIndexFromEnd(param);
-            }
-
-            newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
-
             return newSpannedRange;
         }
     });
@@ -5296,9 +6565,359 @@
         }
     });
 
+    /**
+     * Network 모듈 addon
+     */
+    AddOn.Net = View.Base.extend({
+        events: {
+            'submit': '_onSubmit'
+        },
+        initialize: function(attributes) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            var defaultOptions = {
+                    initialRequest: true,
+                    api: {
+                        'read': 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api/dummy_request.php',
+                        'update': '',
+                        'delete': '',
+                        'modify': '',
+                        'download': '',
+                        'downloadAll': ''
+                    },
+                    perPage: 500,
+                    enableAjaxHistory: true
+                },
+                options = $.extend(true, defaultOptions, attributes),
+                pagination = this.grid.getPaginationInstance();
+
+            this.setOwnProperties({
+                curPage: 1,
+                perPage: options.perPage,
+                options: options,
+                router: null,
+                pagination: pagination,
+                requestedFormData: null,
+                isLocked: false
+            });
+            this._initializeDataModelNetwork();
+            this._initializeRouter();
+            this._initializePagination();
+        },
+        _initializePagination: function() {
+            var pagination = this.pagination;
+            if (pagination) {
+                pagination._setOption('itemPerPage', this.perPage);
+                pagination._setOption('itemCount', 1);
+                pagination.attach('beforeMove', $.proxy(this._onPageBeforeMove, this));
+            }
+        },
+        /**
+         * dataModel 이 network 통신을 할 수 있도록 설정한다.
+         * @private
+         */
+        _initializeDataModelNetwork: function() {
+            this.grid.dataModel.url = this.options.api.read;
+            this.grid.dataModel.sync = $.proxy(this._sync, this);
+        },
+        /**
+         * ajax history 를 사용하기 위한 router 를 초기화한다.
+         * @private
+         */
+        _initializeRouter: function() {
+            if (this.options.enableAjaxHistory) {
+                //router 생성
+                this.router = new AddOn.Net.Router({
+                    grid: this.grid,
+                    net: this
+                });
+                Backbone.history.start();
+            }
+        },
+        /**
+         * pagination 에서 before page move가 발생했을 때 이벤트 핸들러
+         * @param {{page:number}} customEvent
+         * @private
+         */
+        _onPageBeforeMove: function(customEvent) {
+            var page = customEvent.page;
+            if (this.curPage !== page) {
+                this.readDataAt(page, true);
+            }
+        },
+        /**
+         * form 의 submit 이벤트 발생시 이벤트 핸들러
+         * @param {event} submitEvent
+         * @private
+         */
+        _onSubmit: function(submitEvent) {
+            submitEvent.preventDefault();
+            /*
+            page 이동시 form input 을 수정하더라도,
+            formData 를 유지하기 위해 데이터를 기록한다.
+             */
+            this.readDataAt(1, false);
+        },
 
 
-    var Grid = window.Grid = View.Base.extend({
+        setFormData: function(formData) {
+            //form data 를 반영한다.
+            Util.setFormData(this.$el, formData);
+        },
+
+        /**
+         * fetch 수행 이후 custom ajax 동작 처리를 위해 Backbone 의 기본 sync 를 오버라이드 하기위한 메서드.
+         * @param {String} method
+         * @param {Object} model
+         * @param {Object} options
+         * @private
+         */
+        _sync: function(method, model, options) {
+            var params;
+            if (method === 'read') {
+                options = options || {};
+                params = $.extend({}, options);
+                if (!options.url) {
+                    params.url = _.result(model, 'url');
+                }
+                this._ajax(params);
+            } else {
+                Backbone.sync.call(Backbone, method, model, options);
+            }
+        },
+        /**
+         * network 통신에 대한 lock 을 건다.
+         */
+        lock: function() {
+            this.grid.showGridLayer('loading');
+            this.isLocked = true;
+        },
+        /**
+         * network 통신에 대해 unlock 한다.
+         * loading layer hide 는 rendering 하는 로직에서 수행한다.
+         */
+        unlock: function() {
+            this.isLocked = false;
+        },
+
+        /**
+         * form 으로 지정된 엘리먼트의 Data 를 반환한다.
+         * @return {object}
+         * @private
+         */
+        _getFormData: function() {
+            return Util.getFormData(this.$el);
+        },
+        /**
+         * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
+         * @param {object} dataModel grid 의 dataModel
+         * @param {object} responseData
+         * @param {object} options
+         * @private
+         */
+        _onReadSuccess: function(dataModel, responseData, options) {
+            var pagination = this.pagination,
+                page, totalCount;
+
+            //pagination 처리
+            if (pagination && responseData.pagination) {
+                page = responseData.pagination.page;
+                totalCount = responseData.pagination.totalCount;
+                pagination._setOption('itemPerPage', this.perPage);
+                pagination._setOption('itemCount', totalCount);
+//                pagination.reset(totalCount);
+//                console.log('totalCount', totalCount);
+                pagination.movePageTo(page);
+                this.curPage = page;
+            }
+        },
+        /**
+         * DataModel 에서 Backbone.fetch 수행 이후 error 콜백
+         * @param {object} dataModel grid 의 dataModel
+         * @param {object} responseData
+         * @param {object} options
+         * @private
+         */
+        _onReadError: function(dataModel, responseData, options) {
+
+        },
+        /**
+         * 데이터 조회 요청.
+         * @param {object} data 요청시 사용할 request 파라미터
+         */
+        readData: function(data) {
+            var startNumber = 1,
+                grid = this.grid;
+            if (!this.isLocked) {
+                grid.renderModel.initializeVariables();
+                this.lock();
+                this.requestedFormData = _.clone(data);
+                this.curPage = data.page || this.curPage;
+                startNumber = (this.curPage - 1) * this.perPage + 1;
+                grid.renderModel.set({
+                    startNumber: startNumber
+                });
+
+                data.columnModel = JSON.stringify(this.grid.columnModel.get('columnModelList'));
+//                data.columnModel = grid.columnModel.get('columnModelList');
+                grid.dataModel.fetch({
+                    requestType: 'read',
+                    data: data,
+                    type: 'POST',
+                    success: $.proxy(this._onReadSuccess, this),
+                    error: $.proxy(this._onReadError, this),
+                    reset: true
+                });
+            }
+        },
+        /**
+         * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
+         * @param {Number} page
+         * @param {Boolean} isUsingRequestedData
+         */
+        readDataAt: function(page, isUsingRequestedData) {
+            isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
+            var data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
+            data.page = page;
+            data.perPage = this.perPage;
+
+            if (this.router) {
+                this.router.navigate('read/' + Util.toQueryString(data), {
+                    trigger: false
+                });
+            }
+            this.readData(data);
+        },
+        updateData: function() {
+
+        },
+        deleteData: function() {
+
+        },
+        modifyData: function() {
+
+        },
+        downloadData: function() {
+
+        },
+        downloadAllData: function() {
+
+        },
+        /**
+         * ajax 통신을 한다.
+         * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+         * @private
+         */
+        _ajax: function(options) {
+            var grid = this.grid;
+
+            grid.trigger('beforeRequest', options.data);
+            options = $.extend({requestType: ''}, options);
+
+            var params = {
+                'url' : options.url,
+                'data' : options.data || {},
+                'type' : options.type || 'POST',
+                'dataType' : options.dataType || 'json',
+                'complete' : $.proxy(this._onComplete, this, options.complete, options),
+                'success' : $.proxy(this._onSuccess, this, options.success, options),
+                'error' : $.proxy(this._onError, this, options.error, options)
+            };
+            $.ajax(params);
+        },
+        _onComplete: function(callback, jqXHR, status) {
+            this.unlock();
+        },
+        /**
+         * ajax success 이벤트 핸들러
+         * @param {Function} callback
+         * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+         * @param {Object} responseData
+         * @param {number} status
+         * @param {object} jqXHR
+         * @private
+         */
+        _onSuccess: function(callback, options, responseData, status, jqXHR) {
+            var message = responseData && responseData['message'],
+                eventData = this.createEventData({
+                    httpStatus: status,
+                    requestType: options.requestType,
+                    requestParameter: options.data,
+                    responseData: responseData
+                });
+            this.grid.trigger('onResponse', eventData);
+            if (eventData.isStopped()) return;
+            if (responseData && responseData['result']) {
+                this.grid.trigger('onSuccessResponse', eventData);
+                if (eventData.isStopped()) return;
+                callback && typeof callback === 'function' ? callback(responseData['data'] || {}, status, jqXHR) : null;
+            } else {
+                //todo: 오류 처리
+                this.grid.trigger('onFailResponse', eventData);
+                if (eventData.isStopped()) return;
+                message ? alert(message) : null;
+            }
+        },
+        /**
+         * ajax error 이벤트 핸들러
+         * @param {Function} callback
+         * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
+         * @param {object} jqXHR
+         * @param {number} status
+         * @param {String} errorMessage
+         * @private
+         */
+        _onError: function(callback, options, jqXHR, status, errorMessage) {
+            var eventData = this.createEventData({
+                httpStatus: status,
+                requestType: options.requestType,
+                requestParameter: options.data,
+                responseData: null
+            });
+            this.grid.showGridLayer('empty');
+
+            this.grid.trigger('onResponse', eventData);
+            if (eventData.isStopped()) return;
+
+            this.grid.trigger('onErrorResponse', eventData);
+            if (eventData.isStopped()) return;
+
+            if (jqXHR.readyState > 1) {
+                alert('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
+            }
+        }
+    });
+    /**
+     * Ajax History 관리를 위한 Router AddOn
+     */
+    AddOn.Net.Router = Backbone.Router.extend({
+        routes: {
+            'read/:queryStr': 'read'
+        },
+        initialize: function(attributes) {
+            this.setOwnProperties({
+                grid: attributes && attributes.grid || null,
+                net: attributes && attributes.net || null
+            });
+        },
+        /**
+         * read
+         * @param {String} queryStr
+         */
+        read: function(queryStr) {
+            var data = Util.toQueryObject(queryStr);
+            //formData 를 설정한다.
+            this.net.setFormData(data);
+            //그 이후 read
+            this.net.readData(data);
+        },
+        setOwnProperties: function(properties) {
+            _.each(properties, function(value, key) {
+                this[key] = value;
+            }, this);
+        }
+    });
+
+    var Grid = View.Base.extend({
         scrollBarSize: 17,
         minimumHeight: 150, //그리드의 최소 높이값
         lside: null,
@@ -5336,13 +6955,39 @@
             'DEL': 46,
             'UNDEFINED': 229
         },
+        keyName: {
+            9: 'TAB',
+            13: 'ENTER',
+            17: 'CTRL',
+            27: 'ESC',
+            37: 'LEFT_ARROW',
+            38: 'UP_ARROW',
+            39: 'RIGHT_ARROW',
+            40: 'DOWN_ARROW',
+            65: 'CHAR_A',
+            67: 'CHAR_C',
+            70: 'CHAR_F',
+            82: 'CHAR_R',
+            86: 'CHAR_V',
+            91: 'LEFT_WINDOW_KEY',
+            116: 'F5',
+            8: 'BACKSPACE',
+            32: 'SPACE',
+            33: 'PAGE_UP',
+            34: 'PAGE_DOWN',
+            36: 'HOME',
+            35: 'END',
+            46: 'DEL',
+            229: 'UNDEFINED'
+        },
         initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             var id = Util.getUniqueKey();
             this.__instance[id] = this;
-
+            console.log(options);
 
             var defaultOptions = {
+                form: null,
                 debug: false,
                 columnFixIndex: 0,
                 columnModelList: [],
@@ -5365,7 +7010,8 @@
 
                 toolbar: {
                     hasResizeHandler: true,
-                    hasControlPannel: true
+                    hasControlPanel: true,
+                    hasPagination: true
                 }
             };
 
@@ -5382,17 +7028,23 @@
                 'renderModel': null,
                 'layoutModel': null,
                 'focusModel': null,
-
+                'addOn': {},
                 'view': {
                     'lside': null,
                     'rside': null,
                     'toolbar': null,
-                    'clipboard': null
+                    'clipboard': null,
+                    'layer': {
+                        ready: null,
+                        loading: null,
+                        empty: null
+                    }
                 },
-
                 'id' : id,
                 'options' : options,
-                'timeoutIdForResize': 0
+                'timeoutIdForResize': 0,
+                'timeoutIdForSetRowList': 0,
+                '__$el': this.$el.clone()
             });
 
             this._initializeModel();
@@ -5409,6 +7061,455 @@
 
         },
         /**
+         * rowKey 와 columnName 에 해당하는 값을 반환한다.
+         *
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isOriginal]  HTMLElement 리턴 여부
+         * @return {(Number|String)}
+         */
+        getValue: function(rowKey, columnName, isOriginal) {
+
+        },
+        /**
+         * columnName에 해당하는 column data list를 리턴한다.
+         *
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+         * @return {Array}
+         */
+        getColumnValue: function(columnName, isJsonString) {
+
+        },
+        /**
+         * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
+         * @param {(Number|String)} rowKey
+         * @param {Boolean} isJsonString
+         * @return {Object}
+         */
+        getRow: function(rowKey, isJsonString) {
+            var row = this.grid.dataModel.get(rowKey).toJSON();
+            row = isJsonString ? $.toJSON(row) : row;
+            return row;
+        },
+        /**
+         * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
+         * @param {Number} index
+         * @return {Object}
+         */
+        getRowAt: function(index) {
+            return this.grid.dataModel.at(index).toJSON();
+        },
+        /**
+         * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
+         * @return {Number}
+         */
+        getRowCount: function() {
+            return this.grid.dataModel.length;
+        },
+        getRowSpan: function() {
+
+        },
+        /**
+         * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
+         * @return {(Number|String)}
+         */
+        getSelectedRowKey: function() {
+            return this.grid.focusModel.which().rowKey;
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @return {jQuery} 해당 jQuery Element
+         */
+        getElement: function(rowKey, columnName) {
+            var $frame = this.columnModel.isLside(columnName) ? this.view.lside.$el : this.view.rside.$el;
+            return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
+        },
+        /**
+         *
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {(Number|String)} columnValue 할당될 값
+         * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+         */
+        setValue: function(rowKey, columnName, columnValue, silent) {
+            //@TODO : rowKey to String
+            columnValue = typeof columnValue === 'string' ? $.trim(columnValue) : columnValue;
+            this.dataModel.setValue(rowKey, columnName, columnValue, silent);
+        },
+        /**
+         *
+         * @param {String} columnName   컬럼 이름
+         * @param {(Number|String)} columnValue 할당될 값
+         * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+         */
+        setColumnValue: function(columnName, columnValue, silent) {
+            columnValue = typeof columnValue === 'string' ? $.trim(columnValue) : columnValue;
+            this.dataModel.setColumnValue(columnName, columnValue, silent);
+        },
+        /**
+         * setRowList
+         * @TODO: Naming 고민중..
+         * set row list data
+         * @param {Array} rowList
+         * @param {boolean} [isParse=true]
+         */
+        setRowList: function(rowList, isParse) {
+            this.showGridLayer('loading');
+            isParse = isParse === undefined ? true : isParse;
+            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
+            clearTimeout(this.timeoutIdForSetRowList);
+            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+                this.dataModel.set(rowList, {
+                    parse: isParse
+                });
+            }, this), 0);
+        },
+        /**
+         * rowKey, columnName에 해당하는 셀에 포커싱한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+         */
+        focus: function(rowKey, columnName, isScrollable) {
+            this.focusModel.focus(rowKey, columnName, isScrollable);
+        },
+        /**
+         * 셀을 편집모드로 전환한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+         * @private
+         */
+        focusIn: function(rowKey, columnName, isScrollable) {
+            var cellInstance;
+            this.focus(rowKey, columnName, isScrollable);
+            rowKey = this.getMainRowKey(rowKey, columnName);
+            if (this.isEditable(rowKey, columnName)) {
+                cellInstance = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
+                cellInstance.focusIn(this.getElement(rowKey, columnName));
+            } else {
+                this.focusClipboard();
+            }
+        },
+        /**
+         * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
+         * @param {(Number|String)} rowIndex
+         * @param {String} columnIndex
+         * @param {Boolean} isScrollable
+         */
+        focusAt: function(rowIndex, columnIndex, isScrollable) {
+            var row = this.dataModel.at(rowIndex),
+                column = this.columnModel.at(columnIndex);
+            if (row && column) {
+                this.focus(row.get('rowKey'), column['columnName'], isScrollable);
+            }
+        },
+        /**
+         * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
+         * @param {(Number|String)} rowIndex
+         * @param {String} columnIndex
+         * @param {Boolean} isScrollable
+         */
+        focusInAt: function(rowIndex, columnIndex, isScrollable) {
+            var row = this.dataModel.at(rowIndex),
+                column = this.columnModel.at(columnIndex);
+            if (row && column) {
+                this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
+            }
+        },
+        /**
+         * 현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다
+         */
+        blur: function() {
+            this.focusModel.blur();
+        },
+        /**
+         * 전체 행을 선택한다.
+         */
+        checkAll: function() {
+            this.dataModel.setColumnValue('_button', true);
+        },
+        /**
+         * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        check: function(rowKey) {
+            this.setValue(rowKey, '_button', true);
+        },
+        /**
+         * 모든 행을 선택 해제 한다.
+         */
+        uncheckAll: function() {
+            this.dataModel.setColumnValue('_button', false);
+        },
+        /**
+         * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        uncheck: function(rowKey) {
+            this.setValue(rowKey, '_button', false);
+        },
+
+
+        /**
+         * @deprecated
+         */
+        checkRowState: function() {
+
+        },
+        /**
+         * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
+         */
+        clear: function() {
+            //@todo: empty 레이어 추가
+            this.setRowList([]);
+        },
+        /**
+         * rowKey에 해당하는 그리드 데이터를 삭제한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 삭제 여부
+         */
+        removeRow: function(rowKey, isRemoveOriginalDta) {
+
+        },
+        /**
+         * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
+         */
+        enable: function() {
+
+        },
+        /**
+         * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
+         * @param {Boolean} [hasDimmedLayer=true]
+         */
+        disable: function(hasDimmedLayer) {
+
+        },
+        /**
+         * rowKey에 해당하는 행을 활성화시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        enableRow: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, '');
+        },
+        /**
+         * rowKey에 해당하는 행을 비활성화 시킨다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        disableRow: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, 'DISABLED');
+        },
+        /**
+         * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        enableCheck: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, '');
+        },
+        /**
+         * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        disableCheck: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+        },
+
+
+        /**
+         * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
+         * @param {String} columnName
+         * @param {(String|Number)} columnValue
+         */
+        filterData: function(columnName, columnValue) {
+
+        },
+        /**
+         * 현재 선택된 행들의 키값만을 배열로 리턴한다.
+         * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
+         * @return {Array|String}
+         */
+        getCheckedRowKeyList: function(isJsonString) {
+            var rowKeyList = [];
+            _.each(this.dataModel.where({
+                '_button' : true
+            }), function(row) {
+                rowKeyList.push(row.get('rowKey'));
+            }, this);
+            return rowKeyList;
+        },
+        /**
+         * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
+         * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
+         * @return {Array|String}
+         */
+        getCheckedRowList: function(isJsonString) {
+            return this.dataModel.where({
+                '_button' : true
+            });
+        },
+        /**
+         * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
+         * @return {Array}
+         */
+        getColumnModel: function() {
+            return this.grid.columnModel.get('columnModelList');
+        },
+        /**
+         * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
+         * @return {Array}
+         */
+        getDisabledRowKeyList: function() {
+            //@todo
+        },
+        /**
+         * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
+         * 리턴되는 객체에는 inserted, edited, deleted 라는 필드가 있고,
+         * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
+         *
+         * @param {Boolean} [isRowKeyList]  true로 설정하면 키값만 저장하여 리턴
+         * @param {Boolean} [isJsonString]  변경된 데이터 객체를 JSON문자열로 변환하여 리턴
+         * @param {Boolean} [filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
+         * @return {Array}
+         */
+        getModifiedRowList: function(isRowKeyList, isJsonString, filteringColumnList) {
+            //@todo 파라미터 옵션에 따른 데이터 형 변화
+            return this.dataModel.getModifiedRowList();
+        },
+
+        /**
+         * 현재 그리드의 제일 끝에 행을 추가한다.
+         * @param {object} rowData
+         */
+        appendRow: function(row) {
+            this.dataModel.append(row);
+        },
+        /**
+         * 현재 그리드의 제일 앞에 행을 추가한다.
+         * @param {object} rowData
+         */
+        prependRow: function(row) {
+            this.dataModel.prepend(row);
+        },
+        /**
+         * 열 고정 위치를 변경한다.
+         *
+         * @param {Number} index 고정시킬 열의 인덱스
+         */
+        setColumnFixIndex: function(columnFixIndex) {
+            this.option({
+                columnFixIndex: columnFixIndex
+            });
+            this.columnModel.set({columnFixIndex: columnFixIndex});
+        },
+
+        /**
+         * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
+         * - getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.
+         * @return {Boolean}
+         */
+        isChanged: function() {
+
+        },
+        /**
+         * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
+         * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
+         */
+        restore: function() {
+            var originalRowList = this.grid.dataModel.getOriginalRowList();
+            this.grid.setRowList(originalRowList, false);
+        },
+        refreshLayout: function() {
+            //todo
+        },
+        addClassNameToColumn: function() {
+
+        },
+        addClassNameToRow: function() {
+
+        },
+        removeClassNameFromColumn: function() {
+
+        },
+        removeClassNameFromRow: function() {
+
+        },
+        replaceRowList: function() {
+
+        },
+        /**
+         * rowKey에 해당하는 행에 대해 선택한다.
+         * - checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.
+         *
+         * @param {(Number|String)} rowKey
+         */
+        select: function(rowKey) {
+
+        },
+
+        setGridSize: function(size) {
+            var dimensionModel = this.grid.dimensionModel,
+                width = size && size.width || dimensionModel.get('width'),
+                bodyHeight = dimensionModel.get('bodyHeight'),
+                headerHeight = dimensionModel.get('headerHeight'),
+                toolbarHeight = dimensionModel.get('toolbarHeight');
+
+            if (size && size.height) {
+                bodyHeight = height - (headerHeight + toolbarHeight);
+            }
+        },
+        setHeaderColumnTitle: function() {
+
+        },
+        setScrollBarPosition: function() {
+
+        },
+
+
+        /**
+         * Grid Layer 를 모두 감춘다.
+         */
+        hideGridLayer: function() {
+            _.each(this.view.layer, function(view, name) {
+                view.hide();
+            }, this);
+        },
+        /**
+         * name 에 해당하는 Grid Layer를 보여준다.
+         * @param {String} name ready|empty|loading
+         */
+        showGridLayer: function(name) {
+            this.hideGridLayer();
+            this.view.layer[name] ? this.view.layer[name].show() : null;
+        },
+
+        /**
+         * pagination instance 를 반환한다.
+         * @return {instance|*|exports.scopeToPunc.instance|exports.baseTags.instance}
+         */
+        getPaginationInstance: function() {
+            var paginationView = this.view.toolbar.pagination;
+            if (paginationView) {
+                return paginationView.instance;
+            }
+        },
+        /**
+         * addon 을 활성화한다.
+         * @param {string} name addon 이름
+         * @param {object} options addon 에 넘길 파라미터
+         * @return {Grid}
+         */
+        use: function(name, options) {
+            options = $.extend({grid: this}, options);
+            if (AddOn[name]) {
+                this.addOn[name] = new AddOn[name](options);
+            }
+            return this;
+        },
+
+        /**
          * event 속성에 정의되지 않은 이벤트 attach 하는 메서드
          * @private
          */
@@ -5421,16 +7522,15 @@
          * @private
          */
         _onWindowResize: function(resizeEvent) {
-            clearTimeout(this.timeoutIdForResize);
-            this.timeoutIdForResize = setTimeout($.proxy(function() {
-                var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
-                this.dimensionModel.set('width', width);
-            }, this), 100);
+            var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
+            this.dimensionModel.set('width', width);
         },
         _initializeListener: function() {
             this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
             this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight);
         },
+
+
         /**
          * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
          * @private
@@ -5522,8 +7622,7 @@
             this.dataModel = new Data.RowList({
                 grid: this
             });
-
-
+            this.dataModel.reset([]);
 
             if (this.option('notUseSmartRendering') === true) {
                 this.renderModel = new Model.Renderer({
@@ -5565,11 +7664,19 @@
                 grid: this
             });
 
-            this.view.clipboard = this.createView(View.Clipboard, {
+            this.view.layer.ready = this.createView(View.Layer.Ready, {
+                grid: this
+            });
+            this.view.layer.empty = this.createView(View.Layer.Empty, {
+                grid: this
+            });
+            this.view.layer.loading = this.createView(View.Layer.Loading, {
                 grid: this
             });
 
-
+            this.view.clipboard = this.createView(View.Clipboard, {
+                grid: this
+            });
         },
 
         _initializeScrollBar: function() {
@@ -5583,16 +7690,25 @@
          * Rendering grid view
          */
         render: function() {
-            this.trigger('beforeRender');
+            var leftLine = $('<div>').addClass('left_line'),
+                rightLine = $('<div>').addClass('right_line');
 
-            this.$el.attr('instanceId', this.id)
-                .append(this.view.lside.render().el)
+            this.$el.addClass('grid_wrapper')
+                .addClass('uio_grid')
+                .attr('instanceId', this.id)
+                .append(this.view.layer.empty.render().el)
+                .append(this.view.layer.loading.render().el)
+                .append(this.view.layer.ready.render().el);
+
+            this.view.layer.loading.show('초기화 중입니다.');
+
+            this.$el.append(this.view.lside.render().el)
                 .append(this.view.rside.render().el)
                 .append(this.view.toolbar.render().el)
+                .append(leftLine)
+                .append(rightLine)
                 .append(this.view.clipboard.render().el);
-
             this._setHeight();
-            this.trigger('afterRender');
         },
         _setHeight: function() {
             var bodyHeight = this.dimensionModel.get('bodyHeight'),
@@ -5613,12 +7729,13 @@
         },
         /**
          * rowKey 와 columnName 을 받아 edit 가능한 cell 인지를 반환한다.
-         * @param {Number|String} rowKey
+         * @param {(Number|String)} rowKey
          * @param {String} columnName
          * @return {Boolean}
          */
         isEditable: function(rowKey, columnName) {
-            var focused = this.focusModel.which();
+            var focused = this.focusModel.which(),
+                notEditableTypeList = ['_number', 'normal'];
 
             rowKey = rowKey !== undefined ? rowKey : focused.rowKey;
             columnName = columnName !== undefined ? columnName : focused.columnName;
@@ -5628,7 +7745,7 @@
                 editType = columnModel.getEditType(columnName),
                 row, relationResult;
 
-            if (!editType) {
+            if ($.inArray(editType, notEditableTypeList) !== -1) {
                 return false;
             } else {
                 row = dataModel.get(rowKey);
@@ -5636,72 +7753,7 @@
                 return !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
             }
         },
-        /**
-         * cell element (TD) 를 반환한다.
-         * @param {Number|String}   rowKey
-         * @param {String}  columnName
-         * @return {Element}
-         */
-        getCellElement: function(rowKey, columnName) {
-            var $frame = this.columnModel.isLside(columnName) ? this.view.lside.$el : this.view.rside.$el;
-            return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
-        },
-        /**
-         * setRowList
-         *
-         * set row list data
-         * @param rowList
-         */
-        setRowList: function(rowList) {
-            this.dataModel.set(rowList, {
-                parse: true
-            });
-        },
-        /**
-         * setValue
-         *
-         * change cell value
-         * @param rowKey
-         * @param columnName
-         * @param columnValue
-         */
-        setValue: function(rowKey, columnName, columnValue, silent) {
-            //@TODO : rowKey to String
-            this.dataModel.setValue(rowKey, columnName, columnValue, silent);
-        },
-        setColumnValue: function(columnName, columnValue, silent) {
-            this.dataModel.setColumnValue(columnName, columnValue, silent);
-        },
-        /**
-         * appendRow
-         *
-         * append row inside grid
-         * @param row
-         */
-        appendRow: function(row) {
-            this.dataModel.append(row);
-        },
-        /**
-         * prependRow
-         *
-         * prepend row inside grid
-         * @param row
-         */
-        prependRow: function(row) {
-            this.dataModel.prepend(row);
-        },
-        /**
-         * setColumnIndex
-         *
-         * change columnfix index
-         * @param index
-         */
-        setColumnIndex: function(columnFixIndex) {
-            this.option({
-                columnFixIndex: columnFixIndex
-            });
-            this.columnModel.set({columnFixIndex: columnFixIndex});
-        },
+
         setColumnModelList: function(columnModelList) {
             this.columnModel.set('columnModelList', columnModelList);
         },
@@ -5716,74 +7768,45 @@
         getRowList: function() {
             return this.dataModel.toJSON();
         },
-        getCheckedRowList: function() {
-            return this.dataModel.where({
-                '_button' : true
-            });
-        },
-        getCheckedRowKeyList: function() {
-            var rowKeyList = [];
-            _.each(this.dataModel.where({
-                '_button' : true
-            }), function(row) {
-                rowKeyList.push(row.get('rowKey'));
-            }, this);
-            return rowKeyList;
-        },
-        getModifiedRowList: function() {
-            return this.dataModel.getModifiedRowList();
-        },
-        disableCell: function(rowKey, columnName) {
 
-        },
-        enableCell: function(rowKey, columnName) {
 
-        },
-        setEditOptionList: function(rowKey, columnName, optionList) {
-
-        },
         /**
-         * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
-         */
-        checkRow: function(rowKey) {
-            this.setValue(rowKey, '_button', true);
-        },
-        /**
-         * 전체 행을 선택한다
-         */
-        checkAllRow: function() {
-            this.dataModel.setColumnValue('_button', true);
-        },
-        /**
-         * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택해제한다.
-         */
-        uncheckAllRow: function() {
-            this.dataModel.setColumnValue('_button', false);
-        },
-        /**
-         * rowKey, columnName에 해당하는 컬럼에 포커싱한다.
-         * @param {Number|String} rowKey
+         * mainRowKey 를 반환한다.
+         * @param {(Number|String)} rowKey
          * @param {String} columnName
-         * @param {Boolean} isScrollable
+         * @return {(Number|String)}
          */
-        focus: function(rowKey, columnName, isScrollable) {
-            this.focusModel.focus(rowKey, columnName, isScrollable);
+        getMainRowKey: function(rowKey, columnName) {
+            var row = this.dataModel.get(rowKey);
+            if (!this.isSorted()) {
+                rowKey = row ? row.getRowSpanData(columnName).mainRowKey : rowKey;
+            }
+            return rowKey;
         },
         /**
-         * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
-         * @param {Number|String} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * rowKey 와 columnName 에 해당하는 text 형태의 셀의 값을 삭제한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @param {Boolean} silent
          */
-        focusAt: function(rowIndex, columnIndex, isScrollable) {
-            this.focus(this.dataModel.at(rowIndex).get('rowKey'), this.columnModel.at(columnIndex)['columnName'], isScrollable);
+        del: function(rowKey, columnName, silent) {
+            rowKey = this.getMainRowKey(rowKey, columnName);
+
+            var editType = this.columnModel.getEditType(columnName),
+                isDisabledCheck = this.dataModel.get(rowKey).getRowState().isDisabledCheck,
+                deletableEditTypeList = ['text', 'text-convertible'],
+                isDeletable = $.inArray(editType, deletableEditTypeList) !== -1,
+                selectType = this.option('selectType');
+
+            if (isDeletable && this.isEditable(rowKey, columnName)) {
+                this.setValue(rowKey, columnName, '', silent);
+                //silent 의 경우 데이터 모델의 change 이벤트가 발생하지 않기 때문에, 강제로 checkbox 를 세팅한다.
+                if (silent && selectType === 'checkbox' && !isDisabledCheck) {
+                    this.setValue(rowKey, '_button', true, silent);
+                }
+            }
         },
-        /**
-         * 현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다
-         */
-        blur: function() {
-            this.focusModel.blur();
-        },
+
         /**
          * @deprecated
          * @param whichSide
@@ -5795,24 +7818,388 @@
         },
 
         destroy: function() {
-            this.destroyChildren();
-            this.$el.removeAttr('instanceId');
+
             this.stopListening();
+            this.destroyChildren();
+            this.$el.replaceWith(this.__$el);
             for (var property in this) {
                 this[property] = null;
                 delete this[property];
             }
         }
-
     });
 
-    Grid.prototype.__instance = {};
+    Grid.prototype.__instance = Grid.prototype.__instance || {};
 
-    Grid.getInstanceById = function(id) {
-        return this.prototype.__instance[id];
+    var ne = window.ne = ne || {};
+    ne.Grid = View.Base.extend({
+        initialize: function(options) {
+            this.grid = new Grid(options);
+            this.listenTo(this.grid, 'all', this._relayEvent, this);
+        },
+        /**
+         * Grid 에서 발생하는 event 를 relay 한다.
+         * @param eventName
+         * @param params
+         * @private
+         */
+        _relayEvent: function(eventName, params) {
+            this.trigger.apply(this, arguments);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 값을 반환한다.
+         *
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isOriginal]  HTMLElement 리턴 여부
+         * @return {(Number|String)}
+         */
+        get: function(rowKey, columnName, isOriginal) {
+
+        },
+        /**
+         * columnName에 해당하는 column data list를 리턴한다.
+         *
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+         * @return {Array}
+         */
+        getColumn: function(columnName, isJsonString) {
+
+        },
+        /**
+         * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
+         * @param rowKey
+         * @param isJsonString
+         * @return {Object}
+         */
+        getRow: function(rowKey, isJsonString) {
+            var row = this.grid.dataModel.get(rowKey).toJSON(),
+                rowData = isJsonString ? $.toJSON(row) : row;
+            return rowData;
+        },
+        /**
+         * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
+         * @param {Number} index
+         * @return {Object}
+         */
+        getRowAt: function(index) {
+            return this.grid.dataModel.at(index).toJSON();
+        },
+        /**
+         * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
+         * @return {Number}
+         */
+        getRowCount: function() {
+            return this.grid.dataModel.length;
+        },
+        getRowSpan: function() {
+
+        },
+        /**
+         * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
+         * @return {(Number|String)}
+         */
+        getSelectedRowKey: function() {
+            return this.grid.focusModel.which().rowKey;
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 element 를 반환한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @return {jQuery} 해당 jQuery Element
+         */
+        getElement: function(rowKey, columnName) {
+            return this.grid.getElement(rowKey, columnName);
+        },
+        /**
+         *
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {(Number|String)} columnValue 할당될 값
+         */
+        set: function(rowKey, columnName, columnValue) {
+
+        },
+        /**
+         *
+         * @param {String} columnName   컬럼 이름
+         * @param {(Number|String)} columnValue 할당될 값
+         */
+        setColumn: function(columnName, columnValue) {
+
+        },
+
+        /**
+         * @TODO: Naming 고민중..
+         */
+        setRowList: function(rowList) {
+            this.grid.setRowList(rowList);
+        },
+        /**
+         * rowKey, columnName에 해당하는 셀에 포커싱한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+         */
+        focus: function(rowKey, columnName, isScrollable) {
+            this.grid.focus(rowKey, columnName, isScrollable);
+        },
+        /**
+         * 셀을 편집모드로 전환한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {String} columnName   컬럼 이름
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+         * @private
+         */
+        focusIn: function(rowKey, columnName, isScrollable) {
+            this.grid.focusIn(rowKey, columnName, isScrollable);
+        },
+
+        /**
+         * grid 를 blur 한다.
+         */
+        blur: function() {
+            this.grid.blur();
+        },
+        /**
+         * 전체 행을 선택한다.
+         */
+        checkAll: function() {
+            this.grid.checkAll();
+        },
+        /**
+         * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        check: function(rowKey) {
+            this.grid.check(rowKey);
+        },
+        /**
+         * 모든 행을 선택 해제 한다.
+         */
+        uncheckAll: function() {
+
+        },
+        /**
+         * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        uncheck: function(rowKey) {
+
+        },
+
+
+        /**
+         * @deprecated
+         */
+        checkRowState: function() {
+
+        },
+        /**
+         * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
+         */
+        clear: function() {
+            //@todo: empty 레이어 추가
+        },
+        /**
+         * rowKey에 해당하는 그리드 데이터를 삭제한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 삭제 여부
+         */
+        removeRow: function(rowKey, isRemoveOriginalDta) {
+
+        },
+        /**
+         * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
+         */
+        enable: function() {
+
+        },
+        /**
+         * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
+         * @param [hasDimmedLayer=true]
+         */
+        disable: function(hasDimmedLayer) {
+
+        },
+        /**
+         * rowKey에 해당하는 행을 활성화시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        enableRow: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, '');
+        },
+        /**
+         * rowKey에 해당하는 행을 비활성화 시킨다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        disableRow: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, 'DISABLED');
+        },
+        /**
+         * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        enableCheck: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, '');
+        },
+        /**
+         * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        disableCheck: function(rowKey) {
+            this.grid.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+        },
+
+
+        /**
+         * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
+         * @param {String} columnName
+         * @param {(String|Number)} columnValue
+         */
+        filterData: function(columnName, columnValue) {
+
+        },
+        /**
+         * 현재 선택된 행들의 키값만을 배열로 리턴한다.
+         * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
+         * @return {Array|String}
+         */
+        getCheckedRowKeyList: function(isJsonString) {
+            var checkedRowKeyList = this.grid.getCheckedRowKeyList();
+            return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
+        },
+        /**
+         * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
+         * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
+         * @return {Array|String}
+         */
+        getCheckedRowList: function(isJsonString ) {
+            var checkedRowList = this.grid.getCheckedRowList();
+            return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
+        },
+        /**
+         * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
+         * @return {Array}
+         */
+        getColumnModel: function(){
+            return this.grid.columnModel.get('columnModelList');
+        },
+        /**
+         * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
+         * @return {Array}
+         */
+        getDisabledRowKeyList: function() {
+            //@todo
+        },
+        /**
+         * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
+         * 리턴되는 객체에는 inserted, edited, deleted 라는 필드가 있고,
+         * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
+         *
+         * @param {Boolean} [isRowKeyList]  true로 설정하면 키값만 저장하여 리턴
+         * @param {Boolean} [isJsonString]  변경된 데이터 객체를 JSON문자열로 변환하여 리턴
+         * @param {Boolean} [filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
+         * @return {Array}
+         */
+        getModifiedRowList: function(isRowKeyList, isJsonString, filteringColumnList) {
+            //@todo 파라미터 옵션에 따른 데이터 형 변화
+            return this.grid.getModifiedRowList();
+        },
+        /**
+         * 현재 그리드의 제일 끝에 행을 추가한다.
+         * @param {object} rowData
+         */
+        appendRow: function(rowData) {
+            this.grid.appendRow(rowData);
+        },
+        /**
+         * 현재 그리드의 제일 앞에 행을 추가한다.
+         * @param {object} rowData
+         */
+        prependRow: function(rowData) {
+            this.grid.prependRow(rowData);
+        },
+        /**
+         * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
+         * - getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.
+         * @return {Boolean}
+         */
+        isChanged: function() {
+
+        },
+        /**
+         * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
+         * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
+         */
+        restore: function() {
+            var originalRowList = this.grid.dataModel.getOriginalRowList();
+            this.grid.setRowList(originalRowList, false);
+        },
+        refreshLayout: function(){
+            //todo
+        },
+        addClassNameToColumn: function() {
+
+        },
+        addClassNameToRow: function() {
+
+        },
+        removeClassNameFromColumn: function() {
+
+        },
+        removeClassNameFromRow: function() {
+
+        },
+        replaceRowList: function() {
+
+        },
+        /**
+         * rowKey에 해당하는 행에 대해 선택한다.
+         * - checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.
+         *
+         * @param {(Number|String)} rowKey
+         */
+        select: function(rowKey) {
+
+        },
+        /**
+         * 열 고정 위치를 변경한다.
+         *
+         * @param {Number} index 고정시킬 열의 인덱스
+         */
+        setColumnFixIndex: function(index) {
+            this.grid.setColumnFixIndex(index);
+        },
+
+        setGridSize: function(size) {
+            var dimensionModel = this.grid.dimensionModel,
+                width = size && size.width || dimensionModel.get('width'),
+                bodyHeight = dimensionModel.get('bodyHeight'),
+                headerHeight = dimensionModel.get('headerHeight'),
+                toolbarHeight = dimensionModel.get('toolbarHeight');
+
+            if (size && size.height) {
+                bodyHeight = height - (headerHeight + toolbarHeight);
+            }
+        },
+        setHeaderColumnTitle: function() {
+
+        },
+        setScrollBarPosition: function() {
+
+        },
+        use: function(name, options) {
+            this.grid.use(name, options);
+            return this;
+        }
+    });
+
+    ne.Grid.getInstanceById = function(id) {
+        return Grid.prototype.__instance[id];
     };
 
-View.Base.extend({
 
-});
+
 })();

@@ -25,27 +25,33 @@
                 displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
                 startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
                 endIdx = Math.min(this.grid.dataModel.length - 1,
-                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount));
+                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)),
+                startRow, endRow, minList, maxList;
+
             if (!this.grid.isSorted()) {
-                var minList = [];
-                var maxList = [];
-                _.each(this.grid.dataModel.at(startIdx).get('_extraData')['rowSpanData'], function(data, columnName) {
-                    if (!data.isMainRow) {
-                        minList.push(data.count);
-                    }
-                }, this);
+                minList = [];
+                maxList = [];
+                startRow = this.grid.dataModel.at(startIdx);
+                endRow = this.grid.dataModel.at(endIdx);
+                if (startRow && endRow) {
+                    _.each(startRow.get('_extraData')['rowSpanData'], function(data, columnName)  {
+                        if (!data.isMainRow) {
+                            minList.push(data.count);
+                        }
+                    }, this);
 
-                _.each(this.grid.dataModel.at(endIdx).get('_extraData')['rowSpanData'], function(data, columnName) {
-                    if (data.count > 0) {
-                        maxList.push(data.count);
-                    }
-                }, this);
+                    _.each(endRow.get('_extraData')['rowSpanData'], function(data, columnName) {
+                        if (data.count > 0) {
+                            maxList.push(data.count);
+                        }
+                    }, this);
 
-                if (minList.length > 0) {
-                    startIdx += Math.min.apply(Math, minList);
-                }
-                if (maxList.length > 0) {
-                    endIdx += Math.max.apply(Math, maxList);
+                    if (minList.length > 0) {
+                        startIdx += Math.min.apply(Math, minList);
+                    }
+                    if (maxList.length > 0) {
+                        endIdx += Math.max.apply(Math, maxList);
+                    }
                 }
             }
 

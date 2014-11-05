@@ -72,7 +72,7 @@
                 left += columnWidthList[i] + 1;
             }
 
-            right = columnWidthList[i] + 1;
+            right = left + columnWidthList[i] + 1;
 
             return {
                 top: top,

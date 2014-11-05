@@ -1,36 +1,95 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-	<meta charset="utf-8">
-	<title>Sample 1</title>
-	<link rel="stylesheet" type="text/css" href="../css/Grid.css" />
+    <meta charset="utf-8">
+    <title>Sample 1</title>
+    <link rel="stylesheet" type="text/css" href="../css/Grid.css" />
+	<link rel="stylesheet" type="text/css" href="../css/common.css" />
+
+	<!--<link rel="stylesheet" type="text/css" href="../dist/Grid.css" />-->
 </head>
 <body>
+
+<form id="form" style="margin:10px">
+	<table>
+		<tr>
+			<td>
+				송장번호 :
+			</td>
+			<td>
+				<input name="delivery_number" type="text" value="1123123"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				이름 :
+			</td>
+			<td>
+				<input name="user_name" type="text" value="홍길동"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				계절 :
+			</td>
+			<td>
+				<select name="weather">
+					<option>봄</option>
+					<option>여름</option>
+					<option>가을</option>
+					<option>겨울</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				성별 :
+			</td>
+			<td>
+				<input type="radio" name="gender" value="male" checked/>남
+				<input type="radio" name="gender" value="female"/>여
+			</td>
+		</tr>
+		<tr>
+			<td>
+				취미 :
+			</td>
+			<td>
+				<input type="checkbox" name="hobby" value="sport" checked/>스포츠
+				<input type="checkbox" name="hobby" value="sewing"/>재봉틀
+				<input type="checkbox" name="hobby" value="drinking"/>음주
+				<input type="checkbox" name="hobby" value="dancing"/>가무
+			</td>
+		</tr>
+	</table>
+
+    <input type="submit" value="submit"/>
+</form>
 <div>
-	<div class="grid_wrapper uio_grid" id="wrapper1">
-	</div>
+    <div class="grid_wrapper uio_grid" id="wrapper1">
+    </div>
 
-	<div id="buttonList1">
-	</div>
-	<div>
-		<h1>RESULT</h1>
-	</div>
-	<div id="result1">
+    <div id="buttonList1">
+    </div>
+    <div>
+        <h1>RESULT</h1>
+    </div>
+    <div id="result1">
 
-	</div>
+    </div>
 </div>
 <div>
-	<div class="grid_wrapper uio_grid" id="wrapper2">
-	</div>
+    <div class="grid_wrapper uio_grid" id="wrapper2">
+    </div>
 
-	<div id="buttonList2">
-	</div>
-	<div>
-		<h1>RESULT</h1>
-	</div>
-	<div id="result2">
+    <div id="buttonList2">
+    </div>
+    <div>
+        <h1>RESULT</h1>
+    </div>
+    <div id="result2">
 
-	</div>
+    </div>
 </div>
 
 </body>
@@ -52,38 +111,38 @@
 <script type="text/javascript" src="../src/Model/RowList.js"></script>
 <script type="text/javascript" src="../src/Model/Renderer.js"></script>
 <script type="text/javascript" src="../src/Model/Renderer.Smart.js"></script>
-
+<!---->
 <script type="text/javascript" src="../src/View/Layout/Frame.js"></script>
 <script type="text/javascript" src="../src/View/Layout/Frame.Lside.js"></script>
 <script type="text/javascript" src="../src/View/Layout/Frame.Rside.js"></script>
 <script type="text/javascript" src="../src/View/Layout/Header.js"></script>
 <script type="text/javascript" src="../src/View/Layout/Body.js"></script>
 <script type="text/javascript" src="../src/View/Layout/Toolbar.js"></script>
-
+<!---->
 <script type="text/javascript" src="../src/View/Renderer/Cell/Base.js"></script>
 <script type="text/javascript" src="../src/View/Renderer/Cell/Normal.js"></script>
 <script type="text/javascript" src="../src/View/Renderer/Cell/List.js"></script>
 <script type="text/javascript" src="../src/View/Renderer/Cell/Text.js"></script>
 <script type="text/javascript" src="../src/View/Renderer/Row.js"></script>
-
+<!---->
 <script type="text/javascript" src="../src/View/CellFactory.js"></script>
 <script type="text/javascript" src="../src/View/RowList.js"></script>
 <script type="text/javascript" src="../src/View/Selection.js"></script>
-
+<!---->
 <script type="text/javascript" src="../src/View/Clipboard.js"></script>
 
 <script type="text/javascript" src="../src/View/Layer/Base.js"></script>
 <script type="text/javascript" src="../src/View/Layer/Ready.js"></script>
 <script type="text/javascript" src="../src/View/Layer/Loading.js"></script>
 <script type="text/javascript" src="../src/View/Layer/Empty.js"></script>
-
-
-<!--<script type="text/javascript" src="../src/View/Extra/Selection.js"></script>-->
-<!--<script type="text/javascript" src="../src/View/Extra/Log.js"></script>-->
-
+<!---->
+<script type="text/javascript" src="../src/AddOn/Net.js"></script>
+<script type="text/javascript" src="../src/External/Component-Pagination.js"></script>
+<!---->
 <script type="text/javascript" src="../src/Grid.js"></script>
 <script type="text/javascript" src="../src/Public.js"></script>
 
+<!--<script type="text/javascript" src="../dist/Grid.js"></script>-->
 
-<script type="text/javascript" src="./test.js"></script>
+<script type="text/javascript" src="./test_data.js"></script>
 </html>

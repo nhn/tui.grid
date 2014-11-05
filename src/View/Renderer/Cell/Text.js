@@ -1,25 +1,49 @@
     /**
      * text-textbox 변환 가능한 cell renderer
+     * @extends {View.Base.Renderer.Cell}
+     * @implements {View.Base.Renderer.Cell.Interface}
+     * @class
      */
-    View.Renderer.Cell.Text = View.Base.Renderer.Cell.Abstract.extend({
-        cellType: 'text',
+    View.Renderer.Cell.Text = View.Base.Renderer.Cell.extend({
         rerenderAttributes: ['isEditable'],
         eventHandler: {
             'blur input' : '_onBlur',
-            'keydown input': '_onKeyDown'
+            'keydown input': '_onKeyDown',
+            'focus input': '_onFocus'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.Abstract.prototype.initialize.apply(this, arguments);
+            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 originalText: ''
             });
+
+            this._setKeyDownSwitch({
+                'UP_ARROW': function() {},
+                'DOWN_ARROW': function() {},
+                'PAGE_UP': function() {},
+                'PAGE_DOWN': function() {},
+                'ENTER': function(keyDownEvent, param) {
+                    this.focusOut(param.$target);
+                },
+                'ESC': function(keyDownEvent, param) {
+                    this._restore(param.$target);
+                    this.focusOut(param.$target);
+                }
+            });
         },
         template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        getEditType: function() {
+            return 'text';
+        },
+        _onFocus: function(focusEvent) {
+            var $input = $(focusEvent.target);
+            this.originalText = $input.val();
+            this.grid.selection.disable();
+        },
         focusIn: function($td) {
             var $input = $td.find('input');
-            this.originalText = $input.val();
-            $input.focus();
             Util.setCursorToEnd($input.get(0));
+            $input.focus().select();
 
         },
         focusOut: function() {
@@ -34,7 +58,11 @@
             });
         },
         setElementAttribute: function(cellData, $target) {
-            $target.find('input').prop('disabled', cellData.isDisabled);
+            var isValueChanged = $.inArray('value', cellData.changed) !== -1,
+                $input = $target.find('input');
+
+            isValueChanged ? $input.val(cellData.value) : null;
+            $input.prop('disabled', cellData.isDisabled);
         },
         /**
          * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
@@ -54,74 +82,45 @@
             $input.val(this.originalText);
         },
         /**
-         * keyDown event handler
-         * @param {event} keyDownEvent
-         * @private
-         */
-        _onKeyDown: function(keyDownEvent) {
-            var $target = $(keyDownEvent.target),
-                grid = this.grid,
-                keyMap = grid.keyMap,
-                isKeyIdentified = true,
-                keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-            switch (keyCode) {
-                case keyMap['ESC']:
-                    this._restore($target);
-                    this.focusOut($target);
-                    break;
-                case keyMap['ENTER']:
-                    this.focusOut($target);
-                    break;
-                case keyMap['TAB']:
-                    if (keyDownEvent.shiftKey) {
-                        //이전 cell 로 focus 이동
-                    } else {
-                        //이후 cell 로 focus 이동
-                    }
-                    break;
-                default:
-                    isKeyIdentified = false;
-                    break;
-            }
-            if (isKeyIdentified) {
-                keyDownEvent.preventDefault();
-            }
-        },
-        /**
          * blur event handler
          * @param {event} blurEvent
          * @private
          */
         _onBlur: function(blurEvent) {
-
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!blur');
             var $target = $(blurEvent.target),
                 rowKey = this._getRowKey($target),
                 columnName = this._getColumnName($target);
             if (this._isEdited($target)) {
                 this.grid.setValue(rowKey, columnName, $target.val());
             }
+            this.grid.selection.enable();
         }
     });
 
 
     /**
      * text-textbox 변환 가능한 cell renderer
+     * @extends {View.Base.Renderer.Cell.Text}
+     * @implements {View.Base.Renderer.Cell.Interface}
      * @class
      */
     View.Renderer.Cell.Text.Convertible = View.Renderer.Cell.Text.extend({
-        cellType: 'text-convertible',
-        rerenderAttributes: ['isEditable', 'optionList', 'value'],
+        rerenderAttributes: ['isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
             'blur input' : '_onBlurConvertible',
-            'keydown input': '_onKeyDown'
+            'keydown input': '_onKeyDown',
+            'focus input': '_onFocus'
         },
         initialize: function(attributes, options) {
             View.Renderer.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForClick: 0
             });
+        },
+        getEditType: function() {
+            return 'text-convertible';
         },
         focusIn: function($td) {
             this._startEdit($td);
@@ -132,7 +131,7 @@
         },
         getContentHtml: function(cellData) {
             var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName),
-                $td = this.grid.getCellElement(cellData.rowKey, cellData.columnName),
+                $td = this.grid.getElement(cellData.rowKey, cellData.columnName),
                 isEdit = !!($td.length && $td.data('isEdit'));
 
             if (!isEdit) {
@@ -145,6 +144,7 @@
                 });
             }
         },
+        setElementAttribute: function() {},
         /**
          * blur event handler
          * @param {event} blurEvent
@@ -169,8 +169,9 @@
                 this.render(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
-                $input.focus();
                 Util.setCursorToEnd($input.get(0));
+                $input.focus().select();
+
             }
         },
         /**

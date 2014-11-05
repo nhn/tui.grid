@@ -7,18 +7,23 @@
         className: 'toolbar',
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                controlPanel: null,
+                resizeHandler: null,
+                pagination: null
+            });
         },
         render: function() {
             this.destroyChildren();
             var option = this.grid.option('toolbar'),
-                resizeHandler, controlPannel;
+                resizeHandler, controlPanel, pagination;
 
             this.$el.empty();
-            if (option && option.hasControlPannel) {
-                controlPannel = this.createView(View.Layout.Toolbar.ControlPannel, {
+            if (option && option.hasControlPanel) {
+                controlPanel = this.createView(View.Layout.Toolbar.ControlPanel, {
                     grid: this.grid
                 });
-                this.$el.append(controlPannel.render().el).css('display', 'block');
+                this.$el.append(controlPanel.render().el).css('display', 'block');
             }
 
             if (option && option.hasResizeHandler) {
@@ -27,7 +32,53 @@
                 });
                 this.$el.append(resizeHandler.render().el).css('display', 'block');
             }
+
+            if (option && option.hasPagination) {
+                pagination = this.createView(View.Layout.Toolbar.Pagination, {
+                    grid: this.grid
+                });
+                this.$el.append(pagination.render().el).css('display', 'block');
+            }
+            this.setOwnProperties({
+                controlPanel: controlPanel,
+                resizeHandler: resizeHandler,
+                pagination: pagination
+            });
             return this;
+        }
+    });
+    /**
+     * Pagination 영역
+     * @class
+     */
+    View.Layout.Toolbar.Pagination = View.Base.extend({
+        tagName: 'div',
+        className: 'pagination',
+        template: _.template('' +
+            '<a href="#" class="pre_end">맨앞</a><a href="#" class="pre">이전</a> <a href="#" class="next">다음</a><a href="#" class="next_end">맨뒤</a>'
+        ),
+        initialize: function() {
+            View.Base.prototype.initialize.apply(this, arguments);
+
+        },
+        render: function() {
+            this.destroyChildren();
+            this.$el.empty().html(this.template());
+            this._setPaginationInstance();
+            return this;
+        },
+        _setPaginationInstance: function() {
+            var PaginationClass = ne && ne.Component && ne.Component.Pagination,
+                pagination = null;
+            if (!this.instance && PaginationClass) {
+                pagination = new PaginationClass({
+                    itemCount: 1,
+                    itemPerPage: 1
+                }, this.$el);
+            }
+            this.setOwnProperties({
+                instance: pagination
+            });
         }
     });
     /**
@@ -115,10 +166,10 @@
         }
     });
     /**
-     * control pannel
+     * control panel
      * @class
      */
-    View.Layout.Toolbar.ControlPannel = View.Base.extend({
+    View.Layout.Toolbar.ControlPanel = View.Base.extend({
         tagName: 'div',
         className: 'btn_setup',
         template: _.template(

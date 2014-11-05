@@ -1,22 +1,21 @@
     if (typeof window.console == 'undefined' || !window.console || !window.console.log) window.console = {'log' : function() {}, 'error' : function() {}};
     /**
-     * define ddata container
+     * define data container
      * @type {{Layout: {}, Data: {}, Cell: {}}}
      */
     var View = {
             CellFactory: null,
-            Layout: {
-            },
+            Layout: {},
+            Layer: {},
             Renderer: {
                 Row: null,
                 Cell: {}
-            },
-            Extra: {
             }
         },
         Model = {},
         Data = {},
-        Collection = {};
+        Collection = {},
+        AddOn = {};
 
     /**
      * Model Base Class
@@ -45,6 +44,7 @@
             this.setOwnProperties({
                 grid: grid
             });
+            this.reset([], {silent: true});
         },
         clear: function() {
             this.each(function(model) {
@@ -63,6 +63,7 @@
 
     /**
      * View base class
+     * @constructor
      */
     View.Base = Backbone.View.extend({
         initialize: function(attributes) {
@@ -122,7 +123,17 @@
             this.destroyChildren();
             this.remove();
         },
-
+        createEventData: function(eventData) {
+            eventData = eventData || {};
+            eventData.stop = function() {
+                this._isStoped = true;
+            };
+            eventData.isStopped = function() {
+                return this._isStoped;
+            };
+            eventData._isStoped = eventData._isStoped || false;
+            return eventData;
+        },
         destroyChildren: function() {
             if (this.__viewList instanceof Array) {
                 while (this.__viewList.length !== 0) {
@@ -133,6 +144,8 @@
     });
     /**
      * Renderer Base Class
+     * @extends {View.Base}
+     * @constructor
      */
     View.Base.Renderer = View.Base.extend({
         eventHandler: {},
@@ -190,187 +203,5 @@
             throw this.error('implement getHtml() method');
         }
     });
-    /**
-     * Cell Renderer Base
-     */
-    View.Base.Renderer.Cell = View.Base.Renderer.extend({
-        cellType: 'normal',
-        eventHandler: {},
-        rerenderAttributes: ['isEditable', 'optionList', 'value'],
-        initialize: function(attributes, options) {
-            View.Base.Renderer.prototype.initialize.apply(this, arguments);
-            this._initializeEventHandler();
-        },
-        baseTemplate: _.template('<td ' +
-            ' columnName="<%=columnName%>"' +
-            ' <%=rowSpan%>' +
-            ' class="<%=className%>"' +
-            ' <%=attributes%>' +
-            ' data-cell-type="<%=cellType%>"' +
-            '>' +
-            '<%=content%>' +
-            '</td>'),
-        onModelChange: function(cellData, $tr) {
-            var $td = this._getCellElement(cellData.columnName, $tr),
-                isRerender = false,
-                isValueChanged = $.inArray('value', cellData.changed) !== -1,
-                hasFocusedElement;
-
-            this._setFocusedClass(cellData, $td);
-
-            for (var i = 0; i < this.rerenderAttributes.length; i++) {
-                if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
-                    isRerender = true;
-                    break;
-                }
-            }
-
-            $td.attr('class', this._getClassNameList(cellData).join(' '));
-
-            hasFocusedElement = !!($td.find(':focus').length);
-
-            if (isRerender === true) {
-                this.render(cellData, $td, hasFocusedElement);
-                if (hasFocusedElement) {
-                    this.focusIn($td);
-                }
-            } else {
-                this.setElementAttribute(cellData, $td, hasFocusedElement);
-            }
-
-
-        },
-        attachHandler: function($target) {
-            this._attachHandler($target);
-        },
-        detachHandler: function($target) {
-            this._detachHandler($target);
-        },
-        _setFocusedClass: function(cellData, $target) {
-            (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
-            (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
-        },
-        setElementAttribute: function(cellData, $td, $focused) {
-
-        },
-        render: function(cellData, $td, $focused) {
-            this._detachHandler($td);
-            $td.data('cell-type', this.cellType).html(this.getContentHtml(cellData, $td, $focused));
-            this._attachHandler($td);
-        },
-        /**
-         * cellData 정보에서 className 을 추출한다.
-         * @param {Object} cellData
-         * @return {Array}
-         * @private
-         */
-        _getClassNameList: function(cellData) {
-            var classNameList = [],
-                classNameMap = {},
-                columnName = cellData.columnName,
-                privateColumnList = ['_button', '_number'],
-                isPrivate = $.inArray(columnName, privateColumnList) !== -1,
-                i, len;
-
-            if (cellData.className) {
-                classNameList.push(cellData.className);
-            }
-            if (cellData.selected === true) {
-                classNameList.push('selected');
-            }
-            if (cellData.focused === true) {
-                classNameList.push('focused');
-            }
-            if (cellData.isEditable === true && !isPrivate) {
-                classNameList.push('editable');
-            }
-            if (cellData.isDisabled === true && !isPrivate) {
-                classNameList.push('disabled');
-            }
-
-            len = classNameList.length;
-            //중복제거
-            for (i = 0; i < len; i++) {
-                classNameMap[classNameList[i]] = true;
-            }
-            classNameList = [];
-            _.each(classNameMap, function(val, className) {
-                classNameList.push(className);
-            }, this);
-            return classNameList;
-        },
-        getHtml: function(cellData) {
-            return this.baseTemplate({
-                columnName: cellData.columnName,
-                rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
-                className: this._getClassNameList(cellData).join(' '),
-                attributes: this.getAttributes(cellData),
-                cellType: this.cellType,
-                content: this.getContentHtml(cellData)
-            });
-        },
-        getAttributesString: function(attributes) {
-            var str = '';
-            _.each(attributes, function(value, key) {
-                str += ' ' + key + '="' + value + '"';
-            }, this);
-            return str;
-        },
-        getEventHandler: function() {
-            return this._eventHandler;
-        },
-
-        /**
-         * implement this.
-         * @private
-         */
-        getContentHtml: function(cellData) {
-            return cellData.value;
-        },
-        /**
-         * implement this.
-         * @private
-         */
-        getAttributes: function(cellData) {
-            return '';
-        },
-        _getColumnName: function($target) {
-            return $target.closest('td').attr('columnName');
-        },
-        _getRowKey: function($target) {
-            return $target.closest('tr').attr('key');
-        },
-        _getCellElement: function(columnName, $tr) {
-            return $tr.find('td[columnName="' + columnName + '"]');
-        },
-        _getCellData: function($tr) {
-            return this.grid.renderModel.getCellData(this._getRowKey($tr), this._getColumnName($tr));
-        },
-        _getCellAddress: function($target) {
-            return {
-                rowKey: this._getRowKey($target),
-                columnName: this._getColumnName($target)
-            };
-        }
-    });
-
-    View.Base.PluginInterface = View.Base.extend({
-        $super: View.Base.PluginInterface,
-        initialize: function() {
-            View.Base.prototype.initialize.apply(this, arguments);
-            this.$super.__plugin = this;
-        },
-        activate: function() {
-
-        },
-        render: function() {
-            return this;
-        },
-        appendTo: function() {
-
-        }
-    });
-
-
 
 

@@ -16,6 +16,7 @@
                 },
                 instanceList = [
                     new View.Renderer.Cell.MainButton(args),
+                    new View.Renderer.Cell.Normal.Number(args),
                     new View.Renderer.Cell.Normal(args),
                     new View.Renderer.Cell.Text(args),
                     new View.Renderer.Cell.List.Button(args),
@@ -24,7 +25,7 @@
                 ];
 
             _.each(instanceList, function(instance, name) {
-                instances[instance.cellType] = instance;
+                instances[instance.getEditType()] = instance;
             }, this);
 
             this.setOwnProperties({
@@ -32,49 +33,34 @@
             });
         },
         getInstance: function(editType) {
-            var instance = null;
-            switch (editType) {
-                case 'main' :
-                    instance = this.instances[editType];
-                    break;
-                case 'text' :
-                    instance = this.instances[editType];
-                    break;
-                case 'text-convertible' :
-                    instance = this.instances[editType];
-                    break;
-                case 'select':
-                    instance = this.instances[editType];
-                    break;
-                case 'radio' :
-                case 'checkbox' :
+            var instance = this.instances[editType];
+            if (!instance) {
+                if (editType === 'radio' || editType === 'checkbox') {
                     instance = this.instances['button'];
-                    break;
-                default :
+                } else {
                     instance = this.instances['normal'];
-                    break;
+                }
             }
-
             return instance;
         },
         attachHandler: function($parent) {
             var $tdList = $parent.find('td'),
                 $td,
-                cellType;
+                editType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.data('cell-type');
-                this.instances[cellType].attachHandler($td);
+                editType = $td.data('edit-type');
+                this.instances[editType].attachHandler($td);
             }
         },
         detachHandler: function($parent) {
             var $tdList = $parent.find('td'),
                 $td,
-                cellType;
+                editType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.data('cell-type');
-                this.instances[cellType].detachHandler($td);
+                editType = $td.data('edit-type');
+                this.instances[editType].detachHandler($td);
             }
         }
     });

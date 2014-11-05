@@ -6,11 +6,12 @@
         defaults: {
             top: 0,
             scrollTop: 0,
+            $scrollTarget: null,
             scrollLeft: 0,
             maxScrollLeft: 0,
             startIdx: 0,
             endIdx: 0,
-
+            startNumber: 1,
             lside: null,
             rside: null
         },
@@ -18,6 +19,7 @@
             Model.Base.prototype.initialize.apply(this, arguments);
 
             this.setOwnProperties({
+                timeoutIdForRowListChange: 0,
                 timeoutIdForRefresh: 0,
                 isColumnModelChanged: false
             });
@@ -25,7 +27,7 @@
             //원본 rowList 의 상태 값 listening
             this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
             this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
-            this.on('change', this.test, this);
+
             //lside 와 rside 별 Collection 생성
             var lside = new Model.RowList({
                 grid: this.grid
@@ -38,7 +40,17 @@
                 rside: rside
             });
         },
-
+        initializeVariables: function() {
+            this.set({
+                top: 0,
+                scrollTop: 0,
+                $scrollTarget: null,
+                scrollLeft: 0,
+                startIdx: 0,
+                endIdx: 0,
+                startNumber: 1
+            });
+        },
         test: function(model) {
             console.log('change', model.changed);
         },
@@ -70,6 +82,7 @@
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
         _onRowListChange: function() {
+            this.grid.selection.endSelection();
             clearTimeout(this.timeoutIdForRefresh);
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
@@ -99,7 +112,6 @@
 
                 lsideRowList = [],
                 rsideRowList = [],
-
                 lsideRow = [],
                 rsideRow = [],
                 startIdx = this.get('startIdx'),
@@ -108,7 +120,7 @@
 
 
             var start = new Date();
-
+            var num = this.get('startNumber') + startIdx;
 //            console.log('render', startIdx, endIdx);
             for (i = startIdx; i < endIdx + 1; i++) {
                 var rowModel = this.grid.dataModel.at(i);
@@ -125,11 +137,19 @@
 
                 //lside 데이터 먼저 채운다.
                 _.each(lsideColumnList, function(columnName) {
-                    lsideRow[columnName] = rowModel.get(columnName);
+                    if (columnName == '_number') {
+                        lsideRow[columnName] = num++;
+                    } else {
+                        lsideRow[columnName] = rowModel.get(columnName);
+                    }
                 }, this);
 
                 _.each(rsideColumnList, function(columnName) {
-                    rsideRow[columnName] = rowModel.get(columnName);
+                    if (columnName == '_number') {
+                        rsideRow[columnName] = num++;
+                    } else {
+                        rsideRow[columnName] = rowModel.get(columnName);
+                    }
                 }, this);
 
                 lsideRowList.push(lsideRow);
@@ -154,6 +174,10 @@
                 this.trigger('columnModelChanged');
                 this.isColumnModelChanged = false;
             }else {
+//                clearTimeout(this.timeoutIdForRowListChange);
+//                this.timeoutIdForRowListChange = setTimeout($.proxy(function() {
+//                    this.trigger('rowListChanged');
+//                }, this), 10);
                 this.trigger('rowListChanged');
             }
 
@@ -179,7 +203,7 @@
          * CellData 를 가져온다.
          * @param rowKey
          * @param columnName
-         * @returns {*}
+         * @return {*}
          */
         getCellData: function(rowKey, columnName) {
             var collection = this._getRowListDivision(columnName),

@@ -102,7 +102,7 @@
             if (type === 'string') {
                 return value.toString();
             } else if (type === 'number') {
-                return parseInt(value, 10);
+                return value * 1;
             } else {
                 return value;
             }
@@ -126,12 +126,13 @@
             typeExpected = typeof editOptionList[0].value;
             valueList = value.toString().split(',');
             if (typeExpected !== typeof valueList[0]) {
-                _.each(valueList, function(value, index) {
-                    valueList[index] = this._convertValueType(value, typeExpected);
+                _.each(valueList, function(val, index) {
+                    valueList[index] = this._convertValueType(val, typeExpected);
                 }, this);
             }
-            _.each(valueList, function(value, index) {
-                valueList[index] = _.findWhere(editOptionList, {value: value}).text;
+            _.each(valueList, function(val, index) {
+                var item = _.findWhere(editOptionList, {value: val});
+                valueList[index] = item && item.text || '';
             }, this);
 
             return valueList.join(',');
@@ -238,11 +239,8 @@
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 _sortKey: 'rowKey',
-//                _focused: {
-//                    'rowKey' : null,
-//                    'columnName' : ''
-//                },
                 _originalRowList: [],
+                _originalRowMap: {},
                 _startIndex: attributes.startIndex || 1,
                 _privateProperties: [
                     '_button',
@@ -258,7 +256,7 @@
             this.on('all', this.test1, this);
         },
         test1: function() {
-    //            console.log(arguments);
+                console.log('#####TEST', arguments);
         },
         /**
          * rowKey 의 index를 가져온다.
@@ -269,7 +267,6 @@
             return this.indexOf(this.get(rowKey));
         },
         _onSort: function() {
-            console.log('sort');
             this._refreshNumber();
         },
         _refreshNumber: function() {
@@ -281,7 +278,6 @@
         _isPrivateProperty: function(name) {
             return $.inArray(name, this._privateProperties) !== -1;
         },
-
         _onChange: function(row) {
             var getChangeEvent = function(row, columnName) {
                 return {
@@ -406,6 +402,15 @@
                 });
             }, this);
         },
+        /**
+         * rowState 를 설정한다.
+         * @param {(Number|String)} rowKey
+         * @param {string} rowState DISABLED|DISABLED_CHECK|CHECKED
+         * @param {boolean} silent
+         */
+        setRowState: function(rowKey, rowState, silent) {
+            this.setExtraData(rowKey, {rowState: rowState}, silent);
+        },
         setExtraData: function(rowKey, value, silent) {
             var row = this.get(rowKey),
                 obj = {}, extraData;
@@ -424,7 +429,6 @@
             }
         },
         _onFocusChange: function(focusModel) {
-            console.log('onFocusChange', focusModel.changed);
             var selected = true,
                 rowKey = focusModel.get('rowKey');
             _.each(focusModel.changed, function(value, name) {
@@ -442,9 +446,47 @@
         },
 
         parse: function(data) {
-            this._originalRowList = this._parse(data);
+            data = data && data['contents'] || data;
+            this.setOriginalRowList(this._format(data));
             return this._originalRowList;
         },
+
+        /**
+         * originalRowList 와 originalRowMap 을 생성한다.
+         * @param {Array} rowList rowList 가 없을 시 현재 설정된 데이터를 originalRowList 로 저장한다.
+         * @private
+         */
+        setOriginalRowList: function(rowList) {
+            this._originalRowList = rowList || this.toJSON();
+            this._originalRowMap = _.indexBy(this._originalRowList, 'rowKey');
+        },
+        /**
+         *
+         * @param {boolean} [isClone=true]
+         * @return {Array}
+         */
+        getOriginalRowList: function(isClone) {
+            isClone = isClone === undefined ? true : isClone;
+            return isClone ? _.clone(this._originalRowList) : this._originalRowList;
+        },
+        /**
+         * original row 을 리턴한다.
+         * @param {(Number|String)} rowKey
+         * @return {Object}
+         */
+        getOriginalRow: function(rowKey) {
+            return _.clone(this._originalRowMap[rowKey]);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 데이터를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {(Number|String)}
+         */
+        getOriginal: function(rowKey, columnName) {
+            return _.clone(this._originalRowMap[rowKey][columnName]);
+        },
+
         /**
          * 내부 변수를 제거한다.
          * @param rowList
@@ -496,10 +538,7 @@
             }, this);
             return result;
         },
-        _parse: function(data) {
-            var result = data,
-                keyColumnName = this.grid.columnModel.get('keyColumnName');
-
+        _format: function(data) {
             function setExtraRowSpanData(extraData, columnName, rowSpanData) {
                 extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
                 extraData['rowSpanData'][columnName] = rowSpanData;
@@ -508,55 +547,55 @@
                 return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
             }
 
+            var rowList = data,
+                keyColumnName = this.grid.columnModel.get('keyColumnName'),
+                len = rowList.length,
+                subCount, rowSpan, extraData, row, childRow, count, rowKey, rowState, i, j;
 
-            var count, rowKey, columnModel, rowState, extraData;
 
+            for (i = 0; i < len; i++) {
+                row = rowList[i];
+                rowKey = (keyColumnName === null) ? i : row[keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+                row['rowKey'] = rowKey;
+                row['_extraData'] = rowList[i]['_extraData'] || {};
+                extraData = row['_extraData'];
+                rowSpan = row['_extraData']['rowSpan'];
+                rowState = row['_extraData']['rowState'];
 
-            for (var i = 0; i < result.length; i++) {
-                rowKey = (keyColumnName === null) ? i : result[i][keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+                //rowState 값 따라 button 의 상태를 결정한다.
+                row['_button'] = rowState === 'CHECKED';
 
-                result[i]['_extraData'] = result[i]['_extraData'] || {};
-
-//                result[i]['_extraData']['rowState'] = (i % 5 === 0) ? 'DISABLED' : '';
-//                result[i]['_extraData']['rowState'] = (i % 3 === 0) ? 'DISABLED_CHECK' : '';
-
-                rowState = result[i]['_extraData'] && result[i]['_extraData']['rowState'];
-                result[i]['rowKey'] = rowKey;
-                result[i]['_button'] = rowState === 'CHECKED';
                 if (!this.isSortedByField()) {
                     //extraData 의 rowSpanData 가공
-                    if (result[i]['_extraData'] && result[i]['_extraData']['rowSpan']) {
-                        for (var columnName in result[i]['_extraData']['rowSpan']) {
-                            if (!isSetExtraRowSpanData(result[i]['_extraData'], columnName)) {
-                                count = result[i]['_extraData']['rowSpan'][columnName];
-                                setExtraRowSpanData(result[i]['_extraData'], columnName, {
+                    if (rowSpan) {
+                        _.each(rowSpan, function(count, columnName) {
+                            if (!isSetExtraRowSpanData(extraData, columnName)) {
+                                setExtraRowSpanData(extraData, columnName, {
                                     count: count,
                                     isMainRow: true,
-                                    mainRowKey: result[i]['rowKey']
+                                    mainRowKey: rowKey
                                 });
-                                var subCount = -1;
-                                for (var j = i + 1; j < i + count; j++) {
-                                    //value 를 mainRow 의 값과 동일하게 설정
-                                    result[j][columnName] = result[i][columnName];
-                                    result[j]['_extraData'] = result[j]['_extraData'] || {};
-                                    //rowSpan 값 변경
-                                    setExtraRowSpanData(result[j]['_extraData'], columnName, {
+                                subCount = -1;
+                                for (j = i + 1; j < i + count; j++) {
+                                    childRow = rowList[j];
+                                    childRow[columnName] = row[columnName];
+                                    childRow['_extraData'] = childRow['_extraData'] || {};
+                                    setExtraRowSpanData(childRow['_extraData'], columnName, {
                                         count: subCount--,
                                         isMainRow: false,
-                                        mainRowKey: result[i]['rowKey']
+                                        mainRowKey: rowKey
                                     });
                                 }
                             }
-                        }
+                        }, this);
                     }
                 }else {
-                    if (result[i]['_extraData']) {
-                        result[i]['_extraData']['rowSpan'] = null;
+                    if (rowList[i]['_extraData']) {
+                        rowList[i]['_extraData']['rowSpan'] = null;
                     }
                 }
-
             }
-            return result;
+            return rowList;
         },
         _getEmptyRow: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList');
@@ -571,7 +610,7 @@
 
             var rowList,
                 modelList = [],
-                keyColumnName = this.grid.columnModel.get('key'),
+                keyColumnName = this.grid.columnModel.get('keyColumnName'),
                 len = this.length,
                 rowData = rowData || this._getEmptyRow();
 
@@ -580,12 +619,12 @@
                 rowData = [rowData];
             }
             //model type 으로 변경
-            rowList = this._parse(rowData);
+            rowList = this._format(rowData);
 
             _.each(rowList, function(row, index) {
                 row['rowKey'] = (keyColumnName) ? row[keyColumnName] : len + index;
-                modelList.push(new Data.Row(row));
-            },this);
+                modelList.push(new Data.Row(row, {collection: this}));
+            }, this);
             this.add(modelList, {
                 at: at,
                 merge: true

@@ -14,15 +14,40 @@
             View.Base.prototype.initialize.apply(this, arguments);
             this.whichSide = attributes.whichSide;
             this.viewList = [];
-            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.setOwnProperties({
+                timeoutForAllChecked: 0
+            });
+            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
+                .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this);
 
+        },
+        /**
+         * 그리드의 checkCount 가 변경되었을 때 수행하는 헨들러
+         * @private
+         */
+        _onCheckCountChange: function() {
+            if (this.grid.option('selectType') === 'checkbox') {
+                clearTimeout(this.timeoutForAllChecked);
+                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckstate, this), 10);
+            }
+        },
+        /**
+         * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
+         * @private
+         */
+        _syncCheckstate: function() {
+            if (this.grid.option('selectType') === 'checkbox') {
+                var $input = this.$el.find('th[columnname="_button"] input');
+                if ($input.length) {
+                    $input.prop('checked', this.grid.dataModel.length === this.grid.getCheckedRowList().length);
+                }
+            }
         },
         _onColumnWidthChanged: function() {
             var columnData = this._getColumnData(),
                 columnWidthList = columnData.widthList,
                 $colList = this.$el.find('col');
-//            console.log(columnWidthList[0],columnWidthList[1],columnWidthList[2]);
 
             for (var i = 0; i < $colList.length; i++) {
                 $colList.eq(i).css('width', columnWidthList[i] + 'px');
@@ -34,9 +59,12 @@
             }
         },
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target);
-            if ($target.closest('th').attr('columnname') === '_button') {
+            var $target = $(clickEvent.target),
+                isChecked;
 
+            if ($target.closest('th').attr('columnname') === '_button' && $target.is('input')) {
+                isChecked = $target.prop('checked');
+                isChecked ? this.grid.checkAll() : this.grid.uncheckAll();
             }
         },
         template: _.template('' +
@@ -139,11 +167,11 @@
                     colSpan = (colSpanList[j] > 1) ? " colSpan='" + colSpanList[j] + "'" : '';
                     rowMarkupList[j] = rowMarkupList[j] || [];
                     title = columnModel['title'];
-                    rowMarkupList[j].push('<th'+ columnName + sRole + sHeight + sRowSpan + colSpan + '>'+ title + '</th>');
+                    rowMarkupList[j].push('<th' + columnName + sRole + sHeight + sRowSpan + colSpan + '>' + title + '</th>');
                 }
             }
             for (var i = 0; i < rowMarkupList.length; i++) {
-                headerMarkupList.push('<tr>'+ rowMarkupList[i].join('') + '</tr>');
+                headerMarkupList.push('<tr>' + rowMarkupList[i].join('') + '</tr>');
             }
 
             return headerMarkupList.join('');

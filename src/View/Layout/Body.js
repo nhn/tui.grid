@@ -78,6 +78,7 @@
             if (this.whichSide === 'R') {
                 obj['scrollLeft'] = scrollEvent.target.scrollLeft;
             }
+            this.grid.renderModel.set('$scrollTarget', this.$el);
             this.grid.renderModel.set(obj);
         },
         /**

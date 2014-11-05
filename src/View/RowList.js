@@ -11,7 +11,7 @@
                 rowRenderer: null
             });
             this._createRowRenderer();
-            this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+            this.listenTo(this.grid.renderModel, 'rowListChanged', this._onRowListChange, this);
         },
 
         _createRowRenderer: function() {
@@ -22,22 +22,42 @@
                 whichSide: this.whichSide
             });
         },
+        _onRowListChange: function() {
+            var $scrollTarget = this.grid.renderModel.get('$scrollTarget');
+            clearTimeout(this.timeoutIdForCollection);
+            if ($scrollTarget && $scrollTarget.hasClass('virtual_scrollbar')) {
+                this.timeoutIdForCollection = setTimeout($.proxy(this.render, this), 0);
+            } else {
+                this.render();
+            }
+        },
         render: function() {
-            var html = '';
+            var html = '',
+                firstRow = this.collection.at(0);
             var start = new Date();
             console.log('View.RowList.render start');
             this.rowRenderer.detachHandler();
             this.destroyChildren();
             this._createRowRenderer();
             //get html string
-            this.collection.forEach(function(row) {
-                html += this.rowRenderer.getHtml(row);
-            }, this);
+            if (firstRow && firstRow.get('rowKey') !== 'undefined') {
+                this.collection.forEach(function(row) {
+                    html += this.rowRenderer.getHtml(row);
+                }, this);
+            }
             this.$el.html('').prepend(html);
             this.rowRenderer.attachHandler();
 
             var end = new Date();
             console.log('View.RowList.addAll end', end - start);
+            this._showLayer();
             return this;
+        },
+        _showLayer: function() {
+            if (this.grid.dataModel.length) {
+                this.grid.hideGridLayer();
+            } else {
+                this.grid.showGridLayer('empty');
+            }
         }
     });
