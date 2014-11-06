@@ -240,6 +240,10 @@
                 }
             }, this);
         },
+        /**
+         * 렌더러에서 반환할 HTML 스트링
+         * @return {String} html 스트링
+         */
         getHtml: function() {
             throw this.error('implement getHtml() method');
         }
