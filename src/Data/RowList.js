@@ -480,38 +480,62 @@
         },
         /**
          * 수정된 rowList 를 반환한다.
-         * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-         * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         * @param {Object} options
+         *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
+         *      @param {boolean} [options.filteringColumnList=[]] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function(isOnlyChecked, isRaw) {
-            var original = isRaw ? this.originalRowList : this._filter(this.originalRowList),
+        getModifiedRowList: function(options) {
+
+            var isRaw = options && options.isRaw,
+                isOnlyChecked = options && options.isOnlyChecked,
+                isOnlyRowKeyList = options && options.isOnlyRowKeyList,
+                filteringColumnList = options && options.filteringColumnList || [],
+
+                original = isRaw ? this.originalRowList : this._filter(this.originalRowList),
                 current = isRaw ? this.toJSON() : this._filter(this.toJSON()),
                 result = {
                     'createList' : [],
                     'updateList' : [],
                     'deleteList' : []
-                };
+                }, item;
 
             original = _.indexBy(original, 'rowKey');
             current = _.indexBy(current, 'rowKey');
 
+            function filterColumnList(obj, filteringColumnList) {
+                var i = 0, len = filteringColumnList.length;
+                for (; i < len; i++) {
+                    obj[filteringColumnList[i]] = null;
+                }
+                return obj;
+            }
+
             // 추가/ 수정된 행 추출
             _.each(current, function(obj, rowKey) {
+                item = isOnlyRowKeyList ? rowKey : obj;
                 if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                     if (!original[rowKey]) {
-                        result.createList.push(obj);
-                    } else if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
-                        result.updateList.push(obj);
+                        result.createList.push(item);
+                    } else {
+                        //filtering 이 설정되어 있다면 filter 를 한다.
+                        obj = filterColumnList(obj);
+                        original[rowKey] = filterColumnList(original[rowKey]);
+                        if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
+                            result.updateList.push(item);
+                        }
                     }
                 }
             }, this);
 
             //삭제된 행 추출
             _.each(original, function(obj, rowKey) {
+                item = isOnlyRowKeyList ? rowKey : obj;
                 if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                     if (!current[rowKey]) {
-                        result.deleteList.push(obj);
+                        result.deleteList.push(item);
                     }
                 }
             }, this);

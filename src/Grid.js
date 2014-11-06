@@ -146,11 +146,17 @@
          *
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
-         * @param {boolean} [isOriginal]  HTMLElement 리턴 여부
+         * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
          * @return {(Number|String)}
          */
         getValue: function(rowKey, columnName, isOriginal) {
-
+            var value;
+            if (isOriginal) {
+                value = this.grid.dataModel.getOriginal(rowKey, columnName);
+            } else {
+                value = this.grid.dataModel.get(rowKey).get(columnName);
+            }
+            return value;
         },
         /**
          * columnName에 해당하는 column data list를 리턴한다.
@@ -160,7 +166,8 @@
          * @return {Array}
          */
         getColumnValue: function(columnName, isJsonString) {
-
+            var valueList = this.grid.dataModel.pluck(columnName);
+            return isJsonString ? JSON.stringify(valueList) : valueList;
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
@@ -170,7 +177,7 @@
          */
         getRow: function(rowKey, isJsonString) {
             var row = this.grid.dataModel.get(rowKey).toJSON();
-            row = isJsonString ? $.toJSON(row) : row;
+            row = isJsonString ? JSON.stringify(row) : row;
             return row;
         },
         /**
@@ -240,8 +247,7 @@
          */
         setColumnValue: function(columnName, columnValue, isCheckCellState, silent) {
             isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
-            var grid = this.grid,
-                obj = {},
+            var obj = {},
                 cellState = {
                     isDisabled: false,
                     isEditable: true
@@ -260,8 +266,6 @@
             }, this);
         },
         /**
-         * setRowList
-         * @TODO: Naming 고민중..
          * set row list data
          * @param {Array} rowList
          * @param {boolean} [isParse=true]
@@ -363,13 +367,6 @@
             this.setValue(rowKey, '_button', false);
         },
 
-
-        /**
-         * @deprecated
-         */
-        checkRowState: function() {
-
-        },
         /**
          * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
          */
@@ -378,9 +375,15 @@
             this.setRowList([]);
         },
         /**
+         * @deprecated
+         */
+        checkRowState: function() {
+
+        },
+        /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
-         * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
+         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
          */
         removeRow: function(rowKey, isRemoveOriginalData) {
             this.dataModel.removeRow(rowKey, isRemoveOriginalData);
@@ -477,14 +480,18 @@
          * 리턴되는 객체에는 inserted, edited, deleted 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
          *
-         * @param {Boolean} [isRowKeyList]  true로 설정하면 키값만 저장하여 리턴
+         * @param {Boolean} [isOnlyRowKeyList]  true로 설정하면 키값만 저장하여 리턴
          * @param {Boolean} [isJsonString]  변경된 데이터 객체를 JSON문자열로 변환하여 리턴
          * @param {Boolean} [filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {Array}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function(isRowKeyList, isJsonString, filteringColumnList) {
+        getModifiedRowList: function(isOnlyRowKeyList, isJsonString, filteringColumnList) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
-            return this.dataModel.getModifiedRowList();
+
+            return this.dataModel.getModifiedRowList({
+                isOnlyRowKeyList: isOnlyRowKeyList,
+                filteringColumnList: filteringColumnList
+            });
         },
 
         /**
@@ -519,7 +526,15 @@
          * @return {Boolean}
          */
         isChanged: function() {
+            var modifiedRowMap = this.getModifiedRowList(),
+                count = 0, name;
 
+            for (name in modifiedRowMap) {
+                if (modifiedRowMap[name].length) {
+                    return true;
+                }
+            }
+            return false;
         },
         /**
          * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
@@ -554,9 +569,11 @@
          * @param {(Number|String)} rowKey
          */
         select: function(rowKey) {
-
+            this.focusModel.select(rowKey);
         },
-
+        unselect: function() {
+            this.focusModel.unselect();
+        },
         setGridSize: function(size) {
             var dimensionModel = this.grid.dimensionModel,
                 width = size && size.width || dimensionModel.get('width'),
@@ -949,9 +966,11 @@
          * @return {(Number|String)}
          */
         getMainRowKey: function(rowKey, columnName) {
-            var row = this.dataModel.get(rowKey);
+            var row = this.dataModel.get(rowKey),
+                rowSpanData;
             if (!this.isSorted()) {
-                rowKey = row ? row.getRowSpanData(columnName).mainRowKey : rowKey;
+                rowSpanData = row && row.getRowSpanData(columnName);
+                rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
             }
             return rowKey;
         },

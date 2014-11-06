@@ -7,11 +7,9 @@
         },
         /**
          * Grid 에서 발생하는 event 를 relay 한다.
-         * @param eventName
-         * @param params
          * @private
          */
-        _relayEvent: function(eventName, params) {
+        _relayEvent: function() {
             this.trigger.apply(this, arguments);
         },
         /**
@@ -19,11 +17,10 @@
          *
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
-         * @param {boolean} [isOriginal]  HTMLElement 리턴 여부
          * @return {(Number|String)}
          */
-        get: function(rowKey, columnName, isOriginal) {
-
+        getValue: function(rowKey, columnName) {
+            return this.grid.getValue(rowKey, columnName);
         },
         /**
          * columnName에 해당하는 column data list를 리턴한다.
@@ -32,19 +29,17 @@
          * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
          * @return {Array}
          */
-        getColumn: function(columnName, isJsonString) {
-
+        getColumnValue: function(columnName, isJsonString) {
+            return this.grid.getColumnValue(columnName, isJsonString);
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
-         * @param rowKey
-         * @param isJsonString
+         * @param {(Number|String)} rowKey
+         * @param {Boolean} isJsonString
          * @return {Object}
          */
         getRow: function(rowKey, isJsonString) {
-            var row = this.grid.dataModel.get(rowKey).toJSON(),
-                rowData = isJsonString ? $.toJSON(row) : row;
-            return rowData;
+            return this.grid.getRow(rowKey, isJsonString);
         },
         /**
          * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
@@ -52,17 +47,17 @@
          * @return {Object}
          */
         getRowAt: function(index) {
-            return this.grid.dataModel.at(index).toJSON();
+            return this.grid.getRowAt(index);
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
          * @return {Number}
          */
         getRowCount: function() {
-            return this.grid.dataModel.length;
+            return this.grid.getRowCount();
         },
         getRowSpan: function() {
-
+            //@todo:
         },
         /**
          * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
@@ -86,20 +81,22 @@
          * @param {String} columnName   컬럼 이름
          * @param {(Number|String)} columnValue 할당될 값
          */
-        set: function(rowKey, columnName, columnValue) {
-
+        setValue: function(rowKey, columnName, columnValue) {
+            this.grid.setValue(rowKey, columnName, columnValue);
         },
         /**
          *
          * @param {String} columnName   컬럼 이름
          * @param {(Number|String)} columnValue 할당될 값
+         * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
          */
-        setColumn: function(columnName, columnValue) {
-
+        setColumnValue: function(columnName, columnValue, isCheckCellState) {
+            this.grid.setColumnValue(columnName, columnValue, isCheckCellState);
         },
 
         /**
-         * @TODO: Naming 고민중..
+         * rowList 를 설정한다.
+         * @param {Array} rowList
          */
         setRowList: function(rowList) {
             this.grid.setRowList(rowList);
@@ -147,14 +144,14 @@
          * 모든 행을 선택 해제 한다.
          */
         uncheckAll: function() {
-
+            this.grid.uncheckAll();
         },
         /**
          * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         uncheck: function(rowKey) {
-
+            this.grid.uncheck(rowKey);
         },
 
 
@@ -162,62 +159,62 @@
          * @deprecated
          */
         checkRowState: function() {
-
+            //@todo:
         },
         /**
          * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
          */
         clear: function() {
-            //@todo: empty 레이어 추가
+            this.grid.clear();
         },
         /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
-         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 삭제 여부
+         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
          */
         removeRow: function(rowKey, isRemoveOriginalDta) {
-
+            this.grid.removeRow(rowKey, isRemoveOriginalDta);
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
          */
         enable: function() {
-
+            //@todo:
         },
         /**
          * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
          * @param [hasDimmedLayer=true]
          */
         disable: function(hasDimmedLayer) {
-
+            //@todo:
         },
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
          * @param {(Number|String)} rowKey
          */
         enableRow: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, '');
+            this.grid.enableRow(rowKey);
         },
         /**
          * rowKey에 해당하는 행을 비활성화 시킨다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         disableRow: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, 'DISABLED');
+            this.grid.disableRow(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         enableCheck: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, '');
+            this.grid.enableCheck(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         disableCheck: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+            this.grid.disableCheck(rowKey);
         },
 
 
@@ -227,7 +224,7 @@
          * @param {(String|Number)} columnValue
          */
         filterData: function(columnName, columnValue) {
-
+            //@todo:
         },
         /**
          * 현재 선택된 행들의 키값만을 배열로 리턴한다.
@@ -236,7 +233,7 @@
          */
         getCheckedRowKeyList: function(isJsonString) {
             var checkedRowKeyList = this.grid.getCheckedRowKeyList();
-            return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
+            return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
         },
         /**
          * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
@@ -245,7 +242,7 @@
          */
         getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.grid.getCheckedRowList();
-            return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
+            return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
@@ -266,14 +263,14 @@
          * 리턴되는 객체에는 inserted, edited, deleted 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
          *
-         * @param {Boolean} [isRowKeyList]  true로 설정하면 키값만 저장하여 리턴
+         * @param {Boolean} [isOnlyRowKeyList]  true로 설정하면 키값만 저장하여 리턴
          * @param {Boolean} [isJsonString]  변경된 데이터 객체를 JSON문자열로 변환하여 리턴
          * @param {Boolean} [filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {Array}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function(isRowKeyList, isJsonString, filteringColumnList) {
+        getModifiedRowList: function(isOnlyRowKeyList, isJsonString, filteringColumnList) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
-            return this.grid.getModifiedRowList();
+            return this.grid.getModifiedRowList(isOnlyRowKeyList, isJsonString, filteringColumnList);
         },
         /**
          * 현재 그리드의 제일 끝에 행을 추가한다.
@@ -295,9 +292,14 @@
          * @return {Boolean}
          */
         isChanged: function() {
-
+            this.grid.isChanged();
         },
-        getAddon: function(name) {
+        /**
+         * AddOn 인스턴스를 반환한다.
+         * @param {String} name AddOn 이름
+         * @return {instance}
+         */
+        getAddOn: function(name) {
             return name ? this.grid.addOn[name] : this.grid.addOn;
         },
 
@@ -309,7 +311,7 @@
             var originalRowList = this.grid.dataModel.getOriginalRowList();
             this.grid.setRowList(originalRowList, false);
         },
-        refreshLayout: function(){
+        refreshLayout: function() {
             //todo
         },
         addClassNameToColumn: function() {
@@ -334,7 +336,10 @@
          * @param {(Number|String)} rowKey
          */
         select: function(rowKey) {
-
+            this.grid.select(rowKey);
+        },
+        unselect: function() {
+            this.grid.unselect();
         },
         /**
          * 열 고정 위치를 변경한다.

@@ -42,6 +42,7 @@
          * @return {Model.Focus}
          */
         unselect: function() {
+            this.blur();
             this.trigger('unselect', this.get('rowKey'));
             this.set({
                 'rowKey': null

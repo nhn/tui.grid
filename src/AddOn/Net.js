@@ -40,6 +40,10 @@
                 this.readDataAt(1, false);
             }
         },
+        /**
+         * pagination instance 를 초기화 한다.
+         * @private
+         */
         _initializePagination: function() {
             var pagination = this.pagination;
             if (pagination) {
@@ -227,30 +231,79 @@
             }
             this.readData(data);
         },
+        /**
+         *
+         * Create Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         createData: function(options) {
             this.send('createData', options);
         },
+        /**
+         *
+         * Update Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         updateData: function(options) {
             this.send('updateData', options);
         },
+        /**
+         *
+         * Delete Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         deleteData: function(options) {
             this.send('deleteData', options);
         },
+        /**
+         *
+         * Modify Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         modifyData: function(options) {
             this.send('modifyData', options);
         },
-        downloadData: function() {
 
+        downloadData: function() {
+            //@todo
         },
         downloadAllData: function() {
-
+            //@todo
         },
         send: function(requestType, options) {
             var dataModel = this.grid.dataModel,
                 defaultOptions = {
                     url: this.options.api[requestType],
                     type: null,
-                    hasData: true,
+                    hasDataParam: true,
                     isOnlyChecked: true,
                     isOnlyModified: true,
                     isSkipConfirm: false
@@ -263,7 +316,7 @@
                 },
                 checkList = checkMap[requestType],
                 newOptions = $.extend(defaultOptions, options),
-                hasData = newOptions.hasData,
+                hasDataParam = newOptions.hasDataParam,
                 isOnlyModified = newOptions.isOnlyModified,
                 isOnlyChecked = newOptions.isOnlyChecked,
                 isSkipConfirm = newOptions.isSkipConfirm,
@@ -271,10 +324,12 @@
                 data = $.extend({}, this.requestedFormData),
                 dataMap, count = 0;
 
-            if (hasData) {
+            if (hasDataParam) {
                 if (isOnlyModified) {
                     //{createList: [], updateList:[], deleteList: []} 에 담는다.
-                    dataMap = dataModel.getModifiedRowList(isOnlyChecked);
+                    dataMap = dataModel.getModifiedRowList({
+                        isOnlyChecked: true
+                    });
                     _.each(dataMap, function(list, name) {
                         if ($.inArray(name, checkList) !== -1) {
                             count += list.length;
@@ -288,7 +343,7 @@
                 }
             }
 
-            if (isSkipConfirm || this._ask(requestType, count)) {
+            if (isSkipConfirm || this._confirm(requestType, count)) {
                 data = $.extend(data, dataMap);
                 param = {
                     requestType: requestType,
@@ -301,7 +356,14 @@
 
 
         },
-        _ask: function(requestType, count) {
+        /**
+         * requestType 에 따른 컨펌 메세지를 노출한다.
+         * @param {String} requestType
+         * @param {Number} count
+         * @return {boolean}
+         * @private
+         */
+        _confirm: function(requestType, count) {
             var textMap = {
                     'createData': '입력',
                     'updateData': '수정',
@@ -326,7 +388,6 @@
             this.grid.trigger('beforeRequest', eventData);
             if (eventData.isStopped()) return;
             options = $.extend({requestType: ''}, options);
-
             var params = {
                 'url' : options.url,
                 'data' : options.data || {},
@@ -336,8 +397,17 @@
                 'success' : $.proxy(this._onSuccess, this, options.success, options),
                 'error' : $.proxy(this._onError, this, options.error, options)
             };
-            $.ajax(params);
+            if (options.url) {
+                $.ajax(params);
+            }
         },
+        /**
+         * ajax complete 이벤트 핸들러
+         * @param {Function} callback
+         * @param {object} jqXHR
+         * @param {number} status
+         * @private
+         */
         _onComplete: function(callback, jqXHR, status) {
             this.unlock();
         },
