@@ -1,19 +1,20 @@
     var $result = $('#result1');
-    //var url = 'http://10.77.34.122/webstorm/Grid-gitlab/test/php/';
-    var url = 'http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/php/';
+    var url = 'http://10.77.34.122/webstorm/Grid-gitlab/test/php/';
+//    var url = 'http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/php/';
 
     var grid = new ne.Grid({
         el: $('#wrapper1'),
         columnModelList: dummy_data.columnModel_1,
         selectType: 'checkbox',
         columnFixIndex: 5,
+        rowHeight: 30,
         displayRowCount: 10,
         headerHeight: 50,
         minimumColumnWidth: 20
     }).on('onResponse', function(data) {
-        alert('onResponse');
+        console.log('onResponse');
     }).on('onSuccessResponse', function(data) {
-        alert('onSuccessResponse');
+            console.log('onSuccessResponse');
     }).use('Net', {
         el: $('#form'),
         perPage: 100,
