@@ -1984,17 +1984,30 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * column 에 해당하는 값을 전부 변경한다.
-         * @param columnName
-         * @param columnValue
-         * @param silent
+         * @param {String} columnName
+         * @param {(Number|String)} columnValue
+         * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
+         * @param {Boolean} silent
          */
-        setColumnValue: function(columnName, columnValue, silent) {
-            var obj = {};
+        setColumnValue: function(columnName, columnValue, isCheckCellState, silent) {
+            isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+            var grid = this.grid,
+                obj = {},
+                cellState = {
+                    isDisabled: false,
+                    isEditable: true
+                };
             obj[columnName] = columnValue;
+
             this.forEach(function(row, key) {
-                row.set(obj, {
-                    silent: silent
-                });
+                if (isCheckCellState) {
+                    cellState = grid.getCellState(row.get('rowKey'), columnName);
+                }
+                if (!cellState.isDisabled && cellState.isEditable) {
+                    row.set(obj, {
+                        silent: silent
+                    });
+                }
             }, this);
         },
         /**
@@ -3871,18 +3884,25 @@ View.Layer.Ready = View.Layer.Base.extend({
         _onCheckCountChange: function() {
             if (this.grid.option('selectType') === 'checkbox') {
                 clearTimeout(this.timeoutForAllChecked);
-                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckstate, this), 10);
+                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
             }
         },
         /**
          * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
          * @private
          */
-        _syncCheckstate: function() {
+        _syncCheckState: function() {
             if (this.grid.option('selectType') === 'checkbox') {
-                var $input = this.$el.find('th[columnname="_button"] input');
+                var $input = this.$el.find('th[columnname="_button"] input'),
+                    enableCount = 0;
                 if ($input.length) {
-                    $input.prop('checked', this.grid.dataModel.length === this.grid.getCheckedRowList().length);
+                    this.grid.dataModel.forEach(function(row, key) {
+                        var cellState = this.grid.getCellState(row.get('rowKey'), '_button');
+                        if (!cellState.isDisabled && cellState.isEditable) {
+                            enableCount++;
+                        }
+                    }, this);
+                    $input.prop('checked', enableCount === this.grid.getCheckedRowList().length);
                 }
             }
         },
@@ -4427,9 +4447,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         baseTemplate: _.template('' +
             '<tr ' +
             'key="<%=key%>" ' +
+            'class="<%=className%>" ' +
             'style="height: <%=height%>px;">' +
             '<%=contents%>' +
-            'class="<%=className%>" ' +
             '</tr>'),
         /**
          * 초기화 함수
@@ -4550,31 +4570,35 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {string} html html 스트링
          */
         getHtml: function(model) {
-            var columnModelList = this.columnModelList,
-                columnModel = this.grid.columnModel,
-                cellFactory = this.grid.cellFactory,
-                columnName, cellData, editType, cellInstance,
-                html = '';
-            this.cellHandlerList = [];
-            for (var i = 0, len = columnModelList.length; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
-                cellData = model.get(columnName);
-                if (cellData && cellData['isMainRow']) {
-                    editType = this._getEditType(columnName, cellData);
-                    cellInstance = cellFactory.getInstance(editType);
-                    html += cellInstance.getHtml(cellData);
-                    this.cellHandlerList.push({
-                        selector: 'td[columnName="' + columnName + '"]',
-                        cellInstance: cellInstance
-                    });
+            if (model.get('rowKey') === undefined) {
+               return '';
+            } else {
+                var columnModelList = this.columnModelList,
+                    columnModel = this.grid.columnModel,
+                    cellFactory = this.grid.cellFactory,
+                    columnName, cellData, editType, cellInstance,
+                    html = '';
+                this.cellHandlerList = [];
+                for (var i = 0, len = columnModelList.length; i < len; i++) {
+                    columnName = columnModelList[i]['columnName'];
+                    cellData = model.get(columnName);
+                    if (cellData && cellData['isMainRow']) {
+                        editType = this._getEditType(columnName, cellData);
+                        cellInstance = cellFactory.getInstance(editType);
+                        html += cellInstance.getHtml(cellData);
+                        this.cellHandlerList.push({
+                            selector: 'td[columnName="' + columnName + '"]',
+                            cellInstance: cellInstance
+                        });
+                    }
                 }
+                return this.baseTemplate({
+                    key: model.get('rowKey'),
+                    height: this.grid.dimensionModel.get('rowHeight'),
+                    contents: html,
+                    className: ''
+                });
             }
-            return this.baseTemplate({
-                key: model.get('rowKey'),
-                height: this.grid.dimensionModel.get('rowHeight'),
-                contents: html,
-                className: ''
-            });
         }
     });
 
@@ -7857,12 +7881,52 @@ View.Layer.Ready = View.Layer.Base.extend({
             return this.dataModel.isSortedByField();
         },
         /**
-         * rowKey 와 columnName 을 받아 edit 가능한 cell 인지를 반환한다.
+         * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
          * @param {(Number|String)} rowKey
          * @param {String} columnName
          * @return {Boolean}
          */
         isEditable: function(rowKey, columnName) {
+            var focused = this.focusModel.which(),
+                notEditableTypeList = ['_number', 'normal'],
+                editType, cellState;
+
+            rowKey = rowKey !== undefined ? rowKey : focused.rowKey;
+            columnName = columnName !== undefined ? columnName : focused.columnName;
+
+            editType = this.columnModel.getEditType(columnName);
+
+            if ($.inArray(editType, notEditableTypeList) !== -1) {
+                return false;
+            } else {
+                cellState = this.getCellState(rowKey, columnName);
+                return cellState.isEditable;
+            }
+
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {Boolean}
+         */
+        isDisabled: function(rowKey, columnName) {
+            var focused = this.focusModel.which(),
+                cellState;
+
+            rowKey = rowKey !== undefined ? rowKey : focused.rowKey;
+            columnName = columnName !== undefined ? columnName : focused.columnName;
+
+            cellState = this.getCellState(rowKey, columnName);
+            return cellState.isDisabled;
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {{isEditable: boolean, isDisabled: boolean}}
+         */
+        getCellState: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
                 notEditableTypeList = ['_number', 'normal'];
 
@@ -7871,18 +7935,33 @@ View.Layer.Ready = View.Layer.Base.extend({
 
             var columnModel = this.columnModel,
                 dataModel = this.dataModel,
+                isDisabled = false,
+                isEditable = true,
                 editType = columnModel.getEditType(columnName),
-                row, relationResult;
+                row, rowState, relationResult;
+
+            row = dataModel.get(rowKey);
+            relationResult = row.getRelationResult()[columnName];
+            rowState = row.getRowState();
+
+            if (columnName === '_button') {
+                isDisabled = rowState.isDisabledCheck;
+            } else {
+                isDisabled = rowState.isDisabled;
+            }
+            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
 
             if ($.inArray(editType, notEditableTypeList) !== -1) {
-                return false;
+                isEditable = false;
             } else {
-                row = dataModel.get(rowKey);
-                relationResult = row.getRelationResult()[columnName];
-                return !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
+                isEditable = !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
             }
-        },
 
+            return {
+                isEditable: isEditable,
+                isDisabled: isDisabled
+            };
+        },
         setColumnModelList: function(columnModelList) {
             this.columnModel.set('columnModelList', columnModelList);
         },

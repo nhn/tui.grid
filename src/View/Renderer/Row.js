@@ -13,9 +13,9 @@
         baseTemplate: _.template('' +
             '<tr ' +
             'key="<%=key%>" ' +
+            'class="<%=className%>" ' +
             'style="height: <%=height%>px;">' +
             '<%=contents%>' +
-            'class="<%=className%>" ' +
             '</tr>'),
         /**
          * 초기화 함수
@@ -136,30 +136,34 @@
          * @return {string} html html 스트링
          */
         getHtml: function(model) {
-            var columnModelList = this.columnModelList,
-                columnModel = this.grid.columnModel,
-                cellFactory = this.grid.cellFactory,
-                columnName, cellData, editType, cellInstance,
-                html = '';
-            this.cellHandlerList = [];
-            for (var i = 0, len = columnModelList.length; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
-                cellData = model.get(columnName);
-                if (cellData && cellData['isMainRow']) {
-                    editType = this._getEditType(columnName, cellData);
-                    cellInstance = cellFactory.getInstance(editType);
-                    html += cellInstance.getHtml(cellData);
-                    this.cellHandlerList.push({
-                        selector: 'td[columnName="' + columnName + '"]',
-                        cellInstance: cellInstance
-                    });
+            if (model.get('rowKey') === undefined) {
+               return '';
+            } else {
+                var columnModelList = this.columnModelList,
+                    columnModel = this.grid.columnModel,
+                    cellFactory = this.grid.cellFactory,
+                    columnName, cellData, editType, cellInstance,
+                    html = '';
+                this.cellHandlerList = [];
+                for (var i = 0, len = columnModelList.length; i < len; i++) {
+                    columnName = columnModelList[i]['columnName'];
+                    cellData = model.get(columnName);
+                    if (cellData && cellData['isMainRow']) {
+                        editType = this._getEditType(columnName, cellData);
+                        cellInstance = cellFactory.getInstance(editType);
+                        html += cellInstance.getHtml(cellData);
+                        this.cellHandlerList.push({
+                            selector: 'td[columnName="' + columnName + '"]',
+                            cellInstance: cellInstance
+                        });
+                    }
                 }
+                return this.baseTemplate({
+                    key: model.get('rowKey'),
+                    height: this.grid.dimensionModel.get('rowHeight'),
+                    contents: html,
+                    className: ''
+                });
             }
-            return this.baseTemplate({
-                key: model.get('rowKey'),
-                height: this.grid.dimensionModel.get('rowHeight'),
-                contents: html,
-                className: ''
-            });
         }
     });
