@@ -663,7 +663,6 @@
          * @param {Object} rowData
          */
         prepend: function(rowData) {
-            //리스트가 아닐경우 리스트 형태로 변경
             this.append(rowData, 0);
         }
     });
