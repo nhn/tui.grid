@@ -34,6 +34,7 @@
          */
         select: function(rowKey) {
             this.unselect().set('rowKey', rowKey);
+            this.trigger('select', rowKey);
             return this;
         },
         /**
@@ -41,6 +42,7 @@
          * @return {Model.Focus}
          */
         unselect: function() {
+            this.trigger('unselect', this.get('rowKey'));
             this.set({
                 'rowKey': null
             });
@@ -57,13 +59,14 @@
             rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
             columnName = columnName === undefined ? this.get('columnName') : columnName;
             this._savePrevious();
-
+            this.blur();
             if (rowKey !== this.get('rowKey')) {
-                this.blur().select(rowKey);
+                this.select(rowKey);
             }
             if (columnName && columnName !== this.get('columnName')) {
                 this.set('columnName', columnName);
             }
+            this.trigger('focus', rowKey, columnName);
             if (isScrollable) {
                 //todo scrolltop 및 left 값 조정하는 로직 필요.
                 this._adjustScroll();
@@ -114,8 +117,7 @@
          * @return {Model.Focus}
          */
         blur: function() {
-//            console.log("*********************************");
-//            this._clearPrevious();
+            this.trigger('blur', this.get('rowKey'), this.get('columnName'));
             if (this.get('rowKey') !== null) {
                 this.set('columnName', '');
             }

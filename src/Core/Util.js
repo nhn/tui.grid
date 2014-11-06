@@ -183,7 +183,6 @@
         },
         /**
          * 배열의 값들을 전부 String 타입으로 변환한다.
-         * @method _changeToStringInArray
          * @private
          * @param {Array}  arr 변환할 배열
          * @return {Array} 변환된 배열 결과 값
@@ -197,7 +196,6 @@
         /**
          * elementName에 해당하는 인풋 엘리먼트에 formValue 값을 설정한다.
          * -인풋 엘리먼트의 이름을 기준으로 하기에 라디오나 체크박스 엘리먼트에 대해서도 쉽게 값을 설정할 수 있다.
-         * @method setValue
          * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
          * @param {String}  elementName 값을 설정할 인풋 엘리먼트의 이름
          * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.

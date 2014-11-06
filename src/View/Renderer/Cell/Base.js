@@ -68,13 +68,10 @@
          * @param {jQuery} $tr
          */
         onModelChange: function(cellData, $tr) {
-            var rowKey = $tr.attr('key'),
-                $td = this.grid.getElement(rowKey, cellData.columnName),
+            var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
                 isRerender = false,
-                isValueChanged = $.inArray('value', cellData.changed) !== -1,
                 hasFocusedElement;
 
-            this._setFocusedClass(cellData, $td);
 
             for (var i = 0; i < this.rerenderAttributes.length; i++) {
                 if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
@@ -163,33 +160,31 @@
             }
         },
         /**
-         * td에 selected 와 focused css 클래스를 할당한다.
-         * @param {object} cellData
-         * @param {jQuery} $target
-         * @private
-         */
-        _setFocusedClass: function(cellData, $target) {
-            (cellData.selected === true) ? $target.addClass('selected') : $target.removeClass('selected');
-            (cellData.focused === true) ? $target.addClass('focused') : $target.removeClass('focused');
-        },
-
-        /**
          * cellData 정보에서 className 을 추출한다.
          * @param {Object} cellData
          * @return {Array}
          * @private
          */
         _getClassNameList: function(cellData) {
-            var classNameList = [],
-                classNameMap = {},
+            var focused = this.grid.focusModel.which(),
                 columnName = cellData.columnName,
+                focusedRowKey = this.grid.getMainRowKey(focused.rowKey, columnName),
+                classNameList = [],
+                classNameMap = {},
                 privateColumnList = ['_button', '_number'],
                 isPrivateColumnName = $.inArray(columnName, privateColumnList) !== -1,
+
                 i, len;
 
+
+            if (focusedRowKey === cellData.rowKey) {
+                classNameList.push('selected');
+                if (focused.columnName === columnName) {
+                    classNameList.push('focused');
+                }
+            }
+
             cellData.className ? classNameList.push(cellData.className) : null;
-            cellData.selected ? classNameList.push('selected') : null;
-            cellData.focused ? classNameList.push('focused') : null;
             cellData.isEditable && !isPrivateColumnName ? classNameList.push('editable') : null;
             cellData.isDisabled && !isPrivateColumnName ? classNameList.push('disabled') : null;
 

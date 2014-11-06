@@ -1,14 +1,12 @@
     /**
-     * Row Data 모델
-     * @class
+     * Data 중 각 행의 데이터를 담는 모델
+     * @constructor
      */
     Data.Row = Model.Base.extend({
         idAttribute: 'rowKey',
         defaults: {
             _extraData: {
-                'rowState' : null,
-                'selected' : false,
-                'focused' : ''
+                'rowState' : null
             }
         },
         initialize: function() {
@@ -138,8 +136,7 @@
             return valueList.join(',');
         },
         /**
-         * getRelationResult
-         * 컬럼모델에 정의된 relation 을 수행한 결과를 반환한다.
+         * 컬럼모델에 정의된 relation (기존 affectOption) 을 수행한 결과를 반환한다.
          *
          * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisable', 'isEditable'])
          * @return {{columnName: {attribute: resultValue}}}
@@ -228,75 +225,75 @@
         }
 
     });
+
     /**
-     * 실제 데이터 RowList 콜렉션
-     * @class
+     * Raw 데이터 RowList 콜렉션
+     * @constructor
      */
     Data.RowList = Collection.Base.extend({
         model: Data.Row,
-
         initialize: function(attributes) {
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                _sortKey: 'rowKey',
-                _originalRowList: [],
-                _originalRowMap: {},
-                _startIndex: attributes.startIndex || 1,
-                _privateProperties: [
+                sortKey: 'rowKey',
+                originalRowList: [],
+                originalRowMap: {},
+                startIndex: attributes.startIndex || 1,
+                privateProperties: [
                     '_button',
                     '_number',
                     '_extraData'
                 ]
             });
-            this.listenTo(this.grid.focusModel, 'change', this._onFocusChange, this);
-            this.on('change', this._onChange, this);
-            this.on('change:_button', this._onCheckChange, this);
-    //            this.on('sort add remove reset', this._onSort, this);
-            this.on('sort', this._onSort, this);
-            this.on('all', this.test1, this);
-        },
-        test1: function() {
-                console.log('#####TEST', arguments);
+            this.on('change', this._onChange, this)
+                .on('change:_button', this._onCheckChange, this);
         },
         /**
-         * rowKey 의 index를 가져온다.
-         * @param {Number|String} rowKey
+         * rowKey 에 해당하는 index를 반환한다.
+         * @param {(Number|String)} rowKey
          * @return {Number}
          */
         indexOfRowKey: function(rowKey) {
             return this.indexOf(this.get(rowKey));
         },
-        _onSort: function() {
-            this._refreshNumber();
-        },
-        _refreshNumber: function() {
-            for (var i = 0; i < this.length; i++) {
-                this.at(i).set('_number', this._startIndex + i, {silent: true});
-            }
-        },
-
+        /**
+         * rowData 의 프로퍼티 중 내부에서 사용하는 프로퍼티인지 여부를 반환한다.
+         * - 서버로 전송 시 내부에서 사용하는 데이터 제거시 사용됨
+         * @param {String} name
+         * @return {boolean}
+         * @private
+         */
         _isPrivateProperty: function(name) {
-            return $.inArray(name, this._privateProperties) !== -1;
+            return $.inArray(name, this.privateProperties) !== -1;
         },
+        /**
+         * rowData 변경 이벤트 핸들러.
+         * changeCallback 과 rowSpanData에 대한 처리를 담당한다.
+         * @param {object} row
+         * @private
+         */
         _onChange: function(row) {
-            var getChangeEvent = function(row, columnName) {
+            var rowSpanData, changeEvent, columnModel,
+                obj, i, index;
+            function createChangeCallbackEvent(row, columnName) {
                 return {
                     'rowKey' : row.get('rowKey'),
                     'columnName' : columnName,
                     'columnData' : row.get(columnName)
                 };
-            };
+            }
             _.each(row.changed, function(value, columnName) {
                 if (!this._isPrivateProperty(columnName)) {
-                    var columnModel = this.grid.columnModel.getColumnModel(columnName);
+                    columnModel = this.grid.columnModel.getColumnModel(columnName);
                     if (!columnModel) return;
-                    var rowSpanData = row.getRowSpanData(columnName);
 
-                    var changeEvent = getChangeEvent(row, columnName);
-                    var obj;
+                    rowSpanData = row.getRowSpanData(columnName);
+                    changeEvent = createChangeCallbackEvent(row, columnName);
+
                     //beforeChangeCallback 수행
                     if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
-                        if (columnModel.editOption.changeBeforeCallback(changeEvent) === false) {
+                        //beforeChangeCallback 의 결과값이 false 라면 restore 한다.
+                        if (!columnModel.editOption.changeBeforeCallback(changeEvent)) {
                             obj = {};
                             obj[columnName] = row.previous(columnName);
                             row.set(obj);
@@ -306,19 +303,20 @@
                             return;
                         }
                     }
-                    //sorted 가 되지 않았다면, rowSpan 된 데이터들도 함께 update
+
+                    //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
                     if (!this.isSortedByField()) {
                         if (!rowSpanData['isMainRow']) {
                             this.get(rowSpanData['mainRowKey']).set(columnName, value);
                         }else {
-                            var index = this.indexOfRowKey(row.get('rowKey'));
-                            for (var i = 0; i < rowSpanData['count'] - 1; i++) {
+                            index = this.indexOfRowKey(row.get('rowKey'));
+                            for (i = 0; i < rowSpanData['count'] - 1; i++) {
                                 this.at(i + 1 + index).set(columnName, value);
                             }
                         }
                     }
 
-                    changeEvent = getChangeEvent(row, columnName);
+                    changeEvent = createChangeCallbackEvent(row, columnName);
                     //afterChangeCallback 수행
                     if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
                         columnModel.editOption.changeAfterCallback(changeEvent);
@@ -330,9 +328,13 @@
                 }
             }, this);
         },
+        /**
+         * _button 컬럼이 변경되었을때 이벤트 핸들러
+         * @param {Object} row
+         * @private
+         */
         _onCheckChange: function(row) {
-            var columnModel = this.grid.columnModel.getColumnModel('_button'),
-                selectType = this.grid.option('selectType'),
+            var selectType = this.grid.option('selectType'),
                 rowKey = row.get('rowKey'),
                 checkedList;
             if (selectType === 'radio') {
@@ -351,69 +353,29 @@
             }
         },
         /**
-         * 정렬이 되었는지 여부 반환
+         * 현재 정렬이 잘 되었는지 여부를 반환 한다.
          * @return {Boolean}
          */
         isSortedByField: function() {
-            return this._sortKey !== 'rowKey';
+            return this.sortKey !== 'rowKey';
         },
+        /**
+         * sorting 한다.
+         * @param {string} fieldName 정렬할 column 의 이름
+         */
         sortByField: function(fieldName) {
-            this._sortKey = fieldName;
+            this.sortKey = fieldName;
             this.sort();
         },
+        /**
+         * Backbone 에서 sort 연산을 위해 구현되어야 하는 interface
+         * @param {object} item
+         * @return {number}
+         */
         comparator: function(item) {
             if (this.isSortedByField()) {
-                return item.get(this._sortKey) * 1;
+                return +item.get(this.sortKey);
             }
-        },
-        /**
-         * cell 값을 변경한다.
-         * @param rowKey
-         * @param columnName
-         * @param columnValue
-         * @param silent
-         * @return {boolean}
-         */
-        setValue: function(rowKey, columnName, columnValue, silent) {
-            var row = this.get(rowKey),
-                obj = {};
-            if (row) {
-                obj[columnName] = columnValue;
-                row.set(obj, {
-                    silent: silent
-                });
-                return true;
-            }else {
-                return false;
-            }
-        },
-        /**
-         * column 에 해당하는 값을 전부 변경한다.
-         * @param {String} columnName
-         * @param {(Number|String)} columnValue
-         * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
-         * @param {Boolean} silent
-         */
-        setColumnValue: function(columnName, columnValue, isCheckCellState, silent) {
-            isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
-            var grid = this.grid,
-                obj = {},
-                cellState = {
-                    isDisabled: false,
-                    isEditable: true
-                };
-            obj[columnName] = columnValue;
-
-            this.forEach(function(row, key) {
-                if (isCheckCellState) {
-                    cellState = grid.getCellState(row.get('rowKey'), columnName);
-                }
-                if (!cellState.isDisabled && cellState.isEditable) {
-                    row.set(obj, {
-                        silent: silent
-                    });
-                }
-            }, this);
         },
         /**
          * rowState 를 설정한다.
@@ -424,6 +386,13 @@
         setRowState: function(rowKey, rowState, silent) {
             this.setExtraData(rowKey, {rowState: rowState}, silent);
         },
+        /**
+         * row 의 extraData 를 변경한다.
+         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} value
+         * @param {Boolean} silent
+         * @return {boolean}
+         */
         setExtraData: function(rowKey, value, silent) {
             var row = this.get(rowKey),
                 obj = {}, extraData;
@@ -437,31 +406,19 @@
                     silent: silent
                 });
                 return true;
-            }else {
+            } else {
                 return false;
             }
         },
-        _onFocusChange: function(focusModel) {
-            var selected = true,
-                rowKey = focusModel.get('rowKey');
-            _.each(focusModel.changed, function(value, name) {
-                if (name === 'rowKey') {
-                    if (value === null) {
-                        value = focusModel.previous('rowKey');
-                        selected = false;
-                    }
-                    this.setExtraData(value, { selected: selected});
-
-                } else if (name === 'columnName') {
-                    this.setExtraData(rowKey, { focused: value});
-                }
-            }, this);
-        },
-
+        /**
+         * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
+         * @param {Array} data
+         * @return {Array}
+         */
         parse: function(data) {
             data = data && data['contents'] || data;
             this.setOriginalRowList(this._formatData(data));
-            return this._originalRowList;
+            return this.originalRowList;
         },
 
         /**
@@ -470,17 +427,17 @@
          * @private
          */
         setOriginalRowList: function(rowList) {
-            this._originalRowList = rowList || this.toJSON();
-            this._originalRowMap = _.indexBy(this._originalRowList, 'rowKey');
+            this.originalRowList = rowList || this.toJSON();
+            this.originalRowMap = _.indexBy(this.originalRowList, 'rowKey');
         },
         /**
-         *
+         * 원본 데이터 리스트를 반환한다.
          * @param {boolean} [isClone=true]
          * @return {Array}
          */
         getOriginalRowList: function(isClone) {
             isClone = isClone === undefined ? true : isClone;
-            return isClone ? _.clone(this._originalRowList) : this._originalRowList;
+            return isClone ? _.clone(this.originalRowList) : this.originalRowList;
         },
         /**
          * 원본 row 데이터를 반환한다.
@@ -488,16 +445,16 @@
          * @return {Object}
          */
         getOriginalRow: function(rowKey) {
-            return _.clone(this._originalRowMap[rowKey]);
+            return _.clone(this.originalRowMap[rowKey]);
         },
         /**
-         * rowKey 와 columnName 에 해당하는 데이터를 반환한다.
+         * rowKey 와 columnName 에 해당하는 원본 데이터를 반환한다.
          * @param {(Number|String)} rowKey
          * @param {String} columnName
          * @return {(Number|String)}
          */
         getOriginal: function(rowKey, columnName) {
-            return _.clone(this._originalRowMap[rowKey][columnName]);
+            return _.clone(this.originalRowMap[rowKey][columnName]);
         },
 
         /**
@@ -528,7 +485,7 @@
          * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
         getModifiedRowList: function(isOnlyChecked, isRaw) {
-            var original = isRaw ? this._originalRowList : this._filter(this._originalRowList),
+            var original = isRaw ? this.originalRowList : this._filter(this.originalRowList),
                 current = isRaw ? this.toJSON() : this._filter(this.toJSON()),
                 result = {
                     'createList' : [],
@@ -576,6 +533,13 @@
             }
             return isRaw ? rowList : this._filter(rowList);
         },
+        /**
+         * 데이터를 grid 에서 사용하기 쉽도록 가공한다.
+         * rowSpan 데이터도 함께 가공한다.
+         * @param {Array} data
+         * @return {Array}
+         * @private
+         */
         _formatData: function(data) {
             function setExtraRowSpanData(extraData, columnName, rowSpanData) {
                 extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
@@ -636,7 +600,12 @@
             }
             return rowList;
         },
-        _getEmptyRow: function() {
+        /**
+         * append, prepend 시 사용할 dummy row를 생성한다.
+         * @return {Object}
+         * @private
+         */
+        _createDummyRow: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList');
             var data = {};
             for (var i = 0; i < columnModelList.length; i++) {
@@ -657,16 +626,21 @@
                     this.setOriginalRowList();
                 }
             }
-
         },
+        /**
+         * 현재 rowList 중 at 에 해당하는 인덱스에 데이터를 append 한다.
+         * @param {Object|Array} rowData Array 형태일 경우 여러 줄의 row 를 append 한다.
+         * @param {number} [at=this.length] 데이터를 append 할 index
+         */
         append: function(rowData, at) {
             at = at !== undefined ? at : this.length;
+            rowData = rowData || this._createDummyRow();
 
             var rowList,
                 modelList = [],
                 keyColumnName = this.grid.columnModel.get('keyColumnName'),
-                len = this.length,
-                rowData = rowData || this._getEmptyRow();
+                len = this.length;
+
 
             //리스트가 아닐경우 리스트 형태로 변경
             if (!(rowData instanceof Array)) {
@@ -683,8 +657,11 @@
                 at: at,
                 merge: true
             });
-            this._refreshNumber();
         },
+        /**
+         * 현재 rowList 에 최상단에 데이터를 append 한다.
+         * @param {Object} rowData
+         */
         prepend: function(rowData) {
             //리스트가 아닐경우 리스트 형태로 변경
             this.append(rowData, 0);

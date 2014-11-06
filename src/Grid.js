@@ -200,12 +200,14 @@
         },
         /**
          * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
+         * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @return {jQuery} 해당 jQuery Element
          */
         getElement: function(rowKey, columnName) {
             var $frame = this.columnModel.isLside(columnName) ? this.view.lside.$el : this.view.rside.$el;
+            rowKey = this.getMainRowKey(rowKey, columnName);
             return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
         },
         /**
@@ -216,19 +218,46 @@
          * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
          */
         setValue: function(rowKey, columnName, columnValue, silent) {
-            //@TODO : rowKey to String
             columnValue = typeof columnValue === 'string' ? $.trim(columnValue) : columnValue;
-            this.dataModel.setValue(rowKey, columnName, columnValue, silent);
+            var row = this.dataModel.get(rowKey),
+                obj = {};
+            if (row) {
+                obj[columnName] = columnValue;
+                row.set(obj, {
+                    silent: silent
+                });
+                return true;
+            }else {
+                return false;
+            }
         },
         /**
-         *
-         * @param {String} columnName   컬럼 이름
-         * @param {(Number|String)} columnValue 할당될 값
-         * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+         * column 에 해당하는 값을 전부 변경한다.
+         * @param {String} columnName
+         * @param {(Number|String)} columnValue
+         * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
+         * @param {Boolean} silent
          */
-        setColumnValue: function(columnName, columnValue, silent) {
-            columnValue = typeof columnValue === 'string' ? $.trim(columnValue) : columnValue;
-            this.dataModel.setColumnValue(columnName, columnValue, silent);
+        setColumnValue: function(columnName, columnValue, isCheckCellState, silent) {
+            isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+            var grid = this.grid,
+                obj = {},
+                cellState = {
+                    isDisabled: false,
+                    isEditable: true
+                };
+            obj[columnName] = columnValue;
+
+            this.dataModel.forEach(function(row, key) {
+                if (isCheckCellState) {
+                    cellState = this.getCellState(row.get('rowKey'), columnName);
+                }
+                if (!cellState.isDisabled && cellState.isEditable) {
+                    row.set(obj, {
+                        silent: silent
+                    });
+                }
+            }, this);
         },
         /**
          * setRowList
@@ -311,7 +340,7 @@
          * 전체 행을 선택한다.
          */
         checkAll: function() {
-            this.dataModel.setColumnValue('_button', true);
+            this.setColumnValue('_button', true);
         },
         /**
          * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
@@ -324,7 +353,7 @@
          * 모든 행을 선택 해제 한다.
          */
         uncheckAll: function() {
-            this.dataModel.setColumnValue('_button', false);
+            this.setColumnValue('_button', false);
         },
         /**
          * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.

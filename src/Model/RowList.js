@@ -42,8 +42,6 @@
                 var columnModel = this.grid.columnModel.getVisibleColumnModelList(),
                     model = this.grid.dataModel.get(this.get('rowKey')),
                     extraData = model.get('_extraData'),
-                    selected = extraData['selected'] || false,
-                    focusedColumnName = extraData['focused'],
                     rowState = model.getRowState(),
                     param;
 
@@ -52,7 +50,6 @@
                         columnName = column['columnName'],
                         cellData = this.get(columnName),
                         rowModel = this,
-                        focused = (columnName === focusedColumnName),
                         isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
 
                     if (cellData) {
@@ -64,8 +61,6 @@
 
                         if (rowModel && !isRowSpanDataOnly || (isRowSpanDataOnly && !cellData['isMainRow'])) {
                             param = {
-                                focused: focused,
-                                selected: selected,
                                 className: rowState.classNameList.join(' ')
                             };
                             if (isDisabled) {
@@ -85,8 +80,6 @@
 
             _.each(data, function(value, columnName) {
                 var rowSpanData,
-                    focused = data['_extraData']['focused'] === columnName,
-                    selected = !!data['_extraData']['selected'],
                     rowState = dataModel.get(rowKey).getRowState(),
                     isDisabled = rowState.isDisabled,
                     isEditable = grid.isEditable(rowKey, columnName),
@@ -119,8 +112,6 @@
                         isDisabled: isDisabled,
                         optionList: [],
                         className: rowState.classNameList.join(' '),
-                        focused: focused,
-                        selected: selected,
 
                         changed: []    //변경된 프로퍼티 목록들
                     };
@@ -172,15 +163,5 @@
         model: Model.Row,
         initialize: function(attributes) {
             Collection.Base.prototype.initialize.apply(this, arguments);
-            this.on('reset', this._onReset, this);
-        },
-        _onReset: function() {
-            var focused = this.grid.focusModel.which(),
-                model = this.get(focused.rowKey);
-            //랜더링시 rowSpan 된 view 들의 정보를 업데이트한다.
-            if (model) {
-                model.updateRowSpanned();
-            }
         }
-
     });
