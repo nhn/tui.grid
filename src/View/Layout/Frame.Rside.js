@@ -58,6 +58,9 @@
 
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                hasFocus: false
+            });
             this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
             this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
@@ -65,14 +68,25 @@
         },
         template: _.template('<div class="content"></div>'),
         events: {
-            'scroll' : '_onScroll'
+            'scroll' : '_onScroll',
+            'mousedown': '_onMouseDown'
+        },
+        _onMouseDown: function() {
+            this.hasFocus = true;
+            $(document).on('mouseup', $.proxy(this._onMouseUp, this));
+        },
+        _onMouseUp: function() {
+            this.hasFocus = false;
+            $(document).off('mouseup', $.proxy(this._onMouseUp, this));
         },
         _onScroll: function(scrollEvent) {
             clearTimeout(this.timeoutForScroll);
-            this.timeoutForScroll = setTimeout($.proxy(function() {
-                this.grid.renderModel.set('$scrollTarget', this.$el);
-                this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
-            }, this), 10);
+            if (this.hasFocus) {
+                this.timeoutForScroll = setTimeout($.proxy(function() {
+                    this.grid.renderModel.set('$scrollTarget', this.$el);
+                    this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
+                }, this), 0);
+            }
         },
         _onDimensionChange: function(model) {
             if (model.changed['headerHeight'] || model.changed['bodyHeight']) {

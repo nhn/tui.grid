@@ -98,8 +98,6 @@
             });
         },
         refresh: function() {
-            this.trigger('beforeRefresh');
-
             this._setRenderingRange();
             //TODO : rendering 해야할 데이터만 가져온다.
             var len, i,
@@ -167,17 +165,12 @@
             for (; i < len; i++) {
                 this.executeRelation(i);
             }
-
+            this.trigger('beforeRefresh');
             var end = new Date();
-//            console.log('render done', end - start);
             if (this.isColumnModelChanged === true) {
                 this.trigger('columnModelChanged');
                 this.isColumnModelChanged = false;
             }else {
-//                clearTimeout(this.timeoutIdForRowListChange);
-//                this.timeoutIdForRowListChange = setTimeout($.proxy(function() {
-//                    this.trigger('rowListChanged');
-//                }, this), 10);
                 this.trigger('rowListChanged');
             }
 

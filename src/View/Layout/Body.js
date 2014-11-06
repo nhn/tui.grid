@@ -20,15 +20,20 @@
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: attributes && attributes.whichSide || 'R'
+                whichSide: attributes && attributes.whichSide || 'R',
+                isScrollSync: false
             });
 
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
                 .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
-                .listenTo(this.grid.renderModel, 'change:top', this._onTopChange, this)
+
                 .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
                 .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-                .listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
+                .listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this)
+                .listenTo(this.grid.renderModel, 'rowListChanged', this._onRowListRender, this)
+                .listenTo(this.grid.renderModel, 'columnModelChanged', this._onRowListRender, this);
+
+//                .listenTo(this.grid.renderModel, 'beforeRefresh', this._onTopChange, this);
 
         },
         _onBodyHeightChange: function(model, value) {
@@ -73,13 +78,17 @@
          * @private
          */
         _onScroll: function(scrollEvent) {
-            var obj = {};
-            obj['scrollTop'] = scrollEvent.target.scrollTop;
-            if (this.whichSide === 'R') {
-                obj['scrollLeft'] = scrollEvent.target.scrollLeft;
+            if (!this.isScrollSync) {
+                var obj = {};
+                obj['scrollTop'] = scrollEvent.target.scrollTop;
+                if (this.whichSide === 'R') {
+                    obj['scrollLeft'] = scrollEvent.target.scrollLeft;
+                }
+                this.grid.renderModel.set('$scrollTarget', this.$el);
+                this.grid.renderModel.set(obj);
+            } else {
+                this.isScrollSync = false;
             }
-            this.grid.renderModel.set('$scrollTarget', this.$el);
-            this.grid.renderModel.set(obj);
         },
         /**
          * Render model 의 Scroll left 변경 핸들러
@@ -104,15 +113,19 @@
 
         /**
          * Render model 의 top 변경 핸들러
-         * @param {object} model
-         * @param {Number} value
          * @private
          */
-        _onTopChange: function(model, value) {
-            this.$el.children('.table_container').css('top', value + 'px');
+        _onTopChange: function() {
+//            var top = this.grid.renderModel.get('top');
+//            this.$el.children('.table_container').css('top', top + 'px');
         },
         _onBeforeRefresh: function() {
-            this.el.scrollTop = this.grid.renderModel.previous('scrollTop');
+            this.isScrollSync = true;
+            this.el.scrollTop = this.grid.renderModel.get('scrollTop');
+        },
+        _onRowListRender: function(){
+            var top = this.grid.renderModel.get('top');
+            this.$el.children('.table_container').css('top', top + 'px');
         },
         _getViewCollection: function() {
             return this.grid.renderModel.getCollection(this.whichSide);

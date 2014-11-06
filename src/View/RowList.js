@@ -24,12 +24,7 @@
         },
         _onRowListChange: function() {
             var $scrollTarget = this.grid.renderModel.get('$scrollTarget');
-            clearTimeout(this.timeoutIdForCollection);
-            if ($scrollTarget && $scrollTarget.hasClass('virtual_scrollbar')) {
-                this.timeoutIdForCollection = setTimeout($.proxy(this.render, this), 0);
-            } else {
-                this.render();
-            }
+            this.render();
         },
         render: function() {
             var html = '',
