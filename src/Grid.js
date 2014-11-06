@@ -816,12 +816,52 @@
             return this.dataModel.isSortedByField();
         },
         /**
-         * rowKey 와 columnName 을 받아 edit 가능한 cell 인지를 반환한다.
+         * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
          * @param {(Number|String)} rowKey
          * @param {String} columnName
          * @return {Boolean}
          */
         isEditable: function(rowKey, columnName) {
+            var focused = this.focusModel.which(),
+                notEditableTypeList = ['_number', 'normal'],
+                editType, cellState;
+
+            rowKey = rowKey !== undefined ? rowKey : focused.rowKey;
+            columnName = columnName !== undefined ? columnName : focused.columnName;
+
+            editType = this.columnModel.getEditType(columnName);
+
+            if ($.inArray(editType, notEditableTypeList) !== -1) {
+                return false;
+            } else {
+                cellState = this.getCellState(rowKey, columnName);
+                return cellState.isEditable;
+            }
+
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {Boolean}
+         */
+        isDisabled: function(rowKey, columnName) {
+            var focused = this.focusModel.which(),
+                cellState;
+
+            rowKey = rowKey !== undefined ? rowKey : focused.rowKey;
+            columnName = columnName !== undefined ? columnName : focused.columnName;
+
+            cellState = this.getCellState(rowKey, columnName);
+            return cellState.isDisabled;
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {{isEditable: boolean, isDisabled: boolean}}
+         */
+        getCellState: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
                 notEditableTypeList = ['_number', 'normal'];
 
@@ -830,18 +870,33 @@
 
             var columnModel = this.columnModel,
                 dataModel = this.dataModel,
+                isDisabled = false,
+                isEditable = true,
                 editType = columnModel.getEditType(columnName),
-                row, relationResult;
+                row, rowState, relationResult;
+
+            row = dataModel.get(rowKey);
+            relationResult = row.getRelationResult()[columnName];
+            rowState = row.getRowState();
+
+            if (columnName === '_button') {
+                isDisabled = rowState.isDisabledCheck;
+            } else {
+                isDisabled = rowState.isDisabled;
+            }
+            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
 
             if ($.inArray(editType, notEditableTypeList) !== -1) {
-                return false;
+                isEditable = false;
             } else {
-                row = dataModel.get(rowKey);
-                relationResult = row.getRelationResult()[columnName];
-                return !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
+                isEditable = !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
             }
-        },
 
+            return {
+                isEditable: isEditable,
+                isDisabled: isDisabled
+            };
+        },
         setColumnModelList: function(columnModelList) {
             this.columnModel.set('columnModelList', columnModelList);
         },

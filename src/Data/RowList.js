@@ -389,17 +389,30 @@
         },
         /**
          * column 에 해당하는 값을 전부 변경한다.
-         * @param columnName
-         * @param columnValue
-         * @param silent
+         * @param {String} columnName
+         * @param {(Number|String)} columnValue
+         * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
+         * @param {Boolean} silent
          */
-        setColumnValue: function(columnName, columnValue, silent) {
-            var obj = {};
+        setColumnValue: function(columnName, columnValue, isCheckCellState, silent) {
+            isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+            var grid = this.grid,
+                obj = {},
+                cellState = {
+                    isDisabled: false,
+                    isEditable: true
+                };
             obj[columnName] = columnValue;
+
             this.forEach(function(row, key) {
-                row.set(obj, {
-                    silent: silent
-                });
+                if (isCheckCellState) {
+                    cellState = grid.getCellState(row.get('rowKey'), columnName);
+                }
+                if (!cellState.isDisabled && cellState.isEditable) {
+                    row.set(obj, {
+                        silent: silent
+                    });
+                }
             }, this);
         },
         /**

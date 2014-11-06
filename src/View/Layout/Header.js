@@ -29,18 +29,25 @@
         _onCheckCountChange: function() {
             if (this.grid.option('selectType') === 'checkbox') {
                 clearTimeout(this.timeoutForAllChecked);
-                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckstate, this), 10);
+                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
             }
         },
         /**
          * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
          * @private
          */
-        _syncCheckstate: function() {
+        _syncCheckState: function() {
             if (this.grid.option('selectType') === 'checkbox') {
-                var $input = this.$el.find('th[columnname="_button"] input');
+                var $input = this.$el.find('th[columnname="_button"] input'),
+                    enableCount = 0;
                 if ($input.length) {
-                    $input.prop('checked', this.grid.dataModel.length === this.grid.getCheckedRowList().length);
+                    this.grid.dataModel.forEach(function(row, key) {
+                        var cellState = this.grid.getCellState(row.get('rowKey'), '_button');
+                        if (!cellState.isDisabled && cellState.isEditable) {
+                            enableCount++;
+                        }
+                    }, this);
+                    $input.prop('checked', enableCount === this.grid.getCheckedRowList().length);
                 }
             }
         },

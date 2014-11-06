@@ -35,6 +35,10 @@
             this._initializeDataModelNetwork();
             this._initializeRouter();
             this._initializePagination();
+
+            if (options.initialRequest) {
+                this.readDataAt(1, false);
+            }
         },
         _initializePagination: function() {
             var pagination = this.pagination;

@@ -1,7 +1,7 @@
 $result = $('#result1');
 //var url = 'http://10.77.34.122/webstorm/Grid-gitlab/test/php/';
 //var url = 'http://budapest.kr.pe/grid/test/php/';
-var url = 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api_dummy/';
+var url = 'http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/php/';
 var grid = new ne.Grid({
     el: $('#wrapper1'),
     columnModelList: dummy_data.columnModel_2,
