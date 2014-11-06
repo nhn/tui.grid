@@ -1610,7 +1610,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             Model.Base.prototype.initialize.apply(this, arguments);
         },
         /**
-         * extraData 로 부터 rowState 를 object 형태로 리턴한다.
+         * extraData 로 부터 rowState 를 object 형태로 반환한다.
          * @return {{isDisabled: boolean, isDisabledCheck: boolean}}
          * @private
          */
@@ -1649,7 +1649,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * getRowSpanData
          *
-         * rowSpan 관련 data 가져온다.
+         * rowSpan 설정값을 반환한다.
          * @param {String} columnName
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
          */
@@ -1704,7 +1704,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * List type 의 경우 실제 데이터와 editOption.list 의 데이터가 다르기 때문에
-         * text 로 전환해서 리턴할 때 처리를 하여 변환한다.
+         * text 로 전환해서 반환할 때 처리를 하여 변환한다.
          *
          * @param {Number|String} value
          * @param {Object} columnModel
@@ -2042,13 +2042,13 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
         parse: function(data) {
             data = data && data['contents'] || data;
-            this.setOriginalRowList(this._format(data));
+            this.setOriginalRowList(this._formatData(data));
             return this._originalRowList;
         },
 
         /**
          * originalRowList 와 originalRowMap 을 생성한다.
-         * @param {Array} rowList rowList 가 없을 시 현재 설정된 데이터를 originalRowList 로 저장한다.
+         * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
          * @private
          */
         setOriginalRowList: function(rowList) {
@@ -2065,7 +2065,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return isClone ? _.clone(this._originalRowList) : this._originalRowList;
         },
         /**
-         * original row 을 리턴한다.
+         * 원본 row 데이터를 반환한다.
          * @param {(Number|String)} rowKey
          * @return {Object}
          */
@@ -2083,12 +2083,12 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
 
         /**
-         * 내부 변수를 제거한다.
-         * @param rowList
+         * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
+         * @param {Array} rowList
          * @return {Array}
          * @private
          */
-        _filterRowList: function(rowList) {
+        _filter: function(rowList) {
             var obj, filteredRowList = [];
 
             for (var i = 0, len = rowList.length; i < len; i++) {
@@ -2105,35 +2105,60 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 수정된 rowList 를 반환한다.
-         * @return {{inserted: Array, edited: Array, deleted: Array}}
+         * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function() {
-            var original = _.indexBy(this._filterRowList(this._originalRowList), 'rowKey'),
-                current = _.indexBy(this._filterRowList(this.toJSON()), 'rowKey'),
+        getModifiedRowList: function(isOnlyChecked, isRaw) {
+            var original = isRaw ? this._originalRowList : this._filter(this._originalRowList),
+                current = isRaw ? this.toJSON() : this._filter(this.toJSON()),
                 result = {
-                    'inserted' : [],
-                    'edited' : [],
-                    'deleted' : []
+                    'createList' : [],
+                    'updateList' : [],
+                    'deleteList' : []
                 };
+
+            original = _.indexBy(original, 'rowKey');
+            current = _.indexBy(current, 'rowKey');
 
             // 추가/ 수정된 행 추출
             _.each(current, function(obj, rowKey) {
-                if (!original[rowKey]) {
-                    result.inserted.push(obj);
-                }else if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
-                    result.edited.push(obj);
+                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+                    if (!original[rowKey]) {
+                        result.createList.push(obj);
+                    } else if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
+                        result.updateList.push(obj);
+                    }
                 }
             }, this);
 
             //삭제된 행 추출
             _.each(original, function(obj, rowKey) {
-                if (!current[rowKey]) {
-                    result.deleted.push(obj);
+                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+                    if (!current[rowKey]) {
+                        result.deleteList.push(obj);
+                    }
                 }
             }, this);
             return result;
         },
-        _format: function(data) {
+        /**
+         * rowList 를 반환한다.
+         * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         */
+        getRowList: function(isOnlyChecked, isRaw) {
+            var rowList;
+            if (isOnlyChecked) {
+                rowList = this.where({
+                    '_button' : true
+                });
+            } else {
+                rowList = this.toJSON();
+            }
+            return isRaw ? rowList : this._filter(rowList);
+        },
+        _formatData: function(data) {
             function setExtraRowSpanData(extraData, columnName, rowSpanData) {
                 extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
                 extraData['rowSpanData'][columnName] = rowSpanData;
@@ -2161,7 +2186,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 row['_button'] = rowState === 'CHECKED';
 
                 if (!this.isSortedByField()) {
-                    //extraData 의 rowSpanData 가공
+                    //extraData 의 rowSpanData 를 가공한다.
                     if (rowSpan) {
                         _.each(rowSpan, function(count, columnName) {
                             if (!isSetExtraRowSpanData(extraData, columnName)) {
@@ -2170,6 +2195,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                                     isMainRow: true,
                                     mainRowKey: rowKey
                                 });
+                                //rowSpan 된 데이터의 자식 데이터를 설정한다.
                                 subCount = -1;
                                 for (j = i + 1; j < i + count; j++) {
                                     childRow = rowList[j];
@@ -2200,6 +2226,21 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             }
             return data;
         },
+        /**
+         * rowKey에 해당하는 그리드 데이터를 삭제한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
+         */
+        removeRow: function(rowKey, isRemoveOriginalData) {
+            var row = this.get(rowKey);
+            if (row) {
+                this.remove(row);
+                if (isRemoveOriginalData) {
+                    this.setOriginalRowList();
+                }
+            }
+
+        },
         append: function(rowData, at) {
             at = at !== undefined ? at : this.length;
 
@@ -2214,7 +2255,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 rowData = [rowData];
             }
             //model type 으로 변경
-            rowList = this._format(rowData);
+            rowList = this._formatData(rowData);
 
             _.each(rowList, function(row, index) {
                 row['rowKey'] = (keyColumnName) ? row[keyColumnName] : len + index;
@@ -6577,12 +6618,12 @@ View.Layer.Ready = View.Layer.Base.extend({
             var defaultOptions = {
                     initialRequest: true,
                     api: {
-                        'read': 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api/dummy_request.php',
-                        'update': '',
-                        'delete': '',
-                        'modify': '',
-                        'download': '',
-                        'downloadAll': ''
+                        'readData': 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api/dummy_request.php',
+                        'updateData': '',
+                        'deleteData': '',
+                        'modifyData': '',
+                        'downloadData': '',
+                        'downloadAllData': ''
                     },
                     perPage: 500,
                     enableAjaxHistory: true
@@ -6616,7 +6657,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @private
          */
         _initializeDataModelNetwork: function() {
-            this.grid.dataModel.url = this.options.api.read;
+            this.grid.dataModel.url = this.options.api.readData;
             this.grid.dataModel.sync = $.proxy(this._sync, this);
         },
         /**
@@ -6658,9 +6699,12 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.readDataAt(1, false);
         },
 
-
+        /**
+         * 폼 데이터를 설정한다.
+         * @param {Object} formData
+         */
         setFormData: function(formData) {
-            //form data 를 반영한다.
+            //form data 를 실제 form 에 반영한다.
             Util.setFormData(this.$el, formData);
         },
 
@@ -6760,7 +6804,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 data.columnModel = JSON.stringify(this.grid.columnModel.get('columnModelList'));
 //                data.columnModel = grid.columnModel.get('columnModelList');
                 grid.dataModel.fetch({
-                    requestType: 'read',
+                    requestType: 'readData',
                     data: data,
                     type: 'POST',
                     success: $.proxy(this._onReadSuccess, this),
@@ -6787,14 +6831,17 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
             this.readData(data);
         },
-        updateData: function() {
-
+        createData: function(options) {
+            this.send('createData', options);
         },
-        deleteData: function() {
-
+        updateData: function(options) {
+            this.send('updateData', options);
         },
-        modifyData: function() {
-
+        deleteData: function(options) {
+            this.send('deleteData', options);
+        },
+        modifyData: function(options) {
+            this.send('modifyData', options);
         },
         downloadData: function() {
 
@@ -6802,15 +6849,86 @@ View.Layer.Ready = View.Layer.Base.extend({
         downloadAllData: function() {
 
         },
+        send: function(requestType, options) {
+            var dataModel = this.grid.dataModel,
+                defaultOptions = {
+                    url: this.options.api[requestType],
+                    type: null,
+                    hasData: true,
+                    isOnlyChecked: true,
+                    isOnlyModified: true,
+                    isSkipConfirm: false
+                },
+                checkMap = {
+                    'createData': ['createList'],
+                    'updateData': ['updateList'],
+                    'deleteData': ['deleteList'],
+                    'modifyData': ['createList', 'updateList', 'deleteList']
+                },
+                checkList = checkMap[requestType],
+                newOptions = $.extend(defaultOptions, options),
+                hasData = newOptions.hasData,
+                isOnlyModified = newOptions.isOnlyModified,
+                isOnlyChecked = newOptions.isOnlyChecked,
+                isSkipConfirm = newOptions.isSkipConfirm,
+                param = {},
+                data = $.extend({}, this.requestedFormData),
+                dataMap, count = 0;
+
+            if (hasData) {
+                if (isOnlyModified) {
+                    //{createList: [], updateList:[], deleteList: []} 에 담는다.
+                    dataMap = dataModel.getModifiedRowList(isOnlyChecked);
+                    _.each(dataMap, function(list, name) {
+                        if ($.inArray(name, checkList) !== -1) {
+                            count += list.length;
+                        }
+                        dataMap[name] = JSON.stringify(list);
+                    }, this);
+                } else {
+                    //{rowList: []} 에 담는다.
+                    dataMap = {rowList: dataModel.getRowList(isOnlyChecked)};
+                    count = dataMap.rowList.length;
+                }
+            }
+
+            if (isSkipConfirm || this._ask(requestType, count)) {
+                data = $.extend(data, dataMap);
+                param = {
+                    requestType: requestType,
+                    url: newOptions.url,
+                    data: data,
+                    type: newOptions.type
+                };
+                this._ajax(param);
+            }
+
+
+        },
+        _ask: function(requestType, count) {
+            var textMap = {
+                    'createData': '입력',
+                    'updateData': '수정',
+                    'deleteData': '삭제',
+                    'modifyData': '반영'
+                },
+                actionName = textMap[requestType];
+            if (count > 0) {
+                return confirm(count + '건의 데이터를 ' + actionName + '하시겠습니까?');
+            } else {
+                alert(actionName + '할 데이터가 없습니다.');
+                return false;
+            }
+        },
         /**
          * ajax 통신을 한다.
          * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
          * @private
          */
         _ajax: function(options) {
-            var grid = this.grid;
-
-            grid.trigger('beforeRequest', options.data);
+            var eventData = this.createEventData(options.data);
+            this.grid.trigger('beforeRequest', eventData);
+            if (eventData.isStopped()) return;
             options = $.extend({requestType: ''}, options);
 
             var params = {
@@ -6873,7 +6991,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 requestParameter: options.data,
                 responseData: null
             });
-            this.grid.showGridLayer('empty');
+            this.grid.hideGridLayer();
 
             this.grid.trigger('onResponse', eventData);
             if (eventData.isStopped()) return;
@@ -7270,10 +7388,10 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
-         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 삭제 여부
+         * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
          */
-        removeRow: function(rowKey, isRemoveOriginalDta) {
-
+        removeRow: function(rowKey, isRemoveOriginalData) {
+            this.dataModel.removeRow(rowKey, isRemoveOriginalData);
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
@@ -7346,9 +7464,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {Array|String}
          */
         getCheckedRowList: function(isJsonString) {
-            return this.dataModel.where({
-                '_button' : true
-            });
+            return this.dataModel.getRowList(true);
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
@@ -7568,13 +7684,22 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target);
-            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
+            var $target = $(clickEvent.target),
+                eventData = this.createEventData(clickEvent);
+            this.trigger('click', eventData);
+            if (eventData.isStopped()) return;
 
+            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
             }
+
+
         },
         _onMouseDown: function(mouseDownEvent) {
-            var $target = $(mouseDownEvent.target);
+            var $target = $(mouseDownEvent.target),
+                eventData = this.createEventData(mouseDownEvent);
+            this.trigger('mousedown', eventData);
+
+            if (eventData.isStopped()) return;
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
                 mouseDownEvent.preventDefault();
                 this.focusClipboard();
@@ -7766,7 +7891,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.dataModel.sortByField(columnName);
         },
         getRowList: function() {
-            return this.dataModel.toJSON();
+            return this.dataModel.getRowList();
         },
 
 
@@ -8075,7 +8200,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
          * @return {Array|String}
          */
-        getCheckedRowList: function(isJsonString ) {
+        getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.grid.getCheckedRowList();
             return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
         },
@@ -8083,7 +8208,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
          * @return {Array}
          */
-        getColumnModel: function(){
+        getColumnModel: function() {
             return this.grid.columnModel.get('columnModelList');
         },
         /**
@@ -8129,6 +8254,10 @@ View.Layer.Ready = View.Layer.Base.extend({
         isChanged: function() {
 
         },
+        getAddon: function(name) {
+            return name ? this.grid.addOn[name] : this.grid.addOn;
+        },
+
         /**
          * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
          * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.

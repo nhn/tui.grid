@@ -2,12 +2,16 @@
 header('Access-Control-Allow-Origin: *');
 
 $columnModel = json_decode(stripslashes($_REQUEST['columnModel']), true);
+if(is_null($columnModel)){
+    $columnModel = json_decode($_REQUEST['columnModel'], true);
+}
 //var_dump($_REQUEST['columnModel']);
 //var_dump(json_decode(stripslashes($_REQUEST['columnModel'])));
 //var_dump(json_decode(stripslashes($_REQUEST['columnModel']), true));
 $page = (isset($_REQUEST['page'])) ? $_REQUEST['page'] : 1;
 $perPage = (isset($_REQUEST['perPage'])) ? $_REQUEST['perPage'] :  5;
-$totalCount = 928;
+$rowState = (isset($_REQUEST['rowState'])) ? $_REQUEST['rowState'] :  '';
+$totalCount = 99999;
 
 $contents = array();
 function getRow($columnModel, $value){
@@ -28,15 +32,17 @@ function getRow($columnModel, $value){
     }
     return $obj;
 }
-    function genRowSpan($obj, $max){
-        if($max != 0) {
+
+function genRowSpan($obj, $max){
+    global $rowState;
+    if($max != 0) {
         foreach ($obj as $key => $value) {
             $luck = mt_rand(0, 5);
             //        $luck = 1;
             if ($luck == 0) {
                 $obj['_extraData']['rowSpan'][$key] = mt_rand(1, $max);
             }
-            $obj['_extraData']['rowState'] = 'CHECKED';
+            $obj['_extraData']['rowState'] = $rowState;
         }
     }
     return $obj;

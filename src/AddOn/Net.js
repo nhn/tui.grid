@@ -10,12 +10,12 @@
             var defaultOptions = {
                     initialRequest: true,
                     api: {
-                        'read': 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api/dummy_request.php',
-                        'update': '',
-                        'delete': '',
-                        'modify': '',
-                        'download': '',
-                        'downloadAll': ''
+                        'readData': 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api/dummy_request.php',
+                        'updateData': '',
+                        'deleteData': '',
+                        'modifyData': '',
+                        'downloadData': '',
+                        'downloadAllData': ''
                     },
                     perPage: 500,
                     enableAjaxHistory: true
@@ -49,7 +49,7 @@
          * @private
          */
         _initializeDataModelNetwork: function() {
-            this.grid.dataModel.url = this.options.api.read;
+            this.grid.dataModel.url = this.options.api.readData;
             this.grid.dataModel.sync = $.proxy(this._sync, this);
         },
         /**
@@ -91,9 +91,12 @@
             this.readDataAt(1, false);
         },
 
-
+        /**
+         * 폼 데이터를 설정한다.
+         * @param {Object} formData
+         */
         setFormData: function(formData) {
-            //form data 를 반영한다.
+            //form data 를 실제 form 에 반영한다.
             Util.setFormData(this.$el, formData);
         },
 
@@ -193,7 +196,7 @@
                 data.columnModel = JSON.stringify(this.grid.columnModel.get('columnModelList'));
 //                data.columnModel = grid.columnModel.get('columnModelList');
                 grid.dataModel.fetch({
-                    requestType: 'read',
+                    requestType: 'readData',
                     data: data,
                     type: 'POST',
                     success: $.proxy(this._onReadSuccess, this),
@@ -220,14 +223,17 @@
             }
             this.readData(data);
         },
-        updateData: function() {
-
+        createData: function(options) {
+            this.send('createData', options);
         },
-        deleteData: function() {
-
+        updateData: function(options) {
+            this.send('updateData', options);
         },
-        modifyData: function() {
-
+        deleteData: function(options) {
+            this.send('deleteData', options);
+        },
+        modifyData: function(options) {
+            this.send('modifyData', options);
         },
         downloadData: function() {
 
@@ -235,15 +241,86 @@
         downloadAllData: function() {
 
         },
+        send: function(requestType, options) {
+            var dataModel = this.grid.dataModel,
+                defaultOptions = {
+                    url: this.options.api[requestType],
+                    type: null,
+                    hasData: true,
+                    isOnlyChecked: true,
+                    isOnlyModified: true,
+                    isSkipConfirm: false
+                },
+                checkMap = {
+                    'createData': ['createList'],
+                    'updateData': ['updateList'],
+                    'deleteData': ['deleteList'],
+                    'modifyData': ['createList', 'updateList', 'deleteList']
+                },
+                checkList = checkMap[requestType],
+                newOptions = $.extend(defaultOptions, options),
+                hasData = newOptions.hasData,
+                isOnlyModified = newOptions.isOnlyModified,
+                isOnlyChecked = newOptions.isOnlyChecked,
+                isSkipConfirm = newOptions.isSkipConfirm,
+                param = {},
+                data = $.extend({}, this.requestedFormData),
+                dataMap, count = 0;
+
+            if (hasData) {
+                if (isOnlyModified) {
+                    //{createList: [], updateList:[], deleteList: []} 에 담는다.
+                    dataMap = dataModel.getModifiedRowList(isOnlyChecked);
+                    _.each(dataMap, function(list, name) {
+                        if ($.inArray(name, checkList) !== -1) {
+                            count += list.length;
+                        }
+                        dataMap[name] = JSON.stringify(list);
+                    }, this);
+                } else {
+                    //{rowList: []} 에 담는다.
+                    dataMap = {rowList: dataModel.getRowList(isOnlyChecked)};
+                    count = dataMap.rowList.length;
+                }
+            }
+
+            if (isSkipConfirm || this._ask(requestType, count)) {
+                data = $.extend(data, dataMap);
+                param = {
+                    requestType: requestType,
+                    url: newOptions.url,
+                    data: data,
+                    type: newOptions.type
+                };
+                this._ajax(param);
+            }
+
+
+        },
+        _ask: function(requestType, count) {
+            var textMap = {
+                    'createData': '입력',
+                    'updateData': '수정',
+                    'deleteData': '삭제',
+                    'modifyData': '반영'
+                },
+                actionName = textMap[requestType];
+            if (count > 0) {
+                return confirm(count + '건의 데이터를 ' + actionName + '하시겠습니까?');
+            } else {
+                alert(actionName + '할 데이터가 없습니다.');
+                return false;
+            }
+        },
         /**
          * ajax 통신을 한다.
          * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
          * @private
          */
         _ajax: function(options) {
-            var grid = this.grid;
-
-            grid.trigger('beforeRequest', options.data);
+            var eventData = this.createEventData(options.data);
+            this.grid.trigger('beforeRequest', eventData);
+            if (eventData.isStopped()) return;
             options = $.extend({requestType: ''}, options);
 
             var params = {
@@ -306,7 +383,7 @@
                 requestParameter: options.data,
                 responseData: null
             });
-            this.grid.showGridLayer('empty');
+            this.grid.hideGridLayer();
 
             this.grid.trigger('onResponse', eventData);
             if (eventData.isStopped()) return;

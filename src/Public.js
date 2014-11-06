@@ -243,7 +243,7 @@
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
          * @return {Array|String}
          */
-        getCheckedRowList: function(isJsonString ) {
+        getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.grid.getCheckedRowList();
             return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
         },
@@ -251,7 +251,7 @@
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
          * @return {Array}
          */
-        getColumnModel: function(){
+        getColumnModel: function() {
             return this.grid.columnModel.get('columnModelList');
         },
         /**
@@ -297,6 +297,10 @@
         isChanged: function() {
 
         },
+        getAddon: function(name) {
+            return name ? this.grid.addOn[name] : this.grid.addOn;
+        },
+
         /**
          * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
          * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.

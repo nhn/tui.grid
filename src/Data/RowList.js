@@ -15,7 +15,7 @@
             Model.Base.prototype.initialize.apply(this, arguments);
         },
         /**
-         * extraData 로 부터 rowState 를 object 형태로 리턴한다.
+         * extraData 로 부터 rowState 를 object 형태로 반환한다.
          * @return {{isDisabled: boolean, isDisabledCheck: boolean}}
          * @private
          */
@@ -54,7 +54,7 @@
         /**
          * getRowSpanData
          *
-         * rowSpan 관련 data 가져온다.
+         * rowSpan 설정값을 반환한다.
          * @param {String} columnName
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
          */
@@ -109,7 +109,7 @@
         },
         /**
          * List type 의 경우 실제 데이터와 editOption.list 의 데이터가 다르기 때문에
-         * text 로 전환해서 리턴할 때 처리를 하여 변환한다.
+         * text 로 전환해서 반환할 때 처리를 하여 변환한다.
          *
          * @param {Number|String} value
          * @param {Object} columnModel
@@ -447,13 +447,13 @@
 
         parse: function(data) {
             data = data && data['contents'] || data;
-            this.setOriginalRowList(this._format(data));
+            this.setOriginalRowList(this._formatData(data));
             return this._originalRowList;
         },
 
         /**
          * originalRowList 와 originalRowMap 을 생성한다.
-         * @param {Array} rowList rowList 가 없을 시 현재 설정된 데이터를 originalRowList 로 저장한다.
+         * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
          * @private
          */
         setOriginalRowList: function(rowList) {
@@ -470,7 +470,7 @@
             return isClone ? _.clone(this._originalRowList) : this._originalRowList;
         },
         /**
-         * original row 을 리턴한다.
+         * 원본 row 데이터를 반환한다.
          * @param {(Number|String)} rowKey
          * @return {Object}
          */
@@ -488,12 +488,12 @@
         },
 
         /**
-         * 내부 변수를 제거한다.
-         * @param rowList
+         * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
+         * @param {Array} rowList
          * @return {Array}
          * @private
          */
-        _filterRowList: function(rowList) {
+        _filter: function(rowList) {
             var obj, filteredRowList = [];
 
             for (var i = 0, len = rowList.length; i < len; i++) {
@@ -510,35 +510,60 @@
         },
         /**
          * 수정된 rowList 를 반환한다.
-         * @return {{inserted: Array, edited: Array, deleted: Array}}
+         * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function() {
-            var original = _.indexBy(this._filterRowList(this._originalRowList), 'rowKey'),
-                current = _.indexBy(this._filterRowList(this.toJSON()), 'rowKey'),
+        getModifiedRowList: function(isOnlyChecked, isRaw) {
+            var original = isRaw ? this._originalRowList : this._filter(this._originalRowList),
+                current = isRaw ? this.toJSON() : this._filter(this.toJSON()),
                 result = {
-                    'inserted' : [],
-                    'edited' : [],
-                    'deleted' : []
+                    'createList' : [],
+                    'updateList' : [],
+                    'deleteList' : []
                 };
+
+            original = _.indexBy(original, 'rowKey');
+            current = _.indexBy(current, 'rowKey');
 
             // 추가/ 수정된 행 추출
             _.each(current, function(obj, rowKey) {
-                if (!original[rowKey]) {
-                    result.inserted.push(obj);
-                }else if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
-                    result.edited.push(obj);
+                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+                    if (!original[rowKey]) {
+                        result.createList.push(obj);
+                    } else if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
+                        result.updateList.push(obj);
+                    }
                 }
             }, this);
 
             //삭제된 행 추출
             _.each(original, function(obj, rowKey) {
-                if (!current[rowKey]) {
-                    result.deleted.push(obj);
+                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+                    if (!current[rowKey]) {
+                        result.deleteList.push(obj);
+                    }
                 }
             }, this);
             return result;
         },
-        _format: function(data) {
+        /**
+         * rowList 를 반환한다.
+         * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         */
+        getRowList: function(isOnlyChecked, isRaw) {
+            var rowList;
+            if (isOnlyChecked) {
+                rowList = this.where({
+                    '_button' : true
+                });
+            } else {
+                rowList = this.toJSON();
+            }
+            return isRaw ? rowList : this._filter(rowList);
+        },
+        _formatData: function(data) {
             function setExtraRowSpanData(extraData, columnName, rowSpanData) {
                 extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
                 extraData['rowSpanData'][columnName] = rowSpanData;
@@ -566,7 +591,7 @@
                 row['_button'] = rowState === 'CHECKED';
 
                 if (!this.isSortedByField()) {
-                    //extraData 의 rowSpanData 가공
+                    //extraData 의 rowSpanData 를 가공한다.
                     if (rowSpan) {
                         _.each(rowSpan, function(count, columnName) {
                             if (!isSetExtraRowSpanData(extraData, columnName)) {
@@ -575,6 +600,7 @@
                                     isMainRow: true,
                                     mainRowKey: rowKey
                                 });
+                                //rowSpan 된 데이터의 자식 데이터를 설정한다.
                                 subCount = -1;
                                 for (j = i + 1; j < i + count; j++) {
                                     childRow = rowList[j];
@@ -605,6 +631,21 @@
             }
             return data;
         },
+        /**
+         * rowKey에 해당하는 그리드 데이터를 삭제한다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
+         */
+        removeRow: function(rowKey, isRemoveOriginalData) {
+            var row = this.get(rowKey);
+            if (row) {
+                this.remove(row);
+                if (isRemoveOriginalData) {
+                    this.setOriginalRowList();
+                }
+            }
+
+        },
         append: function(rowData, at) {
             at = at !== undefined ? at : this.length;
 
@@ -619,7 +660,7 @@
                 rowData = [rowData];
             }
             //model type 으로 변경
-            rowList = this._format(rowData);
+            rowList = this._formatData(rowData);
 
             _.each(rowList, function(row, index) {
                 row['rowKey'] = (keyColumnName) ? row[keyColumnName] : len + index;

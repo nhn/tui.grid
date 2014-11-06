@@ -351,10 +351,10 @@
         /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
-         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 삭제 여부
+         * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
          */
-        removeRow: function(rowKey, isRemoveOriginalDta) {
-
+        removeRow: function(rowKey, isRemoveOriginalData) {
+            this.dataModel.removeRow(rowKey, isRemoveOriginalData);
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
@@ -427,9 +427,7 @@
          * @return {Array|String}
          */
         getCheckedRowList: function(isJsonString) {
-            return this.dataModel.where({
-                '_button' : true
-            });
+            return this.dataModel.getRowList(true);
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
@@ -649,13 +647,22 @@
             }
         },
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target);
-            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
+            var $target = $(clickEvent.target),
+                eventData = this.createEventData(clickEvent);
+            this.trigger('click', eventData);
+            if (eventData.isStopped()) return;
 
+            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
             }
+
+
         },
         _onMouseDown: function(mouseDownEvent) {
-            var $target = $(mouseDownEvent.target);
+            var $target = $(mouseDownEvent.target),
+                eventData = this.createEventData(mouseDownEvent);
+            this.trigger('mousedown', eventData);
+
+            if (eventData.isStopped()) return;
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
                 mouseDownEvent.preventDefault();
                 this.focusClipboard();
@@ -847,7 +854,7 @@
             this.dataModel.sortByField(columnName);
         },
         getRowList: function() {
-            return this.dataModel.toJSON();
+            return this.dataModel.getRowList();
         },
 
 
