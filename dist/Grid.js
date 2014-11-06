@@ -2118,38 +2118,62 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 수정된 rowList 를 반환한다.
-         * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-         * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         * @param {Object} options
+         *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
+         *      @param {boolean} [options.filteringColumnList=[]] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function(isOnlyChecked, isRaw) {
-            var original = isRaw ? this.originalRowList : this._filter(this.originalRowList),
+        getModifiedRowList: function(options) {
+
+            var isRaw = options && options.isRaw,
+                isOnlyChecked = options && options.isOnlyChecked,
+                isOnlyRowKeyList = options && options.isOnlyRowKeyList,
+                filteringColumnList = options && options.filteringColumnList || [],
+
+                original = isRaw ? this.originalRowList : this._filter(this.originalRowList),
                 current = isRaw ? this.toJSON() : this._filter(this.toJSON()),
                 result = {
                     'createList' : [],
                     'updateList' : [],
                     'deleteList' : []
-                };
+                }, item;
 
             original = _.indexBy(original, 'rowKey');
             current = _.indexBy(current, 'rowKey');
 
+            function filterColumnList(obj, filteringColumnList) {
+                var i = 0, len = filteringColumnList.length;
+                for (; i < len; i++) {
+                    obj[filteringColumnList[i]] = null;
+                }
+                return obj;
+            }
+
             // 추가/ 수정된 행 추출
             _.each(current, function(obj, rowKey) {
+                item = isOnlyRowKeyList ? rowKey : obj;
                 if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                     if (!original[rowKey]) {
-                        result.createList.push(obj);
-                    } else if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
-                        result.updateList.push(obj);
+                        result.createList.push(item);
+                    } else {
+                        //filtering 이 설정되어 있다면 filter 를 한다.
+                        obj = filterColumnList(obj);
+                        original[rowKey] = filterColumnList(original[rowKey]);
+                        if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
+                            result.updateList.push(item);
+                        }
                     }
                 }
             }, this);
 
             //삭제된 행 추출
             _.each(original, function(obj, rowKey) {
+                item = isOnlyRowKeyList ? rowKey : obj;
                 if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                     if (!current[rowKey]) {
-                        result.deleteList.push(obj);
+                        result.deleteList.push(item);
                     }
                 }
             }, this);
@@ -2907,6 +2931,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * @return {Model.Focus}
          */
         unselect: function() {
+            this.blur();
             this.trigger('unselect', this.get('rowKey'));
             this.set({
                 'rowKey': null
@@ -6753,6 +6778,10 @@ View.Layer.Ready = View.Layer.Base.extend({
                 this.readDataAt(1, false);
             }
         },
+        /**
+         * pagination instance 를 초기화 한다.
+         * @private
+         */
         _initializePagination: function() {
             var pagination = this.pagination;
             if (pagination) {
@@ -6940,30 +6969,79 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
             this.readData(data);
         },
+        /**
+         *
+         * Create Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         createData: function(options) {
             this.send('createData', options);
         },
+        /**
+         *
+         * Update Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         updateData: function(options) {
             this.send('updateData', options);
         },
+        /**
+         *
+         * Delete Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         deleteData: function(options) {
             this.send('deleteData', options);
         },
+        /**
+         *
+         * Modify Data API 요청을 보낸다.
+         * @param {object} options
+         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
+         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
+         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
+         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
+         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
+         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+         */
         modifyData: function(options) {
             this.send('modifyData', options);
         },
-        downloadData: function() {
 
+        downloadData: function() {
+            //@todo
         },
         downloadAllData: function() {
-
+            //@todo
         },
         send: function(requestType, options) {
             var dataModel = this.grid.dataModel,
                 defaultOptions = {
                     url: this.options.api[requestType],
                     type: null,
-                    hasData: true,
+                    hasDataParam: true,
                     isOnlyChecked: true,
                     isOnlyModified: true,
                     isSkipConfirm: false
@@ -6976,7 +7054,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 },
                 checkList = checkMap[requestType],
                 newOptions = $.extend(defaultOptions, options),
-                hasData = newOptions.hasData,
+                hasDataParam = newOptions.hasDataParam,
                 isOnlyModified = newOptions.isOnlyModified,
                 isOnlyChecked = newOptions.isOnlyChecked,
                 isSkipConfirm = newOptions.isSkipConfirm,
@@ -6984,10 +7062,12 @@ View.Layer.Ready = View.Layer.Base.extend({
                 data = $.extend({}, this.requestedFormData),
                 dataMap, count = 0;
 
-            if (hasData) {
+            if (hasDataParam) {
                 if (isOnlyModified) {
                     //{createList: [], updateList:[], deleteList: []} 에 담는다.
-                    dataMap = dataModel.getModifiedRowList(isOnlyChecked);
+                    dataMap = dataModel.getModifiedRowList({
+                        isOnlyChecked: true
+                    });
                     _.each(dataMap, function(list, name) {
                         if ($.inArray(name, checkList) !== -1) {
                             count += list.length;
@@ -7001,7 +7081,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 }
             }
 
-            if (isSkipConfirm || this._ask(requestType, count)) {
+            if (isSkipConfirm || this._confirm(requestType, count)) {
                 data = $.extend(data, dataMap);
                 param = {
                     requestType: requestType,
@@ -7014,7 +7094,14 @@ View.Layer.Ready = View.Layer.Base.extend({
 
 
         },
-        _ask: function(requestType, count) {
+        /**
+         * requestType 에 따른 컨펌 메세지를 노출한다.
+         * @param {String} requestType
+         * @param {Number} count
+         * @return {boolean}
+         * @private
+         */
+        _confirm: function(requestType, count) {
             var textMap = {
                     'createData': '입력',
                     'updateData': '수정',
@@ -7039,7 +7126,6 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.grid.trigger('beforeRequest', eventData);
             if (eventData.isStopped()) return;
             options = $.extend({requestType: ''}, options);
-
             var params = {
                 'url' : options.url,
                 'data' : options.data || {},
@@ -7049,8 +7135,17 @@ View.Layer.Ready = View.Layer.Base.extend({
                 'success' : $.proxy(this._onSuccess, this, options.success, options),
                 'error' : $.proxy(this._onError, this, options.error, options)
             };
-            $.ajax(params);
+            if (options.url) {
+                $.ajax(params);
+            }
         },
+        /**
+         * ajax complete 이벤트 핸들러
+         * @param {Function} callback
+         * @param {object} jqXHR
+         * @param {number} status
+         * @private
+         */
         _onComplete: function(callback, jqXHR, status) {
             this.unlock();
         },
@@ -7292,11 +7387,17 @@ View.Layer.Ready = View.Layer.Base.extend({
          *
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
-         * @param {boolean} [isOriginal]  HTMLElement 리턴 여부
+         * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
          * @return {(Number|String)}
          */
         getValue: function(rowKey, columnName, isOriginal) {
-
+            var value;
+            if (isOriginal) {
+                value = this.grid.dataModel.getOriginal(rowKey, columnName);
+            } else {
+                value = this.grid.dataModel.get(rowKey).get(columnName);
+            }
+            return value;
         },
         /**
          * columnName에 해당하는 column data list를 리턴한다.
@@ -7306,7 +7407,8 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {Array}
          */
         getColumnValue: function(columnName, isJsonString) {
-
+            var valueList = this.grid.dataModel.pluck(columnName);
+            return isJsonString ? JSON.stringify(valueList) : valueList;
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
@@ -7316,7 +7418,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          */
         getRow: function(rowKey, isJsonString) {
             var row = this.grid.dataModel.get(rowKey).toJSON();
-            row = isJsonString ? $.toJSON(row) : row;
+            row = isJsonString ? JSON.stringify(row) : row;
             return row;
         },
         /**
@@ -7386,8 +7488,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          */
         setColumnValue: function(columnName, columnValue, isCheckCellState, silent) {
             isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
-            var grid = this.grid,
-                obj = {},
+            var obj = {},
                 cellState = {
                     isDisabled: false,
                     isEditable: true
@@ -7406,8 +7507,6 @@ View.Layer.Ready = View.Layer.Base.extend({
             }, this);
         },
         /**
-         * setRowList
-         * @TODO: Naming 고민중..
          * set row list data
          * @param {Array} rowList
          * @param {boolean} [isParse=true]
@@ -7509,13 +7608,6 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.setValue(rowKey, '_button', false);
         },
 
-
-        /**
-         * @deprecated
-         */
-        checkRowState: function() {
-
-        },
         /**
          * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
          */
@@ -7524,9 +7616,15 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.setRowList([]);
         },
         /**
+         * @deprecated
+         */
+        checkRowState: function() {
+
+        },
+        /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
-         * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
+         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
          */
         removeRow: function(rowKey, isRemoveOriginalData) {
             this.dataModel.removeRow(rowKey, isRemoveOriginalData);
@@ -7623,14 +7721,18 @@ View.Layer.Ready = View.Layer.Base.extend({
          * 리턴되는 객체에는 inserted, edited, deleted 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
          *
-         * @param {Boolean} [isRowKeyList]  true로 설정하면 키값만 저장하여 리턴
+         * @param {Boolean} [isOnlyRowKeyList]  true로 설정하면 키값만 저장하여 리턴
          * @param {Boolean} [isJsonString]  변경된 데이터 객체를 JSON문자열로 변환하여 리턴
          * @param {Boolean} [filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {Array}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function(isRowKeyList, isJsonString, filteringColumnList) {
+        getModifiedRowList: function(isOnlyRowKeyList, isJsonString, filteringColumnList) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
-            return this.dataModel.getModifiedRowList();
+
+            return this.dataModel.getModifiedRowList({
+                isOnlyRowKeyList: isOnlyRowKeyList,
+                filteringColumnList: filteringColumnList
+            });
         },
 
         /**
@@ -7665,7 +7767,15 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {Boolean}
          */
         isChanged: function() {
+            var modifiedRowMap = this.getModifiedRowList(),
+                count = 0, name;
 
+            for (name in modifiedRowMap) {
+                if (modifiedRowMap[name].length) {
+                    return true;
+                }
+            }
+            return false;
         },
         /**
          * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
@@ -7700,9 +7810,11 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(Number|String)} rowKey
          */
         select: function(rowKey) {
-
+            this.focusModel.select(rowKey);
         },
-
+        unselect: function() {
+            this.focusModel.unselect();
+        },
         setGridSize: function(size) {
             var dimensionModel = this.grid.dimensionModel,
                 width = size && size.width || dimensionModel.get('width'),
@@ -8095,9 +8207,11 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {(Number|String)}
          */
         getMainRowKey: function(rowKey, columnName) {
-            var row = this.dataModel.get(rowKey);
+            var row = this.dataModel.get(rowKey),
+                rowSpanData;
             if (!this.isSorted()) {
-                rowKey = row ? row.getRowSpanData(columnName).mainRowKey : rowKey;
+                rowSpanData = row && row.getRowSpanData(columnName);
+                rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
             }
             return rowKey;
         },
@@ -8157,11 +8271,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * Grid 에서 발생하는 event 를 relay 한다.
-         * @param eventName
-         * @param params
          * @private
          */
-        _relayEvent: function(eventName, params) {
+        _relayEvent: function() {
             this.trigger.apply(this, arguments);
         },
         /**
@@ -8169,11 +8281,10 @@ View.Layer.Ready = View.Layer.Base.extend({
          *
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
-         * @param {boolean} [isOriginal]  HTMLElement 리턴 여부
          * @return {(Number|String)}
          */
-        get: function(rowKey, columnName, isOriginal) {
-
+        getValue: function(rowKey, columnName) {
+            return this.grid.getValue(rowKey, columnName);
         },
         /**
          * columnName에 해당하는 column data list를 리턴한다.
@@ -8182,19 +8293,17 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
          * @return {Array}
          */
-        getColumn: function(columnName, isJsonString) {
-
+        getColumnValue: function(columnName, isJsonString) {
+            return this.grid.getColumnValue(columnName, isJsonString);
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
-         * @param rowKey
-         * @param isJsonString
+         * @param {(Number|String)} rowKey
+         * @param {Boolean} isJsonString
          * @return {Object}
          */
         getRow: function(rowKey, isJsonString) {
-            var row = this.grid.dataModel.get(rowKey).toJSON(),
-                rowData = isJsonString ? $.toJSON(row) : row;
-            return rowData;
+            return this.grid.getRow(rowKey, isJsonString);
         },
         /**
          * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
@@ -8202,17 +8311,17 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {Object}
          */
         getRowAt: function(index) {
-            return this.grid.dataModel.at(index).toJSON();
+            return this.grid.getRowAt(index);
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
          * @return {Number}
          */
         getRowCount: function() {
-            return this.grid.dataModel.length;
+            return this.grid.getRowCount();
         },
         getRowSpan: function() {
-
+            //@todo:
         },
         /**
          * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
@@ -8236,20 +8345,22 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {String} columnName   컬럼 이름
          * @param {(Number|String)} columnValue 할당될 값
          */
-        set: function(rowKey, columnName, columnValue) {
-
+        setValue: function(rowKey, columnName, columnValue) {
+            this.grid.setValue(rowKey, columnName, columnValue);
         },
         /**
          *
          * @param {String} columnName   컬럼 이름
          * @param {(Number|String)} columnValue 할당될 값
+         * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
          */
-        setColumn: function(columnName, columnValue) {
-
+        setColumnValue: function(columnName, columnValue, isCheckCellState) {
+            this.grid.setColumnValue(columnName, columnValue, isCheckCellState);
         },
 
         /**
-         * @TODO: Naming 고민중..
+         * rowList 를 설정한다.
+         * @param {Array} rowList
          */
         setRowList: function(rowList) {
             this.grid.setRowList(rowList);
@@ -8297,14 +8408,14 @@ View.Layer.Ready = View.Layer.Base.extend({
          * 모든 행을 선택 해제 한다.
          */
         uncheckAll: function() {
-
+            this.grid.uncheckAll();
         },
         /**
          * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         uncheck: function(rowKey) {
-
+            this.grid.uncheck(rowKey);
         },
 
 
@@ -8312,62 +8423,62 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @deprecated
          */
         checkRowState: function() {
-
+            //@todo:
         },
         /**
          * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
          */
         clear: function() {
-            //@todo: empty 레이어 추가
+            this.grid.clear();
         },
         /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
-         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 삭제 여부
+         * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
          */
         removeRow: function(rowKey, isRemoveOriginalDta) {
-
+            this.grid.removeRow(rowKey, isRemoveOriginalDta);
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
          */
         enable: function() {
-
+            //@todo:
         },
         /**
          * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
          * @param [hasDimmedLayer=true]
          */
         disable: function(hasDimmedLayer) {
-
+            //@todo:
         },
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
          * @param {(Number|String)} rowKey
          */
         enableRow: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, '');
+            this.grid.enableRow(rowKey);
         },
         /**
          * rowKey에 해당하는 행을 비활성화 시킨다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         disableRow: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, 'DISABLED');
+            this.grid.disableRow(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         enableCheck: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, '');
+            this.grid.enableCheck(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         disableCheck: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+            this.grid.disableCheck(rowKey);
         },
 
 
@@ -8377,7 +8488,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(String|Number)} columnValue
          */
         filterData: function(columnName, columnValue) {
-
+            //@todo:
         },
         /**
          * 현재 선택된 행들의 키값만을 배열로 리턴한다.
@@ -8386,7 +8497,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          */
         getCheckedRowKeyList: function(isJsonString) {
             var checkedRowKeyList = this.grid.getCheckedRowKeyList();
-            return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
+            return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
         },
         /**
          * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
@@ -8395,7 +8506,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          */
         getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.grid.getCheckedRowList();
-            return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
+            return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
@@ -8416,14 +8527,14 @@ View.Layer.Ready = View.Layer.Base.extend({
          * 리턴되는 객체에는 inserted, edited, deleted 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
          *
-         * @param {Boolean} [isRowKeyList]  true로 설정하면 키값만 저장하여 리턴
+         * @param {Boolean} [isOnlyRowKeyList]  true로 설정하면 키값만 저장하여 리턴
          * @param {Boolean} [isJsonString]  변경된 데이터 객체를 JSON문자열로 변환하여 리턴
          * @param {Boolean} [filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {Array}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
-        getModifiedRowList: function(isRowKeyList, isJsonString, filteringColumnList) {
+        getModifiedRowList: function(isOnlyRowKeyList, isJsonString, filteringColumnList) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
-            return this.grid.getModifiedRowList();
+            return this.grid.getModifiedRowList(isOnlyRowKeyList, isJsonString, filteringColumnList);
         },
         /**
          * 현재 그리드의 제일 끝에 행을 추가한다.
@@ -8445,9 +8556,14 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @return {Boolean}
          */
         isChanged: function() {
-
+            this.grid.isChanged();
         },
-        getAddon: function(name) {
+        /**
+         * AddOn 인스턴스를 반환한다.
+         * @param {String} name AddOn 이름
+         * @return {instance}
+         */
+        getAddOn: function(name) {
             return name ? this.grid.addOn[name] : this.grid.addOn;
         },
 
@@ -8459,7 +8575,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             var originalRowList = this.grid.dataModel.getOriginalRowList();
             this.grid.setRowList(originalRowList, false);
         },
-        refreshLayout: function(){
+        refreshLayout: function() {
             //todo
         },
         addClassNameToColumn: function() {
@@ -8484,7 +8600,10 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(Number|String)} rowKey
          */
         select: function(rowKey) {
-
+            this.grid.select(rowKey);
+        },
+        unselect: function() {
+            this.grid.unselect();
         },
         /**
          * 열 고정 위치를 변경한다.
