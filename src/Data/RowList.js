@@ -1,5 +1,10 @@
     /**
-     * Data 중 각 행의 데이터를 담는 모델
+     * @fileoverview Grid 의 Data Source 에 해당하는 Collection 과 Model 정의
+     * @author Soonyoung Park <soonyoung.park@nhnent.com>
+     */
+
+    /**
+     * Data 중 각 행의 데이터 모델 (DataSource)
      * @constructor
      */
     Data.Row = Model.Base.extend({
@@ -231,7 +236,7 @@
     });
 
     /**
-     * Raw 데이터 RowList 콜렉션.
+     * Raw 데이터 RowList 콜렉션. (DataSource)
      * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
      *
      * @constructor
@@ -274,7 +279,7 @@
         },
         /**
          * rowData 변경 이벤트 핸들러.
-         * changeCallback 과 rowSpanData에 대한 처리를 담당한다.
+         * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
          * @param {object} row
          * @private
          */
@@ -335,7 +340,7 @@
             }, this);
         },
         /**
-         * _button 컬럼이 변경되었을때 이벤트 핸들러
+         * _button 컬럼이 변경되었을때 radio button 에 대한 처리를 위한 이벤트 핸들러
          * @param {Object} row
          * @private
          */
@@ -359,7 +364,7 @@
             }
         },
         /**
-         * 현재 정렬이 잘 되었는지 여부를 반환 한다.
+         * 현재 정렬된 상태인지 여부를 반환한다.
          * @return {Boolean}
          */
         isSortedByField: function() {

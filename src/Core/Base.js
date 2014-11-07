@@ -1,3 +1,8 @@
+    /**
+     * @fileoverview Grid 에서 사용할 모든 Backbone 의 View, Model, Collection 의 Base 클래스 정의.
+     * @author Soonyoung Park <soonyoung.park@nhnent.com>
+     */
+
     // IE 테스트용 코드. 개발 완료후 master 로 전환시 제거 함.
     if (typeof window.console == 'undefined' || !window.console || !window.console.log) window.console = {'log' : function() {}, 'error' : function() {}};
     /**
