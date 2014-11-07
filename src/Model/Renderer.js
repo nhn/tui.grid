@@ -210,9 +210,11 @@
          * @param {Number} rowIndex
          */
         executeRelation: function(rowIndex) {
-            var relationResult = this.grid.dataModel.at(rowIndex).getRelationResult(),
+            var row = this.grid.dataModel.at(rowIndex),
                 renderIdx = rowIndex - this.get('startIdx'),
-                rowModel;
+                callbackNameList, rowModel, relationResult;
+
+            relationResult = row.getRelationResult();
 
             _.each(relationResult, function(changes, columnName) {
                 rowModel = this._getRowListDivision(columnName).at(renderIdx);

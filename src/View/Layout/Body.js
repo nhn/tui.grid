@@ -111,19 +111,14 @@
             this.el.scrollTop = value;
         },
 
-        /**
-         * Render model 의 top 변경 핸들러
-         * @private
-         */
-        _onTopChange: function() {
-//            var top = this.grid.renderModel.get('top');
-//            this.$el.children('.table_container').css('top', top + 'px');
-        },
         _onBeforeRefresh: function() {
             this.isScrollSync = true;
-            this.el.scrollTop = this.grid.renderModel.get('scrollTop');
         },
-        _onRowListRender: function(){
+        /**
+         * rowList 가 rendering 될 때 top 값을 조정한다.
+         * @private
+         */
+        _onRowListRender: function() {
             var top = this.grid.renderModel.get('top');
             this.$el.children('.table_container').css('top', top + 'px');
         },

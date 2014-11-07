@@ -100,7 +100,7 @@
             if (type === 'string') {
                 return value.toString();
             } else if (type === 'number') {
-                return value * 1;
+                return +value;
             } else {
                 return value;
             }
@@ -142,14 +142,15 @@
          * @return {{columnName: {attribute: resultValue}}}
          */
         getRelationResult: function(callbackNameList) {
-            callbackNameList = callbackNameList || ['optionListChange', 'isDisable', 'isEditable'];
+            callbackNameList = (callbackNameList && callbackNameList.length) || ['optionListChange', 'isDisable', 'isEditable'];
 
             var callback, attribute, columnList,
                 value,
                 rowKey = this.get('rowKey'),
                 rowData = this.toJSON(),
                 relationListMap = this.grid.columnModel.get('relationListMap'),
-                relationResult = {};
+                relationResult = {},
+                rowState = this.getRowState();
 
             //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
             // relationListMap 구조 {columnName : relationList}
@@ -162,26 +163,29 @@
 
                     //각 relation 에 걸려있는 콜백들을 수행한다.
                     _.each(callbackNameList, function(callbackName) {
-                        callback = relation[callbackName];
-                        if (typeof callback === 'function') {
-                            attribute = '';
-                            switch (callbackName) {
-                                case 'optionListChange':
-                                    attribute = 'optionList';
-                                    break;
-                                case 'isDisable':
-                                    attribute = 'isDisabled';
-                                    break;
-                                case 'isEditable':
-                                    attribute = 'isEditable';
-                                    break;
-                            }
-                            if (attribute) {
-                                //relation 에 걸려있는 컬럼들의 값을 변경한다.
-                                _.each(columnList, function(targetColumnName) {
-                                    relationResult[targetColumnName] = relationResult[targetColumnName] || {};
-                                    relationResult[targetColumnName][attribute] = callback(value, rowData);
-                                }, this);
+                        //isDisable relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
+                        if (!(rowState.isDisabled && callbackName === 'isDisable')) {
+                            callback = relation[callbackName];
+                            if (typeof callback === 'function') {
+                                attribute = '';
+                                switch (callbackName) {
+                                    case 'optionListChange':
+                                        attribute = 'optionList';
+                                        break;
+                                    case 'isDisable':
+                                        attribute = 'isDisabled';
+                                        break;
+                                    case 'isEditable':
+                                        attribute = 'isEditable';
+                                        break;
+                                }
+                                if (attribute) {
+                                    //relation 에 걸려있는 컬럼들의 값을 변경한다.
+                                    _.each(columnList, function(targetColumnName) {
+                                        relationResult[targetColumnName] = relationResult[targetColumnName] || {};
+                                        relationResult[targetColumnName][attribute] = callback(value, rowData);
+                                    }, this);
+                                }
                             }
                         }
                     }, this);
@@ -321,7 +325,7 @@
                     if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
                         columnModel.editOption.changeAfterCallback(changeEvent);
                     }
-                    //check가 disable 이 아닐 경우에만.
+                    //check가 disable 이 아닐 경우에만 _button 필드 변경에 따라 check
                     if (!row.getRowState().isDisabledCheck) {
                         row.set('_button', true);
                     }

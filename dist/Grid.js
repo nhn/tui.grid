@@ -1738,7 +1738,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             if (type === 'string') {
                 return value.toString();
             } else if (type === 'number') {
-                return value * 1;
+                return +value;
             } else {
                 return value;
             }
@@ -1780,14 +1780,15 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * @return {{columnName: {attribute: resultValue}}}
          */
         getRelationResult: function(callbackNameList) {
-            callbackNameList = callbackNameList || ['optionListChange', 'isDisable', 'isEditable'];
+            callbackNameList = (callbackNameList && callbackNameList.length) || ['optionListChange', 'isDisable', 'isEditable'];
 
             var callback, attribute, columnList,
                 value,
                 rowKey = this.get('rowKey'),
                 rowData = this.toJSON(),
                 relationListMap = this.grid.columnModel.get('relationListMap'),
-                relationResult = {};
+                relationResult = {},
+                rowState = this.getRowState();
 
             //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
             // relationListMap 구조 {columnName : relationList}
@@ -1800,26 +1801,29 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
                     //각 relation 에 걸려있는 콜백들을 수행한다.
                     _.each(callbackNameList, function(callbackName) {
-                        callback = relation[callbackName];
-                        if (typeof callback === 'function') {
-                            attribute = '';
-                            switch (callbackName) {
-                                case 'optionListChange':
-                                    attribute = 'optionList';
-                                    break;
-                                case 'isDisable':
-                                    attribute = 'isDisabled';
-                                    break;
-                                case 'isEditable':
-                                    attribute = 'isEditable';
-                                    break;
-                            }
-                            if (attribute) {
-                                //relation 에 걸려있는 컬럼들의 값을 변경한다.
-                                _.each(columnList, function(targetColumnName) {
-                                    relationResult[targetColumnName] = relationResult[targetColumnName] || {};
-                                    relationResult[targetColumnName][attribute] = callback(value, rowData);
-                                }, this);
+                        //isDisable relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
+                        if (!(rowState.isDisabled && callbackName === 'isDisable')) {
+                            callback = relation[callbackName];
+                            if (typeof callback === 'function') {
+                                attribute = '';
+                                switch (callbackName) {
+                                    case 'optionListChange':
+                                        attribute = 'optionList';
+                                        break;
+                                    case 'isDisable':
+                                        attribute = 'isDisabled';
+                                        break;
+                                    case 'isEditable':
+                                        attribute = 'isEditable';
+                                        break;
+                                }
+                                if (attribute) {
+                                    //relation 에 걸려있는 컬럼들의 값을 변경한다.
+                                    _.each(columnList, function(targetColumnName) {
+                                        relationResult[targetColumnName] = relationResult[targetColumnName] || {};
+                                        relationResult[targetColumnName][attribute] = callback(value, rowData);
+                                    }, this);
+                                }
                             }
                         }
                     }, this);
@@ -1959,7 +1963,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                     if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
                         columnModel.editOption.changeAfterCallback(changeEvent);
                     }
-                    //check가 disable 이 아닐 경우에만.
+                    //check가 disable 이 아닐 경우에만 _button 필드 변경에 따라 check
                     if (!row.getRowState().isDisabledCheck) {
                         row.set('_button', true);
                     }
@@ -2541,9 +2545,11 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * @param {Number} rowIndex
          */
         executeRelation: function(rowIndex) {
-            var relationResult = this.grid.dataModel.at(rowIndex).getRelationResult(),
+            var row = this.grid.dataModel.at(rowIndex),
                 renderIdx = rowIndex - this.get('startIdx'),
-                rowModel;
+                callbackNameList, rowModel, relationResult;
+
+            relationResult = row.getRelationResult();
 
             _.each(relationResult, function(changes, columnName) {
                 rowModel = this._getRowListDivision(columnName).at(renderIdx);
@@ -3696,19 +3702,14 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.el.scrollTop = value;
         },
 
-        /**
-         * Render model 의 top 변경 핸들러
-         * @private
-         */
-        _onTopChange: function() {
-//            var top = this.grid.renderModel.get('top');
-//            this.$el.children('.table_container').css('top', top + 'px');
-        },
         _onBeforeRefresh: function() {
             this.isScrollSync = true;
-            this.el.scrollTop = this.grid.renderModel.get('scrollTop');
         },
-        _onRowListRender: function(){
+        /**
+         * rowList 가 rendering 될 때 top 값을 조정한다.
+         * @private
+         */
+        _onRowListRender: function() {
             var top = this.grid.renderModel.get('top');
             this.$el.children('.table_container').css('top', top + 'px');
         },
