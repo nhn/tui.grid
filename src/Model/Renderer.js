@@ -51,9 +51,6 @@
                 startNumber: 1
             });
         },
-        test: function(model) {
-            console.log('change', model.changed);
-        },
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var collection;

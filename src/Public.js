@@ -2,8 +2,8 @@
     var ne = window.ne = ne || {};
     ne.Grid = View.Base.extend({
         initialize: function(options) {
-            this.grid = new Grid(options);
-            this.listenTo(this.grid, 'all', this._relayEvent, this);
+            this.core = new Grid(options);
+            this.listenTo(this.core, 'all', this._relayEvent, this);
         },
         /**
          * Grid 에서 발생하는 event 를 relay 한다.
@@ -20,7 +20,7 @@
          * @return {(Number|String)}
          */
         getValue: function(rowKey, columnName) {
-            return this.grid.getValue(rowKey, columnName);
+            return this.core.getValue(rowKey, columnName);
         },
         /**
          * columnName에 해당하는 column data list를 리턴한다.
@@ -30,7 +30,7 @@
          * @return {Array}
          */
         getColumnValue: function(columnName, isJsonString) {
-            return this.grid.getColumnValue(columnName, isJsonString);
+            return this.core.getColumnValue(columnName, isJsonString);
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
@@ -39,7 +39,7 @@
          * @return {Object}
          */
         getRow: function(rowKey, isJsonString) {
-            return this.grid.getRow(rowKey, isJsonString);
+            return this.core.getRow(rowKey, isJsonString);
         },
         /**
          * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
@@ -47,14 +47,14 @@
          * @return {Object}
          */
         getRowAt: function(index) {
-            return this.grid.getRowAt(index);
+            return this.core.getRowAt(index);
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
          * @return {Number}
          */
         getRowCount: function() {
-            return this.grid.getRowCount();
+            return this.core.getRowCount();
         },
         getRowSpan: function() {
             //@todo:
@@ -64,7 +64,7 @@
          * @return {(Number|String)}
          */
         getSelectedRowKey: function() {
-            return this.grid.focusModel.which().rowKey;
+            return this.core.focusModel.which().rowKey;
         },
         /**
          * rowKey 와 columnName 에 해당하는 element 를 반환한다.
@@ -73,7 +73,7 @@
          * @return {jQuery} 해당 jQuery Element
          */
         getElement: function(rowKey, columnName) {
-            return this.grid.getElement(rowKey, columnName);
+            return this.core.getElement(rowKey, columnName);
         },
         /**
          *
@@ -82,7 +82,7 @@
          * @param {(Number|String)} columnValue 할당될 값
          */
         setValue: function(rowKey, columnName, columnValue) {
-            this.grid.setValue(rowKey, columnName, columnValue);
+            this.core.setValue(rowKey, columnName, columnValue);
         },
         /**
          *
@@ -91,7 +91,7 @@
          * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
          */
         setColumnValue: function(columnName, columnValue, isCheckCellState) {
-            this.grid.setColumnValue(columnName, columnValue, isCheckCellState);
+            this.core.setColumnValue(columnName, columnValue, isCheckCellState);
         },
 
         /**
@@ -99,7 +99,7 @@
          * @param {Array} rowList
          */
         setRowList: function(rowList) {
-            this.grid.setRowList(rowList);
+            this.core.setRowList(rowList);
         },
         /**
          * rowKey, columnName에 해당하는 셀에 포커싱한다.
@@ -108,7 +108,7 @@
          * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focus: function(rowKey, columnName, isScrollable) {
-            this.grid.focus(rowKey, columnName, isScrollable);
+            this.core.focus(rowKey, columnName, isScrollable);
         },
         /**
          * 셀을 편집모드로 전환한다.
@@ -118,40 +118,40 @@
          * @private
          */
         focusIn: function(rowKey, columnName, isScrollable) {
-            this.grid.focusIn(rowKey, columnName, isScrollable);
+            this.core.focusIn(rowKey, columnName, isScrollable);
         },
 
         /**
          * grid 를 blur 한다.
          */
         blur: function() {
-            this.grid.blur();
+            this.core.blur();
         },
         /**
          * 전체 행을 선택한다.
          */
         checkAll: function() {
-            this.grid.checkAll();
+            this.core.checkAll();
         },
         /**
          * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         check: function(rowKey) {
-            this.grid.check(rowKey);
+            this.core.check(rowKey);
         },
         /**
          * 모든 행을 선택 해제 한다.
          */
         uncheckAll: function() {
-            this.grid.uncheckAll();
+            this.core.uncheckAll();
         },
         /**
          * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         uncheck: function(rowKey) {
-            this.grid.uncheck(rowKey);
+            this.core.uncheck(rowKey);
         },
 
 
@@ -165,7 +165,7 @@
          * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
          */
         clear: function() {
-            this.grid.clear();
+            this.core.clear();
         },
         /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
@@ -173,7 +173,7 @@
          * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
          */
         removeRow: function(rowKey, isRemoveOriginalDta) {
-            this.grid.removeRow(rowKey, isRemoveOriginalDta);
+            this.core.removeRow(rowKey, isRemoveOriginalDta);
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
@@ -193,28 +193,28 @@
          * @param {(Number|String)} rowKey
          */
         enableRow: function(rowKey) {
-            this.grid.enableRow(rowKey);
+            this.core.enableRow(rowKey);
         },
         /**
          * rowKey에 해당하는 행을 비활성화 시킨다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         disableRow: function(rowKey) {
-            this.grid.disableRow(rowKey);
+            this.core.disableRow(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         enableCheck: function(rowKey) {
-            this.grid.enableCheck(rowKey);
+            this.core.enableCheck(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         disableCheck: function(rowKey) {
-            this.grid.disableCheck(rowKey);
+            this.core.disableCheck(rowKey);
         },
 
 
@@ -232,7 +232,7 @@
          * @return {Array|String}
          */
         getCheckedRowKeyList: function(isJsonString) {
-            var checkedRowKeyList = this.grid.getCheckedRowKeyList();
+            var checkedRowKeyList = this.core.getCheckedRowKeyList();
             return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
         },
         /**
@@ -241,7 +241,7 @@
          * @return {Array|String}
          */
         getCheckedRowList: function(isJsonString) {
-            var checkedRowList = this.grid.getCheckedRowList();
+            var checkedRowList = this.core.getCheckedRowList();
             return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
         },
         /**
@@ -249,7 +249,7 @@
          * @return {Array}
          */
         getColumnModel: function() {
-            return this.grid.columnModel.get('columnModelList');
+            return this.core.columnModel.get('columnModelList');
         },
         /**
          * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
@@ -270,21 +270,21 @@
          */
         getModifiedRowList: function(isOnlyRowKeyList, isJsonString, filteringColumnList) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
-            return this.grid.getModifiedRowList(isOnlyRowKeyList, isJsonString, filteringColumnList);
+            return this.core.getModifiedRowList(isOnlyRowKeyList, isJsonString, filteringColumnList);
         },
         /**
          * 현재 그리드의 제일 끝에 행을 추가한다.
          * @param {object} rowData
          */
         appendRow: function(rowData) {
-            this.grid.appendRow(rowData);
+            this.core.appendRow(rowData);
         },
         /**
          * 현재 그리드의 제일 앞에 행을 추가한다.
          * @param {object} rowData
          */
         prependRow: function(rowData) {
-            this.grid.prependRow(rowData);
+            this.core.prependRow(rowData);
         },
         /**
          * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
@@ -292,7 +292,7 @@
          * @return {Boolean}
          */
         isChanged: function() {
-            this.grid.isChanged();
+            this.core.isChanged();
         },
         /**
          * AddOn 인스턴스를 반환한다.
@@ -300,7 +300,7 @@
          * @return {instance}
          */
         getAddOn: function(name) {
-            return name ? this.grid.addOn[name] : this.grid.addOn;
+            return name ? this.core.addOn[name] : this.core.addOn;
         },
 
         /**
@@ -308,8 +308,8 @@
          * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
          */
         restore: function() {
-            var originalRowList = this.grid.dataModel.getOriginalRowList();
-            this.grid.setRowList(originalRowList, false);
+            var originalRowList = this.core.dataModel.getOriginalRowList();
+            this.core.setRowList(originalRowList, false);
         },
         refreshLayout: function() {
             //todo
@@ -336,10 +336,10 @@
          * @param {(Number|String)} rowKey
          */
         select: function(rowKey) {
-            this.grid.select(rowKey);
+            this.core.select(rowKey);
         },
         unselect: function() {
-            this.grid.unselect();
+            this.core.unselect();
         },
         /**
          * 열 고정 위치를 변경한다.
@@ -347,11 +347,11 @@
          * @param {Number} index 고정시킬 열의 인덱스
          */
         setColumnFixIndex: function(index) {
-            this.grid.setColumnFixIndex(index);
+            this.core.setColumnFixIndex(index);
         },
 
         setGridSize: function(size) {
-            var dimensionModel = this.grid.dimensionModel,
+            var dimensionModel = this.core.dimensionModel,
                 width = size && size.width || dimensionModel.get('width'),
                 bodyHeight = dimensionModel.get('bodyHeight'),
                 headerHeight = dimensionModel.get('headerHeight'),
@@ -368,7 +368,7 @@
 
         },
         use: function(name, options) {
-            this.grid.use(name, options);
+            this.core.use(name, options);
             return this;
         }
     });

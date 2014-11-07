@@ -70,7 +70,7 @@
             }
         },
         _onClick: function(clickEvent) {
-            console.log('click', clickEvent);
+//            console.log('click', clickEvent);
         },
         /**
          * mousedown 이벤트 핸들러

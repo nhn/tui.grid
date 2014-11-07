@@ -75,11 +75,11 @@
                 displayEndIdx = Math.min(this.grid.dataModel.length - 1, Math.floor((scrollTop + bodyHeight) / (rowHeight + 1))),
                 startIdx = this.get('startIdx'),
                 endIdx = this.get('endIdx');
-            console.log('#########GAP', endIdx - startIdx, displayRowCount);
+//            console.log('#########GAP', endIdx - startIdx, displayRowCount);
             if ((startIdx !== 0 && startIdx + this.criticalPoint > displayStartIdx) ||
                 endIdx !== rowCount - 1 && (endIdx < rowCount && (endIdx - this.criticalPoint < displayEndIdx))) {
-                console.log(startIdx + this.criticalPoint, displayStartIdx);
-                console.log(endIdx - this.criticalPoint, displayEndIdx);
+//                console.log(startIdx + this.criticalPoint, displayStartIdx);
+//                console.log(endIdx - this.criticalPoint, displayEndIdx);
                 return true;
             }else {
                 return false;

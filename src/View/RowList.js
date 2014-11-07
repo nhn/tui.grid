@@ -30,7 +30,7 @@
             var html = '',
                 firstRow = this.collection.at(0);
             var start = new Date();
-            console.log('View.RowList.render start');
+//            console.log('View.RowList.render start');
             this.rowRenderer.detachHandler();
             this.destroyChildren();
             this._createRowRenderer();
@@ -44,7 +44,7 @@
             this.rowRenderer.attachHandler();
 
             var end = new Date();
-            console.log('View.RowList.addAll end', end - start);
+//            console.log('View.RowList.addAll end', end - start);
             this._showLayer();
             return this;
         },

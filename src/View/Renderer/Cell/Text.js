@@ -87,7 +87,7 @@
          * @private
          */
         _onBlur: function(blurEvent) {
-            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!blur');
+//            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!blur');
             var $target = $(blurEvent.target),
                 rowKey = this._getRowKey($target),
                 columnName = this._getColumnName($target);

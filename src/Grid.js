@@ -65,7 +65,6 @@
             View.Base.prototype.initialize.apply(this, arguments);
             var id = Util.getUniqueKey();
             this.__instance[id] = this;
-            console.log(options);
 
             var defaultOptions = {
                 form: null,
@@ -152,9 +151,9 @@
         getValue: function(rowKey, columnName, isOriginal) {
             var value;
             if (isOriginal) {
-                value = this.grid.dataModel.getOriginal(rowKey, columnName);
+                value = this.dataModel.getOriginal(rowKey, columnName);
             } else {
-                value = this.grid.dataModel.get(rowKey).get(columnName);
+                value = this.dataModel.get(rowKey).get(columnName);
             }
             return value;
         },
@@ -166,7 +165,7 @@
          * @return {Array}
          */
         getColumnValue: function(columnName, isJsonString) {
-            var valueList = this.grid.dataModel.pluck(columnName);
+            var valueList = this.dataModel.pluck(columnName);
             return isJsonString ? JSON.stringify(valueList) : valueList;
         },
         /**
@@ -176,7 +175,7 @@
          * @return {Object}
          */
         getRow: function(rowKey, isJsonString) {
-            var row = this.grid.dataModel.get(rowKey).toJSON();
+            var row = this.dataModel.get(rowKey).toJSON();
             row = isJsonString ? JSON.stringify(row) : row;
             return row;
         },
@@ -186,14 +185,14 @@
          * @return {Object}
          */
         getRowAt: function(index) {
-            return this.grid.dataModel.at(index).toJSON();
+            return this.dataModel.at(index).toJSON();
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
          * @return {Number}
          */
         getRowCount: function() {
-            return this.grid.dataModel.length;
+            return this.dataModel.length;
         },
         getRowSpan: function() {
 
@@ -203,7 +202,7 @@
          * @return {(Number|String)}
          */
         getSelectedRowKey: function() {
-            return this.grid.focusModel.which().rowKey;
+            return this.focusModel.which().rowKey;
         },
         /**
          * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
@@ -406,28 +405,28 @@
          * @param {(Number|String)} rowKey
          */
         enableRow: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, '');
+            this.dataModel.setRowState(rowKey, '');
         },
         /**
          * rowKey에 해당하는 행을 비활성화 시킨다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          */
         disableRow: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, 'DISABLED');
+            this.dataModel.setRowState(rowKey, 'DISABLED');
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         enableCheck: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, '');
+            this.dataModel.setRowState(rowKey, '');
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
          * @param {(Number|String)} rowKey
          */
         disableCheck: function(rowKey) {
-            this.grid.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+            this.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
         },
 
 
@@ -466,7 +465,7 @@
          * @return {Array}
          */
         getColumnModel: function() {
-            return this.grid.columnModel.get('columnModelList');
+            return this.columnModel.get('columnModelList');
         },
         /**
          * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
@@ -541,8 +540,8 @@
          * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
          */
         restore: function() {
-            var originalRowList = this.grid.dataModel.getOriginalRowList();
-            this.grid.setRowList(originalRowList, false);
+            var originalRowList = this.dataModel.getOriginalRowList();
+            this.setRowList(originalRowList, false);
         },
         refreshLayout: function() {
             //todo
@@ -575,7 +574,7 @@
             this.focusModel.unselect();
         },
         setGridSize: function(size) {
-            var dimensionModel = this.grid.dimensionModel,
+            var dimensionModel = this.dimensionModel,
                 width = size && size.width || dimensionModel.get('width'),
                 bodyHeight = dimensionModel.get('bodyHeight'),
                 headerHeight = dimensionModel.get('headerHeight'),
@@ -731,8 +730,10 @@
             //define column model
             this.columnModel = new Data.ColumnModel({
                 grid: this,
+                hasNumberColumn: this.option('autoNumbering'),
                 keyColumnName: this.option('keyColumnName'),
-                columnFixIndex: this.option('columnFixIndex')
+                columnFixIndex: this.option('columnFixIndex'),
+                selectType: this.option('selectType')
             });
             this.setColumnModelList(this.option('columnModelList'));
 

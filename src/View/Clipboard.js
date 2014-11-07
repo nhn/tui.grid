@@ -15,14 +15,14 @@
          * @private
          */
         _onFocus: function() {
-            console.log('clipboard focus');
+//            console.log('clipboard focus');
         },
         /**
          * clipboard blur event handler
          * @private
          */
         _onBlur: function() {
-            console.log('clipboard blur');
+//            console.log('clipboard blur');
         },
         initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);

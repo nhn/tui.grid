@@ -694,6 +694,7 @@
 
             _.each(rowList, function(row, index) {
                 row['rowKey'] = (keyColumnName) ? row[keyColumnName] : len + index;
+                row['_button'] = true;
                 modelList.push(new Data.Row(row, {collection: this}));
             }, this);
             this.add(modelList, {

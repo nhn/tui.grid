@@ -308,21 +308,32 @@
                     isOnlyModified: true,
                     isSkipConfirm: false
                 },
+                newOptions = $.extend(defaultOptions, options),
+                param = this._getRequestParam(requestType, newOptions);
+            this._ajax(param);
+        },
+        _getRequestParam: function(requestType, options) {
+            var dataModel = this.grid.dataModel,
+                defaultOptions = {
+                    url: this.options.api[requestType],
+                    type: null,
+                    hasDataParam: true,
+                    isOnlyChecked: true,
+                    isOnlyModified: true
+                },
                 checkMap = {
                     'createData': ['createList'],
                     'updateData': ['updateList'],
                     'deleteData': ['deleteList'],
                     'modifyData': ['createList', 'updateList', 'deleteList']
                 },
-                checkList = checkMap[requestType],
                 newOptions = $.extend(defaultOptions, options),
+                checkList = checkMap[requestType],
                 hasDataParam = newOptions.hasDataParam,
                 isOnlyModified = newOptions.isOnlyModified,
                 isOnlyChecked = newOptions.isOnlyChecked,
-                isSkipConfirm = newOptions.isSkipConfirm,
-                param = {},
                 data = $.extend({}, this.requestedFormData),
-                dataMap, count = 0;
+                dataMap, count = 0, param;
 
             if (hasDataParam) {
                 if (isOnlyModified) {
@@ -342,19 +353,14 @@
                     count = dataMap.rowList.length;
                 }
             }
-
-            if (isSkipConfirm || this._confirm(requestType, count)) {
-                data = $.extend(data, dataMap);
-                param = {
-                    requestType: requestType,
-                    url: newOptions.url,
-                    data: data,
-                    type: newOptions.type
-                };
-                this._ajax(param);
-            }
-
-
+            data = $.extend(data, dataMap);
+            param = {
+                requestType: requestType,
+                url: newOptions.url,
+                data: data,
+                type: newOptions.type
+            };
+            return param;
         },
         /**
          * requestType 에 따른 컨펌 메세지를 노출한다.
