@@ -20,7 +20,7 @@
         getContentHtml: function(cellData, $target) {
             var columnName = cellData.columnName,
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
-                value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(columnName),
+                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
                 rowKey = cellData.rowKey;
 
             if (typeof columnModel.formatter === 'function') {

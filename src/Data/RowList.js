@@ -78,7 +78,7 @@
          * @return {String}
          * @private
          */
-        getTagFiltered: function(columnName) {
+        getHTMLEncodedString: function(columnName) {
             var columnModel = this.grid.columnModel.getColumnModel(columnName),
                 editType = this.grid.columnModel.getEditType(columnName),
                 value = this.get(columnName),
@@ -106,7 +106,7 @@
             }
         },
         /**
-         * List type 의 경우 실제 데이터와 editOption.list 의 데이터가 다르기 때문에
+         * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
          * text 로 전환해서 반환할 때 처리를 하여 변환한다.
          *
          * @param {Number|String} value
@@ -136,10 +136,10 @@
             return valueList.join(',');
         },
         /**
-         * 컬럼모델에 정의된 relation (기존 affectOption) 을 수행한 결과를 반환한다.
+         * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
          *
          * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisable', 'isEditable'])
-         * @return {{columnName: {attribute: resultValue}}}
+         * @return {{columnName: {attribute: resultValue}}} row 의 columnName 에 적용될 속성값.
          */
         getRelationResult: function(callbackNameList) {
             callbackNameList = (callbackNameList && callbackNameList.length) || ['optionListChange', 'isDisable', 'isEditable'];
@@ -194,7 +194,7 @@
             return relationResult;
         },
         /**
-         * 화면에 보여지는 데이터를 반환한다.
+         * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
          * @param {String} columnName
          * @return {*}
          */
@@ -221,7 +221,7 @@
                 } else {
                     //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
                     if (typeof model.formatter === 'function') {
-                        value = Util.stripTags(model.formatter(this.getTagFiltered(columnName), this.toJSON(), model));
+                        value = Util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
                     }
                 }
             }
@@ -231,7 +231,9 @@
     });
 
     /**
-     * Raw 데이터 RowList 콜렉션
+     * Raw 데이터 RowList 콜렉션.
+     * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
+     *
      * @constructor
      */
     Data.RowList = Collection.Base.extend({
@@ -392,6 +394,8 @@
         },
         /**
          * row 의 extraData 를 변경한다.
+         * -Backbone 내부적으로 참조형 데이터의 프로퍼티 변경시 변화를 감지하지 못하므로, 데이터를 복제하여 변경 후 set 한다.
+         *
          * @param {(Number|String)} rowKey
          * @param {(Number|String)} value
          * @param {Boolean} silent
@@ -509,12 +513,18 @@
             original = _.indexBy(original, 'rowKey');
             current = _.indexBy(current, 'rowKey');
 
-            function filterColumnList(obj, filteringColumnList) {
+            /**
+             * filteringColumnList 에 해당하는 필드를 null 값으로 할당한다.
+             * @param {Object} row 대상 row 데이터
+             * @param {Array} filteringColumnList row 필터링할 컬럼 이름 배열
+             * @return {row}
+             */
+            function filterColumnList(row, filteringColumnList) {
                 var i = 0, len = filteringColumnList.length;
                 for (; i < len; i++) {
-                    obj[filteringColumnList[i]] = null;
+                    row[filteringColumnList[i]] = null;
                 }
-                return obj;
+                return row;
             }
 
             // 추가/ 수정된 행 추출

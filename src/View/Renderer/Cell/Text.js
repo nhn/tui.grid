@@ -50,7 +50,7 @@
             this.grid.focusClipboard();
         },
         getContentHtml: function(cellData) {
-            var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName);
+            var value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
             return this.template({
                 value: value,
                 disabled: cellData.isDisabled ? 'disabled' : '',
@@ -130,7 +130,7 @@
             this.grid.focusClipboard();
         },
         getContentHtml: function(cellData) {
-            var value = this.grid.dataModel.get(cellData.rowKey).getTagFiltered(cellData.columnName),
+            var value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
                 $td = this.grid.getElement(cellData.rowKey, cellData.columnName),
                 isEdit = !!($td.length && $td.data('isEdit'));
 
