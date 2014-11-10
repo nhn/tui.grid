@@ -15,13 +15,13 @@
                     grid: this.grid
                 },
                 instanceList = [
-                    new View.Renderer.Cell.MainButton(args),
-                    new View.Renderer.Cell.Normal.Number(args),
-                    new View.Renderer.Cell.Normal(args),
-                    new View.Renderer.Cell.Text(args),
-                    new View.Renderer.Cell.List.Button(args),
-                    new View.Renderer.Cell.List.Select(args),
-                    new View.Renderer.Cell.Text.Convertible(args)
+                    new View.Painter.Cell.MainButton(args),
+                    new View.Painter.Cell.Normal.Number(args),
+                    new View.Painter.Cell.Normal(args),
+                    new View.Painter.Cell.Text(args),
+                    new View.Painter.Cell.List.Button(args),
+                    new View.Painter.Cell.List.Select(args),
+                    new View.Painter.Cell.Text.Convertible(args)
                 ];
 
             _.each(instanceList, function(instance, name) {

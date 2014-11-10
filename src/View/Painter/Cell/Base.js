@@ -1,9 +1,9 @@
     /**
-     * Cell Renderer Base
-     * @extends {View.Base.Renderer}
+     * Cell Painter Base
+     * @extends {View.Base.Painter}
      * @constructor
      */
-    View.Base.Renderer.Cell = View.Base.Renderer.extend({
+    View.Base.Painter.Cell = View.Base.Painter.extend({
         /**
          * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
          */
@@ -37,7 +37,7 @@
          */
         eventHandler: {},
         initialize: function(attributes, options) {
-            View.Base.Renderer.prototype.initialize.apply(this, arguments);
+            View.Base.Painter.prototype.initialize.apply(this, arguments);
             this._initializeEventHandler();
             this.setOwnProperties({
                 _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
@@ -63,7 +63,7 @@
             this.grid.focusClipboard();
         },
         /**
-         * RowRenderer 에서 Render model 변경 감지 시 RowRenderer 에서 호출하는 onChange 핸들러
+         * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
          * @param {object} cellData
          * @param {jQuery} $tr
          */
@@ -200,7 +200,7 @@
             return classNameList;
         },
         /**
-         * RowRenderer 에서 한번에 table 을 랜더링 할 때 사용하기 위해
+         * RowPainter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
          * td 단위의 html 문자열을 반환한다.
          * @param {object} cellData
          * @return {string}
@@ -252,25 +252,25 @@
 
 
     /**
-     * Cell Renderer 추가 시 반드시 필요한 Interface 정의
+     * Cell Painter 추가 시 반드시 필요한 Interface 정의
      * @interface
      */
-    View.Base.Renderer.Cell.Interface = function() {};
+    View.Base.Painter.Cell.Interface = function() {};
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
      * @return {String} editType 'normal|button|select|button|text|text-convertible'
      */
-    View.Base.Renderer.Cell.Interface.prototype.getEditType = function() {};
+    View.Base.Painter.Cell.Interface.prototype.getEditType = function() {};
     /**
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param $td
+     * @param {jQuery} $td
      */
-    View.Base.Renderer.Cell.Interface.prototype.focusIn = function($td) {};
+    View.Base.Painter.Cell.Interface.prototype.focusIn = function($td) {};
     /**
      * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td
      */
-//    View.Base.Renderer.Cell.Interface.prototype.focusOut = function($td) {};
+//    View.Base.Painter.Cell.Interface.prototype.focusOut = function($td) {};
     /**
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * re renderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
@@ -286,7 +286,7 @@
      *     <option value='3'>option1</option>
      * </select>
      */
-    View.Base.Renderer.Cell.Interface.prototype.getContentHtml = function(cellData, $td, hasFocusedElement) {};
+    View.Base.Painter.Cell.Interface.prototype.getContentHtml = function(cellData, $td, hasFocusedElement) {};
     /**
      * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * re renderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
@@ -294,5 +294,5 @@
      * @param {jquery} $td
      * @param {Boolean} hasFocusedElement
      */
-    View.Base.Renderer.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
+    View.Base.Painter.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
 

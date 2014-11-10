@@ -1,10 +1,10 @@
     /**
      * text-textbox 변환 가능한 cell renderer
-     * @extends {View.Base.Renderer.Cell}
-     * @implements {View.Base.Renderer.Cell.Interface}
+     * @extends {View.Base.Painter.Cell}
+     * @implements {View.Base.Painter.Cell.Interface}
      * @class
      */
-    View.Renderer.Cell.Text = View.Base.Renderer.Cell.extend({
+    View.Painter.Cell.Text = View.Base.Painter.Cell.extend({
         rerenderAttributes: ['isEditable'],
         eventHandler: {
             'blur input' : '_onBlur',
@@ -12,7 +12,7 @@
             'focus input': '_onFocus'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+            View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 originalText: ''
             });
@@ -101,11 +101,11 @@
 
     /**
      * text-textbox 변환 가능한 cell renderer
-     * @extends {View.Base.Renderer.Cell.Text}
-     * @implements {View.Base.Renderer.Cell.Interface}
+     * @extends {View.Base.Painter.Cell.Text}
+     * @implements {View.Base.Painter.Cell.Interface}
      * @class
      */
-    View.Renderer.Cell.Text.Convertible = View.Renderer.Cell.Text.extend({
+    View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend({
         rerenderAttributes: ['isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
@@ -114,7 +114,7 @@
             'focus input': '_onFocus'
         },
         initialize: function(attributes, options) {
-            View.Renderer.Cell.Text.prototype.initialize.apply(this, arguments);
+            View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForClick: 0
             });

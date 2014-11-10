@@ -1,14 +1,14 @@
     /**
      * editOption 에 list 를 가지고 있는 형태의 추상 클래스
-     * @implements {View.Base.Renderer.Cell.Interface}
+     * @implements {View.Base.Painter.Cell.Interface}
      * @class
      */
-    View.Renderer.Cell.List = View.Base.Renderer.Cell.extend({
+    View.Painter.Cell.List = View.Base.Painter.Cell.extend({
         rerenderAttributes: ['isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {
-            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+            View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
         focusIn: function($td) {},
         getEditType: function() {},
@@ -35,12 +35,12 @@
     /**
      * select type 의 Cell renderer
      *
-     * @extends {View.Renderer.Cell.List}
+     * @extends {View.Painter.Cell.List}
      * @class
      */
-    View.Renderer.Cell.List.Select = View.Renderer.Cell.List.extend({
+    View.Painter.Cell.List.Select = View.Painter.Cell.List.extend({
         initialize: function(attributes) {
-            View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
+            View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
 
             this._setKeyDownSwitch({
                 'ESC': function(keyDownEvent, param) {
@@ -111,12 +111,12 @@
     /**
      * checkbox, radio button type 의 Cell renderer
      *
-     * @extends {View.Renderer.Cell.List}
+     * @extends {View.Painter.Cell.List}
      * @class
      */
-    View.Renderer.Cell.List.Button = View.Renderer.Cell.List.extend({
+    View.Painter.Cell.List.Button = View.Painter.Cell.List.extend({
         initialize: function(attributes) {
-            View.Renderer.Cell.List.prototype.initialize.apply(this, arguments);
+            View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
             this._setKeyDownSwitch({
                 'UP_ARROW': function() {},
                 'DOWN_ARROW': function() {},

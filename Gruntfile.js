@@ -37,9 +37,9 @@ module.exports = function(grunt) {
                     'src/View/Layout/Frame.js',
                     'src/View/Layout/*',
 
-                    'src/View/Renderer/*',
-                    'src/View/Renderer/Cell/Base.js',
-                    'src/View/Renderer/Cell/*',
+                    'src/View/Painter/*',
+                    'src/View/Painter/Cell/Base.js',
+                    'src/View/Painter/Cell/*',
                     'src/View/Layout/*.js',
                     'src/View/*.js',
 

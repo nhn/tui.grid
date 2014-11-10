@@ -8,14 +8,14 @@
             this.setOwnProperties({
                 whichSide: (attributes && attributes.whichSide) || 'R',
                 timeoutIdForCollection: 0,
-                rowRenderer: null
+                rowPainter: null
             });
-            this._createRowRenderer();
+            this._createRowPainter();
             this.listenTo(this.grid.renderModel, 'rowListChanged', this._onRowListChange, this);
         },
 
-        _createRowRenderer: function() {
-            this.rowRenderer = this.createView(View.Renderer.Row, {
+        _createRowPainter: function() {
+            this.rowPainter = this.createView(View.Painter.Row, {
                 grid: this.grid,
                 $parent: this.$el,
                 collection: this.collection,
@@ -31,17 +31,17 @@
                 firstRow = this.collection.at(0);
             var start = new Date();
 //            console.log('View.RowList.render start');
-            this.rowRenderer.detachHandler();
+            this.rowPainter.detachHandler();
             this.destroyChildren();
-            this._createRowRenderer();
+            this._createRowPainter();
             //get html string
             if (firstRow && firstRow.get('rowKey') !== 'undefined') {
                 this.collection.forEach(function(row) {
-                    html += this.rowRenderer.getHtml(row);
+                    html += this.rowPainter.getHtml(row);
                 }, this);
             }
             this.$el.html('').prepend(html);
-            this.rowRenderer.attachHandler();
+            this.rowPainter.attachHandler();
 
             var end = new Date();
 //            console.log('View.RowList.addAll end', end - start);

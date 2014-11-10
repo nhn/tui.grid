@@ -1,8 +1,8 @@
     /**
-     * Row Renderer
-     * 성능 향상을 위해 Row Rendering 을 위한 클래스 생성
+     * Row Painter
+     * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
      */
-    View.Renderer.Row = View.Base.Renderer.extend({
+    View.Painter.Row = View.Base.Painter.extend({
         eventHandler: {
             'click' : '_onClick',
             'mousedown' : '_onMouseDown'
@@ -22,7 +22,7 @@
          * @param {object} attributes
          */
         initialize: function(attributes) {
-            View.Base.Renderer.prototype.initialize.apply(this, arguments);
+            View.Base.Painter.prototype.initialize.apply(this, arguments);
 
             var whichSide = (attributes && attributes.whichSide) || 'R',
                 focusModel = this.grid.focusModel;

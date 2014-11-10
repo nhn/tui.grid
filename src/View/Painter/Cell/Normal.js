@@ -1,12 +1,12 @@
     /**
      * editOption 이 적용되지 않은 cell 의 renderer
      * @class
-     * @extends {View.Base.Renderer.Cell}
-     * @implements {View.Base.Renderer.Cell.Interface}
+     * @extends {View.Base.Painter.Cell}
+     * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Renderer.Cell.Normal = View.Base.Renderer.Cell.extend({
+    View.Painter.Cell.Normal = View.Base.Painter.Cell.extend({
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+            View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
         getEditType: function() {
             return 'normal';
@@ -40,10 +40,10 @@
         }
     });
 
-    View.Renderer.Cell.Normal.Number = View.Renderer.Cell.Normal.extend({
+    View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend({
         rerenderAttributes: [],
         initialize: function(attributes, options) {
-            View.Renderer.Cell.Normal.prototype.initialize.apply(this, arguments);
+            View.Painter.Cell.Normal.prototype.initialize.apply(this, arguments);
         },
         getEditType: function() {
             return '_number';
@@ -61,10 +61,10 @@
     /**
      * checkbox 혹은 radiobox 형태의 Main Button renderer
      * @class
-     * @extends {View.Base.Renderer.Cell}
-     * @implements {View.Base.Renderer.Cell.Interface}
+     * @extends {View.Base.Painter.Cell}
+     * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Renderer.Cell.MainButton = View.Base.Renderer.Cell.extend({
+    View.Painter.Cell.MainButton = View.Base.Painter.Cell.extend({
         /**
          * rendering 해야하는 cellData 의 변경 목록
          */
@@ -75,7 +75,7 @@
             'keydown input' : '_onKeyDown'
         },
         initialize: function(attributes, options) {
-            View.Base.Renderer.Cell.prototype.initialize.apply(this, arguments);
+            View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
             this._setKeyDownSwitch({
                 'UP_ARROW': function() {},
                 'DOWN_ARROW': function() {},
