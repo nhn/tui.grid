@@ -225,6 +225,7 @@
                 columnNameList = [],
                 tmpString = [],
                 strings = [],
+                startIdx = this.spannedRange.row[0],
                 columnLen, i, j, rowList, string;
 
             for (i = 0; i < len; i++) {
@@ -238,7 +239,13 @@
                 tmpString = [];
                 for (j = 0; j < columnLen; j++) {
                     if (!filteringMap[columnNameList[j]]) {
-                        tmpString.push(rowList[i].getVisibleText(columnNameList[j]));
+                        //number 형태의 경우 실 데이터는 존재하지 않으므로 가공하여 추가한다.
+                        if (columnNameList[j] === '_number') {
+                            tmpString.push(startIdx + i + 1);
+                        } else {
+                            tmpString.push(rowList[i].getVisibleText(columnNameList[j]));
+                        }
+
                     }
                 }
                 strings.push(tmpString.join('\t'));

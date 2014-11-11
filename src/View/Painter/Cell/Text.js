@@ -42,7 +42,7 @@
         },
         focusIn: function($td) {
             var $input = $td.find('input');
-            Util.setCursorToEnd($input.get(0));
+            ne.util.setCursorToEnd($input.get(0));
             $input.focus().select();
 
         },
@@ -169,7 +169,7 @@
                 this.render(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
-                Util.setCursorToEnd($input.get(0));
+                ne.util.setCursorToEnd($input.get(0));
                 $input.focus().select();
 
             }

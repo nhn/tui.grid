@@ -50,13 +50,17 @@
      * @constructor
      */
     Collection.Base = Backbone.Collection.extend({
-        initialize: function(attributes) {
-            var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
+        initialize: function(models, options) {
+            var grid = options && options.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
                 grid: grid
             });
-            this.reset([], {silent: true});
+            this.on('reset', this.onReset, this);
         },
+        onReset: function() {
+            this.clear();
+        },
+
         /**
          * collection 내 model 들의 event listener 를 제거하고 메모리에서 해제한다.
          */

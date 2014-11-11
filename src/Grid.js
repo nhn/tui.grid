@@ -754,7 +754,7 @@
             });
 
             //define rowList
-            this.dataModel = new Data.RowList({
+            this.dataModel = new Data.RowList([], {
                 grid: this
             });
             this.dataModel.reset([]);
