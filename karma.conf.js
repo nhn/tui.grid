@@ -61,6 +61,7 @@ module.exports = function(config) {
 
             // files to test
             {pattern: 'test/js/*test.js', watched: true, served: true, included: true}
+//            {pattern: 'test/js/core.util.test.js', watched: true, served: true, included: true}
         ],
 
 
@@ -72,7 +73,7 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/*.js': ['coverage']
+            'src/**/*.js': 'coverage'
         },
 
 
@@ -81,14 +82,14 @@ module.exports = function(config) {
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
 //        reporters: ['progress', 'coverage'],
         reporters: ['dots', 'coverage', 'junit'],
-
         junitReporter: {
             outputFile: 'report/junit-result.xml',
             suite: ''
         },
         coverageReporter: {
             type: 'html',
-            dir: 'report/coverage/'
+            dir: 'report/coverage/',
+            file: 'coverage.html'
         },
         // web server port
         port: 9876,

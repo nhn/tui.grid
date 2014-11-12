@@ -1,6 +1,5 @@
     'use strict';
     describe('Data.ColumnModel', function() {
-
         var dummyModelList = {
             notDefined: [
                 {
@@ -72,49 +71,52 @@
                 }
             ]
         };
-        describe('Private 메서드 확인', function() {
-            describe('_initializeNumberColumn()', function() {
-               it('hasNumberColumn === false', function() {
-                   var columnModel = new Data.ColumnModel({hasNumberColumn: false});
-//                   columnModel._initializeNumberColumn(notDefined)
-               });
-            });
+        describe('컬럼 모델이 정상적으로 생성되는지 확인한다.', function() {
+            var columnModel = new Data.ColumnModel(dummyModelList.notDefined);
         });
-        describe('AutoNumbering 옵션 ON', function() {
-            var hasNumberColumn = true;
-            describe('selectType 이 존재함', function() {
-                var selectType = 'checkbox';
-                var columnModel = new Data.ColumnModel({
-                    hasNumberColumn: hasNumberColumn,
-                    selectType: selectType
-                });
-
-            });
-            describe('selectType 이 존재하지 않음.', function() {
-                var selectType = '';
-                var columnModel = new Data.ColumnModel({
-                    hasNumberColumn: hasNumberColumn,
-                    selectType: selectType
-                });
-            });
-        });
-        describe('AutoNumbering 옵션 ON', function() {
-            var hasNumberColumn = false;
-            describe('selectType 이 존재함', function() {
-                var selectType = 'checkbox';
-                var columnModel = new Data.ColumnModel({
-                    hasNumberColumn: hasNumberColumn,
-                    selectType: selectType
-                });
-            });
-            describe('selectType 이 존재하지 않음.', function() {
-                var selectType = '';
-                var columnModel = new Data.ColumnModel({
-                    hasNumberColumn: hasNumberColumn,
-                    selectType: selectType
-                });
-            });
-
-        });
+//        describe('Private 메서드 확인', function() {
+//            describe('_initializeNumberColumn()', function() {
+//               it('hasNumberColumn === false', function() {
+//                   var columnModel = new Data.ColumnModel({hasNumberColumn: false});
+////                   columnModel._initializeNumberColumn(notDefined)
+//               });
+//            });
+//        });
+//        describe('AutoNumbering 옵션 ON', function() {
+//            var hasNumberColumn = true;
+//            describe('selectType 이 존재함', function() {
+//                var selectType = 'checkbox';
+//                var columnModel = new Data.ColumnModel({
+//                    hasNumberColumn: hasNumberColumn,
+//                    selectType: selectType
+//                });
+//
+//            });
+//            describe('selectType 이 존재하지 않음.', function() {
+//                var selectType = '';
+//                var columnModel = new Data.ColumnModel({
+//                    hasNumberColumn: hasNumberColumn,
+//                    selectType: selectType
+//                });
+//            });
+//        });
+//        describe('AutoNumbering 옵션 ON', function() {
+//            var hasNumberColumn = false;
+//            describe('selectType 이 존재함', function() {
+//                var selectType = 'checkbox';
+//                var columnModel = new Data.ColumnModel({
+//                    hasNumberColumn: hasNumberColumn,
+//                    selectType: selectType
+//                });
+//            });
+//            describe('selectType 이 존재하지 않음.', function() {
+//                var selectType = '';
+//                var columnModel = new Data.ColumnModel({
+//                    hasNumberColumn: hasNumberColumn,
+//                    selectType: selectType
+//                });
+//            });
+//
+//        });
     });
 
