@@ -61,8 +61,8 @@
 
             rowIdx = dataModel.indexOfRowKey(rowKey);
 
-            top = Util.getTBodyHeight(rowIdx, rowHeight);
-            bottom = top + Util.getTBodyHeight(spanCount, rowHeight) - 1;
+            top = Util.getHeight(rowIdx, rowHeight);
+            bottom = top + Util.getHeight(spanCount, rowHeight) - 1;
 
             if (columnFixIndex <= columnIdx) {
                 i = columnFixIndex;
@@ -111,7 +111,7 @@
          * @private
          */
         _setBodyHeight: function() {
-            var height = Util.getTBodyHeight(this.grid.option('displayRowCount'), this.get('rowHeight'));
+            var height = Util.getHeight(this.grid.option('displayRowCount'), this.get('rowHeight'));
             //TODO scroll height 예외처리
             height += this.grid.scrollBarSize;
             this.set('bodyHeight', height);

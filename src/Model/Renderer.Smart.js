@@ -55,7 +55,7 @@
                 }
             }
 
-            top = (startIdx === 0) ? 0 : Util.getTBodyHeight(startIdx, rowHeight) - 1;
+            top = (startIdx === 0) ? 0 : Util.getHeight(startIdx, rowHeight) - 1;
 
             this.set({
                 top: top,

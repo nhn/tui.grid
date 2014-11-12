@@ -105,7 +105,7 @@
          */
         setFormData: function(formData) {
             //form data 를 실제 form 에 반영한다.
-            Util.setFormData(this.$el, formData);
+            ne.util.setFormData(this.$el, formData);
         },
 
         /**
@@ -149,7 +149,7 @@
          * @private
          */
         _getFormData: function() {
-            return Util.getFormData(this.$el);
+            return ne.util.getFormData(this.$el);
         },
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 success 콜백

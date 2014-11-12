@@ -29,10 +29,10 @@
             this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
 
             //lside 와 rside 별 Collection 생성
-            var lside = new Model.RowList({
+            var lside = new Model.RowList([], {
                 grid: this.grid
             });
-            var rside = new Model.RowList({
+            var rside = new Model.RowList([], {
                 grid: this.grid
             });
             this.set({

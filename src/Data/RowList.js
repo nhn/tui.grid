@@ -88,8 +88,8 @@
                 editType = this.grid.columnModel.getEditType(columnName),
                 value = this.get(columnName),
                 notUseHtmlEntity = columnModel.notUseHtmlEntity;
-            if (!notUseHtmlEntity && (!editType || editType === 'text') && Util.hasTagString(value)) {
-                value = Util.encodeHTMLEntity(value);
+            if (!notUseHtmlEntity && (!editType || editType === 'text') && ne.util.hasEncodableString(value)) {
+                value = ne.util.encodeHTMLEntity(value);
             }
             return value;
         },
@@ -243,13 +243,13 @@
      */
     Data.RowList = Collection.Base.extend({
         model: Data.Row,
-        initialize: function(attributes) {
+        initialize: function(models, options) {
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 sortKey: 'rowKey',
                 originalRowList: [],
                 originalRowMap: {},
-                startIndex: attributes.startIndex || 1,
+                startIndex: options.startIndex || 1,
                 privateProperties: [
                     '_button',
                     '_number',

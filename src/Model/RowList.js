@@ -161,7 +161,7 @@
      */
     Model.RowList = Collection.Base.extend({
         model: Model.Row,
-        initialize: function(attributes) {
+        initialize: function(models, options) {
             Collection.Base.prototype.initialize.apply(this, arguments);
         }
     });
