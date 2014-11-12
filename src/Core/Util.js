@@ -1,5 +1,5 @@
     var Util = {
-        getTBodyHeight: function(rowCount, rowHeight) {
+        getHeight: function(rowCount, rowHeight) {
             return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
         },
         getDisplayRowCount: function(tbodyHeight, rowHeight) {
