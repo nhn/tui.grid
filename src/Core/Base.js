@@ -55,20 +55,16 @@
             this.setOwnProperties({
                 grid: grid
             });
-            this.on('reset', this.onReset, this);
         },
-        onReset: function() {
-            this.clear();
-        },
-
         /**
          * collection 내 model 들의 event listener 를 제거하고 메모리에서 해제한다.
          */
         clear: function() {
             this.each(function(model) {
                 model.stopListening();
-                model = null;
+                model.clear();
             });
+            this.reset([]);
 
             return this;
         },
@@ -102,7 +98,7 @@
          */
         error: function(message) {
             var error = function() {
-                this.name = 'GridException';
+                this.name = 'Grid Exception';
                 this.message = message || 'error';
             };
             error.prototype = new Error();
@@ -158,7 +154,7 @@
          * @return {{_isStopped: boolean, stop: function ...}}
          */
         createEventData: function(data) {
-            var eventData = data || {};
+            var eventData = $.extend({}, data);
             eventData.stop = function() {
                 this._isStoped = true;
             };

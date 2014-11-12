@@ -886,9 +886,9 @@ if (!window.ne.util) { window.ne.util = {}; }
 })(window.ne.util);
 
 /**
- * @fileoverview
+ * @fileoverview Form 엘리먼트 헨들링 메서드
  * @author FE개발팀
- * @dependency jquery.js
+ * @dependency jquery-1.8.3.js, collection.js, type.js
  */
 
 (function(ne) {
@@ -898,15 +898,96 @@ if (!window.ne.util) { window.ne.util = {}; }
     }
 
     /**
+     * form 의 input 요소 값을 설정하기 위한 객체
+     */
+    var setInput = {
+        /**
+         * radio type 의 input 요소의 값을 설정한다.
+         * @param {HTMLElement} targetElement
+         * @param {String} formValue
+         */
+        'radio': function(targetElement, formValue) {
+            targetElement.checked = (targetElement.value === formValue);
+        },
+        /**
+         * radio type 의 input 요소의 값을 설정한다.
+         * @param {HTMLElement} targetElement
+         * @param {String} formValue
+         */
+        'checkbox': function(targetElement, formValue) {
+            if (ne.isArray(formValue)) {
+                targetElement.checked = $.inArray(targetElement.value, _changeToStringInArray(formValue)) !== -1;
+            }else {
+                targetElement.checked = (targetElement.value === formValue);
+            }
+        },
+        /**
+         * select-one type 의 input 요소의 값을 설정한다.
+         * @param {HTMLElement} targetElement
+         * @param {String} formValue
+         */
+        'select-one': function(targetElement, formValue) {
+            var i,
+                targetOption,
+                index = -1,
+                length = targetElement.options.length;
+            for (i = 0; i < length; i++) {
+                targetOption = targetElement.options[i];
+                if (targetOption.value === formValue || targetOption.text === formValue) {
+                    index = i;
+                }
+            }
+            targetElement.selectedIndex = index;
+        },
+        /**
+         * select-multiple type 의 input 요소의 값을 설정한다.
+         * @param {HTMLElement} targetElement
+         * @param {String} formValue
+         */
+        'select-multiple': function(targetElement, formValue) {
+            var targetOption,
+                i,
+                length,
+                index = -1;
+
+            if (ne.isArray(formValue)) {
+                formValue = _changeToStringInArray(formValue);
+                length = targetElement.options.length;
+                for (i = 0; i < length; i++) {
+                    targetOption = targetElement.options[i];
+                    targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
+                        $.inArray(targetOption.text, formValue) !== -1;
+                }
+            }else {
+                length = targetElement.options.length;
+                for (i = 0; i < length; i++) {
+                    targetOption = targetElement.options[i];
+                    if (targetOption.value === formValue || targetOption.text === formValue) {
+                        index = i;
+                    }
+                }
+                targetElement.selectedIndex = index;
+            }
+        },
+        /**
+         * input 요소의 값을 설정하는 default 로직
+         * @param {HTMLElement} targetElement
+         * @param {String} formValue
+         */
+        'default': function(targetElement, formValue) {
+            targetElement.value = formValue;
+        }
+    };
+    /**
      * 배열의 값들을 전부 String 타입으로 변환한다.
      * @private
      * @param {Array}  arr 변환할 배열
      * @return {Array} 변환된 배열 결과 값
      */
     function _changeToStringInArray(arr) {
-        for (var i = 0; i < arr.length; i++) {
-            arr[i] = String(arr[i]);
-        }
+        ne.forEach(arr, function(value) {
+            value = String(value);
+        }, this);
         return arr;
     }
 
@@ -917,19 +998,20 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @return {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
      **/
     function getFormData($form) {
-        var result = {};
-        var valueList = $form.serializeArray();
+        var result = {},
+            valueList = $form.serializeArray();
 
-        $.each(valueList, function() {
-            if (result[this.name] !== undefined) {
-                if (!result[this.name].push) {
-                    result[this.name] = [result[this.name]];
+        ne.forEach(valueList, function(obj) {
+            if (ne.isDefined(result[obj.name])) {
+                if (!result[obj.name].push) {
+                    result[obj.name] = [result[obj.name]];
                 }
-                result[this.name].push(this.value || '');
+                result[obj.name].push(obj.value || '');
             } else {
-                result[this.name] = this.value || '';
+                result[obj.name] = obj.value || '';
             }
-        });
+        }, this);
+
         return result;
     }
     /**
@@ -958,11 +1040,9 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {Object} formData 폼에 설정할 폼 데이터 객체
      **/
     function setFormData($form, formData) {
-        for (var x in formData) {
-            if (formData.hasOwnProperty(x)) {
-                setFormElementValue($form, x, formData[x]);
-            }
-        }
+        ne.forEachOwnProperties(formData, function(value, property) {
+            setFormElementValue($form, property, value);
+        }, this);
     }
     /**
      * elementName에 해당하는 인풋 엘리먼트에 formValue 값을 설정한다.
@@ -972,63 +1052,30 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.
      **/
     function setFormElementValue($form, elementName, formValue) {
-        var i, j, index, targetOption;
-        var elementList = getFormElement($form, elementName, true);
+        var i,
+            type,
+            targetElement,
+            length,
+            elementList = getFormElement($form, elementName, true);
+
         if (!elementList) {
             return;
         }
-        elementList = elementList.nodeType == 1 ? [elementList] : elementList;
+        if (!ne.isArray(formValue)) {
+            formValue = String(formValue);
+        }
+        elementList = ne.isHTMLTag(elementList) ? [elementList] : elementList;
 
-        for (var i = 0, targetElement; i < elementList.length; i++) {
+        length = elementList.length;
+        for (i = 0; i < length; i++) {
             targetElement = elementList[i];
-            switch (targetElement.type) {
-                case 'radio':
-                    targetElement.checked = (targetElement.value == formValue);
-                    break;
-                case 'checkbox':
-                    if ($.isArray(formValue)) {
-                        targetElement.checked = $.inArray(targetElement.value, _changeToStringInArray(formValue)) !== -1;
-                    }else {
-                        targetElement.checked = (targetElement.value == formValue);
-                    }
-                    break;
-                case 'select-one':
-                    index = -1;
-                    for (j = 0; j < targetElement.options.length; j++) {
-                        targetOption = targetElement.options[j];
-                        if (targetOption.value == formValue || targetOption.text == formValue) {
-                            index = j;
-                        }
-                    }
-                    targetElement.selectedIndex = index;
-                    break;
-                case 'select-multiple':
-                    if ($.isArray(formValue)) {
-                        formValue = _changeToStringInArray(formValue);
-                        for (j = 0; j < targetElement.options.length; j++) {
-                            targetOption = targetElement.options[j];
-                            targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
-                                $.inArray(targetOption.text, formValue) !== -1;
-                        }
-                    }else {
-                        index = -1;
-                        for (j = 0; j < targetElement.options.length; j++) {
-                            targetOption = targetElement.options[j];
-                            if (targetOption.value == formValue || targetOption.text == formValue) {
-                                index = j;
-                            }
-                        }
-                        targetElement.selectedIndex = index;
-                    }
-                    break;
-                default:
-                    targetElement.value = formValue;
-            }
+            type = setInput[targetElement.type] ? targetElement.type : 'default';
+            setInput[type](targetElement, formValue);
         }
     }
     /**
      * input 타입의 엘리먼트의 커서를 가장 끝으로 이동한다.
-     * @param {element} target HTML input 엘리먼트
+     * @param {HTMLElement} target HTML input 엘리먼트
      */
     function setCursorToEnd(target) {
         target.focus();
@@ -1431,8 +1478,8 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @return {Boolean} HTMLElement 인지 여부
      */
     function isHTMLNode(html) {
-        if(typeof(HTMLElement) === 'object') {
-            return(html && (html instanceof HTMLElement));
+        if (typeof(HTMLElement) === 'object') {
+            return (html && (html instanceof HTMLElement));
         }
         return !!(html && html.nodeType);
     }
@@ -1442,10 +1489,10 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @return {Boolean} HTMLElement 인지 여부
      */
     function isHTMLTag(html) {
-        if(typeof(HTMLElement) === 'object') {
-            return(html && (html instanceof HTMLElement));
+        if (typeof(HTMLElement) === 'object') {
+            return (html && (html instanceof HTMLElement));
         }
-        return !!(html && html.nodeType && html.nodeType !== 3);
+        return !!(html && html.nodeType && html.nodeType === 1);
     }
     /**
      * null, undefined 여부와 순회 가능한 객체의 순회가능 갯수가 0인지 체크한다.
