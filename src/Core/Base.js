@@ -62,9 +62,9 @@
         clear: function() {
             this.each(function(model) {
                 model.stopListening();
-                model.clear();
+                model = null;
             });
-            this.reset([]);
+            this.reset([], {silent: true});
 
             return this;
         },
