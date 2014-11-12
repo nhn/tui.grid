@@ -15,15 +15,17 @@
                     grid: this.grid
                 },
                 instanceList = [
-                    new View.Cell.MainButton(args),
-                    new View.Cell.Normal(args),
-                    new View.Cell.Text(args),
-                    new View.Cell.List.Button(args),
-                    new View.Cell.List.Select(args)
+                    new View.Painter.Cell.MainButton(args),
+                    new View.Painter.Cell.Normal.Number(args),
+                    new View.Painter.Cell.Normal(args),
+                    new View.Painter.Cell.Text(args),
+                    new View.Painter.Cell.List.Button(args),
+                    new View.Painter.Cell.List.Select(args),
+                    new View.Painter.Cell.Text.Convertible(args)
                 ];
 
             _.each(instanceList, function(instance, name) {
-                instances[instance.cellType] = instance;
+                instances[instance.getEditType()] = instance;
             }, this);
 
             this.setOwnProperties({
@@ -31,46 +33,34 @@
             });
         },
         getInstance: function(editType) {
-            var instance = null;
-            switch (editType) {
-                case 'main' :
-                    instance = this.instances[editType];
-                    break;
-                case 'text' :
-                    instance = this.instances[editType];
-                    break;
-                case 'select':
-                    instance = this.instances[editType];
-                    break;
-                case 'radio' :
-                case 'checkbox' :
+            var instance = this.instances[editType];
+            if (!instance) {
+                if (editType === 'radio' || editType === 'checkbox') {
                     instance = this.instances['button'];
-                    break;
-                default :
+                } else {
                     instance = this.instances['normal'];
-                    break;
+                }
             }
-
             return instance;
         },
-        attachHandler: function() {
-            var $tdList = this.grid.$el.find('td'),
+        attachHandler: function($parent) {
+            var $tdList = $parent.find('td'),
                 $td,
-                cellType;
+                editType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.attr('cellType');
-                this.instances[cellType].attachHandler($td);
+                editType = $td.data('edit-type');
+                this.instances[editType].attachHandler($td);
             }
         },
-        detachHandler: function() {
-            var $tdList = this.grid.$el.find('td'),
+        detachHandler: function($parent) {
+            var $tdList = $parent.find('td'),
                 $td,
-                cellType;
+                editType;
             for (var i = 0; i < $tdList.length; i++) {
                 $td = $tdList.eq(i);
-                cellType = $td.attr('cellType');
-                this.instances[cellType].detachHandler($td);
+                editType = $td.data('edit-type');
+                this.instances[editType].detachHandler($td);
             }
         }
     });
