@@ -349,7 +349,16 @@
         setColumnFixIndex: function(index) {
             this.core.setColumnFixIndex(index);
         },
-
+        /**
+         * 인자로 들어온 columnName 기준으로 정렬 한다.
+         * @param {String} columnName 정렬할 컬럼이름
+         */
+        sort: function(columnName) {
+            this.core.sort(columnName);
+        },
+        unSort: function() {
+            this.core.sort('rowKey');
+        },
         setGridSize: function(size) {
             var dimensionModel = this.core.dimensionModel,
                 width = size && size.width || dimensionModel.get('width'),
