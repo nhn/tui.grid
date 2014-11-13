@@ -21,8 +21,8 @@
 
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 number column 을 추가한다.
-         * @param {array} columnModelList
-         * @returns {array}
+         * @param {Array} columnModelList
+         * @returns {Array}
          * @private
          */
         _initializeNumberColumn: function(columnModelList) {
@@ -41,8 +41,8 @@
         },
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 button column 을 추가한다.
-         * @param {array} columnModelList
-         * @returns {array}
+         * @param {Array} columnModelList
+         * @returns {Array}
          * @private
          */
         _initializeButtonColumn: function(columnModelList) {
@@ -76,8 +76,8 @@
          * - columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
          * - _number, _button 컬럼 초기화시 사용함.
          * @param {object} columnObj
-         * @param {array} columnModelList
-         * @returns {array}
+         * @param {Array} columnModelList
+         * @returns {Array}
          * @private
          */
         _extendColumn: function(columnObj, columnModelList) {
@@ -117,7 +117,7 @@
          * columnName 에 해당하는 index를 반환한다.
          * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
          * @param {string} columnName
-         * @param {array} columnModelList
+         * @param {Array} columnModelList
          * @returns {number}
          * @private
          */
@@ -144,7 +144,7 @@
             }
         },
         /**
-         *
+         * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
          * @param {String} [whichSide] 왼쪽 영역인지, 오른쪽 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
          * @returns {Array}
          */
@@ -163,6 +163,11 @@
 
             return columnModelList;
         },
+        /**
+         * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
+         * @param {String} columnName
+         * @return {Object}
+         */
         getColumnModel: function(columnName) {
             return this.get('columnModelMap')[columnName];
         },
@@ -232,6 +237,11 @@
                 visibleList: visibleList
             }, {silent: true});
         },
+        /**
+         * change 이벤트 발생시 핸들러
+         * @param {Object} model
+         * @private
+         */
         _onChange: function(model) {
             var changed = model.changed,
                 columnModelList = changed['columnModelList'] || this.get('columnModelList'),

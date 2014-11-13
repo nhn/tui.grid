@@ -743,7 +743,5 @@ describe('Data.ColumnModel', function() {
             expect(visibleList).toEqual(expectResult);
         });
     });
-
-
 });
 

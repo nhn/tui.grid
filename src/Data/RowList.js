@@ -62,18 +62,24 @@
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
          */
         getRowSpanData: function(columnName) {
-            var extraData = this.get('_extraData'), defaultData;
-            if (!columnName) {
-                return extraData['rowSpanData'];
-            }else {
-                extraData = this.get('_extraData');
+            var extraData = this.get('_extraData'),
                 defaultData = {
                     count: 0,
                     isMainRow: true,
                     mainRowKey: this.get('rowKey')
                 };
-                return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+            if (!this.collection.isSortedByField()) {
+                if (!columnName) {
+                    return extraData['rowSpanData'];
+                }else {
+                    extraData = this.get('_extraData');
+                    return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+                }
+            } else {
+                return defaultData;
             }
+
+
         },
         /**
          * html string 을 encoding 한다.
@@ -345,7 +351,7 @@
          * @private
          */
         _onCheckChange: function(row) {
-            var selectType = this.grid.option('selectType'),
+            var selectType = this.grid.dataModel.get('selectType'),
                 rowKey = row.get('rowKey'),
                 checkedList;
             if (selectType === 'radio') {
@@ -578,70 +584,100 @@
         },
         /**
          * 데이터를 grid 에서 사용하기 쉽도록 가공한다.
-         * rowSpan 데이터도 함께 가공한다.
+         * _extraData 필드에 rowSpanData 를 추가한다.
          * @param {Array} data
          * @return {Array}
          * @private
          */
         _formatData: function(data) {
-            function setExtraRowSpanData(extraData, columnName, rowSpanData) {
-                extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
-                extraData['rowSpanData'][columnName] = rowSpanData;
-            }
-            function isSetExtraRowSpanData(extraData, columnName) {
-                return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
-            }
-
             var rowList = data,
                 keyColumnName = this.grid.columnModel.get('keyColumnName'),
                 len = rowList.length,
-                subCount, rowSpan, extraData, row, childRow, count, rowKey, rowState, i, j;
+                rowSpan, extraData, row, rowKey, i;
 
 
             for (i = 0; i < len; i++) {
-                row = rowList[i];
-                rowKey = (keyColumnName === null) ? i : row[keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
-                row['rowKey'] = rowKey;
-                row['_extraData'] = rowList[i]['_extraData'] || {};
-                extraData = row['_extraData'];
+                row = rowList[i] = this._baseFormat(rowList[i], i);
+                rowKey = row['rowKey'];
                 rowSpan = row['_extraData']['rowSpan'];
-                rowState = row['_extraData']['rowState'];
-
-                //rowState 값 따라 button 의 상태를 결정한다.
-                row['_button'] = rowState === 'CHECKED';
+                extraData = row['_extraData'];
 
                 if (!this.isSortedByField()) {
-                    //extraData 의 rowSpanData 를 가공한다.
-                    if (rowSpan) {
-                        _.each(rowSpan, function(count, columnName) {
-                            if (!isSetExtraRowSpanData(extraData, columnName)) {
-                                setExtraRowSpanData(extraData, columnName, {
-                                    count: count,
-                                    isMainRow: true,
-                                    mainRowKey: rowKey
-                                });
-                                //rowSpan 된 데이터의 자식 데이터를 설정한다.
-                                subCount = -1;
-                                for (j = i + 1; j < i + count; j++) {
-                                    childRow = rowList[j];
-                                    childRow[columnName] = row[columnName];
-                                    childRow['_extraData'] = childRow['_extraData'] || {};
-                                    setExtraRowSpanData(childRow['_extraData'], columnName, {
-                                        count: subCount--,
-                                        isMainRow: false,
-                                        mainRowKey: rowKey
-                                    });
-                                }
-                            }
-                        }, this);
-                    }
-                }else {
-                    if (rowList[i]['_extraData']) {
-                        rowList[i]['_extraData']['rowSpan'] = null;
-                    }
+                    this._setExtraRowSpanData(rowList, i);
                 }
             }
             return rowList;
+        },
+        /**
+         * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
+         * @param {Array} rowList
+         * @param {number} index
+         * @private
+         */
+        _setExtraRowSpanData: function(rowList, index) {
+            function hasRowSpanData(row, columnName) {
+                var extraData = row['_extraData'];
+                return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
+            }
+            function setRowSpanData(row, columnName, rowSpanData) {
+                var extraData = row['_extraData'];
+                extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
+                extraData['rowSpanData'][columnName] = rowSpanData;
+                return extraData;
+            }
+
+            var row = rowList[index],
+                rowSpan = row['_extraData']['rowSpan'],
+                rowKey = row['rowKey'],
+                subCount,
+                childRow,
+                i;
+
+            if (rowSpan) {
+                _.each(rowSpan, function(count, columnName) {
+                    if (!hasRowSpanData(row, columnName)) {
+                        setRowSpanData(row, columnName, {
+                            count: count,
+                            isMainRow: true,
+                            mainRowKey: rowKey
+                        });
+                        //rowSpan 된 row 의 자식 rowSpanData 를 가공한다.
+                        subCount = -1;
+                        for (i = index + 1; i < index + count; i++) {
+                            childRow = rowList[i];
+                            childRow[columnName] = row[columnName];
+                            childRow['_extraData'] = childRow['_extraData'] || {};
+                            setRowSpanData(childRow, columnName, {
+                                count: subCount--,
+                                isMainRow: false,
+                                mainRowKey: rowKey
+                            });
+                        }
+                    }
+                });
+            }
+        },
+        /**
+         * row 를 기본 포멧으로 wrapping 한다.
+         * 추가적으로 rowKey 를 할당하고, rowState 에 따라 checkbox 의 값을 할당한다.
+         *
+         * @param {object} row
+         * @param {number} index
+         * @return {object}
+         * @private
+         */
+        _baseFormat: function(row, index) {
+            var defaultExtraData = {
+                    rowSpan: null,
+                    rowState: null
+                },
+                keyColumnName = this.grid.columnModel.get('keyColumnName'),
+                rowKey = (keyColumnName === null) ? index : row[keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+
+            row['_extraData'] = $.extend(defaultExtraData, row['_extraData']);
+            row['_button'] = (row['_extraData']['rowState'] === 'CHECKED');
+            row['rowKey'] = rowKey;
+            return row;
         },
         /**
          * append, prepend 시 사용할 dummy row를 생성한다.

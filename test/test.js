@@ -119,6 +119,11 @@ function insertButton(gridInstance, $wrapper, $result) {
 //            gridInstance.setColumnValue('columnName1', '<script/>');
 //            gridInstance.sort('columnName5');
         },
+        'unsort' : function() {
+            gridInstance.unSort();
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
+        },
         'test' : function() {
 				gridInstance.setValue(0, 'columnName1', '<script>alert("test");</script>');
 //            gridInstance.setColumnValue('columnName1', '<script/>');
