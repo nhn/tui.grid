@@ -131,6 +131,22 @@
             }, this);
 
             return obj;
+        },
+        /**
+         * type 인자에 맞게 value type 을 convert 한다.
+         * Data.Row 의 List 형태에서 editOption.list 에서 검색을 위해,
+         * value type 해당 type 에 맞게 변환한다.
+         * @param {*} value
+         * @param {String} type
+         * @return {*}      컨버팅된 value
+         */
+        convertValueType: function(value, type) {
+            if (type === 'string') {
+                return value.toString();
+            } else if (type === 'number') {
+                return +value;
+            } else {
+                return value;
+            }
         }
-
     };

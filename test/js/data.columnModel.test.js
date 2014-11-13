@@ -1,5 +1,5 @@
 'use strict';
-describe('Data.ColumnModel', function() {
+describe('data.columnModel', function() {
     var columnModelInstance,
         sampleColumnModelList,
         resultList,
@@ -622,6 +622,24 @@ describe('Data.ColumnModel', function() {
                 },
                 relationListMap = columnModelInstance._getRelationListMap(sampleColumnModelList);
             expect(relationListMap).toEqual(expectResult);
+        });
+    });
+    describe('isTextType()', function() {
+        it('textType 인지 확인한다.', function() {
+            columnModelInstance.set({
+                columnModelList: $.extend(true, [], sampleColumnModelList)
+            });
+            expect(columnModelInstance.isTextType('none')).toBe(true);
+            expect(columnModelInstance.isTextType('_number')).toBe(false);
+            expect(columnModelInstance.isTextType('_button')).toBe(false);
+
+            expect(columnModelInstance.isTextType('text')).toBe(true);
+            expect(columnModelInstance.isTextType('text-convertible')).toBe(true);
+            expect(columnModelInstance.isTextType('select')).toBe(false);
+            expect(columnModelInstance.isTextType('checkbox')).toBe(false);
+            expect(columnModelInstance.isTextType('radio')).toBe(false);
+            expect(columnModelInstance.isTextType('hidden')).toBe(true);
+
         });
     });
     describe('_onChange, _setColumnModelList()', function() {

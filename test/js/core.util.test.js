@@ -151,4 +151,29 @@ describe('core.util', function() {
             expect(Util.toQueryObject(queryString)).toEqual(queryObject);
         });
     });
+    describe('convertValueType()', function() {
+        it('인자로 들어온 타입으로 변환한다.', function() {
+           var str = '1',
+               num = 1,
+               obj = {},
+               arr = [1, 2, 3];
+            expect(Util.convertValueType(str, 'string')).toEqual(str);
+            expect(Util.convertValueType(str, 'number')).toEqual(num);
+
+            expect(Util.convertValueType(num, 'string')).toEqual(str);
+            expect(Util.convertValueType(num, 'number')).toEqual(num);
+
+            expect(Util.convertValueType(obj, 'string')).toEqual('[object Object]');
+            expect(Util.convertValueType(obj, 'number')).toEqual(NaN);
+
+            expect(Util.convertValueType(arr, 'string')).toEqual('1,2,3');
+            expect(Util.convertValueType(arr, 'number')).toEqual(NaN);
+
+            expect(Util.convertValueType(num, 'nothing')).toEqual(num);
+            expect(Util.convertValueType(str, 'nothing')).toEqual(str);
+            expect(Util.convertValueType(obj, 'nothing')).toEqual(obj);
+            expect(Util.convertValueType(arr, 'nothing')).toEqual(arr);
+
+        });
+    });
 });

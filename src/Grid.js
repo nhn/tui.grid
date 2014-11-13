@@ -278,6 +278,9 @@
                 this.dataModel.set(rowList, {
                     parse: isParse
                 });
+                if (!isParse) {
+                    this.dataModel.setOriginalRowList(rowList);
+                }
             }, this), 0);
         },
         /**

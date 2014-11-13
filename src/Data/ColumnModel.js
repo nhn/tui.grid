@@ -172,6 +172,15 @@
             return this.get('columnModelMap')[columnName];
         },
         /**
+         * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
+         * @param {String} columnName
+         * @return {boolean}
+         */
+        isTextType: function(columnName) {
+            var textTypeList = ['normal', 'text', 'text-convertible'];
+            return $.inArray(this.getEditType(columnName), textTypeList) !== -1;
+        },
+        /**
          * 컬럼 모델로부터 editType 을 반환한다.
          * @param {string} columnName
          * @return {string}
