@@ -60,7 +60,7 @@ module.exports = function(config) {
             {pattern: 'images/**/*', watched: true, served: true, included: false},
 
             // files to test
-            {pattern: 'test/js/*test.js', watched: true, served: true, included: true}
+            {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
 //            {pattern: 'test/js/core.util.test.js', watched: true, served: true, included: true}
         ],
 
@@ -73,7 +73,16 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/*.js': 'coverage'
+            'src/**/*.js': ['coverage']
+
+//            'src/**/*.js': ['coverage']
+//            'src/Data/*.js': ['coverage'],
+//            'src/Model/*.js': ['coverage'],
+//            'src/View/*.js': ['coverage'],
+//            'src/View/**/*.js': ['coverage'],
+//            'src/View/**/**/*.js': ['coverage'],
+//            'src/AddOn/*.js': ['coverage'],
+//            'src/*.js': ['coverage']
         },
 
 
@@ -88,8 +97,7 @@ module.exports = function(config) {
         },
         coverageReporter: {
             type: 'html',
-            dir: 'report/coverage/',
-            file: 'coverage.html'
+            dir: 'report/coverage/'
         },
         // web server port
         port: 9876,

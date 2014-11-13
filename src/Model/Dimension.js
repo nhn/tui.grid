@@ -48,7 +48,7 @@
                 rowIdx, spanCount,
                 columnWidthList = this.get('columnWidthList'),
                 columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-                columnIdx = this.grid.columnModel.indexOfColumnName(columnName);
+                columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true);
 
 
 

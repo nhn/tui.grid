@@ -142,7 +142,7 @@
 
             return {
                 rowIdx: this.grid.dataModel.indexOfRowKey(rowKey),
-                columnIdx: this.grid.columnModel.indexOfColumnName(columnName)
+                columnIdx: this.grid.columnModel.indexOfColumnName(columnName, true)
             };
         },
         /**
@@ -176,7 +176,7 @@
                 columnModel = this.grid.columnModel,
                 columnModelList = columnModel.getVisibleColumnModelList();
             if (this.has()) {
-                index = Math.max(Math.min(columnModel.indexOfColumnName(this.get('columnName')) + offset, columnModelList.length - 1), 0);
+                index = Math.max(Math.min(columnModel.indexOfColumnName(this.get('columnName'), true) + offset, columnModelList.length - 1), 0);
                 return columnModelList[index] && columnModelList[index]['columnName'];
             }
         },
@@ -200,11 +200,11 @@
         },
         nextColumnIndex: function() {
             var columnName = this.nextColumnName();
-            return this.grid.columnModel.indexOfColumnName(columnName);
+            return this.grid.columnModel.indexOfColumnName(columnName, true);
         },
         prevColumnIndex: function() {
             var columnName = this.prevColumnName();
-            return this.grid.columnModel.indexOfColumnName(columnName);
+            return this.grid.columnModel.indexOfColumnName(columnName, true);
         },
         /**
          * keyEvent 발생 시 다음 rowKey 를 반환한다.

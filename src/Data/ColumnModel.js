@@ -32,9 +32,11 @@
                     title: 'No.',
                     width: 60
                 };
-            if (hasNumberColumn) {
-                columnModelList = this._appendColumn(numberColumn, columnModelList);
+            if (!hasNumberColumn) {
+                numberColumn.isHidden = true;
             }
+
+            columnModelList = this._extendColumn(numberColumn, columnModelList);
             return columnModelList;
         },
         /**
@@ -65,7 +67,7 @@
                 buttonColumn.isHidden = true;
             }
 
-            columnModelList = this._appendColumn(buttonColumn, columnModelList);
+            columnModelList = this._extendColumn(buttonColumn, columnModelList);
 
             return columnModelList;
         },
@@ -78,7 +80,7 @@
          * @returns {array}
          * @private
          */
-        _appendColumn: function(columnObj, columnModelList) {
+        _extendColumn: function(columnObj, columnModelList) {
             var index;
             if (columnObj && columnObj['columnName']) {
                 index = this._indexOfColumnName(columnObj['columnName'], columnModelList);
@@ -93,7 +95,7 @@
         /**
          * index 에 해당하는 columnModel 을 반환한다.
          * @param {Number} index
-         * @param {Boolean} isVisible
+         * @param {Boolean} isVisible [isVisible=false]
          * @return {*}
          */
         at: function(index, isVisible) {
@@ -103,23 +105,17 @@
         /**
          * columnName 에 해당하는 index를 반환한다.
          * @param {string} columnName
-         * @param {Boolean} isVisible (default:true)
+         * @param {Boolean} isVisible [isVisible=false]
          * @return {number} index
          */
         indexOfColumnName: function(columnName, isVisible) {
-            isVisible = (isVisible === undefined);
-            var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList'),
-                i = 0, len = columnModelList.length;
-            for (; i < len; i++) {
-                if (columnModelList[i]['columnName'] === columnName) {
-                    return i;
-                }
-            }
-            return -1;
+            isVisible = (isVisible === undefined) ? true : isVisible;
+            var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
+            return this._indexOfColumnName(columnName, columnModelList);
         },
         /**
          * columnName 에 해당하는 index를 반환한다.
-         * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때 사용됨.
+         * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
          * @param {string} columnName
          * @param {array} columnModelList
          * @returns {number}
@@ -137,25 +133,34 @@
         /**
          * columnName 이 L Side 에 있는 column 인지 반환한다.
          * @param {String} columnName
+         * @return {Boolean}
          */
         isLside: function(columnName) {
-            return this.get('columnFixIndex') > this.indexOfColumnName(columnName);
+            var index = this.indexOfColumnName(columnName, true);
+            if (index < 0) {
+                return false;
+            } else {
+                return this.get('columnFixIndex') > index;
+            }
         },
+        /**
+         *
+         * @param {String} [whichSide] 왼쪽 영역인지, 오른쪽 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
+         * @returns {Array}
+         */
         getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var columnModelList = [],
                 columnFixIndex = this.get('columnFixIndex');
-            switch (whichSide) {
-                case 'L':
-                    columnModelList = this.get('visibleList').slice(0, columnFixIndex);
-                    break;
-                case 'R':
-                    columnModelList = this.get('visibleList').slice(columnFixIndex);
-                    break;
-                default :
-                    columnModelList = this.get('visibleList');
-                    break;
+
+            if (whichSide === 'L') {
+                columnModelList = this.get('visibleList').slice(0, columnFixIndex);
+            } else if (whichSide === 'R') {
+                columnModelList = this.get('visibleList').slice(columnFixIndex);
+            } else {
+                columnModelList = this.get('visibleList');
             }
+
             return columnModelList;
         },
         getColumnModel: function(columnName) {
@@ -176,15 +181,21 @@
             }
             return editType;
         },
+        /**
+         * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
+         * @param {Array} columnModelList
+         * @return {Array}
+         * @private
+         */
         _getVisibleList: function(columnModelList) {
             return _.filter(columnModelList, function(item) {return !item['isHidden']});
         },
         /**
-         * 각 columnModel 의 relationList 를 모아 relationListMap 를 생성하여 반환한다.
-         * @return {*}
+         * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
+         * @return {{columnName1: [Array], columnName1: [Array]}}
          * @private
          */
-        _getRelationMart: function(columnModelList) {
+        _getRelationListMap: function(columnModelList) {
             var columnName, relationList,
                 relationListMap = {},
                 i, len = columnModelList.length;
@@ -200,31 +211,33 @@
             return relationListMap;
 
         },
-        _onChange: function(model) {
-            var columnModelList = this.get('columnModelList'),
-                visibleList;
-            if (model.changed['columnModelList']) {
-                columnModelList = model.changed['columnModelList'];
-                columnModelList = this._initializeButtonColumn(columnModelList);
-                columnModelList = this._initializeNumberColumn(columnModelList);
-                this.set({
-                    columnModelList: columnModelList
-                },{
-                    silent: true
-                });
-            }
+        /**
+         * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
+         * partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
+         * @param {Array} columnModelList
+         * @param {Number} columnFixIndex
+         * @private
+         */
+        _setColumnModelList: function(columnModelList, columnFixIndex) {
+            columnModelList = $.extend(true, [], columnModelList);
+            columnModelList = this._initializeNumberColumn(this._initializeButtonColumn(columnModelList));
 
-            visibleList = this._getVisibleList(columnModelList);
+            var visibleList = this._getVisibleList(columnModelList);
 
             this.set({
-                visibleList: visibleList,
-                lsideList: visibleList.slice(0, this.get('columnFixIndex')),
-                rsideList: visibleList.slice(this.get('columnFixIndex')),
-                columnModelMap: _.indexBy(this.get('columnModelList'), 'columnName'),
-                relationListMap: this._getRelationMart(columnModelList)
-            }, {
-                silent: true
-            });
+                columnModelList: columnModelList,
+                columnModelMap: _.indexBy(columnModelList, 'columnName'),
+                relationListMap: this._getRelationListMap(columnModelList),
+                columnFixIndex: columnFixIndex,
+                visibleList: visibleList
+            }, {silent: true});
+        },
+        _onChange: function(model) {
+            var changed = model.changed,
+                columnModelList = changed['columnModelList'] || this.get('columnModelList'),
+                columnFixIndex = changed['columnFixIndex'] ? changed['columnFixIndex'] : this.get('columnFixIndex');
+
+            this._setColumnModelList(columnModelList, columnFixIndex);
         }
 
     });
