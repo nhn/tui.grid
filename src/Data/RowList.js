@@ -2,7 +2,6 @@
      * @fileoverview Grid 의 Data Source 에 해당하는 Collection 과 Model 정의
      * @author Soonyoung Park <soonyoung.park@nhnent.com>
      */
-
     /**
      * Data 중 각 행의 데이터 모델 (DataSource)
      * @constructor
@@ -275,7 +274,7 @@
             var rowList = data,
                 keyColumnName = this.grid.columnModel.get('keyColumnName');
 
-            ne.util.forEach(rowList, function(row, i) {
+            _.each(rowList, function(row, i) {
                 rowList[i] = this._baseFormat(rowList[i], i);
                 if (!this.isSortedByField()) {
                     this._setExtraRowSpanData(rowList, i);
@@ -620,7 +619,7 @@
             var obj,
                 filteredRowList = [];
 
-            ne.util.forEach(rowList, function(row) {
+            _.each(rowList, function(row) {
                 obj = {};
                 //_로 시작하는 property 들은 제거한다.
                 _.each(row, function(value, key) {
@@ -655,7 +654,7 @@
         _createDummyRow: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList'),
                 data = {};
-            ne.util.forEach(columnModelList, function(columnModel) {
+            _.each(columnModelList, function(columnModel) {
                 data[columnModel['columnName']] = '';
             }, this);
             return data;
@@ -705,7 +704,7 @@
          *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
          *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
-         *      @param {boolean} [options.filteringColumnList=[]] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
          * @return {{createList: Array, updateList: Array, deleteList: Array}}
          */
         getModifiedRowList: function(options) {
@@ -714,6 +713,7 @@
                 isOnlyChecked = options && options.isOnlyChecked,
                 isOnlyRowKeyList = options && options.isOnlyRowKeyList,
                 filteringColumnList = options && options.filteringColumnList || [],
+                filteringColumnMap = {},
 
                 original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
                 current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
@@ -723,46 +723,42 @@
                     'deleteList' : []
                 }, item;
 
+            _.each(filteringColumnList, function(columnName) {
+                filteringColumnMap[columnName] = true;
+            });
+
             original = _.indexBy(original, 'rowKey');
             current = _.indexBy(current, 'rowKey');
 
-            /**
-             * filteringColumnList 에 해당하는 필드를 null 값으로 할당한다.
-             * @param {Object} row 대상 row 데이터
-             * @param {Array} filteringColumnList row 필터링할 컬럼 이름 배열
-             * @return {Object} row 필터링 된 row
-             */
-            function filterColumnList(row, filteringColumnList) {
-                ne.util.forEach(filteringColumnList, function(columnName) {
-                    row[columnName] = null;
-                }, this);
-                return row;
-            }
-
             // 추가/ 수정된 행 추출
-            _.each(current, function(obj, rowKey) {
-                item = isOnlyRowKeyList ? rowKey : obj;
+            _.each(current, function(row, rowKey) {
+                var isDiff,
+                    originalRow = original[rowKey];
+                item = isOnlyRowKeyList ? row['rowKey'] : row;
                 if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
-                    if (!original[rowKey]) {
+                    if (!originalRow) {
                         result.createList.push(item);
                     } else {
                         //filtering 이 설정되어 있다면 filter 를 한다.
-                        obj = filterColumnList(obj);
-                        original[rowKey] = filterColumnList(original[rowKey]);
-                        if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
-                            result.updateList.push(item);
-                        }
+                        _.each(row, function(value, columnName) {
+                            if (!filteringColumnMap[columnName]) {
+                                if (typeof value === 'object') {
+                                    isDiff = (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
+                                } else {
+                                    isDiff = value !== originalRow[columnName];
+                                }
+                                isDiff && result.updateList.push(item);
+                            }
+                        }, this);
                     }
                 }
             }, this);
 
             //삭제된 행 추출
             _.each(original, function(obj, rowKey) {
-                item = isOnlyRowKeyList ? rowKey : obj;
-                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
-                    if (!current[rowKey]) {
-                        result.deleteList.push(item);
-                    }
+                item = isOnlyRowKeyList ? obj['rowKey'] : obj;
+                if (!current[rowKey]) {
+                    result.deleteList.push(item);
                 }
             }, this);
             return result;

@@ -1301,7 +1301,7 @@ describe('data.rowList', function() {
                         result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
                         expect(result).toBe(false);
                         expect(row.get('changeCallback')).toBe(previous);
-                        expect(callback).toHaveBeenCalledWith({ changed : {changeCallback: true }});
+                        expect(callback).toHaveBeenCalledWith({ changed: {changeCallback: true }});
                     });
                 });
             });
@@ -1640,6 +1640,18 @@ describe('data.rowList', function() {
                 expect(dataModelInstance.at(5).get('text')).toEqual('6');
                 expect(dataModelInstance.at(6).get('text')).toEqual('7');
             });
+            it('append 한 행은 _button 값이 true 이다.', function() {
+                setDefaultRowList();
+                dataModelInstance.append({
+                    text: '6'
+                });
+                dataModelInstance.append({
+                    text: '7'
+                });
+                expect(dataModelInstance.at(4).get('_button')).toEqual(false);
+                expect(dataModelInstance.at(5).get('_button')).toEqual(true);
+                expect(dataModelInstance.at(6).get('_button')).toEqual(true);
+            });
             it('at 옵션이 있을 경우 해당 위치에 추가된다.', function() {
                 setDefaultRowList();
                 dataModelInstance.append({
@@ -1718,6 +1730,325 @@ describe('data.rowList', function() {
                 expect(dataModelInstance.at(2).get('text')).toEqual('1');
             });
         });
-    });
+        describe('getModifiedRowList()', function() {
+            var sampleRowList;
+            function append() {
+                dataModelInstance.append({
+                    'none': 'none_appended',
+                    'text': 'text_appended',
+                    'hidden': 'hidden_appended'
+                });
+            }
+            function prepend() {
+                dataModelInstance.prepend({
+                    'none': 'none_prepended',
+                    'text': 'text_prepended',
+                    'hidden': 'hidden_prepended'
+                });
+            }
+            function remove(rowKey) {
+                dataModelInstance.remove(rowKey);
+            }
 
+            function refreshOriginal() {
+                dataModelInstance.setOriginalRowList();
+            }
+
+            function spoil(rowKey, columnName) {
+                columnName = columnName || 'none';
+                dataModelInstance.get(rowKey).set(columnName, 'dirty');
+            }
+            function check(rowKey) {
+                dataModelInstance.get(rowKey).set('_button', true);
+            }
+            function uncheck(rowKey) {
+                dataModelInstance.get(rowKey).set('_button', false);
+            }
+            function checkAll() {
+                dataModelInstance.forEach(function(row) {
+                    row.set('_button', true);
+                });
+            }
+            function uncheckAll() {
+                dataModelInstance.forEach(function(row) {
+                    row.set('_button', false);
+                });
+            }
+            function getModified() {
+                return dataModelInstance.getModifiedRowList({
+                    isOnlyChecked: true
+                });
+            }
+            function messUp() {
+                append();
+                prepend();
+                spoil(0);
+                spoil(1);
+                remove(2);
+                remove(3);
+            }
+            beforeEach(function() {
+                sampleRowList = [
+                    {
+                        'none': 'none1',
+                        'text': 'text1',
+                        'hidden': 'hidden1'
+                    },{
+                        'none': 'none2',
+                        'text': 'text2',
+                        'hidden': 'hidden2'
+                    },{
+                        'none': 'none3',
+                        'text': 'text3',
+                        'hidden': 'hidden3'
+                    },{
+                        'none': 'none4',
+                        'text': 'text4',
+                        'hidden': 'hidden4'
+                    },{
+                        'none': 'none5',
+                        'text': 'text5',
+                        'hidden': 'hidden5'
+                    },{
+                        'none': 'none6',
+                        'text': 'text6',
+                        'hidden': 'hidden6'
+                    }
+                ];
+                dataModelInstance.set(sampleRowList, {parse: true});
+            });
+
+
+
+
+            describe('isOnlyChecked 옵션 true 일 때.', function() {
+
+                it('check 된 리스트가 존재하지 않을 경우 removeList 를 제외하고 createList, updateList는 빈 배열을 반환한다.', function() {
+                    var modifiedList;
+                    messUp();
+                    uncheckAll();
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [],
+                        updateList: [],
+                        deleteList: [
+                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+                        ]
+                    });
+                });
+                it('변경 사항이 없는 행에만 check 가 되었을 경우 removeList 를 제외하고 createList, updateList 는 빈 배열을 반환한다.', function() {
+                    var modifiedList;
+                    messUp();
+                    uncheckAll();
+                    check(5);
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [],
+                        updateList: [],
+                        deleteList: [
+                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+                        ]
+                    });
+                });
+                it('모두 check 되었다면 isOnlyChecked === false 와 동일한 결과를 반환한다.', function() {
+                    var modifiedList;
+                    messUp();
+                    checkAll();
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [
+                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+                        ],
+                        updateList: [
+                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
+                        ],
+                        deleteList: [
+                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+                        ]
+                    });
+                });
+            });
+            describe('isOnlyChecked 옵션 false 일 때.', function() {
+                function getModified() {
+                    return dataModelInstance.getModifiedRowList({
+                        isOnlyChecked: false
+                    });
+                }
+                it('변경 사항이 없을 경우 아무 리스트도 반환하지 않는다.', function() {
+                    var modifiedList;
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [],
+                        updateList: [],
+                        deleteList: []
+                    });
+                });
+                it('추가 사항이 있을 경우 createList 에 추가하여 반환한다.', function() {
+                    var modifiedList;
+                    append();
+                    prepend();
+
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [
+                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+                        ],
+                        updateList: [],
+                        deleteList: []
+                    });
+                });
+                it('변경 사항이 있을 경우 updateList 에 추가하여 반환한다.', function() {
+                    var modifiedList;
+                    spoil(0);
+                    spoil(1);
+
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [],
+                        updateList: [
+                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
+                        ],
+                        deleteList: []
+                    });
+                });
+                it('삭제 사항이 있을 경우 deleteList 에 추가하여 반환한다.', function() {
+                    var modifiedList;
+                    remove(0);
+                    remove(1);
+
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [],
+                        updateList: [],
+                        deleteList: [
+                            { none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+                            { none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 }
+                        ]
+                    });
+                });
+
+                it('추가/변경/삭제 종합 테스트. 변경한 행을 삭제한 경우', function() {
+                    var modifiedList;
+                    messUp();
+                    remove(0);
+                    remove(1);
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [
+                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+                        ],
+                        updateList: [],
+                        deleteList: [
+                            { none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+                            { none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 },
+                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+                        ]
+                    });
+                });
+                it('추가/변경/삭제 종합 테스트', function() {
+                    var modifiedList;
+                    messUp();
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [
+                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+                        ],
+                        updateList: [
+                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
+                        ],
+                        deleteList: [
+                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+                        ]
+                    });
+                });
+            });
+            describe('filteringColumnList 옵션이 있을 때', function() {
+                function getModified() {
+                    return dataModelInstance.getModifiedRowList({
+                        filteringColumnList: ['none']
+                    });
+                }
+                it('none', function() {
+                    var modifiedList;
+                    messUp();
+                    spoil(4, 'text');
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [
+                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+                        ],
+                        updateList: [
+                            { none: 'none5', text: 'dirty', hidden: 'hidden5', rowKey: 4 }
+                        ],
+                        deleteList: [
+                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+                        ]
+                    });
+                });
+            });
+            describe('isOnlyRowKeyList 옵션 true 일 때.', function() {
+                function getModified() {
+                    return dataModelInstance.getModifiedRowList({
+                        isOnlyRowKeyList: true
+                    });
+                }
+                it('변경한 행의 rowKey 만 추려서 반환한다.', function() {
+                    var modifiedList;
+                    messUp();
+                    modifiedList = getModified();
+                    expect(modifiedList).toEqual({
+                        createList: [
+                            6,
+                            7
+                        ],
+                        updateList: [
+                            0,
+                            1
+                        ],
+                        deleteList: [
+                            2,
+                            3
+                        ]
+                    });
+                });
+            });
+            describe('isRaw 옵션 true 일 때.', function() {
+                function getModified() {
+                    return dataModelInstance.getModifiedRowList({
+                        isRaw: true
+                    });
+                }
+                it('row 의 private property 를 제거하지 않고 반환한다.', function() {
+                    var modifiedList;
+                    messUp();
+                    modifiedList = getModified();
+                    expect(modifiedList.createList[0]['_button']).toBeDefined();
+                    expect(modifiedList.createList[0]['_extraData']).toBeDefined();
+                    expect(modifiedList.createList[0]['rowKey']).toBeDefined();
+
+                    expect(modifiedList.updateList[0]['_button']).toBeDefined();
+                    expect(modifiedList.updateList[0]['_extraData']).toBeDefined();
+                    expect(modifiedList.updateList[0]['rowKey']).toBeDefined();
+
+                    expect(modifiedList.deleteList[0]['_button']).toBeDefined();
+                    expect(modifiedList.deleteList[0]['_extraData']).toBeDefined();
+                    expect(modifiedList.deleteList[0]['rowKey']).toBeDefined();
+                });
+            });
+        });
+    });
 });
