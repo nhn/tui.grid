@@ -39,20 +39,20 @@
         isEqual: function(target, dist) {
             var isDiff,
                 compareObject = function(target, dist) {
-                var name,
-                    result = true;
-                /*
-                    빠른 loop 탈출을 위해 ne.forEach 대신 for in 구문을 사용한다.
-                    (추후 forEach 에 loop 탈출 기능이 추가되면 forEach 로 적용함.
-                */
-                for (name in target) {
-                    if (target[name] !== dist[name]) {
-                        result = false;
-                        break;
+                    var name,
+                        result = true;
+                    /*
+                        빠른 loop 탈출을 위해 ne.forEach 대신 for in 구문을 사용한다.
+                        (추후 forEach 에 loop 탈출 기능이 추가되면 forEach 로 적용함.
+                    */
+                    for (name in target) {
+                        if (target[name] !== dist[name]) {
+                            result = false;
+                            break;
+                        }
                     }
-                }
-                return result;
-            };
+                    return result;
+                };
             if (typeof target !== typeof dist) {
                 return false;
             } else if (ne.util.isArray(target) && target.length !== dist.length) {

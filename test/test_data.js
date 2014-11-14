@@ -5,7 +5,7 @@
     var grid = new ne.Grid({
         el: $('#wrapper1'),
         columnModelList: dummy_data.columnModel_1,
-        selectType: 'checkbox',
+        selectType: 'radio',
         columnFixIndex: 5,
         rowHeight: 30,
         displayRowCount: 10,

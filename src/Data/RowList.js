@@ -253,8 +253,7 @@
                     '_extraData'
                 ]
             });
-            this.on('change', this._onChange, this)
-                .on('change:_button', this._onButtonStatusChange, this);
+            this.on('change', this._onChange, this);
         },
         /**
          * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
@@ -274,17 +273,15 @@
          */
         _formatData: function(data) {
             var rowList = data,
-                keyColumnName = this.grid.columnModel.get('keyColumnName'),
-                len = rowList.length,
-                row,
-                i;
+                keyColumnName = this.grid.columnModel.get('keyColumnName');
 
-            for (i = 0; i < len; i++) {
-                row = rowList[i] = this._baseFormat(rowList[i], i);
+            ne.util.forEach(rowList, function(row, i) {
+                rowList[i] = this._baseFormat(rowList[i], i);
                 if (!this.isSortedByField()) {
                     this._setExtraRowSpanData(rowList, i);
                 }
-            }
+            }, this);
+
             return rowList;
         },
         /**
@@ -299,6 +296,7 @@
         _baseFormat: function(row, index) {
             var defaultExtraData = {
                     rowSpan: null,
+                    rowSpanData: null,
                     rowState: null
                 },
                 keyColumnName = this.grid.columnModel.get('keyColumnName'),
@@ -329,8 +327,8 @@
             }
 
             var row = rowList[index],
-                rowSpan = row['_extraData']['rowSpan'],
-                rowKey = row['rowKey'],
+                rowSpan = row && row['_extraData'] && row['_extraData']['rowSpan'],
+                rowKey = row && row['rowKey'],
                 subCount,
                 childRow,
                 i;
@@ -448,7 +446,7 @@
             } else {
                 rowList = this.toJSON();
             }
-            return isRaw ? rowList : this._filter(rowList);
+            return isRaw ? rowList : this._removePrivateProp(rowList);
         },
         /**
          * rowData 변경 이벤트 핸들러.
@@ -457,21 +455,21 @@
          * @private
          */
         _onChange: function(row) {
-            var rowSpanData, changeEvent, columnModel,
-                obj, i, index;
+            var columnModel;
 
             _.each(row.changed, function(value, columnName) {
                 if (!this._isPrivateProperty(columnName)) {
                     columnModel = this.grid.columnModel.getColumnModel(columnName);
                     if (!columnModel) return;
                     //beforeCallback 의 결과가 false 이면 모든 수행을 중지한다.
-                    if (!this._executeChangeBeforeCallback(row, columnName, columnModel)) {
+                    if (!this._executeChangeBeforeCallback(row, columnName)) {
                         return;
                     }
                     this._syncRowSpannedData(row, columnName, value);
 
                     //afterChangeCallback 수행
-                    this._executeChangeAfterCallback(row, columnName, columnModel);
+                    this._executeChangeAfterCallback(row, columnName);
+
                     //check가 disable 이 아닐 경우에만 _button 필드 변경에 따라 check
                     if (!row.getRowState().isDisabledCheck) {
                         row.set('_button', true);
@@ -489,7 +487,9 @@
          * @private
          */
         _syncRowSpannedData: function(row, columnName, value) {
-            var index, rowSpanData, i;
+            var index,
+                rowSpanData,
+                i;
 
             //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
             if (!this.isSortedByField()) {
@@ -515,7 +515,7 @@
             return {
                 'rowKey' : row.get('rowKey'),
                 'columnName' : columnName,
-                'columnData' : row.get(columnName)
+                'value' : row.get(columnName)
             };
         },
         /**
@@ -524,12 +524,12 @@
          *
          * @param {object} row row 모델
          * @param {String} columnName
-         * @param {object} columnModel
          * @return {boolean} false 를 리턴하면 이후 로직을 수행하지 않는다.
          * @private
          */
-        _executeChangeBeforeCallback: function(row, columnName, columnModel) {
-            var changeEvent,
+        _executeChangeBeforeCallback: function(row, columnName) {
+            var columnModel = this.grid.columnModel.getColumnModel(columnName),
+                changeEvent,
                 obj;
             if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
                 changeEvent = this._createChangeCallbackEvent(row, columnName);
@@ -551,42 +551,18 @@
          *
          * @param {object} row row 모델
          * @param {String} columnName
-         * @param {object} columnModel
          * @return {boolean} false 를 리턴하면 이후 로직을 수행하지 않는다.
          * @private
          */
-        _executeChangeAfterCallback: function(row, columnName, columnModel) {
-            var changeEvent;
+        _executeChangeAfterCallback: function(row, columnName) {
+            var columnModel = this.grid.columnModel.getColumnModel(columnName),
+                changeEvent;
             //afterChangeCallback 수행
             if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
                 changeEvent = this._createChangeCallbackEvent(row, columnName);
                 return !!(columnModel.editOption.changeAfterCallback(changeEvent));
             }
             return true;
-        },
-        /**
-         * _button 컬럼이 변경되었을때 radio button 에 대한 처리를 위한 이벤트 핸들러
-         * @param {Object} row
-         * @private
-         */
-        _onButtonStatusChange: function(row) {
-            var selectType = this.grid.columnModel.get('selectType'),
-                rowKey = row.get('rowKey'),
-                checkedList;
-            if (selectType === 'radio') {
-                checkedList = this.where({
-                    '_button' : true
-                });
-                _.each(checkedList, function(checked, key) {
-                    if (rowKey != checked.get('rowKey')) {
-                        checked.set({
-                            '_button' : false
-                        }, {
-                            silent: true
-                        });
-                    }
-                });
-            }
         },
 
         /**
@@ -600,21 +576,12 @@
             }
         },
         /**
-         * rowState 를 설정한다.
-         * @param {(Number|String)} rowKey
-         * @param {string} rowState DISABLED|DISABLED_CHECK|CHECKED
-         * @param {boolean} silent
-         */
-        setRowState: function(rowKey, rowState, silent) {
-            this.setExtraData(rowKey, {rowState: rowState}, silent);
-        },
-        /**
          * row 의 extraData 를 변경한다.
          * -Backbone 내부적으로 참조형 데이터의 프로퍼티 변경시 변화를 감지하지 못하므로, 데이터를 복제하여 변경 후 set 한다.
          *
          * @param {(Number|String)} rowKey
-         * @param {(Number|String)} value
-         * @param {Boolean} silent
+         * @param {Object} value
+         * @param {Boolean} [silent=false] Backbone 의 'change' 이벤트 발생 여부
          * @return {boolean}
          */
         setExtraData: function(rowKey, value, silent) {
@@ -623,8 +590,8 @@
 
             if (row) {
                 //적용
-                extraData = _.clone(row.get('_extraData'));
-                extraData = $.extend(extraData, value);
+                extraData = $.extend(true, {}, row.get('_extraData'));
+                extraData = $.extend(true, extraData, value);
                 obj['_extraData'] = extraData;
                 row.set(obj, {
                     silent: silent
@@ -634,113 +601,37 @@
                 return false;
             }
         },
-
-
-
+        /**
+         * rowState 를 설정한다.
+         * @param {(Number|String)} rowKey
+         * @param {string} rowState DISABLED|DISABLED_CHECK|CHECKED
+         * @param {boolean} silent
+         */
+        setRowState: function(rowKey, rowState, silent) {
+            this.setExtraData(rowKey, {rowState: rowState}, silent);
+        },
         /**
          * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
          * @param {Array} rowList
          * @return {Array}
          * @private
          */
-        _filter: function(rowList) {
-            var obj, filteredRowList = [];
+        _removePrivateProp: function(rowList) {
+            var obj,
+                filteredRowList = [];
 
-            for (var i = 0, len = rowList.length; i < len; i++) {
+            ne.util.forEach(rowList, function(row) {
                 obj = {};
                 //_로 시작하는 property 들은 제거한다.
-                _.each(rowList[i], function(value, key) {
+                _.each(row, function(value, key) {
                     if (!this._isPrivateProperty(key)) {
                         obj[key] = value;
                     }
                 }, this);
                 filteredRowList.push(obj);
-            }
+            }, this);
+
             return filteredRowList;
-        },
-        /**
-         * 수정된 rowList 를 반환한다.
-         * @param {Object} options
-         *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
-         *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
-         *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
-         *      @param {boolean} [options.filteringColumnList=[]] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
-         * @return {{createList: Array, updateList: Array, deleteList: Array}}
-         */
-        getModifiedRowList: function(options) {
-
-            var isRaw = options && options.isRaw,
-                isOnlyChecked = options && options.isOnlyChecked,
-                isOnlyRowKeyList = options && options.isOnlyRowKeyList,
-                filteringColumnList = options && options.filteringColumnList || [],
-
-                original = isRaw ? this.originalRowList : this._filter(this.originalRowList),
-                current = isRaw ? this.toJSON() : this._filter(this.toJSON()),
-                result = {
-                    'createList' : [],
-                    'updateList' : [],
-                    'deleteList' : []
-                }, item;
-
-            original = _.indexBy(original, 'rowKey');
-            current = _.indexBy(current, 'rowKey');
-
-            /**
-             * filteringColumnList 에 해당하는 필드를 null 값으로 할당한다.
-             * @param {Object} row 대상 row 데이터
-             * @param {Array} filteringColumnList row 필터링할 컬럼 이름 배열
-             * @return {row}
-             */
-            function filterColumnList(row, filteringColumnList) {
-                var i = 0, len = filteringColumnList.length;
-                for (; i < len; i++) {
-                    row[filteringColumnList[i]] = null;
-                }
-                return row;
-            }
-
-            // 추가/ 수정된 행 추출
-            _.each(current, function(obj, rowKey) {
-                item = isOnlyRowKeyList ? rowKey : obj;
-                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
-                    if (!original[rowKey]) {
-                        result.createList.push(item);
-                    } else {
-                        //filtering 이 설정되어 있다면 filter 를 한다.
-                        obj = filterColumnList(obj);
-                        original[rowKey] = filterColumnList(original[rowKey]);
-                        if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
-                            result.updateList.push(item);
-                        }
-                    }
-                }
-            }, this);
-
-            //삭제된 행 추출
-            _.each(original, function(obj, rowKey) {
-                item = isOnlyRowKeyList ? rowKey : obj;
-                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
-                    if (!current[rowKey]) {
-                        result.deleteList.push(item);
-                    }
-                }
-            }, this);
-            return result;
-        },
-
-
-        /**
-         * append, prepend 시 사용할 dummy row를 생성한다.
-         * @return {Object}
-         * @private
-         */
-        _createDummyRow: function() {
-            var columnModelList = this.grid.columnModel.get('columnModelList');
-            var data = {};
-            for (var i = 0; i < columnModelList.length; i++) {
-                data[columnModelList[i]['columnName']] = '';
-            }
-            return data;
         },
         /**
          * rowKey에 해당하는 그리드 데이터를 삭제한다.
@@ -755,6 +646,19 @@
                     this.setOriginalRowList();
                 }
             }
+        },
+        /**
+         * append, prepend 시 사용할 dummy row를 생성한다.
+         * @return {Object}
+         * @private
+         */
+        _createDummyRow: function() {
+            var columnModelList = this.grid.columnModel.get('columnModelList'),
+                data = {};
+            ne.util.forEach(columnModelList, function(columnModel) {
+                data[columnModel['columnName']] = '';
+            }, this);
+            return data;
         },
         /**
          * 현재 rowList 중 at 에 해당하는 인덱스에 데이터를 append 한다.
@@ -794,5 +698,73 @@
          */
         prepend: function(rowData) {
             this.append(rowData, 0);
+        },
+        /**
+         * 수정된 rowList 를 반환한다.
+         * @param {Object} options
+         *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
+         *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
+         *      @param {boolean} [options.filteringColumnList=[]] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+         * @return {{createList: Array, updateList: Array, deleteList: Array}}
+         */
+        getModifiedRowList: function(options) {
+
+            var isRaw = options && options.isRaw,
+                isOnlyChecked = options && options.isOnlyChecked,
+                isOnlyRowKeyList = options && options.isOnlyRowKeyList,
+                filteringColumnList = options && options.filteringColumnList || [],
+
+                original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
+                current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
+                result = {
+                    'createList' : [],
+                    'updateList' : [],
+                    'deleteList' : []
+                }, item;
+
+            original = _.indexBy(original, 'rowKey');
+            current = _.indexBy(current, 'rowKey');
+
+            /**
+             * filteringColumnList 에 해당하는 필드를 null 값으로 할당한다.
+             * @param {Object} row 대상 row 데이터
+             * @param {Array} filteringColumnList row 필터링할 컬럼 이름 배열
+             * @return {Object} row 필터링 된 row
+             */
+            function filterColumnList(row, filteringColumnList) {
+                ne.util.forEach(filteringColumnList, function(columnName) {
+                    row[columnName] = null;
+                }, this);
+                return row;
+            }
+
+            // 추가/ 수정된 행 추출
+            _.each(current, function(obj, rowKey) {
+                item = isOnlyRowKeyList ? rowKey : obj;
+                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+                    if (!original[rowKey]) {
+                        result.createList.push(item);
+                    } else {
+                        //filtering 이 설정되어 있다면 filter 를 한다.
+                        obj = filterColumnList(obj);
+                        original[rowKey] = filterColumnList(original[rowKey]);
+                        if (JSON.stringify(obj) !== JSON.stringify(original[rowKey])) {
+                            result.updateList.push(item);
+                        }
+                    }
+                }
+            }, this);
+
+            //삭제된 행 추출
+            _.each(original, function(obj, rowKey) {
+                item = isOnlyRowKeyList ? rowKey : obj;
+                if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
+                    if (!current[rowKey]) {
+                        result.deleteList.push(item);
+                    }
+                }
+            }, this);
+            return result;
         }
     });

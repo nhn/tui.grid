@@ -72,6 +72,10 @@
                 //todo scrolltop 및 left 값 조정하는 로직 필요.
                 this._adjustScroll();
             }
+            if (this.grid.columnModel.get('selectType') === 'radio') {
+                this.grid.uncheckAll();
+                this.grid.check(rowKey);
+            }
             return this;
         },
         _adjustScroll: function() {

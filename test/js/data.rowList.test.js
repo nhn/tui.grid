@@ -2,6 +2,18 @@
 describe('data.rowList', function() {
     var columnModelList = [
         {
+            title: 'changeCallback',
+            columnName: 'changeCallback',
+            editOption: {
+                changeBeforeCallback: function(changeEvent) {
+                    return !!changeEvent.value;
+                },
+                changeAfterCallback: function(changeEvent) {
+                    return !!changeEvent.value;
+                }
+            }
+        },
+        {
             title: 'keyColumn',
             columnName: 'keyColumn'
         },
@@ -280,313 +292,8 @@ describe('data.rowList', function() {
             grid: grid
         });
     });
-    describe('RowList Collection 테스트', function() {
-        describe('rowList set 시 parse 관련 로직을 테스트한다.', function() {
-            describe('_baseFormat()', function() {
-                describe('keyColumnName 이 존재하지 않을 때', function() {
-                    it('extraData 가 없을때', function() {
-                        var baseRow = dataModelInstance._baseFormat({
-                                'none': 4,
-                                'text': 4,
-                                'text-convertible': 4,
-                                'select': 1,
-                                'checkbox': 1,
-                                'radio': 1,
-                                'hidden': 1
-                            }, 0),
-                            expectResult = {
-                                'rowKey': 0,
-                                '_button': false,
-                                '_extraData': {
-                                    rowSpan: null,
-                                    rowState: null
-                                },
 
-                                'none': 4,
-                                'text': 4,
-                                'text-convertible': 4,
-                                'select': 1,
-                                'checkbox': 1,
-                                'radio': 1,
-                                'hidden': 1
-                            };
-
-
-                        expect(baseRow).toEqual(expectResult);
-                    });
-                    it('rowState가 CHECKED 일 때', function() {
-                        var baseRow = dataModelInstance._baseFormat({
-                                '_extraData': {
-                                    rowState: 'CHECKED'
-                                },
-                                'none': 0,
-                                'text': 0,
-                                'text-convertible': 0,
-                                'select': 1,
-                                'checkbox': 1,
-                                'radio': 1,
-                                'hidden': 1
-                            }, 0),
-                            expectResult = {
-                                'rowKey': 0,
-                                '_button': true,
-                                '_extraData': {
-                                    rowSpan: null,
-                                    rowState: 'CHECKED'
-                                },
-                                'none': 0,
-                                'text': 0,
-                                'text-convertible': 0,
-                                'select': 1,
-                                'checkbox': 1,
-                                'radio': 1,
-                                'hidden': 1
-                            };
-
-
-                        expect(baseRow).toEqual(expectResult);
-                    });
-                    it('rowSpan 이 존재할 때', function() {
-                        var baseRow = dataModelInstance._baseFormat({
-                                '_extraData': {
-                                    rowSpan: {
-                                        'none': 2,
-                                        'text': 3,
-                                        'text-convertible': 4,
-                                        'select': 5,
-                                        'checkbox': 6,
-                                        'radio': 7
-                                    }
-                                },
-                                'none': 1,
-                                'text': 1,
-                                'text-convertible': 1,
-                                'select': 1,
-                                'checkbox': 1,
-                                'radio': 1,
-                                'hidden': 1
-                            }, 0),
-                            expectResult = {
-                                'rowKey': 0,
-                                '_button': false,
-                                '_extraData': {
-                                    rowSpan: {
-                                        'none': 2,
-                                        'text': 3,
-                                        'text-convertible': 4,
-                                        'select': 5,
-                                        'checkbox': 6,
-                                        'radio': 7
-                                    },
-                                    rowState: null
-                                },
-                                'none': 1,
-                                'text': 1,
-                                'text-convertible': 1,
-                                'select': 1,
-                                'checkbox': 1,
-                                'radio': 1,
-                                'hidden': 1
-                            };
-                        expect(baseRow).toEqual(expectResult);
-                    });
-
-
-                });
-                describe('keyColumnName 이 설정되어 있다면', function() {
-                    it('keyColumnName 이 설정되어 있다면 rowKey 는 keyColumn 에 해당하는 값으로 설정된다.', function() {
-                        columnModelInstance.set('keyColumnName', 'none');
-                        var baseRow = dataModelInstance._baseFormat({
-                            'none': 4,
-                            'text': 4,
-                            'text-convertible': 4,
-                            'select': 1,
-                            'checkbox': 1,
-                            'radio': 1,
-                            'hidden': 1
-                        }, 0);
-                        expect(baseRow.rowKey).toEqual(4);
-                    });
-                });
-
-            });
-            describe('_setExtraRowSpanData()', function() {
-                it('자신과 자식 row 까지 rowSpanData를 잘 설정하는지 확인한다.', function() {
-                    var testList = [
-                        {
-                            '_extraData': {
-                                'rowSpan': {
-                                    'none': 2,
-                                    'text': 3
-                                }
-                            },
-                            rowKey: 0
-                        },
-                        {
-                            rowKey: 1
-                        },
-                        {
-                            rowKey: 2
-                        }
-                    ];
-                    var formattedList = dataModelInstance._setExtraRowSpanData(testList, 0);
-                    expect(formattedList[0]['_extraData']['rowSpanData']).toEqual({
-                        'none': {
-                            count: 2,
-                            isMainRow: true,
-                            mainRowKey: 0
-                        },
-                        'text': {
-                            count: 3,
-                            isMainRow: true,
-                            mainRowKey: 0
-                        }
-                    });
-                    expect(formattedList[1]['_extraData']['rowSpanData']).toEqual({
-                        'none': {
-                            count: -1,
-                            isMainRow: false,
-                            mainRowKey: 0
-                        },
-                        'text': {
-                            count: -1,
-                            isMainRow: false,
-                            mainRowKey: 0
-                        }
-                    });
-                    expect(formattedList[2]['_extraData']['rowSpanData']).toEqual({
-                        'text': {
-                            count: -2,
-                            isMainRow: false,
-                            mainRowKey: 0
-                        }
-                    });
-                });
-            });
-
-        });
-        describe('original Data 시리즈', function() {
-            beforeEach(function() {
-                dataModelInstance.set(rowList, {
-                    parse: true
-                });
-            });
-            describe('getOriginalRowList()', function() {
-                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
-                    var expectResult = dataModelInstance._formatData(originalData);
-                    expect(dataModelInstance.toJSON()).toEqual(expectResult);
-                    //데이터 변경
-                    dataModelInstance.get(0).set('none', '2222');
-                    expect(dataModelInstance.toJSON()).not.toEqual(expectResult);
-                    expect(dataModelInstance.getOriginalRowList()).toEqual(expectResult);
-                });
-            });
-            describe('getOriginalRow()', function() {
-                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
-                    var expectResultList = dataModelInstance._formatData(originalData);
-                    expect(dataModelInstance.get(0).toJSON()).toEqual(expectResultList[0]);
-                    dataModelInstance.at(0).set('none', '2222');
-                    expect(dataModelInstance.get(0).toJSON()).not.toEqual(expectResultList[0]);
-                    expect(dataModelInstance.getOriginalRow(0)).toEqual(expectResultList[0]);
-                });
-            });
-            describe('getOriginal()', function() {
-                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
-                    var expectResultList = dataModelInstance._formatData(originalData);
-
-                    expect(dataModelInstance.get(0).get('none')).toBe(expectResultList[0]['none']);
-                    //데이터 변경
-                    dataModelInstance.at(0).set('none', '2222');
-                    expect(dataModelInstance.get(0).get('none')).not.toBe(expectResultList[0]['none']);
-                    expect(dataModelInstance.getOriginal(0, 'none')).toBe(expectResultList[0]['none']);
-                });
-            });
-        });
-        describe('indexOfRowKey()', function() {
-            it('rowKey 를 인자로 index 를 알 수 있다.', function() {
-                columnModelInstance.set('keyColumnName', 'keyColumn');
-                dataModelInstance.set(rowList, {
-                    parse: true
-                });
-                expect(dataModelInstance.indexOfRowKey(10)).toBe(0);
-                expect(dataModelInstance.indexOfRowKey(11)).toBe(1);
-                expect(dataModelInstance.indexOfRowKey(12)).toBe(2);
-                expect(dataModelInstance.indexOfRowKey(1)).toBe(-1);
-            });
-        });
-        describe('_isPrivateProperty()', function() {
-            it('rowData 에서 내부용으로만 사용되는 데이터인지 확인한다.', function() {
-                expect(dataModelInstance._isPrivateProperty('_button')).toBe(true);
-                expect(dataModelInstance._isPrivateProperty('_number')).toBe(true);
-                expect(dataModelInstance._isPrivateProperty('_extraData')).toBe(true);
-                expect(dataModelInstance._isPrivateProperty('none')).toBe(false);
-            });
-        });
-        describe('getRowList', function() {
-            it('isRaw 옵션값이 설정되어 있으면 내부용 데이터를 제거하지 않고 반환한다.', function() {
-                var myRowList;
-                columnModelInstance.set({
-                    hasNumberColumn: true,
-                    selectType: 'checkbox'
-                });
-                dataModelInstance.set(rowList, {
-                    parse: true
-                });
-                myRowList = dataModelInstance.getRowList();
-                //            console.log(myRowList);
-                expect(myRowList[0]['_button']).not.toBeDefined();
-                expect(myRowList[0]['_extraData']).not.toBeDefined();
-                expect(myRowList[0]['_number']).not.toBeDefined();
-
-                myRowList = dataModelInstance.getRowList(false, true);
-                //            console.log(myRowList);
-                expect(myRowList[0]['_button']).toBeDefined();
-                expect(myRowList[0]['_extraData']).toBeDefined();
-                expect(myRowList[0]['_number']).toBeDefined();
-            });
-
-            it('isChecked 옵션값이 설정되어 있으면 checked 된 리스트만 반환한다.', function() {
-                var myRowList;
-                columnModelInstance.set({
-                    hasNumberColumn: true,
-                    selectType: 'checkbox'
-                });
-                dataModelInstance.set(rowList, {
-                    parse: true
-                });
-
-                dataModelInstance.at(0).set('_button', true);
-                dataModelInstance.at(2).set('_button', true);
-                dataModelInstance.at(3).set('_button', true);
-
-                myRowList = dataModelInstance.getRowList(true);
-                expect(myRowList.length).toBe(3);
-                expect(myRowList[1]['keyColumn']).toBe(12);
-                expect(myRowList[1]['_extraData']).not.toBeDefined();
-
-
-                myRowList = dataModelInstance.getRowList(true, true);
-                expect(myRowList[1]['_extraData']).toBeDefined();
-            });
-        });
-        describe('isSortedByField()', function() {
-            it('현재 sorting 상태인지 확인할 수 있다.', function() {
-                dataModelInstance.set(rowList, {
-                    parse: true
-                });
-                expect(dataModelInstance.isSortedByField()).toBe(false);
-                dataModelInstance.sortByField('none');
-                expect(dataModelInstance.isSortedByField()).toBe(true);
-                dataModelInstance.sortByField('rowKey');
-                expect(dataModelInstance.isSortedByField()).toBe(false);
-            });
-        });
-
-    });
-
-
-
-    describe('RowList Model 테스트', function() {
+    describe('Model 테스트', function() {
 
         describe('getRowState()', function() {
             var testList, rowState;
@@ -1026,14 +733,991 @@ describe('data.rowList', function() {
                 });
             });
         });
-        describe('_syncRowSpannedData()', function() {
+    });
+
+
+    describe('Collection 테스트', function() {
+        describe('rowList set 시 parse 관련 로직을 테스트한다.', function() {
+            describe('_baseFormat()', function() {
+                describe('keyColumnName 이 존재하지 않을 때', function() {
+                    it('extraData 가 없을때', function() {
+                        var baseRow = dataModelInstance._baseFormat({
+                                'none': 4,
+                                'text': 4,
+                                'text-convertible': 4,
+                                'select': 1,
+                                'checkbox': 1,
+                                'radio': 1,
+                                'hidden': 1
+                            }, 0),
+                            expectResult = {
+                                'rowKey': 0,
+                                '_button': false,
+                                '_extraData': {
+                                    rowSpan: null,
+                                    rowState: null,
+                                    rowSpanData: null
+                                },
+
+                                'none': 4,
+                                'text': 4,
+                                'text-convertible': 4,
+                                'select': 1,
+                                'checkbox': 1,
+                                'radio': 1,
+                                'hidden': 1
+                            };
+
+
+                        expect(baseRow).toEqual(expectResult);
+                    });
+                    it('rowState가 CHECKED 일 때', function() {
+                        var baseRow = dataModelInstance._baseFormat({
+                                '_extraData': {
+                                    rowState: 'CHECKED'
+                                },
+                                'none': 0,
+                                'text': 0,
+                                'text-convertible': 0,
+                                'select': 1,
+                                'checkbox': 1,
+                                'radio': 1,
+                                'hidden': 1
+                            }, 0),
+                            expectResult = {
+                                'rowKey': 0,
+                                '_button': true,
+                                '_extraData': {
+                                    rowSpan: null,
+                                    rowSpanData: null,
+                                    rowState: 'CHECKED'
+                                },
+                                'none': 0,
+                                'text': 0,
+                                'text-convertible': 0,
+                                'select': 1,
+                                'checkbox': 1,
+                                'radio': 1,
+                                'hidden': 1
+                            };
+
+
+                        expect(baseRow).toEqual(expectResult);
+                    });
+                    it('rowSpan 이 존재할 때', function() {
+                        var baseRow = dataModelInstance._baseFormat({
+                                '_extraData': {
+                                    rowSpan: {
+                                        'none': 2,
+                                        'text': 3,
+                                        'text-convertible': 4,
+                                        'select': 5,
+                                        'checkbox': 6,
+                                        'radio': 7
+                                    }
+                                },
+                                'none': 1,
+                                'text': 1,
+                                'text-convertible': 1,
+                                'select': 1,
+                                'checkbox': 1,
+                                'radio': 1,
+                                'hidden': 1
+                            }, 0),
+                            expectResult = {
+                                'rowKey': 0,
+                                '_button': false,
+                                '_extraData': {
+                                    rowSpan: {
+                                        'none': 2,
+                                        'text': 3,
+                                        'text-convertible': 4,
+                                        'select': 5,
+                                        'checkbox': 6,
+                                        'radio': 7
+                                    },
+                                    rowState: null,
+                                    rowSpanData: null
+                                },
+                                'none': 1,
+                                'text': 1,
+                                'text-convertible': 1,
+                                'select': 1,
+                                'checkbox': 1,
+                                'radio': 1,
+                                'hidden': 1
+                            };
+                        expect(baseRow).toEqual(expectResult);
+                    });
+
+
+                });
+                describe('keyColumnName 이 설정되어 있다면', function() {
+                    it('keyColumnName 이 설정되어 있다면 rowKey 는 keyColumn 에 해당하는 값으로 설정된다.', function() {
+                        columnModelInstance.set('keyColumnName', 'none');
+                        var baseRow = dataModelInstance._baseFormat({
+                            'none': 4,
+                            'text': 4,
+                            'text-convertible': 4,
+                            'select': 1,
+                            'checkbox': 1,
+                            'radio': 1,
+                            'hidden': 1
+                        }, 0);
+                        expect(baseRow.rowKey).toEqual(4);
+                    });
+                });
+
+            });
+            describe('_setExtraRowSpanData()', function() {
+                it('자신과 자식 row 까지 rowSpanData를 잘 설정하는지 확인한다.', function() {
+                    //_baseFormat 을 타고 온다고 가정하기 때문에 셈플 데이터에 rowKey 를 할당한다
+                    var testList = [
+                        {
+                            '_extraData': {
+                                'rowSpan': {
+                                    'none': 2,
+                                    'text': 3
+                                }
+                            },
+                            rowKey: 0
+                        },{
+                            rowKey: 1
+                        },{
+                            rowKey: 2
+                        },{
+                            rowKey: 3
+                        }
+                    ];
+                    var formattedList = dataModelInstance._setExtraRowSpanData(testList, 0);
+                    expect(formattedList[0]['_extraData']['rowSpanData']).toEqual({
+                        'none': {
+                            count: 2,
+                            isMainRow: true,
+                            mainRowKey: 0
+                        },
+                        'text': {
+                            count: 3,
+                            isMainRow: true,
+                            mainRowKey: 0
+                        }
+                    });
+                    expect(formattedList[1]['_extraData']['rowSpanData']).toEqual({
+                        'none': {
+                            count: -1,
+                            isMainRow: false,
+                            mainRowKey: 0
+                        },
+                        'text': {
+                            count: -1,
+                            isMainRow: false,
+                            mainRowKey: 0
+                        }
+                    });
+                    expect(formattedList[2]['_extraData']['rowSpanData']).toEqual({
+                        'text': {
+                            count: -2,
+                            isMainRow: false,
+                            mainRowKey: 0
+                        }
+                    });
+                    expect(formattedList[3]['_extraData']).not.toBeDefined();
+                });
+            });
+            describe('_formatData()', function() {
+                it('_paseFormat, _setExtraRowSpanData 를 정상적으로 잘 수행하는지 확인한다.', function() {
+                    var testList = [
+                        {
+                            '_extraData': {
+                                'rowSpan': {
+                                    'none': 2,
+                                    'text': 3
+                                }
+                            },
+                            'none': 0,
+                            'text': 0
+                        },{
+                            'none': 1,
+                            'text': 1
+                        },{
+                            'none': 2,
+                            'text': 2
+                        },{
+                            'none': 3,
+                            'text': 3
+                        }
+                    ];
+                    var formattedList = dataModelInstance._formatData(testList, 0);
+                    expect(formattedList[0]).toEqual({
+                        '_extraData': {
+                            'rowSpan': {
+                                'none': 2,
+                                'text': 3
+                            },
+                            'rowState': null,
+                            'rowSpanData': {
+                                'none': {
+                                    count: 2,
+                                    isMainRow: true,
+                                    mainRowKey: 0
+                                },
+                                'text': {
+                                    count: 3,
+                                    isMainRow: true,
+                                    mainRowKey: 0
+                                }
+                            }
+                        },
+                        'none': 0,
+                        'text': 0,
+                        'rowKey': 0,
+                        '_button': false
+                    });
+                    expect(formattedList[1]).toEqual({
+                        '_extraData': {
+                            'rowSpan': null,
+                            'rowState': null,
+                            'rowSpanData': {
+                                'none': {
+                                    count: -1,
+                                    isMainRow: false,
+                                    mainRowKey: 0
+                                },
+                                'text': {
+                                    count: -1,
+                                    isMainRow: false,
+                                    mainRowKey: 0
+                                }
+                            }
+                        },
+                        'none': 0,
+                        'text': 0,
+                        'rowKey': 1,
+                        '_button': false
+                    });
+                    expect(formattedList[2]).toEqual({
+                        '_extraData': {
+                            'rowSpan': null,
+                            'rowState': null,
+                            'rowSpanData': {
+                                'text': {
+                                    count: -2,
+                                    isMainRow: false,
+                                    mainRowKey: 0
+                                }
+                            }
+                        },
+                        'none': 2,
+                        'text': 0,
+                        'rowKey': 2,
+                        '_button': false
+                    });
+                    expect(formattedList[3]).toEqual({
+                        '_extraData': {
+                            'rowSpan': null,
+                            'rowState': null,
+                            'rowSpanData': null
+                        },
+                        'none': 3,
+                        'text': 3,
+                        'rowKey': 3,
+                        '_button': false
+                    });
+                });
+            });
 
         });
-        describe('_executeChangeBeforeCallback()', function() {
+        describe('original Data 시리즈', function() {
+            beforeEach(function() {
+                dataModelInstance.set(rowList, {
+                    parse: true
+                });
+            });
+            describe('getOriginalRowList()', function() {
+                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
+                    var expectResult = dataModelInstance._formatData(originalData);
+                    expect(dataModelInstance.toJSON()).toEqual(expectResult);
+                    //데이터 변경
+                    dataModelInstance.get(0).set('none', '2222');
+                    expect(dataModelInstance.toJSON()).not.toEqual(expectResult);
+                    expect(dataModelInstance.getOriginalRowList()).toEqual(expectResult);
+                });
+            });
+            describe('getOriginalRow()', function() {
+                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
+                    var expectResultList = dataModelInstance._formatData(originalData);
+                    expect(dataModelInstance.get(0).toJSON()).toEqual(expectResultList[0]);
+                    dataModelInstance.at(0).set('none', '2222');
+                    expect(dataModelInstance.get(0).toJSON()).not.toEqual(expectResultList[0]);
+                    expect(dataModelInstance.getOriginalRow(0)).toEqual(expectResultList[0]);
+                });
+            });
+            describe('getOriginal()', function() {
+                it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
+                    var expectResultList = dataModelInstance._formatData(originalData);
+
+                    expect(dataModelInstance.get(0).get('none')).toBe(expectResultList[0]['none']);
+                    //데이터 변경
+                    dataModelInstance.at(0).set('none', '2222');
+                    expect(dataModelInstance.get(0).get('none')).not.toBe(expectResultList[0]['none']);
+                    expect(dataModelInstance.getOriginal(0, 'none')).toBe(expectResultList[0]['none']);
+                });
+            });
+        });
+        describe('indexOfRowKey()', function() {
+            it('rowKey 를 인자로 index 를 알 수 있다.', function() {
+                columnModelInstance.set('keyColumnName', 'keyColumn');
+                dataModelInstance.set(rowList, {
+                    parse: true
+                });
+                expect(dataModelInstance.indexOfRowKey(10)).toBe(0);
+                expect(dataModelInstance.indexOfRowKey(11)).toBe(1);
+                expect(dataModelInstance.indexOfRowKey(12)).toBe(2);
+                expect(dataModelInstance.indexOfRowKey(1)).toBe(-1);
+            });
+        });
+        describe('_isPrivateProperty()', function() {
+            it('rowData 에서 내부용으로만 사용되는 데이터인지 확인한다.', function() {
+                expect(dataModelInstance._isPrivateProperty('_button')).toBe(true);
+                expect(dataModelInstance._isPrivateProperty('_number')).toBe(true);
+                expect(dataModelInstance._isPrivateProperty('_extraData')).toBe(true);
+                expect(dataModelInstance._isPrivateProperty('none')).toBe(false);
+            });
+        });
+        describe('getRowList', function() {
+            it('isRaw 옵션값이 설정되어 있으면 내부용 데이터를 제거하지 않고 반환한다.', function() {
+                var myRowList;
+                columnModelInstance.set({
+                    hasNumberColumn: true,
+                    selectType: 'checkbox'
+                });
+                dataModelInstance.set(rowList, {
+                    parse: true
+                });
+                myRowList = dataModelInstance.getRowList();
+                //            console.log(myRowList);
+                expect(myRowList[0]['_button']).not.toBeDefined();
+                expect(myRowList[0]['_extraData']).not.toBeDefined();
+                expect(myRowList[0]['_number']).not.toBeDefined();
+
+                myRowList = dataModelInstance.getRowList(false, true);
+                //            console.log(myRowList);
+                expect(myRowList[0]['_button']).toBeDefined();
+                expect(myRowList[0]['_extraData']).toBeDefined();
+                expect(myRowList[0]['_number']).toBeDefined();
+            });
+
+            it('isChecked 옵션값이 설정되어 있으면 checked 된 리스트만 반환한다.', function() {
+                var myRowList;
+                columnModelInstance.set({
+                    hasNumberColumn: true,
+                    selectType: 'checkbox'
+                });
+                dataModelInstance.set(rowList, {
+                    parse: true
+                });
+
+                dataModelInstance.at(0).set('_button', true);
+                dataModelInstance.at(2).set('_button', true);
+                dataModelInstance.at(3).set('_button', true);
+
+                myRowList = dataModelInstance.getRowList(true);
+                expect(myRowList.length).toBe(3);
+                expect(myRowList[1]['keyColumn']).toBe(12);
+                expect(myRowList[1]['_extraData']).not.toBeDefined();
+
+
+                myRowList = dataModelInstance.getRowList(true, true);
+                expect(myRowList[1]['_extraData']).toBeDefined();
+            });
+        });
+        describe('isSortedByField()', function() {
+            it('현재 sorting 상태인지 확인할 수 있다.', function() {
+                dataModelInstance.set(rowList, {
+                    parse: true
+                });
+                expect(dataModelInstance.isSortedByField()).toBe(false);
+                dataModelInstance.sortByField('none');
+                expect(dataModelInstance.isSortedByField()).toBe(true);
+                dataModelInstance.sortByField('rowKey');
+                expect(dataModelInstance.isSortedByField()).toBe(false);
+            });
+        });
+        describe('_onChange() 테스트', function() {
+            describe('_syncRowSpannedData()', function() {
+                describe('데이터에 변경이 있다면, rowSpan 된 데이터를 함께 업데이트 해준다.', function() {
+                    var testRowList;
+                    beforeEach(function() {
+                        testRowList = [
+                            {
+                                'none': 1,
+                                'text': 1
+                            },{
+                                '_extraData': {
+                                    'rowSpan': {
+                                        'none': 2,
+                                        'text': 3
+                                    }
+                                },
+                                'none': 2,
+                                'text': 2
+                            },{
+                                'none': 3,
+                                'text': 3
+                            },{
+                                'none': 4,
+                                'text': 4
+                            },{
+                                'none': 5,
+                                'text': 5
+                            },{
+                                'none': 6,
+                                'text': 6
+                            }
+                        ];
+                        dataModelInstance.set(testRowList, {parse: true});
+                    });
+                    it('Main row 를 변경했을 때 자식 row 도 변경되는지 확인한다.', function() {
+                        var spannedRow = dataModelInstance.at(1);
+                        dataModelInstance._syncRowSpannedData(spannedRow, 'text', 'changed');
+
+                        expect(dataModelInstance.at(0).get('text')).toBe(1);
+                        expect(dataModelInstance.at(1).get('text')).toBe('changed');
+                        expect(dataModelInstance.at(2).get('text')).toBe('changed');
+                        expect(dataModelInstance.at(3).get('text')).toBe('changed');
+                        expect(dataModelInstance.at(4).get('text')).toBe(5);
+                    });
+                    it('자식 row 를 변경했을 때 Main row 도 변경되는지 확인한다.', function() {
+                        var childRow = dataModelInstance.at(3);
+                        dataModelInstance._syncRowSpannedData(childRow, 'text', 'changed');
+
+                        expect(dataModelInstance.at(0).get('text')).toBe(1);
+                        expect(dataModelInstance.at(1).get('text')).toBe('changed');
+                        expect(dataModelInstance.at(2).get('text')).toBe('changed');
+                        expect(dataModelInstance.at(3).get('text')).toBe('changed');
+                        expect(dataModelInstance.at(4).get('text')).toBe(5);
+                    });
+
+                    it('rowSpan 하지 않은 row 에 대해서는 아무 동작 하지 않는다.', function() {
+                        var childRow = dataModelInstance.at(0);
+                        dataModelInstance._syncRowSpannedData(childRow, 'text', 'changed');
+
+                        expect(dataModelInstance.at(0).get('text')).toBe(1);
+                        expect(dataModelInstance.at(1).get('text')).toBe(2);
+                        expect(dataModelInstance.at(2).get('text')).toBe(2);
+                        expect(dataModelInstance.at(3).get('text')).toBe(2);
+                        expect(dataModelInstance.at(4).get('text')).toBe(5);
+                    });
+
+                    it('sort 되지 않았을 경우는 Spanned 된 데이터라도 업데이트 하지 않는다.', function() {
+                        var spannedRow = dataModelInstance.at(1);
+                        dataModelInstance.sortByField('text');
+                        dataModelInstance._syncRowSpannedData(spannedRow, 'text', 'changed');
+
+                        expect(dataModelInstance.at(0).get('text')).toBe(1);
+                        expect(dataModelInstance.at(1).get('text')).toBe(2);
+                        expect(dataModelInstance.at(2).get('text')).toBe(2);
+                        expect(dataModelInstance.at(3).get('text')).toBe(2);
+                        expect(dataModelInstance.at(4).get('text')).toBe(5);
+                    });
+                });
+            });
+            describe('_executeChangeBeforeCallback()', function() {
+                var testRowList;
+                beforeEach(function() {
+                    testRowList = [
+                        {
+                            'none': 1,
+                            'text': 1,
+                            'changeCallback': true
+                        },{
+                            'none': 2,
+                            'text': 2,
+                            'changeCallback': false
+                        },{
+                            'none': 3,
+                            'text': 3,
+                            'changeCallback': true
+                        },{
+                            'none': 4,
+                            'text': 4,
+                            'changeCallback': false
+                        },{
+                            'none': 5,
+                            'text': 5,
+                            'changeCallback': true
+                        },{
+                            'none': 6,
+                            'text': 6,
+                            'changeCallback': false
+                        }
+                    ];
+                    dataModelInstance.set(testRowList, {parse: true});
+                });
+                it('changeBeforeCallback 이 정의되지 않았을 경우 true 를 리턴한다.', function() {
+                    var row = dataModelInstance.at(0),
+                        result = dataModelInstance._executeChangeBeforeCallback(row, 'text');
+                    expect(result).toBe(true);
+                });
+                it('changeBeforeCallback 이 정의된 경우, changeCallback 의 반환 값을 리턴한다.', function() {
+                    var row = dataModelInstance.at(0),
+                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
+
+                    expect(result).toBe(true);
+
+                    row = dataModelInstance.at(1);
+                    result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
+                    expect(result).toBe(false);
+                });
+                describe('changeBeforeCallback 의 결과값에 따른 동작 확인', function() {
+                    var row,
+                        result;
+                    beforeEach(function() {
+                        row = dataModelInstance.at(0);
+                    });
+                    it('callback 결과 값이 true 인 경우 정상적으로 값이 변경된다.', function() {
+                        row.set('changeCallback', 1, {silent: true});
+                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
+                        expect(result).toBe(true);
+                        expect(row.get('changeCallback')).toBe(1);
+                    });
+                    it('callback 결과 값이 false 인 경우 이전 값으로 복원되어야 한다..', function() {
+                        var previous = row.get('changeCallback');
+                        row.set('changeCallback', false, {silent: true});
+                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
+                        expect(result).toBe(false);
+
+                        //이전 값으로 복원 되었는지 확인 한다.
+                        expect(row.get('changeCallback')).toBe(previous);
+                    });
+                    it('callback 결과 값이 false 인 경우 restore 이벤트가 발생한다.', function() {
+                        var previous = row.get('changeCallback'),
+                            listenModel = new Model.Base(),
+                            callback = jasmine.createSpy('callback');
+
+                        listenModel.listenTo(dataModelInstance, 'restore', callback);
+
+                        row.set('changeCallback', false, {silent: true});
+                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
+                        expect(result).toBe(false);
+                        expect(row.get('changeCallback')).toBe(previous);
+                        expect(callback).toHaveBeenCalledWith({ changed : {changeCallback: true }});
+                    });
+                });
+            });
+            describe('_executeChangeAfterCallback()', function() {
+                var callback;
+                beforeEach(function() {
+                    callback = jasmine.createSpy('callback');
+                    columnModelInstance.set('columnModelList', [{
+                        title: 'changeCallback',
+                        columnName: 'changeCallback',
+                        editOption: {
+                            changeAfterCallback: function(changeEvent) {
+                                callback(changeEvent);
+                            }
+                        }
+                    }]);
+                    dataModelInstance.set(rowList, {parse: true});
+                });
+                it('데이터 변경이 완료된 이후 changeAfterCallback 을 수행한다.', function() {
+                    var row = dataModelInstance.at(0);
+                    row.set('changeCallback', 'new value');
+                    expect(callback).toHaveBeenCalledWith({
+                        rowKey: 0,
+                        columnName: 'changeCallback',
+                        value: 'new value'
+                    });
+                });
+            });
+            describe('_onChange() 콜백 테스트', function() {
+                describe('값이 변화하면 _button 값도 함께 변경되어야 한다.', function() {
+                    var testRowList;
+                    beforeEach(function() {
+                        testRowList = [
+                            {
+                                'changeCallback': null
+                            },{
+                                '_extraData': {
+                                    'rowSpan': {
+                                        'changeCallback': 3
+                                    }
+                                },
+                                'changeCallback': null
+                            },{
+                                'changeCallback': null
+                            },{
+                                'changeCallback': null
+                            },{
+                                'changeCallback': null
+                            },{
+                                'changeCallback': null
+                            }
+                        ];
+                        dataModelInstance.set(testRowList, {parse: true});
+                    });
+                    describe('changeBeforeCallback 수행 결과값이 true 일 경우 변경된 _button 값을 true 로 설정한다.', function() {
+                        it('rowSpan 되어 있지 않은 경우', function() {
+                            var row = dataModelInstance.at(0);
+                            //false 설정되어 있는지 확인한다.
+                            expect(row.get('_button')).toBe(false);
+
+                            row.set('changeCallback', true);
+
+                            expect(dataModelInstance.at(0).get('_button')).toBe(true);
+                            expect(dataModelInstance.at(1).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(2).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(3).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
+                        });
+                        it('rowSpan 되어 있는 경우', function() {
+                            var row = dataModelInstance.at(2);
+                            //false 설정되어 있는지 확인한다.
+                            expect(row.get('_button')).toBe(false);
+
+                            row.set('changeCallback', true);
+
+                            expect(dataModelInstance.at(0).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(1).get('_button')).toBe(true);
+                            expect(dataModelInstance.at(2).get('_button')).toBe(true);
+                            expect(dataModelInstance.at(3).get('_button')).toBe(true);
+                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
+                        });
+                    });
+                    describe('changeBeforeCallback 수행 결과값이 이 false 를 반환한 경우 _button 값을 true 로 설정하지 않는다.', function() {
+                        it('rowSpan 되어 있지 않은 경우', function() {
+                            var row = dataModelInstance.at(0);
+                            //false 설정되어 있는지 확인한다.
+                            expect(row.get('_button')).toBe(false);
+
+                            row.set('changeCallback', false);
+
+                            expect(dataModelInstance.at(0).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(1).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(2).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(3).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
+                        });
+                        it('rowSpan 되어 있는 경우', function() {
+                            var row = dataModelInstance.at(2);
+                            //false 설정되어 있는지 확인한다.
+                            expect(row.get('_button')).toBe(false);
+
+                            row.set('changeCallback', false);
+
+                            expect(dataModelInstance.at(0).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(1).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(2).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(3).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
+                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
+                        });
+                    });
+
+                });
+
+            });
+        });
+        describe('setExtraData() 테스트', function() {
+            var testRowList,
+                listenModel,
+                callback;
+            beforeEach(function() {
+                callback = jasmine.createSpy('callback');
+                testRowList = [
+                    {},{
+                        '_extraData': {
+                            'rowSpan': {
+                                'changeCallback': 3
+                            }
+                        }
+                    },{
+                        '_extraData': {
+                            'rowState': 'CHECKED'
+                        }
+                    },{
+                        '_extraData': {
+                            'rowSpan': {
+                                'changeCallback': 3
+                            },
+                            'rowState': 'CHECKED'
+                        }
+                    },
+                    {},
+                    {},
+                    {}
+                ];
+                dataModelInstance.set(testRowList, {parse: true});
+                listenModel = new Model.Base();
+                listenModel.listenTo(dataModelInstance, 'change', callback);
+            });
+            it('extraData 를 확장할 수 있다.', function() {
+                var expectExtraData = {
+                        rowState: 'DISABLED',
+                        testObj: {}
+                    },
+                    extraData;
+                dataModelInstance.setExtraData(0, expectExtraData);
+                extraData = dataModelInstance.get(0).get('_extraData');
+
+                expect(callback).toHaveBeenCalled();
+                expect(extraData.rowState).toEqual(expectExtraData.rowState);
+                expect(extraData.testObj).toEqual(expectExtraData.testObj);
+            });
+            it('extraData 에 이미 존재하는 필드에도 확장할 수 있다.', function() {
+                var extendExtraData = {
+                        'rowSpan': {
+                            'none': 3
+                        }
+                    },
+                    extraData;
+                dataModelInstance.setExtraData(3, extendExtraData);
+                extraData = dataModelInstance.get(3).get('_extraData');
+
+                expect(callback).toHaveBeenCalled();
+                expect(extraData.rowSpan).toEqual({
+                    'changeCallback': 3,
+                    'none': 3
+                });
+            });
+            it('silent 파라미터가 true 라면 change 이벤트를 발생하지 않는다.', function() {
+                var expectExtraData = {
+                        rowState: 'DISABLED',
+                        testObj: {}
+                    },
+                    extraData;
+                dataModelInstance.setExtraData(0, expectExtraData, true);
+                extraData = dataModelInstance.get(0).get('_extraData');
+
+                expect(callback).not.toHaveBeenCalled();
+                expect(extraData.rowState).toEqual(expectExtraData.rowState);
+                expect(extraData.testObj).toEqual(expectExtraData.testObj);
+            });
+        });
+        describe('setRowState() 테스트', function() {
+            var listenModel,
+                callback;
+            beforeEach(function() {
+                callback = jasmine.createSpy('callback');
+                dataModelInstance.set(rowList, {parse: true});
+                listenModel = new Model.Base();
+                listenModel.listenTo(dataModelInstance, 'change', callback);
+            });
+            it('rowState 를 설정할 수 있다. change 이벤트를 발생시킨다.', function() {
+                dataModelInstance.setRowState(0, 'DISABLED');
+                dataModelInstance.setRowState(1, 'DISABLED_CHECK');
+                dataModelInstance.setRowState(2, 'CHECKED');
+                expect(dataModelInstance.get(0).get('_extraData')['rowState']).toBe('DISABLED');
+                expect(dataModelInstance.get(1).get('_extraData')['rowState']).toBe('DISABLED_CHECK');
+                expect(dataModelInstance.get(2).get('_extraData')['rowState']).toBe('CHECKED');
+
+                expect(callback.calls.count()).toBe(3);
+            });
+
+            it('isSilent 파라미터가 true 의 경우 callback 이 수행되지 않아야 한다.', function() {
+                dataModelInstance.setRowState(0, 'DISABLED', true);
+                dataModelInstance.setRowState(1, 'DISABLED_CHECK', true);
+                dataModelInstance.setRowState(2, 'CHECKED', true);
+                expect(dataModelInstance.get(0).get('_extraData')['rowState']).toBe('DISABLED');
+                expect(dataModelInstance.get(1).get('_extraData')['rowState']).toBe('DISABLED_CHECK');
+                expect(dataModelInstance.get(2).get('_extraData')['rowState']).toBe('CHECKED');
+                expect(callback).not.toHaveBeenCalled();
+            });
+        });
+        describe('_removePrivateProp() 테스트', function() {
+            it('_privateProperty (_number|_button|_extraData) 를 제거하고 반환한다.', function() {
+                dataModelInstance.set(rowList, {parse: true});
+                var notFiltered = dataModelInstance.toJSON(),
+                    filtered = dataModelInstance._removePrivateProp(notFiltered);
+                expect(notFiltered[0]['_number']).toBeDefined();
+                expect(notFiltered[0]['_button']).toBeDefined();
+                expect(notFiltered[0]['_extraData']).toBeDefined();
+                expect(notFiltered[1]['_number']).toBeDefined();
+                expect(notFiltered[1]['_button']).toBeDefined();
+                expect(notFiltered[1]['_extraData']).toBeDefined();
+
+                expect(filtered[0]['_number']).not.toBeDefined();
+                expect(filtered[0]['_button']).not.toBeDefined();
+                expect(filtered[0]['_extraData']).not.toBeDefined();
+                expect(filtered[1]['_number']).not.toBeDefined();
+                expect(filtered[1]['_button']).not.toBeDefined();
+                expect(filtered[1]['_extraData']).not.toBeDefined();
+            });
+        });
+        describe('removeRow() 테스트', function() {
+            var sampleRowList;
+            beforeEach(function() {
+                sampleRowList = [
+                    {},
+                    {},
+                    {},
+                    {},
+                    {}
+                ];
+                dataModelInstance.set(sampleRowList, {parse: true});
+            });
+            it('row 가 삭제되는지 확인한다.', function() {
+                var originalRowList;
+                originalRowList = dataModelInstance.getOriginalRowList();
+                expect(dataModelInstance.length).toBe(5);
+                expect(dataModelInstance.get(0)).toBeDefined();
+                expect(dataModelInstance.get(1)).toBeDefined();
+                expect(dataModelInstance.get(2)).toBeDefined();
+                expect(dataModelInstance.get(3)).toBeDefined();
+                expect(dataModelInstance.get(4)).toBeDefined();
+                expect(originalRowList.length).toBe(5);
+
+                dataModelInstance.removeRow(3);
+                originalRowList = dataModelInstance.getOriginalRowList();
+                expect(dataModelInstance.length).toBe(4);
+                expect(dataModelInstance.get(0)).toBeDefined();
+                expect(dataModelInstance.get(1)).toBeDefined();
+                expect(dataModelInstance.get(2)).toBeDefined();
+                expect(dataModelInstance.get(3)).not.toBeDefined();
+                expect(dataModelInstance.get(4)).toBeDefined();
+                expect(originalRowList.length).toBe(5);
+            });
+            it('isRemoveOriginalData 옵션을 주었을 때 originalData 도 함께 삭제되는지 확인한다.', function() {
+                var originalRowList;
+                originalRowList = dataModelInstance.getOriginalRowList();
+                expect(dataModelInstance.length).toBe(5);
+                expect(dataModelInstance.get(0)).toBeDefined();
+                expect(dataModelInstance.get(1)).toBeDefined();
+                expect(dataModelInstance.get(2)).toBeDefined();
+                expect(dataModelInstance.get(3)).toBeDefined();
+                expect(dataModelInstance.get(4)).toBeDefined();
+
+                expect(dataModelInstance.getOriginalRow(3)).toBeDefined();
+                expect(originalRowList.length).toBe(5);
+
+                dataModelInstance.removeRow(3, true);
+                originalRowList = dataModelInstance.getOriginalRowList();
+                expect(dataModelInstance.length).toBe(4);
+                expect(dataModelInstance.get(0)).toBeDefined();
+                expect(dataModelInstance.get(1)).toBeDefined();
+                expect(dataModelInstance.get(2)).toBeDefined();
+                expect(dataModelInstance.get(3)).not.toBeDefined();
+                expect(dataModelInstance.get(4)).toBeDefined();
+                expect(dataModelInstance.getOriginalRow(3)).not.toBeDefined();
+                expect(originalRowList.length).toBe(4);
+            });
+        });
+        describe('append 테스트', function() {
+            var length;
+            function setDefaultRowList() {
+                dataModelInstance.set([{
+                    'text': '1'
+                },{
+                    'text': '2'
+                },{
+                    'text': '3'
+                },{
+                    'text': '4'
+                },{
+                    'text': '5'
+                }], {parse: true});
+                length = dataModelInstance.length;
+            }
+            beforeEach(function() {
+
+            });
+
+            it('at 옵션을 주지 않았을 경우 맨 뒤에 추가된다.', function() {
+                setDefaultRowList();
+                dataModelInstance.append({
+                    text: '6'
+                });
+                expect(dataModelInstance.length).toBe(length + 1);
+
+                dataModelInstance.append({
+                    text: '7'
+                });
+                expect(dataModelInstance.length).toBe(length + 2);
+                expect(dataModelInstance.at(4).get('text')).toEqual('5');
+                expect(dataModelInstance.at(5).get('text')).toEqual('6');
+                expect(dataModelInstance.at(6).get('text')).toEqual('7');
+            });
+            it('at 옵션이 있을 경우 해당 위치에 추가된다.', function() {
+                setDefaultRowList();
+                dataModelInstance.append({
+                    text: '6'
+                }, 1);
+                expect(dataModelInstance.at(1).get('text')).toEqual('6');
+
+                dataModelInstance.append({
+                    text: '7'
+                }, 1);
+                expect(dataModelInstance.at(0).get('text')).toEqual('1');
+                expect(dataModelInstance.at(1).get('text')).toEqual('7');
+                expect(dataModelInstance.at(2).get('text')).toEqual('6');
+                expect(dataModelInstance.at(3).get('text')).toEqual('2');
+                expect(dataModelInstance.at(4).get('text')).toEqual('3');
+                expect(dataModelInstance.at(5).get('text')).toEqual('4');
+                expect(dataModelInstance.at(6).get('text')).toEqual('5');
+            });
+            it('keyColumn 이 없을 경우 rowKey 는 자동으로 생성된다.', function() {
+                setDefaultRowList();
+                dataModelInstance.append({
+                    text: '6'
+                }, 1);
+                expect(dataModelInstance.at(1).get('text')).toEqual('6');
+
+                dataModelInstance.append({
+                    text: '7'
+                }, 1);
+                expect(dataModelInstance.at(1).get('rowKey')).toEqual(6);
+                expect(dataModelInstance.at(2).get('rowKey')).toEqual(5);
+            });
+            it('keyColumn 이 설정되어 있을 경우, keyColumn 으로 설정된다.', function() {
+                columnModelInstance.set('keyColumnName', 'text');
+                setDefaultRowList();
+                dataModelInstance.append({
+                    text: '6'
+                }, 1);
+                expect(dataModelInstance.at(1).get('text')).toEqual('6');
+
+                dataModelInstance.append({
+                    text: '7'
+                }, 1);
+                expect(dataModelInstance.at(1).get('rowKey')).toEqual('7');
+                expect(dataModelInstance.at(2).get('rowKey')).toEqual('6');
+            });
 
         });
-        describe('_executeChangeAfterCallback()', function() {
+        describe('prepend() 는 append 를 이용하므로 간단하게 테스트한다.', function() {
+            it('상단에 추가되는지 확인한다.', function() {
+                dataModelInstance.set([{
+                    'text': '1'
+                },{
+                    'text': '2'
+                },{
+                    'text': '3'
+                },{
+                    'text': '4'
+                },{
+                    'text': '5'
+                }], {parse: true});
 
+                var length = dataModelInstance.length;
+
+                dataModelInstance.prepend({
+                    text: '0'
+                });
+                expect(dataModelInstance.length).toBe(length + 1);
+
+                dataModelInstance.prepend({
+                    text: '-1'
+                });
+                expect(dataModelInstance.length).toBe(length + 2);
+
+                expect(dataModelInstance.at(0).get('text')).toEqual('-1');
+                expect(dataModelInstance.at(1).get('text')).toEqual('0');
+                expect(dataModelInstance.at(2).get('text')).toEqual('1');
+            });
         });
     });
+
 });

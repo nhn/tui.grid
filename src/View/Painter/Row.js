@@ -110,7 +110,8 @@
                 } else {
                     rowState = cellData.rowState;
                     if (rowState) {
-                        this._setRowState(rowState, $tr);
+                        //todo
+//                        this._setRowState(rowState, $tr);
                     }
                 }
             }, this);

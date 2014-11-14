@@ -2,6 +2,7 @@
 
 describe('core.base', function() {
     var $empty, Class;
+
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
@@ -246,7 +247,7 @@ describe('core.base', function() {
             };
             expect(painter._eventHandler).toEqual(expectHandlerObj);
         });
-        it('Painter 의 _attachEventHandler 의 동작을 확인한다.', function() {
+        it('Painter 의 _attachHandler 의 동작을 확인한다.', function() {
             painter = new PainterClass({test: true});
 
             $empty.html(painter.getHtml());
@@ -257,8 +258,11 @@ describe('core.base', function() {
 
             expect(painter.clickCount).toEqual(1);
             expect(painter.focusCount).toEqual(1);
+
+            //다음 테스트를 위해 이벤트를 해제한다.
+            painter._detachHandler($empty);
         });
-        it('Painter 의 _attachEventHandler 의 동작을 확인한다.', function() {
+        it('Painter 의 _detachHandler 의 동작을 확인한다.', function() {
             painter = new PainterClass({test: true});
 
             $empty.html(painter.getHtml());
@@ -271,7 +275,6 @@ describe('core.base', function() {
 
             $empty.find('p').trigger('click');
             $empty.find('input').focus();
-
             expect(painter.clickCount).toEqual(1);
             expect(painter.focusCount).toEqual(1);
         });

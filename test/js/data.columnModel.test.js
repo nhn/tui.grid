@@ -126,7 +126,7 @@ describe('data.columnModel', function() {
             resultList = columnModelInstance._initializeNumberColumn(sampleColumnModelList);
             expect(resultList[2]).toEqual(expectedColumnModel);
         });
-        it('hasNumberColumn: true ', function() {
+        it('hasNumberColumn: true 일 때 _number 컬럼이 정상적으로 생성된다.', function() {
             expectedColumnModel = {
                 columnName: '_number',
                 title: 'No.',
@@ -394,7 +394,10 @@ describe('data.columnModel', function() {
             });
         });
 
-        it('isVisible 이 기본값(false)일 때 정상동작 하는지 확인한다.', function() {
+        it('isVisible 이 기본값 (=false) 라면 실제 보이는 컬럼일 때 정상동작 하는지 확인한다.', function() {
+            //_button, _number 컬럼모델은 내부에서 재 가공되기 때문에 생성시 columnModel 과 동일하지 않다.
+            expect(columnModelInstance.at(0)).toBeDefined();
+            expect(columnModelInstance.at(1)).toBeDefined();
             expect(columnModelInstance.at(0)).not.toEqual(sampleColumnModelList[0]);
             expect(columnModelInstance.at(1)).not.toEqual(sampleColumnModelList[1]);
 

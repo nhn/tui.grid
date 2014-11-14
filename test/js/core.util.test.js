@@ -6,21 +6,21 @@ describe('core.util', function() {
         loadFixtures('test/fixtures/util.template.html');
     });
     describe('Rendering 시 계산에 사용되는 메서드를 테스트한다..', function() {
-        it('getHeight()', function() {
+        it('getHeight() 는 Row count 개수에 대응하는 table height 를 반환한다.', function() {
             var rowHeight = 100;
             expect(Util.getHeight(0, rowHeight)).toBe(0);
             expect(Util.getHeight(1, rowHeight)).toBe(102);
             expect(Util.getHeight(100, rowHeight)).toBe(10101);
         });
 
-        it('getDisplayRowCount()', function() {
+        it('getDisplayRowCount() 는 화면상에 표시되는 Row 개수를 반환한다.', function() {
             var rowHeight = 100;
             expect(Util.getDisplayRowCount(0, rowHeight)).toBe(0);
             expect(Util.getDisplayRowCount(102, rowHeight)).toBe(1);
             expect(Util.getDisplayRowCount(10101, rowHeight)).toBe(100);
         });
 
-        it('getRowHeight()', function() {
+        it('getRowHeight() 는 테이블 높이를 행 개수로 나눈 값이다.', function() {
             expect(Util.getRowHeight(0, 0)).toBe(0);
             expect(Util.getRowHeight(1, 102)).toBe(100);
             expect(Util.getRowHeight(100, 10101)).toBe(100);

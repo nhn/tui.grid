@@ -22,7 +22,11 @@
         Data = {},
         Collection = {},
         AddOn = {};
-
+    var setOwnProperties = function(properties) {
+        _.each(properties, function(value, key) {
+            this[key] = value;
+        }, this);
+    };
     /**
      * Model Base Class
      * @constructor
@@ -39,11 +43,7 @@
          * 내부 프로퍼티 설정
          * @param {Object} properties
          */
-        setOwnProperties: function(properties) {
-            _.each(properties, function(value, key) {
-                this[key] = value;
-            }, this);
-        }
+        setOwnProperties: setOwnProperties
     });
     /**
      * Collection Base Class
@@ -72,11 +72,7 @@
          * 내부 프로퍼티 설정
          * @param {Object} properties
          */
-        setOwnProperties: function(properties) {
-            _.each(properties, function(value, key) {
-                this[key] = value;
-            }, this);
-        }
+        setOwnProperties: setOwnProperties
     });
 
     /**
@@ -108,11 +104,7 @@
          * 내부 프로퍼티 설정
          * @param {Object} properties
          */
-        setOwnProperties: function(properties) {
-            _.each(properties, function(value, key) {
-                this[key] = value;
-            }, this);
-        },
+        setOwnProperties: setOwnProperties,
 
         /**
          * 자식 View 를 생성할 때 사용하는 메서드
