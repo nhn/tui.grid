@@ -748,7 +748,13 @@
                 width: this.$el.width(),
                 height: this.$el.height(),
                 headerHeight: this.option('headerHeight'),
-                rowHeight: this.option('rowHeight')
+                rowHeight: this.option('rowHeight'),
+
+                scrollX: !!this.option('scrollX'),
+                scrollBarSize: this.scrollBarSize,
+
+                minimumColumnWidth: this.option('minimumColumnWidth'),
+                displayRowCount: this.option('displayRowCount')
             });
 
             // define focus model

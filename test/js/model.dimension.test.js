@@ -282,14 +282,70 @@ describe('model.dimension', function() {
     var rowList,
         dataModelInstance,
         columnModelInstance,
+        dimensionModel,
         grid = {};
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
         columnModelInstance = grid.columnModel = new Data.ColumnModel();
         columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = new Data.RowList([], {
+        dataModelInstance = grid.dataModel = new Data.RowList([], {
             grid: grid
         });
+        dimensionModel = new Model.Dimension({
+            grid: grid,
+            offsetLeft: 100,
+            offsetTop: 200,
+            width: 800,
+            height: 500,
+            headerHeight: 150,
+            rowHeight: 100,
+
+            scrollX: true,
+            scrollBarSize: 17,
+
+            minimumColumnWidth: 20,
+            displayRowCount: 20
+        });
+    });
+
+    describe('_calculateColumnWidthList()', function() {
+        function sum(widthList) {
+            return _.reduce(widthList, function(memo, width) {
+                return memo += width;
+            }, 0);
+        }
+        function min(widthList) {
+            return _.min(widthList);
+        }
+        function max(widthList) {
+            return _.max(widthList);
+        }
+        it('생성된 width 각 요소는 minimumColumnWidth 보다 같거나 커야하고, 요소들의 합은 width 보다 같거나 커야 한다.', function() {
+            var compareWidth = dimensionModel.get('width') - 1,
+                minimumWidth = dimensionModel.get('minimumColumnWidth') - 1,
+                widthList1 = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+                widthList2 = [5, 10, 15, 20, 25, 130, 135, 140, 145, 150],
+                widthList3 = [5, 10, 315, 320, 325, 330, 335, 340, 345, 350],
+                widthList4 = [5, 10, 415, 420, 425, 430, 435, 440, 445, 450],
+                newWidthList;
+
+            newWidthList = dimensionModel._calculateColumnWidthList(widthList1);
+            expect(sum(newWidthList)).toBeGreaterThan(compareWidth);
+            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
+
+            newWidthList = dimensionModel._calculateColumnWidthList(widthList2);
+            expect(sum(newWidthList)).toBeGreaterThan(compareWidth);
+            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
+
+            newWidthList = dimensionModel._calculateColumnWidthList(widthList3);
+            expect(sum(newWidthList)).toBeGreaterThan(compareWidth);
+            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
+
+            newWidthList = dimensionModel._calculateColumnWidthList(widthList4);
+            expect(sum(newWidthList)).toBeGreaterThan(compareWidth);
+            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
+        });
+
     });
 });
