@@ -1857,20 +1857,22 @@ describe('data.rowList', function() {
                     messUp();
                     checkAll();
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [
-                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-                        ],
-                        updateList: [
-                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
-                        ],
-                        deleteList: [
-                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-                        ]
-                    });
+                    expect(modifiedList.createList).toBeDefined();
+                    expect(modifiedList.createList.length).toBe(2);
+                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+
+
+                    expect(modifiedList.updateList).toBeDefined();
+                    expect(modifiedList.updateList.length).toBe(2);
+                    expect(modifiedList.updateList).toContain({ none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 });
+                    expect(modifiedList.updateList).toContain({ none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 });
+
+                    expect(modifiedList.deleteList).toBeDefined();
+                    expect(modifiedList.deleteList.length).toBe(2);
+                    expect(modifiedList.deleteList).toContain({ none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 });
+
                 });
             });
             describe('isOnlyChecked 옵션 false 일 때.', function() {
@@ -1894,14 +1896,15 @@ describe('data.rowList', function() {
                     prepend();
 
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [
-                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-                        ],
-                        updateList: [],
-                        deleteList: []
-                    });
+
+                    expect(modifiedList.createList).toBeDefined();
+                    expect(modifiedList.createList.length).toBe(2);
+                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 });
+                    expect(modifiedList.updateList.length).toBe(0);
+                    expect(modifiedList.deleteList.length).toBe(0);
+
+
                 });
                 it('변경 사항이 있을 경우 updateList 에 추가하여 반환한다.', function() {
                     var modifiedList;
@@ -1909,14 +1912,13 @@ describe('data.rowList', function() {
                     spoil(1);
 
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [],
-                        updateList: [
-                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
-                        ],
-                        deleteList: []
-                    });
+
+                    expect(modifiedList.updateList).toBeDefined();
+                    expect(modifiedList.updateList.length).toBe(2);
+                    expect(modifiedList.updateList).toContain({ none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 });
+                    expect(modifiedList.updateList).toContain({ none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 });
+                    expect(modifiedList.createList.length).toBe(0);
+                    expect(modifiedList.deleteList.length).toBe(0);
                 });
                 it('삭제 사항이 있을 경우 deleteList 에 추가하여 반환한다.', function() {
                     var modifiedList;
@@ -1924,14 +1926,13 @@ describe('data.rowList', function() {
                     remove(1);
 
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [],
-                        updateList: [],
-                        deleteList: [
-                            { none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-                            { none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 }
-                        ]
-                    });
+                    expect(modifiedList.deleteList).toBeDefined();
+                    expect(modifiedList.deleteList.length).toBe(2);
+                    expect(modifiedList.deleteList).toContain({ none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 });
+                    expect(modifiedList.createList.length).toBe(0);
+                    expect(modifiedList.updateList.length).toBe(0);
+
                 });
 
                 it('추가/변경/삭제 종합 테스트. 변경한 행을 삭제한 경우', function() {
@@ -1940,38 +1941,67 @@ describe('data.rowList', function() {
                     remove(0);
                     remove(1);
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [
-                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-                        ],
-                        updateList: [],
-                        deleteList: [
-                            { none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-                            { none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 },
-                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-                        ]
-                    });
+//                    expect(modifiedList).toEqual({
+//                        createList: [
+//                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+//                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+//                        ],
+//                        updateList: [],
+//                        deleteList: [
+//                            { none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+//                            { none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 },
+//                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+//                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+//                        ]
+//                    });
+
+                    expect(modifiedList.createList).toBeDefined();
+                    expect(modifiedList.createList.length).toBe(2);
+                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 });
+
+                    expect(modifiedList.deleteList).toBeDefined();
+                    expect(modifiedList.deleteList.length).toBe(4);
+                    expect(modifiedList.deleteList).toContain({ none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 });
+
+                    expect(modifiedList.updateList.length).toBe(0);
                 });
                 it('추가/변경/삭제 종합 테스트', function() {
                     var modifiedList;
                     messUp();
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [
-                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-                        ],
-                        updateList: [
-                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
-                        ],
-                        deleteList: [
-                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-                        ]
-                    });
+//                    expect(modifiedList).toEqual({
+//                        createList: [
+//                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+//                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+//                        ],
+//                        updateList: [
+//                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
+//                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
+//                        ],
+//                        deleteList: [
+//                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+//                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+//                        ]
+//                    });
+
+                    expect(modifiedList.createList).toBeDefined();
+                    expect(modifiedList.createList.length).toBe(2);
+                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 });
+
+                    expect(modifiedList.deleteList).toBeDefined();
+                    expect(modifiedList.deleteList.length).toBe(2);
+                    expect(modifiedList.deleteList).toContain({ none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 });
+
+                    expect(modifiedList.updateList).toBeDefined();
+                    expect(modifiedList.updateList.length).toBe(2);
+                    expect(modifiedList.updateList).toContain({ none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 });
+                    expect(modifiedList.updateList).toContain({ none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 });
                 });
             });
             describe('filteringColumnList 옵션이 있을 때', function() {
@@ -1985,19 +2015,32 @@ describe('data.rowList', function() {
                     messUp();
                     spoil(4, 'text');
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [
-                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-                        ],
-                        updateList: [
-                            { none: 'none5', text: 'dirty', hidden: 'hidden5', rowKey: 4 }
-                        ],
-                        deleteList: [
-                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-                        ]
-                    });
+//                    expect(modifiedList).toEqual({
+//                        createList: [
+//                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
+//                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
+//                        ],
+//                        updateList: [
+//                            { none: 'none5', text: 'dirty', hidden: 'hidden5', rowKey: 4 }
+//                        ],
+//                        deleteList: [
+//                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
+//                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
+//                        ]
+//                    });
+                    expect(modifiedList.createList).toBeDefined();
+                    expect(modifiedList.createList.length).toBe(2);
+                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 });
+
+                    expect(modifiedList.deleteList).toBeDefined();
+                    expect(modifiedList.deleteList.length).toBe(2);
+                    expect(modifiedList.deleteList).toContain({ none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 });
+                    expect(modifiedList.deleteList).toContain({ none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 });
+
+                    expect(modifiedList.updateList).toBeDefined();
+                    expect(modifiedList.updateList.length).toBe(1);
+                    expect(modifiedList.updateList).toContain({ none: 'none5', text: 'dirty', hidden: 'hidden5', rowKey: 4 });
                 });
             });
             describe('isOnlyRowKeyList 옵션 true 일 때.', function() {
@@ -2010,20 +2053,21 @@ describe('data.rowList', function() {
                     var modifiedList;
                     messUp();
                     modifiedList = getModified();
-                    expect(modifiedList).toEqual({
-                        createList: [
-                            6,
-                            7
-                        ],
-                        updateList: [
-                            0,
-                            1
-                        ],
-                        deleteList: [
-                            2,
-                            3
-                        ]
-                    });
+
+                    expect(modifiedList.createList).toBeDefined();
+                    expect(modifiedList.createList.length).toBe(2);
+                    expect(modifiedList.createList).toContain(6);
+                    expect(modifiedList.createList).toContain(7);
+
+                    expect(modifiedList.updateList).toBeDefined();
+                    expect(modifiedList.updateList.length).toBe(2);
+                    expect(modifiedList.updateList).toContain(0);
+                    expect(modifiedList.updateList).toContain(1);
+
+                    expect(modifiedList.deleteList).toBeDefined();
+                    expect(modifiedList.deleteList.length).toBe(2);
+                    expect(modifiedList.deleteList).toContain(2);
+                    expect(modifiedList.deleteList).toContain(3);
                 });
             });
             describe('isRaw 옵션 true 일 때.', function() {

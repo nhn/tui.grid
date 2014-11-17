@@ -743,7 +743,7 @@
                         _.each(row, function(value, columnName) {
                             if (!filteringColumnMap[columnName]) {
                                 if (typeof value === 'object') {
-                                    isDiff = (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
+                                    isDiff = ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
                                 } else {
                                     isDiff = value !== originalRow[columnName];
                                 }

@@ -22,6 +22,7 @@ module.exports = function(config) {
         files: [
             // dependencies
             {pattern: 'lib/jquery/jquery.min.js', watched: false, served: true, included: true},
+            {pattern: 'lib/jquery-json/src/jquery.json.js', watched: false, served: true, included: true},
             {pattern: 'lib/underscore/underscore.js', watched: false, served: true, included: true},
             {pattern: 'lib/backbone/backbone.js', watched: false, served: true, included: true},
 
@@ -119,7 +120,7 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         _browsers: [
-            'IE'
+            'Chrome'
         ],
         browsers: [
             'IE7',
@@ -170,6 +171,6 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true
     });
 };

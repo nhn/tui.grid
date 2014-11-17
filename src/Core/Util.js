@@ -76,15 +76,16 @@
          * @return {String}
          */
         stripTags: function(htmlString) {
+            var matchResult;
             htmlString = htmlString.replace(/[\n\r\t]/g, '');
             if (ne.util.hasEncodableString(htmlString)) {
-                if (/<img/.test(htmlString)) {
-                    var matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/);
+                if (/<img/i.test(htmlString)) {
+                    matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/i);
                     htmlString = matchResult ? matchResult[1] : '';
                 } else {
-                    htmlString = htmlString.replace(/<button.*?<\/button>/g, '');
+                    htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
                 }
-                htmlString = ne.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, ''));
+                htmlString = $.trim(ne.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')));
             }
             return htmlString;
         },
@@ -106,7 +107,7 @@
 
             ne.util.forEach(dataObj, function(value, name) {
                 if (typeof value !== 'string' && typeof value !== 'number') {
-                    value = JSON.stringify(value);
+                    value = $.toJSON(value);
                 }
                 value = encodeURIComponent(value);
                 queryList.push(name + '=' + value);

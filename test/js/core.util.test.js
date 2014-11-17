@@ -96,17 +96,17 @@ describe('core.util', function() {
         });
         it('button tag 가 포함된 경우 <button> </button> 사이의 내용을 모두 제거한다.', function() {
             var htmlStr = $('#button').html(),
-                expectStr = 'Button  End of Example';
+                expectStr = 'ButtonEnd of Example';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
         it('anchor tag 가 포함된 경우 태그만 제거한다.', function() {
             var htmlStr = $('#anchor').html(),
-                expectStr = 'Anchor Link End of Example';
+                expectStr = 'Anchor LinkEnd of Example';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
         it('button 과 anchor 가 둘다 포함된 경우 button 은 태그 사이 내용 모두 제거하고 anchor 는 태그만 제거한다', function() {
             var htmlStr = $('#button').html() + $('#anchor').html(),
-                expectStr = 'Button  End of ExampleAnchor Link End of Example';
+                expectStr = 'ButtonEnd of ExampleAnchor LinkEnd of Example';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
     });

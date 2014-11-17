@@ -166,7 +166,7 @@
          */
         getColumnValue: function(columnName, isJsonString) {
             var valueList = this.dataModel.pluck(columnName);
-            return isJsonString ? JSON.stringify(valueList) : valueList;
+            return isJsonString ? $.toJSON(valueList) : valueList;
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
@@ -176,7 +176,7 @@
          */
         getRow: function(rowKey, isJsonString) {
             var row = this.dataModel.get(rowKey).toJSON();
-            row = isJsonString ? JSON.stringify(row) : row;
+            row = isJsonString ? $.toJSON(row) : row;
             return row;
         },
         /**
