@@ -21,13 +21,10 @@
             lsideWidth: 0,
             columnWidthList: [],
 
-            maxScrollLeft: 0,
-
             minimumColumnWidth: 0,
-
+            displayRowCount: 1,
             scrollBarSize: 17,
             scrollX: true
-
         },
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
@@ -35,7 +32,7 @@
             this.listenTo(this.columnModel, 'change', this._onWidthChange);
 
             this.on('change:width', this._onWidthChange, this);
-            this._setColumnWidth();
+            this._setColumnWidthVariables();
             this._setBodyHeight();
         },
         /**
@@ -46,43 +43,50 @@
          * @private
          */
         _calculateColumnWidthList: function(columnWidthList) {
-            var remainWidth, unassignedWidth,
-                newColumnWidthList = [],
+            var columnFixIndex = this.columnModel.get('columnFixIndex'),
                 totalWidth = this.get('width'),
+                availableTotalWidth,
+                remainWidth,
+                unassignedWidth,
+                newColumnWidthList = [],
                 width = 0,
                 currentWidth = 0,
                 unassignedCount = 0;
 
-            for (var i = 0, len = columnWidthList.length; i < len; i++) {
-                if (columnWidthList[i] > 0) {
-                    width = Math.max(this.get('minimumColumnWidth'), columnWidthList[i]);
+            availableTotalWidth = totalWidth - columnWidthList.length - 1;
+
+            if (columnFixIndex > 0) {
+                availableTotalWidth -= 1;
+            }
+
+            _.each(columnWidthList, function(columnWidth) {
+                if (columnWidth > 0) {
+                    width = Math.max(this.get('minimumColumnWidth'), columnWidth);
                     newColumnWidthList.push(width);
                     currentWidth += width;
                 }else {
                     newColumnWidthList.push(-1);
                     unassignedCount++;
                 }
-            }
+            }, this);
 
-            remainWidth = totalWidth - currentWidth;
+            remainWidth = availableTotalWidth - currentWidth;
 
-            if (totalWidth > currentWidth && unassignedCount === 0) {
+            if (availableTotalWidth > currentWidth && unassignedCount === 0) {
                 newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
             }
 
-            if (totalWidth > currentWidth) {
-                remainWidth = totalWidth - currentWidth;
+            if (availableTotalWidth > currentWidth) {
+                remainWidth = availableTotalWidth - currentWidth;
                 unassignedWidth = Math.max(this.get('minimumColumnWidth'), Math.floor(remainWidth / unassignedCount));
             }else {
                 unassignedWidth = this.get('minimumColumnWidth');
             }
-
-            for (var i = 0, len = newColumnWidthList.length; i < len; i++) {
-                if (newColumnWidthList[i] === -1) {
-                    newColumnWidthList[i] = unassignedWidth;
+            _.each(newColumnWidthList, function(newColumnWidth, index) {
+                if (newColumnWidth === -1) {
+                    newColumnWidthList[index] = unassignedWidth;
                 }
-            }
-
+            }, this);
             return newColumnWidthList;
         },
         /**
@@ -101,27 +105,55 @@
                     columnWidthList.push(-1);
                 }
             }
-
             return this._calculateColumnWidthList(columnWidthList);
         },
         /**
-         * columnWidth 를 계산하여 저장한다.
-         * @param {Array} [columnWidthList]
+         * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
+         * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
+         * @return {Number}
+         */
+        getFrameWidth: function(whichSide) {
+            var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+                columnWidthList = this.getColumnWidthList(whichSide),
+                frameWidth = this._getFrameWidth(columnWidthList);
+
+            if (!ne.util.isDefined(whichSide) && columnFixIndex > 0) {
+                ++frameWidth;
+            }
+            return frameWidth;
+        },
+        /**
+         * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
+         * @param {Array} widthList
+         * @return {Number}
          * @private
          */
-        _setColumnWidth: function(columnWidthList) {
-            var rsideWidth, lsideWidth = 0,
-                totalWidth = this.get('width'),
-                columnFixIndex = this.columnModel.get('columnFixIndex');
+        _getFrameWidth: function(widthList) {
+            return widthList.length ? Util.sum(widthList) + widthList.length + 1 : 0;
+        },
 
+        /**
+         * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
+         * @param {Array} [columnWidthList] 인자가 존재하지 않을 경우, 현재 columnModel 에 저장된 정보 기준으로 columnWidth 를 설정한다.
+         * @private
+         */
+        _setColumnWidthVariables: function(columnWidthList) {
             columnWidthList = columnWidthList || this._getOriginalWidthList();
 
-            for (var i = 0, len = columnWidthList.length; i < len; i++) {
-                if (i < columnFixIndex) {
-                    lsideWidth += columnWidthList[i] + 1;
-                }
+            var rsideWidth,
+                lsideWidth,
+                totalWidth = this.get('width'),
+                columnFixIndex = this.columnModel.get('columnFixIndex'),
+                maxLeftSideWidth = this._getMaxLeftSideWidth(),
+                lsideWidthList = columnWidthList.slice(0, columnFixIndex),
+                rsideWidthList = columnWidthList.slice(columnFixIndex);
+
+            lsideWidth = this._getFrameWidth(lsideWidthList);
+            if (maxLeftSideWidth < lsideWidth) {
+                lsideWidthList = this._adjustLeftSideWidthList(lsideWidthList, maxLeftSideWidth);
+                lsideWidth = this._getFrameWidth(lsideWidthList);
+                columnWidthList = lsideWidthList.concat(rsideWidthList);
             }
-            lsideWidth += 1;
             rsideWidth = totalWidth - lsideWidth;
             this.set({
                 rsideWidth: rsideWidth,
@@ -129,6 +161,29 @@
                 columnWidthList: columnWidthList
             });
             this.trigger('columnWidthChanged');
+        },
+        /**
+         * 열 고정 영역의 minimum width 값을 구한다.
+         * @return {number}
+         * @private
+         */
+        _getMinLeftSideWidth: function() {
+            var minimumColumnWidth = this.get('minimumColumnWidth'),
+                columnFixIndex = this.columnModel.get('columnFixIndex'),
+                minWidth;
+
+            minWidth = columnFixIndex ? (columnFixIndex * (minimumColumnWidth + 1)) + 1 : 0;
+            return minWidth;
+        },
+        /**
+         * 열 고정 영역의 maximum width 값을 구한다.
+         * @return {number}
+         * @private
+         */
+        _getMaxLeftSideWidth: function() {
+            var maxWidth = Math.ceil(this.get('width') * 0.9);
+            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+            return maxWidth;
         },
         /**
          * 계산한 cell의 위치를 리턴한다.
@@ -147,7 +202,6 @@
                 columnWidthList = this.get('columnWidthList'),
                 columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
                 columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true);
-
 
 
             if (!rowSpanData.isMainRow) {
@@ -180,11 +234,54 @@
             };
         },
         /**
+         * columnFixIndex 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+         * @param {Array} lsideWidthList
+         * @param {Number} totalWidth
+         * @return {Array}
+         * @private
+         */
+        _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
+            var i = lsideWidthList.length - 1,
+                minimumColumnWidth = this.get('minimumColumnWidth'),
+                currentWidth = this._getFrameWidth(lsideWidthList),
+                diff = currentWidth - totalWidth,
+                changedWidth;
+            if (diff > 0) {
+                while (i >= 0 && diff > 0) {
+                    changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
+                    diff -= lsideWidthList[i] - changedWidth;
+                    lsideWidthList[i] = changedWidth;
+                    i--;
+                }
+            } else if (diff < 0) {
+                lsideWidthList[i] += Math.abs(diff);
+            }
+            return lsideWidthList;
+        },
+        /**
+         * body height 계산
+         * @private
+         */
+        _setBodyHeight: function() {
+            var height = Util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
+            if (this.get('scrollX')) {
+                height += this.get('scrollBarSize');
+            }
+            this.set('bodyHeight', height);
+        },
+        /**
          * 현재 화면에 보이는 row 개수를 반환
          * @return {number}
          */
         getDisplayRowCount: function() {
             return Util.getDisplayRowCount(this.get('bodyHeight') - this.get('toolbarHeight'), this.get('rowHeight'));
+        },
+        /**
+         * scrollX 높이를 구한다.
+         * @return {number}
+         */
+        getScrollXHeight: function() {
+            return +this.get('scrollX') * this.get('scrollBarSize');
         },
         /**
          * _onWidthChange
@@ -195,39 +292,7 @@
          */
         _onWidthChange: function(model) {
             var curColumnWidthList = this.get('columnWidthList');
-            this._setColumnWidth(this._calculateColumnWidthList(curColumnWidthList));
-        },
-        /**
-         * scrollX 높이를 구한다.
-         * @return {number}
-         */
-        getScrollXSize: function() {
-            return !!this.get('scrollX') * this.get('scrollBarSize');
-        },
-        /**
-         * body height 계산
-         * @private
-         */
-        _setBodyHeight: function() {
-            var height = Util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
-            //TODO scroll height 예외처리
-            height += this.get('scrollBarSize');
-            this.set('bodyHeight', height);
-        },
-
-        /**
-         * 실제 너비를 계산한다.
-         * @param {String} whichSide
-         * @return {Number}
-         */
-        getTotalWidth: function(whichSide) {
-            var columnWidthList = this.getColumnWidthList(whichSide),
-                i, len = columnWidthList.length,
-                totalWidth = 0;
-            for (i = 0; i < len; i++) {
-                totalWidth += columnWidthList[i] + 1;
-            }
-            return totalWidth;
+            this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
         },
         /**
          * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
@@ -238,10 +303,11 @@
             width = Math.max(width, this.get('minimumColumnWidth'));
             var curColumnWidthList = this.get('columnWidthList'),
                 calculatedColumnWidthList;
-
-            curColumnWidthList[index] = width;
-            calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
-            this._setColumnWidth(calculatedColumnWidthList);
+            if (ne.util.isDefined(curColumnWidthList[index])) {
+                curColumnWidthList[index] = width;
+                calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
+                this._setColumnWidthVariables(calculatedColumnWidthList);
+            }
         },
         /**
          * L side 와 R side 에 따른 columnWidthList 를 반환한다.
@@ -266,7 +332,4 @@
             }
             return columnList;
         }
-
-
-
     });

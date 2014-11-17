@@ -664,7 +664,7 @@
          */
         updateLayoutData: function() {
             var offset = this.$el.offset(),
-                rsideTotalWidth = this.dimensionModel.getTotalWidth('R'),
+                rsideTotalWidth = this.dimensionModel.getFrameWidth('R'),
                 maxScrollLeft = rsideTotalWidth - this.dimensionModel.get('rsideWidth');
 
             this.renderModel.set({

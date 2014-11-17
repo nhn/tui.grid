@@ -1,4 +1,9 @@
     var Util = {
+        sum: function(list) {
+            return _.reduce(list, function(memo, value) {
+                return memo += value;
+            }, 0);
+        },
         /**
          * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
          * @param {number} rowCount

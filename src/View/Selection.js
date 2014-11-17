@@ -155,7 +155,7 @@
                 columnWidthList = dimensionModel.getColumnWidthList(),
                 scrollTop = renderModel.get('scrollTop'),
                 scrollLeft = renderModel.get('scrollLeft'),
-                totalColumnWidth = dimensionModel.getTotalWidth(),
+                totalColumnWidth = dimensionModel.getFrameWidth(),
                 dataPosY = containerPos.pageY + scrollTop,
                 dataPosX = containerPos.pageX,
                 overflowX = 0,
