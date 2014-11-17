@@ -90,22 +90,22 @@ describe('core.util', function() {
                 expectStr = 'http://www.nhnent.com/ko/index.nhn?id=test';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
 
-            htmlStr += $('#button').html();
-            htmlStr += $('#anchor').html();
+            htmlStr += $.trim($('#button').html());
+            htmlStr += $.trim($('#anchor').html());
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
         it('button tag 가 포함된 경우 <button> </button> 사이의 내용을 모두 제거한다.', function() {
-            var htmlStr = $('#button').html(),
+            var htmlStr = $.trim($('#button').html()),
                 expectStr = 'ButtonEnd of Example';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
         it('anchor tag 가 포함된 경우 태그만 제거한다.', function() {
-            var htmlStr = $('#anchor').html(),
+            var htmlStr = $.trim($('#anchor').html()),
                 expectStr = 'Anchor LinkEnd of Example';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
         it('button 과 anchor 가 둘다 포함된 경우 button 은 태그 사이 내용 모두 제거하고 anchor 는 태그만 제거한다', function() {
-            var htmlStr = $('#button').html() + $('#anchor').html(),
+            var htmlStr = $.trim($('#button').html()) + $.trim($('#anchor').html()),
                 expectStr = 'ButtonEnd of ExampleAnchor LinkEnd of Example';
             expect(Util.stripTags(htmlStr)).toBe(expectStr);
         });
