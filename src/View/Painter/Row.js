@@ -120,7 +120,8 @@
 //            console.log('Model change');
         },
         _setCssFocus: function(isBlur) {
-            var focusModel = this.grid.focusModel,
+            var dataModel = this.grid.dataModel,
+                focusModel = this.grid.focusModel,
                 renderModel = this.grid.renderModel.getCollection(this.whichSide),
                 focused = focusModel.which(),
                 columnModelList = this.columnModelList,
@@ -134,7 +135,7 @@
                 columnName = columnModelList[i]['columnName'];
                 isFocusedColumn = (columnName === focused.columnName);
                 cellData = row.get(columnName);
-                if (!this.grid.isSorted() && !cellData.isMainRow) {
+                if (dataModel.isRowSpanEnable() && !cellData.isMainRow) {
                     cellData = renderModel.get(cellData.mainRowKey).get(columnName);
                 }
                 rowKey = cellData.rowKey;

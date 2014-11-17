@@ -42,8 +42,8 @@ describe('data.rowList', function() {
             notUseHtmlEntity: true
         },
         {
-            title: 'relationOptionList',
-            columnName: 'relationOptionList',
+            title: 'relationList',
+            columnName: 'relationList',
             relationList: [
                 {
                     columnList: ['select', 'checkbox', 'radio'],
@@ -61,9 +61,11 @@ describe('data.rowList', function() {
                 {
                     columnList: ['text'],
                     isDisable: function(value, rowData) {
+                        //false 면 true 를 반환
                         return value === false;
                     },
                     isEditable: function(value, rowData) {
+                        //false 면 false 를 반환
                         return value !== false;
                     }
                 }
@@ -294,7 +296,6 @@ describe('data.rowList', function() {
     });
 
     describe('Model 테스트', function() {
-
         describe('getRowState()', function() {
             var testList, rowState;
 
@@ -533,7 +534,7 @@ describe('data.rowList', function() {
             });
             it('changeOptionList Relation 이 걸려있을 경우에도 정상 동작하는지 확인한다.', function() {
                 var sampleList = [{
-                        'relationOptionList': true,
+                        'relationList': true,
                         'select': 1,
                         'radio': 2,
                         'radioNoRelation': 2,
@@ -556,7 +557,7 @@ describe('data.rowList', function() {
                         'none': 'nope',
                         'hasFormatter': '<script>alert("test");</script>',
                         'notUseHtmlEntity': '<html></html>',
-                        'relationOptionList': false,
+                        'relationList': false,
                         'text': 'text',
                         'text-convertible': 'convertible-text',
                         'select': 1,
@@ -568,7 +569,7 @@ describe('data.rowList', function() {
                         'none': 'nope',
                         'hasFormatter': '<script>alert("test");</script>',
                         'notUseHtmlEntity': '<html></html>',
-                        'relationOptionList': true,
+                        'relationList': true,
                         'text': 'text',
                         'text-convertible': 'convertible-text',
                         'select': 1,
@@ -584,7 +585,7 @@ describe('data.rowList', function() {
                 expect(row.getVisibleText('none')).toBe('nope');
                 expect(row.getVisibleText('hasFormatter')).toBe('<script>alert("test");</script> click');
                 expect(row.getVisibleText('notUseHtmlEntity')).toBe('<html></html>');
-                expect(row.getVisibleText('relationOptionList')).toBe('false');
+                expect(row.getVisibleText('relationList')).toBe('false');
                 expect(row.getVisibleText('text')).toBe('text');
                 expect(row.getVisibleText('text-convertible')).toBe('convertible-text');
                 expect(row.getVisibleText('select')).toBe('text1');
@@ -597,7 +598,7 @@ describe('data.rowList', function() {
                 expect(row.getVisibleText('none')).toBe('nope');
                 expect(row.getVisibleText('hasFormatter')).toBe('<script>alert("test");</script> click');
                 expect(row.getVisibleText('notUseHtmlEntity')).toBe('<html></html>');
-                expect(row.getVisibleText('relationOptionList')).toBe('true');
+                expect(row.getVisibleText('relationList')).toBe('true');
                 expect(row.getVisibleText('text')).toBe('text');
                 expect(row.getVisibleText('text-convertible')).toBe('convertible-text');
                 expect(row.getVisibleText('select')).toBe('하나');
@@ -607,17 +608,124 @@ describe('data.rowList', function() {
                 expect(row.getVisibleText('hidden')).toBe('1');
             });
         });
+        describe('getCellState() relation list 결과와 rowState 를 종합한 결과를 통해 isDisabled, isEditable 을 반환한다.', function() {
+            var sampleList, row;
+            beforeEach(function() {
+                sampleList = [{
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    'relationList': true,
+                    'text': 'sample2'
+                }];
+                columnModelInstance.set({
+                    'hasNumberColumn': true,
+                    'selectType': 'checkbox'
+                });
+                dataModelInstance.set(sampleList, {parse: true});
+            });
+            it('결과값에 맞게 반환하는지 확인한다.', function() {
+                expect(dataModelInstance.get(0).getCellState('_button')).toEqual({
+                    isDisabled: false,
+                    isEditable: true
+                });
+                expect(dataModelInstance.get(0).getCellState('_number')).toEqual({
+                    isDisabled: false,
+                    isEditable: false
+                });
+                expect(dataModelInstance.get(0).getCellState('text')).toEqual({
+                    isDisabled: true,
+                    isEditable: false
+                });
+                expect(dataModelInstance.get(1).getCellState('text')).toEqual({
+                    isDisabled: false,
+                    isEditable: true
+                });
+            });
+
+            it('rowState 값이 DISABLED 일 경우 결과를 확인한다.', function() {
+                sampleList = [{
+                    '_extraData': {
+                        'rowState': 'DISABLED'
+                    },
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    'relationList': true,
+                    'text': 'sample2'
+                }];
+                dataModelInstance.set(sampleList, {parse: true});
+
+                expect(dataModelInstance.get(0).getCellState('_button')).toEqual({
+                    isDisabled: true,
+                    isEditable: true
+                });
+                expect(dataModelInstance.get(0).getCellState('_number')).toEqual({
+                    isDisabled: true,
+                    isEditable: false
+                });
+                expect(dataModelInstance.get(0).getCellState('text')).toEqual({
+                    isDisabled: true,
+                    isEditable: false
+                });
+            });
+
+            it('rowState 값이 DISABLED_CHECK 일 경우 결과를 확인한다.', function() {
+                sampleList = [{
+                    '_extraData': {
+                        'rowState': 'DISABLED_CHECK'
+                    },
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    'relationList': true,
+                    'text': 'sample2'
+                }];
+                dataModelInstance.set(sampleList, {parse: true});
+
+                expect(dataModelInstance.get(0).getCellState('_button')).toEqual({
+                    isDisabled: true,
+                    isEditable: true
+                });
+                expect(dataModelInstance.get(0).getCellState('_number')).toEqual({
+                    isDisabled: false,
+                    isEditable: false
+                });
+                expect(dataModelInstance.get(0).getCellState('text')).toEqual({
+                    isDisabled: true,
+                    isEditable: false
+                });
+            });
+        });
+        describe('isEditable() cellState 를 사용하는 메서드이므로, cellState 를 이용하지 않을때 정상 동작하는지 확인한다.', function() {
+            it('_number, normal type 의 경우 false 를 리턴하는지 확인한다.', function() {
+                var sampleList = [{
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    'relationList': true,
+                    'text': 'sample2'
+                }];
+                columnModelInstance.set({
+                    'hasNumberColumn': true,
+                    'selectType': 'checkbox'
+                });
+                dataModelInstance.set(sampleList, {parse: true});
+                expect(dataModelInstance.get(0).isEditable('_number')).toEqual(false);
+                expect(dataModelInstance.get(0).isEditable('normal')).toEqual(false);
+            });
+        });
         describe('getRelationResult()', function() {
             var sampleList, row;
             beforeEach(function() {
                 sampleList = [{
-                    'relationOptionList': false,
+                    'relationList': false,
                     'select': 1,
                     'radio': 2,
                     'checkbox': '1,2,3',
                     'radioNoRelation': 2
                 },{
-                    'relationOptionList': true,
+                    'relationList': true,
                     'select': 1,
                     'radio': 2,
                     'checkbox': '1,2,3',

@@ -945,9 +945,10 @@
          * @return {(Number|String)}
          */
         getMainRowKey: function(rowKey, columnName) {
-            var row = this.dataModel.get(rowKey),
+            var dataModel = this.dataModel,
+                row = dataModel.get(rowKey),
                 rowSpanData;
-            if (!this.isSorted()) {
+            if (dataModel.isRowSpanEnable()) {
                 rowSpanData = row && row.getRowSpanData(columnName);
                 rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
             }

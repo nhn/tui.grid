@@ -132,7 +132,7 @@
                     isMainRow: true,
                     mainRowKey: this.get('rowKey')
                 };
-            if (!this.collection.isSortedByField()) {
+            if (this.collection.isRowSpanEnable()) {
                 if (!columnName) {
                     return extraData['rowSpanData'];
                 }else {
@@ -329,7 +329,7 @@
             return this.setOriginalRowList(data);
         },
         /**
-         * 데이터를 grid 에서 사용하기 쉽도록 가공한다.
+         * 데이터의 _extraData 를 분석하여, Model 에서 사용할 수 있도록 가공한다.
          * _extraData 필드에 rowSpanData 를 추가한다.
          * @param {Array} data
          * @return {Array}
@@ -341,7 +341,7 @@
 
             _.each(rowList, function(row, i) {
                 rowList[i] = this._baseFormat(rowList[i], i);
-                if (!this.isSortedByField()) {
+                if (this.isRowSpanEnable()) {
                     this._setExtraRowSpanData(rowList, i);
                 }
             }, this);
@@ -477,6 +477,14 @@
             return $.inArray(name, this.privateProperties) !== -1;
         },
         /**
+         * rowSpan 이 적용되어야 하는지 여부를 반환한다.
+         * - sorted, 혹은 filterd 된 경우 false 를 리턴한다.
+         * @returns {boolean}
+         */
+        isRowSpanEnable: function() {
+            return !this.isSortedByField();
+        },
+        /**
          * 현재 정렬된 상태인지 여부를 반환한다.
          * @return {Boolean}
          */
@@ -556,7 +564,7 @@
                 i;
 
             //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
-            if (!this.isSortedByField()) {
+            if (this.isRowSpanEnable()) {
                 rowSpanData = row.getRowSpanData(columnName);
                 if (!rowSpanData['isMainRow']) {
                     this.get(rowSpanData['mainRowKey']).set(columnName, value);

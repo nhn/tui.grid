@@ -6,7 +6,8 @@ describe('model.rowList', function() {
     var rowList,
         columnModelInstance,
         dataModelInstance,
-        dimensionModel,
+        rowListModelInstance,
+        dimensionModelInstance,
         grid = {};
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
@@ -15,7 +16,7 @@ describe('model.rowList', function() {
         dataModelInstance = grid.dataModel = new Data.RowList([], {
             grid: grid
         });
-        dimensionModel = new Model.Dimension({
+        dimensionModelInstance = new Model.Dimension({
             grid: grid,
             offsetLeft: 100,
             offsetTop: 200,
@@ -30,9 +31,11 @@ describe('model.rowList', function() {
             minimumColumnWidth: 20,
             displayRowCount: 20
         });
+
+
     });
-    describe('initializeVariables()', function() {
-        it('변수를 초기화 하는지 확인한다.', function() {
+    describe('_formatData()', function() {
+        it('.', function() {
 
         });
     });

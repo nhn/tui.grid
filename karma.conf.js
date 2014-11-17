@@ -62,7 +62,7 @@ module.exports = function(config) {
 
             // files to test
             {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
-//            {pattern: 'test/js/core.util.test.js', watched: true, served: true, included: true}
+//            {pattern: 'test/js/model.renderer.test.js', watched: true, served: true, included: true}
         ],
 
 
@@ -119,10 +119,11 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        _browsers: [
-            'Chrome'
-        ],
         browsers: [
+            'Chrome',
+            'IE'
+        ],
+        _browsers: [
             'IE7',
             'IE8',
             'IE9',
@@ -131,7 +132,7 @@ module.exports = function(config) {
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],
-        customLaunchers: {
+        _customLaunchers: {
             'IE7': {
                 base: 'WebDriver',
                 config: webdriverConfig,

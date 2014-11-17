@@ -10,10 +10,16 @@
             Model.Base.prototype.initialize.apply(this, arguments);
             var rowKey = attributes && attributes['rowKey'];
 
-            if (this.grid.dataModel.get(rowKey)) {
-                this.listenTo(this.grid.dataModel.get(rowKey), 'change', this._onDataModelChange, this);
-                this.listenTo(this.grid.dataModel.get(rowKey), 'restore', this._onDataModelChange, this);
+            this.setOwnProperties({
+                dataModel: this.grid.dataModel,
+                columnModel: this.grid.columnModel
+            });
+
+            if (this.dataModel.get(rowKey)) {
+                this.listenTo(this.dataModel.get(rowKey), 'change', this._onDataModelChange, this);
+                this.listenTo(this.dataModel.get(rowKey), 'restore', this._onDataModelChange, this);
             }
+
         },
         /**
          * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
@@ -39,8 +45,9 @@
          */
         updateRowSpanned: function(isRowSpanDataOnly) {
             if (this.collection) {
-                var columnModel = this.grid.columnModel.getVisibleColumnModelList(),
-                    model = this.grid.dataModel.get(this.get('rowKey')),
+                var dataModel = this.dataModel,
+                    columnModel = this.columnModel.getVisibleColumnModelList(),
+                    model = this.dataModel.get(this.get('rowKey')),
                     extraData = model.get('_extraData'),
                     rowState = model.getRowState(),
                     param;
@@ -53,7 +60,7 @@
                         isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
 
                     if (cellData) {
-                        if (!this.grid.isSorted()) {
+                        if (dataModel.isRowSpanEnable()) {
                             if (!cellData['isMainRow']) {
                                 rowModel = this.collection.get(cellData['mainRowKey']);
                             }
@@ -72,17 +79,32 @@
                 }, this);
             }
         },
+        /**
+         * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
+         * @param {Array} data
+         * @return {Array}
+         */
         parse: function(data) {
-            //affect option 을 먼저 수행한다.
+            return this._formatData(data);
+        },
+        /**
+         * 데이터를 View 에서 사용할 수 있도록 가공한다.
+         * _extraData 필드에 rowSpanData 를 추가한다.
+         * @param {Array} data
+         * @return {Array}
+         * @private
+         */
+        _formatData: function(data) {
             var grid = this.collection.grid,
                 dataModel = grid.dataModel,
                 rowKey = data['rowKey'];
 
             _.each(data, function(value, columnName) {
                 var rowSpanData,
-                    rowState = dataModel.get(rowKey).getRowState(),
+                    row = dataModel.get(rowKey),
+                    rowState = row.getRowState(),
                     isDisabled = rowState.isDisabled,
-                    isEditable = grid.isEditable(rowKey, columnName),
+                    isEditable = row.isEditable(columnName),
                     defaultRowSpanData = {
                         mainRowKey: rowKey,
                         count: 0,
@@ -90,11 +112,11 @@
                     };
 
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                    if (grid.isSorted()) {
-                        rowSpanData = defaultRowSpanData;
-                    }else {
+                    if (dataModel.isRowSpanEnable()) {
                         rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] &&
                             data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
+                    }else {
+                        rowSpanData = defaultRowSpanData;
                     }
                     isDisabled = columnName === '_button' ? rowState.isDisabledCheck : isDisabled;
 
@@ -145,8 +167,8 @@
                     this.set(columnName, data);
                     if (isValueChanged) {
                         //value 가 변경되었을 경우 relation 을 수행한다.
-                        rowIndex = this.grid.dataModel.indexOfRowKey(rowKey);
-                        this.grid.renderModel.executeRelation(rowIndex);
+                        rowIndex = this.dataModel.indexOfRowKey(rowKey);
+                        this.renderModel.executeRelation(rowIndex);
                     }
                 }
             }
