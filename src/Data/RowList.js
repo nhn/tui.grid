@@ -80,7 +80,7 @@
             if ($.inArray(editType, notEditableTypeList) !== -1) {
                 isEditable = false;
             } else {
-                isEditable = !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
+                isEditable = !(relationResult && relationResult['isEditable'] === false);
             }
 
             return {

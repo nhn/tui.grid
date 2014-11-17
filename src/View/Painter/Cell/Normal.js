@@ -68,7 +68,7 @@
         /**
          * rendering 해야하는 cellData 의 변경 목록
          */
-        rerenderAttributes: ['isEditable', 'optionList'],
+        rerenderAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
             'mousedown' : '_onMouseDown',
             'change input' : '_onChange',

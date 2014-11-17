@@ -24,10 +24,6 @@
                 isColumnModelChanged: false
             });
 
-            //원본 rowList 의 상태 값 listening
-            this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this);
-            this.listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this);
-
             //lside 와 rside 별 Collection 생성
             var lside = new Model.RowList([], {
                 grid: this.grid
@@ -39,6 +35,20 @@
                 lside: lside,
                 rside: rside
             });
+
+            //원본 rowList 의 상태 값 listening
+            this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this)
+                .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this)
+                .listenTo(lside, 'valueChange', this._onValueChange, this)
+                .listenTo(rside, 'valueChange', this._onValueChange, this);
+        },
+        /**
+         * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
+         * @param rowIndex
+         * @private
+         */
+        _onValueChange: function(rowIndex) {
+            this.executeRelation(rowIndex);
         },
         /**
          * 내부 변수를 초기화 한다.

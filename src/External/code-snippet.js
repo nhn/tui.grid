@@ -399,15 +399,15 @@ if (!window.ne.util) { window.ne.util = {}; }
      *
      * => sum == 6
      **/
-    var forEachOwnProperties = function(obj, iteratee, context) {
+    function forEachOwnProperties(obj, iteratee, context) {
         var key;
 
-        for(key in obj) {
+        for (key in obj) {
             if (obj.hasOwnProperty(key)) {
                 iteratee.call(context || null, obj[key], key, obj);
             }
         }
-    };
+    }
 
     /**
      * 파라메터로 전달된 객체나 어레이를 순회하며 데이터를 콜백함수에 전달한다.
@@ -423,7 +423,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      *
      * => sum == 6
      **/
-    var forEach = function(obj, iteratee, context) {
+    function forEach(obj, iteratee, context) {
         var key,
             len;
 
@@ -434,7 +434,7 @@ if (!window.ne.util) { window.ne.util = {}; }
         } else {
             ne.forEachOwnProperties(obj, iteratee, context);
         }
-    };
+    }
 
     /**
      * 파라메터로 전달된 객체나 어레이를 순회하며 콜백을 실행한 리턴값을 배열로 만들어 리턴한다.
@@ -449,7 +449,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      *
      * => [1,2,3,4];
      */
-    var map = function(obj, iteratee, context) {
+    function map(obj, iteratee, context) {
         var resultArray = [];
 
         ne.forEach(obj, function() {
@@ -457,7 +457,7 @@ if (!window.ne.util) { window.ne.util = {}; }
         });
 
         return resultArray;
-    };
+    }
 
     /**
      * 파라메터로 전달된 객체나 어레이를 순회하며 콜백을 실행한 리턴값을 다음 콜백의 첫번째 인자로 넘겨준다.
@@ -472,7 +472,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      *
      * => 6;
      */
-    var reduce = function(obj, iteratee, context) {
+    function reduce(obj, iteratee, context) {
         var keys,
             index = 0,
             length,
@@ -492,12 +492,34 @@ if (!window.ne.util) { window.ne.util = {}; }
         }
 
         return store;
+    }
+
+    /**
+     * 유사배열을 배열 형태로 변환한다.
+     * @param {*} arrayLike 유사배열
+     * @return {Array}
+     * @example
+
+     var arrayLike = {
+        0: 'one',
+        1: 'two',
+        2: 'three',
+        3: 'four',
+        length: 4
     };
+     var result = toArray(arrayLike);
+
+     => ['one', 'two', 'three', 'four'];
+     */
+    function toArray(arrayLike) {
+        return Array.prototype.slice.call(arrayLike);
+    }
 
     ne.forEachOwnProperties = forEachOwnProperties;
     ne.forEach = forEach;
     ne.map = map;
     ne.reduce = reduce;
+    ne.toArray = toArray;
 
 })(window.ne.util);
 /**
@@ -917,7 +939,7 @@ if (!window.ne.util) { window.ne.util = {}; }
         'checkbox': function(targetElement, formValue) {
             if (ne.isArray(formValue)) {
                 targetElement.checked = $.inArray(targetElement.value, _changeToStringInArray(formValue)) !== -1;
-            }else {
+            } else {
                 targetElement.checked = (targetElement.value === formValue);
             }
         },
@@ -927,46 +949,35 @@ if (!window.ne.util) { window.ne.util = {}; }
          * @param {String} formValue
          */
         'select-one': function(targetElement, formValue) {
-            var i,
-                targetOption,
-                index = -1,
-                length = targetElement.options.length;
-            for (i = 0; i < length; i++) {
-                targetOption = targetElement.options[i];
+            var options = ne.toArray(targetElement.options),
+                index = -1;
+
+            ne.forEach(options, function(targetOption, i) {
                 if (targetOption.value === formValue || targetOption.text === formValue) {
                     index = i;
+                    return false;
                 }
-            }
+            }, this);
+
             targetElement.selectedIndex = index;
+
         },
         /**
          * select-multiple type 의 input 요소의 값을 설정한다.
          * @param {HTMLElement} targetElement
-         * @param {String} formValue
+         * @param {String|Array} formValue
          */
         'select-multiple': function(targetElement, formValue) {
-            var targetOption,
-                i,
-                length,
-                index = -1;
+            var options = ne.toArray(targetElement.options);
 
             if (ne.isArray(formValue)) {
                 formValue = _changeToStringInArray(formValue);
-                length = targetElement.options.length;
-                for (i = 0; i < length; i++) {
-                    targetOption = targetElement.options[i];
+                ne.forEach(options, function(targetOption) {
                     targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
                         $.inArray(targetOption.text, formValue) !== -1;
-                }
-            }else {
-                length = targetElement.options.length;
-                for (i = 0; i < length; i++) {
-                    targetOption = targetElement.options[i];
-                    if (targetOption.value === formValue || targetOption.text === formValue) {
-                        index = i;
-                    }
-                }
-                targetElement.selectedIndex = index;
+                }, this);
+            } else {
+                this['select-one'].apply(this, arguments);
             }
         },
         /**
@@ -974,7 +985,7 @@ if (!window.ne.util) { window.ne.util = {}; }
          * @param {HTMLElement} targetElement
          * @param {String} formValue
          */
-        'default': function(targetElement, formValue) {
+        'defaultAction': function(targetElement, formValue) {
             targetElement.value = formValue;
         }
     };
@@ -985,8 +996,8 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @return {Array} 변환된 배열 결과 값
      */
     function _changeToStringInArray(arr) {
-        ne.forEach(arr, function(value) {
-            value = String(value);
+        ne.forEach(arr, function(value, i) {
+            arr[i] = String(value);
         }, this);
         return arr;
     }
@@ -1002,13 +1013,15 @@ if (!window.ne.util) { window.ne.util = {}; }
             valueList = $form.serializeArray();
 
         ne.forEach(valueList, function(obj) {
-            if (ne.isDefined(result[obj.name])) {
-                if (!result[obj.name].push) {
-                    result[obj.name] = [result[obj.name]];
+            var value = obj.value,
+                name = obj.name;
+            if (ne.isDefined(result[name])) {
+                if (!result[name].push) {
+                    result[name] = [result[name]];
                 }
-                result[obj.name].push(obj.value || '');
+                result[name].push(value || '');
             } else {
-                result[obj.name] = obj.value || '';
+                result[name] = value || '';
             }
         }, this);
 
@@ -1052,11 +1065,8 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.
      **/
     function setFormElementValue($form, elementName, formValue) {
-        var i,
-            type,
-            targetElement,
-            length,
-            elementList = getFormElement($form, elementName, true);
+        var type,
+            elementList = getFormElement($form, elementName);
 
         if (!elementList) {
             return;
@@ -1065,13 +1075,11 @@ if (!window.ne.util) { window.ne.util = {}; }
             formValue = String(formValue);
         }
         elementList = ne.isHTMLTag(elementList) ? [elementList] : elementList;
-
-        length = elementList.length;
-        for (i = 0; i < length; i++) {
-            targetElement = elementList[i];
-            type = setInput[targetElement.type] ? targetElement.type : 'default';
+        elementList = ne.toArray(elementList);
+        ne.forEach(elementList, function(targetElement) {
+            type = setInput[targetElement.type] ? targetElement.type : 'defaultAction';
             setInput[type](targetElement, formValue);
-        }
+        }, this);
     }
     /**
      * input 타입의 엘리먼트의 커서를 가장 끝으로 이동한다.

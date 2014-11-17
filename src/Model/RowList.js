@@ -12,14 +12,14 @@
 
             this.setOwnProperties({
                 dataModel: this.grid.dataModel,
-                columnModel: this.grid.columnModel
+                columnModel: this.grid.columnModel,
+                renderModel: this.grid.renderModel
             });
 
             if (this.dataModel.get(rowKey)) {
                 this.listenTo(this.dataModel.get(rowKey), 'change', this._onDataModelChange, this);
                 this.listenTo(this.dataModel.get(rowKey), 'restore', this._onDataModelChange, this);
             }
-
         },
         /**
          * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
@@ -29,9 +29,9 @@
         _onDataModelChange: function(model) {
             _.each(model.changed, function(value, columnName) {
                 if (columnName === '_extraData') {
-                    // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 rowSpan 된
-                    // row model 에 연결된 focus, select, disable 를 업데이트 한다.
-                    this.updateRowSpanned();
+                    // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 해당 row 에 disable, editable 상태를 업데이트 한다.
+                    // rowSpan 되어있는 행일 경우 main row 에 해당 처리를 수행한다..
+                    this._setRowExtraData();
                 }else {
                     this.setCell(columnName, {
                         value: value
@@ -43,36 +43,36 @@
         /**
          * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
          */
-        updateRowSpanned: function(isRowSpanDataOnly) {
-            if (this.collection) {
+        _setRowExtraData: function() {
+            if (ne.util.isDefined(this.collection)) {
                 var dataModel = this.dataModel,
-                    columnModel = this.columnModel.getVisibleColumnModelList(),
-                    model = this.dataModel.get(this.get('rowKey')),
-                    extraData = model.get('_extraData'),
-                    rowState = model.getRowState(),
+                    columnModelList = this.columnModel.getVisibleColumnModelList(),
+                    row = this.dataModel.get(this.get('rowKey')),
+                    rowState = row.getRowState(),
                     param;
-
-                _.each(columnModel, function(column, key) {
+                _.each(columnModelList, function(columnModel) {
                     var mainRowKey,
-                        columnName = column['columnName'],
+                        columnName = columnModel['columnName'],
                         cellData = this.get(columnName),
                         rowModel = this,
-                        isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
+                        isEditable,
+                        isDisabled;
 
-                    if (cellData) {
+
+                    if (ne.util.isDefined(cellData)) {
+                        isEditable = row.isEditable(columnName);
+                        isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
                         if (dataModel.isRowSpanEnable()) {
                             if (!cellData['isMainRow']) {
                                 rowModel = this.collection.get(cellData['mainRowKey']);
                             }
                         }
-
-                        if (rowModel && !isRowSpanDataOnly || (isRowSpanDataOnly && !cellData['isMainRow'])) {
+                        if (rowModel) {
                             param = {
-                                className: rowState.classNameList.join(' ')
+                                className: rowState.classNameList.join(' '),
+                                isDisabled: isDisabled,
+                                isEditable: isEditable
                             };
-                            if (isDisabled) {
-                                param.isDisabled = true;
-                            }
                             rowModel.setCell(columnName, param);
                         }
                     }
@@ -89,13 +89,12 @@
         },
         /**
          * 데이터를 View 에서 사용할 수 있도록 가공한다.
-         * _extraData 필드에 rowSpanData 를 추가한다.
          * @param {Array} data
          * @return {Array}
          * @private
          */
         _formatData: function(data) {
-            var grid = this.collection.grid,
+            var grid = this.grid || this.collection.grid,
                 dataModel = grid.dataModel,
                 rowKey = data['rowKey'];
 
@@ -143,7 +142,7 @@
 
         /**
          * Cell 의 값을 변경한다.
-         * - 참조 형식의 데이터 타입이기 때문에 change이벤트 발생을 위해 해당 method 를 사용하여 값 변경을 수행한다.
+         * - 참조형 데이터 타입이기 때문에 change 이벤트 발생을 위해 이 method 를 사용하여 값 변경을 수행한다.
          * @param {String} columnName
          * @param {{key: value}} param
          */
@@ -153,7 +152,7 @@
                     isValueChanged = false,
                     changed = [],
                     rowIndex,
-                    rowKey = this.get(columnName)['rowKey'];
+                    rowKey = this.get('rowKey');
                 _.each(param, function(changeValue, name) {
                     if (!Util.isEqual(data[name], changeValue)) {
                         isValueChanged = (name === 'value') ? true : isValueChanged;
@@ -168,7 +167,7 @@
                     if (isValueChanged) {
                         //value 가 변경되었을 경우 relation 을 수행한다.
                         rowIndex = this.dataModel.indexOfRowKey(rowKey);
-                        this.renderModel.executeRelation(rowIndex);
+                        this.trigger('valueChange', rowIndex);
                     }
                 }
             }
