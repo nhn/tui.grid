@@ -27,7 +27,8 @@
                 isEnable: true,
                 _isShown: false
             });
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+                .listenTo(this.grid.dataModel, 'add remove sort reset', this.endSelection, this);
         },
         /**
          * selection 을 disable 한다.

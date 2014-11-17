@@ -44,7 +44,7 @@
         },
         /**
          * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
-         * @param rowIndex
+         * @param {number} rowIndex
          * @private
          */
         _onValueChange: function(rowIndex) {
@@ -105,7 +105,6 @@
          * @private
          */
         _onRowListChange: function() {
-            this.grid.selection.endSelection();
             clearTimeout(this.timeoutIdForRefresh);
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
@@ -204,7 +203,7 @@
          * @return {Collection}
          * @private
          */
-        _getRowListDivision: function(columnName) {
+        _getCollectionByColumnName: function(columnName) {
             var lside = this.get('lside'),
                 rside = this.get('rside');
 
@@ -216,12 +215,12 @@
         },
         /**
          * CellData 를 가져온다.
-         * @param rowKey
-         * @param columnName
+         * @param {number} rowKey
+         * @param {String} columnName
          * @return {*}
          */
         getCellData: function(rowKey, columnName) {
-            var collection = this._getRowListDivision(columnName),
+            var collection = this._getCollectionByColumnName(columnName),
                 row = collection.get(rowKey);
             if (row) {
                return row.get(columnName);
@@ -238,9 +237,9 @@
             relationResult = row.getRelationResult();
 
             _.each(relationResult, function(changes, columnName) {
-                rowModel = this._getRowListDivision(columnName).at(renderIdx);
+                rowModel = this._getCollectionByColumnName(columnName).at(renderIdx);
                 if (rowModel) {
-                    this._getRowListDivision(columnName).at(renderIdx).setCell(columnName, changes);
+                    this._getCollectionByColumnName(columnName).at(renderIdx).setCell(columnName, changes);
                 }
             }, this);
         }
