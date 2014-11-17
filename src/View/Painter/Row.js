@@ -102,6 +102,7 @@
                 rowKey = cellData.rowKey;
                 $trCache[rowKey] = $trCache[rowKey] || this._getTrElement(rowKey);
                 $tr = $trCache[rowKey];
+
                 if (columnName !== '_extraData') {
                     //editable 프로퍼티가 false 라면 normal type 으로 설정한다.
                     editType = this._getEditType(columnName, cellData);

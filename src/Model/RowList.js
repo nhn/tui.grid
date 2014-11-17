@@ -90,11 +90,11 @@
                     };
 
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
-
                     if (grid.isSorted()) {
                         rowSpanData = defaultRowSpanData;
                     }else {
-                        rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] && data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
+                        rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] &&
+                            data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
                     }
                     isDisabled = columnName === '_button' ? rowState.isDisabledCheck : isDisabled;
 
@@ -102,7 +102,6 @@
                         rowKey: rowKey,
                         columnName: columnName,
                         value: value,
-
                         //Rendering properties
                         rowSpan: rowSpanData.count,
                         isMainRow: rowSpanData.isMainRow,
@@ -117,12 +116,12 @@
                     };
                 }
             }, this);
-//            this.executeAffectList(data);
             return data;
         },
 
         /**
          * Cell 의 값을 변경한다.
+         * - 참조 형식의 데이터 타입이기 때문에 change이벤트 발생을 위해 해당 method 를 사용하여 값 변경을 수행한다.
          * @param {String} columnName
          * @param {{key: value}} param
          */
@@ -133,15 +132,14 @@
                     changed = [],
                     rowIndex,
                     rowKey = this.get(columnName)['rowKey'];
-
-                for (var name in param) {
-
-                    if (!Util.isEqual(data[name], param[name])) {
+                _.each(param, function(changeValue, name) {
+                    if (!Util.isEqual(data[name], changeValue)) {
                         isValueChanged = (name === 'value') ? true : isValueChanged;
-                        data[name] = param[name];
+                        data[name] = changeValue;
                         changed.push(name);
                     }
-                }
+                }, this);
+
                 if (changed.length) {
                     data['changed'] = changed;
                     this.set(columnName, data);

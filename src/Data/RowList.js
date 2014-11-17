@@ -54,6 +54,71 @@
             };
         },
         /**
+         * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
+         * @param {String} columnName
+         * @return {{isEditable: boolean, isDisabled: boolean}}
+         */
+        getCellState: function(columnName) {
+            var notEditableTypeList = ['_number', 'normal'],
+                columnModel = this.grid.columnModel,
+                isDisabled = false,
+                isEditable = true,
+                editType = columnModel.getEditType(columnName),
+                rowState, relationResult;
+
+
+            relationResult = this.getRelationResult(['isDisable', 'isEditable'])[columnName];
+            rowState = this.getRowState();
+
+            if (columnName === '_button') {
+                isDisabled = rowState.isDisabledCheck;
+            } else {
+                isDisabled = rowState.isDisabled;
+            }
+            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
+
+            if ($.inArray(editType, notEditableTypeList) !== -1) {
+                isEditable = false;
+            } else {
+                isEditable = !(relationResult && (relationResult['isDisabled'] || relationResult['isEditable'] === false));
+            }
+
+            return {
+                isEditable: isEditable,
+                isDisabled: isDisabled
+            };
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {Boolean}
+         */
+        isEditable: function(columnName) {
+            var notEditableTypeList = ['_number', 'normal'],
+                editType, cellState;
+
+            editType = this.grid.columnModel.getEditType(columnName);
+
+            if ($.inArray(editType, notEditableTypeList) !== -1) {
+                return false;
+            } else {
+                cellState = this.getCellState(columnName);
+                return cellState.isEditable;
+            }
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {Boolean}
+         */
+        isDisabled: function(rowKey, columnName) {
+            var cellState;
+            cellState = this.getCellState(columnName);
+            return cellState.isDisabled;
+        },
+        /**
          * getRowSpanData
          *
          * rowSpan 설정값을 반환한다.

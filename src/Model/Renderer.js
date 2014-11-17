@@ -1,5 +1,5 @@
     /**
-     * View 에서 Rendering 시 바라보는 객체
+     * View 에서 Rendering 시 사용할 객체
      * @type {*|void}
      */
     Model.Renderer = Model.Base.extend({
@@ -40,6 +40,9 @@
                 rside: rside
             });
         },
+        /**
+         * 내부 변수를 초기화 한다.
+         */
         initializeVariables: function() {
             this.set({
                 top: 0,
@@ -51,6 +54,11 @@
                 startNumber: 1
             });
         },
+        /**
+         * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
+         * @param {String} whichSide
+         * @returns {Object} collection
+         */
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
             var collection;
@@ -67,6 +75,10 @@
             }
             return collection;
         },
+        /**
+         * Data.ColumnModel 이 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
+         * @private
+         */
         _onColumnModelChange: function() {
             this.set({
                 'scrollTop' : 0,
@@ -78,6 +90,10 @@
             clearTimeout(this.timeoutIdForRefresh);
             this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
         },
+        /**
+         * Data.RowList 가 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
+         * @private
+         */
         _onRowListChange: function() {
             this.grid.selection.endSelection();
             clearTimeout(this.timeoutIdForRefresh);
@@ -110,13 +126,11 @@
                 lsideRow = [],
                 rsideRow = [],
                 startIdx = this.get('startIdx'),
-                endIdx = this.get('endIdx');
+                endIdx = this.get('endIdx'),
+                num = this.get('startNumber') + startIdx;
 
 
 
-            var start = new Date();
-            var num = this.get('startNumber') + startIdx;
-//            console.log('render', startIdx, endIdx);
             for (i = startIdx; i < endIdx + 1; i++) {
                 var rowModel = this.grid.dataModel.at(i);
                 var rowKey = rowModel.get('rowKey');
@@ -150,6 +164,7 @@
                 lsideRowList.push(lsideRow);
                 rsideRowList.push(rsideRow);
             }
+            //lside 와 rside 를 초기화한다.
             this.get('lside').clear().reset(lsideRowList, {
                 parse: true
             });
@@ -159,18 +174,18 @@
 
             i = startIdx;
             len = rsideRowList.length + startIdx;
+
             for (; i < len; i++) {
                 this.executeRelation(i);
             }
+
             this.trigger('beforeRefresh');
-            var end = new Date();
             if (this.isColumnModelChanged === true) {
                 this.trigger('columnModelChanged');
                 this.isColumnModelChanged = false;
             }else {
                 this.trigger('rowListChanged');
             }
-
             this.trigger('afterRefresh');
         },
         /**
@@ -209,8 +224,7 @@
         executeRelation: function(rowIndex) {
             var row = this.grid.dataModel.at(rowIndex),
                 renderIdx = rowIndex - this.get('startIdx'),
-                callbackNameList, rowModel, relationResult;
-
+                rowModel, relationResult;
             relationResult = row.getRelationResult();
 
             _.each(relationResult, function(changes, columnName) {
