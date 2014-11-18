@@ -1,18 +1,25 @@
     /**
      * Focus model
      * RowList collection 이 focus class 를 listen 한다.
-     * @class
+     * @constructor
      */
     Model.Focus = Model.Base.extend({
         defaults: {
             rowKey: null,
             columnName: '',
             prevRowKey: null,
-            prevColumnName: ''
+            prevColumnName: '',
+            scrollX: true,
+            scrollY: true,
+            scrollBarSize: 17
         },
         initialize: function(attributes, options) {
             Model.Base.prototype.initialize.apply(this, arguments);
         },
+        /**
+         * 이전 focus 정보를 저장한다.
+         * @private
+         */
         _savePrevious: function() {
             if (this.get('rowKey') !== null) {
                 this.set('prevRowKey', this.get('rowKey'));
@@ -21,6 +28,10 @@
                 this.set('prevColumnName', this.get('columnName'));
             }
         },
+        /**
+         * 이전 focus 정보를 제거한다.
+         * @private
+         */
         _clearPrevious: function() {
             this.set({
                 prevRowKey: null,
@@ -72,12 +83,12 @@
                 //todo scrolltop 및 left 값 조정하는 로직 필요.
                 this._adjustScroll();
             }
-            if (this.grid.columnModel.get('selectType') === 'radio') {
-                this.grid.uncheckAll();
-                this.grid.check(rowKey);
-            }
             return this;
         },
+        /**
+         * focus 이동에 맞추어 scroll 위치를 조정한다.
+         * @private
+         */
         _adjustScroll: function() {
             var focused = this.which(),
                 dimensionModel = this.grid.dimensionModel,
@@ -98,9 +109,9 @@
                 renderModel.set({
                     scrollTop: position.top
                 });
-            } else if (position.bottom > bodyHeight + scrollTop - (this.grid.option('scrollX') * this.grid.scrollBarSize)) {
+            } else if (position.bottom > bodyHeight + scrollTop - (+this.get('scrollX') * this.get('scrollBarSize'))) {
                 renderModel.set({
-                    scrollTop: position.bottom - bodyHeight + (this.grid.option('scrollX') * this.grid.scrollBarSize)
+                    scrollTop: position.bottom - bodyHeight + (+this.get('scrollX') * this.get('scrollBarSize'))
                 });
             }
 
@@ -112,13 +123,13 @@
                     });
                 } else if (position.right > currentRight) {
                     renderModel.set({
-                        scrollLeft: position.right - rsideWidth + (this.grid.option('scrollY') * this.grid.scrollBarSize) + 1
+                        scrollLeft: position.right - rsideWidth + (+this.get('scrollY') * this.get('scrollBarSize')) + 1
                     });
                 }
             }
         },
         /**
-         * blur 처리한다.
+         * 디자인 blur 처리한다.
          * @return {Model.Focus}
          */
         blur: function() {
@@ -178,9 +189,10 @@
         findColumnName: function(offset) {
             var index,
                 columnModel = this.grid.columnModel,
-                columnModelList = columnModel.getVisibleColumnModelList();
+                columnModelList = columnModel.getVisibleColumnModelList(),
+                columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
             if (this.has()) {
-                index = Math.max(Math.min(columnModel.indexOfColumnName(this.get('columnName'), true) + offset, columnModelList.length - 1), 0);
+                index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
                 return columnModelList[index] && columnModelList[index]['columnName'];
             }
         },
@@ -194,18 +206,36 @@
         _getRowSpanData: function(rowKey, columnName) {
             return this.grid.dataModel.get(rowKey).getRowSpanData(columnName);
         },
+        /**
+         * offset 만큼 뒤로 이동한 row의 index를 반환한다.
+         * @param {number} offset
+         * @returns {Number}
+         */
         nextRowIndex: function(offset) {
             var rowKey = this.nextRowKey(offset);
             return this.grid.dataModel.indexOfRowKey(rowKey);
         },
+        /**
+         * offset 만큼 앞으로 이동한 row의 index를 반환한다.
+         * @param {number} offset
+         * @returns {Number}
+         */
         prevRowIndex: function(offset) {
             var rowKey = this.prevRowKey(offset);
             return this.grid.dataModel.indexOfRowKey(rowKey);
         },
+        /**
+         * 다음 column의 index를 반환한다.
+         * @returns {Number}
+         */
         nextColumnIndex: function() {
             var columnName = this.nextColumnName();
             return this.grid.columnModel.indexOfColumnName(columnName, true);
         },
+        /**
+         * 이전 column의 index를 반환한다.
+         * @returns {Number}
+         */
         prevColumnIndex: function() {
             var columnName = this.prevColumnName();
             return this.grid.columnModel.indexOfColumnName(columnName, true);
@@ -282,16 +312,32 @@
         prevColumnName: function() {
             return this.findColumnName(-1);
         },
+        /**
+         * 첫번째 row의 key 를 반환한다.
+         * @return {(string|number)}
+         */
         firstRowKey: function() {
             return this.grid.dataModel.at(0).get('rowKey');
         },
+        /**
+         * 마지막 row의 key 를 반환한다.
+         * @return {(string|number)}
+         */
         lastRowKey: function() {
             return this.grid.dataModel.at(this.grid.dataModel.length - 1).get('rowKey');
         },
+        /**
+         * 첫번째 columnName 을 반환한다.
+         * @return {string}
+         */
         firstColumnName: function() {
             var columnModelList = this.grid.columnModel.getVisibleColumnModelList();
             return columnModelList[0]['columnName'];
         },
+        /**
+         * 마지막 columnName 을 반환한다.
+         * @return {string}
+         */
         lastColumnName: function() {
             var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
                 lastIndex = columnModelList.length - 1;

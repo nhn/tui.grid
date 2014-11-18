@@ -1,4 +1,9 @@
     var Util = {
+        /**
+         * 배열의 합을 반환한다.
+         * @param {number[]} list
+         * @return {number}
+         */
         sum: function(list) {
             return _.reduce(list, function(memo, value) {
                 return memo += value;

@@ -1,40 +1,50 @@
+    /**
+     *  View 에서 Rendering 시 사용할 객체
+     *  Smart Rendering 을 지원한다.
+     *  @constructor
+     */
     Model.Renderer.Smart = Model.Renderer.extend({
         initialize: function() {
             Model.Renderer.prototype.initialize.apply(this, arguments);
             this.on('change:scrollTop', this._onChange, this);
             this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onChange, this);
+
             this.setOwnProperties({
                 hiddenRowCount: 10,
                 criticalPoint: 3
             });
         },
+        /**
+         * bodyHeight 가 변경 되었을때 이벤트 핸들러
+         * @private
+         */
         _onChange: function() {
-            if (this._isRenderable() === true) {
+            if (this._isRenderable(this.get('scrollTop')) === true) {
                 this.refresh();
             }
         },
         /**
          * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
+         * @param {Number} scrollTop
          * @private
          */
-        _setRenderingRange: function() {
+        _setRenderingRange: function(scrollTop) {
             var top,
                 dimensionModel = this.grid.dimensionModel,
                 dataModel = this.grid.dataModel,
-                scrollTop = this.get('scrollTop'),
                 rowHeight = dimensionModel.get('rowHeight'),
                 bodyHeight = dimensionModel.get('bodyHeight'),
                 displayRowCount = dimensionModel.getDisplayRowCount(),
-                startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIdx = Math.min(dataModel.length - 1,
-                    Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)),
+                startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
+                endIndex = Math.min(dataModel.length - 1,
+                    Math.floor(startIndex + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)),
                 startRow, endRow, minList, maxList;
 
             if (dataModel.isRowSpanEnable()) {
                 minList = [];
                 maxList = [];
-                startRow = dataModel.at(startIdx);
-                endRow = dataModel.at(endIdx);
+                startRow = dataModel.at(startIndex);
+                endRow = dataModel.at(endIndex);
                 if (startRow && endRow) {
                     _.each(startRow.get('_extraData')['rowSpanData'], function(data, columnName)  {
                         if (!data.isMainRow) {
@@ -49,43 +59,52 @@
                     }, this);
 
                     if (minList.length > 0) {
-                        startIdx += Math.min.apply(Math, minList);
+                        startIndex += Math.min.apply(Math, minList);
                     }
+
                     if (maxList.length > 0) {
-                        endIdx += Math.max.apply(Math, maxList);
+                        endIndex += Math.max.apply(Math, maxList);
                     }
                 }
             }
-
-            top = (startIdx === 0) ? 0 : Util.getHeight(startIdx, rowHeight) - 1;
+            top = (startIndex === 0) ? 0 : Util.getHeight(startIndex, rowHeight) - 1;
 
             this.set({
                 top: top,
-                startIdx: startIdx,
-                endIdx: endIdx
+                startIndex: startIndex,
+                endIndex: endIndex
             });
-
         },
-
-        _isRenderable: function() {
-            var scrollTop = this.get('scrollTop'),
-                rowHeight = this.grid.dimensionModel.get('rowHeight'),
-                bodyHeight = this.grid.dimensionModel.get('bodyHeight'),
-                displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
-                rowCount = this.grid.dataModel.length,
+        /**
+         * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
+         * @param {Number} scrollTop
+         * @returns {boolean}
+         * @private
+         */
+        _isRenderable: function(scrollTop) {
+            var grid = this.grid,
+                dimensionModel = grid.dimensionModel,
+                dataModel = grid.dataModel,
+                rowHeight = dimensionModel.get('rowHeight'),
+                bodyHeight = dimensionModel.get('bodyHeight'),
+                rowCount = dataModel.length,
                 displayStartIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1))),
-                displayEndIdx = Math.min(this.grid.dataModel.length - 1, Math.floor((scrollTop + bodyHeight) / (rowHeight + 1))),
-                startIdx = this.get('startIdx'),
-                endIdx = this.get('endIdx');
-//            console.log('#########GAP', endIdx - startIdx, displayRowCount);
-            if ((startIdx !== 0 && startIdx + this.criticalPoint > displayStartIdx) ||
-                endIdx !== rowCount - 1 && (endIdx < rowCount && (endIdx - this.criticalPoint < displayEndIdx))) {
-//                console.log(startIdx + this.criticalPoint, displayStartIdx);
-//                console.log(endIdx - this.criticalPoint, displayEndIdx);
-                return true;
-            }else {
-                return false;
-            }
+                displayEndIdx = Math.min(dataModel.length - 1, Math.floor((scrollTop + bodyHeight) / (rowHeight + 1))),
+                startIndex = this.get('startIndex'),
+                endIndex = this.get('endIndex');
 
+            //시작 지점이 임계점 이하로 올라갈 경우 return true
+            if (startIndex !== 0) {
+                if (startIndex + this.criticalPoint > displayStartIdx) {
+                    return true;
+                }
+            }
+            //마지막 지점이 임계점 이하로 내려갔을 경우 return true
+            if (endIndex !== rowCount - 1) {
+                if (endIndex - this.criticalPoint < displayEndIdx) {
+                    return true;
+                }
+            }
+            return false;
         }
     });

@@ -655,9 +655,14 @@
         _initializeListener: function() {
             this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
             this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight);
+            this.listenTo(this.focusModel, 'focus', this._onFocusChanged);
         },
-
-
+        _onFocusChanged: function(rowKey) {
+            if (this.columnModel.get('selectType') === 'radio') {
+                this.uncheckAll();
+                this.check(rowKey);
+            }
+        },
         /**
          * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
          * @private
@@ -759,7 +764,10 @@
 
             // define focus model
             this.focusModel = new Model.Focus({
-                grid: this
+                grid: this,
+                scrollX: !!this.option('scrollX'),
+                scrollY: !!this.option('scrollY'),
+                scrollBarSize: this.scrollBarSize
             });
 
             //define rowList

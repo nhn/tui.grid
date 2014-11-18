@@ -78,7 +78,7 @@
          * @private
          */
         _onScroll: function(scrollEvent) {
-            if (!this.isScrollSync) {
+//            if (!this.isScrollSync) {
                 var obj = {};
                 obj['scrollTop'] = scrollEvent.target.scrollTop;
                 if (this.whichSide === 'R') {
@@ -86,9 +86,9 @@
                 }
                 this.grid.renderModel.set('$scrollTarget', this.$el);
                 this.grid.renderModel.set(obj);
-            } else {
-                this.isScrollSync = false;
-            }
+//            } else {
+//                this.isScrollSync = false;
+//            }
         },
         /**
          * Render model 의 Scroll left 변경 핸들러

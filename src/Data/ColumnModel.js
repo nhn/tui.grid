@@ -15,8 +15,8 @@
         },
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
+            this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
             this.on('change', this._onChange, this);
-
         },
 
         /**
