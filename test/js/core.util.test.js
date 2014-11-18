@@ -5,7 +5,14 @@ describe('core.util', function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/util.template.html');
     });
-    describe('Rendering 시 계산에 사용되는 메서드를 테스트한다..', function() {
+    describe('sum()', function() {
+        it('배열의 합을 반환한다.', function() {
+            expect(Util.sum([10, 20, 30, 40])).toBe(100);
+            expect(Util.sum([10])).toBe(10);
+            expect(Util.sum([100, 100, 100, 100, 100, 100])).toBe(600);
+        });
+    });
+    describe('Rendering 시 계산에 사용되는 메서드를 테스트한다.', function() {
         it('getHeight() 는 Row count 개수에 대응하는 table height 를 반환한다.', function() {
             var rowHeight = 100;
             expect(Util.getHeight(0, rowHeight)).toBe(0);
