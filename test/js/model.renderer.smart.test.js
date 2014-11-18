@@ -107,7 +107,7 @@ describe('model.renderer', function() {
         renderInstance,
         dimensionModelInstance,
         grid = {},
-         i;
+        i;
     rowList = [];
     for (i = 0; i < 100; i++) {
         rowList.push($.extend({}, sampleRow));
@@ -181,6 +181,61 @@ describe('model.renderer', function() {
             expect(renderInstance.get('startIndex')).toBe(25);
             expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(42);
 
+        });
+    });
+    describe('_isRenderable()', function() {
+        it('scrollTop 변경에 따라 rendering 해야할지 여부를 판단하여 반환한다.', function () {
+            renderInstance._setRenderingRange(0);
+            expect(renderInstance._isRenderable(0)).toBe(false);
+            expect(renderInstance._isRenderable(100)).toBe(false);
+            expect(renderInstance._isRenderable(200)).toBe(true);
+            expect(renderInstance._isRenderable(300)).toBe(true);
+            expect(renderInstance._isRenderable(400)).toBe(true);
+            expect(renderInstance._isRenderable(500)).toBe(true);
+
+            renderInstance._setRenderingRange(200);
+            expect(renderInstance._isRenderable(0)).toBe(true);
+            expect(renderInstance._isRenderable(100)).toBe(false);
+            expect(renderInstance._isRenderable(200)).toBe(false);
+            expect(renderInstance._isRenderable(300)).toBe(true);
+            expect(renderInstance._isRenderable(400)).toBe(true);
+            expect(renderInstance._isRenderable(500)).toBe(true);
+
+            renderInstance._setRenderingRange(400);
+            expect(renderInstance._isRenderable(0)).toBe(true);
+            expect(renderInstance._isRenderable(100)).toBe(true);
+            expect(renderInstance._isRenderable(200)).toBe(true);
+            expect(renderInstance._isRenderable(300)).toBe(false);
+            expect(renderInstance._isRenderable(400)).toBe(false);
+            expect(renderInstance._isRenderable(500)).toBe(true);
+        });
+    });
+
+    describe('_onChange()', function() {
+        it('bodyHeight', function () {
+            renderInstance._setRenderingRange(0);
+            expect(renderInstance._isRenderable(0)).toBe(false);
+            expect(renderInstance._isRenderable(100)).toBe(false);
+            expect(renderInstance._isRenderable(200)).toBe(true);
+            expect(renderInstance._isRenderable(300)).toBe(true);
+            expect(renderInstance._isRenderable(400)).toBe(true);
+            expect(renderInstance._isRenderable(500)).toBe(true);
+
+            renderInstance._setRenderingRange(200);
+            expect(renderInstance._isRenderable(0)).toBe(true);
+            expect(renderInstance._isRenderable(100)).toBe(false);
+            expect(renderInstance._isRenderable(200)).toBe(false);
+            expect(renderInstance._isRenderable(300)).toBe(true);
+            expect(renderInstance._isRenderable(400)).toBe(true);
+            expect(renderInstance._isRenderable(500)).toBe(true);
+
+            renderInstance._setRenderingRange(400);
+            expect(renderInstance._isRenderable(0)).toBe(true);
+            expect(renderInstance._isRenderable(100)).toBe(true);
+            expect(renderInstance._isRenderable(200)).toBe(true);
+            expect(renderInstance._isRenderable(300)).toBe(false);
+            expect(renderInstance._isRenderable(400)).toBe(false);
+            expect(renderInstance._isRenderable(500)).toBe(true);
         });
     });
 });
