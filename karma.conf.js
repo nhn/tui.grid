@@ -1,13 +1,67 @@
 // Karma configuration
 // Generated on Mon Aug 25 2014 20:26:51 GMT+0900 (KST)
-
+function setConfig(configDefault, isDev) {
+    if (isDev) {
+        configDefault.browsers = [
+            'Chrome',
+            'IE'
+        ];
+    } else {
+        configDefault.browsers = [
+            'IE7',
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
+        ];
+        configDefault.customLaunchers = {
+            'IE7': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'IE7'
+            },
+            'IE8': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'IE8'
+            },
+            'IE9': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'IE9'
+            },
+            'IE10': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'IE10'
+            },
+            'IE11': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'IE11'
+            },
+            'Chrome-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
+            },
+            'Firefox-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'firefox'
+            }
+        };
+    }
+}
 module.exports = function(config) {
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
         port: 4444,
         remoteHost: true
     };
-    config.set({
+    var configDefault = {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -119,59 +173,12 @@ module.exports = function(config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        _browsers: [
-            'Chrome',
-            'IE'
-        ],
-        browsers: [
-            'IE7',
-            'IE8',
-            'IE9',
-            'IE10',
-            'IE11',
-            'Chrome-WebDriver',
-            'Firefox-WebDriver'
-        ],
-        customLaunchers: {
-            'IE7': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE7'
-            },
-            'IE8': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE8'
-            },
-            'IE9': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE9'
-            },
-            'IE10': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE10'
-            },
-            'IE11': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE11'
-            },
-            'Chrome-WebDriver': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'chrome'
-            },
-            'Firefox-WebDriver': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'firefox'
-            }
-        },
+
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: true
-    });
+    };
+    setConfig(configDefault, true);
+    config.set(configDefault);
 };

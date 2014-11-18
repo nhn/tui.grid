@@ -159,7 +159,23 @@ describe('model.renderer', function() {
         });
     });
     describe('_getCollectionByColumnName()', function() {
-        it('columnName 을 인자로 받아 해당 columnName 이 속한 collection을 반환한다.', function() {
+        it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
+            dataModelInstance.set(rowList, {parse: true});
+            var rside = renderModelInstance.get('rside'),
+                lside = renderModelInstance.get('lside');
+            console.log(dataModelInstance.toJSON());
+            console.log(rside);
+            console.log(lside);
+            console.log(renderModelInstance._getCollectionByColumnName('columnName1').at(0));
+//            console.log((renderModelInstance._getCollectionByColumnName('columnName1')).at(0).get('columnName1') === false ? 'true': 'false');
+//            expect(renderModelInstance._getCollectionByColumnName('columnName1')).toEqual(lside);
+//            expect(renderModelInstance._getCollectionByColumnName('columnName2')).toEqual(lside);
+//            expect(renderModelInstance._getCollectionByColumnName('columnName3')).toEqual(rside);
+//            expect(renderModelInstance._getCollectionByColumnName('columnName4')).toEqual(rside);
+//            expect(renderModelInstance._getCollectionByColumnName('columnName5')).toEqual(rside);
+//            expect(renderModelInstance._getCollectionByColumnName('columnName6')).toEqual(rside);
+//            expect(renderModelInstance._getCollectionByColumnName('columnName7')).toEqual(rside);
         });
     });
 });
+
