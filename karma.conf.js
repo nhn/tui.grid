@@ -1,6 +1,12 @@
 // Karma configuration
 // Generated on Mon Aug 25 2014 20:26:51 GMT+0900 (KST)
 function setConfig(configDefault, isDev) {
+    var webdriverConfig = {
+        hostname: 'fe.nhnent.com',
+        port: 4444,
+        remoteHost: true
+    };
+
     if (isDev) {
         configDefault.browsers = [
             'Chrome',
@@ -56,11 +62,7 @@ function setConfig(configDefault, isDev) {
     }
 }
 module.exports = function(config) {
-    var webdriverConfig = {
-        hostname: 'fe.nhnent.com',
-        port: 4444,
-        remoteHost: true
-    };
+
     var configDefault = {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
