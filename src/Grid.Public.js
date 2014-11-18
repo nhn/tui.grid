@@ -233,7 +233,7 @@
          */
         getCheckedRowKeyList: function(isJsonString) {
             var checkedRowKeyList = this.core.getCheckedRowKeyList();
-            return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
+            return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
         },
         /**
          * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
@@ -242,7 +242,7 @@
          */
         getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.core.getCheckedRowList();
-            return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
+            return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
@@ -349,7 +349,16 @@
         setColumnFixIndex: function(index) {
             this.core.setColumnFixIndex(index);
         },
-
+        /**
+         * 인자로 들어온 columnName 기준으로 정렬 한다.
+         * @param {String} columnName 정렬할 컬럼이름
+         */
+        sort: function(columnName) {
+            this.core.sort(columnName);
+        },
+        unSort: function() {
+            this.core.sort('rowKey');
+        },
         setGridSize: function(size) {
             var dimensionModel = this.core.dimensionModel,
                 width = size && size.width || dimensionModel.get('width'),

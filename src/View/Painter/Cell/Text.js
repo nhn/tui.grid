@@ -106,7 +106,7 @@
      * @class
      */
     View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend({
-        rerenderAttributes: ['isEditable', 'value'],
+        rerenderAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
             'blur input' : '_onBlurConvertible',
@@ -163,8 +163,10 @@
          */
         _startEdit: function($td) {
             var isEdit = $td.data('isEdit'),
-                $input;
-            if (!isEdit && this.grid.isEditable(this._getRowKey($td), this._getColumnName($td))) {
+                $input,
+                cellState = this.grid.getCellState(this._getRowKey($td), this._getColumnName($td));
+
+            if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
                 $td.data('isEdit', true);
                 this.render(this._getCellData($td), $td);
                 $input = $td.find('input');

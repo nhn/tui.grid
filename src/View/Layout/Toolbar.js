@@ -137,7 +137,7 @@
                 toolbarHeight = dimensionModel.get('toolbarHeight'),
                 bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight - toolbarHeight;
 
-            bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXSize());
+            bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
             dimensionModel.set({
                 bodyHeight: bodyHeight
             });

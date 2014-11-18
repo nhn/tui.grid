@@ -45,7 +45,7 @@ var grid2 = new ne.Grid({
 getDummyData(dummy_data.columnModel_2, 5000, function(data) {
     var start = new Date();
     console.log('setRowListStart');
-    grid2.setRowList(data);
+//    grid2.setRowList(data);
     var end = new Date();
     console.log('setRowListEnd', end - start);
 });
@@ -116,6 +116,11 @@ function insertButton(gridInstance, $wrapper, $result) {
         },
         'sort columnName2' : function() {
             gridInstance.sort('columnName2');
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
+        },
+        'unsort' : function() {
+            gridInstance.unSort();
 //            gridInstance.setColumnValue('columnName1', '<script/>');
 //            gridInstance.sort('columnName5');
         },

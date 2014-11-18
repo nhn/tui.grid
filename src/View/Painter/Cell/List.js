@@ -4,7 +4,7 @@
      * @class
      */
     View.Painter.Cell.List = View.Base.Painter.Cell.extend({
-        rerenderAttributes: ['isEditable', 'optionList'],
+        rerenderAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {

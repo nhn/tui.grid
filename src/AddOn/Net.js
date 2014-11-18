@@ -201,7 +201,7 @@
                     startNumber: startNumber
                 });
 
-                data.columnModel = JSON.stringify(this.grid.columnModel.get('columnModelList'));
+                data.columnModel = $.toJSON(this.grid.columnModel.get('columnModelList'));
 //                data.columnModel = grid.columnModel.get('columnModelList');
                 grid.dataModel.fetch({
                     requestType: 'readData',

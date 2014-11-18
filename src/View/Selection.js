@@ -27,7 +27,8 @@
                 isEnable: true,
                 _isShown: false
             });
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+                .listenTo(this.grid.dataModel, 'add remove sort reset', this.endSelection, this);
         },
         /**
          * selection 을 disable 한다.
@@ -155,7 +156,7 @@
                 columnWidthList = dimensionModel.getColumnWidthList(),
                 scrollTop = renderModel.get('scrollTop'),
                 scrollLeft = renderModel.get('scrollLeft'),
-                totalColumnWidth = dimensionModel.getTotalWidth(),
+                totalColumnWidth = dimensionModel.getFrameWidth(),
                 dataPosY = containerPos.pageY + scrollTop,
                 dataPosX = containerPos.pageX,
                 overflowX = 0,
@@ -320,6 +321,7 @@
             if (this.hasSelection()) {
                 this._isShown = true;
                 var tmpRowRange,
+                    dataModel = this.grid.dataModel,
                     columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
                     rowHeight = this.grid.dimensionModel.get('rowHeight'),
                     startRow = Math.min.apply(Math, this.range.row),
@@ -330,7 +332,7 @@
                         row: [startRow, endRow],
                         column: [startColumn, endColumn]
                     };
-                if (!this.grid.isSorted()) {
+                if (dataModel.isRowSpanEnable()) {
                     tmpRowRange = $.extend([], spannedRange.row);
 
                     //rowSpan 처리를 위해 startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.

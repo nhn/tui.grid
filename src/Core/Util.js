@@ -1,4 +1,9 @@
     var Util = {
+        sum: function(list) {
+            return _.reduce(list, function(memo, value) {
+                return memo += value;
+            }, 0);
+        },
         /**
          * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
          * @param {number} rowCount
@@ -39,20 +44,20 @@
         isEqual: function(target, dist) {
             var isDiff,
                 compareObject = function(target, dist) {
-                var name,
-                    result = true;
-                /*
-                    빠른 loop 탈출을 위해 ne.forEach 대신 for in 구문을 사용한다.
-                    (추후 forEach 에 loop 탈출 기능이 추가되면 forEach 로 적용함.
-                */
-                for (name in target) {
-                    if (target[name] !== dist[name]) {
-                        result = false;
-                        break;
+                    var name,
+                        result = true;
+                    /*
+                        빠른 loop 탈출을 위해 ne.forEach 대신 for in 구문을 사용한다.
+                        (추후 forEach 에 loop 탈출 기능이 추가되면 forEach 로 적용함.
+                    */
+                    for (name in target) {
+                        if (target[name] !== dist[name]) {
+                            result = false;
+                            break;
+                        }
                     }
-                }
-                return result;
-            };
+                    return result;
+                };
             if (typeof target !== typeof dist) {
                 return false;
             } else if (ne.util.isArray(target) && target.length !== dist.length) {
@@ -71,15 +76,16 @@
          * @return {String}
          */
         stripTags: function(htmlString) {
+            var matchResult;
             htmlString = htmlString.replace(/[\n\r\t]/g, '');
             if (ne.util.hasEncodableString(htmlString)) {
-                if (/<img/.test(htmlString)) {
-                    var matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/);
+                if (/<img/i.test(htmlString)) {
+                    matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/i);
                     htmlString = matchResult ? matchResult[1] : '';
                 } else {
-                    htmlString = htmlString.replace(/<button.*?<\/button>/g, '');
+                    htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
                 }
-                htmlString = ne.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, ''));
+                htmlString = $.trim(ne.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')));
             }
             return htmlString;
         },
@@ -101,7 +107,7 @@
 
             ne.util.forEach(dataObj, function(value, name) {
                 if (typeof value !== 'string' && typeof value !== 'number') {
-                    value = JSON.stringify(value);
+                    value = $.toJSON(value);
                 }
                 value = encodeURIComponent(value);
                 queryList.push(name + '=' + value);
@@ -131,6 +137,22 @@
             }, this);
 
             return obj;
+        },
+        /**
+         * type 인자에 맞게 value type 을 convert 한다.
+         * Data.Row 의 List 형태에서 editOption.list 에서 검색을 위해,
+         * value type 해당 type 에 맞게 변환한다.
+         * @param {*} value
+         * @param {String} type
+         * @return {*}      컨버팅된 value
+         */
+        convertValueType: function(value, type) {
+            if (type === 'string') {
+                return value.toString();
+            } else if (type === 'number') {
+                return +value;
+            } else {
+                return value;
+            }
         }
-
     };

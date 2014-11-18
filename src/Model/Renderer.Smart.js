@@ -19,20 +19,22 @@
          */
         _setRenderingRange: function() {
             var top,
+                dimensionModel = this.grid.dimensionModel,
+                dataModel = this.grid.dataModel,
                 scrollTop = this.get('scrollTop'),
-                rowHeight = this.grid.dimensionModel.get('rowHeight'),
-                bodyHeight = this.grid.dimensionModel.get('bodyHeight'),
-                displayRowCount = this.grid.dimensionModel.getDisplayRowCount(),
+                rowHeight = dimensionModel.get('rowHeight'),
+                bodyHeight = dimensionModel.get('bodyHeight'),
+                displayRowCount = dimensionModel.getDisplayRowCount(),
                 startIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIdx = Math.min(this.grid.dataModel.length - 1,
+                endIdx = Math.min(dataModel.length - 1,
                     Math.floor(startIdx + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)),
                 startRow, endRow, minList, maxList;
 
-            if (!this.grid.isSorted()) {
+            if (dataModel.isRowSpanEnable()) {
                 minList = [];
                 maxList = [];
-                startRow = this.grid.dataModel.at(startIdx);
-                endRow = this.grid.dataModel.at(endIdx);
+                startRow = dataModel.at(startIdx);
+                endRow = dataModel.at(endIdx);
                 if (startRow && endRow) {
                     _.each(startRow.get('_extraData')['rowSpanData'], function(data, columnName)  {
                         if (!data.isMainRow) {
