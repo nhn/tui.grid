@@ -68,6 +68,7 @@
          * @return {Model.Focus}
          */
         focus: function(rowKey, columnName, isScrollable) {
+            var scrollPosition;
             rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
             columnName = columnName === undefined ? this.get('columnName') : columnName;
             this._savePrevious();
@@ -81,15 +82,17 @@
             this.trigger('focus', rowKey, columnName);
             if (isScrollable) {
                 //todo scrolltop 및 left 값 조정하는 로직 필요.
-                this._adjustScroll();
+                scrollPosition = this._getScrollPosition();
+                !ne.util.isEmpty(scrollPosition) && this.grid.renderModel.set(scrollPosition);
             }
             return this;
         },
         /**
-         * focus 이동에 맞추어 scroll 위치를 조정한다.
+         * focus 이동에 맞추어 scroll 위치를 조정한 값을 반환한다.
+         * @return {Object}
          * @private
          */
-        _adjustScroll: function() {
+        _getScrollPosition: function() {
             var focused = this.which(),
                 dimensionModel = this.grid.dimensionModel,
                 renderModel = this.grid.renderModel,
@@ -98,35 +101,30 @@
                 bodyHeight = dimensionModel.get('bodyHeight'),
                 lsideWidth = dimensionModel.get('lsideWidth'),
                 rsideWidth = dimensionModel.get('rsideWidth'),
-
                 position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName),
                 currentLeft = scrollLeft,
-                currentRight = scrollLeft + rsideWidth;
+                currentRight = scrollLeft + rsideWidth,
+                scrollXSize = +this.get('scrollX') * this.get('scrollBarSize'),
+                scrollYSize = +this.get('scrollY') * this.get('scrollBarSize'),
+                scrollPosition = {};
 
 
             //수직 스크롤 조정
             if (position.top < scrollTop) {
-                renderModel.set({
-                    scrollTop: position.top
-                });
-            } else if (position.bottom > bodyHeight + scrollTop - (+this.get('scrollX') * this.get('scrollBarSize'))) {
-                renderModel.set({
-                    scrollTop: position.bottom - bodyHeight + (+this.get('scrollX') * this.get('scrollBarSize'))
-                });
+                scrollPosition.scrollTop = position.top;
+            } else if (position.bottom > bodyHeight + scrollTop - scrollXSize) {
+                scrollPosition.scrollTop = position.bottom - bodyHeight + scrollXSize;
             }
 
             //수평 스크롤 조정
             if (!this.grid.columnModel.isLside(focused.columnName)) {
                 if (position.left < currentLeft) {
-                    renderModel.set({
-                        scrollLeft: position.left
-                    });
+                    scrollPosition.scrollLeft = position.left;
                 } else if (position.right > currentRight) {
-                    renderModel.set({
-                        scrollLeft: position.right - rsideWidth + (+this.get('scrollY') * this.get('scrollBarSize')) + 1
-                    });
+                    scrollPosition.scrollLeft = position.right - rsideWidth + scrollYSize + 1;
                 }
             }
+            return scrollPosition;
         },
         /**
          * 디자인 blur 처리한다.
@@ -150,6 +148,7 @@
         },
         /**
          * 현재 focus 정보를 index 기준으로 반환한다.
+         * @param {boolean} isPrevious 이전 focus 정보를 반환할지 여부
          */
         indexOf: function(isPrevious) {
             var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
@@ -165,14 +164,15 @@
          * @return {boolean}
          */
         has: function() {
-            return !!(this.get('rowKey') !== undefined && this.get('columnName'));
+            return !!(ne.util.isDefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName');
         },
         /**
          * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
          * @param {Number} offset
          * @return {Number|String} rowKey
+         * @private
          */
-        findRowKey: function(offset) {
+        _findRowKey: function(offset) {
             var index, row,
                 dataModel = this.grid.dataModel;
             if (this.has()) {
@@ -185,8 +185,9 @@
          * 현재 focus 된 column 기준으로 offset 만큼 이동한 columnName 을 반환한다.
          * @param {Number} offset
          * @return {String} columnName
+         * @private
          */
-        findColumnName: function(offset) {
+        _findColumnName: function(offset) {
             var index,
                 columnModel = this.grid.columnModel,
                 columnModelList = columnModel.getVisibleColumnModelList(),
@@ -251,21 +252,21 @@
 
             offset = typeof offset === 'number' ? offset : 1;
             if (offset > 1) {
-                rowKey = this.findRowKey(offset);
+                rowKey = this._findRowKey(offset);
                 rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
                 if (!rowSpanData.isMainRow) {
-                    rowKey = this.findRowKey(rowSpanData.count + offset);
+                    rowKey = this._findRowKey(rowSpanData.count + offset);
                 }
             } else {
                 rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
                 if (rowSpanData.isMainRow && rowSpanData.count > 0) {
-                    rowKey = this.findRowKey(rowSpanData.count);
+                    rowKey = this._findRowKey(rowSpanData.count);
                 } else if (!rowSpanData.isMainRow) {
                     count = rowSpanData.count;
                     rowSpanData = this._getRowSpanData(rowSpanData.mainRowKey, focused.columnName);
-                    rowKey = this.findRowKey(rowSpanData.count + count);
+                    rowKey = this._findRowKey(rowSpanData.count + count);
                 } else {
-                    rowKey = this.findRowKey(1);
+                    rowKey = this._findRowKey(1);
                 }
             }
             return rowKey;
@@ -283,17 +284,17 @@
             offset *= -1;
 
             if (offset < -1) {
-                rowKey = this.findRowKey(offset);
+                rowKey = this._findRowKey(offset);
                 rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
                 if (!rowSpanData.isMainRow) {
-                    rowKey = this.findRowKey(rowSpanData.count + offset);
+                    rowKey = this._findRowKey(rowSpanData.count + offset);
                 }
             } else {
                 rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
                 if (!rowSpanData.isMainRow) {
-                    rowKey = this.findRowKey(rowSpanData.count - 1);
+                    rowKey = this._findRowKey(rowSpanData.count - 1);
                 } else {
-                    rowKey = this.findRowKey(-1);
+                    rowKey = this._findRowKey(-1);
                 }
             }
             return rowKey;
@@ -303,14 +304,14 @@
          * @return {String}
          */
         nextColumnName: function() {
-            return this.findColumnName(1);
+            return this._findColumnName(1);
         },
         /**
          * keyEvent 발생 시 다음 columnName 을 반환한다.
          * @return {String}
          */
         prevColumnName: function() {
-            return this.findColumnName(-1);
+            return this._findColumnName(-1);
         },
         /**
          * 첫번째 row의 key 를 반환한다.
