@@ -1,6 +1,6 @@
     /**
      * View 에서 Rendering 시 사용할 객체
-     * @type {*|void}
+     * @constructor
      */
     Model.Renderer = Model.Base.extend({
         defaults: {
@@ -9,8 +9,8 @@
             $scrollTarget: null,
             scrollLeft: 0,
             maxScrollLeft: 0,
-            startIdx: 0,
-            endIdx: 0,
+            startIndex: 0,
+            endIndex: 0,
             startNumber: 1,
             lside: null,
             rside: null
@@ -59,8 +59,8 @@
                 scrollTop: 0,
                 $scrollTarget: null,
                 scrollLeft: 0,
-                startIdx: 0,
-                endIdx: 0,
+                startIndex: 0,
+                endIndex: 0,
                 startNumber: 1
             });
         },
@@ -93,8 +93,8 @@
             this.set({
                 'scrollTop' : 0,
                 'top' : 0,
-                'startIdx' : 0,
-                'endIdx' : 0
+                'startIndex' : 0,
+                'endIndex' : 0
             });
             this.isColumnModelChanged = true;
             clearTimeout(this.timeoutIdForRefresh);
@@ -115,15 +115,18 @@
          */
         _setRenderingRange: function() {
             this.set({
-                'startIdx' : 0,
-                'endIdx' : this.grid.dataModel.length - 1
+                'startIndex' : 0,
+                'endIndex' : this.grid.dataModel.length - 1
             });
         },
+        /**
+         * rendering 할 데이터를 생성한다.
+         */
         refresh: function() {
-            this._setRenderingRange();
+            this._setRenderingRange(this.get('scrollTop'));
+
             //TODO : rendering 해야할 데이터만 가져온다.
-            var len, i,
-                columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+            var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
                 columnList = this.grid.columnModel.get('visibleList'),
                 columnNameList = _.pluck(columnList, 'columnName'),
 
@@ -134,15 +137,19 @@
                 rsideRowList = [],
                 lsideRow = [],
                 rsideRow = [],
-                startIdx = this.get('startIdx'),
-                endIdx = this.get('endIdx'),
-                num = this.get('startNumber') + startIdx;
+                startIndex = this.get('startIndex'),
+                endIndex = this.get('endIndex'),
+                num = this.get('startNumber') + startIndex,
+                len,
+                i,
+                rowModel,
+                rowKey;
 
 
 
-            for (i = startIdx; i < endIdx + 1; i++) {
-                var rowModel = this.grid.dataModel.at(i);
-                var rowKey = rowModel.get('rowKey');
+            for (i = startIndex; i < endIndex + 1; i++) {
+                rowModel = this.grid.dataModel.at(i);
+                rowKey = rowModel.get('rowKey');
                 //데이터 초기화
                 lsideRow = {
                     '_extraData' : rowModel.get('_extraData'),
@@ -160,7 +167,7 @@
                     } else {
                         lsideRow[columnName] = rowModel.get(columnName);
                     }
-                }, this);
+                });
 
                 _.each(rsideColumnList, function(columnName) {
                     if (columnName == '_number') {
@@ -168,7 +175,7 @@
                     } else {
                         rsideRow[columnName] = rowModel.get(columnName);
                     }
-                }, this);
+                });
 
                 lsideRowList.push(lsideRow);
                 rsideRowList.push(rsideRow);
@@ -181,8 +188,8 @@
                 parse: true
             });
 
-            i = startIdx;
-            len = rsideRowList.length + startIdx;
+            i = startIndex;
+            len = rsideRowList.length + startIndex;
 
             for (; i < len; i++) {
                 this.executeRelation(i);
@@ -232,7 +239,7 @@
          */
         executeRelation: function(rowIndex) {
             var row = this.grid.dataModel.at(rowIndex),
-                renderIdx = rowIndex - this.get('startIdx'),
+                renderIdx = rowIndex - this.get('startIndex'),
                 rowModel, relationResult;
             relationResult = row.getRelationResult();
 

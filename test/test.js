@@ -45,7 +45,7 @@ var grid2 = new ne.Grid({
 getDummyData(dummy_data.columnModel_2, 5000, function(data) {
     var start = new Date();
     console.log('setRowListStart');
-//    grid2.setRowList(data);
+    grid2.setRowList(data);
     var end = new Date();
     console.log('setRowListEnd', end - start);
 });

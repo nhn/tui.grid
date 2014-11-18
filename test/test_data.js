@@ -1,6 +1,6 @@
     var $result = $('#result1');
-//    var url = 'http://10.77.34.122/webstorm/Grid-gitlab/test/php/';
-    var url = 'http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/php/';
+    var url = 'http://10.77.34.122/webstorm/Grid-gitlab/test/php/';
+//    var url = 'http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/php/';
 //    var url = 'http://budapest.pe.kr/grid/test/php/';
 
     var grid = new ne.Grid({
