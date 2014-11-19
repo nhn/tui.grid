@@ -215,15 +215,17 @@ describe('view.painter.cell.base', function() {
     grid.focusModel = new Model.Focus({
         grid: grid
     });
-    cellPainter = new View.Base.Painter.Cell({
-        grid: grid
-    });
+
     grid.renderModel.refresh();
 
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
+        cellPainter && cellPainter.destroy && cellPainter.destroy();
+        cellPainter = new View.Base.Painter.Cell({
+            grid: grid
+        });
     });
     describe('_getClassNameList()', function() {
         var classNameList;
@@ -334,12 +336,14 @@ describe('view.painter.cell.base', function() {
             $td = $empty.find('td');
 
             cellPainter.redraw({
+                rowSpan: 2,
                 columnName: 'columnName1',
                 rowKey: 0,
                 className: 'rowClass',
                 isEditable: true,
                 isDisabled: false
             }, $td);
+            expect($td.attr('rowSpan')).toBe('2');
             expect($td.hasClass('editable')).toBe(true);
             expect($td.hasClass('disabled')).toBe(false);
         });
@@ -443,6 +447,21 @@ describe('view.painter.cell.base', function() {
             cellPainter._setKeyDownSwitch('F5', newFunction);
             expect(cellPainter['_keyDownSwitch']['F5']).toEqual(newFunction);
         });
+        it('첫번째 인자에 Object 형태로 추가한다..', function() {
+            var switchObject = {
+                'ESC': function() {},
+                'F1': function() {},
+                'F2': function() {},
+                'F3': function() {}
+            };
+            expect(cellPainter['_keyDownSwitch']['TAB']).toBeDefined();
+            cellPainter._setKeyDownSwitch(switchObject);
+            expect(cellPainter['_keyDownSwitch']['ESC']).toEqual(switchObject['ESC']);
+            expect(cellPainter['_keyDownSwitch']['F1']).toEqual(switchObject['F1']);
+            expect(cellPainter['_keyDownSwitch']['F2']).toEqual(switchObject['F2']);
+            expect(cellPainter['_keyDownSwitch']['F3']).toEqual(switchObject['F3']);
+            expect(cellPainter['_keyDownSwitch']['TAB']).toBeDefined();
+        });
     });
 
     describe('_executeKeyDownSwitch()', function() {
@@ -452,10 +471,13 @@ describe('view.painter.cell.base', function() {
                     keyCode: grid.keyMap['F5'],
                     which: grid.keyMap['F5'],
                     target: '<div>'
-                };
+                },
+                result;
             cellPainter._setKeyDownSwitch('F5', callback);
-            cellPainter._executeKeyDownSwitch(keyDownEvent);
+            result = cellPainter._executeKeyDownSwitch(keyDownEvent);
+
             expect(callback).toHaveBeenCalled();
+            expect(result).toBe(true);
         });
         it('정의되어있지 않은 keyDownSwitch 를 수행할 경우 defaultAction 을 호출한다.', function() {
             var callback = jasmine.createSpy('callback'),
@@ -463,13 +485,100 @@ describe('view.painter.cell.base', function() {
                     keyCode: grid.keyMap['BACKSPACE'],
                     which: grid.keyMap['BACKSPACE'],
                     target: '<div>'
-                };
+                },
+                result;
             expect(cellPainter['_keyDownSwitch']['BACKSPACE']).not.toBeDefined();
             cellPainter._setKeyDownSwitch('defaultAction', callback);
+            result = cellPainter._executeKeyDownSwitch(keyDownEvent);
+            expect(callback).toHaveBeenCalled();
+            expect(result).toBe(false);
+        });
+    });
+    describe('_onKeyDown', function() {
+        var callback,
+            keyDownEvent;
+        beforeEach(function() {
+            callback = jasmine.createSpy('callback');
+            keyDownEvent = {
+                keyCode: grid.keyMap['F5'],
+                which: grid.keyMap['F5'],
+                target: '<div>',
+                preventDefault: jasmine.createSpy('callback')
+            };
+        });
+        it('정의된 keyDownSwitch 를 수행한다면 keyDownEvent.preventDefault() 를 호출한다.', function() {
+            keyDownEvent.keyCode = keyDownEvent.which =grid.keyMap['TAB'];
+            expect(cellPainter['_keyDownSwitch']['TAB']).toBeDefined();
+            cellPainter._setKeyDownSwitch('TAB', callback);
+            cellPainter._executeKeyDownSwitch(keyDownEvent);
+            expect(callback).toHaveBeenCalled();
+        });
+        it('정의되지 않은 keyDownSwitch 를 수행한다면 keyDownEvent.preventDefault() 를 호출하지 않는다.', function() {
+            delete cellPainter['_keyDownSwitch']['F5'];
+            expect(cellPainter['_keyDownSwitch']['F5']).not.toBeDefined();
+            cellPainter._setKeyDownSwitch('F5', callback);
             cellPainter._executeKeyDownSwitch(keyDownEvent);
             expect(callback).toHaveBeenCalled();
         });
     });
+    describe('focusOut()', function() {
+       it('this.grid.focusClipboard 를 수행하는지 확인한다.', function() {
+           grid.focusClipboard = jasmine.createSpy('focusClipboard');
+           cellPainter.focusOut();
+           expect(grid.focusClipboard).toHaveBeenCalled();
+       });
+    });
+    describe('onModelChange()', function() {
+        var html,
+            $tr;
 
+        beforeEach(function() {
+            cellPainter.redraw = jasmine.createSpy('redraw');
+            cellPainter.setElementAttribute = jasmine.createSpy('setElementAttribute');
+            //tr 은 Row Painter 에서 생성해주기 때문에 해당 test case 에서는 문자열로 넣어준다.
+            html = '<table><tr key="0">';
+            html += cellPainter.getHtml({
+                columnName: 'columnName1',
+                rowKey: 0,
+                className: 'rowClass',
+                isEditable: true,
+                isDisabled: true
+            });
+            html += cellPainter.getHtml({
+                columnName: 'columnName2',
+                rowKey: 0,
+                className: 'rowClass',
+                isEditable: true,
+                isDisabled: false
+            });
+            html += '</tr></table>';
+            $empty.html(html);
+            $tr = $empty.find('tr');
+        });
+        describe('redrawAttributes 에 해당하는 값이 변경된 경우', function() {
+            it('redraw 가 호출되었는지 확인한다.', function() {
+                var cellData = {
+                    columnName: 'columnName1',
+                    rowKey: 0,
+                    changed: ['isEditable']
+                };
+                cellPainter.onModelChange(cellData, $tr);
+                expect(cellPainter.redraw).toHaveBeenCalled();
+                expect(cellPainter.setElementAttribute).not.toHaveBeenCalled();
+            });
+        });
+        describe('redrawAttributes 에 해당하지 않는 값이 변경된 경우', function() {
+            it('setElementAttribute 를 호출하였는지 확인한다.', function() {
+                var cellData = {
+                    columnName: 'columnName1',
+                    rowKey: 0,
+                    changed: ['className']
+                };
+                cellPainter.onModelChange(cellData, $tr);
+                expect(cellPainter.redraw).not.toHaveBeenCalled();
+                expect(cellPainter.setElementAttribute).toHaveBeenCalled();
+            });
+        });
+    });
 
 });
