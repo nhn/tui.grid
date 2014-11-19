@@ -1,5 +1,5 @@
     /**
-     * editOption 이 적용되지 않은 cell 의 renderer
+     * editOption 이 적용되지 않은 cell 의 Painter
      * @class
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
@@ -8,14 +8,25 @@
         initialize: function(attributes, options) {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
         getEditType: function() {
             return 'normal';
         },
         /**
-         * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
          * @param {object} cellData
-         * @param {jQuery} $target
-         * @return {String}
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
          */
         getContentHtml: function(cellData) {
             var columnName = cellData.columnName,
@@ -28,38 +39,60 @@
             }
             return value;
         },
-        focusIn: function() {
+        /**
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
+        focusIn: function($td) {
             this.grid.focusClipboard();
         },
         /**
-         * model 의 onChange 시, innerHTML 변경 없이, element attribute 만 변경해야 할 때 수행된다.
+         * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
          * @param {object} cellData
-         * @param {jQuery} $target
+         * @param {jQuery} $td
+         * @param {Boolean} hasFocusedElement
          */
-        setElementAttribute: function(cellData, $target) {
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {
         }
     });
-
+    /**
+     * Number Cell 의 Painter
+     * @class
+     * @extends {View.Base.Painter.Cell}
+     * @implements {View.Base.Painter.Cell.Interface}
+     */
     View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend({
         redrawAttributes: [],
         initialize: function(attributes, options) {
             View.Painter.Cell.Normal.prototype.initialize.apply(this, arguments);
         },
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
         getEditType: function() {
             return '_number';
         },
         /**
-         * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
          * @param {object} cellData
-         * @param {jQuery} $target
-         * @return {String}
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
          */
         getContentHtml: function(cellData) {
             return cellData.value;
         }
     });
     /**
-     * checkbox 혹은 radiobox 형태의 Main Button renderer
+     * checkbox 혹은 radiobox 형태의 Main Button Painter
      * @class
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
@@ -98,14 +131,25 @@
          * rendering 시 사용할 template
          */
         template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
         getEditType: function() {
             return '_button';
         },
         /**
-         * Rendering 시 td 안에 들어가야 할 contentHtml string 을 반환한다
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
          * @param {object} cellData
-         * @param {jQuery} $target
-         * @return {String}
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
          */
         getContentHtml: function(cellData) {
             var isDisabled = cellData.isDisabled;
@@ -116,8 +160,26 @@
                 disabled: isDisabled ? 'disabled' : ''
             });
         },
+        /**
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
         focusIn: function($td) {
 //            $td.find('input').focus();
+        },
+        /**
+         * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+         * @param {object} cellData
+         * @param {jQuery} $td
+         * @param {Boolean} hasFocusedElement
+         */
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {
+            var $input = $td.find('input'),
+                isChecked = $input.prop('checked');
+            if (isChecked !== !!cellData.value) {
+                $input.prop('checked', cellData.value);
+            }
         },
         /**
          * checked 를 toggle 한다.
@@ -127,13 +189,6 @@
             var $input = $td.find('input');
             if (this.grid.option('selectType') === 'checkbox') {
                 $input.trigger('click');
-            }
-        },
-        setElementAttribute: function(cellData, $target) {
-            var $input = $target.find('input'),
-                isChecked = $input.prop('checked');
-            if (isChecked !== !!cellData.value) {
-                $input.prop('checked', cellData.value);
             }
         },
         getAttributes: function(cellData) {
