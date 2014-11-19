@@ -29,7 +29,7 @@
                     this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
                 }
             },
-            _default: function(keyDownEvent, param) {
+            'defaultAction': function(keyDownEvent, param) {
             }
         },
         /**
@@ -94,33 +94,23 @@
             }
         },
         /**
-         * eventHandler 를 attach 한다.
-         * @param {jQuery} $target
-         */
-        attachHandler: function($target) {
-            this._attachHandler($target);
-        },
-        /**
-         * eventHandler 를 detach 한다.
-         * @param $target
-         */
-        detachHandler: function($target) {
-            this._detachHandler($target);
-        },
-        /**
          * 실제 rendering 한다.
          * @param {object} cellData
          * @param {jQuery} $td
          * @param {Boolean} hasFocusedElement
          */
         render: function(cellData, $td, hasFocusedElement) {
-            this._detachHandler($td);
+            this.detachHandler($td);
             $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData, $td, hasFocusedElement));
-            this._attachHandler($td);
+            this.attachHandler($td);
         },
-
-
-        _getKeyDownSwitchVariables: function(keyDownEvent) {
+        /**
+         * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
+         * @param {Event} keyDownEvent
+         * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
+         * @private
+         */
+        _getParamForKeyDownSwitch: function(keyDownEvent) {
             var grid = this.grid,
                 keyCode = keyDownEvent.keyCode || keyDownEvent.which,
                 focused = grid.focusModel.which(),
@@ -135,6 +125,26 @@
                 keyName: grid.keyName[keyCode]
             };
         },
+        /**
+         * keyDownSwitch 를 수행한다.
+         * @param {Event} keyDownEvent
+         * @return {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
+         * @private
+         */
+        _executeKeyDownSwitch: function(keyDownEvent) {
+            var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
+                keyName = this.grid.keyName[keyCode],
+                param = this._getParamForKeyDownSwitch(keyDownEvent);
+            (this._keyDownSwitch[keyName] || this._keyDownSwitch['defaultAction']).call(this, keyDownEvent, param);
+            return !!this._keyDownSwitch[keyName];
+        },
+        /**
+         * keyDownSwitch 에 정의된 액션을 override 한다.
+         *
+         * @param {String} keyName  정의된 key 이름
+         * @param {function} fn keyDown 이 발생하였을 경우 수행할 액션
+         * @private
+         */
         _setKeyDownSwitch: function(keyName, fn) {
             if (typeof keyName === 'object') {
                 this._keyDownSwitch = $.extend(this._keyDownSwitch, keyName);
@@ -142,14 +152,9 @@
                 this._keyDownSwitch[keyName] = fn;
             }
         },
-        _executeKeyDownSwitch: function(keyDownEvent) {
-            var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-                keyName = this.grid.keyName[keyCode];
-            (this._keyDownSwitch[keyName] || this._keyDownSwitch['_default']).call(this, keyDownEvent, this._getKeyDownSwitchVariables(keyDownEvent));
-            return !!this._keyDownSwitch[keyName];
-        },
+
         /**
-         *
+         * keyDown 이벤트 핸들러
          * @param {event} keyDownEvent
          * @private
          */
@@ -200,7 +205,7 @@
             return classNameList;
         },
         /**
-         * RowPainter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
+         * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
          * td 단위의 html 문자열을 반환한다.
          * @param {object} cellData
          * @return {string}
@@ -215,38 +220,55 @@
                 content: this.getContentHtml(cellData)
             });
         },
-        getAttributesString: function(attributes) {
-            var str = '';
-            _.each(attributes, function(value, key) {
-                str += ' ' + key + '="' + value + '"';
-            }, this);
-            return str;
-        },
-        getEventHandler: function() {
-            return this._eventHandler;
-        },
+
 
         /**
-         * implement this.
+         * 인자로 받은 element 의 cellData 를 반환한다.
+         * @param {jQuery} $target
+         * @return {Object}
          * @private
          */
-        getAttributes: function(cellData) {
-            return '';
-        },
-        _getColumnName: function($target) {
-            return $target.closest('td').attr('columnName');
-        },
-        _getRowKey: function($target) {
-            return $target.closest('tr').attr('key');
-        },
         _getCellData: function($target) {
             return this.grid.renderModel.getCellData(this._getRowKey($target), this._getColumnName($target));
         },
+        /**
+         * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
+         * @param {jQuery} $target
+         * @returns {{rowKey: String, columnName: String}}
+         * @private
+         */
         _getCellAddress: function($target) {
             return {
                 rowKey: this._getRowKey($target),
                 columnName: this._getColumnName($target)
             };
+        },
+        /**
+         * 인자로 받은 element 로 부터 columnName 을 반환한다.
+         * @param {jQuery} $target
+         * @return {String}
+         * @private
+         */
+        _getColumnName: function($target) {
+            return $target.closest('td').attr('columnName');
+        },
+        /**
+         * 인자로 받은 element 로 부터 rowKey 를 반환한다.
+         * @param {jQuery} $target
+         * @return {String}
+         * @private
+         */
+        _getRowKey: function($target) {
+            return $target.closest('tr').attr('key');
+        },
+
+        /**
+         * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
+         * 필요시 상속받아 Override 한다.
+         * @param {Object} cellData
+         */
+        getAttributes: function(cellData) {
+            return '';
         }
     });
 

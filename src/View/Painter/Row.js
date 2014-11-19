@@ -46,16 +46,16 @@
                 .listenTo(focusModel, 'blur', this._onBlur, this);
         },
         destroy: function() {
-            this.detachHandler();
+            this.detachHandlerAll();
             this.destroyChildren();
             this.remove();
         },
         /**
-         * attachHandler
+         * attachHandlerAll
          * event handler 를 전체 tr에 한번에 붙인다.
          */
-        attachHandler: function() {
-            this._attachHandler(this.$parent);
+        attachHandlerAll: function() {
+            this.attachHandler(this.$parent);
             this.grid.cellFactory.attachHandler(this.$parent);
             this._isEventAttached = true;
         },
@@ -63,9 +63,9 @@
          * detach eventHandler
          * event handler 를 전체 tr에서 제거한다.
          */
-        detachHandler: function() {
+        detachHandlerAll: function() {
             if (this._isEventAttached) {
-                this._detachHandler(this.$parent);
+                this.detachHandler(this.$parent);
                 this.grid.cellFactory.detachHandler(this.$parent);
             }
         },

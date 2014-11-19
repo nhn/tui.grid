@@ -137,7 +137,7 @@
             }
         },
         getAttributes: function(cellData) {
-            return this.getAttributesString({
+            return Util.getAttributesString({
                 align: 'center'
             });
         },

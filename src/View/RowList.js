@@ -31,7 +31,7 @@
                 firstRow = this.collection.at(0);
             var start = new Date();
 //            console.log('View.RowList.render start');
-            this.rowPainter.detachHandler();
+            this.rowPainter.detachHandlerAll();
             this.destroyChildren();
             this._createRowPainter();
             //get html string
@@ -41,7 +41,7 @@
                 }, this);
             }
             this.$el.html('').prepend(html);
-            this.rowPainter.attachHandler();
+            this.rowPainter.attachHandlerAll();
 
             var end = new Date();
 //            console.log('View.RowList.addAll end', end - start);
