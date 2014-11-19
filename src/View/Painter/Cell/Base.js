@@ -145,7 +145,7 @@
         /**
          * keyDownSwitch 에 정의된 액션을 override 한다.
          *
-         * @param {String} keyName  정의된 key 이름
+         * @param {(String|Object)} keyName  정의된 key 이름. Object 형태일 경우 기존 keyDownSwitch 를 확장한다.
          * @param {function} fn keyDown 이 발생하였을 경우 수행할 액션
          * @private
          */
