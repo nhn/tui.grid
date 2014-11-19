@@ -137,9 +137,9 @@
             }
         },
         getAttributes: function(cellData) {
-            return Util.getAttributesString({
+            return {
                 align: 'center'
-            });
+            };
         },
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),

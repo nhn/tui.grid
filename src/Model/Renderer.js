@@ -224,7 +224,22 @@
          * CellData 를 가져온다.
          * @param {number} rowKey
          * @param {String} columnName
-         * @return {*}
+         * @return {object} cellData object
+         * @example
+         =>
+         {
+             rowKey: rowKey,
+             columnName: columnName,
+             value: value,
+             rowSpan: rowSpanData.count,
+             isMainRow: rowSpanData.isMainRow,
+             mainRowKey: rowSpanData.mainRowKey,
+             isEditable: isEditable,
+             isDisabled: isDisabled,
+             optionList: [],
+             className: row.getClassNameList(columnName).join(' '),
+             changed: []    //변경된 프로퍼티 목록들
+         }
          */
         getCellData: function(rowKey, columnName) {
             var collection = this._getCollectionByColumnName(columnName),

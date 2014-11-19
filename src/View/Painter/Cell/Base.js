@@ -51,7 +51,7 @@
         /**
          * td 마크업 생성시 필요한 base template
          */
-        baseTemplate: _.template('<td ' +
+        baseTemplate: _.template('<td' +
             ' columnName="<%=columnName%>"' +
             ' <%=rowSpan%>' +
             ' class="<%=className%>"' +
@@ -97,6 +97,14 @@
          */
         redraw: function(cellData, $td) {
             this.detachHandler($td);
+            var attributes = {
+                'class': this._getClassNameList(cellData).join(' ')
+            };
+            if (cellData.rowSpan) {
+                attributes['rowSpan'] = cellData.rowSpan;
+            }
+            attributes = $.extend(attributes, this.getAttributes(cellData));
+            $td.attr(attributes);
             $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData));
             this.attachHandler($td);
         },
@@ -183,7 +191,7 @@
             }
 
             cellData.className ? classNameList.push(cellData.className) : null;
-            cellData.isEditable ? classNameList.push('editable') : null;
+            cellData.isEditable ? !isPrivateColumnName && classNameList.push('editable') : null;
             cellData.isDisabled ? classNameList.push('disabled') : null;
 
             //className 중복제거
@@ -206,11 +214,12 @@
          * @return {string}
          */
         getHtml: function(cellData) {
+            var attributeString = Util.getAttributesString(this.getAttributes(cellData));
             return this.baseTemplate({
                 columnName: cellData.columnName,
                 rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
                 className: this._getClassNameList(cellData).join(' '),
-                attributes: this.getAttributes(cellData),
+                attributes: attributeString,
                 editType: this.getEditType(),
                 content: this.getContentHtml(cellData)
             });
@@ -259,9 +268,10 @@
          * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
          * 필요에 따라 Override 한다.
          * @param {Object} cellData
+         * @return {Object} Attribute Object
          */
         getAttributes: function(cellData) {
-            return '';
+            return {};
         },
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
