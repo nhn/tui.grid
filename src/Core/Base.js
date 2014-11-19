@@ -3,11 +3,11 @@
      * @author Soonyoung Park <soonyoung.park@nhnent.com>
      */
 
-    // IE 테스트용 코드. 개발 완료후 master 로 전환시 제거 함.
-    if (typeof window.console == 'undefined' || !window.console || !window.console.log) window.console = {'log' : function() {}, 'error' : function() {}};
+
     /**
      * 내부 관리용 객체 정의
-     * @type {{CellFactory: null, Layout: {}, Layer: {}, Renderer: {Row: null, Cell: {}}}}
+     *
+     * @type {{CellFactory: null, Layout: {}, Layer: {}, Painter: {Row: null, Cell: {}}}}
      */
     var View = {
             CellFactory: null,
@@ -206,7 +206,7 @@
          * @param {jQuery} $el
          * @private
          */
-        _attachHandler: function($el) {
+        attachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {
                 var handler = obj.handler,
                     selector = obj.selector,
@@ -224,7 +224,7 @@
          * @param {jQuery} $el
          * @private
          */
-        _detachHandler: function($el) {
+        detachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {
                 var handler = obj.handler,
                     selector = obj.selector,

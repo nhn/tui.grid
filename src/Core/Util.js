@@ -1,5 +1,26 @@
     var Util = {
         /**
+         * HTML Attribute 설정 시 필요한 문자열을 가공한다.
+         * @param {{key:value}} attributes
+         * @return {string}
+         * @example
+         var str = Util.getAttributesString({
+                'class': 'focused disabled',
+                'width': '100',
+                'height': '200'
+          });
+
+         =>
+         class="focused disabled" width="100" height="200"
+         */
+        getAttributesString: function(attributes) {
+            var str = '';
+            _.each(attributes, function(value, key) {
+                str += ' ' + key + '="' + value + '"';
+            }, this);
+            return str;
+        },
+        /**
          * 배열의 합을 반환한다.
          * @param {number[]} list
          * @return {number}
