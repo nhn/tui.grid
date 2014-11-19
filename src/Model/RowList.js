@@ -69,9 +69,9 @@
                         }
                         if (rowModel) {
                             param = {
-                                className: rowState.classNameList.join(' '),
                                 isDisabled: isDisabled,
-                                isEditable: isEditable
+                                isEditable: isEditable,
+                                className: row.getClassNameList(columnName).join(' ')
                             };
                             rowModel.setCell(columnName, param);
                         }
@@ -131,7 +131,7 @@
                         isEditable: isEditable,
                         isDisabled: isDisabled,
                         optionList: [],
-                        className: rowState.classNameList.join(' '),
+                        className: row.getClassNameList(columnName).join(' '),
 
                         changed: []    //변경된 프로퍼티 목록들
                     };

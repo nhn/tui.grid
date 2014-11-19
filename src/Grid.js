@@ -213,7 +213,7 @@
          */
         getElement: function(rowKey, columnName) {
             var $frame = this.columnModel.isLside(columnName) ? this.view.lside.$el : this.view.rside.$el;
-            rowKey = this.getMainRowKey(rowKey, columnName);
+            rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
             return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
         },
         /**
@@ -302,7 +302,7 @@
         focusIn: function(rowKey, columnName, isScrollable) {
             var cellInstance;
             this.focus(rowKey, columnName, isScrollable);
-            rowKey = this.getMainRowKey(rowKey, columnName);
+            rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
             if (this.isEditable(rowKey, columnName)) {
                 cellInstance = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
                 cellInstance.focusIn(this.getElement(rowKey, columnName));
@@ -944,24 +944,24 @@
         getRowList: function() {
             return this.dataModel.getRowList();
         },
-
-
-        /**
-         * mainRowKey 를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {(Number|String)}
-         */
-        getMainRowKey: function(rowKey, columnName) {
-            var dataModel = this.dataModel,
-                row = dataModel.get(rowKey),
-                rowSpanData;
-            if (dataModel.isRowSpanEnable()) {
-                rowSpanData = row && row.getRowSpanData(columnName);
-                rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
-            }
-            return rowKey;
-        },
+//
+//
+//        /**
+//         * mainRowKey 를 반환한다.
+//         * @param {(Number|String)} rowKey
+//         * @param {String} columnName
+//         * @return {(Number|String)}
+//         */
+//        getMainRowKey: function(rowKey, columnName) {
+//            var dataModel = this.dataModel,
+//                row = dataModel.get(rowKey),
+//                rowSpanData;
+//            if (dataModel.isRowSpanEnable()) {
+//                rowSpanData = row && row.getRowSpanData(columnName);
+//                rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
+//            }
+//            return rowKey;
+//        },
         /**
          * rowKey 와 columnName 에 해당하는 text 형태의 셀의 값을 삭제한다.
          * @param {(Number|String)} rowKey
@@ -969,7 +969,7 @@
          * @param {Boolean} silent
          */
         del: function(rowKey, columnName, silent) {
-            rowKey = this.getMainRowKey(rowKey, columnName);
+            rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
             var editType = this.columnModel.getEditType(columnName),
                 isDisabledCheck = this.dataModel.get(rowKey).getRowState().isDisabledCheck,

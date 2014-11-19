@@ -314,7 +314,7 @@ describe('model.rowList', function() {
                     isEditable: true,
                     isDisabled: true,
                     optionList: [],
-                    className: 'disabled',
+                    className: '',
                     changed: []
                 });
                 expect(formatted['columnName1']).toEqual({
@@ -327,7 +327,7 @@ describe('model.rowList', function() {
                     isEditable: false,
                     isDisabled: true,
                     optionList: [],
-                    className: 'disabled',
+                    className: '',
                     changed: []
                 });
                 expect(formatted['columnName2']).toEqual({
@@ -340,7 +340,7 @@ describe('model.rowList', function() {
                     isEditable: true,
                     isDisabled: true,
                     optionList: [],
-                    className: 'disabled',
+                    className: '',
                     changed: []
                 });
                 expect(formatted['columnName3']).toEqual({
@@ -353,7 +353,7 @@ describe('model.rowList', function() {
                     isEditable: true,
                     isDisabled: true,
                     optionList: [],
-                    className: 'disabled',
+                    className: '',
                     changed: []
                 });
 
@@ -485,7 +485,7 @@ describe('model.rowList', function() {
 
                 var mainRow= rowListModelInstance.get(1);
                 expect(mainRow.get('columnName1').isDisabled).toEqual(true);
-                expect(mainRow.get('columnName1').className).toEqual('disabled');
+                expect(mainRow.get('columnName1').className).toEqual('');
 
             });
             it('상태 변경 없을 때 기본값 검사', function() {
@@ -526,22 +526,22 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(true);
-                expect(cell0.className).toEqual('disabled');
+                expect(cell0.className).toEqual('');
 
                 expect(cell1.value).toEqual('columnName1');
                 expect(cell1.isEditable).toEqual(false);
                 expect(cell1.isDisabled).toEqual(true);
-                expect(cell1.className).toEqual('disabled');
+                expect(cell1.className).toEqual('');
 
                 expect(cell2.value).toEqual('columnName2');
                 expect(cell2.isEditable).toEqual(true);
                 expect(cell2.isDisabled).toEqual(true);
-                expect(cell2.className).toEqual('disabled');
+                expect(cell2.className).toEqual('');
 
                 expect(cell3.value).toEqual('columnName3');
                 expect(cell3.isEditable).toEqual(true);
                 expect(cell3.isDisabled).toEqual(true);
-                expect(cell3.className).toEqual('disabled');
+                expect(cell3.className).toEqual('');
 
             });
 
@@ -572,6 +572,42 @@ describe('model.rowList', function() {
                 expect(cell3.isEditable).toEqual(true);
                 expect(cell3.isDisabled).toEqual(false);
                 expect(cell3.className).toEqual('');
+            });
+            it('className 변경 시', function() {
+                dataModelInstance.setExtraData(0, {
+                    className: {
+                        row: ['rowClass'],
+                        column: {
+                            'columnName1': ['column1Class1', 'column1Class2'],
+                            'columnName2': ['column2Class1', 'column2Class2']
+                        }
+                    }
+                });
+
+                var cell0 = rowListModelInstance.get(0).get('_button'),
+                    cell1 = rowListModelInstance.get(0).get('columnName1'),
+                    cell2 = rowListModelInstance.get(0).get('columnName2'),
+                    cell3 = rowListModelInstance.get(0).get('columnName3');
+
+                expect(cell0.value).toEqual(false);
+                expect(cell0.isEditable).toEqual(true);
+                expect(cell0.isDisabled).toEqual(false);
+                expect(cell0.className).toEqual('rowClass');
+
+                expect(cell1.value).toEqual('columnName1');
+                expect(cell1.isEditable).toEqual(false);
+                expect(cell1.isDisabled).toEqual(false);
+                expect(cell1.className).toEqual('rowClass column1Class1 column1Class2');
+
+                expect(cell2.value).toEqual('columnName2');
+                expect(cell2.isEditable).toEqual(true);
+                expect(cell2.isDisabled).toEqual(false);
+                expect(cell2.className).toEqual('rowClass column2Class1 column2Class2');
+
+                expect(cell3.value).toEqual('columnName3');
+                expect(cell3.isEditable).toEqual(true);
+                expect(cell3.isDisabled).toEqual(false);
+                expect(cell3.className).toEqual('rowClass');
             });
 
         });

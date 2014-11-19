@@ -26,8 +26,8 @@
                 rowState = extraData && extraData['rowState'],
                 isDisabledCheck = false,
                 isDisabled = false,
-                isChecked = false,
-                classNameList = [];
+                isChecked = false;
+
 
             if (rowState) {
                 switch (rowState) {
@@ -39,19 +39,31 @@
                         break;
                     case 'CHECKED':
                         isChecked = true;
+                        break;
                 }
             }
             isDisabledCheck = isDisabled ? isDisabled : isDisabledCheck;
-            if (isDisabled) {
-                classNameList.push('disabled');
-            }
 
             return {
                 isDisabled: isDisabled,
                 isDisabledCheck: isDisabledCheck,
-                isChecked: isChecked,
-                classNameList: classNameList
+                isChecked: isChecked
             };
+        },
+        /**
+         * row의 extraData에 설정된 classNameList 를 반환한다.
+         * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
+         * @returns {Array}
+         */
+        getClassNameList: function(columnName) {
+            var classNameList = [],
+                extraData = this.get('_extraData'),
+                classNameObj = extraData.className,
+                rowClassNameList = classNameObj && classNameObj['row'] || [],
+                columnClassNameList = classNameObj && columnName && classNameObj['column'] && classNameObj['column'][columnName] || [];
+
+            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList);
+            return classNameList;
         },
         /**
          * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
@@ -90,7 +102,6 @@
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-         * @param {(Number|String)} rowKey
          * @param {String} columnName
          * @return {Boolean}
          */
@@ -109,11 +120,10 @@
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-         * @param {(Number|String)} rowKey
          * @param {String} columnName
          * @return {Boolean}
          */
-        isDisabled: function(rowKey, columnName) {
+        isDisabled: function(columnName) {
             var cellState;
             cellState = this.getCellState(columnName);
             return cellState.isDisabled;
@@ -459,6 +469,21 @@
             return _.clone(this.originalRowMap[rowKey][columnName]);
         },
         /**
+         * mainRowKey 를 반환한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @return {(Number|String)}
+         */
+        getMainRowKey: function(rowKey, columnName) {
+            var row = this.get(rowKey),
+                rowSpanData;
+            if (this.isRowSpanEnable()) {
+                rowSpanData = row && row.getRowSpanData(columnName);
+                rowKey = rowSpanData ? rowSpanData.mainRowKey : rowKey;
+            }
+            return rowKey;
+        },
+        /**
          * rowKey 에 해당하는 index를 반환한다.
          * @param {(Number|String)} rowKey
          * @return {Number}
@@ -658,7 +683,8 @@
          */
         setExtraData: function(rowKey, value, silent) {
             var row = this.get(rowKey),
-                obj = {}, extraData;
+                obj = {},
+                extraData;
 
             if (row) {
                 //적용

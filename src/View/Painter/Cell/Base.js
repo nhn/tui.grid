@@ -7,7 +7,7 @@
         /**
          * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
          */
-        rerenderAttributes: ['isEditable', 'optionList', 'value'],
+        redrawAttributes: ['isEditable', 'optionList', 'value'],
 
         /**
          * keyDownEvent 발생시 기본 동작 switch
@@ -20,7 +20,7 @@
                 this.focusOut(param.$target);
             },
             'TAB': function(keyDownEvent, param) {
-                this.grid.focusClipboard();
+//                this.grid.focusClipboard();
                 if (keyDownEvent.shiftKey) {
                     //이전 cell 로 focus 이동 후 편집모드로 전환
                     this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
@@ -36,14 +36,21 @@
          * event handler
          */
         eventHandler: {},
+        /**
+         * 초기화 함수
+         * @param  {Object} attributes
+         * @param {Object} options
+         */
         initialize: function(attributes, options) {
             View.Base.Painter.prototype.initialize.apply(this, arguments);
-            this._initializeEventHandler();
+            this.initializeEventHandler();
             this.setOwnProperties({
                 _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
             });
         },
-
+        /**
+         * td 마크업 생성시 필요한 base template
+         */
         baseTemplate: _.template('<td ' +
             ' columnName="<%=columnName%>"' +
             ' <%=rowSpan%>' +
@@ -55,37 +62,27 @@
             '</td>'),
 
         /**
-         * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
-         * 필요에 따라 override 한다.
-         * @param {jQuery} $td
-         */
-        focusOut: function($td) {
-            this.grid.focusClipboard();
-        },
-        /**
          * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
          * @param {object} cellData
          * @param {jQuery} $tr
          */
         onModelChange: function(cellData, $tr) {
             var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
-                isRerender = false,
+                isRedraw = false,
                 hasFocusedElement;
 
-
-            for (var i = 0; i < this.rerenderAttributes.length; i++) {
-                if ($.inArray(this.rerenderAttributes[i], cellData.changed) !== -1) {
-                    isRerender = true;
-                    break;
+            ne.util.forEachArray(this.redrawAttributes, function(attribute) {
+                if ($.inArray(attribute, cellData.changed) !== -1) {
+                    isRedraw = true;
+                    return false;
                 }
-            }
+            }, this);
 
             $td.attr('class', this._getClassNameList(cellData).join(' '));
-
             hasFocusedElement = !!($td.find(':focus').length);
 
-            if (isRerender === true) {
-                this.render(cellData, $td, hasFocusedElement);
+            if (isRedraw === true) {
+                this.redraw(cellData, $td);
                 if (hasFocusedElement) {
                     this.focusIn($td);
                 }
@@ -94,14 +91,13 @@
             }
         },
         /**
-         * 실제 rendering 한다.
+         * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
          * @param {object} cellData
          * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
          */
-        render: function(cellData, $td, hasFocusedElement) {
+        redraw: function(cellData, $td) {
             this.detachHandler($td);
-            $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData, $td, hasFocusedElement));
+            $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData));
             this.attachHandler($td);
         },
         /**
@@ -173,14 +169,11 @@
         _getClassNameList: function(cellData) {
             var focused = this.grid.focusModel.which(),
                 columnName = cellData.columnName,
-                focusedRowKey = this.grid.getMainRowKey(focused.rowKey, columnName),
+                focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
                 classNameList = [],
                 classNameMap = {},
                 privateColumnList = ['_button', '_number'],
-                isPrivateColumnName = $.inArray(columnName, privateColumnList) !== -1,
-
-                i, len;
-
+                isPrivateColumnName = $.inArray(columnName, privateColumnList) !== -1;
 
             if (focusedRowKey === cellData.rowKey) {
                 classNameList.push('selected');
@@ -190,18 +183,20 @@
             }
 
             cellData.className ? classNameList.push(cellData.className) : null;
-            cellData.isEditable && !isPrivateColumnName ? classNameList.push('editable') : null;
-            cellData.isDisabled && !isPrivateColumnName ? classNameList.push('disabled') : null;
+            cellData.isEditable ? classNameList.push('editable') : null;
+            cellData.isDisabled ? classNameList.push('disabled') : null;
 
-            len = classNameList.length;
-            //중복제거
-            for (i = 0; i < len; i++) {
-                classNameMap[classNameList[i]] = true;
-            }
+            //className 중복제거
+            _.each(classNameList, function(className) {
+                classNameMap[className] = true;
+            });
+
             classNameList = [];
+
             _.each(classNameMap, function(val, className) {
                 classNameList.push(className);
-            }, this);
+            });
+
             return classNameList;
         },
         /**
@@ -220,8 +215,6 @@
                 content: this.getContentHtml(cellData)
             });
         },
-
-
         /**
          * 인자로 받은 element 의 cellData 를 반환한다.
          * @param {jQuery} $target
@@ -264,12 +257,61 @@
 
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
-         * 필요시 상속받아 Override 한다.
+         * 필요에 따라 Override 한다.
          * @param {Object} cellData
          */
         getAttributes: function(cellData) {
             return '';
-        }
+        },
+        /**
+         * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
+         * - 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
+        focusOut: function($td) {
+            this.grid.focusClipboard();
+        },
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * - 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
+        getEditType: function() {
+            return 'normal';
+        },
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
+        focusIn: function($td) {},
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * re renderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+         * @param {object} cellData
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
+         */
+        getContentHtml: function(cellData) {
+            return '';
+        },
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * re renderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+         * @param {object} cellData
+         * @param {jquery} $td
+         * @param {Boolean} hasFocusedElement
+         */
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {}
+
     });
 
 
@@ -297,8 +339,6 @@
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * re renderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData
-     * @param {jquery} $td
-     * @param {Boolean} hasFocusedElement
      * @return  {string} html string
      * @example
      * var html = this.getContentHtml();
@@ -308,7 +348,7 @@
      *     <option value='3'>option1</option>
      * </select>
      */
-    View.Base.Painter.Cell.Interface.prototype.getContentHtml = function(cellData, $td, hasFocusedElement) {};
+    View.Base.Painter.Cell.Interface.prototype.getContentHtml = function(cellData) {};
     /**
      * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * re renderAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.

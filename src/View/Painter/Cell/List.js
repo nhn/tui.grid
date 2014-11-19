@@ -4,7 +4,7 @@
      * @class
      */
     View.Painter.Cell.List = View.Base.Painter.Cell.extend({
-        rerenderAttributes: ['isDisabled', 'isEditable', 'optionList'],
+        redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
         },
         initialize: function() {
@@ -65,8 +65,7 @@
         getEditType: function() {
             return 'select';
         },
-        getContentHtml: function(cellData, $td, hasFocusedElement) {
-//            console.log('!!!!getContentHtml', cellData.optionList);
+        getContentHtml: function(cellData) {
             var list = this._getOptionList(cellData),
                 html = '',
                 isDisabled = cellData.isDisabled,

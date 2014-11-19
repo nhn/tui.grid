@@ -57,12 +57,11 @@
                     },
                     width: 50
                 };
-            if (selectType === 'checkbox' || selectType === 'radio') {
-                if (selectType === 'checkbox') {
-                    buttonColumn.title = '<input type="checkbox"/>';
-                } else if (selectType === 'radio') {
-                    buttonColumn.title = '선택';
-                }
+
+            if (selectType === 'checkbox') {
+                buttonColumn.title = '<input type="checkbox"/>';
+            } else if (selectType === 'radio') {
+                buttonColumn.title = '선택';
             } else {
                 buttonColumn.isHidden = true;
             }
@@ -82,7 +81,7 @@
          */
         _extendColumn: function(columnObj, columnModelList) {
             var index;
-            if (columnObj && columnObj['columnName']) {
+            if (ne.util.isDefined(columnObj) && ne.util.isDefined(columnObj['columnName'])) {
                 index = this._indexOfColumnName(columnObj['columnName'], columnModelList);
                 if (index === -1) {
                     columnModelList = _.union([columnObj], columnModelList);
@@ -202,7 +201,7 @@
          * @private
          */
         _getVisibleList: function(columnModelList) {
-            return _.filter(columnModelList, function(item) {return !item['isHidden']});
+            return _.filter(columnModelList, function(item) {return !item['isHidden'];});
         },
         /**
          * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
@@ -214,14 +213,13 @@
                 relationListMap = {},
                 i, len = columnModelList.length;
 
-            for (i = 0; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
-
-                if (columnModelList[i].relationList) {
-                    relationList = columnModelList[i].relationList;
+            ne.util.forEachArray(columnModelList, function(columnModel) {
+                columnName = columnModel['columnName'];
+                if (columnModel.relationList) {
+                    relationList = columnModel.relationList;
                     relationListMap[columnName] = relationList;
                 }
-            }
+            });
             return relationListMap;
 
         },

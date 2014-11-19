@@ -329,41 +329,36 @@ describe('data.rowList', function() {
                 expect(rowState.isDisabled).toBeDefined();
                 expect(rowState.isDisabledCheck).toBeDefined();
                 expect(rowState.isChecked).toBeDefined();
-                expect(rowState.classNameList).toBeDefined();
+
 
                 rowState = dataModelInstance.get(1).getRowState();
                 expect(rowState.isDisabled).toBeDefined();
                 expect(rowState.isDisabledCheck).toBeDefined();
                 expect(rowState.isChecked).toBeDefined();
-                expect(rowState.classNameList).toBeDefined();
             });
             it('아무 값이 없을 때', function() {
                 rowState = dataModelInstance.get(0).getRowState();
                 expect(rowState.isDisabled).toBe(false);
                 expect(rowState.isDisabledCheck).toBe(false);
                 expect(rowState.isChecked).toBe(false);
-                expect(rowState.classNameList).toEqual([]);
             });
             it('CHECKED 일 때', function() {
                 rowState = dataModelInstance.get(1).getRowState();
                 expect(rowState.isDisabled).toBe(false);
                 expect(rowState.isDisabledCheck).toBe(false);
                 expect(rowState.isChecked).toBe(true);
-                expect(rowState.classNameList).toEqual([]);
             });
             it('DISABLED 일 때', function() {
                 rowState = dataModelInstance.get(2).getRowState();
                 expect(rowState.isDisabled).toBe(true);
                 expect(rowState.isDisabledCheck).toBe(true);
                 expect(rowState.isChecked).toBe(false);
-                expect(rowState.classNameList).toEqual(['disabled']);
             });
             it('DISABLED_CHECK 일 때', function() {
                 rowState = dataModelInstance.get(3).getRowState();
                 expect(rowState.isDisabled).toBe(false);
                 expect(rowState.isDisabledCheck).toBe(true);
                 expect(rowState.isChecked).toBe(false);
-                expect(rowState.classNameList).toEqual([]);
             });
         });
         describe('getRowSpanData()', function() {
@@ -608,6 +603,79 @@ describe('data.rowList', function() {
                 expect(row.getVisibleText('hidden')).toBe('1');
             });
         });
+        describe('getClassNameList()', function() {
+            it('extraData 에 정의된 className 을 반환한다.', function() {
+                var sampleList = [{
+                    '_extraData': {
+                        'className': {
+                            'row': ['rowClass0', 'rowClass1']
+                        }
+                    },
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    '_extraData': {
+                        'className': {
+                            'column': {
+                                'text': ['textClass1', 'textClass2'],
+                                'relationList': ['relationClass1']
+                            }
+                        }
+                    },
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    '_extraData': {
+                        'className': {
+                            'row': ['rowClass0'],
+                            'column': {
+                                'text': ['textClass1', 'textClass2'],
+                                'relationList': ['relationClass1']
+                            }
+                        }
+                    },
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    'relationList': false,
+                    'text': 'sample1'
+                }];
+                columnModelInstance.set({
+                    'hasNumberColumn': true,
+                    'selectType': 'checkbox'
+                });
+                dataModelInstance.set(sampleList, {parse: true});
+                var row0 = dataModelInstance.get(0),
+                    row1 = dataModelInstance.get(1),
+                    row2 = dataModelInstance.get(2),
+                    row3 = dataModelInstance.get(3);
+
+                expect(row0.getClassNameList('relationList').length).toEqual(2);
+                expect(row0.getClassNameList('relationList')).toContain('rowClass0');
+                expect(row0.getClassNameList('relationList')).toContain('rowClass1');
+                expect(row0.getClassNameList('text').length).toEqual(2);
+                expect(row0.getClassNameList('text')).toContain('rowClass0');
+                expect(row0.getClassNameList('text')).toContain('rowClass1');
+
+                expect(row1.getClassNameList('relationList').length).toEqual(1);
+                expect(row1.getClassNameList('relationList')).toContain('relationClass1');
+                expect(row1.getClassNameList('text').length).toEqual(2);
+                expect(row1.getClassNameList('text')).toContain('textClass1');
+                expect(row1.getClassNameList('text')).toContain('textClass2');
+
+                expect(row2.getClassNameList('relationList').length).toEqual(2);
+                expect(row2.getClassNameList('relationList')).toContain('rowClass0');
+                expect(row2.getClassNameList('relationList')).toContain('relationClass1');
+
+                expect(row2.getClassNameList('text').length).toEqual(3);
+                expect(row2.getClassNameList('text')).toContain('rowClass0');
+                expect(row2.getClassNameList('text')).toContain('textClass1');
+                expect(row2.getClassNameList('text')).toContain('textClass2');
+
+                expect(row3.getClassNameList('relationList').length).toEqual(0);
+                expect(row3.getClassNameList('text').length).toEqual(0);
+            });
+        });
         describe('getCellState() relation list 결과와 rowState 를 종합한 결과를 통해 isDisabled, isEditable 을 반환한다.', function() {
             var sampleList, row;
             beforeEach(function() {
@@ -695,6 +763,31 @@ describe('data.rowList', function() {
                     isDisabled: true,
                     isEditable: false
                 });
+            });
+        });
+        describe('isDisabled() cellState 를 사용하는 메서드이므로 파라미터에 대해 동작하는지 간단하게 확인한다..', function() {
+            it('columnName 을 전달했을경우 정상적으로 isDisabled 값을 반환한다..', function() {
+                var sampleList = [{
+                    '_extraData': {
+                        'rowState': 'DISABLED'
+                    },
+                    'relationList': false,
+                    'text': 'sample1'
+                },{
+                    'relationList': true,
+                    'text': 'sample2'
+                }];
+                dataModelInstance.set(sampleList, {parse: true});
+
+                expect(dataModelInstance.get(0).isDisabled('_button')).toEqual(true);
+                expect(dataModelInstance.get(0).isDisabled('_number')).toEqual(true);
+                expect(dataModelInstance.get(0).isDisabled('relationList')).toEqual(true);
+                expect(dataModelInstance.get(0).isDisabled('text')).toEqual(true);
+
+                expect(dataModelInstance.get(1).isDisabled('_button')).toEqual(false);
+                expect(dataModelInstance.get(1).isDisabled('_number')).toEqual(false);
+                expect(dataModelInstance.get(1).isDisabled('relationList')).toEqual(false);
+                expect(dataModelInstance.get(1).isDisabled('text')).toEqual(false);
             });
         });
         describe('isEditable() cellState 를 사용하는 메서드이므로, cellState 를 이용하지 않을때 정상 동작하는지 확인한다.', function() {
@@ -2049,19 +2142,6 @@ describe('data.rowList', function() {
                     remove(0);
                     remove(1);
                     modifiedList = getModified();
-//                    expect(modifiedList).toEqual({
-//                        createList: [
-//                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-//                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-//                        ],
-//                        updateList: [],
-//                        deleteList: [
-//                            { none: 'none1', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-//                            { none: 'none2', text: 'text2', hidden: 'hidden2', rowKey: 1 },
-//                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-//                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-//                        ]
-//                    });
 
                     expect(modifiedList.createList).toBeDefined();
                     expect(modifiedList.createList.length).toBe(2);
@@ -2081,21 +2161,6 @@ describe('data.rowList', function() {
                     var modifiedList;
                     messUp();
                     modifiedList = getModified();
-//                    expect(modifiedList).toEqual({
-//                        createList: [
-//                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-//                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-//                        ],
-//                        updateList: [
-//                            { none: 'dirty', text: 'text1', hidden: 'hidden1', rowKey: 0 },
-//                            { none: 'dirty', text: 'text2', hidden: 'hidden2', rowKey: 1 }
-//                        ],
-//                        deleteList: [
-//                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-//                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-//                        ]
-//                    });
-
                     expect(modifiedList.createList).toBeDefined();
                     expect(modifiedList.createList.length).toBe(2);
                     expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
@@ -2123,19 +2188,6 @@ describe('data.rowList', function() {
                     messUp();
                     spoil(4, 'text');
                     modifiedList = getModified();
-//                    expect(modifiedList).toEqual({
-//                        createList: [
-//                            {none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6},
-//                            {none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7 }
-//                        ],
-//                        updateList: [
-//                            { none: 'none5', text: 'dirty', hidden: 'hidden5', rowKey: 4 }
-//                        ],
-//                        deleteList: [
-//                            { none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2 },
-//                            { none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3 }
-//                        ]
-//                    });
                     expect(modifiedList.createList).toBeDefined();
                     expect(modifiedList.createList.length).toBe(2);
                     expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});

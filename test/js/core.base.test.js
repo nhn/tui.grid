@@ -251,7 +251,7 @@ describe('core.base', function() {
             painter = new PainterClass({test: true});
 
             $empty.html(painter.getHtml());
-            painter._attachHandler($empty);
+            painter.attachHandler($empty);
 
             $empty.find('p').trigger('click');
             $empty.find('input').focus();
@@ -260,18 +260,18 @@ describe('core.base', function() {
             expect(painter.focusCount).toEqual(1);
 
             //다음 테스트를 위해 이벤트를 해제한다.
-            painter._detachHandler($empty);
+            painter.detachHandler($empty);
         });
         it('Painter 의 _detachHandler 의 동작을 확인한다.', function() {
             painter = new PainterClass({test: true});
 
             $empty.html(painter.getHtml());
-            painter._attachHandler($empty);
+            painter.attachHandler($empty);
 
             $empty.find('p').trigger('click');
             $empty.find('input').focus();
 
-            painter._detachHandler($empty);
+            painter.detachHandler($empty);
 
             $empty.find('p').trigger('click');
             $empty.find('input').focus();

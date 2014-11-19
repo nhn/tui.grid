@@ -5,7 +5,7 @@
      * @class
      */
     View.Painter.Cell.Text = View.Base.Painter.Cell.extend({
-        rerenderAttributes: ['isEditable'],
+        redrawAttributes: ['isEditable'],
         eventHandler: {
             'blur input' : '_onBlur',
             'keydown input': '_onKeyDown',
@@ -106,7 +106,7 @@
      * @class
      */
     View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend({
-        rerenderAttributes: ['isDisabled', 'isEditable', 'value'],
+        redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
             'blur input' : '_onBlurConvertible',
@@ -158,7 +158,7 @@
         },
         /**
          * text를 textbox 로 교체한다.
-         * @param {Element} $td
+         * @param {jQuery} $td
          * @private
          */
         _startEdit: function($td) {
@@ -168,7 +168,7 @@
 
             if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
                 $td.data('isEdit', true);
-                this.render(this._getCellData($td), $td);
+                this.redraw(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
                 ne.util.setCursorToEnd($input.get(0));
@@ -178,14 +178,14 @@
         },
         /**
          * textbox를  text로 교체한다.
-         * @param {Element} $td
+         * @param {jQuery} $td
          * @private
          */
         _endEdit: function($td) {
             var isEdit = $td.data('isEdit');
             if (isEdit) {
                 $td.data('isEdit', false);
-                this.render(this._getCellData($td), $td);
+                this.redraw(this._getCellData($td), $td);
             }
         },
         /**

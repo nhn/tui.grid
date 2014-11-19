@@ -17,7 +17,7 @@
          * @param {jQuery} $target
          * @return {String}
          */
-        getContentHtml: function(cellData, $target) {
+        getContentHtml: function(cellData) {
             var columnName = cellData.columnName,
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
@@ -41,7 +41,7 @@
     });
 
     View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend({
-        rerenderAttributes: [],
+        redrawAttributes: [],
         initialize: function(attributes, options) {
             View.Painter.Cell.Normal.prototype.initialize.apply(this, arguments);
         },
@@ -54,7 +54,7 @@
          * @param {jQuery} $target
          * @return {String}
          */
-        getContentHtml: function(cellData, $target) {
+        getContentHtml: function(cellData) {
             return cellData.value;
         }
     });
@@ -68,7 +68,7 @@
         /**
          * rendering 해야하는 cellData 의 변경 목록
          */
-        rerenderAttributes: ['isDisabled', 'isEditable', 'optionList'],
+        redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
             'mousedown' : '_onMouseDown',
             'change input' : '_onChange',
@@ -107,7 +107,7 @@
          * @param {jQuery} $target
          * @return {String}
          */
-        getContentHtml: function(cellData, $target) {
+        getContentHtml: function(cellData) {
             var isDisabled = cellData.isDisabled;
             return this.template({
                 type: this.grid.option('selectType'),

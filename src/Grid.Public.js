@@ -13,6 +13,20 @@
             this.trigger.apply(this, arguments);
         },
         /**
+         * rowKey에 해당하는 행을 비활성화 시킨다.
+         * @param {(Number|String)} rowKey    행 데이터의 고유 키
+         */
+        disableRow: function(rowKey) {
+            this.core.disableRow(rowKey);
+        },
+        /**
+         * rowKey에 해당하는 행을 활성화시킨다.
+         * @param {(Number|String)} rowKey
+         */
+        enableRow: function(rowKey) {
+            this.core.enableRow(rowKey);
+        },
+        /**
          * rowKey 와 columnName 에 해당하는 값을 반환한다.
          *
          * @param {(Number|String)} rowKey    행 데이터의 고유 키

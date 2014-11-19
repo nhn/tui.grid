@@ -179,13 +179,12 @@
         eventHandler: {},
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this._initializeEventHandler();
+            this.initializeEventHandler();
         },
         /**
          * eventHandler 를 미리 parsing 하여 들고있는다.
-         * @private
          */
-        _initializeEventHandler: function() {
+        initializeEventHandler: function() {
             var eventHandler = {};
             _.each(this.eventHandler, function(methodName, eventName) {
                 var tmp = eventName.split(' '),
@@ -204,7 +203,6 @@
         /**
          * 인자로 받은 엘리먼트에 이벤트 핸들러를 할당한다.
          * @param {jQuery} $el
-         * @private
          */
         attachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {
@@ -222,7 +220,6 @@
         /**
          * 인자로 받은 엘리먼트에 이벤트 핸들러를 제거한다.
          * @param {jQuery} $el
-         * @private
          */
         detachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {

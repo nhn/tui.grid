@@ -161,7 +161,7 @@
 
             for (i = 0; i < len; i++) {
                 columnName = columnModelList[i]['columnName'];
-                mainRowKey = grid.getMainRowKey(rowKey, columnName);
+                mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
 
                 $trCache[mainRowKey] = $trCache[mainRowKey] || this._getTrElement(mainRowKey);
                 $tr = $trCache[mainRowKey];
