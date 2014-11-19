@@ -123,7 +123,7 @@ describe('view.painter.cell.base', function() {
             'columnName5': 3,
             'columnName6': true,
             'columnName7': 'hidden'
-        },
+        }
     ];
     var grid = {
             focusIn: function(){},
@@ -336,14 +336,12 @@ describe('view.painter.cell.base', function() {
             $td = $empty.find('td');
 
             cellPainter.redraw({
-                rowSpan: 2,
                 columnName: 'columnName1',
                 rowKey: 0,
                 className: 'rowClass',
                 isEditable: true,
                 isDisabled: false
             }, $td);
-            expect($td.attr('rowSpan')).toBe('2');
             expect($td.hasClass('editable')).toBe(true);
             expect($td.hasClass('disabled')).toBe(false);
         });
@@ -580,5 +578,4 @@ describe('view.painter.cell.base', function() {
             });
         });
     });
-
 });
