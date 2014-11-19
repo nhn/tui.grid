@@ -10,22 +10,69 @@
         initialize: function() {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
-        focusIn: function($td) {},
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
         getEditType: function() {},
+        /**
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
+        focusIn: function($td) {},
+        /**
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+         * @param {object} cellData
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
+         */
         getContentHtml: function(cellData) {
             throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
         },
-        setElementAttribute: function(cellData, $target) {
+        /**
+         * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+         * @param {object} cellData
+         * @param {jQuery} $td
+         * @param {Boolean} hasFocusedElement
+         */
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
         },
+        /**
+         * List Type 의 option list 를 반환하는 메서드
+         *
+         * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
+         * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
+         * @param {Object} cellData
+         * @returns {optionList|*|expectResult.optionList|.select.optionList|.checkbox.optionList|.radio.optionList}
+         * @private
+         */
         _getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
             return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
         },
+        /**
+         * blur 이벤트 핸들러
+         * @param {Event} blurEvent
+         * @private
+         */
         _onBlur: function(blurEvent) {
             var $target = $(blurEvent.target);
             $target.closest('td').data('isFocused', false);
         },
+        /**
+         * focus 이벤트 핸들러
+         * @param {Event} focusEvent
+         * @private
+         */
         _onFocus: function(focusEvent) {
             var $target = $(focusEvent.target);
             $target.closest('td').data('isFocused', true);
@@ -57,14 +104,34 @@
             'blur select' : '_onBlur',
             'focus select' : '_onFocus'
         },
-
-        focusIn: function($td) {
-            //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
-            $td.find('select').focus();
-        },
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
         getEditType: function() {
             return 'select';
         },
+        /**
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
+        focusIn: function($td) {
+            /* istanbul ignore next */
+            $td.find('select').focus();
+        },
+        /**
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+         * @param {object} cellData
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
+         */
         getContentHtml: function(cellData) {
             var list = this._getOptionList(cellData),
                 html = '',
@@ -90,14 +157,31 @@
             return html;
 
         },
+        /**
+         * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+         * @param {object} cellData
+         * @param {jQuery} $td
+         * @param {Boolean} hasFocusedElement
+         */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
-//            console.log('!!!!setElementAttribute', cellData.optionList);
             var $select = $td.find('select');
-            hasFocusedElement ? $select.blur() : null;
+            /*
+            키보드 상하로 조작시 onChange 콜백에서 false 리턴시 이전 값으로
+            돌아가지 않는 현상때문에 blur focus 를 수행한다.
+             */
+
+            /* istanbul ignore next: blur 확인 불가 */ hasFocusedElement ? $select.blur() : null;
             $select.val(cellData.value);
-            hasFocusedElement ? $select.focus() : null;
+
+            /* istanbul ignore next: focus 확인 불가 */ hasFocusedElement ? $select.focus() : null;
 
         },
+        /**
+         * change 이벤트 핸들러
+         * @param {Event} changeEvent
+         * @private
+         */
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 cellAddr = this._getCellAddress($target),
@@ -156,38 +240,34 @@
             input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%> <%=disabled%> />'),
             label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
         },
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         */
         getEditType: function() {
             return 'button';
         },
+        /**
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td
+         */
         focusIn: function($td) {
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
-            $td.find('input').eq(0).focus();
+            /* istanbul ignore next: focus 확인 불가 */ $td.find('input').eq(0).focus();
         },
-        _focusNextInput: function($currentInput) {
-            var $next = $currentInput;
-            do {
-                $next = $next.next();
-            } while ($next.length && !$next.is('input'));
-            if ($next.length) {
-                $next.focus();
-                return true;
-            } else {
-                return false;
-            }
-        },
-        _focusPrevInput: function($currentInput) {
-            var $prev = $currentInput;
-            do {
-                $prev = $prev.prev();
-            } while ($prev.length && !$prev.is('input'));
-            if ($prev.length) {
-                $prev.focus();
-                return true;
-            } else {
-                return false;
-            }
-        },
-
+        /**
+         * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+         * @param {object} cellData
+         * @return  {string} html string
+         * @example
+         * var html = this.getContentHtml();
+         * <select>
+         *     <option value='1'>option1</option>
+         *     <option value='2'>option1</option>
+         *     <option value='3'>option1</option>
+         * </select>
+         */
         getContentHtml: function(cellData) {
             var list = this._getOptionList(cellData),
                 len = list.length,
@@ -219,8 +299,14 @@
 
             return html;
         },
-
-        setElementAttribute: function(cellData, $td) {
+        /**
+         * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+         * @param {object} cellData
+         * @param {jQuery} $td
+         * @param {Boolean} [hasFocusedElement]
+         */
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {
             //TODO
             var value = cellData.value,
                 checkedList = ('' + value).split(','),
@@ -231,20 +317,69 @@
                 $td.find('input[value="' + checkedList[i] + '"]').prop('checked', true);
             }
         },
-        _getCheckedList: function($target) {
+        /**
+         * 다음 input 에 focus 한다
+         * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
+         * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
+         * @private
+         */
+        _focusNextInput: function($currentInput) {
+            var $next = $currentInput;
+            do {
+                $next = $next.next();
+            } while ($next.length && !$next.is('input'));
+
+            if ($next.length) {
+                $next.focus();
+                return true;
+            } else {
+                return false;
+            }
+        },
+        /**
+         * 이전 input 에 focus 한다.
+         * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
+         * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
+         * @private
+         */
+        _focusPrevInput: function($currentInput) {
+            var $prev = $currentInput;
+            do {
+                $prev = $prev.prev();
+            } while ($prev.length && !$prev.is('input'));
+
+            if ($prev.length) {
+                $prev.focus();
+                return true;
+            } else {
+                return false;
+            }
+        },
+        /**
+         * check 된 button 의 값들을 가져온다. onChange 이벤트 핸들러에서 호출한다.
+         * @param {jQuery} $target 이벤트가 발생한 targetElement
+         * @return {Array}  check 된 값들의 결과 배열
+         * @private
+         */
+        _getCheckedValueList: function($target) {
             var $checkedList = $target.closest('td').find('input:checked'),
                 checkedList = [];
 
-            for (var i = 0; i < $checkedList.length; i++) {
-                checkedList.push($checkedList.eq(i).val());
-            }
+            ne.util.forEachArray($checkedList, function($checked, index) {
+                checkedList.push($checkedList.eq(index).val());
+            });
 
             return checkedList;
         },
+        /**
+         * onChange 이벤트 핸들러
+         * @param {Event} changeEvent
+         * @private
+         */
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                cellAddr = this._getCellAddress($target);
-            this.grid.setValue(cellAddr.rowKey, cellAddr.columnName, this._getCheckedList($target).join(','));
+                cellAddress = this._getCellAddress($target);
+            this.grid.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
         }
 
     });
