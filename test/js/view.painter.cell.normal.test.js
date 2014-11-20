@@ -499,5 +499,21 @@ describe('view.painter.cell.base', function() {
                 expect(grid.setValue).toHaveBeenCalledWith('0', '_button', $button.prop('checked'));
             });
         });
+        describe('KeyDownSwitch', function() {
+            var $target = $('<div>');
+            it('정의된 키 액션은 true 를 반환하는지 확인한다.', function() {
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('UP_ARROW', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('DOWN_ARROW', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('ENTER', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('LEFT_ARROW', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('RIGHT_ARROW', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('ESC', $target))).toBe(true);
+            });
+            it('ENTER 입력시 focusOut 을 호출하는지 확인한다. ', function() {
+                cellPainter.focusOut = jasmine.createSpy('focusOut');
+                cellPainter._executeKeyDownSwitch(getKeyEvent('ENTER', $target));
+                expect(cellPainter.focusOut).toHaveBeenCalled();
+            });
+        });
     });
 });

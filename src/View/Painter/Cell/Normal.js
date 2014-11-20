@@ -114,12 +114,8 @@
                 'ENTER': function(keyDownEvent, param) {
                     this.focusOut(param.$target);
                 },
-                'LEFT_ARROW': function(keyDownEvent, param) {
-                    this._focusPrevInput(param.$target);
-                },
-                'RIGHT_ARROW': function(keyDownEvent, param) {
-                    this._focusPrevInput(param.$target);
-                },
+                'LEFT_ARROW': function(keyDownEvent, param) {},
+                'RIGHT_ARROW': function(keyDownEvent, param) {},
                 'ESC': function(keyDownEvent, param) {}
             });
         },

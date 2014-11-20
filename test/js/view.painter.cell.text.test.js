@@ -579,5 +579,27 @@ describe('view.painter.cell.text', function() {
                 expect(cellPainter._startEdit).toHaveBeenCalled();
             });
         });
+        describe('KeyDownSwitch', function() {
+            var $target = $('<div>');
+            it('정의된 키 액션은 true 를 반환하는지 확인한다.', function() {
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('UP_ARROW', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('DOWN_ARROW', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('PAGE_UP', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('PAGE_DOWN', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('ENTER', $target))).toBe(true);
+                expect(cellPainter._executeKeyDownSwitch(getKeyEvent('ESC', $target))).toBe(true);
+            });
+            it('ENTER 입력시 focusOut 을 호출하는지 확인한다. ', function() {
+                cellPainter.focusOut = jasmine.createSpy('focusOut');
+                cellPainter._executeKeyDownSwitch(getKeyEvent('ENTER', $target));
+                expect(cellPainter.focusOut).toHaveBeenCalled();
+            });
+            it('ESC 입력시 focusOut, _restore 를 호출하는지 확인한다. ', function() {
+                cellPainter.focusOut = jasmine.createSpy('focusOut');
+                cellPainter._restore = jasmine.createSpy('_restore');
+                cellPainter._executeKeyDownSwitch(getKeyEvent('ESC', $target));
+                expect(cellPainter._restore).toHaveBeenCalled();
+            });
+        });
     });
 });
