@@ -23,6 +23,7 @@ module.exports = function(grunt) {
                 // The files to concatenate:
                 // Notice the wildcard, which is automatically expanded.
                 src: [
+                    'src/External/code-snippet.js',
                     'src/External/*.js',
 
                     'src/Core/*.js',

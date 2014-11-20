@@ -1,5 +1,3 @@
-if (!window.ne) { window.ne = {}; }
-if (!window.ne.util) { window.ne.util = {}; }
 /**
  * @fileoverview
  * @author FE개발팀
@@ -10,8 +8,11 @@ if (!window.ne.util) { window.ne.util = {}; }
     if (!ne) {
         ne = window.ne = {};
     }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
 
-    ne.type = ne.type || {
+    ne.util.type = ne.util.type || {
         isPlaneObject: function(obj) {
             return Object.prototype.toString.call(obj) === '[object Object]';
         },
@@ -19,7 +20,7 @@ if (!window.ne.util) { window.ne.util = {}; }
             return Object.prototype.toString.call(obj) === '[object Function]';
         },
         isTruthy: function(obj){
-            return ne.type.isDefined(obj) && obj !== false;
+            return ne.util.type.isDefined(obj) && obj !== false;
         },
         isDefined: function(obj) {
             return obj !== null && obj !== undefined;
@@ -52,7 +53,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      *  sResultType : 응답 포맷
      * @return {Object} $Ajax() 객체
      * @example
-     * ne.ajax.request(url, {
+     * ne.util.ajax.request(url, {
      *	 "action" : "insertList",
      *	 "page" : 3
      *	 "success" : function(responseData, status, jqXHR){
@@ -147,7 +148,7 @@ if (!window.ne.util) { window.ne.util = {}; }
 
         if (requestData) {
             var result = true;
-            if (requestData['_success'] && ne.type.isFunction(requestData['_success'])) {
+            if (requestData['_success'] && ne.util.type.isFunction(requestData['_success'])) {
                 result = requestData['_success'](responseData, status, jqXHR);
             }
 
@@ -195,7 +196,7 @@ if (!window.ne.util) { window.ne.util = {}; }
     };
 
     /**
-     * @modules ne.ajax.util
+     * @modules ne.util.ajax.util
      */
 
     ajax.util = {};
@@ -210,7 +211,7 @@ if (!window.ne.util) { window.ne.util = {}; }
             destinationTarget,
             x, y;
 
-        if (ne.type.isPlaneObject(sourceTarget) && (constructor = this.getConstructorName(sourceTarget))) {
+        if (ne.util.type.isPlaneObject(sourceTarget) && (constructor = this.getConstructorName(sourceTarget))) {
             destinationTarget = eval('new ' + constructor + '()');
 
             if (sourceTarget.prototype) {
@@ -267,7 +268,7 @@ if (!window.ne.util) { window.ne.util = {}; }
     ajax.util.close = function(skipBeforeUnload, popup) {
         var target = popup || window;
 
-        if (ne.type.isTruthy(skipBeforeUnload)) {
+        if (ne.util.type.isTruthy(skipBeforeUnload)) {
             $(target).off('beforeunload');
         }
 
@@ -278,9 +279,10 @@ if (!window.ne.util) { window.ne.util = {}; }
 
     };
 
-    ne.ajax = ajax;
+    ne.util.ajax = ajax;
 
-})(window.ne.util);
+})(window.ne);
+
 /**
  * @fileoverview 클라이언트의 브라우저의 종류와 버전 검출을 위한 모듈
  * @author FE개발팀
@@ -290,6 +292,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     'use strict';
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -369,9 +374,9 @@ if (!window.ne.util) { window.ne.util = {}; }
 
     detector[appName]();
 
-    ne.browser = browser;
+    ne.util.browser = browser;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview 객체나 배열을 다루기위한 펑션들이 정의 되어있는 모듈
@@ -383,6 +388,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     'use strict';
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -472,12 +480,12 @@ if (!window.ne.util) { window.ne.util = {}; }
         var key,
             len;
 
-        if (ne.isArray(obj)) {
+        if (ne.util.isArray(obj)) {
             for (key = 0, len = obj.length; key < len; key++) {
                 iteratee.call(context || null, obj[key], key, obj);
             }
         } else {
-            ne.forEachOwnProperties(obj, iteratee, context);
+            ne.util.forEachOwnProperties(obj, iteratee, context);
         }
     }
 
@@ -498,7 +506,7 @@ if (!window.ne.util) { window.ne.util = {}; }
     function map(obj, iteratee, context) {
         var resultArray = [];
 
-        ne.forEach(obj, function() {
+        ne.util.forEach(obj, function() {
             resultArray.push(iteratee.apply(context || null, arguments));
         });
 
@@ -526,8 +534,8 @@ if (!window.ne.util) { window.ne.util = {}; }
             store;
 
 
-        if (!ne.isArray(obj)) {
-            keys = ne.keys(obj);
+        if (!ne.util.isArray(obj)) {
+            keys = ne.util.keys(obj);
         }
 
         length = keys ? keys.length : obj.length;
@@ -572,14 +580,14 @@ if (!window.ne.util) { window.ne.util = {}; }
         return arr;
     }
 
-    ne.forEachOwnProperties = forEachOwnProperties;
-    ne.forEachArray = forEachArray;
-    ne.forEach = forEach;
-    ne.toArray = toArray;
-    ne.map = map;
-    ne.reduce = reduce;
+    ne.util.forEachOwnProperties = forEachOwnProperties;
+    ne.util.forEachArray = forEachArray;
+    ne.util.forEach = forEach;
+    ne.util.toArray = toArray;
+    ne.util.map = map;
+    ne.util.reduce = reduce;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview 옵저버 패턴을 이용하여 객체 간 커스텀 이벤트를 전달할 수 있는 기능을 제공하는 모듈
@@ -885,7 +893,7 @@ if (!window.ne.util) { window.ne.util = {}; }
 
     ne.CustomEvents = CustomEvents;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview 클래스와 비슷한방식으로 생성자를 만들고 상속을 구현할 수 있는 메소드를 제공하는 모듈
@@ -897,6 +905,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     'use strict';
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -950,21 +961,21 @@ if (!window.ne.util) { window.ne.util = {}; }
 
         obj = props.init || function(){};
 
-        parent && ne.inherit(obj, parent);
+        parent && ne.util.inherit(obj, parent);
 
         if (props.hasOwnProperty('static')) {
-            ne.extend(obj, props.static);
+            ne.util.extend(obj, props.static);
             delete props.static;
         }
 
-        ne.extend(obj.prototype, props);
+        ne.util.extend(obj.prototype, props);
 
         return obj;
     };
 
-    ne.defineClass = defineClass;
+    ne.util.defineClass = defineClass;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview Form 엘리먼트 헨들링 메서드
@@ -976,6 +987,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     'use strict';
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -996,7 +1010,7 @@ if (!window.ne.util) { window.ne.util = {}; }
          * @param {String} formValue
          */
         'checkbox': function(targetElement, formValue) {
-            if (ne.isArray(formValue)) {
+            if (ne.util.isArray(formValue)) {
                 targetElement.checked = $.inArray(targetElement.value, _changeToStringInArray(formValue)) !== -1;
             } else {
                 targetElement.checked = (targetElement.value === formValue);
@@ -1008,10 +1022,10 @@ if (!window.ne.util) { window.ne.util = {}; }
          * @param {String} formValue
          */
         'select-one': function(targetElement, formValue) {
-            var options = ne.toArray(targetElement.options),
+            var options = ne.util.toArray(targetElement.options),
                 index = -1;
 
-            ne.forEach(options, function(targetOption, i) {
+            ne.util.forEach(options, function(targetOption, i) {
                 if (targetOption.value === formValue || targetOption.text === formValue) {
                     index = i;
                     return false;
@@ -1027,11 +1041,11 @@ if (!window.ne.util) { window.ne.util = {}; }
          * @param {String|Array} formValue
          */
         'select-multiple': function(targetElement, formValue) {
-            var options = ne.toArray(targetElement.options);
+            var options = ne.util.toArray(targetElement.options);
 
-            if (ne.isArray(formValue)) {
+            if (ne.util.isArray(formValue)) {
                 formValue = _changeToStringInArray(formValue);
-                ne.forEach(options, function(targetOption) {
+                ne.util.forEach(options, function(targetOption) {
                     targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
                         $.inArray(targetOption.text, formValue) !== -1;
                 }, this);
@@ -1055,7 +1069,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @return {Array} 변환된 배열 결과 값
      */
     function _changeToStringInArray(arr) {
-        ne.forEach(arr, function(value, i) {
+        ne.util.forEach(arr, function(value, i) {
             arr[i] = String(value);
         }, this);
         return arr;
@@ -1071,10 +1085,10 @@ if (!window.ne.util) { window.ne.util = {}; }
         var result = {},
             valueList = $form.serializeArray();
 
-        ne.forEach(valueList, function(obj) {
+        ne.util.forEach(valueList, function(obj) {
             var value = obj.value,
                 name = obj.name;
-            if (ne.isDefined(result[name])) {
+            if (ne.util.isDefined(result[name])) {
                 if (!result[name].push) {
                     result[name] = [result[name]];
                 }
@@ -1112,7 +1126,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {Object} formData 폼에 설정할 폼 데이터 객체
      **/
     function setFormData($form, formData) {
-        ne.forEachOwnProperties(formData, function(value, property) {
+        ne.util.forEachOwnProperties(formData, function(value, property) {
             setFormElementValue($form, property, value);
         }, this);
     }
@@ -1130,12 +1144,12 @@ if (!window.ne.util) { window.ne.util = {}; }
         if (!elementList) {
             return;
         }
-        if (!ne.isArray(formValue)) {
+        if (!ne.util.isArray(formValue)) {
             formValue = String(formValue);
         }
-        elementList = ne.isHTMLTag(elementList) ? [elementList] : elementList;
-        elementList = ne.toArray(elementList);
-        ne.forEach(elementList, function(targetElement) {
+        elementList = ne.util.isHTMLTag(elementList) ? [elementList] : elementList;
+        elementList = ne.util.toArray(elementList);
+        ne.util.forEach(elementList, function(targetElement) {
             type = setInput[targetElement.type] ? targetElement.type : 'defaultAction';
             setInput[type](targetElement, formValue);
         }, this);
@@ -1159,12 +1173,12 @@ if (!window.ne.util) { window.ne.util = {}; }
         }
     }
 
-    ne.getFormElement = getFormElement;
-    ne.getFormData = getFormData;
-    ne.setFormData = setFormData;
-    ne.setFormElementValue = setFormElementValue;
-    ne.setCursorToEnd = setCursorToEnd;
-})(window.ne.util);
+    ne.util.getFormElement = getFormElement;
+    ne.util.getFormData = getFormData;
+    ne.util.setFormData = setFormData;
+    ne.util.setFormElementValue = setFormElementValue;
+    ne.util.setCursorToEnd = setCursorToEnd;
+})(window.ne);
 /**
  * @fileoverview 함수관련 메서드 모음
  * @author FE개발팀
@@ -1175,6 +1189,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     /* istanbul ignore if */
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -1200,9 +1217,331 @@ if (!window.ne.util) { window.ne.util = {}; }
         };
     }
 
-    ne.bind = bind;
+    ne.util.bind = bind;
 
-})(window.ne.util);
+})(window.ne);
+
+/**
+ * @fileoverview Hash Map을 구현한 모듈이 정의 되어있다.
+ * @author FE개발팀
+ * @dependency type, collection.js
+ */
+
+(function(ne) {
+    'use strict';
+    /* istanbul ignore if */
+    if (!ne) {
+        ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
+    
+    /**
+     * 해쉬맵에서 사용하는 데이터는 _MAPDATAPREFIX로 시작한다.
+     * @type {string}
+     * @private
+     */
+    var _MAPDATAPREFIX = 'å';
+
+    /**
+     * HashMap
+     * 키/밸류로 데이터를 관리할수있다(자바의 hashMap과 유사)
+     * 주의) length프로퍼티를 가지고있어 유사 배열을 length의 유무로 체크하는 로직에서 의도되지 않은 동작을 할수있다.
+     * @param {Object} [obj] 인스턴스가 만들어질때 셋팅할 초기 데이터
+     * @constructor
+     * @example
+     * var hm = new HashMap({
+     *     'mydata': {
+     *          'hello': 'imfine'
+     *      },
+     *     'what': 'time'
+     * });
+     */
+    function HashMap(obj) {
+        /**
+         * 사이즈
+         * @type {number}
+         */
+        this.length = 0;
+
+        if (obj) {
+            this.setObject(obj);
+        }
+    }
+
+    /**
+     * 키/밸류 혹은 Object를 전달하여 데이터를 셋팅한다.
+     * @param {String|Object} key 키에 해당하는 스트링이나 객체
+     * @param {*} [value] 데이터
+     * @example
+     * var hm = new HashMap();
+     *
+     * hm.set('key', 'value');
+     * hm.set({
+     *     'key1': 'data1',
+     *     'key2': 'data2'
+     * });
+     */
+    HashMap.prototype.set = function(key, value) {
+        arguments.length === 2 ? this.setKeyValue(key, value) : this.setObject(key);
+    };
+
+    /**
+     * 키/밸류로 데이터를 셋팅한다.
+     * @param {String} key 키스트링
+     * @param {*} value 데이터
+     * @example
+     * var hm = new HashMap();
+     * hm.setKeyValue('key', 'value');
+     */
+    HashMap.prototype.setKeyValue = function(key, value) {
+        if (!this.has(key)) {
+            this.length += 1;
+        }
+        this[this.encodeKey(key)] = value;
+    };
+
+    /**
+     * 객체로 데이터를 셋팅한다.
+     * @param {Object} obj
+     * @example
+     * var hm = new HashMap();
+     *
+     * hm.setObject({
+     *     'key1': 'data1',
+     *     'key2': 'data2'
+     * });
+     */
+    HashMap.prototype.setObject = function(obj) {
+        var self = this;
+
+        ne.util.forEachOwnProperties(obj, function(value, key) {
+            self.setKeyValue(key, value);
+        });
+    };
+
+    /**
+     * 해쉬맵에서 사용할 키를 생성한다.
+     * @param {String} key
+     * @returns {string}
+     * @private
+     */
+    HashMap.prototype.encodeKey = function(key) {
+        return _MAPDATAPREFIX + key;
+    };
+
+    /**
+     * 해쉬맵키에서 실제 키를 가져온다.
+     * @param {String} key
+     * @returns {String}
+     * @private
+     */
+    HashMap.prototype.decodeKey = function(key) {
+        var decodedKey = key.split(_MAPDATAPREFIX);
+        return decodedKey[decodedKey.length-1];
+    };
+
+    /**
+     * 키값을 전달하여 데이터를 반환한다.
+     * @param {String} key
+     * @returns {*}
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     *
+     * hm.get('key') // value
+     */
+    HashMap.prototype.get = function(key) {
+        return this[this.encodeKey(key)];
+    };
+
+    /**
+     * 키를 전달하여 데이터가 존재하는지 체크한다.
+     * @param {String} key
+     * @returns {boolean}
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     *
+     * hm.has('key') // true
+     */
+    HashMap.prototype.has = function(key) {
+        return this.hasOwnProperty(this.encodeKey(key));
+    };
+
+    /**
+     * 키나 키의 목록을 전달하여 데이터를 삭제한다.
+     * @param {String...|String[]} key
+     * @returns {String|String[]}
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     * hm.set('key2', 'value');
+     *
+     * //ex1
+     * hm.remove('key');
+     *
+     * //ex2
+     * hm.remove('key', 'key2');
+     *
+     * //ex3
+     * hm.remove(['key', 'key2']);
+     */
+    HashMap.prototype.remove = function(key) {
+        if (arguments.length > 1) {
+            key = ne.util.toArray(arguments);
+        }
+
+        return ne.util.isArray(key) ? this.removeByKeyArray(key) : this.removeByKey(key);
+    };
+
+    /**
+     * 키를 전달하여 데이터를 삭제한다.
+     * @param {String} key
+     * @returns {*|null} 삭제된 데이터
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     *
+     * hm.removeByKey('key')
+     */
+    HashMap.prototype.removeByKey = function(key) {
+        var data = this.has(key) ? this.get(key) : null;
+
+        if (data !== null) {
+            delete this[this.encodeKey(key)];
+            this.length -= 1;
+        }
+
+        return data;
+    };
+
+    /**
+     * 키의 목록을 전달하여 데이터를 삭제한다.
+     * @param {String[]} keyArray
+     * @returns {String[]} 삭제된 데이터
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     * hm.set('key2', 'value');
+     *
+     * hm.removeByKeyArray(['key', 'key2']);
+     */
+    HashMap.prototype.removeByKeyArray = function(keyArray) {
+        var data = [],
+            self = this;
+
+        ne.util.forEach(keyArray, function(key) {
+            data.push(self.removeByKey(key));
+        });
+
+        return data;
+    };
+
+    /**
+     * 모든데이터를 지운다.
+     */
+    HashMap.prototype.removeAll = function() {
+        var self = this;
+
+        this.each(function(value, key) {
+            self.remove(key);
+        });
+    };
+
+    /**
+     * 데이터를 순회하며 콜백에 전달해준다.
+     * @param {Function} iteratee
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     * hm.set('key2', 'value');
+     *
+     * hm.each(function(value, key) {
+     *     //do something...
+     * });
+     */
+    HashMap.prototype.each = function(iteratee) {
+        var self = this,
+            flag;
+
+        ne.util.forEachOwnProperties(this, function(value, key) {
+            if (key.charAt(0) === _MAPDATAPREFIX) {
+                flag = iteratee(value, self.decodeKey(key));
+            }
+
+            if (flag === false) {
+                return flag;
+            }
+        });
+    };
+
+    /**
+     * 저장된 키의 목록을 배열로 리턴해준다.
+     * @returns {Array}
+     * @example
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     * hm.set('key2', 'value');
+     *
+     * hm.keys();  //['key', 'key2');
+     */
+    HashMap.prototype.keys = function() {
+        var keys = [],
+            self = this;
+
+        this.each(function(value, key) {
+            keys.push(self.decodeKey(key));
+        });
+
+        return keys;
+    };
+
+    /**
+     * 조건을 체크하는 콜백을 전달받아 데이터를 전달해주고 콜백의 결과가 true인경우의 데이터를 모와 배열로 만들어 리턴해준다.
+     * @param {Function} condition
+     * @returns {Array}
+     * @example
+     *
+     * //ex1
+     * var hm = new HashMap();
+     * hm.set('key', 'value');
+     * hm.set('key2', 'value');
+     *
+     * hm.find(function(value, key) {
+     *     return key === 'key2';
+     * }); // ['value']
+     *
+     * //ex2
+     * var hm = new HashMap({
+     *     'myobj1': {
+     *          visible: true
+     *      },
+     *     'mybobj2': {
+     *          visible: false
+     *      }
+     * });
+     *
+     * hm.find(function(obj, key) {
+     *     return obj.visible === true;
+     * }); // [{visible: true}];
+     */
+    HashMap.prototype.find = function(condition) {
+        var founds = [];
+
+        this.each(function(value, key) {
+            if (condition(value, key)) {
+                founds.push(value);
+            }
+        });
+
+        return founds;
+    };
+
+    ne.util.HashMap = HashMap;
+
+})(window.ne);
 
 /**
  * @fileoverview 간단한 상속 시뮬레이션
@@ -1215,13 +1554,16 @@ if (!window.ne.util) { window.ne.util = {}; }
     if (!ne) {
         ne = window.ne = {};
     }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
 
     /**
      * 전달된 객체를 prototype으로 사용하는 객체를 만들어 반환하는 메서드
      * @param {Object} obj
      * @return {Object}
      */
-    function createObject(){
+    function createObject() {
         function F() {}
 
         return function(obj) {
@@ -1261,15 +1603,15 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {function} superType 부모 생성자 함수
      */
     function inherit(subType, superType) {
-        var prototype = ne.createObject(superType.prototype);
+        var prototype = ne.util.createObject(superType.prototype);
         prototype.constructor = subType;
         subType.prototype = prototype;
     }
 
-    ne.createObject = createObject();
-    ne.inherit = inherit;
+    ne.util.createObject = createObject();
+    ne.util.inherit = inherit;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview
@@ -1281,8 +1623,10 @@ if (!window.ne.util) { window.ne.util = {}; }
     if (!ne) {
         ne = window.ne = {};
     }
-
-})(window.ne.util);
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
+})(window.ne);
 /**
  * @fileoverview
  * @author FE개발팀
@@ -1293,6 +1637,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     /* istanbul ignore if */
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -1356,12 +1703,12 @@ if (!window.ne.util) { window.ne.util = {}; }
         return keys;
     };
 
-    ne.extend = extend;
-    ne.stamp = stamp;
-    ne._resetLastId = resetLastId;
-    ne.keys = Object.keys || keys;
+    ne.util.extend = extend;
+    ne.util.stamp = stamp;
+    ne.util._resetLastId = resetLastId;
+    ne.util.keys = Object.keys || keys;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview
@@ -1373,8 +1720,10 @@ if (!window.ne.util) { window.ne.util = {}; }
     if (!ne) {
         ne = window.ne = {};
     }
-
-})(window.ne.util);
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
+})(window.ne);
 
 /**
  * @fileoverview 문자열 조작 모듈
@@ -1386,6 +1735,10 @@ if (!window.ne.util) { window.ne.util = {}; }
     if (!ne) {
         ne = window.ne = {};
     }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
+
     /**
      * 전달된 문자열에 모든 HTML Entity 타입의 문자열을 원래의 문자로 반환
      * @method decodeHTMLEntity
@@ -1426,10 +1779,10 @@ if (!window.ne.util) { window.ne.util = {}; }
         return /[<>&"']/.test(string);
     }
 
-    ne.decodeHTMLEntity = decodeHTMLEntity;
-    ne.encodeHTMLEntity = encodeHTMLEntity;
-    ne.hasEncodableString = hasEncodableString;
-})(window.ne.util);
+    ne.util.decodeHTMLEntity = decodeHTMLEntity;
+    ne.util.encodeHTMLEntity = encodeHTMLEntity;
+    ne.util.hasEncodableString = hasEncodableString;
+})(window.ne);
 
 /**
  * @fileoverview 타입체크 모듈
@@ -1441,6 +1794,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     /* istanbul ignore if */
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -1579,7 +1935,7 @@ if (!window.ne.util) { window.ne.util = {}; }
         }
 
         if (isObject(obj) && !isFunction(obj)) {
-            ne.forEachOwnProperties(obj, function() {
+            ne.util.forEachOwnProperties(obj, function() {
                 hasKey = true;
                 return false;
             });
@@ -1601,22 +1957,22 @@ if (!window.ne.util) { window.ne.util = {}; }
     }
 
 
-    ne.isDefined = isDefined;
-    ne.isTruthy = isTruthy;
-    ne.isFalsy = isFalsy;
-    ne.isArguments = isArguments;
-    ne.isArray = Array.isArray || isArray;
-    ne.isObject = isObject;
-    ne.isFunction = isFunction;
-    ne.isNumber = isNumber;
-    ne.isString = isString;
-    ne.isBoolean = isBoolean;
-    ne.isHTMLNode = isHTMLNode;
-    ne.isHTMLTag = isHTMLTag;
-    ne.isEmpty = isEmpty;
-    ne.isNotEmpty = isNotEmpty;
+    ne.util.isDefined = isDefined;
+    ne.util.isTruthy = isTruthy;
+    ne.util.isFalsy = isFalsy;
+    ne.util.isArguments = isArguments;
+    ne.util.isArray = Array.isArray || isArray;
+    ne.util.isObject = isObject;
+    ne.util.isFunction = isFunction;
+    ne.util.isNumber = isNumber;
+    ne.util.isString = isString;
+    ne.util.isBoolean = isBoolean;
+    ne.util.isHTMLNode = isHTMLNode;
+    ne.util.isHTMLTag = isHTMLTag;
+    ne.util.isEmpty = isEmpty;
+    ne.util.isNotEmpty = isNotEmpty;
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview 전역변수를 쉽게 사용하기 위한 모듈
@@ -1628,6 +1984,9 @@ if (!window.ne.util) { window.ne.util = {}; }
     /* istanbul ignore if */
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -1642,7 +2001,7 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {string} path
      */
     function get(path) {
-        if (!ne.isDefined(path)) {
+        if (!ne.util.isDefined(path)) {
             return undefined;
         }
 
@@ -1674,17 +2033,17 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @return {*} 단일 값 세팅 시는 세팅한 값을 반환한다 (반환 값은 참조형이기 때문에 주의를 요한다)
      * @example
      * // 단일 값 세팅
-     * ne.set('msg.loginerror', '로그인 오류가 발생했습니다');
+     * ne.util.set('msg.loginerror', '로그인 오류가 발생했습니다');
      *
      * // 여러 값을 한번에 변경
-     * ne.set({
+     * ne.util.set({
      *     'msg.loginerror': '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도하세요',
      *     'msg.loginfail': '없는 아이디이거나 패스워드가 맞지 않습니다'
      * });
      */
     function set(path, obj) {
         if (typeof path !== 'string') {
-            ne.forEach(path, function(value, key) {
+            ne.util.forEach(path, function(value, key) {
                 set(key, value);
             });
         } else if (typeof obj !== 'undefined') {
@@ -1715,9 +2074,9 @@ if (!window.ne.util) { window.ne.util = {}; }
      * @param {object} obj
      */
     function reset(obj) {
-        if (ne.isDefined(obj)) {
+        if (ne.util.isDefined(obj)) {
 
-            if (!ne.isObject(obj) || ne.isFunction(obj) || ne.isArray(obj)) {
+            if (!ne.util.isObject(obj) || ne.util.isFunction(obj) || ne.util.isArray(obj)) {
                 throw new Error('variable: 전역변수 공간은 object 형태의 데이터로만 설정이 가능합니다.');
             } else {
                 settings = obj;
@@ -1728,13 +2087,13 @@ if (!window.ne.util) { window.ne.util = {}; }
         }
     }
 
-    ne.variable = {
+    ne.util.variable = {
         get: get,
         set: set,
         reset: reset
     };
 
-})(window.ne.util);
+})(window.ne);
 
 /**
  * @fileoverview
@@ -1746,5 +2105,7 @@ if (!window.ne.util) { window.ne.util = {}; }
     if (!ne) {
         ne = window.ne = {};
     }
-
-})(window.ne.util);
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
+    }
+})(window.ne);

@@ -33,7 +33,6 @@
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
                 rowKey = cellData.rowKey;
-
             if (typeof columnModel.formatter === 'function') {
                 value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
             }
@@ -109,7 +108,7 @@
         },
         initialize: function(attributes, options) {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
-            this._setKeyDownSwitch({
+            this.setKeyDownSwitch({
                 'UP_ARROW': function() {},
                 'DOWN_ARROW': function() {},
                 'ENTER': function(keyDownEvent, param) {
@@ -198,7 +197,7 @@
         },
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
-                rowKey = this._getRowKey($target);
+                rowKey = this.getRowKey($target);
             this.grid.setValue(rowKey, '_button', $target.prop('checked'));
         },
         _onMouseDown: function(mouseDownEvent) {

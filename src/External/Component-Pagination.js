@@ -5,7 +5,7 @@
  */
 
 
-var ne = ne || {};
+var ne = window.ne || {};
 ne.Component = ne.Component || {};
 
 /**

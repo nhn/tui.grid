@@ -53,9 +53,8 @@
          * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
          * @param {Object} cellData
          * @returns {optionList|*|expectResult.optionList|.select.optionList|.checkbox.optionList|.radio.optionList}
-         * @private
          */
-        _getOptionList: function(cellData) {
+        getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
             return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
         },
@@ -89,7 +88,7 @@
         initialize: function(attributes) {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
 
-            this._setKeyDownSwitch({
+            this.setKeyDownSwitch({
                 'ESC': function(keyDownEvent, param) {
                     this.focusOut(param.$target);
                 },
@@ -133,7 +132,7 @@
          * </select>
          */
         getContentHtml: function(cellData) {
-            var list = this._getOptionList(cellData),
+            var list = this.getOptionList(cellData),
                 html = '',
                 isDisabled = cellData.isDisabled,
                 len = list.length;
@@ -200,7 +199,7 @@
     View.Painter.Cell.List.Button = View.Painter.Cell.List.extend({
         initialize: function(attributes) {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
-            this._setKeyDownSwitch({
+            this.setKeyDownSwitch({
                 'UP_ARROW': function() {},
                 'DOWN_ARROW': function() {},
                 'PAGE_UP': function() {},
@@ -269,7 +268,7 @@
          * </select>
          */
         getContentHtml: function(cellData) {
-            var list = this._getOptionList(cellData),
+            var list = this.getOptionList(cellData),
                 len = list.length,
                 columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,

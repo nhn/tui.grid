@@ -100,7 +100,7 @@
 
             _.each(model.changed, function(cellData, columnName) {
                 rowKey = cellData.rowKey;
-                $trCache[rowKey] = $trCache[rowKey] || this._getTrElement(rowKey);
+                $trCache[rowKey] = $trCache[rowKey] || this._getRowElement(rowKey);
                 $tr = $trCache[rowKey];
 
                 if (columnName !== '_extraData') {
@@ -139,7 +139,7 @@
                     cellData = renderModel.get(cellData.mainRowKey).get(columnName);
                 }
                 rowKey = cellData.rowKey;
-                $trCache[rowKey] = $trCache[rowKey] || this._getTrElement(rowKey);
+                $trCache[rowKey] = $trCache[rowKey] || this._getRowElement(rowKey);
                 $tr = $trCache[rowKey];
                 $td = $tr.find('td[columnname="' + cellData.columnName + '"]');
             }
@@ -163,7 +163,7 @@
                 columnName = columnModelList[i]['columnName'];
                 mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
 
-                $trCache[mainRowKey] = $trCache[mainRowKey] || this._getTrElement(mainRowKey);
+                $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
                 $tr = $trCache[mainRowKey];
                 $td = $tr.find('td[columnname="' + columnName + '"]');
                 if ($td.length) {
@@ -185,7 +185,7 @@
          * @return {jquery}
          * @private
          */
-        _getTrElement: function(rowKey) {
+        _getRowElement: function(rowKey) {
             return this.$parent.find('tr[key="' + rowKey + '"]');
         },
         /**

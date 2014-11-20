@@ -243,7 +243,7 @@ describe('view.painter.cell.base', function() {
         afterEach(function() {
 
         });
-        describe('_getOptionList()', function() {
+        describe('getOptionList()', function() {
             it('cellData 에 optionList 가 존재한다면 cellData의 optionList 를 반환한다.', function() {
                 var cellData = {
                         optionList: [
@@ -251,7 +251,7 @@ describe('view.painter.cell.base', function() {
                             {text: 'text2', value: 2}
                         ]
                     },
-                    optionList = cellPainter._getOptionList(cellData);
+                    optionList = cellPainter.getOptionList(cellData);
                 expect(optionList).toEqual(optionList);
             });
             it('cellData 에 optionList 가 존재하지 않는다면 columnModel 의 optionList 를 반환한다..', function() {
@@ -260,7 +260,7 @@ describe('view.painter.cell.base', function() {
                         rowKey: 0,
                         optionsList: []
                     },
-                    optionList = cellPainter._getOptionList(cellData);
+                    optionList = cellPainter.getOptionList(cellData);
                 expect(optionList).toEqual(grid.columnModel.getColumnModel('columnName3').editOption.list);
             });
         });

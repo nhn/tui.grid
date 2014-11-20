@@ -147,10 +147,9 @@
          * keyDownSwitch 에 정의된 액션을 override 한다.
          *
          * @param {(String|Object)} keyName  정의된 key 이름. Object 형태일 경우 기존 keyDownSwitch 를 확장한다.
-         * @param {function} fn keyDown 이 발생하였을 경우 수행할 액션
-         * @private
+         * @param {function} [fn] keyDown 이 발생하였을 경우 수행할 액션
          */
-        _setKeyDownSwitch: function(keyName, fn) {
+        setKeyDownSwitch: function(keyName, fn) {
             if (typeof keyName === 'object') {
                 this._keyDownSwitch = $.extend(this._keyDownSwitch, keyName);
             } else {
@@ -232,7 +231,7 @@
          * @private
          */
         _getCellData: function($target) {
-            return this.grid.renderModel.getCellData(this._getRowKey($target), this._getColumnName($target));
+            return this.grid.renderModel.getCellData(this.getRowKey($target), this.getColumnName($target));
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
@@ -242,26 +241,24 @@
          */
         _getCellAddress: function($target) {
             return {
-                rowKey: this._getRowKey($target),
-                columnName: this._getColumnName($target)
+                rowKey: this.getRowKey($target),
+                columnName: this.getColumnName($target)
             };
         },
         /**
          * 인자로 받은 element 로 부터 columnName 을 반환한다.
          * @param {jQuery} $target
          * @return {String}
-         * @private
          */
-        _getColumnName: function($target) {
+        getColumnName: function($target) {
             return $target.closest('td').attr('columnName');
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 를 반환한다.
          * @param {jQuery} $target
          * @return {String}
-         * @private
          */
-        _getRowKey: function($target) {
+        getRowKey: function($target) {
             return $target.closest('tr').attr('key');
         },
 

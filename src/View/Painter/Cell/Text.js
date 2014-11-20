@@ -17,7 +17,7 @@
                 originalText: ''
             });
 
-            this._setKeyDownSwitch({
+            this.setKeyDownSwitch({
                 'UP_ARROW': function() {},
                 'DOWN_ARROW': function() {},
                 'PAGE_UP': function() {},
@@ -89,8 +89,8 @@
         _onBlur: function(blurEvent) {
 //            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!blur');
             var $target = $(blurEvent.target),
-                rowKey = this._getRowKey($target),
-                columnName = this._getColumnName($target);
+                rowKey = this.getRowKey($target),
+                columnName = this.getColumnName($target);
             if (this._isEdited($target)) {
                 this.grid.setValue(rowKey, columnName, $target.val());
             }
@@ -164,7 +164,7 @@
         _startEdit: function($td) {
             var isEdit = $td.data('isEdit'),
                 $input,
-                cellState = this.grid.getCellState(this._getRowKey($td), this._getColumnName($td));
+                cellState = this.grid.getCellState(this.getRowKey($td), this.getColumnName($td));
 
             if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
                 $td.data('isEdit', true);

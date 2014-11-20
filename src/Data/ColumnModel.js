@@ -210,14 +210,12 @@
          */
         _getRelationListMap: function(columnModelList) {
             var columnName, relationList,
-                relationListMap = {},
-                i, len = columnModelList.length;
+                relationListMap = {};
 
             ne.util.forEachArray(columnModelList, function(columnModel) {
                 columnName = columnModel['columnName'];
                 if (columnModel.relationList) {
-                    relationList = columnModel.relationList;
-                    relationListMap[columnName] = relationList;
+                    relationListMap[columnName] = columnModel.relationList;
                 }
             });
             return relationListMap;

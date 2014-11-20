@@ -346,7 +346,7 @@ describe('view.painter.cell.base', function() {
             expect($td.hasClass('disabled')).toBe(false);
         });
     });
-    describe('_getCellData, _getRowKey, _getColumnName, _getCellAddress 확인', function() {
+    describe('_getCellData, getRowKey, getColumnName, _getCellAddress 확인', function() {
         var html,
             $td;
         beforeEach(function() {
@@ -371,17 +371,17 @@ describe('view.painter.cell.base', function() {
 
 
         });
-        it('_getRowKey 의 동작을 확인한다.', function() {
+        it('getRowKey 의 동작을 확인한다.', function() {
             $td = $empty.find('td:first');
-            expect(cellPainter._getRowKey($td)).toBe('0');
+            expect(cellPainter.getRowKey($td)).toBe('0');
             $td = $empty.find('td:last');
-            expect(cellPainter._getRowKey($td)).toBe('0');
+            expect(cellPainter.getRowKey($td)).toBe('0');
         });
-        it('_getColumnName 의 동작을 확인한다.', function() {
+        it('getColumnName 의 동작을 확인한다.', function() {
             $td = $empty.find('td:first');
-            expect(cellPainter._getColumnName($td)).toBe('columnName1');
+            expect(cellPainter.getColumnName($td)).toBe('columnName1');
             $td = $empty.find('td:last');
-            expect(cellPainter._getColumnName($td)).toBe('columnName2');
+            expect(cellPainter.getColumnName($td)).toBe('columnName2');
         });
         it('_getCellAddress 의 동작을 확인한다.', function() {
             $td = $empty.find('td:first');
@@ -431,18 +431,18 @@ describe('view.painter.cell.base', function() {
         });
     });
 
-    describe('_setKeyDownSwitch()', function() {
+    describe('setKeyDownSwitch()', function() {
         it('이미 존재하는 keyDownSwitch 에 함수를 override 한다.', function() {
             var newFunction = function() {};
             expect(cellPainter['_keyDownSwitch']['ENTER']).toBeDefined();
             expect(cellPainter['_keyDownSwitch']['ENTER']).not.toEqual(newFunction);
-            cellPainter._setKeyDownSwitch('ENTER', newFunction);
+            cellPainter.setKeyDownSwitch('ENTER', newFunction);
             expect(cellPainter['_keyDownSwitch']['ENTER']).toEqual(newFunction);
         });
         it('존재하지 않는 keyDownSwitch 를 추가한다.', function() {
             var newFunction = function() {};
             expect(cellPainter['_keyDownSwitch']['F5']).not.toBeDefined();
-            cellPainter._setKeyDownSwitch('F5', newFunction);
+            cellPainter.setKeyDownSwitch('F5', newFunction);
             expect(cellPainter['_keyDownSwitch']['F5']).toEqual(newFunction);
         });
         it('첫번째 인자에 Object 형태로 추가한다..', function() {
@@ -453,7 +453,7 @@ describe('view.painter.cell.base', function() {
                 'F3': function() {}
             };
             expect(cellPainter['_keyDownSwitch']['TAB']).toBeDefined();
-            cellPainter._setKeyDownSwitch(switchObject);
+            cellPainter.setKeyDownSwitch(switchObject);
             expect(cellPainter['_keyDownSwitch']['ESC']).toEqual(switchObject['ESC']);
             expect(cellPainter['_keyDownSwitch']['F1']).toEqual(switchObject['F1']);
             expect(cellPainter['_keyDownSwitch']['F2']).toEqual(switchObject['F2']);
@@ -471,7 +471,7 @@ describe('view.painter.cell.base', function() {
                     target: '<div>'
                 },
                 result;
-            cellPainter._setKeyDownSwitch('F5', callback);
+            cellPainter.setKeyDownSwitch('F5', callback);
             result = cellPainter._executeKeyDownSwitch(keyDownEvent);
 
             expect(callback).toHaveBeenCalled();
@@ -486,7 +486,7 @@ describe('view.painter.cell.base', function() {
                 },
                 result;
             expect(cellPainter['_keyDownSwitch']['BACKSPACE']).not.toBeDefined();
-            cellPainter._setKeyDownSwitch('defaultAction', callback);
+            cellPainter.setKeyDownSwitch('defaultAction', callback);
             result = cellPainter._executeKeyDownSwitch(keyDownEvent);
             expect(callback).toHaveBeenCalled();
             expect(result).toBe(false);
@@ -507,14 +507,14 @@ describe('view.painter.cell.base', function() {
         it('정의된 keyDownSwitch 를 수행한다면 keyDownEvent.preventDefault() 를 호출한다.', function() {
             keyDownEvent.keyCode = keyDownEvent.which =grid.keyMap['TAB'];
             expect(cellPainter['_keyDownSwitch']['TAB']).toBeDefined();
-            cellPainter._setKeyDownSwitch('TAB', callback);
+            cellPainter.setKeyDownSwitch('TAB', callback);
             cellPainter._executeKeyDownSwitch(keyDownEvent);
             expect(callback).toHaveBeenCalled();
         });
         it('정의되지 않은 keyDownSwitch 를 수행한다면 keyDownEvent.preventDefault() 를 호출하지 않는다.', function() {
             delete cellPainter['_keyDownSwitch']['F5'];
             expect(cellPainter['_keyDownSwitch']['F5']).not.toBeDefined();
-            cellPainter._setKeyDownSwitch('F5', callback);
+            cellPainter.setKeyDownSwitch('F5', callback);
             cellPainter._executeKeyDownSwitch(keyDownEvent);
             expect(callback).toHaveBeenCalled();
         });

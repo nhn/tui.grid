@@ -199,9 +199,9 @@
                 typeExpected = typeof editOptionList[0].value;
                 valueList = value.toString().split(',');
                 if (typeExpected !== typeof valueList[0]) {
-                    _.each(valueList, function(val, index) {
-                        valueList[index] = Util.convertValueType(val, typeExpected);
-                    }, this);
+                    valueList = _.map(valueList, function(val) {
+                        return Util.convertValueType(val, typeExpected);
+                    });
                 }
                 _.each(valueList, function(val, index) {
                     var item = _.findWhere(editOptionList, {value: val});
@@ -238,7 +238,7 @@
                     }
                 } else {
                     //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
-                    if (typeof model.formatter === 'function') {
+                    if (_.isFunction(model.formatter)) {
                         value = Util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
                     }
                 }
