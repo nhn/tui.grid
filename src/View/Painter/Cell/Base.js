@@ -296,7 +296,7 @@
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-         * re renderAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
          * @param {object} cellData
          * @return  {string} html string
          * @example
@@ -358,7 +358,7 @@
      */
     View.Base.Painter.Cell.Interface.prototype.getContentHtml = function(cellData) {};
     /**
-     * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData
      * @param {jQuery} $td

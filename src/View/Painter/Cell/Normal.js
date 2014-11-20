@@ -46,14 +46,14 @@
             this.grid.focusClipboard();
         },
         /**
-         * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
          * @param {object} cellData
          * @param {jQuery} $td
          * @param {Boolean} hasFocusedElement
          */
-        setElementAttribute: function(cellData, $td, hasFocusedElement) {
-        }
+        /* istanbul ignore next */
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {}
     });
     /**
      * Number Cell 의 Painter
@@ -120,10 +120,7 @@
                 'RIGHT_ARROW': function(keyDownEvent, param) {
                     this._focusPrevInput(param.$target);
                 },
-                'ESC': function(keyDownEvent, param) {
-                    this._restore(param.$target);
-                    this.focusOut(param.$target);
-                }
+                'ESC': function(keyDownEvent, param) {}
             });
         },
         /**
@@ -163,11 +160,12 @@
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
          * @param {jQuery} $td
          */
+        /* istanbul ignore next */
         focusIn: function($td) {
-//            $td.find('input').focus();
+            //아무것도 안하도록 변경
         },
         /**
-         * model의 re renderAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
          * @param {object} cellData
          * @param {jQuery} $td
@@ -190,16 +188,32 @@
                 $input.trigger('click');
             }
         },
+        /**
+         * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
+         * 필요에 따라 Override 한다.
+         * @param {Object} cellData
+         * @return {Object} Attribute Object
+         */
         getAttributes: function(cellData) {
             return {
                 align: 'center'
             };
         },
+        /**
+         *
+         * @param {Event} changeEvent
+         * @private
+         */
         _onChange: function(changeEvent) {
             var $target = $(changeEvent.target),
                 rowKey = this.getRowKey($target);
             this.grid.setValue(rowKey, '_button', $target.prop('checked'));
         },
+        /**
+         * TD 전체 mousedown 이벤트 발생시 checkbox 클릭 이벤트를 발생시킨다.
+         * @param {Event} mouseDownEvent
+         * @private
+         */
         _onMouseDown: function(mouseDownEvent) {
             var $target = $(mouseDownEvent.target);
             if (!$target.is('input')) {

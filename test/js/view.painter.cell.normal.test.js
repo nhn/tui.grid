@@ -1,4 +1,9 @@
 describe('view.painter.cell.base', function() {
+    function setSelectType(selectType) {
+        grid.option = function() {
+            return selectType;
+        };
+    }
     function getKeyEvent(keyName, $target) {
         return {
             keyCode: grid.keyMap[keyName],
@@ -64,7 +69,7 @@ describe('view.painter.cell.base', function() {
             relationList: [
                 {
                     columnList: ['columnName3', 'columnName4', 'columnName5'],
-                    optionListChange: function (value) {
+                    optionListChange: function(value) {
                         if (value === true) {
                             return [
                                 { text: '하나', value: 1},
@@ -77,10 +82,10 @@ describe('view.painter.cell.base', function() {
                 },
                 {
                     columnList: ['columnName2'],
-                    isDisable: function (value, rowData) {
+                    isDisable: function(value, rowData) {
                         return value === false;
                     },
-                    isEditable: function (value, rowData) {
+                    isEditable: function(value, rowData) {
                         return value !== false;
                     }
                 }
@@ -136,10 +141,10 @@ describe('view.painter.cell.base', function() {
         }
     ];
     var grid = {
-            focusIn: function() {
-            },
-            focusClipboard: function() {
-            },
+            id: 'test_id',
+            setValue: function() {},
+            focusIn: function() {},
+            focusClipboard: function() {},
             keyMap: {
                 'TAB': 9,
                 'ENTER': 13,
@@ -235,6 +240,7 @@ describe('view.painter.cell.base', function() {
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
         cellPainter && cellPainter.destroy && cellPainter.destroy();
+        setSelectType('checkbox');
     });
     afterEach(function() {
         $empty.empty();
@@ -350,8 +356,147 @@ describe('view.painter.cell.base', function() {
         });
 
         describe('getContentHtml', function() {
-            it('', function() {
+            it('value가 true 일 때 check 되는지 확인한다.', function() {
+                var html = cellPainter.getContentHtml({
+                        value: true
+                    }),
+                    $button;
+                $empty.html(html);
+                $button = $empty.find('input');
+                expect($button.length).toEqual(1);
+                expect($button.prop('checked')).toEqual(true);
+            });
+            it('isDisabled 가 true 일 때 비활성화 되는지 확인한다.', function() {
+                var html = cellPainter.getContentHtml({
+                        isDisabled: true
+                    }),
+                    $button;
+                $empty.html(html);
+                $button = $empty.find('input');
+                expect($button.length).toEqual(1);
+                expect($button.prop('disabled')).toEqual(true);
+            });
+            describe('selectType 에 따라 input 이 잘 생성되는지 확인한다.', function() {
+                it('checkbox', function() {
+                    setSelectType('checkbox');
+                    var html = cellPainter.getContentHtml({}),
+                        $button;
+                    $empty.html(html);
+                    $button = $empty.find('input');
+                    expect($button.length).toEqual(1);
+                    expect($button.attr('type')).toEqual('checkbox');
+                });
+                it('radio', function() {
+                    setSelectType('radio');
+                    var html = cellPainter.getContentHtml({}),
+                        $button;
+                    $empty.html(html);
+                    $button = $empty.find('input');
+                    expect($button.length).toEqual(1);
+                    expect($button.attr('type')).toEqual('radio');
+                });
+            });
+        });
+        describe('setElementAttribute', function() {
+            var html,
+                $button,
+                $td;
+            beforeEach(function() {
+                html = cellPainter.getContentHtml({});
+                $empty.html('<table><tr><td>' + html + '</td></tr></table>');
+                $button = $empty.find('input');
+                $td = $empty.find('td');
+            });
+            it('값을 정확히 설정하는지 확인한다.', function() {
+                expect($button.prop('checked')).toBe(false);
+                cellPainter.setElementAttribute({value: true}, $td);
+                expect($button.prop('checked')).toBe(true);
+                cellPainter.setElementAttribute({value: true}, $td);
+                expect($button.prop('checked')).toBe(true);
+                cellPainter.setElementAttribute({value: false}, $td);
+                expect($button.prop('checked')).toBe(false);
+            });
+        });
+        describe('toggle', function() {
+            var html,
+                $button,
+                $td;
 
+            it('checkbox 일때 값을 toggle 하는지 확인한다.', function() {
+                setSelectType('checkbox');
+                html = cellPainter.getContentHtml({});
+                $empty.html('<table><tr><td>' + html + '</td></tr></table>');
+                $button = $empty.find('input');
+                $td = $empty.find('td');
+
+                expect($button.prop('checked')).toBe(false);
+                cellPainter.toggle($td);
+                expect($button.prop('checked')).toBe(true);
+                cellPainter.toggle($td);
+                expect($button.prop('checked')).toBe(false);
+            });
+            it('radio 일때 값을 toggle 하지 않는지 확인한다.', function() {
+                setSelectType('radio');
+                html = cellPainter.getContentHtml({});
+                $empty.html('<table><tr><td>' + html + '</td></tr></table>');
+                $button = $empty.find('input');
+                $td = $empty.find('td');
+
+                expect($button.prop('checked')).toBe(false);
+                cellPainter.toggle($td);
+                expect($button.prop('checked')).toBe(false);
+                cellPainter.toggle($td);
+                expect($button.prop('checked')).toBe(false);
+            });
+        });
+        describe('getAttributes', function() {
+            it('가운데 정렬 관련 세팅을 반환하는지 확인한다.', function() {
+                expect(cellPainter.getAttributes()).toEqual({
+                    align: 'center'
+                });
+            });
+        });
+        describe('_onMouseDown', function() {
+            var html,
+                $button,
+                $td;
+
+            beforeEach(function() {
+                setSelectType('checkbox');
+                html = cellPainter.getContentHtml({});
+                $empty.html('<table><tr><td>' + html + '</td></tr></table>');
+                $button = $empty.find('input');
+                $td = $empty.find('td');
+            });
+            it('TD 에 mousedown 이벤트 발생시 button 의 상태변화를 유발하는지 확인한다.', function() {
+                cellPainter.attachHandler($td);
+                expect($button.prop('checked')).toBe(false);
+                $td.trigger('mousedown');
+                expect($button.prop('checked')).toBe(true);
+                $td.trigger('mousedown');
+                expect($button.prop('checked')).toBe(false);
+                cellPainter.detachHandler($td);
+            });
+        });
+        describe('_onChange', function() {
+            var html,
+                $button,
+                $td;
+
+            beforeEach(function() {
+                setSelectType('checkbox');
+                html = cellPainter.getContentHtml({});
+                $empty.html('<table><tr key="0"><td>' + html + '</td></tr></table>');
+                $button = $empty.find('input');
+                $td = $empty.find('td');
+            });
+            it('onChange 이벤트가 발생했을 때 setValue 를 적절한 파라미터로 호출하는지 확인한다.', function() {
+                grid.setValue = jasmine.createSpy('setValue');
+                var changeEvent = {
+                    target: $button.get(0)
+                };
+                cellPainter._onChange(changeEvent);
+                expect(grid.setValue).toHaveBeenCalledWith('0', '_button', $button.prop('checked'));
             });
         });
     });
