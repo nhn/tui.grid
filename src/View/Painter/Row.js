@@ -1,10 +1,10 @@
     /**
      * Row Painter
      * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
+     * @constructor
      */
     View.Painter.Row = View.Base.Painter.extend({
         eventHandler: {
-            'click' : '_onClick',
             'mousedown' : '_onMouseDown'
         },
         /**
@@ -28,7 +28,7 @@
                 focusModel = this.grid.focusModel;
 
             this.setOwnProperties({
-                $parent: attributes.$parent,        //부모 element
+                $parent: attributes.$parent,        //부모 frame element
                 collection: attributes.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
                 columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
@@ -45,6 +45,9 @@
                 .listenTo(focusModel, 'focus', this._onFocus, this)
                 .listenTo(focusModel, 'blur', this._onBlur, this);
         },
+        /**
+         * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
+         */
         destroy: function() {
             this.detachHandlerAll();
             this.destroyChildren();
@@ -53,6 +56,7 @@
         /**
          * attachHandlerAll
          * event handler 를 전체 tr에 한번에 붙인다.
+         * 자기 자신의 이벤트 핸들러 및 cellFactory 의 이벤트 헨들러를 bind 한다.
          */
         attachHandlerAll: function() {
             this.attachHandler(this.$parent);
@@ -62,6 +66,7 @@
         /**
          * detach eventHandler
          * event handler 를 전체 tr에서 제거한다.
+         * 자기 자신의 이벤트 핸들러 및 cellFactory 의 이벤트 헨들러를 unbind 한다.
          */
         detachHandlerAll: function() {
             if (this._isEventAttached) {
@@ -69,9 +74,7 @@
                 this.grid.cellFactory.detachHandler(this.$parent);
             }
         },
-        _onClick: function(clickEvent) {
-//            console.log('click', clickEvent);
-        },
+
         /**
          * mousedown 이벤트 핸들러
          * @param {event} mouseDownEvent
@@ -96,7 +99,6 @@
             var editType, cellInstance, rowState,
                 $trCache = {}, rowKey,
                 $tr;
-//            var start = new Date();
 
             _.each(model.changed, function(cellData, columnName) {
                 rowKey = cellData.rowKey;
@@ -108,41 +110,8 @@
                     editType = this._getEditType(columnName, cellData);
                     cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, $tr);
-                } else {
-                    rowState = cellData.rowState;
-                    if (rowState) {
-                        //todo
-//                        this._setRowState(rowState, $tr);
-                    }
                 }
             }, this);
-//            var end = new Date();
-//            console.log('Model change');
-        },
-        _setCssFocus: function(isBlur) {
-            var dataModel = this.grid.dataModel,
-                focusModel = this.grid.focusModel,
-                renderModel = this.grid.renderModel.getCollection(this.whichSide),
-                focused = focusModel.which(),
-                columnModelList = this.columnModelList,
-                len = columnModelList.length, i,
-                row = renderModel.get(focused.rowKey),
-                $trCache = {},
-                $tr, $td, cellData, rowKey, columnName,
-                isFocusedColumn;
-
-            for (i = 0; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
-                isFocusedColumn = (columnName === focused.columnName);
-                cellData = row.get(columnName);
-                if (dataModel.isRowSpanEnable() && !cellData.isMainRow) {
-                    cellData = renderModel.get(cellData.mainRowKey).get(columnName);
-                }
-                rowKey = cellData.rowKey;
-                $trCache[rowKey] = $trCache[rowKey] || this._getRowElement(rowKey);
-                $tr = $trCache[rowKey];
-                $td = $tr.find('td[columnname="' + cellData.columnName + '"]');
-            }
         },
         _onSelect: function(rowKey, focusModel) {
             this._setCssSelect(rowKey, true);

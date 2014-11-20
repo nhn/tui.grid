@@ -1,4 +1,4 @@
-describe('view.painter.cell.base', function() {
+describe('view.painter.cell.normal', function() {
     function setSelectType(selectType) {
         grid.option = function() {
             return selectType;
