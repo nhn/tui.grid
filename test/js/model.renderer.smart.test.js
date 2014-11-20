@@ -70,7 +70,7 @@ describe('model.renderer', function() {
                 },
                 {
                     columnList: ['columnName2'],
-                    isDisable: function(value, rowData) {
+                    isDisabled: function(value, rowData) {
                         return value === false;
                     },
                     isEditable: function(value, rowData) {

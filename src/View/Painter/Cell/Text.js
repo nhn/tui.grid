@@ -238,7 +238,6 @@
                 rowKey = this.getRowKey($td),
                 columnName = this.getColumnName($td),
                 cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
-
             if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
                 $td.data('isEdit', true);
                 this.redraw(this._getCellData($td), $td);

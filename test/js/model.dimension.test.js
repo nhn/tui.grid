@@ -60,7 +60,7 @@ describe('model.dimension', function() {
                 },
                 {
                     columnList: ['text'],
-                    isDisable: function(value, rowData) {
+                    isDisabled: function(value, rowData) {
                         return value === false;
                     },
                     isEditable: function(value, rowData) {

@@ -79,7 +79,7 @@
                 rowState, relationResult;
 
 
-            relationResult = this.getRelationResult(['isDisable', 'isEditable'])[columnName];
+            relationResult = this.getRelationResult(['isDisabled', 'isEditable'])[columnName];
             rowState = this.getRowState();
 
             if (columnName === '_button') {
@@ -248,12 +248,12 @@
         /**
          * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
          *
-         * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisable', 'isEditable'])
+         * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisabled', 'isEditable'])
          * @return {{columnName: {attribute: resultValue}}} row 의 columnName 에 적용될 속성값.
          */
         getRelationResult: function(callbackNameList) {
             callbackNameList = (callbackNameList && callbackNameList.length) ?
-                callbackNameList : ['optionListChange', 'isDisable', 'isEditable'];
+                callbackNameList : ['optionListChange', 'isDisabled', 'isEditable'];
             var callback, attribute, targetColumnList,
                 value,
                 rowKey = this.get('rowKey'),
@@ -272,8 +272,8 @@
 
                     //각 relation 에 걸려있는 콜백들을 수행한다.
                     _.each(callbackNameList, function(callbackName) {
-                        //isDisable relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
-                        if (!(rowState.isDisabled && callbackName === 'isDisable')) {
+                        //isDisabled relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
+                        if (!(rowState.isDisabled && callbackName === 'isDisabled')) {
                             callback = relation[callbackName];
                             if (typeof callback === 'function') {
                                 attribute = '';
@@ -281,7 +281,7 @@
                                     case 'optionListChange':
                                         attribute = 'optionList';
                                         break;
-                                    case 'isDisable':
+                                    case 'isDisabled':
                                         attribute = 'isDisabled';
                                         break;
                                     case 'isEditable':

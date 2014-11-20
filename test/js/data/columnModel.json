@@ -36,7 +36,7 @@ var columnModelList = [
             relationList: [
                 {
                     columnList: ['columnName7', 'columnName8'],
-                    isDisable: function(value, rowData) {
+                    isDisabled: function(value, rowData) {
                         return value == 2;
                     },
                     isEditable: function(value, rowData) {

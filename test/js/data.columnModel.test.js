@@ -558,7 +558,7 @@ describe('data.columnModel', function() {
                     relationList: [
                         {
                             columnList: ['column1', 'column5'],
-                            isDisable: function(value, rowData) {
+                            isDisabled: function(value, rowData) {
                                 return value == 2;
                             },
                             isEditable: function(value, rowData) {
@@ -567,7 +567,7 @@ describe('data.columnModel', function() {
                         },
                         {
                             columnList: ['column2'],
-                            isDisable: function(value, rowData) {
+                            isDisabled: function(value, rowData) {
                                 return value == 2;
                             }
                         }
@@ -654,7 +654,7 @@ describe('data.columnModel', function() {
                     relationList: [
                         {
                             columnList: ['column1', 'column5'],
-                            isDisable: function(value, rowData) {
+                            isDisabled: function(value, rowData) {
                                 return value == 2;
                             },
                             isEditable: function(value, rowData) {
@@ -663,7 +663,7 @@ describe('data.columnModel', function() {
                         },
                         {
                             columnList: ['column2'],
-                            isDisable: function(value, rowData) {
+                            isDisabled: function(value, rowData) {
                                 return value == 2;
                             }
                         }

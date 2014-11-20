@@ -60,7 +60,7 @@ describe('data.rowList', function() {
                 },
                 {
                     columnList: ['text'],
-                    isDisable: function(value, rowData) {
+                    isDisabled: function(value, rowData) {
                         //false 면 true 를 반환
                         return value === false;
                     },
@@ -929,7 +929,7 @@ describe('data.rowList', function() {
                 expect(row.getRelationResult(['isEditable'])).toEqual({
                     text : { isEditable : true }
                 });
-                expect(row.getRelationResult(['isEditable', 'isDisable'])).toEqual({
+                expect(row.getRelationResult(['isEditable', 'isDisabled'])).toEqual({
                     text: { isDisabled: false, isEditable: true }
                 });
             });
