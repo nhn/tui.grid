@@ -150,8 +150,7 @@ FE 개발팀 박순영 <soonyoung.park@nhnent.com>
   {
     'rowKey': 4,
     '_button': true,
-    {
-      '_extraData': {
+    '_extraData' = {
         'rowSpan': null,
         'rowState': 'CHECKED',
         'rowSpanData': null
