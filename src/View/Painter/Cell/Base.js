@@ -339,7 +339,8 @@
      */
     View.Base.Painter.Cell.Interface.prototype.focusIn = function($td) {};
     /**
-     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직. 필요에 따라 override 한다.
+     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
+     * - 필요에 따라 override 한다.
      * @param {jQuery} $td
      */
 //    View.Base.Painter.Cell.Interface.prototype.focusOut = function($td) {};
