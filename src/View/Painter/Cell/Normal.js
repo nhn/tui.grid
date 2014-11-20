@@ -196,7 +196,7 @@
             };
         },
         /**
-         *
+         * onChange 이벤트 핸들러
          * @param {Event} changeEvent
          * @private
          */
