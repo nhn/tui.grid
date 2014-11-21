@@ -408,6 +408,29 @@ describe('view.painter.rowList', function() {
                 'text-convertible': 'text-convertible',
                 'isDisabled': false,
                 'isEditable': true
+            },{
+                '_extraData': {
+                    rowSpan: {
+                        normal: 2
+                    }
+                },
+                'normal': 'normal',
+                'checkbox': 1,
+                'radio': 1,
+                'select': 1,
+                'text': 'text',
+                'text-convertible': 'text-convertible',
+                'isDisabled': false,
+                'isEditable': true
+            },{
+                'normal': 'normal',
+                'checkbox': 1,
+                'radio': 1,
+                'select': 1,
+                'text': 'text',
+                'text-convertible': 'text-convertible',
+                'isDisabled': false,
+                'isEditable': true
             }
         ];
         describe('_showLayer', function() {
@@ -430,7 +453,7 @@ describe('view.painter.rowList', function() {
             beforeEach(function() {
                 rowListView.destroy();
             });
-            it('dataModel 의 rowList 가 변경될 경우, 데이터 내용에 맞게 rendering 한다.', function(){
+            it('dataModel 의 rowList 가 변경될 경우, 데이터 내용에 맞게 rendering 한다.', function() {
                 grid.dataModel.set(simpleRowList, {parse: true});
                 grid.renderModel.refresh();
 
@@ -440,8 +463,9 @@ describe('view.painter.rowList', function() {
                 var trList = $empty.find('tr'),
                     tdList = $empty.find('td');
 
-                expect(trList.length).toBe(1);
-                expect(tdList.length).toBe(8);
+                expect(trList.length).toBe(3);
+                //rowSpan 이 있기 때문에 (3 * 8) -1 이 기대값이다.
+                expect(tdList.length).toBe(23);
             });
         });
         describe('_createRowPainter', function() {
@@ -449,7 +473,7 @@ describe('view.painter.rowList', function() {
                 rowListView.destroyChildren();
                 rowListView.rowPainter = null;
             });
-            it('rowPainter 인스턴스를 생성한다..', function(){
+            it('rowPainter 인스턴스를 생성한다..', function() {
                 expect(rowListView.rowPainter).toBeNull();
                 rowListView._createRowPainter();
                 expect(rowListView.rowPainter).not.toBeNull();
