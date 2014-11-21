@@ -15,7 +15,7 @@ function setConfig(configDefault, isDev) {
     } else {
         configDefault.browsers = [
             'IE7',
-            'IE8',
+            //'IE8',
             'IE9',
             'IE10',
             'IE11',
@@ -28,11 +28,11 @@ function setConfig(configDefault, isDev) {
                 config: webdriverConfig,
                 browserName: 'IE7'
             },
-            'IE8': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE8'
-            },
+            //'IE8': {
+            //    base: 'WebDriver',
+            //    config: webdriverConfig,
+            //    browserName: 'IE8'
+            //},
             'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
