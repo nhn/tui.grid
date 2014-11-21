@@ -158,17 +158,6 @@
                     isSelected ? $td.addClass('selected') : $td.removeClass('selected');
                 }
             }, this);
-            //for (i = 0; i < len; i++) {
-            //    columnName = columnModelList[i]['columnName'];
-            //    mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
-            //
-            //    $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
-            //    $tr = $trCache[mainRowKey];
-            //    $td = $tr.find('td[columnname="' + columnName + '"]');
-            //    if ($td.length) {
-            //        isSelected ? $td.addClass('selected') : $td.removeClass('selected');
-            //    }
-            //}
         },
         /**
          * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
@@ -219,6 +208,7 @@
          * @return {string} html html 스트링
          */
         getHtml: function(model) {
+            /* istanbul ignore if */
             if (model.get('rowKey') === undefined) {
                return '';
             } else {
@@ -230,6 +220,7 @@
                 _.each(columnModelList, function(columnModel) {
                     columnName = columnModel['columnName'];
                     cellData = model.get(columnName);
+                    /* istanbul ignore else */
                     if (cellData && cellData['isMainRow']) {
                         editType = this._getEditType(columnName, cellData);
                         cellInstance = cellFactory.getInstance(editType);

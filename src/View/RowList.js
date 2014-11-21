@@ -38,6 +38,7 @@
             this.destroyChildren();
             this._createRowPainter();
             //get html string
+            /* istanbul ignore else */
             if (firstRow && firstRow.get('rowKey') !== 'undefined') {
                 this.collection.forEach(function(row) {
                     html += this.rowPainter.getHtml(row);
