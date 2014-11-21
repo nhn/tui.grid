@@ -112,7 +112,7 @@ function insertButton(gridInstance, $wrapper, $result) {
             gridInstance = null;
         },
         'set columnFixIndex=2' : function() {
-            gridInstance.setColumnIndex(2);
+            gridInstance.setColumnFixIndex(2);
         },
         'sort columnName2' : function() {
             gridInstance.sort('columnName2');

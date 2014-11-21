@@ -516,8 +516,6 @@
         className: 'selection_layer',
         initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-            this.listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList, this);
             this.setOwnProperties({
                 columnWidthList: attributes.columnWidthList,
@@ -530,12 +528,6 @@
         },
         _updateColumnWidthList: function() {
             this.columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide);
-        },
-        _onScrollTopChange: function() {
-
-        },
-        _onBeforeRefresh: function() {
-
         },
         /**
          * top 값과 height 값을 반환한다.

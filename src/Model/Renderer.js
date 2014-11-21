@@ -6,7 +6,6 @@
         defaults: {
             top: 0,
             scrollTop: 0,
-            $scrollTarget: null,
             scrollLeft: 0,
             maxScrollLeft: 0,
             startIndex: 0,
@@ -195,14 +194,13 @@
                 this.executeRelation(i);
             }
 
-            this.trigger('beforeRefresh');
             if (this.isColumnModelChanged === true) {
-                this.trigger('columnModelChanged');
+                this.trigger('columnModelChanged', this.get('top'));
                 this.isColumnModelChanged = false;
             }else {
-                this.trigger('rowListChanged');
+                this.trigger('rowListChanged', this.get('top'));
             }
-            this.trigger('afterRefresh');
+            this.trigger('refresh', this.get('top'));
         },
         /**
          * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.

@@ -1,7 +1,7 @@
     /**
      * body layout 뷰
      *
-     * @type {*|void}
+     * @constructor
      */
     View.Layout.Body = View.Base.extend({
         tagName: 'div',
@@ -29,13 +29,14 @@
 
                 .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
                 .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-                .listenTo(this.grid.renderModel, 'beforeRefresh', this._onBeforeRefresh, this)
-                .listenTo(this.grid.renderModel, 'rowListChanged', this._onRowListRender, this)
-                .listenTo(this.grid.renderModel, 'columnModelChanged', this._onRowListRender, this);
-
-//                .listenTo(this.grid.renderModel, 'beforeRefresh', this._onTopChange, this);
-
+                .listenTo(this.grid.renderModel, 'refresh', this._setTopPosition, this);
         },
+        /**
+         * DimensionModel 의 body Height 가 변경된 경우 element 의 height 를 조정한다.
+         * @param {Object} model
+         * @param {Number} value
+         * @private
+         */
         _onBodyHeightChange: function(model, value) {
             this.$el.css('height', value + 'px');
         },
@@ -46,9 +47,10 @@
         _onColumnWidthChanged: function() {
             var columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide),
                 $colList = this.$el.find('col');
-            for (var i = 0; i < $colList.length; i++) {
-                $colList.eq(i).css('width', columnWidthList[i] + 'px');
-            }
+
+            _.each(columnWidthList, function(width, index) {
+                $colList.eq(index).css('width', width + 'px');
+            });
         },
         /**
          * MouseDown event handler
@@ -56,9 +58,14 @@
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
-            var focused, pos, selection = this.grid.selection;
+            var grid = this.grid,
+                selection = grid.selection,
+                focused,
+                pos;
+
             if (mouseDownEvent.shiftKey) {
-                focused = this.grid.focusModel.indexOf(true);
+                focused = grid.focusModel.indexOf(true);
+
                 if (!selection.hasSelection()) {
                     selection.startSelection(focused.rowIdx, focused.columnIdx);
                 }
@@ -66,10 +73,10 @@
                 selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
                 pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
                 selection.updateSelection(pos.row, pos.column);
-                this.grid.focusAt(pos.row, pos.column);
+                grid.focusAt(pos.row, pos.column);
             } else {
                 selection.endSelection();
-                this.grid.selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
             }
         },
         /**
@@ -78,17 +85,15 @@
          * @private
          */
         _onScroll: function(scrollEvent) {
-//            if (!this.isScrollSync) {
-                var obj = {};
-                obj['scrollTop'] = scrollEvent.target.scrollTop;
-                if (this.whichSide === 'R') {
-                    obj['scrollLeft'] = scrollEvent.target.scrollLeft;
-                }
-                this.grid.renderModel.set('$scrollTarget', this.$el);
-                this.grid.renderModel.set(obj);
-//            } else {
-//                this.isScrollSync = false;
-//            }
+            var obj = {},
+                renderModel = this.grid.renderModel;
+
+            obj['scrollTop'] = scrollEvent.target.scrollTop;
+
+            if (this.whichSide === 'R') {
+                obj['scrollLeft'] = scrollEvent.target.scrollLeft;
+            }
+            renderModel.set(obj);
         },
         /**
          * Render model 의 Scroll left 변경 핸들러
@@ -97,6 +102,7 @@
          * @private
          */
         _onScrollLeftChange: function(model, value) {
+            /* istanbul ignore next: 부모 frame 이 없는 상태에서 테스트가 불가함*/
             if (this.whichSide === 'R') {
                 this.el.scrollLeft = value;
             }
@@ -108,56 +114,67 @@
          * @private
          */
         _onScrollTopChange: function(model, value) {
+            /* istanbul ignore next: 부모 frame 이 없는 상태에서 테스트가 불가함*/
             this.el.scrollTop = value;
-        },
-
-        _onBeforeRefresh: function() {
-            this.isScrollSync = true;
         },
         /**
          * rowList 가 rendering 될 때 top 값을 조정한다.
+         * @param {number} top
          * @private
          */
-        _onRowListRender: function() {
-            var top = this.grid.renderModel.get('top');
+        _setTopPosition: function(top) {
             this.$el.children('.table_container').css('top', top + 'px');
         },
-        _getViewCollection: function() {
-            return this.grid.renderModel.getCollection(this.whichSide);
-        },
+        /**
+         * rendering 한다.
+         * @return {View.Layout.Body}
+         */
         render: function() {
-            var selection, rowList;
+            var grid = this.grid,
+                whichSide = this.whichSide,
+                selection,
+                rowList,
+                collection = grid.renderModel.getCollection(whichSide);
+
             this.destroyChildren();
+
             this.$el.css({
-                    height: this.grid.dimensionModel.get('bodyHeight')
+                    height: grid.dimensionModel.get('bodyHeight')
                 }).html(this.template({
                     colGroup: this._getColGroupMarkup()
                 }));
 
             rowList = this.createView(View.RowList, {
-                grid: this.grid,
-                collection: this._getViewCollection(),
+                grid: grid,
+                collection: collection,
                 el: this.$el.find('tbody'),
-                whichSide: this.whichSide
+                whichSide: whichSide
             });
             rowList.render();
 
             //selection 을 랜더링한다.
-            selection = this.addView(this.grid.selection.createLayer(this.whichSide));
+            selection = this.addView(grid.selection.createLayer(whichSide));
             this.$el.append(selection.render().el);
 
             return this;
         },
+        /**
+         * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
+         * @return {string}
+         * @private
+         */
         _getColGroupMarkup: function() {
-            var columnModel = this.grid.columnModel,
-                dimensionModel = this.grid.dimensionModel,
-                columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-                columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
+            var grid = this.grid,
+                whichSide = this.whichSide,
+                columnModel = grid.columnModel,
+                dimensionModel = grid.dimensionModel,
+                columnWidthList = dimensionModel.getColumnWidthList(whichSide),
+                columnModelList = columnModel.getVisibleColumnModelList(whichSide),
+                html = '';
 
-            var html = '';
-            for (var i = 0, len = columnWidthList.length; i < len; i++) {
-                html += '<col columnname="' + columnModelList[i]['columnName'] + '" style="width:' + columnWidthList[i] + 'px">';
-            }
+            _.each(columnWidthList, function(columnWidth, index) {
+                html += '<col columnname="' + columnModelList[index]['columnName'] + '" style="width:' + columnWidth + 'px">';
+            });
             return html;
         }
     });

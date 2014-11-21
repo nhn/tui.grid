@@ -265,7 +265,7 @@ describe('model.renderer', function() {
                 expect(rsideResult['columnName6']).toBeDefined();
             });
         });
-        describe('before after refresh 이벤트를 확인한다.', function() {
+        describe('refresh 이벤트를 확인한다.', function() {
             var callback,
                 listenModel;
 
@@ -274,13 +274,8 @@ describe('model.renderer', function() {
                 listenModel = new Model.Base();
             });
 
-            it('beforeRefresh 이벤트를 발생하는지 확인한다.', function() {
-                listenModel.listenTo(renderModelInstance, 'beforeRefresh', callback);
-                renderModelInstance.refresh();
-                expect(callback).toHaveBeenCalled();
-            });
-            it('afterRefresh 이벤트를 발생하는지 확인한다.', function() {
-                listenModel.listenTo(renderModelInstance, 'afterRefresh', callback);
+            it('refresh 이벤트를 발생하는지 확인한다.', function() {
+                listenModel.listenTo(renderModelInstance, 'refresh', callback);
                 renderModelInstance.refresh();
                 expect(callback).toHaveBeenCalled();
             });

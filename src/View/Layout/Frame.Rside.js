@@ -83,7 +83,6 @@
             clearTimeout(this.timeoutForScroll);
             if (this.hasFocus) {
                 this.timeoutForScroll = setTimeout($.proxy(function() {
-                    this.grid.renderModel.set('$scrollTarget', this.$el);
                     this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
                 }, this), 0);
             }

@@ -207,7 +207,6 @@ describe('view.painter.rowList', function() {
     grid.columnModel = new Data.ColumnModel({
         hasNumberColumn: true,
         selectType: 'checkbox',
-        columnFixIndex: 2,
         columnModelList: columnModelList
     });
     grid.dataModel = new Data.RowList([], {
@@ -464,8 +463,8 @@ describe('view.painter.rowList', function() {
                     tdList = $empty.find('td');
 
                 expect(trList.length).toBe(3);
-                //rowSpan 이 있기 때문에 (3 * 8) -1 이 기대값이다.
-                expect(tdList.length).toBe(23);
+                //rowSpan 이 있기 때문에 (3 * 10) -1 이 기대값이다.
+                expect(tdList.length).toBe(29);
             });
         });
         describe('_createRowPainter', function() {
