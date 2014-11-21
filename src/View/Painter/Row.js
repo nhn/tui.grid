@@ -37,9 +37,11 @@
             });
 
             //listener 등록
-            this.collection.forEach(function(row) {
-                this.listenTo(row, 'change', this._onModelChange, this);
-            }, this);
+            if (this.collection) {
+                this.collection.forEach(function(row) {
+                    this.listenTo(row, 'change', this._onModelChange, this);
+                }, this);
+            }
             this.listenTo(focusModel, 'select', this._onSelect, this)
                 .listenTo(focusModel, 'unselect', this._onUnselect, this)
                 .listenTo(focusModel, 'focus', this._onFocus, this)
@@ -113,23 +115,40 @@
                 }
             }, this);
         },
+        /**
+         * focusModel 의 select 이벤트 발생시 이벤트 핸들러
+         * @param {(Number|String)} rowKey
+         * @param {Object}  focusModel
+         * @private
+         */
         _onSelect: function(rowKey, focusModel) {
             this._setCssSelect(rowKey, true);
         },
+        /**
+         * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
+         * @param {(Number|String)} rowKey
+         * @param {Object}  focusModel
+         * @private
+         */
         _onUnselect: function(rowKey, focusModel) {
             this._setCssSelect(rowKey, false);
         },
+        /**
+         * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
+         * @param {(Number|String)} rowKey
+         * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
+         * @private
+         */
         _setCssSelect: function(rowKey, isSelected) {
             var grid = this.grid,
                 columnModelList = this.columnModelList,
                 columnName,
                 $trCache = {},
                 $tr, $td,
-                mainRowKey,
-                i, len = columnModelList.length;
+                mainRowKey;
 
-            for (i = 0; i < len; i++) {
-                columnName = columnModelList[i]['columnName'];
+            _.each(columnModelList, function(columnModel, index) {
+                columnName = columnModel['columnName'];
                 mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
 
                 $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
@@ -138,12 +157,35 @@
                 if ($td.length) {
                     isSelected ? $td.addClass('selected') : $td.removeClass('selected');
                 }
-            }
+            }, this);
+            //for (i = 0; i < len; i++) {
+            //    columnName = columnModelList[i]['columnName'];
+            //    mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
+            //
+            //    $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
+            //    $tr = $trCache[mainRowKey];
+            //    $td = $tr.find('td[columnname="' + columnName + '"]');
+            //    if ($td.length) {
+            //        isSelected ? $td.addClass('selected') : $td.removeClass('selected');
+            //    }
+            //}
         },
+        /**
+         * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @private
+         */
         _onBlur: function(rowKey, columnName) {
             var $td = this.grid.getElement(rowKey, columnName);
             $td.length && $td.removeClass('focused');
         },
+        /**
+         * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
+         * @param {(Number|String)} rowKey
+         * @param {String} columnName
+         * @private
+         */
         _onFocus: function(rowKey, columnName) {
             var $td = this.grid.getElement(rowKey, columnName);
             $td.length && $td.addClass('focused');
@@ -158,7 +200,7 @@
             return this.$parent.find('tr[key="' + rowKey + '"]');
         },
         /**
-         * cellData 의 idEditable 프로퍼티에 따른 editType 을 반환한다.
+         * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
          * @param {String} columnName
          * @param {Object} cellData
          * @return {String}
@@ -181,13 +223,12 @@
                return '';
             } else {
                 var columnModelList = this.columnModelList,
-                    columnModel = this.grid.columnModel,
                     cellFactory = this.grid.cellFactory,
                     columnName, cellData, editType, cellInstance,
                     html = '';
                 this.cellHandlerList = [];
-                for (var i = 0, len = columnModelList.length; i < len; i++) {
-                    columnName = columnModelList[i]['columnName'];
+                _.each(columnModelList, function(columnModel) {
+                    columnName = columnModel['columnName'];
                     cellData = model.get(columnName);
                     if (cellData && cellData['isMainRow']) {
                         editType = this._getEditType(columnName, cellData);
@@ -198,7 +239,8 @@
                             cellInstance: cellInstance
                         });
                     }
-                }
+                }, this);
+
                 return this.baseTemplate({
                     key: model.get('rowKey'),
                     height: this.grid.dimensionModel.get('rowHeight'),

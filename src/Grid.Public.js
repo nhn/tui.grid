@@ -393,6 +393,13 @@
         use: function(name, options) {
             this.core.use(name, options);
             return this;
+        },
+        /**
+         * 제거한다.
+         */
+        destroy: function() {
+            this.core.destroy();
+            this.core = null;
         }
     });
 

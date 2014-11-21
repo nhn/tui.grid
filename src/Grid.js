@@ -997,7 +997,6 @@
         },
 
         destroy: function() {
-
             this.stopListening();
             this.destroyChildren();
             this.$el.replaceWith(this.__$el);
