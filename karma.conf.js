@@ -10,44 +10,45 @@ function setConfig(configDefault, isDev) {
     if (isDev) {
         configDefault.browsers = [
             'Chrome',
-            'IE'
+            'IE',
+            'Firefox'
         ];
     } else {
         configDefault.browsers = [
-            'IE7',
+            //'IE7',
             //'IE8',
-            'IE9',
-            'IE10',
-            'IE11',
+            //'IE9',
+            //'IE10',
+            //'IE11',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ];
         configDefault.customLaunchers = {
-            'IE7': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE7'
-            },
+            //'IE7': {
+            //    base: 'WebDriver',
+            //    config: webdriverConfig,
+            //    browserName: 'IE7'
+            //},
             //'IE8': {
             //    base: 'WebDriver',
             //    config: webdriverConfig,
             //    browserName: 'IE8'
             //},
-            'IE9': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE9'
-            },
-            'IE10': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE10'
-            },
-            'IE11': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE11'
-            },
+            //'IE9': {
+            //    base: 'WebDriver',
+            //    config: webdriverConfig,
+            //    browserName: 'IE9'
+            //},
+            //'IE10': {
+            //    base: 'WebDriver',
+            //    config: webdriverConfig,
+            //    browserName: 'IE10'
+            //},
+            //'IE11': {
+            //    base: 'WebDriver',
+            //    config: webdriverConfig,
+            //    browserName: 'IE11'
+            //},
             'Chrome-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
