@@ -1190,5 +1190,58 @@ describe('view.selection', function() {
                 expect(selection.getRange()).toEqual({ row: [ 0, 99 ], column: [ 0, 9 ] });
             });
         });
+        describe('_adjustScroll', function() {
+            it('', function() {
+                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+                selection._adjustScroll(1, 0);
+                expect(grid.renderModel.get('scrollLeft')).toEqual(40);
+                selection._adjustScroll(-1, 0);
+                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+            });
+        });
+        describe('_onMouseMove', function() {
+            beforeEach(function() {
+            });
+            afterEach(function() {
+                clearInterval(selection.intervalIdForAutoScroll);
+            });
+            describe('selection 이 있을경우', function() {
+                beforeEach(function() {
+                    selection.startSelection(0, 5);
+                    selection.updateSelection(5, 10);
+                });
+                it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
+                    expect(selection.getRange()).toEqual({row: [0, 5], column: [5, 10]});
+                    selection._onMouseMove({
+                        pageX: 1000,
+                        pageY: 2000
+                    });
+                    expect(selection.getRange()).toEqual({row: [0, 68], column: [5, 5]});
+                });
+            });
+            describe('selection 이 없을경우', function() {
+                beforeEach(function() {
+                });
+                it('움직인 거리가 10보다 클 경우 selection 을 시작한다.', function() {
+                    selection._getDistance = function() {return 11;};
+
+                    selection._onMouseMove({
+                        pageX: 1000,
+                        pageY: 2000
+                    });
+                    expect(selection.hasSelection()).toBe(true);
+                });
+                it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다..', function() {
+                    selection._getDistance = function () {
+                        return 8;
+                    };
+                    selection._onMouseMove({
+                        pageX: 1000,
+                        pageY: 2000
+                    });
+                    expect(selection.hasSelection()).toBe(false);
+                });
+            });
+        });
     });
 });

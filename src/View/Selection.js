@@ -116,6 +116,7 @@
                 renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft + 40), maxScrollLeft));
             }
 
+            /* istanbul ignore next: scrollTop 은 보정로직과 얽혀있어 확인이 어렵기 때문에 무시한다. */
             if (overflowY < 0) {
                 renderModel.set('scrollTop', Math.max(0, scrollTop - 40));
             } else if (overflowY > 0) {
