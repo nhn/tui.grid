@@ -1,16 +1,21 @@
     /**
      * Network 모듈 addon
+     * @constructor
      */
     AddOn.Net = View.Base.extend({
         events: {
             'submit': '_onSubmit'
         },
+        /**
+         * 생성자
+         * @param {Object} attributes
+         */
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
             var defaultOptions = {
                     initialRequest: true,
                     api: {
-                        'readData': 'http://fetech.nhnent.com/svnrun/fetech/shopping/demo/php/api/dummy_request.php',
+                        'readData': '',
                         'updateData': '',
                         'deleteData': '',
                         'modifyData': '',
@@ -298,9 +303,13 @@
         downloadAllData: function() {
             //@todo
         },
+        /**
+         * send
+         * @param requestType
+         * @param options
+         */
         send: function(requestType, options) {
-            var dataModel = this.grid.dataModel,
-                defaultOptions = {
+            var defaultOptions = {
                     url: this.options.api[requestType],
                     type: null,
                     hasDataParam: true,
@@ -478,6 +487,7 @@
     });
     /**
      * Ajax History 관리를 위한 Router AddOn
+     * @constructor
      */
     AddOn.Net.Router = Backbone.Router.extend({
         routes: {

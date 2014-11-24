@@ -29,7 +29,7 @@
         initialize: function(attributes) {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.columnModel = this.grid.columnModel;
-            this.listenTo(this.columnModel, 'change', this._onWidthChange);
+            this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
 
             this.on('change:width', this._onWidthChange, this);
             this._setColumnWidthVariables();

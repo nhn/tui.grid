@@ -100,7 +100,7 @@
             return !(overflowX === 0 && overflowY === 0);
         },
         /**
-         *
+         * scrollTop 과 scrollLeft 값을 조정한다.
          * @param {Number} overflowX
          * @param {Number} overflowY
          * @private
@@ -193,13 +193,13 @@
             } else if (totalColumnWidth < dataPosX) {
                 columnIdx = len - 1;
             } else {
-                for (i = 0; i < len; i++) {
-                    curWidth += columnWidthList[i] + 1;
+                ne.util.forEachArray(columnWidthList, function(columnWidth, i) {
+                    curWidth += columnWidth + 1;
                     if (dataPosX <= curWidth) {
                         columnIdx = i;
-                        break;
+                        return false;
                     }
-                }
+                });
             }
 
             return {
@@ -209,6 +209,10 @@
                 overflowY: overflowY
             };
         },
+        /**
+         * 범위를 반환한다.
+         * @returns {*}
+         */
         getRange: function() {
             return $.extend(true, {}, this.spannedRange);
         },
@@ -227,30 +231,29 @@
                 tmpString = [],
                 strings = [],
                 startIdx = this.spannedRange.row[0],
-                columnLen, i, j, rowList, string;
+                rowList, string;
 
-            for (i = 0; i < len; i++) {
-                columnNameList.push(columnModelList[i]['columnName']);
-            }
+            _.each(columnModelList, function(columnModel) {
+                columnNameList.push(columnModel['columnName']);
+            });
+
             rowList = this.grid.dataModel.slice(this.spannedRange.row[0], this.spannedRange.row[1] + 1);
 
-            len = rowList.length;
-            columnLen = columnNameList.length;
-            for (i = 0; i < len; i++) {
+            _.each(rowList, function(row, i) {
                 tmpString = [];
-                for (j = 0; j < columnLen; j++) {
-                    if (!filteringMap[columnNameList[j]]) {
+                _.each(columnNameList, function(columnName, j) {
+                    if (!filteringMap[columnName]) {
                         //number 형태의 경우 실 데이터는 존재하지 않으므로 가공하여 추가한다.
                         if (columnNameList[j] === '_number') {
                             tmpString.push(startIdx + i + 1);
                         } else {
-                            tmpString.push(rowList[i].getVisibleText(columnNameList[j]));
+                            tmpString.push(row.getVisibleText(columnName));
                         }
-
                     }
-                }
+                });
                 strings.push(tmpString.join('\t'));
-            }
+            });
+
             string = strings.join('\n');
             return string;
         },
@@ -484,9 +487,8 @@
                         }
                     }
                 }
-
-                for (var i = 0; i < len; i++) {
-                    columnName = columnModelList[i]['columnName'];
+                _.each(columnModelList, function(columnModel) {
+                    columnName = columnModel['columnName'];
                     param = {
                         columnName: columnName,
                         startIndex: spannedRange.row[0],
@@ -499,11 +501,16 @@
                     };
                     concatRowSpanIndexFromStart(param);
                     concatRowSpanIndexFromEnd(param);
-                }
+                }, this);
 
                 newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
             }
             return newSpannedRange;
+        },
+        destroy: function() {
+            this.detachMouseEvent();
+            this.destroyChildren();
+            this.remove();
         }
     });
 

@@ -172,8 +172,8 @@
                 columnModelList = columnModel.getVisibleColumnModelList(whichSide),
                 html = '';
 
-            _.each(columnWidthList, function(columnWidth, index) {
-                html += '<col columnname="' + columnModelList[index]['columnName'] + '" style="width:' + columnWidth + 'px">';
+            _.each(columnModelList, function(columnModel, index) {
+                html += '<col columnname="' + columnModel['columnName'] + '" style="width:' + columnWidthList[index]+ 'px">';
             });
             return html;
         }

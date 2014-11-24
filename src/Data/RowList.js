@@ -53,7 +53,7 @@
         /**
          * row의 extraData에 설정된 classNameList 를 반환한다.
          * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-         * @returns {Array}
+         * @return {Array}
          */
         getClassNameList: function(columnName) {
             var classNameList = [],
@@ -243,7 +243,8 @@
                     }
                 }
             }
-            return value.toString();
+            value = ne.util.isDefined(value) ? value.toString() : value;
+            return value;
         },
         /**
          * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
@@ -435,7 +436,6 @@
         /**
          * originalRowList 와 originalRowMap 을 생성한다.
          * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
-         * @private
          */
         setOriginalRowList: function(rowList) {
             this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
@@ -504,7 +504,7 @@
         /**
          * rowSpan 이 적용되어야 하는지 여부를 반환한다.
          * - sorted, 혹은 filterd 된 경우 false 를 리턴한다.
-         * @returns {boolean}
+         * @return {boolean}
          */
         isRowSpanEnable: function() {
             return !this.isSortedByField();
@@ -605,7 +605,7 @@
          * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
          * @param {object} row row 모델
          * @param {String} columnName
-         * @returns {{rowKey: *, columnName: *, columnData: *}}
+         * @return {{rowKey: *, columnName: *, columnData: *}}
          * @private
          */
         _createChangeCallbackEvent: function(row, columnName) {

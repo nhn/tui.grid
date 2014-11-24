@@ -66,7 +66,7 @@
         /**
          * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
          * @param {String} whichSide
-         * @returns {Object} collection
+         * @return {Object} collection
          */
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
@@ -175,7 +175,6 @@
                         rsideRow[columnName] = rowModel.get(columnName);
                     }
                 });
-
                 lsideRowList.push(lsideRow);
                 rsideRowList.push(rsideRow);
             }

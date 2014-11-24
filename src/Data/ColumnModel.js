@@ -117,7 +117,7 @@
          * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
          * @param {string} columnName
          * @param {Array} columnModelList
-         * @returns {number}
+         * @return {number}
          * @private
          */
         _indexOfColumnName: function(columnName, columnModelList) {
@@ -145,7 +145,7 @@
         /**
          * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
          * @param {String} [whichSide] 왼쪽 영역인지, 오른쪽 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
-         * @returns {Array}
+         * @return {Array}
          */
         getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
@@ -241,6 +241,7 @@
                 columnFixIndex: columnFixIndex,
                 visibleList: visibleList
             }, {silent: true});
+            this.trigger('columnModelChange');
         },
         /**
          * change 이벤트 발생시 핸들러

@@ -1,24 +1,39 @@
+    /**
+     * frame Base 클래스
+     * @constructor
+     */
     View.Layout.Frame = View.Base.extend({
         tagName: 'div',
         className: 'lside_area',
+        /**
+         * 초기화 메서드
+         * @param {Object} attributes
+         */
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
             this.setOwnProperties({
                 header: null,
-                body: null
+                body: null,
+                whichSide: attributes && attributes.whichSide || 'R'
             });
         },
+        /**
+         * 랜더링
+         * @return {View.Layout.Frame}
+         */
         render: function() {
+            var header,
+                body;
             this.destroyChildren();
             this.beforeRender();
 
-            var header = this.header = this.createView(View.Layout.Header, {
+            header = this.header = this.createView(View.Layout.Header, {
                 grid: this.grid,
                 whichSide: this.whichSide
             });
-            var body = this.body = this.createView(View.Layout.Body, {
+            body = this.body = this.createView(View.Layout.Body, {
                 grid: this.grid,
                 whichSide: this.whichSide
             });
@@ -28,15 +43,21 @@
                 .append(body.render().el);
 
             this.afterRender();
-            this.trigger('afterRender');
             return this;
         },
-        beforeRender: function() {
-            //@TODO: override this function
-        },
-        afterRender: function() {
-            //@TODO: override this function
-        }
+        /**
+         *columnModel change 시 수행되는 핸들러
+         * @private
+         */
+        _onColumnWidthChanged: function() {},
+        /**
+         * 랜더링 하기전에 수행하는 함수
+         */
+        beforeRender: function() {},
+        /**
+         * 랜더링 이후 수행하는 함수
+         */
+        afterRender: function() {}
     });
 
 

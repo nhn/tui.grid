@@ -1,10 +1,13 @@
     /**
      *  툴바 영역
-     *  @class
+     *  @constructor
      */
     View.Layout.Toolbar = View.Base.extend({
         tagName: 'div',
         className: 'toolbar',
+        /**
+         * 초기화 함수
+         */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
@@ -13,6 +16,10 @@
                 pagination: null
             });
         },
+        /**
+         * 랜더링한다.
+         * @return {View.Layout.Toolbar}
+         */
         render: function() {
             this.destroyChildren();
             var option = this.grid.option('toolbar'),
@@ -48,42 +55,41 @@
         }
     });
     /**
-     * Pagination 영역
-     * @class
+     * control panel
+     * @constructor
      */
-    View.Layout.Toolbar.Pagination = View.Base.extend({
+    View.Layout.Toolbar.ControlPanel = View.Base.extend({
         tagName: 'div',
-        className: 'pagination',
-        template: _.template('' +
-            '<a href="#" class="pre_end">맨앞</a><a href="#" class="pre">이전</a> <a href="#" class="next">다음</a><a href="#" class="next_end">맨뒤</a>'
-        ),
+        className: 'btn_setup',
+        template: _.template(
+                '<a href="#" class="excel_download_button btn_text excel_all" style="display: inline-block;">' +
+                '<span><em class="f_bold p_color5">전체엑셀다운로드</em></span>' +
+                '</a>' +
+                '<a href="#" class="excel_download_button btn_text excel_grid" style="display: inline-block;">' +
+                '<span><em class="excel">엑셀다운로드</em></span>' +
+                '</a>' +
+                '<a href="#" class="grid_configurator_button btn_text" style="display: none;">' +
+                '<span><em class="grid">그리드설정</em></span>' +
+                '</a>'),
+        /**
+         * 초기화 함수
+         */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
-
         },
+        /**
+         * 랜더링한다.
+         * @return {View.Layout.Toolbar.ControlPanel}
+         */
         render: function() {
             this.destroyChildren();
-            this.$el.empty().html(this.template());
-            this._setPaginationInstance();
+            this.$el.html(this.template());
             return this;
-        },
-        _setPaginationInstance: function() {
-            var PaginationClass = ne && ne.Component && ne.Component.Pagination,
-                pagination = null;
-            if (!this.instance && PaginationClass) {
-                pagination = new PaginationClass({
-                    itemCount: 1,
-                    itemPerPage: 1
-                }, this.$el);
-            }
-            this.setOwnProperties({
-                instance: pagination
-            });
         }
     });
     /**
      * 툴바 영역 resize handler
-     * @class
+     * @constructor
      */
     View.Layout.Toolbar.ResizeHandler = View.Base.extend({
         tagName: 'div',
@@ -159,35 +165,72 @@
             e.preventDefault();
             return false;
         },
+        /**
+         * 랜더링한다.
+         * @return {View.Layout.Toolbar.ResizeHandler}
+         */
         render: function() {
             this.destroyChildren();
             this.$el.html(this.template());
             return this;
+        },
+        /**
+         * 소멸자
+         */
+        destroy: function() {
+            this._onMouseUp();
+            this.destroyChildren();
+            this.remove();
         }
     });
     /**
-     * control panel
-     * @class
+     * Pagination 영역
+     * @constructor
      */
-    View.Layout.Toolbar.ControlPanel = View.Base.extend({
+    View.Layout.Toolbar.Pagination = View.Base.extend({
         tagName: 'div',
-        className: 'btn_setup',
-        template: _.template(
-            '<a href="#" class="excel_download_button btn_text excel_all" style="display: inline-block;">' +
-                '<span><em class="f_bold p_color5">전체엑셀다운로드</em></span>' +
-            '</a>' +
-            '<a href="#" class="excel_download_button btn_text excel_grid" style="display: inline-block;">' +
-                '<span><em class="excel">엑셀다운로드</em></span>' +
-            '</a>' +
-            '<a href="#" class="grid_configurator_button btn_text" style="display: none;">' +
-                '<span><em class="grid">그리드설정</em></span>' +
-            '</a>'),
+        className: 'pagination',
+        template: _.template('' +
+            '<a href="#" class="pre_end">맨앞</a>' +
+            '<a href="#" class="pre">이전</a> ' +
+            '<a href="#" class="next">다음</a>' +
+            '<a href="#" class="next_end">맨뒤</a>'
+        ),
+        /**
+         * 초기화 한다.
+         */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                instance: null
+            });
         },
+        /**
+         * pagination 을 rendering 한다.
+         * @return {View.Layout.Toolbar.Pagination}
+         */
         render: function() {
             this.destroyChildren();
-            this.$el.html(this.template());
+            this.$el.empty().html(this.template());
+            this._setPaginationInstance();
             return this;
+        },
+        /**
+         * pagination instance 를 설정한다.
+         * @private
+         */
+        _setPaginationInstance: function() {
+            var PaginationClass = ne && ne.Component && ne.Component.Pagination,
+                pagination = this.instance;
+            if (!pagination && PaginationClass) {
+                pagination = new PaginationClass({
+                    itemCount: 1,
+                    itemPerPage: 1
+                }, this.$el);
+            }
+            this.setOwnProperties({
+                instance: pagination
+            });
         }
     });
+

@@ -1,4 +1,4 @@
-describe('view.frame', function() {
+describe('view.frame.toolbar', function() {
     function getKeyEvent(keyName, $target) {
         return {
             keyCode: grid.keyMap[keyName],
@@ -128,22 +128,21 @@ describe('view.frame', function() {
             'columnName6': 'text-convertible',
             'columnName7': false,
             'columnName8': true
-        },{
-            'columnName1': 'normal',
-            'columnName2': 1,
-            'columnName3': 1,
-            'columnName4': 1,
-            'columnName5': 'text',
-            'columnName6': 'text-convertible',
-            'columnName7': false,
-            'columnName8': true
-        }
+        },
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true}
     ];
+
 
     var grid = {
         options: {
             selectType: 'checkbox',
-            columnMerge: []
+            columnMerge: [],
+            toolbar: {
+                hasControlPanel: false,
+                hasResizeHandler: false,
+                hasPagination: false
+            }
         },
         focusAt: function() {},
         hideGridLayer: function() {},
@@ -252,12 +251,13 @@ describe('view.frame', function() {
         offsetTop: 200,
         width: 500,
         height: 500,
-        headerHeight: 150,
+        headerHeight: 50,
         rowHeight: 10,
         displayRowCount: 20,
         scrollX: true,
         scrollBarSize: 17,
-        bodyHeight: 100,
+        bodyHeight: 200,
+        toolbarHeight: 50,
         minimumColumnWidth: 20
     });
     grid.renderModel = new Model.Renderer.Smart({
@@ -271,10 +271,10 @@ describe('view.frame', function() {
     });
 
     var defaultOption,
-        frame,
         $empty;
 
     beforeEach(function() {
+        jasmine.clock().install();
         grid.columnModel.set({
             columnFixIndex: 0,
             hasNumberColumn: true,
@@ -289,29 +289,162 @@ describe('view.frame', function() {
         grid.$el = $empty;
         grid.dataModel.set(rowList, {parse: true});
         grid.renderModel.refresh();
-        frame = new View.Layout.Frame({
-            grid: grid
-        });
+
+
     });
 
     afterEach(function() {
         grid.options = defaultOption;
         grid.columnModel.set('selectType', grid.option('selectType'));
+        jasmine.clock().uninstall();
     });
-
-    describe('render', function() {
+    describe('Toolbar instance 를 테스트한다.', function() {
+        var toolbar;
         beforeEach(function() {
-            frame.beforeRender = jasmine.createSpy('beforeRender');
-            frame.afterRender = jasmine.createSpy('afterRender');
-            frame.render();
+            toolbar = new View.Layout.Toolbar({
+                grid: grid
+            });
         });
-        it('beforeRender 와 afterRender 를 수행하는를 생성하는지 확인한다.', function() {
-            expect(frame.beforeRender).toHaveBeenCalled();
-            expect(frame.afterRender).toHaveBeenCalled();
+        afterEach(function() {
+            toolbar && toolbar.destroy();
         });
-        it('header 와 body 를 생성하는지 확인한다.', function() {
-            expect(frame.header instanceof View.Layout.Header).toBe(true);
-            expect(frame.body instanceof View.Layout.Body).toBe(true);
+        describe('render 옵션에 따라 랜더링을 잘 하는지 확인한다.', function() {
+            describe('hasControlPanel', function() {
+                it('hasControlPanel = false 일 때', function() {
+                    grid.options.toolbar.hasControlPanel = false;
+                    $empty.html(toolbar.render().el);
+                    expect($empty.find('.btn_setup').length).toBe(0);
+                });
+                it('hasControlPanel = true 일 때', function() {
+                    grid.options.toolbar.hasControlPanel = true;
+                    $empty.html(toolbar.render().el);
+                    expect($empty.find('.btn_setup').length).toBe(1);
+                });
+            });
+            describe('hasResizeHandler', function() {
+                it('hasResizeHandler = false 일 때', function() {
+                    grid.options.toolbar.hasResizeHandler = false;
+                    $empty.html(toolbar.render().el);
+                    expect($empty.find('.height_resize_bar').length).toBe(0);
+                });
+                it('hasResizeHandler = true 일 때', function() {
+                    grid.options.toolbar.hasResizeHandler = true;
+                    $empty.html(toolbar.render().el);
+                    expect($empty.find('.height_resize_bar').length).toBe(1);
+                });
+            });
+            describe('hasPagination', function() {
+                it('hasPagination = false 일 때', function() {
+                    grid.options.toolbar.hasPagination = false;
+                    $empty.html(toolbar.render().el);
+                    expect($empty.find('.pagination').length).toBe(0);
+                });
+                it('hasPagination = true 일 때', function() {
+                    grid.options.toolbar.hasPagination = true;
+                    $empty.html(toolbar.render().el);
+                    expect($empty.find('.pagination').length).toBe(1);
+                });
+            });
+        });
+    });
+    describe('Resize Handler instance 를 테스트한다.', function() {
+        var resize,
+            mouseEvent;
+        beforeEach(function() {
+            mouseEvent = {
+                pageX: 100,
+                pageY: 20,
+                target: $('<div>'),
+                preventDefault: function() {}
+            };
+            resize = new View.Layout.Toolbar.ResizeHandler({
+                grid: grid
+            });
+        });
+        afterEach(function() {
+            resize && resize.destroy();
+        });
+        describe('_onMouseDown', function() {
+            beforeEach(function() {
+                resize._attachMouseEvent = jasmine.createSpy('_attachMouseEvent');
+                grid.updateLayoutData = jasmine.createSpy('updateLayoutData');
+                resize._onMouseDown(mouseEvent);
+            });
+            it('mouseDown 이벤트가 발생하면 updateLayoutData 와 _attachMouseEvent 를 수행한다.', function() {
+                expect(resize._attachMouseEvent).toHaveBeenCalled();
+                expect(grid.updateLayoutData).toHaveBeenCalled();
+            });
+            it('body 엘리먼트의 커서 css 스타일을 row-resize 로 변경한다..', function() {
+                expect($(document.body).css('cursor')).toEqual('row-resize');
+            });
+        });
+        describe('_onMouseUp', function() {
+            beforeEach(function() {
+                resize._attachMouseEvent = function() {};
+                resize._detachMouseEvent = jasmine.createSpy('_detachMouseEvent');
+                resize._onMouseDown(mouseEvent);
+                resize._onMouseUp();
+            });
+            it('mouseDown 이벤트가 발생하면 updateLayoutData 와 _attachMouseEvent 를 수행한다.', function() {
+                expect(resize._detachMouseEvent).toHaveBeenCalled();
+            });
+            it('body 엘리먼트의 커서 css 스타일을 row-resize 로 변경한다..', function() {
+                expect($(document.body).css('cursor')).toEqual('default');
+            });
+        });
+        describe('_onMouseMove', function() {
+            it('min 이하로 높이가 줄어들지 않는다.', function() {
+                mouseEvent.pageY = 100;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
+                mouseEvent.pageY = 200;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
+                mouseEvent.pageY = 300;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
+                mouseEvent.pageY = 400;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(100);
+                mouseEvent.pageY = 500;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(200);
+                mouseEvent.pageY = 600;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(300);
+                mouseEvent.pageY = 700;
+                resize._onMouseMove(mouseEvent);
+                expect(grid.dimensionModel.get('bodyHeight')).toBe(400);
+
+            });
+        });
+    });
+    describe('Pagination instance 를 테스트한다.', function() {
+        var pagination,
+            PaginationClass;
+
+        beforeEach(function() {
+            PaginationClass = ne && ne.Component && ne.Component.Pagination
+            pagination = new View.Layout.Toolbar.Pagination({
+                grid: grid
+            });
+        });
+        afterEach(function() {
+            pagination && pagination.destroy();
+        });
+        it('Pagination Instance 를 잘 생성하는지 확인한다.', function() {
+            pagination._setPaginationInstance();
+            expect(pagination.instance instanceof PaginationClass).toBe(true);
+        });
+        it('이미 pagination instance 를 생성다면 pagination 을 생성하지 않는다.', function() {
+            pagination.instance = new PaginationClass({
+                itemCount: 1,
+                itemPerPage: 1
+            }, pagination.$el);
+
+            ne.Component.Pagination = jasmine.createSpy('pagination');
+            pagination._setPaginationInstance();
+            expect(ne.Component.Pagination).not.toHaveBeenCalled();
         });
     });
 });

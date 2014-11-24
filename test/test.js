@@ -79,6 +79,9 @@ function insertButton(gridInstance, $wrapper, $result) {
         $result.html(JSON.stringify(obj));
     };
     var actions = {
+        'setColumnModelList' : function() {
+            gridInstance.setColumnModelList(dummy_data.columnModel_2);
+        },
         'getRowList' : function() {
             var result = gridInstance.getRowList();
             printr(result);

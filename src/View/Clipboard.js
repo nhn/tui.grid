@@ -1,12 +1,12 @@
     /**
      * clipboard view class
-     * @class
+     * @constructor
      */
     View.Clipboard = View.Base.extend({
         tagName: 'textarea',
         className: 'clipboard',
         events: {
-            'keydown': '_onKeydown',
+            'keydown': '_onKeyDown',
             'focus': '_onFocus',
             'blur': '_onBlur'
         },
@@ -15,15 +15,20 @@
          * @private
          */
         _onFocus: function() {
-//            console.log('clipboard focus');
+            this.grid.focusModel.focus();
         },
         /**
          * clipboard blur event handler
          * @private
          */
         _onBlur: function() {
-//            console.log('clipboard blur');
+            this.grid.focusModel.blur();
         },
+        /**
+         * 생성자
+         * @param {object} attributes
+         * @param {object} option
+         */
         initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
@@ -32,29 +37,35 @@
                 isLocked: false
             });
         },
+        /**
+         * render
+         * @return {View.Clipboard}
+         */
         render: function() {
-//            this.$el.css({
-//                'top': 0,
-//                'left': 0,
-//                'width': '100px',
-//                'height': '20px'
-//            });
             return this;
         },
+        /**
+         * keyEvent 의 중복 호출을 방지하는 lock
+         * @private
+         */
         _lock: function() {
             clearTimeout(this.timeoutIdForKeyIn);
             this.isLocked = true;
             this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10);
         },
+        /**
+         * unlock
+         * @private
+         */
         _unlock: function() {
-            this.isLocked = false;},
-
+            this.isLocked = false;
+        },
         /**
          * keyDown event handler
          * @param {event} keyDownEvent
          * @private
          */
-        _onKeydown: function(keyDownEvent) {
+        _onKeyDown: function(keyDownEvent) {
             var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             if (this.isLocked) {
                 keyDownEvent.preventDefault();
@@ -292,9 +303,6 @@
                 grid.del(rowKey, columnName);
             }
         },
-
-
-
         /**
          * keyIn 으로 selection 영역을 update 한다. focus 로직도 함께 수행한다.
          * @param {Number} rowIndex
@@ -320,7 +328,6 @@
         _getClipboardString: function() {
             var text,
                 selection = this.grid.selection,
-//                focused = this.grid.dataModel.getFocused();
                 focused = this.grid.focusModel.which();
             if (selection.isShown()) {
                 text = this.grid.selection.getSelectionToString();
@@ -333,6 +340,7 @@
          * 현재 그리드의 data 를 clipboard 에 copy 한다.
          * @private
          */
+         /* istanbul ignore next */
         _copyToClipboard: function() {
             var text = this._getClipboardString();
             if (window.clipboardData) {

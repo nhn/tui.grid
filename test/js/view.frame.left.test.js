@@ -1,4 +1,4 @@
-describe('view.frame', function() {
+describe('view.frame.left', function() {
     function getKeyEvent(keyName, $target) {
         return {
             keyCode: grid.keyMap[keyName],
@@ -289,29 +289,28 @@ describe('view.frame', function() {
         grid.$el = $empty;
         grid.dataModel.set(rowList, {parse: true});
         grid.renderModel.refresh();
-        frame = new View.Layout.Frame({
+        frame = new View.Layout.Frame.Lside({
             grid: grid
         });
+
     });
 
     afterEach(function() {
         grid.options = defaultOption;
         grid.columnModel.set('selectType', grid.option('selectType'));
     });
+    describe('_onColumnWidthChanged', function() {
+        it('lside width 가 변경되면 dimensionModel 에 정의된 값으로 변경한다.', function() {
+            grid.columnModel.set('columnFixIndex', 0);
 
-    describe('render', function() {
-        beforeEach(function() {
-            frame.beforeRender = jasmine.createSpy('beforeRender');
-            frame.afterRender = jasmine.createSpy('afterRender');
-            frame.render();
-        });
-        it('beforeRender 와 afterRender 를 수행하는를 생성하는지 확인한다.', function() {
-            expect(frame.beforeRender).toHaveBeenCalled();
-            expect(frame.afterRender).toHaveBeenCalled();
-        });
-        it('header 와 body 를 생성하는지 확인한다.', function() {
-            expect(frame.header instanceof View.Layout.Header).toBe(true);
-            expect(frame.body instanceof View.Layout.Body).toBe(true);
+            $empty.html(frame.render().el);
+            expect(grid.dimensionModel.get('lsideWidth')).not.toBe(214);
+            expect(frame.$el.width()).not.toBe(214);
+
+            grid.columnModel.set('columnFixIndex', 3);
+            expect(grid.dimensionModel.get('lsideWidth')).toBe(214);
+            expect(frame.$el.width()).toBe(214);
         });
     });
+
 });
