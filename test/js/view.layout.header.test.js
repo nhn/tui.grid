@@ -299,6 +299,7 @@ describe('view.layout.header', function() {
     describe('header 테스트', function() {
         var header;
         beforeEach(function() {
+            jasmine.clock().install();
             header && header.destroy();
             header = new View.Layout.Header({
                 grid: grid,
@@ -306,11 +307,13 @@ describe('view.layout.header', function() {
             });
         });
         afterEach(function() {
+            jasmine.clock().uninstall();
             header && header.destroy();
         });
         describe('_getColGroupMarkup', function() {
             var $colList;
             beforeEach(function() {
+                jasmine.clock().tick(10);
                 $empty.html(header._getColGroupMarkup());
                 $colList = $empty.find('col');
             });
@@ -326,18 +329,6 @@ describe('view.layout.header', function() {
                 expect($colList.eq(7).attr('columnname')).toBe('columnName6');
                 expect($colList.eq(8).attr('columnname')).toBe('columnName7');
                 expect($colList.eq(9).attr('columnname')).toBe('columnName8');
-            });
-
-            it('width 를 잘 생성했는지 확인한다.', function() {
-                //0, 1 은 _number, _button 이므로 제외하고 테스트한다.
-                expect($colList.eq(2).width()).toBe(100);
-                expect($colList.eq(3).width()).toBe(200);
-                expect($colList.eq(4).width()).toBe(300);
-                expect($colList.eq(5).width()).toBe(400);
-                expect($colList.eq(6).width()).toBe(500);
-                expect($colList.eq(7).width()).toBe(600);
-                expect($colList.eq(8).width()).toBe(700);
-                expect($colList.eq(9).width()).toBe(800);
             });
         });
         describe('_getColumnData', function() {
@@ -517,16 +508,6 @@ describe('view.layout.header', function() {
                 expect($empty.find('tbody').length).toEqual(1);
                 expect($empty.find('tr').length).toEqual(4);
                 expect($empty.find('.header').height()).toEqual(50);
-            });
-        });
-        describe('_onColumnWidthChanged', function() {
-            it('columnWidthList 에 설정된 대로 col 들을 설정하는지 확인한다.', function() {
-                $empty.html(header.render().el);
-                var columnWidthList = header._getColumnData().widthList,
-                    $colList = $empty.find('col');
-                _.each(columnWidthList, function(width, i) {
-                    expect($colList.eq(i).width()).toEqual(width);
-                });
             });
         });
         describe('_getHeaderMainCheckbox', function() {

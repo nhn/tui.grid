@@ -267,6 +267,7 @@ describe('view.layout.body', function() {
         $empty;
 
     beforeEach(function() {
+        jasmine.clock().install();
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
@@ -281,6 +282,7 @@ describe('view.layout.body', function() {
         });
     });
     afterEach(function() {
+        jasmine.clock().uninstall();
         body && body.destroy();
         $empty.empty();
     });
@@ -304,17 +306,6 @@ describe('view.layout.body', function() {
             expect($colList.eq(9).attr('columnname')).toBe('columnName8');
         });
 
-        it('width 를 잘 생성했는지 확인한다.', function() {
-            //0, 1 은 _number, _button 이므로 제외하고 테스트한다.
-            expect($colList.eq(2).width()).toBe(100);
-            expect($colList.eq(3).width()).toBe(200);
-            expect($colList.eq(4).width()).toBe(300);
-            expect($colList.eq(5).width()).toBe(400);
-            expect($colList.eq(6).width()).toBe(500);
-            expect($colList.eq(7).width()).toBe(600);
-            expect($colList.eq(8).width()).toBe(700);
-            expect($colList.eq(9).width()).toBe(800);
-        });
     });
     describe('render', function() {
         beforeEach(function() {
@@ -362,28 +353,6 @@ describe('view.layout.body', function() {
             expect(body.$el.height()).toBe(100);
             body._onBodyHeightChange(null, 200);
             expect(body.$el.height()).toBe(200);
-        });
-    });
-    describe('_onColumnWidthChanged', function() {
-        var $colList;
-        beforeEach(function() {
-            $empty.html(body.render().el);
-            $colList = $empty.find('col');
-        });
-        it('columnWidthList 가 변경되었을 때, col 태그의 값을 변경된 값에 맞게 변경하는지 확인한다.', function() {
-            grid.dimensionModel.setColumnWidth(0, 150);
-            grid.dimensionModel.setColumnWidth(1, 150);
-            grid.dimensionModel.setColumnWidth(2, 150);
-            grid.dimensionModel.setColumnWidth(3, 150);
-            grid.dimensionModel.setColumnWidth(4, 150);
-            grid.dimensionModel.setColumnWidth(5, 150);
-
-            expect($colList.eq(0).width()).toBe(150);
-            expect($colList.eq(1).width()).toBe(150);
-            expect($colList.eq(2).width()).toBe(150);
-            expect($colList.eq(3).width()).toBe(150);
-            expect($colList.eq(4).width()).toBe(150);
-            expect($colList.eq(5).width()).toBe(150);
         });
     });
     describe('_onMouseDown', function() {

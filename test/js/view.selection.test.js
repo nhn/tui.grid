@@ -1150,8 +1150,6 @@ describe('view.selection', function() {
                 expect(data).toEqual({ row: 1, column: 3, overflowX: 0, overflowY: 0 });
                 data = selection.getIndexFromMousePosition(500, 100);
                 expect(data).toEqual({ row: 1, column: 4, overflowX: 0, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(5000, 100);
-                expect(data).toEqual({ row: 1, column: 5, overflowX: 1, overflowY: 0 });
                 data = selection.getIndexFromMousePosition(500, 400);
                 expect(data).toEqual({ row: 11, column: 4, overflowX: 0, overflowY: 1 });
             });
