@@ -413,32 +413,4 @@ describe('view.layout.body', function() {
             });
         });
     });
-    describe('_onScroll', function() {
-
-        describe('_onScroll 이벤트 핸들러가 수행되면 renderModel 의 scrollTop, scrollLeft 를 변경하는지 확인한다.', function() {
-            it('R Side 일때는 scrollLeft 값도 변경한다.', function() {
-                body.whichSide = 'R';
-                body._onScroll({
-                    target: {
-                        scrollTop: 10,
-                        scrollLeft: 20
-                    }
-                });
-                expect(grid.renderModel.get('scrollTop')).toBe(10);
-                expect(grid.renderModel.get('scrollLeft')).toBe(20);
-            });
-            it('L Side 일때는 scrollLeft 값이 변경되지 않는다.', function() {
-                body.whichSide = 'L';
-                body._onScroll({
-                    target: {
-                        scrollTop: 100,
-                        scrollLeft: 200
-                    }
-                });
-                expect(grid.renderModel.get('scrollTop')).toBe(100);
-                expect(grid.renderModel.get('scrollLeft')).not.toBe(200);
-            });
-        });
-
-    });
 });
