@@ -417,14 +417,13 @@
 
         /**
          * rowSpan 된 Index range 를 반환한다.
-         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         * @param {{row: [startIndex, endIndex], column: [startIndex, endIndex]}} spannedRange 인덱스 정보
          * @private
          */
         _getRowSpannedIndex: function(spannedRange) {
             var columnModelList = this.grid.columnModel.get('columnModelList')
                     .slice(spannedRange.column[0], spannedRange.column[1] + 1),
                 dataModel = this.grid.dataModel,
-                len = columnModelList.length,
                 startIndexList = [spannedRange.row[0]],
                 endIndexList = [spannedRange.row[1]],
                 startRow = dataModel.at(spannedRange.row[0]),

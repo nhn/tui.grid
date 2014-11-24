@@ -1,6 +1,6 @@
 'use strict';
 
-describe('core.base', function() {
+describe('addon.net', function() {
     var $empty, Class;
 
     beforeEach(function() {
@@ -17,6 +17,17 @@ describe('core.base', function() {
 
 
     describe('Model.Base', function() {
-
+        beforeEach(function() {
+            jasmine.Ajax.install();
+        });
+        it('ajax mock test', function() {
+            var onSuccess = jasmine.createSpy('onSuccess'),
+                onFailure = jasmine.createSpy('onFailure');
+            $.ajax({
+                url: 'http://nate.com'
+            });
+            var request = jasmine.Ajax.requests.mostRecent();
+            console.log(request);
+        });
     });
 });

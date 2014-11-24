@@ -9,9 +9,7 @@ function setConfig(configDefault, isDev) {
 
     if (isDev) {
         configDefault.browsers = [
-            'Chrome',
-            'IE',
-            'Firefox'
+            'Chrome'
         ];
     } else {
         configDefault.browsers = [
@@ -84,6 +82,7 @@ module.exports = function(config) {
             {pattern: 'lib/backbone/backbone.js', watched: false, served: true, included: true},
 
             {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true},
+            {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false, served: true, included: true},
 
             {pattern: 'test/js/data/*.json', watched: false, served: true, included: true},
 
@@ -118,7 +117,8 @@ module.exports = function(config) {
             {pattern: 'images/**/*', watched: true, served: true, included: false},
 
             // files to test
-            {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
+            {pattern: 'test/js/addon*.test.js', watched: true, served: true, included: true}
+            //{pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
 //            {pattern: 'test/js/model.renderer.test.js', watched: true, served: true, included: true}
         ],
 
