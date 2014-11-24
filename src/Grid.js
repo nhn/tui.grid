@@ -1043,6 +1043,7 @@
                         instance && instance.destroy && instance.destroy();
                     }, this);
                 }
+                value && value.stopListening && value.stopListening();
                 if (property !== '$el' && property !== '__$el') {
                     this[property] = null;
                     delete this[property];

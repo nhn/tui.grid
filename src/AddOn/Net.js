@@ -76,7 +76,7 @@
                     grid: this.grid,
                     net: this
                 });
-                Backbone.history.start();
+                !Backbone.History.started && Backbone.history.start();
             }
         },
         /**
@@ -110,7 +110,7 @@
          */
         setFormData: function(formData) {
             //form data 를 실제 form 에 반영한다.
-            ne.util.setFormData(this.$el, formData);
+            /* istanbul ignore next */ ne.util.setFormData(this.$el, formData);
         },
 
         /**
@@ -154,7 +154,7 @@
          * @private
          */
         _getFormData: function() {
-            return ne.util.getFormData(this.$el);
+            /* istanbul ignore next*/ return ne.util.getFormData(this.$el);
         },
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
@@ -173,8 +173,6 @@
                 totalCount = responseData.pagination.totalCount;
                 pagination._setOption('itemPerPage', this.perPage);
                 pagination._setOption('itemCount', totalCount);
-//                pagination.reset(totalCount);
-//                console.log('totalCount', totalCount);
                 pagination.movePageTo(page);
                 this.curPage = page;
             }
@@ -221,7 +219,7 @@
         /**
          * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
          * @param {Number} page
-         * @param {Boolean} isUsingRequestedData
+         * @param {Boolean} [isUsingRequestedData=true]
          */
         readDataAt: function(page, isUsingRequestedData) {
             isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
@@ -249,6 +247,7 @@
          *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
          */
         createData: function(options) {
+            /* istanbul ignore next: send 에서 테스트 하고 있음 */
             this.send('createData', options);
         },
         /**
@@ -264,6 +263,7 @@
          *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
          */
         updateData: function(options) {
+            /* istanbul ignore next: send 에서 테스트 하고 있음 */
             this.send('updateData', options);
         },
         /**
@@ -279,6 +279,7 @@
          *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
          */
         deleteData: function(options) {
+            /* istanbul ignore next: send 에서 테스트 하고 있음 */
             this.send('deleteData', options);
         },
         /**
@@ -294,6 +295,7 @@
          *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
          */
         modifyData: function(options) {
+            /* istanbul ignore next: send 에서 테스트 하고 있음 */
             this.send('modifyData', options);
         },
 
@@ -319,36 +321,51 @@
                 },
                 newOptions = $.extend(defaultOptions, options),
                 param = this._getRequestParam(requestType, newOptions);
-            this._ajax(param);
+
+            if (param) {
+                this._ajax(param);
+            }
         },
-        _getRequestParam: function(requestType, options) {
-            var dataModel = this.grid.dataModel,
-                defaultOptions = {
-                    url: this.options.api[requestType],
-                    type: null,
+        /**
+         *  data 관련 파라미터를 반환한다.
+         * @param {String} requestType
+         * @param {Object} [options]
+         *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
+         *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+         *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+         * @return {{count: number, data: {requestType: string, url: string, data: object, type: string, dataType: string}}}
+         * @private
+         */
+        _getDataParam: function(requestType, options) {
+            var defaultOptions = {
                     hasDataParam: true,
-                    isOnlyChecked: true,
-                    isOnlyModified: true
-                },
+                    isOnlyModified: true,
+                    isOnlyChecked: true
+                };
+
+
+            options = $.extend(defaultOptions, options);
+
+            var hasDataParam = options.hasDataParam,
+                isOnlyModified = options.isOnlyModified,
+                isOnlyChecked = options.isOnlyChecked,
+                dataModel = this.grid.dataModel,
                 checkMap = {
                     'createData': ['createList'],
                     'updateData': ['updateList'],
                     'deleteData': ['deleteList'],
                     'modifyData': ['createList', 'updateList', 'deleteList']
                 },
-                newOptions = $.extend(defaultOptions, options),
                 checkList = checkMap[requestType],
-                hasDataParam = newOptions.hasDataParam,
-                isOnlyModified = newOptions.isOnlyModified,
-                isOnlyChecked = newOptions.isOnlyChecked,
                 data = $.extend({}, this.requestedFormData),
-                dataMap, count = 0, param;
+                count = 0,
+                dataMap;
 
             if (hasDataParam) {
                 if (isOnlyModified) {
                     //{createList: [], updateList:[], deleteList: []} 에 담는다.
                     dataMap = dataModel.getModifiedRowList({
-                        isOnlyChecked: true
+                        isOnlyChecked: isOnlyChecked
                     });
                     _.each(dataMap, function(list, name) {
                         if ($.inArray(name, checkList) !== -1) {
@@ -362,14 +379,48 @@
                     count = dataMap.rowList.length;
                 }
             }
+
             data = $.extend(data, dataMap);
-            param = {
-                requestType: requestType,
-                url: newOptions.url,
+
+            return {
                 data: data,
-                type: newOptions.type
+                count: count
             };
-            return param;
+        },
+        /**
+         * requestType 에 따라 요청 파라미터를 반환한다.
+         * @param {String} requestType
+         * @param {Object} [options]
+         *      @param {String} [options.url=this.options.api[requestType]] 요청할 url.
+         *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
+         *      @param {String} [options.type='POST'] request method 타입
+         *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
+         *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
+         *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
+         * @return {{requestType: string, url: string, data: object, type: string, dataType: string}}
+         * @private
+         */
+        _getRequestParam: function(requestType, options) {
+            var defaultOptions = {
+                    url: this.options.api[requestType],
+                    type: null,
+                    hasDataParam: true,
+                    isOnlyModified: true,
+                    isOnlyChecked: true
+                },
+                newOptions = $.extend(defaultOptions, options),
+                dataParam = this._getDataParam(requestType, newOptions),
+                param;
+
+            if (this._isConfirmed(requestType, dataParam.count)) {
+                param = {
+                    requestType: requestType,
+                    url: newOptions.url,
+                    data: dataParam.data,
+                    type: newOptions.type
+                };
+                return param;
+            }
         },
         /**
          * requestType 에 따른 컨펌 메세지를 노출한다.
@@ -378,7 +429,23 @@
          * @return {boolean}
          * @private
          */
-        _confirm: function(requestType, count) {
+        _isConfirmed: function(requestType, count) {
+            /* istanbul ignore next: confirm 을 확인할 수 없읔 */
+            if (count > 0) {
+                return confirm(this._getConfirmMessage(requestType, count));
+            } else {
+                alert(this._getConfirmMessage(requestType, count));
+                return false;
+            }
+        },
+        /**
+         * confirm message 를 반환한다.
+         * @param {String} requestType
+         * @param {Number} count
+         * @return {string}
+         * @private
+         */
+        _getConfirmMessage: function(requestType, count) {
             var textMap = {
                     'createData': '입력',
                     'updateData': '수정',
@@ -387,10 +454,9 @@
                 },
                 actionName = textMap[requestType];
             if (count > 0) {
-                return confirm(count + '건의 데이터를 ' + actionName + '하시겠습니까?');
+                return count + '건의 데이터를 ' + actionName + '하시겠습니까?';
             } else {
-                alert(actionName + '할 데이터가 없습니다.');
-                return false;
+                return actionName + '할 데이터가 없습니다.';
             }
         },
         /**
@@ -400,8 +466,13 @@
          */
         _ajax: function(options) {
             var eventData = this.createEventData(options.data);
+
+            //beforeRequest 이벤트를 발생한다.
             this.grid.trigger('beforeRequest', eventData);
+
+            //event 의 stopped 가 호출 된다면 ajax 호출을 중지한다.
             if (eventData.isStopped()) return;
+
             options = $.extend({requestType: ''}, options);
             var params = {
                 'url' : options.url,

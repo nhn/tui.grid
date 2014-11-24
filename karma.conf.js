@@ -117,8 +117,9 @@ module.exports = function(config) {
             {pattern: 'images/**/*', watched: true, served: true, included: false},
 
             // files to test
-            {pattern: 'test/js/addon*.test.js', watched: true, served: true, included: true}
-            //{pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
+            //{pattern: 'test/js/grid*.test.js', watched: true, served: true, included: true}
+            //{pattern: 'test/js/addon*.test.js', watched: true, served: true, included: true}
+            {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
 //            {pattern: 'test/js/model.renderer.test.js', watched: true, served: true, included: true}
         ],
 
