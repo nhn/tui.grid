@@ -12,21 +12,6 @@
         ne.util = window.ne.util = {};
     }
 
-    ne.util.type = ne.util.type || {
-        isPlaneObject: function(obj) {
-            return Object.prototype.toString.call(obj) === '[object Object]';
-        },
-        isFunction: function(obj) {
-            return Object.prototype.toString.call(obj) === '[object Function]';
-        },
-        isTruthy: function(obj){
-            return ne.util.type.isDefined(obj) && obj !== false;
-        },
-        isDefined: function(obj) {
-            return obj !== null && obj !== undefined;
-        }
-    };
-
     var ajax = {};
 
     /**
@@ -148,7 +133,7 @@
 
         if (requestData) {
             var result = true;
-            if (requestData['_success'] && ne.util.type.isFunction(requestData['_success'])) {
+            if (requestData['_success'] && $.isFunction(requestData['_success'])) {
                 result = requestData['_success'](responseData, status, jqXHR);
             }
 
@@ -211,7 +196,7 @@
             destinationTarget,
             x, y;
 
-        if (ne.util.type.isPlaneObject(sourceTarget) && (constructor = this.getConstructorName(sourceTarget))) {
+        if (typeof sourceTarget === 'object' && (constructor = this.getConstructorName(sourceTarget))) {
             destinationTarget = eval('new ' + constructor + '()');
 
             if (sourceTarget.prototype) {
@@ -268,7 +253,7 @@
     ajax.util.close = function(skipBeforeUnload, popup) {
         var target = popup || window;
 
-        if (ne.util.type.isTruthy(skipBeforeUnload)) {
+        if (ne.util.isTruthy(skipBeforeUnload)) {
             $(target).off('beforeunload');
         }
 
@@ -592,6 +577,7 @@
 /**
  * @fileoverview 옵저버 패턴을 이용하여 객체 간 커스텀 이벤트를 전달할 수 있는 기능을 제공하는 모듈
  * @author FE개발팀
+ * @dependency type.js, collection.js object.js
  */
 
 (function(ne) {
@@ -599,6 +585,9 @@
     /* istanbul ignore if */
     if (!ne) {
         ne = window.ne = {};
+    }
+    if (!ne.util) {
+        ne.util = window.ne.util = {};
     }
 
     /**
@@ -663,7 +652,7 @@
          * instance.off();
          */
         off: function(types, fn, context) {
-            if (!ne.isDefined(types)) {
+            if (!ne.util.isExisty(types)) {
                 this._events = null;
                 return;
             }
@@ -684,14 +673,14 @@
             var methodName = isOn ? '_on' : '_off',
                 method = this[methodName];
 
-            if (ne.isObject(types)) {
-                ne.forEachOwnProperties(types, function(handler, type) {
+            if (ne.util.isObject(types)) {
+                ne.util.forEachOwnProperties(types, function(handler, type) {
                     method.call(this, type, handler, fn);
                 }, this);
             } else {
                 types = types.split(' ');
 
-                ne.forEach(types, function(type) {
+                ne.util.forEach(types, function(type) {
                     method.call(this, type, fn, context);
                 }, this);
             }
@@ -715,7 +704,7 @@
          */
         _on: function(type, fn, context) {
             var events = this._events = this._events || {},
-                contextId = context && (context !== this) && ne.stamp(context);
+                contextId = context && (context !== this) && ne.util.stamp(context);
 
             if (contextId) {
                 /*
@@ -726,7 +715,7 @@
                 var indexKey = type + '_idx',
                     indexLenKey = type + '_len',
                     typeIndex = events[indexKey] = events[indexKey] || {},
-                    id = ne.stamp(fn) + '_' + contextId; // 핸들러의 id + context의 id
+                    id = ne.util.stamp(fn) + '_' + contextId; // 핸들러의 id + context의 id
 
                 if (!typeIndex[id]) {
                     typeIndex[id] = {
@@ -760,31 +749,93 @@
                 return;
             }
 
-            var contextId = context && (context !== this) && ne.stamp(context),
+            var contextId = context && (context !== this) && ne.util.stamp(context),
                 listeners,
                 id;
 
             if (contextId) {
-                id = ne.stamp(fn) + '_' + contextId;
+                id = ne.util.stamp(fn) + '_' + contextId;
                 listeners = events[indexKey];
 
                 if (listeners && listeners[id]) {
                     listeners[id] = null;
-                    events[indexLenKey]--;
+                    events[indexLenKey] -= 1;
                 }
 
             } else {
                 listeners = events[type];
 
                 if (listeners) {
-                    ne.forEach(listeners, function(listener, arr, index) {
-                        if (ne.isDefined(listener) && (listener.fn === fn)) {
+                    ne.util.forEach(listeners, function(listener, index) {
+                        if (ne.util.isExisty(listener) && (listener.fn === fn)) {
                             listeners.splice(index, 1);
                             return true;
                         }
                     });
                 }
             }
+        },
+
+        /**
+         * 이벤트를 발생시키는 메서드
+         *
+         * 등록한 리스너들의 실행 결과를 boolean AND 연산하여
+         *
+         * 반환한다는 점에서 {@link CustomEvents#fire} 와 차이가 있다
+         *
+         * 보통 컴포넌트 레벨에서 before 이벤트로 사용자에게
+         *
+         * 이벤트를 취소할 수 있게 해 주는 기능에서 사용한다.
+         * @param {string} type
+         * @param {object} data
+         * @returns {*}
+         * @example
+         * // 확대 기능을 지원하는 컴포넌트 내부 코드라 가정
+         * if (this.invoke('beforeZoom')) {    // 사용자가 등록한 리스너 결과 체크
+         *     // 리스너의 실행결과가 true 일 경우
+         *     // doSomething
+         * }
+         *
+         * //
+         * // 아래는 사용자의 서비스 코드
+         * map.on({
+         *     'beforeZoom': function() {
+         *         if (that.disabled && this.getState()) {    //서비스 페이지에서 어떤 조건에 의해 이벤트를 취소해야한다
+         *             return false;
+         *         }
+         *         return true;
+         *     }
+         * });
+         */
+        invoke: function(type, data) {
+            if (!this.hasListener(type)) {
+                return this;
+            }
+
+            var event = ne.util.extend({}, data, {type: type, target: this}),
+                events = this._events;
+
+            if (!events) {
+                return;
+            }
+
+            var typeIndex = events[type + '_idx'],
+                listeners,
+                result = true;
+
+            if (events[type]) {
+                listeners = events[type].slice();
+
+                ne.util.forEach(listeners, function(listener) {
+                    result = result && (listener.fn.call(this, event) !== false);
+                }, this);
+            }
+
+            ne.util.forEachOwnProperties(typeIndex, function(eventItem) {
+                result = result && (eventItem.fn.call(eventItem.ctx, event) !== false);
+            });
+
+            return result;
         },
 
         /**
@@ -801,32 +852,7 @@
          * });
          */
         fire: function(type, data) {
-            if (!this.hasListener(type)) {
-                return this;
-            }
-
-            var event = ne.extend({}, data, {type: type, target: this}),
-                events = this._events;
-
-            if (!events) {
-                return;
-            }
-
-            var typeIndex = events[type + '_idx'],
-                listeners;
-
-            if (events[type]) {
-                listeners = events[type].slice();
-
-                ne.forEach(listeners, function(listener) {
-                    listener.fn.call(this, event);
-                }, this);
-            }
-
-            ne.forEachOwnProperties(typeIndex, function(eventItem) {
-                eventItem.fn.call(eventItem.ctx, event);
-            });
-
+            this.invoke(type, data);
             return this;
         },
 
@@ -837,9 +863,34 @@
          */
         hasListener: function(type) {
             var events = this._events,
-                isDefineMethod = ne.isDefined;
+                existyFunc = ne.util.isExisty;
 
-            return isDefineMethod(events) && (isDefineMethod(events[type]) || events[type + '_len']);
+            return existyFunc(events) && (existyFunc(events[type]) || events[type + '_len']);
+        },
+
+        /**
+         * 등록된 이벤트 핸들러의 갯수 반환
+         * @param {string} type
+         * @returns {number}
+         */
+        getListenerLength: function(type) {
+            var events = this._events,
+                lenKey = type + '_len',
+                length = 0,
+                types,
+                len;
+
+            if (!ne.util.isExisty(events)) {
+                return 0;
+            }
+
+            types = events[type];
+            len = events[lenKey];
+
+            length += (ne.util.isExisty(types) && ne.util.isArray(types)) ? types.length : 0;
+            length += ne.util.isExisty(len) ? len : 0;
+
+            return length;
         },
 
         /**
@@ -851,9 +902,9 @@
         once: function(types, fn, context) {
             var that = this;
 
-            if (ne.isObject(types)) {
-                ne.forEachOwnProperties(types, function(type) {
-                    this.once(type, types[type], fn)
+            if (ne.util.isObject(types)) {
+                ne.util.forEachOwnProperties(types, function(type) {
+                    this.once(type, types[type], fn);
                 }, this);
 
                 return;
@@ -881,17 +932,17 @@
      * function Model() {}
      *
      * // 커스텀 이벤트 믹스인
-     * ne.CustomEvents.mixin(Model);
+     * ne.util.CustomEvents.mixin(Model);
      *
      * var model = new Model();
      *
      * model.on('changed', function() {}, this);
      */
     CustomEvents.mixin = function(func) {
-        ne.extend(func.prototype, CustomEventMethod);
+        ne.util.extend(func.prototype, CustomEventMethod);
     };
 
-    ne.CustomEvents = CustomEvents;
+    ne.util.CustomEvents = CustomEvents;
 
 })(window.ne);
 
@@ -1088,7 +1139,7 @@
         ne.util.forEach(valueList, function(obj) {
             var value = obj.value,
                 name = obj.name;
-            if (ne.util.isDefined(result[name])) {
+            if (ne.util.isExisty(result[name])) {
                 if (!result[name].push) {
                     result[name] = [result[name]];
                 }
@@ -1800,25 +1851,82 @@
     }
 
     /**
-     * 인자가 null 또는 undefined가 아닌지 확인하는 메서드
+     * 값이 정의되어 있는지 확인(null과 undefined가 아니면 true를 반환한다)
      * @param {*} obj
-     * @return {boolean}
+     * @param {(String|Array)} [key]
+     * @returns {boolean}
+     * @example
+     *
+     * var obj = {a: {b: {c: 1}}};
+     * a 가 존재하는지 확인한다(존재함, true반환)
+     * ne.util.isExisty(a);
+     * => true;
+     * a 에 속성 b 가 존재하는지 확인한다.(존재함, true반환)
+     * ne.util.isExisty(a, 'b');
+     * => true;
+     * a 의 속성 b에 c가 존재하는지 확인한다.(존재함, true반환)
+     * ne.util.isExisty(a, 'b.c');
+     * => true;
+     * a 의 속성 b에 d가 존재하는지 확인한다.(존재하지 않음, false반환)
+     * ne.util.isExisty(a, 'b.d');
+     * => false;
      */
-    function isDefined(obj) {
-        return obj !== null && obj !== undefined;
+    function isExisty(obj, key) {
+        if (arguments.length < 2) {
+            return !isNull(obj) && !isUndefined(obj);
+        }
+        if (!isObject(obj)) {
+            return false;
+        }
+
+        key = isString(key) ? key.split('.') : key;
+
+        if (!isArray(key)) {
+            return false;
+        }
+        key.unshift(obj);
+
+        var res = ne.util.reduce(key, function(acc, a) {
+            if (!acc) {
+                return;
+            }
+            return acc[a];
+        });
+        return !isNull(res) && !isUndefined(res);
+    }
+
+    /**
+     * 인자가 undefiend 인지 체크하는 메서드
+     * @param obj
+     * @returns {boolean}
+     */
+    function isUndefined(obj) {
+        return obj === undefined;
+    }
+
+    /**
+     * 인자가 null 인지 체크하는 메서드
+     * @param {*} obj
+     * @returns {boolean}
+     */
+    function isNull(obj) {
+        return obj === null;
     }
 
     /**
      * 인자가 null, undefined, false가 아닌지 확인하는 메서드
+     * (0도 true로 간주한다)
+     *
      * @param {*} obj
      * @return {boolean}
      */
     function isTruthy(obj) {
-        return isDefined(obj) && obj !== false;
+        return isExisty(obj) && obj !== false;
     }
 
     /**
      * 인자가 null, undefined, false인지 확인하는 메서드
+     * (truthy의 반대값)
      * @param {*} obj
      * @return {boolean}
      */
@@ -1835,7 +1943,7 @@
      * @return {boolean}
      */
     function isArguments(obj) {
-        var result = isDefined(obj) &&
+        var result = isExisty(obj) &&
             ((toString.call(obj) === '[object Arguments]') || 'callee' in obj);
 
         return result;
@@ -1926,7 +2034,7 @@
         var key,
             hasKey = false;
 
-        if (!isDefined(obj)) {
+        if (!isExisty(obj)) {
             return true;
         }
 
@@ -1957,7 +2065,9 @@
     }
 
 
-    ne.util.isDefined = isDefined;
+    ne.util.isExisty = isExisty;
+    ne.util.isUndefined = isUndefined;
+    ne.util.isNull = isNull;
     ne.util.isTruthy = isTruthy;
     ne.util.isFalsy = isFalsy;
     ne.util.isArguments = isArguments;
@@ -2001,7 +2111,7 @@
      * @param {string} path
      */
     function get(path) {
-        if (!ne.util.isDefined(path)) {
+        if (!ne.util.isExisty(path)) {
             return undefined;
         }
 
@@ -2074,7 +2184,7 @@
      * @param {object} obj
      */
     function reset(obj) {
-        if (ne.util.isDefined(obj)) {
+        if (ne.util.isExisty(obj)) {
 
             if (!ne.util.isObject(obj) || ne.util.isFunction(obj) || ne.util.isArray(obj)) {
                 throw new Error('variable: 전역변수 공간은 object 형태의 데이터로만 설정이 가능합니다.');

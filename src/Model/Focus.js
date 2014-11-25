@@ -164,7 +164,7 @@
          * @return {boolean}
          */
         has: function() {
-            return !!(ne.util.isDefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName');
+            return !!(!ne.util.isUndefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName');
         },
         /**
          * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.

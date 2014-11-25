@@ -243,7 +243,7 @@
                     }
                 }
             }
-            value = ne.util.isDefined(value) ? value.toString() : value;
+            value = !ne.util.isUndefined(value) ? value.toString() : value;
             return value;
         },
         /**

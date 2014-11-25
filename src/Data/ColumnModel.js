@@ -81,7 +81,7 @@
          */
         _extendColumn: function(columnObj, columnModelList) {
             var index;
-            if (ne.util.isDefined(columnObj) && ne.util.isDefined(columnObj['columnName'])) {
+            if (!ne.util.isUndefined(columnObj) && !ne.util.isUndefined(columnObj['columnName'])) {
                 index = this._indexOfColumnName(columnObj['columnName'], columnModelList);
                 if (index === -1) {
                     columnModelList = _.union([columnObj], columnModelList);

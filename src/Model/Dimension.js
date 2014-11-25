@@ -117,7 +117,7 @@
                 columnWidthList = this.getColumnWidthList(whichSide),
                 frameWidth = this._getFrameWidth(columnWidthList);
 
-            if (!ne.util.isDefined(whichSide) && columnFixIndex > 0) {
+            if (ne.util.isUndefined(whichSide) && columnFixIndex > 0) {
                 ++frameWidth;
             }
             return frameWidth;
@@ -303,7 +303,7 @@
             width = Math.max(width, this.get('minimumColumnWidth'));
             var curColumnWidthList = this.get('columnWidthList'),
                 calculatedColumnWidthList;
-            if (ne.util.isDefined(curColumnWidthList[index])) {
+            if (!ne.util.isUndefined(curColumnWidthList[index])) {
                 curColumnWidthList[index] = width;
                 calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
                 this._setColumnWidthVariables(calculatedColumnWidthList);

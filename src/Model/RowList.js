@@ -44,7 +44,7 @@
          * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
          */
         _setRowExtraData: function() {
-            if (ne.util.isDefined(this.collection)) {
+            if (!ne.util.isUndefined(this.collection)) {
                 var dataModel = this.dataModel,
                     columnModelList = this.columnModel.getVisibleColumnModelList(),
                     row = this.dataModel.get(this.get('rowKey')),
@@ -59,7 +59,7 @@
                         isDisabled;
 
 
-                    if (ne.util.isDefined(cellData)) {
+                    if (!ne.util.isUndefined(cellData)) {
                         isEditable = row.isEditable(columnName);
                         isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
                         if (dataModel.isRowSpanEnable()) {
