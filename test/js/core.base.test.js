@@ -156,7 +156,7 @@ describe('core.base', function() {
             expect(view.__viewList[1]).toEqual(childView2);
             expect(view.__viewList.length).toBe(2);
         });
-        it('destroyChild() 로 등록된 자식 view 들을 제거한다.', function() {
+        it('destroyChildren() 로 등록된 자식 view 들을 제거한다.', function() {
             view = new Class.View({
                 grid: 'grid'
             });
