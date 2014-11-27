@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Header 관련
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Header 레이아웃 View
-     * @type {*|void}
+     * @constructor View.Layout.Header
      */
-    View.Layout.Header = View.Base.extend({
+    View.Layout.Header = View.Base.extend(/**@lends View.Layout.Header.prototype */{
         tagName: 'div',
         className: 'header',
         viewList: [],
@@ -301,9 +305,9 @@
 
     /**
      * Reside Handler class
-     * @constructor
+     * @constructor View.Layout.Header.ResizeHandler
      */
-    View.Layout.Header.ResizeHandler = View.Base.extend({
+    View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header.ResizeHandler.prototype */{
         tagName: 'div',
         className: 'resize_handle_container',
         viewList: [],

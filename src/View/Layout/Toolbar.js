@@ -1,8 +1,12 @@
+/**
+ * @fileoverview 툴바영역 클래스
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      *  툴바 영역
-     *  @constructor
+     *  @constructor View.Layout.Toolbar
      */
-    View.Layout.Toolbar = View.Base.extend({
+    View.Layout.Toolbar = View.Base.extend(/**@lends View.Layout.Toolbar.prototype */{
         tagName: 'div',
         className: 'toolbar',
         /**
@@ -56,9 +60,9 @@
     });
     /**
      * control panel
-     * @constructor
+     * @constructor View.Layout.Toolbar.ControlPanel
      */
-    View.Layout.Toolbar.ControlPanel = View.Base.extend({
+    View.Layout.Toolbar.ControlPanel = View.Base.extend(/**@lends View.Layout.Toolbar.ControlPanel.prototype */{
         tagName: 'div',
         className: 'btn_setup',
         template: _.template(
@@ -89,9 +93,9 @@
     });
     /**
      * 툴바 영역 resize handler
-     * @constructor
+     * @constructor View.Layout.Toolbar.ResizeHandler
      */
-    View.Layout.Toolbar.ResizeHandler = View.Base.extend({
+    View.Layout.Toolbar.ResizeHandler = View.Base.extend(/**@lends View.Layout.Toolbar.ResizeHandler.prototype */{
         tagName: 'div',
         className: 'height_resize_bar',
         events: {
@@ -185,9 +189,9 @@
     });
     /**
      * Pagination 영역
-     * @constructor
+     * @constructor View.Layout.Toolbar.Pagination
      */
-    View.Layout.Toolbar.Pagination = View.Base.extend({
+    View.Layout.Toolbar.Pagination = View.Base.extend(/**@lends Base.prototype */{
         tagName: 'div',
         className: 'pagination',
         template: _.template('' +

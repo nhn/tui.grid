@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Grid Core 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Grid 코어
-     * @constructor
+     * @constructor Grid
      */
-    var Grid = View.Base.extend({
+    var Grid = View.Base.extend(/**@lends Grid.prototype */{
         scrollBarSize: 17,
         minimumHeight: 150, //그리드의 최소 높이값
         lside: null,

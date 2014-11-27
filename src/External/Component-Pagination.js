@@ -106,7 +106,7 @@ ne.Component.Pagination.prototype.reset = function(itemCount) {
  *
  * @param {String} optionKey 가져올 옵션 키 값
  * @private
- * @returns {*}
+ * @return {*}
  *
  */
 ne.Component.Pagination.prototype._getOption = function(optionKey) {
@@ -187,7 +187,7 @@ ne.Component.Pagination.prototype._setOption = function(optionKey, optionValue) 
 /**
  * 현재 페이지를 가져온다
  *
- * @returns {Number} 현재 페이지
+ * @return {Number} 현재 페이지
  */
 ne.Component.Pagination.prototype.getCurrentPage = function() {
 
@@ -199,7 +199,7 @@ ne.Component.Pagination.prototype.getCurrentPage = function() {
  * 해당 페이지의 첫번째 아이템이 전체중 몇번째 인지 구한다
  *
  * @param {Number} pageNumber 해당 페이지 번호
- * @returns {number}
+ * @return {number}
  */
 ne.Component.Pagination.prototype.getIndexOfFirstItem = function(pageNumber) {
 
@@ -210,7 +210,7 @@ ne.Component.Pagination.prototype.getIndexOfFirstItem = function(pageNumber) {
 /**
  * 마지막 페이지 숫자를 구함
  *
- * @returns {number} 마지막 페이지 숫자
+ * @return {number} 마지막 페이지 숫자
  * @private
  */
 ne.Component.Pagination.prototype._getLastPage = function() {
@@ -277,7 +277,7 @@ ne.Component.Pagination.prototype._getRelativePage = function(relativeName) {
  * 예를들어 총 페이지수가 23인데 30이라는 수를 넣으면 23을 반환받는다. 숫자가 1보다 작으면 1을 반환받는다.
  *
  * @param {Number} page
- * @returns {number} 페이지 범위내로 확인된 숫자
+ * @return {number} 페이지 범위내로 확인된 숫자
  * @private
  */
 ne.Component.Pagination.prototype._convertToAvailPage = function(page) {
@@ -364,7 +364,7 @@ ne.Component.Pagination.prototype._onClickPageList = function(event) {
  * 커스텀 이벤트를 등록시킨다
  * @param {String|Object} eventType
  * @param {Function} handlerToAttach
- * @returns {ne.Component.Pagination}
+ * @return {ne.Component.Pagination}
  */
 ne.Component.Pagination.prototype.attach = function(eventType, handlerToAttach) {
     if (arguments.length === 1) {
@@ -550,7 +550,7 @@ ne.Component.PaginationView.prototype.update = function(viewSet) {
  *
  * @param {JQueryObject} $find 포함되어있는 체크할 대상
  * @param {JQueryObject} $parent 포함하고 있는지 체크할 대상
- * @returns {boolean}
+ * @return {boolean}
  */
 ne.Component.PaginationView.prototype.isIn = function($find, $parent) {
     if (!$parent) {
@@ -562,7 +562,7 @@ ne.Component.PaginationView.prototype.isIn = function($find, $parent) {
 /**
  * 기준 엘리먼트를 구한다
  *
- * @returns {JQueryObject}
+ * @return {JQueryObject}
  */
 ne.Component.PaginationView.prototype.getBaseElement = function() {
     return this._element;
@@ -661,7 +661,7 @@ ne.Component.PaginationView.prototype.attachEvent = function(eventType, callback
 /**
  * 루트 엘리먼트객체를 돌려준다.
  *
- * @returns {jQueryObject}
+ * @return {jQueryObject}
  */
 ne.Component.PaginationView.prototype.getElement = function() {
 
@@ -674,7 +674,7 @@ ne.Component.PaginationView.prototype.getElement = function() {
  * Prefix는 options.classPrefix를 참조, 붙혀질 때 기존 클래스명의 언더바(_) 문자는 하이픈(-)으로 변환됨
  *
  * @param {String} className
- * @returns {*}
+ * @return {*}
  * @private
  */
 ne.Component.PaginationView.prototype._wrapPrefix = function(className) {
@@ -695,7 +695,7 @@ ne.Component.PaginationView.prototype._addTextNode = function() {
 
 /**
  * 엘리먼트 복제, html은 동일하나 jQuery객체상태를 초기화 하여 반환된다.
- * @returns {*}
+ * @return {*}
  * @private
  */
 ne.Component.PaginationView.prototype._clone = function($link) {
@@ -729,7 +729,7 @@ ne.Component.PaginationView.prototype._setPageResult = function(lastNum) {
  * 현재페이지의 양 끝페이지를 구한다
  *
  * @param viewSet
- * @returns {{left: *, right: *}}
+ * @return {{left: *, right: *}}
  * @private
  */
 

@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Left Side Frame
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * left side 프레임 클래스
-     * @constructor
+     * @constructor View.Layout.Frame.Lside
      */
-    View.Layout.Frame.Lside = View.Layout.Frame.extend({
+    View.Layout.Frame.Lside = View.Layout.Frame.extend(/**@lends View.Layout.Frame.Lside.prototype */{
         className: 'lside_area',
         /**
          * 초기화 메서드

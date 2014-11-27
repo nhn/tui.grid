@@ -1,9 +1,13 @@
+/**
+ * @fileoverview 리스트 형태의 Cell(select, radio, checkbox) Painter 가 정의된 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * editOption 에 list 를 가지고 있는 형태의 추상 클래스
      * @implements {View.Base.Painter.Cell.Interface}
-     * @class
+     * @constructor View.Painter.Cell.List
      */
-    View.Painter.Cell.List = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.List = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.List.prototype */{
         redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
         },
@@ -52,7 +56,7 @@
          * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
          * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
          * @param {Object} cellData
-         * @returns {optionList|*|expectResult.optionList|.select.optionList|.checkbox.optionList|.radio.optionList}
+         * @returns {cellData.optionList|*}
          */
         getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
@@ -82,9 +86,9 @@
      * select type 의 Cell renderer
      *
      * @extends {View.Painter.Cell.List}
-     * @class
+     * @constructor View.Painter.Cell.List.Select
      */
-    View.Painter.Cell.List.Select = View.Painter.Cell.List.extend({
+    View.Painter.Cell.List.Select = View.Painter.Cell.List.extend(/**@lends View.Painter.Cell.List.Select.prototype */{
         initialize: function(attributes) {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
 
@@ -194,9 +198,9 @@
      * checkbox, radio button type 의 Cell renderer
      *
      * @extends {View.Painter.Cell.List}
-     * @class
+     * @constructor View.Painter.Cell.List.Button
      */
-    View.Painter.Cell.List.Button = View.Painter.Cell.List.extend({
+    View.Painter.Cell.List.Button = View.Painter.Cell.List.extend(/**@lends View.Painter.Cell.List.Button.prototype */{
         initialize: function(attributes) {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
             this.setKeyDownSwitch({
@@ -319,7 +323,7 @@
         /**
          * 다음 input 에 focus 한다
          * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-         * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
+         * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
          * @private
          */
         _focusNextInput: function($currentInput) {
@@ -338,7 +342,7 @@
         /**
          * 이전 input 에 focus 한다.
          * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-         * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
+         * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
          * @private
          */
         _focusPrevInput: function($currentInput) {

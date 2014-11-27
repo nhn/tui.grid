@@ -1,8 +1,12 @@
+/**
+ * @fileoverview RowList 클래스파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * row model
-     * @type {*|void}
+     * Row Model
+     * @constructor Model.Row
      */
-    Model.Row = Model.Base.extend({
+    Model.Row = Model.Base.extend(/**@lends Model.Row.prototype */{
         idAttribute: 'rowKey',
         defaults: {
         },
@@ -175,10 +179,10 @@
     });
 
     /**
-     * view model rowList collection
-     * @type {*|void}
+     * View Model rowList collection
+     * @constructor Model.RowList
      */
-    Model.RowList = Collection.Base.extend({
+    Model.RowList = Collection.Base.extend(/**@lends Model.RowList.prototype */{
         model: Model.Row,
         initialize: function(models, options) {
             Collection.Base.prototype.initialize.apply(this, arguments);

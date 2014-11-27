@@ -1,8 +1,12 @@
+/**
+ * @fileoverview 크기에 관련된 데이터를 다루는 모델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * 크기 관련 데이터 저장
-     * @type {*|void}
+     * @constructor Model.Dimension
      */
-    Model.Dimension = Model.Base.extend({
+    Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         models: null,
         columnModel: null,
         defaults: {

@@ -1,8 +1,12 @@
+/**
+ * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * clipboard view class
-     * @constructor
+     * Clipboard view class
+     * @constructor View.Clipboard
      */
-    View.Clipboard = View.Base.extend({
+    View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         tagName: 'textarea',
         className: 'clipboard',
         events: {

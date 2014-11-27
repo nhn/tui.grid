@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Cell Painter Factory
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Cell Factory
-     * @constructor
+     * @constructor View.CellFactory
      */
-    View.CellFactory = View.Base.extend({
+    View.CellFactory = View.Base.extend(/**@lends View.CellFactory.prototype */{
         /**
          * 초기화 함수
          * @param {object} attributes

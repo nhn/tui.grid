@@ -1,8 +1,13 @@
-
+/**
+ * @fileoverview RowList View
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * Collection 의 변화를 감지하는 클래스
+     * RowList View.
+     * Collection 의 변화를 감지한다.
+     * @constructor View.RowList
      */
-    View.RowList = View.Base.extend({
+    View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
@@ -27,7 +32,7 @@
         },
         /**
          * 랜더링한다.
-         * @returns {View.RowList}
+         * @return {View.RowList}
          */
         render: function() {
             var html = '',

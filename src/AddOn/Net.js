@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Network 모듈 addon
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Network 모듈 addon
-     * @constructor
+     * @constructor AddOn.Net
      */
-    AddOn.Net = View.Base.extend({
+    AddOn.Net = View.Base.extend(/**@lends AddOn.Net.prototype */{
         events: {
             'submit': '_onSubmit'
         },

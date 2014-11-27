@@ -1,9 +1,13 @@
+/**
+ * @fileoverview CellPainter 의 기초 클래스
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Cell Painter Base
      * @extends {View.Base.Painter}
-     * @constructor
+     * @constructor View.Base.Painter.Cell
      */
-    View.Base.Painter.Cell = View.Base.Painter.extend({
+    View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Cell.prototype*/{
         /**
          * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
          */
@@ -236,7 +240,7 @@
         /**
          * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
          * @param {jQuery} $target
-         * @returns {{rowKey: String, columnName: String}}
+         * @return {{rowKey: String, columnName: String}}
          * @private
          */
         _getCellAddress: function($target) {

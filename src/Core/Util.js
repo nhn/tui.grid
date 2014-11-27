@@ -1,3 +1,11 @@
+/**
+ * @fileoverview 유틸리티 메서드 모음
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+/**
+ * Util 모듈
+ * @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}
+ */
     var Util = {
         /**
          * HTML Attribute 설정 시 필요한 문자열을 가공한다.

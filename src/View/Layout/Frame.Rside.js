@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Left Side Frame, Virtual Scrollbar 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * right side 프레임 클래스
-     * @constructor
+     * @constructor View.Layout.Frame.Rside
      */
-    View.Layout.Frame.Rside = View.Layout.Frame.extend({
+    View.Layout.Frame.Rside = View.Layout.Frame.extend(/**@lends View.Layout.Frame.Rside.prototype */{
         className: 'rside_area',
         /**
          * 초기화 함수
@@ -68,10 +72,9 @@
 
     /**
      * virtual scrollbar
-     *
-     * @constructor
+     * @constructor View.Layout.Frame.Rside.VirtualScrollBar
      */
-    View.Layout.Frame.Rside.VirtualScrollBar = View.Base.extend({
+    View.Layout.Frame.Rside.VirtualScrollBar = View.Base.extend(/**@lends View.Layout.Frame.Rside.VirtualScrollBar.prototype */{
         tagName: 'div',
         className: 'virtual_scrollbar',
 

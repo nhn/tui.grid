@@ -4,9 +4,9 @@
      */
     /**
      * Data 중 각 행의 데이터 모델 (DataSource)
-     * @constructor
+     * @constructor Data.Row
      */
-    Data.Row = Model.Base.extend({
+    Data.Row = Model.Base.extend(/**@lends Data.Row.prototype */{
         idAttribute: 'rowKey',
         defaults: {
             _extraData: {
@@ -311,9 +311,9 @@
      * Raw 데이터 RowList 콜렉션. (DataSource)
      * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
      *
-     * @constructor
+     * @constructor Data.RowList
      */
-    Data.RowList = Collection.Base.extend({
+    Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         model: Data.Row,
         initialize: function(models, options) {
             Collection.Base.prototype.initialize.apply(this, arguments);

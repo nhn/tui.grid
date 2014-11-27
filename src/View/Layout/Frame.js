@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Frame Base
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * frame Base 클래스
-     * @constructor
+     * @constructor View.Layout.Frame
      */
-    View.Layout.Frame = View.Base.extend({
+    View.Layout.Frame = View.Base.extend(/**@lends View.Layout.Frame.prototype */{
         tagName: 'div',
         className: 'lside_area',
         /**

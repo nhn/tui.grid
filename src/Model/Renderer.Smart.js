@@ -1,9 +1,13 @@
+/**
+ * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      *  View 에서 Rendering 시 사용할 객체
      *  Smart Rendering 을 지원한다.
-     *  @constructor
+     *  @constructor Model.Renderer.Smart
      */
-    Model.Renderer.Smart = Model.Renderer.extend({
+    Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
         initialize: function() {
             Model.Renderer.prototype.initialize.apply(this, arguments);
             this.on('change:scrollTop', this._onChange, this);
@@ -78,7 +82,7 @@
         /**
          * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
          * @param {Number} scrollTop
-         * @returns {boolean}
+         * @return {boolean}
          * @private
          */
         _isRenderable: function(scrollTop) {

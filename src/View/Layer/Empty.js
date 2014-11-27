@@ -1,9 +1,12 @@
 /**
- * body layout 뷰
- *
- * @type {*|void}
+ * @fileoverview Layer Empty
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
-View.Layer.Empty = View.Layer.Base.extend({
+/**
+ * 데이터 없음 레이어
+ * @constructor View.Layer.Base
+ */
+View.Layer.Empty = View.Layer.Base.extend(/**@lends View.Layer.Empty.prototype */{
     className: 'no_row_layer',
     initialize: function(attributes) {
         View.Layer.Base.prototype.initialize.apply(this, arguments);

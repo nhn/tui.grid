@@ -22,6 +22,7 @@
         Data = {},
         Collection = {},
         AddOn = {};
+
     var setOwnProperties = function(properties) {
         _.each(properties, function(value, key) {
             this[key] = value;
@@ -29,9 +30,9 @@
     };
     /**
      * Model Base Class
-     * @constructor
+     * @constructor Model.Base
      */
-    Model.Base = Backbone.Model.extend({
+    Model.Base = Backbone.Model.extend(/**@lends Model.Base.prototype */{
         initialize: function(attributes, options) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
@@ -47,9 +48,9 @@
     });
     /**
      * Collection Base Class
-     * @constructor
+     * @constructor Collection.Base
      */
-    Collection.Base = Backbone.Collection.extend({
+    Collection.Base = Backbone.Collection.extend(/**@lends Collection.Base.prototype */{
         initialize: function(models, options) {
             var grid = options && options.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
@@ -77,9 +78,9 @@
 
     /**
      * View base class
-     * @constructor
+     * @constructor View.Base
      */
-    View.Base = Backbone.View.extend({
+    View.Base = Backbone.View.extend(/**@lends View.Base.prototype */{
         initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
@@ -143,7 +144,7 @@
         /**
          * customEvent 에서 사용할 event 객체를 생성하여 반환한다..
          * @param {Object} data
-         * @return {{_isStopped: boolean, stop: function ...}}
+         * @return {{_isStopped: boolean, stop: function, param1: param1, param2: param2}}
          */
         createEventData: function(data) {
             var eventData = $.extend({}, data);
@@ -173,9 +174,9 @@
      * - 마크업 문자열을 생성하고 이벤트 핸들러를 attach, detach 하는 역할.
      * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
      * @extends {View.Base}
-     * @constructor
+     * @constructor View.Base.Painter
      */
-    View.Base.Painter = View.Base.extend({
+    View.Base.Painter = View.Base.extend(/**@lends View.Base.Painter.prototype */{
         eventHandler: {},
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);

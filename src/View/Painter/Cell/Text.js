@@ -1,10 +1,14 @@
+/**
+ * @fileoverview Text 편집 가능한 Cell Painter
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * text-textbox 변환 가능한 cell renderer
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
-     * @class
+     * @constructor View.Painter.Cell.Text
      */
-    View.Painter.Cell.Text = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.Text.prototype */{
         redrawAttributes: ['isEditable'],
         eventHandler: {
             'blur input' : '_onBlur',
@@ -141,9 +145,9 @@
      * text-textbox 변환 가능한 cell renderer
      * @extends {View.Base.Painter.Cell.Text}
      * @implements {View.Base.Painter.Cell.Interface}
-     * @class
+     * @constructor View.Painter.Cell.Text.Convertible
      */
-    View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend({
+    View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends View.Painter.Cell.Text.Convertible.prototype */{
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',

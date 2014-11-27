@@ -1,17 +1,72 @@
 {
     "source": {
-        "include": ["src/"],
+        "include": [
+            "src/Core/Base.js",
+            "src/Core/Util.js",
+            "src/Data/ColumnModel.js",
+            "src/Data/RowList.js",
+            "src/Model/Dimension.js",
+            "src/Model/Focus.js",
+            "src/Model/Renderer.js",
+            "src/Model/Renderer.Smart.js",
+            "src/Model/RowList.js",
+            "src/View/Layer/Base.js",
+            "src/View/Layer/Empty.js",
+            "src/View/Layer/Loading.js",
+            "src/View/Layer/Ready.js",
+            "src/View/Layout/Body.js",
+            "src/View/Layout/Frame.js",
+            "src/View/Layout/Frame.Lside.js",
+            "src/View/Layout/Frame.Rside.js",
+            "src/View/Layout/Header.js",
+            "src/View/Layout/Toolbar.js",
+            "src/View/Painter/Cell/Base.js",
+            "src/View/Painter/Cell/List.js",
+            "src/View/Painter/Cell/Normal.js",
+            "src/View/Painter/Cell/Text.js",
+            "src/View/CellFactory.js",
+            "src/View/Clipboard.js",
+            "src/View/RowList.js",
+            "src/View/Selection.js",
+            "src/Grid.js",
+            "src/Grid.Public.js",
+            "README.md"
+        ],
         "exclude": [],
         "includePattern": ".+\\.js(doc)?$",
         "excludePattern": "(^|\\/|\\\\)_"
     },
     "plugins": ["plugins/markdown"],
+    "templates": {
+        "cleverLinks": true,
+        "monospaceLinks": true,
+        "default": {
+            "outputSourceFiles" : true
+        },
+        "applicationName": "Application-Grid",
+        "disqus": "",
+        "googleAnalytics": "",
+        "openGraph": {
+            "title": "",
+            "type": "website",
+            "image": "",
+            "site_name": "",
+            "url": ""
+        },
+        "meta": {
+            "title": "",
+            "description": "",
+            "keyword": ""
+        },
+        "linenums": false
+    },
     "markdown": {
         "parser": "gfm",
         "hardwrap": true
     },
     "opts": {
         "recurse": true,
-        "private": true
+        "private": true,
+        "destination": "doc"
     }
 }

@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Selection 클래스 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      *  selection layer 의 컨트롤을 담당하는 틀래스
-     *  @class
+     *  @constructor View.Selection
      */
-    View.Selection = View.Base.extend({
+    View.Selection = View.Base.extend(/**@lends View.Selection.prototype */{
         events: {},
         initialize: function(attributes, option) {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -212,7 +216,7 @@
         },
         /**
          * 범위를 반환한다.
-         * @returns {*}
+         * @return {*}
          */
         getRange: function() {
             return $.extend(true, {}, this.spannedRange);
@@ -418,7 +422,7 @@
 
         /**
          * rowSpan 된 Index range 를 반환한다.
-         * @param {{row: [startIndex, endIndex], column: [startIndex, endIndex]}} spannedRange 인덱스 정보
+         * @param {{row: range, column: range}} spannedRange 인덱스 정보
          * @private
          */
         _getRowSpannedIndex: function(spannedRange) {
@@ -516,9 +520,9 @@
 
     /**
      * 실제 selection layer view
-     * @class
+     * @constructor View.Selection.Layer
      */
-    View.Selection.Layer = View.Base.extend({
+    View.Selection.Layer = View.Base.extend(/**@lends View.Selection.Layer.prototype */{
         tagName: 'div',
         className: 'selection_layer',
         initialize: function(attributes, option) {
@@ -538,7 +542,7 @@
         },
         /**
          * top 값과 height 값을 반환한다.
-         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         * @param {{row: range, column: range}} spannedRange 인덱스 정보
          * @return {{display: string, width: string, height: string, top: string, left: string}}
          * @private
          */
@@ -581,7 +585,7 @@
         },
         /**
          *
-         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         * @param {{row: range, column: range}} spannedRange 인덱스 정보
          */
         show: function(spannedRange) {
             this.indexObj = spannedRange;
@@ -605,9 +609,9 @@
     });
     /**
      * 왼쪽 selection layer
-     * @class
+     * @constructor View.Selection.Layer.Lside
      */
-    View.Selection.Layer.Lside = View.Selection.Layer.extend({
+    View.Selection.Layer.Lside = View.Selection.Layer.extend(/**@lends View.Selection.Layer.Lside.prototype */{
         initialize: function(attributes, option) {
             View.Selection.Layer.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
@@ -617,9 +621,9 @@
     });
     /**
      * 오른쪽 selection layer
-     * @class
+     * @constructor View.Selection.Layer.Rside
      */
-    View.Selection.Layer.Rside = View.Selection.Layer.extend({
+    View.Selection.Layer.Rside = View.Selection.Layer.extend(/**@lends View.Selection.Layer.Rside.prototype */{
         initialize: function(attributes, option) {
             View.Selection.Layer.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({

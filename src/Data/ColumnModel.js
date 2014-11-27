@@ -1,8 +1,12 @@
+/**
+ * @fileoverview 컬럼 모델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * ColumnModel
-     * @type {*|void}
+     * 컬럼 모델 데이터를 다루는 객체
+     * @constructor Data.ColumnModel
      */
-    Data.ColumnModel = Model.Base.extend({
+    Data.ColumnModel = Model.Base.extend(/**@lends Data.prototype */{
         defaults: {
             keyColumnName: null,
             columnFixIndex: 0,  //columnFixIndex
@@ -22,7 +26,7 @@
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 number column 을 추가한다.
          * @param {Array} columnModelList
-         * @returns {Array}
+         * @return {Array}
          * @private
          */
         _initializeNumberColumn: function(columnModelList) {
@@ -42,7 +46,7 @@
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 button column 을 추가한다.
          * @param {Array} columnModelList
-         * @returns {Array}
+         * @return {Array}
          * @private
          */
         _initializeButtonColumn: function(columnModelList) {
@@ -76,7 +80,7 @@
          * - _number, _button 컬럼 초기화시 사용함.
          * @param {object} columnObj
          * @param {Array} columnModelList
-         * @returns {Array}
+         * @return {Array}
          * @private
          */
         _extendColumn: function(columnObj, columnModelList) {
@@ -205,11 +209,11 @@
         },
         /**
          * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
-         * @return {{columnName1: [Array], columnName1: [Array]}}
+         * @return {{columnName1: Array, columnName1: Array}}
          * @private
          */
         _getRelationListMap: function(columnModelList) {
-            var columnName, relationList,
+            var columnName,
                 relationListMap = {};
 
             ne.util.forEachArray(columnModelList, function(columnModel) {

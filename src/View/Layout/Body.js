@@ -1,9 +1,13 @@
+/**
+ * @fileoverview Body View
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * body layout 뷰
      *
-     * @constructor
+     * @constructor View.Layout.Body
      */
-    View.Layout.Body = View.Base.extend({
+    View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
         tagName: 'div',
         className: 'data',
         template: _.template('' +
@@ -173,7 +177,7 @@
                 html = '';
 
             _.each(columnModelList, function(columnModel, index) {
-                html += '<col columnname="' + columnModel['columnName'] + '" style="width:' + columnWidthList[index]+ 'px">';
+                html += '<col columnname="' + columnModel['columnName'] + '" style="width:' + columnWidthList[index] + 'px">';
             });
             return html;
         }

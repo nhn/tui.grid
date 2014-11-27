@@ -1,8 +1,12 @@
+/**
+ * @fileoverview Rendering 모델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * View 에서 Rendering 시 사용할 객체
-     * @constructor
+     * @constructor Model.Renderer
      */
-    Model.Renderer = Model.Base.extend({
+    Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
         defaults: {
             top: 0,
             scrollTop: 0,

@@ -1,10 +1,13 @@
-
-    var ne = window.ne = ne || {};
+/**
+ * @fileoverview 기본 클래스 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+    ne = window.ne = ne || {};
     /**
      * Grid public API
-     * @constructor
+     * @constructor ne.Grid
      */
-    ne.Grid = View.Base.extend({
+    ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         /**
          * 초기화 함수
          * @param {Object} options

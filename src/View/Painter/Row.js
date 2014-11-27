@@ -1,9 +1,13 @@
+/**
+ * @fileoverview Row Painter 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Row Painter
      * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
-     * @constructor
+     * @constructor View.Painter.Row
      */
-    View.Painter.Row = View.Base.Painter.extend({
+    View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype */{
         eventHandler: {
             'mousedown' : '_onMouseDown'
         },

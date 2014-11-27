@@ -189,7 +189,7 @@
      * 객체를 복제하여 돌려준다.
      *
      * @param {*} sourceTarget 복제할 대상
-     * @returns {*}
+     * @return {*}
      */
     ajax.util.cloningObject = function(sourceTarget) {
         var constructor,
@@ -223,7 +223,7 @@
      * 클래스의 이름을 문자열로 가져온다.
      *
      * @param {*} target constructor를 체크 할 오브젝트
-     * @returns {String|null}
+     * @return {String|null}
      */
     ajax.util.getConstructorName = function(target) {
         if (target && target.constructor) {
@@ -480,7 +480,7 @@
      * @param {*} obj 순회할 객체
      * @param {Function} iteratee 데이터가 전달될 콜백함수
      * @param {*} [context] 콜백함수의 컨텍스트
-     * @returns {Array}
+     * @return {Array}
      * @example
      * map([0,1,2,3], function(value) {
      *     return value + 1;
@@ -504,7 +504,7 @@
      * @param {*} obj 순회할 객체
      * @param {Function} iteratee 데이터가 전달될 콜백함수
      * @param {*} [context] 콜백함수의 컨텍스트
-     * @returns {*}
+     * @return {*}
      * @example
      * reduce([0,1,2,3], function(stored, value) {
      *     return stored + value;
@@ -788,7 +788,7 @@
          * 이벤트를 취소할 수 있게 해 주는 기능에서 사용한다.
          * @param {string} type
          * @param {object} data
-         * @returns {*}
+         * @return {*}
          * @example
          * // 확대 기능을 지원하는 컴포넌트 내부 코드라 가정
          * if (this.invoke('beforeZoom')) {    // 사용자가 등록한 리스너 결과 체크
@@ -871,7 +871,7 @@
         /**
          * 등록된 이벤트 핸들러의 갯수 반환
          * @param {string} type
-         * @returns {number}
+         * @return {number}
          */
         getListenerLength: function(type) {
             var events = this._events,
@@ -967,7 +967,7 @@
      * @param {Object} props 생성할 생성자의프로토타입에 들어갈 멤버들
      * @param {Function} props.init 인스턴스가 생성될때 실행됨
      * @param {Object} props.static 생성자의 클래스 맴버형태로 들어갈 멤버들
-     * @returns {*}
+     * @return {*}
      * @example
      *
      * var Parent = defineClasss({
@@ -1375,7 +1375,7 @@
     /**
      * 해쉬맵에서 사용할 키를 생성한다.
      * @param {String} key
-     * @returns {string}
+     * @return {string}
      * @private
      */
     HashMap.prototype.encodeKey = function(key) {
@@ -1385,7 +1385,7 @@
     /**
      * 해쉬맵키에서 실제 키를 가져온다.
      * @param {String} key
-     * @returns {String}
+     * @return {String}
      * @private
      */
     HashMap.prototype.decodeKey = function(key) {
@@ -1396,7 +1396,7 @@
     /**
      * 키값을 전달하여 데이터를 반환한다.
      * @param {String} key
-     * @returns {*}
+     * @return {*}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1410,7 +1410,7 @@
     /**
      * 키를 전달하여 데이터가 존재하는지 체크한다.
      * @param {String} key
-     * @returns {boolean}
+     * @return {boolean}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1424,7 +1424,7 @@
     /**
      * 키나 키의 목록을 전달하여 데이터를 삭제한다.
      * @param {String...|String[]} key
-     * @returns {String|String[]}
+     * @return {String|String[]}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1450,7 +1450,7 @@
     /**
      * 키를 전달하여 데이터를 삭제한다.
      * @param {String} key
-     * @returns {*|null} 삭제된 데이터
+     * @return {*|null} 삭제된 데이터
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1471,7 +1471,7 @@
     /**
      * 키의 목록을 전달하여 데이터를 삭제한다.
      * @param {String[]} keyArray
-     * @returns {String[]} 삭제된 데이터
+     * @return {String[]} 삭제된 데이터
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1530,7 +1530,7 @@
 
     /**
      * 저장된 키의 목록을 배열로 리턴해준다.
-     * @returns {Array}
+     * @return {Array}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1552,7 +1552,7 @@
     /**
      * 조건을 체크하는 콜백을 전달받아 데이터를 전달해주고 콜백의 결과가 true인경우의 데이터를 모와 배열로 만들어 리턴해준다.
      * @param {Function} condition
-     * @returns {Array}
+     * @return {Array}
      * @example
      *
      * //ex1
@@ -1739,7 +1739,7 @@
     /**
      * 객체를 전달받아 객체의 키목록을 배열로만들어 리턴해준다.
      * @param obj
-     * @returns {Array}
+     * @return {Array}
      */
     var keys = function(obj) {
         var keys = [],
@@ -1854,7 +1854,7 @@
      * 값이 정의되어 있는지 확인(null과 undefined가 아니면 true를 반환한다)
      * @param {*} obj
      * @param {(String|Array)} [key]
-     * @returns {boolean}
+     * @return {boolean}
      * @example
      *
      * var obj = {a: {b: {c: 1}}};
@@ -1898,7 +1898,7 @@
     /**
      * 인자가 undefiend 인지 체크하는 메서드
      * @param obj
-     * @returns {boolean}
+     * @return {boolean}
      */
     function isUndefined(obj) {
         return obj === undefined;
@@ -1907,7 +1907,7 @@
     /**
      * 인자가 null 인지 체크하는 메서드
      * @param {*} obj
-     * @returns {boolean}
+     * @return {boolean}
      */
     function isNull(obj) {
         return obj === null;

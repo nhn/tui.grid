@@ -1,9 +1,13 @@
+/**
+ * @fileoverview Focus 관련 데이터 처리름 담당한다.
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Focus model
      * RowList collection 이 focus class 를 listen 한다.
-     * @constructor
+     * @constructor Model.Focus
      */
-    Model.Focus = Model.Base.extend({
+    Model.Focus = Model.Base.extend(/**@lends Model.Focus.prototype */{
         defaults: {
             rowKey: null,
             columnName: '',
@@ -210,7 +214,7 @@
         /**
          * offset 만큼 뒤로 이동한 row의 index를 반환한다.
          * @param {number} offset
-         * @returns {Number}
+         * @return {Number}
          */
         nextRowIndex: function(offset) {
             var rowKey = this.nextRowKey(offset);
@@ -219,7 +223,7 @@
         /**
          * offset 만큼 앞으로 이동한 row의 index를 반환한다.
          * @param {number} offset
-         * @returns {Number}
+         * @return {Number}
          */
         prevRowIndex: function(offset) {
             var rowKey = this.prevRowKey(offset);
@@ -227,7 +231,7 @@
         },
         /**
          * 다음 column의 index를 반환한다.
-         * @returns {Number}
+         * @return {Number}
          */
         nextColumnIndex: function() {
             var columnName = this.nextColumnName();
@@ -235,7 +239,7 @@
         },
         /**
          * 이전 column의 index를 반환한다.
-         * @returns {Number}
+         * @return {Number}
          */
         prevColumnIndex: function() {
             var columnName = this.prevColumnName();

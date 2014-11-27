@@ -1,10 +1,14 @@
+/**
+ * @fileoverview 기본 Cell (일반, 숫자, 메인 Checkbox) 관련 Painter 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * editOption 이 적용되지 않은 cell 의 Painter
-     * @class
+     * @constructor View.Painter.Cell.Normal
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Painter.Cell.Normal = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.Normal = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.Normal.prototype */{
         initialize: function(attributes, options) {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
@@ -57,11 +61,11 @@
     });
     /**
      * Number Cell 의 Painter
-     * @class
+     * @constructor View.Painter.Cell.Normal.Number
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend({
+    View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend(/**@lends View.Painter.Cell.Normal.Number.prototype */{
         redrawAttributes: [],
         initialize: function(attributes, options) {
             View.Painter.Cell.Normal.prototype.initialize.apply(this, arguments);
@@ -92,11 +96,11 @@
     });
     /**
      * checkbox 혹은 radiobox 형태의 Main Button Painter
-     * @class
+     * @constructor View.Painter.Cell.MainButton
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Painter.Cell.MainButton = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.MainButton = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.MainButton.prototype */{
         /**
          * rendering 해야하는 cellData 의 변경 목록
          */

@@ -1,9 +1,12 @@
 /**
- * body layout 뷰
- *
- * @type {*|void}
+ * @fileoverview Layer Loading
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
-View.Layer.Loading = View.Layer.Base.extend({
+/**
+ * 로딩 레이어
+ * @constructor View.Layer.Base
+ */
+View.Layer.Loading = View.Layer.Base.extend(/**@lends View.Layer.Loading.prototype */{
     className: 'loading_layer',
     initialize: function(attributes) {
         View.Layer.Base.prototype.initialize.apply(this, arguments);
