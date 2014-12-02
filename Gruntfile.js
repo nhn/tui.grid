@@ -46,8 +46,8 @@ module.exports = function(grunt) {
 
                     'src/AddOn/*.js',
 
-                    'src/Grid.js',
-                    'src/Grid.Public.js'
+                    'src/GridCore.js',
+                    'src/Grid.js'
                 ],
                 // The destination file:
                 // Notice the angle-bracketed ERB-like templating,

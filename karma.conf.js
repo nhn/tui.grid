@@ -108,8 +108,8 @@ module.exports = function(config) {
 
             'src/AddOn/*.js',
 
+            'src/GridCore.js',
             'src/Grid.js',
-            'src/Grid.Public.js',
 
             // fixtures
             {pattern: 'test/fixtures/*.html', watched: true, served: true, included: false},
