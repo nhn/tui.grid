@@ -226,6 +226,21 @@
 
         },
         /**
+         * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
+         * @return {Array}
+         * @private
+         */
+        getIngoredColumnNameList: function() {
+            var columnModelLsit = this.get('columnModelList'),
+                ignoreColumnNameList = [];
+            _.each(columnModelLsit, function(columnModel) {
+                if (columnModel.isIgnore) {
+                    ignoreColumnNameList.push(columnModel['columnName']);
+                }
+            });
+            return ignoreColumnNameList;
+        },
+        /**
          * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
          * partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
          * @param {Array} columnModelList

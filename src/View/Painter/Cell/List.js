@@ -16,7 +16,7 @@
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {},
         /**
@@ -109,7 +109,7 @@
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'select';
@@ -245,7 +245,7 @@
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'button';

@@ -218,14 +218,31 @@
          * @return {string}
          */
         getHtml: function(cellData) {
-            var attributeString = Util.getAttributesString(this.getAttributes(cellData));
+            var columnName = cellData.columnName,
+                columnModel = this.grid.columnModel.getColumnModel(columnName),
+                attributeString = Util.getAttributesString(this.getAttributes(cellData)),
+                content;
+
+            if (!ne.util.isNumber(cellData.value) && !cellData.value) {
+                cellData.value = columnModel.defaultValue;
+            }
+
+            content = this.getContentHtml(cellData);
+
+            if (ne.util.isExisty(columnModel, 'editOption.beforeText')) {
+                content = columnModel.editOption.beforeText + content;
+            }
+            if (ne.util.isExisty(columnModel, 'editOption.afterText')) {
+                content = content + columnModel.editOption.afterText;
+            }
+
             return this.baseTemplate({
                 columnName: cellData.columnName,
                 rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
                 className: this._getClassNameList(cellData).join(' '),
                 attributes: attributeString,
                 editType: this.getEditType(),
-                content: this.getContentHtml(cellData)
+                content: content
             });
         },
         /**
@@ -286,7 +303,7 @@
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * - 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'normal';
@@ -334,7 +351,7 @@
     View.Base.Painter.Cell.Interface = function() {};
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-convertible'
+     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     View.Base.Painter.Cell.Interface.prototype.getEditType = function() {};
     /**

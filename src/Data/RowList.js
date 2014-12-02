@@ -57,12 +57,20 @@
          */
         getClassNameList: function(columnName) {
             var classNameList = [],
+                columnModel = this.grid.columnModel.getColumnModel(columnName),
                 extraData = this.get('_extraData'),
                 classNameObj = extraData.className,
-                rowClassNameList = classNameObj && classNameObj['row'] || [],
-                columnClassNameList = classNameObj && columnName && classNameObj['column'] && classNameObj['column'][columnName] || [];
+                rowClassNameList = ne.util.isExisty(classNameObj, 'row') ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
+                columnClassNameList = ne.util.isExisty(classNameObj, 'column.' + columnName) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
+                columnModelClassNameList = []; //columnModel 에 할당된 className 리스트
 
-            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList);
+            if (columnModel.className) {
+                columnModelClassNameList.push(columnModel.className);
+            }
+            if (columnModel.isEllipsis) {
+                columnModelClassNameList.push('ellipsis');
+            }
+            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
             return classNameList;
         },
         /**
@@ -567,8 +575,8 @@
                     //afterChangeCallback 수행
                     this._executeChangeAfterCallback(row, columnName);
 
-                    //check가 disable 이 아닐 경우에만 _button 필드 변경에 따라 check
-                    if (!row.getRowState().isDisabledCheck) {
+                    //check가 disable 이 아니고, columnModel 에 isIgnore 가 설정되지 않았을 경우, _button 필드 변경에 따라 check
+                    if (!row.getRowState().isDisabledCheck && !columnModel.isIgnore) {
                         row.set('_button', true);
                     }
                 }
@@ -605,14 +613,15 @@
          * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
          * @param {object} row row 모델
          * @param {String} columnName
-         * @return {{rowKey: *, columnName: *, columnData: *}}
+         * @return {{rowKey: *, columnName: *, columnData: *, gridInstance}}
          * @private
          */
         _createChangeCallbackEvent: function(row, columnName) {
             return {
                 'rowKey' : row.get('rowKey'),
                 'columnName' : columnName,
-                'value' : row.get(columnName)
+                'value' : row.get(columnName),
+                'instance': this.grid.public
             };
         },
         /**
@@ -797,6 +806,7 @@
         prepend: function(rowData) {
             this.append(rowData, 0);
         },
+
         /**
          * 수정된 rowList 를 반환한다.
          * @param {Object} options
@@ -811,16 +821,17 @@
             var isRaw = options && options.isRaw,
                 isOnlyChecked = options && options.isOnlyChecked,
                 isOnlyRowKeyList = options && options.isOnlyRowKeyList,
-                filteringColumnList = options && options.filteringColumnList || [],
-                filteringColumnMap = {},
-
                 original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
                 current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
                 result = {
                     'createList' : [],
                     'updateList' : [],
                     'deleteList' : []
-                }, item;
+                },
+                filteringColumnMap = {},
+                filteringColumnList = _.union(options && options.filteringColumnList || [],
+                    this.grid.columnModel.getIngoredColumnNameList()),
+                item;
 
             _.each(filteringColumnList, function(columnName) {
                 filteringColumnMap[columnName] = true;

@@ -3,7 +3,7 @@
  * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
     /**
-     * text-textbox 변환 가능한 cell renderer
+     * text 타입의 cell renderer
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      * @constructor View.Painter.Cell.Text
@@ -35,10 +35,18 @@
                 }
             });
         },
-        template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        /**
+         * input type 을 반환한다.
+         * @returns {string}
+         * @private
+         */
+        _getInputType: function() {
+            return 'text';
+        },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'text';
@@ -57,9 +65,9 @@
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} [$td]
          */
-        focusOut: function() {
+        focusOut: function($td) {
             this.grid.focusClipboard();
         },
         /**
@@ -78,6 +86,7 @@
         getContentHtml: function(cellData) {
             var value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
             return this.template({
+                type: this._getInputType(),
                 value: value,
                 disabled: cellData.isDisabled ? 'disabled' : '',
                 name: Util.getUniqueKey()
@@ -139,7 +148,31 @@
             this.grid.selection.disable();
         }
     });
-
+    /**
+     * Password 타입의 cell renderer
+     * @extends {View.Base.Painter.Cell.Text}
+     * @constructor View.Painter.Cell.Text.Password
+     */
+    View.Painter.Cell.Text.Password = View.Painter.Cell.Text.extend(/**@lends View.Painter.Cell.Text.Password.prototype */{
+        initialize: function(attributes, options) {
+            View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
+        },
+        /**
+         * input type 을 반환한다.
+         * @returns {string}
+         * @private
+         */
+        _getInputType: function() {
+            return 'password';
+        },
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+         */
+        getEditType: function() {
+            return 'text-password';
+        }
+    });
 
     /**
      * text-textbox 변환 가능한 cell renderer
@@ -163,7 +196,7 @@
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'text-convertible';

@@ -38,7 +38,9 @@
          * selection 을 disable 한다.
          */
         enable: function() {
-            this.isEnable = true;
+            if (this.grid.option('useDataCopy')) {
+                this.isEnable = true;
+            }
         },
         /**
          * selection 을 disable 한다.

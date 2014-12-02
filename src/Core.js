@@ -69,10 +69,10 @@
         },
         /**
          * 생성자 함수
-         * @param {Object} options
          */
         initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.public = options.public;
             var id = Util.getUniqueKey();
             this.__instance[id] = this;
             this.id = id;
@@ -112,8 +112,6 @@
                 minimumColumnWidth: 50,
                 notUseSmartRendering: false,
                 columnMerge: [],
-                minimumWidth: 300,      //grid의 최소 너비
-
                 scrollX: true,
                 scrollY: true,
                 useDataCopy: true,
@@ -260,6 +258,10 @@
             this.view.clipboard = this.createView(View.Clipboard, {
                 grid: this
             });
+
+            if (!this.options.useDataCopy) {
+                this.selection.disable();
+            }
         },
         /**
          * listener 를 초기화한다.

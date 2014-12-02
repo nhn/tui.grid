@@ -14,7 +14,7 @@
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|select|button|text|text-convertible'
          */
         getEditType: function() {
             return 'normal';
@@ -72,7 +72,7 @@
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return '_number';
@@ -129,7 +129,7 @@
         template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return '_button';
