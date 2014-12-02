@@ -4,9 +4,9 @@
  */
     /**
      * Grid 코어
-     * @constructor GridCore
+     * @constructor Core
      */
-    var GridCore = View.Base.extend(/**@lends GridCore.prototype */{
+    var Core = View.Base.extend(/**@lends Core.prototype */{
         scrollBarSize: 17,
         minimumHeight: 150, //그리드의 최소 높이값
         lside: null,
@@ -848,7 +848,7 @@
          * addon 을 활성화한다.
          * @param {string} name addon 이름
          * @param {object} options addon 에 넘길 파라미터
-         * @return {Grid}
+         * @return {Core}
          */
         use: function(name, options) {
             options = $.extend({grid: this}, options);
@@ -1058,4 +1058,4 @@
         }
     });
 
-    GridCore.prototype.__instance = GridCore.prototype.__instance || {};
+    Core.prototype.__instance = Core.prototype.__instance || {};

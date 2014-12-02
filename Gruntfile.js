@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 
                     'src/AddOn/*.js',
 
-                    'src/GridCore.js',
+                    'src/Core.js',
                     'src/Grid.js'
                 ],
                 // The destination file:

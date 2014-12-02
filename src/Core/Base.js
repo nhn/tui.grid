@@ -6,8 +6,7 @@
 
     /**
      * 내부 관리용 객체 정의
-     *
-     * @type {{CellFactory: null, Layout: {}, Layer: {}, Painter: {Row: null, Cell: {}}}}
+     * @namespace
      */
     var View = {
             CellFactory: null,

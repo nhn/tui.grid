@@ -28,8 +28,8 @@
             "src/View/Clipboard.js",
             "src/View/RowList.js",
             "src/View/Selection.js",
+            "src/Core.js",
             "src/Grid.js",
-            "src/Grid.Public.js",
             "README.md"
         ],
         "exclude": [],

@@ -1077,7 +1077,7 @@ describe('view.clipboard', function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
-        grid = new Grid({
+        grid = new Core({
             el: $empty,
             columnModelList: columnModelList,
             selectType: 'checkbox'

@@ -13,7 +13,7 @@
          * @param {Object} options
          */
         initialize: function(options) {
-            this.core = new GridCore(options);
+            this.core = new Core(options);
             this.listenTo(this.core, 'all', this._relayEvent, this);
         },
         /**
@@ -437,7 +437,7 @@
     });
 
     ne.Grid.getInstanceById = function(id) {
-        return GridCore.prototype.__instance[id];
+        return Core.prototype.__instance[id];
     };
 
 

@@ -108,7 +108,7 @@ module.exports = function(config) {
 
             'src/AddOn/*.js',
 
-            'src/GridCore.js',
+            'src/Core.js',
             'src/Grid.js',
 
             // fixtures
@@ -184,6 +184,6 @@ module.exports = function(config) {
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: true
     };
-    setConfig(configDefault, true);
+    setConfig(configDefault, false);
     config.set(configDefault);
 };

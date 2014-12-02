@@ -107,7 +107,7 @@ describe('grid.normal.test', function() {
 
     describe('public 메서드를 테스트한다.', function() {
         beforeEach(function() {
-            grid = new Grid({
+            grid = new Core({
                 el: $empty,
                 columnModelList: columnModelList,
                 selectType: 'checkbox'
