@@ -26,7 +26,13 @@
          * @private
          */
         _onBlur: function() {
-            this.grid.focusModel.blur();
+            //Grid 내 input 에 focus 가 된 경우 blur 처리하지 않기위해 setTimeout 을 사용한다.
+            setTimeout($.proxy(function() {
+                var hasFocusedElement = !!(this.grid.$el.find(':focus').length);
+                if (!hasFocusedElement) {
+                    this.grid.focusModel.blur();
+                }
+            }, this), 10);
         },
         /**
          * 생성자
