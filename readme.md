@@ -235,10 +235,22 @@ FE 개발팀 박순영 <soonyoung.park@nhnent.com>
 http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/sample_data.concat.html
 
 ## 다운로드
-
-  
 ## API 문서
-
-
 ## 적용된 페이지
+## 추가 해야할 기능 (TODO)
+- Core#disable: 전체 영역 disable
+- Core#enable: 전체 영역 enable
+- Core#refreshLayout: 그리드 엘리먼트가 숨겨진(display:block) 상태에서 초기화된 상태에서 사용자 의도에 따라 노출되었을 때, 각 columnWidth 와 그리드 height 를 다시 계산 하는 기능
+- Core#setGridSize: 그리드의 전체 사이즈를 조정하는 메서드.
+- Core#setScrollBarPosition: 수직/수평 스크롤바 핸들러 위치를 설정하는 메서드.
+- Core#setGridSize: 그리드의 전체 사이즈를 조정하는 메서드.
+- Core: _extraData rowSpanTo 기능: 추가하려는 행 데이터에 rowSpanTo 데이터가 설정이 되어 있는 경우에는 내부 데이터에서 해당 행을 찾은 뒤에 추가해 준다.
+- Core: removeRow 시 rowSpan 된 행들에 대해 함께 삭제하던지, rowSpan 을 제거하고 삭제 할건지 결정하고 구현 해야함.
+- Core: 데이터 수정후 unloadCheck 얼럿 메세지 기능
+- Net#downloadData : 현재 페이지 데이터 다운로드 하는 기능
+- Net#downloadAllData : 전체 데이터 다운로드 하는 기능
+
+## 제거된 기능
+- Core#getDisabledRowKeyList: cell 별로 disabled 될 수도 있어 판단하기 어렵고, 활용 빈도가 낮을것으로 예상되어 제거함.
+- Net: CheckValidation, InvalidItem 기능 제거.
 
