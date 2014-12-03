@@ -4,6 +4,7 @@
  */
 /**
  * 초기화 레이어
+ * @memberof View.Layer
  * @constructor View.Layer.Ready
  */
 View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype */{

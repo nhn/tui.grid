@@ -4,7 +4,8 @@
  */
 /**
  * 로딩 레이어
- * @constructor View.Layer.Base
+ * @memberof View.Layer
+ * @constructor View.Layer.Loading
  */
 View.Layer.Loading = View.Layer.Base.extend(/**@lends View.Layer.Loading.prototype */{
     className: 'loading_layer',

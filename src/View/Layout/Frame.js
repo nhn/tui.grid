@@ -4,6 +4,7 @@
  */
     /**
      * frame Base 클래스
+     * @namespace
      * @constructor View.Layout.Frame
      */
     View.Layout.Frame = View.Base.extend(/**@lends View.Layout.Frame.prototype */{

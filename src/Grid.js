@@ -2,9 +2,15 @@
  * @fileoverview 기본 클래스 파일
  * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
+    /**
+     * ne
+     * @namespace
+     */
     ne = window.ne = ne || {};
     /**
      * Grid public API
+     *
+     * @memberof ne
      * @param {Object} options
      *      @param {number} [options.columnFixIndex=0] 열고정 기능을 사용하기 위한 인덱스 값으로 고정시킬 컬럼들의 다음 컬럼 인덱스 번호를 설정한다.
      *      setColumnFixIndex()메서드를 사용해서 동적으로 열고정 위치를 변경할 수도 있다.
