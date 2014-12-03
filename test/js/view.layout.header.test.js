@@ -662,7 +662,7 @@ describe('view.layout.header', function() {
                 expect($handlerList.eq(9).hasClass('resize_handle_last')).toBe(true);
             });
         });
-        describe('_getColumnIndex', function() {
+        describe('_getHandlerColumnIndex', function() {
             beforeEach(function() {
                 grid.columnModel.set('columnFixIndex', 4);
             });
@@ -671,17 +671,17 @@ describe('view.layout.header', function() {
             });
             it('L side 일때 columnFix index 를 고려하여 실제 columnIndex 를 계산한다.', function() {
                 handler.whichSide = 'L';
-                expect(handler._getColumnIndex(0)).toBe(0);
-                expect(handler._getColumnIndex(1)).toBe(1);
-                expect(handler._getColumnIndex(2)).toBe(2);
-                expect(handler._getColumnIndex(3)).toBe(3);
+                expect(handler._getHandlerColumnIndex(0)).toBe(0);
+                expect(handler._getHandlerColumnIndex(1)).toBe(1);
+                expect(handler._getHandlerColumnIndex(2)).toBe(2);
+                expect(handler._getHandlerColumnIndex(3)).toBe(3);
             });
             it('R side 일때 columnFix index 를 고려하여 실제 columnIndex 를 계산한다.', function() {
                 handler.whichSide = 'R';
-                expect(handler._getColumnIndex(0)).toBe(4);
-                expect(handler._getColumnIndex(1)).toBe(5);
-                expect(handler._getColumnIndex(2)).toBe(6);
-                expect(handler._getColumnIndex(3)).toBe(7);
+                expect(handler._getHandlerColumnIndex(0)).toBe(4);
+                expect(handler._getHandlerColumnIndex(1)).toBe(5);
+                expect(handler._getHandlerColumnIndex(2)).toBe(6);
+                expect(handler._getHandlerColumnIndex(3)).toBe(7);
             });
         });
         describe('_refreshHandlerPosition', function() {

@@ -202,7 +202,6 @@
                 options = options || {};
                 params = $.extend({}, options);
                 if (!options.url) {
-                    console.log('test', method, model, options);
                     params.url = _.result(model, 'url');
                 }
                 this._ajax(params);

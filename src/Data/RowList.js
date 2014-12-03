@@ -631,7 +631,7 @@
                 'rowKey' : row.get('rowKey'),
                 'columnName' : columnName,
                 'value' : row.get(columnName),
-                'instance': this.publicInstance
+                'instance': this.grid.publicInstance
             };
         },
         /**

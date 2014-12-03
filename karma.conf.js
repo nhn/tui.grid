@@ -118,9 +118,9 @@ module.exports = function(config) {
 
             // files to test
             //{pattern: 'test/js/grid*.test.js', watched: true, served: true, included: true}
-            {pattern: 'test/js/addon*.test.js', watched: true, served: true, included: true}
+            //{pattern: 'test/js/addon*.test.js', watched: true, served: true, included: true}
             //{pattern: 'test/js/*.selection.test.js', watched: true, served: true, included: true}
-            //{pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
+            {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
 //            {pattern: 'test/js/model.renderer.test.js', watched: true, served: true, included: true}
         ],
 
@@ -133,7 +133,7 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/**/*.js': ['coverage']
+            '{src,src/!(External)/**}/*.js': ['coverage']
 
 //            'src/**/*.js': ['coverage']
 //            'src/Data/*.js': ['coverage'],

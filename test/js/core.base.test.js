@@ -107,7 +107,7 @@ describe('core.base', function() {
             view = new Class.View({
                 grid: 'grid'
             });
-            expect(view.hasOwnProperty('__viewList')).toBe(true);
+            expect(view.hasOwnProperty('_viewList')).toBe(true);
             expect(view.hasOwnProperty('grid')).toBe(true);
             expect(view.grid).toEqual('grid');
         });
@@ -131,16 +131,16 @@ describe('core.base', function() {
             expect(view.hasOwnProperty('value3')).toBe(true);
             expect(view.hasOwnProperty('value4')).toBe(false);
         });
-        it('createView() 로 자식 view 를 생성하고 __viewList 에 저장한다.', function() {
+        it('createView() 로 자식 view 를 생성하고 _viewList 에 저장한다.', function() {
             view = new Class.View({
                 grid: 'grid'
             });
             var childView1 = view.createView(Class.View, {grid: 'grid'}),
                 childView2 = view.createView(Class.View, {grid: 'grid'});
 
-            expect(view.__viewList[0]).toEqual(childView1);
-            expect(view.__viewList[1]).toEqual(childView2);
-            expect(view.__viewList.length).toBe(2);
+            expect(view._viewList[0]).toEqual(childView1);
+            expect(view._viewList[1]).toEqual(childView2);
+            expect(view._viewList.length).toBe(2);
         });
         it('addView() 로 자식 view 로 등록할 수 있다.', function() {
             view = new Class.View({
@@ -152,9 +152,9 @@ describe('core.base', function() {
             view.addView(childView1);
             view.addView(childView2);
 
-            expect(view.__viewList[0]).toEqual(childView1);
-            expect(view.__viewList[1]).toEqual(childView2);
-            expect(view.__viewList.length).toBe(2);
+            expect(view._viewList[0]).toEqual(childView1);
+            expect(view._viewList[1]).toEqual(childView2);
+            expect(view._viewList.length).toBe(2);
         });
         it('destroyChildren() 로 등록된 자식 view 들을 제거한다.', function() {
             view = new Class.View({
@@ -167,12 +167,12 @@ describe('core.base', function() {
                 grandChildView3 = childView1.createView(Class.View, {grid: 'grid'});
 
             view.destroyChildren();
-            expect(view.__viewList.length).toBe(0);
-            expect(childView1.__viewList.length).toBe(0);
-            expect(childView2.__viewList.length).toBe(0);
-            expect(grandChildView1.__viewList.length).toBe(0);
-            expect(grandChildView2.__viewList.length).toBe(0);
-            expect(grandChildView3.__viewList.length).toBe(0);
+            expect(view._viewList.length).toBe(0);
+            expect(childView1._viewList.length).toBe(0);
+            expect(childView2._viewList.length).toBe(0);
+            expect(grandChildView1._viewList.length).toBe(0);
+            expect(grandChildView2._viewList.length).toBe(0);
+            expect(grandChildView3._viewList.length).toBe(0);
         });
         it('createEventData() 로 EventData 객체를 생성할 수 있다.', function() {
             view = new Class.View({
