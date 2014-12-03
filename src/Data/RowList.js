@@ -345,7 +345,7 @@
          */
         parse: function(data) {
             data = data && data['contents'] || data;
-            return this.setOriginalRowList(data);
+            return this._formatData(data);
         },
         /**
          * 데이터의 _extraData 를 분석하여, Model 에서 사용할 수 있도록 가공한다.
@@ -444,6 +444,7 @@
         /**
          * originalRowList 와 originalRowMap 을 생성한다.
          * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
+         * @return {Array} format 을 거친 데이터 리스트
          */
         setOriginalRowList: function(rowList) {
             this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
@@ -532,6 +533,7 @@
             this.sortKey = fieldName;
             this.sort();
         },
+
         /**
          * rowList 를 반환한다.
          * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
@@ -621,7 +623,7 @@
                 'rowKey' : row.get('rowKey'),
                 'columnName' : columnName,
                 'value' : row.get(columnName),
-                'instance': this.grid.public
+                'instance': this.griInstanced.public
             };
         },
         /**
@@ -716,6 +718,106 @@
          */
         setRowState: function(rowKey, rowState, silent) {
             this.setExtraData(rowKey, {rowState: rowState}, silent);
+        },
+        /**
+         * rowKey 에 해당하는 _extraData 를 클론하여 반환한다.
+         * @param {(Number|String)} rowKey
+         * @return {object}
+         * @private
+         */
+        _getExtraDataClone: function(rowKey) {
+            var row = this.get(rowKey),
+                extraData;
+
+            if (row) {
+                extraData = $.extend(true, {}, row.get('_extraData'));
+                return extraData;
+            }
+        },
+        /**
+         * className 이 담긴 배열로부터 특정 className 을 제거하여 반환한다.
+         * @param {Array} classNameList
+         * @param {String} className
+         * @return {Array}
+         * @private
+         */
+        _removeClassNameFromArray: function(classNameList, className) {
+            //배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
+            var classNameString = classNameList.join(' ');
+            classNameList = classNameString.split(' ');
+            return _.without(classNameList, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeCellClassName: function(rowKey, columnName, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                row = this.get(rowKey),
+                classNameData;
+
+            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.column.' + columnName)) {
+                classNameData = extraData.className;
+                classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
+                row.set('_extraData', extraData);
+            }
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeRowClassName: function(rowKey, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                row = this.get(rowKey),
+                classNameData;
+
+            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.row')) {
+                classNameData = extraData.className;
+                classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
+                //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
+                row.set('_extraData', extraData);
+            }
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addCellClassName: function(rowKey, columnName, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                classNameData,
+                classNameList;
+
+            if (!ne.util.isUndefined(extraData)) {
+                classNameData = extraData.className || {};
+                classNameData.column = classNameData.column || {};
+                classNameList = classNameData.column[columnName] || [];
+                classNameList.push(className);
+                classNameData.column[columnName] = classNameList;
+                this.setExtraData(rowKey, {className: classNameData});
+            }
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addRowClassName: function(rowKey, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                classNameData,
+                classNameList;
+
+            if (!ne.util.isUndefined(extraData)) {
+                classNameData = extraData.className || {};
+                classNameList = classNameData.row || [];
+                classNameList.push(className);
+                classNameData.row = classNameList;
+                this.setExtraData(rowKey, {className: classNameData});
+            }
         },
         /**
          * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.

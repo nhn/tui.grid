@@ -159,7 +159,7 @@
         },
         /**
          * input type 을 반환한다.
-         * @returns {string}
+         * @return {string}
          * @private
          */
         _getInputType: function() {
@@ -239,6 +239,7 @@
                 return value;
             } else {
                 return this.template({
+                    type: this._getInputType(),
                     value: value,
                     disabled: cellData.isDisabled ? 'disabled' : '',
                     name: Util.getUniqueKey()

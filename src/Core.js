@@ -72,7 +72,7 @@
          */
         initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.public = options.public;
+            this.publicInstance = options.publicInstance;
             var id = Util.getUniqueKey();
             this.__instance[id] = this;
             this.id = id;
@@ -571,7 +571,23 @@
             }, this);
         },
         /**
-         * set row list data
+         * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다..
+         * @param {Array} rowList
+         * @param {boolean} [isParse=true]
+         */
+        replaceRowList: function(rowList, isParse) {
+            this.showGridLayer('loading');
+            isParse = isParse === undefined ? true : isParse;
+            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
+            clearTimeout(this.timeoutIdForSetRowList);
+            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+                this.dataModel.set(rowList, {
+                    parse: isParse
+                });
+            }, this), 0);
+        },
+        /**
+         * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
          * @param {Array} rowList
          * @param {boolean} [isParse=true]
          */
@@ -584,9 +600,7 @@
                 this.dataModel.set(rowList, {
                     parse: isParse
                 });
-                if (!isParse) {
-                    this.dataModel.setOriginalRowList(rowList);
-                }
+                this.dataModel.setOriginalRowList();
             }, this), 0);
         },
         /**
@@ -817,7 +831,7 @@
          */
         restore: function() {
             var originalRowList = this.dataModel.getOriginalRowList();
-            this.setRowList(originalRowList, false);
+            this.replaceRowList(originalRowList, false);
         },
         /**
          * Grid Layer 를 모두 감춘다.
@@ -968,11 +982,49 @@
             }
         },
         /**
-         * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
-         * @return {Array}
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
          */
-        getDisabledRowKeyList: function() {
-            //@todo
+        addCellClassName: function(rowKey, columnName, className) {
+            this.dataModel.addCellClassName(rowKey, columnName, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addRowClassName: function(rowKey, className) {
+            this.dataModel.addRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeCellClassName: function(rowKey, columnName, className) {
+            this.dataModel.removeCellClassName(rowKey, columnName, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeRowClassName: function(rowKey, className) {
+            this.dataModel.removeRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         */
+        getRowSpanData: function(rowKey, columnName) {
+            var row = this.dataModel.get(rowKey);
+            if (row) {
+                return row.getRowSpanData(columnName);
+            }
         },
         /**
          * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
@@ -995,44 +1047,25 @@
         disable: function(hasDimmedLayer) {
             //@todo: 구현 필요
         },
-        getRowSpan: function() {
 
-        },
         refreshLayout: function() {
             //todo
         },
-        addClassNameToColumn: function() {
 
-        },
-        addClassNameToRow: function() {
 
-        },
-        removeClassNameFromColumn: function() {
-
-        },
-        removeClassNameFromRow: function() {
-
-        },
-        replaceRowList: function() {
-
-        },
         setGridSize: function(size) {
-            var dimensionModel = this.dimensionModel,
-                width = size && size.width || dimensionModel.get('width'),
-                bodyHeight = dimensionModel.get('bodyHeight'),
-                headerHeight = dimensionModel.get('headerHeight'),
-                toolbarHeight = dimensionModel.get('toolbarHeight');
-
-            if (size && size.height) {
-                bodyHeight = height - (headerHeight + toolbarHeight);
-            }
+            //var dimensionModel = this.dimensionModel,
+            //    width = size && size.width || dimensionModel.get('width'),
+            //    bodyHeight = dimensionModel.get('bodyHeight'),
+            //    headerHeight = dimensionModel.get('headerHeight'),
+            //    toolbarHeight = dimensionModel.get('toolbarHeight');
+            //
+            //if (size && size.height) {
+            //    bodyHeight = height - (headerHeight + toolbarHeight);
+            //}
         },
-        setHeaderColumnTitle: function() {
-
-        },
-        setScrollBarPosition: function() {
-
-        },
+        setHeaderColumnTitle: function() {},
+        setScrollBarPosition: function() {},
 
         /**
          * 소멸자
@@ -1041,18 +1074,22 @@
             this.stopListening();
             this.destroyChildren();
             _.each(this, function(value, property) {
-                if (value instanceof View.Base) {
-                    value && value.destroy && value.destroy();
+                if (property !== 'publicInstance') {
+                    if (value instanceof View.Base) {
+                        value && value.destroy && value.destroy();
+                    }
+                    if (property === 'view') {
+                        _.each(value, function(instance, name) {
+                            instance && instance.destroy && instance.destroy();
+                        }, this);
+                    }
                 }
-                if (property === 'view') {
-                    _.each(value, function(instance, name) {
-                        instance && instance.destroy && instance.destroy();
-                    }, this);
+                if (value && ne.util.isFunction(value.stopListening)) {
+                    value.stopListening();
                 }
-                value && value.stopListening && value.stopListening();
+
                 if (property !== '$el' && property !== '__$el') {
                     this[property] = null;
-                    delete this[property];
                 }
             }, this);
             this.$el.replaceWith(this.__$el);

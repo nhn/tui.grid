@@ -284,7 +284,9 @@ describe('data.rowList', function() {
     var rowList,
         dataModelInstance,
         columnModelInstance,
-        grid = {};
+        grid = {
+            publicInstance: 'publicInstance'
+        };
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
@@ -1233,6 +1235,7 @@ describe('data.rowList', function() {
                 dataModelInstance.set(rowList, {
                     parse: true
                 });
+                dataModelInstance.setOriginalRowList();
             });
             describe('getOriginalRowList()', function() {
                 it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
@@ -1527,7 +1530,8 @@ describe('data.rowList', function() {
                     expect(callback).toHaveBeenCalledWith({
                         rowKey: 0,
                         columnName: 'changeCallback',
-                        value: 'new value'
+                        value: 'new value',
+                        instance: 'publicInstance'
                     });
                 });
             });
@@ -1759,6 +1763,7 @@ describe('data.rowList', function() {
                     {}
                 ];
                 dataModelInstance.set(sampleRowList, {parse: true});
+                dataModelInstance.setOriginalRowList();
             });
             it('row 가 삭제되는지 확인한다.', function() {
                 var originalRowList;
@@ -2017,6 +2022,7 @@ describe('data.rowList', function() {
                     }
                 ];
                 dataModelInstance.set(sampleRowList, {parse: true});
+                dataModelInstance.setOriginalRowList();
             });
 
 

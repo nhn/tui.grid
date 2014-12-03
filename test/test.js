@@ -56,10 +56,12 @@ function getDummyData(columnModel, size, callback) {
     var url;
 
     if (window.navigator.userAgent.indexOf('MSIE ') !== -1) {
-        url = './php/dummy.php';
+        //url = './php/dummy.php';
     }else {
-        url = 'http://budapest.kr.pe/sample/php/dummy.php';
+        url = './php/dummy.php';
+        //url = 'http://budapest.kr.pe/sample/php/dummy.php';
     }
+    url = 'http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/php/dummy.php';
     console.log(url);
     $.ajax({
         url: url,
@@ -129,6 +131,26 @@ function insertButton(gridInstance, $wrapper, $result) {
         },
         'test' : function() {
 				gridInstance.setValue(0, 'columnName1', '<script>alert("test");</script>');
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
+        },
+        'addCellClassName' : function() {
+            gridInstance.addCellClassName(0, 'columnName1', 'test_class');
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
+        },
+        'removeCellClassName' : function() {
+            gridInstance.removeCellClassName(0, 'columnName1', 'test_class');
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
+        },
+        'addRowClassName' : function() {
+            gridInstance.addCellClassName(1, 'test_row_class');
+//            gridInstance.setColumnValue('columnName1', '<script/>');
+//            gridInstance.sort('columnName5');
+        },
+        'removeRowClassName' : function() {
+            gridInstance.removeCellClassName(1, 'test_row_class');
 //            gridInstance.setColumnValue('columnName1', '<script/>');
 //            gridInstance.sort('columnName5');
         }

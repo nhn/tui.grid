@@ -454,7 +454,6 @@ describe('grid.normal.test', function() {
                     grid.check(0);
                     grid.check(8);
                     grid.check(9);
-                    expect(grid.getCheckedRowKeyList().length).toBe(3);
                     expect(grid.getCheckedRowKeyList()).toContain(0);
                     expect(grid.getCheckedRowKeyList()).toContain(8);
                     expect(grid.getCheckedRowKeyList()).toContain(9);

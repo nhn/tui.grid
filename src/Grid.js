@@ -601,8 +601,45 @@
         sort: function(columnName) {
             this.core.sort(columnName);
         },
+        /**
+         * sort 를 해제한다.
+         */
         unSort: function() {
             this.core.sort('rowKey');
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addCellClassName: function(rowKey, columnName, className) {
+            this.core.addCellClassName(rowKey, columnName, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addRowClassName: function(rowKey, className) {
+            this.core.addRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeCellClassName: function(rowKey, columnName, className) {
+            this.core.removeCellClassName(rowKey, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeRowClassName: function(rowKey, className) {
+            this.core.removeRowClassName(rowKey, className);
         },
         /**
          * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
@@ -655,18 +692,7 @@
         refreshLayout: function() {
             //todo
         },
-        addClassNameToColumn: function() {
 
-        },
-        addClassNameToRow: function() {
-
-        },
-        removeClassNameFromColumn: function() {
-
-        },
-        removeClassNameFromRow: function() {
-
-        },
         replaceRowList: function() {
 
         },

@@ -279,7 +279,7 @@ describe('addon.net', function() {
                 });
             });
         });
-        describe('readDataAt', function() {
+        describe('_readDataAt', function() {
             it('기본적으로 ajaxHistory 를 사용하며, ajax history 를 사용한다면, router.navigate 를 호출하여 url 을 변경한다.', function() {
                 createNet({
                     el: $form,
@@ -288,7 +288,7 @@ describe('addon.net', function() {
                     }
                 });
                 net.router.navigate = jasmine.createSpy('navigate');
-                net.readDataAt(1);
+                net._readDataAt(1);
                 jasmine.clock().tick(10);
                 expect(net.router.navigate).toHaveBeenCalled();
             });
@@ -306,7 +306,7 @@ describe('addon.net', function() {
                 });
 
                 net.router.navigate = jasmine.createSpy('navigate');
-                net.readDataAt(1);
+                net._readDataAt(1);
                 request = jasmine.Ajax.requests.mostRecent();
                 beforeRequesteData = $.extend(true, {}, request.data());
                 //request 요청 후 form data 를 변경한다.
@@ -317,7 +317,7 @@ describe('addon.net', function() {
                     gender: 'male',
                     hobby: ['sport']
                 });
-                net.readDataAt(1, true);
+                net._readDataAt(1, true);
                 request = jasmine.Ajax.requests.mostRecent();
                 afterRequesteData = $.extend(true, {}, request.data());
 
@@ -331,7 +331,7 @@ describe('addon.net', function() {
                 });
 
                 grid.core.showGridLayer = jasmine.createSpy('showGridLayer');
-                net.lock();
+                net._lock();
                 expect(grid.core.showGridLayer).toHaveBeenCalledWith('loading');
                 expect(net.isLocked).toBe(true);
             });
@@ -341,8 +341,8 @@ describe('addon.net', function() {
                 createNet({
                     el: $form
                 });
-                net.lock();
-                net.unlock();
+                net._lock();
+                net._unlock();
                 expect(net.isLocked).toBe(false);
             });
         });
@@ -560,7 +560,7 @@ describe('addon.net', function() {
 
             });
         });
-        describe('send', function() {
+        describe('request', function() {
             beforeEach(function() {
                 createNet({
                     el: $form
@@ -571,19 +571,19 @@ describe('addon.net', function() {
                 net._ajax = jasmine.createSpy('ajax');
             });
             it('ajax call 을 호출한다.', function() {
-                net.send('createData');
+                net.request('createData');
                 expect(net._ajax).toHaveBeenCalled();
             });
             it('_getRequestParam 의 반환값이 없다면 ajax call 을 호출하지 않는다.', function() {
                 net._getRequestParam = function() {return null;};
-                net.send('createData');
+                net.request('createData');
                 expect(net._ajax).not.toHaveBeenCalled();
             });
         });
-        describe('send', function() {
-            var onResponse,
-                onSuccessResponse,
-                onFailResponse,
+        describe('request', function() {
+            var response,
+                successResponse,
+                failResponse,
                 callback,
                 options,
                 responseData;
@@ -608,54 +608,54 @@ describe('addon.net', function() {
                         'data2': 2
                     }
                 };
-                onResponse = jasmine.createSpy('onResponse');
-                onSuccessResponse = jasmine.createSpy('onSuccessResponse');
-                onFailResponse = jasmine.createSpy('onFailResponse');
+                response = jasmine.createSpy('response');
+                successResponse = jasmine.createSpy('successResponse');
+                failResponse = jasmine.createSpy('failResponse');
                 callback = jasmine.createSpy('callback');
             });
             it('정상일때', function() {
-                grid.on('onSuccessResponse', onSuccessResponse)
-                    .on('onFailResponse', onFailResponse)
-                    .on('onResponse', onResponse);
+                grid.on('successResponse', successResponse)
+                    .on('failResponse', failResponse)
+                    .on('response', response);
 
                 net._onSuccess(callback, options, responseData.success, 200);
                 expect(callback).toHaveBeenCalled();
-                expect(onSuccessResponse).toHaveBeenCalled();
-                expect(onResponse).toHaveBeenCalled();
-                expect(onFailResponse).not.toHaveBeenCalled();
+                expect(successResponse).toHaveBeenCalled();
+                expect(response).toHaveBeenCalled();
+                expect(failResponse).not.toHaveBeenCalled();
             });
-            it('정상이지만 onSuccessResponse 에서 stop 을 호출했을 때', function() {
-                grid.on('onSuccessResponse', function(eventData) {eventData.stop();})
-                    .on('onFailResponse', onFailResponse)
-                    .on('onResponse', onResponse);
+            it('정상이지만 successResponse 에서 stop 을 호출했을 때', function() {
+                grid.on('successResponse', function(eventData) {eventData.stop();})
+                    .on('failResponse', failResponse)
+                    .on('response', response);
 
                 net._onSuccess(callback, options, responseData.success, 200);
 
                 expect(callback).not.toHaveBeenCalled();
-                expect(onResponse).toHaveBeenCalled();
-                expect(onFailResponse).not.toHaveBeenCalled();
+                expect(response).toHaveBeenCalled();
+                expect(failResponse).not.toHaveBeenCalled();
             });
-            it('정상이지만 onResponse 에서 stop 을 호출했을 때', function() {
-                grid.on('onSuccessResponse', onSuccessResponse)
-                    .on('onFailResponse', onFailResponse)
-                    .on('onResponse', function(eventData) {eventData.stop();});
+            it('정상이지만 response 에서 stop 을 호출했을 때', function() {
+                grid.on('successResponse', successResponse)
+                    .on('failResponse', failResponse)
+                    .on('response', function(eventData) {eventData.stop();});
 
                 net._onSuccess(callback, options, responseData.success, 200);
 
                 expect(callback).not.toHaveBeenCalled();
-                expect(onSuccessResponse).not.toHaveBeenCalled();
-                expect(onFailResponse).not.toHaveBeenCalled();
+                expect(successResponse).not.toHaveBeenCalled();
+                expect(failResponse).not.toHaveBeenCalled();
             });
             it('응답 결과가 실패 일때', function() {
-                grid.on('onSuccessResponse', onSuccessResponse)
-                    .on('onFailResponse', onFailResponse)
-                    .on('onResponse', onResponse);
+                grid.on('successResponse', successResponse)
+                    .on('failResponse', failResponse)
+                    .on('response', response);
 
                 net._onSuccess(callback, options, responseData.failed, 200);
                 expect(callback).not.toHaveBeenCalled();
-                expect(onSuccessResponse).not.toHaveBeenCalled();
-                expect(onResponse).toHaveBeenCalled();
-                expect(onFailResponse).toHaveBeenCalled();
+                expect(successResponse).not.toHaveBeenCalled();
+                expect(response).toHaveBeenCalled();
+                expect(failResponse).toHaveBeenCalled();
             });
 
         });
@@ -664,14 +664,14 @@ describe('addon.net', function() {
                 createNet({
                     el: $form
                 });
-                net.unlock = jasmine.createSpy('unlock');
+                net._unlock = jasmine.createSpy('unlock');
                 net._onComplete();
-                expect(net.unlock).toHaveBeenCalled();
+                expect(net._unlock).toHaveBeenCalled();
             });
         });
         describe('_onError', function() {
-            var onResponse,
-                onErrorResponse,
+            var response,
+                errorResponse,
                 options,
                 callback;
 
@@ -686,35 +686,35 @@ describe('addon.net', function() {
                         'data2': 2
                     }
                 };
-                onResponse = jasmine.createSpy('onResponse');
-                onErrorResponse = jasmine.createSpy('onErrorResponse');
+                response = jasmine.createSpy('response');
+                errorResponse = jasmine.createSpy('errorResponse');
                 callback = jasmine.createSpy('callback');
             });
             it('alert 을 호출하는지 확인한다.', function() {
                 window.alert = jasmine.createSpy('alert');
 
-                grid.on('onErrorResponse', onErrorResponse)
-                    .on('onResponse', onResponse);
+                grid.on('errorResponse', errorResponse)
+                    .on('response', response);
 
                 net._onError(callback, options, {readyState: 10});
-                expect(onErrorResponse).toHaveBeenCalled();
-                expect(onResponse).toHaveBeenCalled();
+                expect(errorResponse).toHaveBeenCalled();
+                expect(response).toHaveBeenCalled();
                 expect(window.alert).toHaveBeenCalledWith('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
             });
-            it('onResponse 에서 stop 을 호출했을 때', function() {
+            it('response 에서 stop 을 호출했을 때', function() {
                 window.alert = jasmine.createSpy('alert');
-                grid.on('onErrorResponse', onErrorResponse)
-                    .on('onResponse', function(eventData) {eventData.stop();});
+                grid.on('errorResponse', errorResponse)
+                    .on('response', function(eventData) {eventData.stop();});
                 net._onError(callback, options, {readyState: 10});
-                expect(onErrorResponse).not.toHaveBeenCalled();
+                expect(errorResponse).not.toHaveBeenCalled();
                 expect(window.alert).not.toHaveBeenCalled();
             });
-            it('onErrorResponse 에서 stop 을 호출했을 때', function() {
+            it('errorResponse 에서 stop 을 호출했을 때', function() {
                 window.alert = jasmine.createSpy('alert');
-                grid.on('onErrorResponse', function(eventData) {eventData.stop();})
-                    .on('onResponse', onResponse);
+                grid.on('errorResponse', function(eventData) {eventData.stop();})
+                    .on('response', response);
                 net._onError(callback, options, {readyState: 10});
-                expect(onResponse).toHaveBeenCalled();
+                expect(response).toHaveBeenCalled();
                 expect(window.alert).not.toHaveBeenCalled();
             });
         });
@@ -744,7 +744,7 @@ describe('addon.net', function() {
                 createNet({
                     el: $form
                 });
-                net.readDataAt = jasmine.createSpy('readDataAt');
+                net._readDataAt = jasmine.createSpy('readDataAt');
                 customEvent = {
                     page: 10
                 };
@@ -752,12 +752,12 @@ describe('addon.net', function() {
             it('curPage 가 인자로 넘어온 page 와 다르다면 readAt 을 호출한다.', function() {
                 net.curPage = 11;
                 net._onPageBeforeMove(customEvent);
-                expect(net.readDataAt).toHaveBeenCalled();
+                expect(net._readDataAt).toHaveBeenCalled();
             });
             it('curPage 가 인자로 넘어온 page 와 같다면 readAt 을 호출하지 않는다..', function() {
                 net.curPage = 10;
                 net._onPageBeforeMove(customEvent);
-                expect(net.readDataAt).not.toHaveBeenCalled();
+                expect(net._readDataAt).not.toHaveBeenCalled();
             });
         });
         it('ajax mock test', function() {

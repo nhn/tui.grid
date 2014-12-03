@@ -237,6 +237,9 @@ http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/sample_data.con
 ## 다운로드
 ## API 문서
 ## 적용된 페이지
+## 개선 해야할 기능
+- Net: 한페이지에서 두개 이상의 그리드에서 ajaxHistory 사용 가능하도록 개선 해야함. 현재 페이지당 한개 그리드에서만 사용 가능.
+-
 ## 추가 해야할 기능 (TODO)
 - Core#disable: 전체 영역 disable
 - Core#enable: 전체 영역 enable
@@ -247,7 +250,8 @@ http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/sample_data.con
 - Core: _extraData rowSpanTo 기능: 추가하려는 행 데이터에 rowSpanTo 데이터가 설정이 되어 있는 경우에는 내부 데이터에서 해당 행을 찾은 뒤에 추가해 준다.
 - Core: removeRow 시 rowSpan 된 행들에 대해 함께 삭제하던지, rowSpan 을 제거하고 삭제 할건지 결정하고 구현 해야함.
 - Core: 데이터 수정후 unloadCheck 얼럿 메세지 기능
-- Net#downloadData : 현재 페이지 데이터 다운로드 하는 기능
+- Core: 데이터 Ctrl + V 붙여넣기 기능
+ - Net#downloadData : 현재 페이지 데이터 다운로드 하는 기능
 - Net#downloadAllData : 전체 데이터 다운로드 하는 기능
 
 ## 제거된 기능

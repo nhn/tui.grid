@@ -4,7 +4,75 @@
  */
     /**
      * Network 모듈 addon
+     * @param {object} options
+     *      @param {jquery} options.el   form 엘리먼트
+     *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+     *      @param {object} [options.api]   사용할 API URL 리스트
+     *          @param {string} [options.api.readData]  데이터 조회 API 주소
+     *          @param {string} [options.api.createData] 데이터 생성 API 주소
+     *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
+     *          @param {string} [options.api.modify] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+     *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
+     *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
+     *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
      * @constructor AddOn.Net
+     * @example
+     <form id="data_form">
+     <input type="text" name="query"/>
+     </form>
+     <script>
+     var net,
+     grid = new ne.Grid({
+            //...option 생략...
+    });
+
+     //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+     grid.use('Net', {
+        el: $('#data_form'),         //필수 - form 엘리먼트
+        initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+        perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
+        enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
+        //사용할 API URL 리스트
+        api: {
+            'readData': './api/read',       //데이터 조회 API 주소
+            'createData': './api/create',   //데이터 생성 API 주소
+            'updateData': './api/update',   //데이터 업데이트 API 주소
+            'deleteData': './api/delete',   //데이터 삭제 API 주소
+            'modifyData': './api/modify'    //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+        }
+    });
+     //이벤트 핸들러 바인딩
+     grid.on('beforeRequest', function(data) {
+        //모든 dataRequest 시 호출된다.
+    }).on('response', function(data) {
+        //response 이벤트 핸들러
+        //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+    }).on('successResponse', function(data) {
+        //successResponse 이벤트 핸들러
+        //response.result 가 truthy 일 때 호출된다.
+    }).on('failResponse', function(data) {
+        //failResponse 이벤트 핸들러
+        //response.result 가 falsy 일 때 호출된다.
+    }).on('errorResponse', function(data) {
+        //ajax error response 이벤트 핸들러
+    });
+
+     //grid 로부터 사용할 net 인스턴스를 가져온다.
+     net = grid.getAddOn('Net');
+
+     //request 관련 자세한 옵션은 Net#request 를 참고한다.
+     //createData API 요청
+     net.request('createData');
+
+     //updateData API 요청
+     net.request('updateData');
+
+     //deleteData API 요청
+     net.request('deleteData');
+
+     //modifyData API 요청
+     net.request('modifyData');
+     </script>
      */
     AddOn.Net = View.Base.extend(/**@lends AddOn.Net.prototype */{
         events: {
@@ -20,6 +88,7 @@
                     initialRequest: true,
                     api: {
                         'readData': '',
+                        'createData': '',
                         'updateData': '',
                         'deleteData': '',
                         'modifyData': '',
@@ -39,14 +108,15 @@
                 router: null,
                 pagination: pagination,
                 requestedFormData: null,
-                isLocked: false
+                isLocked: false,
+                lastRequestedReadData: null
             });
             this._initializeDataModelNetwork();
             this._initializeRouter();
             this._initializePagination();
 
             if (options.initialRequest) {
-                this.readDataAt(1, false);
+                this._readDataAt(1, false);
             }
         },
         /**
@@ -91,7 +161,7 @@
         _onPageBeforeMove: function(customEvent) {
             var page = customEvent.page;
             if (this.curPage !== page) {
-                this.readDataAt(page, true);
+                this._readDataAt(page, true);
             }
         },
         /**
@@ -105,16 +175,18 @@
             page 이동시 form input 을 수정하더라도,
             formData 를 유지하기 위해 데이터를 기록한다.
              */
-            this.readDataAt(1, false);
+            this._readDataAt(1, false);
         },
 
         /**
          * 폼 데이터를 설정한다.
-         * @param {Object} formData
+         * 내부에서 사용하는 메서드이므로 외부에서 사용하지 않기를 권장한다.
+         * @param {Object} formData 폼 데이터 정보
          */
         setFormData: function(formData) {
             //form data 를 실제 form 에 반영한다.
-            /* istanbul ignore next */ ne.util.setFormData(this.$el, formData);
+            /* istanbul ignore next */
+            ne.util.setFormData(this.$el, formData);
         },
 
         /**
@@ -138,17 +210,19 @@
             }
         },
         /**
-         * network 통신에 대한 lock 을 건다.
+         * network 통신에 대한 _lock 을 건다.
+         * @private
          */
-        lock: function() {
+        _lock: function() {
             this.grid.showGridLayer('loading');
             this.isLocked = true;
         },
         /**
          * network 통신에 대해 unlock 한다.
          * loading layer hide 는 rendering 하는 로직에서 수행한다.
+         * @private
          */
-        unlock: function() {
+        _unlock: function() {
             this.isLocked = false;
         },
 
@@ -158,7 +232,8 @@
          * @private
          */
         _getFormData: function() {
-            /* istanbul ignore next*/ return ne.util.getFormData(this.$el);
+            /* istanbul ignore next*/
+            return ne.util.getFormData(this.$el);
         },
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
@@ -188,11 +263,16 @@
          * @param {object} options
          * @private
          */
-        _onReadError: function(dataModel, responseData, options) {
-
+        _onReadError: function(dataModel, responseData, options) {},
+        /**
+         * 가장 마지막에 조회 요청한 request 파라미터로 다시 요청한다.
+         */
+        reloadData: function() {
+            this.readData(this.lastRequestedReadData);
         },
         /**
          * 데이터 조회 요청.
+         * 내부적으로 사용하는 메서드이므로 외부에서 호출하지 않기를 권장함.
          * @param {object} data 요청시 사용할 request 파라미터
          */
         readData: function(data) {
@@ -200,7 +280,7 @@
                 grid = this.grid;
             if (!this.isLocked) {
                 grid.renderModel.initializeVariables();
-                this.lock();
+                this._lock();
                 this.requestedFormData = _.clone(data);
                 this.curPage = data.page || this.curPage;
                 startNumber = (this.curPage - 1) * this.perPage + 1;
@@ -208,8 +288,11 @@
                     startNumber: startNumber
                 });
 
+                //todo: 바로 아랫줄은 테스트코드이므로 제거해야함.
                 data.columnModel = $.toJSON(this.grid.columnModel.get('columnModelList'));
-//                data.columnModel = grid.columnModel.get('columnModelList');
+
+                //마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
+                this.lastRequestedReadData = _.clone(data);
                 grid.dataModel.fetch({
                     requestType: 'readData',
                     data: data,
@@ -224,8 +307,9 @@
          * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
          * @param {Number} page
          * @param {Boolean} [isUsingRequestedData=true]
+         * @private
          */
-        readDataAt: function(page, isUsingRequestedData) {
+        _readDataAt: function(page, isUsingRequestedData) {
             isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
             var data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
             data.page = page;
@@ -239,8 +323,8 @@
             this.readData(data);
         },
         /**
-         *
-         * Create Data API 요청을 보낸다.
+         * request
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {object} options
          *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
          *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
@@ -250,71 +334,7 @@
          *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
          *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
          */
-        createData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('createData', options);
-        },
-        /**
-         *
-         * Update Data API 요청을 보낸다.
-         * @param {object} options
-         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
-         */
-        updateData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('updateData', options);
-        },
-        /**
-         *
-         * Delete Data API 요청을 보낸다.
-         * @param {object} options
-         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
-         */
-        deleteData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('deleteData', options);
-        },
-        /**
-         *
-         * Modify Data API 요청을 보낸다.
-         * @param {object} options
-         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
-         */
-        modifyData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('modifyData', options);
-        },
-
-        downloadData: function() {
-            //@todo
-        },
-        downloadAllData: function() {
-            //@todo
-        },
-        /**
-         * send
-         * @param requestType
-         * @param options
-         */
-        send: function(requestType, options) {
+        request: function(requestType, options) {
             var defaultOptions = {
                     url: this.options.api[requestType],
                     type: null,
@@ -499,7 +519,7 @@
          * @private
          */
         _onComplete: function(callback, jqXHR, status) {
-            this.unlock();
+            this._unlock();
         },
         /**
          * ajax success 이벤트 핸들러
@@ -518,15 +538,15 @@
                     requestParameter: options.data,
                     responseData: responseData
                 });
-            this.grid.trigger('onResponse', eventData);
+            this.grid.trigger('response', eventData);
             if (eventData.isStopped()) return;
             if (responseData && responseData['result']) {
-                this.grid.trigger('onSuccessResponse', eventData);
+                this.grid.trigger('successResponse', eventData);
                 if (eventData.isStopped()) return;
                 callback && typeof callback === 'function' ? callback(responseData['data'] || {}, status, jqXHR) : null;
             } else {
                 //todo: 오류 처리
-                this.grid.trigger('onFailResponse', eventData);
+                this.grid.trigger('failResponse', eventData);
                 if (eventData.isStopped()) return;
                 message ? alert(message) : null;
             }
@@ -549,10 +569,10 @@
             });
             this.grid.hideGridLayer();
 
-            this.grid.trigger('onResponse', eventData);
+            this.grid.trigger('response', eventData);
             if (eventData.isStopped()) return;
 
-            this.grid.trigger('onErrorResponse', eventData);
+            this.grid.trigger('errorResponse', eventData);
             if (eventData.isStopped()) return;
 
             if (jqXHR.readyState > 1) {
@@ -562,9 +582,9 @@
     });
     /**
      * Ajax History 관리를 위한 Router AddOn
-     * @constructor
+     * @constructor AddOn.Net.Router
      */
-    AddOn.Net.Router = Backbone.Router.extend({
+    AddOn.Net.Router = Backbone.Router.extend(/**@lends AddOn.Net.Router.prototype */{
         routes: {
             'read/:queryStr': 'read'
         },

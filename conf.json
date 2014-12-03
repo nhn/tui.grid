@@ -30,6 +30,7 @@
             "src/View/Selection.js",
             "src/Core.js",
             "src/Grid.js",
+            "src/AddOn/Net.js",
             "README.md"
         ],
         "exclude": [],
