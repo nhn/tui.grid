@@ -8,7 +8,10 @@
  */
 View.Layer.Empty = View.Layer.Base.extend(/**@lends View.Layer.Empty.prototype */{
     className: 'no_row_layer',
-    initialize: function(attributes) {
+    /**
+     * 생성자 함수
+     */
+    initialize: function() {
         View.Layer.Base.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             text: '데이터가 존재하지 않습니다.'

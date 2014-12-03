@@ -27,7 +27,7 @@
         },
         /**
          * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
-         * @param {Object} model
+         * @param {Object} model    변경이 발생한 row 모델
          * @private
          */
         _onDataModelChange: function(model) {
@@ -84,17 +84,17 @@
             }
         },
         /**
-         * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
-         * @param {Array} data
-         * @return {Array}
+         * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 형식에 맞게 가공한다.
+         * @param {Array} data  원본 데이터
+         * @return {Array}  형식에 맞게 가공된 데이터
          */
         parse: function(data) {
             return this._formatData(data);
         },
         /**
          * 데이터를 View 에서 사용할 수 있도록 가공한다.
-         * @param {Array} data
-         * @return {Array}
+         * @param {Array} data  원본 데이터
+         * @return {Array}  가공된 데이터
          * @private
          */
         _formatData: function(data) {
@@ -147,8 +147,8 @@
         /**
          * Cell 의 값을 변경한다.
          * - 참조형 데이터 타입이기 때문에 change 이벤트 발생을 위해 이 method 를 사용하여 값 변경을 수행한다.
-         * @param {String} columnName
-         * @param {{key: value}} param
+         * @param {String} columnName   컬럼명
+         * @param {{key: value}} param  key:value 로 이루어진 셀에서 변경할 프로퍼티 목록
          */
         setCell: function(columnName, param) {
             if (this.get(columnName)) {
@@ -184,7 +184,10 @@
      */
     Model.RowList = Collection.Base.extend(/**@lends Model.RowList.prototype */{
         model: Model.Row,
-        initialize: function(models, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Collection.Base.prototype.initialize.apply(this, arguments);
         }
     });

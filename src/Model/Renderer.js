@@ -18,7 +18,10 @@
             lside: null,
             rside: null
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
 
             this.setOwnProperties({
@@ -47,7 +50,7 @@
         },
         /**
          * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
-         * @param {number} rowIndex
+         * @param {number} rowIndex row 의 index 값
          * @private
          */
         _onValueChange: function(rowIndex) {
@@ -69,8 +72,8 @@
         },
         /**
          * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
-         * @param {String} whichSide
-         * @return {Object} collection
+         * @param {String} [whichSide='R']    어느 영역인지 여부. 'L|R' 중에 하나의 값을 넘긴다.
+         * @return {Object} collection  해당 영역의 랜더 데이터 콜랙션
          */
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
@@ -148,8 +151,6 @@
                 rowModel,
                 rowKey;
 
-
-
             for (i = startIndex; i < endIndex + 1; i++) {
                 rowModel = this.grid.dataModel.at(i);
                 rowKey = rowModel.get('rowKey');
@@ -190,13 +191,14 @@
                 parse: true
             });
 
-            i = startIndex;
+
             len = rsideRowList.length + startIndex;
 
-            for (; i < len; i++) {
+            //relation 을 수행한다.
+            for (i = startIndex; i < len; i++) {
                 this.executeRelation(i);
             }
-
+            //컬럼모델의 변경이 있을 경우 columnModelChanged 이벤트를 발생한다.
             if (this.isColumnModelChanged === true) {
                 this.trigger('columnModelChanged', this.get('top'));
                 this.isColumnModelChanged = false;
@@ -207,8 +209,8 @@
         },
         /**
          * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.
-         * @param {String} columnName
-         * @return {Collection}
+         * @param {String} columnName   컬럼명
+         * @return {Collection} 컬럼명에 해당하는 영역의 콜랙션
          * @private
          */
         _getCollectionByColumnName: function(columnName) {
@@ -222,10 +224,10 @@
             }
         },
         /**
-         * CellData 를 가져온다.
-         * @param {number} rowKey
-         * @param {String} columnName
-         * @return {object} cellData object
+         * 셀 데이터를 반환한다.
+         * @param {number} rowKey   데이터의 키값
+         * @param {String} columnName   컬럼명
+         * @return {object} cellData 셀 데이터
          * @example
          =>
          {
@@ -251,7 +253,7 @@
         },
         /**
          * rowIndex 에 해당하는 relation 을 수행한다.
-         * @param {Number} rowIndex
+         * @param {Number} rowIndex row 의 index 값
          */
         executeRelation: function(rowIndex) {
             var row = this.grid.dataModel.at(rowIndex),
@@ -266,5 +268,4 @@
                 }
             }, this);
         }
-
     });

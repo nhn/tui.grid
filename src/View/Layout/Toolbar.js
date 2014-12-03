@@ -10,7 +10,7 @@
         tagName: 'div',
         className: 'toolbar',
         /**
-         * 초기화 함수
+         * 생성자 함수
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -59,7 +59,7 @@
         }
     });
     /**
-     * control panel
+     * 툴바 영역 컨트롤 패널 UI
      * @constructor View.Layout.Toolbar.ControlPanel
      */
     View.Layout.Toolbar.ControlPanel = View.Base.extend(/**@lends View.Layout.Toolbar.ControlPanel.prototype */{
@@ -76,7 +76,7 @@
                 '<span><em class="grid">그리드설정</em></span>' +
                 '</a>'),
         /**
-         * 초기화 함수
+         * 생성자 함수
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -102,6 +102,9 @@
             'mousedown': '_onMouseDown'
         },
         template: _.template('<a href="#" class="height_resize_handle">높이 조절</a>'),
+        /**
+         * 생성자 함수
+         */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
         },
@@ -125,7 +128,7 @@
         },
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 마우스 이벤트
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -136,7 +139,7 @@
         },
         /**
          * mousemove 이벤트 핸들러
-         * @param {event} mouseMoveEvent
+         * @param {event} mouseMoveEvent 마우스 이벤트
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
@@ -162,7 +165,7 @@
         },
         /**
          * selection start 이벤트 핸들러
-         * @return {boolean}
+         * @return {boolean}    기본 동작 방지를 위해 무조건 false 를 반환한다.
          * @private
          */
         _onSelectStart: function(e) {
@@ -188,7 +191,7 @@
         }
     });
     /**
-     * Pagination 영역
+     * 툴바의 Pagination 영역
      * @constructor View.Layout.Toolbar.Pagination
      */
     View.Layout.Toolbar.Pagination = View.Base.extend(/**@lends Base.prototype */{
@@ -201,7 +204,7 @@
             '<a href="#" class="next_end">맨뒤</a>'
         ),
         /**
-         * 초기화 한다.
+         * 생성자 함수
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);

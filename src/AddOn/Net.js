@@ -80,7 +80,7 @@
         },
         /**
          * 생성자
-         * @param {Object} attributes
+         * @param {Object} attributes 생성자 option 정보
          */
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -155,7 +155,7 @@
         },
         /**
          * pagination 에서 before page move가 발생했을 때 이벤트 핸들러
-         * @param {{page:number}} customEvent
+         * @param {{page:number}} customEvent pagination 으로부터 전달받는 이벤트 객체
          * @private
          */
         _onPageBeforeMove: function(customEvent) {
@@ -166,7 +166,7 @@
         },
         /**
          * form 의 submit 이벤트 발생시 이벤트 핸들러
-         * @param {event} submitEvent
+         * @param {event} submitEvent   submit 이벤트 객체
          * @private
          */
         _onSubmit: function(submitEvent) {
@@ -191,9 +191,9 @@
 
         /**
          * fetch 수행 이후 custom ajax 동작 처리를 위해 Backbone 의 기본 sync 를 오버라이드 하기위한 메서드.
-         * @param {String} method
-         * @param {Object} model
-         * @param {Object} options
+         * @param {String} method   router 로부터 전달받은 method 명
+         * @param {Object} model    fetch 를 수행한 dataModel
+         * @param {Object} options  request 정보
          * @private
          */
         _sync: function(method, model, options) {
@@ -202,6 +202,7 @@
                 options = options || {};
                 params = $.extend({}, options);
                 if (!options.url) {
+                    console.log('test', method, model, options);
                     params.url = _.result(model, 'url');
                 }
                 this._ajax(params);
@@ -228,7 +229,7 @@
 
         /**
          * form 으로 지정된 엘리먼트의 Data 를 반환한다.
-         * @return {object}
+         * @return {object} formData 데이터 오브젝트
          * @private
          */
         _getFormData: function() {
@@ -238,8 +239,8 @@
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
          * @param {object} dataModel grid 의 dataModel
-         * @param {object} responseData
-         * @param {object} options
+         * @param {object} responseData 응답 데이터
+         * @param {object} options  ajax 요청 정보
          * @private
          */
         _onReadSuccess: function(dataModel, responseData, options) {
@@ -259,8 +260,8 @@
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 error 콜백
          * @param {object} dataModel grid 의 dataModel
-         * @param {object} responseData
-         * @param {object} options
+         * @param {object} responseData 응답 데이터
+         * @param {object} options  ajax 요청 정보
          * @private
          */
         _onReadError: function(dataModel, responseData, options) {},
@@ -305,8 +306,8 @@
         },
         /**
          * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
-         * @param {Number} page
-         * @param {Boolean} [isUsingRequestedData=true]
+         * @param {Number} page 조회할 페이지 정보
+         * @param {Boolean} [isUsingRequestedData=true] page 단위 검색이므로, form 수정여부와 관계없이 처음 보낸 form 데이터로 조회할지 여부를 결정한다.
          * @private
          */
         _readDataAt: function(page, isUsingRequestedData) {
@@ -323,7 +324,7 @@
             this.readData(data);
         },
         /**
-         * request
+         * 서버로 API request 한다.
          * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {object} options
          *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
@@ -351,13 +352,14 @@
             }
         },
         /**
-         *  data 관련 파라미터를 반환한다.
-         * @param {String} requestType
+         * 서버로 요청시 사용될 파라미터 중 Grid 의 데이터에 해당하는 데이터를 Option 에 맞추어 반환한다.
+         * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {Object} [options]
          *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
          *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
          *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
          * @return {{count: number, data: {requestType: string, url: string, data: object, type: string, dataType: string}}}
+         * 옵션 조건에 해당하는 그리드 데이터 정보
          * @private
          */
         _getDataParam: function(requestType, options) {
@@ -412,8 +414,8 @@
             };
         },
         /**
-         * requestType 에 따라 요청 파라미터를 반환한다.
-         * @param {String} requestType
+         * requestType 에 따라 서버에 요청할 파라미터를 반환한다.
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {Object} [options]
          *      @param {String} [options.url=this.options.api[requestType]] 요청할 url.
          *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
@@ -421,7 +423,7 @@
          *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
          *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
          *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-         * @return {{requestType: string, url: string, data: object, type: string, dataType: string}}
+         * @return {{requestType: string, url: string, data: object, type: string, dataType: string}} ajax 호출시 사용될 option 파라미터
          * @private
          */
         _getRequestParam: function(requestType, options) {
@@ -448,9 +450,9 @@
         },
         /**
          * requestType 에 따른 컨펌 메세지를 노출한다.
-         * @param {String} requestType
-         * @param {Number} count
-         * @return {boolean}
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+         * @param {Number} count   전송될 데이터 개수
+         * @return {boolean}    계속 진행할지 여부를 반환한다.
          * @private
          */
         _isConfirmed: function(requestType, count) {
@@ -464,9 +466,9 @@
         },
         /**
          * confirm message 를 반환한다.
-         * @param {String} requestType
-         * @param {Number} count
-         * @return {string}
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+         * @param {Number} count 전송될 데이터 개수
+         * @return {string} 생성된 confirm 메세지
          * @private
          */
         _getConfirmMessage: function(requestType, count) {
@@ -513,9 +515,9 @@
         },
         /**
          * ajax complete 이벤트 핸들러
-         * @param {Function} callback
-         * @param {object} jqXHR
-         * @param {number} status
+         * @param {Function} callback   통신 완료 이후 수행할 콜백함수
+         * @param {object} jqXHR    jqueryXHR  객체
+         * @param {number} status   http status 정보
          * @private
          */
         _onComplete: function(callback, jqXHR, status) {
@@ -525,9 +527,9 @@
          * ajax success 이벤트 핸들러
          * @param {Function} callback
          * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
-         * @param {Object} responseData
-         * @param {number} status
-         * @param {object} jqXHR
+         * @param {Object} responseData 응답 데이터
+         * @param {number} status   http status 정보
+         * @param {object} jqXHR    jqueryXHR  객체
          * @private
          */
         _onSuccess: function(callback, options, responseData, status, jqXHR) {
@@ -555,9 +557,9 @@
          * ajax error 이벤트 핸들러
          * @param {Function} callback
          * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
-         * @param {object} jqXHR
-         * @param {number} status
-         * @param {String} errorMessage
+         * @param {object} jqXHR    jqueryXHR  객체
+         * @param {number} status   http status 정보
+         * @param {String} errorMessage 에러 메세지
          * @private
          */
         _onError: function(callback, options, jqXHR, status, errorMessage) {
@@ -595,8 +597,8 @@
             });
         },
         /**
-         * read
-         * @param {String} queryStr
+         * Backbone Router 에서 url 정보를 통해 서버로 read 요청을 한다.
+         * @param {String} queryStr 쿼리 문자열
          */
         read: function(queryStr) {
             var data = Util.toQueryObject(queryStr);
@@ -605,9 +607,9 @@
             //그 이후 read
             this.net.readData(data);
         },
-        setOwnProperties: function(properties) {
-            _.each(properties, function(value, key) {
-                this[key] = value;
-            }, this);
-        }
+        /**
+         * 내부 프로퍼티 설정
+         * @param {Object} properties 할당할 프로퍼티 데이터
+         */
+        setOwnProperties: setOwnProperties
     });

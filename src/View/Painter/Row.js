@@ -23,17 +23,20 @@
             '</tr>'),
         /**
          * 초기화 함수
-         * @param {object} attributes
+         * @param {object} options
+         *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
+         *      @param {jquery} options.$parent 부모 table body jQuery 엘리먼트
+         *      @param {object} options.collection change 를 감지할 collection 객체
          */
-        initialize: function(attributes) {
+        initialize: function(options) {
             View.Base.Painter.prototype.initialize.apply(this, arguments);
 
-            var whichSide = (attributes && attributes.whichSide) || 'R',
+            var whichSide = (options && options.whichSide) || 'R',
                 focusModel = this.grid.focusModel;
 
             this.setOwnProperties({
-                $parent: attributes.$parent,        //부모 frame element
-                collection: attributes.collection,    //change 를 감지할 collection
+                $parent: options.$parent,        //부모 table body element
+                collection: options.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
                 columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
                 cellHandlerList: [],
@@ -83,7 +86,7 @@
 
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -97,13 +100,15 @@
             }
         },
         /**
-         * model 변경 시
-         * @param {object} model
+         * model 변경 시 이벤트 핸들러
+         * @param {object} model    변화가 일어난 모델 인스턴스
          * @private
          */
         _onModelChange: function(model) {
-            var editType, cellInstance, rowState,
-                $trCache = {}, rowKey,
+            var editType,
+                cellInstance,
+                $trCache = {},
+                rowKey,
                 $tr;
 
             _.each(model.changed, function(cellData, columnName) {
@@ -112,7 +117,6 @@
                 $tr = $trCache[rowKey];
 
                 if (columnName !== '_extraData') {
-                    //editable 프로퍼티가 false 라면 normal type 으로 설정한다.
                     editType = this._getEditType(columnName, cellData);
                     cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, $tr);
@@ -121,25 +125,23 @@
         },
         /**
          * focusModel 의 select 이벤트 발생시 이벤트 핸들러
-         * @param {(Number|String)} rowKey
-         * @param {Object}  focusModel
+         * @param {(Number|String)} rowKey 대상의 키값
          * @private
          */
-        _onSelect: function(rowKey, focusModel) {
+        _onSelect: function(rowKey) {
             this._setCssSelect(rowKey, true);
         },
         /**
          * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
-         * @param {(Number|String)} rowKey
-         * @param {Object}  focusModel
+         * @param {(Number|String)} rowKey 대상의 키값
          * @private
          */
-        _onUnselect: function(rowKey, focusModel) {
+        _onUnselect: function(rowKey) {
             this._setCssSelect(rowKey, false);
         },
         /**
          * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 대상의 키값
          * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
          * @private
          */
@@ -151,7 +153,7 @@
                 $tr, $td,
                 mainRowKey;
 
-            _.each(columnModelList, function(columnModel, index) {
+            _.each(columnModelList, function(columnModel) {
                 columnName = columnModel['columnName'];
                 mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
 
@@ -165,8 +167,8 @@
         },
         /**
          * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
+         * @param {(Number|String)} rowKey 대상의 키값
+         * @param {String} columnName 컬럼명
          * @private
          */
         _onBlur: function(rowKey, columnName) {
@@ -175,8 +177,8 @@
         },
         /**
          * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
+         * @param {(Number|String)} rowKey 대상의 키값
+         * @param {String} columnName 컬럼명
          * @private
          */
         _onFocus: function(rowKey, columnName) {
@@ -185,8 +187,8 @@
         },
         /**
          * tr 엘리먼트를 찾아서 반환한다.
-         * @param {string|number} rowKey
-         * @return {jquery}
+         * @param {string|number} rowKey rowKey 대상의 키값
+         * @return {jquery} 조회한 tr jquery 엘리먼트
          * @private
          */
         _getRowElement: function(rowKey) {
@@ -194,9 +196,10 @@
         },
         /**
          * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
-         * @param {String} columnName
-         * @param {Object} cellData
-         * @return {String}
+         * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
+         * @param {String} columnName 컬럼명
+         * @param {Object} cellData 셀 데이터
+         * @return {String} cellFactory 에서 사용될 editType
          * @private
          */
         _getEditType: function(columnName, cellData) {
@@ -207,9 +210,9 @@
             return editType;
         },
         /**
-         * html 마크업을 반환
-         * @param {object} model
-         * @return {string} html html 스트링
+         * tr html 마크업을 반환한다.
+         * @param {object} model 마크업을 생성할 모델 인스턴스
+         * @return {string} tr 마크업 문자열
          */
         getHtml: function(model) {
             /* istanbul ignore if */

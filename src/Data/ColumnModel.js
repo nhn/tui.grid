@@ -6,7 +6,7 @@
      * 컬럼 모델 데이터를 다루는 객체
      * @constructor Data.ColumnModel
      */
-    Data.ColumnModel = Model.Base.extend(/**@lends Data.prototype */{
+    Data.ColumnModel = Model.Base.extend(/**@lends Data.ColumnModel.prototype */{
         defaults: {
             keyColumnName: null,
             columnFixIndex: 0,  //columnFixIndex
@@ -17,7 +17,10 @@
             columnModelMap: {},
             relationListMap: {}
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
             this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
             this.on('change', this._onChange, this);
@@ -25,8 +28,8 @@
 
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 number column 을 추가한다.
-         * @param {Array} columnModelList
-         * @return {Array}
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {Array}  _number 컬럼이 추가된 컬럼모델 배열
          * @private
          */
         _initializeNumberColumn: function(columnModelList) {
@@ -45,8 +48,8 @@
         },
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 button column 을 추가한다.
-         * @param {Array} columnModelList
-         * @return {Array}
+         * @param {Array} columnModelList 컬럼모델 배열
+         * @return {Array} _button 컬럼이 추가된 컬럼모델 배열
          * @private
          */
         _initializeButtonColumn: function(columnModelList) {
@@ -75,12 +78,12 @@
             return columnModelList;
         },
         /**
-         * column 을 append 한다.
-         * - columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
+         * column 을 prepend 한다.
+         * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
          * - _number, _button 컬럼 초기화시 사용함.
-         * @param {object} columnObj
-         * @param {Array} columnModelList
-         * @return {Array}
+         * @param {object} columnObj    prepend 할 컬럼모델
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {Array} 확장한 결과 컬럼모델 배열
          * @private
          */
         _extendColumn: function(columnObj, columnModelList) {
@@ -97,9 +100,9 @@
         },
         /**
          * index 에 해당하는 columnModel 을 반환한다.
-         * @param {Number} index
-         * @param {Boolean} isVisible [isVisible=false]
-         * @return {*}
+         * @param {Number} index    조회할 컬럼모델의 인덱스 값
+         * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 찾을것인지 여부.
+         * @return {object} 조회한 컬럼 모델
          */
         at: function(index, isVisible) {
             var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
@@ -107,9 +110,9 @@
         },
         /**
          * columnName 에 해당하는 index를 반환한다.
-         * @param {string} columnName
-         * @param {Boolean} isVisible [isVisible=false]
-         * @return {number} index
+         * @param {string} columnName   컬럼명
+         * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 반환할 것인지 여부.
+         * @return {number} index   컬럼명에 해당하는 인덱스 값
          */
         indexOfColumnName: function(columnName, isVisible) {
             isVisible = (isVisible === undefined) ? true : isVisible;
@@ -119,9 +122,9 @@
         /**
          * columnName 에 해당하는 index를 반환한다.
          * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
-         * @param {string} columnName
-         * @param {Array} columnModelList
-         * @return {number}
+         * @param {string} columnName   컬럼명
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {number} 컬럼명에 해당하는 인덱스 값
          * @private
          */
         _indexOfColumnName: function(columnName, columnModelList) {
@@ -134,9 +137,9 @@
             return -1;
         },
         /**
-         * columnName 이 L Side 에 있는 column 인지 반환한다.
-         * @param {String} columnName
-         * @return {Boolean}
+         * columnName 이 열고정 영역에 있는 column 인지 반환한다.
+         * @param {String} columnName   컬럼명
+         * @return {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
          */
         isLside: function(columnName) {
             var index = this.indexOfColumnName(columnName, true);
@@ -148,8 +151,8 @@
         },
         /**
          * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
-         * @param {String} [whichSide] 왼쪽 영역인지, 오른쪽 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
-         * @return {Array}
+         * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
+         * @return {Array}  조회한 컬럼모델 배열
          */
         getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
@@ -168,25 +171,26 @@
         },
         /**
          * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
-         * @param {String} columnName
-         * @return {Object}
+         * @param {String} columnName   컬럼명
+         * @return {Object} 컬럼명에 해당하는 컬럼모델
          */
         getColumnModel: function(columnName) {
             return this.get('columnModelMap')[columnName];
         },
         /**
          * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
-         * @param {String} columnName
-         * @return {boolean}
+         * 랜더링시 html 태그 문자열을 제거할때 사용됨.
+         * @param {String} columnName 컬럼명
+         * @return {boolean} text 타입인지 여부
          */
         isTextType: function(columnName) {
-            var textTypeList = ['normal', 'text', 'text-convertible'];
+            var textTypeList = ['normal', 'text', 'text-password', 'text-convertible'];
             return $.inArray(this.getEditType(columnName), textTypeList) !== -1;
         },
         /**
          * 컬럼 모델로부터 editType 을 반환한다.
          * @param {string} columnName
-         * @return {string}
+         * @return {string} 해당하는 columnName 의 editType 을 반환한다.
          */
         getEditType: function(columnName) {
             var columnModel = this.getColumnModel(columnName),
@@ -200,8 +204,8 @@
         },
         /**
          * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
-         * @param {Array} columnModelList
-         * @return {Array}
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {Array}  isHidden 이 설정되지 않은 컬럼모델 배열
          * @private
          */
         _getVisibleList: function(columnModelList) {
@@ -209,7 +213,7 @@
         },
         /**
          * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
-         * @return {{columnName1: Array, columnName1: Array}}
+         * @return {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
          * @private
          */
         _getRelationListMap: function(columnModelList) {
@@ -227,8 +231,7 @@
         },
         /**
          * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
-         * @return {Array}
-         * @private
+         * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
          */
         getIngoredColumnNameList: function() {
             var columnModelLsit = this.get('columnModelList'),
@@ -242,9 +245,9 @@
         },
         /**
          * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
-         * partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
-         * @param {Array} columnModelList
-         * @param {Number} columnFixIndex
+         * 열고정 영역 기준으로 partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @param {Number} columnFixIndex   열고정 인덱스
          * @private
          */
         _setColumnModelList: function(columnModelList, columnFixIndex) {
@@ -264,7 +267,7 @@
         },
         /**
          * change 이벤트 발생시 핸들러
-         * @param {Object} model
+         * @param {Object} model change 이벤트가 발생한 model 객체
          * @private
          */
         _onChange: function(model) {

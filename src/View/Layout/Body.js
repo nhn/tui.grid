@@ -21,10 +21,15 @@
             'scroll': '_onScroll',
             'mousedown': '_onMouseDown'
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 body 인지 여부.
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: attributes && attributes.whichSide || 'R',
+                whichSide: options && options.whichSide || 'R',
                 isScrollSync: false
             });
 
@@ -37,15 +42,15 @@
         },
         /**
          * DimensionModel 의 body Height 가 변경된 경우 element 의 height 를 조정한다.
-         * @param {Object} model
-         * @param {Number} value
+         * @param {Object} model 변경이 일어난 model 인스턴스
+         * @param {Number} value bodyHeight 값
          * @private
          */
         _onBodyHeightChange: function(model, value) {
             this.$el.css('height', value + 'px');
         },
         /**
-         * columnWidth change 핸들러
+         * 컬럼 너비 변경 이벤트 핸들러
          * @private
          */
         _onColumnWidthChanged: function() {
@@ -57,8 +62,8 @@
             });
         },
         /**
-         * MouseDown event handler
-         * @param {event} mouseDownEvent
+         * 마우스다운 이벤트 핸들러
+         * @param {event} mouseDownEvent    마우스 이벤트
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -84,8 +89,8 @@
             }
         },
         /**
-         * Scroll Event Handler
-         * @param {event} scrollEvent
+         * 스크롤 이벤트 핸들러
+         * @param {event} scrollEvent   스크롤 이벤트
          * @private
          */
         _onScroll: function(scrollEvent) {
@@ -100,9 +105,9 @@
             renderModel.set(obj);
         },
         /**
-         * Render model 의 Scroll left 변경 핸들러
-         * @param {object} model
-         * @param {Number} value
+         * Render model 의 Scroll left 변경 이벤트 핸들러
+         * @param {object} model 변경이 일어난 모델 인스턴스
+         * @param {Number} value scrollLeft 값
          * @private
          */
         _onScrollLeftChange: function(model, value) {
@@ -112,9 +117,9 @@
             }
         },
         /**
-         * Render model 의 Scroll top 변경 핸들러
-         * @param {object} model
-         * @param {Number} value
+         * Render model 의 Scroll top 변경 이벤트 핸들러
+         * @param {object} model 변경이 일어난 모델 인스턴스
+         * @param {Number} value scrollTop값
          * @private
          */
         _onScrollTopChange: function(model, value) {
@@ -123,7 +128,7 @@
         },
         /**
          * rowList 가 rendering 될 때 top 값을 조정한다.
-         * @param {number} top
+         * @param {number} top  조정할 top 위치 값
          * @private
          */
         _setTopPosition: function(top) {
@@ -131,7 +136,7 @@
         },
         /**
          * rendering 한다.
-         * @return {View.Layout.Body}
+         * @return {View.Layout.Body}   자기 자신
          */
         render: function() {
             var grid = this.grid,
@@ -164,7 +169,7 @@
         },
         /**
          * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
-         * @return {string}
+         * @return {string} <colgroup> 안에 들어갈 마크업 문자열
          * @private
          */
         _getColGroupMarkup: function() {

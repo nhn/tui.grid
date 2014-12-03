@@ -30,7 +30,10 @@
             scrollBarSize: 17,
             scrollX: true
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.columnModel = this.grid.columnModel;
             this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
@@ -42,8 +45,8 @@
         /**
          * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
          *
-         * @param {Array} columnWidthList
-         * @return {Array}
+         * @param {Array} columnWidthList   컬럼 너비 리스트
+         * @return {Array}  totalWidth 에 맞게 계산한 컬럼 너비 리스트
          * @private
          */
         _calculateColumnWidthList: function(columnWidthList) {
@@ -96,7 +99,7 @@
         /**
          * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
          *
-         * @return {Array}
+         * @return {Array}  columnModel 에 설정된 width 값 기준의 너비 리스트
          * @private
          */
         _getOriginalWidthList: function() {
@@ -114,7 +117,7 @@
         /**
          * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
          * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
-         * @return {Number}
+         * @return {Number} 해당 frame 의 너비
          */
         getFrameWidth: function(whichSide) {
             var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
@@ -128,8 +131,8 @@
         },
         /**
          * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
-         * @param {Array} widthList
-         * @return {Number}
+         * @param {Array} widthList 너비 리스트 배열
+         * @return {Number} 계산된 frame 너비값
          * @private
          */
         _getFrameWidth: function(widthList) {
@@ -168,7 +171,7 @@
         },
         /**
          * 열 고정 영역의 minimum width 값을 구한다.
-         * @return {number}
+         * @return {number} 열고정 영역의 최소 너비값.
          * @private
          */
         _getMinLeftSideWidth: function() {
@@ -181,7 +184,7 @@
         },
         /**
          * 열 고정 영역의 maximum width 값을 구한다.
-         * @return {number}
+         * @return {number} 열고정 영역의 최대 너비값.
          * @private
          */
         _getMaxLeftSideWidth: function() {
@@ -190,10 +193,10 @@
             return maxWidth;
         },
         /**
-         * 계산한 cell의 위치를 리턴한다.
-         * @param {Number|String} rowKey
-         * @param {String} columnName
-         * @return {{top: *, left: number, right: *, bottom: *}}
+         * 계산한 cell 의 위치를 리턴한다.
+         * @param {Number|String} rowKey 데이터의 키값
+         * @param {String} columnName   칼럼명
+         * @return {{top: number, left: number, right: number, bottom: number}}
          */
         getCellPosition: function(rowKey, columnName) {
             var top, left = 0, right, bottom, i = 0,
@@ -239,9 +242,9 @@
         },
         /**
          * columnFixIndex 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
-         * @param {Array} lsideWidthList
-         * @param {Number} totalWidth
-         * @return {Array}
+         * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
+         * @param {Number} totalWidth   grid 전체 너비
+         * @return {Array} 열고정 영역의 너비 리스트
          * @private
          */
         _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
@@ -263,7 +266,7 @@
             return lsideWidthList;
         },
         /**
-         * body height 계산
+         * 그리드의 body height 를 계산하여 할당한다.
          * @private
          */
         _setBodyHeight: function() {
@@ -275,33 +278,30 @@
         },
         /**
          * 현재 화면에 보이는 row 개수를 반환
-         * @return {number}
+         * @return {number} 화면에 보이는 행 개수
          */
         getDisplayRowCount: function() {
             return Util.getDisplayRowCount(this.get('bodyHeight') - this.get('toolbarHeight'), this.get('rowHeight'));
         },
         /**
-         * scrollX 높이를 구한다.
-         * @return {number}
+         * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
+         * @return {number} 수평 스크롤바의 높이
          */
         getScrollXHeight: function() {
             return +this.get('scrollX') * this.get('scrollBarSize');
         },
         /**
-         * _onWidthChange
-         *
-         * width 값 변경시 각 column 별 너비를 계산하는 로직
-         * @param {object} model
+         * width 값 변경시 각 column 별 너비를 계산한다.
          * @private
          */
-        _onWidthChange: function(model) {
+        _onWidthChange: function() {
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
         },
         /**
          * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
-         * @param {Number} index
-         * @param {Number} width
+         * @param {Number} index    너비를 변경할 컬럼의 인덱스
+         * @param {Number} width    변경할 너비 pixel값
          */
         setColumnWidth: function(index, width) {
             width = Math.max(width, this.get('minimumColumnWidth'));
@@ -315,25 +315,25 @@
         },
         /**
          * L side 와 R side 에 따른 columnWidthList 를 반환한다.
-         * @param {String} whichSide 생략했을 때 전체 columnList 반환
-         * @return {Array}
+         * @param {String} whichSide 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략했을 때 전체 columnList 반환
+         * @return {Array}  조회한 영역의 columnWidthList
          */
         getColumnWidthList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
-            var columnFixIndex = this.columnModel.get('columnFixIndex');
-            var columnList = [];
+            var columnFixIndex = this.columnModel.get('columnFixIndex'),
+                columnWidthList = [];
 
             switch (whichSide) {
                 case 'L':
-                    columnList = this.get('columnWidthList').slice(0, columnFixIndex);
+                    columnWidthList = this.get('columnWidthList').slice(0, columnFixIndex);
                     break;
                 case 'R':
-                    columnList = this.get('columnWidthList').slice(columnFixIndex);
+                    columnWidthList = this.get('columnWidthList').slice(columnFixIndex);
                     break;
                 default :
-                    columnList = this.get('columnWidthList');
+                    columnWidthList = this.get('columnWidthList');
                     break;
             }
-            return columnList;
+            return columnWidthList;
         }
     });

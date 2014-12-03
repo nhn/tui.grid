@@ -3,25 +3,28 @@
  * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
 /**
- * 레이어 기반 클래스
+ * 레이어 기본 클래스
  * @constructor View.Layer.Base
  */
 View.Layer.Base = View.Base.extend(/**@lends View.Layer.Base.prototype */{
-    initialize: function(attributes) {
+    template: _.template('' +
+    '<div>' +
+    '    <%=text%>' +
+    '    <div class="loading_img"></div>' +
+    '</div>'),
+    /**
+     * 초기화 함수
+     */
+    initialize: function() {
         View.Base.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             text: '기본 텍스트'
         });
         this.listenTo(this.grid.dimensionModel, 'change', this._resize, this);
     },
-    template: _.template('' +
-        '<div>' +
-        '    <%=text%>' +
-        '    <div class="loading_img"></div>' +
-        '</div>'),
     /**
      * 랜더링 한다.
-     * @param {String} text
+     * @param {String} text 레이어에 노출할 text
      * @return {View.Layer.Base}
      */
     render: function(text) {
@@ -32,7 +35,7 @@ View.Layer.Base = View.Base.extend(/**@lends View.Layer.Base.prototype */{
     },
     /**
      * Layer를 노출한다.
-     * @param {String} text
+     * @param {String} text 레이어에 노출할 text
      */
     show: function(text) {
         this.render(text).$el.css('display', 'block')

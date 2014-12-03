@@ -8,10 +8,15 @@
      * @constructor View.RowList
      */
     View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
-        initialize: function(attributes) {
+        /**
+         * 초기화 함수
+         * @param {object} options
+         *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: (attributes && attributes.whichSide) || 'R',
+                whichSide: (options && options.whichSide) || 'R',
                 timeoutIdForCollection: 0,
                 rowPainter: null
             });

@@ -8,11 +8,9 @@
      */
     View.CellFactory = View.Base.extend(/**@lends View.CellFactory.prototype */{
         /**
-         * 초기화 함수
-         * @param {object} attributes
-         * @param {object} options
+         * 생성자 함수
          */
-        initialize: function(attributes, options) {
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this._initializeInstances();
         },
@@ -46,8 +44,8 @@
         },
         /**
          * 인자로 받은 editType 에 해당하는 Cell Painter Instance 를 반환한다.
-         * @param {String} editType
-         * @return {Object}
+         * @param {String} editType editType 정보
+         * @return {Object} editType 에 해당하는 페인터 인스턴스
          */
         getInstance: function(editType) {
             var instance = this.instances[editType];
@@ -64,8 +62,8 @@
             return instance;
         },
         /**
-         * Frame(Left Side 혹은 Right Side)엘리먼트 하위에 모든 td 에 이벤트 핸들러를 bind 한다.
-         * @param {jQuery} $parent Frame HTML 엘리먼트
+         * Frame(Left Side 혹은 Right Side)엘리먼트 tbody 하위에 모든 td 에 이벤트 핸들러를 bind 한다.
+         * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
         attachHandler: function($parent) {
             var $tdList = $parent.find('td'),
@@ -79,8 +77,8 @@
             }, this);
         },
         /**
-         * Frame(Left Side 혹은 Right Side)엘리먼트 하위에 모든 td 에 이벤트 핸들러를 unbind 한다.
-         * @param {jQuery} $parent Frame HTML 엘리먼트
+         * Frame(Left Side 혹은 Right Side)엘리먼트 tbody 하위에 모든 td 에 이벤트 핸들러를 unbind 한다.
+         * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
         detachHandler: function($parent) {
             var $tdList = $parent.find('td'),

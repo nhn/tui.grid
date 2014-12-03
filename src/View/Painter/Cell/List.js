@@ -11,6 +11,9 @@
         redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
         },
+        /**
+         * 생성자 메서드
+         */
         initialize: function() {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
@@ -21,14 +24,14 @@
         getEditType: function() {},
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {},
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -43,9 +46,9 @@
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jQuery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
@@ -55,8 +58,8 @@
          *
          * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
          * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
-         * @param {Object} cellData
-         * @returns {cellData.optionList|*}
+         * @param {Object} cellData 모델의 셀 데이터
+         * @return {Array} 옵션 리스트
          */
         getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
@@ -64,7 +67,7 @@
         },
         /**
          * blur 이벤트 핸들러
-         * @param {Event} blurEvent
+         * @param {Event} blurEvent 이벤트 객체
          * @private
          */
         _onBlur: function(blurEvent) {
@@ -73,7 +76,7 @@
         },
         /**
          * focus 이벤트 핸들러
-         * @param {Event} focusEvent
+         * @param {Event} focusEvent 이벤트 객체
          * @private
          */
         _onFocus: function(focusEvent) {
@@ -89,7 +92,10 @@
      * @constructor View.Painter.Cell.List.Select
      */
     View.Painter.Cell.List.Select = View.Painter.Cell.List.extend(/**@lends View.Painter.Cell.List.Select.prototype */{
-        initialize: function(attributes) {
+        /**
+         * 생성자 메서드
+         */
+        initialize: function() {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
 
             this.setKeyDownSwitch({
@@ -116,7 +122,7 @@
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             /* istanbul ignore next */
@@ -125,8 +131,8 @@
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -163,9 +169,9 @@
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             var $select = $td.find('select');
@@ -182,7 +188,7 @@
         },
         /**
          * change 이벤트 핸들러
-         * @param {Event} changeEvent
+         * @param {Event} changeEvent   이벤트 객체
          * @private
          */
         _onChange: function(changeEvent) {
@@ -201,7 +207,10 @@
      * @constructor View.Painter.Cell.List.Button
      */
     View.Painter.Cell.List.Button = View.Painter.Cell.List.extend(/**@lends View.Painter.Cell.List.Button.prototype */{
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
             this.setKeyDownSwitch({
                 'UP_ARROW': function() {},
@@ -252,7 +261,7 @@
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
@@ -261,8 +270,8 @@
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -305,9 +314,9 @@
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} [hasFocusedElement]
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             //TODO
@@ -376,7 +385,7 @@
         },
         /**
          * onChange 이벤트 핸들러
-         * @param {Event} changeEvent
+         * @param {Event} changeEvent 이벤트 객체
          * @private
          */
         _onChange: function(changeEvent) {

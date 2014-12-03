@@ -8,7 +8,10 @@
      */
     View.Selection = View.Base.extend(/**@lends View.Selection.prototype */{
         events: {},
-        initialize: function(attributes, option) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 //메서드 호출시 range 값
@@ -51,8 +54,8 @@
         },
         /**
          * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
+         * @param {Number} pageX    초기값으로 설정할 마우스 x좌표
+         * @param {Number} pageY    초기값으로 설정할 마우스 y 좌표
          */
         attachMouseEvent: function(pageX, pageY) {
             if (this.isEnable) {
@@ -76,8 +79,8 @@
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
         },
         /**
-         * mouse move event handler
-         * @param {event} mouseMoveEvent
+         * mouse move 이벤트 핸들러
+         * @param {event} mouseMoveEvent 이벤트 객체
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
@@ -96,10 +99,10 @@
             }
         },
         /**
-         * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환.
-         * @param {Number} overflowX
-         * @param {Number} overflowY
-         * @return {boolean}
+         * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환한다.
+         * @param {Number} overflowX    가로축 기준 영역 overflow 값
+         * @param {Number} overflowY    세로축 기준 영역 overflow 값
+         * @return {boolean} overflow 되었는지 여부
          * @private
          */
         _isAutoScrollable: function(overflowX, overflowY) {
@@ -107,8 +110,8 @@
         },
         /**
          * scrollTop 과 scrollLeft 값을 조정한다.
-         * @param {Number} overflowX
-         * @param {Number} overflowY
+         * @param {Number} overflowX    가로축 기준 영역 overflow 값
+         * @param {Number} overflowY    세로축 기준 영역 overflow 값
          * @private
          */
         _adjustScroll: function(overflowX, overflowY) {
@@ -131,8 +134,8 @@
         },
         /**
          * mousedown 이 일어난 지점부터의 거리를 구한다.
-         * @param {event} mouseMoveEvent
-         * @return {number|*}
+         * @param {event} mouseMoveEvent 이벤트 객체
+         * @return {number} 처음 위치좌표로 부터의 거리.
          * @private
          */
         _getDistance: function(mouseMoveEvent) {
@@ -143,18 +146,17 @@
             return Math.round(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
         },
         /**
-         * mouse up event handler
-         * @param {event} mouseUpEvent
+         * mouse up 이벤트 핸들러
          * @private
          */
-        _onMouseUp: function(mouseUpEvent) {
+        _onMouseUp: function() {
             this.detachMouseEvent();
         },
         /**
          * 마우스 위치 정보에 해당하는 row 와 column index 를 반환한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
-         * @return {{row: number, column: number, overflowX: number, overflowY: number}}
+         * @param {Number} pageX    마우스 x좌표
+         * @param {Number} pageY    마우스 y 좌표
+         * @return {{row: number, column: number, overflowX: number, overflowY: number}} row, column의 인덱스 정보와 x, y축 overflow 정보.
          */
         getIndexFromMousePosition: function(pageX, pageY) {
             var containerPos = this._getContainerPosition(pageX, pageY),
@@ -217,15 +219,15 @@
             };
         },
         /**
-         * 범위를 반환한다.
-         * @return {*}
+         * rowSpan 을 함께 계산한 범위를 반환한다.
+         * @return {{row: array, column: array}} rowSpan 을 함께 계산한 범위정보
          */
         getRange: function() {
             return $.extend(true, {}, this.spannedRange);
         },
         /**
-         *  현재 selection 범위에 대한 string 을 반환한다.
-         *  @return {String}
+         *  현재 selection 범위내 데이터를 문자열 형태로 변환하여 반환한다.
+         *  @return {String} selection 범위내 데이터 문자열
          */
         getSelectionToString: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList')
@@ -266,8 +268,8 @@
         },
         /**
          * 실제로 랜더링될 selection layer view 를 생성 후 반환한다.
-         * @param {String} whichSide
-         * @return {*}
+         * @param {String} [whichSide='L'] 좌 우 영역중 어느 영역인지 여부
+         * @return {Object} 해당 영역의 selection layer view 인스턴스
          */
         createLayer: function(whichSide) {
             var clazz = whichSide === 'R' ? View.Selection.Layer.Rside : View.Selection.Layer.Lside,
@@ -290,8 +292,8 @@
         },
         /**
          * selection 영역 선택을 시작한다.
-         * @param {Number} rowIndex
-         * @param {Number} columnIndex
+         * @param {Number} rowIndex 시작점의 row 인덱스 정보
+         * @param {Number} columnIndex 시작점의 column 인덱스 정보
          */
         startSelection: function(rowIndex, columnIndex) {
             this.range.row[0] = this.range.row[1] = rowIndex;
@@ -300,8 +302,8 @@
         },
         /**
          * selection 영역 선택을 확장한다.
-         * @param {Number} rowIndex
-         * @param {Number} columnIndex
+         * @param {Number} rowIndex 확장할 지점의 row 인덱스 정보
+         * @param {Number} columnIndex 확장할 지점의 column 인덱스 정보
          */
         updateSelection: function(rowIndex, columnIndex) {
             this.range.row[1] = rowIndex;
@@ -373,15 +375,15 @@
         },
         /**
          * 현재 selection 레이어가 노출되어 있는지 확인한다.
-         * @return {boolean|*}
+         * @return {boolean}    레이어 노출여부
          */
         isShown: function() {
             return this._isShown;
         },
         /**
          * Selection Layer View 를 반환한다.
-         * @param {String} whichSide
-         * @return {*|View.Selection.rside}
+         * @param {String} [whichSide='L'] 어느 영역의 layer 를 조회할지 여부. 'L|R' 중 하나를 지정한다.
+         * @return {View.Selection.rside|View.Selection.lside} 해당 selection layer view 인스턴스
          * @private
          */
         _getLayer: function(whichSide) {
@@ -389,9 +391,9 @@
         },
         /**
          * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
-         * @return {{pageX: number, pageY: number}}
+         * @param {Number} pageX    마우스 x 좌표
+         * @param {Number} pageY    마우스 y 좌표
+         * @return {{pageX: number, pageY: number}} 그리드 container 기준의 pageX, pageY 값
          * @private
          */
         _getContainerPosition: function(pageX, pageY) {
@@ -405,17 +407,18 @@
             };
         },
         /**
-         * select start event handler
-         * @param {event} selectStartEvent
+         * select start 이벤트를 방지한다.
+         * @param {event} selectStartEvent 이벤트 객체
          * @private
          */
         _onSelectStart: function(selectStartEvent) {
             selectStartEvent.preventDefault();
+            return false;
         },
 
         /**
          * selection 데이터가 존재하는지 확인한다.
-         * @return {boolean}
+         * @return {boolean}    selection 데이터 존재여부
          * @private
          */
         hasSelection: function() {
@@ -493,6 +496,7 @@
                         }
                     }
                 }
+                //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
                 _.each(columnModelList, function(columnModel) {
                     columnName = columnModel['columnName'];
                     param = {
@@ -527,11 +531,16 @@
     View.Selection.Layer = View.Base.extend(/**@lends View.Selection.Layer.prototype */{
         tagName: 'div',
         className: 'selection_layer',
-        initialize: function(attributes, option) {
+        /**
+         * 생성자 함수
+         * @param {object} options
+         *      @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList, this);
             this.setOwnProperties({
-                columnWidthList: attributes.columnWidthList,
+                columnWidthList: options.columnWidthList,
                 spannedRange: {
                     row: [-1, -1],
                     column: [-1, -1]
@@ -539,13 +548,17 @@
                 whichSide: 'R'
             });
         },
+        /**
+         * 컬럼 widthList 값의 변화가 발생했을때 이벤트 핸들러
+         * @private
+         */
         _updateColumnWidthList: function() {
             this.columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide);
         },
         /**
-         * top 값과 height 값을 반환한다.
+         * 영역 정보를 바탕으로 selection 레이어의 크기와 위치 정보를 담은 css 스타일을 반환한다.
          * @param {{row: range, column: range}} spannedRange 인덱스 정보
-         * @return {{display: string, width: string, height: string, top: string, left: string}}
+         * @return {{display: string, width: string, height: string, top: string, left: string}} css 스타일 정보
          * @private
          */
         _getGeometryStyles: function(spannedRange) {
@@ -586,7 +599,7 @@
             return style;
         },
         /**
-         *
+         * 레이어를 노출한다.
          * @param {{row: range, column: range}} spannedRange 인덱스 정보
          */
         show: function(spannedRange) {
@@ -594,7 +607,7 @@
             this.$el.css(this._getGeometryStyles(spannedRange));
         },
         /**
-         * selection 을 숨긴다.
+         * 레이어를 숨긴다.
          */
         hide: function() {
             this.$el.css({
@@ -605,6 +618,10 @@
                 left: 0
             });
         },
+        /**
+         * 렌더링한다.
+         * @return {View.Selection.Layer}
+         */
         render: function() {
             return this;
         }
@@ -614,7 +631,10 @@
      * @constructor View.Selection.Layer.Lside
      */
     View.Selection.Layer.Lside = View.Selection.Layer.extend(/**@lends View.Selection.Layer.Lside.prototype */{
-        initialize: function(attributes, option) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Selection.Layer.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'L'
@@ -626,7 +646,10 @@
      * @constructor View.Selection.Layer.Rside
      */
     View.Selection.Layer.Rside = View.Selection.Layer.extend(/**@lends View.Selection.Layer.Rside.prototype */{
-        initialize: function(attributes, option) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Selection.Layer.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'R'

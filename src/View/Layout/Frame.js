@@ -11,20 +11,22 @@
         className: 'lside_area',
         /**
          * 초기화 메서드
-         * @param {Object} attributes
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
          */
-        initialize: function(attributes) {
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this);
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this)
+                .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+
             this.setOwnProperties({
                 header: null,
                 body: null,
-                whichSide: attributes && attributes.whichSide || 'R'
+                whichSide: options && options.whichSide || 'R'
             });
         },
         /**
-         * 랜더링
+         * 랜더링 메서드
          * @return {View.Layout.Frame}
          */
         render: function() {
@@ -50,16 +52,16 @@
             return this;
         },
         /**
-         *columnModel change 시 수행되는 핸들러
+         *columnModel change 시 수행되는 핸들러 스켈레톤
          * @private
          */
         _onColumnWidthChanged: function() {},
         /**
-         * 랜더링 하기전에 수행하는 함수
+         * 랜더링 하기전에 수행하는 함수 스켈레톤
          */
         beforeRender: function() {},
         /**
-         * 랜더링 이후 수행하는 함수
+         * 랜더링 이후 수행하는 함수 스켈레톤
          */
         afterRender: function() {}
     });

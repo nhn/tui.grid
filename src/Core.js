@@ -7,8 +7,11 @@
      * @constructor Core
      */
     var Core = View.Base.extend(/**@lends Core.prototype */{
+        /**
+         * 스크롤바의 높이
+         * @type {Number}
+         */
         scrollBarSize: 17,
-        minimumHeight: 150, //그리드의 최소 높이값
         lside: null,
         rside: null,
         toolbar: null,
@@ -69,6 +72,7 @@
         },
         /**
          * 생성자 함수
+         * @param {Object} options Grid.js 의 생성자 option 과 동일값.
          */
         initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -94,7 +98,7 @@
         },
         /**
          * default 설정된 옵션에서 생성자로부터 인자로 받은 옵션들을 확장하여 옵션을 설정한다.
-         * @param {Object} options
+         * @param {Object} options Grid.js 의 생성자 option 과 동일값.
          * @private
          */
         _initializeOptions: function(options) {
@@ -156,7 +160,7 @@
             });
         },
         /**
-         * _initializeModel
+         * 내부에서 사용할 모델 instance를 초기화한다.
          *
          * Initialize data model instances
          * @private
@@ -218,9 +222,7 @@
             this.cellFactory = this.createView(View.CellFactory, { grid: this });
         },
         /**
-         * _initializeView
-         *
-         * Initialize view instances
+         * 내부에서 사용할 view 인스턴스들을 초기화한다.
          * @private
          */
         _initializeView: function() {
@@ -264,7 +266,7 @@
             }
         },
         /**
-         * listener 를 초기화한다.
+         * 커스텀 이벤트 리스너를 초기화한다.
          * @private
          */
         _initializeListener: function() {
@@ -281,7 +283,7 @@
 //            if(!this.option('scrollY')) this.$el.css('overflowY', 'hidden');
         },
         /**
-         * event 속성에 정의되지 않은 이벤트 attach 하는 메서드
+         * event 속성에 정의되지 않은 이벤트 attach 한다.
          * @private
          */
         _attachExtraEvent: function() {
@@ -289,16 +291,15 @@
         },
         /**
          * window resize  이벤트 핸들러
-         * @param {event} resizeEvent
          * @private
          */
-        _onWindowResize: function(resizeEvent) {
+        _onWindowResize: function() {
             var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
             this.dimensionModel.set('width', width);
         },
         /**
          * click 이벤트 핸들러
-         * @param {event} clickEvent
+         * @param {event} clickEvent 이벤트 객체
          * @private
          */
         _onClick: function(clickEvent) {
@@ -312,7 +313,7 @@
         },
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -330,7 +331,7 @@
         /**
          * select 된 row 가 변경된 경우 이벤트 핸들러.
          * radio select type 의 경우에 select 된 행을 check 해주는 로직을 담당한다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 변경이 일어난 데이터의 rowKey
          * @private
          */
         _onRowSelectChanged: function(rowKey) {
@@ -371,7 +372,7 @@
          * option 값을 설정하거나 가져온다.
          * @param {(String|Number)} key 데이터의 key
          * @param {*} [value]   설정할 값. 두번째 값이 설정되어 있지 않다면 getter 로 활용된다.
-         * @return {*}
+         * @return {*}  결과값
          */
         option: function(key, value) {
             if (value === undefined) {
@@ -391,7 +392,7 @@
 
 
         /**
-         * render
+         * 랜더링한다.
          *
          * Rendering grid view
          */
@@ -437,7 +438,7 @@
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-         * @return {(Number|String)}
+         * @return {(Number|String)}    조회한 셀의 값.
          */
         getValue: function(rowKey, columnName, isOriginal) {
             var value;
@@ -451,9 +452,9 @@
         /**
          * columnName에 해당하는 column data list를 리턴한다.
          *
-         * @param {String} columnName   컬럼 이름
+         * @param {String} columnName   컬럼명
          * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Array}
+         * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
          */
         getColumnValues: function(columnName, isJsonString) {
             var valueList = this.dataModel.pluck(columnName);
@@ -461,9 +462,9 @@
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey  행 데이터의 고유 키
          * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Object}
+         * @return {Object} 행 데이터
          */
         getRow: function(rowKey, isJsonString) {
             var row = this.dataModel.get(rowKey);
@@ -472,9 +473,9 @@
         },
         /**
          * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
-         * @param {Number} index
+         * @param {Number} index 행의 인덱스
          * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Object}
+         * @return {Object} 행 데이터
          */
         getRowAt: function(index, isJsonString) {
             var row = this.dataModel.at(index).toJSON();
@@ -483,7 +484,7 @@
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
-         * @return {Number}
+         * @return {Number} 데이터 개수
          */
         getRowCount: function() {
             return this.dataModel.length;
@@ -504,7 +505,7 @@
          * rowKey에 해당하는 행에 대해 선택한다.
          * - checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.
          *
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         select: function(rowKey) {
             this.focusModel.select(rowKey);
@@ -517,7 +518,7 @@
         },
         /**
          * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
-         * @return {(Number|String)}
+         * @return {(Number|String)} 행 데이터의 고유 키
          */
         getSelectedRowKey: function() {
             return this.focusModel.which().rowKey;
@@ -544,11 +545,11 @@
             }
         },
         /**
-         * column 에 해당하는 값을 전부 변경한다.
-         * @param {String} columnName
-         * @param {(Number|String)} columnValue
+         * columnName 에 해당하는 값을 전부 변경한다.
+         * @param {String} columnName 컬럼명
+         * @param {(Number|String)} columnValue 변경할 컬럼 값
          * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
-         * @param {Boolean} [silent=false]
+         * @param {Boolean} [silent=false] change 이벤트 trigger 할지 여부.
          */
         setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
             isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
@@ -559,7 +560,7 @@
                 };
             obj[columnName] = columnValue;
 
-            this.dataModel.forEach(function(row, key) {
+            this.dataModel.forEach(function(row) {
                 if (isCheckCellState) {
                     cellState = this.getCellState(row.get('rowKey'), columnName);
                 }
@@ -571,9 +572,9 @@
             }, this);
         },
         /**
-         * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다..
-         * @param {Array} rowList
-         * @param {boolean} [isParse=true]
+         * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+         * @param {Array} rowList 설정할 데이터 배열 값
+         * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
          */
         replaceRowList: function(rowList, isParse) {
             this.showGridLayer('loading');
@@ -588,8 +589,8 @@
         },
         /**
          * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
-         * @param {Array} rowList
-         * @param {boolean} [isParse=true]
+         * @param {Array} rowList 설정할 데이터 배열 값
+         * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
          */
         setRowList: function(rowList, isParse) {
             this.showGridLayer('loading');
@@ -604,7 +605,7 @@
             }, this), 0);
         },
         /**
-         * rowKey, columnName에 해당하는 셀에 포커싱한다.
+         * rowKey, columnName 에 해당하는 셀에 포커싱한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
@@ -617,7 +618,6 @@
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
-         * @private
          */
         focusIn: function(rowKey, columnName, isScrollable) {
             var cellInstance;
@@ -632,9 +632,9 @@
         },
         /**
          * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
-         * @param {(Number|String)} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * @param {(Number|String)} rowIndex 행 index
+         * @param {String} columnIndex 열 index
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focusAt: function(rowIndex, columnIndex, isScrollable) {
             var row = this.dataModel.at(rowIndex),
@@ -645,9 +645,9 @@
         },
         /**
          * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
-         * @param {(Number|String)} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * @param {(Number|String)} rowIndex 행 index
+         * @param {String} columnIndex 열 index
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focusInAt: function(rowIndex, columnIndex, isScrollable) {
             var row = this.dataModel.at(rowIndex),
@@ -707,7 +707,7 @@
 
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         enableRow: function(rowKey) {
             this.dataModel.setRowState(rowKey, '');
@@ -721,23 +721,22 @@
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         enableCheck: function(rowKey) {
             this.dataModel.setRowState(rowKey, '');
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         disableCheck: function(rowKey) {
             this.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
         },
-
         /**
          * 현재 선택된 행들의 키값만을 배열로 리턴한다.
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-         * @return {Array|String}
+         * @return {Array|String} 선택된 행들의 키값 리스트.
          */
         getCheckedRowKeyList: function(isJsonString) {
             var rowKeyList = [];
@@ -751,7 +750,7 @@
         /**
          * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-         * @return {Array|String}
+         * @return {Array|String} 선택된 행들의 데이터값 리스트.
          */
         getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.dataModel.getRowList(true);
@@ -759,7 +758,7 @@
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
-         * @return {Array}
+         * @return {Array}  컬럼모델 리스트
          */
         getColumnModelList: function() {
             return this.columnModel.get('columnModelList');
@@ -768,12 +767,12 @@
          * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
          * 리턴되는 객체에는 createList, updateList, deleteList 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
-         * @param {Object} options
+         * @param {Object} [options]
          *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
          *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
          *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {{createList: Array, updateList: Array, deleteList: Array}}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}} 옵션에 따라 반환된 수정된 데이터 목록
          */
         getModifiedRowList: function(options) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
@@ -796,7 +795,6 @@
         },
         /**
          * 열 고정 위치를 변경한다.
-         *
          * @param {Number} columnFixIndex 고정시킬 열의 인덱스
          */
         setColumnFixIndex: function(columnFixIndex) {
@@ -805,18 +803,17 @@
             });
             this.columnModel.set({columnFixIndex: columnFixIndex});
         },
-
         /**
          * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
          * - getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.
-         * @return {Boolean}
+         * @return {Boolean}    데이터가 변경되었는지 여부
          */
         isChanged: function() {
             var modifiedRowMap = this.getModifiedRowList(),
                 name;
 
             /*
-                최대한 ㅂ빨리 true 를 반환하기 위하여 for 순환문을 사용함.
+                최대한 빨리 true 를 반환하기 위하여 for 순환문을 사용함.
              */
             for (name in modifiedRowMap) {
                 if (modifiedRowMap[name].length) {
@@ -837,13 +834,13 @@
          * Grid Layer 를 모두 감춘다.
          */
         hideGridLayer: function() {
-            _.each(this.view.layer, function(view, name) {
+            _.each(this.view.layer, function(view) {
                 view.hide();
             }, this);
         },
         /**
          * name 에 해당하는 Grid Layer를 보여준다.
-         * @param {String} name ready|empty|loading
+         * @param {String} name ready|empty|loading 중 하나를 설정한다.
          */
         showGridLayer: function(name) {
             this.hideGridLayer();
@@ -852,7 +849,7 @@
 
         /**
          * pagination instance 를 반환한다.
-         * @return {instance|*|exports.scopeToPunc.instance|exports.baseTags.instance}
+         * @return {instance} pagination 인스턴스
          */
         getPaginationInstance: function() {
             var paginationView = this.view.toolbar.pagination;
@@ -873,20 +870,18 @@
             }
             return this;
         },
-
-
         /**
          * 정렬이 되었는지 여부 반환
-         * @return {Boolean}
+         * @return {Boolean} 현재 정렬이 되어있는지 여부
          */
         isSorted: function() {
             return this.dataModel.isSortedByField();
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {Boolean}
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @return {Boolean} 편집 가능한지 여부
          */
         isEditable: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
@@ -901,10 +896,10 @@
             return isEditable;
         },
         /**
-         * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {Boolean}
+         * rowKey 와 columnName 에 해당하는 셀이 disabled 상태인지 여부를 반환한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @return {Boolean} disabled 상태인지 여부
          */
         isDisabled: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
@@ -920,9 +915,9 @@
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {{isEditable: boolean, isDisabled: boolean}}
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @return {{isEditable: boolean, isDisabled: boolean}} 편집가능한지 여부와 disabled 인지 여부.
          */
         getCellState: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
@@ -935,22 +930,21 @@
         },
         /**
          * columnModelList 를 재설정한다..
-         * @param {Array} columnModelList
+         * @param {Array} columnModelList 컬럼모델 리스트
          */
         setColumnModelList: function(columnModelList) {
             this.columnModel.set('columnModelList', columnModelList);
         },
         /**
-         * sort by columnName
-         *
-         * @param {String} columnName
+         * columnName 기준으로 정렬한다.
+         * @param {String} columnName 컬럼명
          */
         sort: function(columnName) {
             this.dataModel.sortByField(columnName);
         },
         /**
-         * rowList 를 반환한다.
-         * @return {Array}
+         * 현재 그리드의 rowList 를 반환한다.
+         * @return {Array} 그리드의 데이터 리스트
          */
         getRowList: function() {
             return this.dataModel.getRowList();
@@ -958,9 +952,9 @@
 
         /**
          * rowKey 와 columnName 에 해당하는 text 형태의 셀의 값을 삭제한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @param {Boolean} silent
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
          */
         del: function(rowKey, columnName, silent) {
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
@@ -1028,31 +1022,38 @@
         },
         /**
          * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
-         * @param {String} columnName
-         * @param {(String|Number)} columnValue
+         * @todo 기능 구현
+         * @param {String} columnName 컬럼 이름
+         * @param {(String|Number)} columnValue 컬럼 이름
          */
         filterData: function(columnName, columnValue) {
-
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
+         * @todo 기능 구현
          */
         enable: function() {
-            //@todo: 구현 필요
         },
         /**
          * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
+         * @todo 기능 구현
          * @param {Boolean} [hasDimmedLayer=true]
          */
         disable: function(hasDimmedLayer) {
-            //@todo: 구현 필요
         },
-
+        /**
+         * 그리드의 layout 데이터를 갱신한다.
+         * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
+         * @todo 기능 구현
+         * @param {Boolean} [hasDimmedLayer=true]
+         */
         refreshLayout: function() {
-            //todo
         },
-
-
+        /**
+         * 그리드의 크기 정보를 변경한다.
+         * @todo 기능 구현
+         * @param {object} size
+         */
         setGridSize: function(size) {
             //var dimensionModel = this.dimensionModel,
             //    width = size && size.width || dimensionModel.get('width'),
@@ -1064,8 +1065,12 @@
             //    bodyHeight = height - (headerHeight + toolbarHeight);
             //}
         },
-        setHeaderColumnTitle: function() {},
-        setScrollBarPosition: function() {},
+        /**
+         * 스크롤 핸들러의 위치를 변경한다.
+         * @todo 기능 구현
+         * @param {object} size
+         */
+        setScrollHandlerPosition: function() {},
 
         /**
          * 소멸자

@@ -32,7 +32,11 @@
      * @constructor Model.Base
      */
     Model.Base = Backbone.Model.extend(/**@lends Model.Base.prototype */{
-        initialize: function(attributes, options) {
+        /**
+         * 생성자 함수
+         * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+         */
+        initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
                 grid: grid
@@ -41,7 +45,7 @@
         },
         /**
          * 내부 프로퍼티 설정
-         * @param {Object} properties
+         * @param {Object} properties 할당할 프로퍼티 데이터
          */
         setOwnProperties: setOwnProperties
     });
@@ -50,6 +54,11 @@
      * @constructor Collection.Base
      */
     Collection.Base = Backbone.Collection.extend(/**@lends Collection.Base.prototype */{
+        /**
+         * 생성자 함수
+         * @param {Array} models    콜랙션에 추가할 model 리스트
+         * @param {Object} options   생성자의 option 객체. 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+         */
         initialize: function(models, options) {
             var grid = options && options.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
@@ -70,7 +79,7 @@
         },
         /**
          * 내부 프로퍼티 설정
-         * @param {Object} properties
+         * @param {Object} properties 할당할 프로퍼티 데이터
          */
         setOwnProperties: setOwnProperties
     });
@@ -80,17 +89,21 @@
      * @constructor View.Base
      */
     View.Base = Backbone.View.extend(/**@lends View.Base.prototype */{
+        /**
+         * 생성자 함수
+         * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+         */
         initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
                 grid: grid,
-                __viewList: []
+                _viewList: []
             });
         },
         /**
          * 에러 객체를 반환한다.
          * @param {String} message
-         * @return {error}
+         * @return {error} 에러객체
          */
         error: function(message) {
             var error = function() {
@@ -102,7 +115,7 @@
         },
         /**
          * 내부 프로퍼티 설정
-         * @param {Object} properties
+         * @param {Object} properties 할당할 프로퍼티 데이터
          */
         setOwnProperties: setOwnProperties,
 
@@ -110,27 +123,27 @@
          * 자식 View 를 생성할 때 사용하는 메서드
          * 스스로를 다시 rendering 하거나 소멸 될 때 내부에서 스스로 생성한 View instance 들도 메모리에서 제거하기 위함이다.
          *
-         * @param {class} klass
-         * @param {object} params
-         * @return {object} instance
+         * @param {class} constructor   View 생성자
+         * @param {object} params   생성자에 넘길 옵션 파라미터
+         * @return {instance} instance    생성자를 통해 인스턴스화 한 객체
          */
-        createView: function(klass, params) {
-            var instance = new klass(params);
+        createView: function(constructor, params) {
+            var instance = new constructor(params);
             this.addView(instance);
             return instance;
         },
         /**
-         * destroy 시 함께 삭제할 View 를 내부 변수 __viewList 에 추가한다.
-         * @param {object} instance
-         * @return {object} instance
+         * destroy 시 함께 삭제할 View 를 내부 변수 _viewList 에 추가한다.
+         * @param {instance} instance 인스턴스 객체
+         * @return {instance} instance 인자로 전달받은 인스턴스 객체
          */
         addView: function(instance) {
-            if (!this.hasOwnProperty('__viewList')) {
+            if (!this.hasOwnProperty('_viewList')) {
                 this.setOwnProperties({
-                    __viewList: []
+                    _viewList: []
                 });
             }
-            this.__viewList.push(instance);
+            this._viewList.push(instance);
             return instance;
         },
         /**
@@ -141,9 +154,9 @@
             this.remove();
         },
         /**
-         * customEvent 에서 사용할 event 객체를 생성하여 반환한다..
-         * @param {Object} data
-         * @return {{_isStopped: boolean, stop: function, param1: param1, param2: param2}}
+         * customEvent 에서 사용할 이벤트 객체를 포멧에 맞게 생성하여 반환한다.
+         * @param {Object} data 이벤트 핸들러에 넘길 데이터
+         * @return {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
          */
         createEventData: function(data) {
             var eventData = $.extend({}, data);
@@ -160,9 +173,9 @@
          * 등록되어있는 자식 View 들을 제거한다.
          */
         destroyChildren: function() {
-            if (this.__viewList instanceof Array) {
-                while (this.__viewList.length !== 0) {
-                    this.__viewList.pop().destroy();
+            if (this._viewList instanceof Array) {
+                while (this._viewList.length !== 0) {
+                    this._viewList.pop().destroy();
                 }
             }
         }
@@ -177,7 +190,10 @@
      */
     View.Base.Painter = View.Base.extend(/**@lends View.Base.Painter.prototype */{
         eventHandler: {},
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.initializeEventHandler();
         },
@@ -202,7 +218,7 @@
         },
         /**
          * 인자로 받은 엘리먼트에 이벤트 핸들러를 할당한다.
-         * @param {jQuery} $el
+         * @param {jQuery} $el  이벤트를 바인딩할 엘리먼트
          */
         attachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {
@@ -219,7 +235,7 @@
         },
         /**
          * 인자로 받은 엘리먼트에 이벤트 핸들러를 제거한다.
-         * @param {jQuery} $el
+         * @param {jQuery} $el  이벤트를 바인딩할 엘리먼트
          */
         detachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {

@@ -10,16 +10,15 @@
         className: 'lside_area',
         /**
          * 초기화 메서드
-         * @param {object} attributes
          */
-        initialize: function(attributes) {
+        initialize: function() {
             View.Layout.Frame.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'L'
             });
         },
         /**
-         * columnWidth 변경시 이벤트 핸들러
+         * columnWidth 변경시 호출될 이벤트 핸들러
          * @private
          */
         _onColumnWidthChanged: function() {
@@ -29,7 +28,7 @@
             });
         },
         /**
-         * beforeRender 콜백
+         * 랜더링하기 전 수행되는 메서드
          */
         beforeRender: function() {
             var width = this.grid.dimensionModel.get('lsideWidth');

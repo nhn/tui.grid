@@ -8,6 +8,9 @@
      *  @constructor Model.Renderer.Smart
      */
     Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
+        /**
+         * 초기화 함수
+         */
         initialize: function() {
             Model.Renderer.prototype.initialize.apply(this, arguments);
             this.on('change:scrollTop', this._onChange, this);
@@ -29,7 +32,7 @@
         },
         /**
          * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
-         * @param {Number} scrollTop
+         * @param {Number} scrollTop    랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
          * @private
          */
         _setRenderingRange: function(scrollTop) {
@@ -81,8 +84,8 @@
         },
         /**
          * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
-         * @param {Number} scrollTop
-         * @return {boolean}
+         * @param {Number} scrollTop 랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
+         * @return {boolean}    랜더링 해야할지 여부
          * @private
          */
         _isRenderable: function(scrollTop) {

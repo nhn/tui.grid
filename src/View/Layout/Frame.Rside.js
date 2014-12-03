@@ -10,9 +10,8 @@
         className: 'rside_area',
         /**
          * 초기화 함수
-         * @param {Object} attributes
          */
-        initialize: function(attributes) {
+        initialize: function() {
             View.Layout.Frame.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'R'
@@ -33,7 +32,7 @@
             });
         },
         /**
-         * rendering 하기 전에 수행하는 함수
+         * 랜더링하기 전 수행되는 메서드
          * @private
          */
         beforeRender: function() {
@@ -48,7 +47,7 @@
             });
         },
         /**
-         * rendering 하기 전에 수행하는 함수
+         * 랜더링 후 수행되는 메서드
          * @private
          */
         afterRender: function() {
@@ -77,8 +76,10 @@
     View.Layout.Frame.Rside.VirtualScrollBar = View.Base.extend(/**@lends View.Layout.Frame.Rside.VirtualScrollBar.prototype */{
         tagName: 'div',
         className: 'virtual_scrollbar',
-
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 hasFocus: false
@@ -94,8 +95,9 @@
             'mousedown': '_onMouseDown'
         },
         /**
-         * mousedown 이벤트 핸들러
-         * rendering 성능 향상을 위해 document 에 mouseup 이벤트 핸들러를 바인딩한다.
+         * 마우스 down 이벤트 핸들러
+         * 스크롤 핸들러를 직접 조작할 경우 rendering 성능 향상을 위해 매번 랜더링 하지 않고 한번에 랜더링 하기위해
+         * hasFocus 내부 변수를 할당하고, document 에 mouseup 이벤트 핸들러를 바인딩한다.
          * @private
          */
         _onMouseDown: function() {
@@ -103,7 +105,7 @@
             $(document).on('mouseup', $.proxy(this._onMouseUp, this));
         },
         /**
-         * mouseup 이벤트 핸들러
+         * 마우스 up 이벤트 핸들러
          * 바인딩 해제한다.
          * @private
          */
@@ -113,7 +115,7 @@
         },
         /**
          * scroll 이벤트 발생시 renderModel 의 scroll top 값을 변경하여 frame 과 body 의 scrollTop 값을 동기화한다.
-         * @param {event} scrollEvent
+         * @param {event} scrollEvent 스크롤 이벤트
          * @private
          */
         _onScroll: function(scrollEvent) {
@@ -126,7 +128,7 @@
         },
         /**
          * 크기 값이 변경될 때 해당 사항을 반영한다.
-         * @param {event} model
+         * @param {event} model 변경이 발생한 모델
          * @private
          */
         _onDimensionChange: function(model) {
@@ -137,8 +139,8 @@
         /**
          * scrollTop 이 변경된다면 scrollTop 값을 갱신하고,
          * scrollTop 값 자체가 잘못된 경우 renderModel 의 scrollTop 값을 정상값으로 갱신한다.
-         * @param {object} model
-         * @param {number} value
+         * @param {object} model 변경이 발생한 모델
+         * @param {number} value scrollTop 값
          * @private
          */
         _onScrollTopChange: function(model, value) {
@@ -164,7 +166,7 @@
             return this;
         },
         /**
-         * virtual scrollbar 의 height 를 지정한다.
+         * virtual scrollbar 의 height 를 설정한다.
          * @private
          */
         _setHeight: function() {

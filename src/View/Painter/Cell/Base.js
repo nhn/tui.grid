@@ -41,11 +41,9 @@
          */
         eventHandler: {},
         /**
-         * 초기화 함수
-         * @param  {Object} attributes
-         * @param {Object} options
+         * 생성자 함수
          */
-        initialize: function(attributes, options) {
+        initialize: function() {
             View.Base.Painter.prototype.initialize.apply(this, arguments);
             this.initializeEventHandler();
             this.setOwnProperties({
@@ -67,8 +65,8 @@
 
         /**
          * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
-         * @param {object} cellData
-         * @param {jQuery} $tr
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $tr  tr 에 해당하는 jquery 로 감싼 html 엘리먼트
          */
         onModelChange: function(cellData, $tr) {
             var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
@@ -96,11 +94,10 @@
         },
         /**
          * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} [hasFocusedElement]
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
          */
-        redraw: function(cellData, $td, hasFocusedElement) {
+        redraw: function(cellData, $td) {
             this.detachHandler($td);
             var attributes = {
                 'class': this._getClassNameList(cellData).join(' ')
@@ -115,8 +112,9 @@
         },
         /**
          * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
-         * @param {Event} keyDownEvent
+         * @param {Event} keyDownEvent  이벤트 객체
          * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
+         * _keyDownSwitch 에서 사용될 공통 파라미터 객체
          * @private
          */
         _getParamForKeyDownSwitch: function(keyDownEvent) {
@@ -136,7 +134,7 @@
         },
         /**
          * keyDownSwitch 를 수행한다.
-         * @param {Event} keyDownEvent
+         * @param {Event} keyDownEvent 이벤트 객체
          * @return {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
          * @private
          */
@@ -163,7 +161,7 @@
 
         /**
          * keyDown 이벤트 핸들러
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent  이벤트 객체
          * @private
          */
         _onKeyDown: function(keyDownEvent) {
@@ -173,9 +171,9 @@
             }
         },
         /**
-         * cellData 정보에서 className 을 추출한다.
-         * @param {Object} cellData
-         * @return {Array}
+         * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Array} 생성된 css 디자인 클래스 배열
          * @private
          */
         _getClassNameList: function(cellData) {
@@ -214,8 +212,8 @@
         /**
          * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
          * td 단위의 html 문자열을 반환한다.
-         * @param {object} cellData
-         * @return {string}
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {string} td 마크업 문자열
          */
         getHtml: function(cellData) {
             var columnName = cellData.columnName,
@@ -247,8 +245,8 @@
         },
         /**
          * 인자로 받은 element 의 cellData 를 반환한다.
-         * @param {jQuery} $target
-         * @return {Object}
+         * @param {jQuery} $target  조회할 엘리먼트
+         * @return {Object} 조회한 cellData 정보
          * @private
          */
         _getCellData: function($target) {
@@ -256,8 +254,8 @@
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
-         * @param {jQuery} $target
-         * @return {{rowKey: String, columnName: String}}
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
          * @private
          */
         _getCellAddress: function($target) {
@@ -268,16 +266,16 @@
         },
         /**
          * 인자로 받은 element 로 부터 columnName 을 반환한다.
-         * @param {jQuery} $target
-         * @return {String}
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {String} 컬럼명
          */
         getColumnName: function($target) {
             return $target.closest('td').attr('columnName');
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 를 반환한다.
-         * @param {jQuery} $target
-         * @return {String}
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {String} 행의 키값
          */
         getRowKey: function($target) {
             return $target.closest('tr').attr('key');
@@ -286,8 +284,8 @@
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
          * 필요에 따라 Override 한다.
-         * @param {Object} cellData
-         * @return {Object} Attribute Object
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Object} td 에 지정할 attribute 데이터
          */
         getAttributes: function(cellData) {
             return {};
@@ -295,7 +293,7 @@
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
             this.grid.focusClipboard();
@@ -311,15 +309,15 @@
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {},
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -335,9 +333,9 @@
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jquery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focuse 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {}
 
@@ -356,20 +354,20 @@
     View.Base.Painter.Cell.Interface.prototype.getEditType = function() {};
     /**
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     View.Base.Painter.Cell.Interface.prototype.focusIn = function($td) {};
     /**
      * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
      * - 필요에 따라 override 한다.
-     * @param {jQuery} $td
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
 //    View.Base.Painter.Cell.Interface.prototype.focusOut = function($td) {};
     /**
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData
-     * @return  {string} html string
+     * @param {object} cellData 모델의 셀 데이터
+     * @return  {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -382,9 +380,9 @@
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData
-     * @param {jQuery} $td
-     * @param {Boolean} hasFocusedElement
+     * @param {object} cellData 모델의 셀 데이터
+     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
     View.Base.Painter.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
 

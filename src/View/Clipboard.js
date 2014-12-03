@@ -15,14 +15,14 @@
             'blur': '_onBlur'
         },
         /**
-         * clipboard focus event handler
+         * 클립보드 focus 이벤트 핸들러
          * @private
          */
         _onFocus: function() {
             this.grid.focusModel.focus();
         },
         /**
-         * clipboard blur event handler
+         * 클립보드 blur 이벤트 핸들러
          * @private
          */
         _onBlur: function() {
@@ -36,10 +36,8 @@
         },
         /**
          * 생성자
-         * @param {object} attributes
-         * @param {object} option
          */
-        initialize: function(attributes, option) {
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForCopy: 0,
@@ -48,14 +46,14 @@
             });
         },
         /**
-         * render
+         * 랜더링 한다.
          * @return {View.Clipboard}
          */
         render: function() {
             return this;
         },
         /**
-         * keyEvent 의 중복 호출을 방지하는 lock
+         * keyEvent 의 중복 호출을 방지하는 lock 을 설정한다.
          * @private
          */
         _lock: function() {
@@ -64,15 +62,15 @@
             this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10);
         },
         /**
-         * unlock
+         * keyEvent 의 중복 호출을 방지하는 lock 을 해제한다.
          * @private
          */
         _unlock: function() {
             this.isLocked = false;
         },
         /**
-         * keyDown event handler
-         * @param {event} keyDownEvent
+         * keyDown 이벤트 핸들러
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _onKeyDown: function(keyDownEvent) {
@@ -94,8 +92,8 @@
             }
         },
         /**
-         * ctrl, shift 둘다 눌리지 않은 상태에서의 key down event 핸들러
-         * @param {event} keyDownEvent
+         * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyIn: function(keyDownEvent) {
@@ -157,8 +155,8 @@
         },
         /**
          * enter 또는 space 가 입력되었을 때, 처리하는 로직
-         * @param {(number|string)} rowKey
-         * @param {string} columnName
+         * @param {(number|string)} rowKey 키 입력이 발생한 엘리먼트의 rowKey
+         * @param {string} columnName 키 입력이 발생한 엘리먼트의 컬럼명
          * @private
          */
         _onEnterSpace: function(rowKey, columnName) {
@@ -174,7 +172,7 @@
         },
         /**
          * shift 가 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyInWithShift: function(keyDownEvent) {
@@ -228,7 +226,7 @@
         },
         /**
          * ctrl 가 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyInWithCtrl: function(keyDownEvent) {
@@ -260,7 +258,7 @@
         },
         /**
          * ctrl, shift 둘다 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyInWithShiftAndCtrl: function(keyDownEvent) {
@@ -286,6 +284,8 @@
         },
         /**
          * text type 의 editOption cell 의 data 를 빈 스트링으로 세팅한다.
+         * selection 영역이 지정되어 있다면 selection 영역에 해당하는 모든 셀.
+         * selection 영역이 지정되어 있지 않다면 focus된 셀
          * @private
          */
         _del: function() {
@@ -315,8 +315,8 @@
         },
         /**
          * keyIn 으로 selection 영역을 update 한다. focus 로직도 함께 수행한다.
-         * @param {Number} rowIndex
-         * @param {Number} columnIndex
+         * @param {Number} rowIndex 행의 index 정보
+         * @param {Number} columnIndex 열의 index 정보
          * @private
          */
         _updateSelectionByKeyIn: function(rowIndex, columnIndex) {
@@ -331,8 +331,8 @@
         },
 
         /**
-         * clipboard 의 String 을 반환한다.
-         * @return {String}
+         * clipboard 에 설정될 문자열 반환한다.
+         * @return {String} 데이터를 text 형태로 변환한 문자열
          * @private
          */
         _getClipboardString: function() {

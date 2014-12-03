@@ -9,15 +9,18 @@
     View.Layout.Header = View.Base.extend(/**@lends View.Layout.Header.prototype */{
         tagName: 'div',
         className: 'header',
-        viewList: [],
         whichSide: 'R',
         events: {
             'click' : '_onClick'
         },
-        initialize: function(attributes, option) {
+        /**
+         * 초기화 메서드
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.whichSide = attributes.whichSide;
-            this.viewList = [];
+            this.whichSide = options.whichSide;
             this.setOwnProperties({
                 timeoutForAllChecked: 0
             });
@@ -59,7 +62,7 @@
         /**
          * col group 마크업을 생성한다.
          *
-         * @return {string}
+         * @return {string} <colgroup>에 들어갈 html 마크업 스트링
          * @private
          */
         _getColGroupMarkup: function() {
@@ -88,7 +91,7 @@
         },
         /**
          * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
-         * @return {jQuery}
+         * @return {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
          * @private
          */
         _getHeaderMainCheckbox: function() {
@@ -131,8 +134,8 @@
         },
         /**
          * scroll left 값이 변경되었을 때 header 싱크를 맞추는 이벤트 핸들러
-         * @param {Object} model
-         * @param {Number} value
+         * @param {Object} model    변경이 발생한 model 인스턴스
+         * @param {Number} value    scrollLeft 값
          * @private
          */
         /* istanbul ignore next: scrollLeft 를 확인할 수 없음 */
@@ -143,7 +146,7 @@
         },
         /**
          * 클릭 이벤트 핸들러
-         * @param {Event} clickEvent
+         * @param {Event} clickEvent    클릭이벤트
          * @private
          */
         _onClick: function(clickEvent) {
@@ -178,8 +181,8 @@
             return this;
         },
         /**
-         *
-         * @return {{widthList: (Array|*), modelList: (Array|*)}}
+         * 컬럼 정보를 반환한다.
+         * @return {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
          * @private
          */
         _getColumnData: function() {
@@ -195,8 +198,7 @@
 
         /**
          * Header 의 body markup 을 생성한다.
-         *
-         * @return {string}
+         * @return {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
          * @private
          */
         _getTableBodyMarkup: function() {
@@ -252,8 +254,8 @@
         /**
          * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
          *
-         * @param {Array} hierarchyList
-         * @return {number}
+         * @param {Array} hierarchyList 헤더 마크업 생성시 사용될 계층구조 데이터
+         * @return {number} 헤더 영역의 row 최대값
          * @private
          */
         _getHierarchyMaxRowCount: function(hierarchyList) {
@@ -265,35 +267,35 @@
         },
         /**
          * column merge 가 설정되어 있을 때 헤더의 계층구조 리스트를 가져온다.
-         * @return {Array}
+         * @return {Array}  계층구조 리스트
          * @private
          */
         _getColumnHierarchyList: function() {
             var columnModelList = this._getColumnData().modelList;
             var hierarchyList = [];
-            _.each(columnModelList, function(model) {
-                hierarchyList.push(this._getColumnHierarchy(model).reverse());
+            _.each(columnModelList, function(columnModel) {
+                hierarchyList.push(this._getColumnHierarchy(columnModel).reverse());
             }, this);
             return hierarchyList;
         },
         /**
          * column merge 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
          *
-         * @param {Object} columnModelData
-         * @param {Array} [resultList]
-         * @return {*|Array}
+         * @param {Object} columnModel 컬럼모델
+         * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
+         * @return {Array} 계층구조 결과값
          * @private
          */
-        _getColumnHierarchy: function(columnModelData, resultList) {
+        _getColumnHierarchy: function(columnModel, resultList) {
             var columnMergeList = this.grid.option('columnMerge');
             resultList = resultList || [];
             /* istanbul ignore else */
-            if (columnModelData) {
-                resultList.push(columnModelData);
+            if (columnModel) {
+                resultList.push(columnModel);
                 /* istanbul ignore else */
                 if (columnMergeList) {
                     _.each(columnMergeList, function(columnMerge, i) {
-                        if ($.inArray(columnModelData['columnName'], columnMerge['columnNameList']) !== -1) {
+                        if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
                             resultList = this._getColumnHierarchy(columnMerge, resultList);
                         }
                     }, this);
@@ -310,20 +312,18 @@
     View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header.ResizeHandler.prototype */{
         tagName: 'div',
         className: 'resize_handle_container',
-        viewList: [],
-        whichSide: 'R',
         events: {
             'mousedown .resize_handle' : '_onMouseDown'
         },
         /**
          * 초기화 함수
-         * @param {Object} attributes
-         * @param {Object} option
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
          */
-        initialize: function(attributes, option) {
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: attributes.whichSide,
+                whichSide: options.whichSide || 'R',
                 isResizing: false,     //현재 resize 발생 상황인지
                 $target: null,         //이벤트가 발생한 target resize handler
                 differenceLeft: 0,
@@ -363,6 +363,7 @@
         },
         /**
          * resize handler 마크업을 구성한다.
+         * @return {String} resize handler 의 html 마크업 스트링
          * @private
          */
         _getResizeHandlerMarkup: function() {
@@ -418,7 +419,7 @@
         },
         /**
          * 현재 mouse move resizing 중인지 상태 flag 반환
-         * @return {boolean}
+         * @return {boolean}    현재 resize 중인지 여부
          * @private
          */
         _isResizing: function() {
@@ -426,7 +427,7 @@
         },
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent    마우스 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -434,15 +435,14 @@
         },
         /**
          * mouseup 이벤트 핸들러
-         * @param {event} mouseUpEvent
          * @private
          */
-        _onMouseUp: function(mouseUpEvent) {
+        _onMouseUp: function() {
             this._stopResizing();
         },
         /**
-         * mouse move 이벤트 핸들러
-         * @param {event} mouseMoveEvent
+         * mousemove 이벤트 핸들러
+         * @param {event} mouseMoveEvent    마우스 이벤트 객체
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
@@ -455,13 +455,13 @@
                     index = parseInt(this.$target.attr('columnindex'), 10);
 
                 this.$target.css('left', left + 'px');
-                this.grid.dimensionModel.setColumnWidth(this._getColumnIndex(index), width);
+                this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             }
         },
         /**
          * 너비를 계산한다.
-         * @param {number} pageX
-         * @return {*}
+         * @param {number} pageX    마우스의 x 좌표
+         * @return {number} x좌표를 기준으로 계산한 width 값
          * @private
          */
         _calculateWidth: function(pageX) {
@@ -469,17 +469,17 @@
             return this.initialWidth + difference;
         },
         /**
-         * column index 를 반환한다.
-         * @param {number} index
-         * @return {*}
+         * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
+         * @param {number} index 핸들러의 index 값
+         * @return {number} 컬럼 index 값
          * @private
          */
-        _getColumnIndex: function(index) {
+        _getHandlerColumnIndex: function(index) {
             return this.whichSide === 'R' ? index + this.grid.columnModel.get('columnFixIndex') : index;
         },
         /**
          * resize start 세팅
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 마우스 이벤트
          * @private
          */
         _startResizing: function(mouseDownEvent) {

@@ -38,7 +38,7 @@
         template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
         /**
          * input type 을 반환한다.
-         * @returns {string}
+         * @return {string} input 타입
          * @private
          */
         _getInputType: function() {
@@ -53,7 +53,7 @@
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         /* istanbul ignore next: focus, select 를 검증할 수 없음 */
         focusIn: function($td) {
@@ -65,7 +65,7 @@
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} [$td]
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
             this.grid.focusClipboard();
@@ -73,8 +73,8 @@
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -95,9 +95,9 @@
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             var isValueChanged = $.inArray('value', cellData.changed) !== -1,
@@ -108,8 +108,8 @@
         },
         /**
          * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
-         * @param {jQuery} $input
-         * @return {Boolean}
+         * @param {jQuery} $input   인풋 jquery 엘리먼트
+         * @return {Boolean}    값의 변경여부
          * @private
          */
         _isEdited: function($input) {
@@ -117,15 +117,15 @@
         },
         /**
          * 원래 text로 값을 되돌린다.
-         * @param {jQuery} $input
+         * @param {jQuery} $input 인풋 jquery 엘리먼트
          * @private
          */
         _restore: function($input) {
             $input.val(this.originalText);
         },
         /**
-         * blur event handler
-         * @param {event} blurEvent
+         * blur 이벤트 핸들러
+         * @param {event} blurEvent 이벤트 객체
          * @private
          */
         _onBlur: function(blurEvent) {
@@ -138,8 +138,8 @@
             this.grid.selection.enable();
         },
         /**
-         * Focus Event Handler
-         * @param {Event} focusEvent
+         * focus 이벤트 핸들러
+         * @param {Event} focusEvent 이벤트 객체
          * @private
          */
         _onFocus: function(focusEvent) {
@@ -159,7 +159,7 @@
         },
         /**
          * input type 을 반환한다.
-         * @return {string}
+         * @return {string} input 타입
          * @private
          */
         _getInputType: function() {
@@ -175,12 +175,17 @@
     });
 
     /**
-     * text-textbox 변환 가능한 cell renderer
+     * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
      * @extends {View.Base.Painter.Cell.Text}
      * @implements {View.Base.Painter.Cell.Interface}
      * @constructor View.Painter.Cell.Text.Convertible
      */
     View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends View.Painter.Cell.Text.Convertible.prototype */{
+        /**
+         * 더블클릭으로 간주할 time millisecond 설정
+         * @type {number}
+         */
+        doubleClickDuration: 400,
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
@@ -188,7 +193,10 @@
             'keydown input': '_onKeyDown',
             'focus input': '_onFocus'
         },
-        initialize: function(attributes, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForClick: 0
@@ -203,7 +211,7 @@
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             this._startEdit($td);
@@ -211,7 +219,7 @@
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
             this._endEdit($td);
@@ -220,8 +228,8 @@
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -249,14 +257,14 @@
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {},
         /**
-         * blur event handler
-         * @param {event} blurEvent
+         * blur 이벤트 핸들러
+         * @param {event} blurEvent 이벤트 객체
          * @private
          */
         _onBlurConvertible: function(blurEvent) {
@@ -267,7 +275,7 @@
         },
         /**
          * text를 textbox 로 교체한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          * @private
          */
         _startEdit: function($td) {
@@ -288,7 +296,7 @@
         },
         /**
          * textbox를  text로 교체한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          * @private
          */
         _endEdit: function($td) {
@@ -299,8 +307,8 @@
             }
         },
         /**
-         * click Event handler
-         * @param {event} clickEvent
+         * click 이벤트 핸들러
+         * @param {event} clickEvent 이벤트 객체
          * @private
          */
         _onClick: function(clickEvent) {
@@ -315,7 +323,7 @@
                 clearTimeout(this.timeoutIdForClick);
                 this.timeoutIdForClick = setTimeout(function() {
                     $td.data('clicked', false);
-                }, 400);
+                }, this.doubleClickDuration);
             }
         }
     });
