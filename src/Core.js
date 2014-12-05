@@ -213,7 +213,7 @@
                 this.renderModel = new Model.Renderer({
                     grid: this
                 });
-            }else {
+            } else {
                 this.renderModel = new Model.Renderer.Smart({
                     grid: this
                 });
@@ -261,7 +261,7 @@
                 grid: this
             });
 
-            if (!this.options.useDataCopy) {
+            if (!this.options && this.options.useDataCopy) {
                 this.selection.disable();
             }
         },
@@ -377,7 +377,7 @@
         option: function(key, value) {
             if (value === undefined) {
                 return this.options[key];
-            }else {
+            } else {
                 this.options[key] = value;
                 return this;
             }
@@ -540,7 +540,7 @@
                     silent: silent
                 });
                 return true;
-            }else {
+            } else {
                 return false;
             }
         },

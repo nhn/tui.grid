@@ -36,7 +36,7 @@
                     // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 해당 row 에 disable, editable 상태를 업데이트 한다.
                     // rowSpan 되어있는 행일 경우 main row 에 해당 처리를 수행한다..
                     this._setRowExtraData();
-                }else {
+                } else {
                     this.setCell(columnName, {
                         value: value
                     });
@@ -118,7 +118,7 @@
                     if (dataModel.isRowSpanEnable()) {
                         rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] &&
                             data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
-                    }else {
+                    } else {
                         rowSpanData = defaultRowSpanData;
                     }
                     isDisabled = columnName === '_button' ? rowState.isDisabledCheck : isDisabled;

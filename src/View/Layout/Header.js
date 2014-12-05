@@ -225,13 +225,13 @@
 
                     if (j === length - 1) {
                         height = (headerHeight - curHeight) - 2;
-                    }else {
+                    } else {
                         curHeight += height + 1;
                     }
                     if (columnNameList[j] == columnName) {
                         rowMarkupList[j].pop();
                         colSpanList[j] += 1;
-                    }else {
+                    } else {
                         colSpanList[j] = 1;
                     }
                     columnNameList[j] = columnName;

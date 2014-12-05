@@ -202,7 +202,7 @@
             if (this.isColumnModelChanged === true) {
                 this.trigger('columnModelChanged', this.get('top'));
                 this.isColumnModelChanged = false;
-            }else {
+            } else {
                 this.trigger('rowListChanged', this.get('top'));
             }
             this.trigger('refresh', this.get('top'));

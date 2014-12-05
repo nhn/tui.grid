@@ -356,7 +356,7 @@
             if (window.clipboardData) {
                 if (window.clipboardData.setData('Text', text)) {
                     this.$el.select();
-                }else {
+                } else {
                     this.$el.val('').select();
                 }
             } else {

@@ -156,7 +156,7 @@
             if (this.collection.isRowSpanEnable()) {
                 if (!columnName) {
                     return extraData['rowSpanData'];
-                }else {
+                } else {
                     extraData = this.get('_extraData');
                     return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
                 }
@@ -613,7 +613,7 @@
                 rowSpanData = row.getRowSpanData(columnName);
                 if (!rowSpanData['isMainRow']) {
                     this.get(rowSpanData['mainRowKey']).set(columnName, value);
-                }else {
+                } else {
                     index = this.indexOfRowKey(row.get('rowKey'));
                     for (i = 0; i < rowSpanData['count'] - 1; i++) {
                         this.at(i + 1 + index).set(columnName, value);

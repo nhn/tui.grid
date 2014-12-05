@@ -93,24 +93,6 @@
             }
         },
         /**
-         * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
-         * @param {object} cellData Model 의 셀 데이터
-         * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
-         */
-        redraw: function(cellData, $td) {
-            this.detachHandler($td);
-            var attributes = {
-                'class': this._getClassNameList(cellData).join(' ')
-            };
-            if (cellData.rowSpan) {
-                attributes['rowSpan'] = cellData.rowSpan;
-            }
-            attributes = $.extend(attributes, this.getAttributes(cellData));
-            $td.attr(attributes);
-            $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData));
-            this.attachHandler($td);
-        },
-        /**
          * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
          * @param {Event} keyDownEvent  이벤트 객체
          * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
@@ -210,15 +192,15 @@
             return classNameList;
         },
         /**
-         * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
-         * td 단위의 html 문자열을 반환한다.
+         * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
+         * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
          * @param {object} cellData Model 의 셀 데이터
-         * @return {string} td 마크업 문자열
+         * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+         * @private
          */
-        getHtml: function(cellData) {
+        _getContentHtml: function(cellData) {
             var columnName = cellData.columnName,
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
-                attributeString = Util.getAttributesString(this.getAttributes(cellData)),
                 content;
 
             if (!ne.util.isNumber(cellData.value) && !cellData.value) {
@@ -233,6 +215,16 @@
             if (ne.util.isExisty(columnModel, 'editOption.afterText')) {
                 content = content + columnModel.editOption.afterText;
             }
+            return content;
+        },
+        /**
+         * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
+         * td 단위의 html 문자열을 반환한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {string} td 마크업 문자열
+         */
+        getHtml: function(cellData) {
+            var attributeString = Util.getAttributesString(this.getAttributes(cellData));
 
             return this.baseTemplate({
                 columnName: cellData.columnName,
@@ -240,8 +232,26 @@
                 className: this._getClassNameList(cellData).join(' '),
                 attributes: attributeString,
                 editType: this.getEditType(),
-                content: content
+                content: this._getContentHtml(cellData)
             });
+        },
+        /**
+         * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
+         */
+        redraw: function(cellData, $td) {
+            this.detachHandler($td);
+            var attributes = {
+                'class': this._getClassNameList(cellData).join(' ')
+            };
+            if (cellData.rowSpan) {
+                attributes['rowSpan'] = cellData.rowSpan;
+            }
+            attributes = $.extend(attributes, this.getAttributes(cellData));
+            $td.attr(attributes);
+            $td.data('edit-type', this.getEditType()).html(this._getContentHtml(cellData));
+            this.attachHandler($td);
         },
         /**
          * 인자로 받은 element 의 cellData 를 반환한다.

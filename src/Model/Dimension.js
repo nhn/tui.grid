@@ -71,7 +71,7 @@
                     width = Math.max(this.get('minimumColumnWidth'), columnWidth);
                     newColumnWidthList.push(width);
                     currentWidth += width;
-                }else {
+                } else {
                     newColumnWidthList.push(-1);
                     unassignedCount++;
                 }
@@ -86,7 +86,7 @@
             if (availableTotalWidth > currentWidth) {
                 remainWidth = availableTotalWidth - currentWidth;
                 unassignedWidth = Math.max(this.get('minimumColumnWidth'), Math.floor(remainWidth / unassignedCount));
-            }else {
+            } else {
                 unassignedWidth = this.get('minimumColumnWidth');
             }
             _.each(newColumnWidthList, function(newColumnWidth, index) {
@@ -105,13 +105,14 @@
         _getOriginalWidthList: function() {
             var columnModelList = this.columnModel.get('visibleList'),
                 columnWidthList = [];
-            for (var i = 0, len = columnModelList.length; i < len; i++) {
-                if (columnModelList[i].width) {
-                    columnWidthList.push(columnModelList[i].width);
-                }else {
+
+            _.each(columnModelList, function(columnModel) {
+                if (columnModel.width) {
+                    columnWidthList.push(columnModel.width);
+                } else {
                     columnWidthList.push(-1);
                 }
-            }
+            });
             return this._calculateColumnWidthList(columnWidthList);
         },
         /**
