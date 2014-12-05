@@ -6,29 +6,24 @@
 
     /**
      * View 내부 관리용 객체 정의
-     * @namespace
      */
     var View = {
             CellFactory: null,
             /**
              * 그리드 레이아웃 정의
-             * @namespace
              */
             Layout: {},
             /**
              * 그리드 레이어 정의
-             * @namespace
              */
             Layer: {},
             /**
              * 그리드 Painter 클래스 정의
-             * @namespace
              */
             Painter: {
                 Row: null,
                 /**
                  * 그리드 Cell Painter 클래스 정의
-                 * @namespace
                  */
                 Cell: {}
             }
@@ -36,26 +31,21 @@
 
     /**
      * Model 내부 관리용 객체 정의
-     * @namespace
      */
     var Model = {};
 
     /**
      * Data 내부 관리용 객체 정의
-     * @namespace
      */
     var Data = {};
 
     /**
      * Collection 내부 관리용 객체 정의
-     * @ignore
-     * @namespace
      */
     var Collection = {};
 
     /**
      * AddOn 내부 관리용 객체 정의
-     * @namespace
      */
     var AddOn = {};
 

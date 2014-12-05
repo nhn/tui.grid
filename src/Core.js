@@ -294,8 +294,10 @@
          * @private
          */
         _onWindowResize: function() {
-            var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
-            this.dimensionModel.set('width', width);
+            if (this.$el && this.$el.length) {
+                var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
+                this.dimensionModel.set('width', width);
+            }
         },
         /**
          * click 이벤트 핸들러
@@ -375,7 +377,8 @@
          * @return {*}  결과값
          */
         option: function(key, value) {
-            if (value === undefined) {
+            if (ne.util.isUndefined(value)) {
+                this.options = this.options || {};
                 return this.options[key];
             } else {
                 this.options[key] = value;

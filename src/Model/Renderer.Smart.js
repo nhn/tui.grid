@@ -5,7 +5,6 @@
     /**
      *  View 에서 Rendering 시 사용할 객체
      *  Smart Rendering 을 지원한다.
-     *  @memberof Model.Renderer
      *  @constructor Model.Renderer.Smart
      */
     Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{

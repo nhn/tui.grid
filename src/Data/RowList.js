@@ -255,7 +255,7 @@
                     }
                 }
             }
-            value = !ne.util.isExisty(value) ? value.toString() : value;
+            value = !ne.util.isUndefined(value) ? value.toString() : value;
             return value;
         },
         /**

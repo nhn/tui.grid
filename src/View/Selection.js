@@ -577,12 +577,14 @@
                 width = 0;
 
             for (i = 0; i < columnRange[1] + 1 && i < len; i++) {
+                //border 두께 (1px) 값도 포함하여 계산한다.
                 if (i < columnRange[0]) {
                     left += columnWidthList[i] + 1;
                 } else {
                     width += columnWidthList[i] + 1;
                 }
             }
+            //border 두께 (1px) 가 추가로 한번 더 계산되었기 때문에 -1 한다.
             width -= 1;
 
             if (width <= 0 || height <= 0) {

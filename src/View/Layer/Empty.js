@@ -4,7 +4,6 @@
  */
 /**
  * 데이터 없음 레이어
- * @memberof View.Layer
  * @constructor View.Layer.Empty
  */
 View.Layer.Empty = View.Layer.Base.extend(/**@lends View.Layer.Empty.prototype */{

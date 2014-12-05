@@ -110,6 +110,7 @@
                 if (columnModel.width) {
                     columnWidthList.push(columnModel.width);
                 } else {
+                    //width 가 지정되지 않았을 경우, 마지막에 동일한 값을 지정해주기 위해 마킹의 의미로 -1 값을 할당한다.
                     columnWidthList.push(-1);
                 }
             });
@@ -126,6 +127,7 @@
                 frameWidth = this._getFrameWidth(columnWidthList);
 
             if (ne.util.isUndefined(whichSide) && columnFixIndex > 0) {
+                //columnFixIndex 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
                 ++frameWidth;
             }
             return frameWidth;
@@ -137,6 +139,7 @@
          * @private
          */
         _getFrameWidth: function(widthList) {
+            //border 값(1px 도 함께 더한다.)
             return widthList.length ? Util.sum(widthList) + widthList.length + 1 : 0;
         },
 
@@ -179,7 +182,7 @@
             var minimumColumnWidth = this.get('minimumColumnWidth'),
                 columnFixIndex = this.columnModel.get('columnFixIndex'),
                 minWidth;
-
+            //border 값(1px 도 함께 더한다.) columnFixIndex 가 0보다 클 경우, 좌우 나누어진 영역에 대한 보더값도 더한다.
             minWidth = columnFixIndex ? (columnFixIndex * (minimumColumnWidth + 1)) + 1 : 0;
             return minWidth;
         },
@@ -229,9 +232,10 @@
             }
 
             for (; i < columnIdx; i++) {
+                //border 값(1px 도 함께 더한다.)
                 left += columnWidthList[i] + 1;
             }
-
+            //border 값(1px 도 함께 더한다.)
             right = left + columnWidthList[i] + 1;
 
             return {

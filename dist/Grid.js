@@ -190,7 +190,7 @@
      * 객체를 복제하여 돌려준다.
      *
      * @param {*} sourceTarget 복제할 대상
-     * @returns {*}
+     * @return {*}
      */
     ajax.util.cloningObject = function(sourceTarget) {
         var constructor,
@@ -224,7 +224,7 @@
      * 클래스의 이름을 문자열로 가져온다.
      *
      * @param {*} target constructor를 체크 할 오브젝트
-     * @returns {String|null}
+     * @return {String|null}
      */
     ajax.util.getConstructorName = function(target) {
         if (target && target.constructor) {
@@ -481,7 +481,7 @@
      * @param {*} obj 순회할 객체
      * @param {Function} iteratee 데이터가 전달될 콜백함수
      * @param {*} [context] 콜백함수의 컨텍스트
-     * @returns {Array}
+     * @return {Array}
      * @example
      * map([0,1,2,3], function(value) {
      *     return value + 1;
@@ -505,7 +505,7 @@
      * @param {*} obj 순회할 객체
      * @param {Function} iteratee 데이터가 전달될 콜백함수
      * @param {*} [context] 콜백함수의 컨텍스트
-     * @returns {*}
+     * @return {*}
      * @example
      * reduce([0,1,2,3], function(stored, value) {
      *     return stored + value;
@@ -789,7 +789,7 @@
          * 이벤트를 취소할 수 있게 해 주는 기능에서 사용한다.
          * @param {string} type
          * @param {object} data
-         * @returns {*}
+         * @return {*}
          * @example
          * // 확대 기능을 지원하는 컴포넌트 내부 코드라 가정
          * if (this.invoke('beforeZoom')) {    // 사용자가 등록한 리스너 결과 체크
@@ -872,7 +872,7 @@
         /**
          * 등록된 이벤트 핸들러의 갯수 반환
          * @param {string} type
-         * @returns {number}
+         * @return {number}
          */
         getListenerLength: function(type) {
             var events = this._events,
@@ -968,7 +968,7 @@
      * @param {Object} props 생성할 생성자의프로토타입에 들어갈 멤버들
      * @param {Function} props.init 인스턴스가 생성될때 실행됨
      * @param {Object} props.static 생성자의 클래스 맴버형태로 들어갈 멤버들
-     * @returns {*}
+     * @return {*}
      * @example
      *
      * var Parent = defineClasss({
@@ -1376,7 +1376,7 @@
     /**
      * 해쉬맵에서 사용할 키를 생성한다.
      * @param {String} key
-     * @returns {string}
+     * @return {string}
      * @private
      */
     HashMap.prototype.encodeKey = function(key) {
@@ -1386,7 +1386,7 @@
     /**
      * 해쉬맵키에서 실제 키를 가져온다.
      * @param {String} key
-     * @returns {String}
+     * @return {String}
      * @private
      */
     HashMap.prototype.decodeKey = function(key) {
@@ -1397,7 +1397,7 @@
     /**
      * 키값을 전달하여 데이터를 반환한다.
      * @param {String} key
-     * @returns {*}
+     * @return {*}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1411,7 +1411,7 @@
     /**
      * 키를 전달하여 데이터가 존재하는지 체크한다.
      * @param {String} key
-     * @returns {boolean}
+     * @return {boolean}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1425,7 +1425,7 @@
     /**
      * 키나 키의 목록을 전달하여 데이터를 삭제한다.
      * @param {String...|String[]} key
-     * @returns {String|String[]}
+     * @return {String|String[]}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1451,7 +1451,7 @@
     /**
      * 키를 전달하여 데이터를 삭제한다.
      * @param {String} key
-     * @returns {*|null} 삭제된 데이터
+     * @return {*|null} 삭제된 데이터
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1472,7 +1472,7 @@
     /**
      * 키의 목록을 전달하여 데이터를 삭제한다.
      * @param {String[]} keyArray
-     * @returns {String[]} 삭제된 데이터
+     * @return {String[]} 삭제된 데이터
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1531,7 +1531,7 @@
 
     /**
      * 저장된 키의 목록을 배열로 리턴해준다.
-     * @returns {Array}
+     * @return {Array}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1553,7 +1553,7 @@
     /**
      * 조건을 체크하는 콜백을 전달받아 데이터를 전달해주고 콜백의 결과가 true인경우의 데이터를 모와 배열로 만들어 리턴해준다.
      * @param {Function} condition
-     * @returns {Array}
+     * @return {Array}
      * @example
      *
      * //ex1
@@ -1740,7 +1740,7 @@
     /**
      * 객체를 전달받아 객체의 키목록을 배열로만들어 리턴해준다.
      * @param obj
-     * @returns {Array}
+     * @return {Array}
      */
     var keys = function(obj) {
         var keys = [],
@@ -1855,7 +1855,7 @@
      * 값이 정의되어 있는지 확인(null과 undefined가 아니면 true를 반환한다)
      * @param {*} obj
      * @param {(String|Array)} [key]
-     * @returns {boolean}
+     * @return {boolean}
      * @example
      *
      * var obj = {a: {b: {c: 1}}};
@@ -1899,7 +1899,7 @@
     /**
      * 인자가 undefiend 인지 체크하는 메서드
      * @param obj
-     * @returns {boolean}
+     * @return {boolean}
      */
     function isUndefined(obj) {
         return obj === undefined;
@@ -1908,7 +1908,7 @@
     /**
      * 인자가 null 인지 체크하는 메서드
      * @param {*} obj
-     * @returns {boolean}
+     * @return {boolean}
      */
     function isNull(obj) {
         return obj === null;
@@ -2329,7 +2329,7 @@ ne.Component.Pagination.prototype.reset = function(itemCount) {
  *
  * @param {String} optionKey 가져올 옵션 키 값
  * @private
- * @returns {*}
+ * @return {*}
  *
  */
 ne.Component.Pagination.prototype._getOption = function(optionKey) {
@@ -2410,7 +2410,7 @@ ne.Component.Pagination.prototype._setOption = function(optionKey, optionValue) 
 /**
  * 현재 페이지를 가져온다
  *
- * @returns {Number} 현재 페이지
+ * @return {Number} 현재 페이지
  */
 ne.Component.Pagination.prototype.getCurrentPage = function() {
 
@@ -2422,7 +2422,7 @@ ne.Component.Pagination.prototype.getCurrentPage = function() {
  * 해당 페이지의 첫번째 아이템이 전체중 몇번째 인지 구한다
  *
  * @param {Number} pageNumber 해당 페이지 번호
- * @returns {number}
+ * @return {number}
  */
 ne.Component.Pagination.prototype.getIndexOfFirstItem = function(pageNumber) {
 
@@ -2433,7 +2433,7 @@ ne.Component.Pagination.prototype.getIndexOfFirstItem = function(pageNumber) {
 /**
  * 마지막 페이지 숫자를 구함
  *
- * @returns {number} 마지막 페이지 숫자
+ * @return {number} 마지막 페이지 숫자
  * @private
  */
 ne.Component.Pagination.prototype._getLastPage = function() {
@@ -2500,7 +2500,7 @@ ne.Component.Pagination.prototype._getRelativePage = function(relativeName) {
  * 예를들어 총 페이지수가 23인데 30이라는 수를 넣으면 23을 반환받는다. 숫자가 1보다 작으면 1을 반환받는다.
  *
  * @param {Number} page
- * @returns {number} 페이지 범위내로 확인된 숫자
+ * @return {number} 페이지 범위내로 확인된 숫자
  * @private
  */
 ne.Component.Pagination.prototype._convertToAvailPage = function(page) {
@@ -2587,7 +2587,7 @@ ne.Component.Pagination.prototype._onClickPageList = function(event) {
  * 커스텀 이벤트를 등록시킨다
  * @param {String|Object} eventType
  * @param {Function} handlerToAttach
- * @returns {ne.Component.Pagination}
+ * @return {ne.Component.Pagination}
  */
 ne.Component.Pagination.prototype.attach = function(eventType, handlerToAttach) {
     if (arguments.length === 1) {
@@ -2773,7 +2773,7 @@ ne.Component.PaginationView.prototype.update = function(viewSet) {
  *
  * @param {JQueryObject} $find 포함되어있는 체크할 대상
  * @param {JQueryObject} $parent 포함하고 있는지 체크할 대상
- * @returns {boolean}
+ * @return {boolean}
  */
 ne.Component.PaginationView.prototype.isIn = function($find, $parent) {
     if (!$parent) {
@@ -2785,7 +2785,7 @@ ne.Component.PaginationView.prototype.isIn = function($find, $parent) {
 /**
  * 기준 엘리먼트를 구한다
  *
- * @returns {JQueryObject}
+ * @return {JQueryObject}
  */
 ne.Component.PaginationView.prototype.getBaseElement = function() {
     return this._element;
@@ -2884,7 +2884,7 @@ ne.Component.PaginationView.prototype.attachEvent = function(eventType, callback
 /**
  * 루트 엘리먼트객체를 돌려준다.
  *
- * @returns {jQueryObject}
+ * @return {jQueryObject}
  */
 ne.Component.PaginationView.prototype.getElement = function() {
 
@@ -2897,7 +2897,7 @@ ne.Component.PaginationView.prototype.getElement = function() {
  * Prefix는 options.classPrefix를 참조, 붙혀질 때 기존 클래스명의 언더바(_) 문자는 하이픈(-)으로 변환됨
  *
  * @param {String} className
- * @returns {*}
+ * @return {*}
  * @private
  */
 ne.Component.PaginationView.prototype._wrapPrefix = function(className) {
@@ -2918,7 +2918,7 @@ ne.Component.PaginationView.prototype._addTextNode = function() {
 
 /**
  * 엘리먼트 복제, html은 동일하나 jQuery객체상태를 초기화 하여 반환된다.
- * @returns {*}
+ * @return {*}
  * @private
  */
 ne.Component.PaginationView.prototype._clone = function($link) {
@@ -2952,7 +2952,7 @@ ne.Component.PaginationView.prototype._setPageResult = function(lastNum) {
  * 현재페이지의 양 끝페이지를 구한다
  *
  * @param viewSet
- * @returns {{left: *, right: *}}
+ * @return {{left: *, right: *}}
  * @private
  */
 
@@ -3122,23 +3122,50 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
 
     /**
-     * 내부 관리용 객체 정의
-     *
-     * @type {{CellFactory: null, Layout: {}, Layer: {}, Painter: {Row: null, Cell: {}}}}
+     * View 내부 관리용 객체 정의
      */
     var View = {
             CellFactory: null,
+            /**
+             * 그리드 레이아웃 정의
+             */
             Layout: {},
+            /**
+             * 그리드 레이어 정의
+             */
             Layer: {},
+            /**
+             * 그리드 Painter 클래스 정의
+             */
             Painter: {
                 Row: null,
+                /**
+                 * 그리드 Cell Painter 클래스 정의
+                 */
                 Cell: {}
             }
-        },
-        Model = {},
-        Data = {},
-        Collection = {},
-        AddOn = {};
+        };
+
+    /**
+     * Model 내부 관리용 객체 정의
+     */
+    var Model = {};
+
+    /**
+     * Data 내부 관리용 객체 정의
+     */
+    var Data = {};
+
+    /**
+     * Collection 내부 관리용 객체 정의
+     */
+    var Collection = {};
+
+    /**
+     * AddOn 내부 관리용 객체 정의
+     */
+    var AddOn = {};
+
     var setOwnProperties = function(properties) {
         _.each(properties, function(value, key) {
             this[key] = value;
@@ -3146,10 +3173,14 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
     };
     /**
      * Model Base Class
-     * @constructor
+     * @constructor Model.Base
      */
-    Model.Base = Backbone.Model.extend({
-        initialize: function(attributes, options) {
+    Model.Base = Backbone.Model.extend(/**@lends Model.Base.prototype */{
+        /**
+         * 생성자 함수
+         * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+         */
+        initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
                 grid: grid
@@ -3158,15 +3189,20 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 내부 프로퍼티 설정
-         * @param {Object} properties
+         * @param {Object} properties 할당할 프로퍼티 데이터
          */
         setOwnProperties: setOwnProperties
     });
     /**
      * Collection Base Class
-     * @constructor
+     * @constructor Collection.Base
      */
-    Collection.Base = Backbone.Collection.extend({
+    Collection.Base = Backbone.Collection.extend(/**@lends Collection.Base.prototype */{
+        /**
+         * 생성자 함수
+         * @param {Array} models    콜랙션에 추가할 model 리스트
+         * @param {Object} options   생성자의 option 객체. 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+         */
         initialize: function(models, options) {
             var grid = options && options.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
@@ -3187,27 +3223,31 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 내부 프로퍼티 설정
-         * @param {Object} properties
+         * @param {Object} properties 할당할 프로퍼티 데이터
          */
         setOwnProperties: setOwnProperties
     });
 
     /**
      * View base class
-     * @constructor
+     * @constructor View.Base
      */
-    View.Base = Backbone.View.extend({
+    View.Base = Backbone.View.extend(/**@lends View.Base.prototype */{
+        /**
+         * 생성자 함수
+         * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+         */
         initialize: function(attributes) {
             var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
             this.setOwnProperties({
                 grid: grid,
-                __viewList: []
+                _viewList: []
             });
         },
         /**
          * 에러 객체를 반환한다.
          * @param {String} message
-         * @return {error}
+         * @return {error} 에러객체
          */
         error: function(message) {
             var error = function() {
@@ -3219,7 +3259,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 내부 프로퍼티 설정
-         * @param {Object} properties
+         * @param {Object} properties 할당할 프로퍼티 데이터
          */
         setOwnProperties: setOwnProperties,
 
@@ -3227,27 +3267,27 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * 자식 View 를 생성할 때 사용하는 메서드
          * 스스로를 다시 rendering 하거나 소멸 될 때 내부에서 스스로 생성한 View instance 들도 메모리에서 제거하기 위함이다.
          *
-         * @param {class} klass
-         * @param {object} params
-         * @return {object} instance
+         * @param {class} constructor   View 생성자
+         * @param {object} params   생성자에 넘길 옵션 파라미터
+         * @return {instance} instance    생성자를 통해 인스턴스화 한 객체
          */
-        createView: function(klass, params) {
-            var instance = new klass(params);
+        createView: function(constructor, params) {
+            var instance = new constructor(params);
             this.addView(instance);
             return instance;
         },
         /**
-         * destroy 시 함께 삭제할 View 를 내부 변수 __viewList 에 추가한다.
-         * @param {object} instance
-         * @return {object} instance
+         * destroy 시 함께 삭제할 View 를 내부 변수 _viewList 에 추가한다.
+         * @param {instance} instance 인스턴스 객체
+         * @return {instance} instance 인자로 전달받은 인스턴스 객체
          */
         addView: function(instance) {
-            if (!this.hasOwnProperty('__viewList')) {
+            if (!this.hasOwnProperty('_viewList')) {
                 this.setOwnProperties({
-                    __viewList: []
+                    _viewList: []
                 });
             }
-            this.__viewList.push(instance);
+            this._viewList.push(instance);
             return instance;
         },
         /**
@@ -3258,9 +3298,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             this.remove();
         },
         /**
-         * customEvent 에서 사용할 event 객체를 생성하여 반환한다..
-         * @param {Object} data
-         * @return {{_isStopped: boolean, stop: function ...}}
+         * customEvent 에서 사용할 이벤트 객체를 포멧에 맞게 생성하여 반환한다.
+         * @param {Object} data 이벤트 핸들러에 넘길 데이터
+         * @return {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
          */
         createEventData: function(data) {
             var eventData = $.extend({}, data);
@@ -3277,9 +3317,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * 등록되어있는 자식 View 들을 제거한다.
          */
         destroyChildren: function() {
-            if (this.__viewList instanceof Array) {
-                while (this.__viewList.length !== 0) {
-                    this.__viewList.pop().destroy();
+            if (this._viewList instanceof Array) {
+                while (this._viewList.length !== 0) {
+                    this._viewList.pop().destroy();
                 }
             }
         }
@@ -3290,11 +3330,14 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
      * - 마크업 문자열을 생성하고 이벤트 핸들러를 attach, detach 하는 역할.
      * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
      * @extends {View.Base}
-     * @constructor
+     * @constructor View.Base.Painter
      */
-    View.Base.Painter = View.Base.extend({
+    View.Base.Painter = View.Base.extend(/**@lends View.Base.Painter.prototype */{
         eventHandler: {},
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.initializeEventHandler();
         },
@@ -3319,7 +3362,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 인자로 받은 엘리먼트에 이벤트 핸들러를 할당한다.
-         * @param {jQuery} $el
+         * @param {jQuery} $el  이벤트를 바인딩할 엘리먼트
          */
         attachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {
@@ -3336,7 +3379,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 인자로 받은 엘리먼트에 이벤트 핸들러를 제거한다.
-         * @param {jQuery} $el
+         * @param {jQuery} $el  이벤트를 바인딩할 엘리먼트
          */
         detachHandler: function($el) {
             _.each(this._eventHandler, function(obj, eventName) {
@@ -3362,11 +3405,19 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
 
 
+/**
+ * @fileoverview 유틸리티 메서드 모음
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+/**
+ * Util 모듈
+ * @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}
+ */
     var Util = {
         /**
          * HTML Attribute 설정 시 필요한 문자열을 가공한다.
-         * @param {{key:value}} attributes
-         * @return {string}
+         * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
+         * @return {string} html 마크업에 포함될 문자열
          * @example
          var str = Util.getAttributesString({
                 'class': 'focused disabled',
@@ -3386,8 +3437,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 배열의 합을 반환한다.
-         * @param {number[]} list
-         * @return {number}
+         * @param {number[]} list   총 합을 구할 number 타입 배열
+         * @return {number} 합산한 결과값
          */
         sum: function(list) {
             return _.reduce(list, function(memo, value) {
@@ -3396,9 +3447,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
-         * @param {number} rowCount
-         * @param {number} rowHeight
-         * @return {*}
+         * @param {number} rowCount  행 개수
+         * @param {number} rowHeight    한 행당 높이
+         * @return {number} 계산된 높이
          */
         getHeight: function(rowCount, rowHeight) {
             return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
@@ -3406,9 +3457,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          *Table 의 높이와 행당 높이를 인자로 받아, table 에서 보여줄 수 있는 행 개수를 반환한다.
          *
-         * @param {number} height
-         * @param {number} rowHeight
-         * @return {number}
+         * @param {number} height 테이블 body 높이
+         * @param {number} rowHeight    한 행당 높이
+         * @return {number} 테이블 body 당 보여지는 행 개수
          */
         getDisplayRowCount: function(height, rowHeight) {
             return Math.ceil((height - 1) / (rowHeight + 1));
@@ -3416,9 +3467,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * Table 의 height 와 행 개수를 인자로 받아, 한 행당 높이를 구한다.
          *
-         * @param {number} rowCount
-         * @param {number} height
-         * @return {number}
+         * @param {number} rowCount  행 개수
+         * @param {number} height   테이블 body 높이
+         * @return {number} 한 행당 높이값
          */
         getRowHeight: function(rowCount, height) {
             return rowCount === 0 ? 0 : Math.floor(((height - 1) / rowCount)) - 1;
@@ -3426,10 +3477,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
         /**
          * target 과 dist 의 값을 비교하여 같은지 여부를 확인하는 메서드
-         * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지 지원됨.
-         * @param {*} target
-         * @param {*} dist
-         * @return {boolean}
+         * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지만 지원함.
+         * @param {*} target    동등 비교할 target
+         * @param {*} dist      동등 비교할 dist
+         * @return {boolean}    동일한지 여부
          */
         isEqual: function(target, dist) {
             var isDiff,
@@ -3462,8 +3513,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
-         * @param {string} htmlString
-         * @return {String}
+         * @param {string} htmlString   html 마크업 문자열
+         * @return {String} HTML tag 에 해당하는 부분을 제거한 문자열
          */
         stripTags: function(htmlString) {
             var matchResult;
@@ -3481,7 +3532,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * Create unique key
-         * @return {string}
+         * @return {string} unique key 를 반환한다.
          */
         getUniqueKey: function() {
             var rand = String(parseInt(Math.random() * 10000000000, 10));
@@ -3489,8 +3540,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * object 를 query string 으로 변경한다.
-         * @param {object} dataObj
-         * @return {string} query string
+         * @param {object} dataObj  쿼리 문자열으로 반환할 객체
+         * @return {string} 변환된 쿼리 문자열
          */
         toQueryString: function(dataObj) {
             var queryList = [];
@@ -3506,7 +3557,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * queryString 을 object 형태로 변형한다.
-         * @param {String} queryString
+         * @param {String} queryString 쿼리 문자열
          * @return {Object} 변환한 Object
          */
         toQueryObject: function(queryString) {
@@ -3532,9 +3583,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * type 인자에 맞게 value type 을 convert 한다.
          * Data.Row 의 List 형태에서 editOption.list 에서 검색을 위해,
          * value type 해당 type 에 맞게 변환한다.
-         * @param {*} value
-         * @param {String} type
-         * @return {*}      컨버팅된 value
+         * @param {*} value 컨버팅할 value
+         * @param {String} type 컨버팅 될 타입
+         * @return {*}  타입 컨버팅된 value
          */
         convertValueType: function(value, type) {
             if (type === 'string') {
@@ -3547,11 +3598,15 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         }
     };
 
+/**
+ * @fileoverview 컬럼 모델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * ColumnModel
-     * @type {*|void}
+     * 컬럼 모델 데이터를 다루는 객체
+     * @constructor Data.ColumnModel
      */
-    Data.ColumnModel = Model.Base.extend({
+    Data.ColumnModel = Model.Base.extend(/**@lends Data.ColumnModel.prototype */{
         defaults: {
             keyColumnName: null,
             columnFixIndex: 0,  //columnFixIndex
@@ -3562,7 +3617,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             columnModelMap: {},
             relationListMap: {}
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
             this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
             this.on('change', this._onChange, this);
@@ -3570,8 +3628,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 number column 을 추가한다.
-         * @param {Array} columnModelList
-         * @returns {Array}
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {Array}  _number 컬럼이 추가된 컬럼모델 배열
          * @private
          */
         _initializeNumberColumn: function(columnModelList) {
@@ -3590,8 +3648,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 인자로 넘어온 columnModelList 에 설정값에 맞게 button column 을 추가한다.
-         * @param {Array} columnModelList
-         * @returns {Array}
+         * @param {Array} columnModelList 컬럼모델 배열
+         * @return {Array} _button 컬럼이 추가된 컬럼모델 배열
          * @private
          */
         _initializeButtonColumn: function(columnModelList) {
@@ -3620,12 +3678,12 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return columnModelList;
         },
         /**
-         * column 을 append 한다.
-         * - columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
+         * column 을 prepend 한다.
+         * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
          * - _number, _button 컬럼 초기화시 사용함.
-         * @param {object} columnObj
-         * @param {Array} columnModelList
-         * @returns {Array}
+         * @param {object} columnObj    prepend 할 컬럼모델
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {Array} 확장한 결과 컬럼모델 배열
          * @private
          */
         _extendColumn: function(columnObj, columnModelList) {
@@ -3642,9 +3700,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * index 에 해당하는 columnModel 을 반환한다.
-         * @param {Number} index
-         * @param {Boolean} isVisible [isVisible=false]
-         * @return {*}
+         * @param {Number} index    조회할 컬럼모델의 인덱스 값
+         * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 찾을것인지 여부.
+         * @return {object} 조회한 컬럼 모델
          */
         at: function(index, isVisible) {
             var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
@@ -3652,9 +3710,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * columnName 에 해당하는 index를 반환한다.
-         * @param {string} columnName
-         * @param {Boolean} isVisible [isVisible=false]
-         * @return {number} index
+         * @param {string} columnName   컬럼명
+         * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 반환할 것인지 여부.
+         * @return {number} index   컬럼명에 해당하는 인덱스 값
          */
         indexOfColumnName: function(columnName, isVisible) {
             isVisible = (isVisible === undefined) ? true : isVisible;
@@ -3664,9 +3722,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * columnName 에 해당하는 index를 반환한다.
          * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
-         * @param {string} columnName
-         * @param {Array} columnModelList
-         * @return {number}
+         * @param {string} columnName   컬럼명
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {number} 컬럼명에 해당하는 인덱스 값
          * @private
          */
         _indexOfColumnName: function(columnName, columnModelList) {
@@ -3679,9 +3737,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return -1;
         },
         /**
-         * columnName 이 L Side 에 있는 column 인지 반환한다.
-         * @param {String} columnName
-         * @return {Boolean}
+         * columnName 이 열고정 영역에 있는 column 인지 반환한다.
+         * @param {String} columnName   컬럼명
+         * @return {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
          */
         isLside: function(columnName) {
             var index = this.indexOfColumnName(columnName, true);
@@ -3693,8 +3751,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
-         * @param {String} [whichSide] 왼쪽 영역인지, 오른쪽 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
-         * @return {Array}
+         * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
+         * @return {Array}  조회한 컬럼모델 배열
          */
         getVisibleColumnModelList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
@@ -3713,25 +3771,26 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
-         * @param {String} columnName
-         * @return {Object}
+         * @param {String} columnName   컬럼명
+         * @return {Object} 컬럼명에 해당하는 컬럼모델
          */
         getColumnModel: function(columnName) {
             return this.get('columnModelMap')[columnName];
         },
         /**
          * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
-         * @param {String} columnName
-         * @return {boolean}
+         * 랜더링시 html 태그 문자열을 제거할때 사용됨.
+         * @param {String} columnName 컬럼명
+         * @return {boolean} text 타입인지 여부
          */
         isTextType: function(columnName) {
-            var textTypeList = ['normal', 'text', 'text-convertible'];
+            var textTypeList = ['normal', 'text', 'text-password', 'text-convertible'];
             return $.inArray(this.getEditType(columnName), textTypeList) !== -1;
         },
         /**
          * 컬럼 모델로부터 editType 을 반환한다.
          * @param {string} columnName
-         * @return {string}
+         * @return {string} 해당하는 columnName 의 editType 을 반환한다.
          */
         getEditType: function(columnName) {
             var columnModel = this.getColumnModel(columnName),
@@ -3745,8 +3804,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
-         * @param {Array} columnModelList
-         * @return {Array}
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @return {Array}  isHidden 이 설정되지 않은 컬럼모델 배열
          * @private
          */
         _getVisibleList: function(columnModelList) {
@@ -3754,11 +3813,11 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
-         * @return {{columnName1: [Array], columnName1: [Array]}}
+         * @return {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
          * @private
          */
         _getRelationListMap: function(columnModelList) {
-            var columnName, relationList,
+            var columnName,
                 relationListMap = {};
 
             ne.util.forEachArray(columnModelList, function(columnModel) {
@@ -3771,10 +3830,24 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
         },
         /**
+         * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
+         * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
+         */
+        getIngoredColumnNameList: function() {
+            var columnModelLsit = this.get('columnModelList'),
+                ignoreColumnNameList = [];
+            _.each(columnModelLsit, function(columnModel) {
+                if (columnModel.isIgnore) {
+                    ignoreColumnNameList.push(columnModel['columnName']);
+                }
+            });
+            return ignoreColumnNameList;
+        },
+        /**
          * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
-         * partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
-         * @param {Array} columnModelList
-         * @param {Number} columnFixIndex
+         * 열고정 영역 기준으로 partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
+         * @param {Array} columnModelList   컬럼모델 배열
+         * @param {Number} columnFixIndex   열고정 인덱스
          * @private
          */
         _setColumnModelList: function(columnModelList, columnFixIndex) {
@@ -3794,7 +3867,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * change 이벤트 발생시 핸들러
-         * @param {Object} model
+         * @param {Object} model change 이벤트가 발생한 model 객체
          * @private
          */
         _onChange: function(model) {
@@ -3813,21 +3886,24 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
      */
     /**
      * Data 중 각 행의 데이터 모델 (DataSource)
-     * @constructor
+     * @constructor Data.Row
      */
-    Data.Row = Model.Base.extend({
+    Data.Row = Model.Base.extend(/**@lends Data.Row.prototype */{
         idAttribute: 'rowKey',
         defaults: {
             _extraData: {
                 'rowState' : null
             }
         },
+        /**
+         * 생성자 함수
+         */
         initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
         },
         /**
          * extraData 로 부터 rowState 를 object 형태로 반환한다.
-         * @return {{isDisabled: boolean, isDisabledCheck: boolean}}
+         * @return {{isDisabled: boolean, isDisabledCheck: boolean}} rowState 정보
          * @private
          */
         getRowState: function() {
@@ -3862,22 +3938,30 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * row의 extraData에 설정된 classNameList 를 반환한다.
          * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-         * @return {Array}
+         * @return {Array} css 클래스 이름의 배열
          */
         getClassNameList: function(columnName) {
             var classNameList = [],
+                columnModel = this.grid.columnModel.getColumnModel(columnName),
                 extraData = this.get('_extraData'),
                 classNameObj = extraData.className,
-                rowClassNameList = classNameObj && classNameObj['row'] || [],
-                columnClassNameList = classNameObj && columnName && classNameObj['column'] && classNameObj['column'][columnName] || [];
+                rowClassNameList = ne.util.isExisty(classNameObj, 'row') ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
+                columnClassNameList = ne.util.isExisty(classNameObj, 'column.' + columnName) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
+                columnModelClassNameList = []; //columnModel 에 할당된 className 리스트
 
-            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList);
+            if (columnModel.className) {
+                columnModelClassNameList.push(columnModel.className);
+            }
+            if (columnModel.isEllipsis) {
+                columnModelClassNameList.push('ellipsis');
+            }
+            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
             return classNameList;
         },
         /**
          * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-         * @param {String} columnName
-         * @return {{isEditable: boolean, isDisabled: boolean}}
+         * @param {String} columnName   컬럼명
+         * @return {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
          */
         getCellState: function(columnName) {
             var notEditableTypeList = ['_number', 'normal'],
@@ -3911,8 +3995,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-         * @param {String} columnName
-         * @return {Boolean}
+         * @param {String} columnName   컬럼명
+         * @return {Boolean}    편집 가능한지 여부
          */
         isEditable: function(columnName) {
             var notEditableTypeList = ['_number', 'normal'],
@@ -3929,8 +4013,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-         * @param {String} columnName
-         * @return {Boolean}
+         * @param {String} columnName   컬럼명
+         * @return {Boolean}    disabled 처리를 할지 여부
          */
         isDisabled: function(columnName) {
             var cellState;
@@ -3942,7 +4026,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          *
          * rowSpan 설정값을 반환한다.
          * @param {String} [columnName] 인자가 존재하지 않을 경우, 행 전체의 rowSpanData 를 맵 형태로 반환한다.
-         * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}
+         * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
          */
         getRowSpanData: function(columnName) {
             var extraData = this.get('_extraData'),
@@ -3954,7 +4038,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             if (this.collection.isRowSpanEnable()) {
                 if (!columnName) {
                     return extraData['rowSpanData'];
-                }else {
+                } else {
                     extraData = this.get('_extraData');
                     return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
                 }
@@ -3972,8 +4056,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * html string 을 encoding 한다.
          * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
          *
-         * @param {String} columnName
-         * @return {String}
+         * @param {String} columnName   컬럼명
+         * @return {String} 인코딩된 결과값
          * @private
          */
         getHTMLEncodedString: function(columnName) {
@@ -3988,18 +4072,19 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
 
         /**
+         * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
          * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
          * text 로 전환해서 반환할 때 처리를 하여 변환한다.
          *
-         * @param {String} columnName
-         * @return {string}
+         * @param {String} columnName   컬럼명
+         * @return {String} text 형태로 가공된 문자열
          * @private
          */
         _getListTypeVisibleText: function(columnName) {
             var value = this.get(columnName),
                 columnModel = this.grid.columnModel.getColumnModel(columnName);
 
-            if (columnModel && columnModel.editOption && columnModel.editOption.list) {
+            if (ne.util.isExisty(columnModel, 'editOption.list')) {
                 var resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
                     editOptionList = resultOptionList && resultOptionList['optionList'] ?
                         resultOptionList['optionList'] : columnModel.editOption.list,
@@ -4022,8 +4107,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
-         * @param {String} columnName
-         * @return {String}
+         * @param {String} columnName   컬럼명
+         * @return {String} 화면에 보여지는 데이터로 가공된 문자열
          */
         getVisibleText: function(columnName) {
             var columnModel = this.grid.columnModel,
@@ -4040,7 +4125,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 model = columnModel.getColumnModel(columnName);
                 //list type 의 editType 이 존재하는 경우
                 if (listTypeMap[editType]) {
-                    if (model.editOption && model.editOption.list && model.editOption.list[0].value) {
+                    if (ne.util.isExisty(model, 'editOption.list.0.value')) {
                         value = this._getListTypeVisibleText(columnName);
                     } else {
                         throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
@@ -4059,7 +4144,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
          *
          * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisabled', 'isEditable'])
-         * @return {{columnName: {attribute: resultValue}}} row 의 columnName 에 적용될 속성값.
+         * @return {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
          */
         getRelationResult: function(callbackNameList) {
             callbackNameList = (callbackNameList && callbackNameList.length) ?
@@ -4112,18 +4197,21 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             }, this);
             return relationResult;
         }
-
-
     });
 
     /**
      * Raw 데이터 RowList 콜렉션. (DataSource)
      * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
      *
-     * @constructor
+     * @constructor Data.RowList
      */
-    Data.RowList = Collection.Base.extend({
+    Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         model: Data.Row,
+        /**
+         * 생성자 함수
+         * @param {Array} models    콜랙션에 추가할 model 리스트
+         * @param {Object} options   생성자의 option 객체
+         */
         initialize: function(models, options) {
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
@@ -4141,18 +4229,18 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
-         * @param {Array} data
-         * @return {Array}
+         * @param {Array} data  원본 데이터
+         * @return {Array}  파싱하여 가공된 데이터
          */
         parse: function(data) {
             data = data && data['contents'] || data;
-            return this.setOriginalRowList(data);
+            return this._formatData(data);
         },
         /**
          * 데이터의 _extraData 를 분석하여, Model 에서 사용할 수 있도록 가공한다.
          * _extraData 필드에 rowSpanData 를 추가한다.
-         * @param {Array} data
-         * @return {Array}
+         * @param {Array} data  가공할 데이터
+         * @return {Array} 가공된 데이터
          * @private
          */
         _formatData: function(data) {
@@ -4172,9 +4260,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * row 를 기본 포멧으로 wrapping 한다.
          * 추가적으로 rowKey 를 할당하고, rowState 에 따라 checkbox 의 값을 할당한다.
          *
-         * @param {object} row
-         * @param {number} index
-         * @return {object}
+         * @param {object} row  대상 row 데이터
+         * @param {number} index    해당 row 의 인덱스 정보. rowKey 를 자동 생성할 경우 사용된다.
+         * @return {object} 가공된 row 데이터
          * @private
          */
         _baseFormat: function(row, index) {
@@ -4193,9 +4281,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
-         * @param {Array} rowList
-         * @param {number} index
-         * @return {Array} rowList
+         * @param {Array} rowList   전체 rowList 배열. rowSpan 된 경우 자식 row 의 데이터도 가공해야 하기 때문에 전체 list 를 인자로 넘긴다.
+         * @param {number} index    해당 배열에서 extraData 를 설정할 배열
+         * @return {Array} rowList  가공된 rowList
          * @private
          */
         _setExtraRowSpanData: function(rowList, index) {
@@ -4245,6 +4333,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * originalRowList 와 originalRowMap 을 생성한다.
          * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
+         * @return {Array} format 을 거친 데이터 리스트.
          */
         setOriginalRowList: function(rowList) {
             this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
@@ -4253,8 +4342,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 원본 데이터 리스트를 반환한다.
-         * @param {boolean} [isClone=true]
-         * @return {Array}
+         * @param {boolean} [isClone=true]  데이터 복제 여부.
+         * @return {Array}  원본 데이터 리스트 배열.
          */
         getOriginalRowList: function(isClone) {
             isClone = isClone === undefined ? true : isClone;
@@ -4262,26 +4351,26 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 원본 row 데이터를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @return {Object}
+         * @param {(Number|String)} rowKey  데이터의 키값
+         * @return {Object} 해당 행의 원본 데이터값
          */
         getOriginalRow: function(rowKey) {
             return _.clone(this.originalRowMap[rowKey]);
         },
         /**
          * rowKey 와 columnName 에 해당하는 원본 데이터를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {(Number|String)}
+         * @param {(Number|String)} rowKey  데이터의 키값
+         * @param {String} columnName   컬럼명
+         * @return {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 원본 데이터값
          */
         getOriginal: function(rowKey, columnName) {
             return _.clone(this.originalRowMap[rowKey][columnName]);
         },
         /**
          * mainRowKey 를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {(Number|String)}
+         * @param {(Number|String)} rowKey  데이터의 키값
+         * @param {String} columnName   컬럼명
+         * @return {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 main row 키값
          */
         getMainRowKey: function(rowKey, columnName) {
             var row = this.get(rowKey),
@@ -4294,17 +4383,17 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowKey 에 해당하는 index를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @return {Number}
+         * @param {(Number|String)} rowKey 데이터의 키값
+         * @return {Number} 키값에 해당하는 row의 인덱스
          */
         indexOfRowKey: function(rowKey) {
             return this.indexOf(this.get(rowKey));
         },
         /**
          * rowData 의 프로퍼티 중 내부에서 사용하는 프로퍼티인지 여부를 반환한다.
-         * - 서버로 전송 시 내부에서 사용하는 데이터 제거시 사용됨
-         * @param {String} name
-         * @return {boolean}
+         * - 서버로 전송 시 내부에서 사용하는 데이터 제거시 사용 됨
+         * @param {String} name 확인할 프로퍼티 명
+         * @return {boolean}    private 프로퍼티인지 여부.
          * @private
          */
         _isPrivateProperty: function(name) {
@@ -4312,15 +4401,16 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowSpan 이 적용되어야 하는지 여부를 반환한다.
+         * 랜더링시 사용된다.
          * - sorted, 혹은 filterd 된 경우 false 를 리턴한다.
-         * @return {boolean}
+         * @return {boolean}    랜더링 시 rowSpan 을 해야하는지 여부
          */
         isRowSpanEnable: function() {
             return !this.isSortedByField();
         },
         /**
          * 현재 정렬된 상태인지 여부를 반환한다.
-         * @return {Boolean}
+         * @return {Boolean}    정렬된 상태인지 여부
          */
         isSortedByField: function() {
             return this.sortKey !== 'rowKey';
@@ -4333,6 +4423,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             this.sortKey = fieldName;
             this.sort();
         },
+
         /**
          * rowList 를 반환한다.
          * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
@@ -4357,7 +4448,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * rowData 변경 이벤트 핸들러.
          * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
-         * @param {object} row
+         * @param {object} row  데이터의 키값
          * @private
          */
         _onChange: function(row) {
@@ -4366,7 +4457,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             _.each(row.changed, function(value, columnName) {
                 if (!this._isPrivateProperty(columnName)) {
                     columnModel = this.grid.columnModel.getColumnModel(columnName);
-                    if (!columnModel) return;
+                    if (!columnModel) {
+                        return;
+                    }
                     //beforeCallback 의 결과가 false 이면 모든 수행을 중지한다.
                     if (!this._executeChangeBeforeCallback(row, columnName)) {
                         return;
@@ -4376,8 +4469,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                     //afterChangeCallback 수행
                     this._executeChangeAfterCallback(row, columnName);
 
-                    //check가 disable 이 아닐 경우에만 _button 필드 변경에 따라 check
-                    if (!row.getRowState().isDisabledCheck) {
+                    //check 가 disable 이 아니고, columnModel 에 isIgnore 가 설정되지 않았을 경우, _button 필드 변경에 따라 check
+                    if (!row.getRowState().isDisabledCheck && !columnModel.isIgnore) {
                         row.set('_button', true);
                     }
                 }
@@ -4388,8 +4481,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * rowSpan 된 데이터들도 함께 update 한다.
          *
          * @param {object} row row 모델
-         * @param {String} columnName
-         * @param {(String|Number)} value
+         * @param {String} columnName   변경이 발생한 컬럼명
+         * @param {(String|Number)} value 변경된 값
          * @private
          */
         _syncRowSpannedData: function(row, columnName, value) {
@@ -4402,7 +4495,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 rowSpanData = row.getRowSpanData(columnName);
                 if (!rowSpanData['isMainRow']) {
                     this.get(rowSpanData['mainRowKey']).set(columnName, value);
-                }else {
+                } else {
                     index = this.indexOfRowKey(row.get('rowKey'));
                     for (i = 0; i < rowSpanData['count'] - 1; i++) {
                         this.at(i + 1 + index).set(columnName, value);
@@ -4413,15 +4506,16 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
          * @param {object} row row 모델
-         * @param {String} columnName
-         * @return {{rowKey: *, columnName: *, columnData: *}}
+         * @param {String} columnName 컬럼명
+         * @return {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}} changeCallback 에 전달될 이벤트 객체
          * @private
          */
         _createChangeCallbackEvent: function(row, columnName) {
             return {
                 'rowKey' : row.get('rowKey'),
                 'columnName' : columnName,
-                'value' : row.get(columnName)
+                'value' : row.get(columnName),
+                'instance': this.grid.publicInstance
             };
         },
         /**
@@ -4429,8 +4523,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
          *
          * @param {object} row row 모델
-         * @param {String} columnName
-         * @return {boolean} false 를 리턴하면 이후 로직을 수행하지 않는다.
+         * @param {String} columnName   컬럼명
+         * @return {boolean} changeBeforeCallback 수행 결과값
          * @private
          */
         _executeChangeBeforeCallback: function(row, columnName) {
@@ -4457,7 +4551,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          *
          * @param {object} row row 모델
          * @param {String} columnName
-         * @return {boolean} false 를 리턴하면 이후 로직을 수행하지 않는다.
+         * @return {boolean} changeAfterCallback 수행 결과값
          * @private
          */
         _executeChangeAfterCallback: function(row, columnName) {
@@ -4473,22 +4567,22 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
 
         /**
          * Backbone 에서 sort 연산을 위해 구현되어야 하는 interface
-         * @param {object} item
+         * @param {object} row row 모델
          * @return {number}
          */
-        comparator: function(item) {
+        comparator: function(row) {
             if (this.isSortedByField()) {
-                return +item.get(this.sortKey);
+                return +row.get(this.sortKey);
             }
         },
         /**
          * row 의 extraData 를 변경한다.
          * -Backbone 내부적으로 참조형 데이터의 프로퍼티 변경시 변화를 감지하지 못하므로, 데이터를 복제하여 변경 후 set 한다.
          *
-         * @param {(Number|String)} rowKey
-         * @param {Object} value
+         * @param {(Number|String)} rowKey  데이터의 키값
+         * @param {Object} value    extraData 에 설정될 값
          * @param {Boolean} [silent=false] Backbone 의 'change' 이벤트 발생 여부
-         * @return {boolean}
+         * @return {boolean} rowKey 에 해당하는 데이터가 존재하는지 여부.
          */
         setExtraData: function(rowKey, value, silent) {
             var row = this.get(rowKey),
@@ -4510,17 +4604,117 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowState 를 설정한다.
-         * @param {(Number|String)} rowKey
-         * @param {string} rowState DISABLED|DISABLED_CHECK|CHECKED
-         * @param {boolean} silent
+         * @param {(Number|String)} rowKey 데이터의 키값
+         * @param {string} rowState 해당 행의 상태값. 'DISABLED|DISABLED_CHECK|CHECKED' 중 하나를 설정한다.
+         * @param {boolean} silent 내부 change 이벤트 발생 여부
          */
         setRowState: function(rowKey, rowState, silent) {
             this.setExtraData(rowKey, {rowState: rowState}, silent);
         },
         /**
+         * rowKey 에 해당하는 _extraData 를 복제하여 반환한다.
+         * @param {(Number|String)} rowKey  데이터의 키값
+         * @return {object} 조회한 rowKey 에 해당하는 extraData 사본
+         * @private
+         */
+        _getExtraDataClone: function(rowKey) {
+            var row = this.get(rowKey),
+                extraData;
+
+            if (row) {
+                extraData = $.extend(true, {}, row.get('_extraData'));
+                return extraData;
+            }
+        },
+        /**
+         * className 이 담긴 배열로부터 특정 className 을 제거하여 반환한다.
+         * @param {Array} classNameList 디자인 클래스명 리스트
+         * @param {String} className    제거할 클래스명
+         * @return {Array}  제거된 디자인 클래스명 리스트
+         * @private
+         */
+        _removeClassNameFromArray: function(classNameList, className) {
+            //배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
+            var classNameString = classNameList.join(' ');
+            classNameList = classNameString.split(' ');
+            return _.without(classNameList, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeCellClassName: function(rowKey, columnName, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                row = this.get(rowKey),
+                classNameData;
+
+            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.column.' + columnName)) {
+                classNameData = extraData.className;
+                classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
+                row.set('_extraData', extraData);
+            }
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeRowClassName: function(rowKey, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                row = this.get(rowKey),
+                classNameData;
+
+            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.row')) {
+                classNameData = extraData.className;
+                classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
+                //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
+                row.set('_extraData', extraData);
+            }
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addCellClassName: function(rowKey, columnName, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                classNameData,
+                classNameList;
+
+            if (!ne.util.isUndefined(extraData)) {
+                classNameData = extraData.className || {};
+                classNameData.column = classNameData.column || {};
+                classNameList = classNameData.column[columnName] || [];
+                classNameList.push(className);
+                classNameData.column[columnName] = classNameList;
+                this.setExtraData(rowKey, {className: classNameData});
+            }
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addRowClassName: function(rowKey, className) {
+            var extraData = this._getExtraDataClone(rowKey),
+                classNameData,
+                classNameList;
+
+            if (!ne.util.isUndefined(extraData)) {
+                classNameData = extraData.className || {};
+                classNameList = classNameData.row || [];
+                classNameList.push(className);
+                classNameData.row = classNameList;
+                this.setExtraData(rowKey, {className: classNameData});
+            }
+        },
+        /**
          * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
-         * @param {Array} rowList
-         * @return {Array}
+         * @param {Array} rowList   내부에 설정된 rowList 배열
+         * @return {Array}  private 프로퍼티를 제거한 결과값
          * @private
          */
         _removePrivateProp: function(rowList) {
@@ -4541,7 +4735,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return filteredRowList;
         },
         /**
-         * rowKey에 해당하는 그리드 데이터를 삭제한다.
+         * rowKey 에 해당하는 그리드 데이터를 삭제한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
          */
@@ -4556,7 +4750,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * append, prepend 시 사용할 dummy row를 생성한다.
-         * @return {Object}
+         * @return {Object} 값이 비어있는 더미 row 데이터
          * @private
          */
         _createDummyRow: function() {
@@ -4601,11 +4795,12 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 현재 rowList 에 최상단에 데이터를 append 한다.
-         * @param {Object} rowData
+         * @param {Object} rowData  prepend 할 행 데이터
          */
         prepend: function(rowData) {
             this.append(rowData, 0);
         },
+
         /**
          * 수정된 rowList 를 반환한다.
          * @param {Object} options
@@ -4613,23 +4808,24 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
          *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
          *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {{createList: Array, updateList: Array, deleteList: Array}}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
          */
         getModifiedRowList: function(options) {
 
             var isRaw = options && options.isRaw,
                 isOnlyChecked = options && options.isOnlyChecked,
                 isOnlyRowKeyList = options && options.isOnlyRowKeyList,
-                filteringColumnList = options && options.filteringColumnList || [],
-                filteringColumnMap = {},
-
                 original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
                 current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
                 result = {
                     'createList' : [],
                     'updateList' : [],
                     'deleteList' : []
-                }, item;
+                },
+                filteringColumnMap = {},
+                filteringColumnList = _.union(options && options.filteringColumnList || [],
+                    this.grid.columnModel.getIngoredColumnNameList()),
+                item;
 
             _.each(filteringColumnList, function(columnName) {
                 filteringColumnMap[columnName] = true;
@@ -4673,11 +4869,15 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         }
     });
 
+/**
+ * @fileoverview Rendering 모델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * View 에서 Rendering 시 사용할 객체
-     * @constructor
+     * @constructor Model.Renderer
      */
-    Model.Renderer = Model.Base.extend({
+    Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
         defaults: {
             top: 0,
             scrollTop: 0,
@@ -4689,7 +4889,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             lside: null,
             rside: null
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
 
             this.setOwnProperties({
@@ -4718,7 +4921,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
-         * @param {number} rowIndex
+         * @param {number} rowIndex row 의 index 값
          * @private
          */
         _onValueChange: function(rowIndex) {
@@ -4740,8 +4943,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
-         * @param {String} whichSide
-         * @return {Object} collection
+         * @param {String} [whichSide='R']    어느 영역인지 여부. 'L|R' 중에 하나의 값을 넘긴다.
+         * @return {Object} collection  해당 영역의 랜더 데이터 콜랙션
          */
         getCollection: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
@@ -4819,8 +5022,6 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 rowModel,
                 rowKey;
 
-
-
             for (i = startIndex; i < endIndex + 1; i++) {
                 rowModel = this.grid.dataModel.at(i);
                 rowKey = rowModel.get('rowKey');
@@ -4861,25 +5062,26 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 parse: true
             });
 
-            i = startIndex;
+
             len = rsideRowList.length + startIndex;
 
-            for (; i < len; i++) {
+            //relation 을 수행한다.
+            for (i = startIndex; i < len; i++) {
                 this.executeRelation(i);
             }
-
+            //컬럼모델의 변경이 있을 경우 columnModelChanged 이벤트를 발생한다.
             if (this.isColumnModelChanged === true) {
                 this.trigger('columnModelChanged', this.get('top'));
                 this.isColumnModelChanged = false;
-            }else {
+            } else {
                 this.trigger('rowListChanged', this.get('top'));
             }
             this.trigger('refresh', this.get('top'));
         },
         /**
          * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.
-         * @param {String} columnName
-         * @return {Collection}
+         * @param {String} columnName   컬럼명
+         * @return {Collection} 컬럼명에 해당하는 영역의 콜랙션
          * @private
          */
         _getCollectionByColumnName: function(columnName) {
@@ -4893,10 +5095,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             }
         },
         /**
-         * CellData 를 가져온다.
-         * @param {number} rowKey
-         * @param {String} columnName
-         * @return {object} cellData object
+         * 셀 데이터를 반환한다.
+         * @param {number} rowKey   데이터의 키값
+         * @param {String} columnName   컬럼명
+         * @return {object} cellData 셀 데이터
          * @example
          =>
          {
@@ -4922,7 +5124,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowIndex 에 해당하는 relation 을 수행한다.
-         * @param {Number} rowIndex
+         * @param {Number} rowIndex row 의 index 값
          */
         executeRelation: function(rowIndex) {
             var row = this.grid.dataModel.at(rowIndex),
@@ -4937,14 +5139,17 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                 }
             }, this);
         }
-
     });
 
+/**
+ * @fileoverview 크기에 관련된 데이터를 다루는 모델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * 크기 관련 데이터 저장
-     * @type {*|void}
+     * @constructor Model.Dimension
      */
-    Model.Dimension = Model.Base.extend({
+    Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         models: null,
         columnModel: null,
         defaults: {
@@ -4968,7 +5173,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             scrollBarSize: 17,
             scrollX: true
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
             this.columnModel = this.grid.columnModel;
             this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
@@ -4980,8 +5188,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
          *
-         * @param {Array} columnWidthList
-         * @return {Array}
+         * @param {Array} columnWidthList   컬럼 너비 리스트
+         * @return {Array}  totalWidth 에 맞게 계산한 컬럼 너비 리스트
          * @private
          */
         _calculateColumnWidthList: function(columnWidthList) {
@@ -5006,7 +5214,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                     width = Math.max(this.get('minimumColumnWidth'), columnWidth);
                     newColumnWidthList.push(width);
                     currentWidth += width;
-                }else {
+                } else {
                     newColumnWidthList.push(-1);
                     unassignedCount++;
                 }
@@ -5021,7 +5229,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             if (availableTotalWidth > currentWidth) {
                 remainWidth = availableTotalWidth - currentWidth;
                 unassignedWidth = Math.max(this.get('minimumColumnWidth'), Math.floor(remainWidth / unassignedCount));
-            }else {
+            } else {
                 unassignedWidth = this.get('minimumColumnWidth');
             }
             _.each(newColumnWidthList, function(newColumnWidth, index) {
@@ -5034,25 +5242,26 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
          *
-         * @return {Array}
+         * @return {Array}  columnModel 에 설정된 width 값 기준의 너비 리스트
          * @private
          */
         _getOriginalWidthList: function() {
             var columnModelList = this.columnModel.get('visibleList'),
                 columnWidthList = [];
-            for (var i = 0, len = columnModelList.length; i < len; i++) {
-                if (columnModelList[i].width) {
-                    columnWidthList.push(columnModelList[i].width);
-                }else {
+
+            _.each(columnModelList, function(columnModel) {
+                if (columnModel.width) {
+                    columnWidthList.push(columnModel.width);
+                } else {
                     columnWidthList.push(-1);
                 }
-            }
+            });
             return this._calculateColumnWidthList(columnWidthList);
         },
         /**
          * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
          * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
-         * @return {Number}
+         * @return {Number} 해당 frame 의 너비
          */
         getFrameWidth: function(whichSide) {
             var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
@@ -5066,8 +5275,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
-         * @param {Array} widthList
-         * @return {Number}
+         * @param {Array} widthList 너비 리스트 배열
+         * @return {Number} 계산된 frame 너비값
          * @private
          */
         _getFrameWidth: function(widthList) {
@@ -5106,7 +5315,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 열 고정 영역의 minimum width 값을 구한다.
-         * @return {number}
+         * @return {number} 열고정 영역의 최소 너비값.
          * @private
          */
         _getMinLeftSideWidth: function() {
@@ -5119,7 +5328,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 열 고정 영역의 maximum width 값을 구한다.
-         * @return {number}
+         * @return {number} 열고정 영역의 최대 너비값.
          * @private
          */
         _getMaxLeftSideWidth: function() {
@@ -5128,10 +5337,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return maxWidth;
         },
         /**
-         * 계산한 cell의 위치를 리턴한다.
-         * @param {Number|String} rowKey
-         * @param {String} columnName
-         * @return {{top: *, left: number, right: *, bottom: *}}
+         * 계산한 cell 의 위치를 리턴한다.
+         * @param {Number|String} rowKey 데이터의 키값
+         * @param {String} columnName   칼럼명
+         * @return {{top: number, left: number, right: number, bottom: number}}
          */
         getCellPosition: function(rowKey, columnName) {
             var top, left = 0, right, bottom, i = 0,
@@ -5177,9 +5386,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * columnFixIndex 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
-         * @param {Array} lsideWidthList
-         * @param {Number} totalWidth
-         * @return {Array}
+         * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
+         * @param {Number} totalWidth   grid 전체 너비
+         * @return {Array} 열고정 영역의 너비 리스트
          * @private
          */
         _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
@@ -5201,7 +5410,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return lsideWidthList;
         },
         /**
-         * body height 계산
+         * 그리드의 body height 를 계산하여 할당한다.
          * @private
          */
         _setBodyHeight: function() {
@@ -5213,33 +5422,30 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 현재 화면에 보이는 row 개수를 반환
-         * @return {number}
+         * @return {number} 화면에 보이는 행 개수
          */
         getDisplayRowCount: function() {
             return Util.getDisplayRowCount(this.get('bodyHeight') - this.get('toolbarHeight'), this.get('rowHeight'));
         },
         /**
-         * scrollX 높이를 구한다.
-         * @return {number}
+         * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
+         * @return {number} 수평 스크롤바의 높이
          */
         getScrollXHeight: function() {
             return +this.get('scrollX') * this.get('scrollBarSize');
         },
         /**
-         * _onWidthChange
-         *
-         * width 값 변경시 각 column 별 너비를 계산하는 로직
-         * @param {object} model
+         * width 값 변경시 각 column 별 너비를 계산한다.
          * @private
          */
-        _onWidthChange: function(model) {
+        _onWidthChange: function() {
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
         },
         /**
          * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
-         * @param {Number} index
-         * @param {Number} width
+         * @param {Number} index    너비를 변경할 컬럼의 인덱스
+         * @param {Number} width    변경할 너비 pixel값
          */
         setColumnWidth: function(index, width) {
             width = Math.max(width, this.get('minimumColumnWidth'));
@@ -5253,35 +5459,39 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * L side 와 R side 에 따른 columnWidthList 를 반환한다.
-         * @param {String} whichSide 생략했을 때 전체 columnList 반환
-         * @return {Array}
+         * @param {String} whichSide 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략했을 때 전체 columnList 반환
+         * @return {Array}  조회한 영역의 columnWidthList
          */
         getColumnWidthList: function(whichSide) {
             whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
-            var columnFixIndex = this.columnModel.get('columnFixIndex');
-            var columnList = [];
+            var columnFixIndex = this.columnModel.get('columnFixIndex'),
+                columnWidthList = [];
 
             switch (whichSide) {
                 case 'L':
-                    columnList = this.get('columnWidthList').slice(0, columnFixIndex);
+                    columnWidthList = this.get('columnWidthList').slice(0, columnFixIndex);
                     break;
                 case 'R':
-                    columnList = this.get('columnWidthList').slice(columnFixIndex);
+                    columnWidthList = this.get('columnWidthList').slice(columnFixIndex);
                     break;
                 default :
-                    columnList = this.get('columnWidthList');
+                    columnWidthList = this.get('columnWidthList');
                     break;
             }
-            return columnList;
+            return columnWidthList;
         }
     });
 
+/**
+ * @fileoverview Focus 관련 데이터 처리름 담당한다.
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Focus model
      * RowList collection 이 focus class 를 listen 한다.
-     * @constructor
+     * @constructor Model.Focus
      */
-    Model.Focus = Model.Base.extend({
+    Model.Focus = Model.Base.extend(/**@lends Model.Focus.prototype */{
         defaults: {
             rowKey: null,
             columnName: '',
@@ -5291,7 +5501,10 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             scrollY: true,
             scrollBarSize: 17
         },
-        initialize: function(attributes, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
         },
         /**
@@ -5318,7 +5531,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 행을 select 한다.
-         * @param {Number|String} rowKey
+         * @param {Number|String} rowKey    select 할 행의 키값
          * @return {Model.Focus}
          */
         select: function(rowKey) {
@@ -5340,9 +5553,9 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * focus 처리한다.
-         * @param {Number|String} rowKey
-         * @param {String} columnName
-         * @param {Boolean} isScrollable
+         * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
+         * @param {String} columnName focus 처리할 셀의 컬럼명
+         * @param {Boolean} isScrollable focus 처리한 영역으로 scroll 위치를 이동할지 여부
          * @return {Model.Focus}
          */
         focus: function(rowKey, columnName, isScrollable) {
@@ -5367,7 +5580,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * focus 이동에 맞추어 scroll 위치를 조정한 값을 반환한다.
-         * @return {Object}
+         * @return {{scrollTop: number, scrollLeft: number}} 위치 조정한 값
          * @private
          */
         _getScrollPosition: function() {
@@ -5417,6 +5630,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 현재 focus 정보를 반환한다.
+         * @return {{rowKey: (number|string), columnName: string}} 현재 focus 정보에 해당하는 rowKey, columnName
          */
         which: function() {
             return {
@@ -5439,15 +5653,15 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 현재 focus를 가지고 있는지 여부를 리턴한다.
-         * @return {boolean}
+         * @return {boolean} 현재 focus 가 설정되어 있는지 여부
          */
         has: function() {
             return !!(!ne.util.isUndefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName');
         },
         /**
          * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
-         * @param {Number} offset
-         * @return {Number|String} rowKey
+         * @param {Number} offset   이동할 offset
+         * @return {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
          * @private
          */
         _findRowKey: function(offset) {
@@ -5461,8 +5675,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 현재 focus 된 column 기준으로 offset 만큼 이동한 columnName 을 반환한다.
-         * @param {Number} offset
-         * @return {String} columnName
+         * @param {Number} offset   이동할 offset
+         * @return {String} columnName  offset 만큼 이동한 위치의 columnName
          * @private
          */
         _findColumnName: function(offset) {
@@ -5477,18 +5691,18 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * rowSpanData 를 반환한다.
-         * @param {Number|String} rowKey
-         * @param {String} columnName
-         * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}|*}
+         * @param {Number|String} rowKey    조회할 데이터의 키값
+         * @param {String} columnName   컬럼명
+         * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
          * @private
          */
         _getRowSpanData: function(rowKey, columnName) {
             return this.grid.dataModel.get(rowKey).getRowSpanData(columnName);
         },
         /**
-         * offset 만큼 뒤로 이동한 row의 index를 반환한다.
-         * @param {number} offset
-         * @returns {Number}
+         * offset 만큼 뒤로 이동한 row 의 index 를 반환한다.
+         * @param {number} offset   이동할 offset
+         * @return {Number} 이동한 위치의 row index
          */
         nextRowIndex: function(offset) {
             var rowKey = this.nextRowKey(offset);
@@ -5496,32 +5710,34 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * offset 만큼 앞으로 이동한 row의 index를 반환한다.
-         * @param {number} offset
-         * @returns {Number}
+         * @param {number} offset 이동할 offset
+         * @return {Number} 이동한 위치의 row index
          */
         prevRowIndex: function(offset) {
             var rowKey = this.prevRowKey(offset);
             return this.grid.dataModel.indexOfRowKey(rowKey);
         },
         /**
-         * 다음 column의 index를 반환한다.
-         * @returns {Number}
+         * 다음 컬럼의 인덱스를 반환한다.
+         * @return {Number} 다음 컬럼의 index
          */
         nextColumnIndex: function() {
             var columnName = this.nextColumnName();
             return this.grid.columnModel.indexOfColumnName(columnName, true);
         },
         /**
-         * 이전 column의 index를 반환한다.
-         * @returns {Number}
+         * 이전 컬럼의 인덱스를 반환한다.
+         * @return {Number} 이전 컬럼의 인덱스
          */
         prevColumnIndex: function() {
             var columnName = this.prevColumnName();
             return this.grid.columnModel.indexOfColumnName(columnName, true);
         },
         /**
-         * keyEvent 발생 시 다음 rowKey 를 반환한다.
-         * @return {Number|String}
+         * keyEvent 발생 시 호출될 메서드로,
+         * rowSpan 정보 까지 계산된 다음 rowKey 를 반환한다.
+         * @param {number}  offset 이동할 offset
+         * @return {Number|String} offset 만큼 이동한 위치의 rowKey
          */
         nextRowKey: function(offset) {
             var focused = this.which(),
@@ -5549,10 +5765,11 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             }
             return rowKey;
         },
-
         /**
-         * keyEvent 발생 시 이전 rowKey 를 반환한다.
-         * @return {Number|String}
+         * keyEvent 발생 시 호출될 메서드로,
+         * rowSpan 정보 까지 계산된 이전 rowKey 를 반환한다.
+         * @param {number}  offset 이동할 offset
+         * @return {Number|String} offset 만큼 이동한 위치의 rowKey
          */
         prevRowKey: function(offset) {
             var focused = this.which(),
@@ -5578,36 +5795,36 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             return rowKey;
         },
         /**
-         * keyEvent 발생 시 다음 columnName 을 반환한다.
-         * @return {String}
+         * keyEvent 발생 시 호출될 메서드로, 다음 columnName 을 반환한다.
+         * @return {String} 다음 컬럼명
          */
         nextColumnName: function() {
             return this._findColumnName(1);
         },
         /**
-         * keyEvent 발생 시 다음 columnName 을 반환한다.
-         * @return {String}
+         * keyEvent 발생 시 호출될 메서드로, 이전 columnName 을 반환한다.
+         * @return {String} 이전 컬럼명
          */
         prevColumnName: function() {
             return this._findColumnName(-1);
         },
         /**
-         * 첫번째 row의 key 를 반환한다.
-         * @return {(string|number)}
+         * 첫번째 row 의 key 를 반환한다.
+         * @return {(string|number)} 첫번째 row 의 키값
          */
         firstRowKey: function() {
             return this.grid.dataModel.at(0).get('rowKey');
         },
         /**
          * 마지막 row의 key 를 반환한다.
-         * @return {(string|number)}
+         * @return {(string|number)} 마지막 row 의 키값
          */
         lastRowKey: function() {
             return this.grid.dataModel.at(this.grid.dataModel.length - 1).get('rowKey');
         },
         /**
          * 첫번째 columnName 을 반환한다.
-         * @return {string}
+         * @return {string} 첫번째 컬럼명
          */
         firstColumnName: function() {
             var columnModelList = this.grid.columnModel.getVisibleColumnModelList();
@@ -5615,7 +5832,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * 마지막 columnName 을 반환한다.
-         * @return {string}
+         * @return {string} 마지막 컬럼명
          */
         lastColumnName: function() {
             var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
@@ -5624,12 +5841,19 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         }
     });
 
+/**
+ * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      *  View 에서 Rendering 시 사용할 객체
      *  Smart Rendering 을 지원한다.
-     *  @constructor
+     *  @constructor Model.Renderer.Smart
      */
-    Model.Renderer.Smart = Model.Renderer.extend({
+    Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
+        /**
+         * 초기화 함수
+         */
         initialize: function() {
             Model.Renderer.prototype.initialize.apply(this, arguments);
             this.on('change:scrollTop', this._onChange, this);
@@ -5651,7 +5875,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
-         * @param {Number} scrollTop
+         * @param {Number} scrollTop    랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
          * @private
          */
         _setRenderingRange: function(scrollTop) {
@@ -5703,8 +5927,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
-         * @param {Number} scrollTop
-         * @returns {boolean}
+         * @param {Number} scrollTop 랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
+         * @return {boolean}    랜더링 해야할지 여부
          * @private
          */
         _isRenderable: function(scrollTop) {
@@ -5735,11 +5959,15 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         }
     });
 
+/**
+ * @fileoverview RowList 클래스파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * row model
-     * @type {*|void}
+     * Row Model
+     * @constructor Model.Row
      */
-    Model.Row = Model.Base.extend({
+    Model.Row = Model.Base.extend(/**@lends Model.Row.prototype */{
         idAttribute: 'rowKey',
         defaults: {
         },
@@ -5760,7 +5988,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         },
         /**
          * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
-         * @param {Object} model
+         * @param {Object} model    변경이 발생한 row 모델
          * @private
          */
         _onDataModelChange: function(model) {
@@ -5769,7 +5997,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                     // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 해당 row 에 disable, editable 상태를 업데이트 한다.
                     // rowSpan 되어있는 행일 경우 main row 에 해당 처리를 수행한다..
                     this._setRowExtraData();
-                }else {
+                } else {
                     this.setCell(columnName, {
                         value: value
                     });
@@ -5817,17 +6045,17 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
             }
         },
         /**
-         * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
-         * @param {Array} data
-         * @return {Array}
+         * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 형식에 맞게 가공한다.
+         * @param {Array} data  원본 데이터
+         * @return {Array}  형식에 맞게 가공된 데이터
          */
         parse: function(data) {
             return this._formatData(data);
         },
         /**
          * 데이터를 View 에서 사용할 수 있도록 가공한다.
-         * @param {Array} data
-         * @return {Array}
+         * @param {Array} data  원본 데이터
+         * @return {Array}  가공된 데이터
          * @private
          */
         _formatData: function(data) {
@@ -5851,7 +6079,7 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
                     if (dataModel.isRowSpanEnable()) {
                         rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] &&
                             data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
-                    }else {
+                    } else {
                         rowSpanData = defaultRowSpanData;
                     }
                     isDisabled = columnName === '_button' ? rowState.isDisabledCheck : isDisabled;
@@ -5880,8 +6108,8 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
         /**
          * Cell 의 값을 변경한다.
          * - 참조형 데이터 타입이기 때문에 change 이벤트 발생을 위해 이 method 를 사용하여 값 변경을 수행한다.
-         * @param {String} columnName
-         * @param {{key: value}} param
+         * @param {String} columnName   컬럼명
+         * @param {{key: value}} param  key:value 로 이루어진 셀에서 변경할 프로퍼티 목록
          */
         setCell: function(columnName, param) {
             if (this.get(columnName)) {
@@ -5912,49 +6140,73 @@ ne.Component.PaginationView.prototype._setPageNumbers = function(viewSet) {
     });
 
     /**
-     * view model rowList collection
-     * @type {*|void}
+     * View Model rowList collection
+     * @constructor Model.RowList
      */
-    Model.RowList = Collection.Base.extend({
+    Model.RowList = Collection.Base.extend(/**@lends Model.RowList.prototype */{
         model: Model.Row,
-        initialize: function(models, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             Collection.Base.prototype.initialize.apply(this, arguments);
         }
     });
 
 /**
- * body layout 뷰
- *
- * @type {*|void}
+ * @fileoverview Layer Base
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
-View.Layer.Base = View.Base.extend({
-    initialize: function(attributes) {
+/**
+ * 레이어 기본 클래스
+ * @constructor View.Layer.Base
+ */
+View.Layer.Base = View.Base.extend(/**@lends View.Layer.Base.prototype */{
+    template: _.template('' +
+    '<div>' +
+    '    <%=text%>' +
+    '    <div class="loading_img"></div>' +
+    '</div>'),
+    /**
+     * 초기화 함수
+     */
+    initialize: function() {
         View.Base.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             text: '기본 텍스트'
         });
         this.listenTo(this.grid.dimensionModel, 'change', this._resize, this);
     },
-    template: _.template('' +
-        '<div>' +
-        '    <%=text%>' +
-        '    <div class="loading_img"></div>' +
-        '</div>'),
+    /**
+     * 랜더링 한다.
+     * @param {String} text 레이어에 노출할 text
+     * @return {View.Layer.Base}
+     */
     render: function(text) {
         this.$el.html(this.template({
             text: text || this.text
         })).css('display', 'none');
         return this;
     },
-
+    /**
+     * Layer를 노출한다.
+     * @param {String} text 레이어에 노출할 text
+     */
     show: function(text) {
         this.render(text).$el.css('display', 'block')
             .css('zIndex', 1);
         this._resize();
     },
+    /**
+     * Layer 를 감춘다.
+     */
     hide: function() {
         this.$el.css('display', 'none');
     },
+    /**
+     * 그리드의 크기에 맞추어 resize 한다.
+     * @private
+     */
     _resize: function() {
         if (this.$el.css('display') === 'block') {
             var headerHeight = this.grid.dimensionModel.get('headerHeight'),
@@ -5964,14 +6216,21 @@ View.Layer.Base = View.Base.extend({
         }
     }
 });
+
 /**
- * body layout 뷰
- *
- * @type {*|void}
+ * @fileoverview Layer Empty
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
-View.Layer.Empty = View.Layer.Base.extend({
+/**
+ * 데이터 없음 레이어
+ * @constructor View.Layer.Empty
+ */
+View.Layer.Empty = View.Layer.Base.extend(/**@lends View.Layer.Empty.prototype */{
     className: 'no_row_layer',
-    initialize: function(attributes) {
+    /**
+     * 생성자 함수
+     */
+    initialize: function() {
         View.Layer.Base.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             text: '데이터가 존재하지 않습니다.'
@@ -5981,13 +6240,19 @@ View.Layer.Empty = View.Layer.Base.extend({
 });
 
 /**
- * body layout 뷰
- *
- * @type {*|void}
+ * @fileoverview Layer Loading
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
  */
-View.Layer.Loading = View.Layer.Base.extend({
+/**
+ * 로딩 레이어
+ * @constructor View.Layer.Loading
+ */
+View.Layer.Loading = View.Layer.Base.extend(/**@lends View.Layer.Loading.prototype */{
     className: 'loading_layer',
-    initialize: function(attributes) {
+    /**
+     * 생성자 함수
+     */
+    initialize: function() {
         View.Layer.Base.prototype.initialize.apply(this, arguments);
         this.text = '요청을 처리 중입니다.';
     },
@@ -5998,37 +6263,55 @@ View.Layer.Loading = View.Layer.Base.extend({
         '</div>')
 });
 
-View.Layer.Ready = View.Layer.Base.extend({
+/**
+ * @fileoverview Layer Ready
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+/**
+ * 초기화 레이어
+ * @constructor View.Layer.Ready
+ */
+View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype */{
     className: 'initializing_layer',
-    initialize: function(attributes) {
+    /**
+     * 생성자 함수
+     */
+    initialize: function() {
         View.Layer.Base.prototype.initialize.apply(this, arguments);
         this.text = '초기화 중 입니다.';
     }
 });
 
+/**
+ * @fileoverview Frame Base
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * frame Base 클래스
-     * @constructor
+     * @namespace
+     * @constructor View.Layout.Frame
      */
-    View.Layout.Frame = View.Base.extend({
+    View.Layout.Frame = View.Base.extend(/**@lends View.Layout.Frame.prototype */{
         tagName: 'div',
         className: 'lside_area',
         /**
          * 초기화 메서드
-         * @param {Object} attributes
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
          */
-        initialize: function(attributes) {
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this);
-            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+            this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this)
+                .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+
             this.setOwnProperties({
                 header: null,
                 body: null,
-                whichSide: attributes && attributes.whichSide || 'R'
+                whichSide: options && options.whichSide || 'R'
             });
         },
         /**
-         * 랜더링
+         * 랜더링 메서드
          * @return {View.Layout.Frame}
          */
         render: function() {
@@ -6054,16 +6337,16 @@ View.Layer.Ready = View.Layer.Base.extend({
             return this;
         },
         /**
-         *columnModel change 시 수행되는 핸들러
+         *columnModel change 시 수행되는 핸들러 스켈레톤
          * @private
          */
         _onColumnWidthChanged: function() {},
         /**
-         * 랜더링 하기전에 수행하는 함수
+         * 랜더링 하기전에 수행하는 함수 스켈레톤
          */
         beforeRender: function() {},
         /**
-         * 랜더링 이후 수행하는 함수
+         * 랜더링 이후 수행하는 함수 스켈레톤
          */
         afterRender: function() {}
     });
@@ -6084,12 +6367,16 @@ View.Layer.Ready = View.Layer.Base.extend({
 
 
 
+/**
+ * @fileoverview Body View
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * body layout 뷰
      *
-     * @constructor
+     * @constructor View.Layout.Body
      */
-    View.Layout.Body = View.Base.extend({
+    View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
         tagName: 'div',
         className: 'data',
         template: _.template('' +
@@ -6103,10 +6390,15 @@ View.Layer.Ready = View.Layer.Base.extend({
             'scroll': '_onScroll',
             'mousedown': '_onMouseDown'
         },
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 body 인지 여부.
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: attributes && attributes.whichSide || 'R',
+                whichSide: options && options.whichSide || 'R',
                 isScrollSync: false
             });
 
@@ -6119,15 +6411,15 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * DimensionModel 의 body Height 가 변경된 경우 element 의 height 를 조정한다.
-         * @param {Object} model
-         * @param {Number} value
+         * @param {Object} model 변경이 일어난 model 인스턴스
+         * @param {Number} value bodyHeight 값
          * @private
          */
         _onBodyHeightChange: function(model, value) {
             this.$el.css('height', value + 'px');
         },
         /**
-         * columnWidth change 핸들러
+         * 컬럼 너비 변경 이벤트 핸들러
          * @private
          */
         _onColumnWidthChanged: function() {
@@ -6139,8 +6431,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * MouseDown event handler
-         * @param {event} mouseDownEvent
+         * 마우스다운 이벤트 핸들러
+         * @param {event} mouseDownEvent    마우스 이벤트
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -6166,8 +6458,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * Scroll Event Handler
-         * @param {event} scrollEvent
+         * 스크롤 이벤트 핸들러
+         * @param {event} scrollEvent   스크롤 이벤트
          * @private
          */
         _onScroll: function(scrollEvent) {
@@ -6182,9 +6474,9 @@ View.Layer.Ready = View.Layer.Base.extend({
             renderModel.set(obj);
         },
         /**
-         * Render model 의 Scroll left 변경 핸들러
-         * @param {object} model
-         * @param {Number} value
+         * Render model 의 Scroll left 변경 이벤트 핸들러
+         * @param {object} model 변경이 일어난 모델 인스턴스
+         * @param {Number} value scrollLeft 값
          * @private
          */
         _onScrollLeftChange: function(model, value) {
@@ -6194,9 +6486,9 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * Render model 의 Scroll top 변경 핸들러
-         * @param {object} model
-         * @param {Number} value
+         * Render model 의 Scroll top 변경 이벤트 핸들러
+         * @param {object} model 변경이 일어난 모델 인스턴스
+         * @param {Number} value scrollTop값
          * @private
          */
         _onScrollTopChange: function(model, value) {
@@ -6205,7 +6497,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowList 가 rendering 될 때 top 값을 조정한다.
-         * @param {number} top
+         * @param {number} top  조정할 top 위치 값
          * @private
          */
         _setTopPosition: function(top) {
@@ -6213,7 +6505,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rendering 한다.
-         * @return {View.Layout.Body}
+         * @return {View.Layout.Body}   자기 자신
          */
         render: function() {
             var grid = this.grid,
@@ -6246,7 +6538,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
-         * @return {string}
+         * @return {string} <colgroup> 안에 들어갈 마크업 문자열
          * @private
          */
         _getColGroupMarkup: function() {
@@ -6259,30 +6551,33 @@ View.Layer.Ready = View.Layer.Base.extend({
                 html = '';
 
             _.each(columnModelList, function(columnModel, index) {
-                html += '<col columnname="' + columnModel['columnName'] + '" style="width:' + columnWidthList[index]+ 'px">';
+                html += '<col columnname="' + columnModel['columnName'] + '" style="width:' + columnWidthList[index] + 'px">';
             });
             return html;
         }
     });
 
+/**
+ * @fileoverview Left Side Frame
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * left side 프레임 클래스
-     * @constructor
+     * @constructor View.Layout.Frame.Lside
      */
-    View.Layout.Frame.Lside = View.Layout.Frame.extend({
+    View.Layout.Frame.Lside = View.Layout.Frame.extend(/**@lends View.Layout.Frame.Lside.prototype */{
         className: 'lside_area',
         /**
          * 초기화 메서드
-         * @param {object} attributes
          */
-        initialize: function(attributes) {
+        initialize: function() {
             View.Layout.Frame.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'L'
             });
         },
         /**
-         * columnWidth 변경시 이벤트 핸들러
+         * columnWidth 변경시 호출될 이벤트 핸들러
          * @private
          */
         _onColumnWidthChanged: function() {
@@ -6292,7 +6587,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * beforeRender 콜백
+         * 랜더링하기 전 수행되는 메서드
          */
         beforeRender: function() {
             var width = this.grid.dimensionModel.get('lsideWidth');
@@ -6303,17 +6598,20 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview Left Side Frame, Virtual Scrollbar 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * right side 프레임 클래스
-     * @constructor
+     * @constructor View.Layout.Frame.Rside
      */
-    View.Layout.Frame.Rside = View.Layout.Frame.extend({
+    View.Layout.Frame.Rside = View.Layout.Frame.extend(/**@lends View.Layout.Frame.Rside.prototype */{
         className: 'rside_area',
         /**
          * 초기화 함수
-         * @param {Object} attributes
          */
-        initialize: function(attributes) {
+        initialize: function() {
             View.Layout.Frame.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'R'
@@ -6334,7 +6632,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * rendering 하기 전에 수행하는 함수
+         * 랜더링하기 전 수행되는 메서드
          * @private
          */
         beforeRender: function() {
@@ -6349,7 +6647,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * rendering 하기 전에 수행하는 함수
+         * 랜더링 후 수행되는 메서드
          * @private
          */
         afterRender: function() {
@@ -6373,14 +6671,15 @@ View.Layer.Ready = View.Layer.Base.extend({
 
     /**
      * virtual scrollbar
-     *
-     * @constructor
+     * @constructor View.Layout.Frame.Rside.VirtualScrollBar
      */
-    View.Layout.Frame.Rside.VirtualScrollBar = View.Base.extend({
+    View.Layout.Frame.Rside.VirtualScrollBar = View.Base.extend(/**@lends View.Layout.Frame.Rside.VirtualScrollBar.prototype */{
         tagName: 'div',
         className: 'virtual_scrollbar',
-
-        initialize: function(attributes) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 hasFocus: false
@@ -6396,8 +6695,9 @@ View.Layer.Ready = View.Layer.Base.extend({
             'mousedown': '_onMouseDown'
         },
         /**
-         * mousedown 이벤트 핸들러
-         * rendering 성능 향상을 위해 document 에 mouseup 이벤트 핸들러를 바인딩한다.
+         * 마우스 down 이벤트 핸들러
+         * 스크롤 핸들러를 직접 조작할 경우 rendering 성능 향상을 위해 매번 랜더링 하지 않고 한번에 랜더링 하기위해
+         * hasFocus 내부 변수를 할당하고, document 에 mouseup 이벤트 핸들러를 바인딩한다.
          * @private
          */
         _onMouseDown: function() {
@@ -6405,7 +6705,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             $(document).on('mouseup', $.proxy(this._onMouseUp, this));
         },
         /**
-         * mouseup 이벤트 핸들러
+         * 마우스 up 이벤트 핸들러
          * 바인딩 해제한다.
          * @private
          */
@@ -6415,7 +6715,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * scroll 이벤트 발생시 renderModel 의 scroll top 값을 변경하여 frame 과 body 의 scrollTop 값을 동기화한다.
-         * @param {event} scrollEvent
+         * @param {event} scrollEvent 스크롤 이벤트
          * @private
          */
         _onScroll: function(scrollEvent) {
@@ -6428,7 +6728,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 크기 값이 변경될 때 해당 사항을 반영한다.
-         * @param {event} model
+         * @param {event} model 변경이 발생한 모델
          * @private
          */
         _onDimensionChange: function(model) {
@@ -6439,8 +6739,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * scrollTop 이 변경된다면 scrollTop 값을 갱신하고,
          * scrollTop 값 자체가 잘못된 경우 renderModel 의 scrollTop 값을 정상값으로 갱신한다.
-         * @param {object} model
-         * @param {number} value
+         * @param {object} model 변경이 발생한 모델
+         * @param {number} value scrollTop 값
          * @private
          */
         _onScrollTopChange: function(model, value) {
@@ -6466,7 +6766,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             return this;
         },
         /**
-         * virtual scrollbar 의 height 를 지정한다.
+         * virtual scrollbar 의 height 를 설정한다.
          * @private
          */
         _setHeight: function() {
@@ -6487,22 +6787,29 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview Header 관련
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Header 레이아웃 View
-     * @type {*|void}
+     * @constructor View.Layout.Header
      */
-    View.Layout.Header = View.Base.extend({
+    View.Layout.Header = View.Base.extend(/**@lends View.Layout.Header.prototype */{
         tagName: 'div',
         className: 'header',
-        viewList: [],
         whichSide: 'R',
         events: {
             'click' : '_onClick'
         },
-        initialize: function(attributes, option) {
+        /**
+         * 초기화 메서드
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.whichSide = attributes.whichSide;
-            this.viewList = [];
+            this.whichSide = options.whichSide;
             this.setOwnProperties({
                 timeoutForAllChecked: 0
             });
@@ -6544,7 +6851,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * col group 마크업을 생성한다.
          *
-         * @return {string}
+         * @return {string} <colgroup>에 들어갈 html 마크업 스트링
          * @private
          */
         _getColGroupMarkup: function() {
@@ -6573,7 +6880,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
-         * @return {jQuery}
+         * @return {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
          * @private
          */
         _getHeaderMainCheckbox: function() {
@@ -6616,8 +6923,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * scroll left 값이 변경되었을 때 header 싱크를 맞추는 이벤트 핸들러
-         * @param {Object} model
-         * @param {Number} value
+         * @param {Object} model    변경이 발생한 model 인스턴스
+         * @param {Number} value    scrollLeft 값
          * @private
          */
         /* istanbul ignore next: scrollLeft 를 확인할 수 없음 */
@@ -6628,7 +6935,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 클릭 이벤트 핸들러
-         * @param {Event} clickEvent
+         * @param {Event} clickEvent    클릭이벤트
          * @private
          */
         _onClick: function(clickEvent) {
@@ -6663,8 +6970,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             return this;
         },
         /**
-         *
-         * @return {{widthList: (Array|*), modelList: (Array|*)}}
+         * 컬럼 정보를 반환한다.
+         * @return {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
          * @private
          */
         _getColumnData: function() {
@@ -6680,8 +6987,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * Header 의 body markup 을 생성한다.
-         *
-         * @return {string}
+         * @return {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
          * @private
          */
         _getTableBodyMarkup: function() {
@@ -6708,13 +7014,13 @@ View.Layer.Ready = View.Layer.Base.extend({
 
                     if (j === length - 1) {
                         height = (headerHeight - curHeight) - 2;
-                    }else {
+                    } else {
                         curHeight += height + 1;
                     }
                     if (columnNameList[j] == columnName) {
                         rowMarkupList[j].pop();
                         colSpanList[j] += 1;
-                    }else {
+                    } else {
                         colSpanList[j] = 1;
                     }
                     columnNameList[j] = columnName;
@@ -6737,8 +7043,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
          *
-         * @param {Array} hierarchyList
-         * @return {number}
+         * @param {Array} hierarchyList 헤더 마크업 생성시 사용될 계층구조 데이터
+         * @return {number} 헤더 영역의 row 최대값
          * @private
          */
         _getHierarchyMaxRowCount: function(hierarchyList) {
@@ -6750,35 +7056,35 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * column merge 가 설정되어 있을 때 헤더의 계층구조 리스트를 가져온다.
-         * @return {Array}
+         * @return {Array}  계층구조 리스트
          * @private
          */
         _getColumnHierarchyList: function() {
             var columnModelList = this._getColumnData().modelList;
             var hierarchyList = [];
-            _.each(columnModelList, function(model) {
-                hierarchyList.push(this._getColumnHierarchy(model).reverse());
+            _.each(columnModelList, function(columnModel) {
+                hierarchyList.push(this._getColumnHierarchy(columnModel).reverse());
             }, this);
             return hierarchyList;
         },
         /**
          * column merge 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
          *
-         * @param {Object} columnModelData
-         * @param {Array} [resultList]
-         * @return {*|Array}
+         * @param {Object} columnModel 컬럼모델
+         * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
+         * @return {Array} 계층구조 결과값
          * @private
          */
-        _getColumnHierarchy: function(columnModelData, resultList) {
+        _getColumnHierarchy: function(columnModel, resultList) {
             var columnMergeList = this.grid.option('columnMerge');
             resultList = resultList || [];
             /* istanbul ignore else */
-            if (columnModelData) {
-                resultList.push(columnModelData);
+            if (columnModel) {
+                resultList.push(columnModel);
                 /* istanbul ignore else */
                 if (columnMergeList) {
                     _.each(columnMergeList, function(columnMerge, i) {
-                        if ($.inArray(columnModelData['columnName'], columnMerge['columnNameList']) !== -1) {
+                        if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
                             resultList = this._getColumnHierarchy(columnMerge, resultList);
                         }
                     }, this);
@@ -6790,25 +7096,23 @@ View.Layer.Ready = View.Layer.Base.extend({
 
     /**
      * Reside Handler class
-     * @constructor
+     * @constructor View.Layout.Header.ResizeHandler
      */
-    View.Layout.Header.ResizeHandler = View.Base.extend({
+    View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header.ResizeHandler.prototype */{
         tagName: 'div',
         className: 'resize_handle_container',
-        viewList: [],
-        whichSide: 'R',
         events: {
             'mousedown .resize_handle' : '_onMouseDown'
         },
         /**
          * 초기화 함수
-         * @param {Object} attributes
-         * @param {Object} option
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
          */
-        initialize: function(attributes, option) {
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: attributes.whichSide,
+                whichSide: options.whichSide || 'R',
                 isResizing: false,     //현재 resize 발생 상황인지
                 $target: null,         //이벤트가 발생한 target resize handler
                 differenceLeft: 0,
@@ -6848,6 +7152,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * resize handler 마크업을 구성한다.
+         * @return {String} resize handler 의 html 마크업 스트링
          * @private
          */
         _getResizeHandlerMarkup: function() {
@@ -6903,7 +7208,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 현재 mouse move resizing 중인지 상태 flag 반환
-         * @return {boolean}
+         * @return {boolean}    현재 resize 중인지 여부
          * @private
          */
         _isResizing: function() {
@@ -6911,7 +7216,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent    마우스 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -6919,15 +7224,14 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * mouseup 이벤트 핸들러
-         * @param {event} mouseUpEvent
          * @private
          */
-        _onMouseUp: function(mouseUpEvent) {
+        _onMouseUp: function() {
             this._stopResizing();
         },
         /**
-         * mouse move 이벤트 핸들러
-         * @param {event} mouseMoveEvent
+         * mousemove 이벤트 핸들러
+         * @param {event} mouseMoveEvent    마우스 이벤트 객체
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
@@ -6940,13 +7244,13 @@ View.Layer.Ready = View.Layer.Base.extend({
                     index = parseInt(this.$target.attr('columnindex'), 10);
 
                 this.$target.css('left', left + 'px');
-                this.grid.dimensionModel.setColumnWidth(this._getColumnIndex(index), width);
+                this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             }
         },
         /**
          * 너비를 계산한다.
-         * @param {number} pageX
-         * @return {*}
+         * @param {number} pageX    마우스의 x 좌표
+         * @return {number} x좌표를 기준으로 계산한 width 값
          * @private
          */
         _calculateWidth: function(pageX) {
@@ -6954,17 +7258,17 @@ View.Layer.Ready = View.Layer.Base.extend({
             return this.initialWidth + difference;
         },
         /**
-         * column index 를 반환한다.
-         * @param {number} index
-         * @return {*}
+         * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
+         * @param {number} index 핸들러의 index 값
+         * @return {number} 컬럼 index 값
          * @private
          */
-        _getColumnIndex: function(index) {
+        _getHandlerColumnIndex: function(index) {
             return this.whichSide === 'R' ? index + this.grid.columnModel.get('columnFixIndex') : index;
         },
         /**
          * resize start 세팅
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 마우스 이벤트
          * @private
          */
         _startResizing: function(mouseDownEvent) {
@@ -7008,15 +7312,19 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview 툴바영역 클래스
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      *  툴바 영역
-     *  @constructor
+     *  @constructor View.Layout.Toolbar
      */
-    View.Layout.Toolbar = View.Base.extend({
+    View.Layout.Toolbar = View.Base.extend(/**@lends View.Layout.Toolbar.prototype */{
         tagName: 'div',
         className: 'toolbar',
         /**
-         * 초기화 함수
+         * 생성자 함수
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -7065,10 +7373,10 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
     /**
-     * control panel
-     * @constructor
+     * 툴바 영역 컨트롤 패널 UI
+     * @constructor View.Layout.Toolbar.ControlPanel
      */
-    View.Layout.Toolbar.ControlPanel = View.Base.extend({
+    View.Layout.Toolbar.ControlPanel = View.Base.extend(/**@lends View.Layout.Toolbar.ControlPanel.prototype */{
         tagName: 'div',
         className: 'btn_setup',
         template: _.template(
@@ -7082,7 +7390,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 '<span><em class="grid">그리드설정</em></span>' +
                 '</a>'),
         /**
-         * 초기화 함수
+         * 생성자 함수
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -7099,15 +7407,18 @@ View.Layer.Ready = View.Layer.Base.extend({
     });
     /**
      * 툴바 영역 resize handler
-     * @constructor
+     * @constructor View.Layout.Toolbar.ResizeHandler
      */
-    View.Layout.Toolbar.ResizeHandler = View.Base.extend({
+    View.Layout.Toolbar.ResizeHandler = View.Base.extend(/**@lends View.Layout.Toolbar.ResizeHandler.prototype */{
         tagName: 'div',
         className: 'height_resize_bar',
         events: {
             'mousedown': '_onMouseDown'
         },
         template: _.template('<a href="#" class="height_resize_handle">높이 조절</a>'),
+        /**
+         * 생성자 함수
+         */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
         },
@@ -7131,7 +7442,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 마우스 이벤트
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -7142,7 +7453,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * mousemove 이벤트 핸들러
-         * @param {event} mouseMoveEvent
+         * @param {event} mouseMoveEvent 마우스 이벤트
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
@@ -7168,7 +7479,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * selection start 이벤트 핸들러
-         * @return {boolean}
+         * @return {boolean}    기본 동작 방지를 위해 무조건 false 를 반환한다.
          * @private
          */
         _onSelectStart: function(e) {
@@ -7194,10 +7505,10 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
     /**
-     * Pagination 영역
-     * @constructor
+     * 툴바의 Pagination 영역
+     * @constructor View.Layout.Toolbar.Pagination
      */
-    View.Layout.Toolbar.Pagination = View.Base.extend({
+    View.Layout.Toolbar.Pagination = View.Base.extend(/**@lends Base.prototype */{
         tagName: 'div',
         className: 'pagination',
         template: _.template('' +
@@ -7207,7 +7518,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             '<a href="#" class="next_end">맨뒤</a>'
         ),
         /**
-         * 초기화 한다.
+         * 생성자 함수
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -7246,12 +7557,16 @@ View.Layer.Ready = View.Layer.Base.extend({
 
 
 
+/**
+ * @fileoverview Row Painter 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Row Painter
      * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
-     * @constructor
+     * @constructor View.Painter.Row
      */
-    View.Painter.Row = View.Base.Painter.extend({
+    View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype */{
         eventHandler: {
             'mousedown' : '_onMouseDown'
         },
@@ -7267,17 +7582,20 @@ View.Layer.Ready = View.Layer.Base.extend({
             '</tr>'),
         /**
          * 초기화 함수
-         * @param {object} attributes
+         * @param {object} options
+         *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
+         *      @param {jquery} options.$parent 부모 table body jQuery 엘리먼트
+         *      @param {object} options.collection change 를 감지할 collection 객체
          */
-        initialize: function(attributes) {
+        initialize: function(options) {
             View.Base.Painter.prototype.initialize.apply(this, arguments);
 
-            var whichSide = (attributes && attributes.whichSide) || 'R',
+            var whichSide = (options && options.whichSide) || 'R',
                 focusModel = this.grid.focusModel;
 
             this.setOwnProperties({
-                $parent: attributes.$parent,        //부모 frame element
-                collection: attributes.collection,    //change 를 감지할 collection
+                $parent: options.$parent,        //부모 table body element
+                collection: options.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
                 columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
                 cellHandlerList: [],
@@ -7327,7 +7645,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -7341,13 +7659,15 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * model 변경 시
-         * @param {object} model
+         * model 변경 시 이벤트 핸들러
+         * @param {object} model    변화가 일어난 모델 인스턴스
          * @private
          */
         _onModelChange: function(model) {
-            var editType, cellInstance, rowState,
-                $trCache = {}, rowKey,
+            var editType,
+                cellInstance,
+                $trCache = {},
+                rowKey,
                 $tr;
 
             _.each(model.changed, function(cellData, columnName) {
@@ -7356,7 +7676,6 @@ View.Layer.Ready = View.Layer.Base.extend({
                 $tr = $trCache[rowKey];
 
                 if (columnName !== '_extraData') {
-                    //editable 프로퍼티가 false 라면 normal type 으로 설정한다.
                     editType = this._getEditType(columnName, cellData);
                     cellInstance = this.grid.cellFactory.getInstance(editType);
                     cellInstance.onModelChange(cellData, $tr);
@@ -7365,25 +7684,23 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * focusModel 의 select 이벤트 발생시 이벤트 핸들러
-         * @param {(Number|String)} rowKey
-         * @param {Object}  focusModel
+         * @param {(Number|String)} rowKey 대상의 키값
          * @private
          */
-        _onSelect: function(rowKey, focusModel) {
+        _onSelect: function(rowKey) {
             this._setCssSelect(rowKey, true);
         },
         /**
          * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
-         * @param {(Number|String)} rowKey
-         * @param {Object}  focusModel
+         * @param {(Number|String)} rowKey 대상의 키값
          * @private
          */
-        _onUnselect: function(rowKey, focusModel) {
+        _onUnselect: function(rowKey) {
             this._setCssSelect(rowKey, false);
         },
         /**
          * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 대상의 키값
          * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
          * @private
          */
@@ -7395,7 +7712,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 $tr, $td,
                 mainRowKey;
 
-            _.each(columnModelList, function(columnModel, index) {
+            _.each(columnModelList, function(columnModel) {
                 columnName = columnModel['columnName'];
                 mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
 
@@ -7409,8 +7726,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
+         * @param {(Number|String)} rowKey 대상의 키값
+         * @param {String} columnName 컬럼명
          * @private
          */
         _onBlur: function(rowKey, columnName) {
@@ -7419,8 +7736,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
+         * @param {(Number|String)} rowKey 대상의 키값
+         * @param {String} columnName 컬럼명
          * @private
          */
         _onFocus: function(rowKey, columnName) {
@@ -7429,8 +7746,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * tr 엘리먼트를 찾아서 반환한다.
-         * @param {string|number} rowKey
-         * @return {jquery}
+         * @param {string|number} rowKey rowKey 대상의 키값
+         * @return {jquery} 조회한 tr jquery 엘리먼트
          * @private
          */
         _getRowElement: function(rowKey) {
@@ -7438,9 +7755,10 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
-         * @param {String} columnName
-         * @param {Object} cellData
-         * @return {String}
+         * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
+         * @param {String} columnName 컬럼명
+         * @param {Object} cellData 셀 데이터
+         * @return {String} cellFactory 에서 사용될 editType
          * @private
          */
         _getEditType: function(columnName, cellData) {
@@ -7451,9 +7769,9 @@ View.Layer.Ready = View.Layer.Base.extend({
             return editType;
         },
         /**
-         * html 마크업을 반환
-         * @param {object} model
-         * @return {string} html html 스트링
+         * tr html 마크업을 반환한다.
+         * @param {object} model 마크업을 생성할 모델 인스턴스
+         * @return {string} tr 마크업 문자열
          */
         getHtml: function(model) {
             /* istanbul ignore if */
@@ -7490,12 +7808,16 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview CellPainter 의 기초 클래스
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Cell Painter Base
      * @extends {View.Base.Painter}
-     * @constructor
+     * @constructor View.Base.Painter.Cell
      */
-    View.Base.Painter.Cell = View.Base.Painter.extend({
+    View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Cell.prototype*/{
         /**
          * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
          */
@@ -7529,11 +7851,9 @@ View.Layer.Ready = View.Layer.Base.extend({
          */
         eventHandler: {},
         /**
-         * 초기화 함수
-         * @param  {Object} attributes
-         * @param {Object} options
+         * 생성자 함수
          */
-        initialize: function(attributes, options) {
+        initialize: function() {
             View.Base.Painter.prototype.initialize.apply(this, arguments);
             this.initializeEventHandler();
             this.setOwnProperties({
@@ -7555,8 +7875,8 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
-         * @param {object} cellData
-         * @param {jQuery} $tr
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $tr  tr 에 해당하는 jquery 로 감싼 html 엘리먼트
          */
         onModelChange: function(cellData, $tr) {
             var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
@@ -7571,7 +7891,14 @@ View.Layer.Ready = View.Layer.Base.extend({
             }, this);
 
             $td.attr('class', this._getClassNameList(cellData).join(' '));
-            hasFocusedElement = !!($td.find(':focus').length);
+            try {
+                /*
+                IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
+                 */
+                hasFocusedElement = !!($td.find(':focus').length);
+            } catch (e) {
+                hasFocusedElement = false;
+            }
 
             if (isRedraw === true) {
                 this.redraw(cellData, $td, hasFocusedElement);
@@ -7583,28 +7910,10 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} [hasFocusedElement]
-         */
-        redraw: function(cellData, $td, hasFocusedElement) {
-            this.detachHandler($td);
-            var attributes = {
-                'class': this._getClassNameList(cellData).join(' ')
-            };
-            if (cellData.rowSpan) {
-                attributes['rowSpan'] = cellData.rowSpan;
-            }
-            attributes = $.extend(attributes, this.getAttributes(cellData));
-            $td.attr(attributes);
-            $td.data('edit-type', this.getEditType()).html(this.getContentHtml(cellData));
-            this.attachHandler($td);
-        },
-        /**
          * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
-         * @param {Event} keyDownEvent
+         * @param {Event} keyDownEvent  이벤트 객체
          * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
+         * _keyDownSwitch 에서 사용될 공통 파라미터 객체
          * @private
          */
         _getParamForKeyDownSwitch: function(keyDownEvent) {
@@ -7624,7 +7933,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * keyDownSwitch 를 수행한다.
-         * @param {Event} keyDownEvent
+         * @param {Event} keyDownEvent 이벤트 객체
          * @return {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
          * @private
          */
@@ -7651,7 +7960,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * keyDown 이벤트 핸들러
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent  이벤트 객체
          * @private
          */
         _onKeyDown: function(keyDownEvent) {
@@ -7661,9 +7970,9 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * cellData 정보에서 className 을 추출한다.
-         * @param {Object} cellData
-         * @return {Array}
+         * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Array} 생성된 css 디자인 클래스 배열
          * @private
          */
         _getClassNameList: function(cellData) {
@@ -7700,26 +8009,71 @@ View.Layer.Ready = View.Layer.Base.extend({
             return classNameList;
         },
         /**
+         * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
+         * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+         * @private
+         */
+        _getContentHtml: function(cellData) {
+            var columnName = cellData.columnName,
+                columnModel = this.grid.columnModel.getColumnModel(columnName),
+                content;
+
+            if (!ne.util.isNumber(cellData.value) && !cellData.value) {
+                cellData.value = columnModel.defaultValue;
+            }
+
+            content = this.getContentHtml(cellData);
+
+            if (ne.util.isExisty(columnModel, 'editOption.beforeText')) {
+                content = columnModel.editOption.beforeText + content;
+            }
+            if (ne.util.isExisty(columnModel, 'editOption.afterText')) {
+                content = content + columnModel.editOption.afterText;
+            }
+            return content;
+        },
+        /**
          * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
          * td 단위의 html 문자열을 반환한다.
-         * @param {object} cellData
-         * @return {string}
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {string} td 마크업 문자열
          */
         getHtml: function(cellData) {
             var attributeString = Util.getAttributesString(this.getAttributes(cellData));
+
             return this.baseTemplate({
                 columnName: cellData.columnName,
                 rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
                 className: this._getClassNameList(cellData).join(' '),
                 attributes: attributeString,
                 editType: this.getEditType(),
-                content: this.getContentHtml(cellData)
+                content: this._getContentHtml(cellData)
             });
         },
         /**
+         * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
+         */
+        redraw: function(cellData, $td) {
+            this.detachHandler($td);
+            var attributes = {
+                'class': this._getClassNameList(cellData).join(' ')
+            };
+            if (cellData.rowSpan) {
+                attributes['rowSpan'] = cellData.rowSpan;
+            }
+            attributes = $.extend(attributes, this.getAttributes(cellData));
+            $td.attr(attributes);
+            $td.data('edit-type', this.getEditType()).html(this._getContentHtml(cellData));
+            this.attachHandler($td);
+        },
+        /**
          * 인자로 받은 element 의 cellData 를 반환한다.
-         * @param {jQuery} $target
-         * @return {Object}
+         * @param {jQuery} $target  조회할 엘리먼트
+         * @return {Object} 조회한 cellData 정보
          * @private
          */
         _getCellData: function($target) {
@@ -7727,8 +8081,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
-         * @param {jQuery} $target
-         * @returns {{rowKey: String, columnName: String}}
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
          * @private
          */
         _getCellAddress: function($target) {
@@ -7739,16 +8093,16 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 인자로 받은 element 로 부터 columnName 을 반환한다.
-         * @param {jQuery} $target
-         * @return {String}
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {String} 컬럼명
          */
         getColumnName: function($target) {
             return $target.closest('td').attr('columnName');
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 를 반환한다.
-         * @param {jQuery} $target
-         * @return {String}
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {String} 행의 키값
          */
         getRowKey: function($target) {
             return $target.closest('tr').attr('key');
@@ -7757,8 +8111,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
          * 필요에 따라 Override 한다.
-         * @param {Object} cellData
-         * @return {Object} Attribute Object
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Object} td 에 지정할 attribute 데이터
          */
         getAttributes: function(cellData) {
             return {};
@@ -7766,7 +8120,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
             this.grid.focusClipboard();
@@ -7774,7 +8128,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * - 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'normal';
@@ -7782,15 +8136,15 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {},
         /**
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -7806,9 +8160,9 @@ View.Layer.Ready = View.Layer.Base.extend({
          * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jquery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focuse 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {}
 
@@ -7822,25 +8176,25 @@ View.Layer.Ready = View.Layer.Base.extend({
     View.Base.Painter.Cell.Interface = function() {};
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-convertible'
+     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     View.Base.Painter.Cell.Interface.prototype.getEditType = function() {};
     /**
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     View.Base.Painter.Cell.Interface.prototype.focusIn = function($td) {};
     /**
      * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
      * - 필요에 따라 override 한다.
-     * @param {jQuery} $td
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
 //    View.Base.Painter.Cell.Interface.prototype.focusOut = function($td) {};
     /**
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData
-     * @return  {string} html string
+     * @param {object} cellData 모델의 셀 데이터
+     * @return  {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -7853,40 +8207,47 @@ View.Layer.Ready = View.Layer.Base.extend({
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData
-     * @param {jQuery} $td
-     * @param {Boolean} hasFocusedElement
+     * @param {object} cellData 모델의 셀 데이터
+     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
     View.Base.Painter.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
 
 
+/**
+ * @fileoverview 리스트 형태의 Cell(select, radio, checkbox) Painter 가 정의된 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * editOption 에 list 를 가지고 있는 형태의 추상 클래스
      * @implements {View.Base.Painter.Cell.Interface}
-     * @class
+     * @constructor View.Painter.Cell.List
      */
-    View.Painter.Cell.List = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.List = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.List.prototype */{
         redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
         eventHandler: {
         },
+        /**
+         * 생성자 메서드
+         */
         initialize: function() {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {},
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {},
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -7901,9 +8262,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jQuery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             throw this.error('Implement setElementAttribute(cellData, $target) method. ');
@@ -7913,8 +8274,8 @@ View.Layer.Ready = View.Layer.Base.extend({
          *
          * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
          * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
-         * @param {Object} cellData
-         * @returns {optionList|*|expectResult.optionList|.select.optionList|.checkbox.optionList|.radio.optionList}
+         * @param {Object} cellData 모델의 셀 데이터
+         * @return {Array} 옵션 리스트
          */
         getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
@@ -7922,7 +8283,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * blur 이벤트 핸들러
-         * @param {Event} blurEvent
+         * @param {Event} blurEvent 이벤트 객체
          * @private
          */
         _onBlur: function(blurEvent) {
@@ -7931,7 +8292,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * focus 이벤트 핸들러
-         * @param {Event} focusEvent
+         * @param {Event} focusEvent 이벤트 객체
          * @private
          */
         _onFocus: function(focusEvent) {
@@ -7944,10 +8305,13 @@ View.Layer.Ready = View.Layer.Base.extend({
      * select type 의 Cell renderer
      *
      * @extends {View.Painter.Cell.List}
-     * @class
+     * @constructor View.Painter.Cell.List.Select
      */
-    View.Painter.Cell.List.Select = View.Painter.Cell.List.extend({
-        initialize: function(attributes) {
+    View.Painter.Cell.List.Select = View.Painter.Cell.List.extend(/**@lends View.Painter.Cell.List.Select.prototype */{
+        /**
+         * 생성자 메서드
+         */
+        initialize: function() {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
 
             this.setKeyDownSwitch({
@@ -7967,14 +8331,14 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'select';
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             /* istanbul ignore next */
@@ -7983,8 +8347,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8021,9 +8385,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             var $select = $td.find('select');
@@ -8040,7 +8404,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * change 이벤트 핸들러
-         * @param {Event} changeEvent
+         * @param {Event} changeEvent   이벤트 객체
          * @private
          */
         _onChange: function(changeEvent) {
@@ -8056,10 +8420,13 @@ View.Layer.Ready = View.Layer.Base.extend({
      * checkbox, radio button type 의 Cell renderer
      *
      * @extends {View.Painter.Cell.List}
-     * @class
+     * @constructor View.Painter.Cell.List.Button
      */
-    View.Painter.Cell.List.Button = View.Painter.Cell.List.extend({
-        initialize: function(attributes) {
+    View.Painter.Cell.List.Button = View.Painter.Cell.List.extend(/**@lends View.Painter.Cell.List.Button.prototype */{
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Painter.Cell.List.prototype.initialize.apply(this, arguments);
             this.setKeyDownSwitch({
                 'UP_ARROW': function() {},
@@ -8103,14 +8470,14 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'button';
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
@@ -8119,8 +8486,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8163,9 +8530,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} [hasFocusedElement]
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             //TODO
@@ -8181,7 +8548,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * 다음 input 에 focus 한다
          * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-         * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
+         * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
          * @private
          */
         _focusNextInput: function($currentInput) {
@@ -8200,7 +8567,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * 이전 input 에 focus 한다.
          * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-         * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
+         * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
          * @private
          */
         _focusPrevInput: function($currentInput) {
@@ -8234,7 +8601,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * onChange 이벤트 핸들러
-         * @param {Event} changeEvent
+         * @param {Event} changeEvent 이벤트 객체
          * @private
          */
         _onChange: function(changeEvent) {
@@ -8245,19 +8612,26 @@ View.Layer.Ready = View.Layer.Base.extend({
 
     });
 
+/**
+ * @fileoverview 기본 Cell (일반, 숫자, 메인 Checkbox) 관련 Painter 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * editOption 이 적용되지 않은 cell 의 Painter
-     * @class
+     * @constructor View.Painter.Cell.Normal
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Painter.Cell.Normal = View.Base.Painter.Cell.extend({
-        initialize: function(attributes, options) {
+    View.Painter.Cell.Normal = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.Normal.prototype */{
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|select|button|text|text-convertible'
          */
         getEditType: function() {
             return 'normal';
@@ -8265,8 +8639,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8287,7 +8661,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             this.grid.focusClipboard();
@@ -8295,27 +8669,30 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         /* istanbul ignore next */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {}
     });
     /**
      * Number Cell 의 Painter
-     * @class
+     * @constructor View.Painter.Cell.Normal.Number
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend({
+    View.Painter.Cell.Normal.Number = View.Painter.Cell.Normal.extend(/**@lends View.Painter.Cell.Normal.Number.prototype */{
         redrawAttributes: [],
-        initialize: function(attributes, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Painter.Cell.Normal.prototype.initialize.apply(this, arguments);
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return '_number';
@@ -8323,8 +8700,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8339,11 +8716,11 @@ View.Layer.Ready = View.Layer.Base.extend({
     });
     /**
      * checkbox 혹은 radiobox 형태의 Main Button Painter
-     * @class
+     * @constructor View.Painter.Cell.MainButton
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
      */
-    View.Painter.Cell.MainButton = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.MainButton = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.MainButton.prototype */{
         /**
          * rendering 해야하는 cellData 의 변경 목록
          */
@@ -8353,7 +8730,10 @@ View.Layer.Ready = View.Layer.Base.extend({
             'change input' : '_onChange',
             'keydown input' : '_onKeyDown'
         },
-        initialize: function(attributes, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
             this.setKeyDownSwitch({
                 'UP_ARROW': function() {},
@@ -8372,7 +8752,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return '_button';
@@ -8380,8 +8760,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8401,7 +8781,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         /* istanbul ignore next */
         focusIn: function($td) {
@@ -8410,9 +8790,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             var $input = $td.find('input'),
@@ -8423,7 +8803,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * checked 를 toggle 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         toggle: function($td) {
             var $input = $td.find('input');
@@ -8433,9 +8813,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
-         * 필요에 따라 Override 한다.
-         * @param {Object} cellData
-         * @return {Object} Attribute Object
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Object} td 에 지정할 attribute 데이터
          */
         getAttributes: function(cellData) {
             return {
@@ -8444,7 +8823,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * onChange 이벤트 핸들러
-         * @param {Event} changeEvent
+         * @param {Event} changeEvent 이벤트 객체
          * @private
          */
         _onChange: function(changeEvent) {
@@ -8454,7 +8833,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * TD 전체 mousedown 이벤트 발생시 checkbox 클릭 이벤트를 발생시킨다.
-         * @param {Event} mouseDownEvent
+         * @param {Event} mouseDownEvent 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -8465,13 +8844,17 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview Text 편집 가능한 Cell Painter
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * text-textbox 변환 가능한 cell renderer
+     * text 타입의 cell renderer
      * @extends {View.Base.Painter.Cell}
      * @implements {View.Base.Painter.Cell.Interface}
-     * @class
+     * @constructor View.Painter.Cell.Text
      */
-    View.Painter.Cell.Text = View.Base.Painter.Cell.extend({
+    View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.Text.prototype */{
         redrawAttributes: ['isEditable'],
         eventHandler: {
             'blur input' : '_onBlur',
@@ -8498,17 +8881,25 @@ View.Layer.Ready = View.Layer.Base.extend({
                 }
             });
         },
-        template: _.template('<input type="text" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        /**
+         * input type 을 반환한다.
+         * @return {string} input 타입
+         * @private
+         */
+        _getInputType: function() {
+            return 'text';
+        },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'text';
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         /* istanbul ignore next: focus, select 를 검증할 수 없음 */
         focusIn: function($td) {
@@ -8520,16 +8911,16 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
-        focusOut: function() {
+        focusOut: function($td) {
             this.grid.focusClipboard();
         },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8541,6 +8932,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         getContentHtml: function(cellData) {
             var value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
             return this.template({
+                type: this._getInputType(),
                 value: value,
                 disabled: cellData.isDisabled ? 'disabled' : '',
                 name: Util.getUniqueKey()
@@ -8549,9 +8941,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
             var isValueChanged = $.inArray('value', cellData.changed) !== -1,
@@ -8562,8 +8954,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
-         * @param {jQuery} $input
-         * @return {Boolean}
+         * @param {jQuery} $input   인풋 jquery 엘리먼트
+         * @return {Boolean}    값의 변경여부
          * @private
          */
         _isEdited: function($input) {
@@ -8571,15 +8963,15 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 원래 text로 값을 되돌린다.
-         * @param {jQuery} $input
+         * @param {jQuery} $input 인풋 jquery 엘리먼트
          * @private
          */
         _restore: function($input) {
             $input.val(this.originalText);
         },
         /**
-         * blur event handler
-         * @param {event} blurEvent
+         * blur 이벤트 핸들러
+         * @param {event} blurEvent 이벤트 객체
          * @private
          */
         _onBlur: function(blurEvent) {
@@ -8592,8 +8984,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.grid.selection.enable();
         },
         /**
-         * Focus Event Handler
-         * @param {Event} focusEvent
+         * focus 이벤트 핸들러
+         * @param {Event} focusEvent 이벤트 객체
          * @private
          */
         _onFocus: function(focusEvent) {
@@ -8602,15 +8994,44 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.grid.selection.disable();
         }
     });
-
+    /**
+     * Password 타입의 cell renderer
+     * @extends {View.Base.Painter.Cell.Text}
+     * @constructor View.Painter.Cell.Text.Password
+     */
+    View.Painter.Cell.Text.Password = View.Painter.Cell.Text.extend(/**@lends View.Painter.Cell.Text.Password.prototype */{
+        initialize: function(attributes, options) {
+            View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
+        },
+        /**
+         * input type 을 반환한다.
+         * @return {string} input 타입
+         * @private
+         */
+        _getInputType: function() {
+            return 'password';
+        },
+        /**
+         * 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+         */
+        getEditType: function() {
+            return 'text-password';
+        }
+    });
 
     /**
-     * text-textbox 변환 가능한 cell renderer
+     * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
      * @extends {View.Base.Painter.Cell.Text}
      * @implements {View.Base.Painter.Cell.Interface}
-     * @class
+     * @constructor View.Painter.Cell.Text.Convertible
      */
-    View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend({
+    View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends View.Painter.Cell.Text.Convertible.prototype */{
+        /**
+         * 더블클릭으로 간주할 time millisecond 설정
+         * @type {number}
+         */
+        doubleClickDuration: 400,
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
@@ -8618,7 +9039,10 @@ View.Layer.Ready = View.Layer.Base.extend({
             'keydown input': '_onKeyDown',
             'focus input': '_onFocus'
         },
-        initialize: function(attributes, options) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForClick: 0
@@ -8626,14 +9050,14 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
-         * @return {String} editType 'normal|button|select|button|text|text-convertible'
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
         getEditType: function() {
             return 'text-convertible';
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
             this._startEdit($td);
@@ -8641,7 +9065,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
          * - 필요에 따라 override 한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
             this._endEdit($td);
@@ -8650,8 +9074,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
          * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-         * @param {object} cellData
-         * @return  {string} html string
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
          * @example
          * var html = this.getContentHtml();
          * <select>
@@ -8669,6 +9093,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 return value;
             } else {
                 return this.template({
+                    type: this._getInputType(),
                     value: value,
                     disabled: cellData.isDisabled ? 'disabled' : '',
                     name: Util.getUniqueKey()
@@ -8678,14 +9103,14 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
          * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-         * @param {object} cellData
-         * @param {jQuery} $td
-         * @param {Boolean} hasFocusedElement
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {},
         /**
-         * blur event handler
-         * @param {event} blurEvent
+         * blur 이벤트 핸들러
+         * @param {event} blurEvent 이벤트 객체
          * @private
          */
         _onBlurConvertible: function(blurEvent) {
@@ -8696,7 +9121,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * text를 textbox 로 교체한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          * @private
          */
         _startEdit: function($td) {
@@ -8717,7 +9142,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * textbox를  text로 교체한다.
-         * @param {jQuery} $td
+         * @param {jQuery} $td 해당 cell 엘리먼트
          * @private
          */
         _endEdit: function($td) {
@@ -8728,8 +9153,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * click Event handler
-         * @param {event} clickEvent
+         * click 이벤트 핸들러
+         * @param {event} clickEvent 이벤트 객체
          * @private
          */
         _onClick: function(clickEvent) {
@@ -8744,23 +9169,25 @@ View.Layer.Ready = View.Layer.Base.extend({
                 clearTimeout(this.timeoutIdForClick);
                 this.timeoutIdForClick = setTimeout(function() {
                     $td.data('clicked', false);
-                }, 400);
+                }, this.doubleClickDuration);
             }
         }
     });
 
 
+/**
+ * @fileoverview Cell Painter Factory
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Cell Factory
-     * @constructor
+     * @constructor View.CellFactory
      */
-    View.CellFactory = View.Base.extend({
+    View.CellFactory = View.Base.extend(/**@lends View.CellFactory.prototype */{
         /**
-         * 초기화 함수
-         * @param {object} attributes
-         * @param {object} options
+         * 생성자 함수
          */
-        initialize: function(attributes, options) {
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this._initializeInstances();
         },
@@ -8777,9 +9204,10 @@ View.Layer.Ready = View.Layer.Base.extend({
                     new View.Painter.Cell.MainButton(args),
                     new View.Painter.Cell.Normal.Number(args),
                     new View.Painter.Cell.Normal(args),
-                    new View.Painter.Cell.Text(args),
                     new View.Painter.Cell.List.Button(args),
                     new View.Painter.Cell.List.Select(args),
+                    new View.Painter.Cell.Text(args),
+                    new View.Painter.Cell.Text.Password(args),
                     new View.Painter.Cell.Text.Convertible(args)
                 ];
 
@@ -8793,8 +9221,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 인자로 받은 editType 에 해당하는 Cell Painter Instance 를 반환한다.
-         * @param {String} editType
-         * @return {Object}
+         * @param {String} editType editType 정보
+         * @return {Object} editType 에 해당하는 페인터 인스턴스
          */
         getInstance: function(editType) {
             var instance = this.instances[editType];
@@ -8811,8 +9239,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             return instance;
         },
         /**
-         * Frame(Left Side 혹은 Right Side)엘리먼트 하위에 모든 td 에 이벤트 핸들러를 bind 한다.
-         * @param {jQuery} $parent Frame HTML 엘리먼트
+         * Frame(Left Side 혹은 Right Side)엘리먼트 tbody 하위에 모든 td 에 이벤트 핸들러를 bind 한다.
+         * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
         attachHandler: function($parent) {
             var $tdList = $parent.find('td'),
@@ -8826,8 +9254,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             }, this);
         },
         /**
-         * Frame(Left Side 혹은 Right Side)엘리먼트 하위에 모든 td 에 이벤트 핸들러를 unbind 한다.
-         * @param {jQuery} $parent Frame HTML 엘리먼트
+         * Frame(Left Side 혹은 Right Side)엘리먼트 tbody 하위에 모든 td 에 이벤트 핸들러를 unbind 한다.
+         * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
         detachHandler: function($parent) {
             var $tdList = $parent.find('td'),
@@ -8842,11 +9270,15 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * clipboard view class
-     * @constructor
+     * Clipboard view class
+     * @constructor View.Clipboard
      */
-    View.Clipboard = View.Base.extend({
+    View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         tagName: 'textarea',
         className: 'clipboard',
         events: {
@@ -8855,25 +9287,29 @@ View.Layer.Ready = View.Layer.Base.extend({
             'blur': '_onBlur'
         },
         /**
-         * clipboard focus event handler
+         * 클립보드 focus 이벤트 핸들러
          * @private
          */
         _onFocus: function() {
             this.grid.focusModel.focus();
         },
         /**
-         * clipboard blur event handler
+         * 클립보드 blur 이벤트 핸들러
          * @private
          */
         _onBlur: function() {
-            this.grid.focusModel.blur();
+            //Grid 내 input 에 focus 가 된 경우 blur 처리하지 않기위해 setTimeout 을 사용한다.
+            setTimeout($.proxy(function() {
+                var hasFocusedElement = !!(this.grid.$el.find(':focus').length);
+                if (!hasFocusedElement) {
+                    this.grid.focusModel.blur();
+                }
+            }, this), 10);
         },
         /**
          * 생성자
-         * @param {object} attributes
-         * @param {object} option
          */
-        initialize: function(attributes, option) {
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 timeoutIdForCopy: 0,
@@ -8882,14 +9318,14 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * render
+         * 랜더링 한다.
          * @return {View.Clipboard}
          */
         render: function() {
             return this;
         },
         /**
-         * keyEvent 의 중복 호출을 방지하는 lock
+         * keyEvent 의 중복 호출을 방지하는 lock 을 설정한다.
          * @private
          */
         _lock: function() {
@@ -8898,15 +9334,15 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10);
         },
         /**
-         * unlock
+         * keyEvent 의 중복 호출을 방지하는 lock 을 해제한다.
          * @private
          */
         _unlock: function() {
             this.isLocked = false;
         },
         /**
-         * keyDown event handler
-         * @param {event} keyDownEvent
+         * keyDown 이벤트 핸들러
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _onKeyDown: function(keyDownEvent) {
@@ -8928,8 +9364,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * ctrl, shift 둘다 눌리지 않은 상태에서의 key down event 핸들러
-         * @param {event} keyDownEvent
+         * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyIn: function(keyDownEvent) {
@@ -8991,8 +9427,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * enter 또는 space 가 입력되었을 때, 처리하는 로직
-         * @param {(number|string)} rowKey
-         * @param {string} columnName
+         * @param {(number|string)} rowKey 키 입력이 발생한 엘리먼트의 rowKey
+         * @param {string} columnName 키 입력이 발생한 엘리먼트의 컬럼명
          * @private
          */
         _onEnterSpace: function(rowKey, columnName) {
@@ -9008,7 +9444,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * shift 가 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyInWithShift: function(keyDownEvent) {
@@ -9062,7 +9498,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * ctrl 가 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyInWithCtrl: function(keyDownEvent) {
@@ -9094,7 +9530,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * ctrl, shift 둘다 눌린 상태에서의 key down event handler
-         * @param {event} keyDownEvent
+         * @param {event} keyDownEvent 이벤트 객체
          * @private
          */
         _keyInWithShiftAndCtrl: function(keyDownEvent) {
@@ -9120,6 +9556,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * text type 의 editOption cell 의 data 를 빈 스트링으로 세팅한다.
+         * selection 영역이 지정되어 있다면 selection 영역에 해당하는 모든 셀.
+         * selection 영역이 지정되어 있지 않다면 focus된 셀
          * @private
          */
         _del: function() {
@@ -9149,8 +9587,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * keyIn 으로 selection 영역을 update 한다. focus 로직도 함께 수행한다.
-         * @param {Number} rowIndex
-         * @param {Number} columnIndex
+         * @param {Number} rowIndex 행의 index 정보
+         * @param {Number} columnIndex 열의 index 정보
          * @private
          */
         _updateSelectionByKeyIn: function(rowIndex, columnIndex) {
@@ -9165,8 +9603,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
 
         /**
-         * clipboard 의 String 을 반환한다.
-         * @return {String}
+         * clipboard 에 설정될 문자열 반환한다.
+         * @return {String} 데이터를 text 형태로 변환한 문자열
          * @private
          */
         _getClipboardString: function() {
@@ -9190,7 +9628,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             if (window.clipboardData) {
                 if (window.clipboardData.setData('Text', text)) {
                     this.$el.select();
-                }else {
+                } else {
                     this.$el.val('').select();
                 }
             } else {
@@ -9202,15 +9640,25 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
-
+/**
+ * @fileoverview RowList View
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
-     * Collection 의 변화를 감지하는 클래스
+     * RowList View.
+     * Collection 의 변화를 감지한다.
+     * @constructor View.RowList
      */
-    View.RowList = View.Base.extend({
-        initialize: function(attributes) {
+    View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
+        /**
+         * 초기화 함수
+         * @param {object} options
+         *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                whichSide: (attributes && attributes.whichSide) || 'R',
+                whichSide: (options && options.whichSide) || 'R',
                 timeoutIdForCollection: 0,
                 rowPainter: null
             });
@@ -9231,7 +9679,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 랜더링한다.
-         * @returns {View.RowList}
+         * @return {View.RowList}
          */
         render: function() {
             var html = '',
@@ -9269,13 +9717,20 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview Selection 클래스 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      *  selection layer 의 컨트롤을 담당하는 틀래스
-     *  @class
+     *  @constructor View.Selection
      */
-    View.Selection = View.Base.extend({
+    View.Selection = View.Base.extend(/**@lends View.Selection.prototype */{
         events: {},
-        initialize: function(attributes, option) {
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 //메서드 호출시 range 값
@@ -9305,7 +9760,9 @@ View.Layer.Ready = View.Layer.Base.extend({
          * selection 을 disable 한다.
          */
         enable: function() {
-            this.isEnable = true;
+            if (this.grid.option('useDataCopy')) {
+                this.isEnable = true;
+            }
         },
         /**
          * selection 을 disable 한다.
@@ -9316,8 +9773,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
+         * @param {Number} pageX    초기값으로 설정할 마우스 x좌표
+         * @param {Number} pageY    초기값으로 설정할 마우스 y 좌표
          */
         attachMouseEvent: function(pageX, pageY) {
             if (this.isEnable) {
@@ -9341,8 +9798,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
         },
         /**
-         * mouse move event handler
-         * @param {event} mouseMoveEvent
+         * mouse move 이벤트 핸들러
+         * @param {event} mouseMoveEvent 이벤트 객체
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
@@ -9361,10 +9818,10 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환.
-         * @param {Number} overflowX
-         * @param {Number} overflowY
-         * @return {boolean}
+         * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환한다.
+         * @param {Number} overflowX    가로축 기준 영역 overflow 값
+         * @param {Number} overflowY    세로축 기준 영역 overflow 값
+         * @return {boolean} overflow 되었는지 여부
          * @private
          */
         _isAutoScrollable: function(overflowX, overflowY) {
@@ -9372,8 +9829,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * scrollTop 과 scrollLeft 값을 조정한다.
-         * @param {Number} overflowX
-         * @param {Number} overflowY
+         * @param {Number} overflowX    가로축 기준 영역 overflow 값
+         * @param {Number} overflowY    세로축 기준 영역 overflow 값
          * @private
          */
         _adjustScroll: function(overflowX, overflowY) {
@@ -9396,8 +9853,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * mousedown 이 일어난 지점부터의 거리를 구한다.
-         * @param {event} mouseMoveEvent
-         * @return {number|*}
+         * @param {event} mouseMoveEvent 이벤트 객체
+         * @return {number} 처음 위치좌표로 부터의 거리.
          * @private
          */
         _getDistance: function(mouseMoveEvent) {
@@ -9408,18 +9865,17 @@ View.Layer.Ready = View.Layer.Base.extend({
             return Math.round(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
         },
         /**
-         * mouse up event handler
-         * @param {event} mouseUpEvent
+         * mouse up 이벤트 핸들러
          * @private
          */
-        _onMouseUp: function(mouseUpEvent) {
+        _onMouseUp: function() {
             this.detachMouseEvent();
         },
         /**
          * 마우스 위치 정보에 해당하는 row 와 column index 를 반환한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
-         * @return {{row: number, column: number, overflowX: number, overflowY: number}}
+         * @param {Number} pageX    마우스 x좌표
+         * @param {Number} pageY    마우스 y 좌표
+         * @return {{row: number, column: number, overflowX: number, overflowY: number}} row, column의 인덱스 정보와 x, y축 overflow 정보.
          */
         getIndexFromMousePosition: function(pageX, pageY) {
             var containerPos = this._getContainerPosition(pageX, pageY),
@@ -9482,15 +9938,15 @@ View.Layer.Ready = View.Layer.Base.extend({
             };
         },
         /**
-         * 범위를 반환한다.
-         * @returns {*}
+         * rowSpan 을 함께 계산한 범위를 반환한다.
+         * @return {{row: array, column: array}} rowSpan 을 함께 계산한 범위정보
          */
         getRange: function() {
             return $.extend(true, {}, this.spannedRange);
         },
         /**
-         *  현재 selection 범위에 대한 string 을 반환한다.
-         *  @return {String}
+         *  현재 selection 범위내 데이터를 문자열 형태로 변환하여 반환한다.
+         *  @return {String} selection 범위내 데이터 문자열
          */
         getSelectionToString: function() {
             var columnModelList = this.grid.columnModel.get('columnModelList')
@@ -9531,8 +9987,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 실제로 랜더링될 selection layer view 를 생성 후 반환한다.
-         * @param {String} whichSide
-         * @return {*}
+         * @param {String} [whichSide='L'] 좌 우 영역중 어느 영역인지 여부
+         * @return {Object} 해당 영역의 selection layer view 인스턴스
          */
         createLayer: function(whichSide) {
             var clazz = whichSide === 'R' ? View.Selection.Layer.Rside : View.Selection.Layer.Lside,
@@ -9555,8 +10011,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * selection 영역 선택을 시작한다.
-         * @param {Number} rowIndex
-         * @param {Number} columnIndex
+         * @param {Number} rowIndex 시작점의 row 인덱스 정보
+         * @param {Number} columnIndex 시작점의 column 인덱스 정보
          */
         startSelection: function(rowIndex, columnIndex) {
             this.range.row[0] = this.range.row[1] = rowIndex;
@@ -9565,8 +10021,8 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * selection 영역 선택을 확장한다.
-         * @param {Number} rowIndex
-         * @param {Number} columnIndex
+         * @param {Number} rowIndex 확장할 지점의 row 인덱스 정보
+         * @param {Number} columnIndex 확장할 지점의 column 인덱스 정보
          */
         updateSelection: function(rowIndex, columnIndex) {
             this.range.row[1] = rowIndex;
@@ -9638,15 +10094,15 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 현재 selection 레이어가 노출되어 있는지 확인한다.
-         * @return {boolean|*}
+         * @return {boolean}    레이어 노출여부
          */
         isShown: function() {
             return this._isShown;
         },
         /**
          * Selection Layer View 를 반환한다.
-         * @param {String} whichSide
-         * @return {*|View.Selection.rside}
+         * @param {String} [whichSide='L'] 어느 영역의 layer 를 조회할지 여부. 'L|R' 중 하나를 지정한다.
+         * @return {View.Selection.rside|View.Selection.lside} 해당 selection layer view 인스턴스
          * @private
          */
         _getLayer: function(whichSide) {
@@ -9654,9 +10110,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-         * @param {Number} pageX
-         * @param {Number} pageY
-         * @return {{pageX: number, pageY: number}}
+         * @param {Number} pageX    마우스 x 좌표
+         * @param {Number} pageY    마우스 y 좌표
+         * @return {{pageX: number, pageY: number}} 그리드 container 기준의 pageX, pageY 값
          * @private
          */
         _getContainerPosition: function(pageX, pageY) {
@@ -9670,17 +10126,18 @@ View.Layer.Ready = View.Layer.Base.extend({
             };
         },
         /**
-         * select start event handler
-         * @param {event} selectStartEvent
+         * select start 이벤트를 방지한다.
+         * @param {event} selectStartEvent 이벤트 객체
          * @private
          */
         _onSelectStart: function(selectStartEvent) {
             selectStartEvent.preventDefault();
+            return false;
         },
 
         /**
          * selection 데이터가 존재하는지 확인한다.
-         * @return {boolean}
+         * @return {boolean}    selection 데이터 존재여부
          * @private
          */
         hasSelection: function() {
@@ -9689,7 +10146,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * rowSpan 된 Index range 를 반환한다.
-         * @param {{row: [startIndex, endIndex], column: [startIndex, endIndex]}} spannedRange 인덱스 정보
+         * @param {{row: range, column: range}} spannedRange 인덱스 정보
          * @private
          */
         _getRowSpannedIndex: function(spannedRange) {
@@ -9758,6 +10215,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                         }
                     }
                 }
+                //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
                 _.each(columnModelList, function(columnModel) {
                     columnName = columnModel['columnName'];
                     param = {
@@ -9787,16 +10245,21 @@ View.Layer.Ready = View.Layer.Base.extend({
 
     /**
      * 실제 selection layer view
-     * @class
+     * @constructor View.Selection.Layer
      */
-    View.Selection.Layer = View.Base.extend({
+    View.Selection.Layer = View.Base.extend(/**@lends View.Selection.Layer.prototype */{
         tagName: 'div',
         className: 'selection_layer',
-        initialize: function(attributes, option) {
+        /**
+         * 생성자 함수
+         * @param {object} options
+         *      @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
+         */
+        initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList, this);
             this.setOwnProperties({
-                columnWidthList: attributes.columnWidthList,
+                columnWidthList: options.columnWidthList,
                 spannedRange: {
                     row: [-1, -1],
                     column: [-1, -1]
@@ -9804,13 +10267,17 @@ View.Layer.Ready = View.Layer.Base.extend({
                 whichSide: 'R'
             });
         },
+        /**
+         * 컬럼 widthList 값의 변화가 발생했을때 이벤트 핸들러
+         * @private
+         */
         _updateColumnWidthList: function() {
             this.columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide);
         },
         /**
-         * top 값과 height 값을 반환한다.
-         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
-         * @return {{display: string, width: string, height: string, top: string, left: string}}
+         * 영역 정보를 바탕으로 selection 레이어의 크기와 위치 정보를 담은 css 스타일을 반환한다.
+         * @param {{row: range, column: range}} spannedRange 인덱스 정보
+         * @return {{display: string, width: string, height: string, top: string, left: string}} css 스타일 정보
          * @private
          */
         _getGeometryStyles: function(spannedRange) {
@@ -9851,15 +10318,15 @@ View.Layer.Ready = View.Layer.Base.extend({
             return style;
         },
         /**
-         *
-         * @param {{row: [startIdx, endIdx], column: [startIdx, endIdx]}} spannedRange 인덱스 정보
+         * 레이어를 노출한다.
+         * @param {{row: range, column: range}} spannedRange 인덱스 정보
          */
         show: function(spannedRange) {
             this.indexObj = spannedRange;
             this.$el.css(this._getGeometryStyles(spannedRange));
         },
         /**
-         * selection 을 숨긴다.
+         * 레이어를 숨긴다.
          */
         hide: function() {
             this.$el.css({
@@ -9870,16 +10337,23 @@ View.Layer.Ready = View.Layer.Base.extend({
                 left: 0
             });
         },
+        /**
+         * 렌더링한다.
+         * @return {View.Selection.Layer}
+         */
         render: function() {
             return this;
         }
     });
     /**
      * 왼쪽 selection layer
-     * @class
+     * @constructor View.Selection.Layer.Lside
      */
-    View.Selection.Layer.Lside = View.Selection.Layer.extend({
-        initialize: function(attributes, option) {
+    View.Selection.Layer.Lside = View.Selection.Layer.extend(/**@lends View.Selection.Layer.Lside.prototype */{
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Selection.Layer.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'L'
@@ -9888,10 +10362,13 @@ View.Layer.Ready = View.Layer.Base.extend({
     });
     /**
      * 오른쪽 selection layer
-     * @class
+     * @constructor View.Selection.Layer.Rside
      */
-    View.Selection.Layer.Rside = View.Selection.Layer.extend({
-        initialize: function(attributes, option) {
+    View.Selection.Layer.Rside = View.Selection.Layer.extend(/**@lends View.Selection.Layer.Rside.prototype */{
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
             View.Selection.Layer.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: 'R'
@@ -9899,17 +10376,89 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
+/**
+ * @fileoverview Network 모듈 addon
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Network 모듈 addon
-     * @constructor
+     * @param {object} options
+     *      @param {jquery} options.el   form 엘리먼트
+     *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+     *      @param {object} [options.api]   사용할 API URL 리스트
+     *          @param {string} [options.api.readData]  데이터 조회 API 주소
+     *          @param {string} [options.api.createData] 데이터 생성 API 주소
+     *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
+     *          @param {string} [options.api.modify] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+     *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
+     *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
+     *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
+     * @constructor AddOn.Net
+     * @example
+     <form id="data_form">
+     <input type="text" name="query"/>
+     </form>
+     <script>
+     var net,
+     grid = new ne.Grid({
+            //...option 생략...
+    });
+
+     //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+     grid.use('Net', {
+        el: $('#data_form'),         //필수 - form 엘리먼트
+        initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+        perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
+        enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
+        //사용할 API URL 리스트
+        api: {
+            'readData': './api/read',       //데이터 조회 API 주소
+            'createData': './api/create',   //데이터 생성 API 주소
+            'updateData': './api/update',   //데이터 업데이트 API 주소
+            'deleteData': './api/delete',   //데이터 삭제 API 주소
+            'modifyData': './api/modify'    //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+        }
+    });
+     //이벤트 핸들러 바인딩
+     grid.on('beforeRequest', function(data) {
+        //모든 dataRequest 시 호출된다.
+    }).on('response', function(data) {
+        //response 이벤트 핸들러
+        //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+    }).on('successResponse', function(data) {
+        //successResponse 이벤트 핸들러
+        //response.result 가 truthy 일 때 호출된다.
+    }).on('failResponse', function(data) {
+        //failResponse 이벤트 핸들러
+        //response.result 가 falsy 일 때 호출된다.
+    }).on('errorResponse', function(data) {
+        //ajax error response 이벤트 핸들러
+    });
+
+     //grid 로부터 사용할 net 인스턴스를 가져온다.
+     net = grid.getAddOn('Net');
+
+     //request 관련 자세한 옵션은 Net#request 를 참고한다.
+     //createData API 요청
+     net.request('createData');
+
+     //updateData API 요청
+     net.request('updateData');
+
+     //deleteData API 요청
+     net.request('deleteData');
+
+     //modifyData API 요청
+     net.request('modifyData');
+     </script>
      */
-    AddOn.Net = View.Base.extend({
+    AddOn.Net = View.Base.extend(/**@lends AddOn.Net.prototype */{
         events: {
             'submit': '_onSubmit'
         },
         /**
          * 생성자
-         * @param {Object} attributes
+         * @param {Object} attributes 생성자 option 정보
          */
         initialize: function(attributes) {
             View.Base.prototype.initialize.apply(this, arguments);
@@ -9917,6 +10466,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                     initialRequest: true,
                     api: {
                         'readData': '',
+                        'createData': '',
                         'updateData': '',
                         'deleteData': '',
                         'modifyData': '',
@@ -9936,14 +10486,15 @@ View.Layer.Ready = View.Layer.Base.extend({
                 router: null,
                 pagination: pagination,
                 requestedFormData: null,
-                isLocked: false
+                isLocked: false,
+                lastRequestedReadData: null
             });
             this._initializeDataModelNetwork();
             this._initializeRouter();
             this._initializePagination();
 
             if (options.initialRequest) {
-                this.readDataAt(1, false);
+                this._readDataAt(1, false);
             }
         },
         /**
@@ -9982,18 +10533,18 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * pagination 에서 before page move가 발생했을 때 이벤트 핸들러
-         * @param {{page:number}} customEvent
+         * @param {{page:number}} customEvent pagination 으로부터 전달받는 이벤트 객체
          * @private
          */
         _onPageBeforeMove: function(customEvent) {
             var page = customEvent.page;
             if (this.curPage !== page) {
-                this.readDataAt(page, true);
+                this._readDataAt(page, true);
             }
         },
         /**
          * form 의 submit 이벤트 발생시 이벤트 핸들러
-         * @param {event} submitEvent
+         * @param {event} submitEvent   submit 이벤트 객체
          * @private
          */
         _onSubmit: function(submitEvent) {
@@ -10002,23 +10553,25 @@ View.Layer.Ready = View.Layer.Base.extend({
             page 이동시 form input 을 수정하더라도,
             formData 를 유지하기 위해 데이터를 기록한다.
              */
-            this.readDataAt(1, false);
+            this._readDataAt(1, false);
         },
 
         /**
          * 폼 데이터를 설정한다.
-         * @param {Object} formData
+         * 내부에서 사용하는 메서드이므로 외부에서 사용하지 않기를 권장한다.
+         * @param {Object} formData 폼 데이터 정보
          */
         setFormData: function(formData) {
             //form data 를 실제 form 에 반영한다.
-            /* istanbul ignore next */ ne.util.setFormData(this.$el, formData);
+            /* istanbul ignore next */
+            ne.util.setFormData(this.$el, formData);
         },
 
         /**
          * fetch 수행 이후 custom ajax 동작 처리를 위해 Backbone 의 기본 sync 를 오버라이드 하기위한 메서드.
-         * @param {String} method
-         * @param {Object} model
-         * @param {Object} options
+         * @param {String} method   router 로부터 전달받은 method 명
+         * @param {Object} model    fetch 를 수행한 dataModel
+         * @param {Object} options  request 정보
          * @private
          */
         _sync: function(method, model, options) {
@@ -10035,33 +10588,36 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * network 통신에 대한 lock 을 건다.
+         * network 통신에 대한 _lock 을 건다.
+         * @private
          */
-        lock: function() {
+        _lock: function() {
             this.grid.showGridLayer('loading');
             this.isLocked = true;
         },
         /**
          * network 통신에 대해 unlock 한다.
          * loading layer hide 는 rendering 하는 로직에서 수행한다.
+         * @private
          */
-        unlock: function() {
+        _unlock: function() {
             this.isLocked = false;
         },
 
         /**
          * form 으로 지정된 엘리먼트의 Data 를 반환한다.
-         * @return {object}
+         * @return {object} formData 데이터 오브젝트
          * @private
          */
         _getFormData: function() {
-            /* istanbul ignore next*/ return ne.util.getFormData(this.$el);
+            /* istanbul ignore next*/
+            return ne.util.getFormData(this.$el);
         },
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
          * @param {object} dataModel grid 의 dataModel
-         * @param {object} responseData
-         * @param {object} options
+         * @param {object} responseData 응답 데이터
+         * @param {object} options  ajax 요청 정보
          * @private
          */
         _onReadSuccess: function(dataModel, responseData, options) {
@@ -10081,15 +10637,20 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * DataModel 에서 Backbone.fetch 수행 이후 error 콜백
          * @param {object} dataModel grid 의 dataModel
-         * @param {object} responseData
-         * @param {object} options
+         * @param {object} responseData 응답 데이터
+         * @param {object} options  ajax 요청 정보
          * @private
          */
-        _onReadError: function(dataModel, responseData, options) {
-
+        _onReadError: function(dataModel, responseData, options) {},
+        /**
+         * 가장 마지막에 조회 요청한 request 파라미터로 다시 요청한다.
+         */
+        reloadData: function() {
+            this.readData(this.lastRequestedReadData);
         },
         /**
          * 데이터 조회 요청.
+         * 내부적으로 사용하는 메서드이므로 외부에서 호출하지 않기를 권장함.
          * @param {object} data 요청시 사용할 request 파라미터
          */
         readData: function(data) {
@@ -10097,7 +10658,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 grid = this.grid;
             if (!this.isLocked) {
                 grid.renderModel.initializeVariables();
-                this.lock();
+                this._lock();
                 this.requestedFormData = _.clone(data);
                 this.curPage = data.page || this.curPage;
                 startNumber = (this.curPage - 1) * this.perPage + 1;
@@ -10105,8 +10666,11 @@ View.Layer.Ready = View.Layer.Base.extend({
                     startNumber: startNumber
                 });
 
+                //todo: 바로 아랫줄은 테스트코드이므로 제거해야함.
                 data.columnModel = $.toJSON(this.grid.columnModel.get('columnModelList'));
-//                data.columnModel = grid.columnModel.get('columnModelList');
+
+                //마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
+                this.lastRequestedReadData = _.clone(data);
                 grid.dataModel.fetch({
                     requestType: 'readData',
                     data: data,
@@ -10119,10 +10683,11 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
-         * @param {Number} page
-         * @param {Boolean} [isUsingRequestedData=true]
+         * @param {Number} page 조회할 페이지 정보
+         * @param {Boolean} [isUsingRequestedData=true] page 단위 검색이므로, form 수정여부와 관계없이 처음 보낸 form 데이터로 조회할지 여부를 결정한다.
+         * @private
          */
-        readDataAt: function(page, isUsingRequestedData) {
+        _readDataAt: function(page, isUsingRequestedData) {
             isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
             var data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
             data.page = page;
@@ -10136,8 +10701,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.readData(data);
         },
         /**
-         *
-         * Create Data API 요청을 보낸다.
+         * 서버로 API request 한다.
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {object} options
          *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
          *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
@@ -10147,71 +10712,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
          *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
          */
-        createData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('createData', options);
-        },
-        /**
-         *
-         * Update Data API 요청을 보낸다.
-         * @param {object} options
-         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
-         */
-        updateData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('updateData', options);
-        },
-        /**
-         *
-         * Delete Data API 요청을 보낸다.
-         * @param {object} options
-         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
-         */
-        deleteData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('deleteData', options);
-        },
-        /**
-         *
-         * Modify Data API 요청을 보낸다.
-         * @param {object} options
-         *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-         *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-         *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-         *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-         *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-         *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
-         */
-        modifyData: function(options) {
-            /* istanbul ignore next: send 에서 테스트 하고 있음 */
-            this.send('modifyData', options);
-        },
-
-        downloadData: function() {
-            //@todo
-        },
-        downloadAllData: function() {
-            //@todo
-        },
-        /**
-         * send
-         * @param requestType
-         * @param options
-         */
-        send: function(requestType, options) {
+        request: function(requestType, options) {
             var defaultOptions = {
                     url: this.options.api[requestType],
                     type: null,
@@ -10228,13 +10729,14 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         *  data 관련 파라미터를 반환한다.
-         * @param {String} requestType
+         * 서버로 요청시 사용될 파라미터 중 Grid 의 데이터에 해당하는 데이터를 Option 에 맞추어 반환한다.
+         * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {Object} [options]
          *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
          *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
          *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
          * @return {{count: number, data: {requestType: string, url: string, data: object, type: string, dataType: string}}}
+         * 옵션 조건에 해당하는 그리드 데이터 정보
          * @private
          */
         _getDataParam: function(requestType, options) {
@@ -10289,8 +10791,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             };
         },
         /**
-         * requestType 에 따라 요청 파라미터를 반환한다.
-         * @param {String} requestType
+         * requestType 에 따라 서버에 요청할 파라미터를 반환한다.
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
          * @param {Object} [options]
          *      @param {String} [options.url=this.options.api[requestType]] 요청할 url.
          *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
@@ -10298,7 +10800,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
          *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
          *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-         * @return {{requestType: string, url: string, data: object, type: string, dataType: string}}
+         * @return {{requestType: string, url: string, data: object, type: string, dataType: string}} ajax 호출시 사용될 option 파라미터
          * @private
          */
         _getRequestParam: function(requestType, options) {
@@ -10325,9 +10827,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * requestType 에 따른 컨펌 메세지를 노출한다.
-         * @param {String} requestType
-         * @param {Number} count
-         * @return {boolean}
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+         * @param {Number} count   전송될 데이터 개수
+         * @return {boolean}    계속 진행할지 여부를 반환한다.
          * @private
          */
         _isConfirmed: function(requestType, count) {
@@ -10341,9 +10843,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * confirm message 를 반환한다.
-         * @param {String} requestType
-         * @param {Number} count
-         * @return {string}
+         * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
+         * @param {Number} count 전송될 데이터 개수
+         * @return {string} 생성된 confirm 메세지
          * @private
          */
         _getConfirmMessage: function(requestType, count) {
@@ -10390,21 +10892,21 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * ajax complete 이벤트 핸들러
-         * @param {Function} callback
-         * @param {object} jqXHR
-         * @param {number} status
+         * @param {Function} callback   통신 완료 이후 수행할 콜백함수
+         * @param {object} jqXHR    jqueryXHR  객체
+         * @param {number} status   http status 정보
          * @private
          */
         _onComplete: function(callback, jqXHR, status) {
-            this.unlock();
+            this._unlock();
         },
         /**
          * ajax success 이벤트 핸들러
          * @param {Function} callback
          * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
-         * @param {Object} responseData
-         * @param {number} status
-         * @param {object} jqXHR
+         * @param {Object} responseData 응답 데이터
+         * @param {number} status   http status 정보
+         * @param {object} jqXHR    jqueryXHR  객체
          * @private
          */
         _onSuccess: function(callback, options, responseData, status, jqXHR) {
@@ -10415,15 +10917,15 @@ View.Layer.Ready = View.Layer.Base.extend({
                     requestParameter: options.data,
                     responseData: responseData
                 });
-            this.grid.trigger('onResponse', eventData);
+            this.grid.trigger('response', eventData);
             if (eventData.isStopped()) return;
             if (responseData && responseData['result']) {
-                this.grid.trigger('onSuccessResponse', eventData);
+                this.grid.trigger('successResponse', eventData);
                 if (eventData.isStopped()) return;
                 callback && typeof callback === 'function' ? callback(responseData['data'] || {}, status, jqXHR) : null;
             } else {
                 //todo: 오류 처리
-                this.grid.trigger('onFailResponse', eventData);
+                this.grid.trigger('failResponse', eventData);
                 if (eventData.isStopped()) return;
                 message ? alert(message) : null;
             }
@@ -10432,9 +10934,9 @@ View.Layer.Ready = View.Layer.Base.extend({
          * ajax error 이벤트 핸들러
          * @param {Function} callback
          * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
-         * @param {object} jqXHR
-         * @param {number} status
-         * @param {String} errorMessage
+         * @param {object} jqXHR    jqueryXHR  객체
+         * @param {number} status   http status 정보
+         * @param {String} errorMessage 에러 메세지
          * @private
          */
         _onError: function(callback, options, jqXHR, status, errorMessage) {
@@ -10446,10 +10948,10 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
             this.grid.hideGridLayer();
 
-            this.grid.trigger('onResponse', eventData);
+            this.grid.trigger('response', eventData);
             if (eventData.isStopped()) return;
 
-            this.grid.trigger('onErrorResponse', eventData);
+            this.grid.trigger('errorResponse', eventData);
             if (eventData.isStopped()) return;
 
             if (jqXHR.readyState > 1) {
@@ -10459,9 +10961,9 @@ View.Layer.Ready = View.Layer.Base.extend({
     });
     /**
      * Ajax History 관리를 위한 Router AddOn
-     * @constructor
+     * @constructor AddOn.Net.Router
      */
-    AddOn.Net.Router = Backbone.Router.extend({
+    AddOn.Net.Router = Backbone.Router.extend(/**@lends AddOn.Net.Router.prototype */{
         routes: {
             'read/:queryStr': 'read'
         },
@@ -10472,8 +10974,8 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * read
-         * @param {String} queryStr
+         * Backbone Router 에서 url 정보를 통해 서버로 read 요청을 한다.
+         * @param {String} queryStr 쿼리 문자열
          */
         read: function(queryStr) {
             var data = Util.toQueryObject(queryStr);
@@ -10482,20 +10984,27 @@ View.Layer.Ready = View.Layer.Base.extend({
             //그 이후 read
             this.net.readData(data);
         },
-        setOwnProperties: function(properties) {
-            _.each(properties, function(value, key) {
-                this[key] = value;
-            }, this);
-        }
+        /**
+         * 내부 프로퍼티 설정
+         * @param {Object} properties 할당할 프로퍼티 데이터
+         */
+        setOwnProperties: setOwnProperties
     });
 
+/**
+ * @fileoverview Grid Core 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
     /**
      * Grid 코어
-     * @constructor
+     * @constructor Core
      */
-    var Grid = View.Base.extend({
+    var Core = View.Base.extend(/**@lends Core.prototype */{
+        /**
+         * 스크롤바의 높이
+         * @type {Number}
+         */
         scrollBarSize: 17,
-        minimumHeight: 150, //그리드의 최소 높이값
         lside: null,
         rside: null,
         toolbar: null,
@@ -10556,10 +11065,11 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 생성자 함수
-         * @param {Object} options
+         * @param {Object} options Grid.js 의 생성자 option 과 동일값.
          */
         initialize: function(options) {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.publicInstance = options.publicInstance;
             var id = Util.getUniqueKey();
             this.__instance[id] = this;
             this.id = id;
@@ -10581,7 +11091,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * default 설정된 옵션에서 생성자로부터 인자로 받은 옵션들을 확장하여 옵션을 설정한다.
-         * @param {Object} options
+         * @param {Object} options Grid.js 의 생성자 option 과 동일값.
          * @private
          */
         _initializeOptions: function(options) {
@@ -10599,8 +11109,6 @@ View.Layer.Ready = View.Layer.Base.extend({
                 minimumColumnWidth: 50,
                 notUseSmartRendering: false,
                 columnMerge: [],
-                minimumWidth: 300,      //grid의 최소 너비
-
                 scrollX: true,
                 scrollY: true,
                 useDataCopy: true,
@@ -10645,7 +11153,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
         },
         /**
-         * _initializeModel
+         * 내부에서 사용할 모델 instance를 초기화한다.
          *
          * Initialize data model instances
          * @private
@@ -10698,7 +11206,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 this.renderModel = new Model.Renderer({
                     grid: this
                 });
-            }else {
+            } else {
                 this.renderModel = new Model.Renderer.Smart({
                     grid: this
                 });
@@ -10707,9 +11215,7 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.cellFactory = this.createView(View.CellFactory, { grid: this });
         },
         /**
-         * _initializeView
-         *
-         * Initialize view instances
+         * 내부에서 사용할 view 인스턴스들을 초기화한다.
          * @private
          */
         _initializeView: function() {
@@ -10747,9 +11253,13 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.view.clipboard = this.createView(View.Clipboard, {
                 grid: this
             });
+
+            if (!this.options && this.options.useDataCopy) {
+                this.selection.disable();
+            }
         },
         /**
-         * listener 를 초기화한다.
+         * 커스텀 이벤트 리스너를 초기화한다.
          * @private
          */
         _initializeListener: function() {
@@ -10766,7 +11276,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 //            if(!this.option('scrollY')) this.$el.css('overflowY', 'hidden');
         },
         /**
-         * event 속성에 정의되지 않은 이벤트 attach 하는 메서드
+         * event 속성에 정의되지 않은 이벤트 attach 한다.
          * @private
          */
         _attachExtraEvent: function() {
@@ -10774,16 +11284,17 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * window resize  이벤트 핸들러
-         * @param {event} resizeEvent
          * @private
          */
-        _onWindowResize: function(resizeEvent) {
-            var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
-            this.dimensionModel.set('width', width);
+        _onWindowResize: function() {
+            if (this.$el && this.$el.length) {
+                var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
+                this.dimensionModel.set('width', width);
+            }
         },
         /**
          * click 이벤트 핸들러
-         * @param {event} clickEvent
+         * @param {event} clickEvent 이벤트 객체
          * @private
          */
         _onClick: function(clickEvent) {
@@ -10797,7 +11308,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * mousedown 이벤트 핸들러
-         * @param {event} mouseDownEvent
+         * @param {event} mouseDownEvent 이벤트 객체
          * @private
          */
         _onMouseDown: function(mouseDownEvent) {
@@ -10815,7 +11326,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * select 된 row 가 변경된 경우 이벤트 핸들러.
          * radio select type 의 경우에 select 된 행을 check 해주는 로직을 담당한다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 변경이 일어난 데이터의 rowKey
          * @private
          */
         _onRowSelectChanged: function(rowKey) {
@@ -10856,12 +11367,13 @@ View.Layer.Ready = View.Layer.Base.extend({
          * option 값을 설정하거나 가져온다.
          * @param {(String|Number)} key 데이터의 key
          * @param {*} [value]   설정할 값. 두번째 값이 설정되어 있지 않다면 getter 로 활용된다.
-         * @return {*}
+         * @return {*}  결과값
          */
         option: function(key, value) {
-            if (value === undefined) {
+            if (ne.util.isUndefined(value)) {
+                this.options = this.options || {};
                 return this.options[key];
-            }else {
+            } else {
                 this.options[key] = value;
                 return this;
             }
@@ -10876,7 +11388,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
 
         /**
-         * render
+         * 랜더링한다.
          *
          * Rendering grid view
          */
@@ -10922,7 +11434,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-         * @return {(Number|String)}
+         * @return {(Number|String)}    조회한 셀의 값.
          */
         getValue: function(rowKey, columnName, isOriginal) {
             var value;
@@ -10936,9 +11448,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * columnName에 해당하는 column data list를 리턴한다.
          *
-         * @param {String} columnName   컬럼 이름
+         * @param {String} columnName   컬럼명
          * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Array}
+         * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
          */
         getColumnValues: function(columnName, isJsonString) {
             var valueList = this.dataModel.pluck(columnName);
@@ -10946,9 +11458,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey  행 데이터의 고유 키
          * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Object}
+         * @return {Object} 행 데이터
          */
         getRow: function(rowKey, isJsonString) {
             var row = this.dataModel.get(rowKey);
@@ -10957,9 +11469,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
-         * @param {Number} index
+         * @param {Number} index 행의 인덱스
          * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Object}
+         * @return {Object} 행 데이터
          */
         getRowAt: function(index, isJsonString) {
             var row = this.dataModel.at(index).toJSON();
@@ -10968,7 +11480,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
-         * @return {Number}
+         * @return {Number} 데이터 개수
          */
         getRowCount: function() {
             return this.dataModel.length;
@@ -10989,7 +11501,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * rowKey에 해당하는 행에 대해 선택한다.
          * - checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.
          *
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         select: function(rowKey) {
             this.focusModel.select(rowKey);
@@ -11002,7 +11514,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
-         * @return {(Number|String)}
+         * @return {(Number|String)} 행 데이터의 고유 키
          */
         getSelectedRowKey: function() {
             return this.focusModel.which().rowKey;
@@ -11024,16 +11536,16 @@ View.Layer.Ready = View.Layer.Base.extend({
                     silent: silent
                 });
                 return true;
-            }else {
+            } else {
                 return false;
             }
         },
         /**
-         * column 에 해당하는 값을 전부 변경한다.
-         * @param {String} columnName
-         * @param {(Number|String)} columnValue
+         * columnName 에 해당하는 값을 전부 변경한다.
+         * @param {String} columnName 컬럼명
+         * @param {(Number|String)} columnValue 변경할 컬럼 값
          * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
-         * @param {Boolean} [silent=false]
+         * @param {Boolean} [silent=false] change 이벤트 trigger 할지 여부.
          */
         setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
             isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
@@ -11044,7 +11556,7 @@ View.Layer.Ready = View.Layer.Base.extend({
                 };
             obj[columnName] = columnValue;
 
-            this.dataModel.forEach(function(row, key) {
+            this.dataModel.forEach(function(row) {
                 if (isCheckCellState) {
                     cellState = this.getCellState(row.get('rowKey'), columnName);
                 }
@@ -11056,9 +11568,25 @@ View.Layer.Ready = View.Layer.Base.extend({
             }, this);
         },
         /**
-         * set row list data
-         * @param {Array} rowList
-         * @param {boolean} [isParse=true]
+         * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+         * @param {Array} rowList 설정할 데이터 배열 값
+         * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+         */
+        replaceRowList: function(rowList, isParse) {
+            this.showGridLayer('loading');
+            isParse = isParse === undefined ? true : isParse;
+            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
+            clearTimeout(this.timeoutIdForSetRowList);
+            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+                this.dataModel.set(rowList, {
+                    parse: isParse
+                });
+            }, this), 0);
+        },
+        /**
+         * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
+         * @param {Array} rowList 설정할 데이터 배열 값
+         * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
          */
         setRowList: function(rowList, isParse) {
             this.showGridLayer('loading');
@@ -11069,13 +11597,11 @@ View.Layer.Ready = View.Layer.Base.extend({
                 this.dataModel.set(rowList, {
                     parse: isParse
                 });
-                if (!isParse) {
-                    this.dataModel.setOriginalRowList(rowList);
-                }
+                this.dataModel.setOriginalRowList();
             }, this), 0);
         },
         /**
-         * rowKey, columnName에 해당하는 셀에 포커싱한다.
+         * rowKey, columnName 에 해당하는 셀에 포커싱한다.
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
@@ -11088,7 +11614,6 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
-         * @private
          */
         focusIn: function(rowKey, columnName, isScrollable) {
             var cellInstance;
@@ -11103,9 +11628,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
-         * @param {(Number|String)} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * @param {(Number|String)} rowIndex 행 index
+         * @param {String} columnIndex 열 index
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focusAt: function(rowIndex, columnIndex, isScrollable) {
             var row = this.dataModel.at(rowIndex),
@@ -11116,9 +11641,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
-         * @param {(Number|String)} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * @param {(Number|String)} rowIndex 행 index
+         * @param {String} columnIndex 열 index
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focusInAt: function(rowIndex, columnIndex, isScrollable) {
             var row = this.dataModel.at(rowIndex),
@@ -11178,7 +11703,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         enableRow: function(rowKey) {
             this.dataModel.setRowState(rowKey, '');
@@ -11192,23 +11717,22 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         enableCheck: function(rowKey) {
             this.dataModel.setRowState(rowKey, '');
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         disableCheck: function(rowKey) {
             this.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
         },
-
         /**
          * 현재 선택된 행들의 키값만을 배열로 리턴한다.
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-         * @return {Array|String}
+         * @return {Array|String} 선택된 행들의 키값 리스트.
          */
         getCheckedRowKeyList: function(isJsonString) {
             var rowKeyList = [];
@@ -11222,7 +11746,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-         * @return {Array|String}
+         * @return {Array|String} 선택된 행들의 데이터값 리스트.
          */
         getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.dataModel.getRowList(true);
@@ -11230,7 +11754,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
-         * @return {Array}
+         * @return {Array}  컬럼모델 리스트
          */
         getColumnModelList: function() {
             return this.columnModel.get('columnModelList');
@@ -11239,12 +11763,12 @@ View.Layer.Ready = View.Layer.Base.extend({
          * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
          * 리턴되는 객체에는 createList, updateList, deleteList 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
-         * @param {Object} options
+         * @param {Object} [options]
          *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
          *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
          *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {{createList: Array, updateList: Array, deleteList: Array}}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}} 옵션에 따라 반환된 수정된 데이터 목록
          */
         getModifiedRowList: function(options) {
             //@todo 파라미터 옵션에 따른 데이터 형 변화
@@ -11267,7 +11791,6 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 열 고정 위치를 변경한다.
-         *
          * @param {Number} columnFixIndex 고정시킬 열의 인덱스
          */
         setColumnFixIndex: function(columnFixIndex) {
@@ -11276,18 +11799,17 @@ View.Layer.Ready = View.Layer.Base.extend({
             });
             this.columnModel.set({columnFixIndex: columnFixIndex});
         },
-
         /**
          * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
          * - getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.
-         * @return {Boolean}
+         * @return {Boolean}    데이터가 변경되었는지 여부
          */
         isChanged: function() {
             var modifiedRowMap = this.getModifiedRowList(),
                 name;
 
             /*
-                최대한 ㅂ빨리 true 를 반환하기 위하여 for 순환문을 사용함.
+                최대한 빨리 true 를 반환하기 위하여 for 순환문을 사용함.
              */
             for (name in modifiedRowMap) {
                 if (modifiedRowMap[name].length) {
@@ -11302,19 +11824,19 @@ View.Layer.Ready = View.Layer.Base.extend({
          */
         restore: function() {
             var originalRowList = this.dataModel.getOriginalRowList();
-            this.setRowList(originalRowList, false);
+            this.replaceRowList(originalRowList, false);
         },
         /**
          * Grid Layer 를 모두 감춘다.
          */
         hideGridLayer: function() {
-            _.each(this.view.layer, function(view, name) {
+            _.each(this.view.layer, function(view) {
                 view.hide();
             }, this);
         },
         /**
          * name 에 해당하는 Grid Layer를 보여준다.
-         * @param {String} name ready|empty|loading
+         * @param {String} name ready|empty|loading 중 하나를 설정한다.
          */
         showGridLayer: function(name) {
             this.hideGridLayer();
@@ -11323,7 +11845,7 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * pagination instance 를 반환한다.
-         * @return {instance|*|exports.scopeToPunc.instance|exports.baseTags.instance}
+         * @return {instance} pagination 인스턴스
          */
         getPaginationInstance: function() {
             var paginationView = this.view.toolbar.pagination;
@@ -11335,7 +11857,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * addon 을 활성화한다.
          * @param {string} name addon 이름
          * @param {object} options addon 에 넘길 파라미터
-         * @return {Grid}
+         * @return {Core}
          */
         use: function(name, options) {
             options = $.extend({grid: this}, options);
@@ -11344,20 +11866,18 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
             return this;
         },
-
-
         /**
          * 정렬이 되었는지 여부 반환
-         * @return {Boolean}
+         * @return {Boolean} 현재 정렬이 되어있는지 여부
          */
         isSorted: function() {
             return this.dataModel.isSortedByField();
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {Boolean}
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @return {Boolean} 편집 가능한지 여부
          */
         isEditable: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
@@ -11372,10 +11892,10 @@ View.Layer.Ready = View.Layer.Base.extend({
             return isEditable;
         },
         /**
-         * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {Boolean}
+         * rowKey 와 columnName 에 해당하는 셀이 disabled 상태인지 여부를 반환한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @return {Boolean} disabled 상태인지 여부
          */
         isDisabled: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
@@ -11391,9 +11911,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowKey 와 columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @return {{isEditable: boolean, isDisabled: boolean}}
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @return {{isEditable: boolean, isDisabled: boolean}} 편집가능한지 여부와 disabled 인지 여부.
          */
         getCellState: function(rowKey, columnName) {
             var focused = this.focusModel.which(),
@@ -11406,22 +11926,21 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * columnModelList 를 재설정한다..
-         * @param {Array} columnModelList
+         * @param {Array} columnModelList 컬럼모델 리스트
          */
         setColumnModelList: function(columnModelList) {
             this.columnModel.set('columnModelList', columnModelList);
         },
         /**
-         * sort by columnName
-         *
-         * @param {String} columnName
+         * columnName 기준으로 정렬한다.
+         * @param {String} columnName 컬럼명
          */
         sort: function(columnName) {
             this.dataModel.sortByField(columnName);
         },
         /**
-         * rowList 를 반환한다.
-         * @return {Array}
+         * 현재 그리드의 rowList 를 반환한다.
+         * @return {Array} 그리드의 데이터 리스트
          */
         getRowList: function() {
             return this.dataModel.getRowList();
@@ -11429,9 +11948,9 @@ View.Layer.Ready = View.Layer.Base.extend({
 
         /**
          * rowKey 와 columnName 에 해당하는 text 형태의 셀의 값을 삭제한다.
-         * @param {(Number|String)} rowKey
-         * @param {String} columnName
-         * @param {Boolean} silent
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
+         * @param {String} columnName 컬럼 이름
+         * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
          */
         del: function(rowKey, columnName, silent) {
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
@@ -11453,71 +11972,101 @@ View.Layer.Ready = View.Layer.Base.extend({
             }
         },
         /**
-         * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
-         * @return {Array}
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
          */
-        getDisabledRowKeyList: function() {
-            //@todo
+        addCellClassName: function(rowKey, columnName, className) {
+            this.dataModel.addCellClassName(rowKey, columnName, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addRowClassName: function(rowKey, className) {
+            this.dataModel.addRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeCellClassName: function(rowKey, columnName, className) {
+            this.dataModel.removeCellClassName(rowKey, columnName, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeRowClassName: function(rowKey, className) {
+            this.dataModel.removeRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         */
+        getRowSpanData: function(rowKey, columnName) {
+            var row = this.dataModel.get(rowKey);
+            if (row) {
+                return row.getRowSpanData(columnName);
+            }
         },
         /**
          * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
-         * @param {String} columnName
-         * @param {(String|Number)} columnValue
+         * @todo 기능 구현
+         * @param {String} columnName 컬럼 이름
+         * @param {(String|Number)} columnValue 컬럼 이름
          */
         filterData: function(columnName, columnValue) {
-
         },
         /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
+         * @todo 기능 구현
          */
         enable: function() {
-            //@todo: 구현 필요
         },
         /**
          * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
+         * @todo 기능 구현
          * @param {Boolean} [hasDimmedLayer=true]
          */
         disable: function(hasDimmedLayer) {
-            //@todo: 구현 필요
         },
-        getRowSpan: function() {
-
-        },
+        /**
+         * 그리드의 layout 데이터를 갱신한다.
+         * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
+         * @todo 기능 구현
+         * @param {Boolean} [hasDimmedLayer=true]
+         */
         refreshLayout: function() {
-            //todo
         },
-        addClassNameToColumn: function() {
-
-        },
-        addClassNameToRow: function() {
-
-        },
-        removeClassNameFromColumn: function() {
-
-        },
-        removeClassNameFromRow: function() {
-
-        },
-        replaceRowList: function() {
-
-        },
+        /**
+         * 그리드의 크기 정보를 변경한다.
+         * @todo 기능 구현
+         * @param {object} size
+         */
         setGridSize: function(size) {
-            var dimensionModel = this.dimensionModel,
-                width = size && size.width || dimensionModel.get('width'),
-                bodyHeight = dimensionModel.get('bodyHeight'),
-                headerHeight = dimensionModel.get('headerHeight'),
-                toolbarHeight = dimensionModel.get('toolbarHeight');
-
-            if (size && size.height) {
-                bodyHeight = height - (headerHeight + toolbarHeight);
-            }
+            //var dimensionModel = this.dimensionModel,
+            //    width = size && size.width || dimensionModel.get('width'),
+            //    bodyHeight = dimensionModel.get('bodyHeight'),
+            //    headerHeight = dimensionModel.get('headerHeight'),
+            //    toolbarHeight = dimensionModel.get('toolbarHeight');
+            //
+            //if (size && size.height) {
+            //    bodyHeight = height - (headerHeight + toolbarHeight);
+            //}
         },
-        setHeaderColumnTitle: function() {
-
-        },
-        setScrollBarPosition: function() {
-
-        },
+        /**
+         * 스크롤 핸들러의 위치를 변경한다.
+         * @todo 기능 구현
+         * @param {object} size
+         */
+        setScrollHandlerPosition: function() {},
 
         /**
          * 소멸자
@@ -11526,18 +12075,22 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.stopListening();
             this.destroyChildren();
             _.each(this, function(value, property) {
-                if (value instanceof View.Base) {
-                    value && value.destroy && value.destroy();
+                if (property !== 'publicInstance') {
+                    if (value instanceof View.Base) {
+                        value && value.destroy && value.destroy();
+                    }
+                    if (property === 'view') {
+                        _.each(value, function(instance, name) {
+                            instance && instance.destroy && instance.destroy();
+                        }, this);
+                    }
                 }
-                if (property === 'view') {
-                    _.each(value, function(instance, name) {
-                        instance && instance.destroy && instance.destroy();
-                    }, this);
+                if (value && ne.util.isFunction(value.stopListening)) {
+                    value.stopListening();
                 }
-                value && value.stopListening && value.stopListening();
+
                 if (property !== '$el' && property !== '__$el') {
                     this[property] = null;
-                    delete this[property];
                 }
             }, this);
             this.$el.replaceWith(this.__$el);
@@ -11545,20 +12098,272 @@ View.Layer.Ready = View.Layer.Base.extend({
         }
     });
 
-    Grid.prototype.__instance = Grid.prototype.__instance || {};
+    Core.prototype.__instance = Core.prototype.__instance || {};
 
-    var ne = window.ne = ne || {};
+/**
+ * @fileoverview 기본 클래스 파일
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+    /**
+     * ne
+     * @namespace
+     */
+    ne = window.ne = ne || {};
     /**
      * Grid public API
-     * @constructor
+     *
+     * @param {Object} options
+     *      @param {number} [options.columnFixIndex=0] 열고정 기능을 사용하기 위한 인덱스 값으로 고정시킬 컬럼들의 다음 컬럼 인덱스 번호를 설정한다.
+     *      setColumnFixIndex()메서드를 사용해서 동적으로 열고정 위치를 변경할 수도 있다.
+     *      @param {string} [options.selectType=''] 그리드의 각 행 앞에 선택을 위한 체크박스 및 라디오박스를 추가한다.
+     *      값을 지정하지 않은 경우 UI적인 변화는 없으며 라디오박스인 경우처럼 단일 선택만 가능하다.
+     *      @param {boolean} [options.autoNumbering=true] 데이터를 출력 시에 행마다 순번을 자동으로 부여하여 표시한다.
+     *      @param {number} [options.headerHeight=35] 그리드 헤더 영역의 기본 높이. 헤더 영역에서 컬럼 병합 기능을 사용하여 여러 개의 행을 출력하는 경우, 전체 행의 높이를 지정해야 한다.
+     *      @param {number} [options.rowHeight=27] 그리드에 표시되는 행들의 기본 높이를 지정하는 값.
+     *      각 컬럼에 보여줘야 할 내용이 많을 경우 rowHeight값을 크게 지정하여야 모든 내용을 표시할 수 있다.
+     *      @param {number} [options.displayRowCount=10] 그리드에 표시될 행의 개수를 지정하며, 이 값에 따라 그리드의 높이가 자동으로 계산된다
+     *      @param {number} [options.minimumColumnWidth=50] 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
+     *      @param {boolean} [options.scrollX=true] 수평 스크롤바 사용 여부.
+     *      @param {boolean} [options.scrollY=true] 수직 스크롤바 사용 여부.
+     *      @param {string} [options.keyColumnName=null] 각각의 데이터를 구분지을 수 있는 키 값의 필드명(=privateKey).
+     *      존재하지 않을 시 내부적으로 키를 생성하여 할당한다.
+     *      @param {object} [options.toolbar]       툴바영역의 UI 컴포넌트 사용 여부 설정
+     *          @param {boolean} [options.toolbar.hasResizeHandler=true]    수직 resizeHandler 를 사용한다.
+     *          @param {boolean} [options.toolbar.hasControlPanel=true]     컨트롤 패널을 사용한다.
+     *          @param {boolean} [options.toolbar.hasPagination=true]       pagination 을 사용한다.
+     *      @param {array} options.columnModelList
+     *          @param {string} options.columnModelList.columnName 컬럼의 데이터 필드명
+     *          @param {string} [options.columnModelList.isEllipsis=false] 컬럼의 말줄임 여부를 설정
+     *          @param {string} [options.columnModelList.className] 컬럼 전체에 적용할 디자인 클래스 이름
+     *          @param {string} [options.columnModelList.title] 그리드 헤더 영역에 보여질 컬럼 이름
+     *          @param {string} [options.columnModelList.width] 컬럼 너비 값. pixel 로 지정한다.
+     *          @param {string} [options.columnModelList.isHidden ] 설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정을 한다.
+     *          @param {String} [options.columnModelList.defaultValue] 컬럼에 값이 없는 경우 화면에 보여질 기본 텍스트.
+     *          @param {string} [options.columnModelList.formatter] 데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.
+     *          @param {string} [options.columnModelList.notUseHtmlEntity=false] 그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.
+     *          @param {string} [options.columnModelList.isIgnore=false] 그리드에서 값 변경으로 간주하지 않을 column 인지 여부를 결정한다.
+     *          @param {Array} [options.columnModelList.editOption] 수정 UI 및 기능에 대한 좀 더 세분화된 설정을 할 수 있도록 지원한다.
+     *              @param {string} [options.columnModelList.editOption.type='normal'] 컬럼의 데이터를 사용자가 직접 수정할 수 있는 UI를 제공하며, "text", "text-convertible", "select", "radio", "checkbox" 등을 지정할 수 있다.
+     *              @param {Array} [options.columnModelList.editOption.list] select, checkbox, radio 와 같이 list 형태일 경우 [{text: '노출 text', value: '1'}] 과 같은 형태로 설정한다.
+     *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경되기 전에 호출될 콜백함수를 지정한다. false 반환시 변경을 취소한다.
+     *              @param {function} [options.columnModelList.editOption.changeAfterCallback] 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경된 후 호출될 콜백함수를 지정한다.
+     *              @param {string} [options.columnModelList.editOption.beforeText] 인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 텍스트를 지정한다.
+     *              @param {string} [options.columnModelList.editOption.afterText] 인풋 엘리먼트가 표시될 때 인풋 엘리먼트 뒤에 추가하여 보여줄 텍스트를 지정한다.
+     *          @param {Array} [options.columnModelList.relationList] 현재 컬럼의 값 변화에 따라 다른 컬럼의 상태를 변경할 수 있다.
+     *              @param {array} [options.columnModelList.relationList.columnList]    상태값을 변경할 타켓 컬럼 리스트.
+     *              @param {function} [options.columnModelList.relationList.isDisabled] 타켓 컬럼을 disabled 로 변경할지 여부를 반환한다.
+     *              @param {function} [options.columnModelList.relationList.isEditable] 타켓 컬럼을 편집 가능한 컬럼으로 지정할지 여부를 반환한다.
+     *              @param {function} [options.columnModelList.relationList.optionListChange] 타겟 컬럼이 select, checkbox, radio 와 같이 list 형태일 경우 list 를 변경한다.
+     *      @param {array} options.columnMerge
+     * @constructor ne.Grid
+     * @example
+         <div id='grid'></div>
+         <script>
+     var grid = new ne.Grid({
+        el: $('#grid'),
+        columnFixIndex: 2,  //(default=0) 열고정 기능을 사용하기 위한 인덱스 값으로 고정시킬 컬럼들의 다음 컬럼 인덱스 번호를 설정한다.
+        selectType: 'checkbox', //(default='') 그리드의 각 행 앞에 선택을 위한 체크박스 및 라디오박스를 추가한다. 'checkbox' 또는 'radio' 로 설정한다. 값을 지정하지 않은 경우 UI적인 변화는 없으며 라디오박스인 경우처럼 단일 선택만 가능하다.
+        autoNumbering: true, //(default=true) 데이터를 출력 시에 행마다 순번을 자동으로 부여하여 표시한다. 값을 지정하지 않은 경우 UI적인 변화는 없다.
+        headerHeight: 100, //(default=35) 그리드 헤더 영역의 기본 높이. 헤더 영역에서 컬럼 병합 기능을 사용하여 여러 개의 행을 출력하는 경우, 전체 행의 높이를 지정해야 한다.
+        rowHeight: 27, // (default=27) 그리드에 표시되는 행들의 기본 높이를 지정하는 값. 각 컬럼에 보여줘야 할 내용이 많을 경우 rowHeight 값을 크게 지정하여야 모든 내용을 표시할 수 있다.
+        displayRowCount: 10, //(default=10) 그리드에 표시될 행의 개수를 지정하며, 이 값에 따라 그리드의 높이가 자동으로 계산된다.
+        minimumColumnWidth: 50, //(default=50) 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
+        minimumWidth: 50, //(default=50) 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
+        scrollX: true, //(default:true) 수평 스크롤바 사용 여부.
+        scrollY: true, //(default:true) 수직 스크롤바 사용 여부.
+        keyColumnName: 'column1', //(default:null) 각 행의 primaryKey 가 될 컬럼 필드명. 지정하지 않을 시 내부적으로 키를 생성하여 할당한다.
+        toolbar: {  //툴바영역의 UI 컴포넌트 사용 여부 설정
+            hasResizeHandler: true, //(default:true) 수직 resizeHandler 를 사용한다.
+            hasControlPanel: true,  //(default:true) 컨트롤 패널을 사용한다.
+            hasPagination: true     //(default:true) pagination 을 사용한다.
+        },
+        columnModelList: [
+            {
+                title: '일반 타이틀',         //그리드 헤더 영역에 보여질 컬럼 이름
+                columnName: 'column0',      //컬럼의 데이터 필드명
+                className: 'bg_red',        //컬럼 전체에 적용할 디자인 클래스 이름
+                width: 100,                 //컬럼 너비 값. pixel 로 지정한다.
+                isEllipsis: false,          //(default:false) 컬럼의 말줄임 여부를 설정
+                notUseHtmlEntity: false,    //(default:false) 그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.
+                defaultValue: '빈값',        //컬럼에 값이 없는 경우 화면에 보여질 기본 텍스트.
+                isIgnore: false             //(default:false) 그리드에서 값 변경으로 간주하지 않을 column 인지 여부
+
+            },
+            {
+                title: '노출되지 않음',
+                columnName: 'column1',
+                isHidden: true              //설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정을 한다.
+            },
+            {
+                title: 'formatter 설정',
+                columnName: 'column2',
+                formatter: function(value, row) {       //데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.
+                    return '<img src="' + value + '" />';
+                }
+            },
+            {
+                title: '일반 text input 컬럼',
+                columnName: 'column3',
+                editOption: {
+                    type: 'text',
+                    beforeText: '가격:',  //인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 텍스트를 지정한다.
+                    afterText: '원'  //인풋 엘리먼트가 표시될 때 인풋 엘리먼트 뒤에 추가하여 보여줄 텍스트를 지정한다.
+                },
+                //
+                // 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경되기 전에 호출될 콜백함수를 지정한다. false 반환시 변경을 취소한다.
+                // change beforeCallback 에서 정수가 입력되지 않았을 경우 이전값으로 되돌린다.
+                // - param {object}  changeEvent
+                //      - param {(number|string)}  changeEvent.rowKey    이벤트가 발생한 셀의 rowKey
+                //      - param {(number|string)}  changeEvent.columnName 이벤트가 발생한 셀의 columnName
+                //      - param {*}  changeEvent.value 이벤트가 발생한 셀의 변경된 값
+                //      - param {object}  changeEvent.instance grid 인스턴스
+                // - returns {boolean}
+                //
+                changeBeforeCallback: function(changeEvent) {
+                    if (!/[0-9]+/.test(changeEvent.value)) {
+                        alert('정수만 입력할 수 있습니다.');
+                        return false;
+                    }
+                },
+                //
+                // 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경된 후 호출될 콜백함수를 지정한다.
+                // - param {object}  changeEvent
+                //      - param {(number|string)}  changeEvent.rowKey    이벤트가 발생한 셀의 rowKey
+                //      - param {(number|string)}  changeEvent.columnName 이벤트가 발생한 셀의 columnName
+                //      - param {*}  changeEvent.value 이벤트가 발생한 셀의 변경된 값
+                //      - param {object}  changeEvent.instance grid 인스턴스
+                // - returns {boolean}
+                //
+                changeAfterCallback: function(changeEvent) {}
+            },
+            {
+                title: 'password text input 컬럼',
+                columnName: 'column4',
+                editOption: {
+                    type: 'text-password',
+                    beforeText: '비밀번호:'  //인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 텍스트를 지정한다.
+                }
+            },
+            {
+                title: 'text 에서 편집시 text input 으로 변경되는 컬럼',
+                columnName: 'column5',
+                editOption: {
+                    type: 'text-convertible'
+                },
+                isIgnore: true
+            },
+            {
+                title: '셀렉트박스',
+                columnName: 'column6',
+                editOption: {
+                    type: 'select',
+                    list: [                     //select, checkbox, radio 와 같이 list 형태일 경우 [{text: '노출 text', value: '1'}] 과 같은 형태로 설정한다.
+                        {text: '1', value: 1},
+                        {text: '2', value: 2},
+                        {text: '3', value: 3},
+                        {text: '4', value: 4}
+                    ]
+                },
+                relationList: [
+                    {
+                        columnList: ['column7', 'column8'],     //상태값을 변경할 타켓 컬럼 리스트.
+                        //
+                        // 타켓 컬럼을 disabled 로 변경할지 여부를 반환한다.
+                        // - param {*} value 이벤트가 발생한 cell의 변경된 값
+                        // - param {object} rowData 이벤트가 발생한 cell 의 rowData
+                        // - return {boolean} columnList 에 해당하는 column 이 disabled 될지 여부.
+                        //
+                        isDisabled: function(value, rowData) {
+                            return value == 2;
+                        },
+                        //
+                        // 타켓 컬럼을 편집 가능한 컬럼으로 지정할지 여부를 반환한다.
+                        // - param {*} value 이벤트가 발생한 cell의 변경된 값
+                        // - param {object} rowData 이벤트가 발생한 cell 의 rowData
+                        // - return {boolean} columnList 에 해당하는 column 이 편집 가능한 상태일지 여부.
+                        //
+                        isEditable: function(value, rowData) {
+                            return value != 3;
+                        },
+                        //
+                        // 타겟 컬럼이 select, checkbox, radio 와 같이 list 형태일 경우 설정된 list 를 변경한다.
+                        // - param {*} value 이벤트가 발생한 cell의 변경된 값
+                        // - param {object} rowData 이벤트가 발생한 cell 의 rowData
+                        // - return {{text: string, value: number}[]} columnList 에 해당하는 column 의 editOption.list 를 대신할 콜렉션.
+                        //
+                        optionListChange: function(value, rowData) {
+                            if (value == 1) {
+                                console.log('changev return');
+                                return [
+                                    { text: '하나', value: 1},
+                                    { text: '둘', value: 2},
+                                    { text: '셋', value: 3},
+                                    { text: '넷', value: 4}
+                                ];
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: '체크박스',
+                columnName: 'column7',
+                editOption: {
+                    type: 'checkbox',
+                    list: [
+                        {text: '1', value: 1},
+                        {text: '2', value: 2},
+                        {text: '3', value: 3},
+                        {text: '4', value: 4}
+                    ]
+                }
+            },
+            {
+                title: '라디오 버튼',
+                columnName: 'column8',
+                editOption: {
+                    type: 'radio',
+                    list: [
+                        {text: '1', value: 1},
+                        {text: '2', value: 2},
+                        {text: '3', value: 3},
+                        {text: '4', value: 4}
+                    ]
+                }
+            }
+        ],
+        //table header 의 열 병합 정보
+        columnMerge: [
+            {
+                'columnName' : 'mergeColumn1',
+                'title' : '1 + 2',
+                'columnNameList' : ['column1', 'column2']
+            },
+            {
+                'columnName' : 'mergeColumn2',
+                'title' : '1 + 2 + 3',
+                'columnNameList' : ['mergeColumn1', 'column3']
+            },
+            {
+                'columnName' : 'mergeColumn3',
+                'title' : '1 + 2 + 3 + 4 + 5',
+                'columnNameList' : ['mergeColumn2', 'column4', 'column5']
+            }
+        ]
+    });
+
+         </script>
+     *
      */
-    ne.Grid = View.Base.extend({
+    ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         /**
          * 초기화 함수
-         * @param {Object} options
+         * @param {Object} options 생성자의 옵션 정보와 동일.
          */
         initialize: function(options) {
-            this.core = new Grid(options);
+            //grid 에서 public instance 를 참조할 수 있도록 자신의 참조 추가
+            options.public = this;
+            this.core = new Core(options);
             this.listenTo(this.core, 'all', this._relayEvent, this);
         },
         /**
@@ -11577,7 +12382,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey  행 데이터의 고유 키
          */
         enableRow: function(rowKey) {
             this.core.enableRow(rowKey);
@@ -11588,7 +12393,7 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-         * @return {(Number|String)}
+         * @return {(Number|String)}    조회한 셀의 값.
          */
         getValue: function(rowKey, columnName, isOriginal) {
             return this.core.getValue(rowKey, columnName, isOriginal);
@@ -11596,42 +12401,41 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * columnName에 해당하는 column data list를 리턴한다.
          *
-         * @param {String} columnName   컬럼 이름
+         * @param {String} columnName   컬럼명
          * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Array}
+         * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
          */
         getColumnValues: function(columnName, isJsonString) {
             return this.core.getColumnValues(columnName, isJsonString);
         },
         /**
          * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
-         * @param {(Number|String)} rowKey
-         * @param {Boolean} isJsonString
-         * @return {Object}
+         * @param {(Number|String)} rowKey  행 데이터의 고유 키
+         * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+         * @return {Object} 행 데이터
          */
         getRow: function(rowKey, isJsonString) {
             return this.core.getRow(rowKey, isJsonString);
         },
         /**
          * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
-         * @param {Number} index
+         * @param {Number} index 행의 인덱스
          * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-         * @return {Object}
+         * @return {Object} 행 데이터
          */
         getRowAt: function(index, isJsonString) {
             return this.core.getRowAt(index, isJsonString);
         },
         /**
          * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
-         * @return {Number}
+         * @return {Number} 데이터 개수
          */
         getRowCount: function() {
             return this.core.getRowCount();
         },
-
         /**
          * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
-         * @return {(Number|String)}
+         * @return {(Number|String)} 행 데이터의 고유 키
          */
         getSelectedRowKey: function() {
             return this.core.focusModel.which().rowKey;
@@ -11655,18 +12459,24 @@ View.Layer.Ready = View.Layer.Base.extend({
             this.core.setValue(rowKey, columnName, columnValue);
         },
         /**
-         *
-         * @param {String} columnName   컬럼 이름
-         * @param {(Number|String)} columnValue 할당될 값
+         * columnName 에 해당하는 값을 전부 변경한다.
+         * @param {String} columnName 컬럼명
+         * @param {(Number|String)} columnValue 변경할 컬럼 값
          * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
          */
         setColumnValues: function(columnName, columnValue, isCheckCellState) {
             this.core.setColumnValues(columnName, columnValue, isCheckCellState);
         },
-
         /**
-         * rowList 를 설정한다.
-         * @param {Array} rowList
+         * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+         * @param {Array} rowList 설정할 데이터 배열 값
+         */
+        replaceRowList: function(rowList) {
+            this.core.replaceRowList(rowList);
+        },
+        /**
+         * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
+         * @param {Array} rowList 설정할 데이터 배열 값
          */
         setRowList: function(rowList) {
             this.core.setRowList(rowList);
@@ -11682,9 +12492,9 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
-         * @param {(Number|String)} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * @param {(Number|String)} rowIndex 행 index
+         * @param {String} columnIndex 열 index
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focusAt: function(rowIndex, columnIndex, isScrollable) {
             this.core.focusAt(rowIndex, columnIndex, isScrollable);
@@ -11694,22 +12504,21 @@ View.Layer.Ready = View.Layer.Base.extend({
          * @param {(Number|String)} rowKey    행 데이터의 고유 키
          * @param {String} columnName   컬럼 이름
          * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
-         * @private
          */
         focusIn: function(rowKey, columnName, isScrollable) {
             this.core.focusIn(rowKey, columnName, isScrollable);
         },
         /**
          * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
-         * @param {(Number|String)} rowIndex
-         * @param {String} columnIndex
-         * @param {Boolean} isScrollable
+         * @param {(Number|String)} rowIndex 행 index
+         * @param {String} columnIndex 열 index
+         * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
          */
         focusInAt: function(rowIndex, columnIndex, isScrollable) {
             this.core.focusInAt(rowIndex, columnIndex, isScrollable);
         },
         /**
-         * grid 를 blur 한다.
+         * 현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다
          */
         blur: function() {
             this.core.blur();
@@ -11740,7 +12549,6 @@ View.Layer.Ready = View.Layer.Base.extend({
         uncheck: function(rowKey) {
             this.core.uncheck(rowKey);
         },
-
         /**
          * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
          */
@@ -11755,17 +12563,16 @@ View.Layer.Ready = View.Layer.Base.extend({
         removeRow: function(rowKey, isRemoveOriginalDta) {
             this.core.removeRow(rowKey, isRemoveOriginalDta);
         },
-
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         enableCheck: function(rowKey) {
             this.core.enableCheck(rowKey);
         },
         /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         disableCheck: function(rowKey) {
             this.core.disableCheck(rowKey);
@@ -11773,7 +12580,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * 현재 선택된 행들의 키값만을 배열로 리턴한다.
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-         * @return {Array|String}
+         * @return {Array|String} 선택된 행들의 키값 리스트.
          */
         getCheckedRowKeyList: function(isJsonString) {
             var checkedRowKeyList = this.core.getCheckedRowKeyList();
@@ -11782,7 +12589,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         /**
          * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
          * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-         * @return {Array|String}
+         * @return {Array|String} 선택된 행들의 데이터값 리스트.
          */
         getCheckedRowList: function(isJsonString) {
             var checkedRowList = this.core.getCheckedRowList();
@@ -11790,52 +12597,51 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
-         * @return {Array}
+         * @return {Array}  컬럼모델 리스트
          */
         getColumnModelList: function() {
             return this.core.getColumnModelList();
         },
-
         /**
          * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
          * 리턴되는 객체에는 createList, updateList, deleteList 라는 필드가 있고,
          * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
-         * @param {Object} options
+         * @param {Object} [options]
          *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
          *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
          *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
          *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-         * @return {{createList: Array, updateList: Array, deleteList: Array}}
+         * @return {{createList: Array, updateList: Array, deleteList: Array}} 옵션에 따라 반환된 수정된 데이터 목록
          */
         getModifiedRowList: function(options) {
             return this.core.getModifiedRowList(options);
         },
         /**
          * 현재 그리드의 제일 끝에 행을 추가한다.
-         * @param {object} rowData
+         * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
          */
-        appendRow: function(rowData) {
-            this.core.appendRow(rowData);
+        appendRow: function(row) {
+            this.core.appendRow(row);
         },
         /**
          * 현재 그리드의 제일 앞에 행을 추가한다.
-         * @param {object} rowData
+         * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
          */
-        prependRow: function(rowData) {
-            this.core.prependRow(rowData);
+        prependRow: function(row) {
+            this.core.prependRow(row);
         },
         /**
          * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
          * - getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.
-         * @return {Boolean}
+         * @return {Boolean}    데이터가 변경되었는지 여부
          */
         isChanged: function() {
             return this.core.isChanged();
         },
         /**
          * AddOn 인스턴스를 반환한다.
-         * @param {String} name AddOn 이름
-         * @return {instance}
+         * @param {String} name AddOn의 이름
+         * @return {instance} addOn 인스턴스
          */
         getAddOn: function(name) {
             return name ? this.core.addOn[name] : this.core.addOn;
@@ -11848,12 +12654,11 @@ View.Layer.Ready = View.Layer.Base.extend({
         restore: function() {
             this.core.restore();
         },
-
         /**
          * rowKey에 해당하는 행에 대해 선택한다.
          * - checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.
          *
-         * @param {(Number|String)} rowKey
+         * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
         select: function(rowKey) {
             this.core.select(rowKey);
@@ -11866,7 +12671,6 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * 열 고정 위치를 변경한다.
-         *
          * @param {Number} index 고정시킬 열의 인덱스
          */
         setColumnFixIndex: function(index) {
@@ -11874,7 +12678,7 @@ View.Layer.Ready = View.Layer.Base.extend({
         },
         /**
          * columnModelList 를 재설정한다..
-         * @param {Array} columnModelList
+         * @param {Array} columnModelList 컬럼모델 리스트
          */
         setColumnModelList: function(columnModelList) {
             this.core.setColumnModelList(columnModelList);
@@ -11883,15 +12687,15 @@ View.Layer.Ready = View.Layer.Base.extend({
          * addon 을 활성화한다.
          * @param {string} name addon 이름
          * @param {object} options addon 에 넘길 파라미터
-         * @return {Grid}
+         * @return {ne.Grid}
          */
         use: function(name, options) {
             this.core.use(name, options);
             return this;
         },
         /**
-         * rowList 를 반환한다.
-         * @return {Array}
+         * 현재 그리드의 rowList 를 반환한다.
+         * @return {Array} 그리드의 데이터 리스트
          */
         getRowList: function() {
             return this.core.getRowList();
@@ -11903,8 +12707,53 @@ View.Layer.Ready = View.Layer.Base.extend({
         sort: function(columnName) {
             this.core.sort(columnName);
         },
+        /**
+         * sort 를 해제한다.
+         */
         unSort: function() {
             this.core.sort('rowKey');
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addCellClassName: function(rowKey, columnName, className) {
+            this.core.addCellClassName(rowKey, columnName, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        addRowClassName: function(rowKey, className) {
+            this.core.addRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeCellClassName: function(rowKey, columnName, className) {
+            this.core.removeCellClassName(rowKey, className);
+        },
+        /**
+         * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} className 지정할 디자인 클래스명
+         */
+        removeRowClassName: function(rowKey, className) {
+            this.core.removeRowClassName(rowKey, className);
+        },
+        /**
+         * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
+         * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+         * @param {String} columnName 컬럼 이름
+         */
+        getRowSpanData: function(rowKey, columnName) {
+            this.core.getRowSpanData(rowKey, columnName);
         },
         /**
          * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
@@ -11915,63 +12764,57 @@ View.Layer.Ready = View.Layer.Base.extend({
             //@todo:
         },
         /**
+         * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
+         * @todo 기능 구현
+         * @param {String} columnName 컬럼 이름
+         * @param {(String|Number)} columnValue 컬럼 이름
+         */
+        filterData: function(columnName, columnValue) {
+        },
+        /**
          * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
+         * @todo 기능 구현
          */
         enable: function() {
-            //@todo:
         },
         /**
          * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
+         * @todo 기능 구현
          * @param {Boolean} [hasDimmedLayer=true]
          */
         disable: function(hasDimmedLayer) {
-            //@todo:
-        },
-        getRowSpan: function() {
-            //@todo:
         },
         /**
-         * 현재 비활성화된 행들의 키값만을 배열로 리턴한다.
-         * @return {Array}
+         * 그리드의 layout 데이터를 갱신한다.
+         * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
+         * @todo 기능 구현
+         * @param {Boolean} [hasDimmedLayer=true]
          */
-        getDisabledRowKeyList: function() {
-            //@todo
-        },
-        setGridSize: function(size) {
-            var dimensionModel = this.core.dimensionModel,
-                width = size && size.width || dimensionModel.get('width'),
-                bodyHeight = dimensionModel.get('bodyHeight'),
-                headerHeight = dimensionModel.get('headerHeight'),
-                toolbarHeight = dimensionModel.get('toolbarHeight');
-
-            if (size && size.height) {
-                bodyHeight = height - (headerHeight + toolbarHeight);
-            }
-        },
-        setHeaderColumnTitle: function() {
-
-        },
-        setScrollBarPosition: function() {
-
-        },
         refreshLayout: function() {
-            //todo
         },
-        addClassNameToColumn: function() {
+        /**
+         * 그리드의 크기 정보를 변경한다.
+         * @todo 기능 구현
+         * @param {object} size
+         */
+        setGridSize: function(size) {
+            //var dimensionModel = this.dimensionModel,
+            //    width = size && size.width || dimensionModel.get('width'),
+            //    bodyHeight = dimensionModel.get('bodyHeight'),
+            //    headerHeight = dimensionModel.get('headerHeight'),
+            //    toolbarHeight = dimensionModel.get('toolbarHeight');
+            //
+            //if (size && size.height) {
+            //    bodyHeight = height - (headerHeight + toolbarHeight);
+            //}
+        },
+        /**
+         * 스크롤 핸들러의 위치를 변경한다.
+         * @todo 기능 구현
+         * @param {object} size
+         */
+        setScrollHandlerPosition: function() {},
 
-        },
-        addClassNameToRow: function() {
-
-        },
-        removeClassNameFromColumn: function() {
-
-        },
-        removeClassNameFromRow: function() {
-
-        },
-        replaceRowList: function() {
-
-        },
         /**
          * 소멸자.
          */
@@ -11982,7 +12825,7 @@ View.Layer.Ready = View.Layer.Base.extend({
     });
 
     ne.Grid.getInstanceById = function(id) {
-        return Grid.prototype.__instance[id];
+        return Core.prototype.__instance[id];
     };
 
 

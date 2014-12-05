@@ -8,41 +8,45 @@ function setConfig(configDefault, isDev) {
     };
 
     if (isDev) {
+        //configDefault.browsers = [
+        //    'Chrome'
+        //];
         configDefault.browsers = [
-            'Chrome'
+            'IE8-WebDriver'
         ];
+        configDefault.customLaunchers = {
+            'IE8-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'IE8'
+            }
+        };
     } else {
         configDefault.browsers = [
-            'IE7',
-            'IE8',
-            'IE9',
-            'IE10',
-            'IE11',
+            'IE8-WebDriver',
+            'IE9-WebDriver',
+            'IE10-WebDriver',
+            'IE11-WebDriver',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ];
         configDefault.customLaunchers = {
-            'IE7': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE7'
-            },
-            'IE8': {
+            'IE8-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE8'
             },
-            'IE9': {
+            'IE9-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE9'
             },
-            'IE10': {
+            'IE10-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE10'
             },
-            'IE11': {
+            'IE11-WebDriver': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE11'
