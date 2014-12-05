@@ -202,7 +202,7 @@
             var value = this.get(columnName),
                 columnModel = this.grid.columnModel.getColumnModel(columnName);
 
-            if (columnModel && columnModel.editOption && columnModel.editOption.list) {
+            if (ne.util.isExisty(columnModel, 'editOption.list')) {
                 var resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
                     editOptionList = resultOptionList && resultOptionList['optionList'] ?
                         resultOptionList['optionList'] : columnModel.editOption.list,
@@ -243,7 +243,7 @@
                 model = columnModel.getColumnModel(columnName);
                 //list type 의 editType 이 존재하는 경우
                 if (listTypeMap[editType]) {
-                    if (model.editOption && model.editOption.list && model.editOption.list[0].value) {
+                    if (ne.util.isExisty(model, 'editOption.list.0.value')) {
                         value = this._getListTypeVisibleText(columnName);
                     } else {
                         throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
@@ -255,7 +255,7 @@
                     }
                 }
             }
-            value = !ne.util.isUndefined(value) ? value.toString() : value;
+            value = !ne.util.isExisty(value) ? value.toString() : value;
             return value;
         },
         /**
@@ -575,7 +575,9 @@
             _.each(row.changed, function(value, columnName) {
                 if (!this._isPrivateProperty(columnName)) {
                     columnModel = this.grid.columnModel.getColumnModel(columnName);
-                    if (!columnModel) return;
+                    if (!columnModel) {
+                        return;
+                    }
                     //beforeCallback 의 결과가 false 이면 모든 수행을 중지한다.
                     if (!this._executeChangeBeforeCallback(row, columnName)) {
                         return;
@@ -585,7 +587,7 @@
                     //afterChangeCallback 수행
                     this._executeChangeAfterCallback(row, columnName);
 
-                    //check가 disable 이 아니고, columnModel 에 isIgnore 가 설정되지 않았을 경우, _button 필드 변경에 따라 check
+                    //check 가 disable 이 아니고, columnModel 에 isIgnore 가 설정되지 않았을 경우, _button 필드 변경에 따라 check
                     if (!row.getRowState().isDisabledCheck && !columnModel.isIgnore) {
                         row.set('_button', true);
                     }
