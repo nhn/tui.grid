@@ -81,7 +81,14 @@
             }, this);
 
             $td.attr('class', this._getClassNameList(cellData).join(' '));
-            hasFocusedElement = !!($td.find(':focus').length);
+            try {
+                /*
+                IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
+                 */
+                hasFocusedElement = !!($td.find(':focus').length);
+            } catch (e) {
+                hasFocusedElement = false;
+            }
 
             if (isRedraw === true) {
                 this.redraw(cellData, $td, hasFocusedElement);
