@@ -66,10 +66,8 @@
                     if (!ne.util.isUndefined(cellData)) {
                         isEditable = row.isEditable(columnName);
                         isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
-                        if (dataModel.isRowSpanEnable()) {
-                            if (!cellData['isMainRow']) {
-                                rowModel = this.collection.get(cellData['mainRowKey']);
-                            }
+                        if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
+                            rowModel = this.collection.get(cellData['mainRowKey']);
                         }
                         if (rowModel) {
                             param = {
