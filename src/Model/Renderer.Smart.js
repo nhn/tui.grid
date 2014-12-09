@@ -43,8 +43,10 @@
                 bodyHeight = dimensionModel.get('bodyHeight'),
                 displayRowCount = dimensionModel.getDisplayRowCount(),
                 startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIndex = Math.min(dataModel.length - 1,
-                    Math.floor(startIndex + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)),
+                endIndex = Math.min(
+                    dataModel.length - 1,
+                    Math.floor(startIndex + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)
+                ),
                 startRow, endRow, minList, maxList;
 
             if (dataModel.isRowSpanEnable()) {
