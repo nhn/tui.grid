@@ -76,20 +76,7 @@
          * @return {Object} collection  해당 영역의 랜더 데이터 콜랙션
          */
         getCollection: function(whichSide) {
-            whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
-            var collection;
-            switch (whichSide) {
-                case 'L':
-                    collection = this.get('lside');
-                    break;
-                case 'R':
-                    collection = this.get('rside');
-                    break;
-                default :
-                    collection = this.get('rside');
-                    break;
-            }
-            return collection;
+            return this.get(ne.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
         },
         /**
          * Data.ColumnModel 이 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
