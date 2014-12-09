@@ -65,7 +65,7 @@
 
                     if (!ne.util.isUndefined(cellData)) {
                         isEditable = row.isEditable(columnName);
-                        isDisabled = columnName === '_button' ? rowState.isDisabledCheck : rowState.isDisabled;
+                        isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
                         if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
                             rowModel = this.collection.get(cellData['mainRowKey']);
                         }
@@ -119,7 +119,7 @@
                     } else {
                         rowSpanData = defaultRowSpanData;
                     }
-                    isDisabled = columnName === '_button' ? rowState.isDisabledCheck : isDisabled;
+                    isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : isDisabled;
 
                     data[columnName] = {
                         rowKey: rowKey,
