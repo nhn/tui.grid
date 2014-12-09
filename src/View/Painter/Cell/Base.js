@@ -90,7 +90,7 @@
                 hasFocusedElement = false;
             }
 
-            if (isRedraw === true) {
+            if (isRedraw) {
                 this.redraw(cellData, $td, hasFocusedElement);
                 if (hasFocusedElement) {
                     this.focusIn($td);

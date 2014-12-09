@@ -209,7 +209,7 @@
             });
             this.dataModel.reset([]);
 
-            if (this.option('notUseSmartRendering') === true) {
+            if (this.option('notUseSmartRendering')) {
                 this.renderModel = new Model.Renderer({
                     grid: this
                 });

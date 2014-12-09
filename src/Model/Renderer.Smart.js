@@ -26,7 +26,7 @@
          * @private
          */
         _onChange: function() {
-            if (this._isRenderable(this.get('scrollTop')) === true) {
+            if (this._isRenderable(this.get('scrollTop'))) {
                 this.refresh();
             }
         },

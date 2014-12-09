@@ -199,7 +199,7 @@
                 this.executeRelation(i);
             }
             //컬럼모델의 변경이 있을 경우 columnModelChanged 이벤트를 발생한다.
-            if (this.isColumnModelChanged === true) {
+            if (this.isColumnModelChanged) {
                 this.trigger('columnModelChanged', this.get('top'));
                 this.isColumnModelChanged = false;
             } else {
