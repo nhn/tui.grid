@@ -154,7 +154,7 @@
             for (var i = 0; i < len; i++) {
                 html += '<option ';
                 html += 'value="' + list[i].value + '"';
-
+                //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
                 if (cellData.value == list[i].value) {
                     html += ' selected';
                 }

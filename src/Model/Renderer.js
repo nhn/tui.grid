@@ -166,7 +166,7 @@
 
                 //lside 데이터 먼저 채운다.
                 _.each(lsideColumnList, function(columnName) {
-                    if (columnName == '_number') {
+                    if (columnName === '_number') {
                         lsideRow[columnName] = num++;
                     } else {
                         lsideRow[columnName] = rowModel.get(columnName);
@@ -174,7 +174,7 @@
                 });
 
                 _.each(rsideColumnList, function(columnName) {
-                    if (columnName == '_number') {
+                    if (columnName === '_number') {
                         rsideRow[columnName] = num++;
                     } else {
                         rsideRow[columnName] = rowModel.get(columnName);

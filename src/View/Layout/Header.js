@@ -220,7 +220,7 @@
                 _.each(hierarchy, function(columnModel, j) {
                     var columnName = columnModel['columnName'];
 
-                    rowSpan = (length - 1 == j && (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
+                    rowSpan = (length - 1 === j && (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
                     height = rowHeight * rowSpan;
 
                     if (j === length - 1) {
@@ -228,7 +228,7 @@
                     } else {
                         curHeight += height + 1;
                     }
-                    if (columnNameList[j] == columnName) {
+                    if (columnNameList[j] === columnName) {
                         rowMarkupList[j].pop();
                         colSpanList[j] += 1;
                     } else {
