@@ -261,7 +261,7 @@
                 rowKey = focused.rowKey,
                 count, rowSpanData;
 
-            offset = typeof offset === 'number' ? offset : 1;
+            offset = ne.util.isNumber(offset) ? offset : 1;
             if (offset > 1) {
                 rowKey = this._findRowKey(offset);
                 rowSpanData = this._getRowSpanData(rowKey, focused.columnName);
