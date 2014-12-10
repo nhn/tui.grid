@@ -128,7 +128,7 @@
         },
         /**
          * 크기 값이 변경될 때 해당 사항을 반영한다.
-         * @param {event} model 변경이 발생한 모델
+         * @param {object} model 변경이 발생한 모델
          * @private
          */
         _onDimensionChange: function(model) {
