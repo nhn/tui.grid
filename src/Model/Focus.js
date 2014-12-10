@@ -76,8 +76,8 @@
          */
         focus: function(rowKey, columnName, isScrollable) {
             var scrollPosition;
-            rowKey = rowKey === undefined ? this.get('rowKey') : rowKey;
-            columnName = columnName === undefined ? this.get('columnName') : columnName;
+            rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
+            columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
             this._savePrevious();
             this.blur();
             if (rowKey !== this.get('rowKey')) {
@@ -172,7 +172,8 @@
          * @return {boolean} 현재 focus 가 설정되어 있는지 여부
          */
         has: function() {
-            return !!(!ne.util.isUndefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName');
+            var has = !!((!ne.util.isUndefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName'));
+            return has;
         },
         /**
          * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
