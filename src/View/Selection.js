@@ -274,8 +274,9 @@
         createLayer: function(whichSide) {
             var clazz = whichSide === 'R' ? View.Selection.Layer.Rside : View.Selection.Layer.Lside,
                 layer = this._getLayer(whichSide);
-
-            layer && layer.destroy ? layer.destroy() : null;
+            if (layer && ne.util.isFunction(layer.destroy())) {
+                layer.destroy();
+            }
             layer = this.createView(clazz, {
                 grid: this.grid,
                 columnWidthList: this.grid.dimensionModel.getColumnWidthList(whichSide)

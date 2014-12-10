@@ -73,7 +73,9 @@
             _.each($tdList, function(item, index) {
                 $td = $tdList.eq(index);
                 editType = $td.data('edit-type');
-                this.instances[editType] && this.instances[editType].attachHandler($td);
+                if (this.instances[editType]) {
+                    this.instances[editType].attachHandler($td);
+                }
             }, this);
         },
         /**
@@ -88,7 +90,9 @@
             _.each($tdList, function(item, index) {
                 $td = $tdList.eq(index);
                 editType = $td.data('edit-type');
-                this.instances[editType] && this.instances[editType].detachHandler($td);
+                if (this.instances[editType]) {
+                    this.instances[editType].detachHandler($td);
+                }
             }, this);
         }
     });

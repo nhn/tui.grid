@@ -103,7 +103,9 @@
             var isValueChanged = $.inArray('value', cellData.changed) !== -1,
                 $input = $td.find('input');
 
-            isValueChanged && $input.val(cellData.value);
+            if (isValueChanged) {
+                $input.val(cellData.value);
+            }
             $input.prop('disabled', cellData.isDisabled);
         },
         /**

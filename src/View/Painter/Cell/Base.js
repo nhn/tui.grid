@@ -180,10 +180,17 @@
                     classNameList.push('focused');
                 }
             }
+            if (cellData.className) {
+                classNameList.push(cellData.className);
+            }
 
-            cellData.className ? classNameList.push(cellData.className) : null;
-            cellData.isEditable ? !isPrivateColumnName && classNameList.push('editable') : null;
-            cellData.isDisabled ? classNameList.push('disabled') : null;
+            if (cellData.isEditable && !isPrivateColumnName) {
+                classNameList.push('editable');
+            }
+
+            if (cellData.isDisabled) {
+                classNameList.push('disabled');
+            }
 
             //className 중복제거
             _.each(classNameList, function(className) {

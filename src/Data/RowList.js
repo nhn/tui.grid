@@ -969,7 +969,9 @@
                                 } else {
                                     isDiff = value !== originalRow[columnName];
                                 }
-                                isDiff && result.updateList.push(item);
+                                if (isDiff) {
+                                    result.updateList.push(item);
+                                }
                             }
                         }, this);
                     }

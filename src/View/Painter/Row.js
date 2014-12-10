@@ -173,7 +173,9 @@
          */
         _onBlur: function(rowKey, columnName) {
             var $td = this.grid.getElement(rowKey, columnName);
-            $td.length && $td.removeClass('focused');
+            if ($td.length) {
+                $td.removeClass('focused');
+            }
         },
         /**
          * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
@@ -183,7 +185,9 @@
          */
         _onFocus: function(rowKey, columnName) {
             var $td = this.grid.getElement(rowKey, columnName);
-            $td.length && $td.addClass('focused');
+            if ($td.length) {
+                $td.addClass('focused');
+            }
         },
         /**
          * tr 엘리먼트를 찾아서 반환한다.

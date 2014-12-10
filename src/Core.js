@@ -626,8 +626,10 @@
             var cellInstance;
             this.focus(rowKey, columnName, isScrollable);
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+            console.log(rowKey, columnName, this.isEditable(rowKey, columnName));
             if (this.isEditable(rowKey, columnName)) {
                 cellInstance = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
+
                 cellInstance.focusIn(this.getElement(rowKey, columnName));
             } else {
                 this.focusClipboard();
@@ -1084,11 +1086,15 @@
             _.each(this, function(value, property) {
                 if (property !== 'publicInstance') {
                     if (value instanceof View.Base) {
-                        value && value.destroy && value.destroy();
+                        if (value && ne.util.isFunction(value.destroy)) {
+                            value.destroy();
+                        }
                     }
                     if (property === 'view') {
                         _.each(value, function(instance, name) {
-                            instance && instance.destroy && instance.destroy();
+                            if (instance && ne.util.isFunction(instance.destroy)) {
+                                instance.destroy();
+                            }
                         }, this);
                     }
                 }
