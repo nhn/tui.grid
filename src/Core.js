@@ -626,10 +626,8 @@
             var cellInstance;
             this.focus(rowKey, columnName, isScrollable);
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-            console.log(rowKey, columnName, this.isEditable(rowKey, columnName));
             if (this.isEditable(rowKey, columnName)) {
                 cellInstance = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
-
                 cellInstance.focusIn(this.getElement(rowKey, columnName));
             } else {
                 this.focusClipboard();
