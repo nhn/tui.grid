@@ -90,7 +90,6 @@
             this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
             this.timeoutForScroll = 0;
         },
-        template: _.template('<div class="content"></div>'),
         events: {
             'scroll' : '_onScroll',
             'mousedown': '_onMouseDown'
@@ -164,7 +163,7 @@
                 height: height + 'px',
                 top: top + 'px',
                 display: 'block'
-            }).html(this.template());
+            }).html('<div class="content"></div>');
             this._setHeight();
             return this;
         },
