@@ -61,7 +61,7 @@
 
             this.$el.append($space);
 
-            if (this.grid.option('notUseSmartRendering') === false) {
+            if (!this.grid.option('notUseSmartRendering')) {
                 virtualScrollBar = this.createView(View.Layout.Frame.Rside.VirtualScrollBar, {
                     grid: this.grid
                 });
