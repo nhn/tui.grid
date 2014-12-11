@@ -53,7 +53,7 @@
         afterRender: function() {
             var virtualScrollBar,
                 $space = $('<div></div>'),
-                height = this.grid.dimensionModel.get('headerHeight') - 2;
+                height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
 
             $space.css({
                 height: height + 'px'
