@@ -52,10 +52,11 @@
          */
         afterRender: function() {
             var virtualScrollBar,
-                $space = $('<div></div>');
+                $space = $('<div></div>'),
+                height = this.grid.dimensionModel.get('headerHeight') - 2;
 
             $space.css({
-                height: this.grid.dimensionModel.get('headerHeight') - 2
+                height: height + 'px'
             }).addClass('space');
 
             this.$el.append($space);
@@ -156,10 +157,12 @@
          * @return {View.Layout.Frame.Rside.VirtualScrollBar}
          */
         render: function() {
-            var grid = this.grid;
+            var grid = this.grid,
+                height = grid.dimensionModel.get('bodyHeight') - grid.scrollBarSize,
+                top = grid.dimensionModel.get('headerHeight');
             this.$el.css({
-                height: grid.dimensionModel.get('bodyHeight') - grid.scrollBarSize,
-                top: grid.dimensionModel.get('headerHeight'),
+                height: height + 'px',
+                top: top + 'px',
                 display: 'block'
             }).html(this.template());
             this._setHeight();
