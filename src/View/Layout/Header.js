@@ -411,11 +411,10 @@
                 $resizeHandleList = this.$el.find('.resize_handle'),
                 curPos = 0;
 
-            for (var i = 0, len = $resizeHandleList.length; i < len; i++) {
-                curPos += columnWidthList[i] + 1;
-                $resizeHandleList.eq(i).css('left', (curPos - 3) + 'px');
-            }
-
+            ne.util.forEachArray($resizeHandleList, function(item, index) {
+                curPos += columnWidthList[index] + 1;
+                $resizeHandleList.eq(index).css('left', (curPos - 3) + 'px');
+            });
         },
         /**
          * 현재 mouse move resizing 중인지 상태 flag 반환
