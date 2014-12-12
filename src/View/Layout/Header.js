@@ -275,8 +275,8 @@
          * @private
          */
         _getColumnHierarchyList: function() {
-            var columnModelList = this._getColumnData().modelList;
-            var hierarchyList = [];
+            var columnModelList = this._getColumnData().modelList,
+                hierarchyList = [];
             _.each(columnModelList, function(columnModel) {
                 hierarchyList.push(this._getColumnHierarchy(columnModel).reverse());
             }, this);
