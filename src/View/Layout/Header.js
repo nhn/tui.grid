@@ -210,13 +210,13 @@
             // 가공한 컬럼 모델 리스트 정보를 바탕으로 컬럼 엘리먼트들에 대한 마크업을 구성한다.
             var headerHeight = this.grid.dimensionModel.get('headerHeight'),
                 rowMarkupList = new Array(maxRowCount),
-                headerMarkupList = [],
                 columnNameList = new Array(maxRowCount),
                 colSpanList = [],
                 rowHeight = Util.getRowHeight(maxRowCount, headerHeight) - 1,
                 rowSpan = 1,
                 title,
-                height;
+                height,
+                headerMarkupList;
 
             _.each(hierarchyList, function(hierarchy, i) {
                 var length = hierarchyList[i].length,
@@ -249,8 +249,8 @@
                     }));
                 }, this);
             }, this);
-            _.each(rowMarkupList, function(rowMarkup) {
-                headerMarkupList.push('<tr>' + rowMarkup.join('') + '</tr>');
+            headerMarkupList = _.map(rowMarkupList, function(rowMarkup) {
+                return '<tr>' + rowMarkup.join('') + '</tr>';
             });
 
             return headerMarkupList.join('');
