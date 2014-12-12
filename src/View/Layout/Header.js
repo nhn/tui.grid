@@ -150,12 +150,15 @@
          * @private
          */
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target),
-                isChecked;
+            var $target = $(clickEvent.target);
+
             /* istanbul ignore else */
             if ($target.closest('th').attr('columnname') === '_button' && $target.is('input')) {
-                isChecked = $target.prop('checked');
-                isChecked ? this.grid.checkAll() : this.grid.uncheckAll();
+                if ($target.prop('checked')) {
+                    this.grid.checkAll();
+                } else {
+                    this.grid.uncheckAll();
+                }
             }
         },
 
