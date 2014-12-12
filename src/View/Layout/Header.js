@@ -276,10 +276,12 @@
          */
         _getColumnHierarchyList: function() {
             var columnModelList = this._getColumnData().modelList,
-                hierarchyList = [];
-            _.each(columnModelList, function(columnModel) {
-                hierarchyList.push(this._getColumnHierarchy(columnModel).reverse());
+                hierarchyList;
+
+            hierarchyList = _.map(columnModelList, function(columnModel) {
+                return this._getColumnHierarchy(columnModel).reverse();
             }, this);
+
             return hierarchyList;
         },
         /**
@@ -373,17 +375,17 @@
         _getResizeHandlerMarkup: function() {
             var columnData = this._getColumnData(),
                 columnModelList = columnData.modelList,
-                resizeHandleMarkupList = [],
                 headerHeight = this.grid.dimensionModel.get('headerHeight'),
-                length = columnModelList.length;
+                length = columnModelList.length,
+                resizeHandleMarkupList;
 
-            _.each(columnModelList, function(columnModel, index) {
-                resizeHandleMarkupList.push(this.template({
+            resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
+                return this.template({
                     columnIndex: index,
                     columnName: columnModel['columnName'],
                     isLast: index + 1 === length,
                     height: headerHeight
-                }));
+                });
             }, this);
             return resizeHandleMarkupList.join('');
 
