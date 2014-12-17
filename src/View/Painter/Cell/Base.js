@@ -154,7 +154,6 @@
          * @private
          */
         _onKeyDown: function(keyDownEvent) {
-            //todo: cell 종류에 따라 해당 input 에 keydown event handler 를 추가하여 구현한다.
             if (this._executeKeyDownSwitch(keyDownEvent)) {
                 keyDownEvent.preventDefault();
             }
@@ -306,7 +305,7 @@
         },
 
         /**
-         * getHtml 으로 마크업 생성시 td에 포함될 attribute 문자열을 반환한다.
+         * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
          * 필요에 따라 Override 한다.
          * @param {Object} cellData Model 의 셀 데이터
          * @return {Object} td 에 지정할 attribute 데이터
