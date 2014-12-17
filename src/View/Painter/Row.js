@@ -220,35 +220,36 @@
          */
         getHtml: function(model) {
             /* istanbul ignore if */
-            if (model.get('rowKey') === undefined) {
+            if (ne.util.isUndefined(model.get('rowKey'))) {
                return '';
-            } else {
-                var columnModelList = this.columnModelList,
-                    cellFactory = this.grid.cellFactory,
-                    columnName, cellData, editType, cellInstance,
-                    html = '';
-                this.cellHandlerList = [];
-                _.each(columnModelList, function(columnModel) {
-                    columnName = columnModel['columnName'];
-                    cellData = model.get(columnName);
-                    /* istanbul ignore else */
-                    if (cellData && cellData['isMainRow']) {
-                        editType = this._getEditType(columnName, cellData);
-                        cellInstance = cellFactory.getInstance(editType);
-                        html += cellInstance.getHtml(cellData);
-                        this.cellHandlerList.push({
-                            selector: 'td[columnName="' + columnName + '"]',
-                            cellInstance: cellInstance
-                        });
-                    }
-                }, this);
-
-                return this.baseTemplate({
-                    key: model.get('rowKey'),
-                    height: this.grid.dimensionModel.get('rowHeight'),
-                    contents: html,
-                    className: ''
-                });
             }
+
+            var columnModelList = this.columnModelList,
+                cellFactory = this.grid.cellFactory,
+                columnName, cellData, editType, cellInstance,
+                html = '';
+            this.cellHandlerList = [];
+            _.each(columnModelList, function(columnModel) {
+                columnName = columnModel['columnName'];
+                cellData = model.get(columnName);
+                /* istanbul ignore else */
+                if (cellData && cellData['isMainRow']) {
+                    editType = this._getEditType(columnName, cellData);
+                    cellInstance = cellFactory.getInstance(editType);
+                    html += cellInstance.getHtml(cellData);
+                    this.cellHandlerList.push({
+                        selector: 'td[columnName="' + columnName + '"]',
+                        cellInstance: cellInstance
+                    });
+                }
+            }, this);
+
+            return this.baseTemplate({
+                key: model.get('rowKey'),
+                height: this.grid.dimensionModel.get('rowHeight'),
+                contents: html,
+                className: ''
+            });
+
         }
     });
