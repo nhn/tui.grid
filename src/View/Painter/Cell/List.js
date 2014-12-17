@@ -151,17 +151,18 @@
             html += isDisabled ? ' disabled ' : '';
             html += '>';
 
-            for (var i = 0; i < len; i++) {
+            ne.util.forEachArray(list, function(item) {
                 html += '<option ';
-                html += 'value="' + list[i].value + '"';
+                html += 'value="' + item.value + '"';
                 //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
-                if (cellData.value == list[i].value) {
+                if (cellData.value == item.value) {
                     html += ' selected';
                 }
                 html += ' >';
-                html += list[i].text;
+                html += item.text;
                 html += '</option>';
-            }
+            });
+
             html += '</select>';
             return html;
 
@@ -180,11 +181,16 @@
             돌아가지 않는 현상때문에 blur focus 를 수행한다.
              */
 
-            /* istanbul ignore next: blur 확인 불가 */ hasFocusedElement ? $select.blur() : null;
+            /* istanbul ignore next: blur 확인 불가 */
+            if (hasFocusedElement) {
+                $select.blur();
+            }
             $select.val(cellData.value);
 
-            /* istanbul ignore next: focus 확인 불가 */ hasFocusedElement ? $select.focus() : null;
-
+            /* istanbul ignore next: focus 확인 불가 */
+            if (hasFocusedElement) {
+                $select.focus();
+            }
         },
         /**
          * change 이벤트 핸들러
@@ -264,7 +270,6 @@
          * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
-            //todo: cell 에서 키보드 enter 를 입력했을 때 cell 내 input 에 focus 를 수행하는 로직을 구현한다.
             /* istanbul ignore next: focus 확인 불가 */ $td.find('input').eq(0).focus();
         },
         /**
@@ -282,7 +287,6 @@
          */
         getContentHtml: function(cellData) {
             var list = this.getOptionList(cellData),
-                len = list.length,
                 columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
@@ -291,23 +295,23 @@
                 isDisabled = cellData.isDisabled,
                 id;
 
-            for (var i = 0; i < len; i++) {
-                id = name + '_' + list[i].value;
+            ne.util.forEachArray(list, function(item) {
+                id = name + '_' + item.value;
                 html += this.template.input({
                     type: columnModel.editOption.type,
                     name: name,
                     id: id,
-                    value: list[i].value,
-                    checked: $.inArray('' + list[i].value, checkedList) === -1 ? '' : 'checked',
+                    value: item.value,
+                    checked: $.inArray('' + item.value, checkedList) === -1 ? '' : 'checked',
                     disabled: isDisabled ? 'disabled' : ''
                 });
-                if (list[i].text) {
+                if (item.text) {
                     html += this.template.label({
                         id: id,
-                        text: list[i].text
+                        text: item.text
                     });
                 }
-            }
+            }, this);
 
             return html;
         },
@@ -319,15 +323,14 @@
          * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
          */
         setElementAttribute: function(cellData, $td, hasFocusedElement) {
-            //TODO
             var value = cellData.value,
-                checkedList = ('' + value).split(','),
-                len = checkedList.length,
-                i;
+                checkedList = ('' + value).split(',');
+
             $td.find('input:checked').prop('checked', false);
-            for (i = 0; i < len; i++) {
-                $td.find('input[value="' + checkedList[i] + '"]').prop('checked', true);
-            }
+
+            ne.util.forEachArray(checkedList, function(item) {
+                $td.find('input[value="' + item + '"]').prop('checked', true);
+            });
         },
         /**
          * 다음 input 에 focus 한다
