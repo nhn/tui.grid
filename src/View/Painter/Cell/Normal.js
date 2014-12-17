@@ -40,7 +40,7 @@
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
                 rowKey = cellData.rowKey;
-            if (typeof columnModel.formatter === 'function') {
+            if (ne.util.isFunction(columnModel.formatter)) {
                 value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
             }
             return value;
