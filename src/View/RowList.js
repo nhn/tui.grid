@@ -49,7 +49,7 @@
             this._createRowPainter();
             //get html string
             /* istanbul ignore else */
-            if (firstRow && firstRow.get('rowKey') !== 'undefined') {
+            if (firstRow && !ne.util.isUndefined(firstRow.get('rowKey'))) {
                 this.collection.forEach(function(row) {
                     html += this.rowPainter.getHtml(row);
                 }, this);
