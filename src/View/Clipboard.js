@@ -76,18 +76,19 @@
             if (this.isLocked) {
                 keyDownEvent.preventDefault();
                 return false;
-            } else {
-                if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
-                    this._keyInWithShiftAndCtrl(keyDownEvent);
-                } else if (keyDownEvent.shiftKey) {
-                    this._keyInWithShift(keyDownEvent);
-                } else if (keyDownEvent.ctrlKey || keyDownEvent.metaKey) {
-                    this._keyInWithCtrl(keyDownEvent);
-                } else {
-                    this._keyIn(keyDownEvent);
-                }
-                this._lock();
             }
+
+            if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
+                this._keyInWithShiftAndCtrl(keyDownEvent);
+            } else if (keyDownEvent.shiftKey) {
+                this._keyInWithShift(keyDownEvent);
+            } else if (keyDownEvent.ctrlKey || keyDownEvent.metaKey) {
+                this._keyInWithCtrl(keyDownEvent);
+            } else {
+                this._keyIn(keyDownEvent);
+            }
+            this._lock();
+
         },
         /**
          * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
@@ -146,6 +147,7 @@
                     break;
                 default:
                     isKeyIdentified = false;
+                    break;
             }
             keyDownEvent.preventDefault();
             selection.endSelection();
@@ -218,6 +220,7 @@
                     break;
                 default:
                     isKeyIdentified = false;
+                    break;
             }
             keyDownEvent.preventDefault();
             return isKeyIdentified;
@@ -251,6 +254,7 @@
                     break;
                 default:
                     isKeyIdentified = false;
+                    break;
             }
             return isKeyIdentified;
         },
@@ -275,6 +279,7 @@
                     break;
                 default:
                     isKeyIdentified = false;
+                    break;
             }
 
             keyDownEvent.preventDefault();
