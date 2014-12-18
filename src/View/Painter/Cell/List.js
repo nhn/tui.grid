@@ -339,17 +339,7 @@
          * @private
          */
         _focusNextInput: function($currentInput) {
-            var $next = $currentInput;
-            do {
-                $next = $next.next();
-            } while ($next.length && !$next.is('input'));
-
-            if ($next.length) {
-                $next.focus();
-                return true;
-            } else {
-                return false;
-            }
+            return this._focusTargetInput($currentInput, 'next');
         },
         /**
          * 이전 input 에 focus 한다.
@@ -358,13 +348,35 @@
          * @private
          */
         _focusPrevInput: function($currentInput) {
-            var $prev = $currentInput;
-            do {
-                $prev = $prev.prev();
-            } while ($prev.length && !$prev.is('input'));
+            return this._focusTargetInput($currentInput, 'prev');
+        },
+        /**
+         * 이전 혹은 다음 input 에 focus 한다.
+         * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
+         * @param {string} direction 방향 'next|prev'
+         * @return {boolean} 해당 엘리먼트에 focus 되었는지 여부
+         * @private
+         */
+        _focusTargetInput: function($currentInput, direction) {
+            var $target = $currentInput,
+                find;
 
-            if ($prev.length) {
-                $prev.focus();
+            if (direction === 'next') {
+                find = function($target) {
+                    return $target.next();
+                };
+            } else if (direction === 'prev') {
+                find = function($target) {
+                    return $target.prev();
+                };
+            }
+
+            do {
+                $target = find($target);
+            } while ($target.length && !$target.is('input'));
+
+            if ($target.length) {
+                $target.focus();
                 return true;
             } else {
                 return false;
