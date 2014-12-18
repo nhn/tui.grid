@@ -191,7 +191,7 @@
         },
         /**
          * tr 엘리먼트를 찾아서 반환한다.
-         * @param {string|number} rowKey rowKey 대상의 키값
+         * @param {(string|number)} rowKey rowKey 대상의 키값
          * @return {jquery} 조회한 tr jquery 엘리먼트
          * @private
          */
