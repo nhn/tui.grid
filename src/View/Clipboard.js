@@ -40,7 +40,6 @@
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                timeoutIdForCopy: 0,
                 timeoutIdForKeyIn: 0,
                 isLocked: false
             });
@@ -362,8 +361,5 @@
             } else {
                 this.$el.val(text).select();
             }
-            this.timeoutIdForCopy = setTimeout($.proxy(function() {
-                this.$el.val('');
-            }, this), 0);
         }
     });
