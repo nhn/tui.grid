@@ -177,7 +177,7 @@
                     dimensionModel.get('bodyHeight') - this.grid.scrollBarSize : dimensionModel.get('bodyHeight'),
                 width = this.grid.option('scrollY') ?
                     dimensionModel.get('width') - this.grid.scrollBarSize : dimensionModel.get('width'),
-                rowIdx, columnIdx, i;
+                rowIdx, columnIdx;
 
 
             if (!isLside) {
@@ -235,7 +235,6 @@
                 filteringMap = {
                     '_button': true
                 },
-                len = columnModelList.length,
                 columnNameList = [],
                 tmpString = [],
                 strings = [],

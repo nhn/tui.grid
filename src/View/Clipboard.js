@@ -73,7 +73,6 @@
          * @private
          */
         _onKeyDown: function(keyDownEvent) {
-            var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
             if (this.isLocked) {
                 keyDownEvent.preventDefault();
                 return false;
