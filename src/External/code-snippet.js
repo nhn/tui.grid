@@ -49,7 +49,6 @@
     ajax.request = function(api, options) {
         // Ajax 요청을 할 API 설정
         var url = api;
-
         if (url) {
             // 랜덤 아이디 생성
             var randomId = ajax.util._getRandomId();
@@ -70,10 +69,12 @@
             });
 
             // 중복된 요청일 경우 요청 중단
-            var isMatchedURL, isExistJSON;
-            for (var x in this._ajaxRequestData) {
+            var isMatchedURL,
+                isExistJSON,
+                x;
+            for (x in this._ajaxRequestData) {
                 isMatchedURL = options.url === this._ajaxRequestData[x].url;
-                isExistJSON = $.compareJSON(this._ajaxRequestData[x].data, options.data);
+                isExistJSON = ne.util.compareJSON(this._ajaxRequestData[x].data, options.data);
                 if (isMatchedURL && isExistJSON) {
                     return false;
                 }
@@ -130,13 +131,11 @@
      */
     ajax._onAjaxSuccess = function(requestKey, responseData, status, jqXHR) {
         var requestData = this._ajaxRequestData[requestKey];
-
         if (requestData) {
             var result = true;
             if (requestData['_success'] && $.isFunction(requestData['_success'])) {
                 result = requestData['_success'](responseData, status, jqXHR);
             }
-
             if (result !== false && responseData && responseData.data) {
                 if (responseData.data.message) {
                     alert(responseData.data.message);
@@ -189,7 +188,7 @@
      * 객체를 복제하여 돌려준다.
      *
      * @param {*} sourceTarget 복제할 대상
-     * @return {*}
+     * @returns {*}
      */
     ajax.util.cloningObject = function(sourceTarget) {
         var constructor,
@@ -223,7 +222,7 @@
      * 클래스의 이름을 문자열로 가져온다.
      *
      * @param {*} target constructor를 체크 할 오브젝트
-     * @return {String|null}
+     * @returns {String|null}
      */
     ajax.util.getConstructorName = function(target) {
         if (target && target.constructor) {
@@ -480,7 +479,7 @@
      * @param {*} obj 순회할 객체
      * @param {Function} iteratee 데이터가 전달될 콜백함수
      * @param {*} [context] 콜백함수의 컨텍스트
-     * @return {Array}
+     * @returns {Array}
      * @example
      * map([0,1,2,3], function(value) {
      *     return value + 1;
@@ -504,7 +503,7 @@
      * @param {*} obj 순회할 객체
      * @param {Function} iteratee 데이터가 전달될 콜백함수
      * @param {*} [context] 콜백함수의 컨텍스트
-     * @return {*}
+     * @returns {*}
      * @example
      * reduce([0,1,2,3], function(stored, value) {
      *     return stored + value;
@@ -565,12 +564,106 @@
         return arr;
     }
 
+    /**
+     * 파라메터로 전달된 객체나 어레이를 순회하며 콜백을 실행한 리턴값이 참일 경우의 모음을 만들어서 리턴한다.
+     *
+     * @param {*} obj 순회할 객체나 배열
+     * @param {Function} iteratee 데이터가 전달될 콜백함수
+     * @param {*} [context] 콜백함수의 컨텍스트
+     * @returns {*}
+     * @example
+     * filter([0,1,2,3], function(value) {
+     *     return (value % 2 === 0);
+     * });
+     *
+     * => [0, 2];
+     * filter({a : 1, b: 2, c: 3}, function(value) {
+     *     return (value % 2 !== 0);
+     * });
+     *
+     * => {a: 1, c: 3};
+     */
+    var filter = function(obj, iteratee, context) {
+        var result = ne.util.isArray(obj) ? [] : {},
+            value,
+            key;
+
+        if (!ne.util.isObject(obj) || !ne.util.isFunction(iteratee)) {
+            throw new Error('wrong parameter');
+        }
+
+        ne.util.forEach(obj, function() {
+            if (iteratee.apply(context || null, arguments)) {
+                value = arguments[0];
+                key = arguments[1];
+                if (ne.util.isArray(obj)) {
+                    result.push(value);
+                } else {
+                    result[key] = value;
+                }
+            }
+        }, context);
+
+        return result;
+    };
+
+    /**
+     * 배열 내의 값을 찾아서 인덱스를 반환한다. 찾고자 하는 값이 없으면 -1 반환.
+     * @param {*} value 배열 내에서 찾고자 하는 값
+     * @param {array} array 검색 대상 배열
+     * @param {number} fromIndex 검색이 시작될 배열 인덱스. 지정하지 않으면 기본은 0이고 전체 배열 검색.
+     *
+     * @return {number} targetValue가 발견된 array내에서의 index값
+     * @example
+     *
+     *   var arr = ['one', 'two', 'three', 'four'];
+     *   ne.util.inArray('one', arr, 3);
+     *      => return -1;
+     *
+     *   ne.util.inArray('one', arr);
+     *      => return 0
+     */
+    var inArray = function(value, array, fromIndex) {
+        if (!ne.util.isArray(array)) {
+            return -1;
+        }
+
+        if (Array.prototype.indexOf) {
+            return Array.prototype.indexOf.call(array, value, fromIndex);
+        }
+
+        var i,
+            index,
+            arrLen = array.length;
+
+        //fromIndex를 지정하되 array 길이보다 같거나 큰 숫자로 지정하면 오류이므로 -1을 리턴한다.
+        if (ne.util.isUndefined(fromIndex)) {
+            fromIndex = 0;
+        } else if (fromIndex >= arrLen) {
+            return -1;
+        }
+
+        //fromIndex값을 참고하여 배열을 순회할 시작index를 정한다.
+        index = (fromIndex > -1) ? fromIndex : 0;
+
+        //array에서 value 탐색하여 index반환
+        for (i = index; i < arrLen; i++) {
+            if (array[i] === value) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
+
     ne.util.forEachOwnProperties = forEachOwnProperties;
     ne.util.forEachArray = forEachArray;
     ne.util.forEach = forEach;
     ne.util.toArray = toArray;
     ne.util.map = map;
     ne.util.reduce = reduce;
+    ne.util.filter = filter;
+    ne.util.inArray = inArray;
 
 })(window.ne);
 
@@ -639,7 +732,7 @@
         /**
          * 인스턴스에 등록했던 이벤트 핸들러를 해제할 수 있다.
          * @param {(object|string)=} types 등록 해지를 원하는 이벤트 객체 또는 타입명. 아무 인자도 전달하지 않으면 모든 이벤트를 해제한다.
-         * @param {Function=} fn
+         * @param {Function=} fn 삭제할 핸들러, 핸들러를 전달하지 않으면 types 해당 이벤트가 모두 삭제된다.
          * @param {*=} context
          * @example
          * // zoom 이벤트만 해제
@@ -736,7 +829,7 @@
         /**
          * 실제로 구독을 해제하는 메서드
          * @param {(object|string)=} type 등록 해지를 원하는 핸들러명
-         * @param {function} fn
+         * @param {function} [fn]
          * @param {*} context
          * @private
          */
@@ -762,16 +855,20 @@
                     events[indexLenKey] -= 1;
                 }
 
+            } else if(!fn) {
+                events[type] = null;
             } else {
                 listeners = events[type];
 
                 if (listeners) {
-                    ne.util.forEach(listeners, function(listener, index) {
-                        if (ne.util.isExisty(listener) && (listener.fn === fn)) {
-                            listeners.splice(index, 1);
-                            return true;
-                        }
-                    });
+                    if(fn){
+                        ne.util.forEach(listeners, function(listener, index) {
+                            if (ne.util.isExisty(listener) && (listener.fn === fn)) {
+                                listeners.splice(index, 1);
+                                return true;
+                            }
+                        });
+                    }
                 }
             }
         },
@@ -787,8 +884,8 @@
          *
          * 이벤트를 취소할 수 있게 해 주는 기능에서 사용한다.
          * @param {string} type
-         * @param {object} data
-         * @return {*}
+         * @param {*...} data
+         * @returns {*}
          * @example
          * // 확대 기능을 지원하는 컴포넌트 내부 코드라 가정
          * if (this.invoke('beforeZoom')) {    // 사용자가 등록한 리스너 결과 체크
@@ -809,14 +906,14 @@
          */
         invoke: function(type, data) {
             if (!this.hasListener(type)) {
-                return this;
+                return true;
             }
 
-            var event = ne.util.extend({}, data, {type: type, target: this}),
+            var args = Array.prototype.slice.call(arguments, 1),
                 events = this._events;
 
             if (!events) {
-                return;
+                return true;
             }
 
             var typeIndex = events[type + '_idx'],
@@ -827,12 +924,16 @@
                 listeners = events[type].slice();
 
                 ne.util.forEach(listeners, function(listener) {
-                    result = result && (listener.fn.call(this, event) !== false);
+                    if (listener.fn.apply(this, args) === false) {
+                        result = false;
+                    }
                 }, this);
             }
 
             ne.util.forEachOwnProperties(typeIndex, function(eventItem) {
-                result = result && (eventItem.fn.call(eventItem.ctx, event) !== false);
+                if (eventItem.fn.apply(eventItem.ctx, args) === false) {
+                    result = false;
+                }
             });
 
             return result;
@@ -852,7 +953,7 @@
          * });
          */
         fire: function(type, data) {
-            this.invoke(type, data);
+            this.invoke.apply(this, arguments);
             return this;
         },
 
@@ -871,7 +972,7 @@
         /**
          * 등록된 이벤트 핸들러의 갯수 반환
          * @param {string} type
-         * @return {number}
+         * @returns {number}
          */
         getListenerLength: function(type) {
             var events = this._events,
@@ -903,8 +1004,8 @@
             var that = this;
 
             if (ne.util.isObject(types)) {
-                ne.util.forEachOwnProperties(types, function(type) {
-                    this.once(type, types[type], fn);
+                ne.util.forEachOwnProperties(types, function(handler, type) {
+                    this.once(type, handler, fn);
                 }, this);
 
                 return;
@@ -967,7 +1068,7 @@
      * @param {Object} props 생성할 생성자의프로토타입에 들어갈 멤버들
      * @param {Function} props.init 인스턴스가 생성될때 실행됨
      * @param {Object} props.static 생성자의 클래스 맴버형태로 들어갈 멤버들
-     * @return {*}
+     * @returns {*}
      * @example
      *
      * var Parent = defineClasss({
@@ -1373,9 +1474,21 @@
     };
 
     /**
+     * 해쉬맵을 인자로 받아 병합한다.
+     * @param {HashMap} hashMap
+     */
+    HashMap.prototype.merge = function(hashMap) {
+        var self = this;
+
+        hashMap.each(function(value, key) {
+            self.setKeyValue(key, value);
+        });
+    };
+
+    /**
      * 해쉬맵에서 사용할 키를 생성한다.
      * @param {String} key
-     * @return {string}
+     * @returns {string}
      * @private
      */
     HashMap.prototype.encodeKey = function(key) {
@@ -1385,7 +1498,7 @@
     /**
      * 해쉬맵키에서 실제 키를 가져온다.
      * @param {String} key
-     * @return {String}
+     * @returns {String}
      * @private
      */
     HashMap.prototype.decodeKey = function(key) {
@@ -1396,7 +1509,7 @@
     /**
      * 키값을 전달하여 데이터를 반환한다.
      * @param {String} key
-     * @return {*}
+     * @returns {*}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1410,7 +1523,7 @@
     /**
      * 키를 전달하여 데이터가 존재하는지 체크한다.
      * @param {String} key
-     * @return {boolean}
+     * @returns {boolean}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1424,7 +1537,7 @@
     /**
      * 키나 키의 목록을 전달하여 데이터를 삭제한다.
      * @param {String...|String[]} key
-     * @return {String|String[]}
+     * @returns {String|String[]}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1450,7 +1563,7 @@
     /**
      * 키를 전달하여 데이터를 삭제한다.
      * @param {String} key
-     * @return {*|null} 삭제된 데이터
+     * @returns {*|null} 삭제된 데이터
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1471,7 +1584,7 @@
     /**
      * 키의 목록을 전달하여 데이터를 삭제한다.
      * @param {String[]} keyArray
-     * @return {String[]} 삭제된 데이터
+     * @returns {String[]} 삭제된 데이터
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1530,7 +1643,7 @@
 
     /**
      * 저장된 키의 목록을 배열로 리턴해준다.
-     * @return {Array}
+     * @returns {Array}
      * @example
      * var hm = new HashMap();
      * hm.set('key', 'value');
@@ -1552,7 +1665,7 @@
     /**
      * 조건을 체크하는 콜백을 전달받아 데이터를 전달해주고 콜백의 결과가 true인경우의 데이터를 모와 배열로 만들어 리턴해준다.
      * @param {Function} condition
-     * @return {Array}
+     * @returns {Array}
      * @example
      *
      * //ex1
@@ -1739,7 +1852,7 @@
     /**
      * 객체를 전달받아 객체의 키목록을 배열로만들어 리턴해준다.
      * @param obj
-     * @return {Array}
+     * @returns {Array}
      */
     var keys = function(obj) {
         var keys = [],
@@ -1754,11 +1867,142 @@
         return keys;
     };
 
+
+    /**
+     *
+     * 여러개의 json객체들을 대상으로 그것들이 동일한지 비교하여 리턴한다.
+     * (출처) http://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+     *
+     * @param {...object} object 비교할 객체 목록
+     * @return {boolean} 파라미터로 전달받은 json객체들의 동일 여부
+     * @example
+     *
+       var jsonObj1 = {name:'milk', price: 1000},
+           jsonObj2 = {name:'milk', price: 1000},
+           jsonObj3 = {name:'milk', price: 1000}
+
+       ne.util.compareJSON(jsonObj1, jsonObj2, jsonObj3);
+           => return true
+
+       var jsonObj4 = {name:'milk', price: 1000},
+           jsonObj5 = {name:'beer', price: 3000}
+
+       ne.util.compareJSON(jsonObj4, jsonObj5);
+          => return false
+     */
+    function compareJSON(object) {
+        var leftChain,
+            rightChain,
+            argsLen = arguments.length,
+            i;
+
+        function isSameObject(x, y) {
+            var p;
+
+            // remember that NaN === NaN returns false
+            // and isNaN(undefined) returns true
+            if (isNaN(x) &&
+                isNaN(y) &&
+                ne.util.isNumber(x) &&
+                ne.util.isNumber(y)) {
+                return true;
+            }
+
+            // Compare primitives and functions.
+            // Check if both arguments link to the same object.
+            // Especially useful on step when comparing prototypes
+            if (x === y) {
+                return true;
+            }
+
+            // Works in case when functions are created in constructor.
+            // Comparing dates is a common scenario. Another built-ins?
+            // We can even handle functions passed across iframes
+            if ((ne.util.isFunction(x) && ne.util.isFunction(y)) ||
+                (x instanceof Date && y instanceof Date) ||
+                (x instanceof RegExp && y instanceof RegExp) ||
+                (x instanceof String && y instanceof String) ||
+                (x instanceof Number && y instanceof Number)) {
+                return x.toString() === y.toString();
+            }
+
+            // At last checking prototypes as good a we can
+            if (!(x instanceof Object && y instanceof Object)) {
+                return false;
+            }
+
+            if (x.isPrototypeOf(y) ||
+                y.isPrototypeOf(x) ||
+                x.constructor !== y.constructor ||
+                x.prototype !== y.prototype) {
+                return false;
+            }
+
+            // check for infinitive linking loops
+            if (ne.util.inArray(x, leftChain) > -1 ||
+                ne.util.inArray(y, rightChain) > -1) {
+                return false;
+            }
+
+            // Quick checking of one object beeing a subset of another.
+            for (p in y) {
+                if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
+                    return false;
+                }
+                else if (typeof y[p] !== typeof x[p]) {
+                    return false;
+                }
+            }
+
+            //인풋 데이터 x의 오브젝트 키값으로 값을 순회하면서
+            //hasOwnProperty, typeof 체크를 해서 비교하고 x[prop]값과 y[prop] 가 같은 객체인지 판별한다.
+            for (p in x) {
+                if (y.hasOwnProperty(p) !== x.hasOwnProperty(p)) {
+                    return false;
+                }
+                else if (typeof y[p] !== typeof x[p]) {
+                    return false;
+                }
+
+                if (typeof(x[p]) === 'object' || typeof(x[p]) === 'function') {
+                    leftChain.push(x);
+                    rightChain.push(y);
+
+                    if (!isSameObject(x[p], y[p])) {
+                        return false;
+                    }
+
+                    leftChain.pop();
+                    rightChain.pop();
+                } else if (x[p] !== y[p]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (argsLen < 1) {
+            return true;
+        }
+
+        for (i = 1; i < argsLen; i++) {
+            leftChain = [];
+            rightChain = [];
+
+            if (!isSameObject(arguments[0], arguments[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     ne.util.extend = extend;
     ne.util.stamp = stamp;
     ne.util._resetLastId = resetLastId;
     ne.util.keys = Object.keys || keys;
-
+    ne.util.compareJSON = compareJSON;
 })(window.ne);
 
 /**
@@ -1854,7 +2098,7 @@
      * 값이 정의되어 있는지 확인(null과 undefined가 아니면 true를 반환한다)
      * @param {*} obj
      * @param {(String|Array)} [key]
-     * @return {boolean}
+     * @returns {boolean}
      * @example
      *
      * var obj = {a: {b: {c: 1}}};
@@ -1898,7 +2142,7 @@
     /**
      * 인자가 undefiend 인지 체크하는 메서드
      * @param obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     function isUndefined(obj) {
         return obj === undefined;
@@ -1907,7 +2151,7 @@
     /**
      * 인자가 null 인지 체크하는 메서드
      * @param {*} obj
-     * @return {boolean}
+     * @returns {boolean}
      */
     function isNull(obj) {
         return obj === null;
