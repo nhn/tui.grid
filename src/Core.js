@@ -811,17 +811,16 @@
          */
         isChanged: function() {
             var modifiedRowMap = this.getModifiedRowList(),
-                name;
+                result = false;
 
-            /*
-                최대한 빨리 true 를 반환하기 위하여 for 순환문을 사용함.
-             */
-            for (name in modifiedRowMap) {
-                if (modifiedRowMap[name].length) {
-                    return true;
+            ne.util.forEach(modifiedRowMap, function(data) {
+                if (data.length) {
+                    result = true;
+                    return false;
                 }
-            }
-            return false;
+            });
+
+            return result;
         },
         /**
          * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
