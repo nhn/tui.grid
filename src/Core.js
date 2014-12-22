@@ -309,9 +309,6 @@
                 eventData = this.createEventData(clickEvent);
             this.trigger('click', eventData);
             if (eventData.isStopped()) return;
-
-            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select') || $target.is('label'))) {
-            }
         },
         /**
          * mousedown 이벤트 핸들러
@@ -534,7 +531,7 @@
          * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
          */
         setValue: function(rowKey, columnName, columnValue, silent) {
-            columnValue = typeof columnValue === 'string' ? $.trim(columnValue) : columnValue;
+            columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
             var row = this.dataModel.get(rowKey),
                 obj = {};
             if (row) {
