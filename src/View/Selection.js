@@ -238,7 +238,7 @@
                 columnNameList = [],
                 tmpString = [],
                 strings = [],
-                startIdx = this.spannedRange.row[0],
+                startIdx = this.grid.renderModel.get('startNumber') + this.spannedRange.row[0],
                 rowList, string;
 
             _.each(columnModelList, function(columnModel) {
@@ -253,7 +253,7 @@
                     if (!filteringMap[columnName]) {
                         //number 형태의 경우 실 데이터는 존재하지 않으므로 가공하여 추가한다.
                         if (columnNameList[j] === '_number') {
-                            tmpString.push(startIdx + i + 1);
+                            tmpString.push(startIdx + i);
                         } else {
                             tmpString.push(row.getVisibleText(columnName));
                         }
