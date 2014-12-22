@@ -305,10 +305,11 @@
          * @private
          */
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target),
-                eventData = this.createEventData(clickEvent);
+            var eventData = this.createEventData(clickEvent);
             this.trigger('click', eventData);
-            if (eventData.isStopped()) return;
+            if (eventData.isStopped()) {
+                return;
+            }
         },
         /**
          * mousedown 이벤트 핸들러
