@@ -27,29 +27,34 @@
         render: function() {
             this.destroyChildren();
             var option = this.grid.option('toolbar'),
-                resizeHandler, controlPanel, pagination;
+                resizeHandler,
+                controlPanel,
+                pagination;
 
             this.$el.empty();
-            if (option && option.hasControlPanel) {
-                controlPanel = this.createView(View.Layout.Toolbar.ControlPanel, {
-                    grid: this.grid
-                });
-                this.$el.append(controlPanel.render().el).css('display', 'block');
+            if (option) {
+                if (option.hasControlPanel) {
+                    controlPanel = this.createView(View.Layout.Toolbar.ControlPanel, {
+                        grid: this.grid
+                    });
+                    this.$el.append(controlPanel.render().el).css('display', 'block');
+                }
+
+                if (option.hasResizeHandler) {
+                    resizeHandler = this.createView(View.Layout.Toolbar.ResizeHandler, {
+                        grid: this.grid
+                    });
+                    this.$el.append(resizeHandler.render().el).css('display', 'block');
+                }
+
+                if (option.hasPagination) {
+                    pagination = this.createView(View.Layout.Toolbar.Pagination, {
+                        grid: this.grid
+                    });
+                    this.$el.append(pagination.render().el).css('display', 'block');
+                }
             }
 
-            if (option && option.hasResizeHandler) {
-                resizeHandler = this.createView(View.Layout.Toolbar.ResizeHandler, {
-                    grid: this.grid
-                });
-                this.$el.append(resizeHandler.render().el).css('display', 'block');
-            }
-
-            if (option && option.hasPagination) {
-                pagination = this.createView(View.Layout.Toolbar.Pagination, {
-                    grid: this.grid
-                });
-                this.$el.append(pagination.render().el).css('display', 'block');
-            }
             this.setOwnProperties({
                 controlPanel: controlPanel,
                 resizeHandler: resizeHandler,
