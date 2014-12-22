@@ -261,7 +261,7 @@
                 grid: this
             });
 
-            if (!this.options && this.options.useDataCopy) {
+            if (this.options && !this.options.useDataCopy) {
                 this.selection.disable();
             }
         },

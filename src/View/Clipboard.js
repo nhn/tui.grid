@@ -149,7 +149,9 @@
                     isKeyIdentified = false;
                     break;
             }
-            keyDownEvent.preventDefault();
+            if (isKeyIdentified) {
+                keyDownEvent.preventDefault();
+            }
             selection.endSelection();
             return isKeyIdentified;
         },
@@ -222,7 +224,9 @@
                     isKeyIdentified = false;
                     break;
             }
-            keyDownEvent.preventDefault();
+            if (isKeyIdentified) {
+                keyDownEvent.preventDefault();
+            }
             return isKeyIdentified;
         },
         /**
@@ -281,8 +285,9 @@
                     isKeyIdentified = false;
                     break;
             }
-
-            keyDownEvent.preventDefault();
+            if (isKeyIdentified) {
+                keyDownEvent.preventDefault();
+            }
             return isKeyIdentified;
         },
         /**

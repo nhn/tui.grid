@@ -31,6 +31,7 @@
                 pageY: 0,
 
                 intervalIdForAutoScroll: 0,
+                scrollPixelScale: 40,
                 isEnable: true,
                 _isShown: false
             });
@@ -120,16 +121,16 @@
                 maxScrollLeft = renderModel.get('maxScrollLeft'),
                 scrollTop = renderModel.get('scrollTop');
             if (overflowX < 0) {
-                renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft - 40), maxScrollLeft));
+                renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft - this.scrollPixelScale), maxScrollLeft));
             } else if (overflowX > 0) {
-                renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft + 40), maxScrollLeft));
+                renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft + this.scrollPixelScale), maxScrollLeft));
             }
 
             /* istanbul ignore next: scrollTop 은 보정로직과 얽혀있어 확인이 어렵기 때문에 무시한다. */
             if (overflowY < 0) {
-                renderModel.set('scrollTop', Math.max(0, scrollTop - 40));
+                renderModel.set('scrollTop', Math.max(0, scrollTop - this.scrollPixelScale));
             } else if (overflowY > 0) {
-                renderModel.set('scrollTop', Math.max(0, scrollTop + 40));
+                renderModel.set('scrollTop', Math.max(0, scrollTop + this.scrollPixelScale));
             }
         },
         /**
@@ -370,8 +371,12 @@
          */
         hide: function() {
             this._isShown = false;
-            this.lside.hide();
-            this.rside.hide();
+            if (this.lside) {
+                this.lside.hide();
+            }
+            if (this.rside) {
+                this.rside.hide();
+            }
         },
         /**
          * 현재 selection 레이어가 노출되어 있는지 확인한다.
