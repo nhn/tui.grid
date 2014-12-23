@@ -150,7 +150,9 @@
                     grid: this.grid,
                     net: this
                 });
-                !Backbone.History.started && Backbone.history.start();
+                if (!Backbone.History.started) {
+                    Backbone.history.start();
+                }
             }
         },
         /**
@@ -496,7 +498,9 @@
             this.grid.trigger('beforeRequest', eventData);
 
             //event 의 stopped 가 호출 된다면 ajax 호출을 중지한다.
-            if (eventData.isStopped()) return;
+            if (eventData.isStopped()) {
+                return;
+            }
 
             options = $.extend({requestType: ''}, options);
             var params = {
