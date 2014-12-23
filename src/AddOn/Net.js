@@ -556,7 +556,7 @@
                     callback(responseData['data'] || {}, status, jqXHR);
                 }
             } else {
-                //todo: 오류 처리
+                //todo: 오류 처리 - invalid 셀에 마크하기 등. 스펙아웃 할 수도 있음
                 this.grid.trigger('failResponse', eventData);
                 if (eventData.isStopped()) {
                     return;
