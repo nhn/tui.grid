@@ -398,7 +398,7 @@
                         if ($.inArray(name, checkList) !== -1) {
                             count += list.length;
                         }
-                        dataMap[name] = JSON.stringify(list);
+                        dataMap[name] = $.toJSON(list);
                     }, this);
                 } else {
                     //{rowList: []} 에 담는다.
@@ -544,15 +544,23 @@
                     responseData: responseData
                 });
             this.grid.trigger('response', eventData);
-            if (eventData.isStopped()) return;
+            if (eventData.isStopped()) {
+                return;
+            }
             if (responseData && responseData['result']) {
                 this.grid.trigger('successResponse', eventData);
-                if (eventData.isStopped()) return;
-                callback && typeof callback === 'function' ? callback(responseData['data'] || {}, status, jqXHR) : null;
+                if (eventData.isStopped()) {
+                    return;
+                }
+                if (_.isFunction(callback)) {
+                    callback(responseData['data'] || {}, status, jqXHR);
+                }
             } else {
                 //todo: 오류 처리
                 this.grid.trigger('failResponse', eventData);
-                if (eventData.isStopped()) return;
+                if (eventData.isStopped()) {
+                    return;
+                }
                 message ? alert(message) : null;
             }
         },
@@ -575,10 +583,14 @@
             this.grid.hideGridLayer();
 
             this.grid.trigger('response', eventData);
-            if (eventData.isStopped()) return;
+            if (eventData.isStopped()) {
+                return;
+            }
 
             this.grid.trigger('errorResponse', eventData);
-            if (eventData.isStopped()) return;
+            if (eventData.isStopped()) {
+                return;
+            }
 
             if (jqXHR.readyState > 1) {
                 alert('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
