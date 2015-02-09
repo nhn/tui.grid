@@ -12,41 +12,53 @@ function setConfig(configDefault, isDev) {
         //    'Chrome'
         //];
         configDefault.browsers = [
-            'IE8-WebDriver'
+            'IE8'
         ];
         configDefault.customLaunchers = {
-            'IE8-WebDriver': {
+            'IE8': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE8'
             }
         };
+
+        //configDefault.browsers = [
+        //    'Chrome-WebDriver'
+        //];
+        //configDefault.customLaunchers = {
+        //
+        //    'Chrome-WebDriver': {
+        //        base: 'WebDriver',
+        //        config: webdriverConfig,
+        //        browserName: 'chrome'
+        //    }
+        //};
     } else {
         configDefault.browsers = [
-            'IE8-WebDriver',
-            'IE9-WebDriver',
-            'IE10-WebDriver',
-            'IE11-WebDriver',
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ];
         configDefault.customLaunchers = {
-            'IE8-WebDriver': {
+            'IE8': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE8'
             },
-            'IE9-WebDriver': {
+            'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE9'
             },
-            'IE10-WebDriver': {
+            'IE10': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE10'
             },
-            'IE11-WebDriver': {
+            'IE11': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'IE11'
@@ -121,11 +133,7 @@ module.exports = function(config) {
             {pattern: 'images/**/*', watched: true, served: true, included: false},
 
             // files to test
-            //{pattern: 'test/js/grid*.test.js', watched: true, served: true, included: true}
-            //{pattern: 'test/js/addon*.test.js', watched: true, served: true, included: true}
-            //{pattern: 'test/js/*.selection.test.js', watched: true, served: true, included: true}
             {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
-//            {pattern: 'test/js/model.renderer.test.js', watched: true, served: true, included: true}
         ],
 
 
@@ -138,15 +146,6 @@ module.exports = function(config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             '{src,src/!(External)/**}/*.js': ['coverage']
-
-//            'src/**/*.js': ['coverage']
-//            'src/Data/*.js': ['coverage'],
-//            'src/Model/*.js': ['coverage'],
-//            'src/View/*.js': ['coverage'],
-//            'src/View/**/*.js': ['coverage'],
-//            'src/View/**/**/*.js': ['coverage'],
-//            'src/AddOn/*.js': ['coverage'],
-//            'src/*.js': ['coverage']
         },
 
 
@@ -160,8 +159,22 @@ module.exports = function(config) {
             suite: ''
         },
         coverageReporter: {
-            type: 'html',
-            dir: 'report/coverage/'
+            dir: 'report/coverage/',
+            reporters: [
+                {
+                    type: 'html',
+                    subdir: function(browser) {
+                        return 'report-html/' + browser;
+                    }
+                },
+                {
+                    type: 'cobertura',
+                    subdir: function(browser) {
+                        return 'report-cobertura/' + browser;
+                    },
+                    file: 'cobertura.txt'
+                }
+            ]
         },
         // web server port
         port: 9876,

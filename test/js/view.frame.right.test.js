@@ -245,7 +245,6 @@ describe('view.frame.right', function() {
         $empty = $('#empty');
         grid.$el = $empty;
         grid.renderModel.refresh();
-        console.log(new Date() - start);
     });
 
     afterEach(function() {
