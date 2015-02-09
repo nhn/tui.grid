@@ -1,6 +1,6 @@
 {
   "name": "Grid",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "authors": [
     "Soonyoung.park"
   ],
@@ -8,10 +8,17 @@
   "private": true,
   "ignore": [
     "**/.*",
+    ".*",
+    "src",
+    "bin",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "bower.json",
+    "conf.json",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json"
   ],
   "dependencies": {
     "backbone": "~1.1.2",
