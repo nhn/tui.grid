@@ -78,6 +78,7 @@
         getCollection: function(whichSide) {
             return this.get(ne.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
         },
+
         /**
          * Data.ColumnModel 이 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
          * @private
@@ -254,5 +255,8 @@
                     this._getCollectionByColumnName(columnName).at(renderIdx).setCell(columnName, changes);
                 }
             }, this);
+        },
+        _destroy: function() {
+            clearTimeout(this.timeoutIdForRefresh);
         }
     });

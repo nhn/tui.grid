@@ -11,6 +11,7 @@
         rowHeight: 30,
         displayRowCount: 10,
         headerHeight: 50,
+        useDataCopy: false,
         minimumColumnWidth: 20
     }).on('onResponse', function(data) {
         console.log('onResponse');
@@ -40,6 +41,9 @@
     $('#prepend').on('click', function(e) {
         grid.prependRow();
     });
+    $('#sort').on('click', function(e) {
+        grid.sort('columnName2');
+    });
     $('#createData').on('click', function(e) {
         net.createData();
     });
@@ -59,3 +63,4 @@
     $('#downloadAllData').on('click', function(e) {
         net.downloadAllData();
     });
+

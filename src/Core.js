@@ -578,15 +578,22 @@
          * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
          */
         replaceRowList: function(rowList, isParse) {
-            this.showGridLayer('loading');
-            isParse = isParse === undefined ? true : isParse;
-            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
-            clearTimeout(this.timeoutIdForSetRowList);
-            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+            var callback = ne.util.bind(function() {
                 this.dataModel.set(rowList, {
                     parse: isParse
                 });
-            }, this), 0);
+            }, this);
+            this.showGridLayer('loading');
+            isParse = isParse === undefined ? true : isParse;
+            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
+            if (rowList && rowList.length > 500) {
+                clearTimeout(this.timeoutIdForSetRowList);
+                this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+                    callback();
+                }, this), 0);
+            } else {
+                callback();
+            }
         },
         /**
          * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
@@ -594,16 +601,23 @@
          * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
          */
         setRowList: function(rowList, isParse) {
-            this.showGridLayer('loading');
-            isParse = isParse === undefined ? true : isParse;
-            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
-            clearTimeout(this.timeoutIdForSetRowList);
-            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+            var callback = ne.util.bind(function() {
                 this.dataModel.set(rowList, {
                     parse: isParse
                 });
                 this.dataModel.setOriginalRowList();
-            }, this), 0);
+            }, this);
+            this.showGridLayer('loading');
+            isParse = isParse === undefined ? true : isParse;
+            //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
+            if (rowList && rowList.length > 500) {
+                clearTimeout(this.timeoutIdForSetRowList);
+                this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
+                    callback();
+                }, this), 0);
+            } else {
+                callback();
+            }
         },
         /**
          * rowKey, columnName 에 해당하는 셀에 포커싱한다.
@@ -1093,6 +1107,11 @@
                         }, this);
                     }
                 }
+
+                if (value && ne.util.isFunction(value._destroy)) {
+                    value._destroy();
+                }
+
                 if (value && ne.util.isFunction(value.stopListening)) {
                     value.stopListening();
                 }

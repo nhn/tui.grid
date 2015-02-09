@@ -96,113 +96,6 @@ describe('view.frame.right', function() {
             ]
         }
     ];
-    var rowList = [
-        {
-            '_extraData': {
-                'rowSpan': {
-                    'columnName1': 3
-                }
-            },
-            'columnName1': 'normal',
-            'columnName2': 1,
-            'columnName3': 1,
-            'columnName4': 1,
-            'columnName5': 'text',
-            'columnName6': 'text-convertible',
-            'columnName7': false,
-            'columnName8': true
-        },{
-            '_extraData': {
-                'className': {
-                    'row': ['rowClass'],
-                    'column': {
-                        'columnName1': ['normalClass']
-                    }
-                }
-            },
-            'columnName1': 'normal',
-            'columnName2': 1,
-            'columnName3': 1,
-            'columnName4': 1,
-            'columnName5': 'text',
-            'columnName6': 'text-convertible',
-            'columnName7': false,
-            'columnName8': true
-        },
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true}
-    ];
-
 
     var grid = {
         options: {
@@ -338,7 +231,7 @@ describe('view.frame.right', function() {
         $empty;
 
     beforeEach(function() {
-        jasmine.clock().install();
+        var start = new Date();
         grid.columnModel.set({
             columnFixIndex: 0,
             hasNumberColumn: true,
@@ -351,16 +244,13 @@ describe('view.frame.right', function() {
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
         grid.$el = $empty;
-        grid.dataModel.set(rowList, {parse: true});
         grid.renderModel.refresh();
-
-
+        console.log(new Date() - start);
     });
 
     afterEach(function() {
         grid.options = defaultOption;
         grid.columnModel.set('selectType', grid.option('selectType'));
-        jasmine.clock().uninstall();
     });
     describe('R Side frame 을 점검한다.', function() {
         var frame;
@@ -443,35 +333,6 @@ describe('view.frame.right', function() {
             it('scrollTop 값이 변경되어 onScrollTopChange 가 호출되었을때, 엘리먼트에서 표현하지 못하는 scrollTop 값이면 정상 값으로 정정한다.', function() {
                 scrollbar._onScrollTopChange({}, 40);
                 expect(grid.renderModel.get('scrollTop')).toBe(0);
-            });
-        });
-        describe('_onScroll, _onScrollTopChange', function() {
-            var scrollEvent;
-            beforeEach(function() {
-                $empty.html(scrollbar.render().el);
-                scrollEvent = {
-                    target: {
-                        scrollTop: 40
-                    }
-                };
-            });
-            describe('_onScrollTopChange', function() {
-                it('mouse down 이벤트 발생 후 scroll 이 발생했다면, scrollTop 값을 갱신한다.', function() {
-                    //scrollTopChange 이벤트 핸들러에서 값 변경을 방지하는 로직때문에 테스트에서 다음과 같은 처리를 한다.
-                    scrollbar.stopListening();
-                    grid.renderModel.set('scrollTop', 0);
-                    scrollbar._onMouseDown();
-                    scrollbar._onScroll(scrollEvent);
-                    jasmine.clock().tick(1);
-                    expect(grid.renderModel.get('scrollTop')).toBe(40);
-                });
-                it('mousedown 이벤트를 발생하지 않고 scroll 이벤트가 발생했다면, scrollTop 값을 갱신하지 않는다.', function() {
-                    scrollbar.stopListening();
-                    grid.renderModel.set('scrollTop', 0);
-                    scrollbar._onScroll(scrollEvent);
-                    jasmine.clock().tick(1);
-                    expect(grid.renderModel.get('scrollTop')).toBe(0);
-                });
             });
         });
         describe('_onDimensionChange', function() {

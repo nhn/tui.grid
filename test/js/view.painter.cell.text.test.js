@@ -549,7 +549,6 @@ describe('view.painter.cell.text', function() {
                 $input,
                 $td;
             beforeEach(function() {
-                jasmine.clock().install();
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
                     columnName: 'text-convertible'
@@ -561,22 +560,28 @@ describe('view.painter.cell.text', function() {
                 cellPainter._startEdit = jasmine.createSpy('_startEdit');
             });
             afterEach(function() {
-                jasmine.clock().uninstall();
                 cellPainter.detachHandler($td);
             });
-            it('400 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function() {
+            it('400 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function(done) {
                 $td.trigger('click');
                 expect($td.data('clicked')).toBe(true);
-                jasmine.clock().tick(401);
-                $td.trigger('click');
-                expect(cellPainter._startEdit).not.toHaveBeenCalled();
+                setTimeout(function() {
+                    $td.trigger('click');
+                    expect(cellPainter._startEdit).not.toHaveBeenCalled();
+                    done();
+                }, 500);
+
+
             });
-            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.않는다.', function() {
+            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function(done) {
                 $td.trigger('click');
                 expect($td.data('clicked')).toBe(true);
-                jasmine.clock().tick(399);
-                $td.trigger('click');
-                expect(cellPainter._startEdit).toHaveBeenCalled();
+                setTimeout(function() {
+                    $td.trigger('click');
+                    expect(cellPainter._startEdit).toHaveBeenCalled();
+                    done();
+                }, 100);
+
             });
         });
         describe('KeyDownSwitch', function() {

@@ -1070,10 +1070,11 @@ describe('view.clipboard', function() {
         'columnName8': '100_7'
     }];
     var grid,
-        $empty;
+        $empty,
+        timeoutDelay = 10;
 
-    beforeEach(function() {
-        jasmine.clock().install();
+    beforeEach(function(done) {
+        //jasmine.clock().install();
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
@@ -1083,11 +1084,14 @@ describe('view.clipboard', function() {
             selectType: 'checkbox'
         });
         grid.setRowList(rowList);
-        jasmine.clock().tick(100);
+        setTimeout(function() {
+            done();
+        }, timeoutDelay);
+        //jasmine.clock().tick(100);
     });
     afterEach(function() {
         grid && grid.destroy();
-        jasmine.clock().uninstall();
+        //jasmine.clock().uninstall();
     });
     describe('clipboard test', function() {
         var clipboard;

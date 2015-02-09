@@ -38,51 +38,53 @@
         _setRenderingRange: function(scrollTop) {
             var top,
                 dimensionModel = this.grid.dimensionModel,
-                dataModel = this.grid.dataModel,
-                rowHeight = dimensionModel.get('rowHeight'),
-                bodyHeight = dimensionModel.get('bodyHeight'),
-                displayRowCount = dimensionModel.getDisplayRowCount(),
-                startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIndex = Math.min(
-                    dataModel.length - 1,
-                    Math.floor(startIndex + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)
-                ),
-                startRow, endRow, minList, maxList;
+                dataModel = this.grid.dataModel;
+            if (dimensionModel && dataModel) {
+                var rowHeight = dimensionModel.get('rowHeight'),
+                    bodyHeight = dimensionModel.get('bodyHeight'),
+                    displayRowCount = dimensionModel.getDisplayRowCount(),
+                    startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
+                    endIndex = Math.min(
+                        dataModel.length - 1,
+                        Math.floor(startIndex + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)
+                    ),
+                    startRow, endRow, minList, maxList;
 
-            if (dataModel.isRowSpanEnable()) {
-                minList = [];
-                maxList = [];
-                startRow = dataModel.at(startIndex);
-                endRow = dataModel.at(endIndex);
-                if (startRow && endRow) {
-                    _.each(startRow.get('_extraData')['rowSpanData'], function(data, columnName)  {
-                        if (!data.isMainRow) {
-                            minList.push(data.count);
+                if (dataModel.isRowSpanEnable()) {
+                    minList = [];
+                    maxList = [];
+                    startRow = dataModel.at(startIndex);
+                    endRow = dataModel.at(endIndex);
+                    if (startRow && endRow) {
+                        _.each(startRow.get('_extraData')['rowSpanData'], function (data, columnName) {
+                            if (!data.isMainRow) {
+                                minList.push(data.count);
+                            }
+                        }, this);
+
+                        _.each(endRow.get('_extraData')['rowSpanData'], function (data, columnName) {
+                            if (data.count > 0) {
+                                maxList.push(data.count);
+                            }
+                        }, this);
+
+                        if (minList.length > 0) {
+                            startIndex += Math.min.apply(Math, minList);
                         }
-                    }, this);
 
-                    _.each(endRow.get('_extraData')['rowSpanData'], function(data, columnName) {
-                        if (data.count > 0) {
-                            maxList.push(data.count);
+                        if (maxList.length > 0) {
+                            endIndex += Math.max.apply(Math, maxList);
                         }
-                    }, this);
-
-                    if (minList.length > 0) {
-                        startIndex += Math.min.apply(Math, minList);
-                    }
-
-                    if (maxList.length > 0) {
-                        endIndex += Math.max.apply(Math, maxList);
                     }
                 }
-            }
-            top = (startIndex === 0) ? 0 : Util.getHeight(startIndex, rowHeight) - 1;
+                top = (startIndex === 0) ? 0 : Util.getHeight(startIndex, rowHeight) - 1;
 
-            this.set({
-                top: top,
-                startIndex: startIndex,
-                endIndex: endIndex
-            });
+                this.set({
+                    top: top,
+                    startIndex: startIndex,
+                    endIndex: endIndex
+                });
+            }
         },
         /**
          * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
