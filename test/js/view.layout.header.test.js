@@ -287,6 +287,7 @@ describe('view.layout.header', function() {
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
         grid.$el = $empty;
+        grid.dataModel.clear();
         grid.dataModel.set(rowList, {parse: true});
         grid.renderModel.refresh();
     });
@@ -299,23 +300,22 @@ describe('view.layout.header', function() {
     describe('header 테스트', function() {
         var header;
         beforeEach(function() {
-            jasmine.clock().install();
-            header && header.destroy();
             header = new View.Layout.Header({
                 grid: grid,
                 whichSide: 'R'
             });
         });
         afterEach(function() {
-            jasmine.clock().uninstall();
             header && header.destroy();
         });
         describe('_getColGroupMarkup', function() {
             var $colList;
-            beforeEach(function() {
-                jasmine.clock().tick(10);
-                $empty.html(header._getColGroupMarkup());
-                $colList = $empty.find('col');
+            beforeEach(function(done) {
+                setTimeout(function() {
+                    $empty.html(header._getColGroupMarkup());
+                    $colList = $empty.find('col');
+                    done();
+                }, 10);
             });
             it('col 엘리먼트를 기대한 개수만큼 잘 생성했는지 확인한다.', function() {
                 expect($colList.length).toBe(10);
@@ -551,13 +551,7 @@ describe('view.layout.header', function() {
             });
         });
         describe('_onCheckCountChange', function() {
-            beforeEach(function() {
-                jasmine.clock().install();
-            });
-            afterEach(function() {
-                jasmine.clock().uninstall();
-            });
-            it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function() {
+            it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function(done) {
                 grid.options['selectType'] = 'checkbox';
                 header._syncCheckState = jasmine.createSpy('_syncCheckState');
                 header._onCheckCountChange();
@@ -568,16 +562,22 @@ describe('view.layout.header', function() {
                 header._onCheckCountChange();
                 header._onCheckCountChange();
 
-                jasmine.clock().tick(10);
-                expect(header._syncCheckState.calls.count()).toBe(1);
+                setTimeout(function() {
+                    expect(header._syncCheckState.calls.count()).toBe(1);
+                    done();
+                }, 10);
+
             });
-            it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function() {
+            it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function(done) {
                 grid.options['selectType'] = 'radio';
                 header._syncCheckState = jasmine.createSpy('_syncCheckState');
                 header._onCheckCountChange();
 
-                jasmine.clock().tick(10);
-                expect(header._syncCheckState).not.toHaveBeenCalled();
+                setTimeout(function() {
+                    expect(header._syncCheckState).not.toHaveBeenCalled();
+                    done();
+                }, 10);
+
             });
         });
         describe('_onClick', function() {

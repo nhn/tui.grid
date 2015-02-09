@@ -289,7 +289,7 @@ describe('addon.net', function() {
                 });
                 net.router.navigate = jasmine.createSpy('navigate');
                 net._readDataAt(1);
-                jasmine.clock().tick(10);
+                jasmine.clock().tick(1);
                 expect(net.router.navigate).toHaveBeenCalled();
             });
 
