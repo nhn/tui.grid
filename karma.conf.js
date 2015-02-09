@@ -88,9 +88,9 @@ module.exports = function(config) {
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['jasmine'],
 
-        captureTimeout: 300000,
-        browserDisconnectTimeout: 300000,
-        browserNoActivityTimeout: 300000,
+        captureTimeout: 600000,
+        browserDisconnectTimeout: 600000,
+        browserNoActivityTimeout: 600000,
         // list of files / patterns to load in the browser
         files: [
             // dependencies
