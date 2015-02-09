@@ -89,8 +89,8 @@ module.exports = function(config) {
         frameworks: ['jasmine'],
 
         captureTimeout: 300000,
-        browserDisconnectTimeout: 60000,
-        browserNoActivityTimeout: 60000,
+        browserDisconnectTimeout: 300000,
+        browserNoActivityTimeout: 300000,
         // list of files / patterns to load in the browser
         files: [
             // dependencies
