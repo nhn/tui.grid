@@ -1071,7 +1071,7 @@ describe('view.clipboard', function() {
     }];
     var grid,
         $empty,
-        timeoutDelay = 10;
+        timeoutDelay = 0;
 
     beforeEach(function(done) {
         //jasmine.clock().install();
