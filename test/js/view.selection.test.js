@@ -1064,7 +1064,7 @@ describe('view.selection', function() {
         $empty,
         timeoutDelay = 0;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         //jasmine.clock().install();
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
@@ -1075,9 +1075,6 @@ describe('view.selection', function() {
             selectType: 'checkbox'
         });
         grid.setRowList(rowList);
-        setTimeout(function() {
-            done();
-        }, timeoutDelay);
         //jasmine.clock().tick(1);
     });
     afterEach(function() {

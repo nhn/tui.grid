@@ -141,35 +141,38 @@
 
             for (i = startIndex; i < endIndex + 1; i++) {
                 rowModel = this.grid.dataModel.at(i);
-                rowKey = rowModel.get('rowKey');
-                //데이터 초기화
-                lsideRow = {
-                    '_extraData' : rowModel.get('_extraData'),
-                    'rowKey' : rowKey
-                };
-                rsideRow = {
-                    '_extraData' : rowModel.get('_extraData'),
-                    'rowKey' : rowKey
-                };
+                if (rowModel) {
+                    rowKey = rowModel.get('rowKey');
 
-                //lside 데이터 먼저 채운다.
-                _.each(lsideColumnList, function(columnName) {
-                    if (columnName === '_number') {
-                        lsideRow[columnName] = num++;
-                    } else {
-                        lsideRow[columnName] = rowModel.get(columnName);
-                    }
-                });
+                    //데이터 초기화
+                    lsideRow = {
+                        '_extraData': rowModel.get('_extraData'),
+                        'rowKey': rowKey
+                    };
+                    rsideRow = {
+                        '_extraData': rowModel.get('_extraData'),
+                        'rowKey': rowKey
+                    };
 
-                _.each(rsideColumnList, function(columnName) {
-                    if (columnName === '_number') {
-                        rsideRow[columnName] = num++;
-                    } else {
-                        rsideRow[columnName] = rowModel.get(columnName);
-                    }
-                });
-                lsideRowList.push(lsideRow);
-                rsideRowList.push(rsideRow);
+                    //lside 데이터 먼저 채운다.
+                    _.each(lsideColumnList, function (columnName) {
+                        if (columnName === '_number') {
+                            lsideRow[columnName] = num++;
+                        } else {
+                            lsideRow[columnName] = rowModel.get(columnName);
+                        }
+                    });
+
+                    _.each(rsideColumnList, function (columnName) {
+                        if (columnName === '_number') {
+                            rsideRow[columnName] = num++;
+                        } else {
+                            rsideRow[columnName] = rowModel.get(columnName);
+                        }
+                    });
+                    lsideRowList.push(lsideRow);
+                    rsideRowList.push(rsideRow);
+                }
             }
             //lside 와 rside 를 초기화한다.
             this.get('lside').clear().reset(lsideRowList, {

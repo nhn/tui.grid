@@ -1073,7 +1073,7 @@ describe('view.clipboard', function() {
         $empty,
         timeoutDelay = 0;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         //jasmine.clock().install();
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
@@ -1084,9 +1084,7 @@ describe('view.clipboard', function() {
             selectType: 'checkbox'
         });
         grid.setRowList(rowList);
-        setTimeout(function() {
-            done();
-        }, timeoutDelay);
+
         //jasmine.clock().tick(100);
     });
     afterEach(function() {
@@ -1408,6 +1406,11 @@ describe('view.clipboard', function() {
             });
         });
         describe('_onEnterSpace', function() {
+            beforeEach(function(done) {
+                setTimeout(function() {
+                    done();
+                }, timeoutDelay);
+            });
             it('button 컬럼의 경우 check 한다.', function() {
                 grid.focusIn = jasmine.createSpy('focusIn');
                 expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
