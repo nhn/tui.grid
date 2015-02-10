@@ -95,7 +95,7 @@ describe('grid.public.test', function() {
         $empty,
         timeoutDelay = 0;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         //jasmine.clock().install();
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/empty.html');
@@ -107,10 +107,6 @@ describe('grid.public.test', function() {
             selectType: 'checkbox'
         });
         grid.setRowList(rowList);
-
-        setTimeout(function() {
-            done();
-        }, timeoutDelay);
     });
     afterEach(function() {
         grid && grid.destroy();
@@ -224,6 +220,11 @@ describe('grid.public.test', function() {
             });
         });
         describe('getElement()', function() {
+            beforeEach(function(done) {
+                setTimeout(function() {
+                    done();
+                }, timeoutDelay);
+            });
             it('rowKey 와 columnName 에 해당하는 element 를 반환한다.', function() {
                 var $el;
 
@@ -241,6 +242,11 @@ describe('grid.public.test', function() {
             });
         });
         describe('select()', function() {
+            beforeEach(function(done) {
+                setTimeout(function() {
+                    done();
+                }, timeoutDelay);
+            });
             it('rowKey 에 해당하는 td 들에 select css 디자인 클래스를 적용한다.', function() {
                 var $el;
                 grid.select(5);
@@ -353,13 +359,23 @@ describe('grid.public.test', function() {
             });
         });
         describe('check()', function() {
+            beforeEach(function(done) {
+                setTimeout(function() {
+                    done();
+                }, timeoutDelay);
+            });
             it('check 되는지 확인한다.', function() {
                 grid.check(1);
                 expect(grid.getElement(1, '_button').find('input').prop('checked')).toBe(true);
             });
         });
         describe('uncheck()', function() {
-            it('check 되는지 확인한다.', function() {
+            beforeEach(function(done) {
+                setTimeout(function() {
+                    done();
+                }, timeoutDelay);
+            });
+            it('un check 되는지 확인한다.', function() {
                 grid.check(0);
                 grid.uncheck(0);
                 expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
@@ -426,6 +442,11 @@ describe('grid.public.test', function() {
                 });
             });
             describe('disableRow()', function() {
+                beforeEach(function(done) {
+                    setTimeout(function() {
+                        done();
+                    }, timeoutDelay);
+                });
                 it('disableRow 되는지 확인한다.', function() {
                     grid.disableRow(0);
                     expect(grid.getElement(0, 'columnName1').hasClass('disabled')).toBe(true);
@@ -453,12 +474,22 @@ describe('grid.public.test', function() {
                 });
             });
             describe('disableCheck()', function() {
+                beforeEach(function(done) {
+                    setTimeout(function() {
+                        done();
+                    }, timeoutDelay);
+                });
                 it('disableCheck 되는지 확인한다.', function() {
                     grid.disableCheck(0);
                     expect(grid.getElement(0, '_button').find('input').prop('disabled')).toBe(true);
                 });
             });
             describe('enableCheck()', function() {
+                beforeEach(function(done) {
+                    setTimeout(function() {
+                        done();
+                    }, timeoutDelay);
+                });
                 it('enableCheck 되는지 확인한다.', function() {
                     grid.disableCheck(0);
                     grid.enableCheck(0);
