@@ -88,9 +88,10 @@ module.exports = function(config) {
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['jasmine'],
 
-        captureTimeout: 600000,
-        browserDisconnectTimeout: 600000,
-        browserNoActivityTimeout: 600000,
+        captureTimeout: 300000,
+        browserDisconnectTimeout: 60000,
+        browserNoActivityTimeout: 60000,
+
         // list of files / patterns to load in the browser
         files: [
             // dependencies
@@ -135,7 +136,7 @@ module.exports = function(config) {
             {pattern: 'images/**/*', watched: true, served: true, included: false},
 
             // files to test
-            {pattern: 'test/js/*.test.js', watched: true, served: true, included: true}
+            {pattern: 'test/js/core.test.js', watched: true, served: true, included: true}
         ],
 
 
