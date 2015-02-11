@@ -415,10 +415,14 @@
             var columnData = this._getColumnData(),
                 columnWidthList = columnData.widthList,
                 $resizeHandleList = this.$el.find('.resize_handle'),
-                curPos = 0;
+                $colList = this.$el.parent().find('th'),
+                curPos = 0,
+                border = 1,
+                width;
 
             ne.util.forEachArray($resizeHandleList, function(item, index) {
-                curPos += columnWidthList[index] + 1;
+                width = $colList.eq(index).width() || columnWidthList[index];
+                curPos += width + border;
                 $resizeHandleList.eq(index).css('left', (curPos - 3) + 'px');
             });
         },
@@ -497,7 +501,7 @@
             this.initialLeft = parseInt($target.css('left').replace('px', ''), 10);
             this.initialOffsetLeft = this.$el.offset().left;
             this.initialWidth = columnWidthList[$target.attr('columnindex')];
-            this.grid.$el
+            $('body')
                 .bind('mousemove', $.proxy(this._onMouseMove, this))
                 .bind('mouseup', $.proxy(this._onMouseUp, this))
                 .css('cursor', 'col-resize');
@@ -513,7 +517,7 @@
             this.initialLeft = 0;
             this.initialOffsetLeft = 0;
             this.initialWidth = 0;
-            this.grid.$el
+            $('body')
                 .unbind('mousemove', $.proxy(this._onMouseMove, this))
                 .unbind('mouseup', $.proxy(this._onMouseUp, this))
                 .css('cursor', 'default');

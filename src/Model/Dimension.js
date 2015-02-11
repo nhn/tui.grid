@@ -79,9 +79,9 @@
 
             remainWidth = availableTotalWidth - currentWidth;
 
-            if (availableTotalWidth > currentWidth && unassignedCount === 0) {
-                newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
-            }
+            //if (availableTotalWidth > currentWidth && unassignedCount === 0) {
+            //    newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
+            //}
 
             if (availableTotalWidth > currentWidth) {
                 remainWidth = availableTotalWidth - currentWidth;
