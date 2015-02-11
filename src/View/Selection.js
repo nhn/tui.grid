@@ -288,8 +288,10 @@
          * 전체 영역을 선택한다.
          */
         selectAll: function() {
-            this.startSelection(0, 0);
-            this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
+            if (this.isEnable) {
+                this.startSelection(0, 0);
+                this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
+            }
         },
         /**
          * selection 영역 선택을 시작한다.
@@ -297,9 +299,11 @@
          * @param {Number} columnIndex 시작점의 column 인덱스 정보
          */
         startSelection: function(rowIndex, columnIndex) {
-            this.range.row[0] = this.range.row[1] = rowIndex;
-            this.range.column[0] = this.range.column[1] = columnIndex;
-            this.show();
+            if (this.isEnable) {
+                this.range.row[0] = this.range.row[1] = rowIndex;
+                this.range.column[0] = this.range.column[1] = columnIndex;
+                this.show();
+            }
         },
         /**
          * selection 영역 선택을 확장한다.
@@ -307,9 +311,11 @@
          * @param {Number} columnIndex 확장할 지점의 column 인덱스 정보
          */
         updateSelection: function(rowIndex, columnIndex) {
-            this.range.row[1] = rowIndex;
-            this.range.column[1] = columnIndex;
-            this.show();
+            if (this.isEnable) {
+                this.range.row[1] = rowIndex;
+                this.range.column[1] = columnIndex;
+                this.show();
+            }
         },
         /**
          * selection 영역 선택을 종료하고 selection 데이터를 초기화한다.
@@ -331,7 +337,7 @@
          * 현재 selection range 정보를 기반으로 selection Layer 를 노출한다.
          */
         show: function() {
-            if (this.hasSelection()) {
+            if (this.isEnable && this.hasSelection()) {
                 this._isShown = true;
                 var tmpRowRange,
                     dataModel = this.grid.dataModel,
