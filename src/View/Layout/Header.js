@@ -168,10 +168,19 @@
          */
         render: function() {
             this.destroyChildren();
+
             var resizeHandler = this.createView(View.Layout.Header.ResizeHandler, {
                 whichSide: this.whichSide,
                 grid: this.grid
             });
+            if (!this.grid.option('scrollX')) {
+                this.$el.css('overflow-x', 'hidden');
+            }
+
+            if (!this.grid.option('scrollY')) {
+                this.$el.css('overflow-y', 'hidden');
+            }
+
             this.$el.css({
                 height: this.grid.dimensionModel.get('headerHeight')
             }).html(this.template({

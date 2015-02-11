@@ -147,6 +147,14 @@
 
             this.destroyChildren();
 
+            if (!this.grid.option('scrollX')) {
+                this.$el.css('overflow-x', 'hidden');
+            }
+
+            if (!this.grid.option('scrollY') && whichSide === 'R') {
+                this.$el.css('overflow-y', 'hidden');
+            }
+
             this.$el.css({
                     height: grid.dimensionModel.get('bodyHeight')
                 }).html(this.template({

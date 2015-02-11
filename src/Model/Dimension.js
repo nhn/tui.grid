@@ -62,6 +62,10 @@
 
             availableTotalWidth = totalWidth - columnWidthList.length - 1;
 
+            if (this.grid.option('scrollY')) {
+                availableTotalWidth -= this.grid.scrollBarSize;
+            }
+
             if (columnFixIndex > 0) {
                 availableTotalWidth -= 1;
             }
@@ -125,7 +129,6 @@
             var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
                 columnWidthList = this.getColumnWidthList(whichSide),
                 frameWidth = this._getFrameWidth(columnWidthList);
-
             if (ne.util.isUndefined(whichSide) && columnFixIndex > 0) {
                 //columnFixIndex 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
                 ++frameWidth;

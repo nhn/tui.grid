@@ -51,21 +51,23 @@
          * @private
          */
         afterRender: function() {
-            var virtualScrollBar,
-                $space = $('<div></div>'),
-                height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
+            if (this.grid.option('scrollY')) {
+                var virtualScrollBar,
+                    $space = $('<div></div>'),
+                    height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
 
-            $space.css({
-                height: height + 'px'
-            }).addClass('space');
+                $space.css({
+                    height: height + 'px'
+                }).addClass('space');
 
-            this.$el.append($space);
+                this.$el.append($space);
 
-            if (!this.grid.option('notUseSmartRendering')) {
-                virtualScrollBar = this.createView(View.Layout.Frame.Rside.VirtualScrollBar, {
-                    grid: this.grid
-                });
-                this.$el.append(virtualScrollBar.render().el);
+                if (!this.grid.option('notUseSmartRendering')) {
+                    virtualScrollBar = this.createView(View.Layout.Frame.Rside.VirtualScrollBar, {
+                        grid: this.grid
+                    });
+                    this.$el.append(virtualScrollBar.render().el);
+                }
             }
         }
     });
@@ -157,8 +159,13 @@
          */
         render: function() {
             var grid = this.grid,
-                height = grid.dimensionModel.get('bodyHeight') - grid.scrollBarSize,
+                height = grid.dimensionModel.get('bodyHeight'),
                 top = grid.dimensionModel.get('headerHeight');
+
+            if (this.grid.option('scrollX')) {
+                height -= this.grid.scrollBarSize;
+            }
+
             this.$el.css({
                 height: height + 'px',
                 top: top + 'px',
