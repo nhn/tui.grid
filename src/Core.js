@@ -389,7 +389,10 @@
          */
         focusClipboard: function() {
             /* istanbul ignore next: focus 이벤트 확인이 불가함 */
-            this.view.clipboard.$el.focus();
+            setTimeout(ne.util.bind(function() {
+                this.view.clipboard.$el.focus();
+            }, this), 0);
+
         },
 
 
