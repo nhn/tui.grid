@@ -14,11 +14,17 @@
             'focus': '_onFocus',
             'blur': '_onBlur'
         },
+        isFocused: function() {
+
+            return this._isFocused;
+        },
         /**
          * 클립보드 focus 이벤트 핸들러
          * @private
          */
         _onFocus: function() {
+            this._isFocused = true;
+            this.$el.val(this._isFocused);
             this.grid.focusModel.focus();
         },
         /**
@@ -26,6 +32,8 @@
          * @private
          */
         _onBlur: function() {
+            this._isFocused = false;
+            this.$el.val(this._isFocused);
             //Grid 내 input 에 focus 가 된 경우 blur 처리하지 않기위해 setTimeout 을 사용한다.
             setTimeout($.proxy(function() {
                 var hasFocusedElement = !!(this.grid.$el.find(':focus').length);
@@ -40,6 +48,7 @@
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
+                _isFocused: false,
                 timeoutIdForKeyIn: 0,
                 isLocked: false
             });
@@ -362,11 +371,7 @@
         _copyToClipboard: function() {
             var text = this._getClipboardString();
             if (window.clipboardData) {
-                if (window.clipboardData.setData('Text', text)) {
-                    this.$el.select();
-                } else {
-                    this.$el.val('').select();
-                }
+                window.clipboardData.setData('Text', text);
             } else {
                 this.$el.val(text).select();
             }

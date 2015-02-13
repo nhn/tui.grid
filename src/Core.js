@@ -311,6 +311,7 @@
             if (eventData.isStopped()) {
                 return;
             }
+            this.focusClipboard();
         },
         /**
          * mousedown 이벤트 핸들러
@@ -325,7 +326,6 @@
             if (eventData.isStopped()) return;
             if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
                 mouseDownEvent.preventDefault();
-                this.focusClipboard();
                 this.selection.show();
             }
         },
@@ -389,10 +389,7 @@
          */
         focusClipboard: function() {
             /* istanbul ignore next: focus 이벤트 확인이 불가함 */
-            setTimeout(ne.util.bind(function() {
-                this.view.clipboard.$el.focus();
-            }, this), 0);
-
+            this.view.clipboard.$el.focus();
         },
 
 
