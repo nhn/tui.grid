@@ -28,8 +28,10 @@
             minimumColumnWidth: 0,
             displayRowCount: 1,
             scrollBarSize: 17,
-            scrollX: true
+            scrollX: true,
+            scrollY: true
         },
+
         /**
          * 생성자 함수
          */
@@ -42,9 +44,9 @@
             this._setColumnWidthVariables();
             this._setBodyHeight();
         },
+
         /**
          * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
-         *
          * @param {Array} columnWidthList   컬럼 너비 리스트
          * @return {Array}  totalWidth 에 맞게 계산한 컬럼 너비 리스트
          * @private
@@ -62,8 +64,8 @@
 
             availableTotalWidth = totalWidth - columnWidthList.length - 1;
 
-            if (this.grid.option('scrollY')) {
-                availableTotalWidth -= this.grid.scrollBarSize;
+            if (this.get('scrollY')) {
+                availableTotalWidth -= this.get('scrollBarSize');
             }
 
             if (columnFixIndex > 0) {
@@ -83,10 +85,6 @@
 
             remainWidth = availableTotalWidth - currentWidth;
 
-            //if (availableTotalWidth > currentWidth && unassignedCount === 0) {
-            //    newColumnWidthList[newColumnWidthList.length - 1] += remainWidth;
-            //}
-
             if (availableTotalWidth > currentWidth) {
                 remainWidth = availableTotalWidth - currentWidth;
                 unassignedWidth = Math.max(this.get('minimumColumnWidth'), Math.floor(remainWidth / unassignedCount));
@@ -102,7 +100,6 @@
         },
         /**
          * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
-         *
          * @return {Array}  columnModel 에 설정된 width 값 기준의 너비 리스트
          * @private
          */
@@ -306,6 +303,7 @@
             var curColumnWidthList = this.get('columnWidthList');
             this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
         },
+
         /**
          * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
          * @param {Number} index    너비를 변경할 컬럼의 인덱스
@@ -313,17 +311,37 @@
          */
         setColumnWidth: function(index, width) {
             width = Math.max(width, this.get('minimumColumnWidth'));
-            var curColumnWidthList = this.get('columnWidthList'),
-                calculatedColumnWidthList;
+            var curColumnWidthList = this.get('columnWidthList');
             if (!ne.util.isUndefined(curColumnWidthList[index])) {
                 curColumnWidthList[index] = width;
-                calculatedColumnWidthList = this._calculateColumnWidthList(curColumnWidthList);
-                this._setColumnWidthVariables(calculatedColumnWidthList);
+                this._setColumnWidthVariables(curColumnWidthList);
             }
+        },
+
+        /**
+         * 실제 조정된 column의 width 들을 반영한다.
+         * @param {Array} columnWidthList   조정된 열의 너비 리스트
+         * @param {Boolean} [whichSide]   어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 columnList 변경
+         */
+        setColumnWidthList: function(columnWidthList, whichSide) {
+            var oppositeSide = (whichSide === 'L') ? 'R' : 'L',
+                oppositeSideColumnWidthList = this.getColumnWidthList(oppositeSide) || [],
+                newColumnWidthList;
+
+            if (whichSide === 'L') {
+                newColumnWidthList = columnWidthList.concat(oppositeSideColumnWidthList);
+            } else if (whichSide === 'R') {
+                newColumnWidthList = oppositeSideColumnWidthList.concat(columnWidthList);
+            } else {
+                newColumnWidthList = columnWidthList;
+            }
+
+            this._setColumnWidthVariables(newColumnWidthList);
+
         },
         /**
          * L side 와 R side 에 따른 columnWidthList 를 반환한다.
-         * @param {String} whichSide 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략했을 때 전체 columnList 반환
+         * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
          * @return {Array}  조회한 영역의 columnWidthList
          */
         getColumnWidthList: function(whichSide) {

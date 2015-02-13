@@ -189,6 +189,7 @@
                 rowHeight: this.option('rowHeight'),
 
                 scrollX: !!this.option('scrollX'),
+                scrollY: !!this.option('scrollY'),
                 scrollBarSize: this.scrollBarSize,
 
                 minimumColumnWidth: this.option('minimumColumnWidth'),

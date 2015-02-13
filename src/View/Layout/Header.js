@@ -413,27 +413,41 @@
                     'height' : headerHeight + 'px'
                 })
                 .html(this._getResizeHandlerMarkup());
-            this._refreshHandlerPosition();
+            this._refreshHandlerPosition(true);
             return this;
         },
         /**
          * 생성된 핸들러의 위치를 설정한다.
          * @private
          */
-        _refreshHandlerPosition: function() {
+        _refreshHandlerPosition: function(isUpdateWidthList) {
             var columnData = this._getColumnData(),
                 columnWidthList = columnData.widthList,
+                newColumnWidthList = [],
                 $resizeHandleList = this.$el.find('.resize_handle'),
-                $colList = this.$el.parent().find('th'),
+                $thList = this.$el.parent().find('table:first').find('th'),
+                isChanged = false,
+                $handler,
                 curPos = 0,
                 border = 1,
                 width;
 
             ne.util.forEachArray($resizeHandleList, function(item, index) {
-                width = $colList.eq(index).width() || columnWidthList[index];
+                $handler = $resizeHandleList.eq(index);
+                width = $thList.eq(index).width();
+                if (ne.util.isExisty(width)) {
+                    isChanged = isChanged || (width !== columnWidthList[index]);
+                } else {
+                    width = columnWidthList[index];
+                }
                 curPos += width + border;
-                $resizeHandleList.eq(index).css('left', (curPos - 3) + 'px');
+                $handler.css('left', (curPos - 3) + 'px');
+                newColumnWidthList.push(width);
             });
+
+            if (isChanged || isUpdateWidthList) {
+                this.grid.dimensionModel.setColumnWidthList(newColumnWidthList, this.whichSide);
+            }
         },
         /**
          * 현재 mouse move resizing 중인지 상태 flag 반환
