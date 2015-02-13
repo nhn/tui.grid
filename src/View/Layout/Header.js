@@ -488,6 +488,7 @@
 
                 this.$target.css('left', left + 'px');
                 this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
+                this._refreshHandlerPosition(true);
             }
         },
         /**
