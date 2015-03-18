@@ -227,7 +227,7 @@
          * @private
          */
         _setPaginationInstance: function() {
-            var PaginationClass = ne && ne.Component && ne.Component.Pagination,
+            var PaginationClass = ne && ne.component && ne.component.Pagination,
                 pagination = this.instance;
             if (!pagination && PaginationClass) {
                 pagination = new PaginationClass({

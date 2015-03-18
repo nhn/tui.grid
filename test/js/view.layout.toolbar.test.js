@@ -424,7 +424,7 @@ describe('view.frame.toolbar', function() {
             PaginationClass;
 
         beforeEach(function() {
-            PaginationClass = ne && ne.Component && ne.Component.Pagination
+            PaginationClass = ne && ne.component && ne.component.Pagination
             pagination = new View.Layout.Toolbar.Pagination({
                 grid: grid
             });
@@ -442,9 +442,9 @@ describe('view.frame.toolbar', function() {
                 itemPerPage: 1
             }, pagination.$el);
 
-            ne.Component.Pagination = jasmine.createSpy('pagination');
+            ne.component.Pagination = jasmine.createSpy('pagination');
             pagination._setPaginationInstance();
-            expect(ne.Component.Pagination).not.toHaveBeenCalled();
+            expect(ne.component.Pagination).not.toHaveBeenCalled();
         });
     });
 });

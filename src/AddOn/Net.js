@@ -126,9 +126,9 @@
         _initializePagination: function() {
             var pagination = this.pagination;
             if (pagination) {
-                pagination._setOption('itemPerPage', this.perPage);
-                pagination._setOption('itemCount', 1);
-                pagination.attach('beforeMove', $.proxy(this._onPageBeforeMove, this));
+                pagination.setOption('itemPerPage', this.perPage);
+                pagination.setOption('itemCount', 1);
+                pagination.on('beforeMove', $.proxy(this._onPageBeforeMove, this));
             }
         },
         /**
@@ -252,8 +252,8 @@
             if (pagination && responseData.pagination) {
                 page = responseData.pagination.page;
                 totalCount = responseData.pagination.totalCount;
-                pagination._setOption('itemPerPage', this.perPage);
-                pagination._setOption('itemCount', totalCount);
+                pagination.setOption('itemPerPage', this.perPage);
+                pagination.setOption('itemCount', totalCount);
                 pagination.movePageTo(page);
                 this.curPage = page;
             }

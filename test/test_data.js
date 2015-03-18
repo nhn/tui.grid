@@ -7,7 +7,7 @@
         el: $('#wrapper1'),
         columnModelList: dummy_data.columnModel_1,
         selectType: 'checkbox',
-        scrollX: false,
+        scrollX: true,
         scrollY: true,
         columnFixIndex: 5,
         rowHeight: 30,
