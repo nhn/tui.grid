@@ -1,0 +1,73 @@
+<form id="test_form">
+    <table>
+        <tr>
+            <td>
+                송장번호 :
+            </td>
+            <td>
+                <input name="delivery_number" type="text" value=""/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                이름 :
+            </td>
+            <td>
+                <input name="user_name" type="text" value=""/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                계절 :
+            </td>
+            <td>
+                <select name="weather">
+                    <option value="spring" selected>봄</option>
+                    <option value="summer">여름</option>
+                    <option value="fall">가을</option>
+                    <option value="winter">겨울</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                술:
+            </td>
+            <td>
+                <select multiple="" name="drink">
+                    <option value="soju">소주</option>
+                    <option value="beer">맥주</option>
+                    <option value="koreanWine">막걸리</option>
+                    <option value="redWine">레드와인</option>
+                    <option value="whiteWine">화이트와인</option>
+                    <option value="whiskey">위스키</option>
+                    <option value="vodca">보드카</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                성별 :
+            </td>
+            <td>
+                <input type="radio" name="gender" value="male"/>남
+                <input type="radio" name="gender" value="female"/>여
+            </td>
+        </tr>
+        <tr>
+            <td>
+                취미 :
+            </td>
+            <td>
+                <input type="checkbox" name="hobby" value="sport"/>스포츠
+                <input type="checkbox" name="hobby" value="sewing"/>재봉틀
+                <input type="checkbox" name="hobby" value="drinking"/>음주
+                <input type="checkbox" name="hobby" value="dancing"/>가무
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="submit"/>
+</form>
+
+<form id="test_form_empty">
+</form>
