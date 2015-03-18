@@ -7,11 +7,13 @@
         el: $('#wrapper1'),
         columnModelList: dummy_data.columnModel_1,
         selectType: 'checkbox',
+        scrollX: false,
+        scrollY: true,
         columnFixIndex: 5,
         rowHeight: 30,
         displayRowCount: 10,
         headerHeight: 50,
-        useDataCopy: false,
+        useDataCopy: true,
         minimumColumnWidth: 20
     }).on('onResponse', function(data) {
         console.log('onResponse');
