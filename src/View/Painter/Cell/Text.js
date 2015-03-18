@@ -58,7 +58,7 @@
         /* istanbul ignore next: focus, select 를 검증할 수 없음 */
         focusIn: function($td) {
             var $input = $td.find('input');
-            ne.util.setCursorToEnd($input.get(0));
+            Util.form.setCursorToEnd($input.get(0));
             $input.focus().select();
 
         },
@@ -291,7 +291,7 @@
                 this.redraw(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
-                ne.util.setCursorToEnd($input.get(0));
+                Util.form.setCursorToEnd($input.get(0));
                 $input.focus().select();
 
             }

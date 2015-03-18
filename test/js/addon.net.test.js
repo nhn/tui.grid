@@ -124,7 +124,7 @@ describe('addon.net', function() {
         loadFixtures('test/fixtures/addon.net.html');
 
         $form = $('#form');
-        ne.util.setFormData(this.$el, originalformData);
+        Util.form.setFormData(this.$el, originalformData);
         $grid = $('#grid');
         grid = new ne.Grid({
             el: $grid,
@@ -724,7 +724,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 net.pagination.movePageTo = jasmine.createSpy('movePageTo');
-                net.pagination._setOption = jasmine.createSpy('setOption');
+                net.pagination.setOption = jasmine.createSpy('setOption');
             });
             it('responseData 에 pagination 정보가 있다면 pagination instance 에 설정한다.', function() {
                 net._onReadSuccess(null, {
@@ -733,8 +733,8 @@ describe('addon.net', function() {
                         totalCount: 100
                     }
                 });
-                expect(net.pagination._setOption).toHaveBeenCalledWith('itemPerPage', net.perPage);
-                expect(net.pagination._setOption).toHaveBeenCalledWith('itemCount', 100);
+                expect(net.pagination.setOption).toHaveBeenCalledWith('itemPerPage', net.perPage);
+                expect(net.pagination.setOption).toHaveBeenCalledWith('itemCount', 100);
                 expect(net.pagination.movePageTo).toHaveBeenCalledWith(10);
             });
         });
