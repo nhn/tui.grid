@@ -8,19 +8,19 @@ function setConfig(configDefault, isDev) {
     };
 
     if (isDev) {
-        //configDefault.browsers = [
-        //    'Chrome'
-        //];
         configDefault.browsers = [
-            'IE8'
+            'Chrome'
         ];
-        configDefault.customLaunchers = {
-            'IE8': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'IE8'
-            }
-        };
+        //configDefault.browsers = [
+        //    'IE8'
+        //];
+        //configDefault.customLaunchers = {
+        //    'IE8': {
+        //        base: 'WebDriver',
+        //        config: webdriverConfig,
+        //        browserName: 'IE8'
+        //    }
+        //};
 
         //configDefault.browsers = [
         //    'Chrome-WebDriver'
@@ -99,7 +99,7 @@ module.exports = function(config) {
             {pattern: 'lib/jquery-json/src/jquery.json.js', watched: false, served: true, included: true},
             {pattern: 'lib/underscore/underscore.js', watched: false, served: true, included: true},
             {pattern: 'lib/backbone/backbone.js', watched: false, served: true, included: true},
-            {pattern: 'lib/share-code-snippet/code-snippet.js', watched: false, served: true, included: true},
+            {pattern: 'lib/code-snippet/code-snippet.js', watched: false, served: true, included: true},
             {pattern: 'lib/component-pagination/pagination.js', watched: false, served: true, included: true},
 
             {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false, served: true, included: true},
