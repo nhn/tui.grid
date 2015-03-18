@@ -259,6 +259,9 @@ describe('view.frame.right', function() {
             });
         });
         describe('render', function() {
+            beforeEach(function() {
+                grid.options.scrollY = true;
+            });
             describe('virtualScrollbar 상태를 확인한다.', function() {
                 it('notUseSmartRendering 이 true 일때 virtualScrollbar 를 생성하지 않는다.', function() {
                     grid.options.notUseSmartRendering = true;
@@ -267,6 +270,7 @@ describe('view.frame.right', function() {
                 });
                 it('scrollbar 의 상태를 확인한다.', function() {
                     grid.options.notUseSmartRendering = false;
+
                     $empty.html(frame.render().el);
                     expect($empty.find('.virtual_scrollbar').length).toBe(1);
                 });

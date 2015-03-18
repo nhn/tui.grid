@@ -445,7 +445,7 @@
                 newColumnWidthList.push(width);
             });
 
-            if (isChanged || isUpdateWidthList) {
+            if (isUpdateWidthList) {
                 this.grid.dimensionModel.setColumnWidthList(newColumnWidthList, this.whichSide);
             }
         },

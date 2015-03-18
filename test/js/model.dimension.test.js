@@ -387,9 +387,9 @@ describe('model.dimension', function() {
         });
         it('생성된 width 각 요소는 minimumColumnWidth 보다 같거나 커야하고, 요소들의 합은 width 보다 같거나 커야 한다.', function() {
 
-            var compareWidth = dimensionModel.get('width') - 1,
+            var compareWidth = dimensionModel.get('width') - 18,
                 minimumWidth = dimensionModel.get('minimumColumnWidth') - 1,
-                widthList1 = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+                widthList1 = [5, 10, 15, 20, 25, 30, 35, 40, 45, -1],
                 widthList2 = [5, 10, 15, 20, 25, 130, 135, 140, 145, 150],
                 widthList3 = [5, 10, 315, 320, 325, 330, 335, 340, 345, 350],
                 widthList4 = [5, 10, 415, 420, 425, -1, -1, -1, -1, -1],
@@ -435,8 +435,7 @@ describe('model.dimension', function() {
                     width: 40
                 },
                 {
-                    columnName: 'column5',
-                    width: 50
+                    columnName: 'column5'
                 }
             ];
             columnModelInstance.set({
@@ -453,7 +452,7 @@ describe('model.dimension', function() {
 
         it('columnModelList 에 정의된 값으로 columnWidthList 를 생성하는지 확인한다.', function() {
             var originalWidthList = dimensionModel._getOriginalWidthList(),
-                compareWidth = dimensionModel.get('width') - 1,
+                compareWidth = dimensionModel.get('width') - 18,
                 minimumWidth = dimensionModel.get('minimumColumnWidth') - 1;
 
             expect(dimensionModel._getFrameWidth(originalWidthList)).toBeGreaterThan(compareWidth);
@@ -461,7 +460,7 @@ describe('model.dimension', function() {
 
 
             expect(originalWidthList).toEqual([
-               20, 20, 40, 415
+               20, 20, 40, 398
             ]);
 
         });
@@ -763,46 +762,46 @@ describe('model.dimension', function() {
         });
         it('rowSpan 이 없는 경우', function() {
             expect(dimensionModel.getCellPosition(0, 'changeCallback')).toEqual(
-                { 'top': 0, 'left': 0, 'right': 41, 'bottom': 101 }
+                { 'top': 0, 'left': 0, 'right': 40, 'bottom': 101 }
             );
             expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual(
-                { 'top': 0, 'left': 41, 'right': 82, 'bottom': 101 }
+                { 'top': 0, 'left': 40, 'right': 80, 'bottom': 101 }
             );
             //columnFix Index 이기 때문에 left 가 0부터 시작된다.
             expect(dimensionModel.getCellPosition(0, 'none')).toEqual(
-                { 'top': 0, 'left': 0, 'right': 41, 'bottom': 101 }
+                { top: 0, left: 0, right: 40, bottom: 101 }
             );
             expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual(
-                { 'top': 0, 'left': 41, 'right': 82, 'bottom': 101 }
+                { top: 0, left: 40, right: 80, bottom: 101 }
             );
             expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual(
-                { 'top': 0, 'left': 82, 'right': 123, 'bottom': 101 }
+                { top: 0, left: 80, right: 120, bottom: 101 }
             );
             expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual(
-                { 'top': 0, 'left': 123, 'right': 164, 'bottom': 101 }
+                { top: 0, left: 120, right: 160, bottom: 101 }
             );
             expect(dimensionModel.getCellPosition(0, 'text')).toEqual(
-                { 'top': 0, 'left': 164, 'right': 205, 'bottom': 101 }
+                { top: 0, left: 160, right: 200, bottom: 101 }
             );
             expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual(
-                { 'top': 0, 'left': 205, 'right': 246, 'bottom': 101 }
+                { top: 0, left: 200, right: 240, bottom: 101 }
             );
             expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual(
-                { 'top': 102, 'left': 0, 'right': 41, 'bottom': 203 }
+                { top: 102, left: 0, right: 40, bottom: 203 }
             );
             expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual(
-                { 'top': 102, 'left': 41, 'right': 82, 'bottom': 203 }
+                { top: 102, left: 40, right: 80, bottom: 203 }
             );
 
         });
         it('rowSpan 이 있는 경우 main row 가 아닌 row 라도 정상적으로 반환한다.', function() {
-            var expectPosition = { 'top': 102, 'left': 0, 'right': 41, 'bottom': 304 };
+            var expectPosition = { top: 102, left: 0, right: 40, bottom: 304 };
             //columnFix Index 이기 때문에 left 가 0부터 시작된다.
             expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectPosition);
         });
         it('rowSpan 이 3인 경우', function() {
-            var expectPosition = { 'top': 102, 'left': 164, 'right': 205, 'bottom': 405 };
+            var expectPosition = { top: 102, left: 160, right: 200, bottom: 405 };
             expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectPosition);
