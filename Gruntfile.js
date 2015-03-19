@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     // All upfront config goes in a massive nested object.
     grunt.initConfig({
         // You can set arbitrary key-value pairs.
-        distFolder: 'dist',
+        distFolder: 'doc/dist',
         libFolder: 'lib',
         sampleFolder: 'samples',
         // You can also set the value of a key as parsed JSON.
@@ -90,10 +90,20 @@ module.exports = function(grunt) {
                         expand: true,
                         flatten: true,
                         src: [
-                            '<%= distFolder %>/grid.min.js',
                             '<%= libFolder %>/jquery/jquery.min.js',
+                            '<%= libFolder %>/jquery-json/src/jquery.json.js',
+                            '<%= libFolder %>/underscore/underscore.js',
+                            '<%= libFolder %>/backbone/backbone.js',
                             '<%= libFolder %>/code-snippet/code-snippet.min.js',
-                            '<%= libFolder %>/component-pagination/pagination.min.min.js'
+                            '<%= libFolder %>/component-pagination/pagination.min.js'
+                        ],
+                        dest: '<%= sampleFolder %>/js/lib', filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: [
+                            '<%= distFolder %>/*.js'
                         ],
                         dest: '<%= sampleFolder %>/js', filter: 'isFile'
                     },
@@ -102,6 +112,14 @@ module.exports = function(grunt) {
                         flatten: true,
                         src: ['<%= distFolder %>/grid.css'],
                         dest: '<%= sampleFolder %>/css', filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: [
+                            '<%= distFolder %>/grid.min.js'
+                        ],
+                        dest: '<%= sampleFolder %>/js', filter: 'isFile'
                     }
                 ]
             }
@@ -109,7 +127,7 @@ module.exports = function(grunt) {
         zip: {
             main: {
                 src: ['<%= distFolder %>/*'],
-                dest: '<%= distFolder %>/infinite-scroll.zip'
+                dest: '<%= distFolder %>/grid.zip'
             }
         }
     }); // The end of grunt.initConfig
@@ -119,10 +137,10 @@ module.exports = function(grunt) {
     // This will do a lookup similar to node's require() function.
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-//    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-zip');
 
     // Register our own custom task alias.
 //    grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
-    grunt.registerTask('build', ['concat', 'uglify', 'zip']);
+    grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
 };

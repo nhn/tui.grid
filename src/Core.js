@@ -311,7 +311,6 @@
             if (eventData.isStopped()) {
                 return;
             }
-            this.focusClipboard();
         },
         /**
          * mousedown 이벤트 핸들러
@@ -328,6 +327,7 @@
                 mouseDownEvent.preventDefault();
                 this.selection.show();
             }
+            this.focusClipboard();
         },
         /**
          * select 된 row 가 변경된 경우 이벤트 핸들러.
@@ -654,7 +654,7 @@
          */
         focusAt: function(rowIndex, columnIndex, isScrollable) {
             var row = this.dataModel.at(rowIndex),
-                column = this.columnModel.at(columnIndex);
+                column = this.columnModel.at(columnIndex, true);
             if (row && column) {
                 this.focus(row.get('rowKey'), column['columnName'], isScrollable);
             }
@@ -667,7 +667,7 @@
          */
         focusInAt: function(rowIndex, columnIndex, isScrollable) {
             var row = this.dataModel.at(rowIndex),
-                column = this.columnModel.at(columnIndex);
+                column = this.columnModel.at(columnIndex, true);
             if (row && column) {
                 this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
             }

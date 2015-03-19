@@ -32,6 +32,7 @@
      *      @param {array} options.columnModelList
      *          @param {string} options.columnModelList.columnName 컬럼의 데이터 필드명
      *          @param {string} [options.columnModelList.isEllipsis=false] 컬럼의 말줄임 여부를 설정
+     *          @param {string} [options.columnModelList.align=left] 컬럼에 설정할 정렬값
      *          @param {string} [options.columnModelList.className] 컬럼 전체에 적용할 디자인 클래스 이름
      *          @param {string} [options.columnModelList.title] 그리드 헤더 영역에 보여질 컬럼 이름
      *          @param {string} [options.columnModelList.width] 컬럼 너비 값. pixel 로 지정한다.

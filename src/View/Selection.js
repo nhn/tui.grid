@@ -231,7 +231,7 @@
          *  @return {String} selection 범위내 데이터 문자열
          */
         getSelectionToString: function() {
-            var columnModelList = this.grid.columnModel.get('columnModelList')
+            var columnModelList = this.grid.columnModel.getVisibleColumnModelList()
                     .slice(this.spannedRange.column[0], this.spannedRange.column[1] + 1),
                 filteringMap = {
                     '_button': true

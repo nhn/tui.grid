@@ -52,3 +52,4 @@ Desktop.ini
 report
 
 bin
+!samples/*/**

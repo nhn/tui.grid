@@ -425,16 +425,18 @@
                 columnWidthList = columnData.widthList,
                 newColumnWidthList = [],
                 $resizeHandleList = this.$el.find('.resize_handle'),
-                $thList = this.$el.parent().find('table:first').find('th'),
+                $table = this.$el.parent().find('table:first'),
                 isChanged = false,
                 $handler,
+                columnName,
                 curPos = 0,
                 border = 1,
                 width;
 
             ne.util.forEachArray($resizeHandleList, function(item, index) {
                 $handler = $resizeHandleList.eq(index);
-                width = $thList.eq(index).width();
+                columnName = $handler.attr('columnname');
+                width = $table.find('th[columnname="' + columnName + '"]').width();
                 if (ne.util.isExisty(width)) {
                     isChanged = isChanged || (width !== columnWidthList[index]);
                 } else {

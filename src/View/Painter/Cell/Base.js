@@ -303,7 +303,14 @@
         getRowKey: function($target) {
             return $target.closest('tr').attr('key');
         },
-
+        /**
+         * columnModel 을 반환한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {*|Object} 컬럼모델
+         */
+        getColumnModel: function(cellData) {
+            return this.grid.columnModel.getColumnModel(cellData.columnName);
+        },
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
          * 필요에 따라 Override 한다.
@@ -311,7 +318,10 @@
          * @return {Object} td 에 지정할 attribute 데이터
          */
         getAttributes: function(cellData) {
-            return {};
+            var columnModel = this.getColumnModel(cellData);
+            return {
+                align: columnModel.align || 'left'
+            };
         },
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.

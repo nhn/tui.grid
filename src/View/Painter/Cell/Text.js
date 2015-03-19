@@ -35,7 +35,7 @@
                 }
             });
         },
-        template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" <%=disabled%>/>'),
+        template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
         /**
          * input type 을 반환한다.
          * @return {string} input 타입
@@ -84,12 +84,15 @@
          * </select>
          */
         getContentHtml: function(cellData) {
-            var value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
+            var columnModel = this.getColumnModel(cellData),
+                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
+
             return this.template({
                 type: this._getInputType(),
                 value: value,
                 disabled: cellData.isDisabled ? 'disabled' : '',
-                name: Util.getUniqueKey()
+                name: Util.getUniqueKey(),
+                maxLength: columnModel.editOption.maxLength
             });
         },
         /**
@@ -241,18 +244,23 @@
          * </select>
          */
         getContentHtml: function(cellData) {
-            var value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
+            var columnModel = this.getColumnModel(cellData),
+                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
                 $td = this.grid.getElement(cellData.rowKey, cellData.columnName),
                 isEdit = !!($td.length && $td.data('isEdit'));
 
             if (!isEdit) {
+                if (ne.util.isFunction(columnModel.formatter)) {
+                    value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).toJSON(), columnModel);
+                }
                 return value;
             } else {
                 return this.template({
                     type: this._getInputType(),
                     value: value,
                     disabled: cellData.isDisabled ? 'disabled' : '',
-                    name: Util.getUniqueKey()
+                    name: Util.getUniqueKey(),
+                    maxLength: columnModel.editOption.maxLength
                 });
             }
         },

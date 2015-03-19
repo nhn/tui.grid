@@ -1,7 +1,7 @@
 {
-  "name": "Application-Grid",
+  "name": "application-grid",
   "version": "0.9.0",
-  "description": "Grid",
+  "description": "grid",
   "main": "Gruntfile.js",
   "directories": {
     "test": "test"
@@ -21,7 +21,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-zip": "^0.16.0",
     "jasmine-ajax": "^2.99.0",
-    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/FE/Share-FEDocTemplate.git",
+    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "karma": "^0.12.24",

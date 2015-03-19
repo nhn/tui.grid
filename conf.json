@@ -68,6 +68,7 @@
     "opts": {
         "recurse": true,
         "private": true,
-        "destination": "doc"
+        "destination": "doc",
+        "tutorials": "samples"
     }
 }
