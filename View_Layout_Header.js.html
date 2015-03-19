@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: View/Layout/Header.js</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Samples</h3><ul class="list samples"><li class="item"><a href="tutorial-sample1.html">기본 예제</a></li></ul><h3>Classes</h3><ul class="list classes"><li class="item" id="AddOn.Net"><span class="title"><span class="p-item">AddOn.</span><a href="AddOn.Net.html">Net</a></span><span class="icon blue static">static</span><ul class="sublist methods AddOn.Net"><span class="subtitle">Methods</span><li><a href="AddOn.Net.html#initialize">initialize</a></li><li><a href="AddOn.Net.html#readData">readData</a></li><li><a href="AddOn.Net.html#reloadData">reloadData</a></li><li><a href="AddOn.Net.html#request">request</a></li><li><a href="AddOn.Net.html#setFormData">setFormData</a></li></ul></li><li class="item" id="AddOn.Net.Router"><span class="title"><span class="p-item">AddOn.Net.</span><a href="AddOn.Net.Router.html">Router</a></span><span class="icon blue static">static</span><ul class="sublist members AddOn.Net.Router"><span class="subtitle">Members</span><li><a href="AddOn.Net.Router.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division AddOn.Net.Router"><li></li></ul><ul class="sublist methods AddOn.Net.Router"><span class="subtitle">Methods</span><li><a href="AddOn.Net.Router.html#read">read</a></li></ul></li><li class="item" id="Collection.Base"><span class="title"><span class="p-item">Collection.</span><a href="Collection.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist members Collection.Base"><span class="subtitle">Members</span><li><a href="Collection.Base.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division Collection.Base"><li></li></ul><ul class="sublist methods Collection.Base"><span class="subtitle">Methods</span><li><a href="Collection.Base.html#clear">clear</a></li><li><a href="Collection.Base.html#initialize">initialize</a></li></ul></li><li class="item" id="Core"><span class="title"><a href="Core.html">Core</a></span><ul class="sublist members Core"><span class="subtitle">Members</span><li><a href="Core.html#scrollBarSize">scrollBarSize</a></li></ul><ul class="sublist division Core"><li></li></ul><ul class="sublist methods Core"><span class="subtitle">Methods</span><li><a href="Core.html#addCellClassName">addCellClassName</a></li><li><a href="Core.html#addRowClassName">addRowClassName</a></li><li><a href="Core.html#appendRow">appendRow</a></li><li><a href="Core.html#blur">blur</a></li><li><a href="Core.html#check">check</a></li><li><a href="Core.html#checkAll">checkAll</a></li><li><a href="Core.html#clear">clear</a></li><li><a href="Core.html#del">del</a></li><li><a href="Core.html#destroy">destroy</a></li><li><a href="Core.html#disable">disable</a></li><li><a href="Core.html#disableCheck">disableCheck</a></li><li><a href="Core.html#disableRow">disableRow</a></li><li><a href="Core.html#enable">enable</a></li><li><a href="Core.html#enableCheck">enableCheck</a></li><li><a href="Core.html#enableRow">enableRow</a></li><li><a href="Core.html#filterData">filterData</a></li><li><a href="Core.html#focus">focus</a></li><li><a href="Core.html#focusAt">focusAt</a></li><li><a href="Core.html#focusClipboard">focusClipboard</a></li><li><a href="Core.html#focusIn">focusIn</a></li><li><a href="Core.html#focusInAt">focusInAt</a></li><li><a href="Core.html#getCellState">getCellState</a></li><li><a href="Core.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="Core.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="Core.html#getColumnModelList">getColumnModelList</a></li><li><a href="Core.html#getColumnValues">getColumnValues</a></li><li><a href="Core.html#getElement">getElement</a></li><li><a href="Core.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="Core.html#getPaginationInstance">getPaginationInstance</a></li><li><a href="Core.html#getRow">getRow</a></li><li><a href="Core.html#getRowAt">getRowAt</a></li><li><a href="Core.html#getRowCount">getRowCount</a></li><li><a href="Core.html#getRowList">getRowList</a></li><li><a href="Core.html#getRowSpanData">getRowSpanData</a></li><li><a href="Core.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="Core.html#getValue">getValue</a></li><li><a href="Core.html#hideGridLayer">hideGridLayer</a></li><li><a href="Core.html#initialize">initialize</a></li><li><a href="Core.html#isChanged">isChanged</a></li><li><a href="Core.html#isDisabled">isDisabled</a></li><li><a href="Core.html#isEditable">isEditable</a></li><li><a href="Core.html#isSorted">isSorted</a></li><li><a href="Core.html#option">option</a></li><li><a href="Core.html#prependRow">prependRow</a></li><li><a href="Core.html#refreshLayout">refreshLayout</a></li><li><a href="Core.html#removeCellClassName">removeCellClassName</a></li><li><a href="Core.html#removeRow">removeRow</a></li><li><a href="Core.html#removeRowClassName">removeRowClassName</a></li><li><a href="Core.html#render">render</a></li><li><a href="Core.html#replaceRowList">replaceRowList</a></li><li><a href="Core.html#restore">restore</a></li><li><a href="Core.html#select">select</a></li><li><a href="Core.html#setColumnFixIndex">setColumnFixIndex</a></li><li><a href="Core.html#setColumnModelList">setColumnModelList</a></li><li><a href="Core.html#setColumnValues">setColumnValues</a></li><li><a href="Core.html#setGridSize">setGridSize</a></li><li><a href="Core.html#setRowList">setRowList</a></li><li><a href="Core.html#setScrollHandlerPosition">setScrollHandlerPosition</a></li><li><a href="Core.html#setValue">setValue</a></li><li><a href="Core.html#showGridLayer">showGridLayer</a></li><li><a href="Core.html#sort">sort</a></li><li><a href="Core.html#uncheck">uncheck</a></li><li><a href="Core.html#uncheckAll">uncheckAll</a></li><li><a href="Core.html#unselect">unselect</a></li><li><a href="Core.html#use">use</a></li></ul></li><li class="item" id="Data.ColumnModel"><span class="title"><span class="p-item">Data.</span><a href="Data.ColumnModel.html">ColumnModel</a></span><span class="icon blue static">static</span><ul class="sublist methods Data.ColumnModel"><span class="subtitle">Methods</span><li><a href="Data.ColumnModel.html#at">at</a></li><li><a href="Data.ColumnModel.html#getColumnModel">getColumnModel</a></li><li><a href="Data.ColumnModel.html#getEditType">getEditType</a></li><li><a href="Data.ColumnModel.html#getIngoredColumnNameList">getIngoredColumnNameList</a></li><li><a href="Data.ColumnModel.html#getVisibleColumnModelList">getVisibleColumnModelList</a></li><li><a href="Data.ColumnModel.html#indexOfColumnName">indexOfColumnName</a></li><li><a href="Data.ColumnModel.html#initialize">initialize</a></li><li><a href="Data.ColumnModel.html#isLside">isLside</a></li><li><a href="Data.ColumnModel.html#isTextType">isTextType</a></li></ul></li><li class="item" id="Data.Row"><span class="title"><span class="p-item">Data.</span><a href="Data.Row.html">Row</a></span><span class="icon blue static">static</span><ul class="sublist methods Data.Row"><span class="subtitle">Methods</span><li><a href="Data.Row.html#getCellState">getCellState</a></li><li><a href="Data.Row.html#getClassNameList">getClassNameList</a></li><li><a href="Data.Row.html#getRelationResult">getRelationResult</a></li><li><a href="Data.Row.html#getRowSpanData">getRowSpanData</a></li><li><a href="Data.Row.html#getVisibleText">getVisibleText</a></li><li><a href="Data.Row.html#initialize">initialize</a></li><li><a href="Data.Row.html#isDisabled">isDisabled</a></li><li><a href="Data.Row.html#isEditable">isEditable</a></li></ul></li><li class="item" id="Data.RowList"><span class="title"><span class="p-item">Data.</span><a href="Data.RowList.html">RowList</a></span><span class="icon blue static">static</span><ul class="sublist methods Data.RowList"><span class="subtitle">Methods</span><li><a href="Data.RowList.html#addCellClassName">addCellClassName</a></li><li><a href="Data.RowList.html#addRowClassName">addRowClassName</a></li><li><a href="Data.RowList.html#append">append</a></li><li><a href="Data.RowList.html#comparator">comparator</a></li><li><a href="Data.RowList.html#getMainRowKey">getMainRowKey</a></li><li><a href="Data.RowList.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="Data.RowList.html#getOriginal">getOriginal</a></li><li><a href="Data.RowList.html#getOriginalRow">getOriginalRow</a></li><li><a href="Data.RowList.html#getOriginalRowList">getOriginalRowList</a></li><li><a href="Data.RowList.html#getRowList">getRowList</a></li><li><a href="Data.RowList.html#indexOfRowKey">indexOfRowKey</a></li><li><a href="Data.RowList.html#initialize">initialize</a></li><li><a href="Data.RowList.html#isRowSpanEnable">isRowSpanEnable</a></li><li><a href="Data.RowList.html#isSortedByField">isSortedByField</a></li><li><a href="Data.RowList.html#parse">parse</a></li><li><a href="Data.RowList.html#prepend">prepend</a></li><li><a href="Data.RowList.html#removeCellClassName">removeCellClassName</a></li><li><a href="Data.RowList.html#removeRow">removeRow</a></li><li><a href="Data.RowList.html#removeRowClassName">removeRowClassName</a></li><li><a href="Data.RowList.html#setExtraData">setExtraData</a></li><li><a href="Data.RowList.html#setOriginalRowList">setOriginalRowList</a></li><li><a href="Data.RowList.html#setRowState">setRowState</a></li><li><a href="Data.RowList.html#sortByField">sortByField</a></li></ul></li><li class="item" id="Model.Base"><span class="title"><span class="p-item">Model.</span><a href="Model.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist members Model.Base"><span class="subtitle">Members</span><li><a href="Model.Base.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division Model.Base"><li></li></ul><ul class="sublist methods Model.Base"><span class="subtitle">Methods</span><li><a href="Model.Base.html#initialize">initialize</a></li></ul></li><li class="item" id="Model.Dimension"><span class="title"><span class="p-item">Model.</span><a href="Model.Dimension.html">Dimension</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Dimension"><span class="subtitle">Methods</span><li><a href="Model.Dimension.html#getCellPosition">getCellPosition</a></li><li><a href="Model.Dimension.html#getColumnWidthList">getColumnWidthList</a></li><li><a href="Model.Dimension.html#getDisplayRowCount">getDisplayRowCount</a></li><li><a href="Model.Dimension.html#getFrameWidth">getFrameWidth</a></li><li><a href="Model.Dimension.html#getScrollXHeight">getScrollXHeight</a></li><li><a href="Model.Dimension.html#initialize">initialize</a></li><li><a href="Model.Dimension.html#restoreColumnWidth">restoreColumnWidth</a></li><li><a href="Model.Dimension.html#setColumnWidth">setColumnWidth</a></li><li><a href="Model.Dimension.html#setColumnWidthList">setColumnWidthList</a></li></ul></li><li class="item" id="Model.Focus"><span class="title"><span class="p-item">Model.</span><a href="Model.Focus.html">Focus</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Focus"><span class="subtitle">Methods</span><li><a href="Model.Focus.html#blur">blur</a></li><li><a href="Model.Focus.html#firstColumnName">firstColumnName</a></li><li><a href="Model.Focus.html#firstRowKey">firstRowKey</a></li><li><a href="Model.Focus.html#focus">focus</a></li><li><a href="Model.Focus.html#has">has</a></li><li><a href="Model.Focus.html#indexOf">indexOf</a></li><li><a href="Model.Focus.html#initialize">initialize</a></li><li><a href="Model.Focus.html#lastColumnName">lastColumnName</a></li><li><a href="Model.Focus.html#lastRowKey">lastRowKey</a></li><li><a href="Model.Focus.html#nextColumnIndex">nextColumnIndex</a></li><li><a href="Model.Focus.html#nextColumnName">nextColumnName</a></li><li><a href="Model.Focus.html#nextRowIndex">nextRowIndex</a></li><li><a href="Model.Focus.html#nextRowKey">nextRowKey</a></li><li><a href="Model.Focus.html#prevColumnIndex">prevColumnIndex</a></li><li><a href="Model.Focus.html#prevColumnName">prevColumnName</a></li><li><a href="Model.Focus.html#prevRowIndex">prevRowIndex</a></li><li><a href="Model.Focus.html#prevRowKey">prevRowKey</a></li><li><a href="Model.Focus.html#select">select</a></li><li><a href="Model.Focus.html#unselect">unselect</a></li><li><a href="Model.Focus.html#which">which</a></li></ul></li><li class="item" id="Model.Renderer"><span class="title"><span class="p-item">Model.</span><a href="Model.Renderer.html">Renderer</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Renderer"><span class="subtitle">Methods</span><li><a href="Model.Renderer.html#executeRelation">executeRelation</a></li><li><a href="Model.Renderer.html#getCellData">getCellData</a></li><li><a href="Model.Renderer.html#getCollection">getCollection</a></li><li><a href="Model.Renderer.html#initialize">initialize</a></li><li><a href="Model.Renderer.html#initializeVariables">initializeVariables</a></li><li><a href="Model.Renderer.html#refresh">refresh</a></li></ul></li><li class="item" id="Model.Renderer.Smart"><span class="title"><span class="p-item">Model.Renderer.</span><a href="Model.Renderer.Smart.html">Smart</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Renderer.Smart"><span class="subtitle">Methods</span><li><a href="Model.Renderer.Smart.html#initialize">initialize</a></li></ul></li><li class="item" id="Model.Row"><span class="title"><span class="p-item">Model.</span><a href="Model.Row.html">Row</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Row"><span class="subtitle">Methods</span><li><a href="Model.Row.html#_setRowExtraData">_setRowExtraData</a></li><li><a href="Model.Row.html#parse">parse</a></li><li><a href="Model.Row.html#setCell">setCell</a></li></ul></li><li class="item" id="Model.RowList"><span class="title"><span class="p-item">Model.</span><a href="Model.RowList.html">RowList</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.RowList"><span class="subtitle">Methods</span><li><a href="Model.RowList.html#initialize">initialize</a></li></ul></li><li class="item" id="ne.Grid"><span class="title"><span class="p-item">ne.</span><a href="ne.Grid.html">Grid</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.Grid"><span class="subtitle">Methods</span><li><a href="ne.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="ne.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="ne.Grid.html#appendRow">appendRow</a></li><li><a href="ne.Grid.html#blur">blur</a></li><li><a href="ne.Grid.html#check">check</a></li><li><a href="ne.Grid.html#checkAll">checkAll</a></li><li><a href="ne.Grid.html#clear">clear</a></li><li><a href="ne.Grid.html#destroy">destroy</a></li><li><a href="ne.Grid.html#disable">disable</a></li><li><a href="ne.Grid.html#disableCheck">disableCheck</a></li><li><a href="ne.Grid.html#disableRow">disableRow</a></li><li><a href="ne.Grid.html#enable">enable</a></li><li><a href="ne.Grid.html#enableCheck">enableCheck</a></li><li><a href="ne.Grid.html#enableRow">enableRow</a></li><li><a href="ne.Grid.html#filterData">filterData</a></li><li><a href="ne.Grid.html#filterData">filterData</a></li><li><a href="ne.Grid.html#focus">focus</a></li><li><a href="ne.Grid.html#focusAt">focusAt</a></li><li><a href="ne.Grid.html#focusIn">focusIn</a></li><li><a href="ne.Grid.html#focusInAt">focusInAt</a></li><li><a href="ne.Grid.html#getAddOn">getAddOn</a></li><li><a href="ne.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="ne.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="ne.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="ne.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="ne.Grid.html#getElement">getElement</a></li><li><a href="ne.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="ne.Grid.html#getRow">getRow</a></li><li><a href="ne.Grid.html#getRowAt">getRowAt</a></li><li><a href="ne.Grid.html#getRowCount">getRowCount</a></li><li><a href="ne.Grid.html#getRowList">getRowList</a></li><li><a href="ne.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="ne.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="ne.Grid.html#getValue">getValue</a></li><li><a href="ne.Grid.html#initialize">initialize</a></li><li><a href="ne.Grid.html#isChanged">isChanged</a></li><li><a href="ne.Grid.html#prependRow">prependRow</a></li><li><a href="ne.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="ne.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="ne.Grid.html#removeRow">removeRow</a></li><li><a href="ne.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="ne.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="ne.Grid.html#restore">restore</a></li><li><a href="ne.Grid.html#select">select</a></li><li><a href="ne.Grid.html#setColumnFixIndex">setColumnFixIndex</a></li><li><a href="ne.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="ne.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="ne.Grid.html#setGridSize">setGridSize</a></li><li><a href="ne.Grid.html#setRowList">setRowList</a></li><li><a href="ne.Grid.html#setScrollHandlerPosition">setScrollHandlerPosition</a></li><li><a href="ne.Grid.html#setValue">setValue</a></li><li><a href="ne.Grid.html#sort">sort</a></li><li><a href="ne.Grid.html#uncheck">uncheck</a></li><li><a href="ne.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="ne.Grid.html#unselect">unselect</a></li><li><a href="ne.Grid.html#unSort">unSort</a></li><li><a href="ne.Grid.html#use">use</a></li></ul></li><li class="item" id="View.Base"><span class="title"><span class="p-item">View.</span><a href="View.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist members View.Base"><span class="subtitle">Members</span><li><a href="View.Base.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Base"><li></li></ul><ul class="sublist methods View.Base"><span class="subtitle">Methods</span><li><a href="View.Base.html#addView">addView</a></li><li><a href="View.Base.html#createEventData">createEventData</a></li><li><a href="View.Base.html#createView">createView</a></li><li><a href="View.Base.html#destroy">destroy</a></li><li><a href="View.Base.html#destroyChildren">destroyChildren</a></li><li><a href="View.Base.html#error">error</a></li><li><a href="View.Base.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Base.Painter"><span class="title"><span class="p-item">View.Base.</span><a href="View.Base.Painter.html">Painter</a></span><span class="icon blue static">static</span><ul class="sublist members View.Base.Painter"><span class="subtitle">Members</span><li><a href="View.Base.Painter.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Base.Painter"><li></li></ul><ul class="sublist methods View.Base.Painter"><span class="subtitle">Methods</span><li><a href="View.Base.Painter.html#addView">addView</a></li><li><a href="View.Base.Painter.html#attachHandler">attachHandler</a></li><li><a href="View.Base.Painter.html#createEventData">createEventData</a></li><li><a href="View.Base.Painter.html#createView">createView</a></li><li><a href="View.Base.Painter.html#destroy">destroy</a></li><li><a href="View.Base.Painter.html#destroyChildren">destroyChildren</a></li><li><a href="View.Base.Painter.html#detachHandler">detachHandler</a></li><li><a href="View.Base.Painter.html#error">error</a></li><li><a href="View.Base.Painter.html#getHtml">getHtml</a></li><li><a href="View.Base.Painter.html#initialize">initialize</a></li><li><a href="View.Base.Painter.html#initializeEventHandler">initializeEventHandler</a></li></ul></li><li class="item" id="View.Base.Painter.Cell"><span class="title"><span class="p-item">View.Base.Painter.</span><a href="View.Base.Painter.Cell.html">Cell</a></span><span class="icon blue static">static</span><ul class="sublist members View.Base.Painter.Cell"><span class="subtitle">Members</span><li><a href="View.Base.Painter.Cell.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Base.Painter.Cell.html#baseTemplate">baseTemplate</a></li><li><a href="View.Base.Painter.Cell.html#eventHandler">eventHandler</a></li><li><a href="View.Base.Painter.Cell.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Base.Painter.Cell.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Base.Painter.Cell"><li></li></ul><ul class="sublist methods View.Base.Painter.Cell"><span class="subtitle">Methods</span><li><a href="View.Base.Painter.Cell.html#addView">addView</a></li><li><a href="View.Base.Painter.Cell.html#attachHandler">attachHandler</a></li><li><a href="View.Base.Painter.Cell.html#createEventData">createEventData</a></li><li><a href="View.Base.Painter.Cell.html#createView">createView</a></li><li><a href="View.Base.Painter.Cell.html#destroy">destroy</a></li><li><a href="View.Base.Painter.Cell.html#destroyChildren">destroyChildren</a></li><li><a href="View.Base.Painter.Cell.html#detachHandler">detachHandler</a></li><li><a href="View.Base.Painter.Cell.html#error">error</a></li><li><a href="View.Base.Painter.Cell.html#focusIn">focusIn</a></li><li><a href="View.Base.Painter.Cell.html#focusOut">focusOut</a></li><li><a href="View.Base.Painter.Cell.html#getAttributes">getAttributes</a></li><li><a href="View.Base.Painter.Cell.html#getColumnModel">getColumnModel</a></li><li><a href="View.Base.Painter.Cell.html#getColumnName">getColumnName</a></li><li><a href="View.Base.Painter.Cell.html#getContentHtml">getContentHtml</a></li><li><a href="View.Base.Painter.Cell.html#getEditType">getEditType</a></li><li><a href="View.Base.Painter.Cell.html#getHtml">getHtml</a></li><li><a href="View.Base.Painter.Cell.html#getRowKey">getRowKey</a></li><li><a href="View.Base.Painter.Cell.html#initialize">initialize</a></li><li><a href="View.Base.Painter.Cell.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Base.Painter.Cell.html#onModelChange">onModelChange</a></li><li><a href="View.Base.Painter.Cell.html#redraw">redraw</a></li><li><a href="View.Base.Painter.Cell.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Base.Painter.Cell.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.CellFactory"><span class="title"><span class="p-item">View.</span><a href="View.CellFactory.html">CellFactory</a></span><span class="icon blue static">static</span><ul class="sublist methods View.CellFactory"><span class="subtitle">Methods</span><li><a href="View.CellFactory.html#attachHandler">attachHandler</a></li><li><a href="View.CellFactory.html#detachHandler">detachHandler</a></li><li><a href="View.CellFactory.html#getInstance">getInstance</a></li><li><a href="View.CellFactory.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Clipboard"><span class="title"><span class="p-item">View.</span><a href="View.Clipboard.html">Clipboard</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Clipboard"><span class="subtitle">Methods</span><li><a href="View.Clipboard.html#initialize">initialize</a></li><li><a href="View.Clipboard.html#render">render</a></li></ul></li><li class="item" id="View.Layer.Base"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Base"><span class="subtitle">Methods</span><li><a href="View.Layer.Base.html#hide">hide</a></li><li><a href="View.Layer.Base.html#initialize">initialize</a></li><li><a href="View.Layer.Base.html#render">render</a></li><li><a href="View.Layer.Base.html#show">show</a></li></ul></li><li class="item" id="View.Layer.Empty"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Empty.html">Empty</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Empty"><span class="subtitle">Methods</span><li><a href="View.Layer.Empty.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layer.Loading"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Loading.html">Loading</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Loading"><span class="subtitle">Methods</span><li><a href="View.Layer.Loading.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layer.Ready"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Ready.html">Ready</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Ready"><span class="subtitle">Methods</span><li><a href="View.Layer.Ready.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layout.Body"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Body.html">Body</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Body"><span class="subtitle">Methods</span><li><a href="View.Layout.Body.html#initialize">initialize</a></li><li><a href="View.Layout.Body.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Frame"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Frame.html">Frame</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.html#afterRender">afterRender</a></li><li><a href="View.Layout.Frame.html#beforeRender">beforeRender</a></li><li><a href="View.Layout.Frame.html#initialize">initialize</a></li><li><a href="View.Layout.Frame.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Frame.Lside"><span class="title"><span class="p-item">View.Layout.Frame.</span><a href="View.Layout.Frame.Lside.html">Lside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame.Lside"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.Lside.html#beforeRender">beforeRender</a></li><li><a href="View.Layout.Frame.Lside.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layout.Frame.Rside"><span class="title"><span class="p-item">View.Layout.Frame.</span><a href="View.Layout.Frame.Rside.html">Rside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame.Rside"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.Rside.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layout.Frame.Rside.VirtualScrollBar"><span class="title"><span class="p-item">View.Layout.Frame.Rside.</span><a href="View.Layout.Frame.Rside.VirtualScrollBar.html">VirtualScrollBar</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame.Rside.VirtualScrollBar"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.Rside.VirtualScrollBar.html#destroy">destroy</a></li><li><a href="View.Layout.Frame.Rside.VirtualScrollBar.html#initialize">initialize</a></li><li><a href="View.Layout.Frame.Rside.VirtualScrollBar.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Header"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Header.html">Header</a></span><span class="icon blue static">static</span><ul class="sublist members View.Layout.Header"><span class="subtitle">Members</span><li><a href="View.Layout.Header.html#template">template</a></li><li><a href="View.Layout.Header.html#templateCol">templateCol</a></li><li><a href="View.Layout.Header.html#templateHeader">templateHeader</a></li></ul><ul class="sublist division View.Layout.Header"><li></li></ul><ul class="sublist methods View.Layout.Header"><span class="subtitle">Methods</span><li><a href="View.Layout.Header.html#initialize">initialize</a></li><li><a href="View.Layout.Header.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Header.ResizeHandler"><span class="title"><span class="p-item">View.Layout.Header.</span><a href="View.Layout.Header.ResizeHandler.html">ResizeHandler</a></span><span class="icon blue static">static</span><ul class="sublist members View.Layout.Header.ResizeHandler"><span class="subtitle">Members</span><li><a href="View.Layout.Header.ResizeHandler.html#template">template</a></li></ul><ul class="sublist division View.Layout.Header.ResizeHandler"><li></li></ul><ul class="sublist methods View.Layout.Header.ResizeHandler"><span class="subtitle">Methods</span><li><a href="View.Layout.Header.ResizeHandler.html#destroy">destroy</a></li><li><a href="View.Layout.Header.ResizeHandler.html#initialize">initialize</a></li><li><a href="View.Layout.Header.ResizeHandler.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Toolbar"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Toolbar.html">Toolbar</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Toolbar"><span class="subtitle">Methods</span><li><a href="View.Layout.Toolbar.html#initialize">initialize</a></li><li><a href="View.Layout.Toolbar.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Toolbar.ControlPanel"><span class="title"><span class="p-item">View.Layout.Toolbar.</span><a href="View.Layout.Toolbar.ControlPanel.html">ControlPanel</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Toolbar.ControlPanel"><span class="subtitle">Methods</span><li><a href="View.Layout.Toolbar.ControlPanel.html#initialize">initialize</a></li><li><a href="View.Layout.Toolbar.ControlPanel.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Toolbar.Pagination"><span class="title"><span class="p-item">View.Layout.Toolbar.</span><a href="View.Layout.Toolbar.Pagination.html">Pagination</a></span><span class="icon blue static">static</span></li><li class="item" id="View.Layout.Toolbar.ResizeHandler"><span class="title"><span class="p-item">View.Layout.Toolbar.</span><a href="View.Layout.Toolbar.ResizeHandler.html">ResizeHandler</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Toolbar.ResizeHandler"><span class="subtitle">Methods</span><li><a href="View.Layout.Toolbar.ResizeHandler.html#destroy">destroy</a></li><li><a href="View.Layout.Toolbar.ResizeHandler.html#initialize">initialize</a></li><li><a href="View.Layout.Toolbar.ResizeHandler.html#render">render</a></li></ul></li><li class="item" id="View.Painter.Cell.List"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.List.html">List</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.List"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.List.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.List.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.List.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.List.html#getOptionList">getOptionList</a></li><li><a href="View.Painter.Cell.List.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.List.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.List.Button"><span class="title"><span class="p-item">View.Painter.Cell.List.</span><a href="View.Painter.Cell.List.Button.html">Button</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.List.Button"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.List.Button.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.List.Button.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.List.Button.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.List.Button.html#getOptionList">getOptionList</a></li><li><a href="View.Painter.Cell.List.Button.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.List.Button.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.List.Select"><span class="title"><span class="p-item">View.Painter.Cell.List.</span><a href="View.Painter.Cell.List.Select.html">Select</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.List.Select"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.List.Select.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.List.Select.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.List.Select.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.List.Select.html#getOptionList">getOptionList</a></li><li><a href="View.Painter.Cell.List.Select.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.List.Select.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.MainButton"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.MainButton.html">MainButton</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.MainButton"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.MainButton.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.MainButton.html#baseTemplate">baseTemplate</a></li><li><a href="View.Painter.Cell.MainButton.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.MainButton.html#setOwnProperties">setOwnProperties</a></li><li><a href="View.Painter.Cell.MainButton.html#template">template</a></li></ul><ul class="sublist division View.Painter.Cell.MainButton"><li></li></ul><ul class="sublist methods View.Painter.Cell.MainButton"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.MainButton.html#addView">addView</a></li><li><a href="View.Painter.Cell.MainButton.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.MainButton.html#createView">createView</a></li><li><a href="View.Painter.Cell.MainButton.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.MainButton.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.MainButton.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#error">error</a></li><li><a href="View.Painter.Cell.MainButton.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.MainButton.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.MainButton.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.MainButton.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.MainButton.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.MainButton.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.MainButton.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.MainButton.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.MainButton.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.MainButton.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.MainButton.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.MainButton.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.MainButton.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.MainButton.html#setKeyDownSwitch">setKeyDownSwitch</a></li><li><a href="View.Painter.Cell.MainButton.html#toggle">toggle</a></li></ul></li><li class="item" id="View.Painter.Cell.Normal"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.Normal.html">Normal</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Normal"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Normal.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.Normal.html#baseTemplate">baseTemplate</a></li><li><a href="View.Painter.Cell.Normal.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.Normal.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.Normal.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.Normal"><li></li></ul><ul class="sublist methods View.Painter.Cell.Normal"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Normal.html#addView">addView</a></li><li><a href="View.Painter.Cell.Normal.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.Normal.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.Normal.html#createView">createView</a></li><li><a href="View.Painter.Cell.Normal.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.Normal.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.Normal.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.Normal.html#error">error</a></li><li><a href="View.Painter.Cell.Normal.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Normal.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Normal.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.Normal.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.Normal.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.Normal.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Normal.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Normal.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.Normal.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.Normal.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Normal.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.Normal.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.Normal.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.Normal.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.Normal.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.Painter.Cell.Normal.Number"><span class="title"><span class="p-item">View.Painter.Cell.Normal.</span><a href="View.Painter.Cell.Normal.Number.html">Number</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Normal.Number"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Normal.Number.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.Normal.Number.html#baseTemplate">baseTemplate</a></li><li><a href="View.Painter.Cell.Normal.Number.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.Normal.Number.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.Normal.Number"><li></li></ul><ul class="sublist methods View.Painter.Cell.Normal.Number"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Normal.Number.html#addView">addView</a></li><li><a href="View.Painter.Cell.Normal.Number.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.Normal.Number.html#createView">createView</a></li><li><a href="View.Painter.Cell.Normal.Number.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.Normal.Number.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.Normal.Number.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#error">error</a></li><li><a href="View.Painter.Cell.Normal.Number.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Normal.Number.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.Normal.Number.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Normal.Number.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.Normal.Number.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.Normal.Number.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.Normal.Number.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.Painter.Cell.Text"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.Text.html">Text</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Text"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Text.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.Text.html#baseTemplate">baseTemplate</a></li><li><a href="View.Painter.Cell.Text.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.Text.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.Text.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.Text"><li></li></ul><ul class="sublist methods View.Painter.Cell.Text"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Text.html#addView">addView</a></li><li><a href="View.Painter.Cell.Text.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.Text.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.Text.html#createView">createView</a></li><li><a href="View.Painter.Cell.Text.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.Text.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.Text.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.Text.html#error">error</a></li><li><a href="View.Painter.Cell.Text.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Text.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Text.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.Text.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.Text.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.Text.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Text.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Text.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.Text.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.Text.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Text.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.Text.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.Text.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.Text.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.Text.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.Painter.Cell.Text.Convertible"><span class="title"><span class="p-item">View.Painter.Cell.Text.</span><a href="View.Painter.Cell.Text.Convertible.html">Convertible</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Text.Convertible"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Text.Convertible.html#doubleClickDuration">doubleClickDuration</a></li></ul><ul class="sublist division View.Painter.Cell.Text.Convertible"><li></li></ul><ul class="sublist methods View.Painter.Cell.Text.Convertible"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Text.Convertible.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.Text.Password"><span class="title"><span class="p-item">View.Painter.Cell.Text.</span><a href="View.Painter.Cell.Text.Password.html">Password</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.Text.Password"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Text.Password.html#getEditType">getEditType</a></li></ul></li><li class="item" id="View.RowList"><span class="title"><span class="p-item">View.</span><a href="View.RowList.html">RowList</a></span><span class="icon blue static">static</span><ul class="sublist methods View.RowList"><span class="subtitle">Methods</span><li><a href="View.RowList.html#initialize">initialize</a></li><li><a href="View.RowList.html#render">render</a></li></ul></li><li class="item" id="View.Selection"><span class="title"><span class="p-item">View.</span><a href="View.Selection.html">Selection</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection"><span class="subtitle">Methods</span><li><a href="View.Selection.html#attachMouseEvent">attachMouseEvent</a></li><li><a href="View.Selection.html#createLayer">createLayer</a></li><li><a href="View.Selection.html#destroy">destroy</a></li><li><a href="View.Selection.html#detachMouseEvent">detachMouseEvent</a></li><li><a href="View.Selection.html#disable">disable</a></li><li><a href="View.Selection.html#enable">enable</a></li><li><a href="View.Selection.html#endSelection">endSelection</a></li><li><a href="View.Selection.html#getIndexFromMousePosition">getIndexFromMousePosition</a></li><li><a href="View.Selection.html#getRange">getRange</a></li><li><a href="View.Selection.html#getSelectionToString">getSelectionToString</a></li><li><a href="View.Selection.html#hide">hide</a></li><li><a href="View.Selection.html#initialize">initialize</a></li><li><a href="View.Selection.html#isShown">isShown</a></li><li><a href="View.Selection.html#selectAll">selectAll</a></li><li><a href="View.Selection.html#show">show</a></li><li><a href="View.Selection.html#startSelection">startSelection</a></li><li><a href="View.Selection.html#updateSelection">updateSelection</a></li></ul></li><li class="item" id="View.Selection.Layer"><span class="title"><span class="p-item">View.Selection.</span><a href="View.Selection.Layer.html">Layer</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection.Layer"><span class="subtitle">Methods</span><li><a href="View.Selection.Layer.html#hide">hide</a></li><li><a href="View.Selection.Layer.html#initialize">initialize</a></li><li><a href="View.Selection.Layer.html#render">render</a></li><li><a href="View.Selection.Layer.html#show">show</a></li></ul></li><li class="item" id="View.Selection.Layer.Lside"><span class="title"><span class="p-item">View.Selection.Layer.</span><a href="View.Selection.Layer.Lside.html">Lside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection.Layer.Lside"><span class="subtitle">Methods</span><li><a href="View.Selection.Layer.Lside.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Selection.Layer.Rside"><span class="title"><span class="p-item">View.Selection.Layer.</span><a href="View.Selection.Layer.Rside.html">Rside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection.Layer.Rside"><span class="subtitle">Methods</span><li><a href="View.Selection.Layer.Rside.html#initialize">initialize</a></li></ul></li></ul><h3>Namespaces</h3><ul class="list namespaces"><li class="item" id="ne"><span class="title"><a href="ne.html">ne</a></span></li></ul><h3>Interfaces</h3><ul class="list interfaces"><li class="item" id="View.Base.Painter.Cell.Interface"><span class="icon blue static">static</span><span class="title"><a href="View.Base.Painter.Cell.Interface.html">Interface</a></span><ul class="sublist methods View.Base.Painter.Cell.Interface"><span class="subtitle">Methods</span><li><a href="View.Base.Painter.Cell.Interface.html#focusIn">focusIn</a></li><li><a href="View.Base.Painter.Cell.Interface.html#getContentHtml">getContentHtml</a></li><li><a href="View.Base.Painter.Cell.Interface.html#getEditType">getEditType</a></li><li><a href="View.Base.Painter.Cell.Interface.html#setElementAttribute">setElementAttribute</a></li></ul></li></ul><h3>Global</h3><ul class="list globals"><li class="item" id="AddOn"><span class="title"><a href="global.html#AddOn">AddOn</a></span></li><li class="item" id="Collection"><span class="title"><a href="global.html#Collection">Collection</a></span></li><li class="item" id="Data"><span class="title"><a href="global.html#Data">Data</a></span></li><li class="item" id="getFormElement"><span class="title"><a href="global.html#getFormElement">getFormElement</a></span></li><li class="item" id="Model"><span class="title"><a href="global.html#Model">Model</a></span></li><li class="item" id="setFormData"><span class="title"><a href="global.html#setFormData">setFormData</a></span></li><li class="item" id="Util"><span class="title"><a href="global.html#Util">Util</a></span><ul class="sublist members Util"><span class="subtitle">Members</span><li><a href="global.html#Util#.form">form</a></li></ul><ul class="sublist division Util"><li></li></ul><ul class="sublist methods Util"><span class="subtitle">Methods</span><li><a href="global.html#Util#.convertValueType">convertValueType</a></li><li><a href="global.html#Util#.getAttributesString">getAttributesString</a></li><li><a href="global.html#Util#.getDisplayRowCount">getDisplayRowCount</a></li><li><a href="global.html#Util#.getHeight">getHeight</a></li><li><a href="global.html#Util#.getRowHeight">getRowHeight</a></li><li><a href="global.html#Util#.getUniqueKey">getUniqueKey</a></li><li><a href="global.html#Util#.isEqual">isEqual</a></li><li><a href="global.html#Util#.stripTags">stripTags</a></li><li><a href="global.html#Util#.sum">sum</a></li><li><a href="global.html#Util#.toQueryObject">toQueryObject</a></li><li><a href="global.html#Util#.toQueryString">toQueryString</a></li></ul></li><li class="item" id="View"><span class="title"><a href="global.html#View">View</a></span><ul class="sublist members View"><span class="subtitle">Members</span><li><a href="global.html#View#.Layer">Layer</a></li><li><a href="global.html#View#.Layout">Layout</a></li><li><a href="global.html#View#.Painter">Painter</a></li></ul></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Header 관련
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+    /**
+     * Header 레이아웃 View
+     * @constructor View.Layout.Header
+     */
+    View.Layout.Header = View.Base.extend(/**@lends View.Layout.Header.prototype */{
+        tagName: 'div',
+        className: 'header',
+        whichSide: 'R',
+        events: {
+            'click' : '_onClick'
+        },
+        /**
+         * 초기화 메서드
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+         */
+        initialize: function(options) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this.whichSide = options.whichSide;
+            this.setOwnProperties({
+                timeoutForAllChecked: 0
+            });
+            this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
+                .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this);
+
+        },
+        /**
+         * 전체 template
+         */
+        template: _.template('' +
+        '    &lt;table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '        &lt;colgroup>&lt;%=colGroup%>&lt;/colgroup>' +
+        '        &lt;tbody>&lt;%=tBody%>&lt;/tbody>' +
+        '    &lt;/table>'),
+        /**
+         * &lt;th> 템플릿
+         */
+        templateHeader: _.template('' +
+        '&lt;th columnname="&lt;%=columnName%>" ' +
+        'height="&lt;%=height%>" ' +
+        '&lt;%if(colspan > 0) {%>' +
+        'colspan=&lt;%=colspan%> ' +
+        '&lt;%}%>' +
+        '&lt;%if(rowspan > 0) {%>' +
+        'rowspan=&lt;%=rowspan%> ' +
+        '&lt;%}%>' +
+        '>&lt;%=title%>&lt;/th>' +
+        ''),
+        /**
+         * &lt;col> 템플릿
+         */
+        templateCol: _.template('' +
+        '&lt;col ' +
+        'columnname="&lt;%=columnName%>" ' +
+        'style="width:&lt;%=width%>px">' +
+        ''),
+        /**
+         * col group 마크업을 생성한다.
+         *
+         * @return {string} &lt;colgroup>에 들어갈 html 마크업 스트링
+         * @private
+         */
+        _getColGroupMarkup: function() {
+            var columnData = this._getColumnData(),
+                columnWidthList = columnData.widthList,
+                columnModelList = columnData.modelList,
+                htmlList = [];
+
+            _.each(columnWidthList, function(width, index) {
+                htmlList.push(this.templateCol({
+                    columnName: columnModelList[index]['columnName'],
+                    width: width
+                }));
+            }, this);
+            return htmlList.join('');
+        },
+        /**
+         * 그리드의 checkCount 가 변경되었을 때 수행하는 헨들러
+         * @private
+         */
+        _onCheckCountChange: function() {
+            if (this.grid.option('selectType') === 'checkbox') {
+                clearTimeout(this.timeoutForAllChecked);
+                this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
+            }
+        },
+        /**
+         * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
+         * @return {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
+         * @private
+         */
+        _getHeaderMainCheckbox: function() {
+            return this.$el.find('th[columnname="_button"] input');
+        },
+        /**
+         * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
+         * @private
+         */
+        _syncCheckState: function() {
+            if (this.grid.option('selectType') === 'checkbox') {
+                var $input = this._getHeaderMainCheckbox(),
+                    enableCount = 0,
+                    checkedCount;
+                /* istanbul ignore else */
+                if ($input.length) {
+                    checkedCount = this.grid.dataModel.getRowList(true).length;
+                    this.grid.dataModel.forEach(function(row, key) {
+                        var cellState = row.getCellState('_button');
+                        if (!cellState.isDisabled &amp;&amp; cellState.isEditable) {
+                            enableCount++;
+                        }
+                    }, this);
+                    $input.prop('checked', enableCount === checkedCount);
+                }
+            }
+        },
+        /**
+         * column width 변경시 col 엘리먼트들을 조작하기 위한 헨들러
+         * @private
+         */
+        _onColumnWidthChanged: function() {
+            var columnData = this._getColumnData(),
+                columnWidthList = columnData.widthList,
+                $colList = this.$el.find('col');
+
+            _.each(columnWidthList, function(columnWidth, index) {
+                $colList.eq(index).css('width', columnWidth + 'px');
+            });
+        },
+        /**
+         * scroll left 값이 변경되었을 때 header 싱크를 맞추는 이벤트 핸들러
+         * @param {Object} model    변경이 발생한 model 인스턴스
+         * @param {Number} value    scrollLeft 값
+         * @private
+         */
+        /* istanbul ignore next: scrollLeft 를 확인할 수 없음 */
+        _onScrollLeftChange: function(model, value) {
+            if (this.whichSide === 'R') {
+                this.el.scrollLeft = value;
+            }
+        },
+        /**
+         * 클릭 이벤트 핸들러
+         * @param {Event} clickEvent    클릭이벤트
+         * @private
+         */
+        _onClick: function(clickEvent) {
+            var $target = $(clickEvent.target);
+
+            /* istanbul ignore else */
+            if ($target.closest('th').attr('columnname') === '_button' &amp;&amp; $target.is('input')) {
+                if ($target.prop('checked')) {
+                    this.grid.checkAll();
+                } else {
+                    this.grid.uncheckAll();
+                }
+            }
+        },
+
+        /**
+         * 랜더링
+         * @return {View.Layout.Header}
+         */
+        render: function() {
+            this.destroyChildren();
+
+            var resizeHandler = this.createView(View.Layout.Header.ResizeHandler, {
+                whichSide: this.whichSide,
+                grid: this.grid
+            });
+            if (!this.grid.option('scrollX')) {
+                this.$el.css('overflow-x', 'hidden');
+            }
+
+            if (!this.grid.option('scrollY')) {
+                this.$el.css('overflow-y', 'hidden');
+            }
+
+            this.$el.css({
+                height: this.grid.dimensionModel.get('headerHeight')
+            }).html(this.template({
+                'colGroup' : this._getColGroupMarkup(),
+                'tBody' : this._getTableBodyMarkup()
+            }));
+
+
+            this.$el.append(resizeHandler.render().el);
+            return this;
+        },
+        /**
+         * 컬럼 정보를 반환한다.
+         * @return {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
+         * @private
+         */
+        _getColumnData: function() {
+            var columnModel = this.grid.columnModel,
+                dimensionModel = this.grid.dimensionModel,
+                columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
+                columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
+            return {
+                widthList: columnWidthList,
+                modelList: columnModelList
+            };
+        },
+
+        /**
+         * Header 의 body markup 을 생성한다.
+         * @return {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
+         * @private
+         */
+        _getTableBodyMarkup: function() {
+            var hierarchyList = this._getColumnHierarchyList(),
+                maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
+            // 가공한 컬럼 모델 리스트 정보를 바탕으로 컬럼 엘리먼트들에 대한 마크업을 구성한다.
+            var headerHeight = this.grid.dimensionModel.get('headerHeight'),
+                rowMarkupList = new Array(maxRowCount),
+                columnNameList = new Array(maxRowCount),
+                colSpanList = [],
+                rowHeight = Util.getRowHeight(maxRowCount, headerHeight) - 1,
+                rowSpan = 1,
+                title,
+                height,
+                headerMarkupList;
+
+            _.each(hierarchyList, function(hierarchy, i) {
+                var length = hierarchyList[i].length,
+                    curHeight = 0;
+                _.each(hierarchy, function(columnModel, j) {
+                    var columnName = columnModel['columnName'];
+
+                    rowSpan = (length - 1 === j &amp;&amp; (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
+                    height = rowHeight * rowSpan;
+
+                    if (j === length - 1) {
+                        height = (headerHeight - curHeight) - 2;
+                    } else {
+                        curHeight += height + 1;
+                    }
+                    if (columnNameList[j] === columnName) {
+                        rowMarkupList[j].pop();
+                        colSpanList[j] += 1;
+                    } else {
+                        colSpanList[j] = 1;
+                    }
+                    columnNameList[j] = columnName;
+                    rowMarkupList[j] = rowMarkupList[j] || [];
+                    rowMarkupList[j].push(this.templateHeader({
+                        columnName: columnName,
+                        height: height,
+                        colspan: colSpanList[j],
+                        rowspan: rowSpan,
+                        title: columnModel['title']
+                    }));
+                }, this);
+            }, this);
+            headerMarkupList = _.map(rowMarkupList, function(rowMarkup) {
+                return '&lt;tr>' + rowMarkup.join('') + '&lt;/tr>';
+            });
+
+            return headerMarkupList.join('');
+        },
+        /**
+         * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
+         *
+         * @param {Array} hierarchyList 헤더 마크업 생성시 사용될 계층구조 데이터
+         * @return {number} 헤더 영역의 row 최대값
+         * @private
+         */
+        _getHierarchyMaxRowCount: function(hierarchyList) {
+            var lengthList = [0];
+            _.each(hierarchyList, function(hierarchy) {
+                lengthList.push(hierarchy.length);
+            }, this);
+            return Math.max.apply(Math, lengthList);
+        },
+        /**
+         * column merge 가 설정되어 있을 때 헤더의 계층구조 리스트를 가져온다.
+         * @return {Array}  계층구조 리스트
+         * @private
+         */
+        _getColumnHierarchyList: function() {
+            var columnModelList = this._getColumnData().modelList,
+                hierarchyList;
+
+            hierarchyList = _.map(columnModelList, function(columnModel) {
+                return this._getColumnHierarchy(columnModel).reverse();
+            }, this);
+
+            return hierarchyList;
+        },
+        /**
+         * column merge 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
+         *
+         * @param {Object} columnModel 컬럼모델
+         * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
+         * @return {Array} 계층구조 결과값
+         * @private
+         */
+        _getColumnHierarchy: function(columnModel, resultList) {
+            var columnMergeList = this.grid.option('columnMerge');
+            resultList = resultList || [];
+            /* istanbul ignore else */
+            if (columnModel) {
+                resultList.push(columnModel);
+                /* istanbul ignore else */
+                if (columnMergeList) {
+                    _.each(columnMergeList, function(columnMerge, i) {
+                        if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
+                            resultList = this._getColumnHierarchy(columnMerge, resultList);
+                        }
+                    }, this);
+                }
+            }
+            return resultList;
+        }
+    });
+
+    /**
+     * Reside Handler class
+     * @constructor View.Layout.Header.ResizeHandler
+     */
+    View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header.ResizeHandler.prototype */{
+        tagName: 'div',
+        className: 'resize_handle_container',
+        events: {
+            'mousedown .resize_handle' : '_onMouseDown',
+            'click .resize_handle': '_onClick'
+        },
+        /**
+         * 초기화 함수
+         * @param {Object} options
+         *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
+         */
+        initialize: function(options) {
+            View.Base.prototype.initialize.apply(this, arguments);
+            this.setOwnProperties({
+                whichSide: options.whichSide || 'R',
+                isResizing: false,     //현재 resize 발생 상황인지
+                $target: null,         //이벤트가 발생한 target resize handler
+                differenceLeft: 0,
+                initialWidth: 0,
+                initialOffsetLeft: 0,
+                initialLeft: 0
+            });
+            this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
+        },
+        /**
+         * resize handler 마크업 템플릿
+         */
+        template: _.template('' +
+            '&lt;div columnindex="&lt;%=columnIndex%>" ' +
+            'columnname="&lt;%=columnName%>" ' +
+            'class="resize_handle' +
+            '&lt;% if(isLast === true) ' +
+            ' print(" resize_handle_last");%>' +
+            '" ' +
+            'style="&lt;%=height%>" ' +
+            'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
+            '&lt;/div>'),
+        /**
+         * columnWidthList 와 columnModelList 를 함께 반환한다.
+         * @return {{widthList: (Array|*), modelList: (Array|*)}}
+         * @private
+         */
+        _getColumnData: function() {
+            var columnModel = this.grid.columnModel,
+                dimensionModel = this.grid.dimensionModel,
+                columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
+                columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
+            return {
+                widthList: columnWidthList,
+                modelList: columnModelList
+            };
+        },
+        /**
+         * resize handler 마크업을 구성한다.
+         * @return {String} resize handler 의 html 마크업 스트링
+         * @private
+         */
+        _getResizeHandlerMarkup: function() {
+            var columnData = this._getColumnData(),
+                columnModelList = columnData.modelList,
+                headerHeight = this.grid.dimensionModel.get('headerHeight'),
+                length = columnModelList.length,
+                resizeHandleMarkupList;
+
+            resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
+                return this.template({
+                    columnIndex: index,
+                    columnName: columnModel['columnName'],
+                    isLast: index + 1 === length,
+                    height: headerHeight
+                });
+            }, this);
+            return resizeHandleMarkupList.join('');
+
+        },
+        /**
+         * 랜더링 한다.
+         * @return {View.Layout.Header.ResizeHandler}
+         */
+        render: function() {
+            var headerHeight = this.grid.dimensionModel.get('headerHeight');
+            this.$el.empty();
+            this.$el
+                .show()
+                .css({
+                    'marginTop' : -headerHeight + 'px',
+                    'height' : headerHeight + 'px'
+                })
+                .html(this._getResizeHandlerMarkup());
+            this._refreshHandlerPosition(true);
+            return this;
+        },
+        /**
+         * 생성된 핸들러의 위치를 설정한다.
+         * @private
+         */
+        _refreshHandlerPosition: function(isUpdateWidthList) {
+            var columnData = this._getColumnData(),
+                columnWidthList = columnData.widthList,
+                newColumnWidthList = [],
+                $resizeHandleList = this.$el.find('.resize_handle'),
+                $table = this.$el.parent().find('table:first'),
+                isChanged = false,
+                $handler,
+                columnName,
+                curPos = 0,
+                border = 1,
+                width;
+
+            ne.util.forEachArray($resizeHandleList, function(item, index) {
+                $handler = $resizeHandleList.eq(index);
+                columnName = $handler.attr('columnname');
+                width = $table.find('th[columnname="' + columnName + '"]').width();
+                if (ne.util.isExisty(width)) {
+                    isChanged = isChanged || (width !== columnWidthList[index]);
+                } else {
+                    width = columnWidthList[index];
+                }
+                curPos += width + border;
+                $handler.css('left', (curPos - 3) + 'px');
+                newColumnWidthList.push(width);
+            });
+
+            if (isUpdateWidthList) {
+                this.grid.dimensionModel.setColumnWidthList(newColumnWidthList, this.whichSide);
+            }
+        },
+        /**
+         * 현재 mouse move resizing 중인지 상태 flag 반환
+         * @return {boolean}    현재 resize 중인지 여부
+         * @private
+         */
+        _isResizing: function() {
+            return !!this.isResizing;
+        },
+        /**
+         * mousedown 이벤트 핸들러
+         * @param {event} mouseDownEvent    마우스 이벤트 객체
+         * @private
+         */
+        _onMouseDown: function(mouseDownEvent) {
+            this._startResizing(mouseDownEvent);
+        },
+        /**
+         * click 이벤트 핸들러
+         * @param {Event} clickEvent 마우스 이벤트 객체
+         * @private
+         */
+        _onClick: function(clickEvent) {
+            var $target = $(clickEvent.target),
+                index = parseInt($target.attr('columnindex'), 10),
+                isClicked = $target.data('isClicked');
+
+            if (isClicked) {
+                this.grid.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+                this._clearClickedFlag($target);
+                this._refreshHandlerPosition(true);
+            } else {
+                this._setClickedFlag($target);
+            }
+        },
+        /**
+         * 더블클릭을 확인하기 위한 isClicked 플래그를 설정한다.
+         * @param {jQuery} $target 설정할 타겟 엘리먼트
+         * @private
+         */
+        _setClickedFlag: function($target) {
+            $target.data('isClicked', true);
+            setTimeout($.proxy(this._clearClickedFlag, this, $target), 500);
+        },
+
+        /**
+         * 더블클릭을 확인하기 위한 isClicked 를 제거한다.
+         * @param {jQuery} $target 설정할 타겟 엘리먼트
+         * @private
+         */
+        _clearClickedFlag: function($target) {
+            $target.data('isClicked', false);
+        },
+
+        /**
+         * mouseup 이벤트 핸들러
+         * @private
+         */
+        _onMouseUp: function() {
+            this._stopResizing();
+        },
+        /**
+         * mousemove 이벤트 핸들러
+         * @param {event} mouseMoveEvent    마우스 이벤트 객체
+         * @private
+         */
+        _onMouseMove: function(mouseMoveEvent) {
+            /* istanbul ignore else */
+            if (this._isResizing()) {
+                mouseMoveEvent.preventDefault();
+
+                var left = mouseMoveEvent.pageX - this.initialOffsetLeft,
+                    width = this._calculateWidth(mouseMoveEvent.pageX),
+                    index = parseInt(this.$target.attr('columnindex'), 10);
+
+                this.$target.css('left', left + 'px');
+                this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
+                this._refreshHandlerPosition(true);
+            }
+        },
+        /**
+         * 너비를 계산한다.
+         * @param {number} pageX    마우스의 x 좌표
+         * @return {number} x좌표를 기준으로 계산한 width 값
+         * @private
+         */
+        _calculateWidth: function(pageX) {
+            var difference = pageX - this.initialOffsetLeft - this.initialLeft;
+            return this.initialWidth + difference;
+        },
+        /**
+         * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
+         * @param {number} index 핸들러의 index 값
+         * @return {number} 컬럼 index 값
+         * @private
+         */
+        _getHandlerColumnIndex: function(index) {
+            return this.whichSide === 'R' ? index + this.grid.columnModel.get('columnFixIndex') : index;
+        },
+        /**
+         * resize start 세팅
+         * @param {event} mouseDownEvent 마우스 이벤트
+         * @private
+         */
+        _startResizing: function(mouseDownEvent) {
+            var columnData = this._getColumnData(),
+                columnWidthList = columnData.widthList,
+                $target = $(mouseDownEvent.target);
+
+            this.isResizing = true;
+            this.$target = $target;
+            this.initialLeft = parseInt($target.css('left').replace('px', ''), 10);
+            this.initialOffsetLeft = this.$el.offset().left;
+            this.initialWidth = columnWidthList[$target.attr('columnindex')];
+            $('body')
+                .bind('mousemove', $.proxy(this._onMouseMove, this))
+                .bind('mouseup', $.proxy(this._onMouseUp, this))
+                .css('cursor', 'col-resize');
+
+        },
+        /**
+         * resize stop 세팅
+         * @private
+         */
+        _stopResizing: function() {
+            this.isResizing = false;
+            this.$target = null;
+            this.initialLeft = 0;
+            this.initialOffsetLeft = 0;
+            this.initialWidth = 0;
+            $('body')
+                .unbind('mousemove', $.proxy(this._onMouseMove, this))
+                .unbind('mouseup', $.proxy(this._onMouseUp, this))
+                .css('cursor', 'default');
+        },
+        /**
+         * 소멸자
+         */
+        destroy: function() {
+            this._stopResizing();
+            this.destroyChildren();
+            this.remove();
+        }
+    });
+</code></pre>
+        </article>
+    </section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
