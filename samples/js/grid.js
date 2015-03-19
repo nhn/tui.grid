@@ -2366,7 +2366,12 @@ var Util = {
          * @private
          */
         _setColumnWidthVariables: function(columnWidthList) {
-            columnWidthList = columnWidthList || this._getOriginalWidthList();
+            var isSaveWidthList = false;
+
+            if (!columnWidthList) {
+                columnWidthList = this._getOriginalWidthList();
+                isSaveWidthList = true;
+            }
 
             var rsideWidth,
                 lsideWidth,
@@ -2388,8 +2393,14 @@ var Util = {
                 lsideWidth: lsideWidth,
                 columnWidthList: columnWidthList
             });
+
+            if (isSaveWidthList) {
+                this.set('originalWidthList', columnWidthList);
+            }
+
             this.trigger('columnWidthChanged');
         },
+
         /**
          * 열 고정 영역의 minimum width 값을 구한다.
          * @return {number} 열고정 영역의 최소 너비값.
@@ -2534,7 +2545,17 @@ var Util = {
                 this._setColumnWidthVariables(curColumnWidthList);
             }
         },
-
+        /**
+         * 초기 너비로 돌린다.
+         * @param {Number} index    너비를 변경할 컬럼의 인덱스
+         */
+        restoreColumnWidth: function(index) {
+            var curColumnWidthList = this.get('columnWidthList');
+            if (!ne.util.isUndefined(curColumnWidthList[index])) {
+                curColumnWidthList[index] = this.get('originalWidthList')[index];
+                this._setColumnWidthVariables(curColumnWidthList);
+            }
+        },
         /**
          * 실제 조정된 column의 width 들을 반영한다.
          * @param {Array} columnWidthList   조정된 열의 너비 리스트
@@ -4236,7 +4257,8 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         tagName: 'div',
         className: 'resize_handle_container',
         events: {
-            'mousedown .resize_handle' : '_onMouseDown'
+            'mousedown .resize_handle' : '_onMouseDown',
+            'click .resize_handle': '_onClick'
         },
         /**
          * 초기화 함수
@@ -4375,6 +4397,43 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         _onMouseDown: function(mouseDownEvent) {
             this._startResizing(mouseDownEvent);
         },
+        /**
+         * click 이벤트 핸들러
+         * @param {Event} clickEvent 마우스 이벤트 객체
+         * @private
+         */
+        _onClick: function(clickEvent) {
+            var $target = $(clickEvent.target),
+                index = parseInt($target.attr('columnindex'), 10),
+                isClicked = $target.data('isClicked');
+
+            if (isClicked) {
+                this.grid.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+                this._clearClickedFlag($target);
+                this._refreshHandlerPosition(true);
+            } else {
+                this._setClickedFlag($target);
+            }
+        },
+        /**
+         * 더블클릭을 확인하기 위한 isClicked 플래그를 설정한다.
+         * @param {jQuery} $target
+         * @private
+         */
+        _setClickedFlag: function($target) {
+            $target.data('isClicked', true);
+            setTimeout($.proxy(this._clearClickedFlag, this, $target), 500);
+        },
+
+        /**
+         * 더블클릭을 확인하기 위한 isClicked 를 제거한다.
+         * @param {jQuery} $target
+         * @private
+         */
+        _clearClickedFlag: function($target) {
+            $target.data('isClicked', false);
+        },
+
         /**
          * mouseup 이벤트 핸들러
          * @private

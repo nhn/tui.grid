@@ -328,7 +328,8 @@
         tagName: 'div',
         className: 'resize_handle_container',
         events: {
-            'mousedown .resize_handle' : '_onMouseDown'
+            'mousedown .resize_handle' : '_onMouseDown',
+            'click .resize_handle': '_onClick'
         },
         /**
          * 초기화 함수
@@ -467,6 +468,43 @@
         _onMouseDown: function(mouseDownEvent) {
             this._startResizing(mouseDownEvent);
         },
+        /**
+         * click 이벤트 핸들러
+         * @param {Event} clickEvent 마우스 이벤트 객체
+         * @private
+         */
+        _onClick: function(clickEvent) {
+            var $target = $(clickEvent.target),
+                index = parseInt($target.attr('columnindex'), 10),
+                isClicked = $target.data('isClicked');
+
+            if (isClicked) {
+                this.grid.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+                this._clearClickedFlag($target);
+                this._refreshHandlerPosition(true);
+            } else {
+                this._setClickedFlag($target);
+            }
+        },
+        /**
+         * 더블클릭을 확인하기 위한 isClicked 플래그를 설정한다.
+         * @param {jQuery} $target 설정할 타겟 엘리먼트
+         * @private
+         */
+        _setClickedFlag: function($target) {
+            $target.data('isClicked', true);
+            setTimeout($.proxy(this._clearClickedFlag, this, $target), 500);
+        },
+
+        /**
+         * 더블클릭을 확인하기 위한 isClicked 를 제거한다.
+         * @param {jQuery} $target 설정할 타겟 엘리먼트
+         * @private
+         */
+        _clearClickedFlag: function($target) {
+            $target.data('isClicked', false);
+        },
+
         /**
          * mouseup 이벤트 핸들러
          * @private

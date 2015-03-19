@@ -149,7 +149,12 @@
          * @private
          */
         _setColumnWidthVariables: function(columnWidthList) {
-            columnWidthList = columnWidthList || this._getOriginalWidthList();
+            var isSaveWidthList = false;
+
+            if (!columnWidthList) {
+                columnWidthList = this._getOriginalWidthList();
+                isSaveWidthList = true;
+            }
 
             var rsideWidth,
                 lsideWidth,
@@ -171,8 +176,14 @@
                 lsideWidth: lsideWidth,
                 columnWidthList: columnWidthList
             });
+
+            if (isSaveWidthList) {
+                this.set('originalWidthList', columnWidthList);
+            }
+
             this.trigger('columnWidthChanged');
         },
+
         /**
          * 열 고정 영역의 minimum width 값을 구한다.
          * @return {number} 열고정 영역의 최소 너비값.
@@ -317,7 +328,17 @@
                 this._setColumnWidthVariables(curColumnWidthList);
             }
         },
-
+        /**
+         * 초기 너비로 돌린다.
+         * @param {Number} index    너비를 변경할 컬럼의 인덱스
+         */
+        restoreColumnWidth: function(index) {
+            var curColumnWidthList = this.get('columnWidthList');
+            if (!ne.util.isUndefined(curColumnWidthList[index])) {
+                curColumnWidthList[index] = this.get('originalWidthList')[index];
+                this._setColumnWidthVariables(curColumnWidthList);
+            }
+        },
         /**
          * 실제 조정된 column의 width 들을 반영한다.
          * @param {Array} columnWidthList   조정된 열의 너비 리스트
