@@ -4417,7 +4417,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         },
         /**
          * 더블클릭을 확인하기 위한 isClicked 플래그를 설정한다.
-         * @param {jQuery} $target
+         * @param {jQuery} $target 설정할 타겟 엘리먼트
          * @private
          */
         _setClickedFlag: function($target) {
@@ -4427,7 +4427,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
 
         /**
          * 더블클릭을 확인하기 위한 isClicked 를 제거한다.
-         * @param {jQuery} $target
+         * @param {jQuery} $target 설정할 타겟 엘리먼트
          * @private
          */
         _clearClickedFlag: function($target) {
