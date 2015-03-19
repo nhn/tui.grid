@@ -5,6 +5,8 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // You can set arbitrary key-value pairs.
         distFolder: 'dist',
+        libFolder: 'lib',
+        sampleFolder: 'samples',
         // You can also set the value of a key as parsed JSON.
         // Allows us to reference properties we declared in package.json.
         pkg: grunt.file.readJSON('package.json'),
@@ -17,15 +19,13 @@ module.exports = function(grunt) {
             // It's a way of specifying different sub-tasks or modes.
             javascript: {
                 options: {
-                    banner: '(function(){\n',
+                    banner: '/*!grid v<%=pkg.version%> | NHN Entertainment*/\n' +
+                    '(function(){\n',
                     footer: '\n})();'
                 },
                 // The files to concatenate:
                 // Notice the wildcard, which is automatically expanded.
                 src: [
-                    'src/External/code-snippet.js',
-                    'src/External/*.js',
-
                     'src/Core/*.js',
                     'src/Data/*.js',
 
@@ -53,36 +53,63 @@ module.exports = function(grunt) {
                 // Notice the angle-bracketed ERB-like templating,
                 // which allows you to reference other properties.
                 // This is equivalent to 'dist/main.js'.
-                dest: '<%= distFolder %>/Grid.js'
+                dest: '<%= distFolder %>/grid.js'
                 // You can reference any grunt config property you want.
                 // Ex: '<%= concat.options.separator %>' instead of ';'
             },
             css: {
                 src: [
                     'css/common.css',
-                    'css/Grid.css'
+                    'css/grid.css'
                 ],
-                dest: '<%= distFolder %>/Grid.css'
+                dest: '<%= distFolder %>/grid.css'
             }
         },
         uglify: {
             my_target: {
                 files: {
-                    '<%= distFolder %>/Grid.min.js' : '<%= distFolder %>/Grid.js'
+                    '<%= distFolder %>/grid.min.js' : '<%= distFolder %>/grid.js'
+                },
+                options: {
+                    banner: '/*!grid v<%=pkg.version%> | NHN Entertainment*/',
+                    preserveComments: false,
+                    sourceMap: true,
+                    sourceMapName: '<%= distFolder %>/grid.min.map'
                 }
             }
         },
-//        copy: {
-//            main: {
-//                files: [
-//                    {expand: true, flatten: true, src: ['css/*'], dest: '<%= distFolder %>/', filter: 'isFile'}
-//                ]
-//            }
-//        },
+        copy: {
+            main: {
+                files: [
+                    {expand: true, flatten: true, src: ['<%= distFolder %>/*.js', '<%= distFolder %>/*.map', '<%= distFolder %>/*.css'], dest: '', filter: 'isFile'}
+                ]
+            },
+            sample: {
+                files: [
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: [
+                            '<%= distFolder %>/grid.min.js',
+                            '<%= libFolder %>/jquery/jquery.min.js',
+                            '<%= libFolder %>/code-snippet/code-snippet.min.js',
+                            '<%= libFolder %>/component-pagination/pagination.min.min.js'
+                        ],
+                        dest: '<%= sampleFolder %>/js', filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        src: ['<%= distFolder %>/grid.css'],
+                        dest: '<%= sampleFolder %>/css', filter: 'isFile'
+                    }
+                ]
+            }
+        },
         zip: {
             main: {
                 src: ['<%= distFolder %>/*'],
-                dest: '<%= distFolder %>/Grid.zip'
+                dest: '<%= distFolder %>/infinite-scroll.zip'
             }
         }
     }); // The end of grunt.initConfig

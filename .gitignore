@@ -38,7 +38,7 @@ doc
 Thumbs.db
 Desktop.ini
 
-# MAC
+# MACgi
 .DS_Store
 
 # SVN
@@ -50,3 +50,5 @@ Desktop.ini
 
 #report
 report
+
+bin
