@@ -72,9 +72,9 @@
 
             _.each($tdList, function(item, index) {
                 $td = $tdList.eq(index);
-                editType = $td.data('edit-type');
+                editType = $td.attr('edit-type');
                 if (this.instances[editType]) {
-                    this.instances[editType].attachHandler($td);
+                   this.instances[editType].attachHandler($td);
                 }
             }, this);
         },
@@ -83,16 +83,17 @@
          * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
         detachHandler: function($parent) {
-            var $tdList = $parent.find('td'),
-                $td,
-                editType;
-
-            _.each($tdList, function(item, index) {
-                $td = $tdList.eq(index);
-                editType = $td.data('edit-type');
-                if (this.instances[editType]) {
-                    this.instances[editType].detachHandler($td);
-                }
-            }, this);
+            $parent.find().off();
+            //var $tdList = $parent.find('td'),
+            //    $td,
+            //    editType;
+            //
+            //_.each($tdList, function(item, index) {
+            //    $td = $tdList.eq(index);
+            //    editType = $td.attr('edit-type');
+            //    if (this.instances[editType]) {
+            //        this.instances[editType].detachHandler($td);
+            //    }
+            //}, this);
         }
     });

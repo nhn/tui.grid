@@ -76,21 +76,23 @@
          */
         focus: function(rowKey, columnName, isScrollable) {
             var scrollPosition;
-            rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
-            columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
-            this._savePrevious();
-            this.blur();
-            if (rowKey !== this.get('rowKey')) {
-                this.select(rowKey);
-            }
-            if (columnName && columnName !== this.get('columnName')) {
-                this.set('columnName', columnName);
-            }
-            this.trigger('focus', rowKey, columnName);
-            if (isScrollable) {
-                //todo scrolltop 및 left 값 조정하는 로직 필요.
-                scrollPosition = this._getScrollPosition();
-                !ne.util.isEmpty(scrollPosition) && this.grid.renderModel.set(scrollPosition);
+            if (this.get('rowKey') !== rowKey || this.get('columnName') !== columnName) {
+                rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
+                columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
+                this._savePrevious();
+                this.blur();
+                if (rowKey !== this.get('rowKey')) {
+                    this.select(rowKey);
+                }
+                if (columnName && columnName !== this.get('columnName')) {
+                    this.set('columnName', columnName);
+                }
+                this.trigger('focus', rowKey, columnName);
+                if (isScrollable) {
+                    //todo scrolltop 및 left 값 조정하는 로직 필요.
+                    scrollPosition = this._getScrollPosition();
+                    !ne.util.isEmpty(scrollPosition) && this.grid.renderModel.set(scrollPosition);
+                }
             }
             return this;
         },

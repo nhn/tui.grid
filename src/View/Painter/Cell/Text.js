@@ -27,11 +27,11 @@
                 'PAGE_UP': function() {},
                 'PAGE_DOWN': function() {},
                 'ENTER': function(keyDownEvent, param) {
-                    this.focusOut(param.$target);
+                    this.focusOut(param.$target.closest('td'));
                 },
                 'ESC': function(keyDownEvent, param) {
                     this._restore(param.$target);
-                    this.focusOut(param.$target);
+                    this.focusOut(param.$target.closest('td'));
                 }
             });
         },
@@ -85,15 +85,22 @@
          */
         getContentHtml: function(cellData) {
             var columnModel = this.getColumnModel(cellData),
-                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
+                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
+                htmlArr = [];
 
-            return this.template({
-                type: this._getInputType(),
-                value: value,
-                disabled: cellData.isDisabled ? 'disabled' : '',
-                name: Util.getUniqueKey(),
-                maxLength: columnModel.editOption.maxLength
-            });
+            htmlArr.push('<input type="');
+            htmlArr.push(this._getInputType());
+            htmlArr.push('" value="');
+            htmlArr.push(value);
+            htmlArr.push('" name="');
+            htmlArr.push(Util.getUniqueKey());
+            htmlArr.push('" align="center" ');
+            htmlArr.push(cellData.isDisabled ? 'disabled' : '');
+            htmlArr.push(' maxLength="');
+            htmlArr.push(columnModel.editOption.maxLength);
+            htmlArr.push('"/>');
+
+            return htmlArr.join('');
         },
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
@@ -190,7 +197,7 @@
          * 더블클릭으로 간주할 time millisecond 설정
          * @type {number}
          */
-        doubleClickDuration: 400,
+        doubleClickDuration: 800,
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
@@ -204,7 +211,12 @@
         initialize: function() {
             View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                timeoutIdForClick: 0
+                timeoutIdForClick: 0,
+                editingCell: {
+                    rowKey: null,
+                    columnName: '',
+                    $clickedTd: null
+                }
             });
         },
         /**
@@ -227,7 +239,7 @@
          * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
-            this._endEdit($td);
+            //$td.find('input').blur();
             this.grid.focusClipboard();
         },
         /**
@@ -246,23 +258,32 @@
         getContentHtml: function(cellData) {
             var columnModel = this.getColumnModel(cellData),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-                $td = this.grid.getElement(cellData.rowKey, cellData.columnName),
-                isEdit = !!($td.length && $td.data('isEdit'));
+                htmlArr = [];
 
-            if (!isEdit) {
+            if (!this._isEditingCell(cellData)) {
                 if (ne.util.isFunction(columnModel.formatter)) {
-                    value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).toJSON(), columnModel);
+                    value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
                 }
                 return value;
             } else {
-                return this.template({
-                    type: this._getInputType(),
-                    value: value,
-                    disabled: cellData.isDisabled ? 'disabled' : '',
-                    name: Util.getUniqueKey(),
-                    maxLength: columnModel.editOption.maxLength
-                });
+                htmlArr.push('<input type="');
+                htmlArr.push(this._getInputType());
+                htmlArr.push('" value="');
+                htmlArr.push(value);
+                htmlArr.push('" name="');
+                htmlArr.push(Util.getUniqueKey());
+                htmlArr.push('" align="center" ');
+                htmlArr.push(cellData.isDisabled ? 'disabled' : '');
+                htmlArr.push(' maxLength="');
+                htmlArr.push(columnModel.editOption.maxLength);
+                htmlArr.push('"/>');
+
+                return htmlArr.join('');
             }
+        },
+        _isEditingCell: function(cellData) {
+            var editingCell = this.editingCell;
+            return !!(editingCell.rowKey === cellData.rowKey.toString() && editingCell.columnName === cellData.columnName.toString());
         },
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
@@ -294,14 +315,18 @@
                 rowKey = this.getRowKey($td),
                 columnName = this.getColumnName($td),
                 cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
+
+            this.editingCell = {
+                rowKey: rowKey,
+                columnName: columnName
+            };
+
             if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
-                $td.data('isEdit', true);
                 this.redraw(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
                 Util.form.setCursorToEnd($input.get(0));
                 $input.focus().select();
-
             }
         },
         /**
@@ -310,11 +335,15 @@
          * @private
          */
         _endEdit: function($td) {
-            var isEdit = $td.data('isEdit');
-            if (isEdit) {
-                $td.data('isEdit', false);
+            var cellData = this._getCellData($td);
+            this.editingCell = {
+                rowKey: null,
+                columnName: ''
+            };
+            if (cellData) {
                 this.redraw(this._getCellData($td), $td);
             }
+            $td.data('clicked', false);
         },
         /**
          * click 이벤트 핸들러
@@ -322,15 +351,16 @@
          * @private
          */
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target),
+            var that = this,
+                $target = $(clickEvent.target),
                 $td = $target.closest('td'),
                 isClicked = $td.data('clicked');
+
 
             if (isClicked) {
                 this._startEdit($td);
             } else {
                 $td.data('clicked', true);
-                clearTimeout(this.timeoutIdForClick);
                 this.timeoutIdForClick = setTimeout(function() {
                     $td.data('clicked', false);
                 }, this.doubleClickDuration);

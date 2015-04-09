@@ -42,8 +42,10 @@
         render: function() {
             var html = '',
                 firstRow = this.collection.at(0);
-            //var start = new Date();
-            //console.log('View.RowList.render start');
+
+            var start = new Date();
+
+            //alert('a');
             this.rowPainter.detachHandlerAll();
             this.destroyChildren();
             this._createRowPainter();
@@ -54,12 +56,14 @@
                     html += this.rowPainter.getHtml(row);
                 }, this);
             }
-            this.$el.html('').prepend(html);
+            this.$el.empty().prepend(html);
             this.rowPainter.attachHandlerAll();
 
+            this.grid.focusClipboard();
             //var end = new Date();
             //console.log('View.RowList.addAll end', end - start);
             this._showLayer();
+
             return this;
         },
         /**

@@ -261,7 +261,7 @@
          */
         initialize: function(options) {
             //grid 에서 public instance 를 참조할 수 있도록 자신의 참조 추가
-            options.public = this;
+            options.publicInstance = this;
             this.core = new Core(options);
             this.listenTo(this.core, 'all', this._relayEvent, this);
         },

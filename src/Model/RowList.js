@@ -98,26 +98,26 @@
         _formatData: function(data) {
             var grid = this.grid || this.collection.grid,
                 dataModel = grid.dataModel,
-                rowKey = data['rowKey'];
+                rowKey = data['rowKey'],
+                row = dataModel.get(rowKey),
+                rowState = row.getRowState(),
+                isDisabled = rowState.isDisabled;
 
             _.each(data, function(value, columnName) {
                 var rowSpanData,
-                    row = dataModel.get(rowKey),
-                    rowState = row.getRowState(),
-                    isDisabled = rowState.isDisabled,
-                    isEditable = row.isEditable(columnName),
-                    defaultRowSpanData = {
-                        mainRowKey: rowKey,
-                        count: 0,
-                        isMainRow: true
-                    };
+                    isEditable = row.isEditable(columnName);
 
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                    if (dataModel.isRowSpanEnable()) {
-                        rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] &&
-                            data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
+                    if (dataModel.isRowSpanEnable() &&
+                        data['_extraData'] && data['_extraData']['rowSpanData'] &&
+                        data['_extraData']['rowSpanData'][columnName]) {
+                        rowSpanData = data['_extraData']['rowSpanData'][columnName];
                     } else {
-                        rowSpanData = defaultRowSpanData;
+                        rowSpanData = {
+                            mainRowKey: rowKey,
+                            count: 0,
+                            isMainRow: true
+                        };
                     }
                     isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : isDisabled;
 

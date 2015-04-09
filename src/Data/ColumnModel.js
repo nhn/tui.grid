@@ -22,6 +22,12 @@
          */
         initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
+            this.textType = {
+                'normal': true,
+                'text': true,
+                'text-password': true,
+                'text-convertible': true
+            };
             this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
             this.on('change', this._onChange, this);
         },
@@ -184,8 +190,7 @@
          * @return {boolean} text 타입인지 여부
          */
         isTextType: function(columnName) {
-            var textTypeList = ['normal', 'text', 'text-password', 'text-convertible'];
-            return $.inArray(this.getEditType(columnName), textTypeList) !== -1;
+            return !!this.textType[this.getEditType(columnName)];
         },
         /**
          * 컬럼 모델로부터 editType 을 반환한다.

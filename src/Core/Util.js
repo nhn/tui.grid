@@ -7,6 +7,7 @@
 * @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}
 */
 var Util = {
+    uniqueId: 0,
     /**
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
      * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
@@ -27,6 +28,32 @@ var Util = {
             str += ' ' + key + '="' + value + '"';
         }, this);
         return str;
+    },
+
+    /**
+     * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.
+     * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
+     * @param {string} template 템플릿 텍스트
+     * @param {object|object[]} mapper 템플릿과 합성될 데이터
+     * @return {Array}
+     */
+    template: function(template, mapper) {
+        var totalReplaced = [],
+            replaced;
+
+        if(!ne.util.isArray(mapper)){
+            mapper = [mapper];
+        }
+
+        ne.util.forEach(mapper, function(mapdata) {
+            replaced = template.replace(/<%=([^%]+)%>/g, function(matchedString, name) {
+                return mapdata[name] ? mapdata[name].toString() : '';
+            });
+
+            totalReplaced.push(replaced);
+        });
+
+        return totalReplaced;
     },
     /**
      * 배열의 합을 반환한다.
@@ -125,11 +152,10 @@ var Util = {
     },
     /**
      * Create unique key
-     * @return {string} unique key 를 반환한다.
+     * @return {number} unique key 를 반환한다.
      */
     getUniqueKey: function() {
-        var rand = String(parseInt(Math.random() * 10000000000, 10));
-        return new Date().getTime() + rand;
+        return ++this.uniqueId;
     },
     /**
      * object 를 query string 으로 변경한다.

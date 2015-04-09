@@ -13,6 +13,7 @@
                 'rowState' : null
             }
         },
+
         /**
          * 생성자 함수
          */
@@ -31,20 +32,14 @@
                 isDisabled = false,
                 isChecked = false;
 
-
-            if (rowState) {
-                switch (rowState) {
-                    case 'DISABLED':
-                        isDisabled = true;
-                        break;
-                    case 'DISABLED_CHECK':
-                        isDisabledCheck = true;
-                        break;
-                    case 'CHECKED':
-                        isChecked = true;
-                        break;
-                }
+            if (rowState === 'DISABLED') {
+                isDisabled = true;
+            } else if (rowState === 'DISABLED_CHECK') {
+                isDisabledCheck = true;
+            } else if (rowState === 'CHECKED') {
+                isChecked = true;
             }
+
             isDisabledCheck = isDisabled ? isDisabled : isDisabledCheck;
 
             return {
@@ -63,8 +58,10 @@
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 extraData = this.get('_extraData'),
                 classNameObj = extraData.className,
-                rowClassNameList = ne.util.isExisty(classNameObj, 'row') ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
-                columnClassNameList = ne.util.isExisty(classNameObj, 'column.' + columnName) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
+                rowClassNameList = (classNameObj && classNameObj['row']) ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
+                columnClassNameList = (classNameObj && classNameObj['column'] && classNameObj['column'][columnName]) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
+                tmpList,
+                classNameMap = {},
                 columnModelClassNameList = []; //columnModel 에 할당된 className 리스트
 
             if (columnModel.className) {
@@ -73,7 +70,26 @@
             if (columnModel.isEllipsis) {
                 columnModelClassNameList.push('ellipsis');
             }
-            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
+
+            tmpList = [classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList];
+
+            ne.util.forEachArray(tmpList, function(list) {
+                ne.util.forEachArray(list, function(item) {
+                    var sliced = item.slice(' ');
+                    if (ne.util.isArray(sliced)) {
+                        ne.util.forEachArray(sliced, function (className) {
+                            classNameMap[className] = true;
+                        });
+                    } else {
+                        classNameMap[item] = true;
+                    }
+                });
+            });
+
+            ne.util.forEach(classNameMap, function(value, className) {
+                classNameList.push(className);
+            });
+            //classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
             return classNameList;
         },
         /**
@@ -147,26 +163,26 @@
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
          */
         getRowSpanData: function(columnName) {
-            var extraData = this.get('_extraData'),
-                defaultData = {
-                    count: 0,
-                    isMainRow: true,
-                    mainRowKey: this.get('rowKey')
-                };
+            var extraData = this.get('_extraData');
             if (this.collection.isRowSpanEnable()) {
                 if (!columnName) {
                     return extraData['rowSpanData'];
                 } else {
                     extraData = this.get('_extraData');
-                    return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+                    if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
+                        return extraData['rowSpanData'][columnName];
+                    }
                 }
             } else {
-                if (columnName) {
-                    return defaultData;
-                } else {
+                if (!columnName) {
                     return null;
                 }
             }
+            return {
+                count: 0,
+                isMainRow: true,
+                mainRowKey: this.get('rowKey')
+            };
 
 
         },
@@ -270,7 +286,7 @@
             var callback, attribute, targetColumnList,
                 value,
                 rowKey = this.get('rowKey'),
-                rowData = this.toJSON(),
+                rowData = this.attributes,
                 relationListMap = this.grid.columnModel.get('relationListMap'),
                 relationResult = {},
                 rowState = this.getRowState();
@@ -290,16 +306,12 @@
                             callback = relation[callbackName];
                             if (typeof callback === 'function') {
                                 attribute = '';
-                                switch (callbackName) {
-                                    case 'optionListChange':
-                                        attribute = 'optionList';
-                                        break;
-                                    case 'isDisabled':
-                                        attribute = 'isDisabled';
-                                        break;
-                                    case 'isEditable':
-                                        attribute = 'isEditable';
-                                        break;
+                                if (callbackName === 'optionListChange') {
+                                    attribute = 'optionList';
+                                } else if (callbackName === 'isDisabled') {
+                                    attribute = 'isDisabled';
+                                } else if (callbackName === 'isEditable') {
+                                    attribute = 'isEditable';
                                 }
                                 if (attribute) {
                                     //relation 에 걸려있는 컬럼들의 값을 변경한다.

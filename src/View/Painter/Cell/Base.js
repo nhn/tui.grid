@@ -50,18 +50,6 @@
                 _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
             });
         },
-        /**
-         * td 마크업 생성시 필요한 base template
-         */
-        baseTemplate: _.template('<td' +
-            ' columnName="<%=columnName%>"' +
-            ' <%=rowSpan%>' +
-            ' class="<%=className%>"' +
-            ' <%=attributes%>' +
-            ' data-edit-type="<%=editType%>"' +
-            '>' +
-            '<%=content%>' +
-            '</td>'),
 
         /**
          * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
@@ -170,35 +158,31 @@
                 focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
                 classNameList = [],
                 classNameMap = {},
-                privateColumnList = ['_button', '_number'],
-                isPrivateColumnName = $.inArray(columnName, privateColumnList) !== -1;
+                privateColumnMap = {
+                    '_button': true,
+                    '_number': true
+                },
+                isPrivateColumnName = !!privateColumnMap[columnName];
 
             if (focusedRowKey === cellData.rowKey) {
-                classNameList.push('selected');
+                classNameMap['selected'] = true;
                 if (focused.columnName === columnName) {
-                    classNameList.push('focused');
+                    classNameMap['focused'] = true;
                 }
             }
             if (cellData.className) {
-                classNameList.push(cellData.className);
+                classNameMap[cellData.className] = true;
             }
 
             if (cellData.isEditable && !isPrivateColumnName) {
-                classNameList.push('editable');
+                classNameMap['editable'] = true;
             }
 
             if (cellData.isDisabled) {
-                classNameList.push('disabled');
+                classNameMap['disabled'] = true;
             }
 
-            //className 중복제거
-            _.each(classNameList, function(className) {
-                classNameMap[className] = true;
-            });
-
-            classNameList = [];
-
-            _.each(classNameMap, function(val, className) {
+            ne.util.forEach(classNameMap, function(val, className) {
                 classNameList.push(className);
             });
 
@@ -214,6 +198,7 @@
         _getContentHtml: function(cellData) {
             var columnName = cellData.columnName,
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
+                editOption = columnModel.editOption,
                 content;
 
             if (!ne.util.isNumber(cellData.value) && !cellData.value) {
@@ -221,12 +206,13 @@
             }
 
             content = this.getContentHtml(cellData);
-
-            if (ne.util.isExisty(columnModel, 'editOption.beforeText')) {
-                content = columnModel.editOption.beforeText + content;
-            }
-            if (ne.util.isExisty(columnModel, 'editOption.afterText')) {
-                content = content + columnModel.editOption.afterText;
+            if (editOption) {
+                if (editOption.beforeText) {
+                    content = columnModel.editOption.beforeText + content;
+                }
+                if (editOption.afterText) {
+                    content = content + columnModel.editOption.afterText;
+                }
             }
             return content;
         },
@@ -237,16 +223,24 @@
          * @return {string} td 마크업 문자열
          */
         getHtml: function(cellData) {
-            var attributeString = Util.getAttributesString(this.getAttributes(cellData));
+            var attributeString = Util.getAttributesString(this.getAttributes(cellData)),
+                htmlArr = [];
 
-            return this.baseTemplate({
-                columnName: cellData.columnName,
-                rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
-                className: this._getClassNameList(cellData).join(' '),
-                attributes: attributeString,
-                editType: this.getEditType(),
-                content: this._getContentHtml(cellData)
-            });
+            htmlArr.push('<td');
+            htmlArr.push(' columnName="');
+            htmlArr.push(cellData.columnName);
+            htmlArr.push('" ');
+            htmlArr.push(cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '');
+            htmlArr.push(' class="');
+            htmlArr.push(this._getClassNameList(cellData).join(' '));
+            htmlArr.push('" ');
+            htmlArr.push(attributeString);
+            htmlArr.push(' edit-type="');
+            htmlArr.push(this.getEditType());
+            htmlArr.push('">');
+            htmlArr.push(this._getContentHtml(cellData));
+            htmlArr.push('</td>');
+            return htmlArr.join('');
         },
         /**
          * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
@@ -261,9 +255,10 @@
             if (cellData.rowSpan) {
                 attributes['rowSpan'] = cellData.rowSpan;
             }
+            attributes['edit-type'] = this.getEditType();
             attributes = $.extend(attributes, this.getAttributes(cellData));
             $td.attr(attributes);
-            $td.data('edit-type', this.getEditType()).html(this._getContentHtml(cellData));
+            $td.html(this._getContentHtml(cellData));
             this.attachHandler($td);
         },
         /**
@@ -273,7 +268,8 @@
          * @private
          */
         _getCellData: function($target) {
-            return this.grid.renderModel.getCellData(this.getRowKey($target), this.getColumnName($target));
+            var cellData = this._getCellAddress($target);
+            return this.grid.renderModel.getCellData(cellData.rowKey, cellData.columnName);
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
@@ -313,7 +309,6 @@
         },
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-         * 필요에 따라 Override 한다.
          * @param {Object} cellData Model 의 셀 데이터
          * @return {Object} td 에 지정할 attribute 데이터
          */

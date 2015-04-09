@@ -143,28 +143,27 @@
          */
         getContentHtml: function(cellData) {
             var list = this.getOptionList(cellData),
-                html = '',
                 isDisabled = cellData.isDisabled,
-                len = list.length;
+                htmlArr = [];
 
-            html += '<select name="' + Util.getUniqueKey() + '"';
-            html += isDisabled ? ' disabled ' : '';
-            html += '>';
+            htmlArr.push('<select name="' + Util.getUniqueKey() + '"');
+            htmlArr.push(isDisabled ? ' disabled ' : '');
+            htmlArr.push('>');
 
             ne.util.forEachArray(list, function(item) {
-                html += '<option ';
-                html += 'value="' + item.value + '"';
+                htmlArr.push('<option ');
+                htmlArr.push('value="' + item.value + '"');
                 //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
                 if (cellData.value == item.value) {
-                    html += ' selected';
+                    htmlArr.push(' selected');
                 }
-                html += ' >';
-                html += item.text;
-                html += '</option>';
+                htmlArr.push(' >');
+                htmlArr.push(item.text);
+                htmlArr.push('</option>');
             });
 
-            html += '</select>';
-            return html;
+            htmlArr.push('</select>');
+            return htmlArr.join('');
 
         },
         /**
@@ -254,10 +253,6 @@
             'change input' : '_onChange',
             'keydown input' : '_onKeyDown'
         },
-        template: {
-            input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%> <%=disabled%> />'),
-            label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
-        },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
          * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
@@ -290,30 +285,43 @@
                 columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
-                html = '',
+                checkedMap = {},
+                htmlArr = [],
                 name = Util.getUniqueKey(),
                 isDisabled = cellData.isDisabled,
                 id;
 
+            ne.util.forEachArray(checkedList, function(item) {
+                checkedMap[item] = true;
+            });
+
             ne.util.forEachArray(list, function(item) {
                 id = name + '_' + item.value;
-                html += this.template.input({
-                    type: columnModel.editOption.type,
-                    name: name,
-                    id: id,
-                    value: item.value,
-                    checked: $.inArray('' + item.value, checkedList) === -1 ? '' : 'checked',
-                    disabled: isDisabled ? 'disabled' : ''
-                });
+
+                htmlArr.push('<input type="');
+                htmlArr.push(columnModel.editOption.type);
+                htmlArr.push('" name="');
+                htmlArr.push(name);
+                htmlArr.push('" id="');
+                htmlArr.push(id);
+                htmlArr.push('" value="');
+                htmlArr.push(item.value);
+                htmlArr.push('" ');
+                htmlArr.push(checkedMap[item.value] ? 'checked' : '');
+                htmlArr.push(isDisabled ? 'disabled' : '');
+                htmlArr.push('/>');
+
                 if (item.text) {
-                    html += this.template.label({
-                        id: id,
-                        text: item.text
-                    });
+                    htmlArr.push('<label for="');
+                    htmlArr.push(id);
+                    htmlArr.push('" style="margin-right:10px">');
+                    htmlArr.push(item.text);
+                    htmlArr.push('</label>');
                 }
+
             }, this);
 
-            return html;
+            return htmlArr.join('');
         },
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드

@@ -17,8 +17,9 @@
         toolbar: null,
         cellFactory: null,
         events: {
-            'click' : '_onClick',
-            'mousedown' : '_onMouseDown'
+            'click': '_onClick',
+            'mousedown': '_onMouseDown',
+            'selectstart': '_onSelectStart'
         },
         keyMap: {
             'TAB': 9,
@@ -154,6 +155,7 @@
                         empty: null
                     }
                 },
+                'timeoutIdForBlur': 0,
                 'timeoutIdForResize': 0,
                 'timeoutIdForSetRowList': 0,
                 '__$el': this.$el.clone()
@@ -289,6 +291,38 @@
          */
         _attachExtraEvent: function() {
             $(window).on('resize', $.proxy(this._onWindowResize, this));
+            $(document).on('focusin', $.proxy(this._onBlur, this));
+        },
+
+        /**
+         * 클립보드 blur 이벤트 핸들러
+         * @private
+         */
+        _onBlur: function() {
+            clearTimeout(this.timeoutIdForBlur);
+            this.timeoutIdForBlur = setTimeout($.proxy(this._doBlur, this), 0);
+        },
+        /**
+         * 실제 blur 를 한다.
+         * @private
+         */
+        _doBlur: function() {
+            var $focused = this.$el.find(':focus'),
+                hasFocusedElement = !!$focused.length;
+
+            if (!hasFocusedElement) {
+                this.focusModel.blur();
+            } else if ($focused.is('td') || $focused.is('a')) {
+                this.focusClipboard();
+            }
+        },
+        /**
+         * selectStart 이벤트 발생시 이벤트 핸들러
+         * @returns {boolean}
+         * @private
+         */
+        _onSelectStart: function() {
+            return false;
         },
         /**
          * window resize  이벤트 핸들러

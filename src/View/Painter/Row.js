@@ -58,7 +58,7 @@
          * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
          */
         destroy: function() {
-            this.detachHandlerAll();
+            //this.detachHandlerAll();
             this.destroyChildren();
             this.remove();
         },

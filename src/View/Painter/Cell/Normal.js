@@ -41,7 +41,7 @@
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
                 rowKey = cellData.rowKey;
             if (ne.util.isFunction(columnModel.formatter)) {
-                value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
+                value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).attributes, columnModel);
             }
             return value;
         },
@@ -133,10 +133,6 @@
             });
         },
         /**
-         * rendering 시 사용할 template
-         */
-        template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
-        /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
          * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
@@ -157,13 +153,17 @@
          * </select>
          */
         getContentHtml: function(cellData) {
-            var isDisabled = cellData.isDisabled;
-            return this.template({
-                type: this.grid.option('selectType'),
-                name: this.grid.id,
-                checked: (!!cellData.value) ? 'checked' : '',
-                disabled: isDisabled ? 'disabled' : ''
-            });
+            var isDisabled = cellData.isDisabled,
+                htmlArr = [];
+            htmlArr.push('<input type="');
+            htmlArr.push(this.grid.option('selectType'));
+            htmlArr.push('" name="');
+            htmlArr.push(this.grid.id);
+            htmlArr.push('" ');
+            htmlArr.push((!!cellData.value) ? 'checked' : '');
+            htmlArr.push(isDisabled ? 'disabled' : '');
+            htmlArr.push('/>');
+            return htmlArr.join('');
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.

@@ -414,7 +414,10 @@
                     'height' : headerHeight + 'px'
                 })
                 .html(this._getResizeHandlerMarkup());
+
+            //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
             this._refreshHandlerPosition(true);
+            setTimeout($.proxy(this._refreshHandlerPosition, this, true), 0);
             return this;
         },
         /**

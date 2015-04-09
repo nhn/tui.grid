@@ -35,7 +35,6 @@
 
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
                 .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
-
                 .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
                 .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
                 .listenTo(this.grid.renderModel, 'refresh', this._setTopPosition, this);

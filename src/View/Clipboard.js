@@ -11,36 +11,14 @@
         className: 'clipboard',
         events: {
             'keydown': '_onKeyDown',
-            'focus': '_onFocus',
-            'blur': '_onBlur'
-        },
-        isFocused: function() {
-
-            return this._isFocused;
+            'focusin': '_onFocus'
         },
         /**
          * 클립보드 focus 이벤트 핸들러
          * @private
          */
         _onFocus: function() {
-            this._isFocused = true;
-            this.$el.val(this._isFocused);
             this.grid.focusModel.focus();
-        },
-        /**
-         * 클립보드 blur 이벤트 핸들러
-         * @private
-         */
-        _onBlur: function() {
-            this._isFocused = false;
-            this.$el.val(this._isFocused);
-            //Grid 내 input 에 focus 가 된 경우 blur 처리하지 않기위해 setTimeout 을 사용한다.
-            setTimeout($.proxy(function() {
-                var hasFocusedElement = !!(this.grid.$el.find(':focus').length);
-                if (!hasFocusedElement) {
-                    this.grid.focusModel.blur();
-                }
-            }, this), 10);
         },
         /**
          * 생성자
@@ -48,7 +26,6 @@
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                _isFocused: false,
                 timeoutIdForKeyIn: 0,
                 isLocked: false
             });
