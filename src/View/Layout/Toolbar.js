@@ -106,6 +106,7 @@
          * 생성자 함수
          */
         initialize: function() {
+            this.timeoutIdForResize = 0;
             View.Base.prototype.initialize.apply(this, arguments);
         },
         /**
@@ -143,6 +144,8 @@
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
+            clearTimeout(this.timeoutIdForResize);
+
             var dimensionModel = this.grid.dimensionModel,
                 offsetTop = dimensionModel.get('offsetTop'),
                 headerHeight = dimensionModel.get('headerHeight'),
@@ -151,9 +154,15 @@
                 bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight - toolbarHeight;
 
             bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
-            dimensionModel.set({
-                bodyHeight: bodyHeight
-            });
+
+
+            //매번 수행하면 성능이 느려지므로, resize 이벤트가 발생할 시 천첮히 업데이트한다.
+            this.timeoutIdForResize = setTimeout(function() {
+                dimensionModel.set({
+                    bodyHeight: bodyHeight
+                });
+            }, 0);
+
         },
         /**
          * mouseup 이벤트 핸들러

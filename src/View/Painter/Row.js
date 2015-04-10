@@ -98,6 +98,7 @@
             if (this.grid.option('selectType') === 'radio') {
                 this.grid.check(rowKey);
             }
+            this.grid.selection.onMouseDown(mouseDownEvent);
         },
         /**
          * model 변경 시 이벤트 핸들러

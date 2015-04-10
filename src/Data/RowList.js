@@ -218,7 +218,7 @@
             var value = this.get(columnName),
                 columnModel = this.grid.columnModel.getColumnModel(columnName);
 
-            if (ne.util.isExisty(columnModel, 'editOption.list')) {
+            if (ne.util.isExisty(ne.util.pick(columnModel, 'editOption', 'list'))) {
                 var resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
                     editOptionList = resultOptionList && resultOptionList['optionList'] ?
                         resultOptionList['optionList'] : columnModel.editOption.list,
@@ -259,7 +259,7 @@
                 model = columnModel.getColumnModel(columnName);
                 //list type 의 editType 이 존재하는 경우
                 if (listTypeMap[editType]) {
-                    if (ne.util.isExisty(model, 'editOption.list.0.value')) {
+                    if (ne.util.isExisty(ne.util.pick(model, 'editOption', 'list', 0, 'value'))) {
                         value = this._getListTypeVisibleText(columnName);
                     } else {
                         throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
@@ -780,7 +780,7 @@
                 row = this.get(rowKey),
                 classNameData;
 
-            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.column.' + columnName)) {
+            if (ne.util.isExisty(ne.util.pick(extraData, 'className', 'column', columnName))) {
                 classNameData = extraData.className;
                 classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
                 row.set('_extraData', extraData);
@@ -796,7 +796,7 @@
                 row = this.get(rowKey),
                 classNameData;
 
-            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.row')) {
+            if (ne.util.isExisty(extraData, 'className.row')) {
                 classNameData = extraData.className;
                 classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
                 //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.

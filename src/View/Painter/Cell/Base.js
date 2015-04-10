@@ -201,7 +201,8 @@
                 editOption = columnModel.editOption,
                 content;
 
-            if (!ne.util.isNumber(cellData.value) && !cellData.value) {
+            //if (!ne.util.isNumber(cellData.value) && !cellData.value) {
+            if (!ne.util.isExisty(cellData.value)) {
                 cellData.value = columnModel.defaultValue;
             }
 

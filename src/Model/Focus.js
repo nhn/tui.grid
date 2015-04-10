@@ -76,7 +76,11 @@
          */
         focus: function(rowKey, columnName, isScrollable) {
             var scrollPosition;
-            if (this.get('rowKey') !== rowKey || this.get('columnName') !== columnName) {
+            if (ne.util.isUndefined(rowKey) && ne.util.isUndefined(columnName)) {
+                if (ne.util.isUndefined(this.grid.renderModel.getCollection('R').get(rowKey))) {
+                    this.trigger('focus', this.get('rowKey'), this.get('columnName'));
+                }
+            } else if (this.get('rowKey') !== rowKey || this.get('columnName') !== columnName) {
                 rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
                 columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
                 this._savePrevious();

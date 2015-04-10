@@ -8,6 +8,7 @@
      * @constructor View.RowList
      */
     View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
+
         /**
          * 초기화 함수
          * @param {object} options
@@ -18,6 +19,7 @@
             this.setOwnProperties({
                 whichSide: (options && options.whichSide) || 'R',
                 timeoutIdForCollection: 0,
+                timeoutIdForFocusClipboard: 0,
                 rowPainter: null
             });
             this._createRowPainter();
@@ -35,12 +37,14 @@
                 whichSide: this.whichSide
             });
         },
+
         /**
          * 랜더링한다.
          * @return {View.RowList}
          */
         render: function() {
-            var html = '',
+            var self = this,
+                html = '',
                 firstRow = this.collection.at(0);
 
             var start = new Date();
@@ -59,7 +63,11 @@
             this.$el.empty().prepend(html);
             this.rowPainter.attachHandlerAll();
 
-            this.grid.focusClipboard();
+            clearTimeout(this.timeoutIdForFocusClipboard);
+            this.timeoutIdForFocusClipboard = setTimeout(function() {
+                self.grid.focusClipboard();
+            }, 10);
+
             //var end = new Date();
             //console.log('View.RowList.addAll end', end - start);
             this._showLayer();
@@ -76,5 +84,13 @@
             } else {
                 this.grid.showGridLayer('empty');
             }
-        }
+        },
+        ///**
+        // * selection 영역의 mousedown 이벤트
+        // * @param {Event} mouseDownEvent
+        // * @private
+        // */
+        //_onMouseDown: function(mouseDownEvent) {
+        //    this.grid.selection.onMouseDown(mouseDownEvent);
+        //}
     });

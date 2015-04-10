@@ -80,6 +80,31 @@
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
         },
         /**
+         * selection 영역에 대한 mouseDown 퍼블릭 이벤트 핸들러
+         * @param mouseDownEvent
+         */
+        onMouseDown: function(mouseDownEvent) {
+            var grid = this.grid,
+                selection = this,
+                focused,
+                pos;
+
+            if (mouseDownEvent.shiftKey) {
+                focused = grid.focusModel.indexOf(true);
+                if (!selection.hasSelection()) {
+                    selection.startSelection(focused.rowIdx, focused.columnIdx);
+                }
+
+                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                selection.updateSelection(pos.row, pos.column);
+                grid.focusAt(pos.row, pos.column);
+            } else {
+                selection.endSelection();
+                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+            }
+        },
+        /**
          * mouse move 이벤트 핸들러
          * @param {event} mouseMoveEvent 이벤트 객체
          * @private
@@ -546,6 +571,9 @@
     View.Selection.Layer = View.Base.extend(/**@lends View.Selection.Layer.prototype */{
         tagName: 'div',
         className: 'selection_layer',
+        events: {
+            mousedown: '_onMouseDown'
+        },
         /**
          * 생성자 함수
          * @param {object} options
@@ -562,6 +590,14 @@
                 },
                 whichSide: 'R'
             });
+        },
+        /**
+         * selection 영역의 mousedown 이벤트
+         * @param {Event} mouseDownEvent
+         * @private
+         */
+        _onMouseDown: function(mouseDownEvent) {
+            this.grid.selection.onMouseDown(mouseDownEvent);
         },
         /**
          * 컬럼 widthList 값의 변화가 발생했을때 이벤트 핸들러

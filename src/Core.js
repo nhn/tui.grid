@@ -19,7 +19,8 @@
         events: {
             'click': '_onClick',
             'mousedown': '_onMouseDown',
-            'selectstart': '_onSelectStart'
+            'selectstart': '_preventDrag',
+            'dragstart': '_preventDrag'
         },
         keyMap: {
             'TAB': 9,
@@ -317,11 +318,11 @@
             }
         },
         /**
-         * selectStart 이벤트 발생시 이벤트 핸들러
+         * drag 이벤트 발생시 이벤트 핸들러
          * @returns {boolean}
          * @private
          */
-        _onSelectStart: function() {
+        _preventDrag: function() {
             return false;
         },
         /**
@@ -357,10 +358,10 @@
             this.trigger('mousedown', eventData);
 
             if (eventData.isStopped()) return;
-            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
-                mouseDownEvent.preventDefault();
-                this.selection.show();
-            }
+            //if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
+            //    mouseDownEvent.preventDefault();
+            //    this.selection.show();
+            //}
             this.focusClipboard();
         },
         /**

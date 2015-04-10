@@ -18,8 +18,7 @@
                 '    </table>' +
                 '</div>'),
         events: {
-            'scroll': '_onScroll',
-            'mousedown': '_onMouseDown'
+            'scroll': '_onScroll'
         },
         /**
          * 생성자 함수
@@ -65,28 +64,28 @@
          * @param {event} mouseDownEvent    마우스 이벤트
          * @private
          */
-        _onMouseDown: function(mouseDownEvent) {
-            var grid = this.grid,
-                selection = grid.selection,
-                focused,
-                pos;
-
-            if (mouseDownEvent.shiftKey) {
-                focused = grid.focusModel.indexOf(true);
-
-                if (!selection.hasSelection()) {
-                    selection.startSelection(focused.rowIdx, focused.columnIdx);
-                }
-
-                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
-                pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
-                selection.updateSelection(pos.row, pos.column);
-                grid.focusAt(pos.row, pos.column);
-            } else {
-                selection.endSelection();
-                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
-            }
-        },
+        //_onMouseDown: function(mouseDownEvent) {
+        //    var grid = this.grid,
+        //        selection = grid.selection,
+        //        focused,
+        //        pos;
+        //
+        //    if (mouseDownEvent.shiftKey) {
+        //        focused = grid.focusModel.indexOf(true);
+        //
+        //        if (!selection.hasSelection()) {
+        //            selection.startSelection(focused.rowIdx, focused.columnIdx);
+        //        }
+        //
+        //        selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        //        pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        //        selection.updateSelection(pos.row, pos.column);
+        //        grid.focusAt(pos.row, pos.column);
+        //    } else {
+        //        selection.endSelection();
+        //        selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        //    }
+        //},
         /**
          * 스크롤 이벤트 핸들러
          * @param {event} scrollEvent   스크롤 이벤트
