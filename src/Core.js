@@ -358,10 +358,10 @@
             this.trigger('mousedown', eventData);
 
             if (eventData.isStopped()) return;
-            //if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
-            //    mouseDownEvent.preventDefault();
-            //    this.selection.show();
-            //}
+            if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
+                mouseDownEvent.preventDefault();
+                this.selection.show();
+            }
             this.focusClipboard();
         },
         /**
