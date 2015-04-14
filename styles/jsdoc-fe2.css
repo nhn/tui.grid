@@ -23,6 +23,7 @@ body {
     float: left;
     background-color: #f4f7f8;
     overflow: auto;
+    min-width: 250px;
 }
 
 .navigation h3 {
@@ -95,6 +96,9 @@ body {
     margin-left: 250px;
     overflow: auto;
 }
+
+.main { min-width: 800px; }
+.body { min-width: 1090px; }
 
 .main h1,
 .main h2,

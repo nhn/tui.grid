@@ -1,0 +1,38 @@
+{
+  "name": "code-snippet",
+  "authors": [
+    "FE"
+  ],
+  "license": "PRIVATE",
+  "private": true,
+  "main": "code-snippet.js",
+  "ignore": [
+    "**/.*",
+    ".*",
+    "src",
+    "bin",
+    "node_modules",
+    "bower_components",
+    "test",
+    "bower.json",
+    "conf.json",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json",
+    "karma.local.conf.js",
+    "tutorial"
+  ],
+  "devDependencies": {
+    "json2": "*",
+    "jquery": "~1.8.3"
+  },
+  "_release": "88a6898c02",
+  "_resolution": {
+    "type": "branch",
+    "branch": "develop",
+    "commit": "88a6898c029ba0fe47d55c8d7edf2f7519e4eef1"
+  },
+  "_source": "http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/share-code-snippet.git",
+  "_target": "develop",
+  "_originalSource": "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/share-code-snippet.git"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "jquery",
+  "version": "1.8.3+1",
+  "description": "jQuery component",
+  "keywords": [
+    "jquery",
+    "component"
+  ],
+  "scripts": [
+    "jquery.js"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/jquery/jquery",
+  "_release": "1.8.3+1",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.8.3+1",
+    "commit": "e7136682e89f358915994f4a2167fcdea395358e"
+  },
+  "_source": "git://github.com/jquery/jquery.git",
+  "_target": "~1.8.3",
+  "_originalSource": "jquery"
+}

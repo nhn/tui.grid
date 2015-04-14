@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+	<meta charset="utf-8">
+	<title>jQuery JSON Test Suite</title>
+	<link rel="stylesheet" href="../libs/qunit.css">
+	<script src="../libs/jquery.js"></script>
+	<script src="../libs/qunit.js"></script>
+	<script>
+	/*global QUnit */
+
+	QUnit.config.autostart = false;
+
+	/**
+	 * Implement 'distmin' option.
+	 *
+	 * Also makes sure we force a cache miss to ease develoment.
+	 */
+	QUnit.config.urlConfig.push({
+		id: 'distmin',
+		label: 'Use build',
+		tooltip: 'Use the minified build'
+	});
+
+	var srcPath,
+		nativeJSON;
+
+	if (QUnit.urlParams.distmin) {
+		srcPath = '../dist/jquery.json.min.js';
+	} else {
+		srcPath = '../src/jquery.json.js';
+	}
+
+	/**
+	 * Implement 'disableNative' option.
+	 *
+	 * Useful for disabling the browsers native JSON api,
+	 * and thus test the plugin's methods instead.
+	 */
+	QUnit.config.urlConfig.push({
+		id: 'disableNative',
+		label: 'Disable native support',
+		tooltip: 'Disable the native window.JSON object (if it exists)'
+	});
+
+	if (QUnit.urlParams.disableNative) {
+		nativeJSON = JSON;
+		JSON = undefined;
+	}
+
+	// Load source
+	jQuery.ajax({
+		url: srcPath,
+		dataType: 'script',
+		cache: false,
+		// Must use async:false (using XHR) or crossDomain:true (using <script>)
+		// as otherwise the qunit-phantomjs/bridge.js executes at the wrong time,
+		// causing a fatal error for JSON undefined (resulting in a timeout).
+		async: false
+	}).done(function () {
+		if (QUnit.urlParams.disableNative) {
+			JSON = nativeJSON;
+		}
+
+		// Load test suite
+		jQuery.ajax({
+			url: 'jquery.json.test.js',
+			dataType: 'script',
+			cache: false
+		}).done(function () {
+			QUnit.start();
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="qunit"></div>
+</body>
+</html>
