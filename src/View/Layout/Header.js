@@ -348,6 +348,7 @@
                 initialLeft: 0
             });
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
+            this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
         },
         /**
          * resize handler 마크업 템플릿
@@ -417,7 +418,6 @@
 
             //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
             this._refreshHandlerPosition(true);
-            setTimeout($.proxy(this._refreshHandlerPosition, this, true), 0);
             return this;
         },
         /**

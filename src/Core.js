@@ -424,7 +424,10 @@
          */
         focusClipboard: function() {
             /* istanbul ignore next: focus 이벤트 확인이 불가함 */
-            this.view.clipboard.$el.focus();
+            if (ne.util.isExisty(ne.util.pick(this, 'view', 'clipboard'))) {
+                this.view.clipboard.$el.focus();
+            }
+
         },
 
 
@@ -453,6 +456,7 @@
                 .append(rightLine)
                 .append(this.view.clipboard.render().el);
             this._setHeight();
+            this.trigger('rendered');
         },
         /**
          * rendering 이후, 또는 bodyHeight 가 변경되었을 때, header, toolbar 의 높이를 포함하여

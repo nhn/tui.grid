@@ -1,38 +1,21 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-	<meta charset="utf-8">
-	<title>그리드 기본 예제</title>
-	<link rel="stylesheet" type="text/css" href="./css/grid.css" />
+    <meta charset="utf-8">
+    <title>그리드 기본 예제</title>
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/grid.css" />
 </head>
 <body>
 <div>
-	<div id="wrapper1">
-	</div>
-
-	<div id="buttonList1">
-	</div>
-	<div>
-		<h1>RESULT</h1>
-	</div>
-	<div id="result1">
-
-	</div>
+    <div id="wrapper1">
+    </div>
 </div>
 <div>
-	<div id="wrapper2">
-	</div>
+    <div id="log" style="overflow:auto; width:500px; height:300px">
 
-	<div id="buttonList2">
-	</div>
-	<div>
-		<h1>RESULT</h1>
-	</div>
-	<div id="result2">
-
-	</div>
+    </div>
 </div>
-
 </body>
 <script type="text/javascript" src="./js/lib/jquery.min.js"></script>
 <script type="text/javascript" src="./js/lib/jquery.json.js"></script>
@@ -43,7 +26,14 @@
 <script type="text/javascript" src="./js/grid.js"></script>
 <script type="text/javascript" src="./js/data/grid-row-2000.js"></script>
 <script type="text/javascript">
-
+    function log(str) {
+        var $log = $('#log'),
+                original,
+                arr = [$log.html()];
+        str = '[' + new Date().toString() + '] ' + str;
+        arr.unshift(str);
+        $log.html(arr.join('<br>'));
+    }
     var grid = new ne.Grid({
         el: $('#wrapper1'),
         selectType: 'checkbox',
@@ -94,7 +84,10 @@
                 "width" : 100,
                 "editOption" : {
                     type: 'text',
-                    maxLength : 10
+                    maxLength : 10,
+                    "changeBeforeCallback" : function(changeEvent){
+                        console.log("배송 callback", changeEvent)
+                    }
                 }
             },
             {
@@ -120,7 +113,7 @@
                     "checkPattern" :/[\d]+/g,
                     "maxLength" : 10,
                     "changeBeforeCallback" : function(changeEvent){
-                        console.log("change callback", changeEvent)
+                        console.log("상품가격 callback", changeEvent)
                     },
                     "afterText" : " 원"
                 },
@@ -167,7 +160,7 @@
             {
                 "title" : "<b>주문상태</b>",
                 "columnName" : "payState",
-                "width" : 120
+                "width" : 100
             },
             {
                 "title" : "<b>결제방법</b>",
@@ -177,7 +170,7 @@
             {
                 "title" : "<b>결제일</b>",
                 "columnName" : "date",
-                "width" : 60,
+                "width" : 120,
                 "align" : "center",
                 "editOption" : {
                     type: 'text-convertible',

@@ -299,6 +299,7 @@
 * @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}
 */
 var Util = {
+    uniqueId: 0,
     /**
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
      * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
@@ -319,6 +320,32 @@ var Util = {
             str += ' ' + key + '="' + value + '"';
         }, this);
         return str;
+    },
+
+    /**
+     * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.
+     * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
+     * @param {string} template 템플릿 텍스트
+     * @param {object|object[]} mapper 템플릿과 합성될 데이터
+     * @return {Array}
+     */
+    template: function(template, mapper) {
+        var totalReplaced = [],
+            replaced;
+
+        if(!ne.util.isArray(mapper)){
+            mapper = [mapper];
+        }
+
+        ne.util.forEach(mapper, function(mapdata) {
+            replaced = template.replace(/<%=([^%]+)%>/g, function(matchedString, name) {
+                return mapdata[name] ? mapdata[name].toString() : '';
+            });
+
+            totalReplaced.push(replaced);
+        });
+
+        return totalReplaced;
     },
     /**
      * 배열의 합을 반환한다.
@@ -417,11 +444,10 @@ var Util = {
     },
     /**
      * Create unique key
-     * @return {string} unique key 를 반환한다.
+     * @return {number} unique key 를 반환한다.
      */
     getUniqueKey: function() {
-        var rand = String(parseInt(Math.random() * 10000000000, 10));
-        return new Date().getTime() + rand;
+        return ++this.uniqueId;
     },
     /**
      * object 를 query string 으로 변경한다.
@@ -700,6 +726,12 @@ var Util = {
          */
         initialize: function() {
             Model.Base.prototype.initialize.apply(this, arguments);
+            this.textType = {
+                'normal': true,
+                'text': true,
+                'text-password': true,
+                'text-convertible': true
+            };
             this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
             this.on('change', this._onChange, this);
         },
@@ -862,8 +894,7 @@ var Util = {
          * @return {boolean} text 타입인지 여부
          */
         isTextType: function(columnName) {
-            var textTypeList = ['normal', 'text', 'text-password', 'text-convertible'];
-            return $.inArray(this.getEditType(columnName), textTypeList) !== -1;
+            return !!this.textType[this.getEditType(columnName)];
         },
         /**
          * 컬럼 모델로부터 editType 을 반환한다.
@@ -973,6 +1004,7 @@ var Util = {
                 'rowState' : null
             }
         },
+
         /**
          * 생성자 함수
          */
@@ -991,20 +1023,14 @@ var Util = {
                 isDisabled = false,
                 isChecked = false;
 
-
-            if (rowState) {
-                switch (rowState) {
-                    case 'DISABLED':
-                        isDisabled = true;
-                        break;
-                    case 'DISABLED_CHECK':
-                        isDisabledCheck = true;
-                        break;
-                    case 'CHECKED':
-                        isChecked = true;
-                        break;
-                }
+            if (rowState === 'DISABLED') {
+                isDisabled = true;
+            } else if (rowState === 'DISABLED_CHECK') {
+                isDisabledCheck = true;
+            } else if (rowState === 'CHECKED') {
+                isChecked = true;
             }
+
             isDisabledCheck = isDisabled ? isDisabled : isDisabledCheck;
 
             return {
@@ -1023,8 +1049,10 @@ var Util = {
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
                 extraData = this.get('_extraData'),
                 classNameObj = extraData.className,
-                rowClassNameList = ne.util.isExisty(classNameObj, 'row') ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
-                columnClassNameList = ne.util.isExisty(classNameObj, 'column.' + columnName) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
+                rowClassNameList = (classNameObj && classNameObj['row']) ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
+                columnClassNameList = (classNameObj && classNameObj['column'] && classNameObj['column'][columnName]) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
+                tmpList,
+                classNameMap = {},
                 columnModelClassNameList = []; //columnModel 에 할당된 className 리스트
 
             if (columnModel.className) {
@@ -1033,7 +1061,26 @@ var Util = {
             if (columnModel.isEllipsis) {
                 columnModelClassNameList.push('ellipsis');
             }
-            classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
+
+            tmpList = [classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList];
+
+            ne.util.forEachArray(tmpList, function(list) {
+                ne.util.forEachArray(list, function(item) {
+                    var sliced = item.slice(' ');
+                    if (ne.util.isArray(sliced)) {
+                        ne.util.forEachArray(sliced, function (className) {
+                            classNameMap[className] = true;
+                        });
+                    } else {
+                        classNameMap[item] = true;
+                    }
+                });
+            });
+
+            ne.util.forEach(classNameMap, function(value, className) {
+                classNameList.push(className);
+            });
+            //classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
             return classNameList;
         },
         /**
@@ -1107,26 +1154,26 @@ var Util = {
          * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
          */
         getRowSpanData: function(columnName) {
-            var extraData = this.get('_extraData'),
-                defaultData = {
-                    count: 0,
-                    isMainRow: true,
-                    mainRowKey: this.get('rowKey')
-                };
+            var extraData = this.get('_extraData');
             if (this.collection.isRowSpanEnable()) {
                 if (!columnName) {
                     return extraData['rowSpanData'];
                 } else {
                     extraData = this.get('_extraData');
-                    return extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName] || defaultData;
+                    if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
+                        return extraData['rowSpanData'][columnName];
+                    }
                 }
             } else {
-                if (columnName) {
-                    return defaultData;
-                } else {
+                if (!columnName) {
                     return null;
                 }
             }
+            return {
+                count: 0,
+                isMainRow: true,
+                mainRowKey: this.get('rowKey')
+            };
 
 
         },
@@ -1162,7 +1209,7 @@ var Util = {
             var value = this.get(columnName),
                 columnModel = this.grid.columnModel.getColumnModel(columnName);
 
-            if (ne.util.isExisty(columnModel, 'editOption.list')) {
+            if (ne.util.isExisty(ne.util.pick(columnModel, 'editOption', 'list'))) {
                 var resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
                     editOptionList = resultOptionList && resultOptionList['optionList'] ?
                         resultOptionList['optionList'] : columnModel.editOption.list,
@@ -1203,7 +1250,7 @@ var Util = {
                 model = columnModel.getColumnModel(columnName);
                 //list type 의 editType 이 존재하는 경우
                 if (listTypeMap[editType]) {
-                    if (ne.util.isExisty(model, 'editOption.list.0.value')) {
+                    if (ne.util.isExisty(ne.util.pick(model, 'editOption', 'list', 0, 'value'))) {
                         value = this._getListTypeVisibleText(columnName);
                     } else {
                         throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
@@ -1230,7 +1277,7 @@ var Util = {
             var callback, attribute, targetColumnList,
                 value,
                 rowKey = this.get('rowKey'),
-                rowData = this.toJSON(),
+                rowData = this.attributes,
                 relationListMap = this.grid.columnModel.get('relationListMap'),
                 relationResult = {},
                 rowState = this.getRowState();
@@ -1250,16 +1297,12 @@ var Util = {
                             callback = relation[callbackName];
                             if (typeof callback === 'function') {
                                 attribute = '';
-                                switch (callbackName) {
-                                    case 'optionListChange':
-                                        attribute = 'optionList';
-                                        break;
-                                    case 'isDisabled':
-                                        attribute = 'isDisabled';
-                                        break;
-                                    case 'isEditable':
-                                        attribute = 'isEditable';
-                                        break;
+                                if (callbackName === 'optionListChange') {
+                                    attribute = 'optionList';
+                                } else if (callbackName === 'isDisabled') {
+                                    attribute = 'isDisabled';
+                                } else if (callbackName === 'isEditable') {
+                                    attribute = 'isEditable';
                                 }
                                 if (attribute) {
                                     //relation 에 걸려있는 컬럼들의 값을 변경한다.
@@ -1728,7 +1771,7 @@ var Util = {
                 row = this.get(rowKey),
                 classNameData;
 
-            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.column.' + columnName)) {
+            if (ne.util.isExisty(ne.util.pick(extraData, 'className', 'column', columnName))) {
                 classNameData = extraData.className;
                 classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
                 row.set('_extraData', extraData);
@@ -1744,7 +1787,7 @@ var Util = {
                 row = this.get(rowKey),
                 classNameData;
 
-            if (!ne.util.isUndefined(extraData) && ne.util.isExisty(extraData, 'className.row')) {
+            if (ne.util.isExisty(extraData, 'className.row')) {
                 classNameData = extraData.className;
                 classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
                 //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
@@ -2680,21 +2723,27 @@ var Util = {
          */
         focus: function(rowKey, columnName, isScrollable) {
             var scrollPosition;
-            rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
-            columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
-            this._savePrevious();
-            this.blur();
-            if (rowKey !== this.get('rowKey')) {
-                this.select(rowKey);
-            }
-            if (columnName && columnName !== this.get('columnName')) {
-                this.set('columnName', columnName);
-            }
-            this.trigger('focus', rowKey, columnName);
-            if (isScrollable) {
-                //todo scrolltop 및 left 값 조정하는 로직 필요.
-                scrollPosition = this._getScrollPosition();
-                !ne.util.isEmpty(scrollPosition) && this.grid.renderModel.set(scrollPosition);
+            if (ne.util.isUndefined(rowKey) && ne.util.isUndefined(columnName)) {
+                if (ne.util.isUndefined(this.grid.renderModel.getCollection('R').get(rowKey))) {
+                    this.trigger('focus', this.get('rowKey'), this.get('columnName'));
+                }
+            } else if (this.get('rowKey') !== rowKey || this.get('columnName') !== columnName) {
+                rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
+                columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
+                this._savePrevious();
+                this.blur();
+                if (rowKey !== this.get('rowKey')) {
+                    this.select(rowKey);
+                }
+                if (columnName && columnName !== this.get('columnName')) {
+                    this.set('columnName', columnName);
+                }
+                this.trigger('focus', rowKey, columnName);
+                if (isScrollable) {
+                    //todo scrolltop 및 left 값 조정하는 로직 필요.
+                    scrollPosition = this._getScrollPosition();
+                    !ne.util.isEmpty(scrollPosition) && this.grid.renderModel.set(scrollPosition);
+                }
             }
             return this;
         },
@@ -3184,26 +3233,26 @@ var Util = {
         _formatData: function(data) {
             var grid = this.grid || this.collection.grid,
                 dataModel = grid.dataModel,
-                rowKey = data['rowKey'];
+                rowKey = data['rowKey'],
+                row = dataModel.get(rowKey),
+                rowState = row.getRowState(),
+                isDisabled = rowState.isDisabled;
 
             _.each(data, function(value, columnName) {
                 var rowSpanData,
-                    row = dataModel.get(rowKey),
-                    rowState = row.getRowState(),
-                    isDisabled = rowState.isDisabled,
-                    isEditable = row.isEditable(columnName),
-                    defaultRowSpanData = {
-                        mainRowKey: rowKey,
-                        count: 0,
-                        isMainRow: true
-                    };
+                    isEditable = row.isEditable(columnName);
 
                 if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                    if (dataModel.isRowSpanEnable()) {
-                        rowSpanData = data['_extraData'] && data['_extraData']['rowSpanData'] &&
-                            data['_extraData']['rowSpanData'][columnName] || defaultRowSpanData;
+                    if (dataModel.isRowSpanEnable() &&
+                        data['_extraData'] && data['_extraData']['rowSpanData'] &&
+                        data['_extraData']['rowSpanData'][columnName]) {
+                        rowSpanData = data['_extraData']['rowSpanData'][columnName];
                     } else {
-                        rowSpanData = defaultRowSpanData;
+                        rowSpanData = {
+                            mainRowKey: rowKey,
+                            count: 0,
+                            isMainRow: true
+                        };
                     }
                     isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : isDisabled;
 
@@ -3510,8 +3559,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 '    </table>' +
                 '</div>'),
         events: {
-            'scroll': '_onScroll',
-            'mousedown': '_onMouseDown'
+            'scroll': '_onScroll'
         },
         /**
          * 생성자 함수
@@ -3527,7 +3575,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
 
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
                 .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
-
                 .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
                 .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
                 .listenTo(this.grid.renderModel, 'refresh', this._setTopPosition, this);
@@ -3558,28 +3605,28 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @param {event} mouseDownEvent    마우스 이벤트
          * @private
          */
-        _onMouseDown: function(mouseDownEvent) {
-            var grid = this.grid,
-                selection = grid.selection,
-                focused,
-                pos;
-
-            if (mouseDownEvent.shiftKey) {
-                focused = grid.focusModel.indexOf(true);
-
-                if (!selection.hasSelection()) {
-                    selection.startSelection(focused.rowIdx, focused.columnIdx);
-                }
-
-                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
-                pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
-                selection.updateSelection(pos.row, pos.column);
-                grid.focusAt(pos.row, pos.column);
-            } else {
-                selection.endSelection();
-                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
-            }
-        },
+        //_onMouseDown: function(mouseDownEvent) {
+        //    var grid = this.grid,
+        //        selection = grid.selection,
+        //        focused,
+        //        pos;
+        //
+        //    if (mouseDownEvent.shiftKey) {
+        //        focused = grid.focusModel.indexOf(true);
+        //
+        //        if (!selection.hasSelection()) {
+        //            selection.startSelection(focused.rowIdx, focused.columnIdx);
+        //        }
+        //
+        //        selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        //        pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        //        selection.updateSelection(pos.row, pos.column);
+        //        grid.focusAt(pos.row, pos.column);
+        //    } else {
+        //        selection.endSelection();
+        //        selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+        //    }
+        //},
         /**
          * 스크롤 이벤트 핸들러
          * @param {event} scrollEvent   스크롤 이벤트
@@ -4343,7 +4390,10 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                     'height' : headerHeight + 'px'
                 })
                 .html(this._getResizeHandlerMarkup());
+
+            //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
             this._refreshHandlerPosition(true);
+            setTimeout($.proxy(this._refreshHandlerPosition, this, true), 0);
             return this;
         },
         /**
@@ -4633,6 +4683,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * 생성자 함수
          */
         initialize: function() {
+            this.timeoutIdForResize = 0;
             View.Base.prototype.initialize.apply(this, arguments);
         },
         /**
@@ -4670,6 +4721,8 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @private
          */
         _onMouseMove: function(mouseMoveEvent) {
+            clearTimeout(this.timeoutIdForResize);
+
             var dimensionModel = this.grid.dimensionModel,
                 offsetTop = dimensionModel.get('offsetTop'),
                 headerHeight = dimensionModel.get('headerHeight'),
@@ -4678,9 +4731,15 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight - toolbarHeight;
 
             bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
-            dimensionModel.set({
-                bodyHeight: bodyHeight
-            });
+
+
+            //매번 수행하면 성능이 느려지므로, resize 이벤트가 발생할 시 천첮히 업데이트한다.
+            this.timeoutIdForResize = setTimeout(function() {
+                dimensionModel.set({
+                    bodyHeight: bodyHeight
+                });
+            }, 0);
+
         },
         /**
          * mouseup 이벤트 핸들러
@@ -4830,7 +4889,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
          */
         destroy: function() {
-            this.detachHandlerAll();
+            //this.detachHandlerAll();
             this.destroyChildren();
             this.remove();
         },
@@ -4870,6 +4929,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             if (this.grid.option('selectType') === 'radio') {
                 this.grid.check(rowKey);
             }
+            this.grid.selection.onMouseDown(mouseDownEvent);
         },
         /**
          * model 변경 시 이벤트 핸들러
@@ -5078,18 +5138,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
             });
         },
-        /**
-         * td 마크업 생성시 필요한 base template
-         */
-        baseTemplate: _.template('<td' +
-            ' columnName="<%=columnName%>"' +
-            ' <%=rowSpan%>' +
-            ' class="<%=className%>"' +
-            ' <%=attributes%>' +
-            ' data-edit-type="<%=editType%>"' +
-            '>' +
-            '<%=content%>' +
-            '</td>'),
 
         /**
          * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
@@ -5198,35 +5246,31 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
                 classNameList = [],
                 classNameMap = {},
-                privateColumnList = ['_button', '_number'],
-                isPrivateColumnName = $.inArray(columnName, privateColumnList) !== -1;
+                privateColumnMap = {
+                    '_button': true,
+                    '_number': true
+                },
+                isPrivateColumnName = !!privateColumnMap[columnName];
 
             if (focusedRowKey === cellData.rowKey) {
-                classNameList.push('selected');
+                classNameMap['selected'] = true;
                 if (focused.columnName === columnName) {
-                    classNameList.push('focused');
+                    classNameMap['focused'] = true;
                 }
             }
             if (cellData.className) {
-                classNameList.push(cellData.className);
+                classNameMap[cellData.className] = true;
             }
 
             if (cellData.isEditable && !isPrivateColumnName) {
-                classNameList.push('editable');
+                classNameMap['editable'] = true;
             }
 
             if (cellData.isDisabled) {
-                classNameList.push('disabled');
+                classNameMap['disabled'] = true;
             }
 
-            //className 중복제거
-            _.each(classNameList, function(className) {
-                classNameMap[className] = true;
-            });
-
-            classNameList = [];
-
-            _.each(classNameMap, function(val, className) {
+            ne.util.forEach(classNameMap, function(val, className) {
                 classNameList.push(className);
             });
 
@@ -5242,19 +5286,22 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         _getContentHtml: function(cellData) {
             var columnName = cellData.columnName,
                 columnModel = this.grid.columnModel.getColumnModel(columnName),
+                editOption = columnModel.editOption,
                 content;
 
-            if (!ne.util.isNumber(cellData.value) && !cellData.value) {
+            //if (!ne.util.isNumber(cellData.value) && !cellData.value) {
+            if (!ne.util.isExisty(cellData.value)) {
                 cellData.value = columnModel.defaultValue;
             }
 
             content = this.getContentHtml(cellData);
-
-            if (ne.util.isExisty(columnModel, 'editOption.beforeText')) {
-                content = columnModel.editOption.beforeText + content;
-            }
-            if (ne.util.isExisty(columnModel, 'editOption.afterText')) {
-                content = content + columnModel.editOption.afterText;
+            if (editOption) {
+                if (editOption.beforeText) {
+                    content = columnModel.editOption.beforeText + content;
+                }
+                if (editOption.afterText) {
+                    content = content + columnModel.editOption.afterText;
+                }
             }
             return content;
         },
@@ -5265,16 +5312,24 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @return {string} td 마크업 문자열
          */
         getHtml: function(cellData) {
-            var attributeString = Util.getAttributesString(this.getAttributes(cellData));
+            var attributeString = Util.getAttributesString(this.getAttributes(cellData)),
+                htmlArr = [];
 
-            return this.baseTemplate({
-                columnName: cellData.columnName,
-                rowSpan: cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '',
-                className: this._getClassNameList(cellData).join(' '),
-                attributes: attributeString,
-                editType: this.getEditType(),
-                content: this._getContentHtml(cellData)
-            });
+            htmlArr.push('<td');
+            htmlArr.push(' columnName="');
+            htmlArr.push(cellData.columnName);
+            htmlArr.push('" ');
+            htmlArr.push(cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '');
+            htmlArr.push(' class="');
+            htmlArr.push(this._getClassNameList(cellData).join(' '));
+            htmlArr.push('" ');
+            htmlArr.push(attributeString);
+            htmlArr.push(' edit-type="');
+            htmlArr.push(this.getEditType());
+            htmlArr.push('">');
+            htmlArr.push(this._getContentHtml(cellData));
+            htmlArr.push('</td>');
+            return htmlArr.join('');
         },
         /**
          * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
@@ -5289,9 +5344,10 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             if (cellData.rowSpan) {
                 attributes['rowSpan'] = cellData.rowSpan;
             }
+            attributes['edit-type'] = this.getEditType();
             attributes = $.extend(attributes, this.getAttributes(cellData));
             $td.attr(attributes);
-            $td.data('edit-type', this.getEditType()).html(this._getContentHtml(cellData));
+            $td.html(this._getContentHtml(cellData));
             this.attachHandler($td);
         },
         /**
@@ -5301,7 +5357,8 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @private
          */
         _getCellData: function($target) {
-            return this.grid.renderModel.getCellData(this.getRowKey($target), this.getColumnName($target));
+            var cellData = this._getCellAddress($target);
+            return this.grid.renderModel.getCellData(cellData.rowKey, cellData.columnName);
         },
         /**
          * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
@@ -5341,7 +5398,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         },
         /**
          * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-         * 필요에 따라 Override 한다.
          * @param {Object} cellData Model 의 셀 데이터
          * @return {Object} td 에 지정할 attribute 데이터
          */
@@ -5593,28 +5649,27 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         getContentHtml: function(cellData) {
             var list = this.getOptionList(cellData),
-                html = '',
                 isDisabled = cellData.isDisabled,
-                len = list.length;
+                htmlArr = [];
 
-            html += '<select name="' + Util.getUniqueKey() + '"';
-            html += isDisabled ? ' disabled ' : '';
-            html += '>';
+            htmlArr.push('<select name="' + Util.getUniqueKey() + '"');
+            htmlArr.push(isDisabled ? ' disabled ' : '');
+            htmlArr.push('>');
 
             ne.util.forEachArray(list, function(item) {
-                html += '<option ';
-                html += 'value="' + item.value + '"';
+                htmlArr.push('<option ');
+                htmlArr.push('value="' + item.value + '"');
                 //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
                 if (cellData.value == item.value) {
-                    html += ' selected';
+                    htmlArr.push(' selected');
                 }
-                html += ' >';
-                html += item.text;
-                html += '</option>';
+                htmlArr.push(' >');
+                htmlArr.push(item.text);
+                htmlArr.push('</option>');
             });
 
-            html += '</select>';
-            return html;
+            htmlArr.push('</select>');
+            return htmlArr.join('');
 
         },
         /**
@@ -5704,10 +5759,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             'change input' : '_onChange',
             'keydown input' : '_onKeyDown'
         },
-        template: {
-            input: _.template('<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>" <%=checked%> <%=disabled%> />'),
-            label: _.template('<label for="<%=id%>" style="margin-right:10px"><%=text%></label>')
-        },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
          * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
@@ -5740,30 +5791,43 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
                 value = cellData.value,
                 checkedList = ('' + value).split(','),
-                html = '',
+                checkedMap = {},
+                htmlArr = [],
                 name = Util.getUniqueKey(),
                 isDisabled = cellData.isDisabled,
                 id;
 
+            ne.util.forEachArray(checkedList, function(item) {
+                checkedMap[item] = true;
+            });
+
             ne.util.forEachArray(list, function(item) {
                 id = name + '_' + item.value;
-                html += this.template.input({
-                    type: columnModel.editOption.type,
-                    name: name,
-                    id: id,
-                    value: item.value,
-                    checked: $.inArray('' + item.value, checkedList) === -1 ? '' : 'checked',
-                    disabled: isDisabled ? 'disabled' : ''
-                });
+
+                htmlArr.push('<input type="');
+                htmlArr.push(columnModel.editOption.type);
+                htmlArr.push('" name="');
+                htmlArr.push(name);
+                htmlArr.push('" id="');
+                htmlArr.push(id);
+                htmlArr.push('" value="');
+                htmlArr.push(item.value);
+                htmlArr.push('" ');
+                htmlArr.push(checkedMap[item.value] ? 'checked' : '');
+                htmlArr.push(isDisabled ? 'disabled' : '');
+                htmlArr.push('/>');
+
                 if (item.text) {
-                    html += this.template.label({
-                        id: id,
-                        text: item.text
-                    });
+                    htmlArr.push('<label for="');
+                    htmlArr.push(id);
+                    htmlArr.push('" style="margin-right:10px">');
+                    htmlArr.push(item.text);
+                    htmlArr.push('</label>');
                 }
+
             }, this);
 
-            return html;
+            return htmlArr.join('');
         },
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
@@ -5904,7 +5968,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
                 rowKey = cellData.rowKey;
             if (ne.util.isFunction(columnModel.formatter)) {
-                value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
+                value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).attributes, columnModel);
             }
             return value;
         },
@@ -5996,10 +6060,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             });
         },
         /**
-         * rendering 시 사용할 template
-         */
-        template: _.template('<input type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%>/>'),
-        /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
          * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
          */
@@ -6020,13 +6080,17 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * </select>
          */
         getContentHtml: function(cellData) {
-            var isDisabled = cellData.isDisabled;
-            return this.template({
-                type: this.grid.option('selectType'),
-                name: this.grid.id,
-                checked: (!!cellData.value) ? 'checked' : '',
-                disabled: isDisabled ? 'disabled' : ''
-            });
+            var isDisabled = cellData.isDisabled,
+                htmlArr = [];
+            htmlArr.push('<input type="');
+            htmlArr.push(this.grid.option('selectType'));
+            htmlArr.push('" name="');
+            htmlArr.push(this.grid.id);
+            htmlArr.push('" ');
+            htmlArr.push((!!cellData.value) ? 'checked' : '');
+            htmlArr.push(isDisabled ? 'disabled' : '');
+            htmlArr.push('/>');
+            return htmlArr.join('');
         },
         /**
          * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
@@ -6122,11 +6186,11 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 'PAGE_UP': function() {},
                 'PAGE_DOWN': function() {},
                 'ENTER': function(keyDownEvent, param) {
-                    this.focusOut(param.$target);
+                    this.focusOut(param.$target.closest('td'));
                 },
                 'ESC': function(keyDownEvent, param) {
                     this._restore(param.$target);
-                    this.focusOut(param.$target);
+                    this.focusOut(param.$target.closest('td'));
                 }
             });
         },
@@ -6180,15 +6244,22 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         getContentHtml: function(cellData) {
             var columnModel = this.getColumnModel(cellData),
-                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
+                value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
+                htmlArr = [];
 
-            return this.template({
-                type: this._getInputType(),
-                value: value,
-                disabled: cellData.isDisabled ? 'disabled' : '',
-                name: Util.getUniqueKey(),
-                maxLength: columnModel.editOption.maxLength
-            });
+            htmlArr.push('<input type="');
+            htmlArr.push(this._getInputType());
+            htmlArr.push('" value="');
+            htmlArr.push(value);
+            htmlArr.push('" name="');
+            htmlArr.push(Util.getUniqueKey());
+            htmlArr.push('" align="center" ');
+            htmlArr.push(cellData.isDisabled ? 'disabled' : '');
+            htmlArr.push(' maxLength="');
+            htmlArr.push(columnModel.editOption.maxLength);
+            htmlArr.push('"/>');
+
+            return htmlArr.join('');
         },
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
@@ -6285,7 +6356,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * 더블클릭으로 간주할 time millisecond 설정
          * @type {number}
          */
-        doubleClickDuration: 400,
+        doubleClickDuration: 800,
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
@@ -6299,7 +6370,12 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         initialize: function() {
             View.Painter.Cell.Text.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                timeoutIdForClick: 0
+                timeoutIdForClick: 0,
+                editingCell: {
+                    rowKey: null,
+                    columnName: '',
+                    $clickedTd: null
+                }
             });
         },
         /**
@@ -6322,7 +6398,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusOut: function($td) {
-            this._endEdit($td);
+            //$td.find('input').blur();
             this.grid.focusClipboard();
         },
         /**
@@ -6341,23 +6417,32 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         getContentHtml: function(cellData) {
             var columnModel = this.getColumnModel(cellData),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-                $td = this.grid.getElement(cellData.rowKey, cellData.columnName),
-                isEdit = !!($td.length && $td.data('isEdit'));
+                htmlArr = [];
 
-            if (!isEdit) {
+            if (!this._isEditingCell(cellData)) {
                 if (ne.util.isFunction(columnModel.formatter)) {
-                    value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).toJSON(), columnModel);
+                    value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
                 }
                 return value;
             } else {
-                return this.template({
-                    type: this._getInputType(),
-                    value: value,
-                    disabled: cellData.isDisabled ? 'disabled' : '',
-                    name: Util.getUniqueKey(),
-                    maxLength: columnModel.editOption.maxLength
-                });
+                htmlArr.push('<input type="');
+                htmlArr.push(this._getInputType());
+                htmlArr.push('" value="');
+                htmlArr.push(value);
+                htmlArr.push('" name="');
+                htmlArr.push(Util.getUniqueKey());
+                htmlArr.push('" align="center" ');
+                htmlArr.push(cellData.isDisabled ? 'disabled' : '');
+                htmlArr.push(' maxLength="');
+                htmlArr.push(columnModel.editOption.maxLength);
+                htmlArr.push('"/>');
+
+                return htmlArr.join('');
             }
+        },
+        _isEditingCell: function(cellData) {
+            var editingCell = this.editingCell;
+            return !!(editingCell.rowKey === cellData.rowKey.toString() && editingCell.columnName === cellData.columnName.toString());
         },
         /**
          * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
@@ -6389,14 +6474,18 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 rowKey = this.getRowKey($td),
                 columnName = this.getColumnName($td),
                 cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
+
+            this.editingCell = {
+                rowKey: rowKey,
+                columnName: columnName
+            };
+
             if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
-                $td.data('isEdit', true);
                 this.redraw(this._getCellData($td), $td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
                 Util.form.setCursorToEnd($input.get(0));
                 $input.focus().select();
-
             }
         },
         /**
@@ -6405,11 +6494,15 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @private
          */
         _endEdit: function($td) {
-            var isEdit = $td.data('isEdit');
-            if (isEdit) {
-                $td.data('isEdit', false);
+            var cellData = this._getCellData($td);
+            this.editingCell = {
+                rowKey: null,
+                columnName: ''
+            };
+            if (cellData) {
                 this.redraw(this._getCellData($td), $td);
             }
+            $td.data('clicked', false);
         },
         /**
          * click 이벤트 핸들러
@@ -6417,15 +6510,16 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @private
          */
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target),
+            var that = this,
+                $target = $(clickEvent.target),
                 $td = $target.closest('td'),
                 isClicked = $td.data('clicked');
+
 
             if (isClicked) {
                 this._startEdit($td);
             } else {
                 $td.data('clicked', true);
-                clearTimeout(this.timeoutIdForClick);
                 this.timeoutIdForClick = setTimeout(function() {
                     $td.data('clicked', false);
                 }, this.doubleClickDuration);
@@ -6508,9 +6602,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
 
             _.each($tdList, function(item, index) {
                 $td = $tdList.eq(index);
-                editType = $td.data('edit-type');
+                editType = $td.attr('edit-type');
                 if (this.instances[editType]) {
-                    this.instances[editType].attachHandler($td);
+                   this.instances[editType].attachHandler($td);
                 }
             }, this);
         },
@@ -6519,17 +6613,18 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
         detachHandler: function($parent) {
-            var $tdList = $parent.find('td'),
-                $td,
-                editType;
-
-            _.each($tdList, function(item, index) {
-                $td = $tdList.eq(index);
-                editType = $td.data('edit-type');
-                if (this.instances[editType]) {
-                    this.instances[editType].detachHandler($td);
-                }
-            }, this);
+            $parent.find().off();
+            //var $tdList = $parent.find('td'),
+            //    $td,
+            //    editType;
+            //
+            //_.each($tdList, function(item, index) {
+            //    $td = $tdList.eq(index);
+            //    editType = $td.attr('edit-type');
+            //    if (this.instances[editType]) {
+            //        this.instances[editType].detachHandler($td);
+            //    }
+            //}, this);
         }
     });
 
@@ -6546,36 +6641,14 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         className: 'clipboard',
         events: {
             'keydown': '_onKeyDown',
-            'focus': '_onFocus',
-            'blur': '_onBlur'
-        },
-        isFocused: function() {
-
-            return this._isFocused;
+            'focusin': '_onFocus'
         },
         /**
          * 클립보드 focus 이벤트 핸들러
          * @private
          */
         _onFocus: function() {
-            this._isFocused = true;
-            this.$el.val(this._isFocused);
             this.grid.focusModel.focus();
-        },
-        /**
-         * 클립보드 blur 이벤트 핸들러
-         * @private
-         */
-        _onBlur: function() {
-            this._isFocused = false;
-            this.$el.val(this._isFocused);
-            //Grid 내 input 에 focus 가 된 경우 blur 처리하지 않기위해 setTimeout 을 사용한다.
-            setTimeout($.proxy(function() {
-                var hasFocusedElement = !!(this.grid.$el.find(':focus').length);
-                if (!hasFocusedElement) {
-                    this.grid.focusModel.blur();
-                }
-            }, this), 10);
         },
         /**
          * 생성자
@@ -6583,7 +6656,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                _isFocused: false,
                 timeoutIdForKeyIn: 0,
                 isLocked: false
             });
@@ -6923,6 +6995,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
      * @constructor View.RowList
      */
     View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
+
         /**
          * 초기화 함수
          * @param {object} options
@@ -6933,6 +7006,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             this.setOwnProperties({
                 whichSide: (options && options.whichSide) || 'R',
                 timeoutIdForCollection: 0,
+                timeoutIdForFocusClipboard: 0,
                 rowPainter: null
             });
             this._createRowPainter();
@@ -6950,15 +7024,19 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 whichSide: this.whichSide
             });
         },
+
         /**
          * 랜더링한다.
          * @return {View.RowList}
          */
         render: function() {
-            var html = '',
+            var self = this,
+                html = '',
                 firstRow = this.collection.at(0);
-            //var start = new Date();
-            //console.log('View.RowList.render start');
+
+            var start = new Date();
+
+            //alert('a');
             this.rowPainter.detachHandlerAll();
             this.destroyChildren();
             this._createRowPainter();
@@ -6969,12 +7047,18 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                     html += this.rowPainter.getHtml(row);
                 }, this);
             }
-            this.$el.html('').prepend(html);
+            this.$el.empty().prepend(html);
             this.rowPainter.attachHandlerAll();
+
+            clearTimeout(this.timeoutIdForFocusClipboard);
+            this.timeoutIdForFocusClipboard = setTimeout(function() {
+                self.grid.focusClipboard();
+            }, 10);
 
             //var end = new Date();
             //console.log('View.RowList.addAll end', end - start);
             this._showLayer();
+
             return this;
         },
         /**
@@ -6987,7 +7071,15 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             } else {
                 this.grid.showGridLayer('empty');
             }
-        }
+        },
+        ///**
+        // * selection 영역의 mousedown 이벤트
+        // * @param {Event} mouseDownEvent
+        // * @private
+        // */
+        //_onMouseDown: function(mouseDownEvent) {
+        //    this.grid.selection.onMouseDown(mouseDownEvent);
+        //}
     });
 
 /**
@@ -7070,6 +7162,31 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             $(document).off('mousemove', $.proxy(this._onMouseMove, this));
             $(document).off('mouseup', $.proxy(this._onMouseUp, this));
             $(document).off('selectstart', $.proxy(this._onSelectStart, this));
+        },
+        /**
+         * selection 영역에 대한 mouseDown 퍼블릭 이벤트 핸들러
+         * @param mouseDownEvent
+         */
+        onMouseDown: function(mouseDownEvent) {
+            var grid = this.grid,
+                selection = this,
+                focused,
+                pos;
+
+            if (mouseDownEvent.shiftKey) {
+                focused = grid.focusModel.indexOf(true);
+                if (!selection.hasSelection()) {
+                    selection.startSelection(focused.rowIdx, focused.columnIdx);
+                }
+
+                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                pos = selection.getIndexFromMousePosition(mouseDownEvent.pageX, mouseDownEvent.pageY);
+                selection.updateSelection(pos.row, pos.column);
+                grid.focusAt(pos.row, pos.column);
+            } else {
+                selection.endSelection();
+                selection.attachMouseEvent(mouseDownEvent.pageX, mouseDownEvent.pageY);
+            }
         },
         /**
          * mouse move 이벤트 핸들러
@@ -7538,6 +7655,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
     View.Selection.Layer = View.Base.extend(/**@lends View.Selection.Layer.prototype */{
         tagName: 'div',
         className: 'selection_layer',
+        events: {
+            mousedown: '_onMouseDown'
+        },
         /**
          * 생성자 함수
          * @param {object} options
@@ -7554,6 +7674,14 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 },
                 whichSide: 'R'
             });
+        },
+        /**
+         * selection 영역의 mousedown 이벤트
+         * @param {Event} mouseDownEvent
+         * @private
+         */
+        _onMouseDown: function(mouseDownEvent) {
+            this.grid.selection.onMouseDown(mouseDownEvent);
         },
         /**
          * 컬럼 widthList 값의 변화가 발생했을때 이벤트 핸들러
@@ -8318,8 +8446,10 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         toolbar: null,
         cellFactory: null,
         events: {
-            'click' : '_onClick',
-            'mousedown' : '_onMouseDown'
+            'click': '_onClick',
+            'mousedown': '_onMouseDown',
+            'selectstart': '_preventDrag',
+            'dragstart': '_preventDrag'
         },
         keyMap: {
             'TAB': 9,
@@ -8455,6 +8585,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                         empty: null
                     }
                 },
+                'timeoutIdForBlur': 0,
                 'timeoutIdForResize': 0,
                 'timeoutIdForSetRowList': 0,
                 '__$el': this.$el.clone()
@@ -8590,6 +8721,38 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         _attachExtraEvent: function() {
             $(window).on('resize', $.proxy(this._onWindowResize, this));
+            $(document).on('focusin', $.proxy(this._onBlur, this));
+        },
+
+        /**
+         * 클립보드 blur 이벤트 핸들러
+         * @private
+         */
+        _onBlur: function() {
+            clearTimeout(this.timeoutIdForBlur);
+            this.timeoutIdForBlur = setTimeout($.proxy(this._doBlur, this), 0);
+        },
+        /**
+         * 실제 blur 를 한다.
+         * @private
+         */
+        _doBlur: function() {
+            var $focused = this.$el.find(':focus'),
+                hasFocusedElement = !!$focused.length;
+
+            if (!hasFocusedElement) {
+                this.focusModel.blur();
+            } else if ($focused.is('td') || $focused.is('a')) {
+                this.focusClipboard();
+            }
+        },
+        /**
+         * drag 이벤트 발생시 이벤트 핸들러
+         * @returns {boolean}
+         * @private
+         */
+        _preventDrag: function() {
+            return false;
         },
         /**
          * window resize  이벤트 핸들러
@@ -9692,7 +9855,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         initialize: function(options) {
             //grid 에서 public instance 를 참조할 수 있도록 자신의 참조 추가
-            options.public = this;
+            options.publicInstance = this;
             this.core = new Core(options);
             this.listenTo(this.core, 'all', this._relayEvent, this);
         },
