@@ -558,6 +558,7 @@
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this.detachMouseEvent();
             this.destroyChildren();
             this.remove();

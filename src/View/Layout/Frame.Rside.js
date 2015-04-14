@@ -190,6 +190,7 @@
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this._onMouseUp();
             this.destroyChildren();
             this.remove();

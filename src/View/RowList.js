@@ -65,7 +65,9 @@
 
             clearTimeout(this.timeoutIdForFocusClipboard);
             this.timeoutIdForFocusClipboard = setTimeout(function() {
-                self.grid.focusClipboard();
+                if (ne.util.pick(self, 'grid', 'focusClipboard')) {
+                    self.grid.focusClipboard();
+                }
             }, 10);
 
             //var end = new Date();

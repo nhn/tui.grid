@@ -59,6 +59,7 @@
          */
         destroy: function() {
             //this.detachHandlerAll();
+            this.stopListening();
             this.destroyChildren();
             this.remove();
         },

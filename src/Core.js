@@ -308,13 +308,15 @@
          * @private
          */
         _doBlur: function() {
-            var $focused = this.$el.find(':focus'),
-                hasFocusedElement = !!$focused.length;
+            if (this.$el) {
+                var $focused = this.$el.find(':focus'),
+                    hasFocusedElement = !!$focused.length;
 
-            if (!hasFocusedElement) {
-                this.focusModel.blur();
-            } else if ($focused.is('td') || $focused.is('a')) {
-                this.focusClipboard();
+                if (!hasFocusedElement) {
+                    this.focusModel.blur();
+                } else if ($focused.is('td') || $focused.is('a')) {
+                    this.focusClipboard();
+                }
             }
         },
         /**

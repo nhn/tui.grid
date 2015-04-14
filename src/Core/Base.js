@@ -177,6 +177,7 @@
          * 자식 View를 제거한 뒤 자신도 제거한다.
          */
         destroy: function() {
+            this.stopListening();
             this.destroyChildren();
             this.remove();
         },

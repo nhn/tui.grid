@@ -348,7 +348,9 @@
                 initialLeft: 0
             });
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
-            this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
+            if (this.grid instanceof View.Base) {
+                this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
+            }
         },
         /**
          * resize handler 마크업 템플릿
@@ -593,6 +595,7 @@
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this._stopResizing();
             this.destroyChildren();
             this.remove();
