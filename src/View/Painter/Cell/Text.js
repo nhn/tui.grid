@@ -197,7 +197,7 @@
          * 더블클릭으로 간주할 time millisecond 설정
          * @type {number}
          */
-        doubleClickDuration: 500,
+        doubleClickDuration: 800,
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
