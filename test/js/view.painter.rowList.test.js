@@ -372,29 +372,6 @@ describe('view.painter.rowList', function() {
                 expect(rowPainter._setCssSelect).toHaveBeenCalledWith(0, false);
             });
         });
-
-        describe('_onMouseDown', function() {
-            beforeEach(function() {
-                grid.dataModel.set(simpleRowList, {parse: true});
-                grid.renderModel.refresh();
-                grid.focus = jasmine.createSpy('focus');
-                grid.check = jasmine.createSpy('check');
-            });
-            it('mouseDown 이벤트 발생시 grid 의 focus 를 호출한다.', function() {
-                grid.getElement(0, 'normal').trigger('mousedown');
-                expect(grid.focus).toHaveBeenCalledWith('0', 'normal');
-            });
-            it('grid 의 option 이 radio 라면 grid.check 를 호출 한다.', function() {
-                grid.option = function() {return 'radio';};
-                grid.getElement(0, 'normal').trigger('mousedown');
-                expect(grid.check).toHaveBeenCalledWith('0');
-            });
-            it('grid 의 option 이 radio 가 아니라면 grid.check 를 호출 하지 않는다.', function() {
-                grid.option = function() {return 'checkbox';};
-                grid.getElement(0, 'normal').trigger('mousedown');
-                expect(grid.check).not.toHaveBeenCalled();
-            });
-        });
     });
     describe('RowList 를 테스트한다.', function() {
         var simpleRowList = [

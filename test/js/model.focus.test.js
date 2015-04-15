@@ -242,6 +242,9 @@ describe('model.renderer', function() {
         });
     });
     describe('focus()', function() {
+        beforeEach(function(){
+            focusInstance.blur();
+        });
         it('지정된 rowKey, columnName 을 저장한다.', function() {
             focusInstance.focus('22', 'columnName1');
             expect(focusInstance.get('rowKey')).toEqual('22');
@@ -251,7 +254,6 @@ describe('model.renderer', function() {
             var callback = jasmine.createSpy('callback'),
                 listenModel = new Model.Base();
             listenModel.listenToOnce(focusInstance, 'focus', callback);
-
             focusInstance.focus('22', 'columnName1');
             expect(callback).toHaveBeenCalled();
             expect(callback).toHaveBeenCalledWith('22', 'columnName1');

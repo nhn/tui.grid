@@ -85,7 +85,9 @@ describe('view.painter.cell.text', function() {
             getElement: function() { return [];},
             setValue: function() {},
             focusIn: function() {},
-            focusClipboard: function() {},
+            focusClipboard: function() {
+                $(document).focus();
+            },
             keyMap: {
                 'TAB': 9,
                 'ENTER': 13,
@@ -378,11 +380,9 @@ describe('view.painter.cell.text', function() {
             });
         });
         describe('focusOut', function() {
-            it('_endEdit 메서드와 Grid 의 focusClipboard 메서드가 호출되는지 확인한다.', function() {
-                cellPainter._endEdit = jasmine.createSpy('_endEdit');
+            it('_endEdit 메서드가 호출되는지 확인한다.', function() {
                 grid.focusClipboard = jasmine.createSpy('focusClipboard');
                 cellPainter.focusOut();
-                expect(cellPainter._endEdit).toHaveBeenCalled();
                 expect(grid.focusClipboard).toHaveBeenCalled();
             });
         });
@@ -395,10 +395,12 @@ describe('view.painter.cell.text', function() {
                 $empty.html('<table><tr row="0"><td columnname="text-convertible"></td></tr></table>');
                 $td = $empty.find('td');
             });
-            describe('TD 에 isEdit 값이 설정되어 있지 않다면 value 만 반환한다.', function() {
+            describe('편집중이지 않은 셀일 경우 value 만 반환한다.', function() {
                 beforeEach(function() {
-                    $td.data('isEdit', false);
-
+                    cellPainter.editingCell = {
+                        rowKey: 0,
+                        columnName: 'text-convertible'
+                    };
                     html = cellPainter.getContentHtml({
                         rowKey: 0,
                         columnName: 'text-convertible',
@@ -409,10 +411,12 @@ describe('view.painter.cell.text', function() {
                     expect(html).toEqual('text-convertible');
                 });
             });
-            describe('TD 에 isEdit 값이 설정되어 있다면 input text 마크업을 반환한다.', function() {
+            describe('편집중일 경우 input text 마크업을 반환한다.', function() {
                 beforeEach(function() {
-                    grid.getElement = function() {return $td;};
-                    $td.data('isEdit', true);
+                    cellPainter.editingCell = {
+                        rowKey: '0',
+                        columnName: 'text-convertible'
+                    };
                     html = cellPainter.getContentHtml({
                         rowKey: 0,
                         columnName: 'text-convertible',
@@ -429,7 +433,7 @@ describe('view.painter.cell.text', function() {
                     expect($input.length).toEqual(1);
                     expect($input.prop('disabled')).toEqual(true);
                     html = cellPainter.getContentHtml({
-                        rowKey: 0,
+                        rowKey: '0',
                         columnName: 'text-convertible',
                         isDisabled: false
                     });
@@ -469,9 +473,12 @@ describe('view.painter.cell.text', function() {
                 expect($input.length).toBe(1);
                 expect($input.val()).toBe(html);
             });
-            it('isEdit 값을 true 로 설정하는지 확인한다.', function() {
+            it('editingCell 값을 잘 설정하는지 확인한다.', function() {
                 cellPainter._startEdit($td);
-                expect($td.data('isEdit')).toBe(true);
+                expect(cellPainter.editingCell).toEqual({
+                    rowKey: '0',
+                    columnName: 'text-convertible'
+                });
             });
             it('isEditable 이 false 일 때에는 input text 를 노출하지 않는다.', function() {
                 grid.dataModel.get(0).set('isEditable', false);
@@ -513,10 +520,12 @@ describe('view.painter.cell.text', function() {
                 expect($td.html()).toBe(html);
             });
             it('isEdit 값을 false 로 설정하는지 확인한다.', function() {
-                expect($td.data('isEdit')).toBe(true);
                 expect($input.length).toBe(1);
                 cellPainter._endEdit($td);
-                expect($td.data('isEdit')).toBe(false);
+                expect(cellPainter.editingCell).toEqual({
+                    rowKey: null,
+                    columnName: ''
+                });
             });
         });
         describe('_onBlurConvertible', function() {
@@ -553,7 +562,7 @@ describe('view.painter.cell.text', function() {
                     rowKey: 0,
                     columnName: 'text-convertible'
                 });
-                $empty.html('<table><tr row="0"><td columnname="text-convertible">' + html + '</td></tr></table>');
+                $empty.html('<table><tr key="0"><td columnname="text-convertible">' + html + '</td></tr></table>');
                 $input = $empty.find('input');
                 $td = $empty.find('td');
                 cellPainter.attachHandler($td);
@@ -564,7 +573,10 @@ describe('view.painter.cell.text', function() {
             });
             it('400 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function(done) {
                 $td.trigger('click');
-                expect($td.data('clicked')).toBe(true);
+                expect(cellPainter.clicked).toEqual({
+                    rowKey: '0',
+                    columnName: 'text-convertible'
+                });
                 setTimeout(function() {
                     $td.trigger('click');
                     expect(cellPainter._startEdit).not.toHaveBeenCalled();
@@ -575,7 +587,6 @@ describe('view.painter.cell.text', function() {
             });
             it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function(done) {
                 $td.trigger('click');
-                expect($td.data('clicked')).toBe(true);
                 setTimeout(function() {
                     $td.trigger('click');
                     expect(cellPainter._startEdit).toHaveBeenCalled();

@@ -197,7 +197,7 @@
          * 더블클릭으로 간주할 time millisecond 설정
          * @type {number}
          */
-        doubleClickDuration: 800,
+        doubleClickDuration: 500,
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
@@ -216,6 +216,10 @@
                     rowKey: null,
                     columnName: '',
                     $clickedTd: null
+                },
+                clicked: {
+                    rowKey: null,
+                    columnName: null
                 }
             });
         },
@@ -340,10 +344,13 @@
                 rowKey: null,
                 columnName: ''
             };
+            this.clicked = {
+                rowKey: null,
+                columnName: null
+            };
             if (cellData) {
                 this.redraw(this._getCellData($td), $td);
             }
-            $td.data('clicked', false);
         },
         /**
          * click 이벤트 핸들러
@@ -354,17 +361,24 @@
             var that = this,
                 $target = $(clickEvent.target),
                 $td = $target.closest('td'),
-                isClicked = $td.data('clicked');
+                address = this._getCellAddress($td);
 
-
-            if (isClicked) {
+            if (this._isClickedCell($td)) {
                 this._startEdit($td);
             } else {
-                $td.data('clicked', true);
+                clearTimeout(this.timeoutIdForClick);
+                this.clicked = address;
                 this.timeoutIdForClick = setTimeout(function() {
-                    $td.data('clicked', false);
+                    that.clicked = {
+                        rowKey: null,
+                        columnName: null
+                    };
                 }, this.doubleClickDuration);
             }
+        },
+        _isClickedCell: function($td) {
+            var address = this._getCellAddress($td);
+            return !!(this.clicked.rowKey === address.rowKey && this.clicked.columnName === address.columnName);
         }
     });
 

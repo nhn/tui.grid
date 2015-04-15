@@ -1133,28 +1133,6 @@ describe('view.selection', function() {
                 expect(selection.detachMouseEvent).toHaveBeenCalled();
             });
         });
-        describe('getIndexFromMousePosition', function() {
-            it('page X 와 page Y 에 해당하는 index 정보를 잘 반환하는지 확인한다.', function() {
-                var data;
-                data = selection.getIndexFromMousePosition(0, 0);
-                expect(data).toEqual({ row: 0, column: 0, overflowX: -1, overflowY: -1 });
-
-                data = selection.getIndexFromMousePosition(0, 100);
-                expect(data).toEqual({ row: 1, column: 0, overflowX: -1, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(100, 100);
-                expect(data).toEqual({ row: 1, column: 1, overflowX: 0, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(200, 100);
-                expect(data).toEqual({ row: 1, column: 2, overflowX: 0, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(300, 100);
-                expect(data).toEqual({ row: 1, column: 3, overflowX: 0, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(400, 100);
-                expect(data).toEqual({ row: 1, column: 3, overflowX: 0, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(500, 100);
-                expect(data).toEqual({ row: 1, column: 4, overflowX: 0, overflowY: 0 });
-                data = selection.getIndexFromMousePosition(500, 400);
-                expect(data).toEqual({ row: 11, column: 4, overflowX: 0, overflowY: 1 });
-            });
-        });
         describe('getSelectionToString', function() {
             it('현재 selection 범위에 대해  string 으로 반환한다.', function() {
                 selection.startSelection(7, 5);
@@ -1217,7 +1195,7 @@ describe('view.selection', function() {
                         pageX: 1000,
                         pageY: 2000
                     });
-                    expect(selection.getRange()).toEqual({row: [0, 68], column: [5, 5]});
+                    expect(selection.getRange()).toEqual({ row : [ 0, 68 ], column : [ 5, 9 ] });
                 });
             });
             describe('selection 이 없을경우', function() {

@@ -274,7 +274,6 @@ describe('view.frame.toolbar', function() {
         $empty;
 
     beforeEach(function() {
-        jasmine.clock().install();
         grid.columnModel.set({
             columnFixIndex: 0,
             hasNumberColumn: true,
@@ -296,7 +295,6 @@ describe('view.frame.toolbar', function() {
     afterEach(function() {
         grid.options = defaultOption;
         grid.columnModel.set('selectType', grid.option('selectType'));
-        jasmine.clock().uninstall();
     });
     describe('Toolbar instance 를 테스트한다.', function() {
         var toolbar;
@@ -392,30 +390,22 @@ describe('view.frame.toolbar', function() {
                 expect($(document.body).css('cursor')).toEqual('default');
             });
         });
-        describe('_onMouseMove', function() {
-            it('min 이하로 높이가 줄어들지 않는다.', function() {
-                mouseEvent.pageY = 100;
-                resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
-                mouseEvent.pageY = 200;
-                resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
+        describe('_onMouseMove. ', function() {
+            it('min 이하로 높이가 줄어들지 않는다..', function(done) {
                 mouseEvent.pageY = 300;
                 resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
+                setTimeout(function () {
+                    expect(grid.dimensionModel.get('bodyHeight')).toBe(27);
+                    done();
+                }, 10);
+            });
+            it('resize 가 잘 된다', function(done) {
                 mouseEvent.pageY = 400;
                 resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(100);
-                mouseEvent.pageY = 500;
-                resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(200);
-                mouseEvent.pageY = 600;
-                resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(300);
-                mouseEvent.pageY = 700;
-                resize._onMouseMove(mouseEvent);
-                expect(grid.dimensionModel.get('bodyHeight')).toBe(400);
-
+                setTimeout(function () {
+                    expect(grid.dimensionModel.get('bodyHeight')).toBe(100);
+                    done();
+                }, 10);
             });
         });
     });

@@ -309,7 +309,7 @@ describe('view.painter.cell.base', function() {
                 isEditable: true,
                 isDisabled: true
             });
-            expect(html).toEqual('<td columnName="columnName1"  class="selected focused rowClass editable disabled"  data-edit-type="normal"></td>');
+            expect(html).toEqual('<td columnName="columnName1"  class="selected focused rowClass editable disabled"  align="left" edit-type="normal"></td>');
 
             html = cellPainter.getHtml({
                 columnName: 'columnName2',
@@ -318,7 +318,7 @@ describe('view.painter.cell.base', function() {
                 isEditable: false,
                 isDisabled: false
             });
-            expect(html).toEqual('<td columnName="columnName2"  class="rowClass"  data-edit-type="normal"></td>');
+            expect(html).toEqual('<td columnName="columnName2"  class="rowClass"  align="left" edit-type="normal"></td>');
         });
     });
     describe('redraw()', function() {
