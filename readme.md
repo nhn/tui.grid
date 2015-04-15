@@ -235,7 +235,7 @@ FE 개발팀 박순영 <soonyoung.park@nhnent.com>
 ]
 ```
 ## 샘플 페이지
-http://fetech.nhnent.com/svnrun/fetech/prototype/trunk/grid/test/sample_data.concat.html
+https://github.nhnent.com/pages/fe/application-grid/tutorial-sample1.html
 
 ## 다운로드
 ## API 문서

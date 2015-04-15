@@ -1192,7 +1192,7 @@ describe('view.selection', function() {
                 it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
                     expect(selection.getRange()).toEqual({row: [0, 5], column: [5, 10]});
                     selection._onMouseMove({
-                        pageX: 1000,
+                        pageX: 1010,
                         pageY: 2000
                     });
                     expect(selection.getRange()).toEqual({ row : [ 0, 68 ], column : [ 5, 9 ] });

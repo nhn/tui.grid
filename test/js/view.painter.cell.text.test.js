@@ -571,7 +571,7 @@ describe('view.painter.cell.text', function() {
             afterEach(function() {
                 cellPainter.detachHandler($td);
             });
-            it('400 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function(done) {
+            it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function(done) {
                 $td.trigger('click');
                 expect(cellPainter.clicked).toEqual({
                     rowKey: '0',
@@ -581,7 +581,7 @@ describe('view.painter.cell.text', function() {
                     $td.trigger('click');
                     expect(cellPainter._startEdit).not.toHaveBeenCalled();
                     done();
-                }, 500);
+                }, 900);
 
 
             });

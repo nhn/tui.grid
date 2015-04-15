@@ -1360,15 +1360,24 @@ describe('view.clipboard', function() {
                 grid.focus(0, 'columnName1');
                 grid.del = jasmine.createSpy('del');
             });
-            it('selection 이 선택되어 있다면 grid의 del 을 선택된 만큼 삭제하는지 확인한다.', function() {
+            it('selection 이 선택되어 있다면 grid의 del 을 선택된 만큼 삭제하는지 확인한다.', function(done) {
                 grid.selection.startSelection(0, 0);
                 grid.selection.updateSelection(10, 4);
+
                 clipboard._del();
-                expect(grid.del.calls.count()).toEqual(65);
+                setTimeout(function() {
+                    expect(grid.del.calls.count()).toEqual(65);
+                    done();
+                }, 10);
+
             });
-            it('아니라면 한번 호출한 것을 확인한다..', function() {
+            it('아니라면 한번 호출한 것을 확인한다..', function(done) {
                 clipboard._del();
-                expect(grid.del.calls.count()).toEqual(1);
+                setTimeout(function() {
+                    expect(grid.del.calls.count()).toEqual(1);
+                    done();
+                }, 10);
+
             });
         });
 
