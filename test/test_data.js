@@ -15,9 +15,9 @@
         headerHeight: 50,
         useDataCopy: true,
         minimumColumnWidth: 20
-    }).on('onResponse', function(data) {
+    }).on('response', function(data) {
         console.log('onResponse');
-    }).on('onSuccessResponse', function(data) {
+    }).on('successResponse', function(data) {
             console.log('onSuccessResponse');
     }).use('Net', {
         el: $('#form'),
@@ -47,22 +47,22 @@
         grid.sort('columnName2');
     });
     $('#createData').on('click', function(e) {
-        net.createData();
+        net.request('createData');
     });
     $('#updateData').on('click', function(e) {
-        net.updateData();
+        net.request('updateData');
 
     });
     $('#deleteData').on('click', function(e) {
-        net.deleteData();
+        net.request('deleteData');
     });
     $('#modifyData').on('click', function(e) {
-        net.modifyData();
+        net.request('modifyData');
     });
     $('#downloadData').on('click', function(e) {
-        net.downloadData();
+        //net.downloadData();
     });
     $('#downloadAllData').on('click', function(e) {
-        net.downloadAllData();
+        //net.downloadAllData();
     });
 

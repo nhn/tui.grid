@@ -179,6 +179,7 @@
          * 자식 View를 제거한 뒤 자신도 제거한다.
          */
         destroy: function() {
+            this.stopListening();
             this.destroyChildren();
             this.remove();
         },
@@ -3968,6 +3969,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this._onMouseUp();
             this.destroyChildren();
             this.remove();
@@ -4324,7 +4326,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 initialLeft: 0
             });
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
-            this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
+            if (this.grid instanceof View.Base) {
+                this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
+            }
         },
         /**
          * resize handler 마크업 템플릿
@@ -4569,6 +4573,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this._stopResizing();
             this.destroyChildren();
             this.remove();
@@ -4771,6 +4776,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this._onMouseUp();
             this.destroyChildren();
             this.remove();
@@ -4890,6 +4896,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         destroy: function() {
             //this.detachHandlerAll();
+            this.stopListening();
             this.destroyChildren();
             this.remove();
         },
@@ -6375,6 +6382,10 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                     rowKey: null,
                     columnName: '',
                     $clickedTd: null
+                },
+                clicked: {
+                    rowKey: null,
+                    columnName: null
                 }
             });
         },
@@ -6499,10 +6510,13 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 rowKey: null,
                 columnName: ''
             };
+            this.clicked = {
+                rowKey: null,
+                columnName: null
+            };
             if (cellData) {
                 this.redraw(this._getCellData($td), $td);
             }
-            $td.data('clicked', false);
         },
         /**
          * click 이벤트 핸들러
@@ -6513,17 +6527,24 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             var that = this,
                 $target = $(clickEvent.target),
                 $td = $target.closest('td'),
-                isClicked = $td.data('clicked');
+                address = this._getCellAddress($td);
 
-
-            if (isClicked) {
+            if (this._isClickedCell($td)) {
                 this._startEdit($td);
             } else {
-                $td.data('clicked', true);
+                clearTimeout(this.timeoutIdForClick);
+                this.clicked = address;
                 this.timeoutIdForClick = setTimeout(function() {
-                    $td.data('clicked', false);
+                    that.clicked = {
+                        rowKey: null,
+                        columnName: null
+                    };
                 }, this.doubleClickDuration);
             }
+        },
+        _isClickedCell: function($td) {
+            var address = this._getCellAddress($td);
+            return !!(this.clicked.rowKey === address.rowKey && this.clicked.columnName === address.columnName);
         }
     });
 
@@ -7052,7 +7073,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
 
             clearTimeout(this.timeoutIdForFocusClipboard);
             this.timeoutIdForFocusClipboard = setTimeout(function() {
-                self.grid.focusClipboard();
+                if (ne.util.pick(self, 'grid', 'focusClipboard')) {
+                    self.grid.focusClipboard();
+                }
             }, 10);
 
             //var end = new Date();
@@ -7642,6 +7665,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * 소멸자
          */
         destroy: function() {
+            this.stopListening();
             this.detachMouseEvent();
             this.destroyChildren();
             this.remove();
@@ -8043,6 +8067,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @private
          */
         _onReadSuccess: function(dataModel, responseData, options) {
+            dataModel.setOriginalRowList();
             var pagination = this.pagination,
                 page, totalCount;
 
@@ -8737,13 +8762,15 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @private
          */
         _doBlur: function() {
-            var $focused = this.$el.find(':focus'),
-                hasFocusedElement = !!$focused.length;
+            if (this.$el) {
+                var $focused = this.$el.find(':focus'),
+                    hasFocusedElement = !!$focused.length;
 
-            if (!hasFocusedElement) {
-                this.focusModel.blur();
-            } else if ($focused.is('td') || $focused.is('a')) {
-                this.focusClipboard();
+                if (!hasFocusedElement) {
+                    this.focusModel.blur();
+                } else if ($focused.is('td') || $focused.is('a')) {
+                    this.focusClipboard();
+                }
             }
         },
         /**

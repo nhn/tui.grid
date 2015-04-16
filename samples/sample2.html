@@ -3,73 +3,73 @@
 <head>
     <meta charset="utf-8">
     <title>Sample 1</title>
-    <link rel="stylesheet" type="text/css" href="../grid.css" />
+    <link rel="stylesheet" type="text/css" href="./css/grid.css" />
 </head>
 <body>
 
 <form id="form" style="margin:10px">
-	<table>
-		<tr>
-			<td>
-				송장번호 :
-			</td>
-			<td>
-				<input name="delivery_number" type="text" value="1123123"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				이름 :
-			</td>
-			<td>
-				<input name="user_name" type="text" value="홍길동"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				계절 :
-			</td>
-			<td>
-				<select name="weather">
-					<option>봄</option>
-					<option>여름</option>
-					<option>가을</option>
-					<option>겨울</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				성별 :
-			</td>
-			<td>
-				<input type="radio" name="gender" value="male" checked/>남
-				<input type="radio" name="gender" value="female"/>여
-			</td>
-		</tr>
-		<tr>
-			<td>
-				취미 :
-			</td>
-			<td>
-				<input type="checkbox" name="hobby" value="sport" checked/>스포츠
-				<input type="checkbox" name="hobby" value="sewing"/>재봉틀
-				<input type="checkbox" name="hobby" value="drinking"/>음주
-				<input type="checkbox" name="hobby" value="dancing"/>가무
-			</td>
-		</tr>
-		<tr>
-			<td>
-				rowState:
-			</td>
-			<td>
-				<input type="radio" name="rowState" value="" checked/>NONE
-				<input type="radio" name="rowState" value="CHECKED" />CHECKED
-				<input type="radio" name="rowState" value="DISABLED"/>DISABLED
-				<input type="radio" name="rowState" value="DISABLED_CHECK"/>DISABLE_CHECK
-			</td>
-		</tr>
-	</table>
+    <table>
+        <tr>
+            <td>
+                송장번호 :
+            </td>
+            <td>
+                <input name="delivery_number" type="text" value="1123123"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                이름 :
+            </td>
+            <td>
+                <input name="user_name" type="text" value="홍길동"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                계절 :
+            </td>
+            <td>
+                <select name="weather">
+                    <option>봄</option>
+                    <option>여름</option>
+                    <option>가을</option>
+                    <option>겨울</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                성별 :
+            </td>
+            <td>
+                <input type="radio" name="gender" value="male" checked/>남
+                <input type="radio" name="gender" value="female"/>여
+            </td>
+        </tr>
+        <tr>
+            <td>
+                취미 :
+            </td>
+            <td>
+                <input type="checkbox" name="hobby" value="sport" checked/>스포츠
+                <input type="checkbox" name="hobby" value="sewing"/>재봉틀
+                <input type="checkbox" name="hobby" value="drinking"/>음주
+                <input type="checkbox" name="hobby" value="dancing"/>가무
+            </td>
+        </tr>
+        <tr>
+            <td>
+                rowState:
+            </td>
+            <td>
+                <input type="radio" name="rowState" value="" checked/>NONE
+                <input type="radio" name="rowState" value="CHECKED" />CHECKED
+                <input type="radio" name="rowState" value="DISABLED"/>DISABLED
+                <input type="radio" name="rowState" value="DISABLED_CHECK"/>DISABLE_CHECK
+            </td>
+        </tr>
+    </table>
 
     <input type="submit" value="submit"/>
 </form>
@@ -89,62 +89,17 @@
 <div style="margin-left:20px" id="result">
 </div>
 </body>
-<script type="text/javascript" src="../src/Exclude/console.js"></script>
-
-<script type="text/javascript" src="../lib/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="../lib/jquery-json/src/jquery.json.js"></script>
-<script type="text/javascript" src="../lib/underscore/underscore.js"></script>
-<script type="text/javascript" src="../lib/backbone/backbone.js"></script>
-<script type="text/javascript" src="../data/dummy_data.js"></script>
-
-<script type="text/javascript" src="../lib/code-snippet/code-snippet.js"></script>
-<script type="text/javascript" src="../lib/component-pagination/pagination.js"></script>
-
-
-<script type="text/javascript" src="../src/Core/Util.js"></script>
-<script type="text/javascript" src="../src/Core/Base.js"></script>
-
-<script type="text/javascript" src="../src/Data/ColumnModel.js"></script>
-<script type="text/javascript" src="../src/Data/RowList.js"></script>
-
-<script type="text/javascript" src="../src/Model/Focus.js"></script>
-<script type="text/javascript" src="../src/Model/Dimension.js"></script>
-<script type="text/javascript" src="../src/Model/RowList.js"></script>
-<script type="text/javascript" src="../src/Model/Renderer.js"></script>
-<script type="text/javascript" src="../src/Model/Renderer.Smart.js"></script>
-<!---->
-<script type="text/javascript" src="../src/View/Layout/Frame.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Frame.Lside.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Frame.Rside.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Header.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Body.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Toolbar.js"></script>
-<!---->
-<script type="text/javascript" src="../src/View/Painter/Cell/Base.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Cell/Normal.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Cell/List.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Cell/Text.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Row.js"></script>
-<!---->
-<script type="text/javascript" src="../src/View/CellFactory.js"></script>
-<script type="text/javascript" src="../src/View/RowList.js"></script>
-<script type="text/javascript" src="../src/View/Selection.js"></script>
-<!---->
-<script type="text/javascript" src="../src/View/Clipboard.js"></script>
-
-<script type="text/javascript" src="../src/View/Layer/Base.js"></script>
-<script type="text/javascript" src="../src/View/Layer/Ready.js"></script>
-<script type="text/javascript" src="../src/View/Layer/Loading.js"></script>
-<script type="text/javascript" src="../src/View/Layer/Empty.js"></script>
-<!---->
-<script type="text/javascript" src="../src/AddOn/Net.js"></script>
-<!---->
-<script type="text/javascript" src="../src/Grid.js"></script>
-<script type="text/javascript" src="../src/Core.js"></script>
+<script type="text/javascript" src="./js/lib/jquery.min.js"></script>
+<script type="text/javascript" src="./js/lib/jquery.json.js"></script>
+<script type="text/javascript" src="./js/lib/underscore.js"></script>
+<script type="text/javascript" src="./js/lib/backbone.js"></script>
+<script type="text/javascript" src="./js/lib/code-snippet.min.js"></script>
+<script type="text/javascript" src="./js/lib/pagination.min.js"></script>
+<script type="text/javascript" src="./js/grid.js"></script>
 
 <script>
     var $result = $('result'),
-        url = '../samples/js/data/grid-response.json';
+            url = '../samples/js/data/grid-response.json';
 
     var grid = new ne.Grid({
         el: $('#grid'),
@@ -268,21 +223,21 @@
             hasPagination: true     //(default:true) pagination 을 사용한다.
         }
     }).on('response', function(customEvent) {
-        if (customEvent && customEvent.responseData && customEvent.responseData.data) {
-            customEvent.responseData.data.pagination.page = customEvent.requestParameter.page;
-        }
-    }).on('successResponse', function(data) {
-        console.log('onSuccessResponse');
-    }).use('Net', {
-        el: $('#form'),
-        perPage: 100,
-        api: {
-            'readData': url,
-            'updateData': 'api/updateData',
-            'deleteData': 'api/deleteData',
-            'modifyData': 'api/modifyData'
-        }
-    });
+                if (customEvent && customEvent.responseData && customEvent.responseData.data) {
+                    customEvent.responseData.data.pagination.page = customEvent.requestParameter.page;
+                }
+            }).on('successResponse', function(data) {
+                console.log('onSuccessResponse');
+            }).use('Net', {
+                el: $('#form'),
+                perPage: 100,
+                api: {
+                    'readData': url,
+                    'updateData': 'api/updateData',
+                    'deleteData': 'api/deleteData',
+                    'modifyData': 'api/modifyData'
+                }
+            });
 
     var net = grid.getAddOn('Net');
 

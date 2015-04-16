@@ -120,7 +120,7 @@ module.exports = function(grunt) {
                             '<%= distFolder %>/grid.min.js'
                         ],
                         dest: '<%= sampleFolder %>/js', filter: 'isFile'
-                    }
+                    },
                 ]
             }
         },
