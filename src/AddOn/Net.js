@@ -245,6 +245,7 @@
          * @private
          */
         _onReadSuccess: function(dataModel, responseData, options) {
+            dataModel.setOriginalRowList();
             var pagination = this.pagination,
                 page, totalCount;
 
