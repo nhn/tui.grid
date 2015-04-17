@@ -1017,7 +1017,7 @@
 
             var editType = this.columnModel.getEditType(columnName),
                 isDisabledCheck = this.dataModel.get(rowKey).getRowState().isDisabledCheck,
-                deletableEditTypeList = ['text', 'text-convertible'],
+                deletableEditTypeList = ['text', 'text-convertible', 'text-password'],
                 isDeletable = $.inArray(editType, deletableEditTypeList) !== -1,
                 selectType = this.option('selectType'),
                 cellState = this.getCellState(rowKey, columnName),
