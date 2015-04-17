@@ -72,7 +72,6 @@
                 "title" : "<b>날짜</b>",
                 "columnName" : "date1",
                 "width" : 100,
-                "editType" : "textbox",
                 "editOption" : {
                     type : 'text'
                 }
@@ -109,10 +108,9 @@
                 "align" : "right",
                 "editOption" : {
                     type: 'text-convertible',
-                    "checkPattern" :/[\d]+/g,
                     "maxLength" : 10,
                     "changeBeforeCallback" : function(changeEvent){
-                        console.log("상품가격 callback", changeEvent)
+                        console.log("상품가격 callback", changeEvent);
                     },
                     "afterText" : " 원"
                 },
