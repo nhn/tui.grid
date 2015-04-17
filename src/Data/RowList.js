@@ -89,7 +89,7 @@
             ne.util.forEach(classNameMap, function(value, className) {
                 classNameList.push(className);
             });
-            //classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
+
             return classNameList;
         },
         /**
