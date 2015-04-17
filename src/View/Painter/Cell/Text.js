@@ -58,9 +58,12 @@
         /* istanbul ignore next: focus, select 를 검증할 수 없음 */
         focusIn: function($td) {
             var $input = $td.find('input');
-            Util.form.setCursorToEnd($input.get(0));
-            $input.focus().select();
-
+            if ($input.prop('disabled')) {
+                this.grid.focusClipboard();
+            } else {
+                Util.form.setCursorToEnd($input.get(0));
+                $input.focus().select();
+            }
         },
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
@@ -84,6 +87,7 @@
          * </select>
          */
         getContentHtml: function(cellData) {
+            //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
             var columnModel = this.getColumnModel(cellData),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
                 htmlArr = [];
@@ -214,8 +218,7 @@
                 timeoutIdForClick: 0,
                 editingCell: {
                     rowKey: null,
-                    columnName: '',
-                    $clickedTd: null
+                    columnName: ''
                 },
                 clicked: {
                     rowKey: null,
@@ -260,6 +263,7 @@
          * </select>
          */
         getContentHtml: function(cellData) {
+            //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
             var columnModel = this.getColumnModel(cellData),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
                 htmlArr = [];

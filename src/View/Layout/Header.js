@@ -350,6 +350,7 @@
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
             if (this.grid instanceof View.Base) {
                 this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
+                this.listenTo(this.grid.dimensionModel, 'change:width', $.proxy(this._refreshHandlerPosition, this, true));
             }
         },
         /**

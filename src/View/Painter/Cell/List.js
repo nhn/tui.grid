@@ -64,24 +64,6 @@
         getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
             return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
-        },
-        /**
-         * blur 이벤트 핸들러
-         * @param {Event} blurEvent 이벤트 객체
-         * @private
-         */
-        _onBlur: function(blurEvent) {
-            var $target = $(blurEvent.target);
-            $target.closest('td').data('isFocused', false);
-        },
-        /**
-         * focus 이벤트 핸들러
-         * @param {Event} focusEvent 이벤트 객체
-         * @private
-         */
-        _onFocus: function(focusEvent) {
-            var $target = $(focusEvent.target);
-            $target.closest('td').data('isFocused', true);
         }
     });
 
@@ -109,9 +91,7 @@
         },
         eventHandler: {
             'change select' : '_onChange',
-            'keydown select' : '_onKeyDown',
-            'blur select' : '_onBlur',
-            'focus select' : '_onFocus'
+            'keydown select' : '_onKeyDown'
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -126,7 +106,11 @@
          */
         focusIn: function($td) {
             /* istanbul ignore next */
-            $td.find('select').focus();
+            if ($td.find('select').prop('disabled')) {
+                this.grid.focusClipboard();
+            } else {
+                $td.find('select').eq(0).focus();
+            }
         },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
@@ -265,7 +249,12 @@
          * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
-            /* istanbul ignore next: focus 확인 불가 */ $td.find('input').eq(0).focus();
+            /* istanbul ignore next: focus 확인 불가 */
+            if ($td.find('input').eq(0).prop('disabled')) {
+                this.grid.focusClipboard();
+            } else {
+                $td.find('input').eq(0).focus();
+            }
         },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
