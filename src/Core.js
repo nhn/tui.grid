@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @fileoverview Grid Core 파일
  * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
@@ -1031,6 +1032,46 @@
                 }
             }
         },
+        /**
+         * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
+         * 이동하며 셀의 값을 변경한다.
+         * @param {Array[]} data 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.
+         */
+        paste: function(data) {
+            var focusedIdx = this.focusModel.indexOf(),
+                rowIdx = focusedIdx.rowIdx,
+                columnIdx = focusedIdx.columnIdx,
+                columnModelList = this.columnModel.getVisibleColumnModelList(),
+                rowOffset,
+                columnOffset,
+                rowOffsetMax = Math.min(data.length, this.dataModel.length - rowIdx),
+                columnOffsetMax = Math.min(data[0].length, columnModelList.length - columnIdx),
+                row,
+                rowSpanData,
+                cellStatus,
+                columnModel,
+                columnName,
+                attributes;
+
+            for(rowOffset = 0; rowOffset < rowOffsetMax; rowOffset += 1) {
+                row = this.dataModel.at(rowIdx + rowOffset);
+
+                for(columnOffset = 0; columnOffset < columnOffsetMax; columnOffset += 1) {
+                    columnModel = columnModelList[columnIdx + columnOffset];
+                    columnName = columnModel.columnName;
+                    cellStatus = row.getCellState(columnName);
+                    rowSpanData = row.getRowSpanData(columnName);
+
+                    if (cellStatus.isEditable && !cellStatus.isDisabled &&
+                        (!rowSpanData || rowSpanData.count >= 0)) {
+                        attributes = {};
+                        attributes[columnName] = data[rowOffset][columnOffset];
+                        row.set(attributes);
+                    }
+                }
+            }
+        },
+
         /**
          * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
          * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
