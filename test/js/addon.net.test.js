@@ -122,7 +122,6 @@ describe('addon.net', function() {
 
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/addon.net.html');
-
         $form = $('#form');
         Util.form.setFormData(this.$el, originalformData);
         $grid = $('#grid');
@@ -719,6 +718,9 @@ describe('addon.net', function() {
             });
         });
         describe('_onReadSuccess', function() {
+            var dataModel = {
+                setOriginalRowList: function() {}
+            };
             beforeEach(function() {
                 createNet({
                     el: $form
@@ -727,7 +729,7 @@ describe('addon.net', function() {
                 net.pagination.setOption = jasmine.createSpy('setOption');
             });
             it('responseData 에 pagination 정보가 있다면 pagination instance 에 설정한다.', function() {
-                net._onReadSuccess(null, {
+                net._onReadSuccess(dataModel, {
                     pagination: {
                         page: 10,
                         totalCount: 100

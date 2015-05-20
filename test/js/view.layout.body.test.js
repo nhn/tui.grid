@@ -266,11 +266,12 @@ describe('view.layout.body', function() {
     var body,
         $empty;
 
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('test/fixtures/empty.html');
+    $empty = $('#empty');
+
     beforeEach(function() {
         jasmine.clock().install();
-        jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/empty.html');
-        $empty = $('#empty');
         body && body.destroy();
 
         grid.dataModel.set(rowList, {parse: true});
@@ -331,7 +332,7 @@ describe('view.layout.body', function() {
         var $container;
         beforeEach(function() {
             $empty.html(body.render().el);
-            $container = $empty.find('.table_container');
+            $container = $empty.find('.table_container').css('position', 'absolute');
         });
         it('_setTopPosition 의 parameter 값 만큼 top 값이 조정되는지 확인한다.', function() {
             body._setTopPosition(10);

@@ -143,8 +143,13 @@ describe('view.painter.cell.text', function() {
             columnModel: null,
             renderModel: null
         },
-        cellPainter,
-        $empty;
+        $empty,
+        cellPainter;
+
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('test/fixtures/empty.html');
+    $empty = $('#empty');
+
     grid.columnModel = new Data.ColumnModel({
         hasNumberColumn: true,
         selectType: 'checkbox',
@@ -176,12 +181,7 @@ describe('view.painter.cell.text', function() {
         grid: grid
     });
 
-
-
     beforeEach(function() {
-        jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/empty.html');
-        $empty = $('#empty');
         cellPainter && cellPainter.destroy && cellPainter.destroy();
         grid.dataModel.set(rowList, {parse: true});
         grid.renderModel.refresh();
@@ -567,32 +567,27 @@ describe('view.painter.cell.text', function() {
                 $td = $empty.find('td');
                 cellPainter.attachHandler($td);
                 cellPainter._startEdit = jasmine.createSpy('_startEdit');
+                jasmine.clock().install();
             });
             afterEach(function() {
                 cellPainter.detachHandler($td);
+                jasmine.clock().uninstall();
             });
-            it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function(done) {
+            it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function() {
                 $td.trigger('click');
                 expect(cellPainter.clicked).toEqual({
                     rowKey: '0',
                     columnName: 'text-convertible'
                 });
-                setTimeout(function() {
-                    $td.trigger('click');
-                    expect(cellPainter._startEdit).not.toHaveBeenCalled();
-                    done();
-                }, 900);
-
-
-            });
-            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function(done) {
+                jasmine.clock().tick(900);
                 $td.trigger('click');
-                setTimeout(function() {
-                    $td.trigger('click');
-                    expect(cellPainter._startEdit).toHaveBeenCalled();
-                    done();
-                }, 100);
-
+                expect(cellPainter._startEdit).not.toHaveBeenCalled();
+            });
+            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function() {
+                $td.trigger('click');
+                jasmine.clock().tick(100);
+                $td.trigger('click');
+                expect(cellPainter._startEdit).toHaveBeenCalled();
             });
         });
         describe('KeyDownSwitch', function() {
