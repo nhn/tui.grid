@@ -1,11 +1,11 @@
 describe('grid.normal.test', function() {
     var grid,
-        $el = $('<div>').appendTo('body'),
+        $empty,
         timeoutDelay = 0;
 
-    // jasmine.getFixtures().fixturesPath = 'base/';
-    // loadFixtures('test/fixtures/empty.html');
-    // $empty = $('#empty').hide();
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('test/fixtures/empty.html');
+    $empty = $('#empty');
 
     afterEach(function() {
         grid && grid.destroy();
@@ -14,7 +14,7 @@ describe('grid.normal.test', function() {
     describe('public method', function() {
         beforeEach(function() {
             grid = new Core({
-                el: $el.empty(),
+                el: $empty,
                 columnModelList: [
                     {
                         title: 'c1',
