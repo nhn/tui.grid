@@ -156,24 +156,7 @@ describe('grid.normal.test', function() {
                 expect($el.closest('tr').attr('key')).toBe('0');
             });
         });
-        // TODO : 뷰까지 통합테스트 해야할까?
         describe('select(), unselect()', function() {
-            // beforeEach(function(done) {
-            //     setTimeout(function() {
-            //         done();
-            //     }, timeoutDelay);
-            // });
-            // it('rowKey 에 해당하는 td 들에 select css 디자인 클래스를 적용/제거한다.', function() {
-            //     grid.select(1);
-            //     for (var col = 1; col <= 3; col++) {
-            //         expect(grid.getElement(1, 'c' + col).hasClass('selected')).toBe(true);
-            //     }
-            //     grid.unselect();
-            //     for (var col = 1; col <= 3; col++) {
-            //         expect(grid.getElement(1, 'c' + col).hasClass('selected')).toBe(false);
-            //     }
-            // });
-            //
             it('select()', function() {
                 spyOn(grid.focusModel, 'select');
                 grid.select(1);
@@ -194,21 +177,26 @@ describe('grid.normal.test', function() {
                 expect(grid.getSelectedRowKey()).toBeNull();
             });
         });
-        // TODO : Focus.js - focus, blur, focusAt spec 추가
-        it('focus()', function() {
-            spyOn(grid.focusModel, 'focus');
-            grid.focus(0, 'c1', true);
-            expect(grid.focusModel.focus).toHaveBeenCalledWith(0, 'c1', true);
+        describe('focus()', function() {
+            it('focusModel의 focus()를 호출한다.', function() {
+                spyOn(grid.focusModel, 'focus');
+                grid.focus(0, 'c1', true);
+                expect(grid.focusModel.focus).toHaveBeenCalledWith(0, 'c1', true);
+            })
         });
-        it('blur()', function() {
-            spyOn(grid.focusModel, 'blur');
-            grid.blur();
-            expect(grid.focusModel.blur).toHaveBeenCalled();
-        });
-        it('focusAt()', function() {
-            spyOn(grid.focusModel, 'focus');
-            grid.focusAt(0, 0, true);
-            expect(grid.focusModel.focus).toHaveBeenCalledWith(0, '_number', true);
+        describe('blur()', function() {
+            it('focusModel의 blur()를 호출한다', function() {
+                spyOn(grid.focusModel, 'blur');
+                grid.blur();
+                expect(grid.focusModel.blur).toHaveBeenCalled();
+            });
+        })
+        describe('focusAt()', function() {
+            it('rowKey와 columnName을 찾아서 focusModel의 focusAt()을 호출한다.', function() {
+                spyOn(grid.focusModel, 'focus');
+                grid.focusAt(0, 0, true);
+                expect(grid.focusModel.focus).toHaveBeenCalledWith(0, '_number', true);
+            });
         });
         describe('focusIn()', function() {
             it('editable 한 column 일 경우 cellInstance 의 focusIn 을 호출한다.', function() {
@@ -234,48 +222,22 @@ describe('grid.normal.test', function() {
             });
         });
         describe('check()', function() {
-            // beforeEach(function(done) {
-            //     setTimeout(function() {
-            //         done();
-            //     }, timeoutDelay);
-            // });
             it('check 되는지 확인한다.', function() {
                 grid.check(0);
                 expect(grid.getValue(0, '_button')).toBe(true);
-                // expect(grid.getElement(1, '_button').find('input').prop('checked')).toBe(true);
             });
         });
         describe('uncheck()', function() {
-            // beforeEach(function(done) {
-            //     setTimeout(function() {
-            //         done();
-            //     }, timeoutDelay);
-            // });
             it('check 되는지 확인한다.', function() {
                 grid.check(0);
                 expect(grid.getValue(0, '_button')).toBe(true);
                 grid.uncheck(0);
                 expect(grid.getValue(0, '_button')).toBe(false);
-                // expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
             });
         });
         describe('checkAll()', function() {
             it('disabled 를 제외한 모든 행이 check 되는지 확인한다.', function() {
                 grid.checkAll();
-                // TODO: 테스트코드 View로 옮기기
-                // var $buttonTdList = $empty.find('td[columnname="_button"]');
-                // for (var i = 0; i < $buttonTdList.length; i++) {
-                //     if ($buttonTdList.eq(i).length === 0) {
-                //         break;
-                //     } else {
-                //         //2번째 행은 disabled 이므로
-                //         if (i === 1) {
-                //             expect($buttonTdList.eq(i).find('input').prop('checked')).toBe(false);
-                //         } else {
-                //             expect($buttonTdList.eq(i).find('input').prop('checked')).toBe(true);
-                //         }
-                //     }
-                // }
                 grid.dataModel.forEach(function(row, key) {
                     if (key === 1) { //2번째 행은 disabled
                         expect(row.get('_button')).toBe(false);
@@ -288,14 +250,8 @@ describe('grid.normal.test', function() {
 
         describe('uncheckAll()', function() {
             it('unckeck 확인한다.', function() {
-                // TODO: checkAll을 하는 게 맞을까? 새로운 샘플이 필요할까?
                 grid.checkAll();
                 grid.uncheckAll();
-                // var $buttonTdList = $empty.find('td[columnname="_button"]');
-                // for (var i = 0; i < $buttonTdList.length; i++) {
-                //     if ($buttonTdList.eq(i).length === 0) break;
-                //     expect($buttonTdList.eq(i).find('input').prop('checked')).toBe(false);
-                // }
                 grid.dataModel.forEach(function(row, key) {
                     expect(row.get('_button')).toBe(false);
                 }, this);
@@ -317,33 +273,17 @@ describe('grid.normal.test', function() {
             });
         });
         describe('disableRow()', function() {
-            // beforeEach(function(done) {
-            //     setTimeout(function() {
-            //         done();
-            //     }, timeoutDelay);
-            // });
             it('disableRow 되는지 확인한다.', function() {
                 expect(grid.dataModel.get(0).getRowState().isDisabled).toBe(false);
                 grid.disableRow(0);
                 expect(grid.dataModel.get(0).getRowState().isDisabled).toBe(true);
-                // TODO: View 테스트 코드 추가
-                // expect(grid.getElement(0, 'columnName1').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName2').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName3').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName4').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName5').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName6').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName7').hasClass('disabled')).toBe(true);
-                // expect(grid.getElement(0, 'columnName8').hasClass('disabled')).toBe(true);
             });
         });
         describe('enableRow()', function() {
-            // TODO: View 테스트 코드 추가
             it('enableRow 되는지 확인한다.', function() {
                 expect(grid.dataModel.get(1).getRowState().isDisabled).toBe(true);
                 grid.enableRow(1);
                 expect(grid.dataModel.get(1).getRowState().isDisabled).toBe(false)
-                // expect(grid.getElement(0, '_button').find('input').prop('disabled')).toBe(false);
 
             });
         });
@@ -352,22 +292,14 @@ describe('grid.normal.test', function() {
             it('disableCheck 되는지 확인한다.', function() {
                 grid.disableCheck(0);
                 expect(grid.dataModel.get(0).getRowState().isDisabledCheck).toBe(true);
-                // expect(grid.getElement(0, '_button').find('input').prop('disabled')).toBe(true);
             });
         });
 
         describe('enableCheck()', function() {
-            // beforeEach(function(done) {
-            //     setTimeout(function() {
-            //         done();
-            //     }, timeoutDelay);
-            // });
             it('enableCheck 되는지 확인한다.', function() {
-                // TODO: disableCheck 에 의존성이 있음
                 grid.disableCheck(0);
                 grid.enableCheck(0);
                 expect(grid.dataModel.get(0).getRowState().isDisabledCheck).toBe(false);
-                // expect(grid.getElement(0, '_button').find('input').prop('disabled')).toBe(false);
             });
         });
 
@@ -396,7 +328,6 @@ describe('grid.normal.test', function() {
         });
 
         describe('getColumnModelList()', function() {
-            // TODO : 테스트.. 최선입니까.
             it('columnModelList 를 반환하는지 확인한다.', function() {
                 expect(grid.getColumnModelList().length).toBe(5);
             });
