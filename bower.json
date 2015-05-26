@@ -27,7 +27,7 @@
     "backbone": "~1.1.2",
     "jquery": "~1.8.3",
     "jquery-json": "~2.5.1",
-    "code-snippet": "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/share-code-snippet.git#develop",
-    "component-pagination": "git+http://3c672057a1ac16c4e6f1baaba73e24d5270ef453:x-oauth-basic@github.nhnent.com/fe/component-pagination.git#1.0.0"
+    "ne-code-snippet": "~1.0.0",
+    "ne-component-pagination": "~1.0.0"
   }
 }
