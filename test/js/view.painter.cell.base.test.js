@@ -1,3 +1,5 @@
+'use strict';
+
 describe('view.painter.cell.base', function() {
     var columnModelList = [
         {

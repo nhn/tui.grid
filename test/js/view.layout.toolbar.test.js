@@ -1,11 +1,6 @@
+'use strict';
+
 describe('view.frame.toolbar', function() {
-    function getKeyEvent(keyName, $target) {
-        return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
-            target: $target.get(0)
-        };
-    }
     var columnModelList = [
         {
             title: 'columnName1',

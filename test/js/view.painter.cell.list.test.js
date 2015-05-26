@@ -1,3 +1,5 @@
+'use strict';
+
 describe('view.painter.cell.base', function() {
     function getKeyEvent(keyName, $target) {
         return {
@@ -6,6 +8,7 @@ describe('view.painter.cell.base', function() {
             target: $target.get(0)
         };
     }
+
     var columnModelList = [
         {
             title: 'columnName1',

@@ -128,7 +128,7 @@ describe('view.selection', function() {
         describe('selectAll', function() {
             it('전체 영역을 선택한다', function() {
                 selection.selectAll();
-                expect(selection.getRange()).toEqual({ row: [0, 2], column: [0, 3] });
+                expect(selection.getRange()).toEqual({row: [0, 2], column: [0, 3] });
             });
         });
         describe('_adjustScroll', function() {
@@ -145,7 +145,7 @@ describe('view.selection', function() {
         });
         describe('getIndexFromMousePosition()', function() {
             // TODO: 구현
-        })
+        });
 
         describe('_onMouseMove', function() {
             beforeEach(function() {
@@ -170,7 +170,7 @@ describe('view.selection', function() {
                         pageX: 2,
                         pageY: 2
                     });
-                    expect(selection.getRange()).toEqual({ row: [0, 2], column : [0, 2]});
+                    expect(selection.getRange()).toEqual({row: [0, 2], column : [0, 2]});
                 });
             });
             describe('selection 이 없을경우', function() {

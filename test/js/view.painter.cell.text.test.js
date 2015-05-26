@@ -1,3 +1,5 @@
+'use strict';
+
 describe('view.painter.cell.text', function() {
     function getKeyEvent(keyName, $target) {
         return {

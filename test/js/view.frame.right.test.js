@@ -1,17 +1,16 @@
+'use strict';
+
+/* global Data, Model, View */
 describe('view.frame.right', function() {
-    function getKeyEvent(keyName, $target) {
-        return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
-            target: $target.get(0)
-        };
-    }
+    var defaultOption,
+        $empty;
+
     var columnModelList = [
         {
             title: 'columnName1',
             columnName: 'columnName1',
             width: 100
-        },{
+        }, {
             title: 'columnName2',
             columnName: 'columnName2',
             width: 200,
@@ -76,7 +75,7 @@ describe('view.frame.right', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return !!value;
                     }
                 }
@@ -89,7 +88,7 @@ describe('view.frame.right', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return !!value;
                     }
                 }
@@ -227,11 +226,7 @@ describe('view.frame.right', function() {
         grid: grid
     });
 
-    var defaultOption,
-        $empty;
-
     beforeEach(function() {
-        var start = new Date();
         grid.columnModel.set({
             columnFixIndex: 0,
             hasNumberColumn: true,
@@ -251,17 +246,21 @@ describe('view.frame.right', function() {
         grid.options = defaultOption;
         grid.columnModel.set('selectType', grid.option('selectType'));
     });
+
     describe('R Side frame 을 점검한다.', function() {
         var frame;
+
         beforeEach(function() {
             frame = new View.Layout.Frame.Rside({
                 grid: grid
             });
         });
+
         describe('render', function() {
             beforeEach(function() {
                 grid.options.scrollY = true;
             });
+
             describe('virtualScrollbar 상태를 확인한다.', function() {
                 it('notUseSmartRendering 이 true 일때 virtualScrollbar 를 생성하지 않는다.', function() {
                     grid.options.notUseSmartRendering = true;
@@ -274,8 +273,8 @@ describe('view.frame.right', function() {
                     $empty.html(frame.render().el);
                     expect($empty.find('.virtual_scrollbar').length).toBe(1);
                 });
-
             });
+
             describe('_onColumnWidthChanged', function() {
                 it('width 가 변경되면 dimensionModel 에 정의된 값으로 변경한다.', function() {
                     grid.columnModel.set('columnFixIndex', 0);
@@ -297,9 +296,11 @@ describe('view.frame.right', function() {
                 grid: grid
             });
         });
+
         afterEach(function() {
             scrollbar && scrollbar.destroy();
         });
+
         describe('_onMouseUp, _onMouseDown', function() {
             beforeEach(function() {
                 $empty.html(scrollbar.render().el);
@@ -310,18 +311,22 @@ describe('view.frame.right', function() {
                     scrollbar._onMouseUp = jasmine.createSpy('_onMouseUp');
                     scrollbar._onMouseDown();
                 });
+
                 it('document 에 mouseUp 이벤트 핸들러를 걸었는지 확인한다.', function() {
                     $(document).trigger('mouseup');
                     expect(scrollbar._onMouseUp).toHaveBeenCalled();
                 });
+
                 it('hasFocus 프로퍼티가 적절히 변경되었는지 확인한다.', function() {
                     expect(scrollbar.hasFocus).toBe(true);
                 });
             });
+
             describe('_onMouseUp', function() {
                 beforeEach(function() {
                     scrollbar._onMouseDown();
                 });
+                
                 it('hasFocus 프로퍼티가 적절히 변경되었는지 확인한다.', function() {
                     expect(scrollbar.hasFocus).toBe(true);
                     scrollbar._onMouseUp();
@@ -329,30 +334,34 @@ describe('view.frame.right', function() {
                 });
             });
         });
+
         describe('_onScrollTopChange', function() {
             beforeEach(function() {
                 $empty.html(scrollbar.render().el);
             });
+
             it('scrollTop 값이 변경되어 onScrollTopChange 가 호출되었을때, 엘리먼트에서 표현하지 못하는 scrollTop 값이면 정상 값으로 정정한다.', function() {
                 scrollbar._onScrollTopChange({}, 40);
                 expect(grid.renderModel.get('scrollTop')).toBe(0);
             });
         });
+
         describe('_onDimensionChange', function() {
             beforeEach(function() {
                 scrollbar.render = jasmine.createSpy('render');
             });
+
             it('dimension모델의 headerHeight 혹은 bodyHeight 이 변경되면 render 가 호출된다.', function() {
                 grid.dimensionModel.set('headerHeight', 40);
                 expect(scrollbar.render.calls.count()).toBe(1);
                 grid.dimensionModel.set('bodyHeight', 40);
                 expect(scrollbar.render.calls.count()).toBe(2);
             });
+
             it('dimension모델의 headerHeight 혹은 bodyHeight 이 변경되면 render 가 호출된다.', function() {
                 grid.dimensionModel.set('toolbarHeight', 40);
                 expect(scrollbar.render).not.toHaveBeenCalled();
             });
         });
     });
-
 });

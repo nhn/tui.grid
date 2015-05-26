@@ -8,12 +8,13 @@
   },
   "globals": {
     "ne": true,
+    "_": true,
     "Prism": true,
     "rangy": true,
     "loadFixtures": true
   },
   "rules": {
-    //Possible Errors 
+    //Possible Errors
     "no-console": 1,
     "no-extra-parens": 0,
     "no-reserved-keys": 2,

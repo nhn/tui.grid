@@ -1,4 +1,5 @@
 'use strict';
+
 describe('data.columnModel', function() {
     var columnModelInstance,
         sampleColumnModelList,
@@ -81,52 +82,54 @@ describe('data.columnModel', function() {
         ];
     });
 
-
     describe('_extendColumn', function() {
         var length;
+
         beforeEach(function() {
             length = sampleColumnModelList.length;
         });
-        it('columnName 에 해당하는 컬럼 모델이 존재하지 않는다면, 해당 리스트 가장 앞에 prepend 한다.', function() {
 
+        it('columnName에 해당하는 컬럼 모델이 존재하지 않는다면, 해당 리스트 가장 앞에 prepend 한다.', function() {
             expectedColumnModel = {
                 columnName: 'not_exist',
                 title: 'Not exist column.',
                 width: 60
             };
-
             resultList = columnModelInstance._extendColumn(expectedColumnModel, sampleColumnModelList);
+
             expect(resultList.length).toBe(length + 1);
             expect(resultList[0]).toEqual(expectedColumnModel);
         });
-        it('columnName 에 해당하는 컬럼 모델이 존재한다면, 해당 컬럼 모델을 확장한다.', function() {
+
+        it('columnName에 해당하는 컬럼 모델이 존재한다면, 해당 컬럼 모델을 확장한다.', function() {
             var sampleColumn = {
                 columnName: 'none',
                 title: 'exist column.',
                 width: 300
             };
-            resultList = columnModelInstance._extendColumn(sampleColumn, sampleColumnModelList),
+            resultList = columnModelInstance._extendColumn(sampleColumn, sampleColumnModelList);
             expectedColumnModel = $.extend(sampleColumn, _.findWhere(sampleColumnModelList, {columnName: 'none'}));
 
             expect(resultList.length).toBe(length);
             expect(resultList[0]).toEqual(expectedColumnModel);
         });
-
     });
-    describe('_initializeNumberColumn()', function() {
 
-        it('hasNumberColumn: false 라면 _number 컬럼의 isHidden 프로퍼티가 true 로 설정된다.', function() {
+    describe('_initializeNumberColumn()', function() {
+        it('hasNumberColumn: false라면 _number 컬럼의 isHidden 프로퍼티를 true로 설정한다.', function() {
             expectedColumnModel = {
                 columnName: '_number',
                 title: 'No.',
                 width: 60,
                 isHidden: true
             };
+
             columnModelInstance.set('hasNumberColumn', false, {silent: true});
             resultList = columnModelInstance._initializeNumberColumn(sampleColumnModelList);
             expect(resultList[2]).toEqual(expectedColumnModel);
         });
-        it('hasNumberColumn: true 일 때 _number 컬럼이 정상적으로 생성된다.', function() {
+
+        it('hasNumberColumn: true일 때 _number 컬럼이 정상적으로 생성된다.', function() {
             expectedColumnModel = {
                 columnName: '_number',
                 title: 'No.',
@@ -137,10 +140,9 @@ describe('data.columnModel', function() {
             resultList = columnModelInstance._initializeNumberColumn(sampleColumnModelList);
             expect(resultList[2]).toEqual(expectedColumnModel);
         });
-
     });
-    describe('_initializeButtonColumn()', function() {
 
+    describe('_initializeButtonColumn()', function() {
         it('selectType: checkbox 일 때 ', function() {
             var selectType = 'checkbox';
             expectedColumnModel = {
@@ -158,6 +160,7 @@ describe('data.columnModel', function() {
             resultList = columnModelInstance._initializeButtonColumn(sampleColumnModelList);
             expect(resultList[1]).toEqual(expectedColumnModel);
         });
+
         it('selectType: radio 일 때', function() {
             var selectType = 'radio';
             expectedColumnModel = {
@@ -175,9 +178,9 @@ describe('data.columnModel', function() {
             resultList = columnModelInstance._initializeButtonColumn(sampleColumnModelList);
             expect(resultList[1]).toEqual(expectedColumnModel);
         });
+
         it('selectType 이 없을때 isHidden: true 로 설정된다.', function() {
-            var selectType = '',
-                sampleColumnModel = {
+            var sampleColumnModel = {
                     columnName: '_button',
                     editOption: {
                         type: '',
@@ -197,6 +200,7 @@ describe('data.columnModel', function() {
 
     describe('_getVisibleList()', function() {
         it('_number, _button 을 제외하고 isHidden: true 가 아닌 columnModelList 를 반환한다.', function() {
+            var visibleList;
             sampleColumnModelList = [
                 {
                     columnName: '_button'
@@ -220,12 +224,13 @@ describe('data.columnModel', function() {
                     columnName: 'column5'
                 }
             ];
-            var visibleList = columnModelInstance._getVisibleList(sampleColumnModelList);
+            visibleList = columnModelInstance._getVisibleList(sampleColumnModelList);
             expect(visibleList.length).toBe(3);
         });
     });
+
     describe('getEditType()', function() {
-        it('컬럼모델에 정의된 editType 속성값을 반환한다. 없다면 normal 을 반환한다.', function() {
+        it('컬럼모델에 정의된 editType 속성값을 반환한다. 없다면 normal을 반환한다.', function() {
             columnModelInstance.set({
                 columnModelList: sampleColumnModelList
             });
@@ -238,8 +243,8 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.getEditType('radio')).toBe('radio');
             expect(columnModelInstance.getEditType('select')).toBe('select');
         });
-
     });
+
     describe('isLside()', function() {
         it('isHidden 이 아닌 컬럼 중 ColumnFixIndex 기준으로 L side 여부를 판단한다.', function() {
             sampleColumnModelList = [
@@ -276,9 +281,9 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.isLside('column3')).toBe(true);
             expect(columnModelInstance.isLside('column4')).toBe(false);
             expect(columnModelInstance.isLside('column5')).toBe(false);
-
         });
     });
+
     it('_indexOfColumnName()', function() {
         sampleColumnModelList = [
             {
@@ -310,8 +315,8 @@ describe('data.columnModel', function() {
         expect(columnModelInstance._indexOfColumnName('column4', sampleColumnModelList)).toBe(4);
         expect(columnModelInstance._indexOfColumnName('column5', sampleColumnModelList)).toBe(5);
         expect(columnModelInstance._indexOfColumnName('column6', sampleColumnModelList)).toBe(-1);
-
     });
+
     it('indexOfColumnName()', function() {
         sampleColumnModelList = [
             {
@@ -346,17 +351,15 @@ describe('data.columnModel', function() {
         expect(columnModelInstance.indexOfColumnName('column4', true)).toBe(2);
         expect(columnModelInstance.indexOfColumnName('column5', true)).toBe(-1);
 
-
         expect(columnModelInstance.indexOfColumnName('_button', false)).toBe(0);
         expect(columnModelInstance.indexOfColumnName('_number', false)).toBe(1);
         expect(columnModelInstance.indexOfColumnName('column2', false)).toBe(2);
         expect(columnModelInstance.indexOfColumnName('column3', false)).toBe(3);
         expect(columnModelInstance.indexOfColumnName('column4', false)).toBe(4);
         expect(columnModelInstance.indexOfColumnName('column5', false)).toBe(5);
-
     });
-    describe('at() 의 동작을 확인한다.', function() {
 
+    describe('at() 의 동작을 확인한다.', function() {
         beforeEach(function() {
             sampleColumnModelList = [
                 {
@@ -408,6 +411,7 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.at(6)).toEqual(sampleColumnModelList[6]);
             expect(columnModelInstance.at(7)).toEqual(sampleColumnModelList[7]);
         });
+
         it('isVisible: true 일 때 정상동작 하는지 확인한다.', function() {
             expect(columnModelInstance.at(0, true)).toEqual(sampleColumnModelList[4]);
             expect(columnModelInstance.at(1, true)).toEqual(sampleColumnModelList[5]);
@@ -420,6 +424,7 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.at(7, true)).not.toBeDefined();
         });
     });
+
     describe('getVisibleColumnModelList()', function() {
         beforeEach(function() {
             sampleColumnModelList = [
@@ -458,8 +463,8 @@ describe('data.columnModel', function() {
                 columnFixIndex: 2
             });
         });
-        it('whichSide 를 지정하지 않으면 전체 visibleList 를 반환한다.', function() {
 
+        it('whichSide 를 지정하지 않으면 전체 visibleList 를 반환한다.', function() {
             var expectList = [
                     {
                         columnName: 'column2'
@@ -474,8 +479,8 @@ describe('data.columnModel', function() {
                 visibleList = columnModelInstance.getVisibleColumnModelList();
             expect(visibleList).toEqual(expectList);
         });
-        it('whichSide = L 이라면 L Side 의 visibleList 를 반환한다.', function() {
 
+        it('whichSide = L 이라면 L Side 의 visibleList 를 반환한다.', function() {
             var expectList = [
                     {
                         columnName: 'column2'
@@ -487,8 +492,8 @@ describe('data.columnModel', function() {
                 visibleList = columnModelInstance.getVisibleColumnModelList('L');
             expect(visibleList).toEqual(expectList);
         });
-        it('whichSide = L 이라면 L Side 의 visibleList 를 반환한다.', function() {
 
+        it('whichSide = L 이라면 L Side 의 visibleList 를 반환한다.', function() {
             var expectList = [
                     {
                         columnName: 'column4'
@@ -497,8 +502,8 @@ describe('data.columnModel', function() {
                 visibleList = columnModelInstance.getVisibleColumnModelList('R');
             expect(visibleList).toEqual(expectList);
         });
-
     });
+
     describe('getColumnModel()', function() {
         it('columnName 에 해당하는 columnModel 을 반환한다.', function() {
             sampleColumnModelList = [
@@ -546,11 +551,13 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.getColumnModel('column3')).toEqual(sampleColumnModelList[5]);
             expect(columnModelInstance.getColumnModel('column4')).toEqual(sampleColumnModelList[6]);
             expect(columnModelInstance.getColumnModel('column5')).toEqual(sampleColumnModelList[7]);
-
         });
     });
+
     describe('_getRelationListMap()', function() {
         it('각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.', function() {
+            var expectResult, relationListMap;
+
             sampleColumnModelList = [
                 {
                     columnName: 'column0',
@@ -558,17 +565,17 @@ describe('data.columnModel', function() {
                     relationList: [
                         {
                             columnList: ['column1', 'column5'],
-                            isDisabled: function(value, rowData) {
-                                return value == 2;
+                            isDisabled: function(value) {
+                                return value === 2;
                             },
-                            isEditable: function(value, rowData) {
-                                return value != 3;
+                            isEditable: function(value) {
+                                return value !== 3;
                             }
                         },
                         {
                             columnList: ['column2'],
-                            isDisabled: function(value, rowData) {
-                                return value == 2;
+                            isDisabled: function(value) {
+                                return value === 2;
                             }
                         }
                     ]
@@ -582,26 +589,26 @@ describe('data.columnModel', function() {
                     relationList: [
                         {
                             columnList: ['column3', 'column4'],
-                            optionListChange: function(value, rowData) {
-                                if (value == 2) {
+                            optionListChange: function(value) {
+                                if (value === 2) {
                                     return [
-                                        { text: '하나', value: 1},
-                                        { text: '둘', value: 2},
-                                        { text: '셋', value: 3},
-                                        { text: '넷', value: 4}
+                                        {text: '하나', value: 1},
+                                        {text: '둘', value: 2},
+                                        {text: '셋', value: 3},
+                                        {text: '넷', value: 4}
                                     ];
                                 }
                             }
                         },
                         {
                             columnList: ['column5'],
-                            optionListChange: function(value, rowData) {
-                                if (value == 2) {
+                            optionListChange: function(value) {
+                                if (value === 2) {
                                     return [
-                                        { text: '하나', value: 1},
-                                        { text: '둘', value: 2},
-                                        { text: '셋', value: 3},
-                                        { text: '넷', value: 4}
+                                        {text: '하나', value: 1},
+                                        {text: '둘', value: 2},
+                                        {text: '셋', value: 3},
+                                        {text: '넷', value: 4}
                                     ];
                                 }
                             }
@@ -619,14 +626,16 @@ describe('data.columnModel', function() {
                     isHidden: true
                 }
             ];
-            var expectResult = {
-                    'column0': sampleColumnModelList[0].relationList,
-                    'column2': sampleColumnModelList[2].relationList
-                },
-                relationListMap = columnModelInstance._getRelationListMap(sampleColumnModelList);
+
+            expectResult = {
+                'column0': sampleColumnModelList[0].relationList,
+                'column2': sampleColumnModelList[2].relationList
+            };
+            relationListMap = columnModelInstance._getRelationListMap(sampleColumnModelList);
             expect(relationListMap).toEqual(expectResult);
         });
     });
+
     describe('isTextType()', function() {
         it('textType 인지 확인한다.', function() {
             columnModelInstance.set({
@@ -642,9 +651,9 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.isTextType('checkbox')).toBe(false);
             expect(columnModelInstance.isTextType('radio')).toBe(false);
             expect(columnModelInstance.isTextType('hidden')).toBe(true);
-
         });
     });
+
     describe('_onChange, _setColumnModelList()', function() {
         beforeEach(function() {
             sampleColumnModelList = [
@@ -654,17 +663,17 @@ describe('data.columnModel', function() {
                     relationList: [
                         {
                             columnList: ['column1', 'column5'],
-                            isDisabled: function(value, rowData) {
-                                return value == 2;
+                            isDisabled: function(value) {
+                                return value === 2;
                             },
-                            isEditable: function(value, rowData) {
-                                return value != 3;
+                            isEditable: function(value) {
+                                return value !== 3;
                             }
                         },
                         {
                             columnList: ['column2'],
-                            isDisabled: function(value, rowData) {
-                                return value == 2;
+                            isDisabled: function(value) {
+                                return value === 2;
                             }
                         }
                     ]
@@ -678,26 +687,26 @@ describe('data.columnModel', function() {
                     relationList: [
                         {
                             columnList: ['column3', 'column4'],
-                            optionListChange: function(value, rowData) {
-                                if (value == 2) {
+                            optionListChange: function(value) {
+                                if (value === 2) {
                                     return [
-                                        { text: '하나', value: 1},
-                                        { text: '둘', value: 2},
-                                        { text: '셋', value: 3},
-                                        { text: '넷', value: 4}
+                                        {text: '하나', value: 1},
+                                        {text: '둘', value: 2},
+                                        {text: '셋', value: 3},
+                                        {text: '넷', value: 4}
                                     ];
                                 }
                             }
                         },
                         {
                             columnList: ['column5'],
-                            optionListChange: function(value, rowData) {
-                                if (value == 2) {
+                            optionListChange: function(value) {
+                                if (value === 2) {
                                     return [
-                                        { text: '하나', value: 1},
-                                        { text: '둘', value: 2},
-                                        { text: '셋', value: 3},
-                                        { text: '넷', value: 4}
+                                        {text: '하나', value: 1},
+                                        {text: '둘', value: 2},
+                                        {text: '셋', value: 3},
+                                        {text: '넷', value: 4}
                                     ];
                                 }
                             }
@@ -721,34 +730,36 @@ describe('data.columnModel', function() {
                 columnModelList: $.extend(true, [], sampleColumnModelList)
             });
         });
-        describe('columnModelList 가 정상적으로 가공되었는지 확인한다.', function() {
+
+        describe('columnModelList가 정상적으로 가공되었는지 확인한다.', function() {
             it('_button, _checkbox 가 append 되어 length 가 +2 되었는지 확인한다.', function() {
                 var columnModelList = columnModelInstance.get('columnModelList'),
                     length = columnModelList.length;
-                expect(length).toBe(sampleColumnModelList.length+2);
+                expect(length).toBe(sampleColumnModelList.length + 2);
             });
         });
 
-        it('columnModelMap 이 정상적으로 가공되었는지 확인한다.', function() {
+        it('columnModelMap이 정상적으로 가공되었는지 확인한다.', function() {
             var columnModelList = columnModelInstance.get('columnModelList'),
                 columnModelMap = columnModelInstance.get('columnModelMap');
             expect(columnModelMap).toEqual(_.indexBy(columnModelList, 'columnName'));
         });
-        it('relationListMap 가 저장 되었는지 확인한다.', function() {
-            var columnModelList = columnModelInstance.get('columnModelList'),
-                relationListMap = columnModelInstance.get('relationListMap'),
+
+        it('relationListMap가 저장 되었는지 확인한다.', function() {
+            var relationListMap = columnModelInstance.get('relationListMap'),
                 expectResult = {
                     'column0': sampleColumnModelList[0].relationList,
                     'column2': sampleColumnModelList[2].relationList
                 };
             expect(relationListMap).toEqual(expectResult);
         });
-        it('columnFixIndex 가 저장 되었는지 확인한다.', function() {
+
+        it('columnFixIndex가 저장 되었는지 확인한다.', function() {
             expect(columnModelInstance.get('columnFixIndex')).toEqual(2);
         });
-        it('visibleList 가 저장 되었는지 확인한다.', function() {
-            var columnModelList = columnModelInstance.get('columnModelList'),
-                visibleList = columnModelInstance.get('visibleList'),
+
+        it('visibleList가 저장 되었는지 확인한다.', function() {
+            var visibleList = columnModelInstance.get('visibleList'),
                 expectResult = [
                     {
                         columnName: 'column2',
@@ -765,4 +776,3 @@ describe('data.columnModel', function() {
         });
     });
 });
-

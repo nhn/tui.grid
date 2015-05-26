@@ -1,17 +1,12 @@
+'use strict';
+
 describe('view.layout.header', function() {
-    function getKeyEvent(keyName, $target) {
-        return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
-            target: $target.get(0)
-        };
-    }
     var columnModelList = [
         {
             title: 'columnName1',
             columnName: 'columnName1',
             width: 100
-        },{
+        }, {
             title: 'columnName2',
             columnName: 'columnName2',
             width: 200,
@@ -76,7 +71,7 @@ describe('view.layout.header', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return !!value;
                     }
                 }
@@ -89,7 +84,7 @@ describe('view.layout.header', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return !!value;
                     }
                 }
@@ -128,7 +123,7 @@ describe('view.layout.header', function() {
             'columnName6': 'text-convertible',
             'columnName7': false,
             'columnName8': true
-        },{
+        }, {
             'columnName1': 'normal',
             'columnName2': 1,
             'columnName3': 1,

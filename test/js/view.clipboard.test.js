@@ -1,5 +1,6 @@
 'use strict';
 
+/* global Core */
 describe('view.clipboard', function() {
     var grid,
         $empty,
@@ -234,7 +235,6 @@ describe('view.clipboard', function() {
             });
 
             it('_updateSelectionByKeyIn 를 호출하는 키는 _updateSelectionByKeyIn 호출하는지 확인한다.', function() {
-
                 clipboard._unlock();
                 keyEvent = getKeyEvent('UP_ARROW');
                 clipboard._keyInWithShift(keyEvent);
@@ -276,6 +276,7 @@ describe('view.clipboard', function() {
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(8);
             });
         });
+
         describe('_keyInWithCtrl', function() {
             var keyEvent;
 
@@ -320,6 +321,7 @@ describe('view.clipboard', function() {
                 expect(grid.focus.calls.count()).toBe(2);
             });
         });
+
         describe('_keyInWithShiftAndCtrl', function() {
             var keyEvent;
 
@@ -349,6 +351,7 @@ describe('view.clipboard', function() {
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(2);
             });
         });
+        
         describe('_del', function() {
             beforeEach(function() {
                 grid.focus(0, 'columnName1');

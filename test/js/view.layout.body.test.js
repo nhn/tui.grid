@@ -1,17 +1,16 @@
+'use strict';
+
+/* global Data, Model, View */
 describe('view.layout.body', function() {
-    function getKeyEvent(keyName, $target) {
-        return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
-            target: $target.get(0)
-        };
-    }
+    var body,
+        $empty;
+
     var columnModelList = [
         {
             title: 'columnName1',
             columnName: 'columnName1',
             width: 100
-        },{
+        }, {
             title: 'columnName2',
             columnName: 'columnName2',
             width: 200,
@@ -76,7 +75,7 @@ describe('view.layout.body', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return !!value;
                     }
                 }
@@ -89,7 +88,7 @@ describe('view.layout.body', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return !!value;
                     }
                 }
@@ -111,7 +110,7 @@ describe('view.layout.body', function() {
             'text-convertible': 'text-convertible',
             'isDisabled': false,
             'isEditable': true
-        },{
+        }, {
             '_extraData': {
                 'className': {
                     'row': ['rowClass'],
@@ -128,7 +127,7 @@ describe('view.layout.body', function() {
             'text-convertible': 'text-convertible',
             'isDisabled': false,
             'isEditable': true
-        },{
+        }, {
             'normal': 'normal',
             'checkbox': 1,
             'radio': 1,
@@ -263,9 +262,6 @@ describe('view.layout.body', function() {
         grid: grid
     });
 
-    var body,
-        $empty;
-
     jasmine.getFixtures().fixturesPath = 'base/';
     loadFixtures('test/fixtures/empty.html');
     $empty = $('#empty');
@@ -306,8 +302,8 @@ describe('view.layout.body', function() {
             expect($colList.eq(8).attr('columnname')).toBe('columnName7');
             expect($colList.eq(9).attr('columnname')).toBe('columnName8');
         });
-
     });
+
     describe('render', function() {
         beforeEach(function() {
             $empty.html(body.render().el);
@@ -328,6 +324,7 @@ describe('view.layout.body', function() {
             expect($empty.find('.selection_layer').length).toBe(1);
         });
     });
+
     describe('_setTopPosition', function() {
         var $container;
         beforeEach(function() {
@@ -345,10 +342,12 @@ describe('view.layout.body', function() {
             expect($container.css('top')).toEqual('200px');
         });
     });
+
     describe('_onBodyHeightChange', function() {
         beforeEach(function() {
             $empty.html(body.render().el);
         });
+
         it('dimension model 의 bodyHeight 가 변경된 경우 body 의 height 을 변경하는지 확인한다.', function() {
             body._onBodyHeightChange(null, 100);
             expect(body.$el.height()).toBe(100);
