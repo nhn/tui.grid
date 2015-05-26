@@ -1,4 +1,10 @@
+'use strict';
+
 describe('view.clipboard', function() {
+    var grid,
+        $empty,
+        timeoutDelay = 0;
+
     function getKeyEvent(keyName, $target) {
         $target = $target || $('<div>');
         return {
@@ -8,10 +14,6 @@ describe('view.clipboard', function() {
             preventDefault: function() {}
         };
     }
-
-    var grid,
-        $empty,
-        timeoutDelay = 0;
 
     jasmine.getFixtures().fixturesPath = 'base/';
     loadFixtures('test/fixtures/empty.html');
@@ -44,18 +46,18 @@ describe('view.clipboard', function() {
             {
                 c1: '0-1',
                 c2: '0-2',
-                c3: '0-3',
+                c3: '0-3'
             }, {
                 _extraData: {
                     rowState: 'DISABLED'
                 },
                 c1: '1-1',
                 c2: '1-2',
-                c3: '1-3',
+                c3: '1-3'
             }, {
                 c1: '2-1',
                 c2: '2-2',
-                c3: '2-3',
+                c3: '2-3'
             }
         ]);
     });
@@ -77,6 +79,7 @@ describe('view.clipboard', function() {
                 clipboard._keyInWithCtrl = jasmine.createSpy('_keyInWithCtrl');
                 clipboard._keyIn = jasmine.createSpy('_keyIn');
             });
+
             it('상황에 따라 알맞은 메서드를 호출하는지 확인한다.', function() {
                 keyEvent = getKeyEvent('ENTER');
                 keyEvent.shiftKey = true;
@@ -125,20 +128,22 @@ describe('view.clipboard', function() {
                 grid.focusIn = jasmine.createSpy('focusIn');
                 clipboard._onEnterSpace = jasmine.createSpy('_onEnterSpace');
                 clipboard._del = jasmine.createSpy('_del');
-
             });
+
             it('focusIn 를 호출하는 키는 focusIn 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('TAB');
                 clipboard._keyIn(keyEvent);
                 expect(grid.focusIn.calls.count()).toBe(1);
             });
+
             it('_del 를 호출하는 키는 _del 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('DEL');
                 clipboard._keyIn(keyEvent);
                 expect(clipboard._del.calls.count()).toBe(1);
             });
+
             it('_onEnterSpace 를 호출하는 키는 _onEnterSpace 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('ENTER');
@@ -150,12 +155,16 @@ describe('view.clipboard', function() {
                 clipboard._keyIn(keyEvent);
                 expect(clipboard._onEnterSpace.calls.count()).toBe(2);
             });
+
             it('지정되지 않은 키는 result 가 false 인지 확인한다.', function() {
+                var result;
+
                 clipboard._unlock();
                 keyEvent = getKeyEvent('F5');
-                var result = clipboard._keyIn(keyEvent);
+                result = clipboard._keyIn(keyEvent);
                 expect(result).toBe(false);
             });
+
             it('focus 를 호출하는 키는 focus를 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('UP_ARROW');
@@ -207,18 +216,23 @@ describe('view.clipboard', function() {
                 grid.focusIn = jasmine.createSpy('focusIn');
                 clipboard._updateSelectionByKeyIn = jasmine.createSpy('_updateSelectionByKeyIn');
             });
+
             it('지정되지 않은 키는 result 가 false 인지 확인한다.', function() {
+                var result;
+
                 clipboard._unlock();
                 keyEvent = getKeyEvent('F5');
-                var result = clipboard._keyInWithShift(keyEvent);
+                result = clipboard._keyInWithShift(keyEvent);
                 expect(result).toBe(false);
             });
+
             it('focusIn 를 호출하는 키는 focusIn 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('TAB');
                 clipboard._keyInWithShift(keyEvent);
                 expect(grid.focusIn.calls.count()).toBe(1);
             });
+
             it('_updateSelectionByKeyIn 를 호출하는 키는 _updateSelectionByKeyIn 호출하는지 확인한다.', function() {
 
                 clipboard._unlock();
@@ -271,26 +285,30 @@ describe('view.clipboard', function() {
                 grid.selection.selectAll = jasmine.createSpy('selectAll');
                 clipboard._copyToClipboard = jasmine.createSpy('_copyToClipboard');
             });
+
             it('지정되지 않은 키는 result 가 false 인지 확인한다.', function() {
+                var result;
                 clipboard._unlock();
                 keyEvent = getKeyEvent('F5');
-                var result = clipboard._keyInWithCtrl(keyEvent);
+                result = clipboard._keyInWithCtrl(keyEvent);
                 expect(result).toBe(false);
             });
+
             it('selectAll 를 호출하는 키는 selectAll 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('CHAR_C');
                 clipboard._keyInWithCtrl(keyEvent);
                 expect(clipboard._copyToClipboard.calls.count()).toBe(1);
             });
+
             it('selectAll 를 호출하는 키는 selectAll 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('CHAR_A');
                 clipboard._keyInWithCtrl(keyEvent);
                 expect(grid.selection.selectAll.calls.count()).toBe(1);
             });
-            it('focus 를 호출하는 키는 focus 호출하는지 확인한다.', function() {
 
+            it('focus 를 호출하는 키는 focus 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('HOME');
                 clipboard._keyInWithCtrl(keyEvent);
@@ -309,14 +327,17 @@ describe('view.clipboard', function() {
                 grid.focus(0, 'columnName1');
                 clipboard._updateSelectionByKeyIn = jasmine.createSpy('_updateSelectionByKeyIn');
             });
+
             it('지정되지 않은 키는 result 가 false 인지 확인한다.', function() {
+                var result;
+
                 clipboard._unlock();
                 keyEvent = getKeyEvent('F5');
-                var result = clipboard._keyInWithShiftAndCtrl(keyEvent);
+                result = clipboard._keyInWithShiftAndCtrl(keyEvent);
                 expect(result).toBe(false);
             });
-            it('focus 를 호출하는 키는 focus 호출하는지 확인한다.', function() {
 
+            it('focus를 호출하는 키는 focus 호출하는지 확인한다.', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('HOME');
                 clipboard._keyInWithShiftAndCtrl(keyEvent);
@@ -333,14 +354,15 @@ describe('view.clipboard', function() {
                 grid.focus(0, 'columnName1');
                 grid.del = jasmine.createSpy('del');
             });
+
             it('selection 이 선택되어 있다면 grid의 del 을 선택된 만큼 삭제하는지 확인한다.', function() {
                 grid.selection.startSelection(0, 0);
                 grid.selection.updateSelection(2, 2);
 
                 clipboard._del();
                 expect(grid.del.calls.count()).toEqual(9);
-
             });
+
             it('아니라면 한번 호출한 것을 확인한다..', function() {
                 clipboard._del();
                 expect(grid.del.calls.count()).toEqual(1);
@@ -352,22 +374,26 @@ describe('view.clipboard', function() {
                 grid.focus(0, '_number');
                 grid.del = jasmine.createSpy('del');
             });
+
             it('focus위치가 이동되고 getRange()의 값이 변경되는지 확인한다.', function() {
                 grid.selection.startSelection(0, 0);
                 clipboard._updateSelectionByKeyIn(2, 3);
-                expect(grid.focusModel.which()).toEqual({ rowKey: 2, columnName: 'c2' });
+                expect(grid.focusModel.which()).toEqual({rowKey: 2, columnName: 'c2'});
                 expect(grid.selection.getRange()).toEqual({row: [0, 2], column: [0, 3]});
             });
+
             it('selection이 선택되어 있지 않으면 selection start을 호출한다', function() {
                 grid.selection.startSelection = jasmine.createSpy('startSelection');
                 clipboard._updateSelectionByKeyIn(2, 2);
                 expect(grid.selection.startSelection).toHaveBeenCalled();
             });
         });
+
         describe('_getClipboardString', function() {
             beforeEach(function() {
                 grid.focus(0, 'c1');
             });
+
             it('selection 이 선택되어 있다면 grid.selection.getSelectionToString 을 호출한다', function() {
                 grid.selection.startSelection(0, 0);
                 grid.selection.updateSelection(2, 2);
@@ -375,17 +401,20 @@ describe('view.clipboard', function() {
                 clipboard._getClipboardString();
                 expect(grid.selection.getSelectionToString).toHaveBeenCalled();
             });
+
             it('아니라면 현재 focus된 컬럼의 내용만 리턴한다.', function() {
                 var str = clipboard._getClipboardString();
                 expect(str).toBe('0-1');
             });
         });
+
         describe('_onEnterSpace', function() {
             beforeEach(function(done) {
                 setTimeout(function() {
                     done();
                 }, timeoutDelay);
             });
+
             it('button 컬럼의 경우 check 한다.', function() {
                 grid.focusIn = jasmine.createSpy('focusIn');
                 expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
@@ -395,6 +424,7 @@ describe('view.clipboard', function() {
                 expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
                 expect(grid.focusIn).not.toHaveBeenCalled();
             });
+
             it('아니라면 focusIn 을 호출한다..', function() {
                 grid.focusIn = jasmine.createSpy('focusIn');
                 clipboard._onEnterSpace(0, 'c1');

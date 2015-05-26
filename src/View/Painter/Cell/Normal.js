@@ -194,7 +194,7 @@
         toggle: function($td) {
             var $input = $td.find('input');
             if (this.grid.option('selectType') === 'checkbox') {
-                $input.trigger('click');
+                $input.prop('checked', !$input.prop('checked'));
             }
         },
         /**

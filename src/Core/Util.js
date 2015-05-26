@@ -394,17 +394,26 @@ var Util = {
          * @param {HTMLElement} target HTML input 엘리먼트
          */
         setCursorToEnd: function(target) {
-            target.focus();
-            var length = target.value.length;
+            var length = target.value.length,
+                range;
 
+            target.focus();
             if (target.setSelectionRange) {
-                target.setSelectionRange(length, length);
+                try {
+                    target.setSelectionRange(length, length);
+                } catch(e) {
+                    // to prevent unspecified error in IE (occurs when running test)
+                }
             } else if (target.createTextRange) {
-                var range = target.createTextRange();
+                range = target.createTextRange();
                 range.collapse(true);
                 range.moveEnd('character', length);
                 range.moveStart('character', length);
-                range.select();
+                try {
+                     range.select();
+                } catch(e) {
+                     // to prevent unspecified error in IE (occurs when running test)
+                }
             }
         }
     }
