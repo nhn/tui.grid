@@ -274,11 +274,12 @@
          * @private
          */
         _onKeyupCharV: function() {
-            var self = this;
-            this.$el.on('keyup', function() {
-                self._pasteToGrid();
-                self.pasting = !self.pasting;
-            });
+            this.$el.on('keyup', $.proxy(this.onKeyupCharV, this));
+        },
+
+        onKeyupCharV: function() {
+            this._pasteToGrid();
+            this.pasting = false;
         },
 
        /**
