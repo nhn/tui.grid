@@ -310,7 +310,7 @@
                 i = 0,
                 len = result.length;
 
-            for (; i < len; i++) {
+            for (; i < len; i += 1) {
                 result[i] = result[i].split('\t');
             }
             return result;
