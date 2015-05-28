@@ -14,7 +14,7 @@ describe('view.selection', function() {
                 {
                     title: 'c1',
                     columnName: 'c1',
-                    width: 100,
+                    width: 100
                 }, {
                     title: 'c2',
                     columnName: 'c2',
@@ -41,14 +41,14 @@ describe('view.selection', function() {
             {
                 c1: '0-1',
                 c2: '0-2',
-                c3: 1,
+                c3: 1
             }, {
                 _extraData: {
                     rowState: 'DISABLED'
                 },
                 c1: '1-1',
                 c2: '1-2',
-                c3: 2,
+                c3: 2
             }, {
                 c1: '2-1',
                 c2: '2-2',
