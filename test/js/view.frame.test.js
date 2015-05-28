@@ -251,16 +251,22 @@ describe('View.Layout.Frame', function() {
         });
 
         describe('_onScrollTopChange', function() {
+            beforeEach(function() {
+                jasmine.getFixtures().set($('<div id="wrapper" />'));
+            });
+
             it('grid.renderModel의 change:scrollTop 이벤트 발생시 호출된다.', function() {
                 spyOn(VirtualScrollBar.prototype, '_onScrollTopChange');
                 scrollbar = new VirtualScrollBar({
                     grid: grid
                 });
+                $('#wrapper').append(scrollbar.el);
                 grid.renderModel.set('scrollTop', 40);
                 expect(scrollbar._onScrollTopChange).toHaveBeenCalled();
             });
 
             it('엘리먼트에서 표현하지 못하는 scrollTop 값이면 정상 값으로 정정한다.', function() {
+                $('#wrapper').append(scrollbar.el);
                 scrollbar._onScrollTopChange({}, 40);
                 expect(grid.renderModel.get('scrollTop')).toBe(0);
             });
