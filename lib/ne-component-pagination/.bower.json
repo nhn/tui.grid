@@ -1,0 +1,38 @@
+{
+  "name": "ne-component-pagination",
+  "version": "1.0.1",
+  "authors": [
+    "FE개발팀 이제인<jein.yi@nhnent.com>"
+  ],
+  "license": "MIT",
+  "main": "pagination.js",
+  "ignore": [
+    "**/.*",
+    ".*",
+    "src",
+    "bin",
+    "node_modules",
+    "bower_components",
+    "test",
+    "bower.json",
+    "conf.json",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json",
+    "samples"
+  ],
+  "dependencies": {
+    "jquery": "~1.8.3",
+    "ne-code-snippet": "~1.0.0"
+  },
+  "homepage": "https://github.com/nhnent/fe.component-pagination",
+  "_release": "1.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.1",
+    "commit": "8cba9e68d00af35499dc10c2a016d33d0a214c45"
+  },
+  "_source": "git://github.com/nhnent/fe.component-pagination.git",
+  "_target": "~1.0.1",
+  "_originalSource": "ne-component-pagination"
+}

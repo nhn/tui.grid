@@ -1,0 +1,29 @@
+{
+  "name": "ne-code-snippet",
+  "version": "1.0.1",
+  "authors": [
+    "FE"
+  ],
+  "license": "MIT",
+  "main": "code-snippet.js",
+  "ignore": [
+    "**/.*",
+    ".*",
+    "src",
+    "bin",
+    "node_modules",
+    "bower_components",
+    "test",
+    "bower.json",
+    "conf.json",
+    "Gruntfile.js",
+    "karma.conf.js",
+    "package.json",
+    "karma.local.conf.js",
+    "tutorial"
+  ],
+  "devDependencies": {
+    "json2": "*",
+    "jquery": "~1.8.3"
+  }
+}
