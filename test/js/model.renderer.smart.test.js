@@ -60,20 +60,20 @@ describe('model.renderer', function() {
                     optionListChange: function(value) {
                         if (value === true) {
                             return [
-                                { text: '하나', value: 1},
-                                { text: '둘', value: 2},
-                                { text: '셋', value: 3},
-                                { text: '넷', value: 4}
+                                {text: '하나', value: 1},
+                                {text: '둘', value: 2},
+                                {text: '셋', value: 3},
+                                {text: '넷', value: 4}
                             ];
                         }
                     }
                 },
                 {
                     columnList: ['columnName2'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return value === false;
                     },
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return value !== false;
                     }
                 }
@@ -149,6 +149,7 @@ describe('model.renderer', function() {
         });
         renderInstance.refresh();
     });
+
     describe('_setRenderingRange()', function() {
         it('scrollTop 변경에 따라 값을 설정한다.', function() {
             function getDiff(start, end) {
@@ -180,9 +181,9 @@ describe('model.renderer', function() {
             expect(renderInstance.get('top')).toBe(275);
             expect(renderInstance.get('startIndex')).toBe(25);
             expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(42);
-
         });
     });
+    
     describe('_isRenderable()', function() {
         it('scrollTop 변경에 따라 rendering 해야할지 여부를 판단하여 반환한다.', function () {
             renderInstance._setRenderingRange(0);
@@ -239,4 +240,3 @@ describe('model.renderer', function() {
         });
     });
 });
-

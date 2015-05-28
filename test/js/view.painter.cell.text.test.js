@@ -1,3 +1,5 @@
+'use strict';
+
 describe('view.painter.cell.text', function() {
     function getKeyEvent(keyName, $target) {
         return {
@@ -143,8 +145,13 @@ describe('view.painter.cell.text', function() {
             columnModel: null,
             renderModel: null
         },
-        cellPainter,
-        $empty;
+        $empty,
+        cellPainter;
+
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('test/fixtures/empty.html');
+    $empty = $('#empty');
+
     grid.columnModel = new Data.ColumnModel({
         hasNumberColumn: true,
         selectType: 'checkbox',
@@ -176,30 +183,29 @@ describe('view.painter.cell.text', function() {
         grid: grid
     });
 
-
-
     beforeEach(function() {
-        jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/empty.html');
-        $empty = $('#empty');
         cellPainter && cellPainter.destroy && cellPainter.destroy();
         grid.dataModel.set(rowList, {parse: true});
         grid.renderModel.refresh();
     });
+
     afterEach(function() {
         $empty.empty();
     });
+
     describe('View.Painter.Cell.Text 클래스 테스트', function() {
         beforeEach(function() {
             cellPainter = new View.Painter.Cell.Text({
                 grid: grid
             });
         });
+
         describe('getEditType', function() {
             it('text 문자열을 반환한다.', function() {
                 expect(cellPainter.getEditType()).toEqual('text');
             });
         });
+
         describe('focusOut', function() {
             it('Grid 의 focusClipboard 메서드가 호출되는지 확인한다.', function() {
                 grid.focusClipboard = jasmine.createSpy('focusClipboard');
@@ -207,6 +213,7 @@ describe('view.painter.cell.text', function() {
                 expect(grid.focusClipboard).toHaveBeenCalled();
             });
         });
+
         describe('getContentHtml', function() {
             it('value 값이 input 에 설정되는지 확인한다.', function() {
                 var html = cellPainter.getContentHtml({
@@ -237,6 +244,7 @@ describe('view.painter.cell.text', function() {
             var html,
                 $input,
                 $td;
+
             beforeEach(function() {
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
@@ -274,8 +282,8 @@ describe('view.painter.cell.text', function() {
         });
         describe('_onFocus', function() {
             var html,
-                $input,
-                $td;
+                $input;
+
             beforeEach(function() {
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
@@ -283,8 +291,8 @@ describe('view.painter.cell.text', function() {
                 });
                 $empty.html('<table><tr><td>' + html + '</td></tr></table>');
                 $input = $empty.find('input');
-                $td = $empty.find('td');
             });
+
             it('originalText 를 잘 설정하는지 확인한다.', function() {
                 expect($input.val()).toEqual('text');
                 expect(cellPainter.originalText).toEqual('');
@@ -292,16 +300,18 @@ describe('view.painter.cell.text', function() {
                 expect($input.val()).toEqual('text');
                 expect(cellPainter.originalText).toEqual('text');
             });
+
             it('grid 의 selection.disable() 을 호출하는지 확인한다.', function() {
                 grid.selection.disable = jasmine.createSpy('disable');
                 cellPainter._onFocus({target: $input.get(0)});
                 expect(grid.selection.disable).toHaveBeenCalled();
             });
         });
+
         describe('_isEdited, _restore 테스트', function() {
             var html,
-                $input,
-                $td;
+                $input;
+
             beforeEach(function() {
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
@@ -309,7 +319,6 @@ describe('view.painter.cell.text', function() {
                 });
                 $empty.html('<table><tr><td>' + html + '</td></tr></table>');
                 $input = $empty.find('input');
-                $td = $empty.find('td');
                 //_onFocus 를 호출함으로서 originalText 를 설정한다.
                 cellPainter._onFocus({target: $input.get(0)});
             });
@@ -325,10 +334,11 @@ describe('view.painter.cell.text', function() {
                 expect(cellPainter._isEdited($input)).toEqual(false);
             });
         });
+
         describe('_onBlur', function() {
             var html,
-                $input,
-                $td;
+                $input;
+
             beforeEach(function() {
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
@@ -336,7 +346,6 @@ describe('view.painter.cell.text', function() {
                 });
                 $empty.html('<table><tr row="0"><td columnname="text">' + html + '</td></tr></table>');
                 $input = $empty.find('input');
-                $td = $empty.find('td');
                 cellPainter._onFocus({target: $input.get(0)});
             });
 
@@ -345,6 +354,7 @@ describe('view.painter.cell.text', function() {
                 cellPainter._onBlur({target: $input.get(0)});
                 expect(grid.selection.enable).toHaveBeenCalled();
             });
+
             it('_isEdited === true 일 때 setValue 를 호출하는지 확인한다.', function() {
                 grid.setValue = jasmine.createSpy('setValue');
                 cellPainter._onBlur({target: $input.get(0)});
@@ -366,11 +376,13 @@ describe('view.painter.cell.text', function() {
                 grid: grid
             });
         });
+
         describe('getEditType', function() {
             it('text-convertible 문자열을 반환한다.', function() {
                 expect(cellPainter.getEditType()).toEqual('text-convertible');
             });
         });
+
         describe('focusIn', function() {
             it('_startEdit 메서드가 호출되는지 확인한다.', function() {
                 var $td = $('<td>');
@@ -379,6 +391,7 @@ describe('view.painter.cell.text', function() {
                 expect(cellPainter._startEdit).toHaveBeenCalled();
             });
         });
+
         describe('focusOut', function() {
             it('_endEdit 메서드가 호출되는지 확인한다.', function() {
                 grid.focusClipboard = jasmine.createSpy('focusClipboard');
@@ -395,6 +408,7 @@ describe('view.painter.cell.text', function() {
                 $empty.html('<table><tr row="0"><td columnname="text-convertible"></td></tr></table>');
                 $td = $empty.find('td');
             });
+
             describe('편집중이지 않은 셀일 경우 value 만 반환한다.', function() {
                 beforeEach(function() {
                     cellPainter.editingCell = {
@@ -411,6 +425,7 @@ describe('view.painter.cell.text', function() {
                     expect(html).toEqual('text-convertible');
                 });
             });
+
             describe('편집중일 경우 input text 마크업을 반환한다.', function() {
                 beforeEach(function() {
                     cellPainter.editingCell = {
@@ -425,10 +440,12 @@ describe('view.painter.cell.text', function() {
                     $td.html(html);
                     $input = $empty.find('input');
                 });
+
                 it('input 에 value 를 잘 설정한다.', function() {
                     expect($input.length).toEqual(1);
                     expect($input.val()).toEqual('text-convertible');
                 });
+
                 it('disabled 를 잘 설정한다.', function() {
                     expect($input.length).toEqual(1);
                     expect($input.prop('disabled')).toEqual(true);
@@ -446,6 +463,7 @@ describe('view.painter.cell.text', function() {
                 });
             });
         });
+
         describe('_startEdit', function() {
             var html,
                 $td,
@@ -454,7 +472,7 @@ describe('view.painter.cell.text', function() {
             beforeEach(function() {
                 $empty.html('<table><tr key="0"><td columnname="text-convertible"></td></tr></table>');
                 $td = $empty.find('td');
-                grid.getElement = function() {return $td;};
+                grid.getElement = function() {return $td; };
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
                     columnName: 'text-convertible',
@@ -463,9 +481,11 @@ describe('view.painter.cell.text', function() {
                 $td.html(html);
                 $input = $empty.find('input');
             });
+
             afterEach(function() {
                 cellPainter._endEdit($td);
             });
+
             it('input text 를 생성하는지 확인한다.', function() {
                 expect($input.length).toBe(0);
                 cellPainter._startEdit($td);
@@ -473,6 +493,7 @@ describe('view.painter.cell.text', function() {
                 expect($input.length).toBe(1);
                 expect($input.val()).toBe(html);
             });
+
             it('editingCell 값을 잘 설정하는지 확인한다.', function() {
                 cellPainter._startEdit($td);
                 expect(cellPainter.editingCell).toEqual({
@@ -480,12 +501,14 @@ describe('view.painter.cell.text', function() {
                     columnName: 'text-convertible'
                 });
             });
+
             it('isEditable 이 false 일 때에는 input text 를 노출하지 않는다.', function() {
                 grid.dataModel.get(0).set('isEditable', false);
                 cellPainter._startEdit($td);
                 $input = $empty.find('input');
                 expect($input.length).toBe(0);
             });
+
             it('isDisabled 이 true 일 때에는 input text 를 노출하지 않는다.', function() {
                 grid.dataModel.get(0).set('isDisabled', true);
                 cellPainter._startEdit($td);
@@ -493,6 +516,7 @@ describe('view.painter.cell.text', function() {
                 expect($input.length).toBe(0);
             });
         });
+
         describe('_endEdit', function() {
             var html,
                 $td,
@@ -501,7 +525,7 @@ describe('view.painter.cell.text', function() {
             beforeEach(function() {
                 $empty.html('<table><tr key="0"><td columnname="text-convertible"></td></tr></table>');
                 $td = $empty.find('td');
-                grid.getElement = function() {return $td;};
+                grid.getElement = function() {return $td; };
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
                     columnName: 'text-convertible',
@@ -512,6 +536,7 @@ describe('view.painter.cell.text', function() {
                 cellPainter._startEdit($td);
                 $input = $empty.find('input');
             });
+
             it('input text 를 감추는지 확인한다.', function() {
                 expect($input.length).toBe(1);
                 cellPainter._endEdit($td);
@@ -519,6 +544,7 @@ describe('view.painter.cell.text', function() {
                 expect($input.length).toBe(0);
                 expect($td.html()).toBe(html);
             });
+
             it('isEdit 값을 false 로 설정하는지 확인한다.', function() {
                 expect($input.length).toBe(1);
                 cellPainter._endEdit($td);
@@ -528,10 +554,12 @@ describe('view.painter.cell.text', function() {
                 });
             });
         });
+
         describe('_onBlurConvertible', function() {
             var html,
                 $input,
                 $td;
+
             beforeEach(function() {
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
@@ -542,21 +570,25 @@ describe('view.painter.cell.text', function() {
                 $td = $empty.find('td');
                 cellPainter._onFocus({target: $input.get(0)});
             });
+
             it('grid.selection.enable 를 호출하는지 확인한다.', function() {
                 grid.selection.enable = jasmine.createSpy('enable');
                 cellPainter._onBlurConvertible({target: $input.get(0)});
                 expect(grid.selection.enable).toHaveBeenCalled();
             });
+
             it('_endEdit 를 호출하는지 확인한다.', function() {
                 cellPainter._endEdit = jasmine.createSpy('_endEdit');
                 cellPainter._onBlurConvertible({target: $input.get(0)});
                 expect(cellPainter._endEdit).toHaveBeenCalled();
             });
         });
+
         describe('_onClick', function() {
             var html,
                 $input,
                 $td;
+
             beforeEach(function() {
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
@@ -567,34 +599,33 @@ describe('view.painter.cell.text', function() {
                 $td = $empty.find('td');
                 cellPainter.attachHandler($td);
                 cellPainter._startEdit = jasmine.createSpy('_startEdit');
+                jasmine.clock().install();
             });
+
             afterEach(function() {
                 cellPainter.detachHandler($td);
+                jasmine.clock().uninstall();
             });
-            it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function(done) {
+
+            it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function() {
                 $td.trigger('click');
                 expect(cellPainter.clicked).toEqual({
                     rowKey: '0',
                     columnName: 'text-convertible'
                 });
-                setTimeout(function() {
-                    $td.trigger('click');
-                    expect(cellPainter._startEdit).not.toHaveBeenCalled();
-                    done();
-                }, 900);
-
-
-            });
-            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function(done) {
+                jasmine.clock().tick(900);
                 $td.trigger('click');
-                setTimeout(function() {
-                    $td.trigger('click');
-                    expect(cellPainter._startEdit).toHaveBeenCalled();
-                    done();
-                }, 100);
+                expect(cellPainter._startEdit).not.toHaveBeenCalled();
+            });
 
+            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function() {
+                $td.trigger('click');
+                jasmine.clock().tick(100);
+                $td.trigger('click');
+                expect(cellPainter._startEdit).toHaveBeenCalled();
             });
         });
+
         describe('KeyDownSwitch', function() {
             var $target = $('<div>');
             it('정의된 키 액션은 true 를 반환하는지 확인한다.', function() {
@@ -605,11 +636,13 @@ describe('view.painter.cell.text', function() {
                 expect(cellPainter._executeKeyDownSwitch(getKeyEvent('ENTER', $target))).toBe(true);
                 expect(cellPainter._executeKeyDownSwitch(getKeyEvent('ESC', $target))).toBe(true);
             });
+
             it('ENTER 입력시 focusOut 을 호출하는지 확인한다. ', function() {
                 cellPainter.focusOut = jasmine.createSpy('focusOut');
                 cellPainter._executeKeyDownSwitch(getKeyEvent('ENTER', $target));
                 expect(cellPainter.focusOut).toHaveBeenCalled();
             });
+
             it('ESC 입력시 focusOut, _restore 를 호출하는지 확인한다. ', function() {
                 cellPainter.focusOut = jasmine.createSpy('focusOut');
                 cellPainter._restore = jasmine.createSpy('_restore');

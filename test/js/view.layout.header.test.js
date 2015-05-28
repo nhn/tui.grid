@@ -1,17 +1,12 @@
+'use strict';
+
 describe('view.layout.header', function() {
-    function getKeyEvent(keyName, $target) {
-        return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
-            target: $target.get(0)
-        };
-    }
     var columnModelList = [
         {
             title: 'columnName1',
             columnName: 'columnName1',
             width: 100
-        },{
+        }, {
             title: 'columnName2',
             columnName: 'columnName2',
             width: 200,
@@ -76,7 +71,7 @@ describe('view.layout.header', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return !!value;
                     }
                 }
@@ -89,7 +84,7 @@ describe('view.layout.header', function() {
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return !!value;
                     }
                 }
@@ -128,7 +123,7 @@ describe('view.layout.header', function() {
             'columnName6': 'text-convertible',
             'columnName7': false,
             'columnName8': true
-        },{
+        }, {
             'columnName1': 'normal',
             'columnName2': 1,
             'columnName3': 1,
@@ -274,6 +269,10 @@ describe('view.layout.header', function() {
         header,
         $empty;
 
+    jasmine.getFixtures().fixturesPath = 'base/';
+    loadFixtures('test/fixtures/empty.html');
+    $empty = $('#empty');
+
     beforeEach(function() {
         grid.columnModel.set({
             columnFixIndex: 0,
@@ -282,10 +281,6 @@ describe('view.layout.header', function() {
             columnModelList: columnModelList
         });
         defaultOption = $.extend(true, {}, grid.options);
-
-        jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/empty.html');
-        $empty = $('#empty');
         grid.$el = $empty;
         grid.dataModel.clear();
         grid.dataModel.set(rowList, {parse: true});
@@ -688,7 +683,9 @@ describe('view.layout.header', function() {
             var $handlerList;
             beforeEach(function() {
                 $empty.html(handler._getResizeHandlerMarkup());
-                $handlerList = $empty.find('.resize_handle');
+                $handlerList = $empty.find('.resize_handle').each(function(){
+                    $(this).css('position', 'absolute');
+                });
                 handler.$el = $empty;
                 handler._refreshHandlerPosition();
             });
@@ -724,7 +721,7 @@ describe('view.layout.header', function() {
                 $empty.html(handler.render().el);
                 $handlerList = $empty.find('.resize_handle');
                 mouseEvent = {
-                    target: $handlerList.eq(0).get(0)
+                    target: $handlerList.eq(0).css('position', 'absolute').get(0)
                 };
             });
             describe('_startResizing', function() {
@@ -735,7 +732,7 @@ describe('view.layout.header', function() {
                     expect(handler.isResizing).toBe(true);
                     expect(handler.$target.is($handlerList.eq(0))).toBe(true);
                     expect(handler.initialLeft).toBe(58);
-                    expect(handler.initialOffsetLeft).toBe(8);
+                    expect(handler.initialOffsetLeft).toBe(0);
                     expect(handler.initialWidth).toBe(60);
                 });
             });
@@ -749,7 +746,6 @@ describe('view.layout.header', function() {
                     expect(handler.initialWidth).toBe(0);
                 });
             });
-
         });
         describe('_onMouseDown, _onMouseUp', function() {
             var $handlerList,
@@ -801,8 +797,8 @@ describe('view.layout.header', function() {
                 mouseEvent.pageX = 300;
                 handler._onMouseDown(mouseEvent);
                 handler._onMouseMove(mouseEvent);
-                expect($target.css('left')).toBe('292px');
-                expect(grid.dimensionModel.get('columnWidthList')[0]).toBe(294);
+                expect($target.css('left')).toBe('300px');
+                expect(grid.dimensionModel.get('columnWidthList')[0]).toBe(302);
             });
         });
     });

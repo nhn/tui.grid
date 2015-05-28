@@ -1,3 +1,5 @@
+'use strict';
+
 describe('view.painter.cell.normal', function() {
     function setSelectType(selectType) {
         grid.option = function() {
