@@ -1,14 +1,15 @@
 Application Grid
 ===============
 그리드 컴포넌트<br>
-pug 그리드를 개선한 어플리케이션 그리드로 기본적인 그리드의 기능을 제공한다.
+데이터를 그리드 형태로 보여주는 컴포넌트로, 그리드 상에서 간단한 편집기능을 제공한다.
+스마트 렌더링 방식을 적용하여 대용량 데이터도 다룰 수 있으며, 페이징도 제공한다.
 
 ## Feature
 https://github.nhnent.com/fe/application-grid/wiki/어플리케이션-그리드
 
 ## Documentation
 * **API** : https://github.nhnent.com/pages/fe/application-grid/1.0.0
-* * **Tutorial** : https://github.nhnent.com/fe/어플리케이션-그리드-적용하기
+* **Tutorial** : https://github.nhnent.com/fe/어플리케이션-그리드-적용하기
 * **CI** : 준비중
 
 ## Dependency
