@@ -30,8 +30,7 @@
     "src/Core.js",
     "src/Grid.js",
     "src/AddOn/Net.js",
-    "README.md"
-  , "README.md"],
+   "README.md"],
   "exclude": [],
   "includePattern": ".+\\.js(doc)?$",
   "excludePattern": "(^|\\/|\\\\)_"
@@ -67,6 +66,7 @@
   "opts": {
     "recurse": true,
     "private": true,
-    "destination": "api"
+    "destination": "api",
+    "tutorials": "tutorials"
   }
 }
