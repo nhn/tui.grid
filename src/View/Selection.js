@@ -417,6 +417,26 @@
             return this._isShown;
         },
         /**
+         * selection이 시작된 셀의 인덱스를 반환한다.
+         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스정보를 가진 객체
+         */
+        getStartIndex: function() {
+            return {
+                rowIdx: this.range.row[0],
+                columnIdx: this.range.column[0]
+            };
+        },
+        /**
+         * selection이 끝나는 셀의 인덱스를 반환한다.
+         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스정보를 가진 객체
+         */
+        getEndIndex: function() {
+            return {
+                rowIdx: this.range.row[1],
+                columnIdx: this.range.column[1]
+            };
+        },
+        /**
          * Selection Layer View 를 반환한다.
          * @param {String} [whichSide='L'] 어느 영역의 layer 를 조회할지 여부. 'L|R' 중 하나를 지정한다.
          * @return {View.Selection.rside|View.Selection.lside} 해당 selection layer view 인스턴스

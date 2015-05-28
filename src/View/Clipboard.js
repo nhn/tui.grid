@@ -241,6 +241,7 @@
                     grid.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                     break;
                 case keyMap['CHAR_V']:
+                    this._paste();
                     break;
                 default:
                     isKeyIdentified = false;
@@ -248,6 +249,74 @@
             }
             return isKeyIdentified;
         },
+
+        /****************
+         * paste to clipboard methods
+         ****************/
+
+        /**
+         * paste date
+         * @private
+         */
+        _paste: function() {
+            // pressing v long time, clear clipboard to keep final paste date
+            this._clearClipBoard();
+            if (this.pasting) {
+                return;
+            }
+
+            this.pasting = true;
+            this._onKeyupCharV();
+        },
+
+        /**
+         * keyup event attach
+         * @private
+         */
+        _onKeyupCharV: function() {
+            this.$el.on('keyup', $.proxy(this.onKeyupCharV, this));
+        },
+
+        onKeyupCharV: function() {
+            this._pasteToGrid();
+            this.pasting = false;
+        },
+
+       /**
+         * clipboard textarea clear
+         * @private
+         */
+        _clearClipBoard: function() {
+            this.$el.val('');
+        },
+
+        /**
+         * paste text data
+         * @private
+         */
+        _pasteToGrid: function() {
+            var result = this._getProcessClipBoardData();
+            this.$el.off('keyup');
+            this.grid.paste(result);
+        },
+
+        /**
+         * process data for paste to grid
+         * @private
+         * @return result
+         */
+        _getProcessClipBoardData: function() {
+            var text = this.$el.val(),
+                result = text.split('\n'),
+                i = 0,
+                len = result.length;
+
+            for (; i < len; i += 1) {
+                result[i] = result[i].split('\t');
+            }
+            return result;
+        },
+
         /**
          * ctrl, shift 둘다 눌린 상태에서의 key down event handler
          * @param {event} keyDownEvent 이벤트 객체

@@ -1,3 +1,4 @@
+'use strict';
 /**
  * @fileoverview Grid Core 파일
  * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
@@ -1029,6 +1030,76 @@
                 if (silent && selectType === 'checkbox' && !isDisabledCheck) {
                     this.setValue(rowKey, '_button', true, silent);
                 }
+            }
+        },
+        /**
+         * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
+         * 이동하며 셀의 값을 변경한다. 완료한 후 적용된 셀 범위에 Selection을 지정한다.
+         * @param {Array[]} data - 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.
+         */
+        paste: function(data) {
+            var columnModelList = this.columnModel.getVisibleColumnModelList(),
+                start = this._getStartIndexToPaste(),
+                end = this._getEndIndexToPaste(start, data, columnModelList),
+                rowIdx,
+                columnIdx,
+                value;
+
+            for (rowIdx = start.rowIdx; rowIdx <= end.rowIdx; rowIdx += 1) {
+                for (columnIdx = start.columnIdx; columnIdx <= end.columnIdx; columnIdx += 1) {
+                    value = data[rowIdx - start.rowIdx][columnIdx - start.columnIdx];
+                    this._setValueForPaste(rowIdx, columnIdx, columnModelList[columnIdx], value);
+                }
+            }
+
+            this.selection.startSelection(start.rowIdx, start.columnIdx);
+            this.selection.updateSelection(end.rowIdx, end.columnIdx);
+        },
+        /**
+         * 붙여넣기를 실행할때 시작점이 될 셀의 인덱스를 반환한다.
+         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
+         */
+        _getStartIndexToPaste: function() {
+            var startIdx;
+
+            if (this.selection.hasSelection()) {
+                startIdx = this.selection.getStartIndex();
+            } else {
+                startIdx = this.focusModel.indexOf();
+            }
+            return startIdx;
+        },
+        /**
+         * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
+         * @param  {{rowIdx: number, columnIdx: number}} startIdx - 시작점이 될 셀의 인덱스
+         * @param  {Array[]} data - 붙여넣기할 데이터
+         * @param  {Array} columnModelList - 현재 화면에 보여지는 컬럼모델의 목록
+         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
+         */
+        _getEndIndexToPaste: function(startIdx, data, columnModelList) {
+            var endIdx = {
+                rowIdx: Math.min(data.length + startIdx.rowIdx, this.dataModel.length) - 1,
+                columnIdx: Math.min(data[0].length + startIdx.columnIdx, columnModelList.length) - 1
+            }
+            return endIdx;
+        },
+        /**
+         * 지정된 인덱스의 셀이 수정 가능한 상태이면 값을 변경한다. RowSpan이 적용된 셀인 경우 MainRow인 경우에만 값을 변경한다.
+         * @param  {number} rowIdx - 행 인덱스
+         * @param  {number} columnIdx - 열 인덱스
+         * @param  {string} value - 변경할 값
+         * @param  {ColumnModel} columnModel - 해당 열 인덱스의 컬럼모델
+         */
+        _setValueForPaste: function(rowIdx, columnIdx, columnModel, value) {
+            var row = this.dataModel.at(rowIdx),
+                columnName = columnModel.columnName,
+                cellStatus = row.getCellState(columnName),
+                rowSpanData = row.getRowSpanData(columnName),
+                attributes = {};
+
+            if (cellStatus.isEditable && !cellStatus.isDisabled && (!rowSpanData || rowSpanData.count >= 0)) {
+                attributes[columnName] = value;
+                row.set(attributes);
             }
         },
         /**
