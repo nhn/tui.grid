@@ -29,7 +29,7 @@ https://github.nhnent.com/fe/application-grid/wiki/어플리케이션-그리드
 * Bower:
    * 최신버전 : `bower install "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/application-grid.git#master"`
    * 특정버전 : `bower install "git+http://70327b4564c7a80eb61724056876b960290946dd:x-oauth-basic@github.nhnent.com/fe/application-grid.git[#tag]"`
-* Download: https://github.nhnent.com/fe/component-effect-slide
+* Download: https://github.nhnent.com/fe/application-grid
 
 ## History
 | Version | Description | Date | Developer |
