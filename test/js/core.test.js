@@ -1,5 +1,6 @@
 'use strict';
 
+/* global Core */
 describe('grid.normal.test', function() {
     var grid,
         $empty,
@@ -12,7 +13,6 @@ describe('grid.normal.test', function() {
     afterEach(function() {
         grid && grid.destroy();
     });
-
 
     beforeEach(function() {
         grid = new Core({
@@ -41,18 +41,18 @@ describe('grid.normal.test', function() {
             {
                 c1: '0-1',
                 c2: '0-2',
-                c3: '0-3',
+                c3: '0-3'
             }, {
                 _extraData: {
                     rowState: 'DISABLED'
                 },
                 c1: '1-1',
                 c2: '1-2',
-                c3: '1-3',
+                c3: '1-3'
             }, {
                 c1: '2-1',
                 c2: '2-2',
-                c3: '2-3',
+                c3: '2-3'
             }
         ]);
     });
@@ -259,7 +259,7 @@ describe('grid.normal.test', function() {
         it('모든 행의 _button컬럼을 false로 설정한다. ', function() {
             grid.checkAll();
             grid.uncheckAll();
-            grid.dataModel.forEach(function(row, key) {
+            grid.dataModel.forEach(function(row) {
                 expect(row.get('_button')).toBe(false);
             }, this);
         });
