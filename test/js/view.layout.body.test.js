@@ -1,6 +1,5 @@
 'use strict';
 
-/* global Model, Data, View, Collection */
 describe('view.layout.body', function() {
     var grid, body;
 

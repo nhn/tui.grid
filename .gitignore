@@ -53,3 +53,8 @@ report
 
 bin
 !samples/*/**
+
+# Atom
+tags
+.ctags
+.tern-project
