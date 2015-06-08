@@ -41,18 +41,18 @@ describe('grid.normal.test', function() {
             {
                 c1: '0-1',
                 c2: '0-2',
-                c3: '0-3',
+                c3: '0-3'
             }, {
                 _extraData: {
                     rowState: 'DISABLED'
                 },
                 c1: '1-1',
                 c2: '1-2',
-                c3: '1-3',
+                c3: '1-3'
             }, {
                 c1: '2-1',
                 c2: '2-2',
-                c3: '2-3',
+                c3: '2-3'
             }
         ]);
     });
@@ -74,6 +74,7 @@ describe('grid.normal.test', function() {
         it('getValue 는 값을 잘 가져온다.', function() {
             expect(grid.getValue(0, 'c1')).toBe('0-1');
         });
+        
         it('setValue 이후 getValue 의 isOriginal 을 true 로 설정시 original 데이터를 반환한다.', function() {
             grid.setValue(0, 'c1', 'New0-1');
             expect(grid.getValue(0, 'c1')).toBe('New0-1');
@@ -89,6 +90,7 @@ describe('grid.normal.test', function() {
             expect(values[1]).toBe('1-2');
             expect(values[2]).toBe('2-2');
         });
+
         it('인자로 들어온 열에 대한 데이터를 json 스트링으로 반환한다.', function() {
             var values = grid.getColumnValues('c1'),
                 valuesJSON = grid.getColumnValues('c1', true);
@@ -104,6 +106,7 @@ describe('grid.normal.test', function() {
             expect(grid.getValue(1, 'c1')).toBe('1-1'); //2번째 row 는 disabled 이므로 변경하지 않는다.
             expect(grid.getValue(2, 'c1')).toBe('changed');
         });
+
         it('isCheckCellState를 false 로 넘겼을 경우 열에 대한 데이터 모두를 상태에 관계없이 변경한다.', function() {
             grid.setColumnValues('c1', 'changed', false);
             expect(grid.getValue(1, 'c1')).toBe('changed');
@@ -121,6 +124,7 @@ describe('grid.normal.test', function() {
             expect(row.c2).toBe('0-2');
             expect(row.c3).toBe('0-3');
         });
+
         it('두번째 파라미터가 true이면 json문자열 형태로 반환한다.', function() {
             expect($.toJSON(grid.getRow(0))).toBe(grid.getRow(0, true));
         });
@@ -137,6 +141,7 @@ describe('grid.normal.test', function() {
             expect(row.c2).toBe('2-2');
             expect(row.c3).toBe('2-3');
         });
+
         it('두번째 파라미터가 true이면 json문자열 형태로 반환한다.', function() {
             expect($.toJSON(grid.getRowAt(0))).toBe(grid.getRowAt(0, true));
         });
@@ -156,6 +161,7 @@ describe('grid.normal.test', function() {
                 done();
             }, timeoutDelay);
         });
+
         it('rowKey 와 columnName 에 해당하는 element 를 반환한다.', function() {
             var $el;
             $el = grid.getElement(0, 'c1');
@@ -170,21 +176,25 @@ describe('grid.normal.test', function() {
             grid.select(1);
             expect(grid.focusModel.select).toHaveBeenCalledWith(1);
         });
+
         it('unselect()', function() {
             spyOn(grid.focusModel, 'unselect');
             grid.unselect();
             expect(grid.focusModel.unselect).toHaveBeenCalled();
         });
+
         it('focus()', function() {
             spyOn(grid.focusModel, 'focus');
             grid.focus(0, 'c1', true);
             expect(grid.focusModel.focus).toHaveBeenCalledWith(0, 'c1', true);
-        })
+        });
+
         it('blur()', function() {
             spyOn(grid.focusModel, 'blur');
             grid.blur();
             expect(grid.focusModel.blur).toHaveBeenCalled();
         });
+
         it('focusAt()', function() {
             spyOn(grid.focusModel, 'focus');
             grid.focusAt(0, 0, true);
@@ -208,6 +218,7 @@ describe('grid.normal.test', function() {
             grid.focusIn(0, 'c1');
             expect(instance.focusIn).toHaveBeenCalled();
         });
+
         it('editable하지 않을경우 focusClipboard를 호출한다.', function() {
             spyOn(grid, 'focusClipboard');
             var instance = grid.cellFactory.getInstance(grid.columnModel.getEditType('c1'));
@@ -259,7 +270,7 @@ describe('grid.normal.test', function() {
         it('모든 행의 _button컬럼을 false로 설정한다. ', function() {
             grid.checkAll();
             grid.uncheckAll();
-            grid.dataModel.forEach(function(row, key) {
+            grid.dataModel.forEach(function(row) {
                 expect(row.get('_button')).toBe(false);
             }, this);
         });
