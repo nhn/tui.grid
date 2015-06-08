@@ -48,8 +48,18 @@ Desktop.ini
 .project
 .metadata
 
+# ctags
+.ctags
+tags
+
+#ternjs
+.tern-project
+
 #report
 report
+
+#local
+karma.conf.local.js
 
 bin
 !samples/*/**

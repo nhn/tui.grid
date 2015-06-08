@@ -11,7 +11,15 @@
     "_": true,
     "Prism": true,
     "rangy": true,
-    "loadFixtures": true
+    "loadFixtures": true,
+    "View": true,
+    "Data": true,
+    "Model": true,
+    "Core": true,
+    "Util": true,
+    "Collection": true,
+    "AddOn": true,
+    "Backbone": true
   },
   "rules": {
     //Possible Errors
@@ -67,6 +75,11 @@
     "no-mixed-requires": [2, true],
 
     //Legacy
-    "no-plusplus": 2
+    "no-plusplus": 2,
+
+    //only for this project
+    "strict": 0,
+    "no-undefined": 0,
+    "no-alert": 0
   }
 }
