@@ -463,6 +463,14 @@
             this.core.removeRow(rowKey, isRemoveOriginalDta);
         },
         /**
+         * checked된 행을 삭제한다.
+         * @param {Boolean} isConfirm 삭제하기 전에 confirm 메시지를 표시할지 여부
+         * @return {Boolean} 삭제된 행이 있으면 true, 없으면 false
+         */
+        removeCheckedRows: function(isConfirm) {
+            return this.core.removeCheckedRows(isConfirm);
+        },
+        /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
          * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
@@ -726,5 +734,3 @@
     ne.Grid.getInstanceById = function(id) {
         return Core.prototype.__instance[id];
     };
-
-
