@@ -8,9 +8,9 @@ Application Grid
 https://github.nhnent.com/fe/application-grid/wiki/어플리케이션-그리드
 
 ## Documentation
-* **API** : https://github.nhnent.com/pages/fe/application-grid/1.0.0
+* **API** : https://github.nhnent.com/pages/fe/application-grid/1.0.0a
 * **Tutorial** : https://github.nhnent.com/fe/application-grid/wiki/어플리케이션-그리드-적용하기
-* **Sample** : https://github.nhnent.com/pages/fe/application-grid/1.0.0/tutorial-sample1.html
+* **Sample** : https://github.nhnent.com/pages/fe/application-grid/1.0.0a/tutorial-sample1.html
 * **CI** : 준비중
 
 ## Dependency
