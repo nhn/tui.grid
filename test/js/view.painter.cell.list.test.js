@@ -1,3 +1,5 @@
+'use strict';
+
 describe('view.painter.cell.base', function() {
     function getKeyEvent(keyName, $target) {
         return {
@@ -6,6 +8,7 @@ describe('view.painter.cell.base', function() {
             target: $target.get(0)
         };
     }
+
     var columnModelList = [
         {
             title: 'columnName1',
@@ -262,37 +265,6 @@ describe('view.painter.cell.base', function() {
                     },
                     optionList = cellPainter.getOptionList(cellData);
                 expect(optionList).toEqual(grid.columnModel.getColumnModel('columnName3').editOption.list);
-            });
-        });
-        describe('_onBlur, _onFocus', function() {
-            var html,
-                $select,
-                $td;
-            beforeEach(function() {
-                html = '<table><tr>' +
-                    '<td>' +
-                    '<select>' +
-                    '<option></option>' +
-                    '</select>' +
-                    '</td>' +
-                    '</tr></table>';
-                $empty.html(html);
-                $select = $empty.find('select');
-                $td = $empty.find('td');
-            });
-            it('_onBlur 가 호출된다면 TD 에 isFocused 데이터가 false로 설정된다.', function() {
-                var blurEvent = {
-                    target: $select.get(0)
-                };
-                cellPainter._onBlur(blurEvent);
-                expect($td.data('isFocused')).toBe(false);
-            });
-            it('_onFocus 가 호출된다면 TD 에 isFocused 데이터가 true 로 설정된다.', function() {
-                var focusEvent = {
-                    target: $select.get(0)
-                };
-                cellPainter._onFocus(focusEvent);
-                expect($td.data('isFocused')).toBe(true);
             });
         });
     });

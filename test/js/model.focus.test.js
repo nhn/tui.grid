@@ -66,20 +66,20 @@ describe('model.renderer', function() {
                     optionListChange: function(value) {
                         if (value === true) {
                             return [
-                                { text: '하나', value: 1},
-                                { text: '둘', value: 2},
-                                { text: '셋', value: 3},
-                                { text: '넷', value: 4}
+                                {text: '하나', value: 1},
+                                {text: '둘', value: 2},
+                                {text: '셋', value: 3},
+                                {text: '넷', value: 4}
                             ];
                         }
                     }
                 },
                 {
                     columnList: ['columnName2'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return value === false;
                     },
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return value !== false;
                     }
                 }
@@ -170,7 +170,7 @@ describe('model.renderer', function() {
         i,
         count,
         temp;
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 100; i += 1) {
         count = i + 4;
         temp = $.extend({}, sampleRow);
         temp.keyColumn = 'key' + count;
@@ -206,7 +206,6 @@ describe('model.renderer', function() {
     dimensionModelInstance.set('bodyHeight',
         Util.getHeight(dimensionModelInstance.get('displayRowCount'), dimensionModelInstance.get('rowHeight')));
 
-
     dataModelInstance.set(rowList, {parse: true});
     renderInstance = grid.renderModel = new Model.Renderer.Smart({
         grid: grid
@@ -228,6 +227,7 @@ describe('model.renderer', function() {
             expect(callback).toHaveBeenCalled();
         });
     });
+
     describe('unselect()', function() {
         it('저장된 rowKey 를 제거한다.', function() {
             focusInstance.unselect();
@@ -241,15 +241,18 @@ describe('model.renderer', function() {
             expect(callback).toHaveBeenCalled();
         });
     });
+
     describe('focus()', function() {
         beforeEach(function(){
             focusInstance.blur();
         });
+
         it('지정된 rowKey, columnName 을 저장한다.', function() {
             focusInstance.focus('22', 'columnName1');
             expect(focusInstance.get('rowKey')).toEqual('22');
             expect(focusInstance.get('columnName')).toEqual('columnName1');
         });
+
         it('focus 이벤트를 발생한다.', function() {
             var callback = jasmine.createSpy('callback'),
                 listenModel = new Model.Base();
@@ -258,10 +261,11 @@ describe('model.renderer', function() {
             expect(callback).toHaveBeenCalled();
             expect(callback).toHaveBeenCalledWith('22', 'columnName1');
         });
+
         it('이전 focus 정보를 저장하는지 확인한다.', function() {
             focusInstance.focus(11, 'columnName1');
-
             focusInstance.focus(22, 'columnName2');
+
             expect(focusInstance.get('rowKey')).toEqual(22);
             expect(focusInstance.get('columnName')).toEqual('columnName2');
             expect(focusInstance.get('prevRowKey')).toEqual(11);
@@ -269,15 +273,16 @@ describe('model.renderer', function() {
         });
     });
 
-
     describe('blur()', function() {
         it('blur 한다.', function() {
             focusInstance.blur();
             expect(focusInstance.get('columnName')).toEqual('');
         });
+
         it('blur 이벤트를 발생한다.', function() {
             var callback = jasmine.createSpy('callback'),
                 listenModel = new Model.Base();
+
             focusInstance.focus(11, 'columnName1');
             listenModel.listenToOnce(focusInstance, 'blur', callback);
             focusInstance.blur();
@@ -301,7 +306,6 @@ describe('model.renderer', function() {
         });
     });
 
-
     describe('indexOf()', function() {
         it('현재 focus 정보를 화면에 노출되는 Index 기준으로 반환하는지 확인한다.', function() {
             focusInstance.focus('key11', 'columnName5');
@@ -315,6 +319,7 @@ describe('model.renderer', function() {
                 columnIdx: 1
             });
         });
+
         it('isPrevious 옵션이 설정되어 있다면 이전 정보를 반환한다.', function() {
             focusInstance.focus('key11', 'columnName5');
             focusInstance.focus('key21', '_button');
@@ -362,13 +367,13 @@ describe('model.renderer', function() {
         });
     });
 
-
     describe('nextRowIndex()', function() {
         it('offset 만큼 이동한 row 의 index 를 반환한다.', function() {
             focusInstance.focus('key10', 'columnName2');
             expect(focusInstance.nextRowIndex()).toBe(11);
             expect(focusInstance.nextRowIndex(3)).toBe(13);
         });
+
         it('현재 focus 된 row 가  rowSpan 된 경우, rowSpan 값을 고려하여 반환한다.', function() {
             focusInstance.focus('key0', 'columnName1');
             expect(focusInstance.nextRowIndex()).toBe(3);
@@ -383,12 +388,14 @@ describe('model.renderer', function() {
             expect(focusInstance.nextRowIndex()).toBe(103);
         });
     });
+
     describe('prevRowIndex()', function() {
         it('offset 만큼 이동한 row 의 index 를 반환한다.', function() {
             focusInstance.focus('key10', 'columnName2');
             expect(focusInstance.prevRowIndex()).toBe(9);
             expect(focusInstance.prevRowIndex(3)).toBe(7);
         });
+
         it('현재 focus 된 row 가  rowSpan 된 경우, rowSpan 값을 고려하여 반환한다.', function() {
             focusInstance.focus('key5', 'columnName1');
             expect(focusInstance.prevRowIndex()).toBe(2);
@@ -403,9 +410,9 @@ describe('model.renderer', function() {
             focusInstance.focus('key10', 'columnName1');
             expect(focusInstance.prevRowIndex(5)).toBe(3);
             expect(focusInstance.prevRowIndex(6)).toBe(3);
-
         });
     });
+
     describe('nextColumnIndex()', function() {
         it('다음 columnName 을 반환한다.', function() {
             focusInstance.focus('key10', 'columnName4');
@@ -430,7 +437,6 @@ describe('model.renderer', function() {
         });
     });
 
-
     describe('nextRowKey()', function() {
         it('다음 rowKey 를 반환한다.', function() {
             focusInstance.focus('key10', 'columnName2');
@@ -439,6 +445,7 @@ describe('model.renderer', function() {
             expect(focusInstance.nextRowKey(10)).toBe('key20');
             expect(focusInstance.nextRowKey(100)).toBe('key103');
         });
+
         it('rowSpan 되어 있는 경우 고려하여 다음 rowKey 를 반환한다.', function() {
             focusInstance.focus('key0', 'columnName1');
             expect(focusInstance.nextRowKey()).toBe('key3');
@@ -460,6 +467,7 @@ describe('model.renderer', function() {
             expect(focusInstance.prevRowKey()).toBe('key9');
             expect(focusInstance.prevRowKey(3)).toBe('key7');
         });
+
         it('현재 focus 된 row 가  rowSpan 된 경우, rowSpan 값을 고려하여 반환한다.', function() {
             focusInstance.focus('key5', 'columnName1');
             expect(focusInstance.prevRowKey()).toBe('key2');
@@ -474,10 +482,8 @@ describe('model.renderer', function() {
             focusInstance.focus('key10', 'columnName1');
             expect(focusInstance.prevRowKey(5)).toBe('key3');
             expect(focusInstance.prevRowKey(6)).toBe('key3');
-
         });
     });
-
 
     describe('firstRowKey()', function() {
         it('첫번째 rowKey 를 반환한다.', function() {
@@ -510,13 +516,12 @@ describe('model.renderer', function() {
     describe('_adjustScroll()', function() {
         it('현재 focus 위치에 맞추어 scrollTop 과 scrollLeft 값을 반환한다.', function() {
             focusInstance.focus('key10', 'columnName2');
-            expect(focusInstance._getScrollPosition()).toEqual({ scrollLeft: 133 });
+            expect(focusInstance._getScrollPosition()).toEqual({scrollLeft: 133});
             focusInstance.focus('key20', 'columnName40');
-            expect(focusInstance._getScrollPosition()).toEqual({ scrollTop: 28 });
+            expect(focusInstance._getScrollPosition()).toEqual({scrollTop: 28});
 
             focusInstance.focus('key20', 'columnName2');
-            expect(focusInstance._getScrollPosition()).toEqual({ scrollLeft: 133, scrollTop: 28 });
+            expect(focusInstance._getScrollPosition()).toEqual({scrollLeft: 133, scrollTop: 28});
         });
     });
 });
-

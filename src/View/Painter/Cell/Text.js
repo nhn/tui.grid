@@ -385,4 +385,3 @@
             return !!(this.clicked.rowKey === address.rowKey && this.clicked.columnName === address.columnName);
         }
     });
-

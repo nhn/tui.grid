@@ -1,4 +1,6 @@
 'use strict';
+
+/* global Data, Model */
 describe('model.dimension', function() {
     var columnModelList = [
         {
@@ -32,7 +34,7 @@ describe('model.dimension', function() {
         {
             title: 'hasFormatter',
             columnName: 'hasFormatter',
-            formatter: function(value, rowData, model) {
+            formatter: function(value) {
                 return '<a href="http://www.testurl.com" >' + value + '</a> click<button> me</button>';
             }
         },
@@ -50,20 +52,20 @@ describe('model.dimension', function() {
                     optionListChange: function(value) {
                         if (value === true) {
                             return [
-                                { text: '하나', value: 1},
-                                { text: '둘', value: 2},
-                                { text: '셋', value: 3},
-                                { text: '넷', value: 4}
+                                {text: '하나', value: 1},
+                                {text: '둘', value: 2},
+                                {text: '셋', value: 3},
+                                {text: '넷', value: 4}
                             ];
                         }
                     }
                 },
                 {
                     columnList: ['text'],
-                    isDisabled: function(value, rowData) {
+                    isDisabled: function(value) {
                         return value === false;
                     },
-                    isEditable: function(value, rowData) {
+                    isEditable: function(value) {
                         return value !== false;
                     }
                 }
@@ -286,16 +288,8 @@ describe('model.dimension', function() {
         grid = {},
         defaultConfig;
 
-    function sum(widthList) {
-        return _.reduce(widthList, function(memo, width) {
-            return memo += width;
-        }, 0);
-    }
     function min(widthList) {
         return _.min(widthList);
-    }
-    function max(widthList) {
-        return _.max(widthList);
     }
 
     beforeEach(function() {
@@ -323,7 +317,6 @@ describe('model.dimension', function() {
     });
 
     describe('getColumnWidthList()', function() {
-
         it('ColumnFixIndex 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
             columnModelInstance.set({
                 columnFixIndex: 3
@@ -348,14 +341,16 @@ describe('model.dimension', function() {
             expect(dimensionModel.getColumnWidthList('R')).toEqual([50, 60]);
         });
     });
+
     describe('_getFrameWidth()', function() {
-        it('인자로 받은 columnModelList 로 부터 border 값을 포함하여 해당 columnModelList 를 감싸고 있는 frame width 를 구한다.', function() {
-            dimensionModel = new Model.Dimension(defaultConfig);
+        it('인자로 받은 columnModelList로부터 border 값을 포함하여 해당 columnModelList를 감싸고 있는 frame width를 구한다.', function() {
             var widthList = [10, 20, 30, 40, 50];
+            dimensionModel = new Model.Dimension(defaultConfig);
             expect(dimensionModel._getFrameWidth(widthList)).toEqual(156);
             expect(dimensionModel._getFrameWidth([])).toEqual(0);
         });
     });
+
     describe('getFrameWidth()', function() {
         describe('인자로 받은 값으로 columnWidthList 를 제대로 반환한다.', function() {
             beforeEach(function() {
@@ -365,19 +360,22 @@ describe('model.dimension', function() {
                 dimensionModel = new Model.Dimension(defaultConfig);
                 dimensionModel.set('columnWidthList', [10, 20, 30, 40, 50]);
             });
-            it('인자가 없을 경우 전체 frame 의 너비 값을 반환한다.', function() {
+
+            it('인자가 없을 경우 전체 frame의 너비 값을 반환한다.', function() {
                 expect(dimensionModel.getFrameWidth()).toEqual(157);
             });
-            it('L 일 경우 Left Side 의 Frame 너비를 반환한다.', function() {
+
+            it('L일 경우 Left Side의 Frame 너비를 반환한다.', function() {
                 expect(dimensionModel.getFrameWidth('L')).toEqual(33);
             });
-            it('R 일 경우 Right Side 의 Frame 너비를 반환한다.', function() {
+
+            it('R일 경우 Right Side의 Frame 너비를 반환한다.', function() {
                 expect(dimensionModel.getFrameWidth('R')).toEqual(124);
             });
-
         });
     });
-    describe('_calculateColumnWidthList() 가 인자로 받은 배열로부터 width list 를 잘 생성하는지 확인한다.', function() {
+
+    describe('_calculateColumnWidthList()가 인자로 받은 배열로부터 width list를 잘 생성하는지 확인한다.', function() {
         beforeEach(function() {
             dimensionModel = new Model.Dimension(defaultConfig);
             dimensionModel.set({
@@ -385,8 +383,8 @@ describe('model.dimension', function() {
                 minimumWidth: 20
             });
         });
-        it('생성된 width 각 요소는 minimumColumnWidth 보다 같거나 커야하고, 요소들의 합은 width 보다 같거나 커야 한다.', function() {
 
+        it('생성된 width 각 요소는 minimumColumnWidth 보다 같거나 커야하고, 요소들의 합은 width 보다 같거나 커야 한다.', function() {
             var compareWidth = dimensionModel.get('width') - 18,
                 minimumWidth = dimensionModel.get('minimumColumnWidth') - 1,
                 widthList1 = [5, 10, 15, 20, 25, 30, 35, 40, 45, -1],
@@ -411,10 +409,11 @@ describe('model.dimension', function() {
             expect(dimensionModel._getFrameWidth(newWidthList)).toBeGreaterThan(compareWidth);
             expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
         });
-
     });
+
     describe('_getOriginalWidthList() columnModel', function() {
         var sampleColumnModel;
+
         beforeEach(function() {
             sampleColumnModel = [
                 {
@@ -450,7 +449,7 @@ describe('model.dimension', function() {
             });
         });
 
-        it('columnModelList 에 정의된 값으로 columnWidthList 를 생성하는지 확인한다.', function() {
+        it('columnModelList에 정의된 값으로 columnWidthList 를 생성하는지 확인한다.', function() {
             var originalWidthList = dimensionModel._getOriginalWidthList(),
                 compareWidth = dimensionModel.get('width') - 18,
                 minimumWidth = dimensionModel.get('minimumColumnWidth') - 1;
@@ -458,16 +457,14 @@ describe('model.dimension', function() {
             expect(dimensionModel._getFrameWidth(originalWidthList)).toBeGreaterThan(compareWidth);
             expect(min(originalWidthList)).toBeGreaterThan(minimumWidth);
 
-
             expect(originalWidthList).toEqual([
                20, 20, 40, 398
             ]);
-
         });
     });
 
     describe('_getMinLeftSideWidth()', function() {
-        it('Left Side 의 최소 너비를 잘 구하는지 확인한다.', function() {
+        it('Left Side의 최소 너비를 잘 구하는지 확인한다.', function() {
             columnModelInstance.set({
                 columnFixIndex: 3
             });
@@ -482,6 +479,7 @@ describe('model.dimension', function() {
             expect(dimensionModel._getMinLeftSideWidth()).toEqual(0);
         });
     });
+
     describe('_getMaxLeftSideWidth()', function() {
         it('Left Side 의 최대 너비 를 잘 구하는지 확인한다.', function() {
             columnModelInstance.set({
@@ -499,6 +497,7 @@ describe('model.dimension', function() {
             expect(dimensionModel._getMaxLeftSideWidth()).toEqual(604);
         });
     });
+
     describe('_setColumnWidthVariables()', function() {
         var sampleColumnModel;
         beforeEach(function() {
@@ -537,13 +536,14 @@ describe('model.dimension', function() {
             });
         });
 
-        describe('lside 와 rside 의 너비를 계산한다.', function() {
+        describe('lside와 rside의 너비를 계산한다.', function() {
             function changeFixIndex(fixIndex, widthList) {
                 widthList = widthList || dimensionModel.get('columnWidthList');
                 columnModelInstance.set({columnFixIndex: fixIndex});
                 dimensionModel._setColumnWidthVariables(widthList);
             }
-            describe('인자로 넘긴 columnWidthList 를 기준으로 lside 와 rside 를 계산한다.', function() {
+
+            describe('인자로 넘긴 columnWidthList를 기준으로 lside와 rside를 계산한다.', function() {
                 var widthList;
                 beforeEach(function() {
                     widthList = [5, 10, 315, 320, 325, 330, 335, 340, 345, 350];
@@ -576,15 +576,12 @@ describe('model.dimension', function() {
                     expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
                     expect(dimensionModel.get('lsideWidth')).toEqual(655);
                     expect(dimensionModel.get('rsideWidth')).toEqual(345);
-
-
-
                 });
-
 
                 it('columnFixIndex 값이 충분히 커서 열고정 영역의 너비가 전체의 90%를 넘어가는 경우 전체의 열고정 영역의 너비를 전체의 90%로 강제 조정한다.', function() {
                     var leftSideframeWidth,
                         rsideWidthList;
+
                     changeFixIndex(5);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(5);
@@ -609,7 +606,6 @@ describe('model.dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
-
                     changeFixIndex(8);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(8);
@@ -617,7 +613,6 @@ describe('model.dimension', function() {
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
-
 
                     changeFixIndex(9);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
@@ -627,7 +622,6 @@ describe('model.dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
-
                     changeFixIndex(10);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(10);
@@ -636,12 +630,13 @@ describe('model.dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
                 });
-
             });
         });
     });
+
     describe('_adjustLeftSideWidthList()', function() {
         var widthList;
+
         beforeEach(function() {
             dimensionModel = new Model.Dimension({
                 grid: grid,
@@ -649,18 +644,22 @@ describe('model.dimension', function() {
             });
             widthList = [100, 80, 60, 40, 30, 20, 10];
         });
+
         it('열고정 영역을 인자로 넘긴 totalWidth 에 맞추어 조정한다. 가장 마지막 요소부터 처음 요소까지 조정이 완료될 까지 역으로 순환한다.', function() {
             expect(dimensionModel._adjustLeftSideWidthList(widthList, 300)).toEqual([100, 80, 60, 22, 10, 10, 10]);
         });
+
         it('인자로 넘긴 totalWidth 가 너무 작은값일 경우, minimumColumnWidth 크기 까지만 조정한다.', function() {
             expect(dimensionModel._adjustLeftSideWidthList(widthList, 50)).toEqual([10, 10, 10, 10, 10, 10, 10]);
         });
     });
+
     describe('_setBodyHeight()', function() {
         describe('displayRowHeight 와 rowHeight 값을 기반으로 bodyHeight 값을 계산한다.', function() {
             beforeEach(function() {
                 dimensionModel = new Model.Dimension(defaultConfig);
             });
+
             it('scrollX 옵션이 false 일 경우', function() {
                 dimensionModel.set({
                     displayRowCount: 10,
@@ -670,6 +669,7 @@ describe('model.dimension', function() {
                 dimensionModel._setBodyHeight();
                 expect(dimensionModel.get('bodyHeight')).toEqual(211);
             });
+
             it('scrollX 옵션이 true 일 경우', function() {
                 dimensionModel.set({
                     displayRowCount: 10,
@@ -679,14 +679,14 @@ describe('model.dimension', function() {
                 dimensionModel._setBodyHeight();
                 expect(dimensionModel.get('bodyHeight')).toEqual(228);
             });
-
-
         });
     });
+
     describe('getDisplayRowCount()', function() {
         beforeEach(function() {
             dimensionModel = new Model.Dimension(defaultConfig);
         });
+
         it('bodyHeight 값에서 toolbar 영역을 제외한 컨텐트 영역에 보여지는 행의 개수를 구한다.', function() {
             dimensionModel.set({
                 bodyHeight: 150,
@@ -696,16 +696,19 @@ describe('model.dimension', function() {
             expect(dimensionModel.getDisplayRowCount()).toEqual(10);
         });
     });
+
     describe('getScrollXHeight() scrollX 옵션값에 따라 scrollXHeight 를 반환한다.', function() {
         beforeEach(function() {
             dimensionModel = new Model.Dimension(defaultConfig);
         });
+
         it('scrollX 가 false 로 설정되어 있을 경우', function() {
             dimensionModel.set({
                 scrollX: false
             });
             expect(dimensionModel.getScrollXHeight()).toEqual(0);
         });
+
         it('scrollX 가 true 로 설정되어 있을 경우', function() {
             dimensionModel.set({
                 scrollX: true
@@ -728,8 +731,8 @@ describe('model.dimension', function() {
 
             currentColumnWidthList = dimensionModel._calculateColumnWidthList([50, 50, 50, 50, 50]);
             dimensionModel._setColumnWidthVariables(currentColumnWidthList);
-
         });
+
         it('값이 잘 변경되는지 확인한다.', function() {
             dimensionModel.setColumnWidth(0, 100);
             expect(dimensionModel.getColumnWidthList()[0]).toEqual(100);
@@ -744,6 +747,7 @@ describe('model.dimension', function() {
             dimensionModel.setColumnWidth(5, 100);
             expect(dimensionModel.getColumnWidthList()[5]).not.toBeDefined();
         });
+
         it('miminumColumnWidth 이하로 떨어지지 않는지 확인한다.', function() {
             dimensionModel.setColumnWidth(0, 10);
             expect(dimensionModel.getColumnWidthList()[0]).toEqual(20);
@@ -755,53 +759,55 @@ describe('model.dimension', function() {
             columnModelInstance.set({
                 selectType: '',
                 hasNumberColumn: false,
-                columnFixIndex:2
+                columnFixIndex: 2
             });
             dataModelInstance.set(rowList, {parse: true});
             dimensionModel = new Model.Dimension(defaultConfig);
         });
+
         it('rowSpan 이 없는 경우', function() {
             expect(dimensionModel.getCellPosition(0, 'changeCallback')).toEqual(
-                { 'top': 0, 'left': 0, 'right': 40, 'bottom': 101 }
+                {'top': 0, 'left': 0, 'right': 40, 'bottom': 101}
             );
             expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual(
-                { 'top': 0, 'left': 40, 'right': 80, 'bottom': 101 }
+                {'top': 0, 'left': 40, 'right': 80, 'bottom': 101}
             );
             //columnFix Index 이기 때문에 left 가 0부터 시작된다.
             expect(dimensionModel.getCellPosition(0, 'none')).toEqual(
-                { top: 0, left: 0, right: 40, bottom: 101 }
+                {top: 0, left: 0, right: 40, bottom: 101}
             );
             expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual(
-                { top: 0, left: 40, right: 80, bottom: 101 }
+                {top: 0, left: 40, right: 80, bottom: 101}
             );
             expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual(
-                { top: 0, left: 80, right: 120, bottom: 101 }
+                {top: 0, left: 80, right: 120, bottom: 101}
             );
             expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual(
-                { top: 0, left: 120, right: 160, bottom: 101 }
+                {top: 0, left: 120, right: 160, bottom: 101}
             );
             expect(dimensionModel.getCellPosition(0, 'text')).toEqual(
-                { top: 0, left: 160, right: 200, bottom: 101 }
+                {top: 0, left: 160, right: 200, bottom: 101}
             );
             expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual(
-                { top: 0, left: 200, right: 240, bottom: 101 }
+                {top: 0, left: 200, right: 240, bottom: 101}
             );
             expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual(
-                { top: 102, left: 0, right: 40, bottom: 203 }
+                {top: 102, left: 0, right: 40, bottom: 203}
             );
             expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual(
-                { top: 102, left: 40, right: 80, bottom: 203 }
+                {top: 102, left: 40, right: 80, bottom: 203}
             );
-
         });
+
         it('rowSpan 이 있는 경우 main row 가 아닌 row 라도 정상적으로 반환한다.', function() {
-            var expectPosition = { top: 102, left: 0, right: 40, bottom: 304 };
+            var expectPosition = {top: 102, left: 0, right: 40, bottom: 304};
             //columnFix Index 이기 때문에 left 가 0부터 시작된다.
             expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectPosition);
         });
+
         it('rowSpan 이 3인 경우', function() {
-            var expectPosition = { top: 102, left: 160, right: 200, bottom: 405 };
+            var expectPosition = {top: 102, left: 160, right: 200, bottom: 405};
             expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectPosition);

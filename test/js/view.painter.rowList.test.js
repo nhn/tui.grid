@@ -1,17 +1,11 @@
-describe('view.painter.rowList', function() {
+'use strict';
 
-    function getKeyEvent(keyName, $target) {
-        return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
-            target: $target.get(0)
-        };
-    }
+describe('view.painter.rowList', function() {
     var columnModelList = [
         {
             title: 'normal',
             columnName: 'normal'
-        },{
+        }, {
             title: 'text',
             columnName: 'text',
             editOption: {
@@ -104,7 +98,7 @@ describe('view.painter.rowList', function() {
             'text-convertible': 'text-convertible',
             'isDisabled': false,
             'isEditable': true
-        },{
+        }, {
             '_extraData': {
                 'className': {
                     'row': ['rowClass'],
@@ -121,7 +115,7 @@ describe('view.painter.rowList', function() {
             'text-convertible': 'text-convertible',
             'isDisabled': false,
             'isEditable': true
-        },{
+        }, {
             'normal': 'normal',
             'checkbox': 1,
             'radio': 1,
