@@ -848,9 +848,7 @@
                 message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
             if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-                _.each(rowKeyList, function(rowKey) {
-                    this.removeRow(rowKey);
-                }, this);
+                _.each(rowKeyList, this.removeRow, this);
                 return true;
             }
             return false;

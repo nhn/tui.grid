@@ -293,10 +293,6 @@ describe('grid.normal.test', function() {
 
     describe('removeCheckedRows()', function() {
         it('체크된 행들을 삭제한다.', function() {
-            expect(grid.getRowCount()).toBe(3);
-            expect(grid.getRow(1)).toBeDefined();
-            expect(grid.getRow(2)).toBeDefined();
-
             grid.check(1);
             grid.check(2);
             grid.removeCheckedRows();
