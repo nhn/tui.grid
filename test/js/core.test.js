@@ -13,7 +13,6 @@ describe('grid.normal.test', function() {
         grid && grid.destroy();
     });
 
-
     beforeEach(function() {
         grid = new Core({
             el: $empty,
@@ -74,7 +73,7 @@ describe('grid.normal.test', function() {
         it('getValue 는 값을 잘 가져온다.', function() {
             expect(grid.getValue(0, 'c1')).toBe('0-1');
         });
-        
+
         it('setValue 이후 getValue 의 isOriginal 을 true 로 설정시 original 데이터를 반환한다.', function() {
             grid.setValue(0, 'c1', 'New0-1');
             expect(grid.getValue(0, 'c1')).toBe('New0-1');
@@ -289,6 +288,56 @@ describe('grid.normal.test', function() {
             grid.removeRow(2);
             expect(grid.getRow(2)).not.toBeDefined();
             expect(grid.getRowCount()).toBe(2);
+        });
+    });
+
+    describe('removeCheckedRows()', function() {
+        it('체크된 행들을 삭제한다.', function() {
+            expect(grid.getRowCount()).toBe(3);
+            expect(grid.getRow(1)).toBeDefined();
+            expect(grid.getRow(2)).toBeDefined();
+
+            grid.check(1);
+            grid.check(2);
+            grid.removeCheckedRows();
+
+            expect(grid.getRow(1)).not.toBeDefined();
+            expect(grid.getRow(2)).not.toBeDefined();
+            expect(grid.getRowCount()).toBe(1);
+        });
+
+        describe('true를 파라미터로 넘기면 confirm메시지를 출력한다.', function() {
+            beforeEach(function() {
+                spyOn(window, 'confirm').and.callFake(function() {
+                    return true;
+                });
+            });
+
+            it('삭제될 행이 있을 때에만 confirm메시지를 출력한다.', function() {
+                grid.removeCheckedRows(true);
+                expect(window.confirm).not.toHaveBeenCalled();
+
+                grid.check(1);
+                grid.removeCheckedRows(true);
+                expect(window.confirm).toHaveBeenCalled();
+            });
+
+            it('confirm이 true를 반환하면 삭제된다.', function() {
+                expect(grid.getRow(1)).toBeDefined();
+                grid.check(1);
+                grid.removeCheckedRows(true);
+                expect(grid.getRow(1)).not.toBeDefined();
+            });
+
+            it('confirm이 false를 반환하면 삭제되지 않는다.', function() {
+                window.confirm.and.callFake(function() {
+                    return false;
+                });
+                expect(grid.getRow(1)).toBeDefined();
+                grid.check(1);
+                grid.removeCheckedRows(true);
+                expect(grid.getRow(1)).toBeDefined();
+            });
         });
     });
 

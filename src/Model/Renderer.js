@@ -255,7 +255,7 @@
             _.each(relationResult, function(changes, columnName) {
                 rowModel = this._getCollectionByColumnName(columnName).at(renderIdx);
                 if (rowModel) {
-                    this._getCollectionByColumnName(columnName).at(renderIdx).setCell(columnName, changes);
+                    rowModel.setCell(columnName, changes);
                 }
             }, this);
         },

@@ -21,7 +21,9 @@
             'click': '_onClick',
             'mousedown': '_onMouseDown',
             'selectstart': '_preventDrag',
-            'dragstart': '_preventDrag'
+            'dragstart': '_preventDrag',
+            'mouseover': '_onMouseOver',
+            'mouseout': '_onMouseOut'
         },
         keyMap: {
             'TAB': 9,
@@ -340,15 +342,91 @@
         },
         /**
          * click 이벤트 핸들러
-         * @param {event} clickEvent 이벤트 객체
+         * @param {MouseEvent} mouseEvent 이벤트 객체
          * @private
          */
-        _onClick: function(clickEvent) {
-            var eventData = this.createEventData(clickEvent);
+        _onClick: function(mouseEvent) {
+            var eventData = this.createEventData(mouseEvent),
+                $target = $(mouseEvent.target);
+
+            if (this._isCellElement($target, true)) {
+                this._triggerCellMouseEvent('clickCell', eventData, $target);
+            }
             this.trigger('click', eventData);
+
             if (eventData.isStopped()) {
                 return;
             }
+        },
+        /**
+         * mouseover 이벤트 발생시 실행될 핸들러
+         * @private
+         * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
+         */
+        _onMouseOver: function(mouseEvent) {
+            var $target = $(mouseEvent.target),
+                eventData;
+
+            if (this._isCellElement($target)) {
+                eventData = this.createEventData(mouseEvent);
+                this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
+            }
+        },
+        /**
+         * mouseout 이벤트 발생시 실행될 핸들러
+         * @private
+         * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
+         */
+        _onMouseOut: function(mouseEvent) {
+            var $target = $(mouseEvent.target),
+                eventData;
+
+            if (this._isCellElement($target)) {
+                eventData = this.createEventData(mouseEvent);
+                this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
+            }
+        },
+        /**
+         * 셀과 관련된 커스텀 마우스 이벤트를 발생시킨다.
+         * @private
+         * @param {string} eventName 이벤트명
+         * @param {MouseEvent} eventData 커스터마이징 된 마우스 이벤트 객체
+         * @param {jQuery} $cell 셀 HTML요소의 jquery 객체
+         */
+        _triggerCellMouseEvent: function(eventName, eventData, $cell) {
+            _.extend(eventData, this._getCellInfoFromElement($cell));
+            this.trigger(eventName, eventData);
+        },
+        /**
+         * 해당 HTML요소가 셀인지 여부를 반환한다.
+         * @private
+         * @param {jQuery} $target 검사할 HTML요소의 jQuery 객체
+         * @param {boolean} isIncludeChild true이면 셀의 자식요소까지 포함한다.
+         * @return {boolean} 셀이면 true, 아니면 false
+         */
+        _isCellElement: function($target, isIncludeChild) {
+            var $td = isIncludeChild ? $target.closest('td') : $target;
+
+            if (!$td.is('td')) {
+                return false;
+            }
+            return !!($td.parent().attr('key') && $td.attr('columnname'));
+        },
+        /**
+         * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
+         * @private
+         * @param {jQuery} $cell TD요소의 jquery 객체
+         * @return {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
+         */
+        _getCellInfoFromElement: function($cell) {
+            var rowKey = $cell.parent().attr('key'),
+                columnName = $cell.attr('columnname');
+
+            return {
+                rowKey: rowKey,
+                columnName: columnName,
+                rowData: this.getRow(rowKey)
+            };
         },
         /**
          * mousedown 이벤트 핸들러
@@ -430,9 +508,7 @@
             if (ne.util.isExisty(ne.util.pick(this, 'view', 'clipboard'))) {
                 this.view.clipboard.$el.focus();
             }
-
         },
-
 
         /**
          * 랜더링한다.
@@ -762,7 +838,23 @@
         removeRow: function(rowKey, isRemoveOriginalData) {
             this.dataModel.removeRow(rowKey, isRemoveOriginalData);
         },
+        /**
+         * chcked된 행을 삭제한다.
+         * @param {boolean} isConfirm 삭제하기 전에 confirm 메시지를 표시할지 여부
+         * @return {boolean} 삭제된 행이 있으면 true, 없으면 false
+         */
+        removeCheckedRows: function(isConfirm) {
+            var rowKeyList = this.getCheckedRowKeyList(),
+                message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
+            if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
+                _.each(rowKeyList, function(rowKey) {
+                    this.removeRow(rowKey);
+                }, this);
+                return true;
+            }
+            return false;
+        },
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
          * @param {(Number|String)} rowKey 행 데이터의 고유 키

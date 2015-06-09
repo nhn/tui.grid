@@ -796,7 +796,7 @@
                 row = this.get(rowKey),
                 classNameData;
 
-            if (ne.util.isExisty(extraData, 'className.row')) {
+            if (extraData && extraData.className && extraData.className.row) {
                 classNameData = extraData.className;
                 classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
                 //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
@@ -818,9 +818,12 @@
                 classNameData = extraData.className || {};
                 classNameData.column = classNameData.column || {};
                 classNameList = classNameData.column[columnName] || [];
-                classNameList.push(className);
-                classNameData.column[columnName] = classNameList;
-                this.setExtraData(rowKey, {className: classNameData});
+
+                if (ne.util.inArray(className, classNameList) === -1) {
+                    classNameList.push(className);
+                    classNameData.column[columnName] = classNameList;
+                    this.setExtraData(rowKey, {className: classNameData});
+                }
             }
         },
         /**
@@ -836,9 +839,12 @@
             if (!ne.util.isUndefined(extraData)) {
                 classNameData = extraData.className || {};
                 classNameList = classNameData.row || [];
-                classNameList.push(className);
-                classNameData.row = classNameList;
-                this.setExtraData(rowKey, {className: classNameData});
+
+                if (ne.util.inArray(className, classNameList) === -1) {
+                    classNameList.push(className);
+                    classNameData.row = classNameList;
+                    this.setExtraData(rowKey, {className: classNameData});
+                }
             }
         },
         /**
