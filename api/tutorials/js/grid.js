@@ -191,12 +191,12 @@
         createEventData: function(data) {
             var eventData = $.extend({}, data);
             eventData.stop = function() {
-                this._isStopped = true;
+                this._isStoped = true;
             };
             eventData.isStopped = function() {
-                return this._isStopped;
+                return this._isStoped;
             };
-            eventData._isStopped = eventData._isStopped || false;
+            eventData._isStoped = eventData._isStoped || false;
             return eventData;
         },
         /**
@@ -225,6 +225,7 @@
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.initializeEventHandler();
         },
         /**
          * eventHandler 를 미리 parsing 하여 들고있는다.
@@ -287,6 +288,8 @@
             throw this.error('implement getHtml() method');
         }
     });
+
+
 
 /**
 * @fileoverview 유틸리티 메서드 모음
@@ -684,26 +687,17 @@ var Util = {
          * @param {HTMLElement} target HTML input 엘리먼트
          */
         setCursorToEnd: function(target) {
-            var length = target.value.length,
-                range;
-
             target.focus();
+            var length = target.value.length;
+
             if (target.setSelectionRange) {
-                try {
-                    target.setSelectionRange(length, length);
-                } catch(e) {
-                    // to prevent unspecified error in IE (occurs when running test)
-                }
+                target.setSelectionRange(length, length);
             } else if (target.createTextRange) {
-                range = target.createTextRange();
+                var range = target.createTextRange();
                 range.collapse(true);
                 range.moveEnd('character', length);
                 range.moveStart('character', length);
-                try {
-                     range.select();
-                } catch(e) {
-                     // to prevent unspecified error in IE (occurs when running test)
-                }
+                range.select();
             }
         }
     }
@@ -1087,7 +1081,7 @@ var Util = {
             ne.util.forEach(classNameMap, function(value, className) {
                 classNameList.push(className);
             });
-
+            //classNameList = _.union(classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList);
             return classNameList;
         },
         /**
@@ -1794,7 +1788,7 @@ var Util = {
                 row = this.get(rowKey),
                 classNameData;
 
-            if (extraData && extraData.className && extraData.className.row) {
+            if (ne.util.isExisty(extraData, 'className.row')) {
                 classNameData = extraData.className;
                 classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
                 //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
@@ -1816,12 +1810,9 @@ var Util = {
                 classNameData = extraData.className || {};
                 classNameData.column = classNameData.column || {};
                 classNameList = classNameData.column[columnName] || [];
-
-                if (ne.util.inArray(className, classNameList) === -1) {
-                    classNameList.push(className);
-                    classNameData.column[columnName] = classNameList;
-                    this.setExtraData(rowKey, {className: classNameData});
-                }
+                classNameList.push(className);
+                classNameData.column[columnName] = classNameList;
+                this.setExtraData(rowKey, {className: classNameData});
             }
         },
         /**
@@ -1837,12 +1828,9 @@ var Util = {
             if (!ne.util.isUndefined(extraData)) {
                 classNameData = extraData.className || {};
                 classNameList = classNameData.row || [];
-
-                if (ne.util.inArray(className, classNameList) === -1) {
-                    classNameList.push(className);
-                    classNameData.row = classNameList;
-                    this.setExtraData(rowKey, {className: classNameData});
-                }
+                classNameList.push(className);
+                classNameData.row = classNameList;
+                this.setExtraData(rowKey, {className: classNameData});
             }
         },
         /**
@@ -2262,7 +2250,7 @@ var Util = {
             _.each(relationResult, function(changes, columnName) {
                 rowModel = this._getCollectionByColumnName(columnName).at(renderIdx);
                 if (rowModel) {
-                    rowModel.setCell(columnName, changes);
+                    this._getCollectionByColumnName(columnName).at(renderIdx).setCell(columnName, changes);
                 }
             }, this);
         },
@@ -4340,7 +4328,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
             if (this.grid instanceof View.Base) {
                 this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
-                this.listenTo(this.grid.dimensionModel, 'change:width', $.proxy(this._refreshHandlerPosition, this, true));
             }
         },
         /**
@@ -5495,6 +5482,12 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
      */
     View.Base.Painter.Cell.Interface.prototype.focusIn = function($td) {};
     /**
+     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
+     * - 필요에 따라 override 한다.
+     * @param {jQuery} $td 해당 cell 엘리먼트
+     */
+//    View.Base.Painter.Cell.Interface.prototype.focusOut = function($td) {};
+    /**
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
@@ -5516,6 +5509,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
      * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
     View.Base.Painter.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
+
 
 /**
  * @fileoverview 리스트 형태의 Cell(select, radio, checkbox) Painter 가 정의된 파일
@@ -5583,6 +5577,24 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         getOptionList: function(cellData) {
             var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
             return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
+        },
+        /**
+         * blur 이벤트 핸들러
+         * @param {Event} blurEvent 이벤트 객체
+         * @private
+         */
+        _onBlur: function(blurEvent) {
+            var $target = $(blurEvent.target);
+            $target.closest('td').data('isFocused', false);
+        },
+        /**
+         * focus 이벤트 핸들러
+         * @param {Event} focusEvent 이벤트 객체
+         * @private
+         */
+        _onFocus: function(focusEvent) {
+            var $target = $(focusEvent.target);
+            $target.closest('td').data('isFocused', true);
         }
     });
 
@@ -5610,7 +5622,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         },
         eventHandler: {
             'change select' : '_onChange',
-            'keydown select' : '_onKeyDown'
+            'keydown select' : '_onKeyDown',
+            'blur select' : '_onBlur',
+            'focus select' : '_onFocus'
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -5625,11 +5639,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         focusIn: function($td) {
             /* istanbul ignore next */
-            if ($td.find('select').prop('disabled')) {
-                this.grid.focusClipboard();
-            } else {
-                $td.find('select').eq(0).focus();
-            }
+            $td.find('select').focus();
         },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
@@ -5768,12 +5778,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * @param {jQuery} $td 해당 cell 엘리먼트
          */
         focusIn: function($td) {
-            /* istanbul ignore next: focus 확인 불가 */
-            if ($td.find('input').eq(0).prop('disabled')) {
-                this.grid.focusClipboard();
-            } else {
-                $td.find('input').eq(0).focus();
-            }
+            /* istanbul ignore next: focus 확인 불가 */ $td.find('input').eq(0).focus();
         },
         /**
          * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
@@ -6123,7 +6128,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         toggle: function($td) {
             var $input = $td.find('input');
             if (this.grid.option('selectType') === 'checkbox') {
-                $input.prop('checked', !$input.prop('checked'));
+                $input.trigger('click');
             }
         },
         /**
@@ -6219,12 +6224,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         /* istanbul ignore next: focus, select 를 검증할 수 없음 */
         focusIn: function($td) {
             var $input = $td.find('input');
-            if ($input.prop('disabled')) {
-                this.grid.focusClipboard();
-            } else {
-                Util.form.setCursorToEnd($input.get(0));
-                $input.focus().select();
-            }
+            Util.form.setCursorToEnd($input.get(0));
+            $input.focus().select();
+
         },
         /**
          * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
@@ -6248,7 +6250,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * </select>
          */
         getContentHtml: function(cellData) {
-            //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
             var columnModel = this.getColumnModel(cellData),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
                 htmlArr = [];
@@ -6379,7 +6380,8 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 timeoutIdForClick: 0,
                 editingCell: {
                     rowKey: null,
-                    columnName: ''
+                    columnName: '',
+                    $clickedTd: null
                 },
                 clicked: {
                     rowKey: null,
@@ -6424,7 +6426,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          * </select>
          */
         getContentHtml: function(cellData) {
-            //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
             var columnModel = this.getColumnModel(cellData),
                 value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
                 htmlArr = [];
@@ -6546,6 +6547,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             return !!(this.clicked.rowKey === address.rowKey && this.clicked.columnName === address.columnName);
         }
     });
+
 
 /**
  * @fileoverview Cell Painter Factory
@@ -6890,7 +6892,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                     grid.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                     break;
                 case keyMap['CHAR_V']:
-                    this._paste();
                     break;
                 default:
                     isKeyIdentified = false;
@@ -6898,74 +6899,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             }
             return isKeyIdentified;
         },
-
-        /****************
-         * paste to clipboard methods
-         ****************/
-
-        /**
-         * paste date
-         * @private
-         */
-        _paste: function() {
-            // pressing v long time, clear clipboard to keep final paste date
-            this._clearClipBoard();
-            if (this.pasting) {
-                return;
-            }
-
-            this.pasting = true;
-            this._onKeyupCharV();
-        },
-
-        /**
-         * keyup event attach
-         * @private
-         */
-        _onKeyupCharV: function() {
-            this.$el.on('keyup', $.proxy(this.onKeyupCharV, this));
-        },
-
-        onKeyupCharV: function() {
-            this._pasteToGrid();
-            this.pasting = false;
-        },
-
-       /**
-         * clipboard textarea clear
-         * @private
-         */
-        _clearClipBoard: function() {
-            this.$el.val('');
-        },
-
-        /**
-         * paste text data
-         * @private
-         */
-        _pasteToGrid: function() {
-            var result = this._getProcessClipBoardData();
-            this.$el.off('keyup');
-            this.grid.paste(result);
-        },
-
-        /**
-         * process data for paste to grid
-         * @private
-         * @return result
-         */
-        _getProcessClipBoardData: function() {
-            var text = this.$el.val(),
-                result = text.split('\n'),
-                i = 0,
-                len = result.length;
-
-            for (; i < len; i += 1) {
-                result[i] = result[i].split('\t');
-            }
-            return result;
-        },
-
         /**
          * ctrl, shift 둘다 눌린 상태에서의 key down event handler
          * @param {event} keyDownEvent 이벤트 객체
@@ -7589,26 +7522,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
          */
         isShown: function() {
             return this._isShown;
-        },
-        /**
-         * selection이 시작된 셀의 인덱스를 반환한다.
-         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스정보를 가진 객체
-         */
-        getStartIndex: function() {
-            return {
-                rowIdx: this.range.row[0],
-                columnIdx: this.range.column[0]
-            };
-        },
-        /**
-         * selection이 끝나는 셀의 인덱스를 반환한다.
-         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스정보를 가진 객체
-         */
-        getEndIndex: function() {
-            return {
-                rowIdx: this.range.row[1],
-                columnIdx: this.range.column[1]
-            };
         },
         /**
          * Selection Layer View 를 반환한다.
@@ -8349,7 +8262,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 dataParam = this._getDataParam(requestType, newOptions),
                 param;
 
-            if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
+            if (this._isConfirmed(requestType, dataParam.count)) {
                 param = {
                     requestType: requestType,
                     url: newOptions.url,
@@ -8539,7 +8452,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         setOwnProperties: setOwnProperties
     });
 
-'use strict';
 /**
  * @fileoverview Grid Core 파일
  * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
@@ -8562,9 +8474,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             'click': '_onClick',
             'mousedown': '_onMouseDown',
             'selectstart': '_preventDrag',
-            'dragstart': '_preventDrag',
-            'mouseover': '_onMouseOver',
-            'mouseout': '_onMouseOut'
+            'dragstart': '_preventDrag'
         },
         keyMap: {
             'TAB': 9,
@@ -8883,91 +8793,15 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         },
         /**
          * click 이벤트 핸들러
-         * @param {MouseEvent} mouseEvent 이벤트 객체
+         * @param {event} clickEvent 이벤트 객체
          * @private
          */
-        _onClick: function(mouseEvent) {
-            var eventData = this.createEventData(mouseEvent),
-                $target = $(mouseEvent.target);
-
-            if (this._isCellElement($target, true)) {
-                this._triggerCellMouseEvent('clickCell', eventData, $target);
-            }
+        _onClick: function(clickEvent) {
+            var eventData = this.createEventData(clickEvent);
             this.trigger('click', eventData);
-
             if (eventData.isStopped()) {
                 return;
             }
-        },
-        /**
-         * mouseover 이벤트 발생시 실행될 핸들러
-         * @private
-         * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
-         */
-        _onMouseOver: function(mouseEvent) {
-            var $target = $(mouseEvent.target),
-                eventData;
-
-            if (this._isCellElement($target)) {
-                eventData = this.createEventData(mouseEvent);
-                this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
-            }
-        },
-        /**
-         * mouseout 이벤트 발생시 실행될 핸들러
-         * @private
-         * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
-         */
-        _onMouseOut: function(mouseEvent) {
-            var $target = $(mouseEvent.target),
-                eventData;
-
-            if (this._isCellElement($target)) {
-                eventData = this.createEventData(mouseEvent);
-                this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
-            }
-        },
-        /**
-         * 셀과 관련된 커스텀 마우스 이벤트를 발생시킨다.
-         * @private
-         * @param {string} eventName 이벤트명
-         * @param {MouseEvent} eventData 커스터마이징 된 마우스 이벤트 객체
-         * @param {jQuery} $cell 셀 HTML요소의 jquery 객체
-         */
-        _triggerCellMouseEvent: function(eventName, eventData, $cell) {
-            _.extend(eventData, this._getCellInfoFromElement($cell));
-            this.trigger(eventName, eventData);
-        },
-        /**
-         * 해당 HTML요소가 셀인지 여부를 반환한다.
-         * @private
-         * @param {jQuery} $target 검사할 HTML요소의 jQuery 객체
-         * @param {boolean} isIncludeChild true이면 셀의 자식요소까지 포함한다.
-         * @return {boolean} 셀이면 true, 아니면 false
-         */
-        _isCellElement: function($target, isIncludeChild) {
-            var $td = isIncludeChild ? $target.closest('td') : $target;
-
-            if (!$td.is('td')) {
-                return false;
-            }
-            return !!($td.parent().attr('key') && $td.attr('columnname'));
-        },
-        /**
-         * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
-         * @private
-         * @param {jQuery} $cell TD요소의 jquery 객체
-         * @return {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
-         */
-        _getCellInfoFromElement: function($cell) {
-            var rowKey = $cell.parent().attr('key'),
-                columnName = $cell.attr('columnname');
-
-            return {
-                rowKey: rowKey,
-                columnName: columnName,
-                rowData: this.getRow(rowKey)
-            };
         },
         /**
          * mousedown 이벤트 핸들러
@@ -9049,7 +8883,9 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             if (ne.util.isExisty(ne.util.pick(this, 'view', 'clipboard'))) {
                 this.view.clipboard.$el.focus();
             }
+
         },
+
 
         /**
          * 랜더링한다.
@@ -9379,21 +9215,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
         removeRow: function(rowKey, isRemoveOriginalData) {
             this.dataModel.removeRow(rowKey, isRemoveOriginalData);
         },
-        /**
-         * chcked된 행을 삭제한다.
-         * @param {boolean} isConfirm 삭제하기 전에 confirm 메시지를 표시할지 여부
-         * @return {boolean} 삭제된 행이 있으면 true, 없으면 false
-         */
-        removeCheckedRows: function(isConfirm) {
-            var rowKeyList = this.getCheckedRowKeyList(),
-                message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
-            if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-                _.each(rowKeyList, this.removeRow, this);
-                return true;
-            }
-            return false;
-        },
         /**
          * rowKey에 해당하는 행을 활성화시킨다.
          * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -9649,7 +9471,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
 
             var editType = this.columnModel.getEditType(columnName),
                 isDisabledCheck = this.dataModel.get(rowKey).getRowState().isDisabledCheck,
-                deletableEditTypeList = ['text', 'text-convertible', 'text-password'],
+                deletableEditTypeList = ['text', 'text-convertible'],
                 isDeletable = $.inArray(editType, deletableEditTypeList) !== -1,
                 selectType = this.option('selectType'),
                 cellState = this.getCellState(rowKey, columnName),
@@ -9661,76 +9483,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
                 if (silent && selectType === 'checkbox' && !isDisabledCheck) {
                     this.setValue(rowKey, '_button', true, silent);
                 }
-            }
-        },
-        /**
-         * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
-         * 이동하며 셀의 값을 변경한다. 완료한 후 적용된 셀 범위에 Selection을 지정한다.
-         * @param {Array[]} data - 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.
-         */
-        paste: function(data) {
-            var columnModelList = this.columnModel.getVisibleColumnModelList(),
-                start = this._getStartIndexToPaste(),
-                end = this._getEndIndexToPaste(start, data, columnModelList),
-                rowIdx,
-                columnIdx,
-                value;
-
-            for (rowIdx = start.rowIdx; rowIdx <= end.rowIdx; rowIdx += 1) {
-                for (columnIdx = start.columnIdx; columnIdx <= end.columnIdx; columnIdx += 1) {
-                    value = data[rowIdx - start.rowIdx][columnIdx - start.columnIdx];
-                    this._setValueForPaste(rowIdx, columnIdx, columnModelList[columnIdx], value);
-                }
-            }
-
-            this.selection.startSelection(start.rowIdx, start.columnIdx);
-            this.selection.updateSelection(end.rowIdx, end.columnIdx);
-        },
-        /**
-         * 붙여넣기를 실행할때 시작점이 될 셀의 인덱스를 반환한다.
-         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
-         */
-        _getStartIndexToPaste: function() {
-            var startIdx;
-
-            if (this.selection.hasSelection()) {
-                startIdx = this.selection.getStartIndex();
-            } else {
-                startIdx = this.focusModel.indexOf();
-            }
-            return startIdx;
-        },
-        /**
-         * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
-         * @param  {{rowIdx: number, columnIdx: number}} startIdx - 시작점이 될 셀의 인덱스
-         * @param  {Array[]} data - 붙여넣기할 데이터
-         * @param  {Array} columnModelList - 현재 화면에 보여지는 컬럼모델의 목록
-         * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
-         */
-        _getEndIndexToPaste: function(startIdx, data, columnModelList) {
-            var endIdx = {
-                rowIdx: Math.min(data.length + startIdx.rowIdx, this.dataModel.length) - 1,
-                columnIdx: Math.min(data[0].length + startIdx.columnIdx, columnModelList.length) - 1
-            }
-            return endIdx;
-        },
-        /**
-         * 지정된 인덱스의 셀이 수정 가능한 상태이면 값을 변경한다. RowSpan이 적용된 셀인 경우 MainRow인 경우에만 값을 변경한다.
-         * @param  {number} rowIdx - 행 인덱스
-         * @param  {number} columnIdx - 열 인덱스
-         * @param  {string} value - 변경할 값
-         * @param  {ColumnModel} columnModel - 해당 열 인덱스의 컬럼모델
-         */
-        _setValueForPaste: function(rowIdx, columnIdx, columnModel, value) {
-            var row = this.dataModel.at(rowIdx),
-                columnName = columnModel.columnName,
-                cellStatus = row.getCellState(columnName),
-                rowSpanData = row.getRowSpanData(columnName),
-                attributes = {};
-
-            if (cellStatus.isEditable && !cellStatus.isDisabled && (!rowSpanData || rowSpanData.count >= 0)) {
-                attributes[columnName] = value;
-                row.set(attributes);
             }
         },
         /**
@@ -10336,14 +10088,6 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
             this.core.removeRow(rowKey, isRemoveOriginalDta);
         },
         /**
-         * checked된 행을 삭제한다.
-         * @param {Boolean} isConfirm 삭제하기 전에 confirm 메시지를 표시할지 여부
-         * @return {Boolean} 삭제된 행이 있으면 true, 없으면 false
-         */
-        removeCheckedRows: function(isConfirm) {
-            return this.core.removeCheckedRows(isConfirm);
-        },
-        /**
          * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
          * @param {(Number|String)} rowKey 행 데이터의 고유 키
          */
@@ -10607,5 +10351,7 @@ View.Layer.Ready = View.Layer.Base.extend(/**@lends View.Layer.Ready.prototype *
     ne.Grid.getInstanceById = function(id) {
         return Core.prototype.__instance[id];
     };
+
+
 
 })();
