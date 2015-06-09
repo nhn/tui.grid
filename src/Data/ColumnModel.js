@@ -62,6 +62,7 @@
             var selectType = this.get('selectType'),
                 buttonColumn = {
                     columnName: '_button',
+                    isHidden: false,
                     editOption: {
                         type: selectType,
                         list: [{

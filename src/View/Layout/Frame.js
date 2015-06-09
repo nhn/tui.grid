@@ -66,19 +66,3 @@
          */
         afterRender: function() {}
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

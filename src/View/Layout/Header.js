@@ -11,11 +11,11 @@
         className: 'header',
         whichSide: 'R',
         events: {
-            'click' : '_onClick'
+            click: '_onClick'
         },
         /**
          * 초기화 메서드
-         * @param {Object} options
+         * @param {Object} options 옵션
          *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
          */
         initialize: function(options) {
@@ -27,8 +27,8 @@
             this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
                 .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
                 .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this);
-
         },
+
         /**
          * 전체 template
          */
@@ -164,7 +164,7 @@
 
         /**
          * 랜더링
-         * @return {View.Layout.Header}
+         * @return {View.Layout.Header} this
          */
         render: function() {
             this.destroyChildren();
@@ -223,7 +223,6 @@
                 colSpanList = [],
                 rowHeight = Util.getRowHeight(maxRowCount, headerHeight) - 1,
                 rowSpan = 1,
-                title,
                 height,
                 headerMarkupList;
 
@@ -328,7 +327,7 @@
         tagName: 'div',
         className: 'resize_handle_container',
         events: {
-            'mousedown .resize_handle' : '_onMouseDown',
+            'mousedown .resize_handle': '_onMouseDown',
             'click .resize_handle': '_onClick'
         },
         /**
@@ -396,13 +395,12 @@
             resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
                 return this.template({
                     columnIndex: index,
-                    columnName: columnModel['columnName'],
+                    columnName: columnModel.columnName,
                     isLast: index + 1 === length,
                     height: headerHeight
                 });
             }, this);
             return resizeHandleMarkupList.join('');
-
         },
         /**
          * 랜더링 한다.
@@ -414,8 +412,8 @@
             this.$el
                 .show()
                 .css({
-                    'marginTop' : -headerHeight + 'px',
-                    'height' : headerHeight + 'px'
+                    'marginTop': -headerHeight + 'px',
+                    'height': headerHeight + 'px'
                 })
                 .html(this._getResizeHandlerMarkup());
 
@@ -575,7 +573,6 @@
                 .bind('mousemove', $.proxy(this._onMouseMove, this))
                 .bind('mouseup', $.proxy(this._onMouseUp, this))
                 .css('cursor', 'col-resize');
-
         },
         /**
          * resize stop 세팅

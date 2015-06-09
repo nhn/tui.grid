@@ -86,7 +86,7 @@
             } else {
                 this.grid.showGridLayer('empty');
             }
-        },
+        }
         ///**
         // * selection 영역의 mousedown 이벤트
         // * @param {Event} mouseDownEvent
