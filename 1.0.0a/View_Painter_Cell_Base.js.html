@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: View/Painter/Cell/Base.js</title>
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-fe2.css">
+</head>
+<body>
+
+<div id="wrap">
+
+    <div class="header">
+
+        <div class="container-fluid">
+            <h3><a href="index.html">API Documentation</a> <small>FE개발팀</small></h3>
+        </div>
+
+    </div>
+
+    <div class="body">
+        <div id="navigation" class="navigation"><h3>Samples</h3><ul class="list samples"><li class="item"><a href="tutorial-sample1.html">기본 예제</a></li><li class="item"><a href="tutorial-sample2.html">동적 변경 예제</a></li><li class="item"><a href="tutorial-sample3.html">_extraData 의 사용</a></li></ul><h3>Classes</h3><ul class="list classes"><li class="item" id="AddOn.Net"><span class="title"><span class="p-item">AddOn.</span><a href="AddOn.Net.html">Net</a></span><span class="icon blue static">static</span><ul class="sublist methods AddOn.Net"><span class="subtitle">Methods</span><li><a href="AddOn.Net.html#initialize">initialize</a></li><li><a href="AddOn.Net.html#readData">readData</a></li><li><a href="AddOn.Net.html#reloadData">reloadData</a></li><li><a href="AddOn.Net.html#request">request</a></li><li><a href="AddOn.Net.html#setFormData">setFormData</a></li></ul></li><li class="item" id="AddOn.Net.Router"><span class="title"><span class="p-item">AddOn.Net.</span><a href="AddOn.Net.Router.html">Router</a></span><span class="icon blue static">static</span><ul class="sublist members AddOn.Net.Router"><span class="subtitle">Members</span><li><a href="AddOn.Net.Router.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division AddOn.Net.Router"><li></li></ul><ul class="sublist methods AddOn.Net.Router"><span class="subtitle">Methods</span><li><a href="AddOn.Net.Router.html#read">read</a></li></ul></li><li class="item" id="Collection.Base"><span class="title"><span class="p-item">Collection.</span><a href="Collection.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist members Collection.Base"><span class="subtitle">Members</span><li><a href="Collection.Base.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division Collection.Base"><li></li></ul><ul class="sublist methods Collection.Base"><span class="subtitle">Methods</span><li><a href="Collection.Base.html#clear">clear</a></li><li><a href="Collection.Base.html#initialize">initialize</a></li></ul></li><li class="item" id="Core"><span class="title"><a href="Core.html">Core</a></span><ul class="sublist members Core"><span class="subtitle">Members</span><li><a href="Core.html#scrollBarSize">scrollBarSize</a></li></ul><ul class="sublist division Core"><li></li></ul><ul class="sublist methods Core"><span class="subtitle">Methods</span><li><a href="Core.html#_getEndIndexToPaste">_getEndIndexToPaste</a></li><li><a href="Core.html#_getStartIndexToPaste">_getStartIndexToPaste</a></li><li><a href="Core.html#_setValueForPaste">_setValueForPaste</a></li><li><a href="Core.html#addCellClassName">addCellClassName</a></li><li><a href="Core.html#addRowClassName">addRowClassName</a></li><li><a href="Core.html#appendRow">appendRow</a></li><li><a href="Core.html#blur">blur</a></li><li><a href="Core.html#check">check</a></li><li><a href="Core.html#checkAll">checkAll</a></li><li><a href="Core.html#clear">clear</a></li><li><a href="Core.html#del">del</a></li><li><a href="Core.html#destroy">destroy</a></li><li><a href="Core.html#disable">disable</a></li><li><a href="Core.html#disableCheck">disableCheck</a></li><li><a href="Core.html#disableRow">disableRow</a></li><li><a href="Core.html#enable">enable</a></li><li><a href="Core.html#enableCheck">enableCheck</a></li><li><a href="Core.html#enableRow">enableRow</a></li><li><a href="Core.html#filterData">filterData</a></li><li><a href="Core.html#focus">focus</a></li><li><a href="Core.html#focusAt">focusAt</a></li><li><a href="Core.html#focusClipboard">focusClipboard</a></li><li><a href="Core.html#focusIn">focusIn</a></li><li><a href="Core.html#focusInAt">focusInAt</a></li><li><a href="Core.html#getCellState">getCellState</a></li><li><a href="Core.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="Core.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="Core.html#getColumnModelList">getColumnModelList</a></li><li><a href="Core.html#getColumnValues">getColumnValues</a></li><li><a href="Core.html#getElement">getElement</a></li><li><a href="Core.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="Core.html#getPaginationInstance">getPaginationInstance</a></li><li><a href="Core.html#getRow">getRow</a></li><li><a href="Core.html#getRowAt">getRowAt</a></li><li><a href="Core.html#getRowCount">getRowCount</a></li><li><a href="Core.html#getRowList">getRowList</a></li><li><a href="Core.html#getRowSpanData">getRowSpanData</a></li><li><a href="Core.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="Core.html#getValue">getValue</a></li><li><a href="Core.html#hideGridLayer">hideGridLayer</a></li><li><a href="Core.html#initialize">initialize</a></li><li><a href="Core.html#isChanged">isChanged</a></li><li><a href="Core.html#isDisabled">isDisabled</a></li><li><a href="Core.html#isEditable">isEditable</a></li><li><a href="Core.html#isSorted">isSorted</a></li><li><a href="Core.html#option">option</a></li><li><a href="Core.html#paste">paste</a></li><li><a href="Core.html#prependRow">prependRow</a></li><li><a href="Core.html#refreshLayout">refreshLayout</a></li><li><a href="Core.html#removeCellClassName">removeCellClassName</a></li><li><a href="Core.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="Core.html#removeRow">removeRow</a></li><li><a href="Core.html#removeRowClassName">removeRowClassName</a></li><li><a href="Core.html#render">render</a></li><li><a href="Core.html#replaceRowList">replaceRowList</a></li><li><a href="Core.html#restore">restore</a></li><li><a href="Core.html#select">select</a></li><li><a href="Core.html#setColumnFixIndex">setColumnFixIndex</a></li><li><a href="Core.html#setColumnModelList">setColumnModelList</a></li><li><a href="Core.html#setColumnValues">setColumnValues</a></li><li><a href="Core.html#setGridSize">setGridSize</a></li><li><a href="Core.html#setRowList">setRowList</a></li><li><a href="Core.html#setScrollHandlerPosition">setScrollHandlerPosition</a></li><li><a href="Core.html#setValue">setValue</a></li><li><a href="Core.html#showGridLayer">showGridLayer</a></li><li><a href="Core.html#sort">sort</a></li><li><a href="Core.html#uncheck">uncheck</a></li><li><a href="Core.html#uncheckAll">uncheckAll</a></li><li><a href="Core.html#unselect">unselect</a></li><li><a href="Core.html#use">use</a></li></ul></li><li class="item" id="Data.ColumnModel"><span class="title"><span class="p-item">Data.</span><a href="Data.ColumnModel.html">ColumnModel</a></span><span class="icon blue static">static</span><ul class="sublist methods Data.ColumnModel"><span class="subtitle">Methods</span><li><a href="Data.ColumnModel.html#at">at</a></li><li><a href="Data.ColumnModel.html#getColumnModel">getColumnModel</a></li><li><a href="Data.ColumnModel.html#getEditType">getEditType</a></li><li><a href="Data.ColumnModel.html#getIngoredColumnNameList">getIngoredColumnNameList</a></li><li><a href="Data.ColumnModel.html#getVisibleColumnModelList">getVisibleColumnModelList</a></li><li><a href="Data.ColumnModel.html#indexOfColumnName">indexOfColumnName</a></li><li><a href="Data.ColumnModel.html#initialize">initialize</a></li><li><a href="Data.ColumnModel.html#isLside">isLside</a></li><li><a href="Data.ColumnModel.html#isTextType">isTextType</a></li></ul></li><li class="item" id="Data.Row"><span class="title"><span class="p-item">Data.</span><a href="Data.Row.html">Row</a></span><span class="icon blue static">static</span><ul class="sublist methods Data.Row"><span class="subtitle">Methods</span><li><a href="Data.Row.html#getCellState">getCellState</a></li><li><a href="Data.Row.html#getClassNameList">getClassNameList</a></li><li><a href="Data.Row.html#getRelationResult">getRelationResult</a></li><li><a href="Data.Row.html#getRowSpanData">getRowSpanData</a></li><li><a href="Data.Row.html#getVisibleText">getVisibleText</a></li><li><a href="Data.Row.html#initialize">initialize</a></li><li><a href="Data.Row.html#isDisabled">isDisabled</a></li><li><a href="Data.Row.html#isEditable">isEditable</a></li></ul></li><li class="item" id="Data.RowList"><span class="title"><span class="p-item">Data.</span><a href="Data.RowList.html">RowList</a></span><span class="icon blue static">static</span><ul class="sublist methods Data.RowList"><span class="subtitle">Methods</span><li><a href="Data.RowList.html#addCellClassName">addCellClassName</a></li><li><a href="Data.RowList.html#addRowClassName">addRowClassName</a></li><li><a href="Data.RowList.html#append">append</a></li><li><a href="Data.RowList.html#comparator">comparator</a></li><li><a href="Data.RowList.html#getMainRowKey">getMainRowKey</a></li><li><a href="Data.RowList.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="Data.RowList.html#getOriginal">getOriginal</a></li><li><a href="Data.RowList.html#getOriginalRow">getOriginalRow</a></li><li><a href="Data.RowList.html#getOriginalRowList">getOriginalRowList</a></li><li><a href="Data.RowList.html#getRowList">getRowList</a></li><li><a href="Data.RowList.html#indexOfRowKey">indexOfRowKey</a></li><li><a href="Data.RowList.html#initialize">initialize</a></li><li><a href="Data.RowList.html#isRowSpanEnable">isRowSpanEnable</a></li><li><a href="Data.RowList.html#isSortedByField">isSortedByField</a></li><li><a href="Data.RowList.html#parse">parse</a></li><li><a href="Data.RowList.html#prepend">prepend</a></li><li><a href="Data.RowList.html#removeCellClassName">removeCellClassName</a></li><li><a href="Data.RowList.html#removeRow">removeRow</a></li><li><a href="Data.RowList.html#removeRowClassName">removeRowClassName</a></li><li><a href="Data.RowList.html#setExtraData">setExtraData</a></li><li><a href="Data.RowList.html#setOriginalRowList">setOriginalRowList</a></li><li><a href="Data.RowList.html#setRowState">setRowState</a></li><li><a href="Data.RowList.html#sortByField">sortByField</a></li></ul></li><li class="item" id="Model.Base"><span class="title"><span class="p-item">Model.</span><a href="Model.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist members Model.Base"><span class="subtitle">Members</span><li><a href="Model.Base.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division Model.Base"><li></li></ul><ul class="sublist methods Model.Base"><span class="subtitle">Methods</span><li><a href="Model.Base.html#initialize">initialize</a></li></ul></li><li class="item" id="Model.Dimension"><span class="title"><span class="p-item">Model.</span><a href="Model.Dimension.html">Dimension</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Dimension"><span class="subtitle">Methods</span><li><a href="Model.Dimension.html#getCellPosition">getCellPosition</a></li><li><a href="Model.Dimension.html#getColumnWidthList">getColumnWidthList</a></li><li><a href="Model.Dimension.html#getDisplayRowCount">getDisplayRowCount</a></li><li><a href="Model.Dimension.html#getFrameWidth">getFrameWidth</a></li><li><a href="Model.Dimension.html#getScrollXHeight">getScrollXHeight</a></li><li><a href="Model.Dimension.html#initialize">initialize</a></li><li><a href="Model.Dimension.html#restoreColumnWidth">restoreColumnWidth</a></li><li><a href="Model.Dimension.html#setColumnWidth">setColumnWidth</a></li><li><a href="Model.Dimension.html#setColumnWidthList">setColumnWidthList</a></li></ul></li><li class="item" id="Model.Focus"><span class="title"><span class="p-item">Model.</span><a href="Model.Focus.html">Focus</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Focus"><span class="subtitle">Methods</span><li><a href="Model.Focus.html#blur">blur</a></li><li><a href="Model.Focus.html#firstColumnName">firstColumnName</a></li><li><a href="Model.Focus.html#firstRowKey">firstRowKey</a></li><li><a href="Model.Focus.html#focus">focus</a></li><li><a href="Model.Focus.html#has">has</a></li><li><a href="Model.Focus.html#indexOf">indexOf</a></li><li><a href="Model.Focus.html#initialize">initialize</a></li><li><a href="Model.Focus.html#lastColumnName">lastColumnName</a></li><li><a href="Model.Focus.html#lastRowKey">lastRowKey</a></li><li><a href="Model.Focus.html#nextColumnIndex">nextColumnIndex</a></li><li><a href="Model.Focus.html#nextColumnName">nextColumnName</a></li><li><a href="Model.Focus.html#nextRowIndex">nextRowIndex</a></li><li><a href="Model.Focus.html#nextRowKey">nextRowKey</a></li><li><a href="Model.Focus.html#prevColumnIndex">prevColumnIndex</a></li><li><a href="Model.Focus.html#prevColumnName">prevColumnName</a></li><li><a href="Model.Focus.html#prevRowIndex">prevRowIndex</a></li><li><a href="Model.Focus.html#prevRowKey">prevRowKey</a></li><li><a href="Model.Focus.html#select">select</a></li><li><a href="Model.Focus.html#unselect">unselect</a></li><li><a href="Model.Focus.html#which">which</a></li></ul></li><li class="item" id="Model.Renderer"><span class="title"><span class="p-item">Model.</span><a href="Model.Renderer.html">Renderer</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Renderer"><span class="subtitle">Methods</span><li><a href="Model.Renderer.html#executeRelation">executeRelation</a></li><li><a href="Model.Renderer.html#getCellData">getCellData</a></li><li><a href="Model.Renderer.html#getCollection">getCollection</a></li><li><a href="Model.Renderer.html#initialize">initialize</a></li><li><a href="Model.Renderer.html#initializeVariables">initializeVariables</a></li><li><a href="Model.Renderer.html#refresh">refresh</a></li></ul></li><li class="item" id="Model.Renderer.Smart"><span class="title"><span class="p-item">Model.Renderer.</span><a href="Model.Renderer.Smart.html">Smart</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Renderer.Smart"><span class="subtitle">Methods</span><li><a href="Model.Renderer.Smart.html#initialize">initialize</a></li></ul></li><li class="item" id="Model.Row"><span class="title"><span class="p-item">Model.</span><a href="Model.Row.html">Row</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.Row"><span class="subtitle">Methods</span><li><a href="Model.Row.html#_setRowExtraData">_setRowExtraData</a></li><li><a href="Model.Row.html#parse">parse</a></li><li><a href="Model.Row.html#setCell">setCell</a></li></ul></li><li class="item" id="Model.RowList"><span class="title"><span class="p-item">Model.</span><a href="Model.RowList.html">RowList</a></span><span class="icon blue static">static</span><ul class="sublist methods Model.RowList"><span class="subtitle">Methods</span><li><a href="Model.RowList.html#initialize">initialize</a></li></ul></li><li class="item" id="ne.Grid"><span class="title"><span class="p-item">ne.</span><a href="ne.Grid.html">Grid</a></span><span class="icon blue static">static</span><ul class="sublist methods ne.Grid"><span class="subtitle">Methods</span><li><a href="ne.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="ne.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="ne.Grid.html#appendRow">appendRow</a></li><li><a href="ne.Grid.html#blur">blur</a></li><li><a href="ne.Grid.html#check">check</a></li><li><a href="ne.Grid.html#checkAll">checkAll</a></li><li><a href="ne.Grid.html#clear">clear</a></li><li><a href="ne.Grid.html#destroy">destroy</a></li><li><a href="ne.Grid.html#disable">disable</a></li><li><a href="ne.Grid.html#disableCheck">disableCheck</a></li><li><a href="ne.Grid.html#disableRow">disableRow</a></li><li><a href="ne.Grid.html#enable">enable</a></li><li><a href="ne.Grid.html#enableCheck">enableCheck</a></li><li><a href="ne.Grid.html#enableRow">enableRow</a></li><li><a href="ne.Grid.html#filterData">filterData</a></li><li><a href="ne.Grid.html#filterData">filterData</a></li><li><a href="ne.Grid.html#focus">focus</a></li><li><a href="ne.Grid.html#focusAt">focusAt</a></li><li><a href="ne.Grid.html#focusIn">focusIn</a></li><li><a href="ne.Grid.html#focusInAt">focusInAt</a></li><li><a href="ne.Grid.html#getAddOn">getAddOn</a></li><li><a href="ne.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="ne.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="ne.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="ne.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="ne.Grid.html#getElement">getElement</a></li><li><a href="ne.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="ne.Grid.html#getRow">getRow</a></li><li><a href="ne.Grid.html#getRowAt">getRowAt</a></li><li><a href="ne.Grid.html#getRowCount">getRowCount</a></li><li><a href="ne.Grid.html#getRowList">getRowList</a></li><li><a href="ne.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="ne.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="ne.Grid.html#getValue">getValue</a></li><li><a href="ne.Grid.html#initialize">initialize</a></li><li><a href="ne.Grid.html#isChanged">isChanged</a></li><li><a href="ne.Grid.html#prependRow">prependRow</a></li><li><a href="ne.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="ne.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="ne.Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="ne.Grid.html#removeRow">removeRow</a></li><li><a href="ne.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="ne.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="ne.Grid.html#restore">restore</a></li><li><a href="ne.Grid.html#select">select</a></li><li><a href="ne.Grid.html#setColumnFixIndex">setColumnFixIndex</a></li><li><a href="ne.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="ne.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="ne.Grid.html#setGridSize">setGridSize</a></li><li><a href="ne.Grid.html#setRowList">setRowList</a></li><li><a href="ne.Grid.html#setScrollHandlerPosition">setScrollHandlerPosition</a></li><li><a href="ne.Grid.html#setValue">setValue</a></li><li><a href="ne.Grid.html#sort">sort</a></li><li><a href="ne.Grid.html#uncheck">uncheck</a></li><li><a href="ne.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="ne.Grid.html#unselect">unselect</a></li><li><a href="ne.Grid.html#unSort">unSort</a></li><li><a href="ne.Grid.html#use">use</a></li></ul></li><li class="item" id="View.Base"><span class="title"><span class="p-item">View.</span><a href="View.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist members View.Base"><span class="subtitle">Members</span><li><a href="View.Base.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Base"><li></li></ul><ul class="sublist methods View.Base"><span class="subtitle">Methods</span><li><a href="View.Base.html#addView">addView</a></li><li><a href="View.Base.html#createEventData">createEventData</a></li><li><a href="View.Base.html#createView">createView</a></li><li><a href="View.Base.html#destroy">destroy</a></li><li><a href="View.Base.html#destroyChildren">destroyChildren</a></li><li><a href="View.Base.html#error">error</a></li><li><a href="View.Base.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Base.Painter"><span class="title"><span class="p-item">View.Base.</span><a href="View.Base.Painter.html">Painter</a></span><span class="icon blue static">static</span><ul class="sublist members View.Base.Painter"><span class="subtitle">Members</span><li><a href="View.Base.Painter.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Base.Painter"><li></li></ul><ul class="sublist methods View.Base.Painter"><span class="subtitle">Methods</span><li><a href="View.Base.Painter.html#addView">addView</a></li><li><a href="View.Base.Painter.html#attachHandler">attachHandler</a></li><li><a href="View.Base.Painter.html#createEventData">createEventData</a></li><li><a href="View.Base.Painter.html#createView">createView</a></li><li><a href="View.Base.Painter.html#destroy">destroy</a></li><li><a href="View.Base.Painter.html#destroyChildren">destroyChildren</a></li><li><a href="View.Base.Painter.html#detachHandler">detachHandler</a></li><li><a href="View.Base.Painter.html#error">error</a></li><li><a href="View.Base.Painter.html#getHtml">getHtml</a></li><li><a href="View.Base.Painter.html#initialize">initialize</a></li><li><a href="View.Base.Painter.html#initializeEventHandler">initializeEventHandler</a></li></ul></li><li class="item" id="View.Base.Painter.Cell"><span class="title"><span class="p-item">View.Base.Painter.</span><a href="View.Base.Painter.Cell.html">Cell</a></span><span class="icon blue static">static</span><ul class="sublist members View.Base.Painter.Cell"><span class="subtitle">Members</span><li><a href="View.Base.Painter.Cell.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Base.Painter.Cell.html#eventHandler">eventHandler</a></li><li><a href="View.Base.Painter.Cell.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Base.Painter.Cell.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Base.Painter.Cell"><li></li></ul><ul class="sublist methods View.Base.Painter.Cell"><span class="subtitle">Methods</span><li><a href="View.Base.Painter.Cell.html#addView">addView</a></li><li><a href="View.Base.Painter.Cell.html#attachHandler">attachHandler</a></li><li><a href="View.Base.Painter.Cell.html#createEventData">createEventData</a></li><li><a href="View.Base.Painter.Cell.html#createView">createView</a></li><li><a href="View.Base.Painter.Cell.html#destroy">destroy</a></li><li><a href="View.Base.Painter.Cell.html#destroyChildren">destroyChildren</a></li><li><a href="View.Base.Painter.Cell.html#detachHandler">detachHandler</a></li><li><a href="View.Base.Painter.Cell.html#error">error</a></li><li><a href="View.Base.Painter.Cell.html#focusIn">focusIn</a></li><li><a href="View.Base.Painter.Cell.html#focusOut">focusOut</a></li><li><a href="View.Base.Painter.Cell.html#getAttributes">getAttributes</a></li><li><a href="View.Base.Painter.Cell.html#getColumnModel">getColumnModel</a></li><li><a href="View.Base.Painter.Cell.html#getColumnName">getColumnName</a></li><li><a href="View.Base.Painter.Cell.html#getContentHtml">getContentHtml</a></li><li><a href="View.Base.Painter.Cell.html#getEditType">getEditType</a></li><li><a href="View.Base.Painter.Cell.html#getHtml">getHtml</a></li><li><a href="View.Base.Painter.Cell.html#getRowKey">getRowKey</a></li><li><a href="View.Base.Painter.Cell.html#initialize">initialize</a></li><li><a href="View.Base.Painter.Cell.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Base.Painter.Cell.html#onModelChange">onModelChange</a></li><li><a href="View.Base.Painter.Cell.html#redraw">redraw</a></li><li><a href="View.Base.Painter.Cell.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Base.Painter.Cell.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.CellFactory"><span class="title"><span class="p-item">View.</span><a href="View.CellFactory.html">CellFactory</a></span><span class="icon blue static">static</span><ul class="sublist methods View.CellFactory"><span class="subtitle">Methods</span><li><a href="View.CellFactory.html#attachHandler">attachHandler</a></li><li><a href="View.CellFactory.html#detachHandler">detachHandler</a></li><li><a href="View.CellFactory.html#getInstance">getInstance</a></li><li><a href="View.CellFactory.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Clipboard"><span class="title"><span class="p-item">View.</span><a href="View.Clipboard.html">Clipboard</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Clipboard"><span class="subtitle">Methods</span><li><a href="View.Clipboard.html#initialize">initialize</a></li><li><a href="View.Clipboard.html#render">render</a></li></ul></li><li class="item" id="View.Layer.Base"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Base.html">Base</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Base"><span class="subtitle">Methods</span><li><a href="View.Layer.Base.html#hide">hide</a></li><li><a href="View.Layer.Base.html#initialize">initialize</a></li><li><a href="View.Layer.Base.html#render">render</a></li><li><a href="View.Layer.Base.html#show">show</a></li></ul></li><li class="item" id="View.Layer.Empty"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Empty.html">Empty</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Empty"><span class="subtitle">Methods</span><li><a href="View.Layer.Empty.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layer.Loading"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Loading.html">Loading</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Loading"><span class="subtitle">Methods</span><li><a href="View.Layer.Loading.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layer.Ready"><span class="title"><span class="p-item">View.Layer.</span><a href="View.Layer.Ready.html">Ready</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layer.Ready"><span class="subtitle">Methods</span><li><a href="View.Layer.Ready.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layout.Body"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Body.html">Body</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Body"><span class="subtitle">Methods</span><li><a href="View.Layout.Body.html#initialize">initialize</a></li><li><a href="View.Layout.Body.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Frame"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Frame.html">Frame</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.html#afterRender">afterRender</a></li><li><a href="View.Layout.Frame.html#beforeRender">beforeRender</a></li><li><a href="View.Layout.Frame.html#initialize">initialize</a></li><li><a href="View.Layout.Frame.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Frame.Lside"><span class="title"><span class="p-item">View.Layout.Frame.</span><a href="View.Layout.Frame.Lside.html">Lside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame.Lside"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.Lside.html#beforeRender">beforeRender</a></li><li><a href="View.Layout.Frame.Lside.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layout.Frame.Rside"><span class="title"><span class="p-item">View.Layout.Frame.</span><a href="View.Layout.Frame.Rside.html">Rside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame.Rside"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.Rside.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Layout.Frame.Rside.VirtualScrollBar"><span class="title"><span class="p-item">View.Layout.Frame.Rside.</span><a href="View.Layout.Frame.Rside.VirtualScrollBar.html">VirtualScrollBar</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Frame.Rside.VirtualScrollBar"><span class="subtitle">Methods</span><li><a href="View.Layout.Frame.Rside.VirtualScrollBar.html#destroy">destroy</a></li><li><a href="View.Layout.Frame.Rside.VirtualScrollBar.html#initialize">initialize</a></li><li><a href="View.Layout.Frame.Rside.VirtualScrollBar.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Header"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Header.html">Header</a></span><span class="icon blue static">static</span><ul class="sublist members View.Layout.Header"><span class="subtitle">Members</span><li><a href="View.Layout.Header.html#template">template</a></li><li><a href="View.Layout.Header.html#templateCol">templateCol</a></li><li><a href="View.Layout.Header.html#templateHeader">templateHeader</a></li></ul><ul class="sublist division View.Layout.Header"><li></li></ul><ul class="sublist methods View.Layout.Header"><span class="subtitle">Methods</span><li><a href="View.Layout.Header.html#initialize">initialize</a></li><li><a href="View.Layout.Header.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Header.ResizeHandler"><span class="title"><span class="p-item">View.Layout.Header.</span><a href="View.Layout.Header.ResizeHandler.html">ResizeHandler</a></span><span class="icon blue static">static</span><ul class="sublist members View.Layout.Header.ResizeHandler"><span class="subtitle">Members</span><li><a href="View.Layout.Header.ResizeHandler.html#template">template</a></li></ul><ul class="sublist division View.Layout.Header.ResizeHandler"><li></li></ul><ul class="sublist methods View.Layout.Header.ResizeHandler"><span class="subtitle">Methods</span><li><a href="View.Layout.Header.ResizeHandler.html#destroy">destroy</a></li><li><a href="View.Layout.Header.ResizeHandler.html#initialize">initialize</a></li><li><a href="View.Layout.Header.ResizeHandler.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Toolbar"><span class="title"><span class="p-item">View.Layout.</span><a href="View.Layout.Toolbar.html">Toolbar</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Toolbar"><span class="subtitle">Methods</span><li><a href="View.Layout.Toolbar.html#initialize">initialize</a></li><li><a href="View.Layout.Toolbar.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Toolbar.ControlPanel"><span class="title"><span class="p-item">View.Layout.Toolbar.</span><a href="View.Layout.Toolbar.ControlPanel.html">ControlPanel</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Toolbar.ControlPanel"><span class="subtitle">Methods</span><li><a href="View.Layout.Toolbar.ControlPanel.html#initialize">initialize</a></li><li><a href="View.Layout.Toolbar.ControlPanel.html#render">render</a></li></ul></li><li class="item" id="View.Layout.Toolbar.Pagination"><span class="title"><span class="p-item">View.Layout.Toolbar.</span><a href="View.Layout.Toolbar.Pagination.html">Pagination</a></span><span class="icon blue static">static</span></li><li class="item" id="View.Layout.Toolbar.ResizeHandler"><span class="title"><span class="p-item">View.Layout.Toolbar.</span><a href="View.Layout.Toolbar.ResizeHandler.html">ResizeHandler</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Layout.Toolbar.ResizeHandler"><span class="subtitle">Methods</span><li><a href="View.Layout.Toolbar.ResizeHandler.html#destroy">destroy</a></li><li><a href="View.Layout.Toolbar.ResizeHandler.html#initialize">initialize</a></li><li><a href="View.Layout.Toolbar.ResizeHandler.html#render">render</a></li></ul></li><li class="item" id="View.Painter.Cell.List"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.List.html">List</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.List"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.List.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.List.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.List.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.List.html#getOptionList">getOptionList</a></li><li><a href="View.Painter.Cell.List.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.List.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.List.Button"><span class="title"><span class="p-item">View.Painter.Cell.List.</span><a href="View.Painter.Cell.List.Button.html">Button</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.List.Button"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.List.Button.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.List.Button.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.List.Button.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.List.Button.html#getOptionList">getOptionList</a></li><li><a href="View.Painter.Cell.List.Button.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.List.Button.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.List.Select"><span class="title"><span class="p-item">View.Painter.Cell.List.</span><a href="View.Painter.Cell.List.Select.html">Select</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.List.Select"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.List.Select.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.List.Select.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.List.Select.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.List.Select.html#getOptionList">getOptionList</a></li><li><a href="View.Painter.Cell.List.Select.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.List.Select.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.MainButton"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.MainButton.html">MainButton</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.MainButton"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.MainButton.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.MainButton.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.MainButton.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.MainButton"><li></li></ul><ul class="sublist methods View.Painter.Cell.MainButton"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.MainButton.html#addView">addView</a></li><li><a href="View.Painter.Cell.MainButton.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.MainButton.html#createView">createView</a></li><li><a href="View.Painter.Cell.MainButton.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.MainButton.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.MainButton.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#error">error</a></li><li><a href="View.Painter.Cell.MainButton.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.MainButton.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.MainButton.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.MainButton.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.MainButton.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.MainButton.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.MainButton.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.MainButton.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.MainButton.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.MainButton.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.MainButton.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.MainButton.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.MainButton.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.MainButton.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.MainButton.html#setKeyDownSwitch">setKeyDownSwitch</a></li><li><a href="View.Painter.Cell.MainButton.html#toggle">toggle</a></li></ul></li><li class="item" id="View.Painter.Cell.Normal"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.Normal.html">Normal</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Normal"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Normal.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.Normal.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.Normal.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.Normal.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.Normal"><li></li></ul><ul class="sublist methods View.Painter.Cell.Normal"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Normal.html#addView">addView</a></li><li><a href="View.Painter.Cell.Normal.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.Normal.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.Normal.html#createView">createView</a></li><li><a href="View.Painter.Cell.Normal.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.Normal.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.Normal.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.Normal.html#error">error</a></li><li><a href="View.Painter.Cell.Normal.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Normal.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Normal.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.Normal.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.Normal.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.Normal.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Normal.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Normal.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.Normal.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.Normal.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Normal.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.Normal.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.Normal.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.Normal.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.Normal.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.Painter.Cell.Normal.Number"><span class="title"><span class="p-item">View.Painter.Cell.Normal.</span><a href="View.Painter.Cell.Normal.Number.html">Number</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Normal.Number"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Normal.Number.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.Normal.Number.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.Normal.Number.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.Normal.Number"><li></li></ul><ul class="sublist methods View.Painter.Cell.Normal.Number"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Normal.Number.html#addView">addView</a></li><li><a href="View.Painter.Cell.Normal.Number.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.Normal.Number.html#createView">createView</a></li><li><a href="View.Painter.Cell.Normal.Number.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.Normal.Number.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.Normal.Number.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#error">error</a></li><li><a href="View.Painter.Cell.Normal.Number.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Normal.Number.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.Normal.Number.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.Normal.Number.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Normal.Number.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.Normal.Number.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.Normal.Number.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.Normal.Number.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.Normal.Number.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.Painter.Cell.Text"><span class="title"><span class="p-item">View.Painter.Cell.</span><a href="View.Painter.Cell.Text.html">Text</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Text"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Text.html#_defaultKeyDownSwitch">_defaultKeyDownSwitch</a></li><li><a href="View.Painter.Cell.Text.html#eventHandler">eventHandler</a></li><li><a href="View.Painter.Cell.Text.html#redrawAttributes">redrawAttributes</a></li><li><a href="View.Painter.Cell.Text.html#setOwnProperties">setOwnProperties</a></li></ul><ul class="sublist division View.Painter.Cell.Text"><li></li></ul><ul class="sublist methods View.Painter.Cell.Text"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Text.html#addView">addView</a></li><li><a href="View.Painter.Cell.Text.html#attachHandler">attachHandler</a></li><li><a href="View.Painter.Cell.Text.html#createEventData">createEventData</a></li><li><a href="View.Painter.Cell.Text.html#createView">createView</a></li><li><a href="View.Painter.Cell.Text.html#destroy">destroy</a></li><li><a href="View.Painter.Cell.Text.html#destroyChildren">destroyChildren</a></li><li><a href="View.Painter.Cell.Text.html#detachHandler">detachHandler</a></li><li><a href="View.Painter.Cell.Text.html#error">error</a></li><li><a href="View.Painter.Cell.Text.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Text.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Text.html#getAttributes">getAttributes</a></li><li><a href="View.Painter.Cell.Text.html#getColumnModel">getColumnModel</a></li><li><a href="View.Painter.Cell.Text.html#getColumnName">getColumnName</a></li><li><a href="View.Painter.Cell.Text.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Text.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Text.html#getHtml">getHtml</a></li><li><a href="View.Painter.Cell.Text.html#getRowKey">getRowKey</a></li><li><a href="View.Painter.Cell.Text.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Text.html#initializeEventHandler">initializeEventHandler</a></li><li><a href="View.Painter.Cell.Text.html#onModelChange">onModelChange</a></li><li><a href="View.Painter.Cell.Text.html#redraw">redraw</a></li><li><a href="View.Painter.Cell.Text.html#setElementAttribute">setElementAttribute</a></li><li><a href="View.Painter.Cell.Text.html#setKeyDownSwitch">setKeyDownSwitch</a></li></ul></li><li class="item" id="View.Painter.Cell.Text.Convertible"><span class="title"><span class="p-item">View.Painter.Cell.Text.</span><a href="View.Painter.Cell.Text.Convertible.html">Convertible</a></span><span class="icon blue static">static</span><ul class="sublist members View.Painter.Cell.Text.Convertible"><span class="subtitle">Members</span><li><a href="View.Painter.Cell.Text.Convertible.html#doubleClickDuration">doubleClickDuration</a></li></ul><ul class="sublist division View.Painter.Cell.Text.Convertible"><li></li></ul><ul class="sublist methods View.Painter.Cell.Text.Convertible"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Text.Convertible.html#focusIn">focusIn</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#focusOut">focusOut</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#getContentHtml">getContentHtml</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#getEditType">getEditType</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#initialize">initialize</a></li><li><a href="View.Painter.Cell.Text.Convertible.html#setElementAttribute">setElementAttribute</a></li></ul></li><li class="item" id="View.Painter.Cell.Text.Password"><span class="title"><span class="p-item">View.Painter.Cell.Text.</span><a href="View.Painter.Cell.Text.Password.html">Password</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Painter.Cell.Text.Password"><span class="subtitle">Methods</span><li><a href="View.Painter.Cell.Text.Password.html#getEditType">getEditType</a></li></ul></li><li class="item" id="View.RowList"><span class="title"><span class="p-item">View.</span><a href="View.RowList.html">RowList</a></span><span class="icon blue static">static</span><ul class="sublist methods View.RowList"><span class="subtitle">Methods</span><li><a href="View.RowList.html#initialize">initialize</a></li><li><a href="View.RowList.html#render">render</a></li></ul></li><li class="item" id="View.Selection"><span class="title"><span class="p-item">View.</span><a href="View.Selection.html">Selection</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection"><span class="subtitle">Methods</span><li><a href="View.Selection.html#attachMouseEvent">attachMouseEvent</a></li><li><a href="View.Selection.html#createLayer">createLayer</a></li><li><a href="View.Selection.html#destroy">destroy</a></li><li><a href="View.Selection.html#detachMouseEvent">detachMouseEvent</a></li><li><a href="View.Selection.html#disable">disable</a></li><li><a href="View.Selection.html#enable">enable</a></li><li><a href="View.Selection.html#endSelection">endSelection</a></li><li><a href="View.Selection.html#getEndIndex">getEndIndex</a></li><li><a href="View.Selection.html#getIndexFromMousePosition">getIndexFromMousePosition</a></li><li><a href="View.Selection.html#getRange">getRange</a></li><li><a href="View.Selection.html#getSelectionToString">getSelectionToString</a></li><li><a href="View.Selection.html#getStartIndex">getStartIndex</a></li><li><a href="View.Selection.html#hide">hide</a></li><li><a href="View.Selection.html#initialize">initialize</a></li><li><a href="View.Selection.html#isShown">isShown</a></li><li><a href="View.Selection.html#onMouseDown">onMouseDown</a></li><li><a href="View.Selection.html#selectAll">selectAll</a></li><li><a href="View.Selection.html#show">show</a></li><li><a href="View.Selection.html#startSelection">startSelection</a></li><li><a href="View.Selection.html#updateSelection">updateSelection</a></li></ul></li><li class="item" id="View.Selection.Layer"><span class="title"><span class="p-item">View.Selection.</span><a href="View.Selection.Layer.html">Layer</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection.Layer"><span class="subtitle">Methods</span><li><a href="View.Selection.Layer.html#hide">hide</a></li><li><a href="View.Selection.Layer.html#initialize">initialize</a></li><li><a href="View.Selection.Layer.html#render">render</a></li><li><a href="View.Selection.Layer.html#show">show</a></li></ul></li><li class="item" id="View.Selection.Layer.Lside"><span class="title"><span class="p-item">View.Selection.Layer.</span><a href="View.Selection.Layer.Lside.html">Lside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection.Layer.Lside"><span class="subtitle">Methods</span><li><a href="View.Selection.Layer.Lside.html#initialize">initialize</a></li></ul></li><li class="item" id="View.Selection.Layer.Rside"><span class="title"><span class="p-item">View.Selection.Layer.</span><a href="View.Selection.Layer.Rside.html">Rside</a></span><span class="icon blue static">static</span><ul class="sublist methods View.Selection.Layer.Rside"><span class="subtitle">Methods</span><li><a href="View.Selection.Layer.Rside.html#initialize">initialize</a></li></ul></li></ul><h3>Namespaces</h3><ul class="list namespaces"><li class="item" id="ne"><span class="title"><a href="ne.html">ne</a></span></li></ul><h3>Interfaces</h3><ul class="list interfaces"><li class="item" id="View.Base.Painter.Cell.Interface"><span class="icon blue static">static</span><span class="title"><a href="View.Base.Painter.Cell.Interface.html">Interface</a></span><ul class="sublist methods View.Base.Painter.Cell.Interface"><span class="subtitle">Methods</span><li><a href="View.Base.Painter.Cell.Interface.html#focusIn">focusIn</a></li><li><a href="View.Base.Painter.Cell.Interface.html#getContentHtml">getContentHtml</a></li><li><a href="View.Base.Painter.Cell.Interface.html#getEditType">getEditType</a></li><li><a href="View.Base.Painter.Cell.Interface.html#setElementAttribute">setElementAttribute</a></li></ul></li></ul><h3>Global</h3><ul class="list globals"><li class="item" id="AddOn"><span class="title"><a href="global.html#AddOn">AddOn</a></span></li><li class="item" id="Collection"><span class="title"><a href="global.html#Collection">Collection</a></span></li><li class="item" id="Data"><span class="title"><a href="global.html#Data">Data</a></span></li><li class="item" id="getFormElement"><span class="title"><a href="global.html#getFormElement">getFormElement</a></span></li><li class="item" id="Model"><span class="title"><a href="global.html#Model">Model</a></span></li><li class="item" id="setFormData"><span class="title"><a href="global.html#setFormData">setFormData</a></span></li><li class="item" id="Util"><span class="title"><a href="global.html#Util">Util</a></span><ul class="sublist members Util"><span class="subtitle">Members</span><li><a href="global.html#Util#.form">form</a></li></ul><ul class="sublist division Util"><li></li></ul><ul class="sublist methods Util"><span class="subtitle">Methods</span><li><a href="global.html#Util#.convertValueType">convertValueType</a></li><li><a href="global.html#Util#.getAttributesString">getAttributesString</a></li><li><a href="global.html#Util#.getDisplayRowCount">getDisplayRowCount</a></li><li><a href="global.html#Util#.getHeight">getHeight</a></li><li><a href="global.html#Util#.getRowHeight">getRowHeight</a></li><li><a href="global.html#Util#.getUniqueKey">getUniqueKey</a></li><li><a href="global.html#Util#.isEqual">isEqual</a></li><li><a href="global.html#Util#.stripTags">stripTags</a></li><li><a href="global.html#Util#.sum">sum</a></li><li><a href="global.html#Util#.template">template</a></li><li><a href="global.html#Util#.toQueryObject">toQueryObject</a></li><li><a href="global.html#Util#.toQueryString">toQueryString</a></li></ul></li><li class="item" id="View"><span class="title"><a href="global.html#View">View</a></span><ul class="sublist members View"><span class="subtitle">Members</span><li><a href="global.html#View#.Layer">Layer</a></li><li><a href="global.html#View#.Layout">Layout</a></li><li><a href="global.html#View#.Painter">Painter</a></li></ul></li></ul></div>
+        <div id="main" class="main">
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview CellPainter 의 기초 클래스
+ * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ */
+    /**
+     * Cell Painter Base
+     * @extends {View.Base.Painter}
+     * @constructor View.Base.Painter.Cell
+     */
+    View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Cell.prototype*/{
+        /**
+         * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
+         */
+        redrawAttributes: ['isEditable', 'optionList', 'value'],
+
+        /**
+         * keyDownEvent 발생시 기본 동작 switch
+         */
+        _defaultKeyDownSwitch: {
+            'ESC': function(keyDownEvent, param) {
+                this.focusOut(param.$target);
+            },
+            'ENTER': function(keyDownEvent, param) {
+                this.focusOut(param.$target);
+            },
+            'TAB': function(keyDownEvent, param) {
+//                this.grid.focusClipboard();
+                if (keyDownEvent.shiftKey) {
+                    //이전 cell 로 focus 이동 후 편집모드로 전환
+                    this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                } else {
+                    //이후 cell 로 focus 이동 후 편집모드로 전환
+                    this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                }
+            },
+            'defaultAction': function(keyDownEvent, param) {
+            }
+        },
+        /**
+         * event handler
+         */
+        eventHandler: {},
+        /**
+         * 생성자 함수
+         */
+        initialize: function() {
+            View.Base.Painter.prototype.initialize.apply(this, arguments);
+            this.initializeEventHandler();
+            this.setOwnProperties({
+                _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
+            });
+        },
+
+        /**
+         * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $tr  tr 에 해당하는 jquery 로 감싼 html 엘리먼트
+         */
+        onModelChange: function(cellData, $tr) {
+            var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
+                isRedraw = false,
+                hasFocusedElement;
+
+            ne.util.forEachArray(this.redrawAttributes, function(attribute) {
+                if ($.inArray(attribute, cellData.changed) !== -1) {
+                    isRedraw = true;
+                    return false;
+                }
+            }, this);
+
+            $td.attr('class', this._getClassNameList(cellData).join(' '));
+            try {
+                /*
+                IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
+                 */
+                hasFocusedElement = !!($td.find(':focus').length);
+            } catch (e) {
+                hasFocusedElement = false;
+            }
+
+            if (isRedraw) {
+                this.redraw(cellData, $td, hasFocusedElement);
+                if (hasFocusedElement) {
+                    this.focusIn($td);
+                }
+            } else {
+                this.setElementAttribute(cellData, $td, hasFocusedElement);
+            }
+        },
+        /**
+         * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
+         * @param {Event} keyDownEvent  이벤트 객체
+         * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
+         * _keyDownSwitch 에서 사용될 공통 파라미터 객체
+         * @private
+         */
+        _getParamForKeyDownSwitch: function(keyDownEvent) {
+            var grid = this.grid,
+                keyCode = keyDownEvent.keyCode || keyDownEvent.which,
+                focused = grid.focusModel.which(),
+                rowKey = focused.rowKey,
+                columnName = focused.columnName;
+            return {
+                keyDownEvent: keyDownEvent,
+                $target: $(keyDownEvent.target),
+                focusModel: grid.focusModel,
+                rowKey: rowKey,
+                columnName: columnName,
+                keyName: grid.keyName[keyCode]
+            };
+        },
+        /**
+         * keyDownSwitch 를 수행한다.
+         * @param {Event} keyDownEvent 이벤트 객체
+         * @return {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
+         * @private
+         */
+        _executeKeyDownSwitch: function(keyDownEvent) {
+            var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
+                keyName = this.grid.keyName[keyCode],
+                param = this._getParamForKeyDownSwitch(keyDownEvent);
+            (this._keyDownSwitch[keyName] || this._keyDownSwitch['defaultAction']).call(this, keyDownEvent, param);
+            return !!this._keyDownSwitch[keyName];
+        },
+        /**
+         * keyDownSwitch 에 정의된 액션을 override 한다.
+         *
+         * @param {(String|Object)} keyName  정의된 key 이름. Object 형태일 경우 기존 keyDownSwitch 를 확장한다.
+         * @param {function} [fn] keyDown 이 발생하였을 경우 수행할 액션
+         */
+        setKeyDownSwitch: function(keyName, fn) {
+            if (typeof keyName === 'object') {
+                this._keyDownSwitch = $.extend(this._keyDownSwitch, keyName);
+            } else {
+                this._keyDownSwitch[keyName] = fn;
+            }
+        },
+
+        /**
+         * keyDown 이벤트 핸들러
+         * @param {event} keyDownEvent  이벤트 객체
+         * @private
+         */
+        _onKeyDown: function(keyDownEvent) {
+            if (this._executeKeyDownSwitch(keyDownEvent)) {
+                keyDownEvent.preventDefault();
+            }
+        },
+        /**
+         * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Array} 생성된 css 디자인 클래스 배열
+         * @private
+         */
+        _getClassNameList: function(cellData) {
+            var focused = this.grid.focusModel.which(),
+                columnName = cellData.columnName,
+                focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
+                classNameList = [],
+                classNameMap = {},
+                privateColumnMap = {
+                    '_button': true,
+                    '_number': true
+                },
+                isPrivateColumnName = !!privateColumnMap[columnName];
+
+            if (focusedRowKey === cellData.rowKey) {
+                classNameMap['selected'] = true;
+                if (focused.columnName === columnName) {
+                    classNameMap['focused'] = true;
+                }
+            }
+            if (cellData.className) {
+                classNameMap[cellData.className] = true;
+            }
+
+            if (cellData.isEditable &amp;&amp; !isPrivateColumnName) {
+                classNameMap['editable'] = true;
+            }
+
+            if (cellData.isDisabled) {
+                classNameMap['disabled'] = true;
+            }
+
+            ne.util.forEach(classNameMap, function(val, className) {
+                classNameList.push(className);
+            });
+
+            return classNameList;
+        },
+        /**
+         * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
+         * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+         * @private
+         */
+        _getContentHtml: function(cellData) {
+            var columnName = cellData.columnName,
+                columnModel = this.grid.columnModel.getColumnModel(columnName),
+                editOption = columnModel.editOption,
+                content;
+
+            //if (!ne.util.isNumber(cellData.value) &amp;&amp; !cellData.value) {
+            if (!ne.util.isExisty(cellData.value)) {
+                cellData.value = columnModel.defaultValue;
+            }
+
+            content = this.getContentHtml(cellData);
+            if (editOption) {
+                if (editOption.beforeText) {
+                    content = columnModel.editOption.beforeText + content;
+                }
+                if (editOption.afterText) {
+                    content = content + columnModel.editOption.afterText;
+                }
+            }
+            return content;
+        },
+        /**
+         * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
+         * td 단위의 html 문자열을 반환한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {string} td 마크업 문자열
+         */
+        getHtml: function(cellData) {
+            var attributeString = Util.getAttributesString(this.getAttributes(cellData)),
+                htmlArr = [];
+
+            htmlArr.push('&lt;td');
+            htmlArr.push(' columnName="');
+            htmlArr.push(cellData.columnName);
+            htmlArr.push('" ');
+            htmlArr.push(cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '');
+            htmlArr.push(' class="');
+            htmlArr.push(this._getClassNameList(cellData).join(' '));
+            htmlArr.push('" ');
+            htmlArr.push(attributeString);
+            htmlArr.push(' edit-type="');
+            htmlArr.push(this.getEditType());
+            htmlArr.push('">');
+            htmlArr.push(this._getContentHtml(cellData));
+            htmlArr.push('&lt;/td>');
+            return htmlArr.join('');
+        },
+        /**
+         * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
+         */
+        redraw: function(cellData, $td) {
+            this.detachHandler($td);
+            var attributes = {
+                'class': this._getClassNameList(cellData).join(' ')
+            };
+            if (cellData.rowSpan) {
+                attributes['rowSpan'] = cellData.rowSpan;
+            }
+            attributes['edit-type'] = this.getEditType();
+            attributes = $.extend(attributes, this.getAttributes(cellData));
+            $td.attr(attributes);
+            $td.html(this._getContentHtml(cellData));
+            this.attachHandler($td);
+        },
+        /**
+         * 인자로 받은 element 의 cellData 를 반환한다.
+         * @param {jQuery} $target  조회할 엘리먼트
+         * @return {Object} 조회한 cellData 정보
+         * @private
+         */
+        _getCellData: function($target) {
+            var cellData = this._getCellAddress($target);
+            return this.grid.renderModel.getCellData(cellData.rowKey, cellData.columnName);
+        },
+        /**
+         * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
+         * @private
+         */
+        _getCellAddress: function($target) {
+            return {
+                rowKey: this.getRowKey($target),
+                columnName: this.getColumnName($target)
+            };
+        },
+        /**
+         * 인자로 받은 element 로 부터 columnName 을 반환한다.
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {String} 컬럼명
+         */
+        getColumnName: function($target) {
+            return $target.closest('td').attr('columnName');
+        },
+        /**
+         * 인자로 받은 element 로 부터 rowKey 를 반환한다.
+         * @param {jQuery} $target 조회할 엘리먼트
+         * @return {String} 행의 키값
+         */
+        getRowKey: function($target) {
+            return $target.closest('tr').attr('key');
+        },
+        /**
+         * columnModel 을 반환한다.
+         * @param {object} cellData Model 의 셀 데이터
+         * @return {*|Object} 컬럼모델
+         */
+        getColumnModel: function(cellData) {
+            return this.grid.columnModel.getColumnModel(cellData.columnName);
+        },
+        /**
+         * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
+         * @param {Object} cellData Model 의 셀 데이터
+         * @return {Object} td 에 지정할 attribute 데이터
+         */
+        getAttributes: function(cellData) {
+            var columnModel = this.getColumnModel(cellData);
+            return {
+                align: columnModel.align || 'left'
+            };
+        },
+        /**
+         * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
+         * - 필요에 따라 override 한다.
+         * @param {jQuery} $td 해당 cell 엘리먼트
+         */
+        focusOut: function($td) {
+            this.grid.focusClipboard();
+        },
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * - 자기 자신의 인스턴스의 editType 을 반환한다.
+         * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+         */
+        getEditType: function() {
+            return 'normal';
+        },
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+         * @param {jQuery} $td 해당 cell 엘리먼트
+         */
+        focusIn: function($td) {},
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * Cell data 를 인자로 받아 &lt;td> 안에 들아갈 html string 을 반환한다.
+         * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+         * @param {object} cellData 모델의 셀 데이터
+         * @return  {string} html 마크업 문자열
+         * @example
+         * var html = this.getContentHtml();
+         * &lt;select>
+         *     &lt;option value='1'>option1&lt;/option>
+         *     &lt;option value='2'>option1&lt;/option>
+         *     &lt;option value='3'>option1&lt;/option>
+         * &lt;/select>
+         */
+        getContentHtml: function(cellData) {
+            return '';
+        },
+        /**
+         * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
+         * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+         * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+         * @param {object} cellData 모델의 셀 데이터
+         * @param {jquery} $td 해당 cell 엘리먼트
+         * @param {Boolean} hasFocusedElement 해당 셀에 실제 focuse 된 엘리먼트가 존재하는지 여부
+         */
+        setElementAttribute: function(cellData, $td, hasFocusedElement) {}
+
+    });
+
+
+    /**
+     * Cell Painter 추가 시 반드시 필요한 Interface 정의
+     * @interface
+     */
+    View.Base.Painter.Cell.Interface = function() {};
+    /**
+     * 자기 자신의 인스턴스의 editType 을 반환한다.
+     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     */
+    View.Base.Painter.Cell.Interface.prototype.getEditType = function() {};
+    /**
+     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
+     * @param {jQuery} $td 해당 cell 엘리먼트
+     */
+    View.Base.Painter.Cell.Interface.prototype.focusIn = function($td) {};
+    /**
+     * Cell data 를 인자로 받아 &lt;td> 안에 들아갈 html string 을 반환한다.
+     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
+     * @param {object} cellData 모델의 셀 데이터
+     * @return  {string} html 마크업 문자열
+     * @example
+     * var html = this.getContentHtml();
+     * &lt;select>
+     *     &lt;option value='1'>option1&lt;/option>
+     *     &lt;option value='2'>option1&lt;/option>
+     *     &lt;option value='3'>option1&lt;/option>
+     * &lt;/select>
+     */
+    View.Base.Painter.Cell.Interface.prototype.getContentHtml = function(cellData) {};
+    /**
+     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
+     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
+     * @param {object} cellData 모델의 셀 데이터
+     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
+     */
+    View.Base.Painter.Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
+</code></pre>
+        </article>
+    </section>
+
+
+
+</div>
+        <div class="clearfix"></div>
+    </div>
+
+</div>
+<script>
+(function() {
+// 영역 height 설정
+var height = (window.innerHeight || document.documentElement.clientHeight || document.getElementByTagName('body')[0].clientHeight) - 50;
+var navigation = document.getElementById('navigation');
+var main = document.getElementById('main');
+navigation.style.height = height + 'px';
+main.style.height = height + 'px';
+
+// IE 7,8을 위한 getElementsByClassName 구현
+var getElementsByClassName = function(className, parentElement) {
+	if(document.getElementsByClassName) {
+		return (parentElement || document).getElementsByClassName(className);
+	}
+
+    var regEx = new RegExp('(^| )'+className+'( |$)');
+	var nodes = new Array();
+    var elements = (parentElement || document.body).getElementsByTagName("*");
+    for(var i = 0, len = elements.length; i < len ; i++) {
+        if(regEx.test(elements[i].className)) {
+			nodes.push(elements[i]);
+		}
+	}
+	elements = null;
+    return nodes;
+}
+
+// url 파싱후 해당 카테고리만 display:block 처리
+var url = location.href;
+var path = url.lastIndexOf('/');
+var fileName = url.substring(path+1);
+var fullName = fileName.split('.');
+fullName.length -= 1;
+fullName = fullName.join('.');
+fullName = fullName.split('-');
+fullName = fullName[fullName.length - 1];
+var lnbList = getElementsByClassName(fullName);
+if(lnbList.length && lnbList.length > 0) {
+    for(var i = 0, len = lnbList.length; i < len; i++) {
+        lnbList[i].className += ' selected';
+    }
+}
+
+var title = document.getElementById(fullName);
+if(title) {
+    title.className += ' selected';
+    title.innerHTML = '<span class="arrow">▶</span>' + title.innerHTML;
+
+    var static = getElementsByClassName('static', title);
+    if(static) {
+        static[0].className += ' selected';
+    }
+}
+})();
+</script>
+<script type="text/javascript" src="scripts/prettify/prettify.js"></script>
+<script type="text/javascript" src="scripts/prettify/lang-css.js"></script>
+<script type="text/javascript">prettyPrint();</script>
+<script type="text/javascript" src="scripts/linenumber.js"></script>
+</body>
+</html>
