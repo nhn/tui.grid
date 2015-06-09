@@ -36,5 +36,6 @@ https://github.nhnent.com/fe/application-grid/wiki/어플리케이션-그리드
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://github.nhnent.com/pages/fe/application-grid/1.0.0a">1.0.0a</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://github.nhnent.com/pages/fe/application-grid/1.0.0">1.0.0</a> | 배포 | 2015.05 | FE개발팀 <e0242@nhnent.com> |
 | 0.9.0 | 최초개발 | 2014.11 | 박순영 |
