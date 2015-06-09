@@ -440,7 +440,7 @@
                 dataParam = this._getDataParam(requestType, newOptions),
                 param;
 
-            if (this._isConfirmed(requestType, dataParam.count)) {
+            if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
                 param = {
                     requestType: requestType,
                     url: newOptions.url,

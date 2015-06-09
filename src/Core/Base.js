@@ -189,12 +189,12 @@
         createEventData: function(data) {
             var eventData = $.extend({}, data);
             eventData.stop = function() {
-                this._isStoped = true;
+                this._isStopped = true;
             };
             eventData.isStopped = function() {
-                return this._isStoped;
+                return this._isStopped;
             };
-            eventData._isStoped = eventData._isStoped || false;
+            eventData._isStopped = eventData._isStopped || false;
             return eventData;
         },
         /**
@@ -223,7 +223,6 @@
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
-            this.initializeEventHandler();
         },
         /**
          * eventHandler 를 미리 parsing 하여 들고있는다.
@@ -286,5 +285,3 @@
             throw this.error('implement getHtml() method');
         }
     });
-
-
