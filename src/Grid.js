@@ -21,6 +21,7 @@
      *      각 컬럼에 보여줘야 할 내용이 많을 경우 rowHeight값을 크게 지정하여야 모든 내용을 표시할 수 있다.
      *      @param {number} [options.displayRowCount=10] 그리드에 표시될 행의 개수를 지정하며, 이 값에 따라 그리드의 높이가 자동으로 계산된다
      *      @param {number} [options.minimumColumnWidth=50] 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
+     *      @param {boolean} [options.useClientSort] 정렬시 서버데이터를 사용하지 않고 클라이언트가 직접 정렬할지 여부
      *      @param {boolean} [options.scrollX=true] 수평 스크롤바 사용 여부.
      *      @param {boolean} [options.scrollY=true] 수직 스크롤바 사용 여부.
      *      @param {string} [options.keyColumnName=null] 각각의 데이터를 구분지을 수 있는 키 값의 필드명(=privateKey).

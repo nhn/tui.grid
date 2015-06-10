@@ -26,7 +26,8 @@
             });
             this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
                 .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this);
+                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this)
+                .listenTo(this.grid.dataModel, 'sortChanged', this._updateBtnSortState, this);
         },
 
         /**
@@ -49,7 +50,7 @@
         '<%if(rowspan > 0) {%>' +
         'rowspan=<%=rowspan%> ' +
         '<%}%>' +
-        '><%=title%></th>' +
+        '><%=title%><%=btnSort%></th>' +
         ''),
         /**
          * <col> 템플릿
@@ -59,6 +60,12 @@
         'columnname="<%=columnName%>" ' +
         'style="width:<%=width%>px">' +
         ''),
+
+        /**
+         * 정렬 버튼을 위한 HTML 마크업
+         */
+        markupBtnSort: '<span class="sort"><a class="btn_sorting"></a></span>',
+
         /**
          * col group 마크업을 생성한다.
          *
@@ -150,16 +157,35 @@
          * @private
          */
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target);
+            var $target = $(clickEvent.target),
+                columnName = $target.closest('th').attr('columnname');
 
             /* istanbul ignore else */
-            if ($target.closest('th').attr('columnname') === '_button' && $target.is('input')) {
+            if (columnName === '_button' && $target.is('input')) {
                 if ($target.prop('checked')) {
                     this.grid.checkAll();
                 } else {
                     this.grid.uncheckAll();
                 }
             }
+
+            if ($target.is('a.btn_sorting')) {
+                this.grid.sort(columnName);
+            }
+        },
+        /**
+         * 정렬 버튼의 상태를 변경한다.
+         * @private
+         * @param {object} sortOptions 정렬 옵션
+         * @param {string} sortOptions.columnName 정렬할 컬럼명
+         * @param {boolean} sortOptions.isAscending 오름차순 여부
+         */
+        _updateBtnSortState: function(sortOptions) {
+            if (this._$currentSortBtn) {
+                this._$currentSortBtn.removeClass('sorting_down sorting_up');
+            }
+            this._$currentSortBtn = this.$el.find('th[columnname=' + sortOptions.columnName + '] a.btn_sorting');
+            this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
         },
 
         /**
@@ -253,7 +279,8 @@
                         height: height,
                         colspan: colSpanList[j],
                         rowspan: rowSpan,
-                        title: columnModel['title']
+                        title: columnModel.title,
+                        btnSort: columnModel.isSortable ? this.markupBtnSort : ''
                     }));
                 }, this);
             }, this);
