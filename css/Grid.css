@@ -50,9 +50,9 @@
 .uio_grid table{border:0;table-layout:fixed;background-color:#ccc;border-collapse:separate;border-spacing:1px;margin:0}
 .uio_grid table th{overflow:hidden;white-space:nowrap;*white-space:pre;text-align:center;padding:0;border:0}
 .uio_grid table th .sort a{color:#555;text-decoration:none}
-.uio_grid table th .sort .btn_sorting{display:inline-block;overflow:hidden;margin-left:6px;height:16px;width:10px;background:url(../images/sp_btn2.gif) -40px -20px no-repeat;font-size:0;line-height:999px;vertical-align:middle;cursor:pointer;}
-.uio_grid table th .sort .sorting_down{height:16px;width:10px;background-position:0 -20px}
-.uio_grid table th .sort .sorting_up{height:16px;width:10px;background-position:-20px -20px}
+.uio_grid table th .btn_sorting{display:inline-block;overflow:hidden;margin-left:6px;height:16px;width:10px;background:url(../images/sp_btn2.gif) -40px -20px no-repeat;font-size:0;line-height:999px;vertical-align:middle;cursor:pointer;}
+.uio_grid table th .sorting_down{height:16px;width:10px;background-position:0 -20px}
+.uio_grid table th .sorting_up{height:16px;width:10px;background-position:-20px -20px}
 .uio_grid table tr.selected{background-color:#f8f8f8}
 .uio_grid table tr.disabled{color:#b0b0b0}
 .uio_grid table tr.invalidated{background-color:#ffe1e1}

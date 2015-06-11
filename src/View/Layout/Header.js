@@ -64,7 +64,7 @@
         /**
          * 정렬 버튼을 위한 HTML 마크업
          */
-        markupBtnSort: '<span class="sort"><a class="btn_sorting"></a></span>',
+        markupBtnSort: '<a class="btn_sorting"></a>',
 
         /**
          * col group 마크업을 생성한다.
