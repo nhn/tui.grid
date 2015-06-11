@@ -356,7 +356,7 @@
                 sortOptions: {
                     columnName: 'rowKey',
                     isAscending: true,
-                    useClient: options.useClientSort
+                    useClient: (ne.util.isBoolean(options.useClientSort) ? options.useClientSort : true)
                 }
             });
             // 클라이언트의 정렬기능을 사용하지 않는 경우, 서버 데이터는 항상 rowKey가 순서대로 재설정 되어 넘어오기 때문에
@@ -366,7 +366,6 @@
             }
 
             this.on('change', this._onChange, this);
-            this.on('sync', this._onSync, this);
         },
         /**
          * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
@@ -573,14 +572,11 @@
                 isAscending = true;
             }
 
-            if (options.columnName !== columnName) {
-                options.columnName = columnName;
+            if (options.columnName !== columnName || options.isAscending !== isAscending) {
                 isChanged = true;
             }
-            if (options.isAscending !== isAscending) {
-                options.isAscending = isAscending;
-                isChanged = true;
-            }
+            options.columnName = columnName;
+            options.isAscending = isAscending;
 
             if (isChanged) {
                 this.trigger('sortChanged', {
