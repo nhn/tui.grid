@@ -1,5 +1,6 @@
 'use strict';
 
+/* global Core */
 describe('grid.normal.test', function() {
     var grid,
         $empty,

@@ -345,7 +345,6 @@
         initialize: function(models, options) {
             Collection.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
-                sortKey: 'rowKey',
                 originalRowList: [],
                 originalRowMap: {},
                 startIndex: options.startIndex || 1,
@@ -353,8 +352,19 @@
                     '_button',
                     '_number',
                     '_extraData'
-                ]
+                ],
+                sortOptions: {
+                    columnName: 'rowKey',
+                    isAscending: true,
+                    useClient: (ne.util.isBoolean(options.useClientSort) ? options.useClientSort : true)
+                }
             });
+            // 클라이언트의 정렬기능을 사용하지 않는 경우, 서버 데이터는 항상 rowKey가 순서대로 재설정 되어 넘어오기 때문에
+            // 현재 설정된 sortColumnName과 isSortAscending 값에 관계없이 rowKey를 사용해 정렬한다.
+            if (!this.sortOptions.useClient) {
+                this.comparator = 'rowKey';
+            }
+
             this.on('change', this._onChange, this);
         },
         /**
@@ -539,21 +549,60 @@
             return !this.isSortedByField();
         },
         /**
-         * 현재 정렬된 상태인지 여부를 반환한다.
+         * 현재 RowKey가 아닌 다른 컬럼에 의해 정렬된 상태인지 여부를 반환한다.
          * @return {Boolean}    정렬된 상태인지 여부
          */
         isSortedByField: function() {
-            return this.sortKey !== 'rowKey';
+            return this.sortOptions.columnName !== 'rowKey';
         },
         /**
-         * sorting 한다.
-         * @param {string} fieldName 정렬할 column 의 이름
+         * 정렬옵션 객체의 값을 변경하고, 변경된 값이 있을 경우 sortChanged 이벤트를 발생시킨다.
+         * @param {string} columnName 정렬할 컬럼명
+         * @param {boolean} isAscending 오름차순 여부
+         * @param {boolean} isRequireFetch 서버 데이타의 갱신이 필요한지 여부
          */
-        sortByField: function(fieldName) {
-            this.sortKey = fieldName;
-            this.sort();
-        },
+        setSortOptionValues: function(columnName, isAscending, isRequireFetch) {
+            var options = this.sortOptions,
+                isChanged = false;
 
+            if (ne.util.isUndefined(columnName)) {
+                columnName = 'rowKey';
+            }
+            if (ne.util.isUndefined(isAscending)) {
+                isAscending = true;
+            }
+
+            if (options.columnName !== columnName || options.isAscending !== isAscending) {
+                isChanged = true;
+            }
+            options.columnName = columnName;
+            options.isAscending = isAscending;
+
+            if (isChanged) {
+                this.trigger('sortChanged', {
+                    columnName: columnName,
+                    isAscending: isAscending,
+                    isRequireFetch: isRequireFetch
+                });
+            }
+        },
+        /**
+         * 주어진 컬럼명을 기준으로 오름/내림차순 정렬한다.
+         * @param {string} columnName 정렬할 컬럼명
+         * @param {boolean} isAscending 오름차순 여부
+         */
+        sortByField: function(columnName, isAscending) {
+            var options = this.sortOptions;
+
+            if (ne.util.isUndefined(isAscending)) {
+                isAscending = (options.columnName === columnName) ? !options.isAscending : true;
+            }
+            this.setSortOptionValues(columnName, isAscending, !options.useClient);
+
+            if (options.useClient) {
+                this.sort();
+            }
+        },
         /**
          * rowList 를 반환한다.
          * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
@@ -696,14 +745,28 @@
         },
 
         /**
-         * Backbone 에서 sort 연산을 위해 구현되어야 하는 interface
-         * @param {object} row row 모델
-         * @return {number}
+         * Backbone 에서 sort() 실행시 내부적으로 사용되는 메소드.
+         * @param {Data.Row} a 비교할 앞의 모델
+         * @param {Data.Row} b 비교할 뒤의 모델
+         * @return {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
          */
-        comparator: function(row) {
-            if (this.isSortedByField()) {
-                return +row.get(this.sortKey);
+        comparator: function(a, b) {
+            var columnName = this.sortOptions.columnName,
+                isAscending = this.sortOptions.isAscending,
+                valueA = a.get(columnName),
+                valueB = b.get(columnName),
+                result = 0;
+
+            if (valueA < valueB) {
+                result = -1;
+            } else if (valueA > valueB) {
+                result = 1;
             }
+
+            if (!isAscending) {
+                result = -result;
+            }
+            return result;
         },
         /**
          * row 의 extraData 를 변경한다.

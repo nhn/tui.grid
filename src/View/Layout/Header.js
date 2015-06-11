@@ -11,11 +11,11 @@
         className: 'header',
         whichSide: 'R',
         events: {
-            'click' : '_onClick'
+            click: '_onClick'
         },
         /**
          * 초기화 메서드
-         * @param {Object} options
+         * @param {Object} options 옵션
          *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
          */
         initialize: function(options) {
@@ -26,9 +26,10 @@
             });
             this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
                 .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this);
-
+                .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this)
+                .listenTo(this.grid.dataModel, 'sortChanged', this._updateBtnSortState, this);
         },
+
         /**
          * 전체 template
          */
@@ -49,7 +50,7 @@
         '<%if(rowspan > 0) {%>' +
         'rowspan=<%=rowspan%> ' +
         '<%}%>' +
-        '><%=title%></th>' +
+        '><%=title%><%=btnSort%></th>' +
         ''),
         /**
          * <col> 템플릿
@@ -59,6 +60,12 @@
         'columnname="<%=columnName%>" ' +
         'style="width:<%=width%>px">' +
         ''),
+
+        /**
+         * 정렬 버튼을 위한 HTML 마크업
+         */
+        markupBtnSort: '<a class="btn_sorting"></a>',
+
         /**
          * col group 마크업을 생성한다.
          *
@@ -150,21 +157,40 @@
          * @private
          */
         _onClick: function(clickEvent) {
-            var $target = $(clickEvent.target);
+            var $target = $(clickEvent.target),
+                columnName = $target.closest('th').attr('columnname');
 
             /* istanbul ignore else */
-            if ($target.closest('th').attr('columnname') === '_button' && $target.is('input')) {
+            if (columnName === '_button' && $target.is('input')) {
                 if ($target.prop('checked')) {
                     this.grid.checkAll();
                 } else {
                     this.grid.uncheckAll();
                 }
             }
+
+            if ($target.is('a.btn_sorting')) {
+                this.grid.sort(columnName);
+            }
+        },
+        /**
+         * 정렬 버튼의 상태를 변경한다.
+         * @private
+         * @param {object} sortOptions 정렬 옵션
+         * @param {string} sortOptions.columnName 정렬할 컬럼명
+         * @param {boolean} sortOptions.isAscending 오름차순 여부
+         */
+        _updateBtnSortState: function(sortOptions) {
+            if (this._$currentSortBtn) {
+                this._$currentSortBtn.removeClass('sorting_down sorting_up');
+            }
+            this._$currentSortBtn = this.$el.find('th[columnname=' + sortOptions.columnName + '] a.btn_sorting');
+            this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
         },
 
         /**
          * 랜더링
-         * @return {View.Layout.Header}
+         * @return {View.Layout.Header} this
          */
         render: function() {
             this.destroyChildren();
@@ -223,7 +249,6 @@
                 colSpanList = [],
                 rowHeight = Util.getRowHeight(maxRowCount, headerHeight) - 1,
                 rowSpan = 1,
-                title,
                 height,
                 headerMarkupList;
 
@@ -254,7 +279,8 @@
                         height: height,
                         colspan: colSpanList[j],
                         rowspan: rowSpan,
-                        title: columnModel['title']
+                        title: columnModel.title,
+                        btnSort: columnModel.isSortable ? this.markupBtnSort : ''
                     }));
                 }, this);
             }, this);
@@ -328,7 +354,7 @@
         tagName: 'div',
         className: 'resize_handle_container',
         events: {
-            'mousedown .resize_handle' : '_onMouseDown',
+            'mousedown .resize_handle': '_onMouseDown',
             'click .resize_handle': '_onClick'
         },
         /**
@@ -396,13 +422,12 @@
             resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
                 return this.template({
                     columnIndex: index,
-                    columnName: columnModel['columnName'],
+                    columnName: columnModel.columnName,
                     isLast: index + 1 === length,
                     height: headerHeight
                 });
             }, this);
             return resizeHandleMarkupList.join('');
-
         },
         /**
          * 랜더링 한다.
@@ -414,8 +439,8 @@
             this.$el
                 .show()
                 .css({
-                    'marginTop' : -headerHeight + 'px',
-                    'height' : headerHeight + 'px'
+                    'marginTop': -headerHeight + 'px',
+                    'height': headerHeight + 'px'
                 })
                 .html(this._getResizeHandlerMarkup());
 
@@ -575,7 +600,6 @@
                 .bind('mousemove', $.proxy(this._onMouseMove, this))
                 .bind('mouseup', $.proxy(this._onMouseUp, this))
                 .css('cursor', 'col-resize');
-
         },
         /**
          * resize stop 세팅

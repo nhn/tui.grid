@@ -21,6 +21,7 @@
      *      각 컬럼에 보여줘야 할 내용이 많을 경우 rowHeight값을 크게 지정하여야 모든 내용을 표시할 수 있다.
      *      @param {number} [options.displayRowCount=10] 그리드에 표시될 행의 개수를 지정하며, 이 값에 따라 그리드의 높이가 자동으로 계산된다
      *      @param {number} [options.minimumColumnWidth=50] 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
+     *      @param {boolean} [options.useClientSort] 정렬시 서버데이터를 사용하지 않고 클라이언트가 직접 정렬할지 여부
      *      @param {boolean} [options.scrollX=true] 수평 스크롤바 사용 여부.
      *      @param {boolean} [options.scrollY=true] 수직 스크롤바 사용 여부.
      *      @param {string} [options.keyColumnName=null] 각각의 데이터를 구분지을 수 있는 키 값의 필드명(=privateKey).
@@ -31,16 +32,17 @@
      *          @param {boolean} [options.toolbar.hasPagination=true]       pagination 을 사용한다.
      *      @param {array} options.columnModelList
      *          @param {string} options.columnModelList.columnName 컬럼의 데이터 필드명
-     *          @param {string} [options.columnModelList.isEllipsis=false] 컬럼의 말줄임 여부를 설정
+     *          @param {boolean} [options.columnModelList.isEllipsis=false] 컬럼의 말줄임 여부를 설정
      *          @param {string} [options.columnModelList.align=left] 컬럼에 설정할 정렬값
      *          @param {string} [options.columnModelList.className] 컬럼 전체에 적용할 디자인 클래스 이름
      *          @param {string} [options.columnModelList.title] 그리드 헤더 영역에 보여질 컬럼 이름
-     *          @param {string} [options.columnModelList.width] 컬럼 너비 값. pixel 로 지정한다.
-     *          @param {string} [options.columnModelList.isHidden ] 설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정을 한다.
+     *          @param {number} [options.columnModelList.width] 컬럼 너비 값. pixel 로 지정한다.
+     *          @param {boolean} [options.columnModelList.isHidden ] 설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정을 한다.
      *          @param {String} [options.columnModelList.defaultValue] 컬럼에 값이 없는 경우 화면에 보여질 기본 텍스트.
-     *          @param {string} [options.columnModelList.formatter] 데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.
-     *          @param {string} [options.columnModelList.notUseHtmlEntity=false] 그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.
-     *          @param {string} [options.columnModelList.isIgnore=false] 그리드에서 값 변경으로 간주하지 않을 column 인지 여부를 결정한다.
+     *          @param {function} [options.columnModelList.formatter] 데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.
+     *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] 그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.
+     *          @param {boolean} [options.columnModelList.isIgnore=false] 그리드에서 값 변경으로 간주하지 않을 column 인지 여부를 결정한다.
+     *          @param {boolean} [options.columnModelLIst.isSortable=false] true이면 컬럼헤더에 정렬버튼을 표시하고, 클릭시 해당 컬럼을 기준으로 정렬되도록 한다.
      *          @param {Array} [options.columnModelList.editOption] 수정 UI 및 기능에 대한 좀 더 세분화된 설정을 할 수 있도록 지원한다.
      *              @param {string} [options.columnModelList.editOption.type='normal'] 컬럼의 데이터를 사용자가 직접 수정할 수 있는 UI를 제공하며, "text", "text-convertible", "select", "radio", "checkbox" 등을 지정할 수 있다.
      *              @param {Array} [options.columnModelList.editOption.list] select, checkbox, radio 와 같이 list 형태일 경우 [{text: '노출 text', value: '1'}] 과 같은 형태로 설정한다.

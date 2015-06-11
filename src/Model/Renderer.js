@@ -22,6 +22,8 @@
          * 생성자 함수
          */
         initialize: function() {
+            var lside, rside;
+
             Model.Base.prototype.initialize.apply(this, arguments);
 
             this.setOwnProperties({
@@ -31,10 +33,10 @@
             });
 
             //lside 와 rside 별 Collection 생성
-            var lside = new Model.RowList([], {
+            lside = new Model.RowList([], {
                 grid: this.grid
             });
-            var rside = new Model.RowList([], {
+            rside = new Model.RowList([], {
                 grid: this.grid
             });
             this.set({
@@ -85,10 +87,10 @@
          */
         _onColumnModelChange: function() {
             this.set({
-                'scrollTop' : 0,
-                'top' : 0,
-                'startIndex' : 0,
-                'endIndex' : 0
+                scrollTop: 0,
+                top: 0,
+                startIndex: 0,
+                endIndex: 0
             });
             this.isColumnModelChanged = true;
             clearTimeout(this.timeoutIdForRefresh);
@@ -109,8 +111,8 @@
          */
         _setRenderingRange: function() {
             this.set({
-                'startIndex' : 0,
-                'endIndex' : this.grid.dataModel.length - 1
+                startIndex: 0,
+                endIndex: this.grid.dataModel.length - 1
             });
         },
         /**
@@ -139,7 +141,7 @@
                 rowModel,
                 rowKey;
 
-            for (i = startIndex; i < endIndex + 1; i++) {
+            for (i = startIndex; i < endIndex + 1; i += 1) {
                 rowModel = this.grid.dataModel.at(i);
                 if (rowModel) {
                     rowKey = rowModel.get('rowKey');

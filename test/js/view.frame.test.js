@@ -50,7 +50,7 @@ describe('View.Layout.Frame', function() {
             expect(frame.render).toHaveBeenCalled();
         });
 
-        it('grid.deminsionModel:columnWidthChanged 이벤트 발생시 _onColumnWidthChanged()를 호출한다.', function() {
+        it('grid.dimensionModel:columnWidthChanged 이벤트 발생시 _onColumnWidthChanged()를 호출한다.', function() {
             grid.dimensionModel.trigger('columnWidthChanged');
             expect(frame._onColumnWidthChanged).toHaveBeenCalled();
         });

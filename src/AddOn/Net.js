@@ -115,6 +115,8 @@
             this._initializeRouter();
             this._initializePagination();
 
+            this.listenTo(this.grid.dataModel, 'sortChanged', this._onSortChanged, this);
+
             if (options.initialRequest) {
                 this._readDataAt(1, false);
             }
@@ -284,15 +286,13 @@
             if (!this.isLocked) {
                 grid.renderModel.initializeVariables();
                 this._lock();
+
                 this.requestedFormData = _.clone(data);
                 this.curPage = data.page || this.curPage;
                 startNumber = (this.curPage - 1) * this.perPage + 1;
                 grid.renderModel.set({
                     startNumber: startNumber
                 });
-
-                //todo: 바로 아랫줄은 테스트코드이므로 제거해야함.
-                data.columnModel = $.toJSON(this.grid.columnModel.get('columnModelList'));
 
                 //마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
                 this.lastRequestedReadData = _.clone(data);
@@ -304,19 +304,58 @@
                     error: $.proxy(this._onReadError, this),
                     reset: true
                 });
+                grid.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
             }
         },
+        /**
+         * sortChanged 이벤트 발생시 실행되는 함수
+         * @private
+         * @param {object} sortOptions 정렬 옵션
+         * @param {string} sortOptions.sortColumn 정렬할 컬럼명
+         * @param {boolean} sortOptions.isAscending 오름차순 여부
+         */
+        _onSortChanged: function(sortOptions) {
+            if (sortOptions.isRequireFetch) {
+                this._readDataAt(1, true, sortOptions);
+            }
+        },
+        /**
+         * 데이터 객체의 정렬 옵션 관련 값을 변경한다.
+         * @private
+         * @param {object} data 데이터 객체
+         * @param {object} sortOptions 정렬 옵션
+         * @param {string} sortOptions.sortColumn 정렬할 컬럼명
+         * @param {boolean} sortOptions.isAscending 오름차순 여부
+         */
+        _changeSortOptions: function(data, sortOptions) {
+            if (!sortOptions) {
+                return;
+            }
+            if (sortOptions.columnName === 'rowKey') {
+                delete data.sortColumn;
+                delete data.sortAscending;
+            } else {
+                data.sortColumn = sortOptions.columnName;
+                data.sortAscending = sortOptions.isAscending;
+            }
+        },
+
         /**
          * 현재 form data 기준으로, page 에 해당하는 데이터를 조회 한다.
          * @param {Number} page 조회할 페이지 정보
          * @param {Boolean} [isUsingRequestedData=true] page 단위 검색이므로, form 수정여부와 관계없이 처음 보낸 form 데이터로 조회할지 여부를 결정한다.
+         * @param {object} sortOptions 정렬 옵션
+         * @param {string} sortOptions.sortColumn 정렬할 컬럼명
+         * @param {boolean} sortOptions.isAscending 오름차순 여부
          * @private
          */
-        _readDataAt: function(page, isUsingRequestedData) {
+        _readDataAt: function(page, isUsingRequestedData, sortOptions) {
             isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
             var data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
             data.page = page;
             data.perPage = this.perPage;
+
+            this._changeSortOptions(data, sortOptions);
 
             if (this.router) {
                 this.router.navigate('read/' + Util.toQueryString(data), {

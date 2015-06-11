@@ -223,6 +223,7 @@
          */
         initialize: function() {
             View.Base.prototype.initialize.apply(this, arguments);
+            this.initializeEventHandler();
         },
         /**
          * eventHandler 를 미리 parsing 하여 들고있는다.
