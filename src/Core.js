@@ -124,6 +124,7 @@
                 scrollX: true,
                 scrollY: true,
                 useDataCopy: true,
+                useClientSort: true,
 
                 toolbar: {
                     hasResizeHandler: true,
@@ -212,7 +213,8 @@
 
             //define rowList
             this.dataModel = new Data.RowList([], {
-                grid: this
+                grid: this,
+                useClientSort: this.option('useClientSort')
             });
             this.dataModel.reset([]);
 
@@ -1084,10 +1086,11 @@
         },
         /**
          * columnName 기준으로 정렬한다.
-         * @param {String} columnName 컬럼명
+         * @param {String} columnName 정렬할 컬럼명
+         * @param {Boolean} isAscending 오름차순 여부
          */
-        sort: function(columnName) {
-            this.dataModel.sortByField(columnName);
+        sort: function(columnName, isAscending) {
+            this.dataModel.sortByField(columnName, isAscending);
         },
         /**
          * 현재 그리드의 rowList 를 반환한다.
