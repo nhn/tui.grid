@@ -1,5 +1,5 @@
 'use strict';
-/* global View, Model, Data, Collection */
+
 describe('View.Layout.Header', function() {
     var grid;
 
@@ -9,24 +9,9 @@ describe('View.Layout.Header', function() {
             option: function(name) {
                 return this.options[name];
             },
-            showGridLayer: function() {
-
-            },
+            sort: function() {},
             dataModel: new Collection.Base(),
-            columnModel: new Data.ColumnModel({
-                columnModelList: [
-                    {
-                        title: 'c1',
-                        columnName: 'c1',
-                        width: 30
-                    }, {
-                        title: 'c2',
-                        columnName: 'c2',
-                        width: 40
-                    }
-                ]
-            }),
-            focusModel: new Model.Base()
+            columnModel: new Data.ColumnModel()
         };
         mock.dimensionModel = new Model.Dimension({
             grid: mock
@@ -34,17 +19,22 @@ describe('View.Layout.Header', function() {
         mock.renderModel = new Model.Renderer({
             grid: mock
         });
-        mock.selection = new View.Selection({
-            grid: mock
-        });
-        mock.cellFactory = new View.CellFactory({
-            grid: grid
-        });
         return mock;
     }
 
     beforeEach(function() {
         grid = createGridMock();
+        grid.columnModel.set('columnModelList', [
+            {
+                title: 'c1',
+                columnName: 'c1',
+                width: 30
+            }, {
+                title: 'c2',
+                columnName: 'c2',
+                width: 40
+            }
+        ]);
     });
 
     describe('Header', function() {
@@ -145,6 +135,65 @@ describe('View.Layout.Header', function() {
                     expect(columnData.widthList.length).toBeGreaterThan(0);
                     expect(columnData.modelList.length).toBeGreaterThan(0);
                 });
+            });
+        });
+
+        describe('isSortable 관련 테스트', function() {
+            beforeEach(function() {
+                grid.columnModel.set('columnModelList', [
+                    {
+                        title: 'c1',
+                        columnName: 'c1',
+                        isSortable: true
+                    }, {
+                        title: 'c2',
+                        columnName: 'c2',
+                        isSortable: true
+                    }, {
+                        title: 'c3',
+                        columnName: 'c3'
+                    }
+                ]);
+                header = new View.Layout.Header({
+                    grid: grid
+                });
+                header.render();
+            });
+
+            it('true인 경우 버튼이 생성된다.', function() {
+                var $btns = header.$el.find('a.btn_sorting');
+
+                expect($btns.length).toBe(2);
+                expect($btns.eq(0).parent().attr('columnname')).toBe('c1');
+                expect($btns.eq(1).parent().attr('columnname')).toBe('c2');
+            });
+
+            it('버튼을 클릭하면 grid.sort()를 실행한다.', function() {
+                var $btn = header.$el.find('a.btn_sorting');
+                spyOn(grid, 'sort');
+                $btn.trigger('click');
+                expect(grid.sort).toHaveBeenCalled();
+            });
+
+            it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {
+                var $btns = header.$el.find('a.btn_sorting'),
+                    eventData = {
+                        columnName: 'c1',
+                        isAscending: true
+                    };
+
+                grid.dataModel.trigger('sortChanged', eventData);
+                expect($btns.eq(0)).toHaveClass('sorting_up');
+
+                eventData.columnName = 'c2';
+                grid.dataModel.trigger('sortChanged', eventData);
+                expect($btns.eq(0)).not.toHaveClass('sorting_up');
+                expect($btns.eq(1)).toHaveClass('sorting_up');
+
+                eventData.isAscending = false;
+                grid.dataModel.trigger('sortChanged', eventData);
+                expect($btns.eq(1)).not.toHaveClass('sorting_up');
+                expect($btns.eq(1)).toHaveClass('sorting_down');
             });
         });
 
