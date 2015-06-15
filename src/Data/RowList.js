@@ -359,10 +359,8 @@
                     useClient: (ne.util.isBoolean(options.useClientSort) ? options.useClientSort : true)
                 }
             });
-            // 클라이언트의 정렬기능을 사용하지 않는 경우, 서버 데이터는 항상 rowKey가 순서대로 재설정 되어 넘어오기 때문에
-            // 현재 설정된 sortColumnName과 isSortAscending 값에 관계없이 rowKey를 사용해 정렬한다.
             if (!this.sortOptions.useClient) {
-                this.comparator = 'rowKey';
+                this.comparator = null;
             }
 
             this.on('change', this._onChange, this);
