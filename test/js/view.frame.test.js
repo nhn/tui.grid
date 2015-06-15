@@ -1,6 +1,5 @@
 'use strict';
 
-/* global Model, View, Collection */
 describe('View.Layout.Frame', function() {
     var RenderModel = Model.Base.extend({}),
         DimensionModel = Model.Base.extend({}),

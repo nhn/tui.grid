@@ -78,7 +78,6 @@ describe('grid paste test', function() {
             clipboard._paste();
             expect(runned).toBe(true);
         });
-
     });
 
     describe('keyup event fire flow', function() {
@@ -113,5 +112,4 @@ describe('grid paste test', function() {
             expect(res).toEqual(result);
         });
     });
-
 });

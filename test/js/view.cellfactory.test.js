@@ -1,6 +1,5 @@
 'use strict';
 
-/* global View */
 describe('view.cellfactory', function() {
     var cellFactory,
         $empty;

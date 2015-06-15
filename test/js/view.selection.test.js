@@ -1,7 +1,6 @@
 describe('view.selection', function() {
     var grid,
-        $empty,
-        timeoutDelay = 0;
+        $empty;
 
     jasmine.getFixtures().fixturesPath = 'base/';
     loadFixtures('test/fixtures/empty.html');

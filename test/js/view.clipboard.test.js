@@ -64,7 +64,7 @@ describe('view.clipboard', function() {
     });
 
     afterEach(function() {
-        grid && grid.destroy();
+        grid.destroy();
     });
 
     describe('clipboard test', function() {
@@ -351,7 +351,7 @@ describe('view.clipboard', function() {
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(2);
             });
         });
-        
+
         describe('_del', function() {
             beforeEach(function() {
                 grid.focus(0, 'columnName1');
