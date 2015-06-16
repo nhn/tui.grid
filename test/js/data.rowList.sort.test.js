@@ -1,4 +1,5 @@
 'use strict';
+
 describe('data.rowList', function() {
     var columnModelList = [
         {

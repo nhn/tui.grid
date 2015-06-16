@@ -1,6 +1,5 @@
 'use strict';
 
-/* global Core */
 describe('grid.normal.test', function() {
     var grid,
         $empty,
@@ -11,7 +10,7 @@ describe('grid.normal.test', function() {
     $empty = $('#empty');
 
     afterEach(function() {
-        grid && grid.destroy();
+        grid.destroy();
     });
 
     beforeEach(function() {
@@ -212,8 +211,10 @@ describe('grid.normal.test', function() {
     });
 
     describe('focusIn()', function() {
+        var instance;
+
         it('editable한 column일 경우 cellInstance의 focusIn을 호출한다.', function() {
-            var instance = grid.cellFactory.getInstance(grid.columnModel.getEditType('c1'));
+            instance = grid.cellFactory.getInstance(grid.columnModel.getEditType('c1'));
             spyOn(instance, 'focusIn');
             grid.focusIn(0, 'c1');
             expect(instance.focusIn).toHaveBeenCalled();
@@ -221,7 +222,7 @@ describe('grid.normal.test', function() {
 
         it('editable하지 않을경우 focusClipboard를 호출한다.', function() {
             spyOn(grid, 'focusClipboard');
-            var instance = grid.cellFactory.getInstance(grid.columnModel.getEditType('c1'));
+            instance = grid.cellFactory.getInstance(grid.columnModel.getEditType('c1'));
             spyOn(instance, 'focusIn');
             grid.focusIn(1, 'c3');
             expect(instance.focusIn).not.toHaveBeenCalled();

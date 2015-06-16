@@ -1,4 +1,5 @@
 'use strict';
+
 describe('model.renderer', function() {
     var columnModelList = [
         {

@@ -1,3 +1,5 @@
+'use strict';
+
 describe('grid paste test', function() {
     var clipboard;
 

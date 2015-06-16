@@ -1,6 +1,5 @@
 'use strict';
 
-/* global Data, Model */
 describe('model.dimension', function() {
     var columnModelList = [
         {

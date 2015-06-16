@@ -1,3 +1,5 @@
+'use strict';
+
 describe('grid.core.paste()', function() {
     var grid, $empty;
 

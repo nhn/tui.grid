@@ -1,4 +1,5 @@
 'use strict';
+
 describe('model.renderer', function() {
     var columnModelList = [
         {
@@ -183,7 +184,7 @@ describe('model.renderer', function() {
             expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(42);
         });
     });
-    
+
     describe('_isRenderable()', function() {
         it('scrollTop 변경에 따라 rendering 해야할지 여부를 판단하여 반환한다.', function () {
             renderInstance._setRenderingRange(0);

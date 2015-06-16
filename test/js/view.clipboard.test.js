@@ -1,6 +1,5 @@
 'use strict';
 
-/* global Core */
 describe('view.clipboard', function() {
     var grid,
         $empty,

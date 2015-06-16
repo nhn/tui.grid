@@ -1,6 +1,5 @@
 'use strict';
 
-/* global Model, Data */
 describe('model.renderer', function() {
     var columnModelList = [
         {
