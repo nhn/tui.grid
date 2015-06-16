@@ -13,6 +13,9 @@
   "author": "",
   "license": "BSD",
   "devDependencies": {
+    "body-parser": "^1.12.4",
+    "express": "^4.12.4",
+    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.0",
     "grunt-contrib-connect": "^0.8.0",
@@ -21,7 +24,6 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-zip": "^0.16.0",
     "jasmine-ajax": "^2.99.0",
-    "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
     "karma": "^0.12.24",
