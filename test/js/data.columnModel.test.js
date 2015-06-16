@@ -148,6 +148,7 @@ describe('data.columnModel', function() {
             expectedColumnModel = {
                 title: '<input type="checkbox"/>',
                 columnName: '_button',
+                isHidden: false,
                 editOption: {
                     type: selectType,
                     list: [{
@@ -166,6 +167,7 @@ describe('data.columnModel', function() {
             expectedColumnModel = {
                 title: '선택',
                 columnName: '_button',
+                isHidden: false,
                 editOption: {
                     type: selectType,
                     list: [{

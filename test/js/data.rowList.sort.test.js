@@ -48,7 +48,7 @@ describe('data.rowList', function() {
                 grid: grid,
                 useClientSort: false
             });
-            expect(dataModel.comparator).toBe('rowKey');
+            expect(dataModel.comparator).toBeNull();
         });
     });
 
