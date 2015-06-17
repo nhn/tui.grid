@@ -610,7 +610,7 @@
          */
         _stopResizing: function() {
             // for IE8 and under
-            if (this.$target[0].releaseCapture) {
+            if (this.$target && this.$target[0].releaseCapture) {
                 this.$target[0].releaseCapture();
             }
 
