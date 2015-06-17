@@ -11,7 +11,7 @@
     View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Cell.Text.prototype */{
         redrawAttributes: ['isEditable'],
         eventHandler: {
-            'blur input' : '_onBlur',
+            'blur input': '_onBlur',
             'keydown input': '_onKeyDown',
             'focus input': '_onFocus'
         },
@@ -205,7 +205,8 @@
         redrawAttributes: ['isDisabled', 'isEditable', 'value'],
         eventHandler: {
             'click': '_onClick',
-            'blur input' : '_onBlurConvertible',
+            'mousedown': '_onMouseDown',
+            'blur input': '_onBlurConvertible',
             'keydown input': '_onKeyDown',
             'focus input': '_onFocus'
         },
@@ -367,6 +368,9 @@
                 $td = $target.closest('td'),
                 address = this._getCellAddress($td);
 
+            if (this._isEditingCell(address)) {
+                return;
+            }
             if (this._isClickedCell($td)) {
                 this._startEdit($td);
             } else {
@@ -378,6 +382,18 @@
                         columnName: null
                     };
                 }, this.doubleClickDuration);
+            }
+        },
+        /**
+         * mousedown 이벤트 핸들러.
+         * Core의 onMouseDown에서 focusClipboard를 호출하여 input에서 의도하지 않은 blur 이벤트가 발생하는 것을
+         * 방지하기 위해 이벤트 버블링을 멈춘다.
+         * @param {MouseEvent} event 마우스 이벤트 객체
+         * @private
+         */
+        _onMouseDown: function(event) {
+            if ($(event.target).is('input')) {
+                event.stopPropagation();
             }
         },
         _isClickedCell: function($td) {
