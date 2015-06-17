@@ -167,9 +167,7 @@
                 } else {
                     this.grid.uncheckAll();
                 }
-            }
-
-            if ($target.is('a.btn_sorting')) {
+            } else if ($target.is('a.btn_sorting')) {
                 this.grid.sort(columnName);
             }
         },
@@ -596,25 +594,36 @@
             this.initialLeft = parseInt($target.css('left').replace('px', ''), 10);
             this.initialOffsetLeft = this.$el.offset().left;
             this.initialWidth = columnWidthList[$target.attr('columnindex')];
-            $('body')
+            $('body').css('cursor', 'col-resize');
+            $(document)
                 .bind('mousemove', $.proxy(this._onMouseMove, this))
-                .bind('mouseup', $.proxy(this._onMouseUp, this))
-                .css('cursor', 'col-resize');
+                .bind('mouseup', $.proxy(this._onMouseUp, this));
+
+            // for IE8 and under
+            if ($target[0].setCapture) {
+                $target[0].setCapture();
+            }
         },
         /**
          * resize stop 세팅
          * @private
          */
         _stopResizing: function() {
+            // for IE8 and under
+            if (this.$target[0].releaseCapture) {
+                this.$target[0].releaseCapture();
+            }
+
             this.isResizing = false;
             this.$target = null;
             this.initialLeft = 0;
             this.initialOffsetLeft = 0;
             this.initialWidth = 0;
-            $('body')
+
+            $('body').css('cursor', 'default');
+            $(document)
                 .unbind('mousemove', $.proxy(this._onMouseMove, this))
-                .unbind('mouseup', $.proxy(this._onMouseUp, this))
-                .css('cursor', 'default');
+                .unbind('mouseup', $.proxy(this._onMouseUp, this));
         },
         /**
          * 소멸자
