@@ -8,10 +8,9 @@
      * @constructor View.RowList
      */
     View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
-
         /**
          * 초기화 함수
-         * @param {object} options
+         * @param {object} options 옵션 객체
          *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
          */
         initialize: function(options) {
@@ -40,21 +39,17 @@
 
         /**
          * 랜더링한다.
-         * @return {View.RowList}
+         * @return {View.RowList} this 객체
          */
         render: function() {
             var self = this,
                 html = '',
                 firstRow = this.collection.at(0);
 
-            var start = new Date();
-
-            //alert('a');
             this.rowPainter.detachHandlerAll();
             this.destroyChildren();
             this._createRowPainter();
-            //get html string
-            /* istanbul ignore else */
+
             if (firstRow && ne.util.isExisty(firstRow.get('rowKey'))) {
                 this.collection.forEach(function(row) {
                     html += this.rowPainter.getHtml(row);
@@ -62,6 +57,7 @@
             }
             this.$el.empty().prepend(html);
             this.rowPainter.attachHandlerAll();
+            this.rowPainter.triggerResizeEventOnTextCell();
 
             clearTimeout(this.timeoutIdForFocusClipboard);
             this.timeoutIdForFocusClipboard = setTimeout(function() {
@@ -70,8 +66,6 @@
                 }
             }, 10);
 
-            //var end = new Date();
-            //console.log('View.RowList.addAll end', end - start);
             this._showLayer();
 
             return this;

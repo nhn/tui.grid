@@ -39,7 +39,6 @@
                 collection: options.collection,    //change 를 감지할 collection
                 whichSide: whichSide,
                 columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
-                cellHandlerList: [],
                 _isEventAttached: false
             });
 
@@ -52,7 +51,8 @@
             this.listenTo(focusModel, 'select', this._onSelect, this)
                 .listenTo(focusModel, 'unselect', this._onUnselect, this)
                 .listenTo(focusModel, 'focus', this._onFocus, this)
-                .listenTo(focusModel, 'blur', this._onBlur, this);
+                .listenTo(focusModel, 'blur', this._onBlur, this)
+                .listenTo(this.grid.dimensionModel, 'columnWidthChanged', _.debounce(this._onColumnWidthChanged, 200));
         },
         /**
          * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
@@ -65,7 +65,7 @@
         },
         /**
          * attachHandlerAll
-         * event handler 를 전체 tr에 한번에 붙인다.
+         * event handler를 전체 tr에 한번에 붙인다.
          * 자기 자신의 이벤트 핸들러 및 cellFactory 의 이벤트 헨들러를 bind 한다.
          */
         attachHandlerAll: function() {
@@ -74,8 +74,25 @@
             this._isEventAttached = true;
         },
         /**
+         * dimensionModel의 columnWidthChanged 이벤트가 발생했을때 실행되는 핸들러 함수
+         * (렌더링 속도를 고려해 debounce를 통해 실행)
+         */
+        _onColumnWidthChanged: function() {
+            try {
+                this.triggerResizeEventOnTextCell();
+            } catch (e) {
+                // prevent Error from running test cases (caused by setTimeout in _.debounce())
+            }
+        },
+        /**
+         * Text타입의 셀에 resize 이벤트를 발생시킨다.
+         */
+        triggerResizeEventOnTextCell: function() {
+            this.grid.cellFactory.triggerResizeEventOnTextCell(this.$parent);
+        },
+        /**
          * detach eventHandler
-         * event handler 를 전체 tr에서 제거한다.
+         * event handler를 전체 tr에서 제거한다.
          * 자기 자신의 이벤트 핸들러 및 cellFactory 의 이벤트 헨들러를 unbind 한다.
          */
         detachHandlerAll: function() {
@@ -230,7 +247,6 @@
                 cellFactory = this.grid.cellFactory,
                 columnName, cellData, editType, cellInstance,
                 html = '';
-            this.cellHandlerList = [];
             _.each(columnModelList, function(columnModel) {
                 columnName = columnModel['columnName'];
                 cellData = model.get(columnName);
@@ -239,10 +255,6 @@
                     editType = this._getEditType(columnName, cellData);
                     cellInstance = cellFactory.getInstance(editType);
                     html += cellInstance.getHtml(cellData);
-                    this.cellHandlerList.push({
-                        selector: 'td[columnName="' + columnName + '"]',
-                        cellInstance: cellInstance
-                    });
                 }
             }, this);
 
@@ -252,6 +264,5 @@
                 contents: html,
                 className: ''
             });
-
         }
     });

@@ -34,6 +34,7 @@
                     this.focusOut(param.$target.closest('td'));
                 }
             });
+            this.on('resize', this._resetInputWidth, this);
         },
         template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
         /**
@@ -43,6 +44,25 @@
          */
         _getInputType: function() {
             return 'text';
+        },
+        /**
+         * Input요소의 넓이를 재설정한다.
+         * @param {jquery} $td 해당 셀의 TD요소
+         * @private
+         */
+        _resetInputWidth: function($td) {
+            var oldWidth = $td.data('width'),
+                curWidth = $td.width(),
+                textWidth = 0;
+
+            if (oldWidth === curWidth) {
+                return;
+            }
+            $td.find('span').each(function() {
+                textWidth += $(this).width();
+            });
+            $td.find('input').width(curWidth - textWidth);
+            $td.data('width', curWidth);
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -226,6 +246,7 @@
                     columnName: null
                 }
             });
+            this.off('resize');
         },
         /**
          * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -332,6 +353,7 @@
 
             if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
                 this.redraw(this._getCellData($td), $td);
+                this._resetInputWidth($td);
                 $input = $td.find('input');
                 this.originalText = $input.val();
                 Util.form.setCursorToEnd($input.get(0));

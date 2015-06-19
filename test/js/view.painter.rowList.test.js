@@ -1,6 +1,6 @@
 'use strict';
 
-describe('view.painter.rowList', function() {
+describe('view.rowList', function() {
     var grid, rowListView;
 
     function createGridMock() {

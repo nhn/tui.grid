@@ -152,6 +152,32 @@ describe('view.painter.cell.base', function() {
             });
             expect(html).toEqual('<td columnName="c1"  class="editable disabled"  align="left" edit-type="normal"></td>');
         });
+
+        describe('beforeText와 afterText가 설정되었을 때 ', function() {
+            beforeEach(function() {
+                grid.columnModel.set('columnModelList', [
+                    {
+                        columnName: 'c1',
+                        editOption: {
+                            type: 'normal',
+                            beforeText: 'Before',
+                            afterText: 'After'
+                        }
+                    }
+                ]);
+                cellPainter.getContentHtml = function() {
+                    return 'TEXT';
+                };
+            });
+
+            it('실제값의 앞뒤로 span태그로 감싼 문자열을 추가해준다.', function() {
+                var $cell = $(cellPainter.getHtml({
+                    columnName: 'c1',
+                    rowKey: 0
+                }));
+                expect($cell.html()).toEqual('<span>Before</span>TEXT<span>After</span>');
+            });
+        });
     });
 
     describe('redraw()', function() {

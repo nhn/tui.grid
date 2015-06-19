@@ -32,6 +32,42 @@ describe('view.cellfactory', function() {
         });
     });
 
+    describe('triggerResizeEventOnTextCell()', function() {
+        var spies;
+
+        function setSampleTable() {
+            $empty.html([
+                '<table><tbody><tr>',
+                '<td edit-type="normal"></td>',
+                '<td edit-type="text"></td>',
+                '<td edit-type="text-convertible"></td>',
+                '<td edit-type="text-password"></td>',
+                '</tr></tbody></table>'
+            ].join(''));
+        }
+
+        beforeEach(function() {
+            spies = {};
+            setSampleTable();
+
+            _.each(cellFactory.instances, function(instance, editType) {
+                spies[editType] = jasmine.createSpy(editType);
+                instance.on('resize', spies[editType]);
+            }, this);
+            cellFactory.triggerResizeEventOnTextCell($empty);
+        });
+
+        it('text, text-password 타입의 셀에만 resize 이벤트를 발생시킨다.', function() {
+            _.each(spies, function(spy, editType) {
+                if (editType === 'text' || editType === 'text-password') {
+                    expect(spy).toHaveBeenCalled();
+                } else {
+                    expect(spy).not.toHaveBeenCalled();
+                }
+            });
+        });
+    });
+
     describe('각 td에 적절한 instance의 attachHandler를 수행하는지 확인한다.', function() {
         beforeEach(function() {
             _.each(cellFactory.instances, function(instance, editType) {

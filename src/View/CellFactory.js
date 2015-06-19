@@ -79,6 +79,23 @@
             }, this);
         },
         /**
+         * text, text-password 타입의 셀에 resize 이벤트를 발생시킨다.
+         * @param {jquery} $parent 자신이 속한 tbody jquery 엘리먼트
+         */
+        triggerResizeEventOnTextCell: function($parent) {
+            var $tdList = $parent.find('td'),
+                $td,
+                editType;
+
+            _.each($tdList, function(item, index) {
+                $td = $tdList.eq(index);
+                editType = $td.attr('edit-type');
+                if ((editType === 'text' || editType === 'text-password') && this.instances[editType]) {
+                    this.instances[editType].trigger('resize', $td);
+                }
+            }, this);
+        },
+        /**
          * Frame(Left Side 혹은 Right Side)엘리먼트 tbody 하위에 모든 td 에 이벤트 핸들러를 unbind 한다.
          * @param {jQuery} $parent 자신이 속한 tbody jquery 엘리먼트
          */
