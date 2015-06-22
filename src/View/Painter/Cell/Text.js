@@ -13,7 +13,8 @@
         eventHandler: {
             'blur input': '_onBlur',
             'keydown input': '_onKeyDown',
-            'focus input': '_onFocus'
+            'focus input': '_onFocus',
+            'selectstart input': '_onSelectStart'
         },
         initialize: function(attributes, options) {
             View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
@@ -182,6 +183,14 @@
             var $input = $(focusEvent.target);
             this.originalText = $input.val();
             this.grid.selection.disable();
+        },
+        /**
+         * selectstart 이벤트 핸들러
+         * IE에서 selectstart 이벤트가 Input 요소에 까지 적용되어 값에 셀렉션 지정이 안되는 문제를 해결
+         * @param {Event} event 이벤트 객체
+         */
+        _onSelectStart: function(event) {
+            event.stopPropagation();
         }
     });
     /**
@@ -228,7 +237,8 @@
             'mousedown': '_onMouseDown',
             'blur input': '_onBlurConvertible',
             'keydown input': '_onKeyDown',
-            'focus input': '_onFocus'
+            'focus input': '_onFocus',
+            'selectstart input': '_onSelectStart'
         },
         /**
          * 생성자 함수
