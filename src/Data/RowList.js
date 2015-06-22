@@ -183,8 +183,6 @@
                 isMainRow: true,
                 mainRowKey: this.get('rowKey')
             };
-
-
         },
         /**
          * html string 을 encoding 한다.
@@ -238,6 +236,25 @@
 
                 return valueList.join(',');
             }
+        },
+        /**
+         * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
+         * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
+         * @param {object} publicChanged 비교할 객체
+         * @return {boolean} 중복이면 true, 아니면 false
+         * @private
+         */
+        isDuplicatedPublicChanged: function(publicChanged) {
+            if (this._timeoutIdForChanged && _.isEqual(this._lastPublicChanged, publicChanged)) {
+                return true;
+            }
+            clearTimeout(this._timeoutIdForChanged);
+            this._timeoutIdForChanged = setTimeout(_.bind(function() {
+                this._timeoutIdForChanged = null;
+            }, this), 10);
+            this._lastPublicChanged = publicChanged;
+
+            return false;
         },
         /**
          * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
@@ -629,27 +646,24 @@
          * @private
          */
         _onChange: function(row) {
-            var columnModel;
+            var columnModel,
+                publicChanged = _.omit(row.changed, this.privateProperties);
 
-            _.each(row.changed, function(value, columnName) {
-                if (!this._isPrivateProperty(columnName)) {
-                    columnModel = this.grid.columnModel.getColumnModel(columnName);
-                    if (!columnModel) {
-                        return;
-                    }
-                    //beforeCallback 의 결과가 false 이면 모든 수행을 중지한다.
-                    if (!this._executeChangeBeforeCallback(row, columnName)) {
-                        return;
-                    }
-                    this._syncRowSpannedData(row, columnName, value);
-
-                    //afterChangeCallback 수행
-                    this._executeChangeAfterCallback(row, columnName);
-
-                    //check 가 disable 이 아니고, columnModel 에 isIgnore 가 설정되지 않았을 경우, _button 필드 변경에 따라 check
-                    if (!row.getRowState().isDisabledCheck && !columnModel.isIgnore) {
-                        row.set('_button', true);
-                    }
+            if (row.isDuplicatedPublicChanged(publicChanged)) {
+                return;
+            }
+            _.each(publicChanged, function(value, columnName) {
+                columnModel = this.grid.columnModel.getColumnModel(columnName);
+                if (!columnModel) {
+                    return;
+                }
+                if (!this._executeChangeBeforeCallback(row, columnName)) {
+                    return;
+                }
+                this._syncRowSpannedData(row, columnName, value);
+                this._executeChangeAfterCallback(row, columnName);
+                if (!row.getRowState().isDisabledCheck && !columnModel.isIgnore) {
+                    row.set('_button', true);
                 }
             }, this);
         },
