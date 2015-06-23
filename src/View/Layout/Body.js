@@ -29,7 +29,8 @@
             View.Base.prototype.initialize.apply(this, arguments);
             this.setOwnProperties({
                 whichSide: options && options.whichSide || 'R',
-                isScrollSync: false
+                isScrollSync: false,
+                extraWidth: 0
             });
 
             this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
@@ -56,8 +57,8 @@
                 $colList = this.$el.find('col');
 
             _.each(columnWidthList, function(width, index) {
-                $colList.eq(index).css('width', width + 'px');
-            });
+                $colList.eq(index).css('width', (width - View.Layout.Body.extraWidth) + 'px');
+            }, this);
         },
         /**
          * 마우스다운 이벤트 핸들러
@@ -192,4 +193,17 @@
             });
             return html;
         }
+    }, {
+        /**
+         * @static
+         * IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
+         */
+        extraWidth: (function() {
+            var value = 0;
+            if (ne.util.browser.msie && ne.util.browser.version === 7) {
+                // Grid.css의 padding값이 변경되면 다음 값을 같이 변경해 주어야함.
+                value = 20;
+            }
+            return value;
+        }())
     });

@@ -1275,15 +1275,11 @@
          * @param {object} size
          */
         setGridSize: function(size) {
-            //var dimensionModel = this.dimensionModel,
-            //    width = size && size.width || dimensionModel.get('width'),
-            //    bodyHeight = dimensionModel.get('bodyHeight'),
-            //    headerHeight = dimensionModel.get('headerHeight'),
-            //    toolbarHeight = dimensionModel.get('toolbarHeight');
+            // var dimensionModel = this.dimensionModel,
+            //     headerHeight = dimensionModel.get('headerHeight'),
+            //     toolbarHeight = dimensionModel.get('toolbarHeight');
             //
-            //if (size && size.height) {
-            //    bodyHeight = height - (headerHeight + toolbarHeight);
-            //}
+            // dimensionModel.set('bodyHeight', height - headerHeight - toolbarHeight);
         },
         /**
          * 스크롤 핸들러의 위치를 변경한다.
