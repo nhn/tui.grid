@@ -1,6 +1,6 @@
 /**
  * @fileoverview Layer Empty
- * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ * @author NHN Ent. FE Development Team
  */
 /**
  * 데이터 없음 레이어

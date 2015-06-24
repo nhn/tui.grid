@@ -1,6 +1,6 @@
 /**
  * @fileoverview Layer Base
- * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ * @author NHN Ent. FE Development Team
  */
 /**
  * 레이어 기본 클래스

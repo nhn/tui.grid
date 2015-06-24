@@ -1,6 +1,6 @@
 /**
  * @fileoverview Layer Loading
- * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ * @author NHN Ent. FE Development Team
  */
 /**
  * 로딩 레이어

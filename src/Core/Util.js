@@ -1,6 +1,6 @@
 /**
 * @fileoverview 유틸리티 메서드 모음
-* @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+* @author NHN Ent. FE Development Team
 */
 /**
 * Util 모듈
