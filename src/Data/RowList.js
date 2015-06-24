@@ -953,9 +953,58 @@
         removeRow: function(rowKey, isRemoveOriginalData) {
             var row = this.get(rowKey);
             if (row) {
+                this._updateRelatedRowSpanDataForRemove(row);
                 this.remove(row);
                 if (isRemoveOriginalData) {
                     this.setOriginalRowList();
+                }
+            }
+        },
+        /**
+         * 삭제할 행에 rowSpan이 적용되어 있는 경우, 관련된 행들의 rowSpan데이터를 갱신한다.
+         * @param {Data.Row} row 삭제할 Row
+         * @private
+         */
+        _updateRelatedRowSpanDataForRemove: function(row) {
+            var rowSpanData = row.getRowSpanData();
+
+            if (!rowSpanData) {
+                return;
+            }
+            _.each(rowSpanData, function(data, columnName) {
+                var mainRow = this.get(data.mainRowKey);
+
+                if (data.isMainRow) {
+                    this._updateSubRowSpanColumnDataForRemove(mainRow, columnName, data.count - 1);
+                } else {
+                    mainRow.getRowSpanData()[columnName].count -= 1;
+                }
+            }, this);
+        },
+        /**
+         * rowSpan의 mainRow가 삭제되는 경우, 관련된 하위 행들의 rowSpan 데이터를 갱신하고, 바로 다음 행을 mainRow로 지정한다.
+         * @param {Data.Row} mainRow 삭제되는 mainRow
+         * @param {string} columnName rowSpan이 적용된 컬럼명
+         * @param {number} count 관련된 하위 행들의 수
+         * @private
+         */
+        _updateSubRowSpanColumnDataForRemove: function(mainRow, columnName, count) {
+            var idx = this.indexOf(mainRow) + 1,
+                lastIdx = idx + count - 1,
+                row, newMainRowKey, spanData;
+
+            for (; idx <= lastIdx; idx += 1) {
+                row = this.at(idx);
+                spanData = row.getRowSpanData()[columnName];
+                spanData.count += 1;
+
+                if (!newMainRowKey) {
+                    spanData.isMainRow = true;
+                    spanData.count = count;
+                    newMainRowKey = row.get('rowKey');
+                    row.set(columnName, '');
+                } else {
+                    spanData.mainRowKey = newMainRowKey;
                 }
             }
         },
@@ -1022,7 +1071,6 @@
          * @return {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
          */
         getModifiedRowList: function(options) {
-
             var isRaw = options && options.isRaw,
                 isOnlyChecked = options && options.isOnlyChecked,
                 isOnlyRowKeyList = options && options.isOnlyRowKeyList,
