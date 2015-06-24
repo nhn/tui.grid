@@ -78,7 +78,7 @@ describe('view.layout.body', function() {
             body.whichSide = 'L';
             body.render();
             expect(body.$el.css('overflow-x')).toBe('hidden');
-            expect(body.$el.css('overflow-y')).toBe('visible');
+            expect(body.$el.css('overflow-y')).not.toBe('hidden');
 
             body.whichSide = 'R';
             body.render();

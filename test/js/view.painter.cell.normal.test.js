@@ -20,6 +20,7 @@ describe('view.painter.cell.normal', function() {
                 return this.options[name];
             },
             focusIn: function() {},
+            setValue: function() {},
             updateLayoutData: function() {},
             dataModel: new Collection.Base(),
             columnModel: new Data.ColumnModel()
@@ -158,6 +159,7 @@ describe('view.painter.cell.normal', function() {
 
     describe('View.Painter.Cell.MainButton 클래스 테스트', function() {
         beforeEach(function() {
+            grid.options.selectType = 'checkbox';
             cellPainter = new View.Painter.Cell.MainButton({
                 grid: grid
             });
@@ -268,9 +270,11 @@ describe('view.painter.cell.normal', function() {
             var $td, $button;
 
             beforeEach(function() {
+                var $table = jasmine.getFixtures().set('<table><tr><td></td></tr></table>');
+
                 grid.options.selectType = 'checkbox';
                 $button = $(cellPainter.getContentHtml({}));
-                $td = $('<td>').append($button);
+                $td = $table.find('td').append($button);
             });
 
             it('TD 에 mousedown 이벤트 발생시 button 의 상태변화를 유발하는지 확인한다.', function() {

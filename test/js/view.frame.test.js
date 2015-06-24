@@ -256,6 +256,7 @@ describe('View.Layout.Frame', function() {
 
             it('grid.renderModel의 change:scrollTop 이벤트 발생시 호출된다.', function() {
                 spyOn(VirtualScrollBar.prototype, '_onScrollTopChange');
+                scrollbar.destroy();
                 scrollbar = new VirtualScrollBar({
                     grid: grid
                 });

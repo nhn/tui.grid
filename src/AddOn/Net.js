@@ -1,6 +1,6 @@
 /**
  * @fileoverview Network 모듈 addon
- * @author soonyoung.park@nhnent@nhnent.com (Soonyoung Park)
+ * @author NHN Ent. FE Development Team
  */
 /**
  * Network 모듈 addon
