@@ -34,8 +34,8 @@ function getSampleData(query) {
 function createResponseData(contents, page) {
     return {
         result: true,
+        message: 'error',
         data: {
-            message: 'error',
             contents: contents,
             pagination: {
                 page: page,
