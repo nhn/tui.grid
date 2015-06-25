@@ -8,9 +8,9 @@ Application Grid
 https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 
 ## Documentation
-* **API** : https://nhnent.github.io/fe.application-grid/1.0.0b
+* **API** : https://nhnent.github.io/fe.application-grid/1.0.1
 * **Tutorial** : https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드-적용하기
-* **Sample** : https://nhnent.github.io/fe.application-grid/1.0.0b/tutorial-sample1.html
+* **Sample** : https://nhnent.github.io/fe.application-grid/1.0.1/tutorial-sample1.html
 * **CI** : 준비중
 
 ## Dependency
@@ -29,13 +29,14 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 
 ## Download/Install
 * Bower:
-   * 최신버전 : `bower install "ne-application-grid#master"`
+   * 최신버전 : `bower install "ne-application-grid"`
    * 특정버전 : `bower install "ne-application-grid[#tag]"`
 * Download: https://github.com/nhnent/fe.application-grid
 
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://nhnent.github.io/fe.application-grid/1.0.0b">1.0.1</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0b">1.0.0b</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0a">1.0.0a</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0">1.0.0</a> | 배포 | 2015.05 | FE개발팀 <e0242@nhnent.com> |

@@ -80,6 +80,7 @@
     //only for this project
     "strict": 0,
     "no-undefined": 0,
-    "no-alert": 0
+    "no-alert": 0,
+    "dot-notation": 0
   }
 }

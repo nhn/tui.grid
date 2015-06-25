@@ -7,7 +7,7 @@ strong,em{font-style:normal}
 .blind{visibility:hidden;overflow:hidden;position:absolute;top:0;left:0;width:0;height:0;font-size:0;line-height:0}
 
 /* pagination */
-.pagination{height:26px;margin:14px 0 12px;line-height:normal;text-align:center}
+.pagination{height:12px;margin-bottom:12px;padding-top:14px;line-height:normal;text-align:center}
 .pagination a,.pagination strong{display:inline-block;position:relative;padding:3px 8px 4px;color:#333;font-size:12px;font-weight:bold;line-height:normal;text-decoration:none;vertical-align:middle}
 .pagination strong{padding:3px 6px 4px;color:#ff1313;border:1px solid #d4d4d4;background:#e7e7e7}
 .pagination .pre_end,.pagination .pre,.pagination .next,.pagination .next_end{overflow:hidden;width:33px;height:11px;padding:0;background:url(../images/sp_btn2.gif) no-repeat;font-size:0;line-height:999px;white-space:nowrap}
@@ -54,6 +54,7 @@ a span.brand_off{height:16px;width:16px;background-position:-90px -20px}
 .uio_grid table td .search{display:block;height:20px;padding:0 21px 0 6px;border:1px solid #9c9c9c;line-height:20px}
 .uio_grid table td .search input{padding:0;padding-top:4px;border:0;color:#999;-webkit-appearance:none}
 .search_btn{position:absolute;top:3px;right:0;background-color:transparent;border:0;width:22px;height:21px;background:url(../img/sp_btn2.gif) no-repeat -120px -20px;cursor:pointer}
+
 @charset "utf-8";
 /* NTS UI Development 2Team LEH 110518 */
 /* 이미지의 경로는 절대경로를 사용하는 것이 기본 룰이나, 공용 컴포넌트에서 사용하는 이미지 경로는 SSL 지원 문제로 인하여 예외적으로 상대 경로로 처리한다. */
@@ -106,10 +107,9 @@ a span.brand_off{height:16px;width:16px;background-position:-90px -20px}
 .uio_grid table{border:0;table-layout:fixed;background-color:#ccc;border-collapse:separate;border-spacing:1px;margin:0}
 .uio_grid table th{overflow:hidden;white-space:nowrap;*white-space:pre;text-align:center;padding:0;border:0}
 .uio_grid table th .sort a{color:#555;text-decoration:none}
-.uio_grid table th .sort .btn_sorting{display:inline-block;overflow:hidden;margin-left:6px;background:url(../images/sp_btn2.gif) no-repeat;font-size:0;line-height:999px;vertical-align:middle;cursor:pointer}
-.uio_grid table th .sort .sorting_down{height:16px;width:10px;background-position:0 -20px}
-.uio_grid table th .sort .sorting_up{height:16px;width:10px;background-position:-20px -20px}
-.uio_grid table th .sort .sorting_off{height:16px;width:10px;background-position:-40px -20px}
+.uio_grid table th .btn_sorting{display:inline-block;overflow:hidden;margin-left:6px;height:16px;width:10px;background:url(../images/sp_btn2.gif) -40px -20px no-repeat;font-size:0;line-height:999px;vertical-align:middle;cursor:pointer;}
+.uio_grid table th .sorting_down{height:16px;width:10px;background-position:0 -20px}
+.uio_grid table th .sorting_up{height:16px;width:10px;background-position:-20px -20px}
 .uio_grid table tr.selected{background-color:#f8f8f8}
 .uio_grid table tr.disabled{color:#b0b0b0}
 .uio_grid table tr.invalidated{background-color:#ffe1e1}
@@ -142,7 +142,7 @@ a span.brand_off{height:16px;width:16px;background-position:-90px -20px}
 /* toolbar */
 .uio_grid .toolbar{display:none;width:100%;height:65px;bottom:0px;position:absolute;background:#fff;border-top: 1px solid #ccc}
 .uio_grid .toolbar .total_count{position:absolute;top:20px;left:24px;color:#002caf;font-weight:bold}
-.uio_grid .toolbar .btn_setup{position:absolute;right:10px;top:14px} 	
+.uio_grid .toolbar .btn_setup{position:absolute;right:10px;top:14px}
 .uio_grid .toolbar .height_resize_bar{overflow:hidden;cursor:row-resize;position:absolute;bottom:0px;height:15px;width:100%;align:center;border:0;background:url(../images/sp_bu.gif) no-repeat 50% -70px;font-size:0;line-height:999px;font-size:9px;text-align:center}
 .uio_grid .toolbar .height_resize_handle{display:block;margin:0 10px;border-top:1px solid #ccc;cursor:row-resize;}
 

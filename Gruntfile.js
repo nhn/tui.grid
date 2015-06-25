@@ -1,6 +1,5 @@
 //Grunt is just JavaScript running in node, after all...
 module.exports = function(grunt) {
-
     // All upfront config goes in a massive nested object.
     grunt.initConfig({
         // You can set arbitrary key-value pairs.
@@ -19,7 +18,7 @@ module.exports = function(grunt) {
             // It's a way of specifying different sub-tasks or modes.
             javascript: {
                 options: {
-                    banner: '/*!grid v<%=pkg.version%> | NHN Entertainment*/\n' +
+                    banner: '/*!grid v<%=pkg.version%> | NHN Ent. FE Development Team*/\n' +
                     '(function(){\n',
                     footer: '\n})();'
                 },
@@ -66,12 +65,12 @@ module.exports = function(grunt) {
             }
         },
         uglify: {
-            my_target: {
+            myTarget: {
                 files: {
-                    '<%= distFolder %>/grid.min.js' : '<%= distFolder %>/grid.js'
+                    '<%= distFolder %>/grid.min.js': '<%= distFolder %>/grid.js'
                 },
                 options: {
-                    banner: '/*!grid v<%=pkg.version%> | NHN Entertainment*/',
+                    banner: '/*!grid v<%=pkg.version%> | NHN Ent. FE Development Team*/',
                     preserveComments: false,
                     sourceMap: true,
                     sourceMapName: '<%= distFolder %>/grid.min.map'
@@ -94,8 +93,8 @@ module.exports = function(grunt) {
                             '<%= libFolder %>/jquery-json/src/jquery.json.js',
                             '<%= libFolder %>/underscore/underscore.js',
                             '<%= libFolder %>/backbone/backbone.js',
-                            '<%= libFolder %>/code-snippet/code-snippet.min.js',
-                            '<%= libFolder %>/component-pagination/pagination.min.js'
+                            '<%= libFolder %>/ne-code-snippet/code-snippet.min.js',
+                            '<%= libFolder %>/ne-component-pagination/pagination.min.js'
                         ],
                         dest: '<%= sampleFolder %>/js/lib', filter: 'isFile'
                     },
@@ -120,7 +119,7 @@ module.exports = function(grunt) {
                             '<%= distFolder %>/grid.min.js'
                         ],
                         dest: '<%= sampleFolder %>/js', filter: 'isFile'
-                    },
+                    }
                 ]
             }
         },
@@ -141,6 +140,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-zip');
 
     // Register our own custom task alias.
-//    grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
     grunt.registerTask('build', ['concat', 'uglify', 'copy', 'zip']);
 };

@@ -1,10 +1,14 @@
 {
   "name": "Grid",
-  "version": "0.9.0",
+  "version": "1.0.1",
   "authors": [
-    "Soonyoung.park"
+    "NHN Ent. FE Development Team"
   ],
-  "license": "",
+  "license": "MIT",
+  "main": [
+    "grid.js",
+    "grid.css"
+  ],
   "ignore": [
     "**/.*",
     ".*",

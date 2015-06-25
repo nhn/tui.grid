@@ -7,7 +7,7 @@ strong,em{font-style:normal}
 .blind{visibility:hidden;overflow:hidden;position:absolute;top:0;left:0;width:0;height:0;font-size:0;line-height:0}
 
 /* pagination */
-.pagination{height:26px;margin:14px 0 12px;line-height:normal;text-align:center}
+.pagination{height:12px;margin-bottom:12px;padding-top:14px;line-height:normal;text-align:center}
 .pagination a,.pagination strong{display:inline-block;position:relative;padding:3px 8px 4px;color:#333;font-size:12px;font-weight:bold;line-height:normal;text-decoration:none;vertical-align:middle}
 .pagination strong{padding:3px 6px 4px;color:#ff1313;border:1px solid #d4d4d4;background:#e7e7e7}
 .pagination .pre_end,.pagination .pre,.pagination .next,.pagination .next_end{overflow:hidden;width:33px;height:11px;padding:0;background:url(../images/sp_btn2.gif) no-repeat;font-size:0;line-height:999px;white-space:nowrap}
