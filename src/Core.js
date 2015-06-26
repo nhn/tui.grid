@@ -850,7 +850,9 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
         if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-            _.each(rowKeyList, this.removeRow, this);
+            _.each(rowKeyList, function(rowKey) {
+                this.removeRow(rowKey);
+            }, this);
             return true;
         }
         return false;
