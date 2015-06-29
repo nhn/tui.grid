@@ -8,17 +8,17 @@ Application Grid
 https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 
 ## Documentation
-* **API** : https://nhnent.github.io/fe.application-grid/1.0.1
+* **API** : https://nhnent.github.io/fe.application-grid/api
 * **Tutorial** : https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드-적용하기
-* **Sample** : https://nhnent.github.io/fe.application-grid/1.0.1/tutorial-sample1.html
+* **Sample** : https://nhnent.github.io/fe.application-grid/api/tutorial-sample1.html
 * **CI** : 준비중
 
 ## Dependency
 * jquery ~1.8.3
 * jquery-json ~2.5.1
 * backbone ~1.1.2
-* ne-code-snippet : ~1.0.1
-* component-pagination
+* ne-code-snippet ~1.0.1
+* component-pagination ~1.0.0
 
 ## Test environment
 * PC
@@ -26,10 +26,9 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 	* Chrome
 	* Firefox
 
-
 ## Download/Install
 * Bower:
-   * 최신버전 : `bower install "ne-application-grid"`
+   * 최신버전 : `bower install ne-application-grid`
    * 특정버전 : `bower install "ne-application-grid[#tag]"`
 * Download: https://github.com/nhnent/fe.application-grid
 
