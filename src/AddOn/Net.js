@@ -11,7 +11,7 @@
  *          @param {string} [options.api.readData]  데이터 조회 API 주소
  *          @param {string} [options.api.createData] 데이터 생성 API 주소
  *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
- *          @param {string} [options.api.modify] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+ *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
  *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
  *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
  *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
@@ -49,10 +49,10 @@
     //성공/실패와 관계없이 response 를 받을 떄 호출된다.
 }).on('successResponse', function(data) {
     //successResponse 이벤트 핸들러
-    //response.result 가 truthy 일 때 호출된다.
+    //response.result 가 true 일 때 호출된다.
 }).on('failResponse', function(data) {
     //failResponse 이벤트 핸들러
-    //response.result 가 falsy 일 때 호출된다.
+    //response.result 가 false 일 때 호출된다.
 }).on('errorResponse', function(data) {
     //ajax error response 이벤트 핸들러
 });
