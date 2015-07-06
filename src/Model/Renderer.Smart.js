@@ -61,47 +61,29 @@ Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prot
     /**
      * 렌더링을 시작하는 행에 rowSpan 정보가 있으면, count 값이 가장 작은 행의 값을 반환한다.
      * @param {number} startIndex 시작하는 행의 Index
-     * @return {number} rowSpan의 count 값 (negative)
+     * @return {number} rowSpan의 count 값 (0 이하)
      */
     _getStartRowSpanMinCount: function(startIndex) {
-        var minList = [],
-            startRow = this.grid.dataModel.at(startIndex),
-            count = 0;
+        var firstRow = this.grid.dataModel.at(startIndex),
+            counts = _.pluck(firstRow.get('_extraData').rowSpanData, 'count');
 
-        _.each(startRow.get('_extraData')['rowSpanData'], function (data) {
-            if (!data.isMainRow) {
-                minList.push(data.count);
-            }
-        }, this);
+        counts.push(0); // count가 음수인 경우(mainRow가 아닌 경우)에만 최소값을 구함. 없으면 0
 
-        if (minList.length > 0) {
-            count = Math.min.apply(Math, minList);
-        }
-
-        return count;
+        return _.min(counts);
     },
 
     /**
      * 렌더링할 마지막 행에 rowSpan 정보가 있으면, count 값이 가장 큰 행의 값을 반환한다.
      * @param {number} endIndex 마지막 행의 Index
-     * @return {number} rowSpan의 count 값 (negative)
+     * @return {number} rowSpan의 count 값 (0 이상)
      */
     _getEndRowSpanMaxCount: function(endIndex) {
-        var maxList = [],
-            endRow = this.grid.dataModel.at(endIndex),
-            count = 0;
+        var lastRow = this.grid.dataModel.at(endIndex),
+            counts = _.pluck(lastRow.get('_extraData').rowSpanData, 'count');
 
-        _.each(endRow.get('_extraData')['rowSpanData'], function (data) {
-            if (data.count > 0) {
-                maxList.push(data.count);
-            }
-        }, this);
+        counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
 
-        if (maxList.length > 0) {
-            count = Math.max.apply(Math, maxList);
-        }
-
-        return count;
+        return _.max(counts);
     },
     /**
      * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
