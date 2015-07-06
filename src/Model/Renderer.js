@@ -188,7 +188,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
         len = rsideRowList.length + startIndex;
 
         //relation 을 수행한다.
-        for (i = startIndex; i < len; i++) {
+        for (i = startIndex; i < len; i += 1) {
             this.executeRelation(i);
         }
         //컬럼모델의 변경이 있을 경우 columnModelChanged 이벤트를 발생한다.
