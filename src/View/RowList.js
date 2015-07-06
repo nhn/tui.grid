@@ -15,8 +15,6 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      */
     initialize: function(options) {
         View.Base.prototype.initialize.apply(this, arguments);
-        this.grid.dataModel.sortOptions;
-
         this.setOwnProperties({
             whichSide: (options && options.whichSide) || 'R',
             timeoutIdForCollection: 0,
