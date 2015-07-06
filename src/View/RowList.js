@@ -15,10 +15,14 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      */
     initialize: function(options) {
         View.Base.prototype.initialize.apply(this, arguments);
+        this.grid.dataModel.sortOptions;
+
         this.setOwnProperties({
             whichSide: (options && options.whichSide) || 'R',
             timeoutIdForCollection: 0,
             timeoutIdForFocusClipboard: 0,
+            sortOptions: _.clone(this.grid.dataModel.sortOptions),
+            rowIds: null,
             rowPainter: null
         });
         this._createRowPainter();
@@ -38,34 +42,93 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
     },
 
     /**
+     * 기존에 생성되어 있던 TR요소들 중 목록에서 사라진 요소들을 삭제한다.
+     * @param {array}
+     */
+    _removeOldRows: function(dupRowIds) {
+        var firstIdx = _.indexOf(this.rowIds, dupRowIds[0]);
+            lastIdx = _.indexOf(this.rowIds, _.last(dupRowIds)),
+            $rows = this.$el.children('tr');
+
+        $rows.slice(0, firstIdx).remove();
+        $rows.slice(lastIdx + 1).remove();
+    },
+
+    _appendNewRows: function(rowIds, dupRowIds) {
+        var beforeRows = this.collection.slice(0, _.indexOf(rowIds, dupRowIds[0])),
+            afterRows = this.collection.slice(_.indexOf(rowIds, _.last(dupRowIds)) + 1);
+
+        this.$el.prepend(this._getRowsHtml(beforeRows));
+        this.$el.append(this._getRowsHtml(afterRows));
+    },
+
+    /**
+     * el의 innerHTML을 변경한다.
+     */
+    _resetInnerHTML: function(html) {
+        // IE7-9 에서 tbody의 innerHTML를 직접 변경할 수 없음
+        if (ne.util.browser.msie && ne.util.browser.version <= 9) {
+            this.$el.empty().append(html);
+        } else {
+            this.$el[0].innerHTML = html;
+        }
+    },
+
+    /**
+     *
+     */
+    _getRowsHtml: function(rows) {
+        var html = _.reduce(rows, function(memo, row) {
+            return memo + this.rowPainter.getHtml(row);
+        }, '', this);
+
+        return html;
+    },
+
+    _focusClipboard: function(delay) {
+        clearTimeout(this.timeoutIdForFocusClipboard);
+        this.timeoutIdForFocusClipboard = setTimeout($.proxy(function() {
+            this.grid.focusClipboard();
+        }, this), delay);
+    },
+
+    /**
      * 랜더링한다.
      * @return {View.RowList} this 객체
      */
     render: function() {
-        var self = this,
-            html = '',
-            firstRow = this.collection.at(0);
+        var rowIds = this.collection.pluck('rowKey'),
+            sortOptions = _.clone(this.grid.dataModel.sortOptions),
+            isReset = false,
+            dupRowIds;
+
+        if (!_.isEqual(sortOptions, this.sortOptions)) {
+            isReset = true;
+        } else {
+            dupRowIds = _.intersection(rowIds, this.rowIds);
+            if (_.isEmpty(rowIds) || _.isEmpty(dupRowIds) || (dupRowIds.length / rowIds.length > 0.8)) {
+                isReset = true;
+            }
+        }
+
+        if (isReset) {
+            this._resetInnerHTML(this._getRowsHtml(this.collection.models));
+        } else {
+            this._removeOldRows(dupRowIds);
+            this._appendNewRows(rowIds, dupRowIds);
+        }
 
         this.rowPainter.detachHandlerAll();
         this.destroyChildren();
         this._createRowPainter();
 
-        if (firstRow && ne.util.isExisty(firstRow.get('rowKey'))) {
-            this.collection.forEach(function(row) {
-                html += this.rowPainter.getHtml(row);
-            }, this);
-        }
-        this.$el.empty().prepend(html);
+        this.rowIds = rowIds;
+        this.sortOptions = sortOptions;
+
         this.rowPainter.attachHandlerAll();
         this.rowPainter.triggerResizeEventOnTextCell();
 
-        clearTimeout(this.timeoutIdForFocusClipboard);
-        this.timeoutIdForFocusClipboard = setTimeout(function() {
-            if (ne.util.pick(self, 'grid', 'focusClipboard')) {
-                self.grid.focusClipboard();
-            }
-        }, 10);
-
+        this._focusClipboard(10);
         this._showLayer();
 
         return this;
