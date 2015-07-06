@@ -19,7 +19,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             whichSide: (options && options.whichSide) || 'R',
             timeoutIdForCollection: 0,
             timeoutIdForFocusClipboard: 0,
-            sortOptions: _.clone(this.grid.dataModel.sortOptions),
+            sortOptions: null,
             renderedRowKeys: null,
             rowPainter: null
         });
@@ -86,11 +86,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @return {string} 생성된 HTML 문자열
      */
     _getRowsHtml: function(rows) {
-        var html = _.reduce(rows, function(memo, row) {
-            return memo + this.rowPainter.getHtml(row);
-        }, '', this);
-
-        return html;
+        return _.map(rows, this.rowPainter.getHtml, this.rowPainter).join('');
     },
 
     /**
@@ -111,26 +107,21 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
     render: function() {
         var rowKeys = this.collection.pluck('rowKey'),
             sortOptions = _.clone(this.grid.dataModel.sortOptions),
-            isReset = false,
             dupRowKeys;
 
         // 정렬방식이 변경된 경우는 무조건 새로 그린다.
         if (!_.isEqual(sortOptions, this.sortOptions)) {
-            isReset = true;
+            this._resetRows();
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
             if (_.isEmpty(rowKeys) || _.isEmpty(dupRowKeys) ||
                 // 중복된 데이터가 80% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
                 (!View.RowList.isInnerHtmlOfTbodyReadOnly && dupRowKeys.length / rowKeys.length > 0.8)) {
-                isReset = true;
+                this._resetRows();
+            } else {
+                this._removeOldRows(dupRowKeys);
+                this._appendNewRows(rowKeys, dupRowKeys);
             }
-        }
-
-        if (isReset) {
-            this._resetRows();
-        } else {
-            this._removeOldRows(dupRowKeys);
-            this._appendNewRows(rowKeys, dupRowKeys);
         }
 
         this.rowPainter.detachHandlerAll();
