@@ -45,7 +45,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
      */
     initialize: function() {
         View.Base.Painter.prototype.initialize.apply(this, arguments);
-        this.initializeEventHandler();
         this.setOwnProperties({
             _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
         });
@@ -257,7 +256,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
      * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
      */
     redraw: function(cellData, $td) {
-        this.detachHandler($td);
         var attributes = {
             'class': this._getClassNameList(cellData).join(' ')
         };
@@ -268,7 +266,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         attributes = $.extend(attributes, this.getAttributes(cellData));
         $td.attr(attributes);
         $td.html(this._getContentHtml(cellData));
-        this.attachHandler($td);
     },
     /**
      * 인자로 받은 element 의 cellData 를 반환한다.

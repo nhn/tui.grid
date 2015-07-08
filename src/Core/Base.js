@@ -243,38 +243,10 @@ View.Base.Painter = View.Base.extend(/**@lends View.Base.Painter.prototype */{
         });
     },
     /**
-     * 인자로 받은 엘리먼트에 이벤트 핸들러를 할당한다.
-     * @param {jQuery} $el  이벤트를 바인딩할 엘리먼트
+     * 이벤트 핸들러 정보를 반환한다.
      */
-    attachHandler: function($el) {
-        _.each(this._eventHandler, function(obj, eventName) {
-            var handler = obj.handler,
-                selector = obj.selector,
-                $target = $el;
-            if (selector) {
-                $target = $el.find(selector);
-            }
-            if ($target.length > 0) {
-                $target.on(eventName, handler);
-            }
-        }, this);
-    },
-    /**
-     * 인자로 받은 엘리먼트에 이벤트 핸들러를 제거한다.
-     * @param {jQuery} $el  이벤트를 바인딩할 엘리먼트
-     */
-    detachHandler: function($el) {
-        _.each(this._eventHandler, function(obj, eventName) {
-            var handler = obj.handler,
-                selector = obj.selector,
-                $target = $el;
-            if (selector) {
-                $target = $el.find(selector);
-            }
-            if ($target.length > 0) {
-                $target.off(eventName, handler);
-            }
-        }, this);
+    getEventHandlerInfo: function() {
+        return this._eventHandler;
     },
     /**
      * 렌더러에서 반환할 HTML 스트링

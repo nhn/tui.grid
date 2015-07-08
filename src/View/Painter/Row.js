@@ -36,18 +36,10 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
 
         this.setOwnProperties({
             $parent: options.$parent,        //부모 table body element
-            collection: options.collection,    //change 를 감지할 collection
             whichSide: whichSide,
-            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
-            _isEventAttached: false
+            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide)
         });
 
-        //listener 등록
-        if (this.collection) {
-            this.collection.forEach(function(row) {
-                this.listenTo(row, 'change', this._onModelChange, this);
-            }, this);
-        }
         this.listenTo(focusModel, 'select', this._onSelect, this)
             .listenTo(focusModel, 'unselect', this._onUnselect, this)
             .listenTo(focusModel, 'focus', this._onFocus, this)
@@ -58,20 +50,8 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
      * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
      */
     destroy: function() {
-        //this.detachHandlerAll();
         this.stopListening();
-        this.destroyChildren();
         this.remove();
-    },
-    /**
-     * attachHandlerAll
-     * event handler를 전체 tr에 한번에 붙인다.
-     * 자기 자신의 이벤트 핸들러 및 cellFactory 의 이벤트 헨들러를 bind 한다.
-     */
-    attachHandlerAll: function() {
-        this.attachHandler(this.$parent);
-        this.grid.cellFactory.attachHandler(this.$parent);
-        this._isEventAttached = true;
     },
     /**
      * dimensionModel의 columnWidthChanged 이벤트가 발생했을때 실행되는 핸들러 함수
@@ -85,23 +65,21 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
         }
     },
     /**
-     * Text타입의 셀에 resize 이벤트를 발생시킨다.
+     * text, text-password 타입의 셀에 resize 이벤트를 발생시킨다.
+     * @param {jquery} $parent 자신이 속한 tbody jquery 엘리먼트
      */
     triggerResizeEventOnTextCell: function() {
-        this.grid.cellFactory.triggerResizeEventOnTextCell(this.$parent);
-    },
-    /**
-     * detach eventHandler
-     * event handler를 전체 tr에서 제거한다.
-     * 자기 자신의 이벤트 핸들러 및 cellFactory 의 이벤트 헨들러를 unbind 한다.
-     */
-    detachHandlerAll: function() {
-        if (this._isEventAttached) {
-            this.detachHandler(this.$parent);
-            this.grid.cellFactory.detachHandler(this.$parent);
-        }
-    },
+        var $textCells = this.$parent.find('td[edit-type=text], td[edit-type=text-password]');
 
+        _.each($textCells, function(td) {
+            var $td = $(td),
+                cellPainter = this.grid.cellFactory.getInstance($td.attr('edit-type'));
+
+            if (cellPainter) {
+                cellPainter.trigger('resize', $td);
+            }
+        }, this);
+    },
     /**
      * mousedown 이벤트 핸들러
      * @param {event} mouseDownEvent 이벤트 객체
@@ -123,7 +101,7 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
      * @param {object} model    변화가 일어난 모델 인스턴스
      * @private
      */
-    _onModelChange: function(model) {
+    onModelChange: function(model) {
         var editType,
             cellInstance,
             $trCache = {},

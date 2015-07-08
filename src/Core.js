@@ -227,8 +227,6 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
                 grid: this
             });
         }
-
-        this.cellFactory = this.createView(View.CellFactory, { grid: this });
     },
     /**
      * 내부에서 사용할 view 인스턴스들을 초기화한다.

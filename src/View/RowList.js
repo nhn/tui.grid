@@ -15,6 +15,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      */
     initialize: function(options) {
         View.Base.prototype.initialize.apply(this, arguments);
+
         this.setOwnProperties({
             whichSide: (options && options.whichSide) || 'R',
             timeoutIdForCollection: 0,
@@ -23,18 +24,22 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             renderedRowKeys: null,
             rowPainter: null
         });
+
         this._createRowPainter();
+        this._delegateEventsToDesc();
+
+        this.listenTo(this.collection, 'change', this._onModelChange);
         this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
     },
+
     /**
      * Rendering 에 사용할 RowPainter Instance 를 생성한다.
      * @private
      */
     _createRowPainter: function() {
-        this.rowPainter = this.createView(View.Painter.Row, {
+        this.rowPainter = new View.Painter.Row({
             grid: this.grid,
             $parent: this.$el,
-            collection: this.collection,
             whichSide: this.whichSide
         });
     },
@@ -124,21 +129,49 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             }
         }
 
-        this.rowPainter.detachHandlerAll();
-        this.destroyChildren();
-        this._createRowPainter();
-
         this.renderedRowKeys = rowKeys;
         this.sortOptions = sortOptions;
 
-        this.rowPainter.attachHandlerAll();
         this.rowPainter.triggerResizeEventOnTextCell();
-
         this._focusClipboard(10);
         this._showLayer();
 
         return this;
     },
+
+    /**
+     * 하위요소(TR, TD)에서 발생하는 이벤트들 직접 받아서 해당 요소들에게 위임하도록 설정한다.
+     * @private
+     */
+    _delegateEventsToDesc: function() {
+        this._attachDelegatedHandler('tr', this.rowPainter.getEventHandlerInfo());
+
+        _.each(this.grid.cellFactory.instances, function(instance, editType) {
+            this._attachDelegatedHandler('td[edit-type=' + editType + ']', instance.getEventHandlerInfo());
+        }, this);
+    },
+
+    /**
+     * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
+     * @param {string} selector 선택자
+     * @param {object} 이벤트 정보 객체
+     * @private
+     */
+    _attachDelegatedHandler: function(selector, events) {
+        _.each(events, function(obj, eventName) {
+            this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
+        }, this);
+    },
+
+    /**
+     * modelChange 이벤트 발생시 실행되는 핸들러 함수.
+     * @param {Model.Row} model Row 모델 객체
+     * @private
+     */
+    _onModelChange: function(model) {
+        this.rowPainter.onModelChange(model);
+    },
+
     /**
      * 데이터가 있다면 Layer 를 노출하고, 없는 경우 데이터 없음 레이어를 노출한다.
      * @private
@@ -150,14 +183,6 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             this.grid.showGridLayer('empty');
         }
     }
-    ///**
-    // * selection 영역의 mousedown 이벤트
-    // * @param {Event} mouseDownEvent
-    // * @private
-    // */
-    //_onMouseDown: function(mouseDownEvent) {
-    //    this.grid.selection.onMouseDown(mouseDownEvent);
-    //}
 }, {
     /**
      * @static
