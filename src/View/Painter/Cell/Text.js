@@ -35,7 +35,6 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
                 this.focusOut(param.$target.closest('td'));
             }
         });
-        this.on('resize', this._resetInputWidth, this);
     },
     template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
     /**
@@ -51,7 +50,7 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      * @param {jquery} $td 해당 셀의 TD요소
      * @private
      */
-    _resetInputWidth: function($td) {
+    resetInputWidth: function($td) {
         var oldWidth = $td.data('width'),
             curWidth = $td.width(),
             textWidth = 0;
@@ -363,7 +362,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
 
         if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
             this.redraw(this._getCellData($td), $td);
-            this._resetInputWidth($td);
+            this.resetInputWidth($td);
             $input = $td.find('input');
             this.originalText = $input.val();
             Util.form.setCursorToEnd($input.get(0));

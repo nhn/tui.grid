@@ -14,10 +14,14 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
+        var focusModel, whichSide;
+
         View.Base.prototype.initialize.apply(this, arguments);
 
+        whichSide = (options && options.whichSide) || 'R';
         this.setOwnProperties({
-            whichSide: (options && options.whichSide) || 'R',
+            whichSide: whichSide,
+            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
             timeoutIdForCollection: 0,
             timeoutIdForFocusClipboard: 0,
             sortOptions: null,
@@ -28,8 +32,14 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         this._createRowPainter();
         this._delegateEventsToDesc();
 
-        this.listenTo(this.collection, 'change', this._onModelChange);
-        this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+        focusModel = this.grid.focusModel;
+        this.listenTo(this.collection, 'change', this._onModelChange)
+            .listenTo(focusModel, 'select', this._onSelect, this)
+            .listenTo(focusModel, 'unselect', this._onUnselect, this)
+            .listenTo(focusModel, 'focus', this._onFocus, this)
+            .listenTo(focusModel, 'blur', this._onBlur, this)
+            .listenTo(this.grid.renderModel, 'rowListChanged', this.render, this)
+            .listenTo(this.grid.dimensionModel, 'columnWidthChanged', _.debounce(this._onColumnWidthChanged, 200));
     },
 
     /**
@@ -39,8 +49,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
     _createRowPainter: function() {
         this.rowPainter = new View.Painter.Row({
             grid: this.grid,
-            $parent: this.$el,
-            whichSide: this.whichSide
+            columnModelList: this.columnModelList
         });
     },
 
@@ -106,6 +115,114 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
     },
 
     /**
+     * dimensionModel의 columnWidthChanged 이벤트가 발생했을때 실행되는 핸들러 함수
+     * (렌더링 속도를 고려해 debounce를 통해 실행)
+     */
+    _onColumnWidthChanged: function() {
+        try {
+            this._resetInputWidthInTextCells();
+        } catch (e) {
+            // prevent Error from running test cases (caused by setTimeout in _.debounce())
+        }
+    },
+    /**
+     * text, text-password 타입의 셀에 resize 이벤트를 발생시킨다.
+     */
+    _resetInputWidthInTextCells: function() {
+        var $textCells = this.$el.find('td[edit-type=text], td[edit-type=text-password]');
+
+        _.each($textCells, function(td) {
+            var $td = $(td),
+                cellPainter = this.grid.cellFactory.getInstance($td.attr('edit-type'));
+
+            if (cellPainter) {
+                cellPainter.resetInputWidth($td);
+            }
+        }, this);
+    },
+
+    /**
+     * tr 엘리먼트를 찾아서 반환한다.
+     * @param {(string|number)} rowKey rowKey 대상의 키값
+     * @return {jquery} 조회한 tr jquery 엘리먼트
+     * @private
+     */
+    _getRowElement: function(rowKey) {
+        return this.$el.find('tr[key="' + rowKey + '"]');
+    },
+
+    /**
+     * focusModel 의 select 이벤트 발생시 이벤트 핸들러
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @private
+     */
+    _onSelect: function(rowKey) {
+        this._setCssSelect(rowKey, true);
+    },
+
+    /**
+     * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @private
+     */
+    _onUnselect: function(rowKey) {
+        this._setCssSelect(rowKey, false);
+    },
+
+    /**
+     * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
+     * @private
+     */
+    _setCssSelect: function(rowKey, isSelected) {
+        var grid = this.grid,
+            columnModelList = this.columnModelList,
+            columnName,
+            $trCache = {},
+            $tr, $td,
+            mainRowKey;
+
+        _.each(columnModelList, function(columnModel) {
+            columnName = columnModel['columnName'];
+            mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
+
+            $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
+            $tr = $trCache[mainRowKey];
+            $td = $tr.find('td[columnname="' + columnName + '"]');
+            if ($td.length) {
+                isSelected ? $td.addClass('selected') : $td.removeClass('selected');
+            }
+        }, this);
+    },
+
+    /**
+     * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {String} columnName 컬럼명
+     * @private
+     */
+    _onBlur: function(rowKey, columnName) {
+        var $td = this.grid.getElement(rowKey, columnName);
+        if ($td.length) {
+            $td.removeClass('focused');
+        }
+    },
+
+    /**
+     * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {String} columnName 컬럼명
+     * @private
+     */
+    _onFocus: function(rowKey, columnName) {
+        var $td = this.grid.getElement(rowKey, columnName);
+        if ($td.length) {
+            $td.addClass('focused');
+        }
+    },
+
+    /**
      * 랜더링한다.
      * @return {View.RowList} this 객체
      */
@@ -132,7 +249,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         this.renderedRowKeys = rowKeys;
         this.sortOptions = sortOptions;
 
-        this.rowPainter.triggerResizeEventOnTextCell();
+        this._resetInputWidthInTextCells();
         this._focusClipboard(10);
         this._showLayer();
 
@@ -169,7 +286,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @private
      */
     _onModelChange: function(model) {
-        this.rowPainter.onModelChange(model);
+        var $tr =  this._getRowElement(model.get('rowKey'));
+        this.rowPainter.onModelChange(model, $tr);
     },
 
     /**
