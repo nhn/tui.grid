@@ -21,6 +21,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         whichSide = (options && options.whichSide) || 'R';
         this.setOwnProperties({
             whichSide: whichSide,
+            bodyView: options.bodyView,
             columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
             timeoutIdForCollection: 0,
             timeoutIdForFocusClipboard: 0,
@@ -30,7 +31,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         });
 
         this._createRowPainter();
-        this._delegateEventsToDesc();
+        this._delegateTableEventsFromBody();
+        this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
         focusModel = this.grid.focusModel;
         this.listenTo(this.collection, 'change', this._onModelChange)
@@ -83,12 +85,12 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * 전체 행목록을 갱신한다.
      */
     _resetRows: function() {
-        var html = this._getRowsHtml(this.collection.models)
+        var html = this._getRowsHtml(this.collection.models),
+            $tbody;
 
-        // Tbody에 innerHTML을 사용할 수 없는 경우 jquery의 append() 명령을 사용한다.
-        // (Tbody의 대해서는 jquery의 html() 내부적으로 append() 명령을 사용함)
         if (View.RowList.isInnerHtmlOfTbodyReadOnly) {
-            this.$el.empty().append(html);
+            $tbody = this.bodyView.redrawTable(html);
+            this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
         } else {
             this.$el[0].innerHTML = html;
         }
@@ -108,10 +110,11 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @param {number} delay 지연시킬 시간 (ms)
      */
     _focusClipboard: function(delay) {
-        clearTimeout(this.timeoutIdForFocusClipboard);
-        this.timeoutIdForFocusClipboard = setTimeout($.proxy(function() {
+        try {
             this.grid.focusClipboard();
-        }, this), delay);
+        } catch (e) {
+            // prevent Error from running test cases (caused by setTimeout in _.debounce())
+        }
     },
 
     /**
@@ -237,8 +240,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
             if (_.isEmpty(rowKeys) || _.isEmpty(dupRowKeys) ||
-                // 중복된 데이터가 80% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
-                (!View.RowList.isInnerHtmlOfTbodyReadOnly && dupRowKeys.length / rowKeys.length > 0.8)) {
+                // 중복된 데이터가 40% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
+                (dupRowKeys.length / rowKeys.length > 0.4)) {
                 this._resetRows();
             } else {
                 this._removeOldRows(dupRowKeys);
@@ -249,34 +252,25 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         this.renderedRowKeys = rowKeys;
         this.sortOptions = sortOptions;
 
-        this._resetInputWidthInTextCells();
-        this._focusClipboard(10);
+        // this._resetInputWidthInTextCells();
+        this._focusClipboardDebounced();
         this._showLayer();
 
         return this;
     },
 
     /**
-     * 하위요소(TR, TD)에서 발생하는 이벤트들 직접 받아서 해당 요소들에게 위임하도록 설정한다.
+     * 테이블 내부(TR,TD)에서 발생하는 이벤트를 View.Layout.Body에게 넘겨 해당 요소들에게 위임하도록 설정한다.
      * @private
      */
-    _delegateEventsToDesc: function() {
-        this._attachDelegatedHandler('tr', this.rowPainter.getEventHandlerInfo());
+    _delegateTableEventsFromBody: function() {
+        this.bodyView.attachDelegatedHandler('tr', this.rowPainter.getEventHandlerInfo());
 
         _.each(this.grid.cellFactory.instances, function(instance, editType) {
-            this._attachDelegatedHandler('td[edit-type=' + editType + ']', instance.getEventHandlerInfo());
-        }, this);
-    },
+            var selector = 'td[edit-type=' + editType + ']',
+                handlerInfo = instance.getEventHandlerInfo();
 
-    /**
-     * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
-     * @param {string} selector 선택자
-     * @param {object} 이벤트 정보 객체
-     * @private
-     */
-    _attachDelegatedHandler: function(selector, events) {
-        _.each(events, function(obj, eventName) {
-            this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
+            this.bodyView.attachDelegatedHandler(selector, handlerInfo);
         }, this);
     },
 

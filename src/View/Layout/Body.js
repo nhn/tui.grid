@@ -10,13 +10,13 @@
 View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
     tagName: 'div',
     className: 'data',
-    template: _.template('' +
-            '<div class="table_container" style="top: 0px">' +
-            '    <table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
-            '        <colgroup><%=colGroup%></colgroup>' +
-            '        <tbody></tbody>' +
-            '    </table>' +
-            '</div>'),
+    template: _.template('<div class="table_container" style="top: 0px"><%=table%></div>'),
+    templateTable: _.template([
+        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">',
+        '   <colgroup><%=colGroup%></colgroup>',
+        '   <tbody><%=tbody%></tbody>',
+        '</table>'
+    ].join('')),
     events: {
         'scroll': '_onScroll'
     },
@@ -115,7 +115,8 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
             whichSide = this.whichSide,
             selection,
             rowList,
-            collection = grid.renderModel.getCollection(whichSide);
+            tableHtml,
+            collection = grid.renderModel.getCollection(whichSide)
 
         this.destroyChildren();
 
@@ -127,15 +128,20 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
             this.$el.css('overflow-y', 'hidden');
         }
 
+        tableHtml = this.templateTable({
+            colGroup: this._getColGroupMarkup(),
+            tbody: ''
+        });
         this.$el.css({
                 height: grid.dimensionModel.get('bodyHeight')
             }).html(this.template({
-                colGroup: this._getColGroupMarkup()
+                table: tableHtml
             }));
 
         rowList = this.createView(View.RowList, {
             grid: grid,
             collection: collection,
+            bodyView: this,
             el: this.$el.find('tbody'),
             whichSide: whichSide
         });
@@ -147,6 +153,32 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
 
         return this;
     },
+
+    /**
+     * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
+     * @param {string} selector 선택자
+     * @param {object} 이벤트 정보 객체
+     * @private
+     */
+    attachDelegatedHandler: function(selector, handlerInfos) {
+        _.each(handlerInfos, function(obj, eventName) {
+            this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
+        }, this);
+    },
+
+    /**
+     *
+     */
+    redrawTable: function(tbodyHtml) {
+        var $container = this.$el.find('div.table_container');
+        $container[0].innerHTML = this.templateTable({
+            colGroup: this._getColGroupMarkup(),
+            tbody: tbodyHtml
+        });
+
+        return $container.find('tbody');
+    },
+
     /**
      * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
      * @return {string} <colgroup> 안에 들어갈 마크업 문자열
@@ -162,7 +194,10 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {
-            html += '<col columnname="' + columnModel['columnName'] + '" style="width:' + columnWidthList[index] + 'px">';
+            var name = columnModel['columnName'],
+                width = columnWidthList[index] - View.Layout.Body.extraWidth;
+
+            html += '<col columnname="' + name + '" style="width:' + width + 'px">';
         });
         return html;
     }

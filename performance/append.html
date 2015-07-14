@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>Tbody Append Performance Test</title>
+    <title>&lt;tr&gt; append performance test</title>
     <script src="../lib/jquery/jquery.js"></script>
     <script src="../lib/ne-code-snippet/code-snippet.js"></script>
     <script src="../lib/underscore/underscore.js"></script>
@@ -16,6 +17,7 @@
     </style>
 </head>
 <body>
+<h1>&lt;tr&gt; append performance test</h1>
 <div id="scenario">
     <div class="case">
         <input class="btn-append" data-ratio="0.2" type="button" value="append 20%" />
@@ -60,8 +62,8 @@
 </div>
 <div id="title">
     <p>- Table Type - </p>
-    <label><input type="radio" name="type" value="text"  /> Text</label>
-    <label><input type="radio" name="type" value="input" checked /> Input</label>
+    <label><input type="radio" name="type" value="text" checked /> Text</label>
+    <label><input type="radio" name="type" value="input" /> Input</label>
 </div>
 
 <div id="wrapper">
@@ -72,11 +74,11 @@
 var trs = [],
     $tbody = $('tbody'),
     $temp = $('<div></div>'),
-    tableType = '',
+    tableType = 'text',
     COL_LENGTH = 10,
     ROW_LENGTH = 5000,
-    STEP = 50,
-    SET_LENGTH = 10;
+    ROW_STEP = 50,
+    TEST_SET_LENGTH = 10;
 
 function createTr() {
     var tdHtml = '';
@@ -95,31 +97,31 @@ function createTd() {
 }
 
 function appendAll(start) {
-    var html = trs.slice(start, start + STEP).join('');
+    var html = trs.slice(start, start + ROW_STEP).join('');
     $('tbody').empty().append(html);
 }
 
 function setInnerHTML(start) {
-    var html = trs.slice(start, start + STEP).join('');
+    var html = trs.slice(start, start + ROW_STEP).join('');
     $('tbody')[0].innerHTML = html;
 }
 
 function setWrapperInnerHTML(start) {
-    var html = trs.slice(start, start + STEP).join('');
+    var html = trs.slice(start, start + ROW_STEP).join('');
     $('#wrapper')[0].innerHTML = '<table><tbody>' + html + '</tbody></table>';
     $tbody = $('tbody');
 }
 
 function useTempAndReplace(start) {
-    var html = trs.slice(start, start + STEP).join('');
+    var html = trs.slice(start, start + ROW_STEP).join('');
     $temp[0].innerHTML = '<table><tbody>' + html + '</tbody></table>';
     $tbody[0].parentNode.replaceChild($temp.find('tbody')[0], $tbody[0]);
     $tbody = $('tbody');
 }
 
 function appendPart(start, ratio) {
-    var count = parseInt(STEP * ratio, 10),
-        end = start + STEP,
+    var count = parseInt(ROW_STEP * ratio, 10),
+        end = start + ROW_STEP,
         html = trs.slice(end - count, end).join('');
 
     $('tbody').children('tr').slice(0, count).remove();
@@ -130,7 +132,7 @@ function run(callback, $caseDiv, ratio) {
     var startTime = new Date().getTime(),
         timeLapse, avr, count, sum = 0;
 
-    for (var i = 0; i < ROW_LENGTH; i += STEP) {
+    for (var i = 0; i < ROW_LENGTH; i += ROW_STEP) {
         callback(i, ratio);
     }
     timeLapse = new Date().getTime() - startTime;
@@ -139,10 +141,10 @@ function run(callback, $caseDiv, ratio) {
 }
 
 function runSet(callback, $caseDiv, ratio) {
-    _.times(SET_LENGTH, function(count) {
+    _.times(TEST_SET_LENGTH, function(count) {
         setTimeout(function() {
             run(callback, $caseDiv, ratio);
-            if (count === SET_LENGTH - 1) {
+            if (count === TEST_SET_LENGTH - 1) {
                 calAverage($caseDiv);
             }
         }, 0);
@@ -155,7 +157,7 @@ function calAverage($caseDiv) {
     $caseDiv.find('li').each(function() {
         sum += +$(this).text();
     });
-    $caseDiv.find('.average').text('AVR : ' + (sum / SET_LENGTH).toFixed(2));
+    $caseDiv.find('.average').text('AVR : ' + (sum / TEST_SET_LENGTH).toFixed(2));
 };
 
 function getCaseDiv(button) {
@@ -183,14 +185,6 @@ $('.btn-append').click(function() {
     }
 });
 
-$('#title input').click(function() {
-    if (tableType !== this.value) {
-        tableType = this.value;
-        initData();
-    }
-
-})
-
 $('.btn-innerhtml').click(function() {
     runSet(setInnerHTML, getCaseDiv(this));
 });
@@ -202,6 +196,13 @@ $('.btn-wrapper-innerhtml').click(function() {
 $('.btn-replace').click(function() {
     runSet(useTempAndReplace, getCaseDiv(this));
 });
+
+$('#title input').click(function() {
+    if (tableType !== this.value) {
+        tableType = this.value;
+        initData();
+    }
+})
 
 initData();
 </script>
