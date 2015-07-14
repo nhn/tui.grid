@@ -192,28 +192,5 @@ describe('core.base', function() {
         beforeEach(function() {
             painter = new PainterClass();
         });
-
-        it('attachHandler()는 주어진 jQuery객체에 이벤트 핸들러를 설정한다.', function() {
-            $empty.html(painter.getHtml());
-            painter.attachHandler($empty);
-
-            $empty.find('p').trigger('click');
-            expect(painter.clickCount).toEqual(1);
-
-            $empty.find('input').focus();
-            expect(painter.focusCount).toEqual(1);
-        });
-
-        it('detachHandler()는 주어진 jQuery객체에 설정된 이벤트 핸들러를 제거한다.', function() {
-            $empty.html(painter.getHtml());
-            painter.attachHandler($empty);
-            painter.detachHandler($empty);
-
-            $empty.find('p').trigger('click');
-            expect(painter.clickCount).toEqual(0);
-
-            $empty.find('input').focus();
-            expect(painter.focusCount).toEqual(0);
-        });
     });
 });

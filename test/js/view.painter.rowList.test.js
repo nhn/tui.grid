@@ -72,7 +72,10 @@ describe('View.RowList', function() {
             whichSide: 'R',
             grid: grid,
             el : setFixtures('<table><tbody></tbody></table>').find('tbody'),
-            collection: grid.renderModel.getCollection('R')
+            collection: grid.renderModel.getCollection('R'),
+            bodyView: {
+                attachDelegatedHandler: function() {}
+            }
         });
         rowListView.render();
     });
@@ -104,50 +107,6 @@ describe('View.RowList', function() {
                 expect(rowPainter._getEditType('c1', {isEditable: true})).toEqual('normal');
                 expect(rowPainter._getEditType('c2', {isEditable: true})).toEqual('text');
                 expect(rowPainter._getEditType('c3', {isEditable: true})).toEqual('select');
-            });
-        });
-
-        describe('_getRowElement', function() {
-            it('현재 rendering된 엘리먼트 중, rowKey에 해당하는 엘리먼트를 반환한다.', function() {
-                expect(rowPainter._getRowElement(0).length).toEqual(1);
-                expect(rowPainter._getRowElement(0).attr('key')).toEqual('0');
-                expect(rowPainter._getRowElement(1).length).toEqual(1);
-                expect(rowPainter._getRowElement(1).attr('key')).toEqual('1');
-                expect(rowPainter._getRowElement(2).length).toEqual(0);
-            });
-        });
-
-        xdescribe('_onFocus, _onBlur', function() {
-            it('rendering 된 엘리먼트 중 해당하는 엘리먼트에 focus, blur 디자인 클래스를 적용한다.', function() {
-                var $firstCell = rowListView.$el.find('tr:first').find('td').eq(1); // 0번째는 _button임
-
-                rowPainter._onFocus(0, 'c1');
-                expect($firstCell).toHaveClass('focused');
-
-                rowPainter._onBlur(0, 'c1');
-                expect($firstCell).not.toHaveClass('focused');
-            });
-        });
-
-        describe('_onSelect, _onUnselect', function() {
-            var $firstRowCells;
-
-            beforeEach(function() {
-                $firstRowCells = rowListView.$el.find('tr:first').find('td');
-            });
-
-            it('_onSelect 호출시 _setCssSelect 를 true 로 호출한다.', function() {
-                rowPainter._onSelect(0);
-                $firstRowCells.each(function() {
-                    expect(this).toHaveClass('selected');
-                });
-            });
-
-            it('_onUnselect 호출시 _setCssSelect 를 false 로 호출한다.', function() {
-                rowPainter._onUnselect(0);
-                $firstRowCells.each(function() {
-                    expect(this).not.toHaveClass('selected');
-                });
             });
         });
     });
@@ -306,6 +265,54 @@ describe('View.RowList', function() {
     });
 
     describe('RowList', function() {
+        describe('_getRowElement', function() {
+            it('현재 rendering된 엘리먼트 중, rowKey에 해당하는 엘리먼트를 반환한다.', function() {
+                expect(rowListView._getRowElement(0).length).toEqual(1);
+                expect(rowListView._getRowElement(0).attr('key')).toEqual('0');
+                expect(rowListView._getRowElement(1).length).toEqual(1);
+                expect(rowListView._getRowElement(1).attr('key')).toEqual('1');
+                expect(rowListView._getRowElement(2).length).toEqual(0);
+            });
+        });
+
+        describe('_onFocus, _onBlur', function() {
+            beforeEach(function() {
+                grid.$el.append(rowListView.$el);
+            });
+
+            it('rendering 된 엘리먼트 중 해당하는 엘리먼트에 focus, blur 디자인 클래스를 적용한다.', function() {
+                var $firstCell = rowListView.$el.find('tr:first').find('td').eq(1); // 0번째는 _button임
+
+                rowListView._onFocus(0, 'c1');
+                expect($firstCell).toHaveClass('focused');
+
+                rowListView._onBlur(0, 'c1');
+                expect($firstCell).not.toHaveClass('focused');
+            });
+        });
+
+        describe('_onSelect, _onUnselect', function() {
+            var $firstRowCells;
+
+            beforeEach(function() {
+                $firstRowCells = rowListView.$el.find('tr:first').find('td');
+            });
+
+            it('_onSelect 호출시 _setCssSelect 를 true 로 호출한다.', function() {
+                rowListView._onSelect(0);
+                $firstRowCells.each(function() {
+                    expect(this).toHaveClass('selected');
+                });
+            });
+
+            it('_onUnselect 호출시 _setCssSelect 를 false 로 호출한다.', function() {
+                rowListView._onUnselect(0);
+                $firstRowCells.each(function() {
+                    expect(this).not.toHaveClass('selected');
+                });
+            });
+        });
+
         describe('_showLayer', function() {
             it('row의 length가 0일 경우 grid.showGridLayer를 호출한다.', function() {
                 grid.showGridLayer = jasmine.createSpy('showGridLayer');
