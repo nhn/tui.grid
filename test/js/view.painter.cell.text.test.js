@@ -268,8 +268,8 @@ describe('view.painter.cell.text', function() {
                 });
             });
 
-            describe('편집중일 경우 input text 마크업을 반환한다.', function() {
-                var $input;
+            describe('편집중일 경우 input을 포함한 마크업을 반환한다.', function() {
+                var $content;
 
                 beforeEach(function() {
                     cellPainter.editingCell = {
@@ -280,16 +280,16 @@ describe('view.painter.cell.text', function() {
 
                 it('input 에 value 를 잘 설정한다.', function() {
                     options.isDisabled = true;
-                    $input = $(cellPainter.getContentHtml(options));
+                    $content = $(cellPainter.getContentHtml(options));
 
-                    expect($input.val()).toEqual('0-1');
+                    expect($content.find('input').val()).toEqual('0-1');
                 });
 
                 it('disabled 를 잘 설정한다.', function() {
                     options.isDisabled = false;
-                    $input = $(cellPainter.getContentHtml(options));
+                    $content = $(cellPainter.getContentHtml(options));
 
-                    expect($input.prop('disabled')).toBe(false);
+                    expect($content.find('input').prop('disabled')).toBe(false);
                 });
             });
         });

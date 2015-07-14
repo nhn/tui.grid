@@ -200,7 +200,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
             editOption = columnModel.editOption,
             content;
 
-        //if (!ne.util.isNumber(cellData.value) && !cellData.value) {
         if (!ne.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
@@ -208,21 +207,13 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         content = this.getContentHtml(cellData);
         if (editOption) {
             if (editOption.beforeText) {
-                content = this._getSpanWrapText(columnModel.editOption.beforeText) + content;
+                content = columnModel.editOption.beforeText + content;
             }
             if (editOption.afterText) {
-                content = content + this._getSpanWrapText(columnModel.editOption.afterText);
+                content = content + columnModel.editOption.afterText;
             }
         }
         return content;
-    },
-    /**
-     * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
-     * @param {string} text 감싸질 문자열
-     * @return {string} span 태그로 감싼 HTML 코드
-     */
-    _getSpanWrapText: function(text) {
-        return '<span>' + text + '</span>';
     },
     /**
      * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해

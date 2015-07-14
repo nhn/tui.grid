@@ -23,8 +23,6 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             whichSide: whichSide,
             bodyView: options.bodyView,
             columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
-            timeoutIdForCollection: 0,
-            timeoutIdForFocusClipboard: 0,
             sortOptions: null,
             renderedRowKeys: null,
             rowPainter: null
@@ -40,8 +38,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             .listenTo(focusModel, 'unselect', this._onUnselect, this)
             .listenTo(focusModel, 'focus', this._onFocus, this)
             .listenTo(focusModel, 'blur', this._onBlur, this)
-            .listenTo(this.grid.renderModel, 'rowListChanged', this.render, this)
-            .listenTo(this.grid.dimensionModel, 'columnWidthChanged', _.debounce(this._onColumnWidthChanged, 200));
+            .listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
     },
 
     /**
@@ -91,6 +88,11 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         if (View.RowList.isInnerHtmlOfTbodyReadOnly) {
             $tbody = this.bodyView.redrawTable(html);
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
+
+            // IE7에서 레이아웃이 틀어지는 현상 방지
+            if (ne.util.browser.msie && ne.util.browser.version <= 7) {
+                $tbody.width($tbody.width());
+            }
         } else {
             this.$el[0].innerHTML = html;
         }
@@ -115,33 +117,6 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         } catch (e) {
             // prevent Error from running test cases (caused by setTimeout in _.debounce())
         }
-    },
-
-    /**
-     * dimensionModel의 columnWidthChanged 이벤트가 발생했을때 실행되는 핸들러 함수
-     * (렌더링 속도를 고려해 debounce를 통해 실행)
-     */
-    _onColumnWidthChanged: function() {
-        try {
-            this._resetInputWidthInTextCells();
-        } catch (e) {
-            // prevent Error from running test cases (caused by setTimeout in _.debounce())
-        }
-    },
-    /**
-     * text, text-password 타입의 셀에 resize 이벤트를 발생시킨다.
-     */
-    _resetInputWidthInTextCells: function() {
-        var $textCells = this.$el.find('td[edit-type=text], td[edit-type=text-password]');
-
-        _.each($textCells, function(td) {
-            var $td = $(td),
-                cellPainter = this.grid.cellFactory.getInstance($td.attr('edit-type'));
-
-            if (cellPainter) {
-                cellPainter.resetInputWidth($td);
-            }
-        }, this);
     },
 
     /**
@@ -240,8 +215,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
             if (_.isEmpty(rowKeys) || _.isEmpty(dupRowKeys) ||
-                // 중복된 데이터가 40% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
-                (dupRowKeys.length / rowKeys.length > 0.4)) {
+                // 중복된 데이터가 20% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
+                (dupRowKeys.length / rowKeys.length > 0.2)) {
                 this._resetRows();
             } else {
                 this._removeOldRows(dupRowKeys);
@@ -252,7 +227,6 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         this.renderedRowKeys = rowKeys;
         this.sortOptions = sortOptions;
 
-        // this._resetInputWidthInTextCells();
         this._focusClipboardDebounced();
         this._showLayer();
 
@@ -264,13 +238,13 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @private
      */
     _delegateTableEventsFromBody: function() {
-        this.bodyView.attachDelegatedHandler('tr', this.rowPainter.getEventHandlerInfo());
+        this.bodyView.attachTableEventHandler('tr', this.rowPainter.getEventHandlerInfo());
 
-        _.each(this.grid.cellFactory.instances, function(instance, editType) {
+        _.each(this.rowPainter.getCellPainters(), function(painter, editType) {
             var selector = 'td[edit-type=' + editType + ']',
-                handlerInfo = instance.getEventHandlerInfo();
+                handlerInfo = painter.getEventHandlerInfo();
 
-            this.bodyView.attachDelegatedHandler(selector, handlerInfo);
+            this.bodyView.attachTableEventHandler(selector, handlerInfo);
         }, this);
     },
 

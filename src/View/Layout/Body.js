@@ -11,12 +11,11 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
     tagName: 'div',
     className: 'data',
     template: _.template('<div class="table_container" style="top: 0px"><%=table%></div>'),
-    templateTable: _.template([
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">',
-        '   <colgroup><%=colGroup%></colgroup>',
-        '   <tbody><%=tbody%></tbody>',
-        '</table>'
-    ].join('')),
+    templateTable: _.template('' +
+        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '   <colgroup><%=colGroup%></colgroup>' +
+        '   <tbody><%=tbody%></tbody>' +
+        '</table>'),
     events: {
         'scroll': '_onScroll'
     },
@@ -30,7 +29,8 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
         this.setOwnProperties({
             whichSide: options && options.whichSide || 'R',
             isScrollSync: false,
-            extraWidth: 0
+            extraWidth: 0,
+            $tableContainer: null
         });
 
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
@@ -104,7 +104,7 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
      * @private
      */
     _setTopPosition: function(top) {
-        this.$el.children('.table_container').css('top', top + 'px');
+        this.$tableContainer.css('top', top + 'px');
     },
     /**
      * rendering 한다.
@@ -137,6 +137,7 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
             }).html(this.template({
                 table: tableHtml
             }));
+        this.$tableContainer = this.$el.find('div.table_container');
 
         rowList = this.createView(View.RowList, {
             grid: grid,
@@ -157,26 +158,28 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
     /**
      * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
      * @param {string} selector 선택자
-     * @param {object} 이벤트 정보 객체
+     * @param {object} 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
      * @private
      */
-    attachDelegatedHandler: function(selector, handlerInfos) {
+    attachTableEventHandler: function(selector, handlerInfos) {
         _.each(handlerInfos, function(obj, eventName) {
-            this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
+            this.$tableContainer.on(eventName, selector + ' ' + obj.selector, obj.handler);
         }, this);
     },
 
     /**
-     *
+     * table 요소를 새로 생성한다.
+     * (IE7-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
+     * @param {string} tbodyHtml - tbody의 innerHTML 문자열
+     * @return {jquery} - 새로 생성된 table의 tbody 요소
      */
     redrawTable: function(tbodyHtml) {
-        var $container = this.$el.find('div.table_container');
-        $container[0].innerHTML = this.templateTable({
+        this.$tableContainer[0].innerHTML = this.templateTable({
             colGroup: this._getColGroupMarkup(),
             tbody: tbodyHtml
         });
 
-        return $container.find('tbody');
+        return this.$tableContainer.find('tbody');
     },
 
     /**

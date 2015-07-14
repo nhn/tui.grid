@@ -90,6 +90,13 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
         return editType;
     },
     /**
+     * 등록된 Cell Painter들의 이름을 key로 갖고, instance를 value로 갖는 객체를 반환한다.
+     */
+    getCellPainters: function() {
+        // TODO: CellFactory 제거
+        return this.grid.cellFactory.instances;
+    },
+    /**
      * tr html 마크업을 반환한다.
      * @param {object} model 마크업을 생성할 모델 인스턴스
      * @return {string} tr 마크업 문자열

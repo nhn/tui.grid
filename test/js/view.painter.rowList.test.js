@@ -1,11 +1,11 @@
 'use strict';
 
 describe('View.RowList', function() {
-    var grid, rowListView;
+    var grid, rowListView, $tableContainer;
 
     function createGridMock() {
         var mock = {
-            $el: $('<div />'),
+            $el: setFixtures('<div />'),
             hideGridLayer: function () {},
             focusClipboard: function() {},
             columnModel: new Data.ColumnModel(),
@@ -30,6 +30,11 @@ describe('View.RowList', function() {
             grid: mock
         });
         return mock;
+    }
+
+    function redrawTable(html) {
+        $tableContainer[0].innerHTML = '<table><tbody>' + html + '</tbody></table>';
+        return $tableContainer.find('tbody');
     }
 
     beforeEach(function() {
@@ -67,6 +72,8 @@ describe('View.RowList', function() {
         ], {parse: true});
 
         grid.renderModel.refresh();
+        $tableContainer = $('<div />').appendTo(grid.$el);
+        redrawTable('');
 
         rowListView = new View.RowList({
             whichSide: 'R',
@@ -74,7 +81,8 @@ describe('View.RowList', function() {
             el : setFixtures('<table><tbody></tbody></table>').find('tbody'),
             collection: grid.renderModel.getCollection('R'),
             bodyView: {
-                attachDelegatedHandler: function() {}
+                attachTableEventHandler: function() {},
+                redrawTable: redrawTable
             }
         });
         rowListView.render();
