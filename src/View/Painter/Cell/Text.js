@@ -414,7 +414,6 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             $input = $td.find('input');
             this.originalText = $input.val();
             Util.form.setCursorToEnd($input.get(0));
-            $td.addClass('editing');
             $input.focus().select();
         }
     },
@@ -436,7 +435,6 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
         if (cellData) {
             this.redraw(this._getCellData($td), $td);
         }
-        $td.removeClass('editing');
     },
     /**
      * click 이벤트 핸들러
