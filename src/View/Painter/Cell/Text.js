@@ -153,22 +153,21 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
     _getContentHtml: function(cellData) {
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption,
+            editOption = columnModel.editOption || {},
             content = '';
 
         if (!ne.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
 
-        if (editOption) {
-            if (editOption.beforeText) {
-                content += this._getSpanWrapText(columnModel.editOption.beforeText, 'before');
-            }
-            if (editOption.afterText) {
-                content += this._getSpanWrapText(columnModel.editOption.afterText, 'after');
-            }
+        if (editOption.beforeText) {
+            content += this._getSpanWrapText(columnModel.editOption.beforeText, 'before');
+        }
+        if (editOption.afterText) {
+            content += this._getSpanWrapText(columnModel.editOption.afterText, 'after');
         }
         content += this._getSpanWrapText(this.getContentHtml(cellData), 'input');
+
         return content;
     },
     /**

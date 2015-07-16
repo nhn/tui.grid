@@ -197,7 +197,7 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
     _getContentHtml: function(cellData) {
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption,
+            editOption = columnModel.editOption || {},
             content;
 
         if (!ne.util.isExisty(cellData.value)) {
@@ -205,13 +205,11 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         }
 
         content = this.getContentHtml(cellData);
-        if (editOption) {
-            if (editOption.beforeText) {
-                content = columnModel.editOption.beforeText + content;
-            }
-            if (editOption.afterText) {
-                content = content + columnModel.editOption.afterText;
-            }
+        if (editOption.beforeText) {
+            content = columnModel.editOption.beforeText + content;
+        }
+        if (editOption.afterText) {
+            content = content + columnModel.editOption.afterText;
         }
         return content;
     },

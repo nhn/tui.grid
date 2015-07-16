@@ -169,7 +169,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             $tr = $trCache[mainRowKey];
             $td = $tr.find('td[columnname="' + columnName + '"]');
             if ($td.length) {
-                isSelected ? $td.addClass('selected') : $td.removeClass('selected');
+                $td.toggleClass('selected', isSelected);
             }
         }, this);
     },
@@ -215,8 +215,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
             if (_.isEmpty(rowKeys) || _.isEmpty(dupRowKeys) ||
-                // 중복된 데이터가 20% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
-                (dupRowKeys.length / rowKeys.length > 0.2)) {
+                // 중복된 데이터가 70% 미만일 경우에는 성능을 위해 innerHTML을 사용.
+                (dupRowKeys.length / rowKeys.length < 0.7)) {
                 this._resetRows();
             } else {
                 this._removeOldRows(dupRowKeys);
