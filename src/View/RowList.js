@@ -14,28 +14,41 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
+        var focusModel, whichSide;
+
         View.Base.prototype.initialize.apply(this, arguments);
+
+        whichSide = (options && options.whichSide) || 'R';
         this.setOwnProperties({
-            whichSide: (options && options.whichSide) || 'R',
-            timeoutIdForCollection: 0,
-            timeoutIdForFocusClipboard: 0,
+            whichSide: whichSide,
+            bodyView: options.bodyView,
+            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
             sortOptions: null,
             renderedRowKeys: null,
             rowPainter: null
         });
+
         this._createRowPainter();
-        this.listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+        this._delegateTableEventsFromBody();
+        this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
+
+        focusModel = this.grid.focusModel;
+        this.listenTo(this.collection, 'change', this._onModelChange)
+            .listenTo(focusModel, 'select', this._onSelect, this)
+            .listenTo(focusModel, 'unselect', this._onUnselect, this)
+            .listenTo(focusModel, 'focus', this._onFocus, this)
+            .listenTo(focusModel, 'blur', this._onBlur, this)
+            .listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
     },
+
     /**
      * Rendering 에 사용할 RowPainter Instance 를 생성한다.
      * @private
      */
     _createRowPainter: function() {
-        this.rowPainter = this.createView(View.Painter.Row, {
+        this.rowPainter = new View.Painter.Row({
             grid: this.grid,
-            $parent: this.$el,
-            collection: this.collection,
-            whichSide: this.whichSide
+            columnModelList: this.columnModelList
         });
     },
 
@@ -69,12 +82,17 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * 전체 행목록을 갱신한다.
      */
     _resetRows: function() {
-        var html = this._getRowsHtml(this.collection.models)
+        var html = this._getRowsHtml(this.collection.models),
+            $tbody;
 
-        // Tbody에 innerHTML을 사용할 수 없는 경우 jquery의 append() 명령을 사용한다.
-        // (Tbody의 대해서는 jquery의 html() 내부적으로 append() 명령을 사용함)
         if (View.RowList.isInnerHtmlOfTbodyReadOnly) {
-            this.$el.empty().append(html);
+            $tbody = this.bodyView.redrawTable(html);
+            this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
+
+            // IE7에서 레이아웃이 틀어지는 현상 방지
+            if (ne.util.browser.msie && ne.util.browser.version <= 7) {
+                $tbody.width($tbody.width());
+            }
         } else {
             this.$el[0].innerHTML = html;
         }
@@ -94,10 +112,92 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @param {number} delay 지연시킬 시간 (ms)
      */
     _focusClipboard: function(delay) {
-        clearTimeout(this.timeoutIdForFocusClipboard);
-        this.timeoutIdForFocusClipboard = setTimeout($.proxy(function() {
+        try {
             this.grid.focusClipboard();
-        }, this), delay);
+        } catch (e) {
+            // prevent Error from running test cases (caused by setTimeout in _.debounce())
+        }
+    },
+
+    /**
+     * tr 엘리먼트를 찾아서 반환한다.
+     * @param {(string|number)} rowKey rowKey 대상의 키값
+     * @return {jquery} 조회한 tr jquery 엘리먼트
+     * @private
+     */
+    _getRowElement: function(rowKey) {
+        return this.$el.find('tr[key="' + rowKey + '"]');
+    },
+
+    /**
+     * focusModel 의 select 이벤트 발생시 이벤트 핸들러
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @private
+     */
+    _onSelect: function(rowKey) {
+        this._setCssSelect(rowKey, true);
+    },
+
+    /**
+     * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @private
+     */
+    _onUnselect: function(rowKey) {
+        this._setCssSelect(rowKey, false);
+    },
+
+    /**
+     * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
+     * @private
+     */
+    _setCssSelect: function(rowKey, isSelected) {
+        var grid = this.grid,
+            columnModelList = this.columnModelList,
+            columnName,
+            $trCache = {},
+            $tr, $td,
+            mainRowKey;
+
+        _.each(columnModelList, function(columnModel) {
+            columnName = columnModel['columnName'];
+            mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
+
+            $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
+            $tr = $trCache[mainRowKey];
+            $td = $tr.find('td[columnname="' + columnName + '"]');
+            if ($td.length) {
+                $td.toggleClass('selected', isSelected);
+            }
+        }, this);
+    },
+
+    /**
+     * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {String} columnName 컬럼명
+     * @private
+     */
+    _onBlur: function(rowKey, columnName) {
+        var $td = this.grid.getElement(rowKey, columnName);
+        if ($td.length) {
+            $td.removeClass('focused');
+        }
+    },
+
+    /**
+     * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
+     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {String} columnName 컬럼명
+     * @private
+     */
+    _onFocus: function(rowKey, columnName) {
+        var $td = this.grid.getElement(rowKey, columnName);
+        if ($td.length) {
+            $td.addClass('focused');
+        }
     },
 
     /**
@@ -115,8 +215,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
             if (_.isEmpty(rowKeys) || _.isEmpty(dupRowKeys) ||
-                // 중복된 데이터가 80% 이상인 경우에는 remove/append 하는 것보다 innerHTML을 사용하는 게 더 빠름
-                (!View.RowList.isInnerHtmlOfTbodyReadOnly && dupRowKeys.length / rowKeys.length > 0.8)) {
+                // 중복된 데이터가 70% 미만일 경우에는 성능을 위해 innerHTML을 사용.
+                (dupRowKeys.length / rowKeys.length < 0.7)) {
                 this._resetRows();
             } else {
                 this._removeOldRows(dupRowKeys);
@@ -124,21 +224,40 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             }
         }
 
-        this.rowPainter.detachHandlerAll();
-        this.destroyChildren();
-        this._createRowPainter();
-
         this.renderedRowKeys = rowKeys;
         this.sortOptions = sortOptions;
 
-        this.rowPainter.attachHandlerAll();
-        this.rowPainter.triggerResizeEventOnTextCell();
-
-        this._focusClipboard(10);
+        this._focusClipboardDebounced();
         this._showLayer();
 
         return this;
     },
+
+    /**
+     * 테이블 내부(TR,TD)에서 발생하는 이벤트를 View.Layout.Body에게 넘겨 해당 요소들에게 위임하도록 설정한다.
+     * @private
+     */
+    _delegateTableEventsFromBody: function() {
+        this.bodyView.attachTableEventHandler('tr', this.rowPainter.getEventHandlerInfo());
+
+        _.each(this.rowPainter.getCellPainters(), function(painter, editType) {
+            var selector = 'td[edit-type=' + editType + ']',
+                handlerInfo = painter.getEventHandlerInfo();
+
+            this.bodyView.attachTableEventHandler(selector, handlerInfo);
+        }, this);
+    },
+
+    /**
+     * modelChange 이벤트 발생시 실행되는 핸들러 함수.
+     * @param {Model.Row} model Row 모델 객체
+     * @private
+     */
+    _onModelChange: function(model) {
+        var $tr =  this._getRowElement(model.get('rowKey'));
+        this.rowPainter.onModelChange(model, $tr);
+    },
+
     /**
      * 데이터가 있다면 Layer 를 노출하고, 없는 경우 데이터 없음 레이어를 노출한다.
      * @private
@@ -150,14 +269,6 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
             this.grid.showGridLayer('empty');
         }
     }
-    ///**
-    // * selection 영역의 mousedown 이벤트
-    // * @param {Event} mouseDownEvent
-    // * @private
-    // */
-    //_onMouseDown: function(mouseDownEvent) {
-    //    this.grid.selection.onMouseDown(mouseDownEvent);
-    //}
 }, {
     /**
      * @static

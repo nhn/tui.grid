@@ -267,7 +267,7 @@ describe('view.painter.cell.normal', function() {
         });
 
         describe('_onMouseDown', function() {
-            var $td, $button;
+            var $td, $button, mouseDownEvent;
 
             beforeEach(function() {
                 var $table = jasmine.getFixtures().set('<table><tr><td></td></tr></table>');
@@ -275,16 +275,17 @@ describe('view.painter.cell.normal', function() {
                 grid.options.selectType = 'checkbox';
                 $button = $(cellPainter.getContentHtml({}));
                 $td = $table.find('td').append($button);
+                mouseDownEvent = {
+                    target: $td[0]
+                };
             });
 
             it('TD 에 mousedown 이벤트 발생시 button 의 상태변화를 유발하는지 확인한다.', function() {
-                cellPainter.attachHandler($td);
                 expect($button.prop('checked')).toBe(false);
-                $td.trigger('mousedown');
+                cellPainter._onMouseDown(mouseDownEvent);
                 expect($button.prop('checked')).toBe(true);
-                $td.trigger('mousedown');
+                cellPainter._onMouseDown(mouseDownEvent);
                 expect($button.prop('checked')).toBe(false);
-                cellPainter.detachHandler($td);
             });
         });
 

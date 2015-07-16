@@ -5,6 +5,7 @@ describe('view.layout.body', function() {
 
     function createGridMock() {
         var mock = {
+            $el: setFixtures('<div></div>'),
             options: {},
             option: function(name) {
                 return this.options[name];
@@ -165,6 +166,80 @@ describe('view.layout.body', function() {
 
             grid.dimensionModel.trigger('columnWidthChanged');
             expect($cols.eq(1).width()).toBe(30);
+        });
+    });
+
+    describe('redrawTable()', function() {
+        var tbodyHtml = '<tr><td>1-1</td><td>1-2</td></tr>',
+            expectedHtml;
+
+        beforeEach(function() {
+            body.render();
+            expectedHtml = $('<tbody />').append(tbodyHtml).html(); // 브라우저별로 생성된 innerHTML이 다를경우를 위한 처리
+        });
+
+        it('주어진 tbody의 innerHTML로 table 요소를 다시 생성한다.', function() {
+            var $table = body.$el.find('table'),
+                $newTable;
+
+            body.redrawTable(tbodyHtml);
+            $newTable = body.$el.find('table');
+
+            expect($table[0]).not.toBe($newTable[0]);
+            expect($newTable.find('tbody').html()).toBe(expectedHtml);
+        });
+
+        it('생성된 table의 tbody를 반환한다.', function() {
+            var $tbody = body.redrawTable(tbodyHtml);
+            expect($tbody[0]).toBe(body.$el.find('tbody')[0]);
+        });
+    });
+
+    describe('attachTableEventHandler()', function() {
+        var $cell1, $cell2, clickSpy, focusSpy;
+
+        beforeEach(function() {
+            $cell1 = $('<td edit-type="type1"><input /></td>'),
+            $cell2 = $('<td edit-type="type2" />'),
+            clickSpy = jasmine.createSpy('onClick');
+            focusSpy = jasmine.createSpy('onFocus');
+            body.render();
+            grid.$el.append(body.$el);
+            body.$tableContainer.off();
+
+            body.$tableContainer.find('tbody')
+                .append($('<tr />').append($cell1))
+                .append($('<tr />').append($cell2));
+
+            body.attachTableEventHandler('td[edit-type=type1]', {
+                click: {
+                    selector: 'input',
+                    handler: clickSpy
+                },
+                focus: {
+                    selector: '',
+                    handler: focusSpy
+                }
+            });
+        });
+
+        it('selector로 지정한 셀에서의 이벤트만 Delegation 한다.', function() {
+            $cell1.trigger('click');
+            expect(clickSpy).not.toHaveBeenCalled();
+
+            $cell2.trigger('click');
+            expect(clickSpy).not.toHaveBeenCalled();
+
+            $cell1.find('input').trigger('click');
+            expect(clickSpy).toHaveBeenCalled();
+        });
+
+        it('지정된 이벤트만 Delegation 한다.', function() {
+            $cell1.find('input').trigger('click');
+            expect(focusSpy).not.toHaveBeenCalled();
+
+            $cell1.trigger('focus');
+            expect(focusSpy).toHaveBeenCalled();
         });
     });
 });

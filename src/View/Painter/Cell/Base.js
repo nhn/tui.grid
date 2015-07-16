@@ -45,7 +45,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
      */
     initialize: function() {
         View.Base.Painter.prototype.initialize.apply(this, arguments);
-        this.initializeEventHandler();
         this.setOwnProperties({
             _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
         });
@@ -198,32 +197,21 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
     _getContentHtml: function(cellData) {
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption,
+            editOption = columnModel.editOption || {},
             content;
 
-        //if (!ne.util.isNumber(cellData.value) && !cellData.value) {
         if (!ne.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
 
         content = this.getContentHtml(cellData);
-        if (editOption) {
-            if (editOption.beforeText) {
-                content = this._getSpanWrapText(columnModel.editOption.beforeText) + content;
-            }
-            if (editOption.afterText) {
-                content = content + this._getSpanWrapText(columnModel.editOption.afterText);
-            }
+        if (editOption.beforeText) {
+            content = columnModel.editOption.beforeText + content;
+        }
+        if (editOption.afterText) {
+            content = content + columnModel.editOption.afterText;
         }
         return content;
-    },
-    /**
-     * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
-     * @param {string} text 감싸질 문자열
-     * @return {string} span 태그로 감싼 HTML 코드
-     */
-    _getSpanWrapText: function(text) {
-        return '<span>' + text + '</span>';
     },
     /**
      * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
@@ -257,7 +245,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
      * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
      */
     redraw: function(cellData, $td) {
-        this.detachHandler($td);
         var attributes = {
             'class': this._getClassNameList(cellData).join(' ')
         };
@@ -268,7 +255,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         attributes = $.extend(attributes, this.getAttributes(cellData));
         $td.attr(attributes);
         $td.html(this._getContentHtml(cellData));
-        this.attachHandler($td);
     },
     /**
      * 인자로 받은 element 의 cellData 를 반환한다.

@@ -171,13 +171,13 @@ describe('view.painter.cell.base', function() {
             });
 
             it('실제값의 앞뒤로 span태그로 감싼 문자열을 추가해준다.', function() {
-                var html = '<span>Before</span>TEXT<span>After</span>',
+                var html = 'BeforeTEXTAfter',
                     $cell = $(cellPainter.getHtml({
                         columnName: 'c1',
                         rowKey: 0
                     }));
 
-                expect($cell.html().toUpperCase()).toBe(html.toUpperCase());
+                expect($cell.html()).toBe(html);
             });
         });
     });

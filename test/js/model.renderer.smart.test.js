@@ -2,104 +2,19 @@
 
 describe('model.renderer', function() {
     var columnModelList = [
-        {
-            title: 'columnName1',
-            columnName: 'columnName1'
-        },
-        {
-            title: 'columnName2',
-            columnName: 'columnName2',
-            editOption: {
-                type: 'text'
-            }
-        },
-        {
-            title: 'columnName3',
-            columnName: 'columnName3',
-            editOption: {
-                type: 'select',
-                list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
-                ]
-            }
-        },
-        {
-            title: 'columnName4',
-            columnName: 'columnName4',
-            editOption: {
-                type: 'checkbox',
-                list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
-                ]
-            }
-        },
-        {
-            title: 'columnName5',
-            columnName: 'columnName5',
-            editOption: {
-                type: 'radio',
-                list: [
-                    {text: 'text1', value: 1},
-                    {text: 'text2', value: 2},
-                    {text: 'text3', value: 3},
-                    {text: 'text4', value: 4}
-                ]
-            }
-        },
-        {
-            title: 'columnName6',
-            columnName: 'columnName6',
-            relationList: [
-                {
-                    columnList: ['columnName3', 'columnName4', 'columnName5'],
-                    optionListChange: function(value) {
-                        if (value === true) {
-                            return [
-                                {text: '하나', value: 1},
-                                {text: '둘', value: 2},
-                                {text: '셋', value: 3},
-                                {text: '넷', value: 4}
-                            ];
-                        }
-                    }
-                },
-                {
-                    columnList: ['columnName2'],
-                    isDisabled: function(value) {
-                        return value === false;
-                    },
-                    isEditable: function(value) {
-                        return value !== false;
-                    }
-                }
-
-            ]
-        },
-        {
-            title: 'columnName7',
-            columnName: 'columnName7',
-            isHidden: true
-        }
+        {columnName: 'c1'},
+        {columnName: 'c2'},
+        {columnName: 'c3'}
     ];
     var sampleRow = {
-        '_extraData': {
-            'rowSpan': {
-                'columnName1': 3
+        _extraData: {
+            rowSpan: {
+                c1: 3
             }
         },
-        'columnName1': 'normal',
-        'columnName2': 'text',
-        'columnName3': 1,
-        'columnName4': 2,
-        'columnName5': 3,
-        'columnName6': true,
-        'columnName7': 'hidden'
+        c1: '1',
+        c2: '2',
+        c3: '3'
     };
 
     var rowList = [],
@@ -107,17 +22,16 @@ describe('model.renderer', function() {
         dataModelInstance,
         renderInstance,
         dimensionModelInstance,
-        grid = {},
-        i;
-    rowList = [];
-    for (i = 0; i < 100; i++) {
-        rowList.push($.extend({}, sampleRow));
-    }
-    columnModelInstance = grid.columnModel = new Data.ColumnModel({
-        hasNumberColumn: true,
-        selectType: 'checkbox',
-        columnFixIndex: 2
-    });
+        grid = {};
+
+    (function setSampleRows() {
+        var i;
+        for (i = 0; i < 100; i += 1) {
+            rowList.push($.extend({}, sampleRow));
+        }
+    })();
+
+    columnModelInstance = grid.columnModel = new Data.ColumnModel({});
     columnModelInstance.set('columnModelList', columnModelList);
     dataModelInstance = grid.dataModel = new Data.RowList([], {
         grid: grid
@@ -135,16 +49,13 @@ describe('model.renderer', function() {
         scrollBarSize: 17,
         bodyHeight: 100,
         minimumColumnWidth: 20
-
     });
 
     dimensionModelInstance.set('bodyHeight',
         Util.getHeight(dimensionModelInstance.get('displayRowCount'), dimensionModelInstance.get('rowHeight')));
 
-
-    dataModelInstance.set(rowList, {parse: true});
-
     beforeEach(function() {
+        dataModelInstance.set(rowList, {parse: true});
         renderInstance = new Model.Renderer.Smart({
             grid: grid
         });
@@ -161,12 +72,10 @@ describe('model.renderer', function() {
             expect(renderInstance.get('startIndex')).toBe(0);
             expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(40);
 
-
             renderInstance._setRenderingRange(100);
             expect(renderInstance.get('top')).toBe(0);
             expect(renderInstance.get('startIndex')).toBe(0);
             expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(40);
-
 
             renderInstance._setRenderingRange(200);
             expect(renderInstance.get('top')).toBe(77);
