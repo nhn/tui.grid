@@ -865,28 +865,28 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      */
     enableRow: function(rowKey) {
-        this.dataModel.setRowState(rowKey, '');
+        this.dataModel.get(rowKey).setRowState('');
     },
     /**
      * rowKey에 해당하는 행을 비활성화 시킨다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      */
     disableRow: function(rowKey) {
-        this.dataModel.setRowState(rowKey, 'DISABLED');
+        this.dataModel.get(rowKey).setRowState('DISABLED');
     },
     /**
      * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      */
     enableCheck: function(rowKey) {
-        this.dataModel.setRowState(rowKey, '');
+        this.dataModel.get(rowKey).setRowState('');
     },
     /**
      * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      */
     disableCheck: function(rowKey) {
-        this.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+        this.dataModel.get(rowKey).setRowState('DISABLED_CHECK');
     },
     /**
      * 현재 선택된 행들의 키값만을 배열로 리턴한다.
@@ -936,11 +936,14 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
 
     /**
      * 현재 그리드의 제일 끝에 행을 추가한다.
-     * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
+     * @param {object} [row] - row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
+     * @param {object} [options] - 옵션 객체
+     * @param {number} options.at - 데이터를 append 할 index
      */
-    appendRow: function(row) {
-        this.dataModel.append(row);
+    appendRow: function(row, options) {
+        this.dataModel.append(row, options);
     },
+
     /**
      * 현재 그리드의 제일 앞에 행을 추가한다.
      * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
@@ -1207,7 +1210,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addCellClassName: function(rowKey, columnName, className) {
-        this.dataModel.addCellClassName(rowKey, columnName, className);
+        this.dataModel.get(rowKey).addCellClassName(columnName, className);
     },
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
@@ -1215,7 +1218,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addRowClassName: function(rowKey, className) {
-        this.dataModel.addRowClassName(rowKey, className);
+        this.dataModel.get(rowKey).addRowClassName(className);
     },
     /**
      * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
@@ -1224,7 +1227,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeCellClassName: function(rowKey, columnName, className) {
-        this.dataModel.removeCellClassName(rowKey, columnName, className);
+        this.dataModel.get(rowKey).removeCellClassName(columnName, className);
     },
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
@@ -1232,7 +1235,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeRowClassName: function(rowKey, className) {
-        this.dataModel.removeRowClassName(rowKey, className);
+        this.dataModel.get(rowKey).removeRowClassName(className);
     },
     /**
      * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.

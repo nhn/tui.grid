@@ -528,9 +528,11 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     /**
      * 현재 그리드의 제일 끝에 행을 추가한다.
      * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
+     * @param {object} [options] - 옵션 객체
+     * @param {number} options.at - 데이터를 append 할 index
      */
-    appendRow: function(row) {
-        this.core.appendRow(row);
+    appendRow: function(row, options) {
+        this.core.appendRow(row, options);
     },
     /**
      * 현재 그리드의 제일 앞에 행을 추가한다.

@@ -201,6 +201,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
 
     /**
      * 랜더링한다.
+     * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
      * @return {View.RowList} this 객체
      */
     render: function(isModelChanged) {
@@ -249,7 +250,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @private
      */
     _onModelChange: function(model) {
-        var $tr =  this._getRowElement(model.get('rowKey'));
+        var $tr = this._getRowElement(model.get('rowKey'));
         this.rowPainter.onModelChange(model, $tr);
     },
 

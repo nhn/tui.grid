@@ -94,6 +94,10 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             html;
 
+        if (ne.util.isUndefined(value)) {
+            value = '';
+        }
+
         if (ne.util.isFunction(editOption.converter)) {
             html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
         }
@@ -346,28 +350,31 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             htmlArr = [];
 
+        if (ne.util.isUndefined(value)) {
+            value = '';
+        }
+
         if (!this._isEditingCell(cellData)) {
             if (ne.util.isFunction(columnModel.formatter)) {
                 value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
             }
             return value;
-        } else {
-            htmlArr.push('<span class="input">');
-            htmlArr.push('<input type="');
-            htmlArr.push(this._getInputType());
-            htmlArr.push('" value="');
-            htmlArr.push(value);
-            htmlArr.push('" name="');
-            htmlArr.push(Util.getUniqueKey());
-            htmlArr.push('" align="center" ');
-            htmlArr.push(cellData.isDisabled ? 'disabled' : '');
-            htmlArr.push(' maxLength="');
-            htmlArr.push(columnModel.editOption.maxLength);
-            htmlArr.push('"/>');
-            htmlArr.push('</span>');
-
-            return htmlArr.join('');
         }
+        htmlArr.push('<span class="input">');
+        htmlArr.push('<input type="');
+        htmlArr.push(this._getInputType());
+        htmlArr.push('" value="');
+        htmlArr.push(value);
+        htmlArr.push('" name="');
+        htmlArr.push(Util.getUniqueKey());
+        htmlArr.push('" align="center" ');
+        htmlArr.push(cellData.isDisabled ? 'disabled' : '');
+        htmlArr.push(' maxLength="');
+        htmlArr.push(columnModel.editOption.maxLength);
+        htmlArr.push('"/>');
+        htmlArr.push('</span>');
+
+        return htmlArr.join('');
     },
 
     /**
