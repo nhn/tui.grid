@@ -57,7 +57,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * @param {array} dupRowKeys 중복된 데이터의 rowKey 목록
      */
     _removeOldRows: function(dupRowKeys) {
-        var firstIdx = _.indexOf(this.renderedRowKeys, dupRowKeys[0]);
+        var firstIdx = _.indexOf(this.renderedRowKeys, dupRowKeys[0]),
             lastIdx = _.indexOf(this.renderedRowKeys, _.last(dupRowKeys)),
             $rows = this.$el.children('tr');
 
@@ -100,7 +100,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
 
     /**
      * 행데이터 목록을 받아, HTML 문자열을 생성해서 반환한다.
-     * @param rows {Model.Row[]} 행데이터 목록
+     * @param {Model.Row[]} rows - 행데이터 목록
      * @return {string} 생성된 HTML 문자열
      */
     _getRowsHtml: function(rows) {
@@ -109,9 +109,8 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
 
     /**
      * timeout을 사용해 일정 시간이 지난 후 포커스를 Clipboard로 옮긴다.
-     * @param {number} delay 지연시킬 시간 (ms)
      */
-    _focusClipboard: function(delay) {
+    _focusClipboard: function() {
         try {
             this.grid.focusClipboard();
         } catch (e) {
@@ -204,13 +203,11 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
      * 랜더링한다.
      * @return {View.RowList} this 객체
      */
-    render: function() {
+    render: function(isModelChanged) {
         var rowKeys = this.collection.pluck('rowKey'),
-            sortOptions = _.clone(this.grid.dataModel.sortOptions),
             dupRowKeys;
 
-        // 정렬방식이 변경된 경우는 무조건 새로 그린다.
-        if (!_.isEqual(sortOptions, this.sortOptions)) {
+        if (isModelChanged) {
             this._resetRows();
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
@@ -223,9 +220,7 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
                 this._appendNewRows(rowKeys, dupRowKeys);
             }
         }
-
         this.renderedRowKeys = rowKeys;
-        this.sortOptions = sortOptions;
 
         this._focusClipboardDebounced();
         this._showLayer();

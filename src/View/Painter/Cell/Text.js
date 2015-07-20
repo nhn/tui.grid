@@ -71,7 +71,7 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      * - 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    focusOut: function($td) {
+    focusOut: function() {
         this.grid.focusClipboard();
     },
     /**
@@ -90,31 +90,31 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
     getContentHtml: function(cellData) {
         //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
         var columnModel = this.getColumnModel(cellData),
+            editOption = columnModel.editOption,
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-            htmlArr = [];
+            html;
 
-        htmlArr.push('<input type="');
-        htmlArr.push(this._getInputType());
-        htmlArr.push('" value="');
-        htmlArr.push(value);
-        htmlArr.push('" name="');
-        htmlArr.push(Util.getUniqueKey());
-        htmlArr.push('" align="center" ');
-        htmlArr.push(cellData.isDisabled ? 'disabled' : '');
-        htmlArr.push(' maxLength="');
-        htmlArr.push(columnModel.editOption.maxLength);
-        htmlArr.push('"/>');
-
-        return htmlArr.join('');
+        if (ne.util.isFunction(editOption.converter)) {
+            html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
+        }
+        if (ne.util.isFalsy(html)) {
+            html = '<input type="' + this._getInputType() +
+                '" value="' + value +
+                '" name="' + Util.getUniqueKey() +
+                '" align="center"' +
+                ' maxLength="' + editOption.maxLength +
+                (cellData.isDisabled ? ' disabled' : '') +
+                '"/>';
+        }
+        return html;
     },
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
      * @param {jquery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {
+    setElementAttribute: function(cellData, $td) {
         var isValueChanged = $.inArray('value', cellData.changed) !== -1,
             $input = $td.find('input');
 
@@ -154,29 +154,56 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             editOption = columnModel.editOption || {},
-            content = '';
+            content = '',
+            beforeContent, afterContent;
 
         if (!ne.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
+        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
+        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
 
-        if (editOption.beforeText) {
-            content += this._getSpanWrapText(columnModel.editOption.beforeText, 'before');
+        if (beforeContent) {
+            content += this._getSpanWrapContent(beforeContent, 'before', cellData);
         }
-        if (editOption.afterText) {
-            content += this._getSpanWrapText(columnModel.editOption.afterText, 'after');
+        if (afterContent) {
+            content += this._getSpanWrapContent(afterContent, 'after', cellData);
         }
-        content += this._getSpanWrapText(this.getContentHtml(cellData), 'input');
+        content += this._getSpanWrapContent(this.getContentHtml(cellData), 'input');
 
         return content;
     },
     /**
      * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
-     * @param {string} text 감싸질 문자열
+     * @param {string} content - 감싸질 문자열
+     * @param {string} className - span 태그의 클래스명
      * @return {string} span 태그로 감싼 HTML 코드
      */
-    _getSpanWrapText: function(text, className) {
-        return '<span class="' + className + '">' + text + '</span>';
+    _getSpanWrapContent: function(content, className) {
+        if (ne.util.isFalsy(content)) {
+            content = '';
+        }
+        return '<span class="' + className + '">' + content + '</span>';
+    },
+
+    _getExtraContent: function(content, cellData) {
+        var contentValue = content;
+
+        if (ne.util.isFunction(content)) {
+            contentValue = this._getExtraContentByFunction(content, cellData);
+        }
+        return contentValue;
+    },
+
+    /**
+     *
+     */
+    _getExtraContentByFunction: function(fnContent, cellData) {
+        var dataModel = this.grid.dataModel,
+            row = dataModel.get(cellData.rowKey),
+            cellValue = row.getHTMLEncodedString(cellData.columnName);
+
+        return fnContent(cellValue, row.attributes);
     },
 
     /**
@@ -325,7 +352,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             }
             return value;
         } else {
-            htmlArr.push('<span class="input">')
+            htmlArr.push('<span class="input">');
             htmlArr.push('<input type="');
             htmlArr.push(this._getInputType());
             htmlArr.push('" value="');

@@ -335,10 +335,15 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _onWindowResize: function() {
-        if (this.$el && this.$el.length) {
-            var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
-            this.dimensionModel.set('width', width);
+        var minimumWidth = this.option('minimumWidth') || 0,
+            width = this.$el.width();
+
+        if (width < minimumWidth) {
+            this.$el.css('width', minimumWidth + 'px');
+        } else {
+            this.$el.css('width', 'auto');
         }
+        this.dimensionModel.set('width', Math.max(width, minimumWidth));
     },
     /**
      * click 이벤트 핸들러

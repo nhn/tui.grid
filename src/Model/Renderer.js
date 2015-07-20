@@ -102,7 +102,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
      */
     _onRowListChange: function() {
         clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
+        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh(true), this), 0);
     },
     /**
      * rendering 할 index 범위를 결정한다.
@@ -118,7 +118,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
     /**
      * rendering 할 데이터를 생성한다.
      */
-    refresh: function() {
+    refresh: function(isDataModelChanged) {
         this._setRenderingRange(this.get('scrollTop'));
 
         //TODO : rendering 해야할 데이터만 가져온다.
@@ -196,7 +196,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
             this.trigger('columnModelChanged', this.get('top'));
             this.isColumnModelChanged = false;
         } else {
-            this.trigger('rowListChanged', this.get('top'));
+            this.trigger('rowListChanged', isDataModelChanged);
         }
         this.trigger('refresh', this.get('top'));
     },

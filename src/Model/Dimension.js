@@ -312,7 +312,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     _onWidthChange: function() {
         var curColumnWidthList = this.get('columnWidthList');
-        this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
+        // this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
     },
 
     /**
