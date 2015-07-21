@@ -460,7 +460,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     removeRow: function(rowKey, isRemoveOriginalData) {
         var row = this.get(rowKey);
         if (row) {
-            this._updateRelatedRowSpanDataForRemove(row);
+            this._syncRowSpanDataForRemove(row);
             this.remove(row);
             if (isRemoveOriginalData) {
                 this.setOriginalRowList();
@@ -472,7 +472,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @param {Data.Row} row 삭제할 Row
      * @private
      */
-    _updateRelatedRowSpanDataForRemove: function(row) {
+    _syncRowSpanDataForRemove: function(row) {
         var rowSpanData = row.getRowSpanData();
 
         if (!rowSpanData) {
@@ -482,7 +482,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
             var mainRow = this.get(data.mainRowKey);
 
             if (data.isMainRow) {
-                this._updateSubRowSpanColumnDataForRemove(mainRow, columnName, data.count - 1);
+                this._updateRowSpanColumnDataForRemove(mainRow, columnName, data.count - 1);
             } else {
                 mainRow.getRowSpanData()[columnName].count -= 1;
             }
@@ -495,7 +495,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @param {number} count 관련된 하위 행들의 수
      * @private
      */
-    _updateSubRowSpanColumnDataForRemove: function(mainRow, columnName, count) {
+    _updateRowSpanColumnDataForRemove: function(mainRow, columnName, count) {
         var idx = this.indexOf(mainRow) + 1,
             lastIdx = idx + count - 1,
             row, newMainRowKey, spanData;
@@ -537,17 +537,19 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @param {boolean} [options.rowSpanPrev] - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
      */
     append: function(rowData, options) {
-        var at = options.at !== undefined ? options.at : this.length,
-            modelList = this._createModelList(rowData),
-            addOption = {
-                at: at,
-                merge: true,
-                silent: true
-            };
+        var modelList = this._createModelList(rowData),
+            addOptions;
 
-        this.add(modelList, addOption);
-        this._syncRowSpanDataForAppend(at, modelList.length, options.rowSpanPrev);
-        this.trigger('add', modelList, addOption);
+        options = _.extend({at: this.length}, options);
+        addOptions = {
+            at: options.at,
+            merge: true,
+            silent: true
+        };
+
+        this.add(modelList, addOptions);
+        this._syncRowSpanDataForAppend(options.at, modelList.length, options.rowSpanPrev);
+        this.trigger('add', modelList, addOptions);
     },
 
     /**
@@ -577,8 +579,8 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         rowList = this._formatData(rowData);
 
         _.each(rowList, function(row, index) {
-            row['rowKey'] = keyColumnName ? row[keyColumnName] : this.length + index;
-            row['_button'] = true;
+            row.rowKey = keyColumnName ? row[keyColumnName] : this.length + index;
+            row._button = true;
             modelList.push(new Data.Row(row, {collection: this}));
         }, this);
 
@@ -634,7 +636,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      */
     _updateRowSpanColumnDataForAppend: function(mainRow, columnName, startOffset, endOffset) {
         var mainRowIdx = this.indexOf(mainRow),
-            mainRowKey = mainRow.get('key'),
+            mainRowKey = mainRow.get('rowKey'),
             row, offset;
 
         for (offset = startOffset; offset <= endOffset; offset += 1) {

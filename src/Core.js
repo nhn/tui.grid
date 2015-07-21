@@ -726,7 +726,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      */
     setRowList: function(rowList, isParse) {
         var callback = ne.util.bind(function() {
-            this.dataModel.set(rowList, {
+            this.dataModel.reset(rowList, {
                 parse: isParse
             });
             this.dataModel.setOriginalRowList();
