@@ -458,63 +458,62 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
      */
     removeRow: function(rowKey, isRemoveOriginalData) {
-        var row = this.get(rowKey);
-        if (row) {
-            this._syncRowSpanDataForRemove(row);
-            this.remove(row);
-            if (isRemoveOriginalData) {
-                this.setOriginalRowList();
-            }
+        var row = this.get(rowKey),
+            rowSpanData, nextRow;
+
+        if (!row) {
+            return;
         }
+        rowSpanData = _.clone(row.getRowSpanData());
+        nextRow = this.at(this.indexOf(row) + 1);
+        this.remove(row, {
+            silent: true
+        });
+        this._syncRowSpanDataForRemove(rowSpanData, nextRow);
+
+        if (isRemoveOriginalData) {
+            this.setOriginalRowList();
+        }
+        this.trigger('remove');
     },
     /**
-     * 삭제할 행에 rowSpan이 적용되어 있는 경우, 관련된 행들의 rowSpan데이터를 갱신한다.
-     * @param {Data.Row} row 삭제할 Row
+     * 삭제된 행에 rowSpan이 적용되어 있었을 때, 관련된 행들의 rowSpan데이터를 갱신한다.
+     * @param {object} rowSpanData - 삭제된 행의 rowSpanData
+     * @param {Data.Row} nextRow - 삭제된 다음 행의 모델
      * @private
      */
-    _syncRowSpanDataForRemove: function(row) {
-        var rowSpanData = row.getRowSpanData();
-
+    _syncRowSpanDataForRemove: function(rowSpanData, nextRow) {
         if (!rowSpanData) {
             return;
         }
         _.each(rowSpanData, function(data, columnName) {
-            var mainRow = this.get(data.mainRowKey);
+            var mainRowSpanData = {},
+                mainRow, startOffset, spanCount;
 
             if (data.isMainRow) {
-                this._updateRowSpanColumnDataForRemove(mainRow, columnName, data.count - 1);
+                mainRow = nextRow;
+                spanCount = data.count - 1;
+                startOffset = 1;
+                if (spanCount > 1) {
+                    mainRowSpanData.mainRowKey = mainRow.get('rowKey');
+                    mainRowSpanData.isMainRow = true;
+                }
             } else {
-                mainRow.getRowSpanData()[columnName].count -= 1;
+                mainRow = this.get(data.mainRowKey);
+                spanCount = mainRow.getRowSpanData(columnName).count - 1;
+                startOffset = -data.count;
+            }
+
+            if (spanCount > 1) {
+                mainRowSpanData.count = spanCount;
+                mainRow.setRowSpanData(columnName, mainRowSpanData);
+                this._updateSubRowSpanData(mainRow, columnName, startOffset, spanCount);
+            } else {
+                mainRow.setRowSpanData(columnName, null);
             }
         }, this);
     },
-    /**
-     * rowSpan의 mainRow가 삭제되는 경우, 관련된 하위 행들의 rowSpan 데이터를 갱신하고, 바로 다음 행을 mainRow로 지정한다.
-     * @param {Data.Row} mainRow 삭제되는 mainRow
-     * @param {string} columnName rowSpan이 적용된 컬럼명
-     * @param {number} count 관련된 하위 행들의 수
-     * @private
-     */
-    _updateRowSpanColumnDataForRemove: function(mainRow, columnName, count) {
-        var idx = this.indexOf(mainRow) + 1,
-            lastIdx = idx + count - 1,
-            row, newMainRowKey, spanData;
 
-        for (; idx <= lastIdx; idx += 1) {
-            row = this.at(idx);
-            spanData = row.getRowSpanData()[columnName];
-            spanData.count += 1;
-
-            if (!newMainRowKey) {
-                spanData.isMainRow = true;
-                spanData.count = count;
-                newMainRowKey = row.get('rowKey');
-                row.set(columnName, '');
-            } else {
-                spanData.mainRowKey = newMainRowKey;
-            }
-        }
-    },
     /**
      * append, prepend 시 사용할 dummy row를 생성한다.
      * @return {Object} 값이 비어있는 더미 row 데이터
@@ -543,7 +542,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         options = _.extend({at: this.length}, options);
         addOptions = {
             at: options.at,
-            merge: true,
+            add: true,
             silent: true
         };
 
@@ -600,7 +599,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
             return;
         }
         _.each(prevRow.getRowSpanData(), function(data, columnName) {
-            var mainRow, mainRowData, startOffset, endOffset;
+            var mainRow, mainRowData, startOffset, spanCount;
 
             // count 값은 mainRow인 경우 '전체 rowSpan 개수', 아닌 경우는 'mainRow까지의 거리 (음수)'를 의미한다.
             // 0이면 rowSpan 되어 있지 않다는 의미이다.
@@ -620,9 +619,9 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
 
             if (mainRowData.count > startOffset || rowSpanPrev) {
                 mainRowData.count += length;
-                endOffset = mainRowData.count - 1;
+                spanCount = mainRowData.count;
 
-                this._updateRowSpanColumnDataForAppend(mainRow, columnName, startOffset, endOffset);
+                this._updateSubRowSpanData(mainRow, columnName, startOffset, spanCount);
             }
         }, this);
     },
@@ -632,14 +631,14 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @param {Data.Row} mainRow - rowSpan의 첫번째 행
      * @param {string} columnName - 컬럼명
      * @param {number} startOffset - mainRow로부터 몇번째 떨어진 행부터 갱신할지를 지정하는 값
-     * @param {number} endOffset - mainRow로부터 몇번째 떨어진 행까지 갱신할지를 지정하는 값
+     * @param {number} spanCount - span이 적용될 행의 개수
      */
-    _updateRowSpanColumnDataForAppend: function(mainRow, columnName, startOffset, endOffset) {
+    _updateSubRowSpanData: function(mainRow, columnName, startOffset, spanCount) {
         var mainRowIdx = this.indexOf(mainRow),
             mainRowKey = mainRow.get('rowKey'),
             row, offset;
 
-        for (offset = startOffset; offset <= endOffset; offset += 1) {
+        for (offset = startOffset; offset < spanCount; offset += 1) {
             row = this.at(mainRowIdx + offset);
             row.set(columnName, '', {
                 silent: true

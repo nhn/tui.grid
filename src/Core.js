@@ -355,7 +355,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             $target = $(mouseEvent.target);
 
         if (this._isCellElement($target, true)) {
-            this._triggerCellMouseEvent('clickCell', eventData, $target);
+            this._triggerCellMouseEvent('clickCell', eventData, $target.closest('td'));
         }
         this.trigger('click', eventData);
 

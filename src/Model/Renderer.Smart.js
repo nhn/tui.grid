@@ -65,11 +65,15 @@ Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prot
      */
     _getStartRowSpanMinCount: function(startIndex) {
         var firstRow = this.grid.dataModel.at(startIndex),
-            counts = _.pluck(firstRow.get('_extraData').rowSpanData, 'count');
+            result = 0,
+            counts;
 
-        counts.push(0); // count가 음수인 경우(mainRow가 아닌 경우)에만 최소값을 구함. 없으면 0
-
-        return _.min(counts);
+        if (firstRow) {
+            counts = _.pluck(firstRow.getRowSpanData(), 'count');
+            counts.push(0); // count가 음수인 경우(mainRow가 아닌 경우)에만 최소값을 구함. 없으면 0
+            result = _.min(counts);
+        }
+        return result;
     },
 
     /**
@@ -79,11 +83,15 @@ Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prot
      */
     _getEndRowSpanMaxCount: function(endIndex) {
         var lastRow = this.grid.dataModel.at(endIndex),
-            counts = _.pluck(lastRow.get('_extraData').rowSpanData, 'count');
+            result = 0,
+            counts;
 
-        counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
-
-        return _.max(counts);
+        if (lastRow) {
+             counts = _.pluck(lastRow.getRowSpanData(), 'count');
+             counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
+             result = _.max(counts);
+        }
+        return result;
     },
     /**
      * scrollTop 값 에 따라 rendering 해야하는지 판단한다.

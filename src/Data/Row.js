@@ -168,7 +168,6 @@ Data.Row = Model.Base.extend(/**@lends Data.Row.prototype */{
             if (!columnName) {
                 return extraData['rowSpanData'];
             } else {
-                extraData = this.get('_extraData');
                 if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
                     return extraData['rowSpanData'][columnName];
                 }
@@ -205,12 +204,33 @@ Data.Row = Model.Base.extend(/**@lends Data.Row.prototype */{
      * @param {object} data - rowSpan 정보를 가진 객체
      */
     setRowSpanData: function(columnName, data) {
-        var rowSpanData = {};
+        var extraData, rowSpanData;
 
-        rowSpanData[columnName] = data;
-        this.setExtraData({
-            rowSpanData: rowSpanData
-        }, true);
+        if (!columnName) {
+            return;
+        }
+        if (ne.util.isFalsy(data)) {
+            extraData = this._getExtraDataClone();
+            if (!extraData) {
+                return;
+            }
+            rowSpanData = extraData.rowSpanData;
+
+            if (rowSpanData && rowSpanData[columnName]) {
+                delete rowSpanData[columnName];
+
+                if (_.isEmpty(rowSpanData)) {
+                    extraData.rowSpanData = null;
+                }
+                this.set('_extraData', extraData);
+            }
+        } else {
+            rowSpanData = {};
+            rowSpanData[columnName] = data;
+            this.setExtraData({
+                rowSpanData: rowSpanData
+            }, true);
+        }
     },
 
     /**
