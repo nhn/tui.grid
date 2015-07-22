@@ -21,7 +21,7 @@
 
 .uio_grid .left_line{position:absolute;top:0;width:1px;height:100%;background:#ccc;left:0;z-index:10}
 .uio_grid .right_line{position:absolute;top:0;width:1px;height:100%;background:#ccc;right:0;z-index:10}
-.uio_grid .clipboard{position:absolute;top:0px;left:-9999px;width:100px;height:100px}
+.uio_grid .clipboard{position:fixed;top:0px;left:-9999px;width:100px;height:100px}
 .uio_grid .table_container {position:absolute;top:0;width:100%}
 .uio_grid .blocker{display:none;position:absolute;top:0;left:0;z-index:10;width:100%;height:100%;background-color:#000;opacity:0.1;filter:alpha(opacity=10);filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=10);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=10)"}
 .uio_grid .selection_blocker{display:none;position:absolute;top:0;left:0;z-index:10;width:100%;height:100%;background-color:#000;opacity:0;filter:alpha(opacity=0);filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"}
