@@ -117,9 +117,6 @@ describe('addon.net', function() {
         net;
 
     beforeEach(function() {
-        //jasmine.clock().install();
-        //jasmine.Ajax.install();
-
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/addon.net.html');
         $form = $('#form');
@@ -135,10 +132,8 @@ describe('addon.net', function() {
 
         jasmine.clock().install();
         jasmine.Ajax.install();
-        //grid.setRowList(rowList);
-        //jasmine.clock().tick(10);
-
     });
+
     afterEach(function() {
         grid && grid.destroy();
         jasmine.Ajax.uninstall();
@@ -288,7 +283,7 @@ describe('addon.net', function() {
                 });
                 net.router.navigate = jasmine.createSpy('navigate');
                 net._readDataAt(1);
-                jasmine.clock().tick(1);
+
                 expect(net.router.navigate).toHaveBeenCalled();
             });
 
@@ -355,6 +350,7 @@ describe('addon.net', function() {
 
                 grid.removeRow(3);
             }
+
             it('type 이 createData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
                 var param,
                     updateList,
@@ -365,7 +361,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('createData');
                 updateList = $.parseJSON(param.data.updateList);
@@ -400,7 +396,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('createData', {isOnlyChecked: false});
                 updateList = $.parseJSON(param.data.updateList);
@@ -431,7 +427,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('createData', {isOnlyChecked: false, isOnlyModified: false});
                 expect(param.data.rowList).toBeDefined();
@@ -448,7 +444,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('updateData');
                 expect(param.count).toBe(3);
@@ -464,7 +460,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('updateData', {isOnlyChecked: false});
                 expect(param.count).toBe(3);
@@ -481,7 +477,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('deleteData');
                 expect(param.count).toBe(1);
@@ -497,7 +493,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('deleteData', {isOnlyChecked: false});
                 expect(param.count).toBe(1);
@@ -513,7 +509,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('modifyData');
                 expect(param.count).toBe(6);
@@ -529,7 +525,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 messUp();
                 param = net._getDataParam('modifyData', {isOnlyChecked: false});
                 expect(param.count).toBe(6);
@@ -565,7 +561,7 @@ describe('addon.net', function() {
                     el: $form
                 });
                 grid.setRowList(rowList);
-                jasmine.clock().tick(1);
+
                 grid.appendRow();
                 net._ajax = jasmine.createSpy('ajax');
             });

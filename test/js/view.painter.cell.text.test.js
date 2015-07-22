@@ -325,7 +325,7 @@ describe('view.painter.cell.text', function() {
             });
 
             it('isDisabled이 true 일 때에는 input text 를 노출하지 않는다.', function() {
-                grid.dataModel.setRowState('0', 'DISABLED');
+                grid.dataModel.get('0').setRowState('DISABLED');
                 cellPainter._startEdit($td);
                 $input = $td.find('input');
 

@@ -126,7 +126,7 @@ describe('View.RowList', function() {
             smartRenderer = new Model.Renderer({
                 grid: grid
             });
-            grid.dataModel.set(sampleData, {parse: true});
+            grid.dataModel.reset(sampleData, {parse: true});
         }
 
         function setCollectionRange(from, to) {

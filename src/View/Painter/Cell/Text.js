@@ -102,13 +102,13 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
             html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
         }
         if (ne.util.isFalsy(html)) {
-            html = '<input type="' + this._getInputType() +
-                '" value="' + value +
-                '" name="' + Util.getUniqueKey() +
-                '" align="center"' +
-                ' maxLength="' + editOption.maxLength +
-                (cellData.isDisabled ? ' disabled' : '') +
-                '"/>';
+            html = this.template({
+                type: this._getInputType(),
+                value: value,
+                name: Util.getUniqueKey(),
+                disabled: cellData.isDisabled ? 'disabled' : '',
+                maxLength: editOption.maxLength || ''
+            });
         }
         return html;
     },
