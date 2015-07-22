@@ -1249,6 +1249,14 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         }
     },
     /**
+     * rowKey에 해당하는 행의 인덱스를 반환한다.
+     * @param {number|string} rowKey - 행 고유키
+     * @return {number} - 인덱스
+     */
+    getIndexOfRow: function(rowKey) {
+        return this.dataModel.indexOfRowKey(rowKey);
+    },
+    /**
      * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
      * @todo 기능 구현
      * @param {String} columnName 컬럼 이름

@@ -461,8 +461,8 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalDta) {
-        this.core.removeRow(rowKey, isRemoveOriginalDta);
+    removeRow: function(rowKey, isRemoveOriginalData) {
+        this.core.removeRow(rowKey, isRemoveOriginalData);
     },
     /**
      * checked된 행을 삭제한다.
@@ -665,6 +665,14 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      */
     getRowSpanData: function(rowKey, columnName) {
         this.core.getRowSpanData(rowKey, columnName);
+    },
+    /**
+     * rowKey에 해당하는 행의 인덱스를 반환한다.
+     * @param {number|string} rowKey - 행 고유키
+     * @return {number} - 인덱스
+     */
+    getIndexOfRow: function(rowKey) {
+        return this.core.getIndexOfRow(rowKey);
     },
     /**
      * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다

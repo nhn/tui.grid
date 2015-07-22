@@ -497,6 +497,9 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
                 if (spanCount > 1) {
                     mainRowSpanData.mainRowKey = mainRow.get('rowKey');
                     mainRowSpanData.isMainRow = true;
+                    mainRow.set(columnName, '', {
+                        silent: true
+                    });
                 }
             } else {
                 mainRow = this.get(data.mainRowKey);
