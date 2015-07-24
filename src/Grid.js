@@ -675,6 +675,13 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         return this.core.getIndexOfRow(rowKey);
     },
     /**
+     * 화면에 한번에 보여지는 행 개수를 변경한다.
+     * @param {number} count - 행 개수
+     */
+     setDisplayRowCount: function(count) {
+         this.core.setDisplayRowCount(count);
+     },
+    /**
      * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
      * @param {String} columnName
      * @param {(String|Number)} columnValue

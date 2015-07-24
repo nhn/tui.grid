@@ -41,6 +41,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
 
         this.on('change:width', this._onWidthChange, this);
+        this.on('change:displayRowCount', this._setBodyHeight, this);
         this._setColumnWidthVariables();
         this._setBodyHeight();
     },
@@ -79,7 +80,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 currentWidth += width;
             } else {
                 newColumnWidthList.push(-1);
-                unassignedCount++;
+                unassignedCount += 1;
             }
         }, this);
 
@@ -128,7 +129,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             frameWidth = this._getFrameWidth(columnWidthList);
         if (ne.util.isUndefined(whichSide) && columnFixIndex > 0) {
             //columnFixIndex 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
-            ++frameWidth;
+            frameWidth += 1;
         }
         return frameWidth;
     },
@@ -180,7 +181,6 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         if (isSaveWidthList) {
             this.set('originalWidthList', columnWidthList);
         }
-
         this.trigger('columnWidthChanged');
     },
 
@@ -312,7 +312,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     _onWidthChange: function() {
         var curColumnWidthList = this.get('columnWidthList');
-        // this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
+        this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
     },
 
     /**
@@ -356,9 +356,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         } else {
             newColumnWidthList = columnWidthList;
         }
-
         this._setColumnWidthVariables(newColumnWidthList);
-
     },
     /**
      * L side 와 R side 에 따른 columnWidthList 를 반환한다.
@@ -366,10 +364,10 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * @return {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
-        whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
         var columnFixIndex = this.columnModel.get('columnFixIndex'),
             columnWidthList = [];
 
+        whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
         switch (whichSide) {
             case 'L':
                 columnWidthList = this.get('columnWidthList').slice(0, columnFixIndex);

@@ -102,7 +102,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
      */
     _onRowListChange: function() {
         clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh(true), this), 0);
+        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this, true), 0);
     },
     /**
      * rendering 할 index 범위를 결정한다.
