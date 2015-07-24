@@ -713,10 +713,10 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     /**
      * 그리드의 layout 데이터를 갱신한다.
      * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
-     * @todo 기능 구현
      * @param {Boolean} [hasDimmedLayer=true]
      */
     refreshLayout: function() {
+        this.core.refreshLayout();
     },
     /**
      * 그리드의 크기 정보를 변경한다.
