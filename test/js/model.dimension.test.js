@@ -812,4 +812,11 @@ describe('model.dimension', function() {
             expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectPosition);
         });
     });
+
+    describe('change:displayRowCount', function() {
+        it('이벤트 발생시 bodyHeight를 재설정한다.', function() {
+            dimensionModel.set('displayRowCount', 10);
+            expect(dimensionModel.get('bodyHeight')).toBe(1028);
+        });
+    });
 });
