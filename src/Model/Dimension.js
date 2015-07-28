@@ -50,6 +50,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
      * @param {number} columnLength - 컬럼의 개수
      * @return {number} 사용가능한 전체 셀의 넓이
+     * @private
      */
     _getAvailableTotalWidth: function(columnLength) {
         var totalWidth = this.get('width'),
@@ -67,8 +68,9 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     /**
      * 주어진 컬럼 넓이값 배열에서 minimumColumnWidth 값보다 작은 값이 없도록 수정해준다.
      * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @private
      */
-    _applyColumnMinWidth: function(columnWidthList) {
+    _applyMinimumColumnWidth: function(columnWidthList) {
         var minWidth = this.get('minimumColumnWidth');
 
         _.each(columnWidthList, function(width, index) {
@@ -83,6 +85,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * @param {array} columnWidthList - 컬럼 넓이값 배열
      * @param {number} totalWidth - 전체 넓이
      * @return {array} - 값이 모두 채워진 새로운 배열
+     * @private
      */
     _getAssignedColumnWidthList: function(columnWidthList, totalWidth) {
         var columnLength = columnWidthList.length,
@@ -112,11 +115,12 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     /**
      * 컬럼 넓이값의 배열에서, fixed가 아닌 컬럼의 넓이에 추가적인 넓이값을 균등하게 더해준다.
      * @param {array} columnWidthList - 컬럼 넓이값 배열
-     * @param {number} extraWidthTotal - 추가될 전체 넓이
+     * @param {number} extraTotalWidth - 추가될 전체 넓이
      * @param {number} variableCount - 넓이가 가변적인(fixed가 아닌) 컬럼의 개수
+     * @private
      */
-    _addExtraColumnWidth: function(columnWidthList, extraWidthTotal, variableCount) {
-        var extraWidthAvg = Math.round(extraWidthTotal / variableCount),
+    _addExtraColumnWidth: function(columnWidthList, extraTotalWidth, variableCount) {
+        var extraWidthAvg = Math.round(extraTotalWidth / variableCount),
             fixedFlags = this.get('columnWidthFixedFlags'),
             extraAddedCount = 0,
             extraWidth;
@@ -124,20 +128,20 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         _.each(columnWidthList, function(width, index) {
             if (!fixedFlags[index]) {
                 if (extraAddedCount === variableCount - 1) {
-                    extraWidth = extraWidthTotal;
+                    extraWidth = extraTotalWidth;
                 } else {
                     extraWidth = extraWidthAvg;
                 }
                 columnWidthList[index] += extraWidth;
-                extraWidthTotal -= extraWidth;
+                extraTotalWidth -= extraWidth;
                 extraAddedCount += 1;
             }
         });
     },
     /**
-     * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
-     * @param {Array} columnWidthList   컬럼 너비 리스트
-     * @return {Array}  totalWidth 에 맞게 계산한 컬럼 너비 리스트
+     * 컬럼 넓이값의 배열을 받아, 전체 넓이에 맞게 각 넓이값을 재조정하여 새로운 배열로 반환한다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @return {array} - 조정된 넓이갑 배열
      * @private
      */
     _calculateColumnWidthList: function(columnWidthList) {
@@ -145,24 +149,24 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             fixedFlags = this.get('columnWidthFixedFlags'),
             totalWidth = this._getAvailableTotalWidth(columnLength),
             newWidthList = this._getAssignedColumnWidthList(columnWidthList, totalWidth),
-            extraWidthTotal = totalWidth,
+            extraTotalWidth = totalWidth,
             variableCount = 0;
 
         _.each(newWidthList, function(width, index) {
-            extraWidthTotal -= width;
+            extraTotalWidth -= width;
             if (!fixedFlags[index]) {
                 variableCount += 1;
             }
         });
 
-        if (extraWidthTotal > 0) {
+        if (extraTotalWidth > 0) {
             if (variableCount) {
-                this._addExtraColumnWidth(newWidthList, extraWidthTotal, variableCount);
+                this._addExtraColumnWidth(newWidthList, extraTotalWidth, variableCount);
             } else {
-                newWidthList[columnLength - 1] += extraWidthTotal;
+                newWidthList[columnLength - 1] += extraTotalWidth;
             }
         }
-        this._applyColumnMinWidth(newWidthList);
+        this._applyMinimumColumnWidth(newWidthList);
 
         return newWidthList;
     },
