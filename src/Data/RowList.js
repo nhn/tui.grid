@@ -14,6 +14,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     initialize: function(models, options) {
         Collection.Base.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            lastRowKey: -1,
             originalRowList: [],
             originalRowMap: {},
             startIndex: options.startIndex || 1,
@@ -54,7 +55,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         var rowList = data;
 
         _.each(rowList, function(row, i) {
-            rowList[i] = this._baseFormat(rowList[i], i);
+            rowList[i] = this._baseFormat(rowList[i]);
             if (this.isRowSpanEnable()) {
                 this._setExtraRowSpanData(rowList, i);
             }
@@ -71,19 +72,28 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @return {object} 가공된 row 데이터
      * @private
      */
-    _baseFormat: function(row, index) {
+    _baseFormat: function(row) {
         var defaultExtraData = {
                 rowSpan: null,
                 rowSpanData: null,
                 rowState: null
             },
             keyColumnName = this.grid.columnModel.get('keyColumnName'),
-            rowKey = (keyColumnName === null) ? index : row[keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+            rowKey = (keyColumnName === null) ? this._createRowKey() : row[keyColumnName];
 
         row['_extraData'] = $.extend(defaultExtraData, row['_extraData']);
         row['_button'] = (row['_extraData']['rowState'] === 'CHECKED');
         row['rowKey'] = rowKey;
         return row;
+    },
+
+    /**
+     * 새로운 rowKey를 생성해서 반환한다.
+     * @return {number} 생성된 rowKey
+     */
+    _createRowKey: function() {
+        this.lastRowKey += 1;
+        return this.lastRowKey;
     },
     /**
      * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
@@ -279,7 +289,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
             checkedRowList;
         if (isOnlyChecked) {
             checkedRowList = this.where({
-                '_button' : true
+                '_button': true
             });
             rowList = [];
             _.each(checkedRowList, function(checkedRow) {
@@ -588,8 +598,8 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         }
         rowList = this._formatData(rowData);
 
-        _.each(rowList, function(row, index) {
-            row.rowKey = keyColumnName ? row[keyColumnName] : this.length + index;
+        _.each(rowList, function(row) {
+            row.rowKey = keyColumnName ? row[keyColumnName] : this._createRowKey();
             row._button = true;
             modelList.push(new Data.Row(row, {collection: this}));
         }, this);
