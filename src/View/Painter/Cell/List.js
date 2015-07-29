@@ -90,8 +90,8 @@ View.Painter.Cell.List.Select = View.Painter.Cell.List.extend(/**@lends View.Pai
         });
     },
     eventHandler: {
-        'change select' : '_onChange',
-        'keydown select' : '_onKeyDown'
+        'change select': '_onChange',
+        'keydown select': '_onKeyDown'
     },
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -128,28 +128,65 @@ View.Painter.Cell.List.Select = View.Painter.Cell.List.extend(/**@lends View.Pai
     getContentHtml: function(cellData) {
         var list = this.getOptionList(cellData),
             isDisabled = cellData.isDisabled,
-            htmlArr = [];
+            htmlArr = [],
+            html = this._getConvertedHtml(cellData.value, cellData);
 
-        htmlArr.push('<select name="' + Util.getUniqueKey() + '"');
-        htmlArr.push(isDisabled ? ' disabled ' : '');
-        htmlArr.push('>');
+        if (ne.util.isNull(html)) {
+            htmlArr.push('<select name="' + Util.getUniqueKey() + '"');
+            htmlArr.push(isDisabled ? ' disabled ' : '');
+            htmlArr.push('>');
 
-        ne.util.forEachArray(list, function(item) {
-            htmlArr.push('<option ');
-            htmlArr.push('value="' + item.value + '"');
-            //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
-            if (cellData.value == item.value) {
-                htmlArr.push(' selected');
-            }
-            htmlArr.push(' >');
-            htmlArr.push(item.text);
-            htmlArr.push('</option>');
-        });
-
-        htmlArr.push('</select>');
-        return htmlArr.join('');
-
+            ne.util.forEachArray(list, function(item) {
+                htmlArr.push('<option ');
+                htmlArr.push('value="' + item.value + '"');
+                //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
+                if (cellData.value == item.value) {
+                    htmlArr.push(' selected');
+                }
+                htmlArr.push(' >');
+                htmlArr.push(item.text);
+                htmlArr.push('</option>');
+            });
+            htmlArr.push('</select>');
+            html = htmlArr.join('');
+        }
+        return html;
     },
+
+    /**
+     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
+     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
+     * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
+     * View.Base.Painter.Cell로부터 override 해서 구현함)
+     * @param {object} cellData Model 의 셀 데이터
+     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @private
+     * @override
+     */
+    _getContentHtml: function(cellData) {
+        var columnName = cellData.columnName,
+            columnModel = this.grid.columnModel.getColumnModel(columnName),
+            editOption = columnModel.editOption || {},
+            content = '',
+            beforeContent, afterContent;
+
+        if (!ne.util.isExisty(cellData.value)) {
+            cellData.value = columnModel.defaultValue;
+        }
+        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
+        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
+
+        if (beforeContent) {
+            content += this._getSpanWrapContent(beforeContent, 'before', cellData);
+        }
+        if (afterContent) {
+            content += this._getSpanWrapContent(afterContent, 'after', cellData);
+        }
+        content += this._getSpanWrapContent(this.getContentHtml(cellData), 'input');
+
+        return content;
+    },
+
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
@@ -234,8 +271,8 @@ View.Painter.Cell.List.Button = View.Painter.Cell.List.extend(/**@lends View.Pai
         });
     },
     eventHandler: {
-        'change input' : '_onChange',
-        'keydown input' : '_onKeyDown'
+        'change input': '_onChange',
+        'keydown input': '_onKeyDown'
     },
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -275,51 +312,52 @@ View.Painter.Cell.List.Button = View.Painter.Cell.List.extend(/**@lends View.Pai
             value = cellData.value,
             checkedList = ('' + value).split(','),
             checkedMap = {},
+            html = this._getConvertedHtml(value, cellData),
             htmlArr = [],
             name = Util.getUniqueKey(),
             isDisabled = cellData.isDisabled,
             id;
 
-        ne.util.forEachArray(checkedList, function(item) {
-            checkedMap[item] = true;
-        });
+        if (ne.util.isNull(html)) {
+            ne.util.forEachArray(checkedList, function(item) {
+                checkedMap[item] = true;
+            });
 
-        ne.util.forEachArray(list, function(item) {
-            id = name + '_' + item.value;
+            ne.util.forEachArray(list, function(item) {
+                id = name + '_' + item.value;
 
-            htmlArr.push('<input type="');
-            htmlArr.push(columnModel.editOption.type);
-            htmlArr.push('" name="');
-            htmlArr.push(name);
-            htmlArr.push('" id="');
-            htmlArr.push(id);
-            htmlArr.push('" value="');
-            htmlArr.push(item.value);
-            htmlArr.push('" ');
-            htmlArr.push(checkedMap[item.value] ? 'checked' : '');
-            htmlArr.push(isDisabled ? 'disabled' : '');
-            htmlArr.push('/>');
-
-            if (item.text) {
-                htmlArr.push('<label for="');
+                htmlArr.push('<input type="');
+                htmlArr.push(columnModel.editOption.type);
+                htmlArr.push('" name="');
+                htmlArr.push(name);
+                htmlArr.push('" id="');
                 htmlArr.push(id);
-                htmlArr.push('" style="margin-right:10px">');
-                htmlArr.push(item.text);
-                htmlArr.push('</label>');
-            }
+                htmlArr.push('" value="');
+                htmlArr.push(item.value);
+                htmlArr.push('" ');
+                htmlArr.push(checkedMap[item.value] ? 'checked' : '');
+                htmlArr.push(isDisabled ? 'disabled' : '');
+                htmlArr.push('/>');
 
-        }, this);
-
-        return htmlArr.join('');
+                if (item.text) {
+                    htmlArr.push('<label for="');
+                    htmlArr.push(id);
+                    htmlArr.push('" style="margin-right:10px">');
+                    htmlArr.push(item.text);
+                    htmlArr.push('</label>');
+                }
+            }, this);
+            html = htmlArr.join('');
+        }
+        return html;
     },
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
      * @param {jquery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {
+    setElementAttribute: function(cellData, $td) {
         var value = cellData.value,
             checkedList = ('' + value).split(',');
 

@@ -461,6 +461,10 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             this.uncheckAll();
             this.check(rowKey);
         }
+        this.trigger('selectRow', {
+            rowKey: rowKey,
+            rowData: this.getRow(rowKey)
+        });
     },
     /**
      * width 변경시 layout data 를 update 한다.
@@ -837,11 +841,13 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     },
     /**
      * rowKey에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 함께 삭제 할지 여부
+     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {boolean|object} options - 삭제 옵션
+     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalData) {
-        this.dataModel.removeRow(rowKey, isRemoveOriginalData);
+    removeRow: function(rowKey, options) {
+        this.dataModel.removeRow(rowKey, options);
     },
     /**
      * chcked된 행을 삭제한다.

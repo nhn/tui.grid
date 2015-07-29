@@ -39,85 +39,163 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         Model.Base.prototype.initialize.apply(this, arguments);
         this.columnModel = this.grid.columnModel;
         this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
-
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
-        this._setColumnWidthVariables();
+        this._initColumnWidthVariables();
         this._setBodyHeight();
     },
 
     /**
-     * 인자로 columnWidthList 배열을 받아 현재 total width 에 맞게 계산한다.
-     * @param {Array} columnWidthList   컬럼 너비 리스트
-     * @return {Array}  totalWidth 에 맞게 계산한 컬럼 너비 리스트
+     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
+     * @param {number} columnLength - 컬럼의 개수
+     * @return {number} 사용가능한 전체 셀의 넓이
      * @private
      */
-    _calculateColumnWidthList: function(columnWidthList) {
-        var columnFixIndex = this.columnModel.get('columnFixIndex'),
-            totalWidth = this.get('width'),
-            availableTotalWidth,
-            remainWidth,
-            unassignedWidth,
-            newColumnWidthList = [],
-            width = 0,
-            currentWidth = 0,
-            unassignedCount = 0;
-
-        availableTotalWidth = totalWidth - columnWidthList.length - 1;
+    _getAvailableTotalWidth: function(columnLength) {
+        var totalWidth = this.get('width'),
+            availableTotalWidth = totalWidth - columnLength - 1;
 
         if (this.get('scrollY')) {
             availableTotalWidth -= this.get('scrollBarSize');
         }
-
-        if (columnFixIndex > 0) {
+        if (this.columnModel.get('columnFixIndex') > 0) {
             availableTotalWidth -= 1;
         }
-
-        _.each(columnWidthList, function(columnWidth) {
-            if (columnWidth > 0) {
-                width = Math.max(this.get('minimumColumnWidth'), columnWidth);
-                newColumnWidthList.push(width);
-                currentWidth += width;
-            } else {
-                newColumnWidthList.push(-1);
-                unassignedCount += 1;
-            }
-        }, this);
-
-        remainWidth = availableTotalWidth - currentWidth;
-
-        if (availableTotalWidth > currentWidth) {
-            remainWidth = availableTotalWidth - currentWidth;
-            unassignedWidth = Math.max(this.get('minimumColumnWidth'), Math.floor(remainWidth / unassignedCount));
-        } else {
-            unassignedWidth = this.get('minimumColumnWidth');
-        }
-        _.each(newColumnWidthList, function(newColumnWidth, index) {
-            if (newColumnWidth === -1) {
-                newColumnWidthList[index] = unassignedWidth;
-            }
-        }, this);
-        return newColumnWidthList;
+        return availableTotalWidth;
     },
+
     /**
-     * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
-     * @return {Array}  columnModel 에 설정된 width 값 기준의 너비 리스트
+     * 주어진 컬럼 넓이값 배열에서 minimumColumnWidth 값보다 작은 값이 없도록 수정해준다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
      * @private
      */
-    _getOriginalWidthList: function() {
-        var columnModelList = this.columnModel.get('visibleList'),
-            columnWidthList = [];
+    _applyMinimumColumnWidth: function(columnWidthList) {
+        var minWidth = this.get('minimumColumnWidth');
 
-        _.each(columnModelList, function(columnModel) {
-            if (columnModel.width) {
-                columnWidthList.push(columnModel.width);
-            } else {
-                //width 가 지정되지 않았을 경우, 마지막에 동일한 값을 지정해주기 위해 마킹의 의미로 -1 값을 할당한다.
-                columnWidthList.push(-1);
+        _.each(columnWidthList, function(width, index) {
+            if (width < minWidth) {
+                columnWidthList[index] = minWidth;
             }
         });
-        return this._calculateColumnWidthList(columnWidthList);
     },
+
+    /**
+     * 컬럼 넓이값의 배열에서, 넓이가 지정되지 않은 컬럼들의 값을 균등하게 채워준다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @param {number} totalWidth - 전체 넓이
+     * @return {array} - 값이 모두 채워진 새로운 배열
+     * @private
+     */
+    _getAssignedColumnWidthList: function(columnWidthList, totalWidth) {
+        var columnLength = columnWidthList.length,
+            assignedList = Array(columnLength),
+            remainTotalWidth = totalWidth,
+            remainIndexes = [],
+            remainAvgWidth;
+
+        _.each(columnWidthList, function(width, index) {
+            if (width > 0) {
+                assignedList[index] = width;
+                remainTotalWidth -= width;
+            } else {
+                remainIndexes.push(index);
+            }
+        });
+        remainAvgWidth = Math.round(remainTotalWidth / remainIndexes.length);
+
+        _.each(remainIndexes, function(remainIndex, index) {
+            if (index === remainIndexes.length - 1) {
+                assignedList[remainIndex] = remainTotalWidth;
+            } else {
+                assignedList[remainIndex] = remainAvgWidth;
+                remainTotalWidth -= remainAvgWidth;
+            }
+        });
+        return assignedList;
+    },
+
+    /**
+     * 컬럼 넓이값의 배열에서, fixed가 아닌 컬럼의 넓이에 추가적인 넓이값을 균등하게 더해준다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @param {number} extraTotalWidth - 추가될 전체 넓이
+     * @param {number} variableCount - 넓이가 가변적인(fixed가 아닌) 컬럼의 개수
+     * @private
+     */
+    _addExtraColumnWidth: function(columnWidthList, extraTotalWidth, variableCount) {
+        var extraWidthAvg = Math.round(extraTotalWidth / variableCount),
+            fixedFlags = this.get('columnWidthFixedFlags'),
+            extraAddedCount = 0,
+            extraWidth;
+
+        _.each(columnWidthList, function(width, index) {
+            if (!fixedFlags[index]) {
+                if (extraAddedCount === variableCount - 1) {
+                    extraWidth = extraTotalWidth;
+                } else {
+                    extraWidth = extraWidthAvg;
+                }
+                columnWidthList[index] += extraWidth;
+                extraTotalWidth -= extraWidth;
+                extraAddedCount += 1;
+            }
+        });
+    },
+
+    /**
+     * 컬럼 넓이값의 배열을 받아, 전체 넓이에 맞게 각 넓이값을 재조정하여 새로운 배열로 반환한다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @return {array} - 조정된 넓이갑 배열
+     * @private
+     */
+    _calculateColumnWidthList: function(columnWidthList) {
+        var columnLength = columnWidthList.length,
+            fixedFlags = this.get('columnWidthFixedFlags'),
+            totalWidth = this._getAvailableTotalWidth(columnLength),
+            newWidthList = this._getAssignedColumnWidthList(columnWidthList, totalWidth),
+            extraTotalWidth = totalWidth,
+            variableCount = 0; // 가변적인 컬럼(fixed가 아닌)의 수
+
+        _.each(newWidthList, function(width, index) {
+            extraTotalWidth -= width;
+            if (!fixedFlags[index]) {
+                variableCount += 1;
+            }
+        });
+
+        if (extraTotalWidth > 0) {
+            if (variableCount) {
+                this._addExtraColumnWidth(newWidthList, extraTotalWidth, variableCount);
+            } else {
+                // 모든 컬럼 넓이가 고정(fixed)이면 마지막 컬럼의 넓이를 더해준다.
+                newWidthList[columnLength - 1] += extraTotalWidth;
+            }
+        }
+        this._applyMinimumColumnWidth(newWidthList);
+
+        return newWidthList;
+    },
+
+    /**
+     * columnModel 에 설정된 넓이값을 기준으로 컬럼넓이와 관련된 변수들의 값을 초기화한다.
+     * @private
+     */
+    _initColumnWidthVariables: function() {
+        var columnModelList = this.columnModel.get('visibleList'),
+            widthList = [],
+            fixedFlags = [],
+            calculatedList;
+
+        _.each(columnModelList, function(columnModel) {
+            widthList.push(Math.max(columnModel.width, 0));
+            fixedFlags.push(columnModel.isFixedWidth);
+        });
+
+        this.set('columnWidthFixedFlags', fixedFlags);
+
+        calculatedList = this._calculateColumnWidthList(widthList);
+        this._setColumnWidthVariables(calculatedList, true);
+    },
+
     /**
      * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
      * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
@@ -146,24 +224,18 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
 
     /**
      * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
-     * @param {Array} [columnWidthList] 인자가 존재하지 않을 경우, 현재 columnModel 에 저장된 정보 기준으로 columnWidth 를 설정한다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @param {boolean} isSaveWidthList - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
      * @private
      */
-    _setColumnWidthVariables: function(columnWidthList) {
-        var isSaveWidthList = false;
-
-        if (!columnWidthList) {
-            columnWidthList = this._getOriginalWidthList();
-            isSaveWidthList = true;
-        }
-
-        var rsideWidth,
-            lsideWidth,
-            totalWidth = this.get('width'),
+    _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
+        var totalWidth = this.get('width'),
             columnFixIndex = this.columnModel.get('columnFixIndex'),
             maxLeftSideWidth = this._getMaxLeftSideWidth(),
-            lsideWidthList = columnWidthList.slice(0, columnFixIndex),
-            rsideWidthList = columnWidthList.slice(columnFixIndex);
+            rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
+
+        lsideWidthList = columnWidthList.slice(0, columnFixIndex);
+        rsideWidthList = columnWidthList.slice(columnFixIndex);
 
         lsideWidth = this._getFrameWidth(lsideWidthList);
         if (maxLeftSideWidth < lsideWidth) {
@@ -173,9 +245,9 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         rsideWidth = totalWidth - lsideWidth;
         this.set({
+            columnWidthList: columnWidthList,
             rsideWidth: rsideWidth,
-            lsideWidth: lsideWidth,
-            columnWidthList: columnWidthList
+            lsideWidth: lsideWidth
         });
 
         if (isSaveWidthList) {
@@ -216,14 +288,13 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     getCellPosition: function(rowKey, columnName) {
         var top, left = 0, right, bottom, i = 0,
             dataModel = this.grid.dataModel,
-            offsetLeft = this.get('offsetLeft'),
-            offsetTop = this.get('offsetTop'),
             rowHeight = this.get('rowHeight'),
             rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
             rowIdx, spanCount,
             columnWidthList = this.get('columnWidthList'),
             columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-            columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true);
+            columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true),
+            borderWidth = 1;
 
 
         if (!rowSpanData.isMainRow) {
@@ -236,18 +307,16 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         rowIdx = dataModel.indexOfRowKey(rowKey);
 
         top = Util.getHeight(rowIdx, rowHeight);
-        bottom = top + Util.getHeight(spanCount, rowHeight) - 1;
+        bottom = top + Util.getHeight(spanCount, rowHeight) - borderWidth;
 
         if (columnFixIndex <= columnIdx) {
             i = columnFixIndex;
         }
 
-        for (; i < columnIdx; i++) {
-            //border 값(1px 도 함께 더한다.)
-            left += columnWidthList[i] + 1;
+        for (; i < columnIdx; i += 1) {
+            left += columnWidthList[i] + borderWidth;
         }
-        //border 값(1px 도 함께 더한다.)
-        right = left + columnWidthList[i] + 1;
+        right = left + columnWidthList[i] + borderWidth;
 
         return {
             top: top,
@@ -274,7 +343,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
                 diff -= lsideWidthList[i] - changedWidth;
                 lsideWidthList[i] = changedWidth;
-                i--;
+                i -= 1;
             }
         } else if (diff < 0) {
             lsideWidthList[i] += Math.abs(diff);
@@ -321,11 +390,12 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * @param {Number} width    변경할 너비 pixel값
      */
     setColumnWidth: function(index, width) {
-        width = Math.max(width, this.get('minimumColumnWidth'));
-        var curColumnWidthList = this.get('columnWidthList');
-        if (!ne.util.isUndefined(curColumnWidthList[index])) {
-            curColumnWidthList[index] = width;
-            this._setColumnWidthVariables(curColumnWidthList);
+        var columnWidthList = this.get('columnWidthList'),
+            fixedFlags = this.get('columnWidthFixedFlags');
+
+        if (!fixedFlags[index] && columnWidthList[index]) {
+            columnWidthList[index] = width;
+            this._setColumnWidthVariables(this._calculateColumnWidthList(columnWidthList));
         }
     },
     /**
