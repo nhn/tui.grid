@@ -88,26 +88,29 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     _getAssignedColumnWidthList: function(columnWidthList, totalWidth) {
         var columnLength = columnWidthList.length,
-            assignedTotal = 0,
-            assignedCount = 0,
             assignedList = Array(columnLength),
+            remainTotalWidth = totalWidth,
+            remainIndexes = [],
             remainAvgWidth;
 
         _.each(columnWidthList, function(width, index) {
             if (width > 0) {
                 assignedList[index] = width;
-                assignedTotal += width;
-                assignedCount += 1;
+                remainTotalWidth -= width;
+            } else {
+                remainIndexes.push(index);
             }
         });
-        remainAvgWidth = Math.round((totalWidth - assignedTotal) / (columnLength - assignedCount));
+        remainAvgWidth = Math.round(remainTotalWidth / remainIndexes.length);
 
-        _.each(assignedList, function(width, index) {
-            if (!width) {
-                assignedList[index] = remainAvgWidth;
+        _.each(remainIndexes, function(remainIndex, index) {
+            if (index === remainIndexes.length - 1) {
+                assignedList[remainIndex] = remainTotalWidth;
+            } else {
+                assignedList[remainIndex] = remainAvgWidth;
+                remainTotalWidth -= remainAvgWidth;
             }
         });
-
         return assignedList;
     },
 
@@ -290,7 +293,8 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             rowIdx, spanCount,
             columnWidthList = this.get('columnWidthList'),
             columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-            columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true);
+            columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true),
+            borderWidth = 1;
 
 
         if (!rowSpanData.isMainRow) {
@@ -303,18 +307,16 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         rowIdx = dataModel.indexOfRowKey(rowKey);
 
         top = Util.getHeight(rowIdx, rowHeight);
-        bottom = top + Util.getHeight(spanCount, rowHeight) - 1;
+        bottom = top + Util.getHeight(spanCount, rowHeight) - borderWidth;
 
         if (columnFixIndex <= columnIdx) {
             i = columnFixIndex;
         }
 
         for (; i < columnIdx; i += 1) {
-            //border 값(1px 도 함께 더한다.)
-            left += columnWidthList[i] + 1;
+            left += columnWidthList[i] + borderWidth;
         }
-        //border 값(1px 도 함께 더한다.)
-        right = left + columnWidthList[i] + 1;
+        right = left + columnWidthList[i] + borderWidth;
 
         return {
             top: top,

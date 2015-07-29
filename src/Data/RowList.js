@@ -454,24 +454,31 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     },
     /**
      * rowKey 에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
+     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {object} options - 삭제 옵션
+     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalData) {
+    removeRow: function(rowKey, options) {
         var row = this.get(rowKey),
-            rowSpanData, nextRow;
+            rowSpanData, nextRow, removedData;
 
         if (!row) {
             return;
         }
+
+        if (options && options.keepRowSpanData) {
+            removedData = _.clone(row.attributes);
+        }
         rowSpanData = _.clone(row.getRowSpanData());
         nextRow = this.at(this.indexOf(row) + 1);
+
         this.remove(row, {
             silent: true
         });
-        this._syncRowSpanDataForRemove(rowSpanData, nextRow);
+        this._syncRowSpanDataForRemove(rowSpanData, nextRow, removedData);
 
-        if (isRemoveOriginalData) {
+        if (options && options.removeOriginalData) {
             this.setOriginalRowList();
         }
         this.trigger('remove');
@@ -480,9 +487,10 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * 삭제된 행에 rowSpan이 적용되어 있었을 때, 관련된 행들의 rowSpan데이터를 갱신한다.
      * @param {object} rowSpanData - 삭제된 행의 rowSpanData
      * @param {Data.Row} nextRow - 삭제된 다음 행의 모델
+     * @param {object} [removedData] - 삭제된 행의 데이터 (삭제옵션의 keepRowSpanData가 true인 경우에만 넘겨짐)
      * @private
      */
-    _syncRowSpanDataForRemove: function(rowSpanData, nextRow) {
+    _syncRowSpanDataForRemove: function(rowSpanData, nextRow, removedData) {
         if (!rowSpanData) {
             return;
         }
@@ -497,10 +505,10 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
                 if (spanCount > 1) {
                     mainRowSpanData.mainRowKey = mainRow.get('rowKey');
                     mainRowSpanData.isMainRow = true;
-                    mainRow.set(columnName, '', {
-                        silent: true
-                    });
                 }
+                mainRow.set(columnName, (removedData ? removedData[columnName] : ''), {
+                    silent: true
+                });
             } else {
                 mainRow = this.get(data.mainRowKey);
                 spanCount = mainRow.getRowSpanData(columnName).count - 1;

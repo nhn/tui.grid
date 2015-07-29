@@ -198,21 +198,54 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             editOption = columnModel.editOption || {},
-            content;
+            beforeContent, afterContent, content;
 
         if (!ne.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
+        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
+        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
 
-        content = this.getContentHtml(cellData);
-        if (editOption.beforeText) {
-            content = columnModel.editOption.beforeText + content;
-        }
-        if (editOption.afterText) {
-            content = content + columnModel.editOption.afterText;
-        }
+        content = beforeContent + this.getContentHtml(cellData) + afterContent;
+
         return content;
     },
+
+    /**
+     * beforeContent/afterContent의 내용을 반환하다.
+     * 값이 function인 경우 function을 실행해 결과값을 반환한다.
+     * @param {string|function} content - 내용
+     * @param {object} cellData - 셀 데이터
+     * @return {string} - 내용
+     */
+    _getExtraContent: function(content, cellData) {
+        var contentValue = content,
+            row, cellValue;
+
+        if (ne.util.isFunction(content)) {
+            row = this.grid.dataModel.get(cellData.rowKey);
+            cellValue = row.getHTMLEncodedString(cellData.columnName);
+            contentValue = content(cellValue, row.attributes);
+        }
+        if (!ne.util.isExisty(contentValue)) {
+            contentValue = '';
+        }
+        return contentValue;
+    },
+
+    /**
+     * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
+     * @param {string} content - 감싸질 문자열
+     * @param {string} className - span 태그의 클래스명
+     * @return {string} span 태그로 감싼 HTML 코드
+     */
+    _getSpanWrapContent: function(content, className) {
+        if (ne.util.isFalsy(content)) {
+            content = '';
+        }
+        return '<span class="' + className + '">' + content + '</span>';
+    },
+
     /**
      * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
      * td 단위의 html 문자열을 반환한다.
@@ -277,6 +310,20 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
             rowKey: this.getRowKey($target),
             columnName: this.getColumnName($target)
         };
+    },
+
+    _getConvertedHtml: function(value, cellData) {
+        var columnModel = this.getColumnModel(cellData),
+            editOption = columnModel.editOption,
+            html;
+
+        if (ne.util.isFunction(editOption.converter)) {
+            html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
+        }
+        if (ne.util.isFalsy(html)) {
+            html = null;
+        }
+        return html;
     },
     /**
      * 인자로 받은 element 로 부터 columnName 을 반환한다.

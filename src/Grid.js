@@ -458,11 +458,18 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * rowKey에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
+     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {boolean|object} options - 삭제 옵션. boolean 타입인 경우 options.removeOriginal과 동일 (하위버전 호완성 유지를 위함)
+     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalData) {
-        this.core.removeRow(rowKey, isRemoveOriginalData);
+    removeRow: function(rowKey, options) {
+        if (ne.util.isBoolean(options) && options) {
+            options = {
+                removeOriginalData: true
+            };
+        }
+        this.core.removeRow(rowKey, options);
     },
     /**
      * checked된 행을 삭제한다.

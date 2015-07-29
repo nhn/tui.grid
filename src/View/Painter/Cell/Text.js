@@ -97,11 +97,9 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
         if (ne.util.isUndefined(value)) {
             value = '';
         }
+        html = this._getConvertedHtml(value, cellData);
 
-        if (ne.util.isFunction(editOption.converter)) {
-            html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
-        }
-        if (ne.util.isFalsy(html)) {
+        if (ne.util.isNull(html)) {
             html = this.template({
                 type: this._getInputType(),
                 value: value,
@@ -176,38 +174,6 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
         content += this._getSpanWrapContent(this.getContentHtml(cellData), 'input');
 
         return content;
-    },
-    /**
-     * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
-     * @param {string} content - 감싸질 문자열
-     * @param {string} className - span 태그의 클래스명
-     * @return {string} span 태그로 감싼 HTML 코드
-     */
-    _getSpanWrapContent: function(content, className) {
-        if (ne.util.isFalsy(content)) {
-            content = '';
-        }
-        return '<span class="' + className + '">' + content + '</span>';
-    },
-
-    _getExtraContent: function(content, cellData) {
-        var contentValue = content;
-
-        if (ne.util.isFunction(content)) {
-            contentValue = this._getExtraContentByFunction(content, cellData);
-        }
-        return contentValue;
-    },
-
-    /**
-     *
-     */
-    _getExtraContentByFunction: function(fnContent, cellData) {
-        var dataModel = this.grid.dataModel,
-            row = dataModel.get(cellData.rowKey),
-            cellValue = row.getHTMLEncodedString(cellData.columnName);
-
-        return fnContent(cellValue, row.attributes);
     },
 
     /**

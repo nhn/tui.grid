@@ -448,7 +448,6 @@ View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header
     },
     /**
      * 생성된 핸들러의 위치를 설정한다.
-     * @param {boolean} isUpdateWidthList - true이면 dimensionModel의 columnWidthList를 변경해준다.
      * @private
      */
     _refreshHandlerPosition: function() {
