@@ -39,10 +39,9 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         Model.Base.prototype.initialize.apply(this, arguments);
         this.columnModel = this.grid.columnModel;
         this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
-
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
-        this._setColumnWidthVariables();
+        this._initColumnWidthVariables();
         this._setBodyHeight();
     },
 
@@ -138,6 +137,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             }
         });
     },
+
     /**
      * 컬럼 넓이값의 배열을 받아, 전체 넓이에 맞게 각 넓이값을 재조정하여 새로운 배열로 반환한다.
      * @param {array} columnWidthList - 컬럼 넓이값 배열
@@ -150,7 +150,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             totalWidth = this._getAvailableTotalWidth(columnLength),
             newWidthList = this._getAssignedColumnWidthList(columnWidthList, totalWidth),
             extraTotalWidth = totalWidth,
-            variableCount = 0;
+            variableCount = 0; // 가변적인 컬럼(fixed가 아닌)의 수
 
         _.each(newWidthList, function(width, index) {
             extraTotalWidth -= width;
@@ -163,6 +163,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             if (variableCount) {
                 this._addExtraColumnWidth(newWidthList, extraTotalWidth, variableCount);
             } else {
+                // 모든 컬럼 넓이가 고정(fixed)이면 마지막 컬럼의 넓이를 더해준다.
                 newWidthList[columnLength - 1] += extraTotalWidth;
             }
         }
@@ -172,23 +173,26 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     },
 
     /**
-     * columnModel 에 설정된 width 값을 기준으로 widthList 를 작성한다.
-     * @return {Array}  columnModel 에 설정된 width 값 기준의 너비 리스트
+     * columnModel 에 설정된 넓이값을 기준으로 컬럼넓이와 관련된 변수들의 값을 초기화한다.
      * @private
      */
-    _getOriginalColumnWidthList: function() {
+    _initColumnWidthVariables: function() {
         var columnModelList = this.columnModel.get('visibleList'),
-            columnWidthList = [],
-            columnWidthFixedFlags = [];
+            widthList = [],
+            fixedFlags = [],
+            calculatedList;
 
         _.each(columnModelList, function(columnModel) {
-            columnWidthList.push(columnModel.width || 0);
-            columnWidthFixedFlags.push(columnModel.isFixedWidth);
+            widthList.push(Math.max(columnModel.width, 0));
+            fixedFlags.push(columnModel.isFixedWidth);
         });
-        this.set('columnWidthFixedFlags', columnWidthFixedFlags);
 
-        return this._calculateColumnWidthList(columnWidthList, true);
+        this.set('columnWidthFixedFlags', fixedFlags);
+
+        calculatedList = this._calculateColumnWidthList(widthList);
+        this._setColumnWidthVariables(calculatedList, true);
     },
+
     /**
      * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
      * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
@@ -217,20 +221,15 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
 
     /**
      * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
-     * @param {Array} [columnWidthList] 인자가 존재하지 않을 경우, 현재 columnModel 에 저장된 정보 기준으로 columnWidth 를 설정한다.
+     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * @param {boolean} isSaveWidthList - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
      * @private
      */
-    _setColumnWidthVariables: function(columnWidthList) {
+    _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
         var totalWidth = this.get('width'),
             columnFixIndex = this.columnModel.get('columnFixIndex'),
             maxLeftSideWidth = this._getMaxLeftSideWidth(),
-            isSaveWidthList = false,
             rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
-
-        if (!columnWidthList) {
-            columnWidthList = this._getOriginalColumnWidthList();
-            isSaveWidthList = true;
-        }
 
         lsideWidthList = columnWidthList.slice(0, columnFixIndex);
         rsideWidthList = columnWidthList.slice(columnFixIndex);
