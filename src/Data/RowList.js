@@ -554,7 +554,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @param {object|array} rowData - 행 추가할 데이터. Array일 경우 여러행를 동시에 추가한다.
      * @param {object} [options] - 옵션 객체
      * @param {number} [options.at] - 데이터를 append 할 index
-     * @param {boolean} [options.rowSpanPrev] - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
+     * @param {boolean} [options.extendPrevRowSpan] - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
      */
     append: function(rowData, options) {
         var modelList = this._createModelList(rowData),
@@ -568,7 +568,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         };
 
         this.add(modelList, addOptions);
-        this._syncRowSpanDataForAppend(options.at, modelList.length, options.rowSpanPrev);
+        this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
         this.trigger('add', modelList, addOptions);
     },
 
@@ -611,9 +611,9 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * 새로운 행이 추가되었을 때, 관련된 주변 행들의 rowSpan 데이터를 갱신한다.
      * @param {number} index - 추가된 행의 인덱스
      * @param {number} length - 추가된 행의 개수
-     * @param {boolean} rowSpanPrev - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
+     * @param {boolean} extendPrevRowSpan - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
      */
-    _syncRowSpanDataForAppend: function(index, length, rowSpanPrev) {
+    _syncRowSpanDataForAppend: function(index, length, extendPrevRowSpan) {
         var prevRow = this.at(index - 1);
 
         if (!prevRow) {
@@ -638,7 +638,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
                 startOffset = -data.count + 1;
             }
 
-            if (mainRowData.count > startOffset || rowSpanPrev) {
+            if (mainRowData.count > startOffset || extendPrevRowSpan) {
                 mainRowData.count += length;
                 spanCount = mainRowData.count;
 
