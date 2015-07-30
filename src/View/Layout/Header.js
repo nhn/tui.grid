@@ -373,8 +373,8 @@ View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header
         });
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
         if (this.grid instanceof View.Base) {
-            this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this, true));
-            this.listenTo(this.grid.dimensionModel, 'change:width', $.proxy(this._refreshHandlerPosition, this, true));
+            this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this));
+            this.listenTo(this.grid.dimensionModel, 'change:width', $.proxy(this._refreshHandlerPosition, this));
         }
     },
     /**
@@ -443,14 +443,14 @@ View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header
             .html(this._getResizeHandlerMarkup());
 
         //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
-        this._refreshHandlerPosition(true);
+        this._refreshHandlerPosition();
         return this;
     },
     /**
      * 생성된 핸들러의 위치를 설정한다.
      * @private
      */
-    _refreshHandlerPosition: function(isUpdateWidthList) {
+    _refreshHandlerPosition: function() {
         var columnData = this._getColumnData(),
             columnWidthList = columnData.widthList,
             newColumnWidthList = [],
@@ -476,10 +476,6 @@ View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header
             $handler.css('left', (curPos - 3) + 'px');
             newColumnWidthList.push(width);
         });
-
-        if (isUpdateWidthList) {
-            this.grid.dimensionModel.setColumnWidthList(newColumnWidthList, this.whichSide);
-        }
     },
     /**
      * 현재 mouse move resizing 중인지 상태 flag 반환
@@ -510,7 +506,7 @@ View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header
         if (isClicked) {
             this.grid.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
             this._clearClickedFlag($target);
-            this._refreshHandlerPosition(true);
+            this._refreshHandlerPosition();
         } else {
             this._setClickedFlag($target);
         }
@@ -557,7 +553,7 @@ View.Layout.Header.ResizeHandler = View.Base.extend(/**@lends View.Layout.Header
 
             this.$target.css('left', left + 'px');
             this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
-            this._refreshHandlerPosition(true);
+            this._refreshHandlerPosition();
         }
     },
     /**

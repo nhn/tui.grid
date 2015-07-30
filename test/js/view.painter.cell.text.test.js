@@ -268,8 +268,8 @@ describe('view.painter.cell.text', function() {
                 });
             });
 
-            describe('편집중일 경우 input text 마크업을 반환한다.', function() {
-                var $input;
+            describe('편집중일 경우 input을 포함한 마크업을 반환한다.', function() {
+                var $content;
 
                 beforeEach(function() {
                     cellPainter.editingCell = {
@@ -280,16 +280,16 @@ describe('view.painter.cell.text', function() {
 
                 it('input 에 value 를 잘 설정한다.', function() {
                     options.isDisabled = true;
-                    $input = $(cellPainter.getContentHtml(options));
+                    $content = $(cellPainter.getContentHtml(options));
 
-                    expect($input.val()).toEqual('0-1');
+                    expect($content.find('input').val()).toEqual('0-1');
                 });
 
                 it('disabled 를 잘 설정한다.', function() {
                     options.isDisabled = false;
-                    $input = $(cellPainter.getContentHtml(options));
+                    $content = $(cellPainter.getContentHtml(options));
 
-                    expect($input.prop('disabled')).toBe(false);
+                    expect($content.find('input').prop('disabled')).toBe(false);
                 });
             });
         });
@@ -325,7 +325,7 @@ describe('view.painter.cell.text', function() {
             });
 
             it('isDisabled이 true 일 때에는 input text 를 노출하지 않는다.', function() {
-                grid.dataModel.setRowState('0', 'DISABLED');
+                grid.dataModel.get('0').setRowState('DISABLED');
                 cellPainter._startEdit($td);
                 $input = $td.find('input');
 
@@ -387,7 +387,7 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_onClick', function() {
-            var $td;
+            var $td, clickEvent;
 
             beforeEach(function() {
                 var $table;
@@ -395,32 +395,32 @@ describe('view.painter.cell.text', function() {
                 $table = $('<table><tr key="0"><td></td></tr></table>');
                 $td = $table.find('td').attr('columnname', 'c1');
                 $td.html(cellPainter.getContentHtml(options));
-
-                cellPainter.attachHandler($td);
+                clickEvent = {
+                    target: $td[0]
+                };
                 cellPainter._startEdit = jasmine.createSpy('_startEdit');
                 jasmine.clock().install();
             });
 
             afterEach(function() {
-                cellPainter.detachHandler($td);
                 jasmine.clock().uninstall();
             });
 
             it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function() {
-                $td.trigger('click');
+                cellPainter._onClick(clickEvent);
                 expect(cellPainter.clicked).toEqual({
                     rowKey: '0',
                     columnName: 'c1'
                 });
                 jasmine.clock().tick(900);
-                $td.trigger('click');
+                cellPainter._onClick(clickEvent);
                 expect(cellPainter._startEdit).not.toHaveBeenCalled();
             });
 
             it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function() {
-                $td.trigger('click');
+                cellPainter._onClick(clickEvent);
                 jasmine.clock().tick(100);
-                $td.trigger('click');
+                cellPainter._onClick(clickEvent);
                 expect(cellPainter._startEdit).toHaveBeenCalled();
             });
         });

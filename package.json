@@ -1,6 +1,6 @@
 {
   "name": "application-grid",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "grid",
   "main": "Gruntfile.js",
   "directories": {
@@ -10,8 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "",
-  "author": "",
-  "license": "BSD",
+  "author": "NHN Ent. FE Development Team",
+  "license": "MIT",
   "devDependencies": {
     "body-parser": "^1.12.4",
     "express": "^4.12.4",

@@ -21,7 +21,7 @@
 
 .uio_grid .left_line{position:absolute;top:0;width:1px;height:100%;background:#ccc;left:0;z-index:10}
 .uio_grid .right_line{position:absolute;top:0;width:1px;height:100%;background:#ccc;right:0;z-index:10}
-.uio_grid .clipboard{position:absolute;top:0px;left:-9999px;width:100px;height:100px}
+.uio_grid .clipboard{position:fixed;top:0px;left:-9999px;width:100px;height:100px}
 .uio_grid .table_container {position:absolute;top:0;width:100%}
 .uio_grid .blocker{display:none;position:absolute;top:0;left:0;z-index:10;width:100%;height:100%;background-color:#000;opacity:0.1;filter:alpha(opacity=10);filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=10);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=10)"}
 .uio_grid .selection_blocker{display:none;position:absolute;top:0;left:0;z-index:10;width:100%;height:100%;background-color:#000;opacity:0;filter:alpha(opacity=0);filter:progid:DXImageTransform.Microsoft.Alpha(Opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"}
@@ -56,11 +56,15 @@
 .uio_grid table tr.selected{background-color:#f8f8f8}
 .uio_grid table tr.disabled{color:#b0b0b0}
 .uio_grid table tr.invalidated{background-color:#ffe1e1}
-.uio_grid table td{overflow:hidden;padding:0 10px;*padding:0 10px;border:0;white-space:nowrap;*white-space:pre}
+.uio_grid table td{overflow:hidden;padding:0 10px;*padding:0 10px;border:0;white-space:nowrap;*white-space:pre;}
 .uio_grid table td.ellipsis{-o-text-overflow:ellipsis; /*Opera 9*/-moz-binding:url('ellipsis.xml#ellipsis'); /* Firefox */width:100%; /* for IE6 */text-overflow:ellipsis}
 .uio_grid table td img{vertical-align:middle}
-.uio_grid table td input[type=text]{width:100%;padding:2px 0;border:solid 1px #E2E3EA;border-top:solid 1px #ABADB3;border-bottom:solid 1px #E3E9EF;}
-.uio_grid table td input[type=password]{width:100%;padding:2px 0;border:solid 1px #E2E3EA;border-top:solid 1px #ABADB3;border-bottom:solid 1px #E3E9EF;}
+.uio_grid table td span.before{float:left;margin-right:2px;line-height:1.5}
+.uio_grid table td span.after{float:right;margin-left:2px;line-height:1.5}
+.uio_grid table td span.input{display:block;overflow:hidden;line-height:1.5;*margin-left:-2px;*padding-left:2px;}
+.uio_grid table td span.input input{box-sizing:border-box;}
+.uio_grid table td input[type=text],
+.uio_grid table td input[type=password]{width:100%;padding:2px 0;;border:solid 1px #E2E3EA;border-top:solid 1px #ABADB3;border-bottom:solid 1px #E3E9EF;}
 .uio_grid table td input.editing{border:solid 1px #748eea}
 .uio_grid table td select{width:100%;}
 .uio_grid table td a{color:#002caf}

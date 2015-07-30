@@ -410,7 +410,7 @@ describe('model.dimension', function() {
         });
     });
 
-    describe('_getOriginalWidthList() columnModel', function() {
+    describe('_initColumnWidthVariables()', function() {
         var sampleColumnModel;
 
         beforeEach(function() {
@@ -449,7 +449,7 @@ describe('model.dimension', function() {
         });
 
         it('columnModelList에 정의된 값으로 columnWidthList 를 생성하는지 확인한다.', function() {
-            var originalWidthList = dimensionModel._getOriginalWidthList(),
+            var originalWidthList = dimensionModel.get('originalWidthList'),
                 compareWidth = dimensionModel.get('width') - 18,
                 minimumWidth = dimensionModel.get('minimumColumnWidth') - 1;
 
@@ -457,7 +457,7 @@ describe('model.dimension', function() {
             expect(min(originalWidthList)).toBeGreaterThan(minimumWidth);
 
             expect(originalWidthList).toEqual([
-               20, 20, 40, 398
+               20, 20, 40, 408
             ]);
         });
     });
@@ -746,11 +746,6 @@ describe('model.dimension', function() {
             dimensionModel.setColumnWidth(5, 100);
             expect(dimensionModel.getColumnWidthList()[5]).not.toBeDefined();
         });
-
-        it('miminumColumnWidth 이하로 떨어지지 않는지 확인한다.', function() {
-            dimensionModel.setColumnWidth(0, 10);
-            expect(dimensionModel.getColumnWidthList()[0]).toEqual(20);
-        });
     });
 
     describe('getCellPosition() Frame 으로 부터 상대적인 cell의 위치를 잘 반환한다.', function() {
@@ -810,6 +805,13 @@ describe('model.dimension', function() {
             expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectPosition);
             expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectPosition);
+        });
+    });
+
+    describe('change:displayRowCount', function() {
+        it('이벤트 발생시 bodyHeight를 재설정한다.', function() {
+            dimensionModel.set('displayRowCount', 10);
+            expect(dimensionModel.get('bodyHeight')).toBe(1028);
         });
     });
 });

@@ -45,7 +45,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
      */
     initialize: function() {
         View.Base.Painter.prototype.initialize.apply(this, arguments);
-        this.initializeEventHandler();
         this.setOwnProperties({
             _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
         });
@@ -198,33 +197,55 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
     _getContentHtml: function(cellData) {
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption,
-            content;
+            editOption = columnModel.editOption || {},
+            beforeContent, afterContent, content;
 
-        //if (!ne.util.isNumber(cellData.value) && !cellData.value) {
         if (!ne.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
+        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
+        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
 
-        content = this.getContentHtml(cellData);
-        if (editOption) {
-            if (editOption.beforeText) {
-                content = this._getSpanWrapText(columnModel.editOption.beforeText) + content;
-            }
-            if (editOption.afterText) {
-                content = content + this._getSpanWrapText(columnModel.editOption.afterText);
-            }
-        }
+        content = beforeContent + this.getContentHtml(cellData) + afterContent;
+
         return content;
     },
+
+    /**
+     * beforeContent/afterContent의 내용을 반환하다.
+     * 값이 function인 경우 function을 실행해 결과값을 반환한다.
+     * @param {(string|function)} content - 내용
+     * @param {object} cellData - 셀 데이터
+     * @return {string} - 내용
+     */
+    _getExtraContent: function(content, cellData) {
+        var contentValue = content,
+            row, cellValue;
+
+        if (ne.util.isFunction(content)) {
+            row = this.grid.dataModel.get(cellData.rowKey);
+            cellValue = row.getHTMLEncodedString(cellData.columnName);
+            contentValue = content(cellValue, row.attributes);
+        }
+        if (!ne.util.isExisty(contentValue)) {
+            contentValue = '';
+        }
+        return contentValue;
+    },
+
     /**
      * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
-     * @param {string} text 감싸질 문자열
+     * @param {string} content - 감싸질 문자열
+     * @param {string} className - span 태그의 클래스명
      * @return {string} span 태그로 감싼 HTML 코드
      */
-    _getSpanWrapText: function(text) {
-        return '<span>' + text + '</span>';
+    _getSpanWrapContent: function(content, className) {
+        if (ne.util.isFalsy(content)) {
+            content = '';
+        }
+        return '<span class="' + className + '">' + content + '</span>';
     },
+
     /**
      * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
      * td 단위의 html 문자열을 반환한다.
@@ -257,7 +278,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
      * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
      */
     redraw: function(cellData, $td) {
-        this.detachHandler($td);
         var attributes = {
             'class': this._getClassNameList(cellData).join(' ')
         };
@@ -268,7 +288,6 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         attributes = $.extend(attributes, this.getAttributes(cellData));
         $td.attr(attributes);
         $td.html(this._getContentHtml(cellData));
-        this.attachHandler($td);
     },
     /**
      * 인자로 받은 element 의 cellData 를 반환한다.
@@ -291,6 +310,26 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
             rowKey: this.getRowKey($target),
             columnName: this.getColumnName($target)
         };
+    },
+    /**
+     * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
+     * converter 함수를 적용한 결과값을 반환한다.
+     * @param {string} value - 셀의 실제값
+     * @param {object} cellData - 모델의 셀 데이터
+     * @return {(string|null)} HTML문자열. 혹은 null
+     */
+    _getConvertedHtml: function(value, cellData) {
+        var columnModel = this.getColumnModel(cellData),
+            editOption = columnModel.editOption,
+            html;
+
+        if (editOption && ne.util.isFunction(editOption.converter)) {
+            html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
+        }
+        if (ne.util.isFalsy(html)) {
+            html = null;
+        }
+        return html;
     },
     /**
      * 인자로 받은 element 로 부터 columnName 을 반환한다.

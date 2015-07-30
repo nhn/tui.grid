@@ -227,8 +227,6 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
                 grid: this
             });
         }
-
-        this.cellFactory = this.createView(View.CellFactory, { grid: this });
     },
     /**
      * 내부에서 사용할 view 인스턴스들을 초기화한다.
@@ -337,10 +335,15 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _onWindowResize: function() {
-        if (this.$el && this.$el.length) {
-            var width = Math.max(this.option('minimumWidth'), this.$el.css('width', '100%').width());
-            this.dimensionModel.set('width', width);
+        var minimumWidth = this.option('minimumWidth') || 0,
+            width = this.$el.width();
+
+        if (width < minimumWidth) {
+            this.$el.css('width', minimumWidth + 'px');
+        } else {
+            this.$el.css('width', 'auto');
         }
+        this.dimensionModel.set('width', Math.max(width, minimumWidth));
     },
     /**
      * click 이벤트 핸들러
@@ -352,7 +355,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             $target = $(mouseEvent.target);
 
         if (this._isCellElement($target, true)) {
-            this._triggerCellMouseEvent('clickCell', eventData, $target);
+            this._triggerCellMouseEvent('clickCell', eventData, $target.closest('td'));
         }
         this.trigger('click', eventData);
 
@@ -458,6 +461,10 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             this.uncheckAll();
             this.check(rowKey);
         }
+        this.trigger('selectRow', {
+            rowKey: rowKey,
+            rowData: this.getRow(rowKey)
+        });
     },
     /**
      * width 변경시 layout data 를 update 한다.
@@ -723,7 +730,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      */
     setRowList: function(rowList, isParse) {
         var callback = ne.util.bind(function() {
-            this.dataModel.set(rowList, {
+            this.dataModel.reset(rowList, {
                 parse: isParse
             });
             this.dataModel.setOriginalRowList();
@@ -834,11 +841,13 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     },
     /**
      * rowKey에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 함께 삭제 할지 여부
+     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {boolean|object} options - 삭제 옵션
+     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalData) {
-        this.dataModel.removeRow(rowKey, isRemoveOriginalData);
+    removeRow: function(rowKey, options) {
+        this.dataModel.removeRow(rowKey, options);
     },
     /**
      * chcked된 행을 삭제한다.
@@ -862,28 +871,28 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      */
     enableRow: function(rowKey) {
-        this.dataModel.setRowState(rowKey, '');
+        this.dataModel.get(rowKey).setRowState('');
     },
     /**
      * rowKey에 해당하는 행을 비활성화 시킨다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      */
     disableRow: function(rowKey) {
-        this.dataModel.setRowState(rowKey, 'DISABLED');
+        this.dataModel.get(rowKey).setRowState('DISABLED');
     },
     /**
      * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      */
     enableCheck: function(rowKey) {
-        this.dataModel.setRowState(rowKey, '');
+        this.dataModel.get(rowKey).setRowState('');
     },
     /**
      * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      */
     disableCheck: function(rowKey) {
-        this.dataModel.setRowState(rowKey, 'DISABLED_CHECK');
+        this.dataModel.get(rowKey).setRowState('DISABLED_CHECK');
     },
     /**
      * 현재 선택된 행들의 키값만을 배열로 리턴한다.
@@ -933,11 +942,14 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
 
     /**
      * 현재 그리드의 제일 끝에 행을 추가한다.
-     * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
+     * @param {object} [row] - row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
+     * @param {object} [options] - 옵션 객체
+     * @param {number} options.at - 데이터를 append 할 index
      */
-    appendRow: function(row) {
-        this.dataModel.append(row);
+    appendRow: function(row, options) {
+        this.dataModel.append(row, options);
     },
+
     /**
      * 현재 그리드의 제일 앞에 행을 추가한다.
      * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
@@ -1204,7 +1216,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addCellClassName: function(rowKey, columnName, className) {
-        this.dataModel.addCellClassName(rowKey, columnName, className);
+        this.dataModel.get(rowKey).addCellClassName(columnName, className);
     },
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
@@ -1212,7 +1224,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addRowClassName: function(rowKey, className) {
-        this.dataModel.addRowClassName(rowKey, className);
+        this.dataModel.get(rowKey).addRowClassName(className);
     },
     /**
      * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
@@ -1221,7 +1233,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeCellClassName: function(rowKey, columnName, className) {
-        this.dataModel.removeCellClassName(rowKey, columnName, className);
+        this.dataModel.get(rowKey).removeCellClassName(columnName, className);
     },
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
@@ -1229,7 +1241,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeRowClassName: function(rowKey, className) {
-        this.dataModel.removeRowClassName(rowKey, className);
+        this.dataModel.get(rowKey).removeRowClassName(className);
     },
     /**
      * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
@@ -1241,6 +1253,21 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         if (row) {
             return row.getRowSpanData(columnName);
         }
+    },
+    /**
+     * rowKey에 해당하는 행의 인덱스를 반환한다.
+     * @param {number|string} rowKey - 행 고유키
+     * @return {number} - 인덱스
+     */
+    getIndexOfRow: function(rowKey) {
+        return this.dataModel.indexOfRowKey(rowKey);
+    },
+    /**
+     * 화면에 한번에 보여지는 행 개수를 변경한다.
+     * @param {number} count - 행 개수
+     */
+    setDisplayRowCount: function(count) {
+        this.dimensionModel.set('displayRowCount', count);
     },
     /**
      * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
@@ -1266,10 +1293,10 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     /**
      * 그리드의 layout 데이터를 갱신한다.
      * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
-     * @todo 기능 구현
      * @param {Boolean} [hasDimmedLayer=true]
      */
     refreshLayout: function() {
+        this.dimensionModel.set('width', this.$el.width());
     },
     /**
      * 그리드의 크기 정보를 변경한다.

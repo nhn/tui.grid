@@ -35,7 +35,6 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
                 this.focusOut(param.$target.closest('td'));
             }
         });
-        this.on('resize', this._resetInputWidth, this);
     },
     template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
     /**
@@ -45,25 +44,6 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      */
     _getInputType: function() {
         return 'text';
-    },
-    /**
-     * Input요소의 넓이를 재설정한다.
-     * @param {jquery} $td 해당 셀의 TD요소
-     * @private
-     */
-    _resetInputWidth: function($td) {
-        var oldWidth = $td.data('width'),
-            curWidth = $td.width(),
-            textWidth = 0;
-
-        if (oldWidth === curWidth) {
-            return;
-        }
-        $td.find('span').each(function() {
-            textWidth += $(this).width();
-        });
-        $td.find('input').width(curWidth - textWidth);
-        $td.data('width', curWidth);
     },
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -91,7 +71,7 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      * - 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    focusOut: function($td) {
+    focusOut: function() {
         this.grid.focusClipboard();
     },
     /**
@@ -110,31 +90,33 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
     getContentHtml: function(cellData) {
         //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
         var columnModel = this.getColumnModel(cellData),
+            editOption = columnModel.editOption,
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-            htmlArr = [];
+            html;
 
-        htmlArr.push('<input type="');
-        htmlArr.push(this._getInputType());
-        htmlArr.push('" value="');
-        htmlArr.push(value);
-        htmlArr.push('" name="');
-        htmlArr.push(Util.getUniqueKey());
-        htmlArr.push('" align="center" ');
-        htmlArr.push(cellData.isDisabled ? 'disabled' : '');
-        htmlArr.push(' maxLength="');
-        htmlArr.push(columnModel.editOption.maxLength);
-        htmlArr.push('"/>');
+        if (ne.util.isUndefined(value)) {
+            value = '';
+        }
+        html = this._getConvertedHtml(value, cellData);
 
-        return htmlArr.join('');
+        if (ne.util.isNull(html)) {
+            html = this.template({
+                type: this._getInputType(),
+                value: value,
+                name: Util.getUniqueKey(),
+                disabled: cellData.isDisabled ? 'disabled' : '',
+                maxLength: editOption.maxLength || ''
+            });
+        }
+        return html;
     },
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
      * @param {jquery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {
+    setElementAttribute: function(cellData, $td) {
         var isValueChanged = $.inArray('value', cellData.changed) !== -1,
             $input = $td.find('input');
 
@@ -160,6 +142,40 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
     _restore: function($input) {
         $input.val(this.originalText);
     },
+    /**
+     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
+     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
+     * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
+     * View.Base.Painter.Cell로부터 override 해서 구현함)
+     * @param {object} cellData Model 의 셀 데이터
+     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @private
+     * @override
+     */
+    _getContentHtml: function(cellData) {
+        var columnName = cellData.columnName,
+            columnModel = this.grid.columnModel.getColumnModel(columnName),
+            editOption = columnModel.editOption || {},
+            content = '',
+            beforeContent, afterContent;
+
+        if (!ne.util.isExisty(cellData.value)) {
+            cellData.value = columnModel.defaultValue;
+        }
+        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
+        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
+
+        if (beforeContent) {
+            content += this._getSpanWrapContent(beforeContent, 'before', cellData);
+        }
+        if (afterContent) {
+            content += this._getSpanWrapContent(afterContent, 'after', cellData);
+        }
+        content += this._getSpanWrapContent(this.getContentHtml(cellData), 'input');
+
+        return content;
+    },
+
     /**
      * blur 이벤트 핸들러
      * @param {event} blurEvent 이벤트 객체
@@ -300,27 +316,59 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             htmlArr = [];
 
+        if (ne.util.isUndefined(value)) {
+            value = '';
+        }
+
         if (!this._isEditingCell(cellData)) {
             if (ne.util.isFunction(columnModel.formatter)) {
                 value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
             }
             return value;
-        } else {
-            htmlArr.push('<input type="');
-            htmlArr.push(this._getInputType());
-            htmlArr.push('" value="');
-            htmlArr.push(value);
-            htmlArr.push('" name="');
-            htmlArr.push(Util.getUniqueKey());
-            htmlArr.push('" align="center" ');
-            htmlArr.push(cellData.isDisabled ? 'disabled' : '');
-            htmlArr.push(' maxLength="');
-            htmlArr.push(columnModel.editOption.maxLength);
-            htmlArr.push('"/>');
-
-            return htmlArr.join('');
         }
+        htmlArr.push('<span class="input">');
+        htmlArr.push('<input type="');
+        htmlArr.push(this._getInputType());
+        htmlArr.push('" value="');
+        htmlArr.push(value);
+        htmlArr.push('" name="');
+        htmlArr.push(Util.getUniqueKey());
+        htmlArr.push('" align="center" ');
+        htmlArr.push(cellData.isDisabled ? 'disabled' : '');
+        htmlArr.push(' maxLength="');
+        htmlArr.push(columnModel.editOption.maxLength);
+        htmlArr.push('"/>');
+        htmlArr.push('</span>');
+
+        return htmlArr.join('');
     },
+
+    /**
+     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
+     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
+     * (상태에 따라 Text나 Base의 함수를 선택해서 사용해야 하기 때문에, 추가로 override 해서 prototype을 이용해 실행)
+     * @param {object} cellData Model의 셀 데이터
+     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @private
+     * @override
+     */
+    _getContentHtml: function(cellData) {
+        var targetProto;
+
+        if (this._isEditingCell(cellData)) {
+            targetProto = View.Painter.Cell.Text.prototype;
+        } else {
+            targetProto = View.Base.Painter.Cell.prototype;
+        }
+
+        return targetProto._getContentHtml.call(this, cellData);
+    },
+    /**
+     * 현재 편집중인 셀인지 여부를 반환한다.
+     * @param {object} cellData Model의 셀 데이터
+     * @return {boolean} - 편집중이면 true, 아니면 false
+     * @private
+     */
     _isEditingCell: function(cellData) {
         var editingCell = this.editingCell;
         return !!(editingCell.rowKey === cellData.rowKey.toString() && editingCell.columnName === cellData.columnName.toString());
@@ -350,8 +398,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
      * @private
      */
     _startEdit: function($td) {
-        var isEdit = $td.data('isEdit'),
-            $input,
+        var $input,
             rowKey = this.getRowKey($td),
             columnName = this.getColumnName($td),
             cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
@@ -361,9 +408,8 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             columnName: columnName
         };
 
-        if (!isEdit && cellState.isEditable && !cellState.isDisabled) {
+        if (cellState.isEditable && !cellState.isDisabled) {
             this.redraw(this._getCellData($td), $td);
-            this._resetInputWidth($td);
             $input = $td.find('input');
             this.originalText = $input.val();
             Util.form.setCursorToEnd($input.get(0));

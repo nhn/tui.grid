@@ -30,61 +30,68 @@ Model.Renderer.Smart = Model.Renderer.extend(/**@lends Model.Renderer.Smart.prot
             this.refresh();
         }
     },
+
     /**
      * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
      * @param {Number} scrollTop    랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
      * @private
      */
     _setRenderingRange: function(scrollTop) {
-        var top,
-            dimensionModel = this.grid.dimensionModel,
-            dataModel = this.grid.dataModel;
-        if (dimensionModel && dataModel) {
-            var rowHeight = dimensionModel.get('rowHeight'),
-                bodyHeight = dimensionModel.get('bodyHeight'),
-                displayRowCount = dimensionModel.getDisplayRowCount(),
-                startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-                endIndex = Math.min(
-                    dataModel.length - 1,
-                    Math.floor(startIndex + this.hiddenRowCount + displayRowCount + this.hiddenRowCount)
-                ),
-                startRow, endRow, minList, maxList;
+        var dimensionModel = this.grid.dimensionModel,
+            dataModel = this.grid.dataModel,
+            rowHeight = dimensionModel.get('rowHeight'),
+            displayRowCount = dimensionModel.getDisplayRowCount(),
+            startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
+            endIndex = Math.min(dataModel.length - 1, startIndex + displayRowCount + (this.hiddenRowCount * 2)),
+            top;
 
-            if (dataModel.isRowSpanEnable()) {
-                minList = [];
-                maxList = [];
-                startRow = dataModel.at(startIndex);
-                endRow = dataModel.at(endIndex);
-                if (startRow && endRow) {
-                    _.each(startRow.get('_extraData')['rowSpanData'], function (data, columnName) {
-                        if (!data.isMainRow) {
-                            minList.push(data.count);
-                        }
-                    }, this);
-
-                    _.each(endRow.get('_extraData')['rowSpanData'], function (data, columnName) {
-                        if (data.count > 0) {
-                            maxList.push(data.count);
-                        }
-                    }, this);
-
-                    if (minList.length > 0) {
-                        startIndex += Math.min.apply(Math, minList);
-                    }
-
-                    if (maxList.length > 0) {
-                        endIndex += Math.max.apply(Math, maxList);
-                    }
-                }
-            }
-            top = (startIndex === 0) ? 0 : Util.getHeight(startIndex, rowHeight) - 1;
-
-            this.set({
-                top: top,
-                startIndex: startIndex,
-                endIndex: endIndex
-            });
+        if (dataModel.isRowSpanEnable()) {
+            startIndex += this._getStartRowSpanMinCount(startIndex);
+            endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
+        top = (startIndex === 0) ? 0 : Util.getHeight(startIndex, rowHeight) - 1;
+
+        this.set({
+            top: top,
+            startIndex: startIndex,
+            endIndex: endIndex
+        });
+    },
+
+    /**
+     * 렌더링을 시작하는 행에 rowSpan 정보가 있으면, count 값이 가장 작은 행의 값을 반환한다.
+     * @param {number} startIndex 시작하는 행의 Index
+     * @return {number} rowSpan의 count 값 (0 이하)
+     */
+    _getStartRowSpanMinCount: function(startIndex) {
+        var firstRow = this.grid.dataModel.at(startIndex),
+            result = 0,
+            counts;
+
+        if (firstRow) {
+            counts = _.pluck(firstRow.getRowSpanData(), 'count');
+            counts.push(0); // count가 음수인 경우(mainRow가 아닌 경우)에만 최소값을 구함. 없으면 0
+            result = _.min(counts);
+        }
+        return result;
+    },
+
+    /**
+     * 렌더링할 마지막 행에 rowSpan 정보가 있으면, count 값이 가장 큰 행의 값을 반환한다.
+     * @param {number} endIndex 마지막 행의 Index
+     * @return {number} rowSpan의 count 값 (0 이상)
+     */
+    _getEndRowSpanMaxCount: function(endIndex) {
+        var lastRow = this.grid.dataModel.at(endIndex),
+            result = 0,
+            counts;
+
+        if (lastRow) {
+             counts = _.pluck(lastRow.getRowSpanData(), 'count');
+             counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
+             result = _.max(counts);
+        }
+        return result;
     },
     /**
      * scrollTop 값 에 따라 rendering 해야하는지 판단한다.

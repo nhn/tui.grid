@@ -11,7 +11,6 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 * **API** : https://nhnent.github.io/fe.application-grid/api
 * **Tutorial** : https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드-적용하기
 * **Sample** : https://nhnent.github.io/fe.application-grid/api/tutorial-sample1.html
-* **CI** : 준비중
 
 ## Dependency
 * jquery ~1.8.3
@@ -35,8 +34,12 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://nhnent.github.io/fe.application-grid/1.0.2">1.0.2</a> | 배포 | 2015.07 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.1">1.0.1</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0b">1.0.0b</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0a">1.0.0a</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0">1.0.0</a> | 배포 | 2015.05 | FE개발팀 <e0242@nhnent.com> |
 | 0.9.0 | 최초개발 | 2014.11 | 박순영 |
+
+## License
+This software is licensed under the [MIT License](https://github.com/nhnent/fe.component-layout/blob/master/LICENSE).

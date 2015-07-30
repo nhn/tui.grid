@@ -319,7 +319,7 @@ describe('View.Layout.Header', function() {
                 var $input = header._getHeaderMainCheckbox();
 
                 grid.dataModel.forEach(function(row) {
-                    grid.dataModel.setRowState(row.get('rowKey'), 'DISABLED');
+                    row.setRowState('DISABLED');
                 });
                 header._syncCheckState();
                 expect($input.prop('checked')).toBe(true);

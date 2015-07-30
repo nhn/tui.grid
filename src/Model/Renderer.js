@@ -102,7 +102,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
      */
     _onRowListChange: function() {
         clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
+        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this, true), 0);
     },
     /**
      * rendering 할 index 범위를 결정한다.
@@ -118,7 +118,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
     /**
      * rendering 할 데이터를 생성한다.
      */
-    refresh: function() {
+    refresh: function(isDataModelChanged) {
         this._setRenderingRange(this.get('scrollTop'));
 
         //TODO : rendering 해야할 데이터만 가져온다.
@@ -188,7 +188,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
         len = rsideRowList.length + startIndex;
 
         //relation 을 수행한다.
-        for (i = startIndex; i < len; i++) {
+        for (i = startIndex; i < len; i += 1) {
             this.executeRelation(i);
         }
         //컬럼모델의 변경이 있을 경우 columnModelChanged 이벤트를 발생한다.
@@ -196,7 +196,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
             this.trigger('columnModelChanged', this.get('top'));
             this.isColumnModelChanged = false;
         } else {
-            this.trigger('rowListChanged', this.get('top'));
+            this.trigger('rowListChanged', isDataModelChanged);
         }
         this.trigger('refresh', this.get('top'));
     },

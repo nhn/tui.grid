@@ -1,352 +1,4 @@
 /**
- * @fileoverview Grid 의 Data Source 에 해당하는 Collection 과 Model 정의
- * @author NHN Ent. FE Development Team
- */
-/**
- * Data 중 각 행의 데이터 모델 (DataSource)
- * @constructor Data.Row
- */
-Data.Row = Model.Base.extend(/**@lends Data.Row.prototype */{
-    idAttribute: 'rowKey',
-    defaults: {
-        _extraData: {
-            'rowState' : null
-        }
-    },
-
-    /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        Model.Base.prototype.initialize.apply(this, arguments);
-    },
-    /**
-     * extraData 로 부터 rowState 를 object 형태로 반환한다.
-     * @return {{isDisabled: boolean, isDisabledCheck: boolean}} rowState 정보
-     * @private
-     */
-    getRowState: function() {
-        var extraData = this.get('_extraData'),
-            rowState = extraData && extraData['rowState'],
-            isDisabledCheck = false,
-            isDisabled = false,
-            isChecked = false;
-
-        if (rowState === 'DISABLED') {
-            isDisabled = true;
-        } else if (rowState === 'DISABLED_CHECK') {
-            isDisabledCheck = true;
-        } else if (rowState === 'CHECKED') {
-            isChecked = true;
-        }
-
-        isDisabledCheck = isDisabled ? isDisabled : isDisabledCheck;
-
-        return {
-            isDisabled: isDisabled,
-            isDisabledCheck: isDisabledCheck,
-            isChecked: isChecked
-        };
-    },
-    /**
-     * row의 extraData에 설정된 classNameList 를 반환한다.
-     * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-     * @return {Array} css 클래스 이름의 배열
-     */
-    getClassNameList: function(columnName) {
-        var classNameList = [],
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            extraData = this.get('_extraData'),
-            classNameObj = extraData.className,
-            rowClassNameList = (classNameObj && classNameObj['row']) ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
-            columnClassNameList = (classNameObj && classNameObj['column'] && classNameObj['column'][columnName]) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
-            tmpList,
-            classNameMap = {},
-            columnModelClassNameList = []; //columnModel 에 할당된 className 리스트
-
-        if (columnModel.className) {
-            columnModelClassNameList.push(columnModel.className);
-        }
-        if (columnModel.isEllipsis) {
-            columnModelClassNameList.push('ellipsis');
-        }
-
-        tmpList = [classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList];
-
-        ne.util.forEachArray(tmpList, function(list) {
-            ne.util.forEachArray(list, function(item) {
-                var sliced = item.slice(' ');
-                if (ne.util.isArray(sliced)) {
-                    ne.util.forEachArray(sliced, function (className) {
-                        classNameMap[className] = true;
-                    });
-                } else {
-                    classNameMap[item] = true;
-                }
-            });
-        });
-
-        ne.util.forEach(classNameMap, function(value, className) {
-            classNameList.push(className);
-        });
-
-        return classNameList;
-    },
-    /**
-     * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @return {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
-     */
-    getCellState: function(columnName) {
-        var notEditableTypeList = ['_number', 'normal'],
-            columnModel = this.grid.columnModel,
-            isDisabled = false,
-            isEditable = true,
-            editType = columnModel.getEditType(columnName),
-            rowState, relationResult;
-
-
-        relationResult = this.getRelationResult(['isDisabled', 'isEditable'])[columnName];
-        rowState = this.getRowState();
-
-        if (columnName === '_button') {
-            isDisabled = rowState.isDisabledCheck;
-        } else {
-            isDisabled = rowState.isDisabled;
-        }
-        isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
-
-        if ($.inArray(editType, notEditableTypeList) !== -1) {
-            isEditable = false;
-        } else {
-            isEditable = !(relationResult && relationResult['isEditable'] === false);
-        }
-
-        return {
-            isEditable: isEditable,
-            isDisabled: isDisabled
-        };
-    },
-    /**
-     * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @return {Boolean}    편집 가능한지 여부
-     */
-    isEditable: function(columnName) {
-        var notEditableTypeList = ['_number', 'normal'],
-            editType, cellState;
-
-        editType = this.grid.columnModel.getEditType(columnName);
-
-        if ($.inArray(editType, notEditableTypeList) !== -1) {
-            return false;
-        } else {
-            cellState = this.getCellState(columnName);
-            return cellState.isEditable;
-        }
-    },
-    /**
-     * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @return {Boolean}    disabled 처리를 할지 여부
-     */
-    isDisabled: function(columnName) {
-        var cellState;
-        cellState = this.getCellState(columnName);
-        return cellState.isDisabled;
-    },
-    /**
-     * getRowSpanData
-     *
-     * rowSpan 설정값을 반환한다.
-     * @param {String} [columnName] 인자가 존재하지 않을 경우, 행 전체의 rowSpanData 를 맵 형태로 반환한다.
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
-     */
-    getRowSpanData: function(columnName) {
-        var extraData = this.get('_extraData');
-        if (this.collection.isRowSpanEnable()) {
-            if (!columnName) {
-                return extraData['rowSpanData'];
-            } else {
-                extraData = this.get('_extraData');
-                if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
-                    return extraData['rowSpanData'][columnName];
-                }
-            }
-        } else {
-            if (!columnName) {
-                return null;
-            }
-        }
-        return {
-            count: 0,
-            isMainRow: true,
-            mainRowKey: this.get('rowKey')
-        };
-    },
-    /**
-     * html string 을 encoding 한다.
-     * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
-     *
-     * @param {String} columnName   컬럼명
-     * @return {String} 인코딩된 결과값
-     * @private
-     */
-    getHTMLEncodedString: function(columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
-            isTextType = this.grid.columnModel.isTextType(columnName),
-            value = this.get(columnName),
-            notUseHtmlEntity = columnModel.notUseHtmlEntity;
-        if (!notUseHtmlEntity && isTextType && ne.util.hasEncodableString(value)) {
-            value = ne.util.encodeHTMLEntity(value);
-        }
-        return value;
-    },
-
-    /**
-     * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
-     * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
-     * text 로 전환해서 반환할 때 처리를 하여 변환한다.
-     *
-     * @param {String} columnName   컬럼명
-     * @return {String} text 형태로 가공된 문자열
-     * @private
-     */
-    _getListTypeVisibleText: function(columnName) {
-        var value = this.get(columnName),
-            columnModel = this.grid.columnModel.getColumnModel(columnName);
-
-        if (ne.util.isExisty(ne.util.pick(columnModel, 'editOption', 'list'))) {
-            var resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
-                editOptionList = resultOptionList && resultOptionList['optionList'] ?
-                    resultOptionList['optionList'] : columnModel.editOption.list,
-                typeExpected, valueList;
-
-            typeExpected = typeof editOptionList[0].value;
-            valueList = value.toString().split(',');
-            if (typeExpected !== typeof valueList[0]) {
-                valueList = _.map(valueList, function(val) {
-                    return Util.convertValueType(val, typeExpected);
-                });
-            }
-            _.each(valueList, function(val, index) {
-                var item = _.findWhere(editOptionList, {value: val});
-                valueList[index] = item && item.text || '';
-            }, this);
-
-            return valueList.join(',');
-        }
-    },
-    /**
-     * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
-     * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
-     * @param {object} publicChanged 비교할 객체
-     * @return {boolean} 중복이면 true, 아니면 false
-     * @private
-     */
-    isDuplicatedPublicChanged: function(publicChanged) {
-        if (this._timeoutIdForChanged && _.isEqual(this._lastPublicChanged, publicChanged)) {
-            return true;
-        }
-        clearTimeout(this._timeoutIdForChanged);
-        this._timeoutIdForChanged = setTimeout(_.bind(function() {
-            this._timeoutIdForChanged = null;
-        }, this), 10);
-        this._lastPublicChanged = publicChanged;
-
-        return false;
-    },
-    /**
-     * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @return {String} 화면에 보여지는 데이터로 가공된 문자열
-     */
-    getVisibleText: function(columnName) {
-        var columnModel = this.grid.columnModel,
-            value = this.get(columnName),
-            editType, model,
-            listTypeMap = {
-                'select': true,
-                'radio': true,
-                'checkbox': true
-            };
-
-        if (columnModel) {
-            editType = columnModel.getEditType(columnName);
-            model = columnModel.getColumnModel(columnName);
-            //list type 의 editType 이 존재하는 경우
-            if (listTypeMap[editType]) {
-                if (ne.util.isExisty(ne.util.pick(model, 'editOption', 'list', 0, 'value'))) {
-                    value = this._getListTypeVisibleText(columnName);
-                } else {
-                    throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
-                }
-            } else {
-                //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
-                if (_.isFunction(model.formatter)) {
-                    value = Util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
-                }
-            }
-        }
-        value = !ne.util.isUndefined(value) ? value.toString() : value;
-        return value;
-    },
-    /**
-     * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
-     *
-     * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisabled', 'isEditable'])
-     * @return {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
-     */
-    getRelationResult: function(callbackNameList) {
-        callbackNameList = (callbackNameList && callbackNameList.length) ?
-            callbackNameList : ['optionListChange', 'isDisabled', 'isEditable'];
-        var callback, attribute, targetColumnList,
-            value,
-            rowKey = this.get('rowKey'),
-            rowData = this.attributes,
-            relationListMap = this.grid.columnModel.get('relationListMap'),
-            relationResult = {},
-            rowState = this.getRowState();
-
-        //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
-        // relationListMap 구조 {columnName : relationList}
-        _.each(relationListMap, function(relationList, columnName) {
-            value = rowData[columnName];
-            //relationList 를 순회하며 수행한다.
-            _.each(relationList, function(relation) {
-                targetColumnList = relation.columnList;
-
-                //각 relation 에 걸려있는 콜백들을 수행한다.
-                _.each(callbackNameList, function(callbackName) {
-                    //isDisabled relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
-                    if (!(rowState.isDisabled && callbackName === 'isDisabled')) {
-                        callback = relation[callbackName];
-                        if (typeof callback === 'function') {
-                            attribute = '';
-                            if (callbackName === 'optionListChange') {
-                                attribute = 'optionList';
-                            } else if (callbackName === 'isDisabled') {
-                                attribute = 'isDisabled';
-                            } else if (callbackName === 'isEditable') {
-                                attribute = 'isEditable';
-                            }
-                            if (attribute) {
-                                //relation 에 걸려있는 컬럼들의 값을 변경한다.
-                                _.each(targetColumnList, function(targetColumnName) {
-                                    relationResult[targetColumnName] = relationResult[targetColumnName] || {};
-                                    relationResult[targetColumnName][attribute] = callback(value, rowData);
-                                }, this);
-                            }
-                        }
-                    }
-                }, this);
-            }, this);
-        }, this);
-        return relationResult;
-    }
-});
-
-/**
  * Raw 데이터 RowList 콜렉션. (DataSource)
  * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
  *
@@ -362,6 +14,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     initialize: function(models, options) {
         Collection.Base.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            lastRowKey: -1,
             originalRowList: [],
             originalRowMap: {},
             startIndex: options.startIndex || 1,
@@ -399,11 +52,10 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @private
      */
     _formatData: function(data) {
-        var rowList = data,
-            keyColumnName = this.grid.columnModel.get('keyColumnName');
+        var rowList = data;
 
         _.each(rowList, function(row, i) {
-            rowList[i] = this._baseFormat(rowList[i], i);
+            rowList[i] = this._baseFormat(rowList[i]);
             if (this.isRowSpanEnable()) {
                 this._setExtraRowSpanData(rowList, i);
             }
@@ -420,19 +72,28 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @return {object} 가공된 row 데이터
      * @private
      */
-    _baseFormat: function(row, index) {
+    _baseFormat: function(row) {
         var defaultExtraData = {
                 rowSpan: null,
                 rowSpanData: null,
                 rowState: null
             },
             keyColumnName = this.grid.columnModel.get('keyColumnName'),
-            rowKey = (keyColumnName === null) ? index : row[keyColumnName];    //rowKey 설정 keyColumnName 이 없을 경우 자동 생성
+            rowKey = (keyColumnName === null) ? this._createRowKey() : row[keyColumnName];
 
         row['_extraData'] = $.extend(defaultExtraData, row['_extraData']);
         row['_button'] = (row['_extraData']['rowState'] === 'CHECKED');
         row['rowKey'] = rowKey;
         return row;
+    },
+
+    /**
+     * 새로운 rowKey를 생성해서 반환한다.
+     * @return {number} 생성된 rowKey
+     */
+    _createRowKey: function() {
+        this.lastRowKey += 1;
+        return this.lastRowKey;
     },
     /**
      * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
@@ -628,7 +289,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
             checkedRowList;
         if (isOnlyChecked) {
             checkedRowList = this.where({
-                '_button' : true
+                '_button': true
             });
             rowList = [];
             _.each(checkedRowList, function(checkedRow) {
@@ -677,9 +338,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      * @private
      */
     _syncRowSpannedData: function(row, columnName, value) {
-        var index,
-            rowSpanData,
-            i;
+        var index, rowSpanData, i;
 
         //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
         if (this.isRowSpanEnable()) {
@@ -688,7 +347,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
                 this.get(rowSpanData['mainRowKey']).set(columnName, value);
             } else {
                 index = this.indexOfRowKey(row.get('rowKey'));
-                for (i = 0; i < rowSpanData['count'] - 1; i++) {
+                for (i = 0; i < rowSpanData['count'] - 1; i += 1) {
                     this.at(i + 1 + index).set(columnName, value);
                 }
             }
@@ -703,10 +362,10 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      */
     _createChangeCallbackEvent: function(row, columnName) {
         return {
-            'rowKey' : row.get('rowKey'),
-            'columnName' : columnName,
-            'value' : row.get(columnName),
-            'instance': this.grid.publicInstance
+            rowKey: row.get('rowKey'),
+            columnName: columnName,
+            value: row.get(columnName),
+            instance: this.grid.publicInstance
         };
     },
     /**
@@ -739,16 +398,15 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     },
     /**
      * columnModel 에 정의된 changeAfterCallback 을 수행한다.
-     *
-     * @param {object} row row 모델
-     * @param {String} columnName
+     * @param {object} row - row 모델
+     * @param {String} columnName - 컬럼명
      * @return {boolean} changeAfterCallback 수행 결과값
      * @private
      */
     _executeChangeAfterCallback: function(row, columnName) {
         var columnModel = this.grid.columnModel.getColumnModel(columnName),
             changeEvent;
-        //afterChangeCallback 수행
+
         if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
             changeEvent = this._createChangeCallbackEvent(row, columnName);
             return !!(columnModel.editOption.changeAfterCallback(changeEvent));
@@ -780,148 +438,7 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         }
         return result;
     },
-    /**
-     * row 의 extraData 를 변경한다.
-     * -Backbone 내부적으로 참조형 데이터의 프로퍼티 변경시 변화를 감지하지 못하므로, 데이터를 복제하여 변경 후 set 한다.
-     *
-     * @param {(Number|String)} rowKey  데이터의 키값
-     * @param {Object} value    extraData 에 설정될 값
-     * @param {Boolean} [silent=false] Backbone 의 'change' 이벤트 발생 여부
-     * @return {boolean} rowKey 에 해당하는 데이터가 존재하는지 여부.
-     */
-    setExtraData: function(rowKey, value, silent) {
-        var row = this.get(rowKey),
-            obj = {},
-            extraData;
 
-        if (row) {
-            //적용
-            extraData = $.extend(true, {}, row.get('_extraData'));
-            extraData = $.extend(true, extraData, value);
-            obj['_extraData'] = extraData;
-            row.set(obj, {
-                silent: silent
-            });
-            return true;
-        } else {
-            return false;
-        }
-    },
-    /**
-     * rowState 를 설정한다.
-     * @param {(Number|String)} rowKey 데이터의 키값
-     * @param {string} rowState 해당 행의 상태값. 'DISABLED|DISABLED_CHECK|CHECKED' 중 하나를 설정한다.
-     * @param {boolean} silent 내부 change 이벤트 발생 여부
-     */
-    setRowState: function(rowKey, rowState, silent) {
-        this.setExtraData(rowKey, {rowState: rowState}, silent);
-    },
-    /**
-     * rowKey 에 해당하는 _extraData 를 복제하여 반환한다.
-     * @param {(Number|String)} rowKey  데이터의 키값
-     * @return {object} 조회한 rowKey 에 해당하는 extraData 사본
-     * @private
-     */
-    _getExtraDataClone: function(rowKey) {
-        var row = this.get(rowKey),
-            extraData;
-
-        if (row) {
-            extraData = $.extend(true, {}, row.get('_extraData'));
-            return extraData;
-        }
-    },
-    /**
-     * className 이 담긴 배열로부터 특정 className 을 제거하여 반환한다.
-     * @param {Array} classNameList 디자인 클래스명 리스트
-     * @param {String} className    제거할 클래스명
-     * @return {Array}  제거된 디자인 클래스명 리스트
-     * @private
-     */
-    _removeClassNameFromArray: function(classNameList, className) {
-        //배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
-        var classNameString = classNameList.join(' ');
-        classNameList = classNameString.split(' ');
-        return _.without(classNameList, className);
-    },
-    /**
-     * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} columnName 컬럼 이름
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    removeCellClassName: function(rowKey, columnName, className) {
-        var extraData = this._getExtraDataClone(rowKey),
-            row = this.get(rowKey),
-            classNameData;
-
-        if (ne.util.isExisty(ne.util.pick(extraData, 'className', 'column', columnName))) {
-            classNameData = extraData.className;
-            classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
-            row.set('_extraData', extraData);
-        }
-    },
-    /**
-     * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    removeRowClassName: function(rowKey, className) {
-        var extraData = this._getExtraDataClone(rowKey),
-            row = this.get(rowKey),
-            classNameData;
-
-        if (extraData && extraData.className && extraData.className.row) {
-            classNameData = extraData.className;
-            classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
-            //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
-            row.set('_extraData', extraData);
-        }
-    },
-    /**
-     * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} columnName 컬럼 이름
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    addCellClassName: function(rowKey, columnName, className) {
-        var extraData = this._getExtraDataClone(rowKey),
-            classNameData,
-            classNameList;
-
-        if (!ne.util.isUndefined(extraData)) {
-            classNameData = extraData.className || {};
-            classNameData.column = classNameData.column || {};
-            classNameList = classNameData.column[columnName] || [];
-
-            if (ne.util.inArray(className, classNameList) === -1) {
-                classNameList.push(className);
-                classNameData.column[columnName] = classNameList;
-                this.setExtraData(rowKey, {className: classNameData});
-            }
-        }
-    },
-    /**
-     * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    addRowClassName: function(rowKey, className) {
-        var extraData = this._getExtraDataClone(rowKey),
-            classNameData,
-            classNameList;
-
-        if (!ne.util.isUndefined(extraData)) {
-            classNameData = extraData.className || {};
-            classNameList = classNameData.row || [];
-
-            if (ne.util.inArray(className, classNameList) === -1) {
-                classNameList.push(className);
-                classNameData.row = classNameList;
-                this.setExtraData(rowKey, {className: classNameData});
-            }
-        }
-    },
     /**
      * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
      * @param {Array} rowList   내부에 설정된 rowList 배열
@@ -947,67 +464,77 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     },
     /**
      * rowKey 에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {Boolean} [isRemoveOriginalData=false] 원본 데이터도 삭제 여부
+     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
+     * @param {object} options - 삭제 옵션
+     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalData) {
-        var row = this.get(rowKey);
-        if (row) {
-            this._updateRelatedRowSpanDataForRemove(row);
-            this.remove(row);
-            if (isRemoveOriginalData) {
-                this.setOriginalRowList();
-            }
+    removeRow: function(rowKey, options) {
+        var row = this.get(rowKey),
+            rowSpanData, nextRow, removedData;
+
+        if (!row) {
+            return;
         }
+
+        if (options && options.keepRowSpanData) {
+            removedData = _.clone(row.attributes);
+        }
+        rowSpanData = _.clone(row.getRowSpanData());
+        nextRow = this.at(this.indexOf(row) + 1);
+
+        this.remove(row, {
+            silent: true
+        });
+        this._syncRowSpanDataForRemove(rowSpanData, nextRow, removedData);
+
+        if (options && options.removeOriginalData) {
+            this.setOriginalRowList();
+        }
+        this.trigger('remove');
     },
     /**
-     * 삭제할 행에 rowSpan이 적용되어 있는 경우, 관련된 행들의 rowSpan데이터를 갱신한다.
-     * @param {Data.Row} row 삭제할 Row
+     * 삭제된 행에 rowSpan이 적용되어 있었을 때, 관련된 행들의 rowSpan데이터를 갱신한다.
+     * @param {object} rowSpanData - 삭제된 행의 rowSpanData
+     * @param {Data.Row} nextRow - 삭제된 다음 행의 모델
+     * @param {object} [removedData] - 삭제된 행의 데이터 (삭제옵션의 keepRowSpanData가 true인 경우에만 넘겨짐)
      * @private
      */
-    _updateRelatedRowSpanDataForRemove: function(row) {
-        var rowSpanData = row.getRowSpanData();
-
+    _syncRowSpanDataForRemove: function(rowSpanData, nextRow, removedData) {
         if (!rowSpanData) {
             return;
         }
         _.each(rowSpanData, function(data, columnName) {
-            var mainRow = this.get(data.mainRowKey);
+            var mainRowSpanData = {},
+                mainRow, startOffset, spanCount;
 
             if (data.isMainRow) {
-                this._updateSubRowSpanColumnDataForRemove(mainRow, columnName, data.count - 1);
+                mainRow = nextRow;
+                spanCount = data.count - 1;
+                startOffset = 1;
+                if (spanCount > 1) {
+                    mainRowSpanData.mainRowKey = mainRow.get('rowKey');
+                    mainRowSpanData.isMainRow = true;
+                }
+                mainRow.set(columnName, (removedData ? removedData[columnName] : ''), {
+                    silent: true
+                });
             } else {
-                mainRow.getRowSpanData()[columnName].count -= 1;
+                mainRow = this.get(data.mainRowKey);
+                spanCount = mainRow.getRowSpanData(columnName).count - 1;
+                startOffset = -data.count;
+            }
+
+            if (spanCount > 1) {
+                mainRowSpanData.count = spanCount;
+                mainRow.setRowSpanData(columnName, mainRowSpanData);
+                this._updateSubRowSpanData(mainRow, columnName, startOffset, spanCount);
+            } else {
+                mainRow.setRowSpanData(columnName, null);
             }
         }, this);
     },
-    /**
-     * rowSpan의 mainRow가 삭제되는 경우, 관련된 하위 행들의 rowSpan 데이터를 갱신하고, 바로 다음 행을 mainRow로 지정한다.
-     * @param {Data.Row} mainRow 삭제되는 mainRow
-     * @param {string} columnName rowSpan이 적용된 컬럼명
-     * @param {number} count 관련된 하위 행들의 수
-     * @private
-     */
-    _updateSubRowSpanColumnDataForRemove: function(mainRow, columnName, count) {
-        var idx = this.indexOf(mainRow) + 1,
-            lastIdx = idx + count - 1,
-            row, newMainRowKey, spanData;
 
-        for (; idx <= lastIdx; idx += 1) {
-            row = this.at(idx);
-            spanData = row.getRowSpanData()[columnName];
-            spanData.count += 1;
-
-            if (!newMainRowKey) {
-                spanData.isMainRow = true;
-                spanData.count = count;
-                newMainRowKey = row.get('rowKey');
-                row.set(columnName, '');
-            } else {
-                spanData.mainRowKey = newMainRowKey;
-            }
-        }
-    },
     /**
      * append, prepend 시 사용할 dummy row를 생성한다.
      * @return {Object} 값이 비어있는 더미 row 데이터
@@ -1021,44 +548,126 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         }, this);
         return data;
     },
+
     /**
      * 현재 rowList 중 at 에 해당하는 인덱스에 데이터를 append 한다.
-     * @param {Object|Array} rowData Array 형태일 경우 여러 줄의 row 를 append 한다.
-     * @param {number} [at=this.length] 데이터를 append 할 index
+     * @param {object|array} rowData - 행 추가할 데이터. Array일 경우 여러행를 동시에 추가한다.
+     * @param {object} [options] - 옵션 객체
+     * @param {number} [options.at] - 데이터를 append 할 index
+     * @param {boolean} [options.extendPrevRowSpan] - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
      */
-    append: function(rowData, at) {
-        at = at !== undefined ? at : this.length;
-        rowData = rowData || this._createDummyRow();
+    append: function(rowData, options) {
+        var modelList = this._createModelList(rowData),
+            addOptions;
 
-        var rowList,
-            modelList = [],
-            keyColumnName = this.grid.columnModel.get('keyColumnName'),
-            len = this.length;
+        options = _.extend({at: this.length}, options);
+        addOptions = {
+            at: options.at,
+            add: true,
+            silent: true
+        };
 
-
-        //리스트가 아닐경우 리스트 형태로 변경
-        if (!(rowData instanceof Array)) {
-            rowData = [rowData];
-        }
-        //model type 으로 변경
-        rowList = this._formatData(rowData);
-
-        _.each(rowList, function(row, index) {
-            row['rowKey'] = (keyColumnName) ? row[keyColumnName] : len + index;
-            row['_button'] = true;
-            modelList.push(new Data.Row(row, {collection: this}));
-        }, this);
-        this.add(modelList, {
-            at: at,
-            merge: true
-        });
+        this.add(modelList, addOptions);
+        this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
+        this.trigger('add', modelList, addOptions);
     },
+
     /**
      * 현재 rowList 에 최상단에 데이터를 append 한다.
      * @param {Object} rowData  prepend 할 행 데이터
      */
     prepend: function(rowData) {
-        this.append(rowData, 0);
+        this.append(rowData, {
+            at: 0
+        });
+    },
+
+    /**
+     * 주어진 데이터로 모델 목록을 생성하여 반환한다.
+     * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
+     * @return {Data.Row[]} 생성된 모델 목록
+     */
+    _createModelList: function(rowData) {
+        var modelList = [],
+            rowList;
+
+        rowData = rowData || this._createDummyRow();
+        if (!ne.util.isArray(rowData)) {
+            rowData = [rowData];
+        }
+        rowList = this._formatData(rowData);
+
+        _.each(rowList, function(row) {
+            row._button = true;
+            modelList.push(new Data.Row(row, {collection: this}));
+        }, this);
+
+        return modelList;
+    },
+
+    /**
+     * 새로운 행이 추가되었을 때, 관련된 주변 행들의 rowSpan 데이터를 갱신한다.
+     * @param {number} index - 추가된 행의 인덱스
+     * @param {number} length - 추가된 행의 개수
+     * @param {boolean} extendPrevRowSpan - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
+     */
+    _syncRowSpanDataForAppend: function(index, length, extendPrevRowSpan) {
+        var prevRow = this.at(index - 1);
+
+        if (!prevRow) {
+            return;
+        }
+        _.each(prevRow.getRowSpanData(), function(data, columnName) {
+            var mainRow, mainRowData, startOffset, spanCount;
+
+            // count 값은 mainRow인 경우 '전체 rowSpan 개수', 아닌 경우는 'mainRow까지의 거리 (음수)'를 의미한다.
+            // 0이면 rowSpan 되어 있지 않다는 의미이다.
+            if (data.count === 0) {
+                return;
+            }
+            if (data.isMainRow) {
+                mainRow = prevRow;
+                mainRowData = data;
+                startOffset = 1;
+            } else {
+                mainRow = this.get(data.mainRowKey);
+                mainRowData = mainRow.getRowSpanData()[columnName];
+                // 루프를 순회할 때 의미를 좀더 명확하게 하기 위해 양수값으로 변경해서 offset 처럼 사용한다.
+                startOffset = -data.count + 1;
+            }
+
+            if (mainRowData.count > startOffset || extendPrevRowSpan) {
+                mainRowData.count += length;
+                spanCount = mainRowData.count;
+
+                this._updateSubRowSpanData(mainRow, columnName, startOffset, spanCount);
+            }
+        }, this);
+    },
+
+    /**
+     * 특정 컬럼의 rowSpan 데이터를 주어진 범위만큼 갱신한다.
+     * @param {Data.Row} mainRow - rowSpan의 첫번째 행
+     * @param {string} columnName - 컬럼명
+     * @param {number} startOffset - mainRow로부터 몇번째 떨어진 행부터 갱신할지를 지정하는 값
+     * @param {number} spanCount - span이 적용될 행의 개수
+     */
+    _updateSubRowSpanData: function(mainRow, columnName, startOffset, spanCount) {
+        var mainRowIdx = this.indexOf(mainRow),
+            mainRowKey = mainRow.get('rowKey'),
+            row, offset;
+
+        for (offset = startOffset; offset < spanCount; offset += 1) {
+            row = this.at(mainRowIdx + offset);
+            row.set(columnName, '', {
+                silent: true
+            });
+            row.setRowSpanData(columnName, {
+                count: -offset,
+                mainRowKey: mainRowKey,
+                isMainRow: false
+            });
+        }
     },
 
     /**

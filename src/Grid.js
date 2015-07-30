@@ -37,19 +37,25 @@ ne = window.ne = ne || {};
  *          @param {string} [options.columnModelList.className] 컬럼 전체에 적용할 디자인 클래스 이름
  *          @param {string} [options.columnModelList.title] 그리드 헤더 영역에 보여질 컬럼 이름
  *          @param {number} [options.columnModelList.width] 컬럼 너비 값. pixel 로 지정한다.
- *          @param {boolean} [options.columnModelList.isHidden ] 설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정을 한다.
+ *          @param {boolean} [options.columnModelList.isHidden] 설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정한다.
+ *          @param {boolean} [options.columnModelList.isFixedWidth=false] 넓이를 고정하고 싶은 컬럼에 대해서 true로 설정한다.
  *          @param {String} [options.columnModelList.defaultValue] 컬럼에 값이 없는 경우 화면에 보여질 기본 텍스트.
  *          @param {function} [options.columnModelList.formatter] 데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.
  *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] 그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.
  *          @param {boolean} [options.columnModelList.isIgnore=false] 그리드에서 값 변경으로 간주하지 않을 column 인지 여부를 결정한다.
  *          @param {boolean} [options.columnModelLIst.isSortable=false] true이면 컬럼헤더에 정렬버튼을 표시하고, 클릭시 해당 컬럼을 기준으로 정렬되도록 한다.
  *          @param {Array} [options.columnModelList.editOption] 수정 UI 및 기능에 대한 좀 더 세분화된 설정을 할 수 있도록 지원한다.
- *              @param {string} [options.columnModelList.editOption.type='normal'] 컬럼의 데이터를 사용자가 직접 수정할 수 있는 UI를 제공하며, "text", "text-convertible", "select", "radio", "checkbox" 등을 지정할 수 있다.
+ *              @param {string} [options.columnModelList.editOption.type='normal'] 컬럼의 데이터를 사용자가 직접 수정할 수 있는 UI의 타입을 지정한다.
+                    "text", "text-password", "text-convertible", "select", "radio", "checkbox" 등을 지정할 수 있다.
  *              @param {Array} [options.columnModelList.editOption.list] select, checkbox, radio 와 같이 list 형태일 경우 [{text: '노출 text', value: '1'}] 과 같은 형태로 설정한다.
  *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경되기 전에 호출될 콜백함수를 지정한다. false 반환시 변경을 취소한다.
  *              @param {function} [options.columnModelList.editOption.changeAfterCallback] 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경된 후 호출될 콜백함수를 지정한다.
- *              @param {string} [options.columnModelList.editOption.beforeText] 인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 텍스트를 지정한다.
- *              @param {string} [options.columnModelList.editOption.afterText] 인풋 엘리먼트가 표시될 때 인풋 엘리먼트 뒤에 추가하여 보여줄 텍스트를 지정한다.
+ *              @param {string} [options.columnModelList.editOption.beforeText] Deprecated. (beforeContent로 대체됨)
+ *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] 인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 내용(HTML)을 지정한다. function인 경우 리턴값이 사용된다.
+ *              @param {string} [options.columnModelList.editOption.afterText] Deprecated. (afterContent로 대체됨)
+ *              @param {(string|function)} [options.columnModelList.editOption.afterContent] 인풋 엘리먼트가 표시될 때 인풋 엘리먼트 뒤에 추가하여 보여줄 내용(HTML)을 지정한다. function인 경우 리턴값이 사용된다.
+                @param {function} [options.columnModeList.editOption.converter] UI에 인풋 요소가 포함된 HTML이 보여지는 타입(text, text-password, select, checkbox, radio)의 HTML을 지정된 함수의 리턴값으로 대체한다.
+                    리턴값이 (null|undefined|false) 이면 원래의 HTML을 표시한다.
  *          @param {Array} [options.columnModelList.relationList] 현재 컬럼의 값 변화에 따라 다른 컬럼의 상태를 변경할 수 있다.
  *              @param {array} [options.columnModelList.relationList.columnList]    상태값을 변경할 타켓 컬럼 리스트.
  *              @param {function} [options.columnModelList.relationList.isDisabled] 타켓 컬럼을 disabled 로 변경할지 여부를 반환한다.
@@ -458,11 +464,18 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * rowKey에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {Boolean} [isRemoveOriginalDta=false] 원본 데이터도 함께 삭제 할지 여부
+     * @param {(number|string)} rowKey - 행 데이터의 고유 키
+     * @param {(boolean|object)} [options] - 삭제 옵션. boolean 타입인 경우 options.removeOriginal과 동일 (하위버전 호완성 유지를 위함)
+     * @param {boolean} [options.removeOriginalData] - 원본 데이터도 함께 삭제할 지 여부
+     * @param {boolean} [options.keepRowSpanData] - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
      */
-    removeRow: function(rowKey, isRemoveOriginalDta) {
-        this.core.removeRow(rowKey, isRemoveOriginalDta);
+    removeRow: function(rowKey, options) {
+        if (ne.util.isBoolean(options) && options) {
+            options = {
+                removeOriginalData: true
+            };
+        }
+        this.core.removeRow(rowKey, options);
     },
     /**
      * checked된 행을 삭제한다.
@@ -515,7 +528,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
      * 리턴되는 객체에는 createList, updateList, deleteList 라는 필드가 있고,
      * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
-     * @param {Object} [options]
+     * @param {Object} [options] 옵션 객체
      *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
@@ -528,9 +541,12 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     /**
      * 현재 그리드의 제일 끝에 행을 추가한다.
      * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
+     * @param {object} [options] - 옵션 객체
+     * @param {number} [options.at] - 추가할 위치의 index
+     * @param {boolean} [options.extendPrevRowSpan] - 추가하려는 위치의 이전행에 rowSpan 설정이 되어있을 때 포함하여 추가할지 여부
      */
-    appendRow: function(row) {
-        this.core.appendRow(row);
+    appendRow: function(row, options) {
+        this.core.appendRow(row, options);
     },
     /**
      * 현재 그리드의 제일 앞에 행을 추가한다.
@@ -596,7 +612,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * addon 을 활성화한다.
      * @param {string} name addon 이름
      * @param {object} options addon 에 넘길 파라미터
-     * @return {ne.Grid}
+     * @return {ne.Grid} grid 객체(this)
      */
     use: function(name, options) {
         this.core.use(name, options);
@@ -665,56 +681,61 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.getRowSpanData(rowKey, columnName);
     },
     /**
+     * rowKey에 해당하는 행의 인덱스를 반환한다.
+     * @param {number|string} rowKey - 행 고유키
+     * @return {number} - 인덱스
+     */
+    getIndexOfRow: function(rowKey) {
+        return this.core.getIndexOfRow(rowKey);
+    },
+    /**
+     * 화면에 한번에 보여지는 행 개수를 변경한다.
+     * @param {number} count - 행 개수
+     */
+     setDisplayRowCount: function(count) {
+         this.core.setDisplayRowCount(count);
+     },
+    /**
      * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
      * @param {String} columnName
      * @param {(String|Number)} columnValue
      */
-    filterData: function(columnName, columnValue) {
-        //@todo:
-    },
-    /**
-     * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
-     * @todo 기능 구현
-     * @param {String} columnName 컬럼 이름
-     * @param {(String|Number)} columnValue 컬럼 이름
-     */
-    filterData: function(columnName, columnValue) {
-    },
+    // filterData: function(columnName, columnValue) {
+    // },
     /**
      * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
      * @todo 기능 구현
      */
-    enable: function() {
-    },
+    // enable: function() {
+    // },
     /**
      * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
      * @todo 기능 구현
      * @param {Boolean} [hasDimmedLayer=true]
      */
-    disable: function(hasDimmedLayer) {
-    },
+    // disable: function(hasDimmedLayer) {
+    // },
     /**
      * 그리드의 layout 데이터를 갱신한다.
      * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
-     * @todo 기능 구현
-     * @param {Boolean} [hasDimmedLayer=true]
      */
     refreshLayout: function() {
+        this.core.refreshLayout();
     },
     /**
      * 그리드의 크기 정보를 변경한다.
      * @todo 기능 구현
      * @param {object} size
      */
-    setGridSize: function(size) {
-        // this.core.setGridSize(size);
-    },
+    // setGridSize: function(size) {
+    //     // this.core.setGridSize(size);
+    // },
     /**
      * 스크롤 핸들러의 위치를 변경한다.
      * @todo 기능 구현
      * @param {object} size
      */
-    setScrollHandlerPosition: function() {},
+    // setScrollHandlerPosition: function() {},
 
     /**
      * 소멸자.
