@@ -267,8 +267,9 @@ View.RowList = View.Base.extend(/**@lends View.RowList.prototype */{
     }
 }, {
     /**
-     * @static
      * tbody 요소의 innerHTML이 읽기전용인지 여부
+     * @memberof View.RowList
+     * @static
      */
     isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9)
 });

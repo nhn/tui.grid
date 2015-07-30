@@ -206,8 +206,9 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
     }
 }, {
     /**
-     * @static
      * IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
+     * @memberof View.Layout.Body
+     * @static
      */
     extraWidth: (function() {
         var value = 0;
