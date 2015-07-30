@@ -42,4 +42,4 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 | 0.9.0 | 최초개발 | 2014.11 | 박순영 |
 
 ## License
-This software is licensed under the [MIT License](https://github.com/nhnent/fe.component-layout/blob/master/LICENSE).
+This software is licensed under the [MIT License](https://github.com/nhnent/fe.application-grid/blob/master/LICENSE).
