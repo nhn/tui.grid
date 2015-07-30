@@ -107,16 +107,18 @@ describe('view.painter.cell.base', function() {
         var $select, options;
 
         beforeEach(function() {
-            cellPainter = new View.Painter.Cell.List.Select({
-                grid: grid
-            });
             options = {
+                columnName: 'c1',
                 optionList: [
                     {text: 'text0', value: 0},
                     {text: 'text1', value: 1},
                     {text: 'text2', value: 2}
                 ]
             };
+            grid.columnModel.set('columnModelList', [options]);
+            cellPainter = new View.Painter.Cell.List.Select({
+                grid: grid
+            });
         });
 
         describe('getEditType', function() {

@@ -410,7 +410,7 @@ describe('model.dimension', function() {
         });
     });
 
-    describe('_getOriginalWidthList() columnModel', function() {
+    describe('_initColumnWidthVariables()', function() {
         var sampleColumnModel;
 
         beforeEach(function() {
@@ -449,7 +449,7 @@ describe('model.dimension', function() {
         });
 
         it('columnModelList에 정의된 값으로 columnWidthList 를 생성하는지 확인한다.', function() {
-            var originalWidthList = dimensionModel._getOriginalWidthList(),
+            var originalWidthList = dimensionModel.get('originalWidthList'),
                 compareWidth = dimensionModel.get('width') - 18,
                 minimumWidth = dimensionModel.get('minimumColumnWidth') - 1;
 
@@ -457,7 +457,7 @@ describe('model.dimension', function() {
             expect(min(originalWidthList)).toBeGreaterThan(minimumWidth);
 
             expect(originalWidthList).toEqual([
-               20, 20, 40, 398
+               20, 20, 40, 408
             ]);
         });
     });
@@ -745,11 +745,6 @@ describe('model.dimension', function() {
             expect(dimensionModel.getColumnWidthList()[4]).toEqual(100);
             dimensionModel.setColumnWidth(5, 100);
             expect(dimensionModel.getColumnWidthList()[5]).not.toBeDefined();
-        });
-
-        it('miminumColumnWidth 이하로 떨어지지 않는지 확인한다.', function() {
-            dimensionModel.setColumnWidth(0, 10);
-            expect(dimensionModel.getColumnWidthList()[0]).toEqual(20);
         });
     });
 

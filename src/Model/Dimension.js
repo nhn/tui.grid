@@ -38,7 +38,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     initialize: function() {
         Model.Base.prototype.initialize.apply(this, arguments);
         this.columnModel = this.grid.columnModel;
-        this.listenTo(this.columnModel, 'columnModelChange', this._setColumnWidthVariables);
+        this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
         this._initColumnWidthVariables();

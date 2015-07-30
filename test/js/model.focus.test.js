@@ -290,6 +290,7 @@ describe('model.renderer', function() {
 
     describe('with rowSpan Data', function() {
         beforeEach(function() {
+            grid.dataModel.lastRowKey = -1;
             grid.dataModel.set([{
                 c1: '0-1',
                 c2: '0-2',

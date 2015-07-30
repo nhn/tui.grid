@@ -589,7 +589,6 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
      */
     _createModelList: function(rowData) {
         var modelList = [],
-            keyColumnName = this.grid.columnModel.get('keyColumnName'),
             rowList;
 
         rowData = rowData || this._createDummyRow();
@@ -599,7 +598,6 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
         rowList = this._formatData(rowData);
 
         _.each(rowList, function(row) {
-            row.rowKey = keyColumnName ? row[keyColumnName] : this._createRowKey();
             row._button = true;
             modelList.push(new Data.Row(row, {collection: this}));
         }, this);

@@ -721,19 +721,19 @@ describe('data.rowList', function() {
             });
 
             it('결과값에 맞게 반환하는지 확인한다.', function() {
-                expect(dataModelInstance.get(0).getCellState('_button')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('_button')).toEqual({
                     isDisabled: false,
                     isEditable: true
                 });
-                expect(dataModelInstance.get(0).getCellState('_number')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('_number')).toEqual({
                     isDisabled: false,
                     isEditable: false
                 });
-                expect(dataModelInstance.get(0).getCellState('text')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('text')).toEqual({
                     isDisabled: true,
                     isEditable: false
                 });
-                expect(dataModelInstance.get(1).getCellState('text')).toEqual({
+                expect(dataModelInstance.at(1).getCellState('text')).toEqual({
                     isDisabled: false,
                     isEditable: true
                 });
@@ -752,15 +752,15 @@ describe('data.rowList', function() {
                 }];
                 dataModelInstance.set(sampleList, {parse: true});
 
-                expect(dataModelInstance.get(0).getCellState('_button')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('_button')).toEqual({
                     isDisabled: true,
                     isEditable: true
                 });
-                expect(dataModelInstance.get(0).getCellState('_number')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('_number')).toEqual({
                     isDisabled: true,
                     isEditable: false
                 });
-                expect(dataModelInstance.get(0).getCellState('text')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('text')).toEqual({
                     isDisabled: true,
                     isEditable: false
                 });
@@ -779,15 +779,15 @@ describe('data.rowList', function() {
                 }];
                 dataModelInstance.set(sampleList, {parse: true});
 
-                expect(dataModelInstance.get(0).getCellState('_button')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('_button')).toEqual({
                     isDisabled: true,
                     isEditable: true
                 });
-                expect(dataModelInstance.get(0).getCellState('_number')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('_number')).toEqual({
                     isDisabled: false,
                     isEditable: false
                 });
-                expect(dataModelInstance.get(0).getCellState('text')).toEqual({
+                expect(dataModelInstance.at(0).getCellState('text')).toEqual({
                     isDisabled: true,
                     isEditable: false
                 });
@@ -808,15 +808,15 @@ describe('data.rowList', function() {
                 }];
                 dataModelInstance.set(sampleList, {parse: true});
 
-                expect(dataModelInstance.get(0).isDisabled('_button')).toEqual(true);
-                expect(dataModelInstance.get(0).isDisabled('_number')).toEqual(true);
-                expect(dataModelInstance.get(0).isDisabled('relationList')).toEqual(true);
-                expect(dataModelInstance.get(0).isDisabled('text')).toEqual(true);
+                expect(dataModelInstance.at(0).isDisabled('_button')).toEqual(true);
+                expect(dataModelInstance.at(0).isDisabled('_number')).toEqual(true);
+                expect(dataModelInstance.at(0).isDisabled('relationList')).toEqual(true);
+                expect(dataModelInstance.at(0).isDisabled('text')).toEqual(true);
 
-                expect(dataModelInstance.get(1).isDisabled('_button')).toEqual(false);
-                expect(dataModelInstance.get(1).isDisabled('_number')).toEqual(false);
-                expect(dataModelInstance.get(1).isDisabled('relationList')).toEqual(false);
-                expect(dataModelInstance.get(1).isDisabled('text')).toEqual(false);
+                expect(dataModelInstance.at(1).isDisabled('_button')).toEqual(false);
+                expect(dataModelInstance.at(1).isDisabled('_number')).toEqual(false);
+                expect(dataModelInstance.at(1).isDisabled('relationList')).toEqual(false);
+                expect(dataModelInstance.at(1).isDisabled('text')).toEqual(false);
             });
         });
 
@@ -1287,7 +1287,9 @@ describe('data.rowList', function() {
 
             describe('getOriginalRowList()', function() {
                 it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
-                    var expectResult = dataModelInstance._formatData(originalData);
+                    var expectResult;
+                    dataModelInstance.lastRowKey = -1;
+                    expectResult = dataModelInstance._formatData(originalData);
                     expect(dataModelInstance.toJSON()).toEqual(expectResult);
                     //데이터 변경
                     dataModelInstance.get(0).set('none', '2222');
@@ -1298,7 +1300,9 @@ describe('data.rowList', function() {
 
             describe('getOriginalRow()', function() {
                 it('set 에서 parse 후 originalRowList 가 정상적으로 생성되었는지 확인한다.', function() {
-                    var expectResultList = dataModelInstance._formatData(originalData);
+                    var expectResultList;
+                    dataModelInstance.lastRowKey = -1;
+                    expectResultList = dataModelInstance._formatData(originalData);
                     expect(dataModelInstance.get(0).toJSON()).toEqual(expectResultList[0]);
                     dataModelInstance.at(0).set('none', '2222');
                     expect(dataModelInstance.get(0).toJSON()).not.toEqual(expectResultList[0]);
@@ -1771,7 +1775,9 @@ describe('data.rowList', function() {
                 expect(dataModelInstance.getOriginalRow(3)).toBeDefined();
                 expect(originalRowList.length).toBe(5);
 
-                dataModelInstance.removeRow(3, true);
+                dataModelInstance.removeRow(3, {
+                    removeOriginalData: true
+                });
                 originalRowList = dataModelInstance.getOriginalRowList();
                 expect(dataModelInstance.length).toBe(4);
                 expect(dataModelInstance.get(0)).toBeDefined();
@@ -2026,7 +2032,6 @@ describe('data.rowList', function() {
                     expect(modifiedList.createList.length).toBe(2);
                     expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
                     expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
-
 
                     expect(modifiedList.updateList).toBeDefined();
                     expect(modifiedList.updateList.length).toBe(2);

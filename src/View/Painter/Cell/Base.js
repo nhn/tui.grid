@@ -311,13 +311,15 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
             columnName: this.getColumnName($target)
         };
     },
-
+    /**
+     *
+     */
     _getConvertedHtml: function(value, cellData) {
         var columnModel = this.getColumnModel(cellData),
             editOption = columnModel.editOption,
             html;
 
-        if (ne.util.isFunction(editOption.converter)) {
+        if (editOption && ne.util.isFunction(editOption.converter)) {
             html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
         }
         if (ne.util.isFalsy(html)) {

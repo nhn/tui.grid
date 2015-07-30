@@ -422,27 +422,33 @@ describe('grid.normal.test', function() {
 
     describe('appendRow()', function() {
         it('실제 데이터가 뒤에 추가되는지 확인한다.', function() {
-            expect(grid.dataModel.length).toBe(3);
+            var row;
             grid.appendRow({
                 c1: '3-1',
                 c2: '3-2',
                 c3: '3-3'
             });
             expect(grid.dataModel.length).toBe(4);
-            expect(grid.dataModel.at(3).get('rowKey')).toBe(3);
+            row = grid.dataModel.at(3);
+            expect(row.get('c1')).toEqual('3-1');
+            expect(row.get('c2')).toEqual('3-2');
+            expect(row.get('c3')).toEqual('3-3');
         });
     });
 
     describe('prependRow()', function() {
         it('실제 데이터가 앞에 추가되는지 확인한다.', function() {
-            expect(grid.dataModel.length).toBe(3);
+            var row;
             grid.prependRow({
                 c1: '3-1',
                 c2: '3-2',
                 c3: '3-3'
             });
             expect(grid.dataModel.length).toBe(4);
-            expect(grid.dataModel.at(0).get('rowKey')).toBe(3);
+            row = grid.dataModel.at(0);
+            expect(row.get('c1')).toEqual('3-1');
+            expect(row.get('c2')).toEqual('3-2');
+            expect(row.get('c3')).toEqual('3-3');
         });
     });
 
