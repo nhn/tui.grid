@@ -214,7 +214,7 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
     /**
      * beforeContent/afterContent의 내용을 반환하다.
      * 값이 function인 경우 function을 실행해 결과값을 반환한다.
-     * @param {string|function} content - 내용
+     * @param {(string|function)} content - 내용
      * @param {object} cellData - 셀 데이터
      * @return {string} - 내용
      */
@@ -312,7 +312,11 @@ View.Base.Painter.Cell = View.Base.Painter.extend(/**@lends View.Base.Painter.Ce
         };
     },
     /**
-     *
+     * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
+     * converter 함수를 적용한 결과값을 반환한다.
+     * @param {string} value - 셀의 실제값
+     * @param {object} cellData - 모델의 셀 데이터
+     * @return {(string|null)} HTML문자열. 혹은 null
      */
     _getConvertedHtml: function(value, cellData) {
         var columnModel = this.getColumnModel(cellData),
