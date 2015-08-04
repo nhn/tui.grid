@@ -11,30 +11,17 @@ ne = window.ne = ne || {};
  * Grid public API
  *
  * @param {Object} options
- *      @param {number} [options.columnFixIndex=0]
-            - Column index for fixed column. The columns indexed from 0 to this value will alaways be shown on the left side.
-            #setColumnFixIndex() can be used for setting this value dynamically.
- *      @param {string} [options.selectType='']
-            - Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used.
-            If not specified, the button column will not be shown.
- *      @param {boolean} [options.autoNumbering=true]
-            - Specifies whether to assign a auto increasing number to each rows when rendering time.
- *      @param {number} [options.headerHeight=35]
-            - The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.
- *      @param {number} [options.rowHeight=27]
-            - The height of each rows.
- *      @param {number} [options.displayRowCount=10]
-            - The number of rows to be shown in the table area. Total height of grid will be set based on this value.
- *      @param {number} [options.minimumColumnWidth=50]
-            - Minimum width of each columns.
- *      @param {boolean} [options.useClientSort]
-            - If set to true, sorting will be executed by client itself without server.
- *      @param {boolean} [options.scrollX=true]
-            - Specifies whether to show horizontal scrollbar.
- *      @param {boolean} [options.scrollY=true]
-            - Specifies whether to show vertical scrollbar.
- *      @param {string} [options.keyColumnName=null]
-            - The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.
+ *      @param {number} [options.columnFixIndex=0] - Column index for fixed column. The columns indexed from 0 to this value will alaways be shown on the left side. {@link ne.Grid#setColumnFixIndex|setColumnFixIndex} can be used for setting this value dynamically.
+ *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used. If not specified, the button column will not be shown.
+ *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number to each rows when rendering time.
+ *      @param {number} [options.headerHeight=35] - The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.
+ *      @param {number} [options.rowHeight=27] - The height of each rows.
+ *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area. Total height of grid will be set based on this value.
+ *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
+ *      @param {boolean} [options.useClientSort] - If set to true, sorting will be executed by client itself without server.
+ *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
+ *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
+ *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.
  *      @param {Object} [options.toolbar] - The object for configuring toolbar UI.
  *          @param {boolean} [options.toolbar.hasResizeHandler=true] - Specifies whether to use the resize hendler.
  *          @param {boolean} [options.toolbar.hasControlPanel=true] - Specifies whether to use the control panel.
@@ -49,28 +36,20 @@ ne = window.ne = ne || {};
  *          @param {boolean} [options.columnModelList.isHidden] - If set to true, the column will not be shown.
  *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column will not be changed.
  *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column doesn't have a value.
- *          @param {function} [options.columnModelList.formatter]
-                - The function that formats the value of the cell. The retrurn value of the function will be shown as the value of the cell.
+ *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell. The retrurn value of the function will be shown as the value of the cell.
  *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell will not be encoded as HTML entities.
  *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be ignored when setting up the list of modified rows.
  *          @param {boolean} [options.columnModelLIst.isSortable=false] - If set to true, sort button will be shown on the right side of the column header, which executes the sort action when clicked.
  *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
- *              @param {string} [options.columnModelList.editOption.type='normal']
-                    - The string value that specifies the type of the editing UI. Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
- *              @param {Array} [options.columnModelList.editOption.list]
- - Specifies the option list for the 'select', 'radio', 'checkbox' type. The item of the array must contain properties named 'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columnModelList.editOption.changeBeforeCallback]
- - The function that will be called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columnModelList.editOption.changeAfterCallback]
- - The function that will be called after changing the value of the cell.
- *              @param {string} [options.columnModelList.editOption.beforeText] Deprecated. (replaced with beforeContent)
- *              @param {(string|function)} [options.columnModelList.editOption.beforeContent]
- - The HTML string to be shown left to the value. If it's a function, the return value will be used.
- *              @param {string} [options.columnModelList.editOption.afterText] Deprecated. (replaced with afterContent)
- *              @param {(string|function)} [options.columnModelList.editOption.afterContent]
- - The HTML string to be shown right to the value. If it's a function, the return value will be used.
-                @param {function} [options.columnModeList.editOption.converter]
-                - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
+ *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies the type of the editing UI. Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
+ *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the 'select', 'radio', 'checkbox' type. The item of the array must contain properties named 'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
+ *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be called before changing the value of the cell. If returns false, the changing will be canceled.
+ *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be called after changing the value of the cell.
+ *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>. (replaced with {@link beforeContent})
+ *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be shown left to the value. If it's a function, the return value will be used.
+ *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>. (replaced with {@link afterContent})
+ *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be shown right to the value. If it's a function, the return value will be used.
+ *              @param {function} [options.columnModeList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
  *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns will be disabled.
@@ -400,7 +379,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.setRowList(rowList);
     },
     /**
-     * Sets focus on the cell identified by the specified row key and column name.
+     * Sets focus on the cell identified by the specified rowKey and columnName.
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -447,7 +426,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.checkAll();
     },
     /**
-     * Checks the row identified by the specified row key.
+     * Checks the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     check: function(rowKey) {
@@ -460,7 +439,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.uncheckAll();
     },
     /**
-     * Unchecks the row identified by the specified row key.
+     * Unchecks the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     uncheck: function(rowKey) {
@@ -473,7 +452,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.clear();
     },
     /**
-     * Removes the row identified by the specified row key.
+     * Removes the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to  options.removeOriginalData.
      * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
@@ -503,16 +482,16 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.enableCheck(rowKey);
     },
     /**
-      * Disables the row identified by the spciied row key to not be abled to check.
+      * Disables the row identified by the spcified rowKey to not be abled to check.
      * @param {(number|string)} rowKey - The unique keyof the row.
      */
     disableCheck: function(rowKey) {
         this.core.disableCheck(rowKey);
     },
     /**
-     * Returns a list of the row key of checked rows.
+     * Returns a list of the rowKey of checked rows.
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Array|string} - A list of the row key. (or JSON string of the list)
+     * @return {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
         var checkedRowKeyList = this.core.getCheckedRowKeyList();
@@ -520,7 +499,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * Returns a list of the checked rows.
-     * @param {Boolean} [isJsonString=false] - If set tu true, return value will be converted to JSON string.
+     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @return {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
     getCheckedRowList: function(isJsonString) {
@@ -581,7 +560,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * Restores the data to the original data.
-     * (Original data is set by #setRowList())
+     * (Original data is set by {@link ne.Grid#setRowList|setRowList}
      */
     restore: function() {
         this.core.restore();
@@ -701,7 +680,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
          this.core.setDisplayRowCount(count);
      },
     /**
-     * Refresh the layout view. Use this method when grid was rendered while hidden.
+     * Refresh the layout view. Use this method when the view was rendered while hidden.
      */
     refreshLayout: function() {
         this.core.refreshLayout();
