@@ -410,7 +410,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.setRowList(rowList);
     },
     /**
-     * Sets focus on the cell identified by the specified row key and column name.
+     * Sets focus on the cell identified by the specified rowKey and columnName.
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -457,7 +457,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.checkAll();
     },
     /**
-     * Checks the row identified by the specified row key.
+     * Checks the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     check: function(rowKey) {
@@ -470,7 +470,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.uncheckAll();
     },
     /**
-     * Unchecks the row identified by the specified row key.
+     * Unchecks the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     uncheck: function(rowKey) {
@@ -483,7 +483,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.clear();
     },
     /**
-     * Removes the row identified by the specified row key.
+     * Removes the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to  options.removeOriginalData.
      * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
@@ -513,16 +513,16 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
         this.core.enableCheck(rowKey);
     },
     /**
-      * Disables the row identified by the spciied row key to not be abled to check.
+      * Disables the row identified by the spcified rowKey to not be abled to check.
      * @param {(number|string)} rowKey - The unique keyof the row.
      */
     disableCheck: function(rowKey) {
         this.core.disableCheck(rowKey);
     },
     /**
-     * Returns a list of the row key of checked rows.
+     * Returns a list of the rowKey of checked rows.
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Array|string} - A list of the row key. (or JSON string of the list)
+     * @return {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
         var checkedRowKeyList = this.core.getCheckedRowKeyList();
@@ -530,7 +530,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * Returns a list of the checked rows.
-     * @param {Boolean} [isJsonString=false] - If set tu true, return value will be converted to JSON string.
+     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @return {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
     getCheckedRowList: function(isJsonString) {
@@ -591,7 +591,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * Restores the data to the original data.
-     * (Original data is set by #setRowList())
+     * (Original data is set by {@link ne.Grid#setRowList|setRowList}
      */
     restore: function() {
         this.core.restore();
@@ -711,7 +711,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
          this.core.setDisplayRowCount(count);
      },
     /**
-     * Refresh the layout view. Use this method when grid was rendered while hidden.
+     * Refresh the layout view. Use this method when the view was rendered while hidden.
      */
     refreshLayout: function() {
         this.core.refreshLayout();
