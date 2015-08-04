@@ -183,7 +183,7 @@
                 </td>
             
 
-            <td class="description last"><p>열고정 기능을 사용하기 위한 인덱스 값으로 고정시킬 컬럼들의 다음 컬럼 인덱스 번호를 설정한다.<br>     setColumnFixIndex()메서드를 사용해서 동적으로 열고정 위치를 변경할 수도 있다.</p></td>
+            <td class="description last"><p>Column index for fixed column. The columns indexed from 0 to this value will alaways be shown on the left side. <a href="ne.Grid.html#setColumnFixIndex"><code>setColumnFixIndex</code></a> can be used for setting this value dynamically.</p></td>
         </tr>
 
     
@@ -222,7 +222,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드의 각 행 앞에 선택을 위한 체크박스 및 라디오박스를 추가한다.<br>     값을 지정하지 않은 경우 UI적인 변화는 없으며 라디오박스인 경우처럼 단일 선택만 가능하다.</p></td>
+            <td class="description last"><p>Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used. If not specified, the button column will not be shown.</p></td>
         </tr>
 
     
@@ -261,7 +261,7 @@
                 </td>
             
 
-            <td class="description last"><p>데이터를 출력 시에 행마다 순번을 자동으로 부여하여 표시한다.</p></td>
+            <td class="description last"><p>Specifies whether to assign a auto increasing number to each rows when rendering time.</p></td>
         </tr>
 
     
@@ -300,7 +300,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드 헤더 영역의 기본 높이. 헤더 영역에서 컬럼 병합 기능을 사용하여 여러 개의 행을 출력하는 경우, 전체 행의 높이를 지정해야 한다.</p></td>
+            <td class="description last"><p>The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.</p></td>
         </tr>
 
     
@@ -339,7 +339,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에 표시되는 행들의 기본 높이를 지정하는 값.<br>     각 컬럼에 보여줘야 할 내용이 많을 경우 rowHeight값을 크게 지정하여야 모든 내용을 표시할 수 있다.</p></td>
+            <td class="description last"><p>The height of each rows.</p></td>
         </tr>
 
     
@@ -378,7 +378,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에 표시될 행의 개수를 지정하며, 이 값에 따라 그리드의 높이가 자동으로 계산된다</p></td>
+            <td class="description last"><p>The number of rows to be shown in the table area. Total height of grid will be set based on this value.</p></td>
         </tr>
 
     
@@ -417,7 +417,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.</p></td>
+            <td class="description last"><p>Minimum width of each columns.</p></td>
         </tr>
 
     
@@ -454,7 +454,7 @@
                 </td>
             
 
-            <td class="description last"><p>정렬시 서버데이터를 사용하지 않고 클라이언트가 직접 정렬할지 여부</p></td>
+            <td class="description last"><p>If set to true, sorting will be executed by client itself without server.</p></td>
         </tr>
 
     
@@ -493,7 +493,7 @@
                 </td>
             
 
-            <td class="description last"><p>수평 스크롤바 사용 여부.</p></td>
+            <td class="description last"><p>Specifies whether to show horizontal scrollbar.</p></td>
         </tr>
 
     
@@ -532,7 +532,7 @@
                 </td>
             
 
-            <td class="description last"><p>수직 스크롤바 사용 여부.</p></td>
+            <td class="description last"><p>Specifies whether to show vertical scrollbar.</p></td>
         </tr>
 
     
@@ -571,7 +571,7 @@
                 </td>
             
 
-            <td class="description last"><p>각각의 데이터를 구분지을 수 있는 키 값의 필드명(=privateKey).<br>     존재하지 않을 시 내부적으로 키를 생성하여 할당한다.</p></td>
+            <td class="description last"><p>The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.</p></td>
         </tr>
 
     
@@ -584,7 +584,7 @@
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">Object</span>
 
 
             
@@ -608,7 +608,7 @@
                 </td>
             
 
-            <td class="description last"><p>툴바영역의 UI 컴포넌트 사용 여부 설정</p>
+            <td class="description last"><p>The object for configuring toolbar UI.</p>
                 <h6>Properties:</h6>
                 
 
@@ -670,7 +670,7 @@
                 </td>
             
 
-            <td class="description last"><p>수직 resizeHandler 를 사용한다.</p></td>
+            <td class="description last"><p>Specifies whether to use the resize hendler.</p></td>
         </tr>
 
     
@@ -709,7 +709,7 @@
                 </td>
             
 
-            <td class="description last"><p>컨트롤 패널을 사용한다.</p></td>
+            <td class="description last"><p>Specifies whether to use the control panel.</p></td>
         </tr>
 
     
@@ -748,7 +748,7 @@
                 </td>
             
 
-            <td class="description last"><p>pagination 을 사용한다.</p></td>
+            <td class="description last"><p>Specifies whether to use the pagination.</p></td>
         </tr>
 
     
@@ -789,7 +789,7 @@
                 </td>
             
 
-            <td class="description last">
+            <td class="description last"><p>The configuration of the grid columns.</p>
                 <h6>Properties:</h6>
                 
 
@@ -847,7 +847,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼의 데이터 필드명</p></td>
+            <td class="description last"><p>The name of the column.</p></td>
         </tr>
 
     
@@ -886,7 +886,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼의 말줄임 여부를 설정</p></td>
+            <td class="description last"><p>If set to true, ellipsis will be used for overflowing content.</p></td>
         </tr>
 
     
@@ -925,7 +925,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼에 설정할 정렬값</p></td>
+            <td class="description last"><p>Horizontal alignment of the column content. Available values are 'left', 'center', 'right'.</p></td>
         </tr>
 
     
@@ -962,7 +962,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼 전체에 적용할 디자인 클래스 이름</p></td>
+            <td class="description last"><p>The name of the class to be used for all cells of the column.</p></td>
         </tr>
 
     
@@ -999,7 +999,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드 헤더 영역에 보여질 컬럼 이름</p></td>
+            <td class="description last"><p>The title of the column to be shown on the header.</p></td>
         </tr>
 
     
@@ -1036,7 +1036,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼 너비 값. pixel 로 지정한다.</p></td>
+            <td class="description last"><p>The width of the column. The unit is pixel.</p></td>
         </tr>
 
     
@@ -1073,7 +1073,7 @@
                 </td>
             
 
-            <td class="description last"><p>설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정한다.</p></td>
+            <td class="description last"><p>If set to true, the column will not be shown.</p></td>
         </tr>
 
     
@@ -1112,7 +1112,7 @@
                 </td>
             
 
-            <td class="description last"><p>넓이를 고정하고 싶은 컬럼에 대해서 true로 설정한다.</p></td>
+            <td class="description last"><p>If set to true, the width of the column will not be changed.</p></td>
         </tr>
 
     
@@ -1125,7 +1125,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -1149,7 +1149,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼에 값이 없는 경우 화면에 보여질 기본 텍스트.</p></td>
+            <td class="description last"><p>The default value to be shown when the column doesn't have a value.</p></td>
         </tr>
 
     
@@ -1186,7 +1186,7 @@
                 </td>
             
 
-            <td class="description last"><p>데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.</p></td>
+            <td class="description last"><p>The function that formats the value of the cell. The retrurn value of the function will be shown as the value of the cell.</p></td>
         </tr>
 
     
@@ -1225,7 +1225,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.</p></td>
+            <td class="description last"><p>If set to true, the value of the cell will not be encoded as HTML entities.</p></td>
         </tr>
 
     
@@ -1264,7 +1264,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에서 값 변경으로 간주하지 않을 column 인지 여부를 결정한다.</p></td>
+            <td class="description last"><p>If set to true, the value of the column will be ignored when setting up the list of modified rows.</p></td>
         </tr>
 
     
@@ -1309,7 +1309,7 @@
                 </td>
             
 
-            <td class="description last"><p>true이면 컬럼헤더에 정렬버튼을 표시하고, 클릭시 해당 컬럼을 기준으로 정렬되도록 한다.</p></td>
+            <td class="description last"><p>If set to true, sort button will be shown on the right side of the column header, which executes the sort action when clicked.</p></td>
         </tr>
 
     
@@ -1346,7 +1346,7 @@
                 </td>
             
 
-            <td class="description last"><p>수정 UI 및 기능에 대한 좀 더 세분화된 설정을 할 수 있도록 지원한다.</p>
+            <td class="description last"><p>The object for configuring editing UI.</p>
                 <h6>Properties:</h6>
                 
 
@@ -1408,7 +1408,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼의 데이터를 사용자가 직접 수정할 수 있는 UI의 타입을 지정한다.<br>                    &quot;text&quot;, &quot;text-password&quot;, &quot;text-convertible&quot;, &quot;select&quot;, &quot;radio&quot;, &quot;checkbox&quot; 등을 지정할 수 있다.</p></td>
+            <td class="description last"><p>The string value that specifies the type of the editing UI. Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.</p></td>
         </tr>
 
     
@@ -1445,7 +1445,7 @@
                 </td>
             
 
-            <td class="description last"><p>select, checkbox, radio 와 같이 list 형태일 경우 [{text: '노출 text', value: '1'}] 과 같은 형태로 설정한다.</p></td>
+            <td class="description last"><p>Specifies the option list for the 'select', 'radio', 'checkbox' type. The item of the array must contain properties named 'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])</p></td>
         </tr>
 
     
@@ -1482,7 +1482,7 @@
                 </td>
             
 
-            <td class="description last"><p>인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경되기 전에 호출될 콜백함수를 지정한다. false 반환시 변경을 취소한다.</p></td>
+            <td class="description last"><p>The function that will be called before changing the value of the cell. If returns false, the changing will be canceled.</p></td>
         </tr>
 
     
@@ -1519,7 +1519,7 @@
                 </td>
             
 
-            <td class="description last"><p>인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경된 후 호출될 콜백함수를 지정한다.</p></td>
+            <td class="description last"><p>The function that will be called after changing the value of the cell.</p></td>
         </tr>
 
     
@@ -1556,7 +1556,7 @@
                 </td>
             
 
-            <td class="description last"><p>Deprecated. (beforeContent로 대체됨)</p></td>
+            <td class="description last"><p><em>Deprecated</em>. (replaced with <code>beforeContent</code>)</p></td>
         </tr>
 
     
@@ -1596,7 +1596,7 @@
                 </td>
             
 
-            <td class="description last"><p>인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 내용(HTML)을 지정한다. function인 경우 리턴값이 사용된다.</p></td>
+            <td class="description last"><p>The HTML string to be shown left to the value. If it's a function, the return value will be used.</p></td>
         </tr>
 
     
@@ -1633,7 +1633,7 @@
                 </td>
             
 
-            <td class="description last"><p>Deprecated. (afterContent로 대체됨)</p></td>
+            <td class="description last"><p><em>Deprecated</em>. (replaced with <code>afterContent</code>)</p></td>
         </tr>
 
     
@@ -1673,7 +1673,7 @@
                 </td>
             
 
-            <td class="description last"><p>인풋 엘리먼트가 표시될 때 인풋 엘리먼트 뒤에 추가하여 보여줄 내용(HTML)을 지정한다. function인 경우 리턴값이 사용된다.</p></td>
+            <td class="description last"><p>The HTML string to be shown right to the value. If it's a function, the return value will be used.</p></td>
         </tr>
 
     
@@ -1716,7 +1716,7 @@
                 </td>
             
 
-            <td class="description last"><p>UI에 인풋 요소가 포함된 HTML이 보여지는 타입(text, text-password, select, checkbox, radio)의 HTML을 지정된 함수의 리턴값으로 대체한다.<br>                    리턴값이 (null|undefined|false) 이면 원래의 HTML을 표시한다.</p></td>
+            <td class="description last"><p>The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.</p></td>
         </tr>
 
     
@@ -1753,7 +1753,7 @@
                 </td>
             
 
-            <td class="description last"><p>현재 컬럼의 값 변화에 따라 다른 컬럼의 상태를 변경할 수 있다.</p>
+            <td class="description last"><p>Specifies relation between this and other column.</p>
                 <h6>Properties:</h6>
                 
 
@@ -1807,7 +1807,7 @@
 
             
 
-            <td class="description last"><p>상태값을 변경할 타켓 컬럼 리스트.</p></td>
+            <td class="description last"><p>Array of the names of target columns.</p></td>
         </tr>
 
     
@@ -1840,7 +1840,7 @@
 
             
 
-            <td class="description last"><p>타켓 컬럼을 disabled 로 변경할지 여부를 반환한다.</p></td>
+            <td class="description last"><p>If returns true, target columns will be disabled.</p></td>
         </tr>
 
     
@@ -1873,7 +1873,7 @@
 
             
 
-            <td class="description last"><p>타켓 컬럼을 편집 가능한 컬럼으로 지정할지 여부를 반환한다.</p></td>
+            <td class="description last"><p>If returns true, target columns will be editable.</p></td>
         </tr>
 
     
@@ -1906,7 +1906,7 @@
 
             
 
-            <td class="description last"><p>타겟 컬럼이 select, checkbox, radio 와 같이 list 형태일 경우 list 를 변경한다.</p></td>
+            <td class="description last"><p>The function whose return value specifies the option list for the 'select', 'radio', 'checkbox' type. The options list of target columns will be replaced with the return value of this function.</p></td>
         </tr>
 
     
@@ -1947,7 +1947,7 @@
                 </td>
             
 
-            <td class="description last"></td>
+            <td class="description last"><p>The array that specifies the merged column. This options does not merge the cells of multiple columns into a single cell. This options only effects to the headers of the multiple columns, creates a new parent header that includes the headers of spcified columns, and sets up the hierarchy.</p></td>
         </tr>
 
     
@@ -2021,103 +2021,110 @@
      &lt;script>
  var grid = new ne.Grid({
     el: $('#grid'),
-    columnFixIndex: 2,  //(default=0) 열고정 기능을 사용하기 위한 인덱스 값으로 고정시킬 컬럼들의 다음 컬럼 인덱스 번호를 설정한다.
-    selectType: 'checkbox', //(default='') 그리드의 각 행 앞에 선택을 위한 체크박스 및 라디오박스를 추가한다. 'checkbox' 또는 'radio' 로 설정한다. 값을 지정하지 않은 경우 UI적인 변화는 없으며 라디오박스인 경우처럼 단일 선택만 가능하다.
-    autoNumbering: true, //(default=true) 데이터를 출력 시에 행마다 순번을 자동으로 부여하여 표시한다. 값을 지정하지 않은 경우 UI적인 변화는 없다.
-    headerHeight: 100, //(default=35) 그리드 헤더 영역의 기본 높이. 헤더 영역에서 컬럼 병합 기능을 사용하여 여러 개의 행을 출력하는 경우, 전체 행의 높이를 지정해야 한다.
-    rowHeight: 27, // (default=27) 그리드에 표시되는 행들의 기본 높이를 지정하는 값. 각 컬럼에 보여줘야 할 내용이 많을 경우 rowHeight 값을 크게 지정하여야 모든 내용을 표시할 수 있다.
-    displayRowCount: 10, //(default=10) 그리드에 표시될 행의 개수를 지정하며, 이 값에 따라 그리드의 높이가 자동으로 계산된다.
-    minimumColumnWidth: 50, //(default=50) 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
-    minimumWidth: 50, //(default=50) 컬럼들의 최소 넓이 값. 컬럼들이 렌더링되거나 리사이징 시에 최소값으로 적용된다.
-    scrollX: true, //(default:true) 수평 스크롤바 사용 여부.
-    scrollY: true, //(default:true) 수직 스크롤바 사용 여부.
-    keyColumnName: 'column1', //(default:null) 각 행의 primaryKey 가 될 컬럼 필드명. 지정하지 않을 시 내부적으로 키를 생성하여 할당한다.
-    toolbar: {  //툴바영역의 UI 컴포넌트 사용 여부 설정
-        hasResizeHandler: true, //(default:true) 수직 resizeHandler 를 사용한다.
-        hasControlPanel: true,  //(default:true) 컨트롤 패널을 사용한다.
-        hasPagination: true     //(default:true) pagination 을 사용한다.
+    columnFixIndex: 2,  //(default=0)
+    selectType: 'checkbox', //(default='')
+    autoNumbering: true, //(default=true)
+    headerHeight: 100, //(default=35)
+    rowHeight: 27, // (default=27)
+    displayRowCount: 10, //(default=10)
+    minimumColumnWidth: 50, //(default=50)
+    minimumWidth: 50, //(default=50)
+    scrollX: true, //(default:true)
+    scrollY: true, //(default:true)
+    keyColumnName: 'column1', //(default:null)
+    toolbar: {
+        hasResizeHandler: true, //(default:true)
+        hasControlPanel: true,  //(default:true)
+        hasPagination: true     //(default:true)
     },
     columnModelList: [
         {
-            title: '일반 타이틀',         //그리드 헤더 영역에 보여질 컬럼 이름
-            columnName: 'column0',      //컬럼의 데이터 필드명
-            className: 'bg_red',        //컬럼 전체에 적용할 디자인 클래스 이름
-            width: 100,                 //컬럼 너비 값. pixel 로 지정한다.
-            isEllipsis: false,          //(default:false) 컬럼의 말줄임 여부를 설정
-            notUseHtmlEntity: false,    //(default:false) 그리드 랜더링 시 원본 데이터를 HTML Entity 로 변환하지 않도록 하려면 옵션을 true 로 준다.
-            defaultValue: '빈값',        //컬럼에 값이 없는 경우 화면에 보여질 기본 텍스트.
-            isIgnore: false             //(default:false) 그리드에서 값 변경으로 간주하지 않을 column 인지 여부
-
+            title: 'normal title',
+            columnName: 'column0',
+            className: 'bg_red',
+            width: 100,
+            isEllipsis: false,
+            notUseHtmlEntity: false,
+            defaultValue: 'empty',
+            isIgnore: false
         },
         {
-            title: '노출되지 않음',
+            title: 'hidden column',
             columnName: 'column1',
-            isHidden: true              //설정된 데이터 중에 화면 상에 표시하지 않을 컬럼에 대해서 true로 설정을 한다.
+            isHidden: true
         },
         {
-            title: 'formatter 설정',
+            title: 'formatter example',
             columnName: 'column2',
-            formatter: function(value, row) {       //데이터를 화면에 표시할 때 값의 포맷팅 처리를 하기 위한 함수로, 값을 출력하기 전에 formatter 함수에 해당 컬럼의 값을 전달하고 해당 함수가 리턴한 값을 화면 상에 표시한다.
+            formatter: function(value, row) {
                 return '&lt;img src="' + value + '" />';
             }
         },
         {
-            title: '일반 text input 컬럼',
+            title: 'converter example',
             columnName: 'column3',
             editOption: {
                 type: 'text',
-                beforeText: '가격:',  //인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 텍스트를 지정한다.
-                afterText: '원'  //인풋 엘리먼트가 표시될 때 인풋 엘리먼트 뒤에 추가하여 보여줄 텍스트를 지정한다.
+                converter: function(value, row) {
+                    if (row.rowKey % 2 === 0) {
+                        return 'Plain text value : ' + value;
+                    }
+                }
+            }
+        },
+        {
+            title: 'normal text input column',
+            columnName: 'column4',
+            editOption: {
+                type: 'text',
+                beforeContent: 'price:',
+                afterContent: '$'
             },
-            //
-            // 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경되기 전에 호출될 콜백함수를 지정한다. false 반환시 변경을 취소한다.
-            // change beforeCallback 에서 정수가 입력되지 않았을 경우 이전값으로 되돌린다.
-            // - param {object}  changeEvent
-            //      - param {(number|string)}  changeEvent.rowKey    이벤트가 발생한 셀의 rowKey
-            //      - param {(number|string)}  changeEvent.columnName 이벤트가 발생한 셀의 columnName
-            //      - param {*}  changeEvent.value 이벤트가 발생한 셀의 변경된 값
-            //      - param {object}  changeEvent.instance grid 인스턴스
+            // - param {Object}  changeEvent
+            //      - param {(number|string)} changeEvent.rowKey - The rowKey of the target cell
+            //      - param {(number|string)} changeEvent.columnName - The field(column) name of the target cell
+            //      - param {*} changeEvent.value - The changed value of the target cell
+            //      - param {Object} changeEvent.instance - The instance of the Grid
             // - returns {boolean}
-            //
             changeBeforeCallback: function(changeEvent) {
                 if (!/[0-9]+/.test(changeEvent.value)) {
-                    alert('정수만 입력할 수 있습니다.');
+                    alert('Integer only.');
                     return false;
                 }
             },
-            //
-            // 인풋 엘리먼트가 그리드에 표시된 경우 해당 엘리먼트의 값이 변경된 후 호출될 콜백함수를 지정한다.
-            // - param {object}  changeEvent
-            //      - param {(number|string)}  changeEvent.rowKey    이벤트가 발생한 셀의 rowKey
-            //      - param {(number|string)}  changeEvent.columnName 이벤트가 발생한 셀의 columnName
-            //      - param {*}  changeEvent.value 이벤트가 발생한 셀의 변경된 값
-            //      - param {object}  changeEvent.instance grid 인스턴스
+            // - param {Object}  changeEvent
+            //      - param {(number|string)} changeEvent.rowKey - The rowKey of the target cell
+            //      - param {(number|string)} changeEvent.columnName - The field(column) name of the target
+            //      - param {*} changeEvent.value - The changed value of the target cell
+            //      - param {Object} changeEvent.instance - - The instance of the Grid
             // - returns {boolean}
             //
             changeAfterCallback: function(changeEvent) {}
         },
         {
-            title: 'password text input 컬럼',
-            columnName: 'column4',
+            title: 'password input column',
+            columnName: 'column5',
+            width: 100,
+            isFixedWidth: true,
             editOption: {
                 type: 'text-password',
-                beforeText: '비밀번호:'  //인풋 엘리먼트가 표시될 때 인풋 엘리먼트 앞에 추가하여 보여줄 텍스트를 지정한다.
+                beforeContent: 'password:'
             }
         },
         {
-            title: 'text 에서 편집시 text input 으로 변경되는 컬럼',
-            columnName: 'column5',
+            title: 'text input when editing mode',
+            columnName: 'column6',
             editOption: {
                 type: 'text-convertible'
             },
             isIgnore: true
         },
         {
-            title: '셀렉트박스',
-            columnName: 'column6',
+            title: 'select box',
+            columnName: 'column7',
             editOption: {
                 type: 'select',
-                list: [                     //select, checkbox, radio 와 같이 list 형태일 경우 [{text: '노출 text', value: '1'}] 과 같은 형태로 설정한다.
+                list: [
                     {text: '1', value: 1},
                     {text: '2', value: 2},
                     {text: '3', value: 3},
@@ -2126,39 +2133,31 @@
             },
             relationList: [
                 {
-                    columnList: ['column7', 'column8'],     //상태값을 변경할 타켓 컬럼 리스트.
-                    //
-                    // 타켓 컬럼을 disabled 로 변경할지 여부를 반환한다.
-                    // - param {*} value 이벤트가 발생한 cell의 변경된 값
-                    // - param {object} rowData 이벤트가 발생한 cell 의 rowData
-                    // - return {boolean} columnList 에 해당하는 column 이 disabled 될지 여부.
-                    //
+                    columnList: ['column8', 'column9'],
+                    // - param {*} value - The changed value of the target cell
+                    // - param {Object} rowData - The data of the row that contains the target cell
+                    // - return {boolean}
                     isDisabled: function(value, rowData) {
                         return value == 2;
                     },
-                    //
-                    // 타켓 컬럼을 편집 가능한 컬럼으로 지정할지 여부를 반환한다.
-                    // - param {*} value 이벤트가 발생한 cell의 변경된 값
-                    // - param {object} rowData 이벤트가 발생한 cell 의 rowData
-                    // - return {boolean} columnList 에 해당하는 column 이 편집 가능한 상태일지 여부.
+                    // - param {*} value - The changed value of the target cell
+                    // - param {Object} rowData - The data of the row that contains the target cell
+                    // - return {boolean}
                     //
                     isEditable: function(value, rowData) {
                         return value != 3;
                     },
-                    //
-                    // 타겟 컬럼이 select, checkbox, radio 와 같이 list 형태일 경우 설정된 list 를 변경한다.
-                    // - param {*} value 이벤트가 발생한 cell의 변경된 값
-                    // - param {object} rowData 이벤트가 발생한 cell 의 rowData
-                    // - return {{text: string, value: number}[]} columnList 에 해당하는 column 의 editOption.list 를 대신할 콜렉션.
-                    //
+                    // - param {*} value - The changed value of the target cell
+                    // - param {Object} rowData - The data of the row that contains the target cell
+                    // - return {{text: string, value: number}[]}
                     optionListChange: function(value, rowData) {
                         if (value == 1) {
                             console.log('changev return');
                             return [
-                                { text: '하나', value: 1},
-                                { text: '둘', value: 2},
-                                { text: '셋', value: 3},
-                                { text: '넷', value: 4}
+                                { text: 'option 1', value: 1},
+                                { text: 'option 2', value: 2},
+                                { text: 'option 3', value: 3},
+                                { text: 'option 4', value: 4}
                             ];
                         }
                     }
@@ -2166,33 +2165,32 @@
             ]
         },
         {
-            title: '체크박스',
-            columnName: 'column7',
+            title: 'checkbox',
+            columnName: 'column8',
             editOption: {
                 type: 'checkbox',
                 list: [
-                    {text: '1', value: 1},
-                    {text: '2', value: 2},
-                    {text: '3', value: 3},
-                    {text: '4', value: 4}
+                    {text: 'option 1', value: 1},
+                    {text: 'option 2', value: 2},
+                    {text: 'option 3', value: 3},
+                    {text: 'option 4', value: 4}
                 ]
             }
         },
         {
-            title: '라디오 버튼',
-            columnName: 'column8',
+            title: 'radio button',
+            columnName: 'column9',
             editOption: {
                 type: 'radio',
                 list: [
-                    {text: '1', value: 1},
-                    {text: '2', value: 2},
-                    {text: '3', value: 3},
-                    {text: '4', value: 4}
+                    {text: 'option 1', value: 1},
+                    {text: 'option 2', value: 2},
+                    {text: 'option 3', value: 3},
+                    {text: 'option 4', value: 4}
                 ]
             }
-        }
+        },
     ],
-    //table header 의 열 병합 정보
     columnMerge: [
         {
             'columnName' : 'mergeColumn1',
@@ -2246,7 +2244,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line280">line 280</a></code>
+                    <code><a href="Grid.js.html#line272">line 272</a></code>
                 </div>
             
         </h4>
@@ -2260,7 +2258,7 @@
 
     
     <div class="description">
-        <p>Grid 에서 발생하는 event 를 외부로 relay 한다.</p>
+        <p>Relay the internal events to the external.</p>
     </div>
     
 
@@ -2336,7 +2334,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line647">line 647</a></code>
+                    <code><a href="Grid.js.html#line631">line 631</a></code>
                 </div>
             
         </h4>
@@ -2350,7 +2348,7 @@
 
     
     <div class="description">
-        <p>rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.</p>
+        <p>Adds the specified css class to cell element identified by the rowKey and className</p>
     </div>
     
 
@@ -2392,10 +2390,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -2405,7 +2403,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 rowKey</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -2418,7 +2416,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -2428,7 +2426,7 @@
 
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -2441,7 +2439,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -2451,7 +2449,7 @@
 
             
 
-            <td class="description last"><p>지정할 디자인 클래스명</p></td>
+            <td class="description last"><p>The css class name to add</p></td>
         </tr>
 
     
@@ -2524,7 +2522,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line655">line 655</a></code>
+                    <code><a href="Grid.js.html#line639">line 639</a></code>
                 </div>
             
         </h4>
@@ -2538,7 +2536,7 @@
 
     
     <div class="description">
-        <p>rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.</p>
+        <p>Adds the specified css class to all cell elements in the row identified by the rowKey</p>
     </div>
     
 
@@ -2580,10 +2578,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -2593,7 +2591,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 rowKey</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -2606,7 +2604,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -2616,7 +2614,7 @@
 
             
 
-            <td class="description last"><p>지정할 디자인 클래스명</p></td>
+            <td class="description last"><p>The css class name to add</p></td>
         </tr>
 
     
@@ -2689,7 +2687,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line548">line 548</a></code>
+                    <code><a href="Grid.js.html#line536">line 536</a></code>
                 </div>
             
         </h4>
@@ -2703,7 +2701,7 @@
 
     
     <div class="description">
-        <p>현재 그리드의 제일 끝에 행을 추가한다.</p>
+        <p>Insert the new row with specified data to the end of table.</p>
     </div>
     
 
@@ -2767,7 +2765,7 @@
 
             
 
-            <td class="description last"><p>row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.</p></td>
+            <td class="description last"><p>The data for the new row</p></td>
         </tr>
 
     
@@ -2800,7 +2798,7 @@
 
             
 
-            <td class="description last"><p>옵션 객체</p>
+            <td class="description last"><p>Options</p>
                 <h6>Properties:</h6>
                 
 
@@ -2854,7 +2852,7 @@
 
             
 
-            <td class="description last"><p>추가할 위치의 index</p></td>
+            <td class="description last"><p>The index at which new row will be inserted</p></td>
         </tr>
 
     
@@ -2887,7 +2885,7 @@
 
             
 
-            <td class="description last"><p>추가하려는 위치의 이전행에 rowSpan 설정이 되어있을 때 포함하여 추가할지 여부</p></td>
+            <td class="description last"><p>If set to true and the previous row at target index has a rowspan data, the new row will extend the existing rowspan data.</p></td>
         </tr>
 
     
@@ -2966,7 +2964,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line430">line 430</a></code>
+                    <code><a href="Grid.js.html#line419">line 419</a></code>
                 </div>
             
         </h4>
@@ -2980,7 +2978,7 @@
 
     
     <div class="description">
-        <p>현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다</p>
+        <p>Removes focus from the focused cell.</p>
     </div>
     
 
@@ -3056,7 +3054,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line443">line 443</a></code>
+                    <code><a href="Grid.js.html#line432">line 432</a></code>
                 </div>
             
         </h4>
@@ -3070,7 +3068,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.</p>
+        <p>Checks the row identified by the specified row key.</p>
     </div>
     
 
@@ -3112,10 +3110,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -3125,7 +3123,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -3198,7 +3196,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line436">line 436</a></code>
+                    <code><a href="Grid.js.html#line425">line 425</a></code>
                 </div>
             
         </h4>
@@ -3212,7 +3210,7 @@
 
     
     <div class="description">
-        <p>전체 행을 선택한다.</p>
+        <p>Checks all rows.</p>
     </div>
     
 
@@ -3288,7 +3286,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line462">line 462</a></code>
+                    <code><a href="Grid.js.html#line451">line 451</a></code>
                 </div>
             
         </h4>
@@ -3302,7 +3300,7 @@
 
     
     <div class="description">
-        <p>그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.</p>
+        <p>Removes all rows.</p>
     </div>
     
 
@@ -3378,7 +3376,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line743">line 743</a></code>
+                    <code><a href="Grid.js.html#line691">line 691</a></code>
                 </div>
             
         </h4>
@@ -3392,7 +3390,7 @@
 
     
     <div class="description">
-        <p>소멸자.</p>
+        <p>Destroys the instance.</p>
     </div>
     
 
@@ -3468,7 +3466,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line499">line 499</a></code>
+                    <code><a href="Grid.js.html#line488">line 488</a></code>
                 </div>
             
         </h4>
@@ -3482,7 +3480,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.</p>
+        <p>Disables the row identified by the spciied row key to not be abled to check.</p>
     </div>
     
 
@@ -3524,10 +3522,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -3537,7 +3535,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique keyof the row.</p></td>
         </tr>
 
     
@@ -3610,7 +3608,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line287">line 287</a></code>
+                    <code><a href="Grid.js.html#line279">line 279</a></code>
                 </div>
             
         </h4>
@@ -3624,7 +3622,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행을 비활성화 시킨다.</p>
+        <p>Disables the row identified by the rowkey.</p>
     </div>
     
 
@@ -3666,10 +3664,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -3679,7 +3677,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the target row</p></td>
         </tr>
 
     
@@ -3752,7 +3750,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line492">line 492</a></code>
+                    <code><a href="Grid.js.html#line481">line 481</a></code>
                 </div>
             
         </h4>
@@ -3766,7 +3764,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.</p>
+        <p>Enables the row identified by the rowKey to be able to check.</p>
     </div>
     
 
@@ -3808,10 +3806,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -3821,7 +3819,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -3894,7 +3892,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line294">line 294</a></code>
+                    <code><a href="Grid.js.html#line286">line 286</a></code>
                 </div>
             
         </h4>
@@ -3908,7 +3906,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행을 활성화시킨다.</p>
+        <p>Enables the row identified by the rowKey.</p>
     </div>
     
 
@@ -3950,10 +3948,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -3963,7 +3961,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the target row</p></td>
         </tr>
 
     
@@ -4036,7 +4034,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line397">line 397</a></code>
+                    <code><a href="Grid.js.html#line387">line 387</a></code>
                 </div>
             
         </h4>
@@ -4050,7 +4048,7 @@
 
     
     <div class="description">
-        <p>rowKey, columnName에 해당하는 셀에 포커싱한다.</p>
+        <p>Sets focus on the cell identified by the specified row key and column name.</p>
     </div>
     
 
@@ -4096,10 +4094,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4121,7 +4119,7 @@
                 </td>
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -4134,7 +4132,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4156,7 +4154,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -4195,7 +4193,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에서 해당 영역으로 scroll 할지 여부</p></td>
+            <td class="description last"><p>If set to true, the view will scroll to the cell element.</p></td>
         </tr>
 
     
@@ -4268,7 +4266,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line406">line 406</a></code>
+                    <code><a href="Grid.js.html#line396">line 396</a></code>
                 </div>
             
         </h4>
@@ -4282,7 +4280,7 @@
 
     
     <div class="description">
-        <p>rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.</p>
+        <p>Sets focus on the cell at the specified index of row and column.</p>
     </div>
     
 
@@ -4328,10 +4326,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4353,7 +4351,7 @@
                 </td>
             
 
-            <td class="description last"><p>행 index</p></td>
+            <td class="description last"><p>The index of the row</p></td>
         </tr>
 
     
@@ -4366,7 +4364,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4388,7 +4386,7 @@
                 </td>
             
 
-            <td class="description last"><p>열 index</p></td>
+            <td class="description last"><p>The index of the column</p></td>
         </tr>
 
     
@@ -4427,7 +4425,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에서 해당 영역으로 scroll 할지 여부</p></td>
+            <td class="description last"><p>If set to true, the view will scroll to the cell element.</p></td>
         </tr>
 
     
@@ -4500,7 +4498,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line415">line 415</a></code>
+                    <code><a href="Grid.js.html#line405">line 405</a></code>
                 </div>
             
         </h4>
@@ -4514,7 +4512,7 @@
 
     
     <div class="description">
-        <p>셀을 편집모드로 전환한다.</p>
+        <p>Sets focus on the cell at the specified index of row and column and starts to edit.</p>
     </div>
     
 
@@ -4560,10 +4558,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4585,7 +4583,7 @@
                 </td>
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -4598,7 +4596,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4620,7 +4618,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -4659,7 +4657,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에서 해당 영역으로 scroll 할지 여부</p></td>
+            <td class="description last"><p>If set to true, the view will scroll to the cell element.</p></td>
         </tr>
 
     
@@ -4732,7 +4730,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line424">line 424</a></code>
+                    <code><a href="Grid.js.html#line413">line 413</a></code>
                 </div>
             
         </h4>
@@ -4746,7 +4744,7 @@
 
     
     <div class="description">
-        <p>rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.</p>
+        <p>Sets focus on the cell at the specified index of row and column and starts to edit.</p>
     </div>
     
 
@@ -4792,10 +4790,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4817,7 +4815,7 @@
                 </td>
             
 
-            <td class="description last"><p>행 index</p></td>
+            <td class="description last"><p>The index of the row</p></td>
         </tr>
 
     
@@ -4830,7 +4828,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -4852,7 +4850,7 @@
                 </td>
             
 
-            <td class="description last"><p>열 index</p></td>
+            <td class="description last"><p>The index of the column</p></td>
         </tr>
 
     
@@ -4891,7 +4889,7 @@
                 </td>
             
 
-            <td class="description last"><p>그리드에서 해당 영역으로 scroll 할지 여부</p></td>
+            <td class="description last"><p>If set to true, the view will scroll to the cell element.</p></td>
         </tr>
 
     
@@ -4964,7 +4962,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line571">line 571</a></code>
+                    <code><a href="Grid.js.html#line558">line 558</a></code>
                 </div>
             
         </h4>
@@ -4978,7 +4976,7 @@
 
     
     <div class="description">
-        <p>AddOn 인스턴스를 반환한다.</p>
+        <p>Returns the instance of specified AddOn.</p>
     </div>
     
 
@@ -5020,7 +5018,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -5030,7 +5028,7 @@
 
             
 
-            <td class="description last"><p>AddOn의 이름</p></td>
+            <td class="description last"><p>The name of the AddOn</p></td>
         </tr>
 
     
@@ -5047,7 +5045,7 @@
         
                 
 <div class="param-desc">
-    <p>addOn 인스턴스</p>
+    <p>addOn - The instance of the AddOn</p>
 </div>
 
             
@@ -5114,11 +5112,11 @@
 <dt>
     
         <h4 class="name" id="getCheckedRowKeyList">
-            <span class="type-signature"></span>getCheckedRowKeyList<span class="signature">(isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array|String}</span>
+            <span class="type-signature"></span>getCheckedRowKeyList<span class="signature">(isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line507">line 507</a></code>
+                    <code><a href="Grid.js.html#line496">line 496</a></code>
                 </div>
             
         </h4>
@@ -5132,7 +5130,7 @@
 
     
     <div class="description">
-        <p>현재 선택된 행들의 키값만을 배열로 리턴한다.</p>
+        <p>Returns a list of the row key of checked rows.</p>
     </div>
     
 
@@ -5204,7 +5202,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 일 경우 json 문자열을 리턴한다.</p></td>
+            <td class="description last"><p>If set to true, return value will be converted to JSON string.</p></td>
         </tr>
 
     
@@ -5221,7 +5219,9 @@
         
                 
 <div class="param-desc">
-    <p>선택된 행들의 키값 리스트.</p>
+    <ul>
+<li>A list of the row key. (or JSON string of the list)</li>
+</ul>
 </div>
 
             
@@ -5288,11 +5288,11 @@
 <dt>
     
         <h4 class="name" id="getCheckedRowList">
-            <span class="type-signature"></span>getCheckedRowList<span class="signature">(isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array|String}</span>
+            <span class="type-signature"></span>getCheckedRowList<span class="signature">(isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line516">line 516</a></code>
+                    <code><a href="Grid.js.html#line505">line 505</a></code>
                 </div>
             
         </h4>
@@ -5306,7 +5306,7 @@
 
     
     <div class="description">
-        <p>현재 선택된 행들의 모든 데이터를 배열로 리턴한다.</p>
+        <p>Returns a list of the checked rows.</p>
     </div>
     
 
@@ -5378,7 +5378,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 일 경우 json 문자열을 리턴한다.</p></td>
+            <td class="description last"><p>If set tu true, return value will be converted to JSON string.</p></td>
         </tr>
 
     
@@ -5395,7 +5395,9 @@
         
                 
 <div class="param-desc">
-    <p>선택된 행들의 데이터값 리스트.</p>
+    <ul>
+<li>A list of the checked rows. (or JSON string of the list)</li>
+</ul>
 </div>
 
             
@@ -5466,7 +5468,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line524">line 524</a></code>
+                    <code><a href="Grid.js.html#line513">line 513</a></code>
                 </div>
             
         </h4>
@@ -5480,7 +5482,7 @@
 
     
     <div class="description">
-        <p>그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.</p>
+        <p>Returns a list of the column model.</p>
     </div>
     
 
@@ -5500,7 +5502,9 @@
         
                 
 <div class="param-desc">
-    <p>컬럼모델 리스트</p>
+    <ul>
+<li>A list of the column model.</li>
+</ul>
 </div>
 
             
@@ -5567,11 +5571,11 @@
 <dt>
     
         <h4 class="name" id="getColumnValues">
-            <span class="type-signature"></span>getColumnValues<span class="signature">(columnName, isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array}</span>
+            <span class="type-signature"></span>getColumnValues<span class="signature">(columnName, isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Array|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line315">line 315</a></code>
+                    <code><a href="Grid.js.html#line305">line 305</a></code>
                 </div>
             
         </h4>
@@ -5585,7 +5589,7 @@
 
     
     <div class="description">
-        <p>columnName에 해당하는 column data list를 리턴한다.</p>
+        <p>Returns a list of all values in the specified column.</p>
     </div>
     
 
@@ -5631,7 +5635,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -5653,7 +5657,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼명</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -5692,7 +5696,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 일 경우 JSON String 으로 반환한다.</p></td>
+            <td class="description last"><p>It set to true, return value will be converted to JSON string.</p></td>
         </tr>
 
     
@@ -5709,7 +5713,9 @@
         
                 
 <div class="param-desc">
-    <p>컬럼명에 해당하는 셀들의 데이터 리스트</p>
+    <ul>
+<li>A List of all values in the specified column. (or JSON string of the list)</li>
+</ul>
 </div>
 
             
@@ -5780,7 +5786,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line356">line 356</a></code>
+                    <code><a href="Grid.js.html#line346">line 346</a></code>
                 </div>
             
         </h4>
@@ -5794,7 +5800,7 @@
 
     
     <div class="description">
-        <p>rowKey 와 columnName 에 해당하는 element 를 반환한다.</p>
+        <p>Returns the jquery object of the cell identified by the rowKey and columnName.</p>
     </div>
     
 
@@ -5836,10 +5842,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -5849,7 +5855,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -5862,7 +5868,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -5872,7 +5878,7 @@
 
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -5889,7 +5895,9 @@
         
                 
 <div class="param-desc">
-    <p>해당 jQuery Element</p>
+    <ul>
+<li>The jquery object of the cell element</li>
+</ul>
 </div>
 
             
@@ -5960,7 +5968,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line688">line 688</a></code>
+                    <code><a href="Grid.js.html#line672">line 672</a></code>
                 </div>
             
         </h4>
@@ -5974,7 +5982,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행의 인덱스를 반환한다.</p>
+        <p>Returns the index of the row indentified by the rowKey.</p>
     </div>
     
 
@@ -6029,7 +6037,7 @@
 
             
 
-            <td class="description last"><p>행 고유키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -6047,7 +6055,7 @@
                 
 <div class="param-desc">
     <ul>
-<li>인덱스</li>
+<li>The index of the row</li>
 </ul>
 </div>
 
@@ -6119,7 +6127,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line538">line 538</a></code>
+                    <code><a href="Grid.js.html#line526">line 526</a></code>
                 </div>
             
         </h4>
@@ -6133,7 +6141,7 @@
 
     
     <div class="description">
-        <p>그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.<br>리턴되는 객체에는 createList, updateList, deleteList 라는 필드가 있고,<br>각 필드에는 변경된 데이터들이 배열로 구성되어 있다.</p>
+        <p>Returns the object that contains the lists of changed data compared to the original data.<br>The object has properties 'createList', 'updateList', 'deleteList'.</p>
     </div>
     
 
@@ -6197,7 +6205,7 @@
 
             
 
-            <td class="description last"><p>옵션 객체</p>
+            <td class="description last"><p>Options</p>
                 <h6>Properties:</h6>
                 
 
@@ -6259,7 +6267,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.</p></td>
+            <td class="description last"><p>If set to true, only checked rows will be considered.</p></td>
         </tr>
 
     
@@ -6298,7 +6306,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.</p></td>
+            <td class="description last"><p>If set to true, the data will contains the row data for internal use.</p></td>
         </tr>
 
     
@@ -6337,7 +6345,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 로 설정된 경우 키값만 저장하여 리턴한다.</p></td>
+            <td class="description last"><p>If set to true, only keys of the changed rows will be returned.</p></td>
         </tr>
 
     
@@ -6374,7 +6382,7 @@
                 </td>
             
 
-            <td class="description last"><p>행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.</p></td>
+            <td class="description last"><p>A list of column name to be excluded.</p></td>
         </tr>
 
     
@@ -6397,7 +6405,9 @@
         
                 
 <div class="param-desc">
-    <p>옵션에 따라 반환된 수정된 데이터 목록</p>
+    <ul>
+<li>Object that contains the result list.</li>
+</ul>
 </div>
 
             
@@ -6464,11 +6474,11 @@
 <dt>
     
         <h4 class="name" id="getRow">
-            <span class="type-signature"></span>getRow<span class="signature">(rowKey, isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span>
+            <span class="type-signature"></span>getRow<span class="signature">(rowKey, isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line324">line 324</a></code>
+                    <code><a href="Grid.js.html#line314">line 314</a></code>
                 </div>
             
         </h4>
@@ -6482,7 +6492,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.</p>
+        <p>Returns the object that contains all values in the specified row.</p>
     </div>
     
 
@@ -6528,10 +6538,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -6553,7 +6563,7 @@
                 </td>
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the target row</p></td>
         </tr>
 
     
@@ -6566,7 +6576,7 @@
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -6592,7 +6602,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 일 경우 JSON String 으로 반환한다.</p></td>
+            <td class="description last"><p>If set to true, return value will be converted to JSON string.</p></td>
         </tr>
 
     
@@ -6609,7 +6619,9 @@
         
                 
 <div class="param-desc">
-    <p>행 데이터</p>
+    <ul>
+<li>The object that contains all values in the row. (or JSON string of the object)</li>
+</ul>
 </div>
 
             
@@ -6676,11 +6688,11 @@
 <dt>
     
         <h4 class="name" id="getRowAt">
-            <span class="type-signature"></span>getRowAt<span class="signature">(index, isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span>
+            <span class="type-signature"></span>getRowAt<span class="signature">(index, isJsonString<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line333">line 333</a></code>
+                    <code><a href="Grid.js.html#line323">line 323</a></code>
                 </div>
             
         </h4>
@@ -6694,7 +6706,7 @@
 
     
     <div class="description">
-        <p>그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.</p>
+        <p>Returns the object that contains all values in the row at specified index.</p>
     </div>
     
 
@@ -6740,7 +6752,7 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 
 
             
@@ -6762,7 +6774,7 @@
                 </td>
             
 
-            <td class="description last"><p>행의 인덱스</p></td>
+            <td class="description last"><p>The index of the row</p></td>
         </tr>
 
     
@@ -6801,7 +6813,7 @@
                 </td>
             
 
-            <td class="description last"><p>true 일 경우 JSON String 으로 반환한다.</p></td>
+            <td class="description last"><p>If set to true, return value will be converted to JSON string.</p></td>
         </tr>
 
     
@@ -6818,7 +6830,9 @@
         
                 
 <div class="param-desc">
-    <p>행 데이터</p>
+    <ul>
+<li>The object that contains all values in the row. (or JSON string of the object)</li>
+</ul>
 </div>
 
             
@@ -6885,11 +6899,11 @@
 <dt>
     
         <h4 class="name" id="getRowCount">
-            <span class="type-signature"></span>getRowCount<span class="signature">()</span><span class="type-signature"> &rarr; {Number}</span>
+            <span class="type-signature"></span>getRowCount<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line340">line 340</a></code>
+                    <code><a href="Grid.js.html#line330">line 330</a></code>
                 </div>
             
         </h4>
@@ -6903,7 +6917,7 @@
 
     
     <div class="description">
-        <p>현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.</p>
+        <p>Returns the total number of the rows.</p>
     </div>
     
 
@@ -6923,7 +6937,9 @@
         
                 
 <div class="param-desc">
-    <p>데이터 개수</p>
+    <ul>
+<li>The total number of the rows</li>
+</ul>
 </div>
 
             
@@ -6994,7 +7010,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line625">line 625</a></code>
+                    <code><a href="Grid.js.html#line609">line 609</a></code>
                 </div>
             
         </h4>
@@ -7008,7 +7024,7 @@
 
     
     <div class="description">
-        <p>현재 그리드의 rowList 를 반환한다.</p>
+        <p>Returns a list of all rows.</p>
     </div>
     
 
@@ -7028,7 +7044,9 @@
         
                 
 <div class="param-desc">
-    <p>그리드의 데이터 리스트</p>
+    <ul>
+<li>A list of all rows</li>
+</ul>
 </div>
 
             
@@ -7099,7 +7117,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line680">line 680</a></code>
+                    <code><a href="Grid.js.html#line664">line 664</a></code>
                 </div>
             
         </h4>
@@ -7113,7 +7131,7 @@
 
     
     <div class="description">
-        <p>rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.</p>
+        <p>Returns the rowspan data of the cell identified by the rowKey and columnName.</p>
     </div>
     
 
@@ -7155,10 +7173,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -7168,7 +7186,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 rowKey</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -7181,7 +7199,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -7191,7 +7209,7 @@
 
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -7260,11 +7278,11 @@
 <dt>
     
         <h4 class="name" id="getSelectedRowKey">
-            <span class="type-signature"></span>getSelectedRowKey<span class="signature">()</span><span class="type-signature"> &rarr; {Number|String}</span>
+            <span class="type-signature"></span>getSelectedRowKey<span class="signature">()</span><span class="type-signature"> &rarr; {number|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line347">line 347</a></code>
+                    <code><a href="Grid.js.html#line337">line 337</a></code>
                 </div>
             
         </h4>
@@ -7278,7 +7296,7 @@
 
     
     <div class="description">
-        <p>그리드 내에서 현재 선택된 row의 키값을 리턴한다.</p>
+        <p>Returns the rowKey of the currently selected row.</p>
     </div>
     
 
@@ -7298,7 +7316,9 @@
         
                 
 <div class="param-desc">
-    <p>행 데이터의 고유 키</p>
+    <ul>
+<li>The rowKey of the row</li>
+</ul>
 </div>
 
             
@@ -7365,11 +7385,11 @@
 <dt>
     
         <h4 class="name" id="getValue">
-            <span class="type-signature"></span>getValue<span class="signature">(rowKey, columnName, isOriginal<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Number|String}</span>
+            <span class="type-signature"></span>getValue<span class="signature">(rowKey, columnName, isOriginal<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {number|string}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line305">line 305</a></code>
+                    <code><a href="Grid.js.html#line296">line 296</a></code>
                 </div>
             
         </h4>
@@ -7383,7 +7403,7 @@
 
     
     <div class="description">
-        <p>rowKey 와 columnName 에 해당하는 값을 반환한다.</p>
+        <p>Returns the value of the cell identified by the rowKey and columnName.</p>
     </div>
     
 
@@ -7427,10 +7447,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -7448,7 +7468,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the target row.</p></td>
         </tr>
 
     
@@ -7461,7 +7481,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -7479,7 +7499,7 @@
 
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -7512,7 +7532,7 @@
 
             
 
-            <td class="description last"><p>원본 데이터 리턴 여부</p></td>
+            <td class="description last"><p>It set to true, the original value will be return.</p></td>
         </tr>
 
     
@@ -7529,7 +7549,9 @@
         
                 
 <div class="param-desc">
-    <p>조회한 셀의 값.</p>
+    <ul>
+<li>The value of the cell</li>
+</ul>
 </div>
 
             
@@ -7600,7 +7622,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line270">line 270</a></code>
+                    <code><a href="Grid.js.html#line262">line 262</a></code>
                 </div>
             
         </h4>
@@ -7614,7 +7636,7 @@
 
     
     <div class="description">
-        <p>초기화 함수</p>
+        <p>Initializes the instance.</p>
     </div>
     
 
@@ -7666,7 +7688,7 @@
 
             
 
-            <td class="description last"><p>생성자의 옵션 정보와 동일.</p></td>
+            <td class="description last"><p>Options for the constructor</p></td>
         </tr>
 
     
@@ -7735,11 +7757,11 @@
 <dt>
     
         <h4 class="name" id="isChanged">
-            <span class="type-signature"></span>isChanged<span class="signature">()</span><span class="type-signature"> &rarr; {Boolean}</span>
+            <span class="type-signature"></span>isChanged<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line563">line 563</a></code>
+                    <code><a href="Grid.js.html#line550">line 550</a></code>
                 </div>
             
         </h4>
@@ -7753,10 +7775,7 @@
 
     
     <div class="description">
-        <p>현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.</p>
-<ul>
-<li>getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.</li>
-</ul>
+        <p>Returns true if there are at least one row changed.</p>
     </div>
     
 
@@ -7776,7 +7795,9 @@
         
                 
 <div class="param-desc">
-    <p>데이터가 변경되었는지 여부</p>
+    <ul>
+<li>True if there are at least one row changed.</li>
+</ul>
 </div>
 
             
@@ -7847,7 +7868,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line555">line 555</a></code>
+                    <code><a href="Grid.js.html#line543">line 543</a></code>
                 </div>
             
         </h4>
@@ -7861,7 +7882,7 @@
 
     
     <div class="description">
-        <p>현재 그리드의 제일 앞에 행을 추가한다.</p>
+        <p>Insert the new row with specified data to the beginning of table.</p>
     </div>
     
 
@@ -7925,7 +7946,7 @@
 
             
 
-            <td class="description last"><p>row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.</p></td>
+            <td class="description last"><p>The data for the new row</p></td>
         </tr>
 
     
@@ -7998,7 +8019,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line722">line 722</a></code>
+                    <code><a href="Grid.js.html#line685">line 685</a></code>
                 </div>
             
         </h4>
@@ -8012,7 +8033,7 @@
 
     
     <div class="description">
-        <p>그리드의 layout 데이터를 갱신한다.<br>그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.</p>
+        <p>Refresh the layout view. Use this method when grid was rendered while hidden.</p>
     </div>
     
 
@@ -8088,7 +8109,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line664">line 664</a></code>
+                    <code><a href="Grid.js.html#line648">line 648</a></code>
                 </div>
             
         </h4>
@@ -8102,7 +8123,7 @@
 
     
     <div class="description">
-        <p>rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.</p>
+        <p>Removes the specified css class from the cell element indentified by the rowKey and columnName.</p>
     </div>
     
 
@@ -8144,10 +8165,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -8157,7 +8178,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 rowKey</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -8170,7 +8191,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -8180,7 +8201,7 @@
 
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -8193,7 +8214,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -8203,7 +8224,7 @@
 
             
 
-            <td class="description last"><p>지정할 디자인 클래스명</p></td>
+            <td class="description last"><p>The css class name to be removed</p></td>
         </tr>
 
     
@@ -8272,11 +8293,11 @@
 <dt>
     
         <h4 class="name" id="removeCheckedRows">
-            <span class="type-signature"></span>removeCheckedRows<span class="signature">(isConfirm)</span><span class="type-signature"> &rarr; {Boolean}</span>
+            <span class="type-signature"></span>removeCheckedRows<span class="signature">(isConfirm)</span><span class="type-signature"> &rarr; {boolean}</span>
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line485">line 485</a></code>
+                    <code><a href="Grid.js.html#line474">line 474</a></code>
                 </div>
             
         </h4>
@@ -8290,7 +8311,7 @@
 
     
     <div class="description">
-        <p>checked된 행을 삭제한다.</p>
+        <p>Removes all checked rows.</p>
     </div>
     
 
@@ -8332,7 +8353,7 @@
             <td class="type">
             
                 
-<span class="param-type">Boolean</span>
+<span class="param-type">boolean</span>
 
 
             
@@ -8342,7 +8363,7 @@
 
             
 
-            <td class="description last"><p>삭제하기 전에 confirm 메시지를 표시할지 여부</p></td>
+            <td class="description last"><p>If set to true, confirm message will be shown before remove.</p></td>
         </tr>
 
     
@@ -8359,7 +8380,9 @@
         
                 
 <div class="param-desc">
-    <p>삭제된 행이 있으면 true, 없으면 false</p>
+    <ul>
+<li>True if there's at least one row removed.</li>
+</ul>
 </div>
 
             
@@ -8430,7 +8453,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line472">line 472</a></code>
+                    <code><a href="Grid.js.html#line461">line 461</a></code>
                 </div>
             
         </h4>
@@ -8444,7 +8467,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 그리드 데이터를 삭제한다.</p>
+        <p>Removes the row identified by the specified row key.</p>
     </div>
     
 
@@ -8509,7 +8532,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -8545,7 +8568,7 @@
 
             
 
-            <td class="description last"><p>삭제 옵션. boolean 타입인 경우 options.removeOriginal과 동일 (하위버전 호완성 유지를 위함)</p>
+            <td class="description last"><p>Options. If the type is boolean, this value is equivalent to  options.removeOriginalData.</p>
                 <h6>Properties:</h6>
                 
 
@@ -8599,7 +8622,7 @@
 
             
 
-            <td class="description last"><p>원본 데이터도 함께 삭제할 지 여부</p></td>
+            <td class="description last"><p>If set to true, the original data will be removed.</p></td>
         </tr>
 
     
@@ -8632,7 +8655,7 @@
 
             
 
-            <td class="description last"><p>rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부</p></td>
+            <td class="description last"><p>If set to true, the value of the merged cells will not be removed although the target is first cell of them.</p></td>
         </tr>
 
     
@@ -8711,7 +8734,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line672">line 672</a></code>
+                    <code><a href="Grid.js.html#line656">line 656</a></code>
                 </div>
             
         </h4>
@@ -8725,7 +8748,7 @@
 
     
     <div class="description">
-        <p>rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.</p>
+        <p>Removes the specified css class from all cell elements in the row identified by the rowKey.</p>
     </div>
     
 
@@ -8767,10 +8790,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -8780,7 +8803,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 rowKey</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -8793,7 +8816,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -8803,7 +8826,7 @@
 
             
 
-            <td class="description last"><p>지정할 디자인 클래스명</p></td>
+            <td class="description last"><p>The css class name to be removed</p></td>
         </tr>
 
     
@@ -8876,7 +8899,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line381">line 381</a></code>
+                    <code><a href="Grid.js.html#line371">line 371</a></code>
                 </div>
             
         </h4>
@@ -8890,7 +8913,7 @@
 
     
     <div class="description">
-        <p>rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.</p>
+        <p>Replace all rows with the specified list. This will not change the original data.</p>
     </div>
     
 
@@ -8942,7 +8965,7 @@
 
             
 
-            <td class="description last"><p>설정할 데이터 배열 값</p></td>
+            <td class="description last"><p>A list of new rows</p></td>
         </tr>
 
     
@@ -9015,7 +9038,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line579">line 579</a></code>
+                    <code><a href="Grid.js.html#line565">line 565</a></code>
                 </div>
             
         </h4>
@@ -9029,7 +9052,7 @@
 
     
     <div class="description">
-        <p>setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.<br>그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.</p>
+        <p>Restores the data to the original data.<br>(Original data is set by #setRowList())</p>
     </div>
     
 
@@ -9105,7 +9128,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line588">line 588</a></code>
+                    <code><a href="Grid.js.html#line572">line 572</a></code>
                 </div>
             
         </h4>
@@ -9119,10 +9142,7 @@
 
     
     <div class="description">
-        <p>rowKey에 해당하는 행에 대해 선택한다.</p>
-<ul>
-<li>checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.</li>
-</ul>
+        <p>Selects the row identified by the rowKey.</p>
     </div>
     
 
@@ -9164,10 +9184,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -9177,7 +9197,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -9250,7 +9270,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line601">line 601</a></code>
+                    <code><a href="Grid.js.html#line585">line 585</a></code>
                 </div>
             
         </h4>
@@ -9264,7 +9284,7 @@
 
     
     <div class="description">
-        <p>열 고정 위치를 변경한다.</p>
+        <p>Sets the index of fixed column.</p>
     </div>
     
 
@@ -9306,7 +9326,7 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 
 
             
@@ -9316,7 +9336,7 @@
 
             
 
-            <td class="description last"><p>고정시킬 열의 인덱스</p></td>
+            <td class="description last"><p>The index of column to be fixed</p></td>
         </tr>
 
     
@@ -9389,7 +9409,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line608">line 608</a></code>
+                    <code><a href="Grid.js.html#line592">line 592</a></code>
                 </div>
             
         </h4>
@@ -9403,7 +9423,7 @@
 
     
     <div class="description">
-        <p>columnModelList 를 재설정한다..</p>
+        <p>Sets the list of column model.</p>
     </div>
     
 
@@ -9455,7 +9475,7 @@
 
             
 
-            <td class="description last"><p>컬럼모델 리스트</p></td>
+            <td class="description last"><p>A new list of column model</p></td>
         </tr>
 
     
@@ -9528,7 +9548,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line374">line 374</a></code>
+                    <code><a href="Grid.js.html#line364">line 364</a></code>
                 </div>
             
         </h4>
@@ -9542,7 +9562,7 @@
 
     
     <div class="description">
-        <p>columnName 에 해당하는 값을 전부 변경한다.</p>
+        <p>Sets the all values in the specified column.</p>
     </div>
     
 
@@ -9588,7 +9608,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -9610,7 +9630,7 @@
                 </td>
             
 
-            <td class="description last"><p>컬럼명</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -9623,10 +9643,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -9648,7 +9668,7 @@
                 </td>
             
 
-            <td class="description last"><p>변경할 컬럼 값</p></td>
+            <td class="description last"><p>The value to be set</p></td>
         </tr>
 
     
@@ -9687,7 +9707,7 @@
                 </td>
             
 
-            <td class="description last"><p>셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부</p></td>
+            <td class="description last"><p>If set to true, only editable and not disabled cells will be affected.</p></td>
         </tr>
 
     
@@ -9760,7 +9780,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line695">line 695</a></code>
+                    <code><a href="Grid.js.html#line679">line 679</a></code>
                 </div>
             
         </h4>
@@ -9774,7 +9794,7 @@
 
     
     <div class="description">
-        <p>화면에 한번에 보여지는 행 개수를 변경한다.</p>
+        <p>Sets the number of rows to be shown in the table area.</p>
     </div>
     
 
@@ -9826,7 +9846,7 @@
 
             
 
-            <td class="description last"><p>행 개수</p></td>
+            <td class="description last"><p>The number of rows</p></td>
         </tr>
 
     
@@ -9899,7 +9919,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line388">line 388</a></code>
+                    <code><a href="Grid.js.html#line378">line 378</a></code>
                 </div>
             
         </h4>
@@ -9913,7 +9933,7 @@
 
     
     <div class="description">
-        <p>rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.</p>
+        <p>Replace all rows with the specified list. This will change the original data.</p>
     </div>
     
 
@@ -9965,7 +9985,7 @@
 
             
 
-            <td class="description last"><p>설정할 데이터 배열 값</p></td>
+            <td class="description last"><p>A list of new rows</p></td>
         </tr>
 
     
@@ -10038,7 +10058,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line365">line 365</a></code>
+                    <code><a href="Grid.js.html#line355">line 355</a></code>
                 </div>
             
         </h4>
@@ -10050,6 +10070,10 @@
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>Sets the value of the cell identified by the specified rowKey and columnName.</p>
+    </div>
     
 
     
@@ -10090,10 +10114,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -10103,7 +10127,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -10116,7 +10140,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -10126,7 +10150,7 @@
 
             
 
-            <td class="description last"><p>컬럼 이름</p></td>
+            <td class="description last"><p>The name of the column</p></td>
         </tr>
 
     
@@ -10139,10 +10163,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -10152,7 +10176,7 @@
 
             
 
-            <td class="description last"><p>할당될 값</p></td>
+            <td class="description last"><p>The value to be set</p></td>
         </tr>
 
     
@@ -10225,7 +10249,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line632">line 632</a></code>
+                    <code><a href="Grid.js.html#line616">line 616</a></code>
                 </div>
             
         </h4>
@@ -10239,7 +10263,7 @@
 
     
     <div class="description">
-        <p>인자로 들어온 columnName 기준으로 정렬 한다.</p>
+        <p>Sorts all rows by the specified column.</p>
     </div>
     
 
@@ -10281,7 +10305,7 @@
             <td class="type">
             
                 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -10291,7 +10315,7 @@
 
             
 
-            <td class="description last"><p>정렬할 컬럼이름</p></td>
+            <td class="description last"><p>The name of the column to be used to compare the rows</p></td>
         </tr>
 
     
@@ -10364,7 +10388,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line456">line 456</a></code>
+                    <code><a href="Grid.js.html#line445">line 445</a></code>
                 </div>
             
         </h4>
@@ -10378,7 +10402,7 @@
 
     
     <div class="description">
-        <p>rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.</p>
+        <p>Unchecks the row identified by the specified row key.</p>
     </div>
     
 
@@ -10420,10 +10444,10 @@
             <td class="type">
             
                 
-<span class="param-type">Number</span>
+<span class="param-type">number</span>
 |
 
-<span class="param-type">String</span>
+<span class="param-type">string</span>
 
 
             
@@ -10433,7 +10457,7 @@
 
             
 
-            <td class="description last"><p>행 데이터의 고유 키</p></td>
+            <td class="description last"><p>The unique key of the row</p></td>
         </tr>
 
     
@@ -10506,7 +10530,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line449">line 449</a></code>
+                    <code><a href="Grid.js.html#line438">line 438</a></code>
                 </div>
             
         </h4>
@@ -10520,7 +10544,7 @@
 
     
     <div class="description">
-        <p>모든 행을 선택 해제 한다.</p>
+        <p>Unchecks all rows.</p>
     </div>
     
 
@@ -10596,7 +10620,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line594">line 594</a></code>
+                    <code><a href="Grid.js.html#line578">line 578</a></code>
                 </div>
             
         </h4>
@@ -10610,7 +10634,7 @@
 
     
     <div class="description">
-        <p>선택되었던 행에 대한 선택을 해제한다.</p>
+        <p>Unselects selected rows.</p>
     </div>
     
 
@@ -10686,7 +10710,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line638">line 638</a></code>
+                    <code><a href="Grid.js.html#line622">line 622</a></code>
                 </div>
             
         </h4>
@@ -10700,7 +10724,7 @@
 
     
     <div class="description">
-        <p>sort 를 해제한다.</p>
+        <p>Unsorts all rows. (Sorts by rowKey).</p>
     </div>
     
 
@@ -10776,7 +10800,7 @@
             
                 <div class="container-source method">
                     <code><a href="Grid.js.html">Grid.js</a></code>,
-                    <code><a href="Grid.js.html#line617">line 617</a></code>
+                    <code><a href="Grid.js.html#line601">line 601</a></code>
                 </div>
             
         </h4>
@@ -10790,7 +10814,7 @@
 
     
     <div class="description">
-        <p>addon 을 활성화한다.</p>
+        <p>Create an specified AddOn and use it on this instance.</p>
     </div>
     
 
@@ -10842,7 +10866,7 @@
 
             
 
-            <td class="description last"><p>addon 이름</p></td>
+            <td class="description last"><p>The name of the AddOn to use.</p></td>
         </tr>
 
     
@@ -10865,7 +10889,7 @@
 
             
 
-            <td class="description last"><p>addon 에 넘길 파라미터</p></td>
+            <td class="description last"><p>The option objects for configuring the AddON.</p></td>
         </tr>
 
     
@@ -10882,7 +10906,9 @@
         
                 
 <div class="param-desc">
-    <p>grid 객체(this)</p>
+    <ul>
+<li>This instance.</li>
+</ul>
 </div>
 
             
