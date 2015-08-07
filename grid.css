@@ -86,7 +86,7 @@ a span.brand_off{height:16px;width:16px;background-position:-90px -20px}
 .uio_grid .lside_area{display:none;height:100%;position:absolute;top:0;left:0;overflow:hidden;}
 .uio_grid .lside_area .header{_width:100%;overflow:hidden;}
 .uio_grid .lside_area .data{_width:100%;overflow:scroll;position:relative;margin-right:-17px;*padding-right:17px}
-.uio_grid .lside_area .data table{*margin-right:-17px;}
+.uio_grid .lside_area .data table{*margin-right:-17px; width:auto;}
 .uio_grid .lside_area .data .selection_layer{display:none;position:absolute;top:0;left:1px;width:0;height:0;border:dotted 1px red;background:orange;opacity:0.2;filter:alpha(opacity=10)}
 .uio_grid .rside_area{display:none;height:100%;overflow:hidden;}
 .uio_grid .rside_area .header{_width:100%;position:relative;*padding-right:17px;overflow-x:hidden;overflow-y:scroll}
