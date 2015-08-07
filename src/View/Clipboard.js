@@ -17,8 +17,15 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
      * 클립보드 focus 이벤트 핸들러
      * @private
      */
-    _onFocus: function() {
-        this.grid.focusModel.focus();
+    _onFocus: function(ev) {
+        var focusModel = this.grid.focusModel,
+            focused = focusModel.which(),
+            rowIdx;
+
+        if (Util.isBlank(focused.columnName)) {
+            rowIdx = Util.isBlank(focused.rowKey) ? 0 : this.grid.getIndexOfRow(focused.rowKey);
+            this.grid.focusAt(rowIdx, 0);
+        }
     },
     /**
      * 생성자
@@ -92,6 +99,10 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             displayRowCount = grid.dimensionModel.getDisplayRowCount(),
             isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+
+        if (Util.isBlank(focused.rowKey)) {
+            return;
+        }
 
         switch (keyCode) {
             case keyMap['UP_ARROW']:

@@ -19,6 +19,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     cellFactory: null,
     events: {
         'click': '_onClick',
+        'dblclick': '_onDblclick',
         'mousedown': '_onMouseDown',
         'selectstart': '_preventDrag',
         'dragstart': '_preventDrag',
@@ -311,9 +312,11 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _doBlur: function() {
+        var $focused, hasFocusedElement;
+
         if (this.$el) {
-            var $focused = this.$el.find(':focus'),
-                hasFocusedElement = !!$focused.length;
+            $focused = this.$el.find(':focus');
+            hasFocusedElement = !!$focused.length;
 
             if (!hasFocusedElement) {
                 this.focusModel.blur();
@@ -354,13 +357,29 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         var eventData = this.createEventData(mouseEvent),
             $target = $(mouseEvent.target);
 
+        this.trigger('click', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
         if (this._isCellElement($target, true)) {
             this._triggerCellMouseEvent('clickCell', eventData, $target.closest('td'));
         }
-        this.trigger('click', eventData);
+    },
+    /**
+     * doubleClick 이벤트 핸들러
+     * @param {MouseEvent} mouseEvent 이벤트 객체
+     * @private
+     */
+    _onDblclick: function(mouseEvent) {
+        var eventData = this.createEventData(mouseEvent),
+            $target = $(mouseEvent.target);
 
+        this.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
             return;
+        }
+        if (this._isCellElement($target, true)) {
+            this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
         }
     },
     /**
@@ -441,14 +460,16 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     _onMouseDown: function(mouseDownEvent) {
         var $target = $(mouseDownEvent.target),
             eventData = this.createEventData(mouseDownEvent);
-        this.trigger('mousedown', eventData);
 
-        if (eventData.isStopped()) return;
-        if (!($target.is('input') || $target.is('a') || $target.is('button') || $target.is('select'))) {
+        this.trigger('mousedown', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
+        if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
             this.selection.show();
+            this.focusClipboard();
         }
-        this.focusClipboard();
     },
     /**
      * select 된 row 가 변경된 경우 이벤트 핸들러.
@@ -510,15 +531,19 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         }
     },
     /**
+     * Makes view ready to get keyboard input.
+     */
+    readyForKeyControl: function() {
+        this.focusClipboard();
+    },
+    /**
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        /* istanbul ignore next: focus 이벤트 확인이 불가함 */
         if (ne.util.isExisty(ne.util.pick(this, 'view', 'clipboard'))) {
             this.view.clipboard.$el.focus();
         }
     },
-
     /**
      * 랜더링한다.
      *
@@ -643,7 +668,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * 선택되었던 행에 대한 선택을 해제한다.
      */
     unselect: function() {
-        this.focusModel.unselect();
+        this.focusModel.unselect(true);
     },
     /**
      * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
@@ -653,7 +678,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         return this.focusModel.which().rowKey;
     },
     /**
-     *
+     * Sets the vlaue of the cell identified by the specified rowKey and columnName.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
      * @param {(Number|String)} columnValue 할당될 값
@@ -902,7 +927,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     getCheckedRowKeyList: function(isJsonString) {
         var rowKeyList = [];
         _.each(this.dataModel.where({
-            '_button' : true
+            _button: true
         }), function(row) {
             rowKeyList.push(row.get('rowKey'));
         }, this);
@@ -1024,7 +1049,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * addon 을 활성화한다.
      * @param {string} name addon 이름
      * @param {object} options addon 에 넘길 파라미터
-     * @return {Core}
+     * @return {Core} this
      */
     use: function(name, options) {
         options = $.extend({grid: this}, options);
@@ -1187,7 +1212,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         var endIdx = {
             rowIdx: Math.min(data.length + startIdx.rowIdx, this.dataModel.length) - 1,
             columnIdx: Math.min(data[0].length + startIdx.columnIdx, columnModelList.length) - 1
-        }
+        };
         return endIdx;
     },
     /**

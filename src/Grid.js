@@ -49,7 +49,7 @@ ne = window.ne = ne || {};
  *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be shown left to the value. If it's a function, the return value will be used.
  *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>. (replaced with {@link afterContent})
  *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be shown right to the value. If it's a function, the return value will be used.
- *              @param {function} [options.columnModeList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
+ *              @param {function} [options.columnModelList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
  *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns will be disabled.
@@ -385,6 +385,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
     focus: function(rowKey, columnName, isScrollable) {
+        this.core.focusClipboard();
         this.core.focus(rowKey, columnName, isScrollable);
     },
     /**
@@ -412,6 +413,12 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.     */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
         this.core.focusInAt(rowIndex, columnIndex, isScrollable);
+    },
+    /**
+     * Makes view ready to get keyboard input.
+     */
+    readyForKeyControl: function() {
+        this.core.readyForKeyControl();
     },
     /**
      * Removes focus from the focused cell.

@@ -59,8 +59,10 @@ Model.Focus = Model.Base.extend(/**@lends Model.Focus.prototype */{
      * 행을 unselect 한다.
      * @return {Model.Focus}
      */
-    unselect: function() {
-        this.blur();
+    unselect: function(blur) {
+        if (blur) {
+            this.blur();
+        }
         this.trigger('unselect', this.get('rowKey'));
         this.set({
             'rowKey': null
@@ -75,27 +77,26 @@ Model.Focus = Model.Base.extend(/**@lends Model.Focus.prototype */{
      * @return {Model.Focus}
      */
     focus: function(rowKey, columnName, isScrollable) {
-        var scrollPosition;
-        if (ne.util.isUndefined(rowKey) && ne.util.isUndefined(columnName)) {
-            if (ne.util.isUndefined(this.grid.renderModel.getCollection('R').get(rowKey))) {
-                this.trigger('focus', this.get('rowKey'), this.get('columnName'));
-            }
-        } else if (this.get('rowKey') !== rowKey || this.get('columnName') !== columnName) {
-            rowKey = ne.util.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
-            columnName = ne.util.isUndefined(columnName) ? this.get('columnName') : columnName;
-            this._savePrevious();
-            this.blur();
-            if (rowKey !== this.get('rowKey')) {
-                this.select(rowKey);
-            }
-            if (columnName && columnName !== this.get('columnName')) {
-                this.set('columnName', columnName);
-            }
-            this.trigger('focus', rowKey, columnName);
-            if (isScrollable) {
-                //todo scrolltop 및 left 값 조정하는 로직 필요.
-                scrollPosition = this._getScrollPosition();
-                !ne.util.isEmpty(scrollPosition) && this.grid.renderModel.set(scrollPosition);
+        var scrollPosition,
+            curRowKey = this.get('rowKey');
+
+        if (Util.isBlank(rowKey) || Util.isBlank(columnName)) {
+            return this;
+        }
+        this._savePrevious();
+        this.blur();
+
+        if (rowKey !== curRowKey) {
+            this.select(rowKey);
+        }
+        this.set('columnName', columnName);
+        this.trigger('focus', rowKey, columnName);
+
+        if (isScrollable) {
+            //TODO: scrolltop 및 left 값 조정하는 로직 필요.
+            scrollPosition = this._getScrollPosition();
+            if (!ne.util.isEmpty(scrollPosition)) {
+                this.grid.renderModel.set(scrollPosition);
             }
         }
         return this;
@@ -144,9 +145,11 @@ Model.Focus = Model.Base.extend(/**@lends Model.Focus.prototype */{
      * @return {Model.Focus}
      */
     blur: function() {
-        this.trigger('blur', this.get('rowKey'), this.get('columnName'));
-        if (this.get('rowKey') !== null) {
-            this.set('columnName', '');
+        if (this.has()) {
+            this.trigger('blur', this.get('rowKey'), this.get('columnName'));
+            if (this.get('rowKey') !== null) {
+                this.set('columnName', '');
+            }
         }
         return this;
     },
@@ -178,7 +181,7 @@ Model.Focus = Model.Base.extend(/**@lends Model.Focus.prototype */{
      * @return {boolean} 현재 focus 가 설정되어 있는지 여부
      */
     has: function() {
-        var has = !!((!ne.util.isUndefined(this.get('rowKey')) && this.get('rowKey') !== null) && this.get('columnName'));
+        var has = !Util.isBlank(this.get('rowKey')) && !Util.isBlank(this.get('columnName'));
         return has;
     },
     /**

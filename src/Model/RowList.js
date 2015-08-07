@@ -155,6 +155,7 @@ Model.Row = Model.Base.extend(/**@lends Model.Row.prototype */{
                 changed = [],
                 rowIndex,
                 rowKey = this.get('rowKey');
+
             _.each(param, function(changeValue, name) {
                 if (!Util.isEqual(data[name], changeValue)) {
                     isValueChanged = (name === 'value') ? true : isValueChanged;

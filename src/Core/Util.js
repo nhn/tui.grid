@@ -132,6 +132,16 @@ var Util = {
         return true;
     },
     /**
+     * Returns whether the string blank.
+     * @return {boolean} True if target is undefined or null or ''
+     */
+    isBlank: function(target) {
+        if (ne.util.isString(target)) {
+            return !target.length;
+        }
+        return target === undefined || target === null;
+    },
+    /**
      * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
      * @param {string} htmlString   html 마크업 문자열
      * @return {String} HTML tag 에 해당하는 부분을 제거한 문자열
