@@ -2,6 +2,11 @@
  * @fileoverview 크기에 관련된 데이터를 다루는 모델
  * @author NHN Ent. FE Development Team
  */
+(function() {
+'use strict';
+
+var BORDER_WIDTH = 1;
+
 /**
  * 크기 관련 데이터 저장
  * @constructor Model.Dimension
@@ -42,6 +47,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
         this._initColumnWidthVariables();
+
         this._setBodyHeight();
     },
 
@@ -59,7 +65,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             availableTotalWidth -= this.get('scrollBarSize');
         }
         if (this.columnModel.get('columnFixIndex') > 0) {
-            availableTotalWidth -= 1;
+            availableTotalWidth -= BORDER_WIDTH;
         }
         return availableTotalWidth;
     },
@@ -218,8 +224,11 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * @private
      */
     _getFrameWidth: function(widthList) {
-        //border 값(1px 도 함께 더한다.)
-        return widthList.length ? Util.sum(widthList) + widthList.length + 1 : 0;
+        var frameWidth = 0;
+        if (widthList.length) {
+            frameWidth = Util.sum(widthList) + ((widthList.length + 1) * BORDER_WIDTH);
+        }
+        return frameWidth;
     },
 
     /**
@@ -264,9 +273,13 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     _getMinLeftSideWidth: function() {
         var minimumColumnWidth = this.get('minimumColumnWidth'),
             columnFixIndex = this.columnModel.get('columnFixIndex'),
-            minWidth;
-        //border 값(1px 도 함께 더한다.) columnFixIndex 가 0보다 클 경우, 좌우 나누어진 영역에 대한 보더값도 더한다.
-        minWidth = columnFixIndex ? (columnFixIndex * (minimumColumnWidth + 1)) + 1 : 0;
+            minWidth = 0,
+            borderWidth;
+
+        if (columnFixIndex) {
+            borderWidth = (columnFixIndex + 1) * BORDER_WIDTH;
+            minWidth = borderWidth + (minimumColumnWidth * columnFixIndex);
+        }
         return minWidth;
     },
     /**
@@ -284,9 +297,9 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     },
     /**
      * 계산한 cell 의 위치를 리턴한다.
-     * @param {Number|String} rowKey 데이터의 키값
-     * @param {String} columnName   칼럼명
-     * @return {{top: number, left: number, right: number, bottom: number}}
+     * @param {Number|String} rowKey - 데이터의 키값
+     * @param {String} columnName - 칼럼명
+     * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
      */
     getCellPosition: function(rowKey, columnName) {
         var top, left = 0, right, bottom, i = 0,
@@ -455,3 +468,4 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         return columnWidthList;
     }
 });
+}());
