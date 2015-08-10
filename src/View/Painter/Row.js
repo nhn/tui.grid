@@ -124,9 +124,23 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
 
         return this.baseTemplate({
             key: model.get('rowKey'),
-            height: this.grid.dimensionModel.get('rowHeight'),
+            height: this.grid.dimensionModel.get('rowHeight') + View.Painter.Row._extraHeight,
             contents: html,
             className: ''
         });
     }
+}, {
+    /**
+     * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
+     * @memberof View.Painter.Row
+     * @static
+     */
+    _extraHeight: (function() {
+        var value = 0;
+        if (ne.util.browser.msie && ne.util.browser.version === 7) {
+            // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
+            value = -2;
+        }
+        return value;
+    }())
 });

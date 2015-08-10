@@ -29,7 +29,7 @@
 .uio_grid .lside_area{display:none;height:100%;position:absolute;top:0;left:0;overflow:hidden;}
 .uio_grid .lside_area .header{_width:100%;overflow:hidden;}
 .uio_grid .lside_area .data{_width:100%;overflow:scroll;position:relative;margin-right:-17px;*padding-right:17px}
-.uio_grid .lside_area .data table{*margin-right:-17px; width:auto;}
+.uio_grid .lside_area .data table{*margin-right:-17px;}
 .uio_grid .lside_area .data .selection_layer{display:none;position:absolute;top:0;left:1px;width:0;height:0;border:dotted 1px red;background:orange;opacity:0.2;filter:alpha(opacity=10)}
 .uio_grid .rside_area{display:none;height:100%;overflow:hidden;}
 .uio_grid .rside_area .header{_width:100%;position:relative;*padding-right:17px;overflow-x:hidden;overflow-y:scroll}
@@ -56,7 +56,7 @@
 .uio_grid table tr.selected{background-color:#f8f8f8}
 .uio_grid table tr.disabled{color:#b0b0b0}
 .uio_grid table tr.invalidated{background-color:#ffe1e1}
-.uio_grid table td{overflow:hidden;padding:0 10px;*padding:0 10px;border:0;white-space:nowrap;*white-space:pre;}
+.uio_grid table td{overflow:hidden;padding:0 10px;*padding:1px 10px;border:0;white-space:nowrap;*white-space:pre;}
 .uio_grid table td.ellipsis{-o-text-overflow:ellipsis; /*Opera 9*/-moz-binding:url('ellipsis.xml#ellipsis'); /* Firefox */width:100%; /* for IE6 */text-overflow:ellipsis}
 .uio_grid table td img{vertical-align:middle}
 .uio_grid table td span.before{float:left;margin-right:2px;line-height:1.5}
