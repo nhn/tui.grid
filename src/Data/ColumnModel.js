@@ -239,7 +239,7 @@ Data.ColumnModel = Model.Base.extend(/**@lends Data.ColumnModel.prototype */{
      * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
      * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
      */
-    getIngoredColumnNameList: function() {
+    getIgnoredColumnNameList: function() {
         var columnModelLsit = this.get('columnModelList'),
             ignoreColumnNameList = [];
         _.each(columnModelLsit, function(columnModel) {

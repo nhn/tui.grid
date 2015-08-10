@@ -671,8 +671,27 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     },
 
     /**
+     * 해당 row가 수정된 Row인지 여부를 반환한다.
+     * @param {Object} row - row 데이터
+     * @param {Object} originalRow - 원본 row 데이터
+     * @param {Array} filteringColumnList - 비교에서 제외할 컬럼명
+     * @return {boolean} - 수정여부
+     */
+    _isModifiedRow: function(row, originalRow, filteringColumnList) {
+        var filtered = _.omit(row, filteringColumnList);
+        var result = _.some(filtered, function(value, columnName) {
+            if (typeof value === 'object') {
+                return ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
+            }
+            return value !== originalRow[columnName];
+        }, this);
+
+        return result;
+    },
+
+    /**
      * 수정된 rowList 를 반환한다.
-     * @param {Object} options
+     * @param {Object} options 옵션 객체
      *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
@@ -685,52 +704,34 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
             isOnlyRowKeyList = options && options.isOnlyRowKeyList,
             original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
             current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
+            filteringColumnList = options && options.filteringColumnList,
             result = {
-                'createList' : [],
-                'updateList' : [],
-                'deleteList' : []
-            },
-            filteringColumnMap = {},
-            filteringColumnList = _.union(options && options.filteringColumnList || [],
-                this.grid.columnModel.getIngoredColumnNameList()),
-            item;
-
-        _.each(filteringColumnList, function(columnName) {
-            filteringColumnMap[columnName] = true;
-        });
+                createList: [],
+                updateList: [],
+                deleteList: []
+            };
 
         original = _.indexBy(original, 'rowKey');
         current = _.indexBy(current, 'rowKey');
+        filteringColumnList = _.union(filteringColumnList, this.grid.columnModel.getIgnoredColumnNameList());
 
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
-            var isDiff,
-                originalRow = original[rowKey];
-            item = isOnlyRowKeyList ? row['rowKey'] : row;
+            var originalRow = original[rowKey],
+                item = isOnlyRowKeyList ? row['rowKey'] : row;
+
             if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
                     result.createList.push(item);
-                } else {
-                    //filtering 이 설정되어 있다면 filter 를 한다.
-                    _.each(row, function(value, columnName) {
-                        if (!filteringColumnMap[columnName]) {
-                            if (typeof value === 'object') {
-                                isDiff = ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
-                            } else {
-                                isDiff = value !== originalRow[columnName];
-                            }
-                            if (isDiff) {
-                                result.updateList.push(item);
-                            }
-                        }
-                    }, this);
+                } else if (this._isModifiedRow(row, originalRow, filteringColumnList)) {
+                    result.updateList.push(item);
                 }
             }
         }, this);
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            item = isOnlyRowKeyList ? obj['rowKey'] : obj;
+            var item = isOnlyRowKeyList ? obj['rowKey'] : obj;
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }
