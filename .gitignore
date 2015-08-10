@@ -49,13 +49,6 @@ Desktop.ini
 .project
 .metadata
 
-# ctags
-.ctags
-tags
-
-#ternjs
-.tern-project
-
 #report
 report
 
@@ -69,3 +62,4 @@ bin
 tags
 .ctags
 .tern-project
+.imdone

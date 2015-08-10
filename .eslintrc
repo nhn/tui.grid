@@ -41,7 +41,6 @@
     "no-eq-null": 2,
     "no-floating-decimal": 2,
     "no-self-compare": 1,
-    "no-warning-comments": 1,
     "no-new": 1,
     "radix": 2,
     "vars-on-top": 2,
@@ -81,6 +80,7 @@
     "strict": 0,
     "no-undefined": 0,
     "no-alert": 0,
-    "dot-notation": 0
+    "dot-notation": 0,
+    "no-warning-comments": 0
   }
 }
