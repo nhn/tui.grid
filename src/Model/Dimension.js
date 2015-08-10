@@ -166,7 +166,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             if (variableCount) {
                 this._addExtraColumnWidth(newWidthList, extraTotalWidth, variableCount);
             } else {
-                // 모든 컬럼 넓이가 고정(fixed)이면 마지막 컬럼의 넓이를 더해준다.
+                // 모든 컬럼 넓이가 고정(fixed)이면 마지막 컬럼의 넓이를 증가시킨다.
                 newWidthList[columnLength - 1] += extraTotalWidth;
             }
         }
@@ -238,7 +238,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         rsideWidthList = columnWidthList.slice(columnFixIndex);
 
         lsideWidth = this._getFrameWidth(lsideWidthList);
-        if (maxLeftSideWidth < lsideWidth) {
+        if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
             lsideWidthList = this._adjustLeftSideWidthList(lsideWidthList, maxLeftSideWidth);
             lsideWidth = this._getFrameWidth(lsideWidthList);
             columnWidthList = lsideWidthList.concat(rsideWidthList);
@@ -276,7 +276,10 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     _getMaxLeftSideWidth: function() {
         var maxWidth = Math.ceil(this.get('width') * 0.9);
-        maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+
+        if (maxWidth) {
+            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+        }
         return maxWidth;
     },
     /**
