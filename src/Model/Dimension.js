@@ -5,7 +5,19 @@
 (function() {
 'use strict';
 
-var BORDER_WIDTH = 1;
+    /**
+     * @const
+     * @type {number}
+     * The width of the border of the dimension.
+     */
+var BORDER_WIDTH = 1,
+
+    /**
+     * @const
+     * @type {mumber}
+     * The width of the border of table row.
+     */
+    ROW_BORDER_WIDTH = 1;
 
 /**
  * 크기 관련 데이터 저장
@@ -45,11 +57,11 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         this.columnModel = this.grid.columnModel;
         this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
         this.on('change:width', this._onWidthChange, this);
+        this.on('change:height', this._onHeightChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
         this._columnWidthFixedFlags = null;
         this._minColumnWidthList = null;
-
         this._initColumnWidthVariables();
         this._setBodyHeight();
     },
@@ -68,7 +80,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             availableTotalWidth -= this.get('scrollBarSize');
         }
         if (this.columnModel.get('columnFixIndex') > 0) {
-            availableTotalWidth -= BORDER_WIDTH;
+            availableTotalWidth -= ROW_BORDER_WIDTH;
         }
         return availableTotalWidth;
     },
@@ -108,7 +120,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 emptyIndexes.push(index);
             }
         });
-        return this._distributeExtraWidthOnAvg(columnWidthList, remainTotalWidth, emptyIndexes);
+        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
     },
 
     /**
@@ -128,11 +140,15 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 columnIndexes.push(index);
             }
         });
-        return this._distributeExtraWidthOnAvg(columnWidthList, extraTotalWidth, columnIndexes);
+        return this._distributeExtraWidthEqually(columnWidthList, extraTotalWidth, columnIndexes);
     },
 
     /**
-     *
+     * Reduce excess widths of the column equally.
+     * @param {number[]} columnWidthList - An array of column Width
+     * @param {number} excessTotalWidth - Total excess width (negative number)
+     * @return {number[]} - A new array of column width
+     * @private
      */
     _reduceExcessColumnWidth: function(columnWidthList, excessTotalWidth) {
         var minWidthList = this._minColumnWidthList,
@@ -150,6 +166,15 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), excessTotalWidth, availableList);
     },
 
+    /**
+     * Reduce the (remaining) excess widths of the column.
+     * This method will be called recursively by _reduceExcessColumnWidth.
+     * @param {number[]} columnWidthList - An array of column Width
+     * @param {number} remainTotalWidth - Remaining excess width (negative number)
+     * @param {{index:number, width:number}[]} availableList - An array of infos about available column
+     * @return {number[]} - A new array of column width
+     * @private
+     */
     _reduceExcessColumnWidthSub: function(columnWidthList, remainTotalWidth, availableList) {
         var avgValue = Math.round(remainTotalWidth / availableList.length),
             newAvailableList = [],
@@ -164,16 +189,23 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 newAvailableList.push(available);
             }
         });
-        // call recursivly until all available width are bigger than average
+        // call recursively until all available width are less than average
         if (availableList.length > newAvailableList.length) {
             return this._reduceExcessColumnWidthSub(columnWidthList, remainTotalWidth, newAvailableList);
         }
         columnIndexes = _.pluck(availableList, 'index');
-        return this._distributeExtraWidthOnAvg(columnWidthList, remainTotalWidth, columnIndexes);
+        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, columnIndexes);
     },
 
-
-    _distributeExtraWidthOnAvg: function(columnWidthList, extraWidth, columnIndexes) {
+    /**
+     * Distributes the extra width equally to each column at specified indexes.
+     * @param  {number[]} columnWidthList - An array of column width
+     * @param  {number} extraWidth - Extra width
+     * @param  {number[]} columnIndexes - An array of indexes of target columns
+     * @return {number[]} - A new array of column width
+     * @private
+     */
+    _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
         var length = columnIndexes.length,
             avgValue = Math.round(extraWidth / length),
             errorValue = (avgValue * length) - extraWidth, // to correct total width
@@ -188,15 +220,17 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     },
 
     /**
-     * 컬럼 넓이값의 배열을 받아, 전체 넓이에 맞게 각 넓이값을 재조정하여 새로운 배열로 반환한다.
-     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
-     * @return {number[]} 수정된 새로운 넓이값 배열
+     * Adjust the column widths to make them fit into the dimension.
+     * @param {number[]} columnWidthList - An array of column width
+     * @param {boolean} fitToReducedTotal - If set to true and the total width is
+            smaller than dimension(width), the column widths will be reduced.
+     * @return {number[]} - A new array of column widthdj
      * @private
      */
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
         var columnLength = columnWidthList.length,
-            totalWidth = this._getAvailableTotalWidth(columnLength),
-            extraTotalWidth = totalWidth - Util.sum(columnWidthList),
+            availableWidth = this._getAvailableTotalWidth(columnLength),
+            extraTotalWidth = availableWidth - Util.sum(columnWidthList),
             fixedCount = _.filter(this._columnWidthFixedFlags).length,
             adjustedList;
 
@@ -266,6 +300,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         return frameWidth;
     },
+
     /**
      * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
      * @param {Array} widthList 너비 리스트 배열
@@ -275,7 +310,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     _getFrameWidth: function(widthList) {
         var frameWidth = 0;
         if (widthList.length) {
-            frameWidth = Util.sum(widthList) + ((widthList.length + 1) * BORDER_WIDTH);
+            frameWidth = Util.sum(widthList) + ((widthList.length + 1) * ROW_BORDER_WIDTH);
         }
         return frameWidth;
     },
@@ -326,7 +361,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             borderWidth;
 
         if (columnFixIndex) {
-            borderWidth = (columnFixIndex + 1) * BORDER_WIDTH;
+            borderWidth = (columnFixIndex + 1) * ROW_BORDER_WIDTH;
             minWidth = borderWidth + (minimumColumnWidth * columnFixIndex);
         }
         return minWidth;
@@ -431,7 +466,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * @return {number} 화면에 보이는 행 개수
      */
     getDisplayRowCount: function() {
-        return Util.getDisplayRowCount(this.get('bodyHeight') - this.get('toolbarHeight'), this.get('rowHeight'));
+        return Util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
     },
     /**
      * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
@@ -466,6 +501,18 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             fixedFlags[index] = false;
             this._setColumnWidthVariables(adjustedList);
         }
+    },
+    /**
+     * Sets the height of the dimension.
+     * (Resets the bodyHeight and displayRowCount relative to the dimension height)
+     * @param  {number} height - The height of the dimension
+     */
+    setHeight: function(height) {
+        var bodyHeight = height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH,
+            minBodyHeight = this.get('rowHeight') + (ROW_BORDER_WIDTH * 2) + this.getScrollXHeight();
+
+        this.set('bodyHeight', Math.max(bodyHeight, minBodyHeight));
+        this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
     },
     /**
      * 초기 너비로 돌린다.

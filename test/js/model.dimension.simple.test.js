@@ -21,8 +21,8 @@ describe('model.dimension', function() {
         };
     });
 
-    describe('_distributeExtraWidthOnAvg()', function() {
-        var testFn = Model.Dimension.prototype._distributeExtraWidthOnAvg;
+    describe('_distributeExtraWidthEqually()', function() {
+        var testFn = Model.Dimension.prototype._distributeExtraWidthEqually;
 
         it('[20, 20, 20], extra: 30', function() {
             var widths = [20, 20, 20],

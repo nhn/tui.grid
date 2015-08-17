@@ -47,6 +47,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
         //원본 rowList 의 상태 값 listening
         this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this)
             .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this)
+            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange, this)
             .listenTo(lside, 'valueChange', this._onValueChange, this)
             .listenTo(rside, 'valueChange', this._onValueChange, this);
     },
@@ -57,6 +58,13 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
      */
     _onValueChange: function(rowIndex) {
         this.executeRelation(rowIndex);
+    },
+    /**
+     * Event handler for 'chage:width' event on Dimension.
+     */
+    _onWidthChange: function() {
+        var dimension = this.grid.dimensionModel;
+        this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
     },
     /**
      * 내부 변수를 초기화 한다.

@@ -69,7 +69,6 @@ ne = window.ne = ne || {};
     rowHeight: 27, // (default=27)
     displayRowCount: 10, //(default=10)
     minimumColumnWidth: 50, //(default=50)
-    minimumWidth: 50, //(default=50)
     scrollX: true, //(default:true)
     scrollY: true, //(default:true)
     keyColumnName: 'column1', //(default:null)
@@ -683,14 +682,22 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * Sets the number of rows to be shown in the table area.
      * @param {number} count - The number of rows
      */
-     setDisplayRowCount: function(count) {
-         this.core.setDisplayRowCount(count);
-     },
+    setDisplayRowCount: function(count) {
+        this.core.setDisplayRowCount(count);
+    },
+     /**
+      * Sets the width and height of the dimension.
+      * @param  {(number|null)} width - The width of the dimension
+      * @param  {(number|null)} height - The height of the dimension
+      */
+    setSize: function(width, height) {
+        this.core.setSize(width, height);
+    },
     /**
      * Refresh the layout view. Use this method when the view was rendered while hidden.
      */
     refreshLayout: function() {
-        this.core.refreshLayout();
+        this.core.updateLayoutData();
     },
     /**
      * Destroys the instance.

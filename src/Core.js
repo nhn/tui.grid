@@ -192,7 +192,6 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             offsetTop: offset.top,
             offsetLeft: offset.left,
             width: this.$el.width(),
-            height: this.$el.height(),
             headerHeight: this.option('headerHeight'),
             rowHeight: this.option('rowHeight'),
 
@@ -278,8 +277,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _initializeListener: function() {
-        this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange)
-            .listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight)
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight)
             .listenTo(this.focusModel, 'select', this._onRowSelectChanged);
     },
     /**
@@ -338,15 +336,8 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _onWindowResize: function() {
-        var minimumWidth = this.option('minimumWidth') || 0,
-            width = this.$el.width();
-
-        if (width < minimumWidth) {
-            this.$el.css('width', minimumWidth + 'px');
-        } else {
-            this.$el.css('width', 'auto');
-        }
-        this.dimensionModel.set('width', Math.max(width, minimumWidth));
+        var width = this.$el.width();
+        this.dimensionModel.set('width', width);
     },
     /**
      * click 이벤트 핸들러
@@ -488,29 +479,16 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         });
     },
     /**
-     * width 변경시 layout data 를 update 한다.
-     * @private
-     */
-    _onWidthChange: function() {
-        this.updateLayoutData();
-    },
-    /**
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      * @private
      */
     updateLayoutData: function() {
-        var offset = this.$el.offset(),
-            rsideTotalWidth = this.dimensionModel.getFrameWidth('R'),
-            maxScrollLeft = rsideTotalWidth - this.dimensionModel.get('rsideWidth');
+        var offset = this.$el.offset();
 
-        this.renderModel.set({
-            maxScrollLeft: maxScrollLeft
-        });
         this.dimensionModel.set({
             offsetTop: offset.top,
             offsetLeft: offset.left,
             width: this.$el.width(),
-            height: this.$el.height(),
             toolbarHeight: this.view.toolbar.$el.height()
         });
     },
@@ -1316,24 +1294,18 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     disable: function(hasDimmedLayer) {
     },
     /**
-     * 그리드의 layout 데이터를 갱신한다.
-     * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
-     * @param {Boolean} [hasDimmedLayer=true]
+     * Sets the width and height of the dimension.
+     * @param {(number|null)} width - Width
+     * @param {(number|null)} height - Height
      */
-    refreshLayout: function() {
-        this.dimensionModel.set('width', this.$el.width());
-    },
-    /**
-     * 그리드의 크기 정보를 변경한다.
-     * @todo 기능 구현
-     * @param {object} size
-     */
-    setGridSize: function(size) {
-        // var dimensionModel = this.dimensionModel,
-        //     headerHeight = dimensionModel.get('headerHeight'),
-        //     toolbarHeight = dimensionModel.get('toolbarHeight');
-        //
-        // dimensionModel.set('bodyHeight', height - headerHeight - toolbarHeight);
+    setSize: function(width, height) {
+        if (width > 0) {
+            this.$el.width(width);
+        }
+        if (height > 0) {
+            this.dimensionModel.setHeight(height);
+        }
+        this.updateLayoutData();
     },
     /**
      * 스크롤 핸들러의 위치를 변경한다.

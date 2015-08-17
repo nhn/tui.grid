@@ -34,27 +34,33 @@ View.Layout.Toolbar = View.Base.extend(/**@lends View.Layout.Toolbar.prototype *
             controlPanel = this.createView(View.Layout.Toolbar.ControlPanel, {
                 grid: this.grid
             });
-            this.$el.append(controlPanel.render().el).css('display', 'block');
+            this.$el.append(controlPanel.render().el);
         }
 
         if (option && option.hasResizeHandler) {
             resizeHandler = this.createView(View.Layout.Toolbar.ResizeHandler, {
                 grid: this.grid
             });
-            this.$el.append(resizeHandler.render().el).css('display', 'block');
+            this.$el.append(resizeHandler.render().el);
         }
 
         if (option && option.hasPagination) {
             pagination = this.createView(View.Layout.Toolbar.Pagination, {
                 grid: this.grid
             });
-            this.$el.append(pagination.render().el).css('display', 'block');
+            this.$el.append(pagination.render().el);
         }
         this.setOwnProperties({
             controlPanel: controlPanel,
             resizeHandler: resizeHandler,
             pagination: pagination
         });
+
+        if (!controlPanel && !resizeHandler && !pagination) {
+            this.$el.height(0);
+        } else {
+            this.$el.show();
+        }
         return this;
     }
 });
