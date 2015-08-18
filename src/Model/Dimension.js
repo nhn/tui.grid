@@ -14,7 +14,7 @@ var BORDER_WIDTH = 1,
 
     /**
      * @const
-     * @type {mumber}
+     * @type {number}
      * The width of the border of table row.
      */
     ROW_BORDER_WIDTH = 1;
@@ -54,14 +54,24 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     initialize: function() {
         Model.Base.prototype.initialize.apply(this, arguments);
+
+        /**
+         * @type {boolean[]}
+         * An array of the fixed flags of the columns
+         */
+        this._columnWidthFixedFlags = null;
+
+        /**
+         * @type {number[]}
+         * An array of the minimum width of the columns
+         */
+        this._minColumnWidthList = null;
+
         this.columnModel = this.grid.columnModel;
         this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
         this.on('change:width', this._onWidthChange, this);
-        this.on('change:height', this._onHeightChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
-        this._columnWidthFixedFlags = null;
-        this._minColumnWidthList = null;
         this._initColumnWidthVariables();
         this._setBodyHeight();
     },
@@ -86,7 +96,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     },
 
     /**
-     * 주어진 컬럼 넓이값 배열에서 minimumColumnWidth 값보다 작은 값이 없도록 수정해준다.
+     * Makes all width of columns not less than minimumColumnWidth.
      * @param {number[]} columnWidthList - 컬럼 넓이값 배열
      * @return {number[]} - 수정된 새로운 넓이값 배열
      * @private
@@ -105,9 +115,9 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     },
 
     /**
-     * 컬럼 넓이값의 배열에서, 넓이가 지정되지 않은 컬럼들의 값을 균등하게 채워준다.
-     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
-     * @return {number[]} - 값이 모두 채워진 새로운 배열
+     * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
+     * @param {number[]} columnWidthList - An array of column widths
+     * @return {number[]} - A new array of column widths
      * @private
      */
     _fillEmptyColumnWidth: function(columnWidthList) {
@@ -124,14 +134,14 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     },
 
     /**
-     * 컬럼 넓이값의 배열에서, fixed가 아닌 컬럼의 넓이에 추가적인 넓이값을 균등하게 더해준다.
-     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
-     * @param {number} extraTotalWidth - 추가될 전체 넓이
+     * Adds extra widths of the column equally.
+     * @param {number[]} columnWidthList - An array of column widths
+     * @param {number} totalExtraWidth - Total extra width
      * @param {number} varColumnCount - 넓이가 가변적인(fixed가 아닌) 컬럼의 개수
-     * @return {number[]} - 수정된 새로운 넓이값 배열
+     * @return {number[]} - A new array of column widths
      * @private
      */
-    _addExtraColumnWidth: function(columnWidthList, extraTotalWidth) {
+    _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
         var fixedFlags = this._columnWidthFixedFlags,
             columnIndexes = [];
 
@@ -140,17 +150,17 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 columnIndexes.push(index);
             }
         });
-        return this._distributeExtraWidthEqually(columnWidthList, extraTotalWidth, columnIndexes);
+        return this._distributeExtraWidthEqually(columnWidthList, totalExtraWidth, columnIndexes);
     },
 
     /**
-     * Reduce excess widths of the column equally.
-     * @param {number[]} columnWidthList - An array of column Width
-     * @param {number} excessTotalWidth - Total excess width (negative number)
-     * @return {number[]} - A new array of column width
+     * Reduces excess widths of the column equally.
+     * @param {number[]} columnWidthList - An array of column widths
+     * @param {number} totalExcessWidth - Total excess width (negative number)
+     * @return {number[]} - A new array of column widths
      * @private
      */
-    _reduceExcessColumnWidth: function(columnWidthList, excessTotalWidth) {
+    _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
         var minWidthList = this._minColumnWidthList,
             fixedFlags = this._columnWidthFixedFlags,
             availableList = [];
@@ -163,27 +173,27 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
                 });
             }
         });
-        return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), excessTotalWidth, availableList);
+        return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
     },
 
     /**
      * Reduce the (remaining) excess widths of the column.
      * This method will be called recursively by _reduceExcessColumnWidth.
      * @param {number[]} columnWidthList - An array of column Width
-     * @param {number} remainTotalWidth - Remaining excess width (negative number)
+     * @param {number} totalRemainWidth - Remaining excess width (negative number)
      * @param {{index:number, width:number}[]} availableList - An array of infos about available column
-     * @return {number[]} - A new array of column width
+     * @return {number[]} - A new array of column widths
      * @private
      */
-    _reduceExcessColumnWidthSub: function(columnWidthList, remainTotalWidth, availableList) {
-        var avgValue = Math.round(remainTotalWidth / availableList.length),
+    _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
+        var avgValue = Math.round(totalRemainWidth / availableList.length),
             newAvailableList = [],
             columnIndexes;
 
         _.each(availableList, function(available) {
-            // note that remainTotalWidth and avgValue are negative number.
+            // note that totalRemainWidth and avgValue are negative number.
             if (available.width < Math.abs(avgValue)) {
-                remainTotalWidth += available.width;
+                totalRemainWidth += available.width;
                 columnWidthList[available.index] -= available.width;
             } else {
                 newAvailableList.push(available);
@@ -191,18 +201,18 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         });
         // call recursively until all available width are less than average
         if (availableList.length > newAvailableList.length) {
-            return this._reduceExcessColumnWidthSub(columnWidthList, remainTotalWidth, newAvailableList);
+            return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
         }
         columnIndexes = _.pluck(availableList, 'index');
-        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, columnIndexes);
+        return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
     },
 
     /**
      * Distributes the extra width equally to each column at specified indexes.
-     * @param  {number[]} columnWidthList - An array of column width
-     * @param  {number} extraWidth - Extra width
-     * @param  {number[]} columnIndexes - An array of indexes of target columns
-     * @return {number[]} - A new array of column width
+     * @param {number[]} columnWidthList - An array of column width
+     * @param {number} extraWidth - Extra width
+     * @param {number[]} columnIndexes - An array of indexes of target columns
+     * @return {number[]} - A new array of column widths
      * @private
      */
     _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
@@ -222,28 +232,28 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     /**
      * Adjust the column widths to make them fit into the dimension.
      * @param {number[]} columnWidthList - An array of column width
-     * @param {boolean} fitToReducedTotal - If set to true and the total width is
-            smaller than dimension(width), the column widths will be reduced.
-     * @return {number[]} - A new array of column widthdj
+     * @param {boolean} fitToReducedTotal - If set to true and the total width is smaller than dimension(width),
+     *                                    the column widths will be reduced.
+     * @return {number[]} - A new array of column widths
      * @private
      */
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
         var columnLength = columnWidthList.length,
             availableWidth = this._getAvailableTotalWidth(columnLength),
-            extraTotalWidth = availableWidth - Util.sum(columnWidthList),
+            totalExtraWidth = availableWidth - Util.sum(columnWidthList),
             fixedCount = _.filter(this._columnWidthFixedFlags).length,
             adjustedList;
 
-        if (extraTotalWidth > 0) {
+        if (totalExtraWidth > 0) {
             if (columnLength > fixedCount) {
-                adjustedList = this._addExtraColumnWidth(columnWidthList, extraTotalWidth);
+                adjustedList = this._addExtraColumnWidth(columnWidthList, totalExtraWidth);
             } else {
-                // 모든 컬럼 넓이가 고정(fixed)이면 마지막 컬럼의 넓이를 증가시킨다.
+                // If all column has fixed width, add extra width to the last column.
                 adjustedList = _.clone(columnWidthList);
-                adjustedList[columnLength - 1] += extraTotalWidth;
+                adjustedList[columnLength - 1] += totalExtraWidth;
             }
-        } else if (fitToReducedTotal && extraTotalWidth < 0) {
-            adjustedList = this._reduceExcessColumnWidth(columnWidthList, extraTotalWidth);
+        } else if (fitToReducedTotal && totalExtraWidth < 0) {
+            adjustedList = this._reduceExcessColumnWidth(columnWidthList, totalExtraWidth);
         } else {
             adjustedList = columnWidthList;
         }
@@ -496,6 +506,8 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
 
         if (!fixedFlags[index] && columnWidthList[index]) {
             columnWidthList[index] = Math.max(width, minWidth);
+            // makes width of the target column fixed temporarily
+            // to not be influenced while adjusting column widths.
             fixedFlags[index] = true;
             adjustedList = this._adjustColumnWidthList(columnWidthList);
             fixedFlags[index] = false;
