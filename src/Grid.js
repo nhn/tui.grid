@@ -374,9 +374,10 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     /**
      * Replace all rows with the specified list. This will change the original data.
      * @param {Array} rowList - A list of new rows
+     * @param {function} callback - The function that will be called when done.
      */
-    setRowList: function(rowList) {
-        this.core.setRowList(rowList);
+    setRowList: function(rowList, callback) {
+        this.core.setRowList(rowList, true, callback);
     },
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.

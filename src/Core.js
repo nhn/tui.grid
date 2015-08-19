@@ -730,13 +730,17 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
      * @param {Array} rowList 설정할 데이터 배열 값
      * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * @param {function} [callback] 완료시 호출될 함수
      */
-    setRowList: function(rowList, isParse) {
-        var callback = ne.util.bind(function() {
+    setRowList: function(rowList, isParse, callback) {
+        var doProcess = ne.util.bind(function() {
             this.dataModel.reset(rowList, {
                 parse: isParse
             });
             this.dataModel.setOriginalRowList();
+            if (_.isFunction(callback)) {
+                callback();
+            }
         }, this);
         this.showGridLayer('loading');
         isParse = isParse === undefined ? true : isParse;
@@ -744,10 +748,10 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         if (rowList && rowList.length > 500) {
             clearTimeout(this.timeoutIdForSetRowList);
             this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
-                callback();
+                doProcess();
             }, this), 0);
         } else {
-            callback();
+            doProcess();
         }
     },
     /**
