@@ -63,7 +63,7 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
             this.grid.focusClipboard();
         } else {
             Util.form.setCursorToEnd($input.get(0));
-            $input.focus().select();
+            $input.select();
         }
     },
     /**
@@ -188,8 +188,10 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
         if (this._isEdited($target)) {
             this.grid.setValue(rowKey, columnName, $target.val());
         }
+        this._executeInputEventHandler(blurEvent, 'blur');
         this.grid.selection.enable();
     },
+
     /**
      * focus 이벤트 핸들러
      * @param {Event} focusEvent 이벤트 객체
@@ -197,9 +199,54 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      */
     _onFocus: function(focusEvent) {
         var $input = $(focusEvent.target);
+
         this.originalText = $input.val();
+        this._executeInputEventHandler(focusEvent, 'focus');
         this.grid.selection.disable();
     },
+
+    /**
+     * keydown 이벤트 핸들러
+     * @param  {KeyboardEvent} keyboardEvent 키보드 이벤트 객체
+     * @private
+     */
+    _onKeyDown: function(keyboardEvent) {
+        View.Base.Painter.Cell.prototype._onKeyDown.call(this, keyboardEvent);
+        this._executeInputEventHandler(keyboardEvent, 'keydown');
+    },
+
+    /**
+     * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
+     * @param  {jquery} $input - 인풋 요소의 jquery 객체
+     * @return {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
+     */
+    _getCellInfoFromInput: function($input) {
+        var $cell = $input.closest('td'),
+            $row = $cell.closest('tr');
+
+        return {
+            rowKey: $row.attr('key'),
+            columnName: $cell.attr('columnname')
+        };
+    },
+
+    /**
+     * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
+     * 해당 이벤트 핸들러를 호출해준다.
+     * @param  {Event} event - 이벤트 객체
+     * @param  {string} eventName - 이벤트명
+     */
+    _executeInputEventHandler: function(event, eventName) {
+        var $input = $(event.target),
+            cellInfo = this._getCellInfoFromInput($input),
+            columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
+            eventHandler = ne.util.pick(columnModel, 'editOption', 'inputEvent', eventName);
+
+        if (_.isFunction(eventHandler)) {
+            eventHandler(event, cellInfo);
+        }
+    },
+
     /**
      * selectstart 이벤트 핸들러
      * IE에서 selectstart 이벤트가 Input 요소에 까지 적용되어 값에 셀렉션 지정이 안되는 문제를 해결
@@ -293,8 +340,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
      * - 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    focusOut: function($td) {
-        //$td.find('input').blur();
+    focusOut: function() {
         this.grid.focusClipboard();
     },
     /**
@@ -413,7 +459,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             $input = $td.find('input');
             this.originalText = $input.val();
             Util.form.setCursorToEnd($input.get(0));
-            $input.focus().select();
+            $input.select();
         }
     },
     /**

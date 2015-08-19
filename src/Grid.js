@@ -50,6 +50,7 @@ ne = window.ne = ne || {};
  *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>. (replaced with {@link afterContent})
  *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be shown right to the value. If it's a function, the return value will be used.
  *              @param {function} [options.columnModelList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
+ *              @param {Object} [options.columnModelList.editOption.inputEvent] - The object that has an event name as a key and event handler as a value for events on input element.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
  *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns will be disabled.
