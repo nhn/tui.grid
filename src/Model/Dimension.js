@@ -137,7 +137,6 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * Adds extra widths of the column equally.
      * @param {number[]} columnWidthList - An array of column widths
      * @param {number} totalExtraWidth - Total extra width
-     * @param {number} varColumnCount - 넓이가 가변적인(fixed가 아닌) 컬럼의 개수
      * @return {number[]} - A new array of column widths
      * @private
      */
@@ -376,6 +375,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         return minWidth;
     },
+
     /**
      * 열 고정 영역의 maximum width 값을 구한다.
      * @return {number} 열고정 영역의 최대 너비값.
@@ -389,6 +389,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         return maxWidth;
     },
+
     /**
      * 계산한 cell 의 위치를 리턴한다.
      * @param {Number|String} rowKey - 데이터의 키값
@@ -435,6 +436,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             bottom: bottom
         };
     },
+
     /**
      * columnFixIndex 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
@@ -460,6 +462,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         return lsideWidthList;
     },
+
     /**
      * 그리드의 body height 를 계산하여 할당한다.
      * @private
@@ -471,6 +474,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         this.set('bodyHeight', height);
     },
+
     /**
      * 현재 화면에 보이는 row 개수를 반환
      * @return {number} 화면에 보이는 행 개수
@@ -478,6 +482,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     getDisplayRowCount: function() {
         return Util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
     },
+
     /**
      * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
      * @return {number} 수평 스크롤바의 높이
@@ -485,6 +490,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     getScrollXHeight: function() {
         return +this.get('scrollX') * this.get('scrollBarSize');
     },
+
     /**
      * width 값 변경시 각 column 별 너비를 계산한다.
      * @private
@@ -493,6 +499,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
         this._setColumnWidthVariables(widthList);
     },
+
     /**
      * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
      * @param {Number} index    너비를 변경할 컬럼의 인덱스
@@ -514,18 +521,34 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             this._setColumnWidthVariables(adjustedList);
         }
     },
+
+    /**
+     * Returns the height of table body.
+     * @param  {number} height - The height of the dimension
+     * @return {number} The height of the table body
+     */
+    _getBodyHeight: function(height) {
+        return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
+    },
+
+    /**
+     * Returns the minimum height of table body.
+     * @return {number} The minimum height of table body
+     */
+    _getMinBodyHeight: function() {
+        return this.get('rowHeight') + (ROW_BORDER_WIDTH * 2) + this.getScrollXHeight();
+    },
+
     /**
      * Sets the height of the dimension.
      * (Resets the bodyHeight and displayRowCount relative to the dimension height)
      * @param  {number} height - The height of the dimension
      */
     setHeight: function(height) {
-        var bodyHeight = height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH,
-            minBodyHeight = this.get('rowHeight') + (ROW_BORDER_WIDTH * 2) + this.getScrollXHeight();
-
-        this.set('bodyHeight', Math.max(bodyHeight, minBodyHeight));
+        this.set('bodyHeight', Math.max(this._getBodyHeight(height), this._getMinBodyHeight()));
         this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
     },
+
     /**
      * 초기 너비로 돌린다.
      * @param {Number} index    너비를 변경할 컬럼의 인덱스
@@ -534,6 +557,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         var orgWidth = this.get('originalWidthList')[index];
         this.setColumnWidth(index, orgWidth);
     },
+
     /**
      * L side 와 R side 에 따른 columnWidthList 를 반환한다.
      * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
