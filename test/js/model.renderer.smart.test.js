@@ -70,27 +70,27 @@ describe('model.renderer', function() {
             renderInstance._setRenderingRange(0);
             expect(renderInstance.get('top')).toBe(0);
             expect(renderInstance.get('startIndex')).toBe(0);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(40);
+            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(39);
 
             renderInstance._setRenderingRange(100);
             expect(renderInstance.get('top')).toBe(0);
             expect(renderInstance.get('startIndex')).toBe(0);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(40);
+            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(39);
 
             renderInstance._setRenderingRange(200);
             expect(renderInstance.get('top')).toBe(77);
             expect(renderInstance.get('startIndex')).toBe(7);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(42);
+            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(41);
 
             renderInstance._setRenderingRange(300);
             expect(renderInstance.get('top')).toBe(176);
             expect(renderInstance.get('startIndex')).toBe(16);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(42);
+            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(41);
 
             renderInstance._setRenderingRange(400);
             expect(renderInstance.get('top')).toBe(275);
             expect(renderInstance.get('startIndex')).toBe(25);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(42);
+            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(41);
         });
     });
 

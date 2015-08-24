@@ -134,6 +134,9 @@ describe('model.renderer', function() {
         dataModelInstance = grid.dataModel = new Data.RowList([], {
             grid: grid
         });
+        grid.dimensionModel = new Model.Dimension({
+            grid: grid
+        });
         renderModelInstance = new Model.Renderer({
             grid: grid
         });

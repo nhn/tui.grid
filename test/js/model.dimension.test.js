@@ -374,94 +374,6 @@ describe('model.dimension', function() {
         });
     });
 
-    describe('_calculateColumnWidthList()가 인자로 받은 배열로부터 width list를 잘 생성하는지 확인한다.', function() {
-        beforeEach(function() {
-            dimensionModel = new Model.Dimension(defaultConfig);
-            dimensionModel.set({
-                width: 500,
-                minimumWidth: 20
-            });
-        });
-
-        it('생성된 width 각 요소는 minimumColumnWidth 보다 같거나 커야하고, 요소들의 합은 width 보다 같거나 커야 한다.', function() {
-            var compareWidth = dimensionModel.get('width') - 18,
-                minimumWidth = dimensionModel.get('minimumColumnWidth') - 1,
-                widthList1 = [5, 10, 15, 20, 25, 30, 35, 40, 45, -1],
-                widthList2 = [5, 10, 15, 20, 25, 130, 135, 140, 145, 150],
-                widthList3 = [5, 10, 315, 320, 325, 330, 335, 340, 345, 350],
-                widthList4 = [5, 10, 415, 420, 425, -1, -1, -1, -1, -1],
-                newWidthList;
-
-            newWidthList = dimensionModel._calculateColumnWidthList(widthList1);
-            expect(dimensionModel._getFrameWidth(newWidthList)).toBeGreaterThan(compareWidth);
-            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
-
-            newWidthList = dimensionModel._calculateColumnWidthList(widthList2);
-            expect(dimensionModel._getFrameWidth(newWidthList)).toBeGreaterThan(compareWidth);
-            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
-
-            newWidthList = dimensionModel._calculateColumnWidthList(widthList3);
-            expect(dimensionModel._getFrameWidth(newWidthList)).toBeGreaterThan(compareWidth);
-            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
-
-            newWidthList = dimensionModel._calculateColumnWidthList(widthList4);
-            expect(dimensionModel._getFrameWidth(newWidthList)).toBeGreaterThan(compareWidth);
-            expect(min(newWidthList)).toBeGreaterThan(minimumWidth);
-        });
-    });
-
-    describe('_initColumnWidthVariables()', function() {
-        var sampleColumnModel;
-
-        beforeEach(function() {
-            sampleColumnModel = [
-                {
-                    columnName: 'column1',
-                    width: 10
-                },
-                {
-                    columnName: 'column2',
-                    width: 20
-                },
-                {
-                    columnName: 'column3',
-                    width: 300,
-                    isHidden: true
-                },
-                {
-                    columnName: 'column4',
-                    width: 40
-                },
-                {
-                    columnName: 'column5'
-                }
-            ];
-            columnModelInstance.set({
-                columnModelList: sampleColumnModel,
-                hasNumberColumn: false,
-                selectType: ''
-            });
-            dimensionModel = new Model.Dimension(defaultConfig);
-            dimensionModel.set({
-                width: 500,
-                minimumWidth: 20
-            });
-        });
-
-        it('columnModelList에 정의된 값으로 columnWidthList 를 생성하는지 확인한다.', function() {
-            var originalWidthList = dimensionModel.get('originalWidthList'),
-                compareWidth = dimensionModel.get('width') - 18,
-                minimumWidth = dimensionModel.get('minimumColumnWidth') - 1;
-
-            expect(dimensionModel._getFrameWidth(originalWidthList)).toBeGreaterThan(compareWidth);
-            expect(min(originalWidthList)).toBeGreaterThan(minimumWidth);
-
-            expect(originalWidthList).toEqual([
-               20, 20, 40, 408
-            ]);
-        });
-    });
-
     describe('_getMinLeftSideWidth()', function() {
         it('Left Side의 최소 너비를 잘 구하는지 확인한다.', function() {
             columnModelInstance.set({
@@ -692,7 +604,7 @@ describe('model.dimension', function() {
                 toolbarHeight: 50,
                 rowHeight: 9
             });
-            expect(dimensionModel.getDisplayRowCount()).toEqual(10);
+            expect(dimensionModel.getDisplayRowCount()).toEqual(14);
         });
     });
 
@@ -713,38 +625,6 @@ describe('model.dimension', function() {
                 scrollX: true
             });
             expect(dimensionModel.getScrollXHeight()).toEqual(17);
-        });
-    });
-
-    describe('setColumnWidth()', function() {
-        var currentColumnWidthList;
-        beforeEach(function() {
-            columnModelInstance.set({
-                columnFixIndex: 3
-            });
-            dimensionModel = new Model.Dimension(defaultConfig);
-            dimensionModel.set({
-                minimumColumnWidth: 20,
-                columnWidthList: [50, 50, 50, 50, 50]
-            });
-
-            currentColumnWidthList = dimensionModel._calculateColumnWidthList([50, 50, 50, 50, 50]);
-            dimensionModel._setColumnWidthVariables(currentColumnWidthList);
-        });
-
-        it('값이 잘 변경되는지 확인한다.', function() {
-            dimensionModel.setColumnWidth(0, 100);
-            expect(dimensionModel.getColumnWidthList()[0]).toEqual(100);
-            dimensionModel.setColumnWidth(1, 100);
-            expect(dimensionModel.getColumnWidthList()[1]).toEqual(100);
-            dimensionModel.setColumnWidth(2, 100);
-            expect(dimensionModel.getColumnWidthList()[2]).toEqual(100);
-            dimensionModel.setColumnWidth(3, 100);
-            expect(dimensionModel.getColumnWidthList()[3]).toEqual(100);
-            dimensionModel.setColumnWidth(4, 100);
-            expect(dimensionModel.getColumnWidthList()[4]).toEqual(100);
-            dimensionModel.setColumnWidth(5, 100);
-            expect(dimensionModel.getColumnWidthList()[5]).not.toBeDefined();
         });
     });
 
