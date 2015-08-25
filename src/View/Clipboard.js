@@ -258,7 +258,6 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         var grid = this.grid,
             keyMap = grid.keyMap,
             focusModel = grid.focusModel,
-            isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
@@ -278,11 +277,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
                 this._paste();
                 break;
             default:
-                isKeyIdentified = false;
                 break;
-        }
-        if (isKeyIdentified) {
-            keyDownEvent.preventDefault();
         }
     },
 
