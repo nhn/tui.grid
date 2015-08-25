@@ -17,7 +17,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
      * 클립보드 focus 이벤트 핸들러
      * @private
      */
-    _onFocus: function(ev) {
+    _onFocus: function() {
         var focusModel = this.grid.focusModel,
             focused = focusModel.which(),
             rowIdx;
@@ -39,7 +39,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
     },
     /**
      * 랜더링 한다.
-     * @return {View.Clipboard}
+     * @return {View.Clipboard} Self
      */
     render: function() {
         return this;
@@ -63,6 +63,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
     /**
      * keyDown 이벤트 핸들러
      * @param {event} keyDownEvent 이벤트 객체
+     * @return {boolean} False if locked
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
@@ -81,11 +82,33 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             this._keyIn(keyDownEvent);
         }
         this._lock();
+    },
+    /**
+     * Returns true if the keyCode value is a character (not a function key).
+     * @param  {number} keyCode Key code
+     * @return {boolean} True if the keyCode value is a character
+     */
+    _isCharKey: function(keyCode) {
+        var isAlphaNum = keyCode >= 48 && keyCode <= 90,
+            isSpecialChar = (keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222);
 
+        return isAlphaNum || isSpecialChar;
+    },
+    /**
+     * Makes currently focused cell to be editable if the edit type of the cell is text-*.
+     * (text, text-password, text-convertible).
+     */
+    _startEditFocusedCell: function() {
+        var focused = this.grid.focusModel.which(),
+            editType = this.grid.columnModel.getEditType(focused.columnName);
+
+        if (editType.indexOf('text') === 0) {
+            this.grid.focusIn(focused.rowKey, focused.columnName);
+        }
     },
     /**
      * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
-     * @param {event} keyDownEvent 이벤트 객체
+     * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
     _keyIn: function(keyDownEvent) {
@@ -140,9 +163,10 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             case keyMap['TAB']:
                 grid.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
-            case keyMap['CHAR_V']:
-                break;
             default:
+                if (this._isCharKey(keyCode)) {
+                    this._startEditFocusedCell();
+                }
                 isKeyIdentified = false;
                 break;
         }
@@ -150,7 +174,6 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             keyDownEvent.preventDefault();
         }
         selection.endSelection();
-        return isKeyIdentified;
     },
     /**
      * enter 또는 space 가 입력되었을 때, 처리하는 로직
@@ -215,16 +238,16 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             case keyMap['TAB']:
                 grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
-            case keyMap['CHAR_V']:
-                break;
             default:
+                if (this._isCharKey(keyCode)) {
+                    this._startEditFocusedCell();
+                }
                 isKeyIdentified = false;
                 break;
         }
         if (isKeyIdentified) {
             keyDownEvent.preventDefault();
         }
-        return isKeyIdentified;
     },
     /**
      * ctrl 가 눌린 상태에서의 key down event handler
@@ -258,7 +281,9 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
                 isKeyIdentified = false;
                 break;
         }
-        return isKeyIdentified;
+        if (isKeyIdentified) {
+            keyDownEvent.preventDefault();
+        }
     },
 
     /****************
@@ -354,7 +379,6 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         if (isKeyIdentified) {
             keyDownEvent.preventDefault();
         }
-        return isKeyIdentified;
     },
     /**
      * text type 의 editOption cell 의 data 를 빈 스트링으로 세팅한다.
@@ -375,14 +399,14 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         if (selection.hasSelection()) {
             //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
             range = selection.getRange();
-            for (i = range.row[0]; i < range.row[1] + 1; i++) {
+            for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
                 rowKey = dataModel.at(i).get('rowKey');
-                for (j = range.column[0]; j < range.column[1] + 1; j++) {
+                for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
                     columnName = columnModelList[j]['columnName'];
                     grid.del(rowKey, columnName, true);
                 }
             }
-            grid.renderModel.refresh();
+            grid.renderModel.refresh(true);
         } else {
             grid.del(rowKey, columnName);
         }
