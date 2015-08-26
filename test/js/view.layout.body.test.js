@@ -98,7 +98,8 @@ describe('view.layout.body', function() {
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
-            var $colgroup, $cols;
+            var extraWidth = View.Layout.Body.extraWidth,
+                $colgroup, $cols;
 
             body.render();
 
@@ -107,9 +108,9 @@ describe('view.layout.body', function() {
 
             expect($colgroup.length).toBe(1);
             expect($cols.length).toBe(3);
-            expect($cols.eq(1).width()).toBe(30);
+            expect($cols.eq(1).width()).toBe(30 - extraWidth);
             expect($cols.eq(1).attr('columnname')).toBe('c1');
-            expect($cols.eq(2).width()).toBe(40);
+            expect($cols.eq(2).width()).toBe(40 - extraWidth);
             expect($cols.eq(2).attr('columnname')).toBe('c2');
         });
 
@@ -156,7 +157,8 @@ describe('view.layout.body', function() {
 
     describe('grid.dimensionModel의 columnWidthChanged 이벤트 발생시', function() {
         it('각 col요소의 넓이를 재설정한다.', function() {
-            var $cols;
+            var extraWidth = View.Layout.Body.extraWidth,
+                $cols;
 
             body.render();
             $cols = body.$el.find('col');
@@ -165,7 +167,7 @@ describe('view.layout.body', function() {
             expect($cols.eq(1).width()).toBe(10);
 
             grid.dimensionModel.trigger('columnWidthChanged');
-            expect($cols.eq(1).width()).toBe(30);
+            expect($cols.eq(1).width()).toBe(30 - extraWidth);
         });
     });
 
