@@ -17,6 +17,7 @@
     "bin",
     "node_modules",
     "bower_components",
+    "performance",
     "test",
     "data",
     "bower.json",
