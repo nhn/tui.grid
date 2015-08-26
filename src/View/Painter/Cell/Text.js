@@ -293,7 +293,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
      * 더블클릭으로 간주할 time millisecond 설정
      * @type {number}
      */
-    doubleClickDuration: 800,
+    doubleClickDuration: 500,
     redrawAttributes: ['isDisabled', 'isEditable', 'value'],
     eventHandler: {
         'click': '_onClick',

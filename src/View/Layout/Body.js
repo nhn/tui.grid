@@ -113,10 +113,8 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
     render: function() {
         var grid = this.grid,
             whichSide = this.whichSide,
-            selection,
-            rowList,
-            tableHtml,
-            collection = grid.renderModel.getCollection(whichSide)
+            collection = grid.renderModel.getCollection(whichSide),
+            selection, rowList, tableHtml;
 
         this.destroyChildren();
 
