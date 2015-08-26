@@ -19,7 +19,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     cellFactory: null,
     events: {
         'click': '_onClick',
-        'dblclick': '_onDblclick',
+        'dblclick': '_onDblClick',
         'mousedown': '_onMouseDown',
         'selectstart': '_preventDrag',
         'dragstart': '_preventDrag',
@@ -325,7 +325,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     },
     /**
      * drag 이벤트 발생시 이벤트 핸들러
-     * @returns {boolean}
+     * @returns {boolean} false
      * @private
      */
     _preventDrag: function() {
@@ -361,7 +361,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {MouseEvent} mouseEvent 이벤트 객체
      * @private
      */
-    _onDblclick: function(mouseEvent) {
+    _onDblClick: function(mouseEvent) {
         var eventData = this.createEventData(mouseEvent),
             $target = $(mouseEvent.target);
 

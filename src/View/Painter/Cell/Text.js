@@ -293,10 +293,9 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
      * 더블클릭으로 간주할 time millisecond 설정
      * @type {number}
      */
-    doubleClickDuration: 500,
     redrawAttributes: ['isDisabled', 'isEditable', 'value'],
     eventHandler: {
-        'click': '_onClick',
+        'dblclick': '_onDblClick',
         'mousedown': '_onMouseDown',
         'blur input': '_onBlurConvertible',
         'keydown input': '_onKeyDown',
@@ -482,30 +481,16 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
         }
     },
     /**
-     * click 이벤트 핸들러
-     * @param {event} clickEvent 이벤트 객체
-     * @private
+     * Event Handler for double click event.
+     * @param  {MouseEvent} mouseEvent - MouseEvent object
      */
-    _onClick: function(clickEvent) {
-        var that = this,
-            $target = $(clickEvent.target),
+    _onDblClick: function (mouseEvent) {
+        var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
             address = this._getCellAddress($td);
 
-        if (this._isEditingCell(address)) {
-            return;
-        }
-        if (this._isClickedCell($td)) {
+        if (!this._isEditingCell(address)) {
             this._startEdit($td);
-        } else {
-            clearTimeout(this.timeoutIdForClick);
-            this.clicked = address;
-            this.timeoutIdForClick = setTimeout(function() {
-                that.clicked = {
-                    rowKey: null,
-                    columnName: null
-                };
-            }, this.doubleClickDuration);
         }
     },
     /**
@@ -519,9 +504,5 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
         if ($(event.target).is('input')) {
             event.stopPropagation();
         }
-    },
-    _isClickedCell: function($td) {
-        var address = this._getCellAddress($td);
-        return !!(this.clicked.rowKey === address.rowKey && this.clicked.columnName === address.columnName);
     }
 });
