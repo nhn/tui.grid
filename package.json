@@ -1,6 +1,6 @@
 {
   "name": "application-grid",
-  "version": "1.0.2a",
+  "version": "1.0.3",
   "description": "grid",
   "main": "Gruntfile.js",
   "directories": {

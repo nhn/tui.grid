@@ -16,7 +16,7 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 * jquery ~1.8.3
 * jquery-json ~2.5.1
 * backbone ~1.1.2
-* ne-code-snippet ~1.0.1
+* ne-code-snippet ~1.0.2
 * component-pagination ~1.0.0
 
 ## Test environment
@@ -34,6 +34,7 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://nhnent.github.io/fe.application-grid/1.0.3">1.0.3</a> | 배포 | 2015.09 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.2a">1.0.2a</a> | 배포 | 2015.08 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.2">1.0.2</a> | 배포 | 2015.07 | FE개발팀 <e0242@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.1">1.0.1</a> | 배포 | 2015.06 | FE개발팀 <e0242@nhnent.com> |
