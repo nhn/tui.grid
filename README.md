@@ -40,7 +40,7 @@ https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.1">1.0.1</a> | 2015.06 수시배포 | 2015.06 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0b">1.0.0b</a> | 2015.06 수시배포 | 2015.06 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.0a">1.0.0a</a> | 2015.06 수시배포 | 2015.06 | FE개발팀 <dl_javascript@nhnent.com> |
-| <a href="https://nhnent.github.io/fe.application-grid/1.0.0">1.0.0</a> | 2015.06 수시배포 | 2015.05 | FE개발팀 <dl_javascript@nhnent.com> |
+| <a href="https://nhnent.github.io/fe.application-grid/1.0.0">1.0.0</a> | 2015.05 최초배포 | 2015.05 | FE개발팀 <dl_javascript@nhnent.com> |
 | 0.9.0 | 최초개발 | 2014.11 | FE개발팀 <dl_javascript@nhnent.com> |
 
 ## License
