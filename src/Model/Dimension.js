@@ -6,16 +6,16 @@
 'use strict';
 
     /**
+     * The width of the border of the dimension.
      * @const
      * @type {number}
-     * The width of the border of the dimension.
      */
 var BORDER_WIDTH = 1,
 
     /**
+     * The width of the border of table row.
      * @const
      * @type {number}
-     * The width of the border of table row.
      */
     ROW_BORDER_WIDTH = 1;
 
@@ -56,14 +56,14 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         Model.Base.prototype.initialize.apply(this, arguments);
 
         /**
-         * @type {boolean[]}
          * An array of the fixed flags of the columns
+         * @type {boolean[]}
          */
         this._columnWidthFixedFlags = null;
 
         /**
-         * @type {number[]}
          * An array of the minimum width of the columns
+         * @type {number[]}
          */
         this._minColumnWidthList = null;
 
@@ -180,7 +180,8 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * This method will be called recursively by _reduceExcessColumnWidth.
      * @param {number[]} columnWidthList - An array of column Width
      * @param {number} totalRemainWidth - Remaining excess width (negative number)
-     * @param {{index:number, width:number}[]} availableList - An array of infos about available column
+     * @param {object[]} availableList - An array of infos about available column.
+     *                                 Each item of the array has {index:number, width:number}.
      * @return {number[]} - A new array of column widths
      * @private
      */
