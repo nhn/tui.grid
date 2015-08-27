@@ -386,45 +386,6 @@ describe('view.painter.cell.text', function() {
             });
         });
 
-        describe('_onClick', function() {
-            var $td, clickEvent;
-
-            beforeEach(function() {
-                var $table;
-
-                $table = $('<table><tr key="0"><td></td></tr></table>');
-                $td = $table.find('td').attr('columnname', 'c1');
-                $td.html(cellPainter.getContentHtml(options));
-                clickEvent = {
-                    target: $td[0]
-                };
-                cellPainter._startEdit = jasmine.createSpy('_startEdit');
-                jasmine.clock().install();
-            });
-
-            afterEach(function() {
-                jasmine.clock().uninstall();
-            });
-
-            it('800 ms 가 지난 후 click 이벤트가 발생하면 startEdit 를 호출하지 않는다.', function() {
-                cellPainter._onClick(clickEvent);
-                expect(cellPainter.clicked).toEqual({
-                    rowKey: '0',
-                    columnName: 'c1'
-                });
-                jasmine.clock().tick(900);
-                cellPainter._onClick(clickEvent);
-                expect(cellPainter._startEdit).not.toHaveBeenCalled();
-            });
-
-            it('400 ms 가 지나기 전에 click 이벤트가 발생하면 startEdit 를 호출한다.', function() {
-                cellPainter._onClick(clickEvent);
-                jasmine.clock().tick(100);
-                cellPainter._onClick(clickEvent);
-                expect(cellPainter._startEdit).toHaveBeenCalled();
-            });
-        });
-
         describe('KeyDownSwitch', function() {
             var $target = $('<div>');
 
