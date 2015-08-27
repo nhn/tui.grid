@@ -185,10 +185,11 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
         var $target = $(blurEvent.target),
             rowKey = this.getRowKey($target),
             columnName = this.getColumnName($target);
+
+        this._executeInputEventHandler(blurEvent, 'blur');
         if (this._isEdited($target)) {
             this.grid.setValue(rowKey, columnName, $target.val());
         }
-        this._executeInputEventHandler(blurEvent, 'blur');
         this.grid.selection.enable();
     },
 
@@ -211,8 +212,8 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      * @private
      */
     _onKeyDown: function(keyboardEvent) {
-        View.Base.Painter.Cell.prototype._onKeyDown.call(this, keyboardEvent);
         this._executeInputEventHandler(keyboardEvent, 'keydown');
+        View.Base.Painter.Cell.prototype._onKeyDown.call(this, keyboardEvent);
     },
 
     /**
@@ -233,18 +234,20 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
     /**
      * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
      * 해당 이벤트 핸들러를 호출해준다.
-     * @param  {Event} event - 이벤트 객체
-     * @param  {string} eventName - 이벤트명
+     * @param {Event} event - 이벤트 객체
+     * @param {string} eventName - 이벤트명
+     * @return {boolean} Return value of the event handler. Null if there's no event handler.
      */
     _executeInputEventHandler: function(event, eventName) {
         var $input = $(event.target),
             cellInfo = this._getCellInfoFromInput($input),
             columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
-            eventHandler = ne.util.pick(columnModel, 'editOption', 'inputEvent', eventName);
+            eventHandler = ne.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
 
         if (_.isFunction(eventHandler)) {
-            eventHandler(event, cellInfo);
+            return eventHandler(event, cellInfo);
         }
+        return null;
     },
 
     /**
