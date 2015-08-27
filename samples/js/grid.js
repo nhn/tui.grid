@@ -1,4 +1,4 @@
-/*!grid v1.0.2a | NHN Ent. FE Development Team*/
+/*!grid v1.0.3 | NHN Ent. FE Development Team*/
 (function(){
 /**
  * @fileoverview Grid 에서 사용할 모든 Backbone 의 View, Model, Collection 의 Base 클래스 정의.
@@ -933,7 +933,7 @@ Data.ColumnModel = Model.Base.extend(/**@lends Data.ColumnModel.prototype */{
      * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
      * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
      */
-    getIngoredColumnNameList: function() {
+    getIgnoredColumnNameList: function() {
         var columnModelLsit = this.get('columnModelList'),
             ignoreColumnNameList = [];
         _.each(columnModelLsit, function(columnModel) {
@@ -2160,8 +2160,27 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
     },
 
     /**
+     * 해당 row가 수정된 Row인지 여부를 반환한다.
+     * @param {Object} row - row 데이터
+     * @param {Object} originalRow - 원본 row 데이터
+     * @param {Array} filteringColumnList - 비교에서 제외할 컬럼명
+     * @return {boolean} - 수정여부
+     */
+    _isModifiedRow: function(row, originalRow, filteringColumnList) {
+        var filtered = _.omit(row, filteringColumnList);
+        var result = _.some(filtered, function(value, columnName) {
+            if (typeof value === 'object') {
+                return ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
+            }
+            return value !== originalRow[columnName];
+        }, this);
+
+        return result;
+    },
+
+    /**
      * 수정된 rowList 를 반환한다.
-     * @param {Object} options
+     * @param {Object} options 옵션 객체
      *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
@@ -2174,52 +2193,34 @@ Data.RowList = Collection.Base.extend(/**@lends Data.RowList.prototype */{
             isOnlyRowKeyList = options && options.isOnlyRowKeyList,
             original = isRaw ? this.originalRowList : this._removePrivateProp(this.originalRowList),
             current = isRaw ? this.toJSON() : this._removePrivateProp(this.toJSON()),
+            filteringColumnList = options && options.filteringColumnList,
             result = {
-                'createList' : [],
-                'updateList' : [],
-                'deleteList' : []
-            },
-            filteringColumnMap = {},
-            filteringColumnList = _.union(options && options.filteringColumnList || [],
-                this.grid.columnModel.getIngoredColumnNameList()),
-            item;
-
-        _.each(filteringColumnList, function(columnName) {
-            filteringColumnMap[columnName] = true;
-        });
+                createList: [],
+                updateList: [],
+                deleteList: []
+            };
 
         original = _.indexBy(original, 'rowKey');
         current = _.indexBy(current, 'rowKey');
+        filteringColumnList = _.union(filteringColumnList, this.grid.columnModel.getIgnoredColumnNameList());
 
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
-            var isDiff,
-                originalRow = original[rowKey];
-            item = isOnlyRowKeyList ? row['rowKey'] : row;
+            var originalRow = original[rowKey],
+                item = isOnlyRowKeyList ? row['rowKey'] : row;
+
             if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
                     result.createList.push(item);
-                } else {
-                    //filtering 이 설정되어 있다면 filter 를 한다.
-                    _.each(row, function(value, columnName) {
-                        if (!filteringColumnMap[columnName]) {
-                            if (typeof value === 'object') {
-                                isDiff = ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
-                            } else {
-                                isDiff = value !== originalRow[columnName];
-                            }
-                            if (isDiff) {
-                                result.updateList.push(item);
-                            }
-                        }
-                    }, this);
+                } else if (this._isModifiedRow(row, originalRow, filteringColumnList)) {
+                    result.updateList.push(item);
                 }
             }
         }, this);
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            item = isOnlyRowKeyList ? obj['rowKey'] : obj;
+            var item = isOnlyRowKeyList ? obj['rowKey'] : obj;
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }
@@ -2277,6 +2278,7 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
         //원본 rowList 의 상태 값 listening
         this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this)
             .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this)
+            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange, this)
             .listenTo(lside, 'valueChange', this._onValueChange, this)
             .listenTo(rside, 'valueChange', this._onValueChange, this);
     },
@@ -2287,6 +2289,13 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
      */
     _onValueChange: function(rowIndex) {
         this.executeRelation(rowIndex);
+    },
+    /**
+     * Event handler for 'chage:width' event on Dimension.
+     */
+    _onWidthChange: function() {
+        var dimension = this.grid.dimensionModel;
+        this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
     },
     /**
      * 내부 변수를 초기화 한다.
@@ -2500,6 +2509,23 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
  * @fileoverview 크기에 관련된 데이터를 다루는 모델
  * @author NHN Ent. FE Development Team
  */
+(function() {
+'use strict';
+
+    /**
+     * @const
+     * @type {number}
+     * The width of the border of the dimension.
+     */
+var BORDER_WIDTH = 1,
+
+    /**
+     * @const
+     * @type {number}
+     * The width of the border of table row.
+     */
+    ROW_BORDER_WIDTH = 1;
+
 /**
  * 크기 관련 데이터 저장
  * @constructor Model.Dimension
@@ -2535,10 +2561,24 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     initialize: function() {
         Model.Base.prototype.initialize.apply(this, arguments);
+
+        /**
+         * @type {boolean[]}
+         * An array of the fixed flags of the columns
+         */
+        this._columnWidthFixedFlags = null;
+
+        /**
+         * @type {number[]}
+         * An array of the minimum width of the columns
+         */
+        this._minColumnWidthList = null;
+
         this.columnModel = this.grid.columnModel;
         this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
+
         this._initColumnWidthVariables();
         this._setBodyHeight();
     },
@@ -2557,120 +2597,173 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             availableTotalWidth -= this.get('scrollBarSize');
         }
         if (this.columnModel.get('columnFixIndex') > 0) {
-            availableTotalWidth -= 1;
+            availableTotalWidth -= ROW_BORDER_WIDTH;
         }
         return availableTotalWidth;
     },
 
     /**
-     * 주어진 컬럼 넓이값 배열에서 minimumColumnWidth 값보다 작은 값이 없도록 수정해준다.
-     * @param {array} columnWidthList - 컬럼 넓이값 배열
+     * Makes all width of columns not less than minimumColumnWidth.
+     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
+     * @return {number[]} - 수정된 새로운 넓이값 배열
      * @private
      */
     _applyMinimumColumnWidth: function(columnWidthList) {
-        var minWidth = this.get('minimumColumnWidth');
+        var minWidthList = this._minColumnWidthList,
+            appliedList = _.clone(columnWidthList);
 
-        _.each(columnWidthList, function(width, index) {
+        _.each(appliedList, function(width, index) {
+            var minWidth = minWidthList[index];
             if (width < minWidth) {
-                columnWidthList[index] = minWidth;
+                appliedList[index] = minWidth;
             }
         });
+        return appliedList;
     },
 
     /**
-     * 컬럼 넓이값의 배열에서, 넓이가 지정되지 않은 컬럼들의 값을 균등하게 채워준다.
-     * @param {array} columnWidthList - 컬럼 넓이값 배열
-     * @param {number} totalWidth - 전체 넓이
-     * @return {array} - 값이 모두 채워진 새로운 배열
+     * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
+     * @param {number[]} columnWidthList - An array of column widths
+     * @return {number[]} - A new array of column widths
      * @private
      */
-    _getAssignedColumnWidthList: function(columnWidthList, totalWidth) {
-        var columnLength = columnWidthList.length,
-            assignedList = Array(columnLength),
-            remainTotalWidth = totalWidth,
-            remainIndexes = [],
-            remainAvgWidth;
+    _fillEmptyColumnWidth: function(columnWidthList) {
+        var totalWidth = this._getAvailableTotalWidth(columnWidthList.length),
+            remainTotalWidth = totalWidth - Util.sum(columnWidthList),
+            emptyIndexes = [];
 
         _.each(columnWidthList, function(width, index) {
-            if (width > 0) {
-                assignedList[index] = width;
-                remainTotalWidth -= width;
-            } else {
-                remainIndexes.push(index);
+            if (!width) {
+                emptyIndexes.push(index);
             }
         });
-        remainAvgWidth = Math.round(remainTotalWidth / remainIndexes.length);
-
-        _.each(remainIndexes, function(remainIndex, index) {
-            if (index === remainIndexes.length - 1) {
-                assignedList[remainIndex] = remainTotalWidth;
-            } else {
-                assignedList[remainIndex] = remainAvgWidth;
-                remainTotalWidth -= remainAvgWidth;
-            }
-        });
-        return assignedList;
+        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
     },
 
     /**
-     * 컬럼 넓이값의 배열에서, fixed가 아닌 컬럼의 넓이에 추가적인 넓이값을 균등하게 더해준다.
-     * @param {array} columnWidthList - 컬럼 넓이값 배열
-     * @param {number} extraTotalWidth - 추가될 전체 넓이
-     * @param {number} variableCount - 넓이가 가변적인(fixed가 아닌) 컬럼의 개수
+     * Adds extra widths of the column equally.
+     * @param {number[]} columnWidthList - An array of column widths
+     * @param {number} totalExtraWidth - Total extra width
+     * @return {number[]} - A new array of column widths
      * @private
      */
-    _addExtraColumnWidth: function(columnWidthList, extraTotalWidth, variableCount) {
-        var extraWidthAvg = Math.round(extraTotalWidth / variableCount),
-            fixedFlags = this.get('columnWidthFixedFlags'),
-            extraAddedCount = 0,
-            extraWidth;
+    _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
+        var fixedFlags = this._columnWidthFixedFlags,
+            columnIndexes = [];
+
+        _.each(fixedFlags, function(flag, index) {
+            if (!flag) {
+                columnIndexes.push(index);
+            }
+        });
+        return this._distributeExtraWidthEqually(columnWidthList, totalExtraWidth, columnIndexes);
+    },
+
+    /**
+     * Reduces excess widths of the column equally.
+     * @param {number[]} columnWidthList - An array of column widths
+     * @param {number} totalExcessWidth - Total excess width (negative number)
+     * @return {number[]} - A new array of column widths
+     * @private
+     */
+    _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
+        var minWidthList = this._minColumnWidthList,
+            fixedFlags = this._columnWidthFixedFlags,
+            availableList = [];
 
         _.each(columnWidthList, function(width, index) {
             if (!fixedFlags[index]) {
-                if (extraAddedCount === variableCount - 1) {
-                    extraWidth = extraTotalWidth;
-                } else {
-                    extraWidth = extraWidthAvg;
-                }
-                columnWidthList[index] += extraWidth;
-                extraTotalWidth -= extraWidth;
-                extraAddedCount += 1;
+                availableList.push({
+                    index: index,
+                    width: width - minWidthList[index]
+                });
             }
         });
+        return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
     },
 
     /**
-     * 컬럼 넓이값의 배열을 받아, 전체 넓이에 맞게 각 넓이값을 재조정하여 새로운 배열로 반환한다.
-     * @param {array} columnWidthList - 컬럼 넓이값 배열
-     * @return {array} - 조정된 넓이갑 배열
+     * Reduce the (remaining) excess widths of the column.
+     * This method will be called recursively by _reduceExcessColumnWidth.
+     * @param {number[]} columnWidthList - An array of column Width
+     * @param {number} totalRemainWidth - Remaining excess width (negative number)
+     * @param {{index:number, width:number}[]} availableList - An array of infos about available column
+     * @return {number[]} - A new array of column widths
      * @private
      */
-    _calculateColumnWidthList: function(columnWidthList) {
-        var columnLength = columnWidthList.length,
-            fixedFlags = this.get('columnWidthFixedFlags'),
-            totalWidth = this._getAvailableTotalWidth(columnLength),
-            newWidthList = this._getAssignedColumnWidthList(columnWidthList, totalWidth),
-            extraTotalWidth = totalWidth,
-            variableCount = 0; // 가변적인 컬럼(fixed가 아닌)의 수
+    _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
+        var avgValue = Math.round(totalRemainWidth / availableList.length),
+            newAvailableList = [],
+            columnIndexes;
 
-        _.each(newWidthList, function(width, index) {
-            extraTotalWidth -= width;
-            if (!fixedFlags[index]) {
-                variableCount += 1;
+        _.each(availableList, function(available) {
+            // note that totalRemainWidth and avgValue are negative number.
+            if (available.width < Math.abs(avgValue)) {
+                totalRemainWidth += available.width;
+                columnWidthList[available.index] -= available.width;
+            } else {
+                newAvailableList.push(available);
             }
         });
-
-        if (extraTotalWidth > 0) {
-            if (variableCount) {
-                this._addExtraColumnWidth(newWidthList, extraTotalWidth, variableCount);
-            } else {
-                // 모든 컬럼 넓이가 고정(fixed)이면 마지막 컬럼의 넓이를 더해준다.
-                newWidthList[columnLength - 1] += extraTotalWidth;
-            }
+        // call recursively until all available width are less than average
+        if (availableList.length > newAvailableList.length) {
+            return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
         }
-        this._applyMinimumColumnWidth(newWidthList);
+        columnIndexes = _.pluck(availableList, 'index');
+        return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
+    },
 
-        return newWidthList;
+    /**
+     * Distributes the extra width equally to each column at specified indexes.
+     * @param {number[]} columnWidthList - An array of column width
+     * @param {number} extraWidth - Extra width
+     * @param {number[]} columnIndexes - An array of indexes of target columns
+     * @return {number[]} - A new array of column widths
+     * @private
+     */
+    _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
+        var length = columnIndexes.length,
+            avgValue = Math.round(extraWidth / length),
+            errorValue = (avgValue * length) - extraWidth, // to correct total width
+            resultList = _.clone(columnWidthList);
+
+        _.each(columnIndexes, function(columnIndex) {
+            resultList[columnIndex] += avgValue;
+        });
+        resultList[_.last(columnIndexes)] -= errorValue;
+
+        return resultList;
+    },
+
+    /**
+     * Adjust the column widths to make them fit into the dimension.
+     * @param {number[]} columnWidthList - An array of column width
+     * @param {boolean} fitToReducedTotal - If set to true and the total width is smaller than dimension(width),
+     *                                    the column widths will be reduced.
+     * @return {number[]} - A new array of column widths
+     * @private
+     */
+    _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
+        var columnLength = columnWidthList.length,
+            availableWidth = this._getAvailableTotalWidth(columnLength),
+            totalExtraWidth = availableWidth - Util.sum(columnWidthList),
+            fixedCount = _.filter(this._columnWidthFixedFlags).length,
+            adjustedList;
+
+        if (totalExtraWidth > 0) {
+            if (columnLength > fixedCount) {
+                adjustedList = this._addExtraColumnWidth(columnWidthList, totalExtraWidth);
+            } else {
+                // If all column has fixed width, add extra width to the last column.
+                adjustedList = _.clone(columnWidthList);
+                adjustedList[columnLength - 1] += totalExtraWidth;
+            }
+        } else if (fitToReducedTotal && totalExtraWidth < 0) {
+            adjustedList = this._reduceExcessColumnWidth(columnWidthList, totalExtraWidth);
+        } else {
+            adjustedList = columnWidthList;
+        }
+        return adjustedList;
     },
 
     /**
@@ -2679,19 +2772,33 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     _initColumnWidthVariables: function() {
         var columnModelList = this.columnModel.get('visibleList'),
+            commonMinWidth = this.get('minimumColumnWidth'),
             widthList = [],
             fixedFlags = [],
-            calculatedList;
+            minWidthList = [],
+            calculate;
 
         _.each(columnModelList, function(columnModel) {
-            widthList.push(Math.max(columnModel.width, 0));
-            fixedFlags.push(columnModel.isFixedWidth);
+            var width = columnModel.width > 0 ? columnModel.width : 0,
+                minWidth = Math.max(width, commonMinWidth);
+            // If the width is not assigned (not positive number), set it to zero (not applying minimum width)
+            // so that #_fillEmptyColumnWidth() can detect which one is empty.
+            // After then, minimum width will be applied by #_applyMinimumColumnWidth().
+            widthList.push(width ? minWidth : 0);
+            minWidthList.push(minWidth);
+            fixedFlags.push(!!columnModel.isFixedWidth);
         });
 
-        this.set('columnWidthFixedFlags', fixedFlags);
+        this._columnWidthFixedFlags = fixedFlags;
+        this._minColumnWidthList = minWidthList;
 
-        calculatedList = this._calculateColumnWidthList(widthList);
-        this._setColumnWidthVariables(calculatedList, true);
+        // note that the calling order of functions is bottom-to-top.
+        calculate = _.compose(
+            this._adjustColumnWidthList,
+            this._applyMinimumColumnWidth,
+            this._fillEmptyColumnWidth
+        );
+        this._setColumnWidthVariables(calculate.call(this, widthList), true);
     },
 
     /**
@@ -2709,6 +2816,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         return frameWidth;
     },
+
     /**
      * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
      * @param {Array} widthList 너비 리스트 배열
@@ -2716,8 +2824,11 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * @private
      */
     _getFrameWidth: function(widthList) {
-        //border 값(1px 도 함께 더한다.)
-        return widthList.length ? Util.sum(widthList) + widthList.length + 1 : 0;
+        var frameWidth = 0;
+        if (widthList.length) {
+            frameWidth = Util.sum(widthList) + ((widthList.length + 1) * ROW_BORDER_WIDTH);
+        }
+        return frameWidth;
     },
 
     /**
@@ -2736,7 +2847,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         rsideWidthList = columnWidthList.slice(columnFixIndex);
 
         lsideWidth = this._getFrameWidth(lsideWidthList);
-        if (maxLeftSideWidth < lsideWidth) {
+        if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
             lsideWidthList = this._adjustLeftSideWidthList(lsideWidthList, maxLeftSideWidth);
             lsideWidth = this._getFrameWidth(lsideWidthList);
             columnWidthList = lsideWidthList.concat(rsideWidthList);
@@ -2749,7 +2860,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         });
 
         if (isSaveWidthList) {
-            this.set('originalWidthList', columnWidthList);
+            this.set('originalWidthList', _.clone(columnWidthList));
         }
         this.trigger('columnWidthChanged');
     },
@@ -2762,11 +2873,16 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     _getMinLeftSideWidth: function() {
         var minimumColumnWidth = this.get('minimumColumnWidth'),
             columnFixIndex = this.columnModel.get('columnFixIndex'),
-            minWidth;
-        //border 값(1px 도 함께 더한다.) columnFixIndex 가 0보다 클 경우, 좌우 나누어진 영역에 대한 보더값도 더한다.
-        minWidth = columnFixIndex ? (columnFixIndex * (minimumColumnWidth + 1)) + 1 : 0;
+            minWidth = 0,
+            borderWidth;
+
+        if (columnFixIndex) {
+            borderWidth = (columnFixIndex + 1) * ROW_BORDER_WIDTH;
+            minWidth = borderWidth + (minimumColumnWidth * columnFixIndex);
+        }
         return minWidth;
     },
+
     /**
      * 열 고정 영역의 maximum width 값을 구한다.
      * @return {number} 열고정 영역의 최대 너비값.
@@ -2774,14 +2890,18 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     _getMaxLeftSideWidth: function() {
         var maxWidth = Math.ceil(this.get('width') * 0.9);
-        maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+
+        if (maxWidth) {
+            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+        }
         return maxWidth;
     },
+
     /**
      * 계산한 cell 의 위치를 리턴한다.
-     * @param {Number|String} rowKey 데이터의 키값
-     * @param {String} columnName   칼럼명
-     * @return {{top: number, left: number, right: number, bottom: number}}
+     * @param {Number|String} rowKey - 데이터의 키값
+     * @param {String} columnName - 칼럼명
+     * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
      */
     getCellPosition: function(rowKey, columnName) {
         var top, left = 0, right, bottom, i = 0,
@@ -2823,6 +2943,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
             bottom: bottom
         };
     },
+
     /**
      * columnFixIndex 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
@@ -2848,6 +2969,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         return lsideWidthList;
     },
+
     /**
      * 그리드의 body height 를 계산하여 할당한다.
      * @private
@@ -2859,13 +2981,15 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         }
         this.set('bodyHeight', height);
     },
+
     /**
      * 현재 화면에 보이는 row 개수를 반환
      * @return {number} 화면에 보이는 행 개수
      */
     getDisplayRowCount: function() {
-        return Util.getDisplayRowCount(this.get('bodyHeight') - this.get('toolbarHeight'), this.get('rowHeight'));
+        return Util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
     },
+
     /**
      * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
      * @return {number} 수평 스크롤바의 높이
@@ -2873,13 +2997,14 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
     getScrollXHeight: function() {
         return +this.get('scrollX') * this.get('scrollBarSize');
     },
+
     /**
      * width 값 변경시 각 column 별 너비를 계산한다.
      * @private
      */
     _onWidthChange: function() {
-        var curColumnWidthList = this.get('columnWidthList');
-        this._setColumnWidthVariables(this._calculateColumnWidthList(curColumnWidthList));
+        var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
+        this._setColumnWidthVariables(widthList);
     },
 
     /**
@@ -2889,43 +3014,57 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      */
     setColumnWidth: function(index, width) {
         var columnWidthList = this.get('columnWidthList'),
-            fixedFlags = this.get('columnWidthFixedFlags');
+            fixedFlags = this._columnWidthFixedFlags,
+            minWidth = this._minColumnWidthList[index],
+            adjustedList;
 
         if (!fixedFlags[index] && columnWidthList[index]) {
-            columnWidthList[index] = width;
-            this._setColumnWidthVariables(this._calculateColumnWidthList(columnWidthList));
+            columnWidthList[index] = Math.max(width, minWidth);
+            // makes width of the target column fixed temporarily
+            // to not be influenced while adjusting column widths.
+            fixedFlags[index] = true;
+            adjustedList = this._adjustColumnWidthList(columnWidthList);
+            fixedFlags[index] = false;
+            this._setColumnWidthVariables(adjustedList);
         }
     },
+
+    /**
+     * Returns the height of table body.
+     * @param  {number} height - The height of the dimension
+     * @return {number} The height of the table body
+     */
+    _getBodyHeight: function(height) {
+        return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
+    },
+
+    /**
+     * Returns the minimum height of table body.
+     * @return {number} The minimum height of table body
+     */
+    _getMinBodyHeight: function() {
+        return this.get('rowHeight') + (ROW_BORDER_WIDTH * 2) + this.getScrollXHeight();
+    },
+
+    /**
+     * Sets the height of the dimension.
+     * (Resets the bodyHeight and displayRowCount relative to the dimension height)
+     * @param  {number} height - The height of the dimension
+     */
+    setHeight: function(height) {
+        this.set('bodyHeight', Math.max(this._getBodyHeight(height), this._getMinBodyHeight()));
+        this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
+    },
+
     /**
      * 초기 너비로 돌린다.
      * @param {Number} index    너비를 변경할 컬럼의 인덱스
      */
     restoreColumnWidth: function(index) {
-        var curColumnWidthList = this.get('columnWidthList');
-        if (!ne.util.isUndefined(curColumnWidthList[index])) {
-            curColumnWidthList[index] = this.get('originalWidthList')[index];
-            this._setColumnWidthVariables(curColumnWidthList);
-        }
+        var orgWidth = this.get('originalWidthList')[index];
+        this.setColumnWidth(index, orgWidth);
     },
-    /**
-     * 실제 조정된 column의 width 들을 반영한다.
-     * @param {Array} columnWidthList   조정된 열의 너비 리스트
-     * @param {Boolean} [whichSide]   어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 columnList 변경
-     */
-    setColumnWidthList: function(columnWidthList, whichSide) {
-        var oppositeSide = (whichSide === 'L') ? 'R' : 'L',
-            oppositeSideColumnWidthList = this.getColumnWidthList(oppositeSide) || [],
-            newColumnWidthList;
 
-        if (whichSide === 'L') {
-            newColumnWidthList = columnWidthList.concat(oppositeSideColumnWidthList);
-        } else if (whichSide === 'R') {
-            newColumnWidthList = oppositeSideColumnWidthList.concat(columnWidthList);
-        } else {
-            newColumnWidthList = columnWidthList;
-        }
-        this._setColumnWidthVariables(newColumnWidthList);
-    },
     /**
      * L side 와 R side 에 따른 columnWidthList 를 반환한다.
      * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
@@ -2950,6 +3089,7 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         return columnWidthList;
     }
 });
+}());
 
 /**
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
@@ -3955,10 +4095,8 @@ View.Layout.Body = View.Base.extend(/**@lends View.Layout.Body.prototype */{
     render: function() {
         var grid = this.grid,
             whichSide = this.whichSide,
-            selection,
-            rowList,
-            tableHtml,
-            collection = grid.renderModel.getCollection(whichSide)
+            collection = grid.renderModel.getCollection(whichSide),
+            selection, rowList, tableHtml;
 
         this.destroyChildren();
 
@@ -4972,27 +5110,33 @@ View.Layout.Toolbar = View.Base.extend(/**@lends View.Layout.Toolbar.prototype *
             controlPanel = this.createView(View.Layout.Toolbar.ControlPanel, {
                 grid: this.grid
             });
-            this.$el.append(controlPanel.render().el).css('display', 'block');
+            this.$el.append(controlPanel.render().el);
         }
 
         if (option && option.hasResizeHandler) {
             resizeHandler = this.createView(View.Layout.Toolbar.ResizeHandler, {
                 grid: this.grid
             });
-            this.$el.append(resizeHandler.render().el).css('display', 'block');
+            this.$el.append(resizeHandler.render().el);
         }
 
         if (option && option.hasPagination) {
             pagination = this.createView(View.Layout.Toolbar.Pagination, {
                 grid: this.grid
             });
-            this.$el.append(pagination.render().el).css('display', 'block');
+            this.$el.append(pagination.render().el);
         }
         this.setOwnProperties({
             controlPanel: controlPanel,
             resizeHandler: resizeHandler,
             pagination: pagination
         });
+
+        if (!controlPanel && !resizeHandler && !pagination) {
+            this.$el.height(0);
+        } else {
+            this.$el.show();
+        }
         return this;
     }
 });
@@ -5316,11 +5460,25 @@ View.Painter.Row = View.Base.Painter.extend(/**@lends View.Painter.Row.prototype
 
         return this.baseTemplate({
             key: model.get('rowKey'),
-            height: this.grid.dimensionModel.get('rowHeight'),
+            height: this.grid.dimensionModel.get('rowHeight') + View.Painter.Row._extraHeight,
             contents: html,
             className: ''
         });
     }
+}, {
+    /**
+     * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
+     * @memberof View.Painter.Row
+     * @static
+     */
+    _extraHeight: (function() {
+        var value = 0;
+        if (ne.util.browser.msie && ne.util.browser.version === 7) {
+            // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
+            value = -2;
+        }
+        return value;
+    }())
 });
 
 /**
@@ -6524,7 +6682,7 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
             this.grid.focusClipboard();
         } else {
             Util.form.setCursorToEnd($input.get(0));
-            $input.focus().select();
+            $input.select();
         }
     },
     /**
@@ -6646,11 +6804,14 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
         var $target = $(blurEvent.target),
             rowKey = this.getRowKey($target),
             columnName = this.getColumnName($target);
+
+        this._executeInputEventHandler(blurEvent, 'blur');
         if (this._isEdited($target)) {
             this.grid.setValue(rowKey, columnName, $target.val());
         }
         this.grid.selection.enable();
     },
+
     /**
      * focus 이벤트 핸들러
      * @param {Event} focusEvent 이벤트 객체
@@ -6658,9 +6819,56 @@ View.Painter.Cell.Text = View.Base.Painter.Cell.extend(/**@lends View.Painter.Ce
      */
     _onFocus: function(focusEvent) {
         var $input = $(focusEvent.target);
+
         this.originalText = $input.val();
+        this._executeInputEventHandler(focusEvent, 'focus');
         this.grid.selection.disable();
     },
+
+    /**
+     * keydown 이벤트 핸들러
+     * @param  {KeyboardEvent} keyboardEvent 키보드 이벤트 객체
+     * @private
+     */
+    _onKeyDown: function(keyboardEvent) {
+        this._executeInputEventHandler(keyboardEvent, 'keydown');
+        View.Base.Painter.Cell.prototype._onKeyDown.call(this, keyboardEvent);
+    },
+
+    /**
+     * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
+     * @param  {jquery} $input - 인풋 요소의 jquery 객체
+     * @return {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
+     */
+    _getCellInfoFromInput: function($input) {
+        var $cell = $input.closest('td'),
+            $row = $cell.closest('tr');
+
+        return {
+            rowKey: $row.attr('key'),
+            columnName: $cell.attr('columnname')
+        };
+    },
+
+    /**
+     * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
+     * 해당 이벤트 핸들러를 호출해준다.
+     * @param {Event} event - 이벤트 객체
+     * @param {string} eventName - 이벤트명
+     * @return {boolean} Return value of the event handler. Null if there's no event handler.
+     */
+    _executeInputEventHandler: function(event, eventName) {
+        var $input = $(event.target),
+            cellInfo = this._getCellInfoFromInput($input),
+            columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
+            eventHandler = ne.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
+
+        if (_.isFunction(eventHandler)) {
+            return eventHandler(event, cellInfo);
+        }
+        return null;
+    },
+
     /**
      * selectstart 이벤트 핸들러
      * IE에서 selectstart 이벤트가 Input 요소에 까지 적용되어 값에 셀렉션 지정이 안되는 문제를 해결
@@ -6707,10 +6915,9 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
      * 더블클릭으로 간주할 time millisecond 설정
      * @type {number}
      */
-    doubleClickDuration: 800,
     redrawAttributes: ['isDisabled', 'isEditable', 'value'],
     eventHandler: {
-        'click': '_onClick',
+        'dblclick': '_onDblClick',
         'mousedown': '_onMouseDown',
         'blur input': '_onBlurConvertible',
         'keydown input': '_onKeyDown',
@@ -6754,8 +6961,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
      * - 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    focusOut: function($td) {
-        //$td.find('input').blur();
+    focusOut: function() {
         this.grid.focusClipboard();
     },
     /**
@@ -6874,7 +7080,7 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
             $input = $td.find('input');
             this.originalText = $input.val();
             Util.form.setCursorToEnd($input.get(0));
-            $input.focus().select();
+            $input.select();
         }
     },
     /**
@@ -6897,30 +7103,16 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
         }
     },
     /**
-     * click 이벤트 핸들러
-     * @param {event} clickEvent 이벤트 객체
-     * @private
+     * Event Handler for double click event.
+     * @param  {MouseEvent} mouseEvent - MouseEvent object
      */
-    _onClick: function(clickEvent) {
-        var that = this,
-            $target = $(clickEvent.target),
+    _onDblClick: function (mouseEvent) {
+        var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
             address = this._getCellAddress($td);
 
-        if (this._isEditingCell(address)) {
-            return;
-        }
-        if (this._isClickedCell($td)) {
+        if (!this._isEditingCell(address)) {
             this._startEdit($td);
-        } else {
-            clearTimeout(this.timeoutIdForClick);
-            this.clicked = address;
-            this.timeoutIdForClick = setTimeout(function() {
-                that.clicked = {
-                    rowKey: null,
-                    columnName: null
-                };
-            }, this.doubleClickDuration);
         }
     },
     /**
@@ -6934,10 +7126,6 @@ View.Painter.Cell.Text.Convertible = View.Painter.Cell.Text.extend(/**@lends Vie
         if ($(event.target).is('input')) {
             event.stopPropagation();
         }
-    },
-    _isClickedCell: function($td) {
-        var address = this._getCellAddress($td);
-        return !!(this.clicked.rowKey === address.rowKey && this.clicked.columnName === address.columnName);
     }
 });
 
@@ -7025,7 +7213,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
      * 클립보드 focus 이벤트 핸들러
      * @private
      */
-    _onFocus: function(ev) {
+    _onFocus: function() {
         var focusModel = this.grid.focusModel,
             focused = focusModel.which(),
             rowIdx;
@@ -7047,7 +7235,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
     },
     /**
      * 랜더링 한다.
-     * @return {View.Clipboard}
+     * @return {View.Clipboard} Self
      */
     render: function() {
         return this;
@@ -7071,6 +7259,7 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
     /**
      * keyDown 이벤트 핸들러
      * @param {event} keyDownEvent 이벤트 객체
+     * @return {boolean} False if locked
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
@@ -7089,11 +7278,33 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             this._keyIn(keyDownEvent);
         }
         this._lock();
+    },
+    /**
+     * Returns true if the keyCode value is a character (not a function key).
+     * @param  {number} keyCode Key code
+     * @return {boolean} True if the keyCode value is a character
+     */
+    _isCharKey: function(keyCode) {
+        var isAlphaNum = keyCode >= 48 && keyCode <= 90,
+            isSpecialChar = (keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222);
 
+        return isAlphaNum || isSpecialChar;
+    },
+    /**
+     * Makes currently focused cell to be editable if the edit type of the cell is text-*.
+     * (text, text-password, text-convertible).
+     */
+    _startEditFocusedCell: function() {
+        var focused = this.grid.focusModel.which(),
+            editType = this.grid.columnModel.getEditType(focused.columnName);
+
+        if (editType.indexOf('text') === 0) {
+            this.grid.focusIn(focused.rowKey, focused.columnName);
+        }
     },
     /**
      * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
-     * @param {event} keyDownEvent 이벤트 객체
+     * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
     _keyIn: function(keyDownEvent) {
@@ -7148,9 +7359,10 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             case keyMap['TAB']:
                 grid.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
-            case keyMap['CHAR_V']:
-                break;
             default:
+                if (this._isCharKey(keyCode)) {
+                    this._startEditFocusedCell();
+                }
                 isKeyIdentified = false;
                 break;
         }
@@ -7158,7 +7370,6 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             keyDownEvent.preventDefault();
         }
         selection.endSelection();
-        return isKeyIdentified;
     },
     /**
      * enter 또는 space 가 입력되었을 때, 처리하는 로직
@@ -7223,16 +7434,16 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
             case keyMap['TAB']:
                 grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
-            case keyMap['CHAR_V']:
-                break;
             default:
+                if (this._isCharKey(keyCode)) {
+                    this._startEditFocusedCell();
+                }
                 isKeyIdentified = false;
                 break;
         }
         if (isKeyIdentified) {
             keyDownEvent.preventDefault();
         }
-        return isKeyIdentified;
     },
     /**
      * ctrl 가 눌린 상태에서의 key down event handler
@@ -7243,7 +7454,6 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         var grid = this.grid,
             keyMap = grid.keyMap,
             focusModel = grid.focusModel,
-            isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
@@ -7263,10 +7473,8 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
                 this._paste();
                 break;
             default:
-                isKeyIdentified = false;
                 break;
         }
-        return isKeyIdentified;
     },
 
     /****************
@@ -7362,7 +7570,6 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         if (isKeyIdentified) {
             keyDownEvent.preventDefault();
         }
-        return isKeyIdentified;
     },
     /**
      * text type 의 editOption cell 의 data 를 빈 스트링으로 세팅한다.
@@ -7383,14 +7590,14 @@ View.Clipboard = View.Base.extend(/**@lends View.Clipboard.prototype */{
         if (selection.hasSelection()) {
             //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
             range = selection.getRange();
-            for (i = range.row[0]; i < range.row[1] + 1; i++) {
+            for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
                 rowKey = dataModel.at(i).get('rowKey');
-                for (j = range.column[0]; j < range.column[1] + 1; j++) {
+                for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
                     columnName = columnModelList[j]['columnName'];
                     grid.del(rowKey, columnName, true);
                 }
             }
-            grid.renderModel.refresh();
+            grid.renderModel.refresh(true);
         } else {
             grid.del(rowKey, columnName);
         }
@@ -8364,8 +8571,8 @@ View.Selection.Layer = View.Base.extend(/**@lends View.Selection.Layer.prototype
             columnRange = spannedRange.column,
             rowHeight = this.grid.dimensionModel.get('rowHeight'),
 //                top = Util.getTBodyHeight(rowRange[0], rowHeight) + this.grid.renderModel.get('top'),
-            top = Util.getHeight(rowRange[0], rowHeight) + 1,
-            height = Util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 3,
+            top = Util.getHeight(rowRange[0], rowHeight) - 1,
+            height = Util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 2,
             len = columnWidthList.length,
             display = 'block',
             left = 0,
@@ -9146,7 +9353,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     cellFactory: null,
     events: {
         'click': '_onClick',
-        'dblclick': '_onDblclick',
+        'dblclick': '_onDblClick',
         'mousedown': '_onMouseDown',
         'selectstart': '_preventDrag',
         'dragstart': '_preventDrag',
@@ -9319,7 +9526,6 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
             offsetTop: offset.top,
             offsetLeft: offset.left,
             width: this.$el.width(),
-            height: this.$el.height(),
             headerHeight: this.option('headerHeight'),
             rowHeight: this.option('rowHeight'),
 
@@ -9405,8 +9611,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _initializeListener: function() {
-        this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange)
-            .listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight)
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight)
             .listenTo(this.focusModel, 'select', this._onRowSelectChanged);
     },
     /**
@@ -9454,7 +9659,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     },
     /**
      * drag 이벤트 발생시 이벤트 핸들러
-     * @returns {boolean}
+     * @returns {boolean} false
      * @private
      */
     _preventDrag: function() {
@@ -9465,15 +9670,8 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @private
      */
     _onWindowResize: function() {
-        var minimumWidth = this.option('minimumWidth') || 0,
-            width = this.$el.width();
-
-        if (width < minimumWidth) {
-            this.$el.css('width', minimumWidth + 'px');
-        } else {
-            this.$el.css('width', 'auto');
-        }
-        this.dimensionModel.set('width', Math.max(width, minimumWidth));
+        var width = this.$el.width();
+        this.dimensionModel.set('width', width);
     },
     /**
      * click 이벤트 핸들러
@@ -9497,7 +9695,7 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {MouseEvent} mouseEvent 이벤트 객체
      * @private
      */
-    _onDblclick: function(mouseEvent) {
+    _onDblClick: function(mouseEvent) {
         var eventData = this.createEventData(mouseEvent),
             $target = $(mouseEvent.target);
 
@@ -9615,29 +9813,16 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         });
     },
     /**
-     * width 변경시 layout data 를 update 한다.
-     * @private
-     */
-    _onWidthChange: function() {
-        this.updateLayoutData();
-    },
-    /**
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      * @private
      */
     updateLayoutData: function() {
-        var offset = this.$el.offset(),
-            rsideTotalWidth = this.dimensionModel.getFrameWidth('R'),
-            maxScrollLeft = rsideTotalWidth - this.dimensionModel.get('rsideWidth');
+        var offset = this.$el.offset();
 
-        this.renderModel.set({
-            maxScrollLeft: maxScrollLeft
-        });
         this.dimensionModel.set({
             offsetTop: offset.top,
             offsetLeft: offset.left,
             width: this.$el.width(),
-            height: this.$el.height(),
             toolbarHeight: this.view.toolbar.$el.height()
         });
     },
@@ -9879,13 +10064,17 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
      * @param {Array} rowList 설정할 데이터 배열 값
      * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * @param {function} [callback] 완료시 호출될 함수
      */
-    setRowList: function(rowList, isParse) {
-        var callback = ne.util.bind(function() {
+    setRowList: function(rowList, isParse, callback) {
+        var doProcess = ne.util.bind(function() {
             this.dataModel.reset(rowList, {
                 parse: isParse
             });
             this.dataModel.setOriginalRowList();
+            if (_.isFunction(callback)) {
+                callback();
+            }
         }, this);
         this.showGridLayer('loading');
         isParse = isParse === undefined ? true : isParse;
@@ -9893,10 +10082,10 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
         if (rowList && rowList.length > 500) {
             clearTimeout(this.timeoutIdForSetRowList);
             this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
-                callback();
+                doProcess();
             }, this), 0);
         } else {
-            callback();
+            doProcess();
         }
     },
     /**
@@ -10443,24 +10632,18 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
     disable: function(hasDimmedLayer) {
     },
     /**
-     * 그리드의 layout 데이터를 갱신한다.
-     * 그리드가 숨겨진 상태에서 초기화 되었을 경우 사옹한다.
-     * @param {Boolean} [hasDimmedLayer=true]
+     * Sets the width and height of the dimension.
+     * @param {(number|null)} width - Width
+     * @param {(number|null)} height - Height
      */
-    refreshLayout: function() {
-        this.dimensionModel.set('width', this.$el.width());
-    },
-    /**
-     * 그리드의 크기 정보를 변경한다.
-     * @todo 기능 구현
-     * @param {object} size
-     */
-    setGridSize: function(size) {
-        // var dimensionModel = this.dimensionModel,
-        //     headerHeight = dimensionModel.get('headerHeight'),
-        //     toolbarHeight = dimensionModel.get('toolbarHeight');
-        //
-        // dimensionModel.set('bodyHeight', height - headerHeight - toolbarHeight);
+    setSize: function(width, height) {
+        if (width > 0) {
+            this.$el.width(width);
+        }
+        if (height > 0) {
+            this.dimensionModel.setHeight(height);
+        }
+        this.updateLayoutData();
     },
     /**
      * 스크롤 핸들러의 위치를 변경한다.
@@ -10551,7 +10734,7 @@ ne = window.ne = ne || {};
  *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell. The retrurn value of the function will be shown as the value of the cell.
  *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell will not be encoded as HTML entities.
  *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be ignored when setting up the list of modified rows.
- *          @param {boolean} [options.columnModelLIst.isSortable=false] - If set to true, sort button will be shown on the right side of the column header, which executes the sort action when clicked.
+ *          @param {boolean} [options.columnModelList.isSortable=false] - If set to true, sort button will be shown on the right side of the column header, which executes the sort action when clicked.
  *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
  *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies the type of the editing UI. Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
  *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the 'select', 'radio', 'checkbox' type. The item of the array must contain properties named 'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
@@ -10562,6 +10745,7 @@ ne = window.ne = ne || {};
  *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>. (replaced with {@link afterContent})
  *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be shown right to the value. If it's a function, the return value will be used.
  *              @param {function} [options.columnModelList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
+ *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name as a key and event handler as a value for events on input element.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
  *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns will be disabled.
@@ -10581,7 +10765,6 @@ ne = window.ne = ne || {};
     rowHeight: 27, // (default=27)
     displayRowCount: 10, //(default=10)
     minimumColumnWidth: 50, //(default=50)
-    minimumWidth: 50, //(default=50)
     scrollX: true, //(default:true)
     scrollY: true, //(default:true)
     keyColumnName: 'column1', //(default:null)
@@ -10886,9 +11069,10 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
     /**
      * Replace all rows with the specified list. This will change the original data.
      * @param {Array} rowList - A list of new rows
+     * @param {function} callback - The function that will be called when done.
      */
-    setRowList: function(rowList) {
-        this.core.setRowList(rowList);
+    setRowList: function(rowList, callback) {
+        this.core.setRowList(rowList, true, callback);
     },
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
@@ -11195,14 +11379,22 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * Sets the number of rows to be shown in the table area.
      * @param {number} count - The number of rows
      */
-     setDisplayRowCount: function(count) {
-         this.core.setDisplayRowCount(count);
-     },
+    setDisplayRowCount: function(count) {
+        this.core.setDisplayRowCount(count);
+    },
+     /**
+      * Sets the width and height of the dimension.
+      * @param  {(number|null)} width - The width of the dimension
+      * @param  {(number|null)} height - The height of the dimension
+      */
+    setSize: function(width, height) {
+        this.core.setSize(width, height);
+    },
     /**
      * Refresh the layout view. Use this method when the view was rendered while hidden.
      */
     refreshLayout: function() {
-        this.core.refreshLayout();
+        this.core.updateLayoutData();
     },
     /**
      * Destroys the instance.
