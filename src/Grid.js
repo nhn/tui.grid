@@ -654,7 +654,7 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * @param {string} className - The css class name to be removed
      */
     removeCellClassName: function(rowKey, columnName, className) {
-        this.core.removeCellClassName(rowKey, className);
+        this.core.removeCellClassName(rowKey, columnName, className);
     },
     /**
      * Removes the specified css class from all cell elements in the row identified by the rowKey.
