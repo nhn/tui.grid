@@ -1,96 +1,317 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 	<meta charset="utf-8">
-	<title>Sample 1</title>
-	<link rel="stylesheet" type="text/css" href="../css/grid.css" />
+	<title>그리드 기본 예제</title>
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	<link rel="stylesheet" type="text/css" href="../css/Grid.css" />
+	<style media="screen">
+	#top {height:1000px;}
+	#wrapper {width:100%;}
+	</style>
 </head>
 <body>
 <div>
-	<div id="wrapper1">
+	<div id="top"></div>
+	<div id="wrapper">
+		<div id="grid"></div>
 	</div>
-
-	<div id="buttonList1">
+	<div id="btns">
+		<input id="input-value" type="text" />
+		<button type="button" id="btn-reset-row">reset row</button>
+		<a href="#">1</a>
+		<a href="#">2</a>
+		<a href="#">3</a>
 	</div>
-	<div>
-		<h1>RESULT</h1>
-	</div>
-	<div id="result1">
-
-	</div>
+	<div id="log"></div>
 </div>
-<div>
-	<div id="wrapper2">
-	</div>
-
-	<div id="buttonList2">
-	</div>
-	<div>
-		<h1>RESULT</h1>
-	</div>
-	<div id="result2">
-
-	</div>
-</div>
-
 </body>
-<script type="text/javascript" src="../src/Exclude/console.js"></script>
+<script src="../src/Exclude/console.js"></script>
 
-<script type="text/javascript" src="../lib/jquery/jquery.min.js"></script>
-<script type="text/javascript" src="../lib/jquery-json/src/jquery.json.js"></script>
-<script type="text/javascript" src="../lib/underscore/underscore.js"></script>
-<script type="text/javascript" src="../lib/backbone/backbone.js"></script>
+<script src="../lib/jquery/jquery.js"></script>
+<script src="../lib/jquery-json/src/jquery.json.js"></script>
+	<script src="../lib/underscore/underscore.js"></script>
+<script src="../lib/backbone/backbone.js"></script>
 
-<script type="text/javascript" src="../lib/code-snippet/code-snippet.js"></script>
-<script type="text/javascript" src="../lib/component-pagination/pagination.js"></script>
+<script src="../lib/ne-code-snippet/code-snippet.js"></script>
+<script src="../lib/ne-component-pagination/pagination.js"></script>
 
+<script src="../src/Core/Util.js"></script>
+<script src="../src/Core/Base.js"></script>
 
-<script type="text/javascript" src="../data/dummy_data.js"></script>
+<script src="../src/Data/ColumnModel.js"></script>
+<script src="../src/Data/Row.js"></script>
+<script src="../src/Data/RowList.js"></script>
 
-<script type="text/javascript" src="../src/Core/Util.js"></script>
-<script type="text/javascript" src="../src/Core/Base.js"></script>
+<script src="../src/Model/Focus.js"></script>
+<script src="../src/Model/Dimension.js"></script>
+<script src="../src/Model/RowList.js"></script>
+<script src="../src/Model/Renderer.js"></script>
+<script src="../src/Model/Renderer.Smart.js"></script>
 
-<script type="text/javascript" src="../src/Data/ColumnModel.js"></script>
-<script type="text/javascript" src="../src/Data/RowList.js"></script>
+<script src="../src/View/Layout/Frame.js"></script>
+<script src="../src/View/Layout/Frame.Lside.js"></script>
+<script src="../src/View/Layout/Frame.Rside.js"></script>
+<script src="../src/View/Layout/Header.js"></script>
+<script src="../src/View/Layout/Body.js"></script>
+<script src="../src/View/Layout/Toolbar.js"></script>
 
-<script type="text/javascript" src="../src/Model/Focus.js"></script>
-<script type="text/javascript" src="../src/Model/Dimension.js"></script>
-<script type="text/javascript" src="../src/Model/RowList.js"></script>
-<script type="text/javascript" src="../src/Model/Renderer.js"></script>
-<script type="text/javascript" src="../src/Model/Renderer.Smart.js"></script>
+<script src="../src/View/Painter/Cell/Base.js"></script>
+<script src="../src/View/Painter/Cell/Normal.js"></script>
+<script src="../src/View/Painter/Cell/List.js"></script>
+<script src="../src/View/Painter/Cell/Text.js"></script>
+<script src="../src/View/Painter/Row.js"></script>
 
-<script type="text/javascript" src="../src/View/Layout/Frame.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Frame.Lside.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Frame.Rside.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Header.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Body.js"></script>
-<script type="text/javascript" src="../src/View/Layout/Toolbar.js"></script>
+<script src="../src/View/CellFactory.js"></script>
+<script src="../src/View/RowList.js"></script>
+<script src="../src/View/Selection.js"></script>
 
-<script type="text/javascript" src="../src/View/Painter/Cell/Base.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Cell/Normal.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Cell/List.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Cell/Text.js"></script>
-<script type="text/javascript" src="../src/View/Painter/Row.js"></script>
+<script src="../src/View/Clipboard.js"></script>
 
-<script type="text/javascript" src="../src/View/CellFactory.js"></script>
-<script type="text/javascript" src="../src/View/RowList.js"></script>
-<script type="text/javascript" src="../src/View/Selection.js"></script>
+<script src="../src/View/Layer/Base.js"></script>
+<script src="../src/View/Layer/Ready.js"></script>
+<script src="../src/View/Layer/Loading.js"></script>
+<script src="../src/View/Layer/Empty.js"></script>
 
-<script type="text/javascript" src="../src/View/Clipboard.js"></script>
+<script src="../src/AddOn/Net.js"></script>
 
-<script type="text/javascript" src="../src/View/Layer/Base.js"></script>
-<script type="text/javascript" src="../src/View/Layer/Ready.js"></script>
-<script type="text/javascript" src="../src/View/Layer/Loading.js"></script>
-<script type="text/javascript" src="../src/View/Layer/Empty.js"></script>
+<script src="../src/Core.js"></script>
+<script src="../src/Grid.js"></script>
+<script>
+var grid = new ne.Grid({
+    el: $('#grid'),
+	columnFixIndex: 2,
+	displayRowCount: 20,
+	headerHeight: 100,
+    columnModelList: [
+		{
+            title: 'c1',
+            columnName: 'c1',
+			width: 20,
+            editOption: {
+                type: 'text-convertible'
+			}
+        }, {
+            title: 'c2',
+			width: 100,
+			isFixedWidth: true,
+            columnName: 'c2',
+			editOption: {
+				type: 'text'
+			}
+        }, {
+			title: 'c3',
+			width: 60,
+			columnName: 'c3'
+		}, {
+			title: 'c4',
+			width: 120,
+			columnName: 'c4',
+			editOption: {
+				type: 'text-convertible',
+			    inputEvents: {
+					focus: function(ev) {
+					    console.log('focus!!!!!!');
+					},
+					blur: function(ev) {
+						console.log('blur!!!!');
+					},
+					keydown: function(ev) {
+						console.log('keydown!');
+					}
+				}
+			}
+		}, {
+			title: 'c5',
+			width: 100,
+			columnName: 'c5',
+			formatter: function() {
+			    return '<a href="http://naver.com">Link</a>';
+			}
+		}, {
+			title: 'c6',
+			width: 50,
+			columnName: 'c6'
+		}, {
+			title: 'c7',
+			width: 200,
+			columnName: 'c7'
+		}
+    ],
+	columnMerge: [{
+		columnName: 'merge1',
+		title: 'merge1',
+		columnNameList: ['c2', 'c3']
+	}, {
+		columnName: 'merge2',
+		title: 'merge2',
+		columnNameList: ['c4', 'c5', 'c6', 'c7']
+	}],
+	toolbar: {
+		hasResizeHandler: false,
+		hasControlPanel: false,
+		hasPagination: false
+	}
+});
 
+var rowList = [{
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+        c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+        c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+        c2: '1',
+		c3: '2',
+		c4: '3'
+    }, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}, {
+		c1: '0',
+		c2: '1',
+		c3: '2',
+		c4: '3'
+	}
+];
 
-<!--<script type="text/javascript" src="../src/View/Extra/Selection.js"></script>-->
-<!--<script type="text/javascript" src="../src/View/Extra/Log.js"></script>-->
+grid.setRowList(rowList, function() {
+    console.log('done!!');
+});
 
-<script type="text/javascript" src="../src/Core.js"></script>
-<script type="text/javascript" src="../src/Grid.js"></script>
+$('#btn-reset-row').click(function() {
+    grid.setRowList(rowList);
+});
 
-
-<script type="text/javascript" src="./test.js"></script>
+grid.on('dblclickCell', function() {
+    console.log('dblclick!!');
+});
+</script>
 </html>

@@ -2513,16 +2513,16 @@ Model.Renderer = Model.Base.extend(/**@lends Model.Renderer.prototype */{
 'use strict';
 
     /**
+     * The width of the border of the dimension.
      * @const
      * @type {number}
-     * The width of the border of the dimension.
      */
 var BORDER_WIDTH = 1,
 
     /**
+     * The width of the border of table row.
      * @const
      * @type {number}
-     * The width of the border of table row.
      */
     ROW_BORDER_WIDTH = 1;
 
@@ -2563,14 +2563,14 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
         Model.Base.prototype.initialize.apply(this, arguments);
 
         /**
-         * @type {boolean[]}
          * An array of the fixed flags of the columns
+         * @type {boolean[]}
          */
         this._columnWidthFixedFlags = null;
 
         /**
-         * @type {number[]}
          * An array of the minimum width of the columns
+         * @type {number[]}
          */
         this._minColumnWidthList = null;
 
@@ -2687,7 +2687,8 @@ Model.Dimension = Model.Base.extend(/**@lends Model.Dimension.prototype */{
      * This method will be called recursively by _reduceExcessColumnWidth.
      * @param {number[]} columnWidthList - An array of column Width
      * @param {number} totalRemainWidth - Remaining excess width (negative number)
-     * @param {{index:number, width:number}[]} availableList - An array of infos about available column
+     * @param {object[]} availableList - An array of infos about available column.
+     *                                 Each item of the array has {index:number, width:number}.
      * @return {number[]} - A new array of column widths
      * @private
      */
@@ -9987,7 +9988,6 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @return {(Number|String)} 행 데이터의 고유 키
      */
     getSelectedRowKey: function() {
-        console.log('selectedRowKey', this.focusModel.which().rowKey);
         return this.focusModel.which().rowKey;
     },
     /**
@@ -10583,7 +10583,6 @@ var Core = View.Base.extend(/**@lends Core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeRowClassName: function(rowKey, className) {
-        console.log('removeRowClassName', rowKey, className);
         this.dataModel.get(rowKey).removeRowClassName(className);
     },
     /**
@@ -11351,7 +11350,6 @@ ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
      * @param {string} className - The css class name to be removed
      */
     removeCellClassName: function(rowKey, columnName, className) {
-        console.log('removeCellClassName', rowKey, columnName, className);
         this.core.removeCellClassName(rowKey, className);
     },
     /**
