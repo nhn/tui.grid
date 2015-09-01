@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Renderer = require('./renderer');
 

@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Model = require('../base/model');
 

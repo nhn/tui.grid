@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Collection = require('../base/collection');
 var Row = require('./row');

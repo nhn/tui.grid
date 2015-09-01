@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview RowList 클래스파일
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Collection = require('../base/collection');
 var Row = require('./row');

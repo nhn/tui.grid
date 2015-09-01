@@ -1,9 +1,9 @@
-'use strict';
-
 /**
 * @fileoverview 유틸리티 메서드 모음
 * @author NHN Ent. FE Development Team
 */
+'use strict';
+
 /**
 * Util 모듈
 * @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}

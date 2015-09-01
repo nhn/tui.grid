@@ -1,11 +1,11 @@
-'use strict';
-
-var View = require('./view');
-
 /**
  * @fileoverview Layer Base
  * @author NHN Ent. FE Development Team
  */
+'use strict';
+
+var View = require('../base/view');
+
 /**
  * 레이어 기본 클래스
  * @constructor View.Layer.Base

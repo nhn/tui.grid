@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview Rendering 모델
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Model = require('../base/model');
 var RowList = require('./rowList');

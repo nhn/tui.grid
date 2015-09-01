@@ -1,11 +1,10 @@
-'use strict';
-
 /**
  * @fileoverview Body View
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
-var View = require('../base/view');
+var View = require('../../base/view');
 
 /**
  * body layout 뷰

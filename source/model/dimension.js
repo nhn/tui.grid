@@ -1,8 +1,8 @@
-'use strict';
 /**
  * @fileoverview 크기에 관련된 데이터를 다루는 모델
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Model = require('../base/model');
 

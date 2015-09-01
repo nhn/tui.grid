@@ -1,11 +1,10 @@
-'use strict';
-
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
-var View = require('../base/view');
+var View = require('../../base/view');
 
 /**
  * frame Base 클래스

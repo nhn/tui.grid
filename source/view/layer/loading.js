@@ -1,11 +1,10 @@
-'use strict';
-
 /**
  * @fileoverview Layer Loading
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
-var Layer = require('../base/view-layer');
+var Layer = require('../layer');
 
 /**
  * 로딩 레이어

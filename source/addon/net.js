@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview Network 모듈 addon
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
  var View = require('../base/view');
  var Router = require('./net-router');

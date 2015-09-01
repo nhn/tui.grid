@@ -1,14 +1,44 @@
-'use strict';
-
 /**
  * @fileoverview Grid Core 파일
  * @author NHN Ent. FE Development Team
  */
+ 'use strict';
 
 var View = require('./base/view');
 
+// data models
+var ColumnModelData = require('./data/columnModel');
+var RowListData = require('./data/rowList');
+
+// models
+var DimensionModel = require('./model/dimension');
+var FocusModel = require('./model/focus');
+var RenderModel = require('./model/renderer');
+var SmartRenderModel = require('./model/renderer-smart');
+
+// views
+var CellFactory = require('./view/cellFactory');
+var Selection = require('./view/selection');
+var Clipboard = require('./view/clipboard');
+
+// layouts
+var LsideFrame = require('./view/layout/frame-lside');
+var RsideFrame = require('./view/layout/frame-rside');
+var ToolbarLayout = require('./view/layout/toolbar');
+
+// layers
+var ReadyLayer = require('./view/layer/ready');
+var EmptyLayer = require('./view/layer/empty');
+var LoadingLayer = require('./view/layer/loading');
+
+var Net = require('./addon/net');
+
+var addOn = {
+    Net: Net
+};
+
 /**
- * Grid 코어
+ * Grid Core
  * @constructor Core
  */
 var Core = View.extend(/**@lends Core.prototype */{
@@ -86,6 +116,7 @@ var Core = View.extend(/**@lends Core.prototype */{
      */
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
+
         this.publicInstance = options.publicInstance;
         var id = Util.getUniqueKey();
         this.__instance[id] = this;
@@ -106,6 +137,7 @@ var Core = View.extend(/**@lends Core.prototype */{
 
         this.updateLayoutData();
     },
+
     /**
      * default 설정된 옵션에서 생성자로부터 인자로 받은 옵션들을 확장하여 옵션을 설정한다.
      * @param {Object} options Grid.js 의 생성자 option 과 동일값.
@@ -140,6 +172,7 @@ var Core = View.extend(/**@lends Core.prototype */{
 
         this.options = $.extend(true, defaultOptions, options);
     },
+
     /**
      * 내부 properties 를 초기화한다.
      * @private
@@ -171,6 +204,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             '__$el': this.$el.clone()
         });
     },
+
     /**
      * 내부에서 사용할 모델 instance를 초기화한다.
      *
@@ -181,7 +215,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         var offset = this.$el.offset();
 
         //define column model
-        this.columnModel = new Data.ColumnModel({
+        this.columnModel = new ColumnModelData({
             grid: this,
             hasNumberColumn: this.option('autoNumbering'),
             keyColumnName: this.option('keyColumnName'),
@@ -191,7 +225,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         this.setColumnModelList(this.option('columnModelList'));
 
         //define layout model
-        this.dimensionModel = new Model.Dimension({
+        this.dimensionModel = new DimensionModel({
             grid: this,
             offsetTop: offset.top,
             offsetLeft: offset.left,
@@ -208,7 +242,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         });
 
         // define focus model
-        this.focusModel = new Model.Focus({
+        this.focusModel = new FocusModel({
             grid: this,
             scrollX: !!this.option('scrollX'),
             scrollY: !!this.option('scrollY'),
@@ -216,18 +250,18 @@ var Core = View.extend(/**@lends Core.prototype */{
         });
 
         //define rowList
-        this.dataModel = new Data.RowList([], {
+        this.dataModel = new RowListData([], {
             grid: this,
             useClientSort: this.option('useClientSort')
         });
         this.dataModel.reset([]);
 
         if (this.option('notUseSmartRendering')) {
-            this.renderModel = new Model.Renderer({
+            this.renderModel = new RenderModel({
                 grid: this
             });
         } else {
-            this.renderModel = new Model.Renderer.Smart({
+            this.renderModel = new SmartRenderModel({
                 grid: this
             });
         }
@@ -237,38 +271,38 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @private
      */
     _initializeView: function() {
-        this.cellFactory = this.createView(View.CellFactory, {
+        this.cellFactory = this.createView(CellFactory, {
             grid: this
         });
 
-        this.selection = this.createView(View.Selection, {
+        this.selection = this.createView(Selection, {
             grid: this
         });
 
         //define header & body area
-        this.view.lside = this.createView(View.Layout.Frame.Lside, {
+        this.view.lside = this.createView(LsideFrame, {
             grid: this
         });
 
-        this.view.rside = this.createView(View.Layout.Frame.Rside, {
+        this.view.rside = this.createView(RsideFrame, {
             grid: this
         });
 
-        this.view.toolbar = this.createView(View.Layout.Toolbar, {
+        this.view.toolbar = this.createView(ToolbarLayout, {
             grid: this
         });
 
-        this.view.layer.ready = this.createView(View.Layer.Ready, {
+        this.view.layer.ready = this.createView(ReadyLayer, {
             grid: this
         });
-        this.view.layer.empty = this.createView(View.Layer.Empty, {
+        this.view.layer.empty = this.createView(EmptyLayer, {
             grid: this
         });
-        this.view.layer.loading = this.createView(View.Layer.Loading, {
+        this.view.layer.loading = this.createView(LoadingLayer, {
             grid: this
         });
 
-        this.view.clipboard = this.createView(View.Clipboard, {
+        this.view.clipboard = this.createView(Clipboard, {
             grid: this
         });
 
@@ -1038,9 +1072,11 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @return {Core} this
      */
     use: function(name, options) {
+        var Constructor = addOn[name];
+
         options = $.extend({grid: this}, options);
-        if (AddOn[name]) {
-            this.addOn[name] = new AddOn[name](options);
+        if (Constructor) {
+            this.addOn[name] = new Constructor(options);
         }
         return this;
     },
@@ -1237,6 +1273,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     addRowClassName: function(rowKey, className) {
         this.dataModel.get(rowKey).addRowClassName(className);
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
@@ -1246,6 +1283,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     removeCellClassName: function(rowKey, columnName, className) {
         this.dataModel.get(rowKey).removeCellClassName(columnName, className);
     },
+
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
@@ -1254,6 +1292,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     removeRowClassName: function(rowKey, className) {
         this.dataModel.get(rowKey).removeRowClassName(className);
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
@@ -1265,6 +1304,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             return row.getRowSpanData(columnName);
         }
     },
+
     /**
      * rowKey에 해당하는 행의 인덱스를 반환한다.
      * @param {number|string} rowKey - 행 고유키
@@ -1273,6 +1313,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     getIndexOfRow: function(rowKey) {
         return this.dataModel.indexOfRowKey(rowKey);
     },
+
     /**
      * 화면에 한번에 보여지는 행 개수를 변경한다.
      * @param {number} count - 행 개수
@@ -1280,6 +1321,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     setDisplayRowCount: function(count) {
         this.dimensionModel.set('displayRowCount', count);
     },
+
     /**
      * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
      * @todo 기능 구현
@@ -1288,12 +1330,14 @@ var Core = View.extend(/**@lends Core.prototype */{
      */
     filterData: function(columnName, columnValue) {
     },
+
     /**
      * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
      * @todo 기능 구현
      */
     enable: function() {
     },
+
     /**
      * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
      * @todo 기능 구현
@@ -1301,6 +1345,7 @@ var Core = View.extend(/**@lends Core.prototype */{
      */
     disable: function(hasDimmedLayer) {
     },
+
     /**
      * Sets the width and height of the dimension.
      * @param {(number|null)} width - Width
@@ -1315,6 +1360,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }
         this.updateLayoutData();
     },
+
     /**
      * 스크롤 핸들러의 위치를 변경한다.
      * @todo 기능 구현

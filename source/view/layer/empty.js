@@ -1,11 +1,10 @@
-'use strict';
-
 /**
  * @fileoverview Layer Empty
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
-var Layer = require('../base/view-layer');
+var Layer = require('../layer');
 
 /**
  * 데이터 없음 레이어

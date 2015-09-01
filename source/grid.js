@@ -1,9 +1,9 @@
-'use strict';
-
 /**
  * @fileoverview The ne.Grid class for the external API.
  * @author NHN Ent. FE Development Team
  */
+'use strict';
+
 /**
  * Grid public API
  *

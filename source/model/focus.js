@@ -1,9 +1,8 @@
-'use strict';
-
 /**
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
  */
+'use strict';
 
 var Model = require('../base/model');
 
