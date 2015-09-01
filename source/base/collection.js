@@ -1,0 +1,43 @@
+'use strict';
+
+var common = require('./common');
+
+/**
+ * Collection Base Class
+ * @constructor Collection.Base
+ */
+var Collection = Backbone.Collection.extend(/**@lends Collection.Base.prototype */{
+    /**
+     * 생성자 함수
+     * @param {Array} models    콜랙션에 추가할 model 리스트
+     * @param {Object} options   생성자의 option 객체. 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+     */
+    initialize: function(models, options) {
+        var grid = options && options.grid || this.collection && this.collection.grid || null;
+        this.setOwnProperties({
+            grid: grid
+        });
+    },
+
+    /**
+     * collection 내 model 들의 event listener 를 제거하고 메모리에서 해제한다.
+     * @returns {object} this object
+     */
+    clear: function() {
+        this.each(function(model) {
+            model.stopListening();
+            model = null;
+        });
+        this.reset([], {silent: true});
+
+        return this;
+    },
+
+    /**
+     * 내부 프로퍼티 설정
+     * @param {Object} properties 할당할 프로퍼티 데이터
+     */
+    setOwnProperties: common.setOwnProperties
+});
+
+module.exports = Collection;
