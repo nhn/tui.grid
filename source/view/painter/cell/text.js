@@ -5,6 +5,7 @@
 'use strict';
 
 var Cell = require('../cell');
+var util = require('../../../util');
 
 /**
  * text 타입의 cell renderer
@@ -70,7 +71,7 @@ var Text = Cell.extend(/**@lends Text.prototype */{
         if ($input.prop('disabled')) {
             this.grid.focusClipboard();
         } else {
-            Util.form.setCursorToEnd($input.get(0));
+            util.form.setCursorToEnd($input.get(0));
             $input.select();
         }
     },
@@ -113,7 +114,7 @@ var Text = Cell.extend(/**@lends Text.prototype */{
             html = this.template({
                 type: this._getInputType(),
                 value: value,
-                name: Util.getUniqueKey(),
+                name: util.getUniqueKey(),
                 disabled: cellData.isDisabled ? 'disabled' : '',
                 maxLength: editOption.maxLength || ''
             });
@@ -227,7 +228,7 @@ var Text = Cell.extend(/**@lends Text.prototype */{
      */
     _onKeyDown: function(keyboardEvent) {
         this._executeInputEventHandler(keyboardEvent, 'keydown');
-        View.Base.Painter.Cell.prototype._onKeyDown.call(this, keyboardEvent);
+        Cell.prototype._onKeyDown.call(this, keyboardEvent);
     },
 
     /**

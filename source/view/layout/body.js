@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../base/view');
+var RowListView = require('../rowList');
 
 /**
  * body layout 뷰
@@ -64,7 +65,7 @@ var Body = View.extend(/**@lends Body.prototype */{
             $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', (width - View.Layout.Body.extraWidth) + 'px');
+            $colList.eq(index).css('width', (width - Body.extraWidth) + 'px');
         }, this);
     },
 
@@ -149,7 +150,7 @@ var Body = View.extend(/**@lends Body.prototype */{
             }));
         this.$tableContainer = this.$el.find('div.table_container');
 
-        rowList = this.createView(View.RowList, {
+        rowList = this.createView(RowListView, {
             grid: grid,
             collection: collection,
             bodyView: this,
@@ -207,7 +208,7 @@ var Body = View.extend(/**@lends Body.prototype */{
 
         _.each(columnModelList, function(columnModel, index) {
             var name = columnModel['columnName'],
-                width = columnWidthList[index] - View.Layout.Body.extraWidth;
+                width = columnWidthList[index] - Body.extraWidth;
 
             html += '<col columnname="' + name + '" style="width:' + width + 'px">';
         });

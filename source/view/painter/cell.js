@@ -5,11 +5,12 @@
 'use strict';
 
 var Painter = require('../../base/painter');
+var util = require('../../util');
 
 /**
  * Cell Painter Base
- * @extends {View.Base.Painter}
- * @constructor View.Base.Painter.Cell
+ * @extends {Painter}
+ * @constructor Cell
  */
 var Cell = Painter.extend(/**@lends Cell.prototype*/{
     /**
@@ -260,7 +261,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      * @return {string} td 마크업 문자열
      */
     getHtml: function(cellData) {
-        var attributeString = Util.getAttributesString(this.getAttributes(cellData)),
+        var attributeString = util.getAttributesString(this.getAttributes(cellData)),
             htmlArr = [];
 
         htmlArr.push('<td');

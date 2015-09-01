@@ -5,17 +5,17 @@
 'use strict';
 
 /**
-* Util 모듈
+* util 모듈
 * @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}
 */
-var Util = {
+var util = {
     uniqueId: 0,
     /**
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
      * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
      * @return {string} html 마크업에 포함될 문자열
      * @example
-     var str = Util.getAttributesString({
+     var str = util.getAttributesString({
             'class': 'focused disabled',
             'width': '100',
             'height': '200'
@@ -327,7 +327,7 @@ var Util = {
 
         /**
          * $form 에 정의된 인풋 엘리먼트들의 값을 모아서 DataObject 로 구성하여 반환한다.
-         * @memberof Util.form
+         * @memberof util.form
          * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
          * @return {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
          **/
@@ -354,7 +354,7 @@ var Util = {
         /**
          * 폼 안에 있는 모든 인풋 엘리먼트를 배열로 리턴하거나, elementName에 해당하는 인풋 엘리먼트를 리턴한다.
          * @method form.getFormElement
-         * @memberof Util.form
+         * @memberof util.form
          * @param {jquery} $form jQuery()로 감싼 폼엘리먼트
          * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
          * @return {jQuery}  jQuery 로 감싼 엘리먼트를 반환한다.
@@ -374,7 +374,7 @@ var Util = {
         /**
          * 파라미터로 받은 데이터 객체를 이용하여 폼내에 해당하는 input 요소들의 값을 설정한다.
          * @method setFormData
-         * @memberof Util.form
+         * @memberof util.form
          * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
          * @param {Object} formData 폼에 설정할 폼 데이터 객체
          **/
@@ -439,4 +439,4 @@ var Util = {
     }
 };
 
-module.exports = Util;
+module.exports = util;

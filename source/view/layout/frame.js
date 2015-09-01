@@ -5,6 +5,8 @@
 'use strict';
 
 var View = require('../../base/view');
+var Header = require('./header');
+var Body = require('./body');
 
 /**
  * frame Base 클래스
@@ -41,11 +43,11 @@ var Frame = View.extend(/**@lends Frame.prototype */{
         this.destroyChildren();
         this.beforeRender();
 
-        header = this.header = this.createView(View.Layout.Header, {
+        header = this.header = this.createView(Header, {
             grid: this.grid,
             whichSide: this.whichSide
         });
-        body = this.body = this.createView(View.Layout.Body, {
+        body = this.body = this.createView(Body, {
             grid: this.grid,
             whichSide: this.whichSide
         });

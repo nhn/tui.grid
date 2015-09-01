@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../base/view');
+var util = require('../util');
 
 /**
  * Clipboard view class
@@ -22,7 +23,7 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
      * 생성자
      */
     initialize: function() {
-        View.Base.prototype.initialize.apply(this, arguments);
+        View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             timeoutIdForKeyIn: 0,
             isLocked: false
@@ -38,8 +39,8 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
             focused = focusModel.which(),
             rowIdx;
 
-        if (Util.isBlank(focused.columnName)) {
-            rowIdx = Util.isBlank(focused.rowKey) ? 0 : this.grid.getIndexOfRow(focused.rowKey);
+        if (util.isBlank(focused.columnName)) {
+            rowIdx = util.isBlank(focused.rowKey) ? 0 : this.grid.getIndexOfRow(focused.rowKey);
             this.grid.focusAt(rowIdx, 0);
         }
     },
@@ -136,7 +137,7 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
             isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
-        if (Util.isBlank(focused.rowKey)) {
+        if (util.isBlank(focused.rowKey)) {
             return;
         }
 

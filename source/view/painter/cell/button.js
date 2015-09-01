@@ -1,6 +1,7 @@
 'use strict';
 
 var List = require('./list');
+var util = require('../../../util');
 
 /**
  * checkbox, radio button type 의 Cell renderer
@@ -94,7 +95,7 @@ var Button = List.extend(/**@lends ButtonCell.prototype */{
             checkedMap = {},
             html = this._getConvertedHtml(value, cellData),
             htmlArr = [],
-            name = Util.getUniqueKey(),
+            name = util.getUniqueKey(),
             isDisabled = cellData.isDisabled,
             id;
 

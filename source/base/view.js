@@ -4,9 +4,9 @@ var common = require('./common');
 
 /**
  * View base class
- * @constructor View.Base
+ * @constructor View
  */
-var View = Backbone.View.extend(/**@lends View.Base.prototype */{
+var View = Backbone.View.extend(/**@lends View.prototype */{
     /**
      * 생성자 함수
      * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.

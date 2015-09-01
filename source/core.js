@@ -32,6 +32,7 @@ var EmptyLayer = require('./view/layer/empty');
 var LoadingLayer = require('./view/layer/loading');
 
 var Net = require('./addon/net');
+var util = require('./util');
 
 var addOn = {
     Net: Net
@@ -118,7 +119,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         View.prototype.initialize.apply(this, arguments);
 
         this.publicInstance = options.publicInstance;
-        var id = Util.getUniqueKey();
+        var id = util.getUniqueKey();
         this.__instance[id] = this;
         this.id = id;
 
@@ -1376,7 +1377,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         this.destroyChildren();
         _.each(this, function(value, property) {
             if (property !== 'publicInstance') {
-                if (value instanceof View.Base) {
+                if (value instanceof View) {
                     if (value && ne.util.isFunction(value.destroy)) {
                         value.destroy();
                     }

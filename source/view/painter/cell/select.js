@@ -1,6 +1,7 @@
 'use strict';
 
 var List = require('./list');
+var util = require('../../../util');
 
 /**
  * select type 의 Cell renderer
@@ -70,7 +71,7 @@ var Select = List.extend(/**@lends Select.prototype */{
             html = this._getConvertedHtml(cellData.value, cellData);
 
         if (ne.util.isNull(html)) {
-            htmlArr.push('<select name="' + Util.getUniqueKey() + '"');
+            htmlArr.push('<select name="' + util.getUniqueKey() + '"');
             htmlArr.push(isDisabled ? ' disabled ' : '');
             htmlArr.push('>');
 

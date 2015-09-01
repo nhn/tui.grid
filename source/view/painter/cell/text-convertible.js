@@ -2,6 +2,7 @@
 
 var Cell = require('../cell');
 var Text = require('./text');
+var util = require('../../../util');
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @extends {View.Base.Painter.Cell.Text}
@@ -98,7 +99,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
         htmlArr.push('" value="');
         htmlArr.push(value);
         htmlArr.push('" name="');
-        htmlArr.push(Util.getUniqueKey());
+        htmlArr.push(util.getUniqueKey());
         htmlArr.push('" align="center" ');
         htmlArr.push(cellData.isDisabled ? 'disabled' : '');
         htmlArr.push(' maxLength="');
@@ -182,7 +183,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
             this.redraw(this._getCellData($td), $td);
             $input = $td.find('input');
             this.originalText = $input.val();
-            Util.form.setCursorToEnd($input.get(0));
+            util.form.setCursorToEnd($input.get(0));
             $input.select();
         }
     },

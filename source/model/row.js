@@ -5,6 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
+var util = require('../util');
 
 /**
  * Row Model
@@ -164,7 +165,7 @@ var Row = Model.extend(/**@lends Model.Row.prototype */{
                 rowKey = this.get('rowKey');
 
             _.each(param, function(changeValue, name) {
-                if (!Util.isEqual(data[name], changeValue)) {
+                if (!util.isEqual(data[name], changeValue)) {
                     isValueChanged = (name === 'value') ? true : isValueChanged;
                     data[name] = changeValue;
                     changed.push(name);

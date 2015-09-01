@@ -5,6 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
+var util = require('../util');
 
 /**
  * The width of the border of the dimension.
@@ -123,7 +124,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
      */
     _fillEmptyColumnWidth: function(columnWidthList) {
         var totalWidth = this._getAvailableTotalWidth(columnWidthList.length),
-            remainTotalWidth = totalWidth - Util.sum(columnWidthList),
+            remainTotalWidth = totalWidth - util.sum(columnWidthList),
             emptyIndexes = [];
 
         _.each(columnWidthList, function(width, index) {
@@ -241,7 +242,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
         var columnLength = columnWidthList.length,
             availableWidth = this._getAvailableTotalWidth(columnLength),
-            totalExtraWidth = availableWidth - Util.sum(columnWidthList),
+            totalExtraWidth = availableWidth - util.sum(columnWidthList),
             fixedCount = _.filter(this._columnWidthFixedFlags).length,
             adjustedList;
 
@@ -321,7 +322,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
     _getFrameWidth: function(widthList) {
         var frameWidth = 0;
         if (widthList.length) {
-            frameWidth = Util.sum(widthList) + ((widthList.length + 1) * ROW_BORDER_WIDTH);
+            frameWidth = util.sum(widthList) + ((widthList.length + 1) * ROW_BORDER_WIDTH);
         }
         return frameWidth;
     },
@@ -419,8 +420,8 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
 
         rowIdx = dataModel.indexOfRowKey(rowKey);
 
-        top = Util.getHeight(rowIdx, rowHeight);
-        bottom = top + Util.getHeight(spanCount, rowHeight) - borderWidth;
+        top = util.getHeight(rowIdx, rowHeight);
+        bottom = top + util.getHeight(spanCount, rowHeight) - borderWidth;
 
         if (columnFixIndex <= columnIdx) {
             i = columnFixIndex;
@@ -470,7 +471,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
      * @private
      */
     _setBodyHeight: function() {
-        var height = Util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
+        var height = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
         if (this.get('scrollX')) {
             height += this.get('scrollBarSize');
         }
@@ -482,7 +483,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
      * @return {number} 화면에 보이는 행 개수
      */
     getDisplayRowCount: function() {
-        return Util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
+        return util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
     },
 
     /**

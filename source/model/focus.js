@@ -5,6 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
+var util = require('../util');
 
 /**
  * Focus model
@@ -90,7 +91,7 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
         var scrollPosition,
             curRowKey = this.get('rowKey');
 
-        if (Util.isBlank(rowKey) || Util.isBlank(columnName)) {
+        if (util.isBlank(rowKey) || util.isBlank(columnName)) {
             return this;
         }
         this._savePrevious();
@@ -196,7 +197,7 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
      * @return {boolean} 현재 focus 가 설정되어 있는지 여부
      */
     has: function() {
-        var has = !Util.isBlank(this.get('rowKey')) && !Util.isBlank(this.get('columnName'));
+        var has = !util.isBlank(this.get('rowKey')) && !util.isBlank(this.get('columnName'));
         return has;
     },
 

@@ -5,6 +5,8 @@
 'use strict';
 
 var View = require('../../base/view');
+var util = require('../../util');
+var ResizeHandler = require('./resizeHandler');
 
 /**
  * Header 레이아웃 View
@@ -198,7 +200,7 @@ var Header = View.extend(/**@lends Header.prototype */{
     render: function() {
         this.destroyChildren();
 
-        var resizeHandler = this.createView(View.Layout.Header.ResizeHandler, {
+        var resizeHandler = this.createView(ResizeHandler, {
             whichSide: this.whichSide,
             grid: this.grid
         });
@@ -250,7 +252,7 @@ var Header = View.extend(/**@lends Header.prototype */{
             rowMarkupList = new Array(maxRowCount),
             columnNameList = new Array(maxRowCount),
             colSpanList = [],
-            rowHeight = Util.getRowHeight(maxRowCount, headerHeight) - 1,
+            rowHeight = util.getRowHeight(maxRowCount, headerHeight) - 1,
             rowSpan = 1,
             height,
             headerMarkupList;

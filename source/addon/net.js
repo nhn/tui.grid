@@ -196,7 +196,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
     setFormData: function(formData) {
         //form data 를 실제 form 에 반영한다.
         /* istanbul ignore next */
-        Util.form.setFormData(this.$el, formData);
+        util.form.setFormData(this.$el, formData);
     },
 
     /**
@@ -243,7 +243,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      */
     _getFormData: function() {
         /* istanbul ignore next*/
-        return Util.form.getFormData(this.$el);
+        return util.form.getFormData(this.$el);
     },
     /**
      * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
@@ -364,7 +364,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         this._changeSortOptions(data, sortOptions);
 
         if (this.router) {
-            this.router.navigate('read/' + Util.toQueryString(data), {
+            this.router.navigate('read/' + utiltoQueryString(data), {
                 trigger: false
             });
         }

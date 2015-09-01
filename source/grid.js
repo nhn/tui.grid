@@ -251,7 +251,9 @@
      </script>
  *
  */
-var Core = require('./core.js');
+
+var View = require('./base/view');
+var Core = require('./core');
 
  /**
   * ne
@@ -259,7 +261,7 @@ var Core = require('./core.js');
   */
 ne = window.ne = ne || {};
 
-ne.Grid = View.Base.extend(/**@lends ne.Grid.prototype */{
+ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
     /**
      * Initializes the instance.
      * @param {Object} options - Options for the constructor

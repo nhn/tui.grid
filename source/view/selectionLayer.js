@@ -1,6 +1,7 @@
 'use strict';
 
 var View = require('../base/view');
+var util = require('../util');
 
 /**
  * 실제 selection layer view
@@ -63,9 +64,8 @@ var SelectionLayer = View.extend(/**@lends View.Selection.Layer.prototype */{
             rowRange = spannedRange.row,
             columnRange = spannedRange.column,
             rowHeight = this.grid.dimensionModel.get('rowHeight'),
-//                top = Util.getTBodyHeight(rowRange[0], rowHeight) + this.grid.renderModel.get('top'),
-            top = Util.getHeight(rowRange[0], rowHeight) - 1,
-            height = Util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 2,
+            top = util.getHeight(rowRange[0], rowHeight) - 1,
+            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 2,
             len = columnWidthList.length,
             display = 'block',
             left = 0,
@@ -136,7 +136,7 @@ SelectionLayer.Lside = SelectionLayer.extend(/**@lends Layer.Lside.prototype */{
      * 생성자 함수
      */
     initialize: function() {
-        View.Selection.Layer.prototype.initialize.apply(this, arguments);
+        SelectionLayer.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             whichSide: 'L'
         });
@@ -152,7 +152,7 @@ SelectionLayer.Rside = SelectionLayer.extend(/**@lends Layer.Rside.prototype */{
      * 생성자 함수
      */
     initialize: function() {
-        View.Selection.Layer.prototype.initialize.apply(this, arguments);
+        SelectionLayer.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             whichSide: 'R'
         });

@@ -133,7 +133,7 @@ var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
 
         return this.baseTemplate({
             key: model.get('rowKey'),
-            height: this.grid.dimensionModel.get('rowHeight') + View.Painter.Row._extraHeight,
+            height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
             contents: html,
             className: ''
         });

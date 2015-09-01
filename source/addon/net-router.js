@@ -1,6 +1,7 @@
 'use strict';
 
 var common = require('../base/common');
+var util = require('../util');
 
 /**
  * Ajax History 관리를 위한 Router AddOn
@@ -21,7 +22,7 @@ var Router = Backbone.Router.extend(/**@lends AddOn.Net.Router.prototype */{
      * @param {String} queryStr 쿼리 문자열
      */
     read: function(queryStr) {
-        var data = Util.toQueryObject(queryStr);
+        var data = util.toQueryObject(queryStr);
         //formData 를 설정한다.
         this.net.setFormData(data);
         //그 이후 read

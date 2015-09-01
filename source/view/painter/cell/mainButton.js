@@ -4,9 +4,9 @@ var Cell = require('../cell');
 
 /**
  * checkbox 혹은 radiobox 형태의 Main Button Painter
- * @constructor View.Painter.Cell.MainButton
- * @extends {View.Base.Painter.Cell}
- * @implements {View.Base.Painter.Cell.Interface}
+ * @constructor MainButton
+ * @extends {Cell}
+ * @implements {Cell.Interface}
  */
 var MainButton = Cell.extend(/**@lends MainButton.prototype */{
     /**
@@ -23,7 +23,7 @@ var MainButton = Cell.extend(/**@lends MainButton.prototype */{
      * 생성자 함수
      */
     initialize: function() {
-        View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
+        Cell.prototype.initialize.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},

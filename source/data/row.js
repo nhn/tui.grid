@@ -5,6 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
+var util = require('../util');
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
@@ -390,7 +391,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
             valueList = value.toString().split(',');
             if (typeExpected !== typeof valueList[0]) {
                 valueList = _.map(valueList, function(val) {
-                    return Util.convertValueType(val, typeExpected);
+                    return util.convertValueType(val, typeExpected);
                 });
             }
             _.each(valueList, function(val, index) {
@@ -448,7 +449,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
             } else {
                 //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
                 if (_.isFunction(model.formatter)) {
-                    value = Util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
+                    value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
                 }
             }
         }

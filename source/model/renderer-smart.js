@@ -5,6 +5,7 @@
 'use strict';
 
 var Renderer = require('./renderer');
+var util = require('../util');
 
 /**
  *  View 에서 Rendering 시 사용할 객체
@@ -53,7 +54,7 @@ var SmartRenderer = Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
             startIndex += this._getStartRowSpanMinCount(startIndex);
             endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
-        top = (startIndex === 0) ? 0 : Util.getHeight(startIndex, rowHeight) - 1;
+        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight) - 1;
 
         this.set({
             top: top,

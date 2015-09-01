@@ -8,8 +8,8 @@ var Cell = require('../cell');
 
 /**
  * editOption 에 list 를 가지고 있는 형태의 추상 클래스
- * @implements {View.Base.Painter.Cell.Interface}
- * @constructor View.Painter.Cell.List
+ * @implements {Cell.Interface}
+ * @constructor List
  */
 var List = Cell.extend(/**@lends List.prototype */{
     redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],

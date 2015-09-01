@@ -17,7 +17,7 @@ var Normal = Cell.extend(/**@lends Normal.prototype */{
      * 생성자 함수
      */
     initialize: function() {
-        View.Base.Painter.Cell.prototype.initialize.apply(this, arguments);
+        Cell.prototype.initialize.apply(this, arguments);
     },
 
     /**

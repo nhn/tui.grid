@@ -90,7 +90,7 @@ var RowList = View.extend(/**@lends RowList.prototype */{
         var html = this._getRowsHtml(this.collection.models),
             $tbody;
 
-        if (View.RowList.isInnerHtmlOfTbodyReadOnly) {
+        if (RowList.isInnerHtmlOfTbodyReadOnly) {
             $tbody = this.bodyView.redrawTable(html);
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
@@ -274,7 +274,7 @@ var RowList = View.extend(/**@lends RowList.prototype */{
 {
     /**
      * tbody 요소의 innerHTML이 읽기전용인지 여부
-     * @memberof View.RowList
+     * @memberof RowList
      * @static
      */
     isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9)
