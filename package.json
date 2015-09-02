@@ -2,27 +2,29 @@
   "name": "application-grid",
   "version": "1.0.3",
   "description": "grid",
-  "main": "Gruntfile.js",
+  "main": "gulpfiles.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhnent/fe.application-grid"
+  },
   "author": "NHN Ent. FE Development Team",
   "license": "MIT",
   "devDependencies": {
     "body-parser": "^1.12.4",
+    "browserify": "^11.0.1",
     "express": "^4.12.4",
     "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
-    "grunt": "^0.4.5",
-    "grunt-contrib-concat": "^0.5.0",
-    "grunt-contrib-connect": "^0.8.0",
-    "grunt-contrib-copy": "^0.6.0",
-    "grunt-contrib-uglify": "^0.6.0",
-    "grunt-contrib-watch": "^0.6.1",
-    "grunt-zip": "^0.16.0",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-minify-css": "^1.2.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.4.0",
     "jasmine-ajax": "^2.99.0",
     "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
@@ -37,6 +39,7 @@
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-requirejs": "^0.2.2",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
-    "requirejs": "^2.1.14"
+    "merge-stream": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
