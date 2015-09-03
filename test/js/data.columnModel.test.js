@@ -1,5 +1,7 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+
 describe('data.columnModel', function() {
     var columnModelInstance,
         sampleColumnModelList,
@@ -7,7 +9,7 @@ describe('data.columnModel', function() {
         expectedColumnModel;
 
     beforeEach(function() {
-        columnModelInstance = new Data.ColumnModel();
+        columnModelInstance = new ColumnModelData();
         sampleColumnModelList = [
             {
                 title: 'none',

@@ -1,5 +1,9 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Model = require('../../src/js/base/model');
+
 describe('data.rowList', function() {
     var columnModelList = [
         {
@@ -291,9 +295,9 @@ describe('data.rowList', function() {
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
-        columnModelInstance = grid.columnModel = new Data.ColumnModel();
+        columnModelInstance = grid.columnModel = new ColumnModelData();
         columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = new Data.RowList([], {
+        dataModelInstance = new RowListData([], {
             grid: grid
         });
     });
@@ -1564,7 +1568,7 @@ describe('data.rowList', function() {
 
                     it('callback 결과 값이 false 인 경우 restore 이벤트가 발생한다.', function() {
                         var previous = row.get('changeCallback'),
-                            listenModel = new Model.Base(),
+                            listenModel = new Model(),
                             callback = jasmine.createSpy('callback');
 
                         listenModel.listenTo(dataModelInstance, 'restore', callback);

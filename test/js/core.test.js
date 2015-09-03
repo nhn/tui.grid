@@ -1,5 +1,7 @@
 'use strict';
 
+var Core = require('../../src/js/core');
+
 describe('grid.normal.test', function() {
     var grid,
         $empty,

@@ -1,12 +1,15 @@
 'use strict';
 
+var util = require('../../src/js/util');
+var Model = require('../../src/js/base/model');
+
 describe('addon.net', function() {
     var columnModelList = [
         {
             title: 'columnName1',
             columnName: 'columnName1',
             width: 100
-        },{
+        }, {
             title: 'columnName2',
             columnName: 'columnName2',
             width: 200,
@@ -120,7 +123,7 @@ describe('addon.net', function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/addon.net.html');
         $form = $('#form');
-        Util.form.setFormData(this.$el, originalformData);
+        util.form.setFormData(this.$el, originalformData);
         $grid = $('#grid');
         grid = new ne.Grid({
             el: $grid,
@@ -228,8 +231,8 @@ describe('addon.net', function() {
                         }
                     });
                 });
-                it('ajax 요청이 발생하는지 확인한다.', function() {
 
+                it('ajax 요청이 발생하는지 확인한다.', function() {
                     net._ajax({
                         url: '/api/test',
                         method: 'POST',
@@ -247,8 +250,9 @@ describe('addon.net', function() {
                     });
 
                 });
+
                 it('grid 에서 beforeRequest 이벤트를 발생하는지 확인한다.', function() {
-                    var listenModel = new Model.Base(),
+                    var listenModel = new Model(),
                         callback = jasmine.createSpy('callback');
 
                     listenModel.listenTo(grid, 'beforeRequest', callback);
@@ -259,7 +263,7 @@ describe('addon.net', function() {
                 });
 
                 it('beforeRequest 이벤트 핸들러에서 stop() 을 호출하면 ajax 요청이 중지되는지 확인한다.', function() {
-                    var listenModel = new Model.Base();
+                    var listenModel = new Model();
 
                     listenModel.listenTo(grid, 'beforeRequest', function(eventData) {
                         eventData.stop();
@@ -420,8 +424,7 @@ describe('addon.net', function() {
                 expect(param.count).toBe(2);
             });
             it('isOnlyModified=false, isOnlyChecked=false ', function() {
-                var param,
-                    rowList;
+                var param, rowList;
 
                 createNet({
                     el: $form
@@ -534,8 +537,8 @@ describe('addon.net', function() {
                 param = net._getDataParam('modifyData', {isOnlyChecked: false});
                 expect(param.count).toBe(6);
             });
-
         });
+
         describe('_getConfirmMessage', function() {
             beforeEach(function() {
                 createNet({

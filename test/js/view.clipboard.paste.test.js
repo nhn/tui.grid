@@ -1,10 +1,12 @@
 'use strict';
 
+var Clipboard = require('../../src/js/view/clipboard');
+
 describe('grid paste test', function() {
     var clipboard;
 
     beforeEach(function() {
-        clipboard = new View.Clipboard();
+        clipboard = new Clipboard();
     });
 
     it('define', function() {

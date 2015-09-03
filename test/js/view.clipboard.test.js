@@ -1,5 +1,7 @@
 'use strict';
 
+var Core = require('../../src/js/core');
+
 describe('view.clipboard', function() {
     var grid,
         $empty,

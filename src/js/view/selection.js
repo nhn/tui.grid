@@ -528,81 +528,83 @@ var Selection = View.extend(/**@lends Selection.prototype */{
             endRow = dataModel.at(spannedRange.row[1]),
             newSpannedRange = $.extend({}, spannedRange);
 
-        if (startRow && endRow) {
-            var startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
-                endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
-                columnName, param;
+        if (!startRow || !endRow) {
+            return newSpannedRange;
+        }
+        
+        var startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
+            endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
+            columnName, param;
 
-            /**
-             * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
-             * @param {object} param
-             */
-            function concatRowSpanIndexFromStart(param) {
-                var startIndex = param.startIndex,
-                    endIndex = param.endIndex,
-                    rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
-                    startIndexList = param.startIndexList,
-                    endIndexList = param.endIndexList,
-                    spannedIndex;
+        /**
+         * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
+         * @param {object} param
+         */
+        function concatRowSpanIndexFromStart(param) {
+            var startIndex = param.startIndex,
+                endIndex = param.endIndex,
+                rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
+                startIndexList = param.startIndexList,
+                endIndexList = param.endIndexList,
+                spannedIndex;
 
-                if (rowSpanData) {
-                    if (!rowSpanData['isMainRow']) {
-                        spannedIndex = startIndex + rowSpanData['count'];
-                        startIndexList.push(spannedIndex);
-                    } else {
-                        spannedIndex = startIndex + rowSpanData['count'] - 1;
-                        if (spannedIndex > endIndex) {
-                            endIndexList.push(spannedIndex);
-                        }
-                    }
-                }
-            }
-
-            /**
-             * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
-             * @param {object} param
-             */
-            function concatRowSpanIndexFromEnd(param) {
-                var endIndex = param.endIndex,
-                    columnName = param.columnName,
-                    rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
-                    endIndexList = param.endIndexList,
-                    dataModel = param.dataModel,
-                    spannedIndex, tmpRowSpanData;
-
-                if (rowSpanData) {
-                    if (!rowSpanData['isMainRow']) {
-                        spannedIndex = endIndex + rowSpanData['count'];
-                        tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-                        spannedIndex += tmpRowSpanData['count'] - 1;
-                        if (spannedIndex > endIndex) {
-                            endIndexList.push(spannedIndex);
-                        }
-                    } else {
-                        spannedIndex = endIndex + rowSpanData['count'] - 1;
+            if (rowSpanData) {
+                if (!rowSpanData['isMainRow']) {
+                    spannedIndex = startIndex + rowSpanData['count'];
+                    startIndexList.push(spannedIndex);
+                } else {
+                    spannedIndex = startIndex + rowSpanData['count'] - 1;
+                    if (spannedIndex > endIndex) {
                         endIndexList.push(spannedIndex);
                     }
                 }
             }
-            //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
-            _.each(columnModelList, function(columnModel) {
-                columnName = columnModel['columnName'];
-                param = {
-                    columnName: columnName,
-                    startIndex: spannedRange.row[0],
-                    endIndex: spannedRange.row[1],
-                    endRowSpanDataMap: endRowSpanDataMap,
-                    startRowSpanDataMap: startRowSpanDataMap,
-                    startIndexList: startIndexList,
-                    endIndexList: endIndexList,
-                    dataModel: dataModel
-                };
-                concatRowSpanIndexFromStart(param);
-                concatRowSpanIndexFromEnd(param);
-            }, this);
-
-            newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
         }
+
+        /**
+         * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
+         * @param {object} param
+         */
+        function concatRowSpanIndexFromEnd(param) {
+            var endIndex = param.endIndex,
+                columnName = param.columnName,
+                rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
+                endIndexList = param.endIndexList,
+                dataModel = param.dataModel,
+                spannedIndex, tmpRowSpanData;
+
+            if (rowSpanData) {
+                if (!rowSpanData['isMainRow']) {
+                    spannedIndex = endIndex + rowSpanData['count'];
+                    tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
+                    spannedIndex += tmpRowSpanData['count'] - 1;
+                    if (spannedIndex > endIndex) {
+                        endIndexList.push(spannedIndex);
+                    }
+                } else {
+                    spannedIndex = endIndex + rowSpanData['count'] - 1;
+                    endIndexList.push(spannedIndex);
+                }
+            }
+        }
+        //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
+        _.each(columnModelList, function(columnModel) {
+            columnName = columnModel['columnName'];
+            param = {
+                columnName: columnName,
+                startIndex: spannedRange.row[0],
+                endIndex: spannedRange.row[1],
+                endRowSpanDataMap: endRowSpanDataMap,
+                startRowSpanDataMap: startRowSpanDataMap,
+                startIndexList: startIndexList,
+                endIndexList: endIndexList,
+                dataModel: dataModel
+            };
+            concatRowSpanIndexFromStart(param);
+            concatRowSpanIndexFromEnd(param);
+        }, this);
+
+        newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
         return newSpannedRange;
     },
 

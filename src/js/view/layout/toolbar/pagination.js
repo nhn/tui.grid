@@ -54,4 +54,4 @@ var Pagination = View.extend(/**@lends Base.prototype */{
     }
 });
 
-module.export = Pagination;
+module.exports = Pagination;

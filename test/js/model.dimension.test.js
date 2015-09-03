@@ -1,6 +1,10 @@
 'use strict';
 
-describe('model.dimension', function() {
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+
+describe('Dimension', function() {
     var columnModelList = [
         {
             title: 'changeCallback',
@@ -293,9 +297,9 @@ describe('model.dimension', function() {
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
-        columnModelInstance = grid.columnModel = new Data.ColumnModel();
+        columnModelInstance = grid.columnModel = new ColumnModelData();
         columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = grid.dataModel = new Data.RowList([], {
+        dataModelInstance = grid.dataModel = new RowListData([], {
             grid: grid
         });
         defaultConfig = {
@@ -320,7 +324,7 @@ describe('model.dimension', function() {
             columnModelInstance.set({
                 columnFixIndex: 3
             });
-            dimensionModel = new Model.Dimension({
+            dimensionModel = new Dimension({
                 grid: grid
             });
             dimensionModel.set({
@@ -344,7 +348,7 @@ describe('model.dimension', function() {
     describe('_getFrameWidth()', function() {
         it('인자로 받은 columnModelList로부터 border 값을 포함하여 해당 columnModelList를 감싸고 있는 frame width를 구한다.', function() {
             var widthList = [10, 20, 30, 40, 50];
-            dimensionModel = new Model.Dimension(defaultConfig);
+            dimensionModel = new Dimension(defaultConfig);
             expect(dimensionModel._getFrameWidth(widthList)).toEqual(156);
             expect(dimensionModel._getFrameWidth([])).toEqual(0);
         });
@@ -356,7 +360,7 @@ describe('model.dimension', function() {
                 columnModelInstance.set({
                     columnFixIndex: 2
                 });
-                dimensionModel = new Model.Dimension(defaultConfig);
+                dimensionModel = new Dimension(defaultConfig);
                 dimensionModel.set('columnWidthList', [10, 20, 30, 40, 50]);
             });
 
@@ -379,7 +383,7 @@ describe('model.dimension', function() {
             columnModelInstance.set({
                 columnFixIndex: 3
             });
-            dimensionModel = new Model.Dimension({
+            dimensionModel = new Dimension({
                 grid: grid,
                 minimumColumnWidth: 20
             });
@@ -396,7 +400,7 @@ describe('model.dimension', function() {
             columnModelInstance.set({
                 columnFixIndex: 3
             });
-            dimensionModel = new Model.Dimension({
+            dimensionModel = new Dimension({
                 grid: grid,
                 width: 100,
                 minimumColumnWidth: 20
@@ -440,7 +444,7 @@ describe('model.dimension', function() {
                 hasNumberColumn: false,
                 selectType: ''
             });
-            dimensionModel = new Model.Dimension(defaultConfig);
+            dimensionModel = new Dimension(defaultConfig);
             dimensionModel.set({
                 width: 1000,
                 minimumWidth: 20
@@ -549,7 +553,7 @@ describe('model.dimension', function() {
         var widthList;
 
         beforeEach(function() {
-            dimensionModel = new Model.Dimension({
+            dimensionModel = new Dimension({
                 grid: grid,
                 minimumColumnWidth: 10
             });
@@ -568,7 +572,7 @@ describe('model.dimension', function() {
     describe('_setBodyHeight()', function() {
         describe('displayRowHeight 와 rowHeight 값을 기반으로 bodyHeight 값을 계산한다.', function() {
             beforeEach(function() {
-                dimensionModel = new Model.Dimension(defaultConfig);
+                dimensionModel = new Dimension(defaultConfig);
             });
 
             it('scrollX 옵션이 false 일 경우', function() {
@@ -595,7 +599,7 @@ describe('model.dimension', function() {
 
     describe('getDisplayRowCount()', function() {
         beforeEach(function() {
-            dimensionModel = new Model.Dimension(defaultConfig);
+            dimensionModel = new Dimension(defaultConfig);
         });
 
         it('bodyHeight 값에서 toolbar 영역을 제외한 컨텐트 영역에 보여지는 행의 개수를 구한다.', function() {
@@ -610,7 +614,7 @@ describe('model.dimension', function() {
 
     describe('getScrollXHeight() scrollX 옵션값에 따라 scrollXHeight 를 반환한다.', function() {
         beforeEach(function() {
-            dimensionModel = new Model.Dimension(defaultConfig);
+            dimensionModel = new Dimension(defaultConfig);
         });
 
         it('scrollX 가 false 로 설정되어 있을 경우', function() {
@@ -636,7 +640,7 @@ describe('model.dimension', function() {
                 columnFixIndex: 2
             });
             dataModelInstance.set(rowList, {parse: true});
-            dimensionModel = new Model.Dimension(defaultConfig);
+            dimensionModel = new Dimension(defaultConfig);
         });
 
         it('rowSpan 이 없는 경우', function() {

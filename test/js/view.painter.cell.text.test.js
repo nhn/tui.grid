@@ -1,5 +1,15 @@
 'use strict';
 
+var Collection = require('../../src/js/base/collection');
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var Focus = require('../../src/js/model/focus');
+var Selection = require('../../src/js/view/selection');
+var TextPainter = require('../../src/js/view/painter/cell/text');
+var ConvertiblePainter = require('../../src/js/view/painter/cell/text-convertible');
+
 describe('view.painter.cell.text', function() {
     var grid, cellPainter;
 
@@ -14,22 +24,22 @@ describe('view.painter.cell.text', function() {
             focusIn: function() {},
             selection: {},
             updateLayoutData: function() {},
-            dataModel: new Collection.Base(),
-            columnModel: new Data.ColumnModel()
+            dataModel: new Collection(),
+            columnModel: new ColumnModelData()
         };
-        mock.dimensionModel = new Model.Dimension({
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
-        mock.renderModel = new Model.Renderer({
+        mock.renderModel = new Renderer({
             grid: mock
         });
-        mock.focusModel = new Model.Focus({
+        mock.focusModel = new Focus({
             grid: mock
         });
-        mock.selection = new View.Selection({
+        mock.selection = new Selection({
             grid: mock
         });
-        mock.dataModel = new Data.RowList([], {
+        mock.dataModel = new RowListData([], {
             grid: mock
         });
         return mock;
@@ -63,7 +73,7 @@ describe('view.painter.cell.text', function() {
                 columnName: 'c1'
             };
 
-            cellPainter = new View.Painter.Cell.Text({
+            cellPainter = new TextPainter({
                 grid: grid
             });
         });
@@ -231,7 +241,7 @@ describe('view.painter.cell.text', function() {
                 rowKey: 0,
                 columnName: 'c1'
             };
-            cellPainter = new View.Painter.Cell.Text.Convertible({
+            cellPainter = new ConvertiblePainter({
                 grid: grid
             });
         });

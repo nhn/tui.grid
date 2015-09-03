@@ -1,5 +1,13 @@
 'use strict';
 
+var Collection = require('../../src/js/base/collection');
+var ColumnModelData = require('../../src/js/data/columnModel');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var LayoutToolbar = require('../../src/js/view/layout/toolbar');
+var ResizeHandler = require('../../src/js/view/layout/toolbar/resizeHandler');
+var Pagination = require('../../src/js/view/layout/toolbar/pagination');
+
 describe('view.frame.toolbar', function() {
     var grid;
 
@@ -12,13 +20,13 @@ describe('view.frame.toolbar', function() {
                 return this.options[name];
             },
             updateLayoutData: function() {},
-            dataModel: new Collection.Base(),
-            columnModel: new Data.ColumnModel()
+            dataModel: new Collection(),
+            columnModel: new ColumnModelData()
         };
-        mock.dimensionModel = new Model.Dimension({
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
-        mock.renderModel = new Model.Renderer({
+        mock.renderModel = new Renderer({
             grid: mock
         });
         return mock;
@@ -43,7 +51,7 @@ describe('view.frame.toolbar', function() {
         var toolbar;
 
         beforeEach(function() {
-            toolbar = new View.Layout.Toolbar({
+            toolbar = new LayoutToolbar({
                 grid: grid
             });
         });
@@ -101,7 +109,7 @@ describe('view.frame.toolbar', function() {
         });
     });
 
-    describe('View.Layout.Toolbar.ResizeHandler', function() {
+    describe('LayoutToolbar.ResizeHandler', function() {
         var resize,
             mouseEvent;
 
@@ -112,7 +120,7 @@ describe('view.frame.toolbar', function() {
                 target: $('<div>'),
                 preventDefault: function() {}
             };
-            resize = new View.Layout.Toolbar.ResizeHandler({
+            resize = new ResizeHandler({
                 grid: grid
             });
         });
@@ -188,11 +196,11 @@ describe('view.frame.toolbar', function() {
         });
     });
 
-    describe('View.Layout.Toolbar.Pagination', function() {
+    describe('LayoutToolbar.Pagination', function() {
         var pagination;
 
         beforeEach(function() {
-            pagination = new View.Layout.Toolbar.Pagination({
+            pagination = new Pagination({
                 grid: grid
             });
             pagination.render();

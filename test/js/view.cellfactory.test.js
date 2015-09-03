@@ -1,5 +1,7 @@
 'use strict';
 
+var CellFactory = require('../../src/js/view/cellFactory');
+
 describe('view.cellfactory', function() {
     var cellFactory,
         $empty;
@@ -9,7 +11,7 @@ describe('view.cellfactory', function() {
         loadFixtures('test/fixtures/empty.html');
         $empty = $('#empty');
 
-        cellFactory = new View.CellFactory({
+        cellFactory = new CellFactory({
             grid: {}
         });
     });

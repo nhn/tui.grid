@@ -1,5 +1,11 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+var SmartRenderer = require('../../src/js/model/renderer-smart');
+var util = require('../../src/js/util');
+
 describe('model.renderer', function() {
     var columnModelList = [
         {columnName: 'c1'},
@@ -31,12 +37,12 @@ describe('model.renderer', function() {
         }
     })();
 
-    columnModelInstance = grid.columnModel = new Data.ColumnModel({});
+    columnModelInstance = grid.columnModel = new ColumnModelData({});
     columnModelInstance.set('columnModelList', columnModelList);
-    dataModelInstance = grid.dataModel = new Data.RowList([], {
+    dataModelInstance = grid.dataModel = new RowListData([], {
         grid: grid
     });
-    dimensionModelInstance = grid.dimensionModel = new Model.Dimension({
+    dimensionModelInstance = grid.dimensionModel = new Dimension({
         grid: grid,
         offsetLeft: 100,
         offsetTop: 200,
@@ -52,11 +58,11 @@ describe('model.renderer', function() {
     });
 
     dimensionModelInstance.set('bodyHeight',
-        Util.getHeight(dimensionModelInstance.get('displayRowCount'), dimensionModelInstance.get('rowHeight')));
+        util.getHeight(dimensionModelInstance.get('displayRowCount'), dimensionModelInstance.get('rowHeight')));
 
     beforeEach(function() {
         dataModelInstance.set(rowList, {parse: true});
-        renderInstance = new Model.Renderer.Smart({
+        renderInstance = new SmartRenderer({
             grid: grid
         });
         renderInstance.refresh();

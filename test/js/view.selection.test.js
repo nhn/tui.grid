@@ -1,5 +1,7 @@
 'use strict';
 
+var Core = require('../../src/js/core');
+
 describe('view.selection', function() {
     var grid,
         $empty;
@@ -140,7 +142,7 @@ describe('view.selection', function() {
         describe('selectAll', function() {
             it('전체 영역을 선택한다', function() {
                 selection.selectAll();
-                expect(selection.getRange()).toEqual({row: [0, 2], column: [0, 3] });
+                expect(selection.getRange()).toEqual({row: [0, 2], column: [0, 3]});
             });
         });
 
@@ -153,7 +155,7 @@ describe('view.selection', function() {
                 selection._adjustScroll(1, 0);
                 expect(grid.renderModel.get('scrollLeft')).toEqual(10);
                 selection._adjustScroll(-1, 0);
-                expect(grid.renderModel.get('scrollLeft')).toEqual(0)
+                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
             });
         });
 

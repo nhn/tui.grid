@@ -1,5 +1,15 @@
 'use strict';
 
+var Collection = require('../../src/js/base/collection');
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var Focus = require('../../src/js/model/focus');
+var NormalPainter = require('../../src/js/view/painter/cell/normal');
+var MainButtonPainter = require('../../src/js/view/painter/cell/mainButton');
+var NumberPainter = require('../../src/js/view/painter/cell/number');
+
 describe('view.painter.cell.normal', function() {
     var grid, cellPainter;
 
@@ -22,19 +32,19 @@ describe('view.painter.cell.normal', function() {
             focusIn: function() {},
             setValue: function() {},
             updateLayoutData: function() {},
-            dataModel: new Collection.Base(),
-            columnModel: new Data.ColumnModel()
+            dataModel: new Collection(),
+            columnModel: new ColumnModelData()
         };
-        mock.dimensionModel = new Model.Dimension({
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
-        mock.renderModel = new Model.Renderer({
+        mock.renderModel = new Renderer({
             grid: mock
         });
-        mock.focusModel = new Model.Focus({
+        mock.focusModel = new Focus({
             grid: mock
         });
-        mock.dataModel = new Data.RowList([], {
+        mock.dataModel = new RowListData([], {
             grid: mock
         });
         return mock;
@@ -64,7 +74,7 @@ describe('view.painter.cell.normal', function() {
                 }
             ], {parse: true});
 
-            cellPainter = new View.Painter.Cell.Normal({
+            cellPainter = new NormalPainter({
                 grid: grid
             });
         });
@@ -134,7 +144,7 @@ describe('view.painter.cell.normal', function() {
 
     describe('Cell.Normal.Number 클래스 테스트', function() {
         beforeEach(function() {
-            cellPainter = new View.Painter.Cell.Normal.Number({
+            cellPainter = new NumberPainter({
                 grid: grid
             });
         });
@@ -160,7 +170,7 @@ describe('view.painter.cell.normal', function() {
     describe('View.Painter.Cell.MainButton 클래스 테스트', function() {
         beforeEach(function() {
             grid.options.selectType = 'checkbox';
-            cellPainter = new View.Painter.Cell.MainButton({
+            cellPainter = new MainButtonPainter({
                 grid: grid
             });
         });

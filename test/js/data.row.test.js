@@ -1,11 +1,13 @@
 'use strict';
 
-describe('Data.Row', function() {
+var RowData = require('../../src/js/data/row');
+
+describe('RowData', function() {
     describe('isDuplicatedPublicChanged()', function() {
         var row;
 
         beforeEach(function() {
-            row = new Data.Row({
+            row = new RowData({
                 c1: '0-1',
                 c2: '0-2'
             });
@@ -33,7 +35,7 @@ describe('Data.Row', function() {
         var row;
 
         beforeEach(function() {
-            row = new Data.Row({
+            row = new RowData({
                 _extraData: {
                     rowSpan: {text: 3}
                 },
@@ -95,7 +97,7 @@ describe('Data.Row', function() {
         var row;
 
         beforeEach(function() {
-            row = new Data.Row({
+            row = new RowData({
                 text: 'hello'
             });
         });

@@ -1,4 +1,15 @@
+/* global setFixtures */
+
 'use strict';
+
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var Focus = require('../../src/js/model/focus');
+var CellFactory = require('../../src/js/view/cellFactory');
+var RowListModel = require('../../src/js/model/rowList');
+var RowListView = require('../../src/js/view/rowList');
 
 describe('View.RowList', function() {
     var grid, rowListView, $tableContainer;
@@ -8,25 +19,25 @@ describe('View.RowList', function() {
             $el: setFixtures('<div />'),
             hideGridLayer: function () {},
             focusClipboard: function() {},
-            columnModel: new Data.ColumnModel(),
+            columnModel: new ColumnModelData(),
             getElement: function(rowKey, columnName) {
                 rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
                 return this.$el.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
             }
         };
-        mock.dimensionModel = new Model.Dimension({
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
-        mock.dataModel = new Data.RowList([], {
+        mock.dataModel = new RowListData([], {
             grid: mock
         });
-        mock.renderModel = new Model.Renderer({
+        mock.renderModel = new Renderer({
             grid: mock
         });
-        mock.focusModel = new Model.Focus({
+        mock.focusModel = new Focus({
             grid: mock
         });
-        mock.cellFactory = new View.CellFactory({
+        mock.cellFactory = new CellFactory({
             grid: mock
         });
         return mock;
@@ -75,10 +86,10 @@ describe('View.RowList', function() {
         $tableContainer = $('<div />').appendTo(grid.$el);
         redrawTable('');
 
-        rowListView = new View.RowList({
+        rowListView = new RowListView({
             whichSide: 'R',
             grid: grid,
-            el : setFixtures('<table><tbody></tbody></table>').find('tbody'),
+            el: setFixtures('<table><tbody></tbody></table>').find('tbody'),
             collection: grid.renderModel.getCollection('R'),
             bodyView: {
                 attachTableEventHandler: function() {},
@@ -123,7 +134,7 @@ describe('View.RowList', function() {
         var smartRenderer, $trs;
 
         function init(sampleData) {
-            smartRenderer = new Model.Renderer({
+            smartRenderer = new Renderer({
                 grid: grid
             });
             grid.dataModel.lastRowKey = -1;
@@ -135,7 +146,7 @@ describe('View.RowList', function() {
 
             smartRenderer.refresh();
             collection = smartRenderer.getCollection('R');
-            rowListView.collection = new Model.RowList(collection.slice(from, to), {grid: grid});
+            rowListView.collection = new RowListModel(collection.slice(from, to), {grid: grid});
             rowListView.render();
             $trs = rowListView.$el.children('tr');
         }

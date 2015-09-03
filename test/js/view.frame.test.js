@@ -1,45 +1,66 @@
+/* global setFixtures */
+
 'use strict';
 
-describe('View.Layout.Frame', function() {
-    var RenderModel = Model.Base.extend({}),
-        DimensionModel = Model.Base.extend({}),
-        RowList = Collection.Base.extend({});
+var Model = require('../../src/js/base/model');
+var Collection = require('../../src/js/base/collection');
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Frame = require('../../src/js/view/layout/frame');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var Selection = require('../../src/js/view/selection');
+var CellFactory = require('../../src/js/view/cellFactory');
+var FrameRside = require('../../src/js/view/layout/frame-rside');
+var FrameLside = require('../../src/js/view/layout/frame-lside');
+var LayoutHeader = require('../../src/js/view/layout/header');
+var LayoutBody = require('../../src/js/view/layout/body');
+var VirtualScrollBar = require('../../src/js/view/layout/virtualScrollbar');
+
+describe('Frame', function() {
     var grid, frame;
 
-    beforeEach(function() {
-        grid = {
+    function createGridMock() {
+        var mock = {
+            $el: setFixtures('<div></div>'),
             options: {},
             option: function(name) {
                 return this.options[name];
             },
-            renderModel: new RenderModel(),
-            dimensionModel: new DimensionModel(),
-            dataModel: new RowList()
+            showGridLayer: function() {},
+            columnModel: new ColumnModelData(),
+            dataModel: new Collection(),
+            focusModel: new Model()
         };
+        mock.dimensionModel = new Dimension({
+            grid: mock
+        });
+        mock.renderModel = new Renderer({
+            grid: mock
+        });
+        mock.selection = new Selection({
+            grid: mock
+        });
+        mock.cellFactory = new CellFactory({
+            grid: mock
+        });
+        mock.dataModel = new RowListData([], {
+            grid: mock
+        });
+        return mock;
+    }
 
-        spyOn(View.Layout, 'Header').and.callFake(function() {
-            this.render = function() {
-                this.el = $('<div />')[0];
-                return this;
-            };
-            this.destroy = function() {};
-        });
-        spyOn(View.Layout, 'Body').and.callFake(function() {
-            this.render = function() {
-                this.el = $('<div />')[0];
-                return this;
-            };
-            this.destroy = function() {};
-        });
+    beforeEach(function() {
+        grid = createGridMock();
     });
 
     describe('initialize', function() {
         beforeEach(function() {
-            spyOn(View.Layout.Frame.prototype, 'render');
-            spyOn(View.Layout.Frame.prototype, '_onColumnWidthChanged');
+            spyOn(Frame.prototype, 'render');
+            spyOn(Frame.prototype, '_onColumnWidthChanged');
 
-            frame = new View.Layout.Frame({
+            frame = new Frame({
                 grid: grid
             });
         });
@@ -56,7 +77,7 @@ describe('View.Layout.Frame', function() {
 
         it('option으로 whichSide를 지정할 수 있다. 기본값은 R이다', function() {
             expect(frame.whichSide).toBe('R');
-            frame = new View.Layout.Frame({
+            frame = new Frame({
                 grid: grid,
                 whichSide: 'L'
             });
@@ -79,8 +100,8 @@ describe('View.Layout.Frame', function() {
         });
 
         it('header와 body를 생성하고 각각의 el을 this.el의 자식으로 추가한다.', function() {
-            expect(frame.header instanceof View.Layout.Header).toBe(true);
-            expect(frame.body instanceof View.Layout.Body).toBe(true);
+            expect(frame.header instanceof LayoutHeader).toBe(true);
+            expect(frame.body instanceof LayoutBody).toBe(true);
 
             expect($(frame.header.el).parent().is(frame.$el)).toBe(true);
             expect($(frame.body.el).parent().is(frame.$el)).toBe(true);
@@ -89,13 +110,13 @@ describe('View.Layout.Frame', function() {
 
     describe('Lside', function() {
         beforeEach(function() {
-            frame = new View.Layout.Frame.Lside({
+            frame = new FrameLside({
                 grid: grid
             });
         });
 
         it('whichSide의 값은 무조건 L이다.', function() {
-            frame = new View.Layout.Frame.Lside({
+            frame = new FrameLside({
                 grid: grid,
                 whichSide: 'R'
             });
@@ -129,13 +150,13 @@ describe('View.Layout.Frame', function() {
 
     describe('Rside', function() {
         beforeEach(function() {
-            frame = new View.Layout.Frame.Rside({
+            frame = new FrameRside({
                 grid: grid
             });
         });
 
         it('whichSide의 값은 무조건 R이다.', function() {
-            frame = new View.Layout.Frame.Rside({
+            frame = new FrameRside({
                 grid: grid,
                 whichSide: 'L'
             });
@@ -176,41 +197,44 @@ describe('View.Layout.Frame', function() {
                     expect($space.height()).toBe(28);
                 });
 
-                describe('grid.option.notUseSmartRendering', function() {
-                    var barEl;
-
-                    beforeEach(function() {
-                        barEl = $('<div />')[0];
-                        spyOn(View.Layout.Frame.Rside, 'VirtualScrollBar').and.callFake(function() {
-                            this.render = function() {
-                                this.el = barEl;
-                                return this;
-                            };
-                        });
-                    });
-
-                    it('true가 아니면 VirtualScrollbar를 생성한다.', function() {
-                        frame.afterRender();
-                        expect($(barEl).parent().is(frame.$el)).toBe(true);
-                    });
-
-                    it('true이면 VirtualScrollbar를 생성하지 않는다', function() {
-                        grid.options.notUseSmartRendering = true;
-                        expect(View.Layout.Frame.Rside.VirtualScrollBar).not.toHaveBeenCalled();
-                    });
-                });
+                // describe('grid.option.notUseSmartRendering', function() {
+                //     var barEl;
+                //
+                //     beforeEach(function() {
+                //         barEl = $('<div />')[0];
+                //         spyOn(FrameRside, 'VirtualScrollBar').and.callFake(function() {
+                //             this.render = function() {
+                //                 this.el = barEl;
+                //                 return this;
+                //             };
+                //         });
+                //     });
+                //
+                //     it('true가 아니면 VirtualScrollbar를 생성한다.', function() {
+                //         frame.afterRender();
+                //         expect($(barEl).parent().is(frame.$el)).toBe(true);
+                //     });
+                //
+                //     it('true이면 VirtualScrollbar를 생성하지 않는다', function() {
+                //         grid.options.notUseSmartRendering = true;
+                //         expect(FrameRside.VirtualScrollBar).not.toHaveBeenCalled();
+                //     });
+                // });
             });
         });
     });
 
     describe('Rside.VirtualScrollBar', function() {
-        var scrollbar,
-            VirtualScrollBar = View.Layout.Frame.Rside.VirtualScrollBar;
+        var scrollbar;
 
         beforeEach(function() {
             scrollbar = new VirtualScrollBar({
                 grid: grid
             });
+        });
+
+        afterEach(function() {
+            scrollbar.destroy();
         });
 
         describe('_onMouseDown', function() {

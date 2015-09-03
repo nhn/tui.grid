@@ -3,8 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>그리드 기본 예제</title>
-    <link rel="stylesheet" type="text/css" href="../css/common.css" />
-	<link rel="stylesheet" type="text/css" href="../css/Grid.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 	<style media="screen">
 	#wrapper {width:100%;}
 	</style>
@@ -17,7 +16,6 @@
 	<div id="log"></div>
 </div>
 </body>
-<script src="../src/Exclude/console.js"></script>
 
 <script src="../lib/jquery/jquery.js"></script>
 <script src="../lib/jquery-json/src/jquery.json.js"></script>
@@ -26,48 +24,8 @@
 
 <script src="../lib/ne-code-snippet/code-snippet.js"></script>
 <script src="../lib/ne-component-pagination/pagination.js"></script>
+<script src="../build/grid.js"></script>
 
-<script src="../src/Core/Util.js"></script>
-<script src="../src/Core/Base.js"></script>
-
-<script src="../src/Data/ColumnModel.js"></script>
-<script src="../src/Data/Row.js"></script>
-<script src="../src/Data/RowList.js"></script>
-
-<script src="../src/Model/Focus.js"></script>
-<script src="../src/Model/Dimension.js"></script>
-<script src="../src/Model/RowList.js"></script>
-<script src="../src/Model/Renderer.js"></script>
-<script src="../src/Model/Renderer.Smart.js"></script>
-
-<script src="../src/View/Layout/Frame.js"></script>
-<script src="../src/View/Layout/Frame.Lside.js"></script>
-<script src="../src/View/Layout/Frame.Rside.js"></script>
-<script src="../src/View/Layout/Header.js"></script>
-<script src="../src/View/Layout/Body.js"></script>
-<script src="../src/View/Layout/Toolbar.js"></script>
-
-<script src="../src/View/Painter/Cell/Base.js"></script>
-<script src="../src/View/Painter/Cell/Normal.js"></script>
-<script src="../src/View/Painter/Cell/List.js"></script>
-<script src="../src/View/Painter/Cell/Text.js"></script>
-<script src="../src/View/Painter/Row.js"></script>
-
-<script src="../src/View/CellFactory.js"></script>
-<script src="../src/View/RowList.js"></script>
-<script src="../src/View/Selection.js"></script>
-
-<script src="../src/View/Clipboard.js"></script>
-
-<script src="../src/View/Layer/Base.js"></script>
-<script src="../src/View/Layer/Ready.js"></script>
-<script src="../src/View/Layer/Loading.js"></script>
-<script src="../src/View/Layer/Empty.js"></script>
-
-<script src="../src/AddOn/Net.js"></script>
-
-<script src="../src/Core.js"></script>
-<script src="../src/Grid.js"></script>
 <script>
 var grid = new ne.Grid({
     el: $('#grid'),
@@ -137,12 +95,7 @@ var grid = new ne.Grid({
 		columnName: 'merge2',
 		title: 'merge2',
 		columnNameList: ['c4', 'c5', 'c6', 'c7']
-	}],
-	toolbar: {
-		hasResizeHandler: false,
-		hasControlPanel: false,
-		hasPagination: false
-	}
+	}]
 });
 
 var rowList = [{

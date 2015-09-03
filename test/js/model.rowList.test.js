@@ -1,5 +1,11 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var RowListModel = require('../../src/js/model/rowList');
+var RowModel = require('../../src/js/model/row');
+var Model = require('../../src/js/base/model');
+
 describe('model.rowList', function() {
     var columnModelList = [
         {
@@ -34,11 +40,11 @@ describe('model.rowList', function() {
         grid = {};
 
     beforeEach(function() {
-        columnModelInstance = grid.columnModel = new Data.ColumnModel({
+        columnModelInstance = grid.columnModel = new ColumnModelData({
             selectType: 'checkbox'
         });
         columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = grid.dataModel = new Data.RowList([], {
+        dataModelInstance = grid.dataModel = new RowListData([], {
             grid: grid
         });
     });
@@ -68,7 +74,7 @@ describe('model.rowList', function() {
                     }
                 ];
                 dataModelInstance.set(rowList, {parse: true});
-                model = new Model.Row({
+                model = new RowModel({
                     grid: grid
                 });
             });
@@ -149,7 +155,7 @@ describe('model.rowList', function() {
                             columnName3: 'columnName3'
                         }
                     ],
-                    model = new Model.Row({
+                    model = new RowModel({
                         grid: grid
                     }),
                     dataList,
@@ -230,7 +236,7 @@ describe('model.rowList', function() {
                     formatted;
 
                 dataModelInstance.set(rowList, {parse: true});
-                model = new Model.Row({
+                model = new RowModel({
                     grid: grid
                 });
                 dataList = dataModelInstance.toJSON();
@@ -306,7 +312,7 @@ describe('model.rowList', function() {
                     formatted;
 
                 dataModelInstance.set(rowList, {parse: true});
-                model = new Model.Row({
+                model = new RowModel({
                     grid: grid
                 });
                 dataList = dataModelInstance.toJSON();
@@ -382,7 +388,7 @@ describe('model.rowList', function() {
                     formatted;
 
                 dataModelInstance.set(rowList, {parse: true});
-                model = new Model.Row({
+                model = new RowModel({
                     grid: grid
                 });
                 dataList = dataModelInstance.toJSON();
@@ -484,7 +490,7 @@ describe('model.rowList', function() {
             ];
             dataModelInstance.set(rowList, {parse: true});
 
-            rowListModelInstance = new Model.RowList(dataModelInstance.toJSON(), {
+            rowListModelInstance = new RowListModel(dataModelInstance.toJSON(), {
                 grid: grid,
                 parse: true
             });
@@ -651,7 +657,7 @@ describe('model.rowList', function() {
             ];
             dataModelInstance.set(rowList, {parse: true});
 
-            rowListModelInstance = new Model.RowList(dataModelInstance.toJSON(), {
+            rowListModelInstance = new RowListModel(dataModelInstance.toJSON(), {
                 grid: grid,
                 parse: true
             });
@@ -709,7 +715,7 @@ describe('model.rowList', function() {
 
         it('변경시 change 이벤트를 발생하는지 확인한다.', function() {
             var callback = jasmine.createSpy('callback'),
-                listenModel = new Model.Base();
+                listenModel = new Model();
 
             listenModel.listenTo(rowListModelInstance.get(0), 'change', callback);
             rowListModelInstance.get(0).setCell('columnName1', {
@@ -728,7 +734,7 @@ describe('model.rowList', function() {
 
         it('값이 변경된 경우 valueChange 이벤트를 발생하는지 확인한다.', function() {
             var callback = jasmine.createSpy('callback'),
-                listenModel = new Model.Base();
+                listenModel = new Model();
 
             listenModel.listenTo(rowListModelInstance.get(0), 'valueChange', callback);
             rowListModelInstance.get(0).setCell('columnName1', {

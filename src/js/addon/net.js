@@ -4,8 +4,9 @@
  */
 'use strict';
 
- var View = require('../base/view');
- var Router = require('./net-router');
+var View = require('../base/view');
+var Router = require('./net-router');
+var util = require('../util');
 
 /**
  * Network 모듈 addon
@@ -364,7 +365,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         this._changeSortOptions(data, sortOptions);
 
         if (this.router) {
-            this.router.navigate('read/' + utiltoQueryString(data), {
+            this.router.navigate('read/' + util.toQueryString(data), {
                 trigger: false
             });
         }

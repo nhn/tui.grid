@@ -1,18 +1,20 @@
 'use strict';
 
+var Core = require('../../src/js/core');
+
 describe('grid.core.paste()', function() {
     var grid, $empty;
 
     function createColumnModelList(names) {
         var models = [];
-        ne.util.forEachArray(names, function(name, editType){
+        ne.util.forEachArray(names, function(name, editType) {
             models.push({
                 title: name,
                 columnName: name,
                 editOption: {
                     type: editType || 'text'
                 }
-            })
+            });
         });
         return models;
     }
@@ -23,7 +25,7 @@ describe('grid.core.paste()', function() {
 
     afterEach(function() {
         grid.destroy();
-    })
+    });
 
     describe('텍스트 컬럼 (text, text-convertible)', function() {
         beforeEach(function() {
@@ -38,15 +40,15 @@ describe('grid.core.paste()', function() {
                 {
                     c1: '0-1',
                     c2: '0-2',
-                    c3: '0-3',
+                    c3: '0-3'
                 }, {
                     c1: '1-1',
                     c2: '1-2',
-                    c3: '1-3',
+                    c3: '1-3'
                 }, {
                     c1: '2-1',
                     c2: '2-2',
-                    c3: '2-3',
+                    c3: '2-3'
                 }
             ]);
         });
@@ -149,7 +151,7 @@ describe('grid.core.paste()', function() {
             });
             grid.setRowList([
                 {
-                    _extraData : {
+                    _extraData: {
                         rowState: 'DISABLED'
                     },
                     c1: '0-1',
@@ -210,9 +212,9 @@ describe('grid.core.paste()', function() {
         });
         grid.setRowList([
             {
-                _extraData : {
-                    rowSpan : {
-                        c2 : 2
+                _extraData: {
+                    rowSpan: {
+                        c2: 2
                     }
                 },
                 c1: '0-1',

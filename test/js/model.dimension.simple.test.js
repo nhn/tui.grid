@@ -1,12 +1,16 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+
 describe('model.dimension', function() {
     var grid = {},
         defaultConfig;
 
     beforeEach(function() {
-        grid.columnModel = new Data.ColumnModel();
-        grid.dataModel = new Data.RowList([], {
+        grid.columnModel = new ColumnModelData();
+        grid.dataModel = new RowListData([], {
             grid: grid
         });
         defaultConfig = {
@@ -22,7 +26,7 @@ describe('model.dimension', function() {
     });
 
     describe('_distributeExtraWidthEqually()', function() {
-        var testFn = Model.Dimension.prototype._distributeExtraWidthEqually;
+        var testFn = Dimension.prototype._distributeExtraWidthEqually;
 
         it('[20, 20, 20], extra: 30', function() {
             var widths = [20, 20, 20],
@@ -58,7 +62,7 @@ describe('model.dimension', function() {
                 width: 506, // total 500
                 minimumColumnWidth: 50
             });
-            dimension = new Model.Dimension(config);
+            dimension = new Dimension(config);
         });
 
         it('[100, 100, 0, 0, 0]', function() {
@@ -85,7 +89,7 @@ describe('model.dimension', function() {
                     width: 506,
                     minimumColumnWidth: 50
                 });
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
             });
 
             it('50(fixed), 50(fixed), 100, 100, 100', function() {
@@ -111,7 +115,7 @@ describe('model.dimension', function() {
                     width: 306,
                     minimumColumnWidth: 50
                 });
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
                 dimension._minColumnWidthList = [50, 50, 50, 50, 50];
             });
 
@@ -134,7 +138,7 @@ describe('model.dimension', function() {
                     output = [50, 50, 50, 50, 50];
 
                 dimension.set('width', 206);
-                expect(dimension._adjustColumnWidthList(input, true)).toEqual(output);
+                expect(_.isEqual(dimension._adjustColumnWidthList(input, true), output)).toBe(true);
             });
 
             it('100(fixed), 100(fixed), 100(fixed), 100, 100', function() {
@@ -142,7 +146,7 @@ describe('model.dimension', function() {
                     output = [100, 100, 100, 50, 50];
 
                 dimension._columnWidthFixedFlags = [true, true, true, false, false];
-                expect(dimension._adjustColumnWidthList(input, true)).toEqual(output);
+                expect(_.isEqual(dimension._adjustColumnWidthList(input, true), output)).toBe(true);
             });
         });
     });
@@ -167,7 +171,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
                 expect(dimension.get('columnWidthList')).toEqual([100, 100, 100, 100, 100]);
             });
 
@@ -180,7 +184,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
                 expect(dimension.get('columnWidthList')).toEqual([150, 150, 150, 50, 50]);
             });
 
@@ -192,7 +196,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
                 expect(dimension.get('columnWidthList')).toEqual([80, 80, 80, 130, 130]);
             });
 
@@ -204,7 +208,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
                 expect(dimension.get('columnWidthList')).toEqual([50, 50, 50, 175, 175]);
             });
 
@@ -216,7 +220,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 50, isFixedWidth: true},
                     {columnName: 'c5', width: 50, isFixedWidth: true}
                 ]);
-                dimension = new Model.Dimension(config);
+                dimension = new Dimension(config);
                 expect(dimension.get('columnWidthList')).toEqual([50, 50, 50, 50, 300]);
             });
         });
@@ -243,7 +247,7 @@ describe('model.dimension', function() {
                         {columnName: 'c4'},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Model.Dimension(config);
+                    dimension = new Dimension(config);
                 });
 
                 it('set first width to 150', function() {
@@ -271,7 +275,7 @@ describe('model.dimension', function() {
                         {columnName: 'c4', width: 100},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Model.Dimension(config);
+                    dimension = new Dimension(config);
                 });
 
                 it('set first width(fixed) to 150', function() {

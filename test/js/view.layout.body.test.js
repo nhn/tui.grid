@@ -1,4 +1,15 @@
+/* global setFixtures */
+
 'use strict';
+
+var Model = require('../../src/js/base/model');
+var Collection = require('../../src/js/base/collection');
+var ColumnModelData = require('../../src/js/data/columnModel');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var Selection = require('../../src/js/view/selection');
+var CellFactory = require('../../src/js/view/cellFactory');
+var LayoutBody = require('../../src/js/view/layout/body');
 
 describe('view.layout.body', function() {
     var grid, body;
@@ -13,8 +24,8 @@ describe('view.layout.body', function() {
             showGridLayer: function() {
 
             },
-            dataModel: new Collection.Base(),
-            columnModel: new Data.ColumnModel({
+            dataModel: new Collection(),
+            columnModel: new ColumnModelData({
                 columnModelList: [
                     {
                         title: 'c1',
@@ -27,18 +38,18 @@ describe('view.layout.body', function() {
                     }
                 ]
             }),
-            focusModel: new Model.Base()
+            focusModel: new Model()
         };
-        mock.dimensionModel = new Model.Dimension({
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
-        mock.renderModel = new Model.Renderer({
+        mock.renderModel = new Renderer({
             grid: mock
         });
-        mock.selection = new View.Selection({
+        mock.selection = new Selection({
             grid: mock
         });
-        mock.cellFactory = new View.CellFactory({
+        mock.cellFactory = new CellFactory({
             grid: grid
         });
         return mock;
@@ -46,7 +57,7 @@ describe('view.layout.body', function() {
 
     beforeEach(function() {
         grid = createGridMock();
-        body = new View.Layout.Body({
+        body = new LayoutBody({
             grid: grid
         });
     });
@@ -98,7 +109,7 @@ describe('view.layout.body', function() {
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
-            var extraWidth = View.Layout.Body.extraWidth,
+            var extraWidth = LayoutBody.extraWidth,
                 $colgroup, $cols;
 
             body.render();
@@ -119,12 +130,13 @@ describe('view.layout.body', function() {
             $(grid.selection.el).parent().is(body.el);
         });
 
-        it('View.RowList를 생성하고, render를 실행한다.', function() {
-            spyOn(View.RowList.prototype, 'render');
-
-            body.render();
-            expect(View.RowList.prototype.render).toHaveBeenCalled();
-        });
+        // TODO: TC 구현
+        // it('View.RowList를 생성하고, render를 실행한다.', function() {
+        //     spyOn(RowListView, 'render');
+        //
+        //     body.render();
+        //     expect(RowListView.render).toHaveBeenCalled();
+        // });
     });
 
     describe('grid.renderModel의 refresh 이벤트 발생시', function() {
@@ -157,7 +169,7 @@ describe('view.layout.body', function() {
 
     describe('grid.dimensionModel의 columnWidthChanged 이벤트 발생시', function() {
         it('각 col요소의 넓이를 재설정한다.', function() {
-            var extraWidth = View.Layout.Body.extraWidth,
+            var extraWidth = LayoutBody.extraWidth,
                 $cols;
 
             body.render();
@@ -201,8 +213,8 @@ describe('view.layout.body', function() {
         var $cell1, $cell2, clickSpy, focusSpy;
 
         beforeEach(function() {
-            $cell1 = $('<td edit-type="type1"><input /></td>'),
-            $cell2 = $('<td edit-type="type2" />'),
+            $cell1 = $('<td edit-type="type1"><input /></td>');
+            $cell2 = $('<td edit-type="type2" />');
             clickSpy = jasmine.createSpy('onClick');
             focusSpy = jasmine.createSpy('onFocus');
             body.render();

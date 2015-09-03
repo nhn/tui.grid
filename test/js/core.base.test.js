@@ -1,11 +1,15 @@
 'use strict';
 
+var Model = require('../../src/js/base/model');
+var Collection = require('../../src/js/base/collection');
+var View = require('../../src/js/base/view');
+
 describe('core.base', function() {
     var grid,
         $empty,
         Class;
 
-    function testForSetOwnProperties(object){
+    function testForSetOwnProperties(object) {
         object.setOwnProperties({
             value1: 1,
             value2: 2,
@@ -26,11 +30,11 @@ describe('core.base', function() {
     loadFixtures('test/fixtures/empty.html');
     $empty = $('#empty');
     Class = {};
-    Class.Model = Model.Base.extend({});
-    Class.Collection = Collection.Base.extend({
+    Class.Model = Model.extend({});
+    Class.Collection = Collection.extend({
         model: Class.Model
     });
-    Class.View = View.Base.extend({});
+    Class.View = View.extend({});
 
     beforeEach(function() {
         $empty.empty();
@@ -71,7 +75,7 @@ describe('core.base', function() {
         });
 
         it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
-            var collection = new Class.Collection();
+            collection = new Class.Collection();
             testForSetOwnProperties(collection);
         });
 
@@ -163,34 +167,6 @@ describe('core.base', function() {
             expect(error instanceof Error).toBe(true);
             expect(error.hasOwnProperty('name')).toBe(true);
             expect(error.message).toBe(message);
-        });
-    });
-
-    describe('View.Base.Painter', function() {
-        var painter,
-            PainterClass = PainterClass = View.Base.Painter.extend({
-               initialize: function() {
-                   View.Base.Painter.prototype.initialize.apply(this, arguments);
-                   this.clickCount = 0;
-                   this.focusCount = 0;
-               },
-               eventHandler: {
-                   'click p': '_onClick',
-                   'focus input': '_onFocus'
-               },
-               getHtml: function() {
-                   return '<p>test html<input type="text"></p>';
-               },
-               _onClick: function() {
-                   this.clickCount += 1;
-               },
-               _onFocus: function() {
-                   this.focusCount += 1;
-               }
-           });
-
-        beforeEach(function() {
-            painter = new PainterClass();
         });
     });
 });

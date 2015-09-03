@@ -1,5 +1,11 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+var Renderer = require('../../src/js/model/renderer');
+var Model = require('../../src/js/base/model');
+
 describe('model.renderer', function() {
     var columnModelList = [
         {
@@ -125,19 +131,19 @@ describe('model.renderer', function() {
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalRowList);
-        columnModelInstance = grid.columnModel = new Data.ColumnModel({
+        columnModelInstance = grid.columnModel = new ColumnModelData({
             hasNumberColumn: true,
             selectType: 'checkbox',
             columnFixIndex: 2
         });
         columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = grid.dataModel = new Data.RowList([], {
+        dataModelInstance = grid.dataModel = new RowListData([], {
             grid: grid
         });
-        grid.dimensionModel = new Model.Dimension({
+        grid.dimensionModel = new Dimension({
             grid: grid
         });
-        renderModelInstance = new Model.Renderer({
+        renderModelInstance = new Renderer({
             grid: grid
         });
     });
@@ -289,7 +295,7 @@ describe('model.renderer', function() {
 
             beforeEach(function() {
                 callback = jasmine.createSpy('callback');
-                listenModel = new Model.Base();
+                listenModel = new Model();
             });
 
             it('refresh 이벤트를 발생하는지 확인한다.', function() {
@@ -303,13 +309,13 @@ describe('model.renderer', function() {
             var listenModel;
 
             beforeEach(function() {
-                listenModel = new Model.Base();
+                listenModel = new Model();
             });
 
             it('데이터가 변경되었을 경우 rowListChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
-                renderModelInstance = new Model.Renderer({
+                renderModelInstance = new Renderer({
                     grid: grid
                 });
                 listenModel.listenTo(renderModelInstance, 'rowListChanged', callback);
@@ -323,7 +329,7 @@ describe('model.renderer', function() {
             it('컬럼 모델이 변경되었을 경우 isColumnModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
-                renderModelInstance = new Model.Renderer({
+                renderModelInstance = new Renderer({
                     grid: grid
                 });
                 listenModel.listenTo(renderModelInstance, 'columnModelChanged', callback);

@@ -1,5 +1,8 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+
 describe('Data.RowList - rowSpan', function() {
     var columnModelList = [
         {
@@ -23,9 +26,9 @@ describe('Data.RowList - rowSpan', function() {
         };
 
     beforeEach(function() {
-        columnModel = grid.columnModel = new Data.ColumnModel();
+        columnModel = grid.columnModel = new ColumnModelData();
         columnModel.set('columnModelList', columnModelList);
-        rowList = new Data.RowList([], {
+        rowList = new RowListData([], {
             grid: grid
         });
         rowList.set([

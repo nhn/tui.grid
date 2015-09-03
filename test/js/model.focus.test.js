@@ -1,5 +1,14 @@
 'use strict';
 
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
+var Dimension = require('../../src/js/model/dimension');
+var FocusModel = require('../../src/js/model/focus');
+var RenderModel = require('../../src/js/model/renderer');
+var Selection = require('../../src/js/model/dimension');
+var Collection = require('../../src/js/base/collection');
+var Model = require('../../src/js/base/model');
+
 describe('model.renderer', function() {
     var grid, focusModel;
 
@@ -14,22 +23,22 @@ describe('model.renderer', function() {
             focusIn: function() {},
             selection: {},
             updateLayoutData: function() {},
-            dataModel: new Collection.Base(),
-            columnModel: new Data.ColumnModel()
+            dataModel: new Collection(),
+            columnModel: new ColumnModelData()
         };
-        mock.dimensionModel = new Model.Dimension({
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
-        mock.renderModel = new Model.Renderer({
+        mock.renderModel = new RenderModel({
             grid: mock
         });
-        mock.focusModel = new Model.Focus({
+        mock.focusModel = new FocusModel({
             grid: mock
         });
-        mock.selection = new View.Selection({
+        mock.selection = new Selection({
             grid: mock
         });
-        mock.dataModel = new Data.RowList([], {
+        mock.dataModel = new RowListData([], {
             grid: mock
         });
         return mock;
@@ -82,7 +91,7 @@ describe('model.renderer', function() {
 
         it('select 시 select 이벤트를 발생하는지 확인한다.', function() {
             var callback = jasmine.createSpy('callback'),
-                listenModel = new Model.Base();
+                listenModel = new Model();
             listenModel.listenToOnce(focusModel, 'select', callback);
             focusModel.select(1);
             expect(callback).toHaveBeenCalled();
@@ -96,7 +105,7 @@ describe('model.renderer', function() {
         });
         it('unselect 시 unselect 이벤트를 발생하는지 확인한다.', function() {
             var callback = jasmine.createSpy('callback'),
-                listenModel = new Model.Base();
+                listenModel = new Model();
             listenModel.listenToOnce(focusModel, 'unselect', callback);
             focusModel.unselect();
             expect(callback).toHaveBeenCalled();
@@ -116,7 +125,7 @@ describe('model.renderer', function() {
 
         it('focus 이벤트를 발생한다.', function() {
             var callback = jasmine.createSpy('callback'),
-                listenModel = new Model.Base();
+                listenModel = new Model();
             listenModel.listenToOnce(focusModel, 'focus', callback);
             focusModel.focus('1', 'c1');
             expect(callback).toHaveBeenCalled();
@@ -142,7 +151,7 @@ describe('model.renderer', function() {
 
         it('blur 이벤트를 발생한다.', function() {
             var callback = jasmine.createSpy('callback'),
-                listenModel = new Model.Base();
+                listenModel = new Model();
 
             focusModel.focus(1, 'c1');
             listenModel.listenToOnce(focusModel, 'blur', callback);
