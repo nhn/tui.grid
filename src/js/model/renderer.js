@@ -23,6 +23,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
         lside: null,
         rside: null
     },
+
     /**
      * 생성자 함수
      */
@@ -56,6 +57,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
             .listenTo(lside, 'valueChange', this._onValueChange, this)
             .listenTo(rside, 'valueChange', this._onValueChange, this);
     },
+
     /**
      * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
      * @param {number} rowIndex row 의 index 값
@@ -64,6 +66,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
     _onValueChange: function(rowIndex) {
         this.executeRelation(rowIndex);
     },
+
     /**
      * Event handler for 'chage:width' event on Dimension.
      */
@@ -71,6 +74,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
         var dimension = this.grid.dimensionModel;
         this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
     },
+
     /**
      * 내부 변수를 초기화 한다.
      */
@@ -85,6 +89,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
             startNumber: 1
         });
     },
+
     /**
      * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
      * @param {String} [whichSide='R']    어느 영역인지 여부. 'L|R' 중에 하나의 값을 넘긴다.
@@ -109,6 +114,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
         clearTimeout(this.timeoutIdForRefresh);
         this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
     },
+
     /**
      * Data.RowList 가 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
      * @private
@@ -117,6 +123,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
         clearTimeout(this.timeoutIdForRefresh);
         this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this, true), 0);
     },
+
     /**
      * rendering 할 index 범위를 결정한다.
      * Smart rendering 을 사용하지 않을 경우 전체 범위로 랜더링한다.
@@ -128,14 +135,17 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
             endIndex: this.grid.dataModel.length - 1
         });
     },
+
     /**
      * rendering 할 데이터를 생성한다.
+     * @param {boolean} isDataModelChanged - The boolean value whether dataModel has changed
      */
     refresh: function(isDataModelChanged) {
         this._setRenderingRange(this.get('scrollTop'));
 
         //TODO : rendering 해야할 데이터만 가져온다.
-        var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+        //TODO : eslint 에러 수정
+        var columnFixIndex = this.grid.columnModel.get('columnFixIndex'), // eslint-disable-line
             columnList = this.grid.columnModel.get('visibleList'),
             columnNameList = _.pluck(columnList, 'columnName'),
 
@@ -170,17 +180,17 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
                 };
 
                 //lside 데이터 먼저 채운다.
-                _.each(lsideColumnList, function (columnName) {
+                _.each(lsideColumnList, function (columnName) { // eslint-disable-line
                     if (columnName === '_number') {
-                        lsideRow[columnName] = num++;
+                        lsideRow[columnName] = num++; // eslint-disable-line
                     } else {
                         lsideRow[columnName] = rowModel.get(columnName);
                     }
                 });
 
-                _.each(rsideColumnList, function (columnName) {
+                _.each(rsideColumnList, function (columnName) { // eslint-disable-line
                     if (columnName === '_number') {
-                        rsideRow[columnName] = num++;
+                        rsideRow[columnName] = num++; // eslint-disable-line
                     } else {
                         rsideRow[columnName] = rowModel.get(columnName);
                     }
@@ -213,6 +223,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
         }
         this.trigger('refresh', this.get('top'));
     },
+
     /**
      * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.
      * @param {String} columnName   컬럼명
@@ -221,14 +232,16 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
      */
     _getCollectionByColumnName: function(columnName) {
         var lside = this.get('lside'),
-            rside = this.get('rside');
+            collection;
 
         if (lside.at(0) && lside.at(0).get(columnName)) {
-            return lside;
+            collection = lside;
         } else {
-            return rside;
+            collection = this.get('rside');
         }
+        return collection;
     },
+
     /**
      * 셀 데이터를 반환한다.
      * @param {number} rowKey   데이터의 키값
@@ -257,6 +270,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
            return row.get(columnName);
         }
     },
+
     /**
      * rowIndex 에 해당하는 relation 을 수행한다.
      * @param {Number} rowIndex row 의 index 값
@@ -274,6 +288,10 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
             }
         }, this);
     },
+
+    /**
+     * Destroys itself
+     */
     _destroy: function() {
         clearTimeout(this.timeoutIdForRefresh);
     }

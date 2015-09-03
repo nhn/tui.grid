@@ -90,23 +90,26 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * @param {Object} attributes 생성자 option 정보
      */
     initialize: function(attributes) {
+        var defaultOptions, options, pagination;
+
         View.prototype.initialize.apply(this, arguments);
-        var defaultOptions = {
-                initialRequest: true,
-                api: {
-                    'readData': '',
-                    'createData': '',
-                    'updateData': '',
-                    'deleteData': '',
-                    'modifyData': '',
-                    'downloadData': '',
-                    'downloadAllData': ''
-                },
-                perPage: 500,
-                enableAjaxHistory: true
+
+        defaultOptions = {
+            initialRequest: true,
+            api: {
+                'readData': '',
+                'createData': '',
+                'updateData': '',
+                'deleteData': '',
+                'modifyData': '',
+                'downloadData': '',
+                'downloadAllData': ''
             },
-            options = $.extend(true, defaultOptions, attributes),
-            pagination = this.grid.getPaginationInstance();
+            perPage: 500,
+            enableAjaxHistory: true
+        };
+        options = $.extend(true, defaultOptions, attributes);
+        pagination = this.grid.getPaginationInstance();
 
         this.setOwnProperties({
             curPage: 1,
@@ -250,13 +253,13 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
      * @param {object} dataModel grid 의 dataModel
      * @param {object} responseData 응답 데이터
-     * @param {object} options  ajax 요청 정보
      * @private
      */
-    _onReadSuccess: function(dataModel, responseData, options) {
-        dataModel.setOriginalRowList();
+    _onReadSuccess: function(dataModel, responseData) {
         var pagination = this.pagination,
             page, totalCount;
+
+        dataModel.setOriginalRowList();
 
         //pagination 처리
         if (pagination && responseData.pagination) {
@@ -275,7 +278,8 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * @param {object} options  ajax 요청 정보
      * @private
      */
-    _onReadError: function(dataModel, responseData, options) {},
+    _onReadError: function(dataModel, responseData, options) {}, // eslint-disable-line
+
     /**
      * 가장 마지막에 조회 요청한 request 파라미터로 다시 요청한다.
      */
@@ -357,8 +361,10 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * @private
      */
     _readDataAt: function(page, isUsingRequestedData, sortOptions) {
+        var data;
+
         isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
-        var data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
+        data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
         data.page = page;
         data.perPage = this.perPage;
 
@@ -371,10 +377,11 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         }
         this.readData(data);
     },
+
     /**
      * 서버로 API request 한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
-     * @param {object} options
+     * @param {object} options Options
      *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
      *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
      *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
@@ -399,10 +406,11 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
             this._ajax(param);
         }
     },
+
     /**
      * 서버로 요청시 사용될 파라미터 중 Grid 의 데이터에 해당하는 데이터를 Option 에 맞추어 반환한다.
      * @param {String} requestType  요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
-     * @param {Object} [options]
+     * @param {Object} [options] Options
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
      *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
      *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
@@ -411,19 +419,12 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * @private
      */
     _getDataParam: function(requestType, options) {
-        var defaultOptions = {
+        var dataModel = this.grid.dataModel,
+            defaultOptions = {
                 hasDataParam: true,
                 isOnlyModified: true,
                 isOnlyChecked: true
-            };
-
-
-        options = $.extend(defaultOptions, options);
-
-        var hasDataParam = options.hasDataParam,
-            isOnlyModified = options.isOnlyModified,
-            isOnlyChecked = options.isOnlyChecked,
-            dataModel = this.grid.dataModel,
+            },
             checkMap = {
                 'createData': ['createList'],
                 'updateData': ['updateList'],
@@ -433,7 +434,13 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
             checkList = checkMap[requestType],
             data = $.extend({}, this.requestedFormData),
             count = 0,
-            dataMap;
+            hasDataParam, isOnlyModified, isOnlyChecked, dataMap;
+
+
+        options = $.extend(defaultOptions, options);
+        hasDataParam = options.hasDataParam;
+        isOnlyModified = options.isOnlyModified;
+        isOnlyChecked = options.isOnlyChecked;
 
         if (hasDataParam) {
             if (isOnlyModified) {
@@ -461,10 +468,11 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
             count: count
         };
     },
+
     /**
      * requestType 에 따라 서버에 요청할 파라미터를 반환한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
-     * @param {Object} [options]
+     * @param {Object} [options] Options
      *      @param {String} [options.url=this.options.api[requestType]] 요청할 url.
      *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
      *      @param {String} [options.type='POST'] request method 타입
@@ -496,6 +504,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
             return param;
         }
     },
+
     /**
      * requestType 에 따른 컨펌 메세지를 노출한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
@@ -504,13 +513,15 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * @private
      */
     _isConfirmed: function(requestType, count) {
+        var result = false;
+
         /* istanbul ignore next: confirm 을 확인할 수 없읔 */
         if (count > 0) {
-            return confirm(this._getConfirmMessage(requestType, count));
+            result = confirm(this._getConfirmMessage(requestType, count));
         } else {
             alert(this._getConfirmMessage(requestType, count));
-            return false;
         }
+        return result;
     },
     /**
      * confirm message 를 반환한다.
@@ -526,20 +537,25 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
                 'deleteData': '삭제',
                 'modifyData': '반영'
             },
-            actionName = textMap[requestType];
+            actionName = textMap[requestType],
+            message;
+
         if (count > 0) {
-            return count + '건의 데이터를 ' + actionName + '하시겠습니까?';
+            message = count + '건의 데이터를 ' + actionName + '하시겠습니까?';
         } else {
-            return actionName + '할 데이터가 없습니다.';
+            message = actionName + '할 데이터가 없습니다.';
         }
+        return message;
     },
+
     /**
      * ajax 통신을 한다.
      * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
      * @private
      */
     _ajax: function(options) {
-        var eventData = this.createEventData(options.data);
+        var eventData = this.createEventData(options.data),
+            params;
 
         //beforeRequest 이벤트를 발생한다.
         this.grid.trigger('beforeRequest', eventData);
@@ -550,19 +566,20 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         }
 
         options = $.extend({requestType: ''}, options);
-        var params = {
-            'url' : options.url,
-            'data' : options.data || {},
-            'type' : options.type || 'POST',
-            'dataType' : options.dataType || 'json',
-            'complete' : $.proxy(this._onComplete, this, options.complete, options),
-            'success' : $.proxy(this._onSuccess, this, options.success, options),
-            'error' : $.proxy(this._onError, this, options.error, options)
+        params = {
+            url: options.url,
+            data: options.data || {},
+            type: options.type || 'POST',
+            dataType: options.dataType || 'json',
+            complete: $.proxy(this._onComplete, this, options.complete, options),
+            success: $.proxy(this._onSuccess, this, options.success, options),
+            error: $.proxy(this._onError, this, options.error, options)
         };
         if (options.url) {
             $.ajax(params);
         }
     },
+
     /**
      * ajax complete 이벤트 핸들러
      * @param {Function} callback   통신 완료 이후 수행할 콜백함수
@@ -570,12 +587,13 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      * @param {number} status   http status 정보
      * @private
      */
-    _onComplete: function(callback, jqXHR, status) {
+    _onComplete: function(callback, jqXHR, status) { // eslint-disable-line no-unused-vars
         this._unlock();
     },
+
     /**
      * ajax success 이벤트 핸들러
-     * @param {Function} callback
+     * @param {Function} callback Callback function
      * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
      * @param {Object} responseData 응답 데이터
      * @param {number} status   http status 정보
@@ -603,24 +621,27 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
                 callback(responseData['data'] || {}, status, jqXHR);
             }
         } else {
-            //todo: 오류 처리 - invalid 셀에 마크하기 등. 스펙아웃 할 수도 있음
+            // TODO: 오류 처리 - invalid 셀에 마크하기 등. 스펙아웃 할 수도 있음
             this.grid.trigger('failResponse', eventData);
             if (eventData.isStopped()) {
                 return;
             }
-            message ? alert(message) : null;
+            if (message) {
+                alert(message);
+            }
         }
     },
+
     /**
      * ajax error 이벤트 핸들러
-     * @param {Function} callback
+     * @param {Function} callback Callback function
      * @param {{requestType: string, url: string, data: object, type: string, dataType: string}} options ajax 요청 파라미터
      * @param {object} jqXHR    jqueryXHR  객체
      * @param {number} status   http status 정보
      * @param {String} errorMessage 에러 메세지
      * @private
      */
-    _onError: function(callback, options, jqXHR, status, errorMessage) {
+    _onError: function(callback, options, jqXHR, status) {
         var eventData = this.createEventData({
             httpStatus: status,
             requestType: options.requestType,

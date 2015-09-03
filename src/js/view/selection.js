@@ -531,7 +531,7 @@ var Selection = View.extend(/**@lends Selection.prototype */{
         if (!startRow || !endRow) {
             return newSpannedRange;
         }
-        
+
         var startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
             endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
             columnName, param;

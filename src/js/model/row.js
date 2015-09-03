@@ -13,7 +13,13 @@ var util = require('../util');
  */
 var Row = Model.extend(/**@lends Model.Row.prototype */{
     idAttribute: 'rowKey',
-    initialize: function(attributes, options) {
+
+    /**
+     * Initializes
+     * @param  {object} attributes - Attributes
+     * @param  {object} options - Options
+     */
+    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
         var rowKey;
 
         Model.prototype.initialize.apply(this, arguments);
@@ -54,38 +60,38 @@ var Row = Model.extend(/**@lends Model.Row.prototype */{
      * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
      */
     _setRowExtraData: function() {
-        if (!ne.util.isUndefined(this.collection)) {
-            var dataModel = this.dataModel,
-                columnModelList = this.columnModel.getVisibleColumnModelList(),
-                row = this.dataModel.get(this.get('rowKey')),
-                rowState = row.getRowState(),
-                param;
-            _.each(columnModelList, function(columnModel) {
-                var mainRowKey,
-                    columnName = columnModel['columnName'],
-                    cellData = this.get(columnName),
-                    rowModel = this,
-                    isEditable,
-                    isDisabled;
+        var dataModel = this.dataModel,
+            columnModelList = this.columnModel.getVisibleColumnModelList(),
+            row = this.dataModel.get(this.get('rowKey')),
+            rowState = row.getRowState(),
+            param;
 
-
-                if (!ne.util.isUndefined(cellData)) {
-                    isEditable = row.isEditable(columnName);
-                    isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
-                    if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
-                        rowModel = this.collection.get(cellData['mainRowKey']);
-                    }
-                    if (rowModel) {
-                        param = {
-                            isDisabled: isDisabled,
-                            isEditable: isEditable,
-                            className: row.getClassNameList(columnName).join(' ')
-                        };
-                        rowModel.setCell(columnName, param);
-                    }
-                }
-            }, this);
+        if (ne.util.isUndefined(this.collection)) {
+            return;
         }
+
+        _.each(columnModelList, function(columnModel) {
+            var columnName = columnModel['columnName'],
+                cellData = this.get(columnName),
+                rowModel = this,
+                isEditable, isDisabled;
+
+            if (!ne.util.isUndefined(cellData)) {
+                isEditable = row.isEditable(columnName);
+                isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
+                if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
+                    rowModel = this.collection.get(cellData['mainRowKey']);
+                }
+                if (rowModel) {
+                    param = {
+                        isDisabled: isDisabled,
+                        isEditable: isEditable,
+                        className: row.getClassNameList(columnName).join(' ')
+                    };
+                    rowModel.setCell(columnName, param);
+                }
+            }
+        }, this);
     },
 
     /**
@@ -157,29 +163,32 @@ var Row = Model.extend(/**@lends Model.Row.prototype */{
      * @param {{key: value}} param  key:value 로 이루어진 셀에서 변경할 프로퍼티 목록
      */
     setCell: function(columnName, param) {
-        if (this.get(columnName)) {
-            var data = _.clone(this.get(columnName)),
-                isValueChanged = false,
-                changed = [],
-                rowIndex,
-                rowKey = this.get('rowKey');
+        var isValueChanged = false,
+            changed = [],
+            rowIndex, rowKey, data;
 
-            _.each(param, function(changeValue, name) {
-                if (!util.isEqual(data[name], changeValue)) {
-                    isValueChanged = (name === 'value') ? true : isValueChanged;
-                    data[name] = changeValue;
-                    changed.push(name);
-                }
-            }, this);
+        if (!this.get(columnName)) {
+            return;
+        }
 
-            if (changed.length) {
-                data['changed'] = changed;
-                this.set(columnName, data);
-                if (isValueChanged) {
-                    //value 가 변경되었을 경우 relation 을 수행한다.
-                    rowIndex = this.dataModel.indexOfRowKey(rowKey);
-                    this.trigger('valueChange', rowIndex);
-                }
+        rowKey = this.get('rowKey');
+        data = _.clone(this.get(columnName));
+
+        _.each(param, function(changeValue, name) {
+            if (!util.isEqual(data[name], changeValue)) {
+                isValueChanged = (name === 'value') ? true : isValueChanged;
+                data[name] = changeValue;
+                changed.push(name);
+            }
+        }, this);
+
+        if (changed.length) {
+            data['changed'] = changed;
+            this.set(columnName, data);
+            if (isValueChanged) {
+                //value 가 변경되었을 경우 relation 을 수행한다.
+                rowIndex = this.dataModel.indexOfRowKey(rowKey);
+                this.trigger('valueChange', rowIndex);
             }
         }
     }

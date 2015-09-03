@@ -132,6 +132,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
             isDisabled: isDisabled
         };
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
      * @param {String} columnName   컬럼명
@@ -139,17 +140,15 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
      */
     isEditable: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
-            editType, cellState;
+            editType = this.grid.columnModel.getEditType(columnName),
+            result = false;
 
-        editType = this.grid.columnModel.getEditType(columnName);
-
-        if ($.inArray(editType, notEditableTypeList) !== -1) {
-            return false;
-        } else {
-            cellState = this.getCellState(columnName);
-            return cellState.isEditable;
+        if ($.inArray(editType, notEditableTypeList) === -1) {
+            result = this.getCellState(columnName).isEditable;
         }
+        return result;
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
      * @param {String} columnName   컬럼명
@@ -160,6 +159,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
         cellState = this.getCellState(columnName);
         return cellState.isDisabled;
     },
+
     /**
      * getRowSpanData
      *
@@ -168,25 +168,25 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
      * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
      */
     getRowSpanData: function(columnName) {
-        var extraData = this.get('_extraData');
+        var extraData = this.get('_extraData'),
+            rowSpanData = null;
+
         if (this.collection.isRowSpanEnable()) {
             if (!columnName) {
-                return extraData['rowSpanData'];
-            } else {
-                if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
-                    return extraData['rowSpanData'][columnName];
-                }
-            }
-        } else {
-            if (!columnName) {
-                return null;
+                rowSpanData = extraData['rowSpanData'];
+            } else if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
+                rowSpanData = extraData['rowSpanData'][columnName];
             }
         }
-        return {
-            count: 0,
-            isMainRow: true,
-            mainRowKey: this.get('rowKey')
-        };
+
+        if (!rowSpanData && columnName) {
+            rowSpanData = {
+                count: 0,
+                isMainRow: true,
+                mainRowKey: this.get('rowKey')
+            };
+        }
+        return rowSpanData;
     },
 
     /**
@@ -379,13 +379,13 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
      */
     _getListTypeVisibleText: function(columnName) {
         var value = this.get(columnName),
-            columnModel = this.grid.columnModel.getColumnModel(columnName);
+            columnModel = this.grid.columnModel.getColumnModel(columnName),
+            resultOptionList, editOptionList, typeExpected, valueList;
 
         if (ne.util.isExisty(ne.util.pick(columnModel, 'editOption', 'list'))) {
-            var resultOptionList = this.getRelationResult(['optionListChange'])[columnName],
-                editOptionList = resultOptionList && resultOptionList['optionList'] ?
-                    resultOptionList['optionList'] : columnModel.editOption.list,
-                typeExpected, valueList;
+            resultOptionList = this.getRelationResult(['optionListChange'])[columnName];
+            editOptionList = resultOptionList && resultOptionList['optionList'] ?
+                    resultOptionList['optionList'] : columnModel.editOption.list;
 
             typeExpected = typeof editOptionList[0].value;
             valueList = value.toString().split(',');
@@ -402,6 +402,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
             return valueList.join(',');
         }
     },
+
     /**
      * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
      * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
@@ -421,6 +422,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
 
         return false;
     },
+
     /**
      * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
      * @param {String} columnName   컬럼명
@@ -446,16 +448,15 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
                 } else {
                     throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
                 }
-            } else {
+            } else if (_.isFunction(model.formatter)) {
                 //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
-                if (_.isFunction(model.formatter)) {
-                    value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
-                }
+                value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
             }
         }
         value = !ne.util.isUndefined(value) ? value.toString() : value;
         return value;
     },
+
     /**
      * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
      *
@@ -463,15 +464,14 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
      * @return {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
      */
     getRelationResult: function(callbackNameList) {
-        callbackNameList = (callbackNameList && callbackNameList.length) ?
-            callbackNameList : ['optionListChange', 'isDisabled', 'isEditable'];
-        var callback, attribute, targetColumnList,
-            value,
-            rowKey = this.get('rowKey'),
-            rowData = this.attributes,
+        var rowData = this.attributes,
             relationListMap = this.grid.columnModel.get('relationListMap'),
             relationResult = {},
-            rowState = this.getRowState();
+            rowState = this.getRowState(),
+            callback, attribute, targetColumnList, value;
+
+        callbackNameList = (callbackNameList && callbackNameList.length) ?
+            callbackNameList : ['optionListChange', 'isDisabled', 'isEditable'];
 
         //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
         // relationListMap 구조 {columnName : relationList}

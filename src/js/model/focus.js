@@ -56,8 +56,8 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
 
     /**
      * 행을 select 한다.
-     * @param {Number|String} rowKey    select 할 행의 키값
-     * @return {Model.Focus}
+     * @param {Number|String} rowKey - select 할 행의 키값
+     * @returns {Model.Focus} This object
      */
     select: function(rowKey) {
         this.unselect().set('rowKey', rowKey);
@@ -67,7 +67,8 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
 
     /**
      * 행을 unselect 한다.
-     * @return {Model.Focus}
+     * @param {boolean} blur - The boolean value whether to invoke blur
+     * @return {Model.Focus} This object
      */
     unselect: function(blur) {
         if (blur) {
@@ -85,7 +86,7 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
      * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
      * @param {String} columnName focus 처리할 셀의 컬럼명
      * @param {Boolean} isScrollable focus 처리한 영역으로 scroll 위치를 이동할지 여부
-     * @return {Model.Focus}
+     * @return {Model.Focus} This object
      */
     focus: function(rowKey, columnName, isScrollable) {
         var scrollPosition,
@@ -125,7 +126,6 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
             scrollTop = renderModel.get('scrollTop'),
             scrollLeft = renderModel.get('scrollLeft'),
             bodyHeight = dimensionModel.get('bodyHeight'),
-            lsideWidth = dimensionModel.get('lsideWidth'),
             rsideWidth = dimensionModel.get('rsideWidth'),
             position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName),
             currentLeft = scrollLeft,
@@ -155,7 +155,7 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
 
     /**
      * 디자인 blur 처리한다.
-     * @return {Model.Focus}
+     * @return {Model.Focus} This object
      */
     blur: function() {
         if (this.has()) {
@@ -181,6 +181,7 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
     /**
      * 현재 focus 정보를 index 기준으로 반환한다.
      * @param {boolean} isPrevious 이전 focus 정보를 반환할지 여부
+     * @return {{rowIdx: number, columnIdx: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
         var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),

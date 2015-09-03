@@ -104,31 +104,30 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         this.lastRowKey += 1;
         return this.lastRowKey;
     },
+
     /**
      * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
-     * @param {Array} rowList   전체 rowList 배열. rowSpan 된 경우 자식 row 의 데이터도 가공해야 하기 때문에 전체 list 를 인자로 넘긴다.
-     * @param {number} index    해당 배열에서 extraData 를 설정할 배열
-     * @return {Array} rowList  가공된 rowList
+     * @param {Array} rowList - 전체 rowList 배열. rowSpan 된 경우 자식 row 의 데이터도 가공해야 하기 때문에 전체 list 를 인자로 넘긴다.
+     * @param {number} index - 해당 배열에서 extraData 를 설정할 배열
+     * @return {Array} rowList - 가공된 rowList
      * @private
      */
     _setExtraRowSpanData: function(rowList, index) {
-        function hasRowSpanData(row, columnName) {
+        var row = rowList[index],
+            rowSpan = row && row['_extraData'] && row['_extraData']['rowSpan'],
+            rowKey = row && row['rowKey'],
+            subCount, childRow, i;
+
+        function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow
             var extraData = row['_extraData'];
             return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
         }
-        function setRowSpanData(row, columnName, rowSpanData) {
+        function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow
             var extraData = row['_extraData'];
             extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
             extraData['rowSpanData'][columnName] = rowSpanData;
             return extraData;
         }
-
-        var row = rowList[index],
-            rowSpan = row && row['_extraData'] && row['_extraData']['rowSpan'],
-            rowKey = row && row['rowKey'],
-            subCount,
-            childRow,
-            i;
 
         if (rowSpan) {
             _.each(rowSpan, function(count, columnName) {
@@ -140,21 +139,23 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
                     });
                     //rowSpan 된 row 의 자식 rowSpanData 를 가공한다.
                     subCount = -1;
-                    for (i = index + 1; i < index + count; i++) {
+                    for (i = index + 1; i < index + count; i += 1) {
                         childRow = rowList[i];
                         childRow[columnName] = row[columnName];
                         childRow['_extraData'] = childRow['_extraData'] || {};
                         setRowSpanData(childRow, columnName, {
-                            count: subCount--,
+                            count: subCount,
                             isMainRow: false,
                             mainRowKey: rowKey
                         });
+                        subCount -= 1;
                     }
                 }
             });
         }
         return rowList;
     },
+
     /**
      * originalRowList 와 originalRowMap 을 생성한다.
      * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
@@ -165,6 +166,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         this.originalRowMap = _.indexBy(this.originalRowList, 'rowKey');
         return this.originalRowList;
     },
+
     /**
      * 원본 데이터 리스트를 반환한다.
      * @param {boolean} [isClone=true]  데이터 복제 여부.
@@ -174,6 +176,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         isClone = isClone === undefined ? true : isClone;
         return isClone ? _.clone(this.originalRowList) : this.originalRowList;
     },
+
     /**
      * 원본 row 데이터를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
@@ -182,6 +185,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
     getOriginalRow: function(rowKey) {
         return _.clone(this.originalRowMap[rowKey]);
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 원본 데이터를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
@@ -191,6 +195,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
     getOriginal: function(rowKey, columnName) {
         return _.clone(this.originalRowMap[rowKey][columnName]);
     },
+
     /**
      * mainRowKey 를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
@@ -206,6 +211,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         }
         return rowKey;
     },
+
     /**
      * rowKey 에 해당하는 index를 반환한다.
      * @param {(Number|String)} rowKey 데이터의 키값
@@ -214,6 +220,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
     indexOfRowKey: function(rowKey) {
         return this.indexOf(this.get(rowKey));
     },
+
     /**
      * rowData 의 프로퍼티 중 내부에서 사용하는 프로퍼티인지 여부를 반환한다.
      * - 서버로 전송 시 내부에서 사용하는 데이터 제거시 사용 됨
@@ -224,6 +231,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
     _isPrivateProperty: function(name) {
         return $.inArray(name, this.privateProperties) !== -1;
     },
+
     /**
      * rowSpan 이 적용되어야 하는지 여부를 반환한다.
      * 랜더링시 사용된다.
@@ -233,6 +241,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
     isRowSpanEnable: function() {
         return !this.isSortedByField();
     },
+
     /**
      * 현재 RowKey가 아닌 다른 컬럼에 의해 정렬된 상태인지 여부를 반환한다.
      * @return {Boolean}    정렬된 상태인지 여부
@@ -240,6 +249,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
     isSortedByField: function() {
         return this.sortOptions.columnName !== 'rowKey';
     },
+
     /**
      * 정렬옵션 객체의 값을 변경하고, 변경된 값이 있을 경우 sortChanged 이벤트를 발생시킨다.
      * @param {string} columnName 정렬할 컬럼명
@@ -271,6 +281,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
             });
         }
     },
+
     /**
      * 주어진 컬럼명을 기준으로 오름/내림차순 정렬한다.
      * @param {string} columnName 정렬할 컬럼명
@@ -288,10 +299,12 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
             this.sort();
         }
     },
+
     /**
      * rowList 를 반환한다.
      * @param {boolean} [isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
      * @param {boolean} [isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
+     * @returns {Array} Row List
      */
     getRowList: function(isOnlyChecked, isRaw) {
         var rowList,
@@ -309,6 +322,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         }
         return isRaw ? rowList : this._removePrivateProp(rowList);
     },
+
     /**
      * rowData 변경 이벤트 핸들러.
      * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
@@ -337,6 +351,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
             }
         }, this);
     },
+
     /**
      * row Data 값에 변경이 발생했을 경우, sorting 되지 않은 경우에만
      * rowSpan 된 데이터들도 함께 update 한다.
@@ -362,6 +377,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
             }
         }
     },
+
     /**
      * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
      * @param {object} row row 모델
@@ -377,6 +393,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
             instance: this.grid.publicInstance
         };
     },
+
     /**
      * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
      * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
@@ -405,6 +422,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         }
         return true;
     },
+
     /**
      * columnModel 에 정의된 changeAfterCallback 을 수행한다.
      * @param {object} row - row 모델
@@ -471,6 +489,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
 
         return filteredRowList;
     },
+
     /**
      * rowKey 에 해당하는 그리드 데이터를 삭제한다.
      * @param {(Number|String)} rowKey - 행 데이터의 고유 키
@@ -502,6 +521,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         }
         this.trigger('remove');
     },
+
     /**
      * 삭제된 행에 rowSpan이 적용되어 있었을 때, 관련된 행들의 rowSpan데이터를 갱신한다.
      * @param {object} rowSpanData - 삭제된 행의 rowSpanData

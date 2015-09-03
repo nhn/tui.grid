@@ -21,6 +21,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         columnModelMap: {},
         relationListMap: {}
     },
+
     /**
      * 생성자 함수
      */
@@ -56,6 +57,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         columnModelList = this._extendColumn(numberColumn, columnModelList);
         return columnModelList;
     },
+
     /**
      * 인자로 넘어온 columnModelList 에 설정값에 맞게 button column 을 추가한다.
      * @param {Array} columnModelList 컬럼모델 배열
@@ -88,6 +90,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
 
         return columnModelList;
     },
+
     /**
      * column 을 prepend 한다.
      * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
@@ -109,6 +112,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         }
         return columnModelList;
     },
+
     /**
      * index 에 해당하는 columnModel 을 반환한다.
      * @param {Number} index    조회할 컬럼모델의 인덱스 값
@@ -119,6 +123,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
         return columnModelList[index];
     },
+
     /**
      * columnName 에 해당하는 index를 반환한다.
      * @param {string} columnName   컬럼명
@@ -126,10 +131,16 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
      * @return {number} index   컬럼명에 해당하는 인덱스 값
      */
     indexOfColumnName: function(columnName, isVisible) {
-        isVisible = (isVisible === undefined) ? true : isVisible;
-        var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
+        var columnModelList;
+
+        if (isVisible || isVisible === undefined) {
+            columnModelList = this.getVisibleColumnModelList();
+        } else {
+            columnModelList = this.get('columnModelList');
+        }
         return this._indexOfColumnName(columnName, columnModelList);
     },
+
     /**
      * columnName 에 해당하는 index를 반환한다.
      * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
@@ -140,35 +151,39 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
      */
     _indexOfColumnName: function(columnName, columnModelList) {
         var i = 0, len = columnModelList.length;
-        for (; i < len; i++) {
+        for (; i < len; i += 1) {
             if (columnModelList[i]['columnName'] === columnName) {
                 return i;
             }
         }
         return -1;
     },
+
     /**
      * columnName 이 열고정 영역에 있는 column 인지 반환한다.
      * @param {String} columnName   컬럼명
      * @return {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
      */
     isLside: function(columnName) {
-        var index = this.indexOfColumnName(columnName, true);
-        if (index < 0) {
-            return false;
-        } else {
-            return this.get('columnFixIndex') > index;
+        var index = this.indexOfColumnName(columnName, true),
+            result = false;
+
+        if (index >= 0 && this.get('columnFixIndex') > index) {
+            result = true;
         }
+        return result;
     },
+
     /**
      * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
      * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList 를 반환한다.
      * @return {Array}  조회한 컬럼모델 배열
      */
     getVisibleColumnModelList: function(whichSide) {
-        whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
         var columnModelList = [],
             columnFixIndex = this.get('columnFixIndex');
+
+        whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
 
         if (whichSide === 'L') {
             columnModelList = this.get('visibleList').slice(0, columnFixIndex);
@@ -180,6 +195,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
 
         return columnModelList;
     },
+
     /**
      * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
      * @param {String} columnName   컬럼명
@@ -188,6 +204,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
     getColumnModel: function(columnName) {
         return this.get('columnModelMap')[columnName];
     },
+
     /**
      * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
      * 랜더링시 html 태그 문자열을 제거할때 사용됨.
@@ -197,9 +214,10 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
     isTextType: function(columnName) {
         return !!this.textType[this.getEditType(columnName)];
     },
+
     /**
      * 컬럼 모델로부터 editType 을 반환한다.
-     * @param {string} columnName
+     * @param {string} columnName The name of the target column
      * @return {string} 해당하는 columnName 의 editType 을 반환한다.
      */
     getEditType: function(columnName) {
@@ -212,6 +230,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         }
         return editType;
     },
+
     /**
      * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
      * @param {Array} columnModelList   컬럼모델 배열
@@ -219,10 +238,14 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
      * @private
      */
     _getVisibleList: function(columnModelList) {
-        return _.filter(columnModelList, function(item) {return !item['isHidden'];});
+        return _.filter(columnModelList, function(item) {
+            return !item['isHidden'];
+        });
     },
+
     /**
      * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
+     * @param {Array} columnModelList - Column Model List
      * @return {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
      * @private
      */
@@ -237,8 +260,8 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
             }
         });
         return relationListMap;
-
     },
+
     /**
      * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
      * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
@@ -253,6 +276,7 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         });
         return ignoreColumnNameList;
     },
+
     /**
      * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
      * 열고정 영역 기준으로 partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
@@ -261,10 +285,11 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
      * @private
      */
     _setColumnModelList: function(columnModelList, columnFixIndex) {
+        var visibleList;
+
         columnModelList = $.extend(true, [], columnModelList);
         columnModelList = this._initializeNumberColumn(this._initializeButtonColumn(columnModelList));
-
-        var visibleList = this._getVisibleList(columnModelList);
+        visibleList = this._getVisibleList(columnModelList);
 
         this.set({
             columnModelList: columnModelList,
@@ -273,8 +298,10 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
             columnFixIndex: columnFixIndex,
             visibleList: visibleList
         }, {silent: true});
+
         this.trigger('columnModelChange');
     },
+
     /**
      * change 이벤트 발생시 핸들러
      * @param {Object} model change 이벤트가 발생한 model 객체

@@ -1,8 +1,8 @@
-var istanbul = require('browserify-istanbul');
+'use strict';
+
+// var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
-    'use strict';
-
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
         port: 4444,
@@ -15,24 +15,23 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['source-map-support', 'browserify', 'jasmine-jquery', 'jasmine'],
+        frameworks: ['source-map-support', 'browserify', 'jasmine-jquery', 'jasmine-ajax', 'jasmine'],
 
         // list of files / patterns to load in the browser
         files: [
-            'lib/jquery/jquery.js',
-            'lib/jquery-json/src/jquery.json.js',
-            'lib/underscore/underscore.js',
-            'lib/backbone/backbone.js',
-            'lib/ne-code-snippet/code-snippet.js',
-            'lib/ne-component-pagination/pagination.js',
-
-            {pattern: 'src/js/**/*.js', watched: true, include: true, served: true},
-            // {pattern: 'test/**/*.test.js', watched: false, include: true, served: true},
-            'test/js/view.cellfactory.test.js',
+            {pattern: 'lib/jquery/jquery.js', watched: false},
+            {pattern: 'lib/jquery-json/src/jquery.json.js', watched: false},
+            {pattern: 'lib/underscore/underscore.js', watched: false},
+            {pattern: 'lib/backbone/backbone.js', watched: false},
+            {pattern: 'lib/ne-code-snippet/code-snippet.js', watched: false},
+            {pattern: 'lib/ne-component-pagination/pagination.js', watched: false},
 
             {pattern: 'test/fixtures/*.html', included: false},
             {pattern: 'src/css/*.css', included: false},
-            {pattern: 'images/*', included: false}
+            {pattern: 'images/*', included: false},
+
+            'src/js/**/*.js',
+            'test/**/*.test.js'
         ],
 
         // list of files to exclude
@@ -101,13 +100,13 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            // 'IE7'
-            // 'IE8'
-            'IE9'
-            // 'IE10',
-            // 'IE11',
-            // 'Chrome-WebDriver',
-            // 'Firefox-WebDriver'
+            'IE7',
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
         ],
 
         client: {
