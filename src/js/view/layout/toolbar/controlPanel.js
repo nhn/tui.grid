@@ -1,3 +1,7 @@
+/**
+ * @fileoverview ControlPanel for the Toolbar
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var View = require('../../../base/view');

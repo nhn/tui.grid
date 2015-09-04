@@ -116,10 +116,11 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @param {Object} options Grid.js 의 생성자 option 과 동일값.
      */
     initialize: function(options) {
+        var id = util.getUniqueKey();
+
         View.prototype.initialize.apply(this, arguments);
 
         this.publicInstance = options.publicInstance;
-        var id = util.getUniqueKey();
         this.__instance[id] = this;
         this.id = id;
 
@@ -267,6 +268,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             });
         }
     },
+
     /**
      * 내부에서 사용할 view 인스턴스들을 초기화한다.
      * @private
@@ -311,6 +313,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this.selection.disable();
         }
     },
+
     /**
      * 커스텀 이벤트 리스너를 초기화한다.
      * @private
@@ -320,6 +323,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             .listenTo(this.focusModel, 'select', this._onRowSelectChanged);
     },
     /**
+
      * scrollbar 를 초기화한다.
      * @private
      */
@@ -327,6 +331,7 @@ var Core = View.extend(/**@lends Core.prototype */{
 //            if(!this.option('scrollX')) this.$el.css('overflowX', 'hidden');
 //            if(!this.option('scrollY')) this.$el.css('overflowY', 'hidden');
     },
+
     /**
      * event 속성에 정의되지 않은 이벤트 attach 한다.
      * @private
@@ -344,6 +349,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         clearTimeout(this.timeoutIdForBlur);
         this.timeoutIdForBlur = setTimeout($.proxy(this._doBlur, this), 0);
     },
+
     /**
      * 실제 blur 를 한다.
      * @private
@@ -362,6 +368,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             }
         }
     },
+
     /**
      * drag 이벤트 발생시 이벤트 핸들러
      * @returns {boolean} false
@@ -370,6 +377,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     _preventDrag: function() {
         return false;
     },
+
     /**
      * window resize  이벤트 핸들러
      * @private
@@ -378,6 +386,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         var width = this.$el.width();
         this.dimensionModel.set('width', width);
     },
+
     /**
      * click 이벤트 핸들러
      * @param {MouseEvent} mouseEvent 이벤트 객체
@@ -395,6 +404,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this._triggerCellMouseEvent('clickCell', eventData, $target.closest('td'));
         }
     },
+
     /**
      * doubleClick 이벤트 핸들러
      * @param {MouseEvent} mouseEvent 이벤트 객체
@@ -412,6 +422,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
         }
     },
+
     /**
      * mouseover 이벤트 발생시 실행될 핸들러
      * @private
@@ -426,6 +437,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
         }
     },
+
     /**
      * mouseout 이벤트 발생시 실행될 핸들러
      * @private
@@ -440,6 +452,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
         }
     },
+
     /**
      * 셀과 관련된 커스텀 마우스 이벤트를 발생시킨다.
      * @private
@@ -451,6 +464,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         _.extend(eventData, this._getCellInfoFromElement($cell));
         this.trigger(eventName, eventData);
     },
+
     /**
      * 해당 HTML요소가 셀인지 여부를 반환한다.
      * @private
@@ -466,6 +480,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }
         return !!($td.parent().attr('key') && $td.attr('columnname'));
     },
+
     /**
      * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
      * @private
@@ -482,6 +497,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             rowData: this.getRow(rowKey)
         };
     },
+
     /**
      * mousedown 이벤트 핸들러
      * @param {event} mouseDownEvent 이벤트 객체
@@ -501,6 +517,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this.focusClipboard();
         }
     },
+
     /**
      * select 된 row 가 변경된 경우 이벤트 핸들러.
      * radio select type 의 경우에 select 된 행을 check 해주는 로직을 담당한다.
@@ -517,6 +534,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             rowData: this.getRow(rowKey)
         });
     },
+
     /**
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      * @private
@@ -539,20 +557,25 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @return {*}  결과값
      */
     option: function(key, value) {
+        var result;
+
         if (ne.util.isUndefined(value)) {
             this.options = this.options || {};
-            return this.options[key];
+            result = this.options[key];
         } else {
             this.options[key] = value;
-            return this;
+            result = this;
         }
+        return result;
     },
+
     /**
      * Makes view ready to get keyboard input.
      */
     readyForKeyControl: function() {
         this.focusClipboard();
     },
+
     /**
      * clipboard 에 focus 한다.
      */
@@ -561,6 +584,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this.view.clipboard.$el.focus();
         }
     },
+
     /**
      * 랜더링한다.
      *
@@ -588,6 +612,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         this._setHeight();
         this.trigger('rendered');
     },
+
     /**
      * rendering 이후, 또는 bodyHeight 가 변경되었을 때, header, toolbar 의 높이를 포함하여
      * grid 의 전체 너비를 설정한다.
@@ -603,6 +628,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             toolbarHeight: toolbarHeight
         });
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 값을 반환한다.
      *
@@ -620,6 +646,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }
         return value;
     },
+
     /**
      * columnName에 해당하는 column data list를 리턴한다.
      *
@@ -631,6 +658,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         var valueList = this.dataModel.pluck(columnName);
         return isJsonString ? $.toJSON(valueList) : valueList;
     },
+
     /**
      * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
      * @param {(Number|String)} rowKey  행 데이터의 고유 키
@@ -642,6 +670,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         row = row && row.toJSON();
         return isJsonString ? $.toJSON(row) : row;
     },
+
     /**
      * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
      * @param {Number} index 행의 인덱스
@@ -653,6 +682,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         row = isJsonString ? $.toJSON(row) : row;
         return row;
     },
+
     /**
      * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
      * @return {Number} 데이터 개수
@@ -660,6 +690,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     getRowCount: function() {
         return this.dataModel.length;
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
      * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
@@ -672,6 +703,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
         return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
     },
+
     /**
      * rowKey에 해당하는 행에 대해 선택한다.
      * - checkRow()는 행에 포함된 체크박스나 라디오박스를 선택하며, selectRow()는 클릭된 행이 선택되어졌음을 시각적으로 나타내기 위해 해당 행의 배경색을 변경한다.
@@ -681,12 +713,14 @@ var Core = View.extend(/**@lends Core.prototype */{
     select: function(rowKey) {
         this.focusModel.select(rowKey);
     },
+
     /**
      * 선택되었던 행에 대한 선택을 해제한다.
      */
     unselect: function() {
         this.focusModel.unselect(true);
     },
+
     /**
      * 그리드 내에서 현재 선택된 row의 키값을 리턴한다.
      * @return {(Number|String)} 행 데이터의 고유 키
@@ -694,27 +728,34 @@ var Core = View.extend(/**@lends Core.prototype */{
     getSelectedRowKey: function() {
         return this.focusModel.which().rowKey;
     },
+
     /**
      * Sets the vlaue of the cell identified by the specified rowKey and columnName.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
      * @param {(Number|String)} columnValue 할당될 값
      * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+     * @returns {Boolean} True if affected row is exist
      */
     setValue: function(rowKey, columnName, columnValue, silent) {
-        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
         var row = this.dataModel.get(rowKey),
-            obj = {};
+            obj = {},
+            result;
+
+        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
         if (row) {
             obj[columnName] = columnValue;
             row.set(obj, {
                 silent: silent
             });
-            return true;
+            result = true;
         } else {
-            return false;
+            result = false;
         }
+
+        return result;
     },
+
     /**
      * columnName 에 해당하는 값을 전부 변경한다.
      * @param {String} columnName 컬럼명
@@ -723,13 +764,14 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @param {Boolean} [silent=false] change 이벤트 trigger 할지 여부.
      */
     setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
-        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
         var obj = {},
             cellState = {
                 isDisabled: false,
                 isEditable: true
             };
+
         obj[columnName] = columnValue;
+        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
 
         this.dataModel.forEach(function(row) {
             if (isCheckCellState) {
@@ -742,6 +784,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             }
         }, this);
     },
+
     /**
      * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
      * @param {Array} rowList 설정할 데이터 배열 값
@@ -765,6 +808,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             callback();
         }
     },
+
     /**
      * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
      * @param {Array} rowList 설정할 데이터 배열 값
@@ -793,6 +837,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             doProcess();
         }
     },
+
     /**
      * rowKey, columnName 에 해당하는 셀에 포커싱한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -802,6 +847,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     focus: function(rowKey, columnName, isScrollable) {
         this.focusModel.focus(rowKey, columnName, isScrollable);
     },
+
     /**
      * 셀을 편집모드로 전환한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -819,6 +865,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this.focusClipboard();
         }
     },
+
     /**
      * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
      * @param {(Number|String)} rowIndex 행 index
@@ -832,6 +879,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             this.focus(row.get('rowKey'), column['columnName'], isScrollable);
         }
     },
+
     /**
      * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
      * @param {(Number|String)} rowIndex 행 index
@@ -845,18 +893,21 @@ var Core = View.extend(/**@lends Core.prototype */{
             this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
         }
     },
+
     /**
      * 현재 포커스 된 컬럼이 있을 경우 포커스 상태를 해제한다
      */
     blur: function() {
         this.focusModel.blur();
     },
+
     /**
      * 전체 행을 선택한다.
      */
     checkAll: function() {
         this.setColumnValues('_button', true);
     },
+
     /**
      * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -864,12 +915,14 @@ var Core = View.extend(/**@lends Core.prototype */{
     check: function(rowKey) {
         this.setValue(rowKey, '_button', true);
     },
+
     /**
      * 모든 행을 선택 해제 한다.
      */
     uncheckAll: function() {
         this.setColumnValues('_button', false);
     },
+
     /**
      * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -885,6 +938,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         //@todo: empty 레이어 추가
         this.setRowList([]);
     },
+
     /**
      * rowKey에 해당하는 그리드 데이터를 삭제한다.
      * @param {(Number|String)} rowKey - 행 데이터의 고유 키
@@ -895,6 +949,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     removeRow: function(rowKey, options) {
         this.dataModel.removeRow(rowKey, options);
     },
+
     /**
      * chcked된 행을 삭제한다.
      * @param {boolean} isConfirm 삭제하기 전에 confirm 메시지를 표시할지 여부
@@ -912,6 +967,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }
         return false;
     },
+
     /**
      * rowKey에 해당하는 행을 활성화시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -919,6 +975,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     enableRow: function(rowKey) {
         this.dataModel.get(rowKey).setRowState('');
     },
+
     /**
      * rowKey에 해당하는 행을 비활성화 시킨다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -926,6 +983,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     disableRow: function(rowKey) {
         this.dataModel.get(rowKey).setRowState('DISABLED');
     },
+
     /**
      * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -933,6 +991,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     enableCheck: function(rowKey) {
         this.dataModel.get(rowKey).setRowState('');
     },
+
     /**
      * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -940,6 +999,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     disableCheck: function(rowKey) {
         this.dataModel.get(rowKey).setRowState('DISABLED_CHECK');
     },
+
     /**
      * 현재 선택된 행들의 키값만을 배열로 리턴한다.
      * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
@@ -954,6 +1014,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }, this);
         return isJsonString ? $.toJSON(rowKeyList) : rowKeyList;
     },
+
     /**
      * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
      * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
@@ -963,6 +1024,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         var checkedRowList = this.dataModel.getRowList(true);
         return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
     },
+
     /**
      * 그리드에 설정된 컬럼모델 정보를 배열 형태로 리턴한다.
      * @return {Array}  컬럼모델 리스트
@@ -970,11 +1032,12 @@ var Core = View.extend(/**@lends Core.prototype */{
     getColumnModelList: function() {
         return this.columnModel.get('columnModelList');
     },
+
     /**
      * 그리드 내에서 변경된 데이터들의 목록을 구성하여 리턴한다.
      * 리턴되는 객체에는 createList, updateList, deleteList 라는 필드가 있고,
      * 각 필드에는 변경된 데이터들이 배열로 구성되어 있다.
-     * @param {Object} [options]
+     * @param {Object} [options] Options
      *      @param {boolean} [options.isOnlyChecked=false] true 로 설정된 경우 checked 된 데이터 대상으로 비교 후 반환한다.
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
@@ -1003,6 +1066,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     prependRow: function(row) {
         this.dataModel.prepend(row);
     },
+
     /**
      * 열 고정 위치를 변경한다.
      * @param {Number} columnFixIndex 고정시킬 열의 인덱스
@@ -1013,6 +1077,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         });
         this.columnModel.set({columnFixIndex: columnFixIndex});
     },
+
     /**
      * 현재 그리드에 설정된 데이터의 변경 여부를 Boolean으로 리턴한다.
      * - getModifiedRowList() 함수의 결과값을 이용하여 입력/수정/삭제가 되었으면 true를 리턴하고 그렇지 않은 경우에는 false를 리턴한다.
@@ -1031,6 +1096,7 @@ var Core = View.extend(/**@lends Core.prototype */{
 
         return result;
     },
+
     /**
      * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
      * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
@@ -1039,6 +1105,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         var originalRowList = this.dataModel.getOriginalRowList();
         this.replaceRowList(originalRowList, false);
     },
+
     /**
      * Grid Layer 를 모두 감춘다.
      */
@@ -1047,13 +1114,16 @@ var Core = View.extend(/**@lends Core.prototype */{
             view.hide();
         }, this);
     },
+
     /**
      * name 에 해당하는 Grid Layer를 보여준다.
      * @param {String} name ready|empty|loading 중 하나를 설정한다.
      */
     showGridLayer: function(name) {
         this.hideGridLayer();
-        this.view.layer[name] ? this.view.layer[name].show() : null;
+        if (this.view.layer[name]) {
+            this.view.layer[name].show();
+        }
     },
 
     /**
@@ -1066,6 +1136,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             return paginationView.instance;
         }
     },
+
     /**
      * addon 을 활성화한다.
      * @param {string} name addon 이름
@@ -1081,6 +1152,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }
         return this;
     },
+
     /**
      * 정렬이 되었는지 여부 반환
      * @return {Boolean} 현재 정렬이 되어있는지 여부
@@ -1088,6 +1160,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     isSorted: function() {
         return this.dataModel.isSortedByField();
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -1106,6 +1179,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         isEditable = row ? row.isEditable(columnName) : true;
         return isEditable;
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 셀이 disabled 상태인지 여부를 반환한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -1124,6 +1198,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         isDisabled = row ? row.isDisabled(columnName) : false;
         return isDisabled;
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
@@ -1139,6 +1214,7 @@ var Core = View.extend(/**@lends Core.prototype */{
 
         return dataModel.get(rowKey).getCellState(columnName);
     },
+
     /**
      * columnModelList 를 재설정한다..
      * @param {Array} columnModelList 컬럼모델 리스트
@@ -1146,6 +1222,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     setColumnModelList: function(columnModelList) {
         this.columnModel.set('columnModelList', columnModelList);
     },
+
     /**
      * columnName 기준으로 정렬한다.
      * @param {String} columnName 정렬할 컬럼명
@@ -1154,6 +1231,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     sort: function(columnName, isAscending) {
         this.dataModel.sortByField(columnName, isAscending);
     },
+
     /**
      * 현재 그리드의 rowList 를 반환한다.
      * @return {Array} 그리드의 데이터 리스트
@@ -1169,24 +1247,24 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
      */
     del: function(rowKey, columnName, silent) {
-        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-
         var editType = this.columnModel.getEditType(columnName),
-            isDisabledCheck = this.dataModel.get(rowKey).getRowState().isDisabledCheck,
+            mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName),
+            isDisabledCheck = this.dataModel.get(mainRowKey).getRowState().isDisabledCheck,
             deletableEditTypeList = ['text', 'text-convertible', 'text-password'],
             isDeletable = $.inArray(editType, deletableEditTypeList) !== -1,
             selectType = this.option('selectType'),
-            cellState = this.getCellState(rowKey, columnName),
+            cellState = this.getCellState(mainRowKey, columnName),
             isRemovable = !!(isDeletable && cellState.isEditable && !cellState.isDisabled);
 
         if (isRemovable) {
-            this.setValue(rowKey, columnName, '', silent);
+            this.setValue(mainRowKey, columnName, '', silent);
             //silent 의 경우 데이터 모델의 change 이벤트가 발생하지 않기 때문에, 강제로 checkbox 를 세팅한다.
             if (silent && selectType === 'checkbox' && !isDisabledCheck) {
-                this.setValue(rowKey, '_button', true, silent);
+                this.setValue(mainRowKey, '_button', true, silent);
             }
         }
     },
+
     /**
      * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
      * 이동하며 셀의 값을 변경한다. 완료한 후 적용된 셀 범위에 Selection을 지정한다.
@@ -1210,6 +1288,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         this.selection.startSelection(start.rowIdx, start.columnIdx);
         this.selection.updateSelection(end.rowIdx, end.columnIdx);
     },
+
     /**
      * 붙여넣기를 실행할때 시작점이 될 셀의 인덱스를 반환한다.
      * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
@@ -1224,6 +1303,7 @@ var Core = View.extend(/**@lends Core.prototype */{
         }
         return startIdx;
     },
+
     /**
      * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
      * @param  {{rowIdx: number, columnIdx: number}} startIdx - 시작점이 될 셀의 인덱스
@@ -1238,12 +1318,13 @@ var Core = View.extend(/**@lends Core.prototype */{
         };
         return endIdx;
     },
+
     /**
      * 지정된 인덱스의 셀이 수정 가능한 상태이면 값을 변경한다. RowSpan이 적용된 셀인 경우 MainRow인 경우에만 값을 변경한다.
      * @param  {number} rowIdx - 행 인덱스
      * @param  {number} columnIdx - 열 인덱스
-     * @param  {string} value - 변경할 값
      * @param  {ColumnModel} columnModel - 해당 열 인덱스의 컬럼모델
+     * @param  {string} value - 변경할 값
      */
     _setValueForPaste: function(rowIdx, columnIdx, columnModel, value) {
         var row = this.dataModel.at(rowIdx),
@@ -1257,6 +1338,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             row.set(attributes);
         }
     },
+
     /**
      * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
@@ -1266,6 +1348,7 @@ var Core = View.extend(/**@lends Core.prototype */{
     addCellClassName: function(rowKey, columnName, className) {
         this.dataModel.get(rowKey).addCellClassName(columnName, className);
     },
+
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
@@ -1298,6 +1381,7 @@ var Core = View.extend(/**@lends Core.prototype */{
      * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} columnName 컬럼 이름
+     * @returns {object} rowSpanData
      */
     getRowSpanData: function(rowKey, columnName) {
         var row = this.dataModel.get(rowKey);
@@ -1329,7 +1413,7 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @param {String} columnName 컬럼 이름
      * @param {(String|Number)} columnValue 컬럼 이름
      */
-    filterData: function(columnName, columnValue) {
+    filterData: function(columnName, columnValue) { // eslint-disable-line no-unused-vars
     },
 
     /**
@@ -1342,9 +1426,8 @@ var Core = View.extend(/**@lends Core.prototype */{
     /**
      * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
      * @todo 기능 구현
-     * @param {Boolean} [hasDimmedLayer=true]
      */
-    disable: function(hasDimmedLayer) {
+    disable: function() {
     },
 
     /**
@@ -1365,7 +1448,6 @@ var Core = View.extend(/**@lends Core.prototype */{
     /**
      * 스크롤 핸들러의 위치를 변경한다.
      * @todo 기능 구현
-     * @param {object} size
      */
     setScrollHandlerPosition: function() {},
 
@@ -1383,7 +1465,7 @@ var Core = View.extend(/**@lends Core.prototype */{
                     }
                 }
                 if (property === 'view') {
-                    _.each(value, function(instance, name) {
+                    _.each(value, function(instance) {
                         if (instance && ne.util.isFunction(instance.destroy)) {
                             instance.destroy();
                         }

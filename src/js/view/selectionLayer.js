@@ -56,20 +56,20 @@ var SelectionLayer = View.extend(/**@lends View.Selection.Layer.prototype */{
      * @private
      */
     _getGeometryStyles: function(spannedRange) {
-        spannedRange = spannedRange || this.indexObj;
-        var style,
-            i,
-            border = 1,
-            columnWidthList = this.columnWidthList,
-            rowRange = spannedRange.row,
-            columnRange = spannedRange.column,
+        var columnWidthList = this.columnWidthList,
             rowHeight = this.grid.dimensionModel.get('rowHeight'),
-            top = util.getHeight(rowRange[0], rowHeight) - 1,
-            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 2,
             len = columnWidthList.length,
             display = 'block',
             left = 0,
-            width = 0;
+            width = 0,
+            border = 1,
+            rowRange, columnRange, top, height, style, i;
+
+        spannedRange = spannedRange || this.indexObj;
+        rowRange = spannedRange.row;
+        columnRange = spannedRange.column;
+        top = util.getHeight(rowRange[0], rowHeight) - 1;
+        height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 2;
 
         for (i = 0; i < columnRange[1] + 1 && i < len; i += 1) {
             //border 두께 (1px) 값도 포함하여 계산한다.

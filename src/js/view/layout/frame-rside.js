@@ -1,5 +1,5 @@
 /**
- * @fileoverview Left Side Frame, Virtual Scrollbar 정의
+ * @fileoverview Left Side Frame 정의
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -56,23 +56,25 @@ var RsideFrame = Frame.extend(/**@lends RsideFrame.prototype */{
      * @private
      */
     afterRender: function() {
-        if (this.grid.option('scrollY')) {
-            var virtualScrollBar,
-                $space = $('<div></div>'),
-                height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
+        var scrollbar, $space, height;
 
-            $space.css({
-                height: height + 'px'
-            }).addClass('space');
+        if (!this.grid.option('scrollY')) {
+            return;
+        }
+        $space = $('<div></div>');
+        height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
 
-            this.$el.append($space);
+        $space.css({
+            height: height + 'px'
+        }).addClass('space');
 
-            if (!this.grid.option('notUseSmartRendering')) {
-                virtualScrollBar = this.createView(VirtualScrollBar, {
-                    grid: this.grid
-                });
-                this.$el.append(virtualScrollBar.render().el);
-            }
+        this.$el.append($space);
+
+        if (!this.grid.option('notUseSmartRendering')) {
+            scrollbar = this.createView(VirtualScrollBar, {
+                grid: this.grid
+            });
+            this.$el.append(scrollbar.render().el);
         }
     }
 });

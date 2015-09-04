@@ -30,9 +30,9 @@ var MainButton = Cell.extend(/**@lends MainButton.prototype */{
             'ENTER': function(keyDownEvent, param) {
                 this.focusOut(param.$target);
             },
-            'LEFT_ARROW': function(keyDownEvent, param) {},
-            'RIGHT_ARROW': function(keyDownEvent, param) {},
-            'ESC': function(keyDownEvent, param) {}
+            'LEFT_ARROW': function() {},
+            'RIGHT_ARROW': function() {},
+            'ESC': function() {}
         });
     },
 

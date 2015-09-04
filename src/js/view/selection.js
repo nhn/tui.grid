@@ -91,7 +91,7 @@ var Selection = View.extend(/**@lends Selection.prototype */{
 
     /**
      * selection 영역에 대한 mouseDown 퍼블릭 이벤트 핸들러
-     * @param mouseDownEvent
+     * @param {MouseDownEvent} mouseDownEvent Event object
      */
     onMouseDown: function(mouseDownEvent) {
         var grid = this.grid,
@@ -318,6 +318,7 @@ var Selection = View.extend(/**@lends Selection.prototype */{
     createLayer: function(whichSide) {
         var clazz = whichSide === 'R' ? Layer.Rside : Layer.Lside,
             layer = this._getLayer(whichSide);
+
         if (layer && ne.util.isFunction(layer.destroy())) {
             layer.destroy();
         }
@@ -325,7 +326,12 @@ var Selection = View.extend(/**@lends Selection.prototype */{
             grid: this.grid,
             columnWidthList: this.grid.dimensionModel.getColumnWidthList(whichSide)
         });
-        whichSide === 'R' ? this.rside = layer : this.lside = layer;
+
+        if (whichSide === 'R') {
+            this.rside = layer;
+        } else {
+            this.lside = layer;
+        }
         return layer;
     },
 
@@ -387,40 +393,41 @@ var Selection = View.extend(/**@lends Selection.prototype */{
      * 현재 selection range 정보를 기반으로 selection Layer 를 노출한다.
      */
     show: function() {
-        if (this.isEnable && this.hasSelection()) {
-            this._isShown = true;
-            var tmpRowRange,
-                dataModel = this.grid.dataModel,
-                columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-                rowHeight = this.grid.dimensionModel.get('rowHeight'),
-                startRow = Math.min.apply(Math, this.range.row),
-                endRow = Math.max.apply(Math, this.range.row),
-                startColumn = Math.min.apply(Math, this.range.column),
-                endColumn = Math.max.apply(Math, this.range.column),
-                spannedRange = {
-                    row: [startRow, endRow],
-                    column: [startColumn, endColumn]
-                };
-            if (dataModel.isRowSpanEnable()) {
-                tmpRowRange = $.extend([], spannedRange.row);
-
-                //rowSpan 처리를 위해 startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.
-                do {
-                    tmpRowRange = $.extend([], spannedRange.row);
-                    spannedRange = this._getRowSpannedIndex(spannedRange);
-                } while (spannedRange.row[0] !== tmpRowRange[0] ||
-                    spannedRange.row[1] !== tmpRowRange[1]);
-
-            }
-            this.spannedRange = spannedRange;
-            this.lside.show(spannedRange);
-            this.rside.show({
-                row: spannedRange.row,
-                column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
-            });
-            //selection 이 생성될 때에는 무조건 input 에 focus 가 가지 않도록 clipboard에 focus 를 준다.
-            this.grid.focusClipboard();
+        if (!this.isEnable || !this.hasSelection()) {
+            return;
         }
+        this._isShown = true;
+
+        var dataModel = this.grid.dataModel, // eslint-disable-line vars-on-top
+            columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+            startRow = Math.min.apply(Math, this.range.row),
+            endRow = Math.max.apply(Math, this.range.row),
+            startColumn = Math.min.apply(Math, this.range.column),
+            endColumn = Math.max.apply(Math, this.range.column),
+            spannedRange = {
+                row: [startRow, endRow],
+                column: [startColumn, endColumn]
+            },
+            tmpRowRange;
+
+        if (dataModel.isRowSpanEnable()) {
+            tmpRowRange = $.extend([], spannedRange.row);
+
+            //rowSpan 처리를 위해 startIndex 와 endIndex 의 모든 데이터 mainRow 일때까지 loop 를 수행한다.
+            do {
+                tmpRowRange = $.extend([], spannedRange.row);
+                spannedRange = this._getRowSpannedIndex(spannedRange);
+            } while (spannedRange.row[0] !== tmpRowRange[0] ||
+                spannedRange.row[1] !== tmpRowRange[1]);
+        }
+        this.spannedRange = spannedRange;
+        this.lside.show(spannedRange);
+        this.rside.show({
+            row: spannedRange.row,
+            column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
+        });
+        //selection 이 생성될 때에는 무조건 input 에 focus 가 가지 않도록 clipboard에 focus 를 준다.
+        this.grid.focusClipboard();
     },
 
     /**
@@ -497,6 +504,7 @@ var Selection = View.extend(/**@lends Selection.prototype */{
     /**
      * select start 이벤트를 방지한다.
      * @param {event} selectStartEvent 이벤트 객체
+     * @returns {boolean} false
      * @private
      */
     _onSelectStart: function(selectStartEvent) {
@@ -514,8 +522,62 @@ var Selection = View.extend(/**@lends Selection.prototype */{
     },
 
     /**
+     * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
+     * @param {object} param - parameters
+     */
+    _concatRowSpanIndexFromStart: function(param) {
+        var startIndex = param.startIndex,
+            endIndex = param.endIndex,
+            columnName = param.columnName,
+            rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
+            startIndexList = param.startIndexList,
+            endIndexList = param.endIndexList,
+            spannedIndex;
+
+        if (rowSpanData) {
+            if (!rowSpanData['isMainRow']) {
+                spannedIndex = startIndex + rowSpanData['count'];
+                startIndexList.push(spannedIndex);
+            } else {
+                spannedIndex = startIndex + rowSpanData['count'] - 1;
+                if (spannedIndex > endIndex) {
+                    endIndexList.push(spannedIndex);
+                }
+            }
+        }
+    },
+
+    /**
+     * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
+     * @param {object} param - parameters
+     */
+    _concatRowSpanIndexFromEnd: function(param) {
+        var endIndex = param.endIndex,
+            columnName = param.columnName,
+            rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
+            endIndexList = param.endIndexList,
+            dataModel = param.dataModel,
+            spannedIndex, tmpRowSpanData;
+
+        if (rowSpanData) {
+            if (!rowSpanData['isMainRow']) {
+                spannedIndex = endIndex + rowSpanData['count'];
+                tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
+                spannedIndex += tmpRowSpanData['count'] - 1;
+                if (spannedIndex > endIndex) {
+                    endIndexList.push(spannedIndex);
+                }
+            } else {
+                spannedIndex = endIndex + rowSpanData['count'] - 1;
+                endIndexList.push(spannedIndex);
+            }
+        }
+    },
+
+    /**
      * rowSpan 된 Index range 를 반환한다.
-     * @param {{row: range, column: range}} spannedRange 인덱스 정보
+     * @param {{row: Array, column: Array}} spannedRange 인덱스 정보
+     * @returns {{row: Array, column: Array}} New Range
      * @private
      */
     _getRowSpannedIndex: function(spannedRange) {
@@ -526,67 +588,16 @@ var Selection = View.extend(/**@lends Selection.prototype */{
             endIndexList = [spannedRange.row[1]],
             startRow = dataModel.at(spannedRange.row[0]),
             endRow = dataModel.at(spannedRange.row[1]),
-            newSpannedRange = $.extend({}, spannedRange);
+            newSpannedRange = $.extend({}, spannedRange),
+            startRowSpanDataMap, endRowSpanDataMap, columnName, param;
 
         if (!startRow || !endRow) {
             return newSpannedRange;
         }
 
-        var startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData(),
-            endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData(),
-            columnName, param;
+        startRowSpanDataMap = dataModel.at(spannedRange.row[0]).getRowSpanData();
+        endRowSpanDataMap = dataModel.at(spannedRange.row[1]).getRowSpanData();
 
-        /**
-         * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
-         * @param {object} param
-         */
-        function concatRowSpanIndexFromStart(param) {
-            var startIndex = param.startIndex,
-                endIndex = param.endIndex,
-                rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
-                startIndexList = param.startIndexList,
-                endIndexList = param.endIndexList,
-                spannedIndex;
-
-            if (rowSpanData) {
-                if (!rowSpanData['isMainRow']) {
-                    spannedIndex = startIndex + rowSpanData['count'];
-                    startIndexList.push(spannedIndex);
-                } else {
-                    spannedIndex = startIndex + rowSpanData['count'] - 1;
-                    if (spannedIndex > endIndex) {
-                        endIndexList.push(spannedIndex);
-                    }
-                }
-            }
-        }
-
-        /**
-         * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
-         * @param {object} param
-         */
-        function concatRowSpanIndexFromEnd(param) {
-            var endIndex = param.endIndex,
-                columnName = param.columnName,
-                rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
-                endIndexList = param.endIndexList,
-                dataModel = param.dataModel,
-                spannedIndex, tmpRowSpanData;
-
-            if (rowSpanData) {
-                if (!rowSpanData['isMainRow']) {
-                    spannedIndex = endIndex + rowSpanData['count'];
-                    tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-                    spannedIndex += tmpRowSpanData['count'] - 1;
-                    if (spannedIndex > endIndex) {
-                        endIndexList.push(spannedIndex);
-                    }
-                } else {
-                    spannedIndex = endIndex + rowSpanData['count'] - 1;
-                    endIndexList.push(spannedIndex);
-                }
-            }
-        }
         //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
         _.each(columnModelList, function(columnModel) {
             columnName = columnModel['columnName'];
@@ -600,8 +611,8 @@ var Selection = View.extend(/**@lends Selection.prototype */{
                 endIndexList: endIndexList,
                 dataModel: dataModel
             };
-            concatRowSpanIndexFromStart(param);
-            concatRowSpanIndexFromEnd(param);
+            this._concatRowSpanIndexFromStart(param);
+            this._concatRowSpanIndexFromEnd(param);
         }, this);
 
         newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];

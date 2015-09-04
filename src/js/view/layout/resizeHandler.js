@@ -1,3 +1,7 @@
+/**
+ * @fileoverview ResizeHandler for the Header
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var View = require('../../base/view');
@@ -52,7 +56,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
 
     /**
      * columnWidthList 와 columnModelList 를 함께 반환한다.
-     * @return {{widthList: (Array|*), modelList: (Array|*)}}
+     * @return {{widthList: (Array|*), modelList: (Array|*)}} Column Data
      * @private
      */
     _getColumnData: function() {
@@ -91,7 +95,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
 
     /**
      * 랜더링 한다.
-     * @return {View.Layout.Header.ResizeHandler}
+     * @return {View.Layout.Header.ResizeHandler} This object
      */
     render: function() {
         var headerHeight = this.grid.dimensionModel.get('headerHeight');
@@ -211,13 +215,15 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
      * @private
      */
     _onMouseMove: function(mouseMoveEvent) {
+        var left, width, index;
+
         /* istanbul ignore else */
         if (this._isResizing()) {
             mouseMoveEvent.preventDefault();
 
-            var left = mouseMoveEvent.pageX - this.initialOffsetLeft,
-                width = this._calculateWidth(mouseMoveEvent.pageX),
-                index = parseInt(this.$target.attr('columnindex'), 10);
+            left = mouseMoveEvent.pageX - this.initialOffsetLeft;
+            width = this._calculateWidth(mouseMoveEvent.pageX);
+            index = parseInt(this.$target.attr('columnindex'), 10);
 
             this.$target.css('left', left + 'px');
             this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);

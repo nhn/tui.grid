@@ -37,13 +37,13 @@ var util = {
      * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
      * @param {string} template 템플릿 텍스트
      * @param {object|object[]} mapper 템플릿과 합성될 데이터
-     * @return {Array}
+     * @return {Array} replaced array
      */
     template: function(template, mapper) {
         var totalReplaced = [],
             replaced;
 
-        if(!ne.util.isArray(mapper)){
+        if (!ne.util.isArray(mapper)) {
             mapper = [mapper];
         }
 
@@ -57,6 +57,7 @@ var util = {
 
         return totalReplaced;
     },
+
     /**
      * 배열의 합을 반환한다.
      * @param {number[]} list   총 합을 구할 number 타입 배열
@@ -64,9 +65,11 @@ var util = {
      */
     sum: function(list) {
         return _.reduce(list, function(memo, value) {
-            return memo += value;
+            memo += value;
+            return memo;
         }, 0);
     },
+
     /**
      * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
      * @param {number} rowCount  행 개수
@@ -76,6 +79,7 @@ var util = {
     getHeight: function(rowCount, rowHeight) {
         return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
     },
+
     /**
      *Table 의 높이와 행당 높이를 인자로 받아, table 에서 보여줄 수 있는 행 개수를 반환한다.
      *
@@ -86,6 +90,7 @@ var util = {
     getDisplayRowCount: function(height, rowHeight) {
         return Math.ceil((height - 1) / (rowHeight + 1));
     },
+
     /**
      * Table 의 height 와 행 개수를 인자로 받아, 한 행당 높이를 구한다.
      *
@@ -106,15 +111,15 @@ var util = {
      */
     isEqual: function(target, dist) {
         var isDiff,
-            compareObject = function(target, dist) {
+            compareObject = function(targetObj, distObj) {
                 var name,
                     result = true;
                 /*
                     빠른 loop 탈출을 위해 ne.forEach 대신 for in 구문을 사용한다.
                     (추후 forEach 에 loop 탈출 기능이 추가되면 forEach 로 적용함.
                 */
-                for (name in target) {
-                    if (target[name] !== dist[name]) {
+                for (name in targetObj) {
+                    if (targetObj[name] !== distObj[name]) {
                         result = false;
                         break;
                     }
@@ -136,6 +141,7 @@ var util = {
 
     /**
      * Returns whether the string blank.
+     * @param {*} target - target object
      * @return {boolean} True if target is undefined or null or ''
      */
     isBlank: function(target) {
@@ -170,7 +176,8 @@ var util = {
      * @return {number} unique key 를 반환한다.
      */
     getUniqueKey: function() {
-        return ++this.uniqueId;
+        this.uniqueId += 1;
+        return this.uniqueId;
     },
 
     /**
@@ -200,16 +207,15 @@ var util = {
         var queryList = queryString.split('&'),
             obj = {};
 
-        ne.util.forEach(queryList, function(queryString) {
-            var tmp = queryString.split('='),
+        ne.util.forEach(queryList, function(query) {
+            var tmp = query.split('='),
                 key,
                 value;
             key = tmp[0];
             value = decodeURIComponent(tmp[1]);
             try {
                 value = $.parseJSON(value);
-            } catch (e) {}
-
+            } catch(e) {} // eslint-disable-line
             obj[key] = value;
         }, this);
 
@@ -229,10 +235,10 @@ var util = {
             return value.toString();
         } else if (type === 'number') {
             return +value;
-        } else {
-            return value;
         }
+        return value;
     },
+
     /**
      * form 요소 설정
      */
@@ -256,8 +262,8 @@ var util = {
 
             /**
              * radio type 의 input 요소의 값을 설정한다.
-             * @param {HTMLElement} targetElement
-             * @param {String} formValue
+             * @param {HTMLElement} targetElement - Target element
+             * @param {String} formValue - Form value
              */
             'radio': function(targetElement, formValue) {
                 targetElement.checked = (targetElement.value === formValue);
@@ -265,8 +271,8 @@ var util = {
 
             /**
              * radio type 의 input 요소의 값을 설정한다.
-             * @param {HTMLElement} targetElement
-             * @param {String} formValue
+             * @param {HTMLElement} targetElement - Target element
+             * @param {String} formValue - Form value
              */
             'checkbox': function(targetElement, formValue) {
                 if (ne.util.isArray(formValue)) {
@@ -278,8 +284,8 @@ var util = {
 
             /**
              * select-one type 의 input 요소의 값을 설정한다.
-             * @param {HTMLElement} targetElement
-             * @param {String} formValue
+             * @param {HTMLElement} targetElement - Target element
+             * @param {String} formValue - Form value
              */
             'select-one': function(targetElement, formValue) {
                 var options = ne.util.toArray(targetElement.options),
@@ -293,13 +299,12 @@ var util = {
                 }, this);
 
                 targetElement.selectedIndex = index;
-
             },
 
             /**
              * select-multiple type 의 input 요소의 값을 설정한다.
-             * @param {HTMLElement} targetElement
-             * @param {String|Array} formValue
+             * @param {HTMLElement} targetElement - Target element
+             * @param {String} formValue - Form value
              */
             'select-multiple': function(targetElement, formValue) {
                 var options = ne.util.toArray(targetElement.options);
@@ -317,8 +322,8 @@ var util = {
 
             /**
              * input 요소의 값을 설정하는 default 로직
-             * @param {HTMLElement} targetElement
-             * @param {String} formValue
+             * @param {HTMLElement} targetElement - Target element
+             * @param {String} formValue - Form value
              */
             'defaultAction': function(targetElement, formValue) {
                 targetElement.value = formValue;

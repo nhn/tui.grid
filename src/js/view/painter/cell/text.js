@@ -23,7 +23,12 @@ var Text = Cell.extend(/**@lends Text.prototype */{
     },
     template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
 
-    initialize: function(attributes, options) {
+    /**
+     * Initializes
+     * @param {object} attributes Attributes
+     * @param {object} options Options
+     */
+    initialize: function(attributes, options) { // eslint-disable-line
         Cell.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             originalText: ''

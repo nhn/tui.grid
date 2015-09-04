@@ -43,11 +43,9 @@ var Button = List.extend(/**@lends ButtonCell.prototype */{
                     if (!this._focusPrevInput(param.$target)) {
                         this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
                     }
-                } else {
-                    //이후 cell 로 focus 이동
-                    if (!this._focusNextInput(param.$target)) {
-                        this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
-                    }
+                //이후 cell 로 focus 이동
+                } else if (!this._focusNextInput(param.$target)) {
+                    this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
                 }
             }
         });
@@ -179,15 +177,16 @@ var Button = List.extend(/**@lends ButtonCell.prototype */{
      */
     _focusTargetInput: function($currentInput, direction) {
         var $target = $currentInput,
+            result = false,
             find;
 
         if (direction === 'next') {
-            find = function($target) {
-                return $target.next();
+            find = function($el) {
+                return $el.next();
             };
         } else if (direction === 'prev') {
-            find = function($target) {
-                return $target.prev();
+            find = function($el) {
+                return $el.prev();
             };
         }
 
@@ -197,10 +196,9 @@ var Button = List.extend(/**@lends ButtonCell.prototype */{
 
         if ($target.length) {
             $target.focus();
-            return true;
-        } else {
-            return false;
+            result = true;
         }
+        return result;
     },
 
     /**

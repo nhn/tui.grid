@@ -25,11 +25,12 @@
 <script src="../lib/ne-code-snippet/code-snippet.js"></script>
 <script src="../lib/ne-component-pagination/pagination.js"></script>
 <script src="../build/grid.js"></script>
+<!-- <script src="../grid1.0.3.js"></script> -->
 
 <script>
 var grid = new ne.Grid({
     el: $('#grid'),
-	columnFixIndex: 2,
+	// columnFixIndex: 2,
 	displayRowCount: 20,
 	headerHeight: 100,
     columnModelList: [
@@ -104,6 +105,9 @@ var rowList = [{
 		c3: '2',
 		c4: '3'
 	}, {
+		_extraData: {
+			rowSpan: {c1: 2}
+		},
 		c1: '0',
         c2: '1',
 		c3: '2',

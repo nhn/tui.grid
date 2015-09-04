@@ -35,8 +35,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
                 this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
             }
         },
-        'defaultAction': function(keyDownEvent, param) {
-        }
+        'defaultAction': function() {}
     },
     /**
      * event handler
@@ -405,7 +404,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    focusIn: function($td) {},
+    focusIn: function($td) {}, // eslint-disable-line no-unused-vars
 
     /**
      * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
@@ -421,7 +420,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      *     <option value='3'>option1</option>
      * </select>
      */
-    getContentHtml: function(cellData) {
+    getContentHtml: function(cellData) { // eslint-disable-line no-unused-vars
         return '';
     },
 
@@ -433,7 +432,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      * @param {jquery} $td 해당 cell 엘리먼트
      * @param {Boolean} hasFocusedElement 해당 셀에 실제 focuse 된 엘리먼트가 존재하는지 여부
      */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {}
+    setElementAttribute: function(cellData, $td, hasFocusedElement) {} // eslint-disable-line no-unused-vars
 });
 
 
@@ -443,6 +442,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
  */
 Cell.Interface = function() {};
 
+/* eslint-disable */
 /**
  * 자기 자신의 인스턴스의 editType 을 반환한다.
  * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
@@ -478,5 +478,6 @@ Cell.Interface.prototype.getContentHtml = function(cellData) {};
  * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
  */
 Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
+/* eslint-enable */
 
 module.exports = Cell;

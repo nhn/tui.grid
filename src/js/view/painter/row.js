@@ -111,15 +111,15 @@ var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
      * @return {string} tr 마크업 문자열
      */
     getHtml: function(model) {
-        /* istanbul ignore if */
-        if (ne.util.isUndefined(model.get('rowKey'))) {
-           return '';
-        }
-
         var columnModelList = this.columnModelList,
             cellFactory = this.grid.cellFactory,
-            columnName, cellData, editType, cellInstance,
-            html = '';
+            html = '',
+            columnName, cellData, editType, cellInstance;
+
+        if (ne.util.isUndefined(model.get('rowKey'))) {
+           return html;
+        }
+
         _.each(columnModelList, function(columnModel) {
             columnName = columnModel['columnName'];
             cellData = model.get(columnName);

@@ -116,23 +116,28 @@ var Header = View.extend(/**@lends Header.prototype */{
      * @private
      */
     _syncCheckState: function() {
-        if (this.grid.option('selectType') === 'checkbox') {
-            var $input = this._getHeaderMainCheckbox(),
-                enableCount = 0,
-                checkedCount;
-            /* istanbul ignore else */
-            if ($input.length) {
-                checkedCount = this.grid.dataModel.getRowList(true).length;
-                this.grid.dataModel.forEach(function(row, key) {
-                    var cellState = row.getCellState('_button');
-                    if (!cellState.isDisabled && cellState.isEditable) {
-                        enableCount++;
-                    }
-                }, this);
-                $input.prop('checked', enableCount === checkedCount);
-            }
+        var $input, enableCount, checkedCount;
+
+        if (this.grid.option('selectType') !== 'checkbox') {
+            return;
         }
+
+        $input = this._getHeaderMainCheckbox();
+        if (!$input.length) {
+            return;
+        }
+
+        enableCount = 0;
+        checkedCount = this.grid.dataModel.getRowList(true).length;
+        this.grid.dataModel.forEach(function(row) {
+            var cellState = row.getCellState('_button');
+            if (!cellState.isDisabled && cellState.isEditable) {
+                enableCount += 1;
+            }
+        }, this);
+        $input.prop('checked', enableCount === checkedCount);
     },
+
     /**
      * column width 변경시 col 엘리먼트들을 조작하기 위한 헨들러
      * @private
@@ -198,9 +203,11 @@ var Header = View.extend(/**@lends Header.prototype */{
      * @return {View.Layout.Header} this
      */
     render: function() {
+        var resizeHandler;
+
         this.destroyChildren();
 
-        var resizeHandler = this.createView(ResizeHandler, {
+        resizeHandler = this.createView(ResizeHandler, {
             whichSide: this.whichSide,
             grid: this.grid
         });
@@ -215,14 +222,14 @@ var Header = View.extend(/**@lends Header.prototype */{
         this.$el.css({
             height: this.grid.dimensionModel.get('headerHeight')
         }).html(this.template({
-            'colGroup' : this._getColGroupMarkup(),
-            'tBody' : this._getTableBodyMarkup()
+            colGroup: this._getColGroupMarkup(),
+            tBody: this._getTableBodyMarkup()
         }));
-
 
         this.$el.append(resizeHandler.render().el);
         return this;
     },
+
     /**
      * 컬럼 정보를 반환한다.
      * @return {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
@@ -295,6 +302,7 @@ var Header = View.extend(/**@lends Header.prototype */{
 
         return headerMarkupList.join('');
     },
+
     /**
      * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
      *
@@ -309,6 +317,7 @@ var Header = View.extend(/**@lends Header.prototype */{
         }, this);
         return Math.max.apply(Math, lengthList);
     },
+
     /**
      * column merge 가 설정되어 있을 때 헤더의 계층구조 리스트를 가져온다.
      * @return {Array}  계층구조 리스트
@@ -324,6 +333,7 @@ var Header = View.extend(/**@lends Header.prototype */{
 
         return hierarchyList;
     },
+
     /**
      * column merge 가 설정되어 있을 때 재귀적으로 돌면서 계층구조를 형성한다.
      *
@@ -340,7 +350,7 @@ var Header = View.extend(/**@lends Header.prototype */{
             resultList.push(columnModel);
             /* istanbul ignore else */
             if (columnMergeList) {
-                _.each(columnMergeList, function(columnMerge, i) {
+                _.each(columnMergeList, function(columnMerge) {
                     if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
                         resultList = this._getColumnHierarchy(columnMerge, resultList);
                     }

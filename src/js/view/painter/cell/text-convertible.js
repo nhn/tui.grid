@@ -149,7 +149,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * @param {jquery} $td 해당 cell 엘리먼트
      * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {},
+    setElementAttribute: function(cellData, $td, hasFocusedElement) {}, // eslint-disable-line no-unused-vars
 
     /**
      * blur 이벤트 핸들러

@@ -61,9 +61,12 @@ var Layer = View.extend(/**@lends View.Layer.Base.prototype */{
      * @private
      */
     _resize: function() {
+        var headerHeight, bodyHeight;
+
         if (this.$el.css('display') === 'block') {
-            var headerHeight = this.grid.dimensionModel.get('headerHeight'),
-                bodyHeight = this.grid.dimensionModel.get('bodyHeight');
+            headerHeight = this.grid.dimensionModel.get('headerHeight');
+            bodyHeight = this.grid.dimensionModel.get('bodyHeight');
+
             this.$el.css('marginTop', headerHeight + 'px')
                 .css('height', bodyHeight + 'px');
         }

@@ -153,9 +153,71 @@ describe('view.selection', function() {
                 });
                 expect(grid.renderModel.get('scrollLeft')).toEqual(0);
                 selection._adjustScroll(1, 0);
+
                 expect(grid.renderModel.get('scrollLeft')).toEqual(10);
                 selection._adjustScroll(-1, 0);
                 expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+            });
+        });
+
+        describe('_getRowSpannedIndex', function() {
+            beforeEach(function() {
+                grid.setRowList([
+                    {
+                        _extraData: {
+                            rowSpan: {c1: 2}
+                        },
+                        c1: '1',
+                        c2: '2',
+                        c3: '3'
+                    },
+                    {
+                        c2: '2',
+                        c3: '3'
+                    },
+                    {
+                        _extraData: {
+                            rowSpan: {c2: 2}
+                        },
+                        c1: '1',
+                        c2: '2',
+                        c3: '3'
+                    },
+                    {
+                        c1: '1',
+                        c3: '3'
+                    }
+                ]);
+            });
+
+            it('rowSpan이 없으면 그대로 반환한다.', function() {
+                expect(selection._getRowSpannedIndex({
+                    row: [0, 1],
+                    column: [0, 1]
+                })).toEqual({
+                    row: [0, 1],
+                    column: [0, 1]
+                });
+            });
+
+            it('rowSpan이 있으면 적용된 셀렉션을 반환한다 - case1', function() {
+                expect(selection._getRowSpannedIndex({
+                    row: [0, 0],
+                    column: [1, 2]
+                })).toEqual({
+                    row: [0, 1],
+                    column: [1, 2]
+                });
+            });
+
+            it('rowSpan이 있으면 적용된 셀렉션을 반환한다 - case2', function() {
+                expect(selection._getRowSpannedIndex({
+                    row: [1, 2],
+                    column: [1, 3]
+                })).toEqual({
+                    row: [0, 3],
+                    column: [1, 3]
+                });
             });
         });
 

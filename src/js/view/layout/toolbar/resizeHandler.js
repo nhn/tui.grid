@@ -1,3 +1,7 @@
+/**
+ * @fileoverview ResizeHandler for the Toolbar
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var View = require('../../../base/view');
@@ -13,6 +17,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
         'mousedown': '_onMouseDown'
     },
     template: _.template('<a href="#" class="height_resize_handle">높이 조절</a>'),
+
     /**
      * 생성자 함수
      */
@@ -20,6 +25,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
         this.timeoutIdForResize = 0;
         View.prototype.initialize.apply(this, arguments);
     },
+
     /**
      * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
      * @private
@@ -29,6 +35,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
         $(document).on('mouseup', $.proxy(this._onMouseUp, this));
         $(document).on('selectstart', $.proxy(this._onSelectStart, this));
     },
+
     /**
      * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
      * @private
@@ -38,6 +45,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
         $(document).off('mouseup', $.proxy(this._onMouseUp, this));
         $(document).off('selectstart', $.proxy(this._onSelectStart, this));
     },
+
     /**
      * mousedown 이벤트 핸들러
      * @param {event} mouseDownEvent 마우스 이벤트
@@ -49,14 +57,13 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
         this.grid.updateLayoutData();
         this._attachMouseEvent();
     },
+
     /**
      * mousemove 이벤트 핸들러
      * @param {event} mouseMoveEvent 마우스 이벤트
      * @private
      */
     _onMouseMove: function(mouseMoveEvent) {
-        clearTimeout(this.timeoutIdForResize);
-
         var dimensionModel = this.grid.dimensionModel,
             offsetTop = dimensionModel.get('offsetTop'),
             headerHeight = dimensionModel.get('headerHeight'),
@@ -64,9 +71,11 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
             toolbarHeight = dimensionModel.get('toolbarHeight'),
             bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight - toolbarHeight;
 
+        clearTimeout(this.timeoutIdForResize);
+
         bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
 
-        //매번 수행하면 성능이 느려지므로, resize 이벤트가 발생할 시 천첮히 업데이트한다.
+        //매번 수행하면 성능이 느려지므로, resize 이벤트가 발생할 시 천천히 업데이트한다.
         this.timeoutIdForResize = setTimeout(function() {
             dimensionModel.set({
                 bodyHeight: bodyHeight
@@ -103,6 +112,7 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
         this.$el.html(this.template());
         return this;
     },
+
     /**
      * 소멸자
      */

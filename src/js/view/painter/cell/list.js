@@ -22,6 +22,7 @@ var List = Cell.extend(/**@lends List.prototype */{
         Cell.prototype.initialize.apply(this, arguments);
     },
 
+    /* eslint-disable */
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
      * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
@@ -31,7 +32,8 @@ var List = Cell.extend(/**@lends List.prototype */{
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    focusIn: function($td) {},
+    focusIn: function($td) {}, // eslint-disable-line no-unused-vars
+
     /**
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
@@ -45,7 +47,7 @@ var List = Cell.extend(/**@lends List.prototype */{
      *     <option value='3'>option1</option>
      * </select>
      */
-    getContentHtml: function(cellData) {
+    getContentHtml: function(cellData) { // eslint-disable-line no-unused-vars
         throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
     },
     /**
@@ -55,9 +57,11 @@ var List = Cell.extend(/**@lends List.prototype */{
      * @param {jQuery} $td 해당 cell 엘리먼트
      * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {
+    setElementAttribute: function(cellData, $td, hasFocusedElement) { // eslint-disable-line no-unused-vars
         throw this.error('Implement setElementAttribute(cellData, $target) method. ');
     },
+    /* eslint-enable */
+
     /**
      * List Type 의 option list 를 반환하는 메서드
      *

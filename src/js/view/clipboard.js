@@ -125,7 +125,7 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
-    _keyIn: function(keyDownEvent) {
+    _keyIn: function(keyDownEvent) { // eslint-disable-line complexity
         var grid = this.grid,
             keyMap = grid.keyMap,
             focusModel = grid.focusModel,
@@ -213,7 +213,7 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
      * @param {event} keyDownEvent 이벤트 객체
      * @private
      */
-    _keyInWithShift: function(keyDownEvent) {
+    _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
         var grid = this.grid,
             keyMap = grid.keyMap,
             focusModel = grid.focusModel,
@@ -347,7 +347,7 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
     /**
      * process data for paste to grid
      * @private
-     * @return result
+     * @return {Array.<Array.<string>>} result
      */
     _getProcessClipBoardData: function() {
         var text = this.$el.val(),
@@ -388,6 +388,7 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
             keyDownEvent.preventDefault();
         }
     },
+
     /**
      * text type 의 editOption cell 의 data 를 빈 스트링으로 세팅한다.
      * selection 영역이 지정되어 있다면 selection 영역에 해당하는 모든 셀.
