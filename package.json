@@ -42,7 +42,7 @@
     "karma-junit-reporter": "^0.3.4",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-source-map-support": "^1.1.0",
-    "karma-webdriver-launcher": "^1.0.4",
+    "karma-webdriver-launcher": "git://github.com/everedifice/karma-webdriver-launcher.git",
     "phantomjs": "^1.9.18",
     "source-map-support": "^0.3.2",
     "vinyl-source-stream": "^1.1.0"

@@ -1,6 +1,6 @@
 'use strict';
 
-// var istanbul = require('browserify-istanbul');
+var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
     var webdriverConfig = {
@@ -45,7 +45,11 @@ module.exports = function(config) {
         },
 
         browserify: {
-            debug: true
+            debug: true,
+            transform: [istanbul({
+                ignore: ['**/test/**', '**/tmpl/**'],
+                defaultIgnore: true
+            })]
         },
 
         // test results reporter to use
@@ -78,7 +82,7 @@ module.exports = function(config) {
         },
 
         junitReporter: {
-            outputFile: 'report/junit-result.xml',
+            outputDir: 'report/junit',
             suite: ''
         },
 
@@ -100,17 +104,17 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE7',
-            'IE8',
-            'IE9',
-            'IE10',
-            'IE11',
-            'Chrome-WebDriver',
-            'Firefox-WebDriver'
+            // 'IE7',
+            // 'IE8',
+            // 'IE9',
+            // 'IE10',
+            // 'IE11',
+            'Chrome-WebDriver'
+            // 'Firefox-WebDriver'
         ],
 
         client: {
-            useIframe: true
+            useIframe: false
         },
 
         customLaunchers: {
