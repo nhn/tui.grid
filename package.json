@@ -27,9 +27,11 @@
     "gulp-rename": "^1.2.2",
     "gulp-streamify": "^1.0.0",
     "gulp-uglify": "^1.4.0",
+    "jasmine-ajax": "^2.99.0",
     "jasmine-core": "^2.3.4",
+    "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
-    "karma": "^0.13.9",
+    "karma": "^0.12.36",
     "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^0.5.1",
@@ -37,14 +39,10 @@
     "karma-htmlfile-reporter": "^0.2.2",
     "karma-ie-launcher": "^0.1.5",
     "karma-jasmine": "latest",
-    "karma-jasmine-ajax": "^0.1.13",
-    "karma-jasmine-jquery": "^0.1.1",
     "karma-junit-reporter": "^0.3.4",
     "karma-phantomjs-launcher": "^0.2.1",
-    "karma-source-map-support": "^1.1.0",
     "karma-webdriver-launcher": "git://github.com/everedifice/karma-webdriver-launcher.git",
     "phantomjs": "^1.9.18",
-    "source-map-support": "^0.3.2",
     "vinyl-source-stream": "^1.1.0"
   }
 }

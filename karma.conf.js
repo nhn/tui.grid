@@ -13,9 +13,16 @@ module.exports = function(config) {
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
 
+        captureTimeout: 100000,
+        browserDisconnectTimeout: 60000,
+        browserNoActivityTimeout: 60000,
+
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['source-map-support', 'browserify', 'jasmine-jquery', 'jasmine-ajax', 'jasmine'],
+        frameworks: [
+            'browserify',
+            'jasmine'
+        ],
 
         // list of files / patterns to load in the browser
         files: [
@@ -25,6 +32,9 @@ module.exports = function(config) {
             {pattern: 'lib/backbone/backbone.js', watched: false},
             {pattern: 'lib/ne-code-snippet/code-snippet.js', watched: false},
             {pattern: 'lib/ne-component-pagination/pagination.js', watched: false},
+
+            {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false},
+            {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false},
 
             {pattern: 'test/fixtures/*.html', included: false},
             {pattern: 'src/css/*.css', included: false},
@@ -47,7 +57,7 @@ module.exports = function(config) {
         browserify: {
             debug: true,
             transform: [istanbul({
-                ignore: ['**/test/**', '**/tmpl/**'],
+                ignore: ['test/**/*'],
                 defaultIgnore: true
             })]
         },
@@ -104,19 +114,19 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            // 'IE7',
-            // 'IE8',
-            // 'IE9',
-            // 'IE10',
-            // 'IE11',
-            'Chrome-WebDriver'
-            // 'Firefox-WebDriver'
+            'IE7',
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
         ],
 
-        client: {
-            useIframe: false
-        },
-
+        // client: {
+        //     useIframe: false
+        // },
+        //
         customLaunchers: {
             'IE7': {
                 base: 'WebDriver',
