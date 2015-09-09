@@ -1,7 +1,6 @@
 {
   "env": {
     "browser": true,
-    "amd": true,
     "node": true,
     "jasmine": true,
     "jquery": true
@@ -9,28 +8,18 @@
   "globals": {
     "ne": true,
     "_": true,
-    "Prism": true,
-    "rangy": true,
     "loadFixtures": true,
-    "View": true,
-    "Data": true,
-    "Model": true,
-    "Core": true,
-    "Util": true,
-    "Collection": true,
-    "AddOn": true,
     "Backbone": true
   },
   "rules": {
     //Possible Errors
     "no-console": 1,
     "no-extra-parens": 0,
-    "no-reserved-keys": 2,
+    "quote-props": [2, "consistent"],
     "valid-jsdoc": [2, {
         "requireReturn": false
     }],
     "valid-typeof": 1,
-
 
     //Best Practices
     "block-scoped-var": 2,
@@ -67,7 +56,6 @@
     "space-after-function-name": 2,
     "space-after-keywords": 2,
     "space-before-blocks": 2,
-    "space-in-brackets": 2,
     "space-in-parens": 2,
 
     //Node.js
@@ -77,7 +65,6 @@
     "no-plusplus": 2,
 
     //only for this project
-    "strict": 0,
     "no-undefined": 0,
     "no-alert": 0,
     "dot-notation": 0,
