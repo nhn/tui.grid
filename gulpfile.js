@@ -39,7 +39,7 @@ gulp.task('build-css', function() {
 gulp.task('build', ['build-js']);
 
 // watch - build
-gulp.task('watch', ['build-js, build-css'], function() {
+gulp.task('watch', ['build-js', 'build-css'], function() {
     gulp.watch('src/js/**/*', ['build-js']);
     gulp.watch('src/css/*.styl', ['build-css']);
 });
