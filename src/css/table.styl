@@ -1,0 +1,154 @@
+table
+    border 0
+    table-layout fixed
+    background-color #ccc
+    border-collapse separate
+    border-spacing 1px
+    margin 0
+
+    th
+        overflow hidden
+        white-space nowrap
+        *white-space pre
+        text-align center
+        padding 0
+        border 0
+
+        .sort a
+            color #555
+            text-decoration none
+
+        .btn_sorting
+            display inline-block
+            overflow hidden
+            margin-left 6px
+            height 16px
+            width 10px
+            background url(../images/icons.gif) -30px -150px no-repeat
+            font-size 0
+            line-height 999px
+            vertical-align middle
+            cursor pointer
+
+        .sorting_down
+            height 16px
+            width 10px
+            background-position 0 -150px
+
+        .sorting_up
+            height 16px
+            width 10px
+            background-position -15px -150px
+
+    tr
+        &.selected
+            background-color #f8f8f8
+
+        &.disabled
+            color #b0b0b0
+
+        &.invalidated
+            background-color #ffe1e1
+
+    col
+        background #fff
+
+        &.editable
+            background-color #ffffef
+
+    td
+        overflow hidden
+        padding 0 10px
+        *padding 1px 10px
+        border 0
+        white-space nowrap
+        *white-space pre
+
+        &.editable
+            background-color #ffffef
+
+        &.selected
+            background-color #f8f8f8
+            font-weight bold
+
+        &.disabled
+            color #b0b0b0
+
+        &.invalidated_row
+            background #ffe1e1
+
+        &.invalidated_column,
+        &.invalidated_column input,
+        &.invalidated_column select
+            color #ff0202
+
+        &.focused
+            padding 0 9px
+            border dotted 1px #190000
+
+        &.ellipsis
+            -o-text-overflow ellipsis /*Opera 9*/
+            -moz-binding url('ellipsis.xml#ellipsis') /* Firefox */
+            width 100% /* for IE6 */
+            text-overflow ellipsis
+
+        img
+            vertical-align middle
+
+        span
+            &.before
+                float left
+                margin-right 2px
+                line-height 1.5
+
+            &.after
+                float right
+                margin-left 2px
+                line-height 1.5
+
+            &.input
+                display block
+                overflow hidden
+                line-height 1.5
+                *margin-left -2px
+                *padding-left 2px
+
+                input
+                    box-sizing border-box
+
+        input
+            &[type=text],
+            &[type=password]
+                width 100%
+                padding 2px 0
+                border solid 1px #E2E3EA
+                border-top solid 1px #ABADB3
+                border-bottom solid 1px #E3E9EF
+
+            &.editing
+                border solid 1px #748eea
+
+        .search_bx
+            position relative
+
+        .search
+            display block
+            height 20px
+            padding 0 33px 0 6px
+            border 1px solid #9c9c9c
+            line-height 20px
+
+            input
+                width 100%
+                background transparent
+                padding 0
+                padding-top 4px
+                border 0
+                color #999
+                -webkit-appearance none
+
+        select
+            width 100%
+
+        a
+            color #002caf

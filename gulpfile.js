@@ -1,13 +1,17 @@
 'use strict';
 
 var gulp = require('gulp');
+var path = require('path');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
+var stylus = require('gulp-stylus');
+var sourcemaps = require('gulp-sourcemaps');
 var minifycss = require('gulp-minify-css');
 var streamify = require('gulp-streamify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var karma = require('karma').server;
 
 var PATH_DIST = 'dist/',
     PATH_BUILD = 'build/',
@@ -15,6 +19,7 @@ var PATH_DIST = 'dist/',
     FNAME_JS = 'grid.js',
     FNAME_CSS = 'grid.css';
 
+// build
 gulp.task('build-js', function() {
     return browserify('src/js/grid.js', {debug: true})
         .bundle()
@@ -22,11 +27,37 @@ gulp.task('build-js', function() {
         .pipe(gulp.dest(PATH_BUILD));
 });
 
-gulp.task('watch', ['build-js'], function() {
-    gulp.watch('src/js/**/*', ['build-js']);
-    console.log('watching for changes...');
+gulp.task('build-css', function() {
+    return gulp.src('src/css/index.styl')
+        .pipe(sourcemaps.init())
+        .pipe(stylus())
+        .pipe(sourcemaps.write())
+        .pipe(rename({basename: 'grid'}))
+        .pipe(gulp.dest(PATH_BUILD));
 });
 
+gulp.task('build', ['build-js']);
+
+// watch - build
+gulp.task('watch', ['build-js, build-css'], function() {
+    gulp.watch('src/js/**/*', ['build-js']);
+    gulp.watch('src/css/*.styl', ['build-css']);
+});
+
+// test
+gulp.task('default', function() {
+    karma.start({
+        configFile: path.join(__dirname, 'karma.conf.local.js')
+    });
+});
+
+gulp.task('test-all', function() {
+    karma.start({
+        configFile: path.join(__dirname, 'karma.conf.js')
+    });
+});
+
+// deploy
 gulp.task('deploy-js', function() {
     return browserify('src/js/grid.js')
         .bundle()
@@ -67,7 +98,5 @@ gulp.task('copy-sample-lib', function() {
        ])
        .pipe(gulp.dest(PATH_SAMPLE + 'js/lib'));
 });
-
-gulp.task('build', ['build-js']);
 
 gulp.task('deploy', ['deploy-js', 'deploy-css', 'deploy-image', 'copy-sample-lib']);
