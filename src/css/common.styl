@@ -2,6 +2,9 @@ p, input
     margin 0
     padding 0
 
+input[type=text]
+    outline none
+
 ul, li
     list-style none
     padding 0
@@ -37,3 +40,26 @@ strong, em
     .grid
         {$btn-common}
         background-position 0 -21px
+
+$line-common =
+    position absolute
+    top 0
+    width 1px
+    height 100%
+    background #ccc
+    z-index 10
+
+.left_line
+    {$line-common}
+    left 0
+
+.right_line
+    {$line-common}
+    right 0
+
+.clipboard
+    position fixed
+    top 0px
+    left -9999px
+    width 100px
+    height 100px
