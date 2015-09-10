@@ -1,3 +1,14 @@
+$selection-layer =
+    display none
+    position absolute
+    top 0
+    width 0
+    height 0
+    border dotted 1px red
+    background orange
+    opacity 0.2
+    filter unquote('alpha(opacity=10)')
+
 .lside_area
     display none
     height 100%
@@ -17,21 +28,12 @@
         margin-right -17px
         *padding-right 17px
 
-
         table
             *margin-right -17px
 
         .selection_layer
-            display none
-            position absolute
-            top 0
+            {$selection-layer}
             left 1px
-            width 0
-            height 0
-            border dotted 1px red
-            background orange
-            opacity 0.2
-            filter unquote('alpha(opacity=10)')
 
 .rside_area
     display none
@@ -58,16 +60,8 @@
             *margin-right -17px
 
         .selection_layer
-            display none
-            position absolute
-            top 0
+            {$selection-layer}
             left -1px
-            width 0
-            height 0
-            border dotted 1px red
-            background orange
-            opacity 0.2
-            filter unquote('alpha(opacity=10)')
 
     .space
         display block

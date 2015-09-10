@@ -36,7 +36,7 @@ gulp.task('build-css', function() {
         .pipe(gulp.dest(PATH_BUILD));
 });
 
-gulp.task('build', ['build-js']);
+gulp.task('build', ['build-js', 'build-css']);
 
 // watch - build
 gulp.task('watch', ['build-js', 'build-css'], function() {
@@ -71,14 +71,14 @@ gulp.task('deploy-js', function() {
 });
 
 gulp.task('deploy-css', function() {
-    return gulp.src(['src/css/common.css', 'src/css/Grid.css'])
-        .pipe(concat(FNAME_CSS))
+    return gulp.src(['src/css/index.styl'])
+        .pipe(stylus())
+        .pipe(sourcemaps.write())
+        .pipe(rename({basename: 'grid'}))
         .pipe(gulp.dest(PATH_DIST))
-        .pipe(gulp.dest(PATH_SAMPLE + 'css'))
         .pipe(minifycss())
         .pipe(rename({extname: '.min.css'}))
-        .pipe(gulp.dest(PATH_DIST))
-        .pipe(gulp.dest(PATH_SAMPLE + 'css'));
+        .pipe(gulp.dest(PATH_DIST));
 });
 
 gulp.task('deploy-image', function() {

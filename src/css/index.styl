@@ -34,23 +34,21 @@
     ::-webkit-scrollbar-corner
         background-color: #f2f2f2
 
-    .left_line
+    $line
         position absolute
         top 0
         width 1px
         height 100%
         background #ccc
-        left 0
         z-index 10
 
+    .left_line
+        @extend .uio_grid $line
+        left 0
+
     .right_line
-        position absolute
-        top 0
-        width 1px
-        height 100%
-        background #ccc
+        @extend .uio_grid $line
         right 0
-        z-index 10
 
     .clipboard
         position fixed
