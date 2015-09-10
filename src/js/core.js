@@ -383,8 +383,9 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @private
      */
     _onWindowResize: function() {
-        var width = this.$el.width();
-        this.dimensionModel.set('width', width);
+        if (this.$el) {
+            this.dimensionModel.set('width', this.$el.width());
+        }
     },
 
     /**
