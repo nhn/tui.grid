@@ -253,7 +253,7 @@ var util = {
              * @param {Array}  arr 변환할 배열
              * @return {Array} 변환된 배열 결과 값
              */
-            _changeToStringInArray: function(arr) {
+            '_changeToStringInArray': function(arr) {
                 ne.util.forEach(arr, function(value, i) {
                     arr[i] = String(value);
                 }, this);

@@ -82,7 +82,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
             ne.util.forEachArray(list, function(item) {
                 var sliced = item.slice(' ');
                 if (ne.util.isArray(sliced)) {
-                    ne.util.forEachArray(sliced, function (className) {
+                    ne.util.forEachArray(sliced, function(className) {
                         classNameMap[className] = true;
                     });
                 } else {

@@ -237,7 +237,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * Event Handler for double click event.
      * @param  {MouseEvent} mouseEvent - MouseEvent object
      */
-    _onDblClick: function (mouseEvent) {
+    _onDblClick: function(mouseEvent) {
         var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
             address = this._getCellAddress($td);
