@@ -39,13 +39,13 @@ gulp.task('build-css', function() {
 gulp.task('build', ['build-js', 'build-css']);
 
 // watch - build
-gulp.task('watch', ['build-js', 'build-css'], function() {
+gulp.task('default', ['build-js', 'build-css'], function() {
     gulp.watch('src/js/**/*', ['build-js']);
     gulp.watch('src/css/*.styl', ['build-css']);
 });
 
 // test
-gulp.task('default', function() {
+gulp.task('test', function() {
     karma.start({
         configFile: path.join(__dirname, 'karma.conf.local.js')
     });
