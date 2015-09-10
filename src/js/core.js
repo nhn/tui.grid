@@ -856,12 +856,12 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        var cellInstance;
+        var cellPainter;
         this.focus(rowKey, columnName, isScrollable);
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
         if (this.isEditable(rowKey, columnName)) {
-            cellInstance = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
-            cellInstance.focusIn(this.getElement(rowKey, columnName));
+            cellPainter = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
+            cellPainter.focusIn(this.getElement(rowKey, columnName));
         } else {
             this.focusClipboard();
         }

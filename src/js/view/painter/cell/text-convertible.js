@@ -1,8 +1,13 @@
+/**
+ * @fileoverview Constructor for the Painter of text-convertible cell
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var Cell = require('../cell');
 var Text = require('./text');
 var util = require('../../../util');
+
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @extends {View.Base.Painter.Cell.Text}
@@ -78,7 +83,8 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * </select>
      */
     getContentHtml: function(cellData) {
-        //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
+        // FIXME: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
+        // TODO: html template 형태로 변경
         var columnModel = this.getColumnModel(cellData),
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             htmlArr = [];
@@ -159,6 +165,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
     _onBlurConvertible: function(blurEvent) {
         var $target = $(blurEvent.target),
             $td = $target.closest('td');
+
         this._onBlur(blurEvent);
         this._endEdit($td);
     },
@@ -169,17 +176,20 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * @private
      */
     _startEdit: function($td) {
-        var $input,
-            rowKey = this.getRowKey($td),
-            columnName = this.getColumnName($td),
-            cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
+        var $input, rowKey, columnName, cellState;
 
-        this.editingCell = {
-            rowKey: rowKey,
-            columnName: columnName
-        };
+        this._blurEditingCell();
+
+        rowKey = this.getRowKey($td),
+        columnName = this.getColumnName($td),
+        cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
 
         if (cellState.isEditable && !cellState.isDisabled) {
+            this.editingCell = {
+                rowKey: rowKey,
+                columnName: columnName
+            };
+
             this.redraw(this._getCellData($td), $td);
             $input = $td.find('input');
             this.originalText = $input.val();
@@ -197,14 +207,29 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
         var cellData = this._getCellData($td);
         this.editingCell = {
             rowKey: null,
-            columnName: ''
+            columnName: null
         };
         this.clicked = {
             rowKey: null,
             columnName: null
         };
         if (cellData) {
-            this.redraw(this._getCellData($td), $td);
+            this.redraw(cellData, $td);
+        }
+    },
+
+    /**
+     * Trigger blur event on editing cell if exist
+     * @private
+     */
+    _blurEditingCell: function() {
+        var rowKey = this.editingCell.rowKey,
+            columnName = this.editingCell.columnName,
+            $td;
+
+        if (!ne.util.isNull(rowKey) && !ne.util.isNull(columnName)) {
+            $td = this.grid.getElement(rowKey, columnName);
+            $td.find('input')[0].blur();
         }
     },
 
