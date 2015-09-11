@@ -11,7 +11,7 @@ var util = require('../util');
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @constructor Data.Row
  */
-var Row = Model.extend(/**@lends Data.Row.prototype */{
+var Row = Model.extend(/**@lends Row.prototype */{
     idAttribute: 'rowKey',
     defaults: {
         _extraData: {

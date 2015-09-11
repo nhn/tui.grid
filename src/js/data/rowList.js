@@ -538,6 +538,10 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
                 mainRow, startOffset, spanCount;
 
             if (data.isMainRow) {
+                if (data.count === 1) {
+                    // if isMainRow is true and count is 1, rowSpanData is meaningless
+                    return;
+                }
                 mainRow = nextRow;
                 spanCount = data.count - 1;
                 startOffset = 1;
