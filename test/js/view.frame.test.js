@@ -16,7 +16,7 @@ var FrameRside = require('../../src/js/view/layout/frame-rside');
 var FrameLside = require('../../src/js/view/layout/frame-lside');
 var LayoutHeader = require('../../src/js/view/layout/header');
 var LayoutBody = require('../../src/js/view/layout/body');
-var VirtualScrollBar = require('../../src/js/view/layout/virtualScrollbar');
+var VirtualScrollBar = require('../../src/js/view/layout/virtualScrollBar');
 
 describe('Frame', function() {
     var grid, frame;
