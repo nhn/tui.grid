@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>그리드 기본 예제</title>
-    <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+    <link rel="stylesheet" type="text/css" href="../build/grid.css" />
 	<style media="screen">
 	#wrapper {width:100%;}
 	</style>
@@ -21,23 +21,22 @@
 <script src="../lib/jquery-json/src/jquery.json.js"></script>
 <script src="../lib/underscore/underscore.js"></script>
 <script src="../lib/backbone/backbone.js"></script>
-
 <script src="../lib/ne-code-snippet/code-snippet.js"></script>
 <script src="../lib/ne-component-pagination/pagination.js"></script>
 <script src="../build/grid.js"></script>
-<!-- <script src="../grid1.0.3.js"></script> -->
 
 <script>
 var grid = new ne.Grid({
     el: $('#grid'),
 	// columnFixIndex: 2,
-	displayRowCount: 20,
+	displayRowCount: 10,
 	headerHeight: 100,
     columnModelList: [
 		{
             title: 'c1',
             columnName: 'c1',
 			width: 20,
+			isSortable: true,
             editOption: {
                 type: 'text-convertible'
 			}
@@ -47,7 +46,7 @@ var grid = new ne.Grid({
 			isFixedWidth: true,
             columnName: 'c2',
 			editOption: {
-				type: 'text'
+				type: 'text-convertible'
 			}
         }, {
 			title: 'c3',
@@ -61,13 +60,13 @@ var grid = new ne.Grid({
 				type: 'text-convertible',
 			    inputEvents: {
 					focus: function(ev) {
-					    console.log('focus!!!!!!');
+					    // console.log('focus!!!!!!');
 					},
 					blur: function(ev) {
-						console.log('blur!!!!');
+						// console.log('blur!!!!');
 					},
 					keydown: function(ev) {
-						console.log('keydown!');
+						// console.log('keydown!');
 					}
 				}
 			}
@@ -99,159 +98,23 @@ var grid = new ne.Grid({
 	}]
 });
 
-var rowList = [{
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		_extraData: {
-			rowSpan: {c1: 2}
-		},
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-        c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-        c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-        c2: '1',
-		c3: '2',
-		c4: '3'
-    }, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}, {
-		c1: '0',
-		c2: '1',
-		c3: '2',
-		c4: '3'
-	}
-];
+var rowList = [];
 
-grid.setRowList(rowList, function() {
-    console.log('done!!');
-});
+(function() {
+	_.times(50, function(number) {
+	    rowList.push({
+			c1: number + '0',
+			c2: number + '1',
+			c3: number + '2',
+			c4: number + '3'
+		});
+	})
+})();
+
+rowList[4]._extraData = {
+	rowSpan: {c1: 1, c2: 1}
+}
+
+grid.setRowList(rowList);
 </script>
 </html>
