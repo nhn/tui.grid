@@ -99,7 +99,13 @@ var RowList = View.extend(/**@lends RowList.prototype */{
                 $tbody.width($tbody.width());
             }
         } else {
-            this.$el[0].innerHTML = html;
+            // IE의 호환성 보기를 사용하면 브라우저 검출이 정확하지 않기 때문에, try/catch로 방어코드를 추가함.
+            try {
+                this.$el[0].innerHTML = html;
+            } catch (e) {
+                RowList.isInnerHtmlOfTbodyReadOnly = true;
+                this._resetRows();
+            }
         }
     },
 
