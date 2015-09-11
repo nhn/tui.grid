@@ -310,30 +310,29 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_startEdit', function() {
-            var html, $table, $td1, $td2, $input;
+            var html, $table, $td, $input;
 
             beforeEach(function() {
                 $table = $('<table><tr key="0"></tr></table>');
-                $td1 = $('<td />').attr('columnname', 'c1');
-                $td2 = $('<td />').attr('columnname', 'c2');
-                $table.find('tr').append($td1).append($td2);
+                $td = $('<td />').attr('columnname', 'c1');
+                $table.find('tr').append($td);
                 grid.$el.append($table);
             });
 
             afterEach(function() {
-                cellPainter._endEdit($td1);
+                cellPainter._endEdit($td);
             });
 
             it('input text 를 생성하는지 확인한다.', function() {
-                cellPainter._startEdit($td1);
-                $input = $td1.find('input');
+                cellPainter._startEdit($td);
+                $input = $td.find('input');
 
                 expect($input.length).toBe(1);
                 expect($input.val()).toBe('0-1');
             });
 
             it('editingCell 값을 잘 설정하는지 확인한다.', function() {
-                cellPainter._startEdit($td1);
+                cellPainter._startEdit($td);
                 expect(cellPainter.editingCell).toEqual({
                     rowKey: '0',
                     columnName: 'c1'
@@ -342,23 +341,10 @@ describe('view.painter.cell.text', function() {
 
             it('isDisabled이 true 일 때에는 input text 를 노출하지 않는다.', function() {
                 grid.dataModel.get('0').setRowState('DISABLED');
-                cellPainter._startEdit($td1);
-                $input = $td1.find('input');
+                cellPainter._startEdit($td);
+                $input = $td.find('input');
 
                 expect($input.length).toBe(0);
-            });
-
-            it('editing 중인 cell이 있으면 blurEditingCell을 호출해준다', function() {
-                var blurSpy = jasmine.createSpy('blurSpy');
-
-                cellPainter._startEdit($td1);
-                $td1.find('input').blur(function() {
-                    blurSpy();
-                });
-                setTimeout(function () {
-                    cellPainter._startEdit($td2);
-                    expect(blurSpy).toHaveBeenCalled();
-                }, 0);
             });
         });
 
