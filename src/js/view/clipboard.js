@@ -96,31 +96,6 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
     },
 
     /**
-     * Returns true if the keyCode value is a character (not a function key).
-     * @param  {number} keyCode Key code
-     * @return {boolean} True if the keyCode value is a character
-     */
-    _isCharKey: function(keyCode) {
-        var isAlphaNum = keyCode >= 48 && keyCode <= 90,
-            isSpecialChar = (keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222);
-
-        return isAlphaNum || isSpecialChar;
-    },
-
-    /**
-     * Makes currently focused cell to be editable if the edit type of the cell is text-*.
-     * (text, text-password, text-convertible).
-     */
-    _startEditFocusedCell: function() {
-        var focused = this.grid.focusModel.which(),
-            editType = this.grid.columnModel.getEditType(focused.columnName);
-
-        if (editType.indexOf('text') === 0) {
-            this.grid.focusIn(focused.rowKey, focused.columnName);
-        }
-    },
-
-    /**
      * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
@@ -178,9 +153,6 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
                 grid.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
             default:
-                if (this._isCharKey(keyCode)) {
-                    this._startEditFocusedCell();
-                }
                 isKeyIdentified = false;
                 break;
         }
@@ -255,9 +227,6 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
                 grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
             default:
-                if (this._isCharKey(keyCode)) {
-                    this._startEditFocusedCell();
-                }
                 isKeyIdentified = false;
                 break;
         }
