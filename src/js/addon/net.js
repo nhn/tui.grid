@@ -421,10 +421,10 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
     _getDataParam: function(requestType, options) {
         var dataModel = this.grid.dataModel,
             checkMap = {
-                'createData': ['createList'],
-                'updateData': ['updateList'],
-                'deleteData': ['deleteList'],
-                'modifyData': ['createList', 'updateList', 'deleteList']
+                createData: ['createList'],
+                updateData: ['updateList'],
+                deleteData: ['deleteList'],
+                modifyData: ['createList', 'updateList', 'deleteList']
             },
             checkList = checkMap[requestType],
             data = $.extend({}, this.requestedFormData),
@@ -516,7 +516,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         }
         return result;
     },
-    
+
     /**
      * confirm message 를 반환한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
@@ -554,7 +554,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         //beforeRequest 이벤트를 발생한다.
         this.grid.trigger('beforeRequest', eventData);
 
-        //event 의 stopped 가 호출 된다면 ajax 호출을 중지한다.
+        //event의 stopped 가 호출 된다면 ajax 호출을 중지한다.
         if (eventData.isStopped()) {
             return;
         }
