@@ -164,7 +164,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             scrollY: true,
             useDataCopy: true,
             useClientSort: true,
-
+            singleClickEdit: false,
             toolbar: {
                 hasResizeHandler: true,
                 hasControlPanel: true,
@@ -395,14 +395,19 @@ var Core = View.extend(/**@lends Core.prototype */{
      */
     _onClick: function(mouseEvent) {
         var eventData = this.createEventData(mouseEvent),
-            $target = $(mouseEvent.target);
+            $target = $(mouseEvent.target),
+            cellInfo;
 
         this.trigger('click', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (this._isCellElement($target, true)) {
-            this._triggerCellMouseEvent('clickCell', eventData, $target.closest('td'));
+            cellInfo = this._getCellInfoFromElement($target.closest('td'));
+            if (this.option('singleClickEdit')) {
+                this.focusIn(cellInfo.rowKey, cellInfo.columnName);
+            }
+            this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
     },
 
@@ -459,10 +464,14 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @private
      * @param {string} eventName 이벤트명
      * @param {MouseEvent} eventData 커스터마이징 된 마우스 이벤트 객체
-     * @param {jQuery} $cell 셀 HTML요소의 jquery 객체
+     * @param {(jQuery|object)} cell 이벤트가 발생한 cell (jquery 객체이거나 rowKey, columnName, rowData를 갖는 plain 객체)
      */
-    _triggerCellMouseEvent: function(eventName, eventData, $cell) {
-        _.extend(eventData, this._getCellInfoFromElement($cell));
+    _triggerCellMouseEvent: function(eventName, eventData, cell) {
+        var cellInfo = cell;
+        if (cell instanceof $) {
+            cellInfo = this._getCellInfoFromElement(cell);
+        }
+        _.extend(eventData, cellInfo);
         this.trigger(eventName, eventData);
     },
 

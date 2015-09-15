@@ -9,15 +9,19 @@ describe('grid.normal.test', function() {
 
     jasmine.getFixtures().fixturesPath = 'base/';
     loadFixtures('test/fixtures/empty.html');
-    $empty = $('#empty');
 
     afterEach(function() {
         grid.destroy();
+        grid = null;
     });
 
     beforeEach(function() {
-        grid = new Core({
-            el: $empty,
+        grid = createCore();
+    });
+
+    function createCore() {
+        var core = new Core({
+            el: setFixtures('<div />'),
             columnModelList: [
                 {
                     title: 'c1',
@@ -38,7 +42,7 @@ describe('grid.normal.test', function() {
             ],
             selectType: 'checkbox'
         });
-        grid.setRowList([
+        core.setRowList([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -56,7 +60,9 @@ describe('grid.normal.test', function() {
                 c3: '2-3'
             }
         ]);
-    });
+
+        return core;
+    }
 
     it('setRowList()를 실행하면 dataModel이 설정된다.', function() {
         expect(grid.dataModel.length).toBe(3);
@@ -580,6 +586,48 @@ describe('grid.normal.test', function() {
             grid.del(1, 'c2');
             expect(grid.getValue(1, 'c1')).toBe('1-1');
             expect(grid.getValue(1, 'c2')).toBe('1-2');
+        });
+    });
+
+    describe('click handler', function() {
+        it('cell에서 click이벤트가 발생하면 clickCell 이벤트를 발생시킨다.', function(done) {
+            // 클로저상의 grid 변수를 사용하면 timeout으로 인한 호출타이밍 때문에 destroy된 변수를 참조하게 되어 로컬에서 다시 생성해서 사용
+            var core = createCore(),
+                spy = jasmine.createSpy('clickCellSpy');
+
+            setTimeout(function() {
+                var $cell = core.getElement(0, 'c1');
+                core.on('clickCell', spy);
+                $cell.click();
+                expect(spy).toHaveBeenCalled();
+                done();
+            })
+        });
+
+        it('singleClickEdit 옵션이 true이고 text-convertible 셀인 경우 편집모드로 전환한다.', function(done) {
+            var core = new Core({
+                el: setFixtures('<div />'),
+                columnModelList: [
+                    {
+                        title: 'c1',
+                        columnName: 'c1',
+                        editOption: {
+                            type: 'text-convertible'
+                        }
+                    }
+                ]
+            });
+            core.option('singleClickEdit', true);
+            core.setRowList([{
+                c1: '0-1'
+            }]);
+
+            setTimeout(function() {
+                var $cell = core.getElement(0, 'c1');
+                $cell.click();
+                expect($cell.find('input').length).toBe(1);
+                done();
+            })
         });
     });
 });
