@@ -6,29 +6,21 @@ var Model = require('../../src/js/base/model');
 describe('addon.net', function() {
     var columnModelList = [
         {
-            title: 'columnName1',
             columnName: 'columnName1',
-            width: 100
         }, {
-            title: 'columnName2',
             columnName: 'columnName2',
-            width: 200,
             editOption: {
                 type: 'text'
             }
         },
         {
-            title: 'columnName3',
             columnName: 'columnName3',
-            width: 300,
             editOption: {
                 type: 'text-convertible'
             }
         },
         {
-            title: 'columnName4',
             columnName: 'columnName4',
-            width: 400,
             editOption: {
                 type: 'select',
                 list: [
@@ -40,9 +32,7 @@ describe('addon.net', function() {
             }
         },
         {
-            title: 'columnName5',
             columnName: 'columnName5',
-            width: 500,
             editOption: {
                 type: 'checkbox',
                 list: [
@@ -54,9 +44,7 @@ describe('addon.net', function() {
             }
         },
         {
-            title: 'columnName6',
             columnName: 'columnName6',
-            width: 600,
             editOption: {
                 type: 'radio',
                 list: [
@@ -68,9 +56,7 @@ describe('addon.net', function() {
             }
         },
         {
-            title: 'columnName7',
             columnName: 'columnName7',
-            width: 700,
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
@@ -81,9 +67,7 @@ describe('addon.net', function() {
             ]
         },
         {
-            title: 'columnName8',
             columnName: 'columnName8',
-            width: 800,
             relationList: [
                 {
                     columnList: ['text', 'text-convertible'],
@@ -96,17 +80,18 @@ describe('addon.net', function() {
     ];
     //두번째 행은 disabled 처리한다.
     var rowList = [
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true},
-        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false ,'columnName8': true}
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true},
+        {'columnName1': 'normal', 'columnName2': 1, 'columnName3': 1, 'columnName4': 1, 'columnName5': 'text', 'columnName6': 'text-convertible', 'columnName7': false, 'columnName8': true}
     ];
+
     var originalformData = {
         delivery_number: 1111,
         user_name: 'john_doe',
@@ -114,10 +99,8 @@ describe('addon.net', function() {
         gender: 'male',
         hobby: ['sport']
     };
-    var grid,
-        $form,
-        $grid,
-        net;
+
+    var grid, $form, $grid, net;
 
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
@@ -130,8 +113,8 @@ describe('addon.net', function() {
             columnModelList: columnModelList,
             selectType: 'checkbox'
         });
-        window.alert = function(){};
-        window.confirm = function(){return true};
+        window.alert = function() {};
+        window.confirm = function() {return true};
 
         jasmine.clock().install();
         jasmine.Ajax.install();
@@ -146,43 +129,10 @@ describe('addon.net', function() {
     function createNet(options) {
         grid.use('Net', options);
         net = grid.getAddOn('Net');
-        net._isConfirmed = function(){return true;}
+        net._isConfirmed = function() {return true;}
     }
-    function createResponse() {
-        var response = {
-            readData: {
 
-            },
-            createData: {
-
-            },
-            updateData: {
-
-            },
-            deleteData: {
-
-            },
-            modifyData: {
-
-            }
-        };
-    }
     describe('AddOn.Net 테스트', function() {
-        beforeEach(function() {
-            //grid.use('Net', {
-            //    el: $('#form'),
-            //    api: {
-            //        'readData': '/api/read',
-            //        'createData': '/api/create',
-            //        'updateData': '/api/update',
-            //        'deleteData': '/api/delete',
-            //        'modifyData': '/api/modify',
-            //        'downloadData': '/api/download',
-            //        'downloadAllData': '/api/downloadAll'
-            //    }
-            //});
-            //net = grid.getAddOn('Net');
-        });
         describe('초기화 관련 메서드 확인', function() {
             describe('_initializeDataModelNetwork', function() {
                 beforeEach(function() {
@@ -193,11 +143,13 @@ describe('addon.net', function() {
                         }
                     });
                 });
+
                 it('dataModel 의 network 설정을 확인한다.', function() {
                     expect(grid.core.dataModel.url).toBe('/api/read');
                     expect(typeof grid.core.dataModel.sync).toBe('function');
                 });
             });
+
             describe('_initializeRouter', function() {
                 describe('enableAjaxHistory 가 설정되어 있을때만 router 설정을 한다.', function() {
                     it('enableAjaxHistory on', function() {
@@ -210,6 +162,7 @@ describe('addon.net', function() {
                         });
                         expect(net.router).not.toBeNull();
                     });
+
                     it('enableAjaxHistory off', function() {
                         createNet({
                             el: $form,
@@ -222,6 +175,7 @@ describe('addon.net', function() {
                     });
                 });
             });
+
             describe('_ajax', function() {
                 beforeEach(function() {
                     createNet({
@@ -233,6 +187,7 @@ describe('addon.net', function() {
                 });
 
                 it('ajax 요청이 발생하는지 확인한다.', function() {
+                    var request;
                     net._ajax({
                         url: '/api/test',
                         method: 'POST',
@@ -241,14 +196,13 @@ describe('addon.net', function() {
                             'param2': 2
                         }
                     });
-                    var request = jasmine.Ajax.requests.mostRecent();
+                    request = jasmine.Ajax.requests.mostRecent();
                     expect(request.url).toBe('/api/test');
                     expect(request.method).toBe('POST');
                     expect(request.data()).toEqual({
                         param1: ['1'],
                         param2: ['2']
                     });
-
                 });
 
                 it('grid 에서 beforeRequest 이벤트를 발생하는지 확인한다.', function() {
@@ -263,7 +217,8 @@ describe('addon.net', function() {
                 });
 
                 it('beforeRequest 이벤트 핸들러에서 stop() 을 호출하면 ajax 요청이 중지되는지 확인한다.', function() {
-                    var listenModel = new Model();
+                    var listenModel = new Model(),
+                        request;
 
                     listenModel.listenTo(grid, 'beforeRequest', function(eventData) {
                         eventData.stop();
@@ -272,11 +227,12 @@ describe('addon.net', function() {
                     net._ajax({
                         url: '/api/stop'
                     });
-                    var request = jasmine.Ajax.requests.mostRecent();
+                    request = jasmine.Ajax.requests.mostRecent();
                     expect(request.url).not.toBe('/api/stop');
                 });
             });
         });
+
         describe('_readDataAt', function() {
             it('기본적으로 ajaxHistory 를 사용하며, ajax history 를 사용한다면, router.navigate 를 호출하여 url 을 변경한다.', function() {
                 createNet({
@@ -322,6 +278,7 @@ describe('addon.net', function() {
                 expect(beforeRequesteData).toEqual(afterRequesteData);
             });
         });
+
         describe('lock', function() {
             it('loading layer 를 보여주고, isLocked 를 true로 설정한다.', function() {
                 createNet({
@@ -334,6 +291,7 @@ describe('addon.net', function() {
                 expect(net.isLocked).toBe(true);
             });
         });
+
         describe('unlock', function() {
             it('isLocked 를 false로 설정한다.', function() {
                 createNet({
@@ -344,6 +302,7 @@ describe('addon.net', function() {
                 expect(net.isLocked).toBe(false);
             });
         });
+
         describe('_getDataParam', function() {
             function messUp() {
                 grid.appendRow();
@@ -368,28 +327,18 @@ describe('addon.net', function() {
 
                 messUp();
                 param = net._getDataParam('createData');
-                updateList = $.parseJSON(param.data.updateList);
-                deleteList = $.parseJSON(param.data.deleteList);
                 createList = $.parseJSON(param.data.createList);
 
                 expect(createList.length).toBe(2);
-                expect(updateList.length).toBe(3);
-                expect(deleteList.length).toBe(1);
+                expect(param.data.updateList).toBeUndefined();
+                expect(param.data.deleteList).toBeUndefined();
                 expect(param.count).toBe(2);
 
                 grid.uncheckAll();
                 param = net._getDataParam('createData');
-                updateList = $.parseJSON(param.data.updateList);
-                deleteList = $.parseJSON(param.data.deleteList);
-                createList = $.parseJSON(param.data.createList);
-
-                expect(createList.length).toBe(0);
-                expect(updateList.length).toBe(0);
-
-                //delete 는 checked 와 관계없다.
-                expect(deleteList.length).toBe(1);
-                expect(param.count).toBe(0);
+                expect(param.createList).toBeUndefined();
             });
+
             it('type 이 createData 이고 isOnlyChecked=false ', function() {
                 var param,
                     updateList,
@@ -403,26 +352,21 @@ describe('addon.net', function() {
 
                 messUp();
                 param = net._getDataParam('createData', {isOnlyChecked: false});
-                updateList = $.parseJSON(param.data.updateList);
-                deleteList = $.parseJSON(param.data.deleteList);
                 createList = $.parseJSON(param.data.createList);
 
                 expect(createList.length).toBe(2);
-                expect(updateList.length).toBe(3);
-                expect(deleteList.length).toBe(1);
+                expect(param.data.updateList).not.toBeDefined();
+                expect(param.data.deleteList).not.toBeDefined();
                 expect(param.count).toBe(2);
 
                 grid.uncheckAll();
                 param = net._getDataParam('createData', {isOnlyChecked: false});
-                updateList = $.parseJSON(param.data.updateList);
-                deleteList = $.parseJSON(param.data.deleteList);
                 createList = $.parseJSON(param.data.createList);
 
                 expect(createList.length).toBe(2);
-                expect(updateList.length).toBe(3);
-                expect(deleteList.length).toBe(1);
                 expect(param.count).toBe(2);
             });
+
             it('isOnlyModified=false, isOnlyChecked=false ', function() {
                 var param, rowList;
 
@@ -440,7 +384,7 @@ describe('addon.net', function() {
                 expect(param.count).toBe(grid.getRowCount());
             });
 
-            it('type 이 updateData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
+            it('type이 updateData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
                 var param;
 
                 createNet({
@@ -451,12 +395,17 @@ describe('addon.net', function() {
                 messUp();
                 param = net._getDataParam('updateData');
                 expect(param.count).toBe(3);
+                expect($.parseJSON(param.data.updateList).length).toBe(3);
+                expect(param.data.createList).not.toBeDefined();
+                expect(param.data.deleteList).not.toBeDefined();
 
                 grid.uncheckAll();
                 param = net._getDataParam('updateData');
                 expect(param.count).toBe(0);
+                expect(param.data.updateList).not.toBeDefined();
             });
-            it('type 이 updateData 이고 isOnlyChecked=false ', function() {
+
+            it('type이 updateData 이고 isOnlyChecked=false ', function() {
                 var param;
 
                 createNet({
@@ -467,13 +416,20 @@ describe('addon.net', function() {
                 messUp();
                 param = net._getDataParam('updateData', {isOnlyChecked: false});
                 expect(param.count).toBe(3);
+                expect($.parseJSON(param.data.updateList).length).toBe(3);
+                expect(param.data.createList).not.toBeDefined();
+                expect(param.data.deleteList).not.toBeDefined();
 
                 grid.uncheckAll();
                 param = net._getDataParam('updateData', {isOnlyChecked: false});
                 expect(param.count).toBe(3);
+                expect($.parseJSON(param.data.updateList).length).toBe(3);
+                expect(param.data.createList).not.toBeDefined();
+                expect(param.data.deleteList).not.toBeDefined();
             });
 
             it('type 이 deleteData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
+                // deleteData는 isOnlyModified, isOnlyChecked 옵션과 관계없음
                 var param;
 
                 createNet({
@@ -484,27 +440,10 @@ describe('addon.net', function() {
                 messUp();
                 param = net._getDataParam('deleteData');
                 expect(param.count).toBe(1);
-
-                grid.uncheckAll();
-                param = net._getDataParam('deleteData');
-                expect(param.count).toBe(1);
+                expect(param.data.createList).not.toBeDefined();
+                expect(param.data.updateList).not.toBeDefined();
             });
-            it('type 이 deleteData 이고 isOnlyChecked=false ', function() {
-                var param;
 
-                createNet({
-                    el: $form
-                });
-                grid.setRowList(rowList);
-
-                messUp();
-                param = net._getDataParam('deleteData', {isOnlyChecked: false});
-                expect(param.count).toBe(1);
-
-                grid.uncheckAll();
-                param = net._getDataParam('deleteData', {isOnlyChecked: false});
-                expect(param.count).toBe(1);
-            });
             it('type 이 modifyData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
                 var param;
 
@@ -516,11 +455,18 @@ describe('addon.net', function() {
                 messUp();
                 param = net._getDataParam('modifyData');
                 expect(param.count).toBe(6);
+                expect($.parseJSON(param.data.createList).length).toBe(2);
+                expect($.parseJSON(param.data.updateList).length).toBe(3);
+                expect($.parseJSON(param.data.deleteList).length).toBe(1);
 
                 grid.uncheckAll();
                 param = net._getDataParam('modifyData');
                 expect(param.count).toBe(1);
+                expect(param.data.createList).not.toBeDefined();
+                expect(param.data.updateList).not.toBeDefined();
+                expect($.parseJSON(param.data.deleteList).length).toBe(1);
             });
+
             it('type 이 modifyData 이고 isOnlyChecked=false ', function() {
                 var param;
 
@@ -531,10 +477,16 @@ describe('addon.net', function() {
 
                 messUp();
                 param = net._getDataParam('modifyData', {isOnlyChecked: false});
+                expect($.parseJSON(param.data.createList).length).toBe(2);
+                expect($.parseJSON(param.data.updateList).length).toBe(3);
+                expect($.parseJSON(param.data.deleteList).length).toBe(1);
                 expect(param.count).toBe(6);
 
                 grid.uncheckAll();
                 param = net._getDataParam('modifyData', {isOnlyChecked: false});
+                expect($.parseJSON(param.data.createList).length).toBe(2);
+                expect($.parseJSON(param.data.updateList).length).toBe(3);
+                expect($.parseJSON(param.data.deleteList).length).toBe(1);
                 expect(param.count).toBe(6);
             });
         });
@@ -545,6 +497,7 @@ describe('addon.net', function() {
                     el: $form
                 });
             });
+
             it('createData', function() {
                 expect(net._getConfirmMessage('createData', 3)).toEqual('3건의 데이터를 입력하시겠습니까?');
                 expect(net._getConfirmMessage('updateData', 3)).toEqual('3건의 데이터를 수정하시겠습니까?');
@@ -555,9 +508,9 @@ describe('addon.net', function() {
                 expect(net._getConfirmMessage('updateData', 0)).toEqual('수정할 데이터가 없습니다.');
                 expect(net._getConfirmMessage('deleteData', 0)).toEqual('삭제할 데이터가 없습니다.');
                 expect(net._getConfirmMessage('modifyData', 0)).toEqual('반영할 데이터가 없습니다.');
-
             });
         });
+
         describe('request', function() {
             beforeEach(function() {
                 createNet({
@@ -568,16 +521,19 @@ describe('addon.net', function() {
                 grid.appendRow();
                 net._ajax = jasmine.createSpy('ajax');
             });
+
             it('ajax call 을 호출한다.', function() {
                 net.request('createData');
                 expect(net._ajax).toHaveBeenCalled();
             });
+
             it('_getRequestParam 의 반환값이 없다면 ajax call 을 호출하지 않는다.', function() {
                 net._getRequestParam = function() {return null;};
                 net.request('createData');
                 expect(net._ajax).not.toHaveBeenCalled();
             });
         });
+
         describe('request', function() {
             var response,
                 successResponse,
@@ -585,6 +541,7 @@ describe('addon.net', function() {
                 callback,
                 options,
                 responseData;
+
             beforeEach(function() {
                 createNet({
                     el: $form
@@ -611,6 +568,7 @@ describe('addon.net', function() {
                 failResponse = jasmine.createSpy('failResponse');
                 callback = jasmine.createSpy('callback');
             });
+
             it('정상일때', function() {
                 grid.on('successResponse', successResponse)
                     .on('failResponse', failResponse)
@@ -622,6 +580,7 @@ describe('addon.net', function() {
                 expect(response).toHaveBeenCalled();
                 expect(failResponse).not.toHaveBeenCalled();
             });
+
             it('정상이지만 successResponse 에서 stop 을 호출했을 때', function() {
                 grid.on('successResponse', function(eventData) {eventData.stop();})
                     .on('failResponse', failResponse)
@@ -633,6 +592,7 @@ describe('addon.net', function() {
                 expect(response).toHaveBeenCalled();
                 expect(failResponse).not.toHaveBeenCalled();
             });
+
             it('정상이지만 response 에서 stop 을 호출했을 때', function() {
                 grid.on('successResponse', successResponse)
                     .on('failResponse', failResponse)
@@ -644,6 +604,7 @@ describe('addon.net', function() {
                 expect(successResponse).not.toHaveBeenCalled();
                 expect(failResponse).not.toHaveBeenCalled();
             });
+
             it('응답 결과가 실패 일때', function() {
                 grid.on('successResponse', successResponse)
                     .on('failResponse', failResponse)
@@ -655,8 +616,8 @@ describe('addon.net', function() {
                 expect(response).toHaveBeenCalled();
                 expect(failResponse).toHaveBeenCalled();
             });
-
         });
+
         describe('_onComplete', function() {
             it('unlock 을 호출하는지 확인한다.', function() {
                 createNet({
@@ -688,6 +649,7 @@ describe('addon.net', function() {
                 errorResponse = jasmine.createSpy('errorResponse');
                 callback = jasmine.createSpy('callback');
             });
+
             it('alert 을 호출하는지 확인한다.', function() {
                 window.alert = jasmine.createSpy('alert');
 
@@ -699,6 +661,7 @@ describe('addon.net', function() {
                 expect(response).toHaveBeenCalled();
                 expect(window.alert).toHaveBeenCalledWith('데이터 요청 중에 에러가 발생하였습니다.\n\n다시 시도하여 주시기 바랍니다.');
             });
+
             it('response 에서 stop 을 호출했을 때', function() {
                 window.alert = jasmine.createSpy('alert');
                 grid.on('errorResponse', errorResponse)
@@ -707,6 +670,7 @@ describe('addon.net', function() {
                 expect(errorResponse).not.toHaveBeenCalled();
                 expect(window.alert).not.toHaveBeenCalled();
             });
+
             it('errorResponse 에서 stop 을 호출했을 때', function() {
                 window.alert = jasmine.createSpy('alert');
                 grid.on('errorResponse', function(eventData) {eventData.stop();})
@@ -716,10 +680,12 @@ describe('addon.net', function() {
                 expect(window.alert).not.toHaveBeenCalled();
             });
         });
+
         describe('_onReadSuccess', function() {
             var dataModel = {
                 setOriginalRowList: function() {}
             };
+
             beforeEach(function() {
                 createNet({
                     el: $form
@@ -727,6 +693,7 @@ describe('addon.net', function() {
                 net.pagination.movePageTo = jasmine.createSpy('movePageTo');
                 net.pagination.setOption = jasmine.createSpy('setOption');
             });
+
             it('responseData 에 pagination 정보가 있다면 pagination instance 에 설정한다.', function() {
                 net._onReadSuccess(dataModel, {
                     pagination: {
@@ -739,8 +706,10 @@ describe('addon.net', function() {
                 expect(net.pagination.movePageTo).toHaveBeenCalledWith(10);
             });
         });
+
         describe('_onPageBeforeMove', function() {
             var customEvent;
+
             beforeEach(function() {
                 createNet({
                     el: $form
@@ -750,26 +719,31 @@ describe('addon.net', function() {
                     page: 10
                 };
             });
+
             it('curPage 가 인자로 넘어온 page 와 다르다면 readAt 을 호출한다.', function() {
                 net.curPage = 11;
                 net._onPageBeforeMove(customEvent);
                 expect(net._readDataAt).toHaveBeenCalled();
             });
+
             it('curPage 가 인자로 넘어온 page 와 같다면 readAt 을 호출하지 않는다..', function() {
                 net.curPage = 10;
                 net._onPageBeforeMove(customEvent);
                 expect(net._readDataAt).not.toHaveBeenCalled();
             });
         });
+
         it('ajax mock test', function() {
             var onSuccess = jasmine.createSpy('onSuccess'),
                 onFailure = jasmine.createSpy('onFailure');
+
             $.ajax({
                 url: 'http://nate.com'
             });
-            var request = jasmine.Ajax.requests.mostRecent();
+            // var request = jasmine.Ajax.requests.mostRecent();
         });
     });
+
     describe('AddOn.Net.Router', function() {
         it('read 시 쿼리스트링을 잘 파싱해서 폼 설정 후 readData 를 호출하는지 확인한다.', function() {
             createNet({
