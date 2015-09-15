@@ -40,7 +40,7 @@ gulp.task('build', ['build-js', 'build-css']);
 
 // watch - build
 gulp.task('default', ['build-js', 'build-css'], function() {
-    gulp.watch('src/js/**/*', ['build-js']);
+    gulp.watch('src/js/**/*.js', ['build-js']);
     gulp.watch('src/css/*.styl', ['build-css']);
 });
 
@@ -71,7 +71,7 @@ gulp.task('deploy-js', function() {
 });
 
 gulp.task('deploy-css', function() {
-    return gulp.src(['src/css/index.styl'])
+    return gulp.src('src/css/index.styl')
         .pipe(stylus())
         .pipe(sourcemaps.write())
         .pipe(rename({basename: 'grid'}))
