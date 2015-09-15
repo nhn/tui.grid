@@ -1132,7 +1132,7 @@ var Core = View.extend(/**@lends Core.prototype */{
             scrollY: true,
             useDataCopy: true,
             useClientSort: true,
-
+            singleClickEdit: false,
             toolbar: {
                 hasResizeHandler: true,
                 hasControlPanel: true,
@@ -1351,8 +1351,9 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @private
      */
     _onWindowResize: function() {
-        var width = this.$el.width();
-        this.dimensionModel.set('width', width);
+        if (this.$el) {
+            this.dimensionModel.set('width', this.$el.width());
+        }
     },
 
     /**
@@ -1362,14 +1363,19 @@ var Core = View.extend(/**@lends Core.prototype */{
      */
     _onClick: function(mouseEvent) {
         var eventData = this.createEventData(mouseEvent),
-            $target = $(mouseEvent.target);
+            $target = $(mouseEvent.target),
+            cellInfo;
 
         this.trigger('click', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (this._isCellElement($target, true)) {
-            this._triggerCellMouseEvent('clickCell', eventData, $target.closest('td'));
+            cellInfo = this._getCellInfoFromElement($target.closest('td'));
+            if (this.option('singleClickEdit')) {
+                this.focusIn(cellInfo.rowKey, cellInfo.columnName);
+            }
+            this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
     },
 
@@ -1426,10 +1432,14 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @private
      * @param {string} eventName 이벤트명
      * @param {MouseEvent} eventData 커스터마이징 된 마우스 이벤트 객체
-     * @param {jQuery} $cell 셀 HTML요소의 jquery 객체
+     * @param {(jQuery|object)} cell 이벤트가 발생한 cell (jquery 객체이거나 rowKey, columnName, rowData를 갖는 plain 객체)
      */
-    _triggerCellMouseEvent: function(eventName, eventData, $cell) {
-        _.extend(eventData, this._getCellInfoFromElement($cell));
+    _triggerCellMouseEvent: function(eventName, eventData, cell) {
+        var cellInfo = cell;
+        if (cell instanceof $) {
+            cellInfo = this._getCellInfoFromElement(cell);
+        }
+        _.extend(eventData, cellInfo);
         this.trigger(eventName, eventData);
     },
 
@@ -1823,12 +1833,12 @@ var Core = View.extend(/**@lends Core.prototype */{
      * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        var cellInstance;
+        var cellPainter;
         this.focus(rowKey, columnName, isScrollable);
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
         if (this.isEditable(rowKey, columnName)) {
-            cellInstance = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
-            cellInstance.focusIn(this.getElement(rowKey, columnName));
+            cellPainter = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
+            cellPainter.focusIn(this.getElement(rowKey, columnName));
         } else {
             this.focusClipboard();
         }
@@ -2797,7 +2807,7 @@ var util = require('../util');
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @constructor Data.Row
  */
-var Row = Model.extend(/**@lends Data.Row.prototype */{
+var Row = Model.extend(/**@lends Row.prototype */{
     idAttribute: 'rowKey',
     defaults: {
         _extraData: {
@@ -2868,7 +2878,7 @@ var Row = Model.extend(/**@lends Data.Row.prototype */{
             ne.util.forEachArray(list, function(item) {
                 var sliced = item.slice(' ');
                 if (ne.util.isArray(sliced)) {
-                    ne.util.forEachArray(sliced, function (className) {
+                    ne.util.forEachArray(sliced, function(className) {
                         classNameMap[className] = true;
                     });
                 } else {
@@ -3840,6 +3850,10 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
                 mainRow, startOffset, spanCount;
 
             if (data.isMainRow) {
+                if (data.count === 1) {
+                    // if isMainRow is true and count is 1, rowSpanData is meaningless
+                    return;
+                }
                 mainRow = nextRow;
                 spanCount = data.count - 1;
                 startOffset = 1;
@@ -6712,7 +6726,7 @@ var util = {
              * @param {Array}  arr 변환할 배열
              * @return {Array} 변환된 배열 결과 값
              */
-            _changeToStringInArray: function(arr) {
+            '_changeToStringInArray': function(arr) {
                 ne.util.forEach(arr, function(value, i) {
                     arr[i] = String(value);
                 }, this);
@@ -7087,31 +7101,6 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
     },
 
     /**
-     * Returns true if the keyCode value is a character (not a function key).
-     * @param  {number} keyCode Key code
-     * @return {boolean} True if the keyCode value is a character
-     */
-    _isCharKey: function(keyCode) {
-        var isAlphaNum = keyCode >= 48 && keyCode <= 90,
-            isSpecialChar = (keyCode >= 186 && keyCode <= 192) || (keyCode >= 219 && keyCode <= 222);
-
-        return isAlphaNum || isSpecialChar;
-    },
-
-    /**
-     * Makes currently focused cell to be editable if the edit type of the cell is text-*.
-     * (text, text-password, text-convertible).
-     */
-    _startEditFocusedCell: function() {
-        var focused = this.grid.focusModel.which(),
-            editType = this.grid.columnModel.getEditType(focused.columnName);
-
-        if (editType.indexOf('text') === 0) {
-            this.grid.focusIn(focused.rowKey, focused.columnName);
-        }
-    },
-
-    /**
      * ctrl, shift 둘다 눌리지 않은 상태에서의 key down 이벤트 핸들러
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
@@ -7169,9 +7158,6 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
                 grid.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
             default:
-                if (this._isCharKey(keyCode)) {
-                    this._startEditFocusedCell();
-                }
                 isKeyIdentified = false;
                 break;
         }
@@ -7246,9 +7232,6 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
                 grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
             default:
-                if (this._isCharKey(keyCode)) {
-                    this._startEditFocusedCell();
-                }
                 isKeyIdentified = false;
                 break;
         }
@@ -10453,11 +10436,16 @@ var Select = List.extend(/**@lends Select.prototype */{
 module.exports = Select;
 
 },{"../../../util":19,"./list":39}],44:[function(require,module,exports){
+/**
+ * @fileoverview Constructor for the Painter of text-convertible cell
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var Cell = require('../cell');
 var Text = require('./text');
 var util = require('../../../util');
+
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @extends {View.Base.Painter.Cell.Text}
@@ -10533,7 +10521,8 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * </select>
      */
     getContentHtml: function(cellData) {
-        //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
+        // FIXME: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
+        // TODO: html template 형태로 변경
         var columnModel = this.getColumnModel(cellData),
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             htmlArr = [];
@@ -10614,6 +10603,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
     _onBlurConvertible: function(blurEvent) {
         var $target = $(blurEvent.target),
             $td = $target.closest('td');
+
         this._onBlur(blurEvent);
         this._endEdit($td);
     },
@@ -10624,17 +10614,20 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * @private
      */
     _startEdit: function($td) {
-        var $input,
-            rowKey = this.getRowKey($td),
-            columnName = this.getColumnName($td),
-            cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
+        var $input, rowKey, columnName, cellState;
 
-        this.editingCell = {
-            rowKey: rowKey,
-            columnName: columnName
-        };
+        this._blurEditingCell();
+
+        rowKey = this.getRowKey($td),
+        columnName = this.getColumnName($td),
+        cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
 
         if (cellState.isEditable && !cellState.isDisabled) {
+            this.editingCell = {
+                rowKey: rowKey,
+                columnName: columnName
+            };
+
             this.redraw(this._getCellData($td), $td);
             $input = $td.find('input');
             this.originalText = $input.val();
@@ -10652,14 +10645,29 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
         var cellData = this._getCellData($td);
         this.editingCell = {
             rowKey: null,
-            columnName: ''
+            columnName: null
         };
         this.clicked = {
             rowKey: null,
             columnName: null
         };
         if (cellData) {
-            this.redraw(this._getCellData($td), $td);
+            this.redraw(cellData, $td);
+        }
+    },
+
+    /**
+     * Trigger blur event on editing cell if exist
+     * @private
+     */
+    _blurEditingCell: function() {
+        var rowKey = this.editingCell.rowKey,
+            columnName = this.editingCell.columnName,
+            $td;
+
+        if (!ne.util.isNull(rowKey) && !ne.util.isNull(columnName)) {
+            $td = this.grid.getElement(rowKey, columnName);
+            $td.find('input')[0].blur();
         }
     },
 
@@ -10667,7 +10675,7 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
      * Event Handler for double click event.
      * @param  {MouseEvent} mouseEvent - MouseEvent object
      */
-    _onDblClick: function (mouseEvent) {
+    _onDblClick: function(mouseEvent) {
         var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
             address = this._getCellAddress($td);
@@ -11280,7 +11288,13 @@ var RowList = View.extend(/**@lends RowList.prototype */{
                 $tbody.width($tbody.width());
             }
         } else {
-            this.$el[0].innerHTML = html;
+            // IE의 호환성 보기를 사용하면 브라우저 검출이 정확하지 않기 때문에, try/catch로 방어코드를 추가함.
+            try {
+                this.$el[0].innerHTML = html;
+            } catch (e) {
+                RowList.isInnerHtmlOfTbodyReadOnly = true;
+                this._resetRows();
+            }
         }
     },
 
