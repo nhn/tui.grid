@@ -22,13 +22,17 @@ describe('addon.net', function() {
         hobby: ['sport']
     };
 
-    var grid, $form, $grid, net;
+    var grid, $grid, net;
+
+    function createNet(options) {
+        grid.use('Net', options);
+        net = grid.getAddOn('Net');
+        net._isConfirmed = function() {return true;}
+    }
 
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/addon.net.html');
-        $form = $('#form');
-        util.form.setFormData(this.$el, originalformData);
         $grid = $('#grid');
         grid = new ne.Grid({
             el: $grid,
@@ -48,19 +52,17 @@ describe('addon.net', function() {
         jasmine.clock().uninstall();
     });
 
-    function createNet(options) {
-        grid.use('Net', options);
-        net = grid.getAddOn('Net');
-        net._isConfirmed = function() {return true;}
-    }
-
     describe('초기화 관련 메서드 확인', function() {
+        it('el을 지정안하면 빈 form이 생성된다', function() {
+            createNet();
+            expect(net.$el.is('form')).toBe(true);
+        });
+
         describe('_initializeDataModelNetwork', function() {
             beforeEach(function() {
                 createNet({
-                    el: $form,
                     api: {
-                        'readData': '/api/read'
+                        readData: '/api/read'
                     }
                 });
             });
@@ -75,9 +77,8 @@ describe('addon.net', function() {
             describe('enableAjaxHistory 가 설정되어 있을때만 router 설정을 한다.', function() {
                 it('enableAjaxHistory on', function() {
                     createNet({
-                        el: $form,
                         api: {
-                            'readData': '/api/read'
+                            readData: '/api/read'
                         },
                         enableAjaxHistory: true
                     });
@@ -86,9 +87,8 @@ describe('addon.net', function() {
 
                 it('enableAjaxHistory off', function() {
                     createNet({
-                        el: $form,
                         api: {
-                            'readData': '/api/read'
+                            readData: '/api/read'
                         },
                         enableAjaxHistory: false
                     });
@@ -101,9 +101,8 @@ describe('addon.net', function() {
     describe('_ajax', function() {
         beforeEach(function() {
             createNet({
-                el: $form,
                 api: {
-                    'readData': '/api/read'
+                    readData: '/api/read'
                 }
             });
         });
@@ -114,8 +113,8 @@ describe('addon.net', function() {
                 url: '/api/test',
                 method: 'POST',
                 data: {
-                    'param1': 1,
-                    'param2': 2
+                    param1: 1,
+                    param2: 2
                 }
             });
             request = jasmine.Ajax.requests.mostRecent();
@@ -153,12 +152,39 @@ describe('addon.net', function() {
         });
     });
 
+    describe('setFormData', function() {
+        it('this.$el의 내부 인풋 요소들에 주어진 데이터를 설정한다.', function() {
+            var $form = $('<form />'),
+                inputData, actualData;
+
+            $form.append($('<input />').attr('name', 'input1'));
+            $form.append($('<input />').attr('name', 'input2'));
+            createNet({
+                el: $form
+            });
+            inputData = {
+                input1: 'data1',
+                input2: 'data2'
+            };
+            net.setFormData(inputData);
+            actualData = util.form.getFormData($form);
+            expect(actualData).toEqual(inputData);
+        });
+
+        it('this.$el의 폼과 형식이 다른 경우 데이터가 설정되지 않는다.', function() {
+            createNet(); //form을 따로 지정하지 않으면 내부적으로 빈 form이 생성됨
+            net.setFormData({
+                input: 'data1'
+            });
+            expect(util.form.getFormData(net.$el)).toEqual({});
+        });
+    });
+
     describe('_readDataAt', function() {
         it('기본적으로 ajaxHistory를 사용하며, ajax history를 사용한다면, router.navigate를 호출하여 url을 변경한다.', function() {
             createNet({
-                el: $form,
                 api: {
-                    'readData': '/api/read'
+                    readData: '/api/read'
                 }
             });
             net.router.navigate = jasmine.createSpy('navigate');
@@ -170,12 +196,15 @@ describe('addon.net', function() {
         it('isUsingRequestedData가 true일 경우, formData 변경여부와 관계없이 이전 질의한 데이터로 질의한다.', function() {
             var request,
                 beforeRequesteData,
-                afterRequesteData;
+                afterRequesteData,
+                $form = $('<form />');
 
+            $form.append($('<input />').attr('name', 'input1'));
+            $form.append($('<input />').attr('name', 'input2'));
             createNet({
                 el: $form,
                 api: {
-                    'readData': '/api/read'
+                    readData: '/api/read'
                 }
             });
 
@@ -183,13 +212,11 @@ describe('addon.net', function() {
             net._readDataAt(1);
             request = jasmine.Ajax.requests.mostRecent();
             beforeRequesteData = $.extend(true, {}, request.data());
+
             //request 요청 후 form data 를 변경한다.
             net.setFormData({
-                delivery_number: 1111,
-                user_name: 'changed_name',
-                weather: 'fall',
-                gender: 'male',
-                hobby: ['sport']
+                input1: 'data1',
+                input2: 'data2'
             });
             net._readDataAt(1, true);
             request = jasmine.Ajax.requests.mostRecent();
@@ -201,9 +228,7 @@ describe('addon.net', function() {
 
     describe('lock', function() {
         it('loading layer 를 보여주고, isLocked 를 true로 설정한다.', function() {
-            createNet({
-                el: $form
-            });
+            createNet();
 
             grid.core.showGridLayer = jasmine.createSpy('showGridLayer');
             net._lock();
@@ -214,9 +239,7 @@ describe('addon.net', function() {
 
     describe('unlock', function() {
         it('isLocked 를 false로 설정한다.', function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             net._lock();
             net._unlock();
             expect(net.isLocked).toBe(false);
@@ -233,12 +256,10 @@ describe('addon.net', function() {
             grid.removeRow(3);
         }
 
-        it('type 이 createData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
+        it('createData, {isOnlyModified: true, isOnlyChecked: true}', function() {
             var param, updateList, deleteList, createList;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -255,15 +276,13 @@ describe('addon.net', function() {
             expect(param.createList).toBeUndefined();
         });
 
-        it('type 이 createData 이고 isOnlyChecked=false ', function() {
+        it('createData, {isOnlyChecked: false}', function() {
             var param,
                 updateList,
                 deleteList,
                 createList;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -283,12 +302,10 @@ describe('addon.net', function() {
             expect(param.count).toBe(2);
         });
 
-        it('isOnlyModified=false, isOnlyChecked=false ', function() {
+        it('createData, {isOnlyModified: false, isOnlyChecked: false}', function() {
             var param, rowList;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -300,12 +317,10 @@ describe('addon.net', function() {
             expect(param.count).toBe(grid.getRowCount());
         });
 
-        it('type이 updateData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
+        it('updateData, {isOnlyModified: true, isOnlyChecked: true} ', function() {
             var param;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -321,12 +336,10 @@ describe('addon.net', function() {
             expect(param.data.updateList).not.toBeDefined();
         });
 
-        it('type이 updateData 이고 isOnlyChecked=false ', function() {
+        it('updateData, {isOnlyChecked: false}', function() {
             var param;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -344,13 +357,11 @@ describe('addon.net', function() {
             expect(param.data.deleteList).not.toBeDefined();
         });
 
-        it('type 이 deleteData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
+        it('deleteData, {isOnlyModified: true, isOnlyChecked: true}', function() {
             // deleteData는 isOnlyModified, isOnlyChecked 옵션과 관계없음
             var param;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -360,12 +371,10 @@ describe('addon.net', function() {
             expect(param.data.updateList).not.toBeDefined();
         });
 
-        it('type 이 modifyData 이고 기본옵션(isOnlyModified-true, isOnlyChecked=true) ', function() {
+        it('modifyData, {isOnlyModified: true, isOnlyChecked: true}', function() {
             var param;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -383,12 +392,10 @@ describe('addon.net', function() {
             expect($.parseJSON(param.data.deleteList).length).toBe(1);
         });
 
-        it('type 이 modifyData 이고 isOnlyChecked=false ', function() {
+        it('modifyData, {isOnlyChecked: false}', function() {
             var param;
 
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             messUp();
@@ -409,9 +416,7 @@ describe('addon.net', function() {
 
     describe('_getConfirmMessage', function() {
         beforeEach(function() {
-            createNet({
-                el: $form
-            });
+            createNet();
         });
 
         it('createData', function() {
@@ -429,9 +434,7 @@ describe('addon.net', function() {
 
     describe('request', function() {
         beforeEach(function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             grid.setRowList(rowList);
 
             grid.appendRow();
@@ -459,9 +462,7 @@ describe('addon.net', function() {
             responseData;
 
         beforeEach(function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             responseData = {
                 success: {
                     'result': true,
@@ -536,14 +537,13 @@ describe('addon.net', function() {
 
     describe('_onComplete', function() {
         it('unlock 을 호출하는지 확인한다.', function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             net._unlock = jasmine.createSpy('unlock');
             net._onComplete();
             expect(net._unlock).toHaveBeenCalled();
         });
     });
+
     describe('_onError', function() {
         var response,
             errorResponse,
@@ -551,9 +551,7 @@ describe('addon.net', function() {
             callback;
 
         beforeEach(function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             options = {
                 requestType: 'POST',
                 data: {
@@ -603,14 +601,12 @@ describe('addon.net', function() {
         };
 
         beforeEach(function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             net.pagination.movePageTo = jasmine.createSpy('movePageTo');
             net.pagination.setOption = jasmine.createSpy('setOption');
         });
 
-        it('responseData 에 pagination 정보가 있다면 pagination instance 에 설정한다.', function() {
+        it('responseData에 pagination 정보가 있다면 pagination instance에 설정한다.', function() {
             net._onReadSuccess(dataModel, {
                 pagination: {
                     page: 10,
@@ -627,22 +623,20 @@ describe('addon.net', function() {
         var customEvent;
 
         beforeEach(function() {
-            createNet({
-                el: $form
-            });
+            createNet();
             net._readDataAt = jasmine.createSpy('readDataAt');
             customEvent = {
                 page: 10
             };
         });
 
-        it('curPage 가 인자로 넘어온 page 와 다르다면 readAt 을 호출한다.', function() {
+        it('curPage가 인자로 넘어온 page 와 다르다면 readAt을 호출한다.', function() {
             net.curPage = 11;
             net._onPageBeforeMove(customEvent);
             expect(net._readDataAt).toHaveBeenCalled();
         });
 
-        it('curPage 가 인자로 넘어온 page 와 같다면 readAt 을 호출하지 않는다..', function() {
+        it('curPage가 인자로 넘어온 page 와 같다면 readAt을 호출하지 않는다..', function() {
             net.curPage = 10;
             net._onPageBeforeMove(customEvent);
             expect(net._readDataAt).not.toHaveBeenCalled();
@@ -650,10 +644,8 @@ describe('addon.net', function() {
     });
 
     describe('AddOn.Net.Router', function() {
-        it('read 시 쿼리스트링을 잘 파싱해서 폼 설정 후 readData 를 호출하는지 확인한다.', function() {
-            createNet({
-                el: $form
-            });
+        it('read시 쿼리스트링을 잘 파싱해서 폼 설정 후 readData를 호출하는지 확인한다.', function() {
+            createNet();
             net.setFormData = jasmine.createSpy('setFormData');
             net.readData = jasmine.createSpy('readData');
             net.router.read('a=10&b=20');

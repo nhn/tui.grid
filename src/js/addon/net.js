@@ -82,8 +82,9 @@ var util = require('../util');
  */
 
 var Net = View.extend(/**@lends AddOn.Net.prototype */{
+    tagName: 'form',
     events: {
-        'submit': '_onSubmit'
+        submit: '_onSubmit'
     },
     /**
      * 생성자
@@ -97,18 +98,18 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         defaultOptions = {
             initialRequest: true,
             api: {
-                'readData': '',
-                'createData': '',
-                'updateData': '',
-                'deleteData': '',
-                'modifyData': '',
-                'downloadData': '',
-                'downloadAllData': ''
+                readData: '',
+                createData: '',
+                updateData: '',
+                deleteData: '',
+                modifyData: '',
+                downloadData: '',
+                downloadAllData: ''
             },
             perPage: 500,
             enableAjaxHistory: true
         };
-        options = $.extend(true, defaultOptions, attributes);
+        options = $.extend(true, defaultOptions, attributes); // deep extend
         pagination = this.grid.getPaginationInstance();
 
         this.setOwnProperties({
