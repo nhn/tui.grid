@@ -76,9 +76,11 @@ gulp.task('deploy-css', function() {
         .pipe(sourcemaps.write())
         .pipe(rename({basename: 'grid'}))
         .pipe(gulp.dest(PATH_DIST))
+        .pipe(gulp.dest(PATH_SAMPLE + 'css'))
         .pipe(minifycss())
         .pipe(rename({extname: '.min.css'}))
-        .pipe(gulp.dest(PATH_DIST));
+        .pipe(gulp.dest(PATH_DIST))
+        .pipe(gulp.dest(PATH_SAMPLE + 'css'));
 });
 
 gulp.task('deploy-image', function() {

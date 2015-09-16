@@ -123,8 +123,9 @@ var util = require('../util');
  */
 
 var Net = View.extend(/**@lends AddOn.Net.prototype */{
+    tagName: 'form',
     events: {
-        'submit': '_onSubmit'
+        submit: '_onSubmit'
     },
     /**
      * 생성자
@@ -138,18 +139,18 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         defaultOptions = {
             initialRequest: true,
             api: {
-                'readData': '',
-                'createData': '',
-                'updateData': '',
-                'deleteData': '',
-                'modifyData': '',
-                'downloadData': '',
-                'downloadAllData': ''
+                readData: '',
+                createData: '',
+                updateData: '',
+                deleteData: '',
+                modifyData: '',
+                downloadData: '',
+                downloadAllData: ''
             },
             perPage: 500,
             enableAjaxHistory: true
         };
-        options = $.extend(true, defaultOptions, attributes);
+        options = $.extend(true, defaultOptions, attributes); // deep extend
         pagination = this.grid.getPaginationInstance();
 
         this.setOwnProperties({
@@ -461,48 +462,41 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
      */
     _getDataParam: function(requestType, options) {
         var dataModel = this.grid.dataModel,
-            defaultOptions = {
-                hasDataParam: true,
-                isOnlyModified: true,
-                isOnlyChecked: true
-            },
             checkMap = {
-                'createData': ['createList'],
-                'updateData': ['updateList'],
-                'deleteData': ['deleteList'],
-                'modifyData': ['createList', 'updateList', 'deleteList']
+                createData: ['createList'],
+                updateData: ['updateList'],
+                deleteData: ['deleteList'],
+                modifyData: ['createList', 'updateList', 'deleteList']
             },
             checkList = checkMap[requestType],
             data = $.extend({}, this.requestedFormData),
             count = 0,
-            hasDataParam, isOnlyModified, isOnlyChecked, dataMap;
+            dataMap;
 
+        options = _.defaults(options || {}, {
+            hasDataParam: true,
+            isOnlyModified: true,
+            isOnlyChecked: true
+        });
 
-        options = $.extend(defaultOptions, options);
-        hasDataParam = options.hasDataParam;
-        isOnlyModified = options.isOnlyModified;
-        isOnlyChecked = options.isOnlyChecked;
-
-        if (hasDataParam) {
-            if (isOnlyModified) {
+        if (options.hasDataParam) {
+            if (options.isOnlyModified) {
                 //{createList: [], updateList:[], deleteList: []} 에 담는다.
                 dataMap = dataModel.getModifiedRowList({
-                    isOnlyChecked: isOnlyChecked
+                    isOnlyChecked: options.isOnlyChecked
                 });
                 _.each(dataMap, function(list, name) {
-                    if ($.inArray(name, checkList) !== -1) {
+                    if (_.contains(checkList, name) && list.length) {
                         count += list.length;
+                        data[name] = $.toJSON(list);
                     }
-                    dataMap[name] = $.toJSON(list);
                 }, this);
             } else {
                 //{rowList: []} 에 담는다.
-                dataMap = {rowList: dataModel.getRowList(isOnlyChecked)};
-                count = dataMap.rowList.length;
+                data.rowList = dataModel.getRowList(options.isOnlyChecked);
+                count = data.rowList.length;
             }
         }
-
-        data = $.extend(data, dataMap);
 
         return {
             data: data,
@@ -564,6 +558,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         }
         return result;
     },
+
     /**
      * confirm message 를 반환한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
@@ -601,7 +596,7 @@ var Net = View.extend(/**@lends AddOn.Net.prototype */{
         //beforeRequest 이벤트를 발생한다.
         this.grid.trigger('beforeRequest', eventData);
 
-        //event 의 stopped 가 호출 된다면 ajax 호출을 중지한다.
+        //event의 stopped 가 호출 된다면 ajax 호출을 중지한다.
         if (eventData.isStopped()) {
             return;
         }
