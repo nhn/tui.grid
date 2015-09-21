@@ -199,7 +199,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
                 rsideRowList.push(rsideRow);
             }
         }
-        //lside 와 rside 를 초기화한다.
+
         this.get('lside').clear().reset(lsideRowList, {
             parse: true
         });
@@ -207,14 +207,11 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
             parse: true
         });
 
-
         len = rsideRowList.length + startIndex;
-
-        //relation 을 수행한다.
         for (i = startIndex; i < len; i += 1) {
             this.executeRelation(i);
         }
-        //컬럼모델의 변경이 있을 경우 columnModelChanged 이벤트를 발생한다.
+
         if (this.isColumnModelChanged) {
             this.trigger('columnModelChanged', this.get('top'));
             this.isColumnModelChanged = false;

@@ -14,7 +14,7 @@ var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
     tagName: 'div',
     className: 'virtual_scrollbar',
     events: {
-        'scroll': '_onScroll',
+        'scroll': '_onScrollDebounced',
         'mousedown': '_onMouseDown'
     },
 
@@ -26,10 +26,12 @@ var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
         this.setOwnProperties({
             hasFocus: false
         });
+
+        this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
+
         this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
         this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
         this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-        this.timeoutForScroll = 0;
     },
 
     /**
@@ -52,19 +54,18 @@ var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
         this.hasFocus = false;
         $(document).off('mouseup', $.proxy(this._onMouseUp, this));
     },
+
     /**
      * scroll 이벤트 발생시 renderModel 의 scroll top 값을 변경하여 frame 과 body 의 scrollTop 값을 동기화한다.
      * @param {event} scrollEvent 스크롤 이벤트
      * @private
      */
     _onScroll: function(scrollEvent) {
-        clearTimeout(this.timeoutForScroll);
         if (this.hasFocus) {
-            this.timeoutForScroll = setTimeout($.proxy(function() {
-                this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
-            }, this), 0);
+            this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
         }
     },
+
     /**
      * 크기 값이 변경될 때 해당 사항을 반영한다.
      * @param {object} model 변경이 발생한 모델
@@ -75,6 +76,7 @@ var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
             this.render();
         }
     },
+
     /**
      * scrollTop 이 변경된다면 scrollTop 값을 갱신하고,
      * scrollTop 값 자체가 잘못된 경우 renderModel 의 scrollTop 값을 정상값으로 갱신한다.
@@ -83,12 +85,7 @@ var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
      * @private
      */
     _onScrollTopChange: function(model, value) {
-        var scrollTop;
         this.el.scrollTop = value;
-        scrollTop = this.el.scrollTop;
-        if (scrollTop !== value) {
-            this.grid.renderModel.set('scrollTop', scrollTop);
-        }
     },
 
     /**

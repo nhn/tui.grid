@@ -22,7 +22,7 @@ var Body = View.extend(/**@lends Body.prototype */{
         '   <tbody><%=tbody%></tbody>' +
         '</table>'),
     events: {
-        'scroll': '_onScroll'
+        'scroll': '_onScrollDebounced'
     },
 
     /**
@@ -38,6 +38,8 @@ var Body = View.extend(/**@lends Body.prototype */{
             extraWidth: 0,
             $tableContainer: null
         });
+        // resolve the issue that IE7, IE8 emits multiple scroll-events during a single call stack
+        this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
 
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
@@ -75,14 +77,23 @@ var Body = View.extend(/**@lends Body.prototype */{
      * @private
      */
     _onScroll: function(scrollEvent) {
-        var obj = {},
-            renderModel = this.grid.renderModel;
+        var obj, renderModel;
 
-        obj['scrollTop'] = scrollEvent.target.scrollTop;
+        renderModel = this.grid.renderModel;
+        obj = {
+            scrollTop: scrollEvent.target.scrollTop
+        };
 
         if (this.whichSide === 'R') {
-            obj['scrollLeft'] = scrollEvent.target.scrollLeft;
+            obj.scrollLeft = scrollEvent.target.scrollLeft;
         }
+
+        // block scrollChange temporarily to prevent setting scrollTop again by #_onScrollTopChange)
+        this._blockScrollChange = true;
+        _.defer(function(self) {
+            self._blockScrollChange = false;
+        }, this);
+
         renderModel.set(obj);
     },
 
@@ -93,7 +104,6 @@ var Body = View.extend(/**@lends Body.prototype */{
      * @private
      */
     _onScrollLeftChange: function(model, value) {
-        /* istanbul ignore next: 부모 frame 이 없는 상태에서 테스트가 불가함*/
         if (this.whichSide === 'R') {
             this.el.scrollLeft = value;
         }
@@ -106,8 +116,9 @@ var Body = View.extend(/**@lends Body.prototype */{
      * @private
      */
     _onScrollTopChange: function(model, value) {
-        /* istanbul ignore next: 부모 frame 이 없는 상태에서 테스트가 불가함*/
-        this.el.scrollTop = value;
+        if (!this._blockScrollChange) {
+            this.el.scrollTop = value;
+        }
     },
 
     /**
