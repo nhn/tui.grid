@@ -49,6 +49,9 @@ var Normal = Cell.extend(/**@lends Normal.prototype */{
         if (ne.util.isFunction(columnModel.formatter)) {
             value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).attributes, columnModel);
         }
+        if (!ne.util.isExisty(value)) {
+            value = '';
+        }
         return value;
     },
 

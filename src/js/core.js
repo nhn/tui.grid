@@ -1284,16 +1284,11 @@ var Core = View.extend(/**@lends Core.prototype */{
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
             start = this._getStartIndexToPaste(),
             end = this._getEndIndexToPaste(start, data, columnModelList),
-            rowIdx,
-            columnIdx,
-            value;
+            rowIdx, columnIdx, row, value;
 
-        for (rowIdx = start.rowIdx; rowIdx <= end.rowIdx; rowIdx += 1) {
-            for (columnIdx = start.columnIdx; columnIdx <= end.columnIdx; columnIdx += 1) {
-                value = data[rowIdx - start.rowIdx][columnIdx - start.columnIdx];
-                this._setValueForPaste(rowIdx, columnIdx, columnModelList[columnIdx], value);
-            }
-        }
+        _.each(data, function(row, index) {
+            this._setValueForPaste(row, start.rowIdx + index, start.columnIdx, end.columnIdx);
+        }, this);
 
         this.selection.startSelection(start.rowIdx, start.columnIdx);
         this.selection.updateSelection(end.rowIdx, end.columnIdx);
@@ -1323,30 +1318,38 @@ var Core = View.extend(/**@lends Core.prototype */{
      */
     _getEndIndexToPaste: function(startIdx, data, columnModelList) {
         var endIdx = {
-            rowIdx: Math.min(data.length + startIdx.rowIdx, this.dataModel.length) - 1,
+            rowIdx: data.length + startIdx.rowIdx - 1,
             columnIdx: Math.min(data[0].length + startIdx.columnIdx, columnModelList.length) - 1
         };
         return endIdx;
     },
 
     /**
-     * 지정된 인덱스의 셀이 수정 가능한 상태이면 값을 변경한다. RowSpan이 적용된 셀인 경우 MainRow인 경우에만 값을 변경한다.
+     * 주어진 행 데이터를 지정된 인덱스의 컬럼에 반영한다.
+     * 셀이 수정 가능한 상태일 때만 값을 변경하며, RowSpan이 적용된 셀인 경우 MainRow인 경우에만 값을 변경한다.
+     * @param  {rowData} rowData - 붙여넣을 행 데이터
      * @param  {number} rowIdx - 행 인덱스
-     * @param  {number} columnIdx - 열 인덱스
-     * @param  {ColumnModel} columnModel - 해당 열 인덱스의 컬럼모델
-     * @param  {string} value - 변경할 값
+     * @param  {number} columnStartIdx - 열 시작 인덱스
+     * @param  {number} columnEndIdx - 열 종료 인덱스
      */
-    _setValueForPaste: function(rowIdx, columnIdx, columnModel, value) {
+    _setValueForPaste: function(rowData, rowIdx, columnStartIdx, columnEndIdx) {
         var row = this.dataModel.at(rowIdx),
-            columnName = columnModel.columnName,
-            cellStatus = row.getCellState(columnName),
-            rowSpanData = row.getRowSpanData(columnName),
-            attributes = {};
+            attributes = {},
+            columnIdx, columnName, cellState, rowSpanData;
 
-        if (cellStatus.isEditable && !cellStatus.isDisabled && (!rowSpanData || rowSpanData.count >= 0)) {
-            attributes[columnName] = value;
-            row.set(attributes);
+        if (!row) {
+            row = this.dataModel.append({})[0];
         }
+        for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
+            columnName = this.columnModel.at(columnIdx, true).columnName;
+            cellState = row.getCellState(columnName);
+            rowSpanData = row.getRowSpanData(columnName);
+
+            if (cellState.isEditable && !cellState.isDisabled && (!rowSpanData || rowSpanData.count >= 0)) {
+                attributes[columnName] = rowData[columnIdx - columnStartIdx];
+            }
+        }
+        row.set(attributes);
     },
 
     /**

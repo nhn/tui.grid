@@ -205,16 +205,17 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             editOption = columnModel.editOption || {},
+            defaultValue = columnModel.defaultValue,
+            isExisty = ne.util.isExisty,
             beforeContent, afterContent, content;
 
-        if (!ne.util.isExisty(cellData.value)) {
-            cellData.value = columnModel.defaultValue;
+        if (!isExisty(cellData.value)) {
+            cellData.value = isExisty(defaultValue) ? defulatValue : '';
         }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
         afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
 
         content = beforeContent + this.getContentHtml(cellData) + afterContent;
-
         return content;
     },
 

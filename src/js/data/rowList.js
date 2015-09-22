@@ -603,6 +603,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
         this.add(modelList, addOptions);
         this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
         this.trigger('add', modelList, addOptions);
+        return modelList;
     },
 
     /**
@@ -610,7 +611,7 @@ var RowList = Collection.extend(/**@lends RowList.prototype */{
      * @param {Object} rowData  prepend 할 행 데이터
      */
     prepend: function(rowData) {
-        this.append(rowData, {
+        return this.append(rowData, {
             at: 0
         });
     },

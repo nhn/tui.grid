@@ -71,13 +71,22 @@ describe('grid.core.paste()', function() {
             expect(grid.getValue(2, 'c2')).toBe('New2-2');
         });
 
-        it('그리드의 범위를 넘어가는 값들은 무시한다', function() {
+        it('컬럼 범위를 넘어가는 값은 무시한다.', function() {
             grid.focus(2, 'c3');
-            grid.paste([
-                ['New2-3', 'New2-4'],
-                ['New3-3', 'New3-4']
-            ]);
+            grid.paste([['New2-3', 'New2-4', 'New2-5']]);
             expect(grid.getValue(2, 'c3')).toBe('New2-3');
+        });
+
+        it('행 범위를 넘어가는 값이 있으면 행을 추가해준다.', function() {
+            grid.focus(2, 'c2');
+            grid.paste([
+                ['New2-2', 'New2-3'],
+                ['New3-2', 'New3-3']
+            ]);
+            expect(grid.getValue(2, 'c2')).toBe('New2-2');
+            expect(grid.getValue(2, 'c3')).toBe('New2-3');
+            expect(grid.getValue(3, 'c2')).toBe('New3-2');
+            expect(grid.getValue(3, 'c3')).toBe('New3-3');
         });
 
         it('붙여넣기가 끝나면 변경된 범위만큼 셀렉션을 만들어준다.', function() {
