@@ -14,11 +14,13 @@ var Empty = Layer.extend(/**@lends Empty.prototype */{
     className: 'no_row_layer',
     /**
      * 생성자 함수
+     * @param {object} options - options
+     * @param {string} options.text - text to be shown on the layer
      */
     initialize: function() {
         Layer.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            text: '데이터가 존재하지 않습니다.'
+            text: this.grid.options.emptyMessage || '데이터가 존재하지 않습니다.'
         });
     },
     template: _.template('<%=text%>')
