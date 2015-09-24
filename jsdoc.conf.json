@@ -38,6 +38,7 @@
     "opts": {
         "recurse": true,
         "private": true,
-        "destination": "api"
+        "destination": "api",
+        "tutorials": "samples"
     }
 }
