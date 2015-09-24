@@ -9,13 +9,12 @@ var util = require('../util');
 
 /**
  * Row Model
- * @constructor Model.Row
+ * @module model/row
  */
-var Row = Model.extend(/**@lends Model.Row.prototype */{
-    idAttribute: 'rowKey',
-
+var Row = Model.extend(/**@lends module:model/row.prototype */{
     /**
-     * Initializes
+     * @constructs
+     * @extends module:base/model
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
@@ -36,6 +35,8 @@ var Row = Model.extend(/**@lends Model.Row.prototype */{
             this.listenTo(this.dataModel.get(rowKey), 'restore', this._onDataModelChange, this);
         }
     },
+
+    idAttribute: 'rowKey',
 
     /**
      * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
@@ -58,6 +59,7 @@ var Row = Model.extend(/**@lends Model.Row.prototype */{
 
     /**
      * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
+     * @private
      */
     _setRowExtraData: function() {
         var dataModel = this.dataModel,

@@ -9,9 +9,38 @@ var RowList = require('./rowList');
 
 /**
  * View 에서 Rendering 시 사용할 객체
- * @constructor Model.Renderer
+ * @module model/renderer
  */
-var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
+var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
+    /**
+     * @extends module:base/model
+     * @constructs
+     */
+    initialize: function() {
+        var lside, rside;
+
+        Model.prototype.initialize.apply(this, arguments);
+
+        this.setOwnProperties({
+            timeoutIdForRowListChange: 0,
+            timeoutIdForRefresh: 0,
+            isColumnModelChanged: false
+        });
+
+        lside = new RowList([], {grid: this.grid});
+        rside = new RowList([], {grid: this.grid});
+        this.set({
+            lside: lside,
+            rside: rside
+        });
+
+        this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this)
+            .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this)
+            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange, this)
+            .listenTo(lside, 'valueChange', this._onValueChange, this)
+            .listenTo(rside, 'valueChange', this._onValueChange, this);
+    },
+
     defaults: {
         top: 0,
         scrollTop: 0,
@@ -25,40 +54,6 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
     },
 
     /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        var lside, rside;
-
-        Model.prototype.initialize.apply(this, arguments);
-
-        this.setOwnProperties({
-            timeoutIdForRowListChange: 0,
-            timeoutIdForRefresh: 0,
-            isColumnModelChanged: false
-        });
-
-        //lside 와 rside 별 Collection 생성
-        lside = new RowList([], {
-            grid: this.grid
-        });
-        rside = new RowList([], {
-            grid: this.grid
-        });
-        this.set({
-            lside: lside,
-            rside: rside
-        });
-
-        //원본 rowList 의 상태 값 listening
-        this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this)
-            .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this)
-            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange, this)
-            .listenTo(lside, 'valueChange', this._onValueChange, this)
-            .listenTo(rside, 'valueChange', this._onValueChange, this);
-    },
-
-    /**
      * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
      * @param {number} rowIndex row 의 index 값
      * @private
@@ -69,6 +64,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
 
     /**
      * Event handler for 'chage:width' event on Dimension.
+     * @private
      */
     _onWidthChange: function() {
         var dimension = this.grid.dimensionModel;
@@ -288,6 +284,7 @@ var Renderer = Model.extend(/**@lends Model.Renderer.prototype */{
 
     /**
      * Destroys itself
+     * @private
      */
     _destroy: function() {
         clearTimeout(this.timeoutIdForRefresh);

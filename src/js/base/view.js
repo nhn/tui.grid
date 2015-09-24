@@ -1,15 +1,20 @@
+/**
+ * @fileoverview Base class for Views
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var common = require('./common');
 
 /**
- * View base class
- * @constructor View
+ * Base class for Views
+ * @module base/view
  */
-var View = Backbone.View.extend(/**@lends View.prototype */{
+var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
-     * 생성자 함수
-     * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+     * @constructs
+     * @mixes module:base/common
+     * @param {Object} attributes Attributes
      */
     initialize: function(attributes) {
         var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
@@ -18,6 +23,7 @@ var View = Backbone.View.extend(/**@lends View.prototype */{
             _viewList: []
         });
     },
+
     /**
      * 에러 객체를 반환한다.
      * @param {String} message - Error message
@@ -31,12 +37,6 @@ var View = Backbone.View.extend(/**@lends View.prototype */{
         GridError.prototype = new Error();
         return new GridError();
     },
-
-    /**
-     * 내부 프로퍼티 설정
-     * @param {Object} properties 할당할 프로퍼티 데이터
-     */
-    setOwnProperties: common.setOwnProperties,
 
     /**
      * 자식 View 를 생성할 때 사용하는 메서드
@@ -104,5 +104,7 @@ var View = Backbone.View.extend(/**@lends View.prototype */{
         }
     }
 });
+
+_.assign(View.prototype, common);
 
 module.exports = View;

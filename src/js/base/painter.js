@@ -1,24 +1,30 @@
+/**
+ * @fileoverview Base class for Painters
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var View = require('./view');
 
 /**
- * Drawer Base Class
+ * Base class for Painters
  * - HTML Element 당 하나의 view 를 생성하면 성능이 좋지 않기 때문에 Drawer 라는 개념을 도입.
  * - 마크업 문자열을 생성하고 이벤트 핸들러를 attach, detach 하는 역할.
  * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
- * @extends {View}
- * @constructor Painter
+ * @module base/painter
  */
-var Painter = View.extend(/**@lends Painter.prototype */{
-    eventHandler: {},
+var Painter = View.extend(/**@lends module:base/painter.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
         this.initializeEventHandler();
     },
+
+    eventHandler: {},
+
     /**
      * eventHandler 를 미리 parsing 하여 들고있는다.
      */

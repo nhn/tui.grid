@@ -17,11 +17,12 @@ var TextPasswordCell = require('./painter/cell/text-password');
 
 /**
  * Cell Factory
- * @constructor View.CellFactory
+ * @module view/cellFactory
  */
-var CellFactory = View.extend(/**@lends cellFactory.prototype */{
+var CellFactory = View.extend(/**@lends module:view/cellFactory.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/base 
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);

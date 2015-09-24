@@ -1,5 +1,5 @@
 /**
- * @fileoverview Layer Empty
+ * @fileoverview Empty layer class
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,13 +7,13 @@
 var Layer = require('../layer');
 
 /**
- * 데이터 없음 레이어
- * @constructor View.Layer.Empty
+ * Class for the layer which shows a 'no data' message
+ * @module view/layer/empty
  */
-var Empty = Layer.extend(/**@lends Empty.prototype */{
-    className: 'no_row_layer',
+var Empty = Layer.extend(/**@lends module:view/layer/empty.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/layer
      * @param {object} options - options
      * @param {string} options.text - text to be shown on the layer
      */
@@ -23,6 +23,9 @@ var Empty = Layer.extend(/**@lends Empty.prototype */{
             text: this.grid.options.emptyMessage || '데이터가 존재하지 않습니다.'
         });
     },
+
+    className: 'no_row_layer',
+
     template: _.template('<%=text%>')
 });
 

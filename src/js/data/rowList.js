@@ -10,15 +10,15 @@ var Row = require('./row');
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
  * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
- *
- * @constructor RowList
+ * @module data/rowList
  */
-var RowList = Collection.extend(/**@lends RowList.prototype */{
+var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     model: Row,
     /**
-     * 생성자 함수
      * @param {Array} models    콜랙션에 추가할 model 리스트
      * @param {Object} options   생성자의 option 객체
+     * @extends module:base/collection
+     * @constructs
      */
     initialize: function(models, options) {
         Collection.prototype.initialize.apply(this, arguments);

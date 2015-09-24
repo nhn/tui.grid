@@ -9,9 +9,17 @@ var util = require('../util');
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
- * @constructor Data.Row
+ * @module data/row
  */
-var Row = Model.extend(/**@lends Row.prototype */{
+var Row = Model.extend(/**@lends module:data/row.prototype */{
+    /**
+     * @constructs
+     * @extends module:base/model
+     */
+    initialize: function() {
+        Model.prototype.initialize.apply(this, arguments);
+    },
+
     idAttribute: 'rowKey',
     defaults: {
         _extraData: {
@@ -20,15 +28,8 @@ var Row = Model.extend(/**@lends Row.prototype */{
     },
 
     /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        Model.prototype.initialize.apply(this, arguments);
-    },
-    /**
      * extraData 로 부터 rowState 를 object 형태로 반환한다.
      * @return {{isDisabled: boolean, isDisabledCheck: boolean}} rowState 정보
-     * @private
      */
     getRowState: function() {
         var extraData = this.get('_extraData'),
@@ -162,7 +163,6 @@ var Row = Model.extend(/**@lends Row.prototype */{
 
     /**
      * getRowSpanData
-     *
      * rowSpan 설정값을 반환한다.
      * @param {String} [columnName] 인자가 존재하지 않을 경우, 행 전체의 rowSpanData 를 맵 형태로 반환한다.
      * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
@@ -355,7 +355,6 @@ var Row = Model.extend(/**@lends Row.prototype */{
      *
      * @param {String} columnName   컬럼명
      * @return {String} 인코딩된 결과값
-     * @private
      */
     getHTMLEncodedString: function(columnName) {
         var columnModel = this.grid.columnModel.getColumnModel(columnName),
@@ -408,7 +407,6 @@ var Row = Model.extend(/**@lends Row.prototype */{
      * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
      * @param {object} publicChanged 비교할 객체
      * @return {boolean} 중복이면 true, 아니면 false
-     * @private
      */
     isDuplicatedPublicChanged: function(publicChanged) {
         if (this._timeoutIdForChanged && _.isEqual(this._lastPublicChanged, publicChanged)) {

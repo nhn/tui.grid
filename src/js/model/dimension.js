@@ -7,25 +7,47 @@
 var Model = require('../base/model');
 var util = require('../util');
 
-/**
- * The width of the border of the dimension.
- * @const
- * @type {number}
- */
-var BORDER_WIDTH = 1,
+// The width of the border of the dimension.
+var BORDER_WIDTH = 1;
 
-/**
- * The width of the border of table row.
- * @const
- * @type {number}
- */
-    ROW_BORDER_WIDTH = 1;
+// The width of the border of table row.
+var ROW_BORDER_WIDTH = 1;
 
 /**
  * 크기 관련 데이터 저장
- * @constructor Model.Dimension
+ * @module model/dimension
  */
-var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
+var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
+    /**
+     * @extends module:base/model
+     * @constructs
+     */
+    initialize: function() {
+        Model.prototype.initialize.apply(this, arguments);
+
+        /**
+         * An array of the fixed flags of the columns
+         * @private
+         * @type {boolean[]}
+         */
+        this._columnWidthFixedFlags = null;
+
+        /**
+         * An array of the minimum width of the columns
+         * @private
+         * @type {number[]}
+         */
+        this._minColumnWidthList = null;
+
+        this.columnModel = this.grid.columnModel;
+        this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
+        this.on('change:width', this._onWidthChange, this);
+        this.on('change:displayRowCount', this._setBodyHeight, this);
+
+        this._initColumnWidthVariables();
+        this._setBodyHeight();
+    },
+
     models: null,
     columnModel: null,
     defaults: {
@@ -49,33 +71,6 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
         scrollBarSize: 17,
         scrollX: true,
         scrollY: true
-    },
-
-    /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        Model.prototype.initialize.apply(this, arguments);
-
-        /**
-         * An array of the fixed flags of the columns
-         * @type {boolean[]}
-         */
-        this._columnWidthFixedFlags = null;
-
-        /**
-         * An array of the minimum width of the columns
-         * @type {number[]}
-         */
-        this._minColumnWidthList = null;
-
-        this.columnModel = this.grid.columnModel;
-        this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
-        this.on('change:width', this._onWidthChange, this);
-        this.on('change:displayRowCount', this._setBodyHeight, this);
-
-        this._initColumnWidthVariables();
-        this._setBodyHeight();
     },
 
     /**
@@ -529,6 +524,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
      * Returns the height of table body.
      * @param  {number} height - The height of the dimension
      * @return {number} The height of the table body
+     * @private
      */
     _getBodyHeight: function(height) {
         return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
@@ -537,6 +533,7 @@ var Dimension = Model.extend(/**@lends Model.Dimension.prototype */{
     /**
      * Returns the minimum height of table body.
      * @return {number} The minimum height of table body
+     * @private
      */
     _getMinBodyHeight: function() {
         return this.get('rowHeight') + (ROW_BORDER_WIDTH * 2) + this.getScrollXHeight();

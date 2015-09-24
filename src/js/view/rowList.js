@@ -8,13 +8,14 @@ var View = require('../base/view');
 var RowPainter = require('./painter/row');
 
 /**
- * RowList View.
- * Collection 의 변화를 감지한다.
- * @constructor View.RowList
+ * RowList View
+ * @module view/rowList
  */
-var RowList = View.extend(/**@lends RowList.prototype */{
+var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 초기화 함수
+     * @constructs
+     * @extends module:baes/view
      * @param {object} options 옵션 객체
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */

@@ -8,18 +8,12 @@ var View = require('../../base/view');
 
 /**
  * virtual scrollbar
- * @constructor View.Layout.Frame.Rside.VirtualScrollBar
+ * @module view/layout/virtualScrollBar
  */
-var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
-    tagName: 'div',
-    className: 'virtual_scrollbar',
-    events: {
-        'scroll': '_onScrollDebounced',
-        'mousedown': '_onMouseDown'
-    },
-
+var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view 
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -32,6 +26,15 @@ var VirtualScrollBar = View.extend(/**@lends VirtualScrollBar.prototype */{
         this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
         this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
         this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
+    },
+
+    tagName: 'div',
+
+    className: 'virtual_scrollbar',
+
+    events: {
+        'scroll': '_onScrollDebounced',
+        'mousedown': '_onMouseDown'
     },
 
     /**

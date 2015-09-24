@@ -10,14 +10,12 @@ var Body = require('./body');
 
 /**
  * frame Base 클래스
- * @namespace
- * @constructor View.Layout.Frame
+ * @module view/layout/frame
  */
-var Frame = View.extend(/**@lends Frame.prototype */{
-    tagName: 'div',
-    className: 'lside_area',
+var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     /**
-     * 초기화 메서드
+     * @constructs
+     * @extends module:base/view
      * @param {Object} options Options
      *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
      */
@@ -32,6 +30,10 @@ var Frame = View.extend(/**@lends Frame.prototype */{
             whichSide: options && options.whichSide || 'R'
         });
     },
+
+    tagName: 'div',
+
+    className: 'lside_area',
 
     /**
      * 랜더링 메서드

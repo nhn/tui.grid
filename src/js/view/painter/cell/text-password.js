@@ -1,13 +1,18 @@
+/**
+ * @fileoverview Password 타입의 Input을 가진 Cell Painter
+ * @author NHN Ent. FE Development Team
+ * @module view/painter/cell/text-password
+ */
 'use strict';
 
 var Text = require('./text');
 
 /**
  * Password 타입의 cell renderer
- * @extends {View.Base.Painter.Cell.Text}
- * @constructor View.Painter.Cell.Text.Password
+ * @extends module:view/painter/cell/text
+ * @constructor module:view/painter/cell/text-password
  */
-var Password = Text.extend(/**@lends Password.prototype */{
+var Password = Text.extend(/**@lends module:view/painter/cell/text-password.prototype */{
     /**
      * Initializes
      * @param {object} attributes Attributes

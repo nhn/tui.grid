@@ -6,12 +6,13 @@
 
 /**
 * util 모듈
-* @type {{getAttributesString: Function, sum: Function, getHeight: Function, getDisplayRowCount: Function, getRowHeight: Function, isEqual: Function, stripTags: Function, getUniqueKey: Function, toQueryString: Function, toQueryObject: Function, convertValueType: Function}}
+* @module util
 */
 var util = {
     uniqueId: 0,
     /**
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
+     * @memberof module:util
      * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
      * @return {string} html 마크업에 포함될 문자열
      * @example
@@ -35,6 +36,7 @@ var util = {
     /**
      * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.
      * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
+     * @memberof module:util
      * @param {string} template 템플릿 텍스트
      * @param {object|object[]} mapper 템플릿과 합성될 데이터
      * @return {Array} replaced array
@@ -60,6 +62,7 @@ var util = {
 
     /**
      * 배열의 합을 반환한다.
+     * @memberof module:util
      * @param {number[]} list   총 합을 구할 number 타입 배열
      * @return {number} 합산한 결과값
      */
@@ -72,6 +75,7 @@ var util = {
 
     /**
      * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
+     * @memberof module:util
      * @param {number} rowCount  행 개수
      * @param {number} rowHeight    한 행당 높이
      * @return {number} 계산된 높이
@@ -82,7 +86,7 @@ var util = {
 
     /**
      *Table 의 높이와 행당 높이를 인자로 받아, table 에서 보여줄 수 있는 행 개수를 반환한다.
-     *
+     * @memberof module:util
      * @param {number} height 테이블 body 높이
      * @param {number} rowHeight    한 행당 높이
      * @return {number} 테이블 body 당 보여지는 행 개수
@@ -93,7 +97,7 @@ var util = {
 
     /**
      * Table 의 height 와 행 개수를 인자로 받아, 한 행당 높이를 구한다.
-     *
+     * @memberof module:util
      * @param {number} rowCount  행 개수
      * @param {number} height   테이블 body 높이
      * @return {number} 한 행당 높이값
@@ -105,6 +109,7 @@ var util = {
     /**
      * target 과 dist 의 값을 비교하여 같은지 여부를 확인하는 메서드
      * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지만 지원함.
+     * @memberof module:util
      * @param {*} target    동등 비교할 target
      * @param {*} dist      동등 비교할 dist
      * @return {boolean}    동일한지 여부
@@ -141,6 +146,7 @@ var util = {
 
     /**
      * Returns whether the string blank.
+     * @memberof module:util
      * @param {*} target - target object
      * @return {boolean} True if target is undefined or null or ''
      */
@@ -153,6 +159,7 @@ var util = {
 
     /**
      * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
+     * @memberof module:util
      * @param {string} htmlString   html 마크업 문자열
      * @return {String} HTML tag 에 해당하는 부분을 제거한 문자열
      */
@@ -173,6 +180,7 @@ var util = {
 
     /**
      * Create unique key
+     * @memberof module:util
      * @return {number} unique key 를 반환한다.
      */
     getUniqueKey: function() {
@@ -182,6 +190,7 @@ var util = {
 
     /**
      * object 를 query string 으로 변경한다.
+     * @memberof module:util
      * @param {object} dataObj  쿼리 문자열으로 반환할 객체
      * @return {string} 변환된 쿼리 문자열
      */
@@ -200,6 +209,7 @@ var util = {
 
     /**
      * queryString 을 object 형태로 변형한다.
+     * @memberof module:util
      * @param {String} queryString 쿼리 문자열
      * @return {Object} 변환한 Object
      */
@@ -226,6 +236,7 @@ var util = {
      * type 인자에 맞게 value type 을 convert 한다.
      * Data.Row 의 List 형태에서 editOption.list 에서 검색을 위해,
      * value type 해당 type 에 맞게 변환한다.
+     * @memberof module:util
      * @param {*} value 컨버팅할 value
      * @param {String} type 컨버팅 될 타입
      * @return {*}  타입 컨버팅된 value
@@ -241,15 +252,20 @@ var util = {
 
     /**
      * form 요소 설정
+     * @memberof module:util
      */
     form: {
         /**
          * form 의 input 요소 값을 설정하기 위한 객체
+         * @alias form.setInput
+         * @memberof module:util
          */
         setInput: {
             /**
              * 배열의 값들을 전부 String 타입으로 변환한다.
+             * @memberof module:util
              * @private
+             * @alias form.setInput['_changeToStringInArray']
              * @param {Array}  arr 변환할 배열
              * @return {Array} 변환된 배열 결과 값
              */
@@ -262,6 +278,8 @@ var util = {
 
             /**
              * radio type 의 input 요소의 값을 설정한다.
+             * @memberof module:util
+             * @alias form.setInput['radio']
              * @param {HTMLElement} targetElement - Target element
              * @param {String} formValue - Form value
              */
@@ -271,6 +289,8 @@ var util = {
 
             /**
              * radio type 의 input 요소의 값을 설정한다.
+             * @memberof module:util
+             * @alias form.setInput.checkbox
              * @param {HTMLElement} targetElement - Target element
              * @param {String} formValue - Form value
              */
@@ -284,6 +304,8 @@ var util = {
 
             /**
              * select-one type 의 input 요소의 값을 설정한다.
+             * @memberof module:util
+             * @alias form.setInput['select-one']
              * @param {HTMLElement} targetElement - Target element
              * @param {String} formValue - Form value
              */
@@ -303,6 +325,8 @@ var util = {
 
             /**
              * select-multiple type 의 input 요소의 값을 설정한다.
+             * @memberof module:util
+             * @alias form.setinput['select-multiple']
              * @param {HTMLElement} targetElement - Target element
              * @param {String} formValue - Form value
              */
@@ -322,6 +346,8 @@ var util = {
 
             /**
              * input 요소의 값을 설정하는 default 로직
+             * @memberof module:util
+             * @alias form.setinput['defaultAction']
              * @param {HTMLElement} targetElement - Target element
              * @param {String} formValue - Form value
              */
@@ -332,7 +358,8 @@ var util = {
 
         /**
          * $form 에 정의된 인풋 엘리먼트들의 값을 모아서 DataObject 로 구성하여 반환한다.
-         * @memberof util.form
+         * @memberof module:util
+         * @alias form.getFormData
          * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
          * @return {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
          **/
@@ -358,8 +385,8 @@ var util = {
 
         /**
          * 폼 안에 있는 모든 인풋 엘리먼트를 배열로 리턴하거나, elementName에 해당하는 인풋 엘리먼트를 리턴한다.
-         * @method form.getFormElement
-         * @memberof util.form
+         * @memberof module:util
+         * @alias form.getFormElement
          * @param {jquery} $form jQuery()로 감싼 폼엘리먼트
          * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
          * @return {jQuery}  jQuery 로 감싼 엘리먼트를 반환한다.
@@ -378,8 +405,8 @@ var util = {
 
         /**
          * 파라미터로 받은 데이터 객체를 이용하여 폼내에 해당하는 input 요소들의 값을 설정한다.
-         * @method setFormData
-         * @memberof util.form
+         * @memberof module:util
+         * @alias form.setFormData
          * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
          * @param {Object} formData 폼에 설정할 폼 데이터 객체
          **/
@@ -392,6 +419,8 @@ var util = {
         /**
          * elementName에 해당하는 인풋 엘리먼트에 formValue 값을 설정한다.
          * -인풋 엘리먼트의 이름을 기준으로 하기에 라디오나 체크박스 엘리먼트에 대해서도 쉽게 값을 설정할 수 있다.
+         * @memberof module:util
+         * @alias form.setFormElementValue
          * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
          * @param {String}  elementName 값을 설정할 인풋 엘리먼트의 이름
          * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.
@@ -416,6 +445,8 @@ var util = {
 
         /**
          * input 타입의 엘리먼트의 커서를 가장 끝으로 이동한다.
+         * @memberof module:util
+         * @alias form.setCursorToEnd
          * @param {HTMLElement} target HTML input 엘리먼트
          */
         setCursorToEnd: function(target) {

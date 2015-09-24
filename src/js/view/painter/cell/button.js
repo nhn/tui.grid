@@ -1,22 +1,20 @@
+/**
+ * @fileoverview Painter class for the button cell
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var List = require('./list');
 var util = require('../../../util');
 
 /**
- * checkbox, radio button type 의 Cell renderer
- *
- * @extends {View.Painter.Cell.List}
- * @constructor View.Painter.Cell.List.Button
+ * Painter class for the button cell
+ * @module view/painter/cell/button
  */
-var Button = List.extend(/**@lends ButtonCell.prototype */{
-    eventHandler: {
-        'change input': '_onChange',
-        'keydown input': '_onKeyDown'
-    },
-
+var Button = List.extend(/**@lends module:view/painter/cell/button.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/painter/cell/list 
      */
     initialize: function() {
         List.prototype.initialize.apply(this, arguments);
@@ -49,6 +47,11 @@ var Button = List.extend(/**@lends ButtonCell.prototype */{
                 }
             }
         });
+    },
+
+    eventHandler: {
+        'change input': '_onChange',
+        'keydown input': '_onKeyDown'
     },
 
     /**

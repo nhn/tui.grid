@@ -9,12 +9,12 @@ var VirtualScrollBar = require('./virtualScrollBar');
 
 /**
  * right side 프레임 클래스
- * @constructor View.Layout.Frame.Rside
+ * @module view/layout/frame-rside
  */
-var RsideFrame = Frame.extend(/**@lends RsideFrame.prototype */{
-    className: 'rside_area',
+var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
     /**
-     * 초기화 함수
+     * @constructs
+     * @extends module:view/layout/frame
      */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
@@ -22,6 +22,9 @@ var RsideFrame = Frame.extend(/**@lends RsideFrame.prototype */{
             whichSide: 'R'
         });
     },
+
+    className: 'rside_area',
+
     /**
      * 컬럼 width 값이 변경되었을때 이벤트 핸들러
      * @private
@@ -36,9 +39,9 @@ var RsideFrame = Frame.extend(/**@lends RsideFrame.prototype */{
             marginLeft: marginLeft + 'px'
         });
     },
+
     /**
      * 랜더링하기 전 수행되는 메서드
-     * @private
      */
     beforeRender: function() {
         var dimensionModel = this.grid.dimensionModel,
@@ -51,9 +54,9 @@ var RsideFrame = Frame.extend(/**@lends RsideFrame.prototype */{
             marginLeft: marginLeft + 'px'
         });
     },
+
     /**
      * 랜더링 후 수행되는 메서드
-     * @private
      */
     afterRender: function() {
         var scrollbar, $space, height;

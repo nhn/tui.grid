@@ -1,22 +1,33 @@
+/**
+ * @fileoverview Router for Addon.Net
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var common = require('../base/common');
 var util = require('../util');
 
 /**
- * Ajax History 관리를 위한 Router AddOn
- * @constructor AddOn.Net.Router
+ * Router for Addon.Net
+ * @module addon/net-router
  */
-var Router = Backbone.Router.extend(/**@lends AddOn.Net.Router.prototype */{
-    routes: {
-        'read/:queryStr': 'read'
-    },
+var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype */{
+    /**
+     * @constructs
+     * @mixes module:base/common
+     * @param  {object} attributes - Attributes
+     */
     initialize: function(attributes) {
         this.setOwnProperties({
             grid: attributes && attributes.grid || null,
             net: attributes && attributes.net || null
         });
     },
+
+    routes: {
+        'read/:queryStr': 'read'
+    },
+
     /**
      * Backbone Router 에서 url 정보를 통해 서버로 read 요청을 한다.
      * @param {String} queryStr 쿼리 문자열
@@ -27,12 +38,9 @@ var Router = Backbone.Router.extend(/**@lends AddOn.Net.Router.prototype */{
         this.net.setFormData(data);
         //그 이후 read
         this.net.readData(data);
-    },
-    /**
-     * 내부 프로퍼티 설정
-     * @param {Object} properties 할당할 프로퍼티 데이터
-     */
-    setOwnProperties: common.setOwnProperties
+    }
 });
+
+_.assign(Router.prototype, common);
 
 module.exports = Router;

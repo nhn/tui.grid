@@ -8,13 +8,12 @@ var Cell = require('../cell');
 
 /**
  * editOption 이 적용되지 않은 cell 의 Painter
- * @constructor View.Painter.Cell.Normal
- * @extends {View.Base.Painter.Cell}
- * @implements {View.Base.Painter.Cell.Interface}
+ * @module view/painter/cell/normal
  */
-var Normal = Cell.extend(/**@lends Normal.prototype */{
+var Normal = Cell.extend(/**@lends module:view/painter/cell/normal.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/painter/cell
      */
     initialize: function() {
         Cell.prototype.initialize.apply(this, arguments);

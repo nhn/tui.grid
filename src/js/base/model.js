@@ -1,15 +1,20 @@
+/**
+ * @fileoverview Base class for Models
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var common = require('./common');
 
 /**
- * Model Base Class
- * @constructor Model.Base
+ * Base class for Models
+ * @module base/model
  */
-var Model = Backbone.Model.extend(/**@lends Model.Base.prototype */{
+var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{
     /**
-     * 생성자 함수
-     * @param {Object} attributes 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+     * @constructs
+     * @mixes module:base/common
+     * @param {Object} attributes Attributes
      */
     initialize: function(attributes) {
         var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
@@ -17,12 +22,8 @@ var Model = Backbone.Model.extend(/**@lends Model.Base.prototype */{
             grid: grid
         });
     },
-
-    /**
-     * 내부 프로퍼티 설정
-     * @param {Object} properties 할당할 프로퍼티 데이터
-     */
-    setOwnProperties: common.setOwnProperties
 });
+
+_.assign(Model.prototype, common);
 
 module.exports = Model;

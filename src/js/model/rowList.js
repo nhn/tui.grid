@@ -9,12 +9,13 @@ var Row = require('./row');
 
 /**
   * View Model rowList collection
-  * @constructor Model.RowList
+  * @module model/rowList
   */
-var RowList = Collection.extend(/**@lends Model.RowList.prototype */{
+var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     model: Row,
     /**
-     * 생성자 함수
+     * @constructs 
+     * @extends module:base/collection
      */
     initialize: function() {
         Collection.prototype.initialize.apply(this, arguments);

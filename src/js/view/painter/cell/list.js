@@ -1,5 +1,5 @@
 /**
- * @fileoverview 리스트 형태의 Cell(select, radio, checkbox) Painter 가 정의된 파일
+ * @fileoverview 리스트 형태의 Cell Painter을 위한 Base 클래스
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,20 +7,21 @@
 var Cell = require('../cell');
 
 /**
- * editOption 에 list 를 가지고 있는 형태의 추상 클래스
- * @implements {Cell.Interface}
- * @constructor List
+ * editOption 에 list 를 가지고 있는 형태의 Base 클래스
+ * @module view/painter/cell/list
  */
-var List = Cell.extend(/**@lends List.prototype */{
-    redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
-    eventHandler: {
-    },
+var List = Cell.extend(/**@lends module:view/painter/cell/list.prototype */{
     /**
-     * 생성자 메서드
+     * @constructs
+     * @extends module:view/painter/cell
      */
     initialize: function() {
         Cell.prototype.initialize.apply(this, arguments);
     },
+
+    redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
+
+    eventHandler: {},
 
     /* eslint-disable */
     /**
@@ -28,6 +29,7 @@ var List = Cell.extend(/**@lends List.prototype */{
      * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {},
+
     /**
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
@@ -50,6 +52,7 @@ var List = Cell.extend(/**@lends List.prototype */{
     getContentHtml: function(cellData) { // eslint-disable-line no-unused-vars
         throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
     },
+
     /**
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.

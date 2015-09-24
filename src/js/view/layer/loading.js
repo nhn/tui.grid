@@ -1,5 +1,5 @@
 /**
- * @fileoverview Layer Loading
+ * @fileoverview Loading layer class
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,18 +7,20 @@
 var Layer = require('../layer');
 
 /**
- * 로딩 레이어
- * @constructor View.Layer.Loading
+ * Class for the layer which shows a loading indicator
+ * @module view/layer/loading
  */
-var Loading = Layer.extend(/**@lends Layer.prototype */{
-    className: 'loading_layer',
+var Loading = Layer.extend(/**@lends module:view/layer/loading.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/layer
      */
     initialize: function() {
         Layer.prototype.initialize.apply(this, arguments);
         this.text = '요청을 처리 중입니다.';
     },
+
+    className: 'loading_layer',
 
     template: _.template('' +
         '<div>' +

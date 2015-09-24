@@ -1,26 +1,19 @@
+/**
+ * @fileoverview Painter class for the main button
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var Cell = require('../cell');
 
 /**
- * checkbox 혹은 radiobox 형태의 Main Button Painter
- * @constructor MainButton
- * @extends {Cell}
- * @implements {Cell.Interface}
+ * Painter class for the main button
+ * @module view/painter/cell/mainButton
  */
-var MainButton = Cell.extend(/**@lends MainButton.prototype */{
+var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.prototype */{
     /**
-     * rendering 해야하는 cellData 의 변경 목록
-     */
-    redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
-    eventHandler: {
-        'mousedown': '_onMouseDown',
-        'change input': '_onChange',
-        'keydown input': '_onKeyDown'
-    },
-
-    /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/painter/cell
      */
     initialize: function() {
         Cell.prototype.initialize.apply(this, arguments);
@@ -34,6 +27,17 @@ var MainButton = Cell.extend(/**@lends MainButton.prototype */{
             'RIGHT_ARROW': function() {},
             'ESC': function() {}
         });
+    },
+
+    /**
+     * rendering 해야하는 cellData 의 변경 목록
+     */
+    redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
+
+    eventHandler: {
+        'mousedown': '_onMouseDown',
+        'change input': '_onChange',
+        'keydown input': '_onKeyDown'
     },
 
     /**

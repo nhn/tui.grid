@@ -10,18 +10,12 @@ var ResizeHandler = require('./resizeHandler');
 
 /**
  * Header 레이아웃 View
- * @constructor View.Layout.Header
+ * @module view/layout/header
  */
-var Header = View.extend(/**@lends Header.prototype */{
-    tagName: 'div',
-    className: 'header',
-    whichSide: 'R',
-    events: {
-        click: '_onClick'
-    },
-
+var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
-     * 초기화 메서드
+     * @constructs
+     * @extends module:base/view 
      * @param {Object} options 옵션
      *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
      */
@@ -35,6 +29,16 @@ var Header = View.extend(/**@lends Header.prototype */{
             .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this)
             .listenTo(this.grid.dataModel, 'sortChanged', this._updateBtnSortState, this);
+    },
+
+    tagName: 'div',
+
+    className: 'header',
+
+    whichSide: 'R',
+
+    events: {
+        click: '_onClick'
     },
 
     /**

@@ -1,21 +1,25 @@
+/**
+ * @fileoverview Painter class for the number cell
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var Normal = require('./normal');
 
 /**
  * Number Cell 의 Painter
- * @constructor View.Painter.Cell.Normal.Number
- * @extends {View.Base.Painter.Cell}
- * @implements {View.Base.Painter.Cell.Interface}
+ * @module view/painter/cell/number
  */
-var NumberCell = Normal.extend(/**@lends NumberCell.prototype */{
-    redrawAttributes: [],
+var NumberCell = Normal.extend(/**@lends module:view/painter/cell/number.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/painter/cell/normal
      */
     initialize: function() {
         Normal.prototype.initialize.apply(this, arguments);
     },
+
+    redrawAttributes: [],
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.

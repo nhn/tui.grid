@@ -1,16 +1,21 @@
+/**
+ * @fileoverview Base class for Collections
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var common = require('./common');
 
 /**
- * Collection Base Class
- * @constructor Collection.Base
+ * Base class for Collection
+ * @module base/collection
  */
-var Collection = Backbone.Collection.extend(/**@lends Collection.Base.prototype */{
+var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
     /**
-     * 생성자 함수
-     * @param {Array} models    콜랙션에 추가할 model 리스트
-     * @param {Object} options   생성자의 option 객체. 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+     * @param {Array} models - 콜랙션에 추가할 model 리스트
+     * @param {Object} options - 생성자의 option 객체. 인자의 프로퍼티에 grid 가 존재한다면 내부 프로퍼티에 grid 를 할당한다.
+     * @mixes module:base/common
+     * @constructs
      */
     initialize: function(models, options) {
         var grid = options && options.grid || this.collection && this.collection.grid || null;
@@ -31,13 +36,9 @@ var Collection = Backbone.Collection.extend(/**@lends Collection.Base.prototype 
         this.reset([], {silent: true});
 
         return this;
-    },
-
-    /**
-     * 내부 프로퍼티 설정
-     * @param {Object} properties 할당할 프로퍼티 데이터
-     */
-    setOwnProperties: common.setOwnProperties
+    }
 });
+
+_.assign(Collection.prototype, common);
 
 module.exports = Collection;

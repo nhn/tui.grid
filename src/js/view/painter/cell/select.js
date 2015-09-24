@@ -1,21 +1,20 @@
+/**
+ * @fileoverview Painter class for the select cell
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var List = require('./list');
 var util = require('../../../util');
 
 /**
- * select type 의 Cell renderer
- *
- * @extends {view/painter/list}
- * @constructor Select
+ * Painter class for the select cell
+ * @module view/painter/cell/select
  */
-var Select = List.extend(/**@lends Select.prototype */{
-    eventHandler: {
-        'change select': '_onChange',
-        'keydown select': '_onKeyDown'
-    },
+var Select = List.extend(/**@lends module:view/painter/cell/select.prototype */{
     /**
-     * 생성자 메서드
+     * @constructs
+     * @extends module:view/painter/cell/list 
      */
     initialize: function() {
         List.prototype.initialize.apply(this, arguments);
@@ -28,6 +27,11 @@ var Select = List.extend(/**@lends Select.prototype */{
                 this.focusOut(param.$target);
             }
         });
+    },
+
+    eventHandler: {
+        'change select': '_onChange',
+        'keydown select': '_onKeyDown'
     },
 
     /**

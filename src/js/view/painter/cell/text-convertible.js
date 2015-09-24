@@ -1,5 +1,5 @@
 /**
- * @fileoverview Constructor for the Painter of text-convertible cell
+ * @fileoverview Painter class for the text-convertible cell
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -10,23 +10,12 @@ var util = require('../../../util');
 
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
- * @extends {View.Base.Painter.Cell.Text}
- * @implements {View.Base.Painter.Cell.Interface}
- * @constructor View.Painter.Cell.Text.Convertible
+ * @module view/painter/cell/text-convertible
  */
-var Convertible = Text.extend(/**@lends Convertible.prototype */{
-    redrawAttributes: ['isDisabled', 'isEditable', 'value'],
-    eventHandler: {
-        'dblclick': '_onDblClick',
-        'mousedown': '_onMouseDown',
-        'blur input': '_onBlurConvertible',
-        'keydown input': '_onKeyDown',
-        'focus input': '_onFocus',
-        'selectstart input': '_onSelectStart'
-    },
-
+var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertible.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:view/painter/cell/text 
      */
     initialize: function() {
         Text.prototype.initialize.apply(this, arguments);
@@ -42,6 +31,17 @@ var Convertible = Text.extend(/**@lends Convertible.prototype */{
             }
         });
         this.off('resize');
+    },
+
+    redrawAttributes: ['isDisabled', 'isEditable', 'value'],
+
+    eventHandler: {
+        'dblclick': '_onDblClick',
+        'mousedown': '_onMouseDown',
+        'blur input': '_onBlurConvertible',
+        'keydown input': '_onKeyDown',
+        'focus input': '_onFocus',
+        'selectstart input': '_onSelectStart'
     },
 
     /**

@@ -1,21 +1,20 @@
+/**
+ * @fileoverview Class for the selection layer
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
 var View = require('../base/view');
 var util = require('../util');
 
 /**
- * 실제 selection layer view
- * @constructor View.Selection.Layer
+ * Class for the selection layer
+ * @module view/selectionLayer
  */
-var SelectionLayer = View.extend(/**@lends View.Selection.Layer.prototype */{
-    tagName: 'div',
-    className: 'selection_layer',
-    events: {
-        mousedown: '_onMouseDown'
-    },
-
+var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      * @param {object} options Options
      *      @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
      */
@@ -24,12 +23,20 @@ var SelectionLayer = View.extend(/**@lends View.Selection.Layer.prototype */{
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList, this);
         this.setOwnProperties({
             columnWidthList: options.columnWidthList,
+            whichSide: options.whichSide || 'R',
             spannedRange: {
                 row: [-1, -1],
                 column: [-1, -1]
-            },
-            whichSide: 'R'
+            }
         });
+    },
+
+    tagName: 'div',
+
+    className: 'selection_layer',
+
+    events: {
+        mousedown: '_onMouseDown'
     },
 
     /**
@@ -124,38 +131,6 @@ var SelectionLayer = View.extend(/**@lends View.Selection.Layer.prototype */{
      */
     render: function() {
         return this;
-    }
-});
-
-/**
- * 왼쪽 selection layer
- * @constructor View.Selection.Layer.Lside
- */
-SelectionLayer.Lside = SelectionLayer.extend(/**@lends Layer.Lside.prototype */{
-    /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        SelectionLayer.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
-            whichSide: 'L'
-        });
-    }
-});
-
-/**
- * 오른쪽 selection layer
- * @constructor View.Selection.Layer.Rside
- */
-SelectionLayer.Rside = SelectionLayer.extend(/**@lends Layer.Rside.prototype */{
-    /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        SelectionLayer.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
-            whichSide: 'R'
-        });
     }
 });
 

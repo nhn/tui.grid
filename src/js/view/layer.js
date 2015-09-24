@@ -1,5 +1,5 @@
 /**
- * @fileoverview Layer Base
+ * @fileoverview Base class for layers
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,17 +7,13 @@
 var View = require('../base/view');
 
 /**
- * 레이어 기본 클래스
- * @constructor View.Layer.Base
+ * Base class for layers
+ * @module view/layer
  */
-var Layer = View.extend(/**@lends View.Layer.Base.prototype */{
-    template: _.template('' +
-    '<div>' +
-    '    <%=text%>' +
-    '    <div class="loading_img"></div>' +
-    '</div>'),
+var Layer = View.extend(/**@lends module:view/layer.prototype */{
     /**
-     * 초기화 함수
+     * @constructs
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -26,6 +22,12 @@ var Layer = View.extend(/**@lends View.Layer.Base.prototype */{
         });
         this.listenTo(this.grid.dimensionModel, 'change', this._resize, this);
     },
+
+    template: _.template('' +
+        '<div>' +
+        '    <%=text%>' +
+        '    <div class="loading_img"></div>' +
+        '</div>'),
 
     /**
      * 랜더링 한다.

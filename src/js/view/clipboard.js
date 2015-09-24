@@ -9,18 +9,12 @@ var util = require('../util');
 
 /**
  * Clipboard view class
- * @constructor View.Clipboard
+ * @module view/clipboard
  */
-var Clipboard = View.extend(/**@lends Clipboard.prototype */{
-    tagName: 'textarea',
-    className: 'clipboard',
-    events: {
-        'keydown': '_onKeyDown',
-        'focusin': '_onFocus'
-    },
-
+var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
-     * 생성자
+     * @constructs
+     * @extends module:base/view 
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -28,6 +22,15 @@ var Clipboard = View.extend(/**@lends Clipboard.prototype */{
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
+    },
+
+    tagName: 'textarea',
+
+    className: 'clipboard',
+
+    events: {
+        'keydown': '_onKeyDown',
+        'focusin': '_onFocus'
     },
 
     /**

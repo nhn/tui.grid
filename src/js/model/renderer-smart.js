@@ -10,11 +10,12 @@ var util = require('../util');
 /**
  *  View 에서 Rendering 시 사용할 객체
  *  Smart Rendering 을 지원한다.
- *  @constructor Model.Renderer.Smart
+ *  @module model/renderer-smart
  */
-var SmartRenderer = Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
+var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
     /**
-     * 초기화 함수
+     * @extends module:model/renderer
+     * @constructs
      */
     initialize: function() {
         Renderer.prototype.initialize.apply(this, arguments);
@@ -67,6 +68,7 @@ var SmartRenderer = Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
      * 렌더링을 시작하는 행에 rowSpan 정보가 있으면, count 값이 가장 작은 행의 값을 반환한다.
      * @param {number} startIndex 시작하는 행의 Index
      * @return {number} rowSpan의 count 값 (0 이하)
+     * @private
      */
     _getStartRowSpanMinCount: function(startIndex) {
         var firstRow = this.grid.dataModel.at(startIndex),
@@ -85,6 +87,7 @@ var SmartRenderer = Renderer.extend(/**@lends Model.Renderer.Smart.prototype */{
      * 렌더링할 마지막 행에 rowSpan 정보가 있으면, count 값이 가장 큰 행의 값을 반환한다.
      * @param {number} endIndex 마지막 행의 Index
      * @return {number} rowSpan의 count 값 (0 이상)
+     * @private
      */
     _getEndRowSpanMaxCount: function(endIndex) {
         var lastRow = this.grid.dataModel.at(endIndex),

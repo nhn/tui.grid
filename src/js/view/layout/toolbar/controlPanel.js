@@ -1,15 +1,23 @@
 /**
- * @fileoverview ControlPanel for the Toolbar
+ * @fileoverview Class for the control panel in the toolbar
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 var View = require('../../../base/view');
 /**
- * 툴바 영역 컨트롤 패널 UI
- * @constructor View.Layout.Toolbar.ControlPanel
+ * Class for the control panel in the toolbar
+ * @module view/layout/toolbar/controlPanel
  */
-var ControlPanel = View.extend(/**@lends View.Layout.Toolbar.ControlPanel.prototype */{
+var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel.prototype */{
+    /**
+     * @constructs
+     * @extends module:base/view
+     */
+    initialize: function() {
+        View.prototype.initialize.apply(this, arguments);
+    },
+
     tagName: 'div',
     className: 'btn_setup',
     template: _.template(
@@ -20,13 +28,6 @@ var ControlPanel = View.extend(/**@lends View.Layout.Toolbar.ControlPanel.protot
             '<span><em class="excel">엑셀다운로드</em></span>' +
             '</a>'
             ),
-    /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
-    },
-
     /**
      * 랜더링한다.
      * @return {View.Layout.Toolbar.ControlPanel} - this object

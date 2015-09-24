@@ -8,12 +8,12 @@ var Frame = require('./frame');
 
 /**
  * left side 프레임 클래스
- * @constructor View.Layout.Frame.Lside
+ * @module view/layout/frame-lside
  */
-var LsideFrame = Frame.extend(/**@lends View.Layout.Frame.Lside.prototype */{
-    className: 'lside_area',
+var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
     /**
-     * 초기화 메서드
+     * @constructs
+     * @extends module:view/layout/frame
      */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
@@ -21,6 +21,9 @@ var LsideFrame = Frame.extend(/**@lends View.Layout.Frame.Lside.prototype */{
             whichSide: 'L'
         });
     },
+
+    className: 'lside_area',
+
     /**
      * columnWidth 변경시 호출될 이벤트 핸들러
      * @private

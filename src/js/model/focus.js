@@ -10,9 +10,17 @@ var util = require('../util');
 /**
  * Focus model
  * RowList collection 이 focus class 를 listen 한다.
- * @constructor Model.Focus
+ * @module model/focus
  */
-var Focus = Model.extend(/**@lends Model.Focus.prototype */{
+var Focus = Model.extend(/**@lends module:model/focus.prototype */{
+    /**
+     * @extends module:base/model
+     * @constructs
+     */
+    initialize: function() {
+        Model.prototype.initialize.apply(this, arguments);
+    },
+
     defaults: {
         rowKey: null,
         columnName: '',
@@ -21,13 +29,6 @@ var Focus = Model.extend(/**@lends Model.Focus.prototype */{
         scrollX: true,
         scrollY: true,
         scrollBarSize: 17
-    },
-
-    /**
-     * 생성자 함수
-     */
-    initialize: function() {
-        Model.prototype.initialize.apply(this, arguments);
     },
 
     /**

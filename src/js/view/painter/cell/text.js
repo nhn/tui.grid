@@ -1,5 +1,5 @@
 /**
- * @fileoverview Text 편집 가능한 Cell Painter
+ * @fileoverview Painter class for the text cell
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,23 +8,13 @@ var Cell = require('../cell');
 var util = require('../../../util');
 
 /**
- * text 타입의 cell renderer
- * @extends {View.Base.Painter.Cell}
- * @implements {View.Base.Painter.Cell.Interface}
- * @constructor View.Painter.Cell.Text
+ * Painter class for the text cell
+ * @module view/painter/cell/text
  */
-var Text = Cell.extend(/**@lends Text.prototype */{
-    redrawAttributes: ['isEditable'],
-    eventHandler: {
-        'blur input': '_onBlur',
-        'keydown input': '_onKeyDown',
-        'focus input': '_onFocus',
-        'selectstart input': '_onSelectStart'
-    },
-    template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
-
+var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
     /**
-     * Initializes
+     * @constructs
+     * @extends module:view/painter/cell
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
@@ -48,6 +38,17 @@ var Text = Cell.extend(/**@lends Text.prototype */{
             }
         });
     },
+
+    redrawAttributes: ['isEditable'],
+
+    eventHandler: {
+        'blur input': '_onBlur',
+        'keydown input': '_onKeyDown',
+        'focus input': '_onFocus',
+        'selectstart input': '_onSelectStart'
+    },
+
+    template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
 
     /**
      * input type 을 반환한다.
@@ -240,6 +241,7 @@ var Text = Cell.extend(/**@lends Text.prototype */{
      * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
      * @param  {jquery} $input - 인풋 요소의 jquery 객체
      * @return {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
+     * @private
      */
     _getCellInfoFromInput: function($input) {
         var $cell = $input.closest('td'),
@@ -257,6 +259,7 @@ var Text = Cell.extend(/**@lends Text.prototype */{
      * @param {Event} event - 이벤트 객체
      * @param {string} eventName - 이벤트명
      * @return {boolean} Return value of the event handler. Null if there's no event handler.
+     * @private
      */
     _executeInputEventHandler: function(event, eventName) {
         var $input = $(event.target),
@@ -274,6 +277,7 @@ var Text = Cell.extend(/**@lends Text.prototype */{
      * selectstart 이벤트 핸들러
      * IE에서 selectstart 이벤트가 Input 요소에 까지 적용되어 값에 셀렉션 지정이 안되는 문제를 해결
      * @param {Event} event 이벤트 객체
+     * @private
      */
     _onSelectStart: function(event) {
         event.stopPropagation();

@@ -8,18 +8,12 @@ var View = require('../../base/view');
 
 /**
  * Reside Handler class
- * @constructor View.Layout.Header.ResizeHandler
+ * @module view/layout/resizeHandler
  */
-var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
-    tagName: 'div',
-    className: 'resize_handle_container',
-    events: {
-        'mousedown .resize_handle': '_onMouseDown',
-        'click .resize_handle': '_onClick'
-    },
-
+var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
     /**
-     * 초기화 함수
+     * @constructs
+     * @extends module:base/view 
      * @param {Object} options - Options
      *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
      */
@@ -40,9 +34,16 @@ var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
             this.listenTo(this.grid.dimensionModel, 'change:width', $.proxy(this._refreshHandlerPosition, this));
         }
     },
-    /**
-     * resize handler 마크업 템플릿
-     */
+
+    tagName: 'div',
+
+    className: 'resize_handle_container',
+
+    events: {
+        'mousedown .resize_handle': '_onMouseDown',
+        'click .resize_handle': '_onClick'
+    },
+
     template: _.template('' +
         '<div columnindex="<%=columnIndex%>" ' +
         'columnname="<%=columnName%>" ' +

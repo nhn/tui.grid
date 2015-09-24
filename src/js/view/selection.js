@@ -9,15 +9,16 @@ var Layer = require('./selectionLayer');
 
 /**
  *  selection layer 의 컨트롤을 담당하는 틀래스
- *  @constructor View.Selection
+ *  @module view/selection
  */
-var Selection = View.extend(/**@lends Selection.prototype */{
-    events: {},
+var Selection = View.extend(/**@lends module:view/selection.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
+
         this.setOwnProperties({
             //메서드 호출시 range 값
             range: {
@@ -40,9 +41,12 @@ var Selection = View.extend(/**@lends Selection.prototype */{
             isEnable: true,
             _isShown: false
         });
+
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.grid.dataModel, 'add remove sort reset', this.endSelection, this);
     },
+
+    events: {},
 
     /**
      * selection 을 disable 한다.
@@ -316,14 +320,14 @@ var Selection = View.extend(/**@lends Selection.prototype */{
      * @return {Object} 해당 영역의 selection layer view 인스턴스
      */
     createLayer: function(whichSide) {
-        var clazz = whichSide === 'R' ? Layer.Rside : Layer.Lside,
-            layer = this._getLayer(whichSide);
+        var layer = this._getLayer(whichSide);
 
         if (layer && ne.util.isFunction(layer.destroy())) {
             layer.destroy();
         }
-        layer = this.createView(clazz, {
+        layer = this.createView(Layer, {
             grid: this.grid,
+            whichSide: whichSide,
             columnWidthList: this.grid.dimensionModel.getColumnWidthList(whichSide)
         });
 

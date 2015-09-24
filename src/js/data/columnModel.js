@@ -8,22 +8,12 @@ var Model = require('../base/model');
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
- * @constructor Data.ColumnModel
+ * @module data/columnModel
  */
-var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
-    defaults: {
-        keyColumnName: null,
-        columnFixIndex: 0,  //columnFixIndex
-        columnModelList: [],
-        visibleList: [],
-        hasNumberColumn: true,
-        selectType: '',
-        columnModelMap: {},
-        relationListMap: {}
-    },
-
+var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/model
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
@@ -35,6 +25,17 @@ var ColumnModel = Model.extend(/**@lends Data.ColumnModel.prototype */{
         };
         this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
         this.on('change', this._onChange, this);
+    },
+
+    defaults: {
+        keyColumnName: null,
+        columnFixIndex: 0,  //columnFixIndex
+        columnModelList: [],
+        visibleList: [],
+        hasNumberColumn: true,
+        selectType: '',
+        columnModelMap: {},
+        relationListMap: {}
     },
 
     /**

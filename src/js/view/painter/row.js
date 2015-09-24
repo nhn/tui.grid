@@ -9,25 +9,12 @@ var Painter = require('../../base/painter');
 /**
  * Row Painter
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
- * @constructor View.Painter.Row
+ * @module view/painter/row
  */
-var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
-    eventHandler: {
-        'mousedown': '_onMouseDown'
-    },
+var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
     /**
-     * TR 마크업 생성시 사용할 템플릿
-     */
-    baseTemplate: _.template('' +
-        '<tr ' +
-        'key="<%=key%>" ' +
-        'class="<%=className%>" ' +
-        'style="height: <%=height%>px;">' +
-        '<%=contents%>' +
-        '</tr>'),
-
-    /**
-     * 초기화 함수
+     * @constructs
+     * @extends module:view/painter
      * @param {object} options - Options
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체
@@ -39,6 +26,19 @@ var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
             columnModelList: options.columnModelList
         });
     },
+
+    eventHandler: {
+        'mousedown': '_onMouseDown'
+    },
+
+    baseTemplate: _.template('' +
+        '<tr ' +
+        'key="<%=key%>" ' +
+        'class="<%=className%>" ' +
+        'style="height: <%=height%>px;">' +
+        '<%=contents%>' +
+        '</tr>'),
+
     /**
      * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
      */
@@ -46,6 +46,7 @@ var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
         this.stopListening();
         this.remove();
     },
+    
     /**
      * mousedown 이벤트 핸들러
      * @param {event} mouseDownEvent 이벤트 객체
@@ -67,7 +68,6 @@ var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
      * model 변경 시 이벤트 핸들러
      * @param {object} model - 변화가 일어난 모델 인스턴스
      * @param {jquery} $tr - jquery object for tr element
-     * @private
      */
     onModelChange: function(model, $tr) {
         var editType,
@@ -81,6 +81,7 @@ var RowPainter = Painter.extend(/**@lends View.Painter.Row.prototype */{
             }
         }, this);
     },
+
     /**
      * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.

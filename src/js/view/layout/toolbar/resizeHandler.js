@@ -1,5 +1,5 @@
 /**
- * @fileoverview ResizeHandler for the Toolbar
+ * @fileoverview Class for the resize handler of the toolbar
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,23 +7,27 @@
 var View = require('../../../base/view');
 
 /**
- * 툴바 영역 resize handler
- * @constructor ResizeHandler
+ * Class for the resize handler of the toolbar
+ * @module view/layout/toolbar/resizeHandler
  */
-var ResizeHandler = View.extend(/**@lends ResizeHandler.prototype */{
-    tagName: 'div',
-    className: 'height_resize_bar',
-    events: {
-        'mousedown': '_onMouseDown'
-    },
-    template: _.template('<a href="#" class="height_resize_handle">높이 조절</a>'),
-
+var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandler.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      */
     initialize: function() {
         this.timeoutIdForResize = 0;
         View.prototype.initialize.apply(this, arguments);
+    },
+
+    tagName: 'div',
+
+    className: 'height_resize_bar',
+
+    template: _.template('<a href="#" class="height_resize_handle">높이 조절</a>'),
+
+    events: {
+        'mousedown': '_onMouseDown'
     },
 
     /**

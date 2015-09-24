@@ -9,10 +9,20 @@ var util = require('../../util');
 
 /**
  * Cell Painter Base
- * @extends {Painter}
- * @constructor Cell
+ * @module view/painter/cell
  */
-var Cell = Painter.extend(/**@lends Cell.prototype*/{
+var Cell = Painter.extend(/**@lends module:view/painter/cell.prototype */{
+    /**
+     * @constructs
+     * @extends moduel:view/painter
+     */
+    initialize: function() {
+        Painter.prototype.initialize.apply(this, arguments);
+        this.setOwnProperties({
+            _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
+        });
+    },
+
     /**
      * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
      */
@@ -20,6 +30,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
 
     /**
      * keyDownEvent 발생시 기본 동작 switch
+     * @private
      */
     _defaultKeyDownSwitch: {
         'ESC': function(keyDownEvent, param) {
@@ -37,20 +48,11 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
         },
         'defaultAction': function() {}
     },
-    /**
-     * event handler
-     */
-    eventHandler: {},
 
     /**
-     * 생성자 함수
+     * Event handlers
      */
-    initialize: function() {
-        Painter.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
-            _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
-        });
-    },
+    eventHandler: {},
 
     /**
      * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
@@ -225,6 +227,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      * @param {(string|function)} content - 내용
      * @param {object} cellData - 셀 데이터
      * @return {string} - 내용
+     * @private
      */
     _getExtraContent: function(content, cellData) {
         var contentValue = content,
@@ -246,6 +249,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      * @param {string} content - 감싸질 문자열
      * @param {string} className - span 태그의 클래스명
      * @return {string} span 태그로 감싼 HTML 코드
+     * @private
      */
     _getSpanWrapContent: function(content, className) {
         if (ne.util.isFalsy(content)) {
@@ -329,6 +333,7 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      * @param {string} value - 셀의 실제값
      * @param {object} cellData - 모델의 셀 데이터
      * @return {(string|null)} HTML문자열. 혹은 null
+     * @private
      */
     _getConvertedHtml: function(value, cellData) {
         var columnModel = this.getColumnModel(cellData),
@@ -435,50 +440,5 @@ var Cell = Painter.extend(/**@lends Cell.prototype*/{
      */
     setElementAttribute: function(cellData, $td, hasFocusedElement) {} // eslint-disable-line no-unused-vars
 });
-
-
-/**
- * Cell Painter 추가 시 반드시 필요한 Interface 정의
- * @interface
- */
-Cell.Interface = function() {};
-
-/* eslint-disable */
-/**
- * 자기 자신의 인스턴스의 editType 을 반환한다.
- * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
- */
-Cell.Interface.prototype.getEditType = function() {};
-
-/**
- * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
- * @param {jQuery} $td 해당 cell 엘리먼트
- */
-Cell.Interface.prototype.focusIn = function($td) {};
-
-/**
- * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
- * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
- * @param {object} cellData 모델의 셀 데이터
- * @return  {string} html 마크업 문자열
- * @example
- * var html = this.getContentHtml();
- * <select>
- *     <option value='1'>option1</option>
- *     <option value='2'>option1</option>
- *     <option value='3'>option1</option>
- * </select>
- */
-Cell.Interface.prototype.getContentHtml = function(cellData) {};
-
-/**
- * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
- * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
- * @param {object} cellData 모델의 셀 데이터
- * @param {jquery} $td 해당 cell 엘리먼트
- * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
- */
-Cell.Interface.prototype.setElementAttribute = function(cellData, $td, hasFocusedElement) {};
-/* eslint-enable */
 
 module.exports = Cell;

@@ -18,9 +18,7 @@
         "no-console": 1,
         "no-extra-parens": 0,
         "quote-props": [2, consistent],
-        "valid-jsdoc": [2, {
-            "requireReturn": false
-        }],
+        "valid-jsdoc": 0,
         "valid-typeof": 1,
 
         //Best Practices

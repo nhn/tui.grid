@@ -11,13 +11,12 @@ var ResizeHandler = require('./toolbar/resizeHandler');
 
 /**
  *  툴바 영역
- *  @constructor View.Layout.Toolbar
+ *  @module view/layout/toolbar
  */
-var Toolbar = View.extend(/**@lends Toolbar.prototype */{
-    tagName: 'div',
-    className: 'toolbar',
+var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -27,6 +26,10 @@ var Toolbar = View.extend(/**@lends Toolbar.prototype */{
             pagination: null
         });
     },
+
+    tagName: 'div',
+
+    className: 'toolbar',
 
     /**
      * 랜더링한다.

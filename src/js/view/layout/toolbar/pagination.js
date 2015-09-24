@@ -1,5 +1,5 @@
 /**
- * @fileoverview Pagination for the Toolbar
+ * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,20 +7,13 @@
 var View = require('../../../base/view');
 
 /**
- * 툴바의 Pagination 영역
- * @constructor View.Layout.Toolbar.Pagination
+ * Class for the pagination in the toolbar
+ * @module view/layout/toolbar/pagination
  */
-var Pagination = View.extend(/**@lends Base.prototype */{
-    tagName: 'div',
-    className: 'pagination',
-    template: _.template('' +
-        '<a href="#" class="pre_end">맨앞</a>' +
-        '<a href="#" class="pre">이전</a> ' +
-        '<a href="#" class="next">다음</a>' +
-        '<a href="#" class="next_end">맨뒤</a>'
-    ),
+var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -28,6 +21,17 @@ var Pagination = View.extend(/**@lends Base.prototype */{
             instance: null
         });
     },
+
+    tagName: 'div',
+
+    className: 'pagination',
+
+    template: _.template('' +
+        '<a href="#" class="pre_end">맨앞</a>' +
+        '<a href="#" class="pre">이전</a> ' +
+        '<a href="#" class="next">다음</a>' +
+        '<a href="#" class="next_end">맨뒤</a>'
+    ),
 
     /**
      * pagination 을 rendering 한다.
@@ -39,6 +43,7 @@ var Pagination = View.extend(/**@lends Base.prototype */{
         this._setPaginationInstance();
         return this;
     },
+
     /**
      * pagination instance 를 설정한다.
      * @private

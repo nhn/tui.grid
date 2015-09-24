@@ -1,5 +1,5 @@
 /**
- * @fileoverview Body View
+ * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,25 +8,13 @@ var View = require('../../base/view');
 var RowListView = require('../rowList');
 
 /**
- * body layout 뷰
- *
- * @constructor View.Layout.Body
+ * Class for the body layout
+ * @module view/layout/body
  */
-var Body = View.extend(/**@lends Body.prototype */{
-    tagName: 'div',
-    className: 'data',
-    template: _.template('<div class="table_container" style="top: 0px"><%=table%></div>'),
-    templateTable: _.template('' +
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
-        '   <colgroup><%=colGroup%></colgroup>' +
-        '   <tbody><%=tbody%></tbody>' +
-        '</table>'),
-    events: {
-        'scroll': '_onScrollDebounced'
-    },
-
+var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     /**
-     * 생성자 함수
+     * @constructs
+     * @extends module:base/view
      * @param {Object} options - Options
      *      @param {String} [options.whichSide='R']  어느 영역의 body 인지 여부.
      */
@@ -46,6 +34,22 @@ var Body = View.extend(/**@lends Body.prototype */{
             .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
             .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
             .listenTo(this.grid.renderModel, 'refresh', this._setTopPosition, this);
+    },
+
+    tagName: 'div',
+
+    className: 'data',
+
+    template: _.template('<div class="table_container" style="top: 0px"><%=table%></div>'),
+
+    templateTable: _.template('' +
+        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '   <colgroup><%=colGroup%></colgroup>' +
+        '   <tbody><%=tbody%></tbody>' +
+        '</table>'),
+
+    events: {
+        'scroll': '_onScrollDebounced'
     },
 
     /**
@@ -181,7 +185,6 @@ var Body = View.extend(/**@lends Body.prototype */{
      * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
      * @param {string} selector - 선택자
      * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
-     * @private
      */
     attachTableEventHandler: function(selector, handlerInfos) {
         _.each(handlerInfos, function(obj, eventName) {
