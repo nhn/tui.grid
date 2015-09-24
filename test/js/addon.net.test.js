@@ -535,6 +535,17 @@ describe('addon.net', function() {
         });
     });
 
+    describe('setPerPage', function() {
+        it('Set number of rows per page and reload current page', function() {
+            createNet();
+            spyOn(net, '_readDataAt');
+            net.setPerPage(15);
+
+            expect(net.perPage).toEqual(15);
+            expect(net._readDataAt).toHaveBeenCalledWith(1);
+        });
+    });
+
     describe('_onComplete', function() {
         it('unlock 을 호출하는지 확인한다.', function() {
             createNet();

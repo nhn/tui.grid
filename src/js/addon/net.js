@@ -131,6 +131,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this._readDataAt(1, false);
         }
     },
+
     /**
      * pagination instance 를 초기화 한다.
      * @private
@@ -143,6 +144,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             pagination.on('beforeMove', $.proxy(this._onPageBeforeMove, this));
         }
     },
+
     /**
      * dataModel 이 network 통신을 할 수 있도록 설정한다.
      * @private
@@ -151,6 +153,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this.grid.dataModel.url = this.options.api.readData;
         this.grid.dataModel.sync = $.proxy(this._sync, this);
     },
+
     /**
      * ajax history 를 사용하기 위한 router 를 초기화한다.
      * @private
@@ -405,6 +408,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (param) {
             this._ajax(param);
         }
+    },
+
+    /**
+     * Set number of rows per page and reload current page
+     * @param {number} perPage - Number of rows per page
+     */
+    setPerPage: function(perPage) {
+        this.perPage = perPage;
+        this._readDataAt(1);
     },
 
     /**
