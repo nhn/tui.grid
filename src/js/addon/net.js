@@ -102,8 +102,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 updateData: '',
                 deleteData: '',
                 modifyData: '',
-                downloadData: '',
-                downloadAllData: ''
+                downloadExcel: '',
+                downloadExcelAll: ''
             },
             perPage: 500,
             enableAjaxHistory: true
@@ -226,6 +226,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             Backbone.sync.call(Backbone, method, model, options);
         }
     },
+
     /**
      * network 통신에 대한 _lock 을 건다.
      * @private
@@ -234,6 +235,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this.grid.showGridLayer('loading');
         this.isLocked = true;
     },
+
     /**
      * network 통신에 대해 unlock 한다.
      * loading layer hide 는 rendering 하는 로직에서 수행한다.
@@ -252,6 +254,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         /* istanbul ignore next*/
         return util.form.getFormData(this.$el);
     },
+
     /**
      * DataModel 에서 Backbone.fetch 수행 이후 success 콜백
      * @param {object} dataModel grid 의 dataModel
@@ -274,6 +277,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this.curPage = page;
         }
     },
+
     /**
      * DataModel 에서 Backbone.fetch 수행 이후 error 콜백
      * @param {object} dataModel grid 의 dataModel
@@ -289,6 +293,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     reloadData: function() {
         this.readData(this.lastRequestedReadData);
     },
+
     /**
      * 데이터 조회 요청.
      * 내부적으로 사용하는 메서드이므로 외부에서 호출하지 않기를 권장함.
@@ -408,6 +413,28 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (param) {
             this._ajax(param);
         }
+    },
+
+    /**
+     * Change window.location to registered url for downloading data
+     * @param {string} type - Download type. 'excel' or 'excelAll'.
+     *        Will be matched with API 'downloadExcel', 'downloadExcelAll'.
+     */
+    download: function(type) {
+        var apiName = 'download' + util.toUpperCaseFirstLetter(type),
+            data = this.requestedFormData,
+            url = this.options.api[apiName],
+            paramStr;
+
+        if (type === 'excel') {
+            data.page = this.curPage;
+            data.perPage = this.perPage;
+        } else {
+            data = _.omit(data, 'page', 'perPage');
+        }
+
+        paramStr = $.param(data);
+        window.location = url + '?'+ paramStr;
     },
 
     /**

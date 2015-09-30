@@ -251,6 +251,15 @@ var util = {
     },
 
     /**
+     * Capitalize first character of the target string.
+     * @param  {string} string Target string
+     * @return {string} Converted new string
+     */
+    toUpperCaseFirstLetter: function(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    },
+
+    /**
      * form 요소 설정
      * @memberof module:util
      */

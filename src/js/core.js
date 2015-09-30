@@ -64,8 +64,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         this._initializeListener();
         this._initializeView();
 
-        this._initializeScrollBar();
-
         this._attachExtraEvent();
 
         this.render();
@@ -122,7 +120,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         'DEL': 46,
         'UNDEFINED': 229
     },
-    
+
     keyName: {
         9: 'TAB',
         13: 'ENTER',
@@ -330,15 +328,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
     _initializeListener: function() {
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight)
             .listenTo(this.focusModel, 'select', this._onRowSelectChanged);
-    },
-    /**
-
-     * scrollbar 를 초기화한다.
-     * @private
-     */
-    _initializeScrollBar: function() {
-//            if(!this.option('scrollX')) this.$el.css('overflowX', 'hidden');
-//            if(!this.option('scrollY')) this.$el.css('overflowY', 'hidden');
     },
 
     /**

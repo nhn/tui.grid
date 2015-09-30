@@ -21,7 +21,7 @@ var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{
         this.setOwnProperties({
             grid: grid
         });
-    },
+    }
 });
 
 _.assign(Model.prototype, common);
