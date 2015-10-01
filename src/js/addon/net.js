@@ -49,11 +49,13 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
         //사용할 API URL 리스트
         api: {
-            'readData': './api/read',       //데이터 조회 API 주소
-            'createData': './api/create',   //데이터 생성 API 주소
-            'updateData': './api/update',   //데이터 업데이트 API 주소
-            'deleteData': './api/delete',   //데이터 삭제 API 주소
-            'modifyData': './api/modify'    //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+            'readData': './api/read',                       //데이터 조회 API 주소
+            'createData': './api/create',                   //데이터 생성 API 주소
+            'updateData': './api/update',                   //데이터 업데이트 API 주소
+            'deleteData': './api/delete',                   //데이터 삭제 API 주소
+            'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+            'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
+            'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
         }
     });
      //이벤트 핸들러 바인딩
@@ -267,7 +269,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         dataModel.setOriginalRowList();
 
-        //pagination 처리
         if (pagination && responseData.pagination) {
             page = responseData.pagination.page;
             totalCount = responseData.pagination.totalCount;
@@ -466,7 +467,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 modifyData: ['createList', 'updateList', 'deleteList']
             },
             checkList = checkMap[requestType],
-            data = $.extend({}, this.requestedFormData),
+            data = {},
             count = 0,
             dataMap;
 
@@ -590,10 +591,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         var eventData = this.createEventData(options.data),
             params;
 
-        //beforeRequest 이벤트를 발생한다.
         this.grid.trigger('beforeRequest', eventData);
-
-        //event의 stopped 가 호출 된다면 ajax 호출을 중지한다.
         if (eventData.isStopped()) {
             return;
         }
@@ -641,6 +639,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 requestParameter: options.data,
                 responseData: responseData
             });
+
         this.grid.trigger('response', eventData);
         if (eventData.isStopped()) {
             return;
