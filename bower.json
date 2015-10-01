@@ -6,26 +6,22 @@
   ],
   "license": "MIT",
   "main": [
-    "grid.js",
-    "grid.css"
+    "dist/grid.js",
+    "dist/grid.css"
   ],
   "ignore": [
     "**/.*",
     ".*",
-    "*.zip",
-    "src",
-    "bin",
-    "node_modules",
-    "bower_components",
+    "images",
     "performance",
+    "samples"
+    "src",
     "test",
-    "data",
     "bower.json",
-    "conf.json",
-    "Gruntfile.js",
+    "gulpfile.js",
+    "jsdoc.conf.json",
     "karma.conf.js",
     "package.json",
-    "samples"
   ],
   "dependencies": {
     "backbone": "~1.1.2",
