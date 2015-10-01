@@ -5,7 +5,7 @@ Application Grid
 스마트 렌더링을 적용하여 대용량 데이터도 다룰 수 있으며, 페이지 단위 처리도 제공한다.
 
 ## Feature
-https://github.com/nhnent/fe.application-grid/wiki/어플리케이션-그리드
+https://github.com/nhnent/fe.application-grid/wiki
 
 ## Documentation
 * **API** : https://nhnent.github.io/fe.application-grid/api
