@@ -37,7 +37,7 @@ module.exports = function(config) {
             {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false},
 
             {pattern: 'test/fixtures/*.html', included: false},
-            {pattern: 'src/css/*.css', included: false},
+            {pattern: 'build/grid.css', included: false},
             {pattern: 'images/*', included: false},
 
             'src/js/**/*.js',
@@ -123,10 +123,6 @@ module.exports = function(config) {
             'Firefox-WebDriver'
         ],
 
-        // client: {
-        //     useIframe: false
-        // },
-        //
         customLaunchers: {
             'IE7': {
                 base: 'WebDriver',

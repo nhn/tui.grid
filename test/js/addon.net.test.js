@@ -157,8 +157,9 @@ describe('addon.net', function() {
             var $form = $('<form />'),
                 inputData, actualData;
 
-            $form.append($('<input />').attr('name', 'input1'));
-            $form.append($('<input />').attr('name', 'input2'));
+            $form.append($('<input name="input1" />'));
+            $form.append($('<input name="input2" />'));
+
             createNet({
                 el: $form
             });
