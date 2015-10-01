@@ -1,5 +1,5 @@
 {
-  "name": "Grid",
+  "name": "ne-application-grid",
   "version": "1.0.4",
   "authors": [
     "NHN Ent. FE Development Team"
@@ -17,7 +17,6 @@
     "samples"
     "src",
     "test",
-    "bower.json",
     "gulpfile.js",
     "jsdoc.conf.json",
     "karma.conf.js",
