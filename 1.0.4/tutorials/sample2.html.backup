@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>Sample 1</title>
+    <link rel="stylesheet" type="text/css" href="./css/grid.css" />
+</head>
+<body>
+
+<form id="form" style="margin:10px">
+    <table>
+        <tr>
+            <td>
+                송장번호 :
+            </td>
+            <td>
+                <input name="delivery_number" type="text" value="1123123"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                이름 :
+            </td>
+            <td>
+                <input name="user_name" type="text" value="홍길동"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                계절 :
+            </td>
+            <td>
+                <select name="weather">
+                    <option>봄</option>
+                    <option>여름</option>
+                    <option>가을</option>
+                    <option>겨울</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                성별 :
+            </td>
+            <td>
+                <input type="radio" name="gender" value="male" checked/>남
+                <input type="radio" name="gender" value="female"/>여
+            </td>
+        </tr>
+        <tr>
+            <td>
+                취미 :
+            </td>
+            <td>
+                <input type="checkbox" name="hobby" value="sport" checked/>스포츠
+                <input type="checkbox" name="hobby" value="sewing"/>재봉틀
+                <input type="checkbox" name="hobby" value="drinking"/>음주
+                <input type="checkbox" name="hobby" value="dancing"/>가무
+            </td>
+        </tr>
+        <tr>
+            <td>
+                rowState:
+            </td>
+            <td>
+                <input type="radio" name="rowState" value="" checked/>NONE
+                <input type="radio" name="rowState" value="CHECKED" />CHECKED
+                <input type="radio" name="rowState" value="DISABLED"/>DISABLED
+                <input type="radio" name="rowState" value="DISABLED_CHECK"/>DISABLE_CHECK
+            </td>
+        </tr>
+    </table>
+
+    <input type="submit" value="submit"/>
+</form>
+<div>
+    <div style="width:1024px" id="grid">
+    </div>
+</div>
+<div style="margin-left:20px">
+    <h1>테스트 영역</h1>
+    <input type="button" value="append" id="append"/> row 를 최하단에 추가한다.<br />
+    <input type="button" value="prepend" id="prepend"/> row 를 최상단에 추가한다.<br />
+    <input type="button" value="createData" id="createData"/> createData 요청 테스트<br />
+    <input type="button" value="updateData" id="updateData"/> updateData 요청 테스트<br />
+    <input type="button" value="deleteData" id="deleteData"/> deleteData 요청 테스트<br />
+    <input type="button" value="modifyData" id="modifyData"/> modifyData 요청 테스트<br />
+</div>
+<div style="margin-left:20px" id="result">
+</div>
+</body>
+<script type="text/javascript" src="./js/lib/jquery.min.js"></script>
+<script type="text/javascript" src="./js/lib/jquery.json.js"></script>
+<script type="text/javascript" src="./js/lib/underscore.js"></script>
+<script type="text/javascript" src="./js/lib/backbone.js"></script>
+<script type="text/javascript" src="./js/lib/code-snippet.min.js"></script>
+<script type="text/javascript" src="./js/lib/pagination.min.js"></script>
+<script type="text/javascript" src="./js/grid.js"></script>
+
+<script>
+    var $result = $('result'),
+            url = './js/data/grid-response.json';
+
+    var grid = new ne.Grid({
+        el: $('#grid'),
+        columnModelList: [
+            {
+                title: 'column1',
+                columnName: 'column1'
+            },
+            {
+                title: 'column2',
+                columnName: 'column2',
+                formatter: function(value, row) {
+                    return '<img src="'+value+'"/> value ';
+                }
+            },
+            {
+                title: 'column3',
+                columnName: 'column3',
+                width: 100
+            },
+            {
+                title: 'column4',
+                columnName: 'column4',
+                editOption: {
+                    type: 'select',
+                    list: [
+                        {text: '7, 8', value: 1},
+                        {text: '7, 8 editable, disabled', value: 2},
+                        {text: '7, 8 not editable', value: 3},
+                        {text: '저는 선택 불가능합니다', value: 4}
+                    ],
+                    changeBeforeCallback: function(changeEvent) {
+                        return !(changeEvent.columnData === '4');
+                    },
+                    changeAfterCallback: function(changeEvent) {
+                    }
+                },
+                relationList: [
+                    {
+                        columnList: ['column7', 'column8'],
+                        isDisabled: function(value, rowData) {
+                            return value == 2;
+                        },
+                        isEditable: function(value, rowData) {
+                            return value != 3;
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'column5',
+                columnName: 'column5',
+                editOption: {
+                    type: 'radio',
+                    list: [
+                        {text: '첫번째', value: 1},
+                        {text: '두번째 4의 리스트 변경', value: 2},
+                        {text: '세번째', value: 3}
+                    ]
+                },
+                relationList: [
+                    {
+                        columnList: ['column4'],
+                        optionListChange: function(value, rowData) {
+                            if (value == 2) {
+                                console.log('changev return');
+                                return [
+                                    { text: '하나', value: 1},
+                                    { text: '둘', value: 2},
+                                    { text: '셋', value: 3},
+                                    { text: '넷', value: 4}
+                                ];
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                title: 'column6',
+                columnName: 'column6',
+                editOption: {
+                    type: 'checkbox',
+                    list: [
+                        {text: '첫번째', value: 1},
+                        {text: '두번째', value: 2},
+                        {text: '세번째', value: 3}
+                    ]
+                }
+            },
+            {
+                title: 'column7',
+                columnName: 'column7',
+                editOption: {
+                    type: 'text-convertible',
+                    afterText: '패'
+                },
+                isEㅌllipsis: true
+
+            },
+            {
+                title: 'column8',
+                columnName: 'column8',
+                editOption: {
+                    type: 'text-password',
+                    beforeText: '패'
+                }
+            }
+        ],
+        selectType: 'checkbox',
+        scrollX: true,
+        scrollY: true,
+        columnFixIndex: 5,
+        rowHeight: 30,
+        displayRowCount: 10,
+        headerHeight: 50,
+        useDataCopy: true,
+        minimumColumnWidth: 20,
+        toolbar: {  //툴바영역의 UI 컴포넌트 사용 여부 설정
+            hasResizeHandler: true, //(default:true) 수직 resizeHandler 를 사용한다.
+            hasControlPanel: false,  //(default:true) 컨트롤 패널을 사용한다.
+            hasPagination: true     //(default:true) pagination 을 사용한다.
+        }
+    }).on('response', function(customEvent) {
+                if (customEvent && customEvent.responseData && customEvent.responseData.data) {
+                    customEvent.responseData.data.pagination.page = customEvent.requestParameter.page;
+                }
+            }).on('successResponse', function(data) {
+                console.log('onSuccessResponse');
+            }).use('Net', {
+                el: $('#form'),
+                perPage: 100,
+                api: {
+                    'readData': url,
+                    'updateData': 'api/updateData',
+                    'deleteData': 'api/deleteData',
+                    'modifyData': 'api/modifyData'
+                }
+            });
+
+    var net = grid.getAddOn('Net');
+
+    $('#append').on('click', function(e) {
+        grid.appendRow();
+    });
+    $('#prepend').on('click', function(e) {
+        grid.prependRow();
+    });
+    $('#sort').on('click', function(e) {
+        grid.sort('columnName2');
+    });
+    $('#createData').on('click', function(e) {
+        net.request('createData');
+    });
+    $('#updateData').on('click', function(e) {
+        net.request('updateData');
+
+    });
+    $('#deleteData').on('click', function(e) {
+        net.request('deleteData');
+    });
+    $('#modifyData').on('click', function(e) {
+        net.request('modifyData');
+    });
+</script>
+</html>
