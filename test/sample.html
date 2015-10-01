@@ -13,10 +13,9 @@
 	<div id="wrapper">
 		<div id="grid"></div>
 	</div>
-	<div id="log"></div>
+	<div id="btn"><button type="button" id="btn-update">UpdateData</button></div>
 </div>
 </body>
-
 <script src="../lib/jquery/jquery.js"></script>
 <script src="../lib/jquery-json/src/jquery.json.js"></script>
 <script src="../lib/underscore/underscore.js"></script>
@@ -24,97 +23,67 @@
 <script src="../lib/ne-code-snippet/code-snippet.js"></script>
 <script src="../lib/ne-component-pagination/pagination.js"></script>
 <script src="../build/grid.js"></script>
-
 <script>
 var grid = new ne.Grid({
     el: $('#grid'),
-	// columnFixIndex: 2,
 	displayRowCount: 10,
-	headerHeight: 100,
+	useClientSort: false,
     columnModelList: [
 		{
-            title: 'c1',
+			title: 'c1',
             columnName: 'c1',
-			width: 20,
-			isSortable: true,
             editOption: {
                 type: 'text-convertible'
 			}
-        }, {
-            title: 'c2',
-			width: 100,
-			isFixedWidth: true,
+        },
+		{
+			title: 'c2',
+			isSortable: true,
             columnName: 'c2',
-			editOption: {
-				type: 'text-convertible'
+            editOption: {
+                type: 'text'
 			}
-        }, {
+        },
+		{
 			title: 'c3',
-			width: 60,
-			columnName: 'c3'
-		}, {
-			title: 'c4',
-			width: 120,
-			columnName: 'c4',
-			editOption: {
-				type: 'text-convertible',
-			    inputEvents: {
-					focus: function(ev) {
-					    // console.log('focus!!!!!!');
-					},
-					blur: function(ev) {
-						// console.log('blur!!!!');
-					},
-					keydown: function(ev) {
-						// console.log('keydown!');
-					}
-				}
+            columnName: 'c3',
+            editOption: {
+				type: 'text'
 			}
-		}, {
-			title: 'c5',
-			width: 100,
-			columnName: 'c5',
-			formatter: function() {
-			    return '<a href="http://naver.com">Link</a>';
-			}
-		}, {
-			title: 'c6',
-			width: 50,
-			columnName: 'c6'
-		}, {
-			title: 'c7',
-			width: 200,
-			columnName: 'c7'
-		}
-    ],
-	columnMerge: [{
-		columnName: 'merge1',
-		title: 'merge1',
-		columnNameList: ['c2', 'c3']
-	}, {
-		columnName: 'merge2',
-		title: 'merge2',
-		columnNameList: ['c4', 'c5', 'c6', 'c7']
-	}]
+        }
+	]
 });
 
-var rowList = [];
+// var rowList = [];
+//
+// (function() {
+// 	_.times(5, function(number) {
+// 	    rowList.push({
+// 			c1: number + '0',
+// 			c2: number + '1',
+// 			c3: number + '2',
+// 			c4: number + '3'
+// 		});
+// 	})
+// })();
+//
+// rowList[4]._extraData = {
+// 	rowSpan: {c1: 1, c2: 1}
+// }
+// grid.setRowList(rowList);
+grid.use('Net', {
+	perPage: 10,
+	api: {
+		readData: '/sample',
+		downloadExcel: '/download/excel',
+		downloadExcelAll: '/download/excelAll',
+		updateData: '/update'
+	}
+});
+var net = grid.getAddOn('Net');
 
-(function() {
-	_.times(50, function(number) {
-	    rowList.push({
-			c1: number + '0',
-			c2: number + '1',
-			c3: number + '2',
-			c4: number + '3'
-		});
-	})
-})();
-
-rowList[4]._extraData = {
-	rowSpan: {c1: 1, c2: 1}
-}
-
-grid.setRowList(rowList);
+$('#btn-update').click(function() {
+	net.request('updateData');
+});
 </script>
 </html>

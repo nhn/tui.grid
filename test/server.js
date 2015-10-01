@@ -1,3 +1,5 @@
+'use strict';
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
@@ -66,4 +68,25 @@ app.route('/sample')
     .post(function(req, res) {
         res.send(getSampleData(req.body));
     });
+
+app.route('/download/excel')
+    .get(function(req, res) {
+        res.setHeader('Content-Type', 'application/vnd.openxmlformates');
+        res.send('this!!???');
+    });
+
+app.route('/download/excelAll')
+    .get(function(req, res) {
+        res.setHeader('Content-Type', 'application/vnd.openxmlformates');
+        res.send('this!!???AAAA');
+    });
+
+app.route('/update')
+    .post(function(req, res) {
+        res.send({
+            result: false,
+            message: 'Error!!'
+        });
+    });
+
 app.listen(8000);
