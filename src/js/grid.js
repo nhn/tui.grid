@@ -15,7 +15,8 @@
  *      @param {number} [options.rowHeight=27] - The height of each rows.
  *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area. Total height of grid will be set based on this value.
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
- *      @param {boolean} [options.useClientSort] - If set to true, sorting will be executed by client itself without server.
+ *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself without server.
+ *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to edit-mode with a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.
