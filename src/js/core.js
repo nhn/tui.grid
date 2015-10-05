@@ -402,7 +402,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (this.option('singleClickEdit')) {
+            if (this.option('singleClickEdit') && !$target.is('input')) {
                 this.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
