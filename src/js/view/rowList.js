@@ -20,7 +20,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
-        var focusModel, whichSide;
+        var focusModel, renderModel, whichSide;
 
         View.prototype.initialize.apply(this, arguments);
 
@@ -40,11 +40,11 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         focusModel = this.grid.focusModel;
         this.listenTo(this.collection, 'change', this._onModelChange)
-            .listenTo(focusModel, 'select', this._onSelect, this)
-            .listenTo(focusModel, 'unselect', this._onUnselect, this)
-            .listenTo(focusModel, 'focus', this._onFocus, this)
-            .listenTo(focusModel, 'blur', this._onBlur, this)
-            .listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+            .listenTo(focusModel, 'select', this._onSelect)
+            .listenTo(focusModel, 'unselect', this._onUnselect)
+            .listenTo(focusModel, 'focus', this._onFocus)
+            .listenTo(focusModel, 'blur', this._onBlur)
+            .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 100));
     },
 
     /**
@@ -220,6 +220,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
+        this.bodyView.resetContainerArea();
+
         if (isModelChanged) {
             this._resetRows();
         } else {
@@ -233,8 +235,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 this._appendNewRows(rowKeys, dupRowKeys);
             }
         }
-        this.renderedRowKeys = rowKeys;
 
+        this.renderedRowKeys = rowKeys;
         this._focusClipboardDebounced();
         this._showLayer();
 
@@ -284,7 +286,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @memberof RowList
      * @static
      */
-    isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9)
+    isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9),
 });
 
 module.exports = RowList;

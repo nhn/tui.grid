@@ -13,7 +13,7 @@ var View = require('../../base/view');
 var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar.prototype */{
     /**
      * @constructs
-     * @extends module:base/view 
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -23,7 +23,6 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
 
         this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
 
-        this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
         this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
         this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
     },
@@ -77,6 +76,8 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
     _onDimensionChange: function(model) {
         if (model.changed['headerHeight'] || model.changed['bodyHeight']) {
             this.render();
+        } else if (model.changed['totalRowHeight']) {
+            this._setHeight();
         }
     },
 
@@ -110,6 +111,7 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
             display: 'block'
         }).html('<div class="content"></div>');
         this._setHeight();
+
         return this;
     },
 
@@ -118,12 +120,7 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
      * @private
      */
     _setHeight: function() {
-        var grid = this.grid,
-            rowHeight = grid.dimensionModel.get('rowHeight'),
-            rowCount = grid.dataModel.length,
-            height = rowHeight * grid.dataModel.length + (rowCount + 1);
-
-        this.$el.find('.content').height(height);
+        this.$el.find('.content').height(this.grid.dimensionModel.get('totalRowHeight'));
     },
 
     /**

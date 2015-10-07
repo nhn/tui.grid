@@ -38,9 +38,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
          * @type {number[]}
          */
         this._minColumnWidthList = null;
-
         this.columnModel = this.grid.columnModel;
+
         this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
+        this.listenTo(this.grid.dataModel, 'add remove reset', this._resetTotalRowHeight);
+
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
@@ -49,7 +51,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     models: null,
+
     columnModel: null,
+    
     defaults: {
         offsetLeft: 0,
         offsetTop: 0,
@@ -61,6 +65,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         toolbarHeight: 0,
 
         rowHeight: 0,
+        totalRowHeight: 0,
 
         rsideWidth: 0,
         lsideWidth: 0,
@@ -109,6 +114,17 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             }
         });
         return appliedList;
+    },
+
+    /**
+     * Reset 'totalRowHeight' property.
+     */
+    _resetTotalRowHeight: function() {
+        var rowHeight = this.get('rowHeight'),
+            rowCount = this.grid.dataModel.length,
+            totalBorderWidth = rowCount + 1;
+
+        this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
     },
 
     /**

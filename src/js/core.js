@@ -223,7 +223,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
     _initializeModel: function() {
         var offset = this.$el.offset();
 
-        //define column model
         this.columnModel = new ColumnModelData({
             grid: this,
             hasNumberColumn: this.option('autoNumbering'),
@@ -233,7 +232,12 @@ var Core = View.extend(/**@lends module:core.prototype */{
         });
         this.setColumnModelList(this.option('columnModelList'));
 
-        //define layout model
+        this.dataModel = new RowListData([], {
+            grid: this,
+            useClientSort: this.option('useClientSort')
+        });
+        this.dataModel.reset([]);
+
         this.dimensionModel = new DimensionModel({
             grid: this,
             offsetTop: offset.top,
@@ -250,20 +254,12 @@ var Core = View.extend(/**@lends module:core.prototype */{
             displayRowCount: this.option('displayRowCount')
         });
 
-        // define focus model
         this.focusModel = new FocusModel({
             grid: this,
             scrollX: !!this.option('scrollX'),
             scrollY: !!this.option('scrollY'),
             scrollBarSize: this.scrollBarSize
         });
-
-        //define rowList
-        this.dataModel = new RowListData([], {
-            grid: this,
-            useClientSort: this.option('useClientSort')
-        });
-        this.dataModel.reset([]);
 
         if (this.option('notUseSmartRendering')) {
             this.renderModel = new RenderModel({

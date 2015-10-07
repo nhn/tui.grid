@@ -26,14 +26,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             extraWidth: 0,
             $tableContainer: null
         });
-        // resolve the issue that IE7, IE8 emits multiple scroll-events during a single call stack
-        this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
 
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
             .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
-            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-            .listenTo(this.grid.renderModel, 'refresh', this._setTopPosition, this);
+            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
     },
 
     tagName: 'div',
@@ -49,7 +46,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         '</table>'),
 
     events: {
-        'scroll': '_onScrollDebounced'
+        'scroll': '_onScroll'
     },
 
     /**
@@ -92,12 +89,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             obj.scrollLeft = scrollEvent.target.scrollLeft;
         }
 
-        // block scrollChange temporarily to prevent setting scrollTop again by #_onScrollTopChange)
-        this._blockScrollChange = true;
-        _.defer(function(self) {
-            self._blockScrollChange = false;
-        }, this);
-
         renderModel.set(obj);
     },
 
@@ -120,18 +111,22 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onScrollTopChange: function(model, value) {
-        if (!this._blockScrollChange) {
-            this.el.scrollTop = value;
-        }
+        this.el.scrollTop = value;
     },
 
     /**
-     * rowList 가 rendering 될 때 top 값을 조정한다.
+     * Reset position and height of a container area.
      * @param {number} top  조정할 top 위치 값
      * @private
      */
-    _setTopPosition: function(top) {
-        this.$tableContainer.css('top', top + 'px');
+    resetContainerArea: function() {
+        var top = this.grid.renderModel.get('top'),
+            height = this.grid.dimensionModel.get('totalRowHeight');
+
+        this.$tableContainer.css({
+            top: top + 'px',
+            height: (height - top) + 'px'
+        });
     },
 
     /**

@@ -209,12 +209,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         }
 
         if (this.isColumnModelChanged) {
-            this.trigger('columnModelChanged', this.get('top'));
+            this.trigger('columnModelChanged');
             this.isColumnModelChanged = false;
         } else {
             this.trigger('rowListChanged', isDataModelChanged);
         }
-        this.trigger('refresh', this.get('top'));
+        this.trigger('refresh');
     },
 
     /**
