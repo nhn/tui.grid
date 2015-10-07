@@ -39,6 +39,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
         focusModel = this.grid.focusModel;
+        renderModel = this.grid.renderModel;
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(focusModel, 'select', this._onSelect)
             .listenTo(focusModel, 'unselect', this._onUnselect)
