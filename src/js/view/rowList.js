@@ -45,7 +45,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'unselect', this._onUnselect)
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
-            .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 100));
+            .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 50));
     },
 
     /**
@@ -287,7 +287,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @memberof RowList
      * @static
      */
-    isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9),
+    isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9)
 });
 
 module.exports = RowList;
