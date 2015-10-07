@@ -1255,7 +1255,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
     _initializeModel: function() {
         var offset = this.$el.offset();
 
-        //define column model
         this.columnModel = new ColumnModelData({
             grid: this,
             hasNumberColumn: this.option('autoNumbering'),
@@ -1265,7 +1264,12 @@ var Core = View.extend(/**@lends module:core.prototype */{
         });
         this.setColumnModelList(this.option('columnModelList'));
 
-        //define layout model
+        this.dataModel = new RowListData([], {
+            grid: this,
+            useClientSort: this.option('useClientSort')
+        });
+        this.dataModel.reset([]);
+
         this.dimensionModel = new DimensionModel({
             grid: this,
             offsetTop: offset.top,
@@ -1282,20 +1286,12 @@ var Core = View.extend(/**@lends module:core.prototype */{
             displayRowCount: this.option('displayRowCount')
         });
 
-        // define focus model
         this.focusModel = new FocusModel({
             grid: this,
             scrollX: !!this.option('scrollX'),
             scrollY: !!this.option('scrollY'),
             scrollBarSize: this.scrollBarSize
         });
-
-        //define rowList
-        this.dataModel = new RowListData([], {
-            grid: this,
-            useClientSort: this.option('useClientSort')
-        });
-        this.dataModel.reset([]);
 
         if (this.option('notUseSmartRendering')) {
             this.renderModel = new RenderModel({
@@ -1434,7 +1430,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (this.option('singleClickEdit')) {
+            if (this.option('singleClickEdit') && !$target.is('input')) {
                 this.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
@@ -4170,7 +4166,8 @@ module.exports = RowList;
  *      @param {number} [options.rowHeight=27] - The height of each rows.
  *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area. Total height of grid will be set based on this value.
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
- *      @param {boolean} [options.useClientSort] - If set to true, sorting will be executed by client itself without server.
+ *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself without server.
+ *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to edit-mode with a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.
@@ -4917,9 +4914,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
          * @type {number[]}
          */
         this._minColumnWidthList = null;
-
         this.columnModel = this.grid.columnModel;
+
         this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
+        this.listenTo(this.grid.dataModel, 'add remove reset', this._resetTotalRowHeight);
+
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
@@ -4928,7 +4927,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     models: null,
+
     columnModel: null,
+    
     defaults: {
         offsetLeft: 0,
         offsetTop: 0,
@@ -4940,6 +4941,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         toolbarHeight: 0,
 
         rowHeight: 0,
+        totalRowHeight: 0,
 
         rsideWidth: 0,
         lsideWidth: 0,
@@ -4988,6 +4990,17 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             }
         });
         return appliedList;
+    },
+
+    /**
+     * Reset 'totalRowHeight' property.
+     */
+    _resetTotalRowHeight: function() {
+        var rowHeight = this.get('rowHeight'),
+            rowCount = this.grid.dataModel.length,
+            totalBorderWidth = rowCount + 1;
+
+        this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
     },
 
     /**
@@ -6221,12 +6234,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         }
 
         if (this.isColumnModelChanged) {
-            this.trigger('columnModelChanged', this.get('top'));
+            this.trigger('columnModelChanged');
             this.isColumnModelChanged = false;
         } else {
             this.trigger('rowListChanged', isDataModelChanged);
         }
-        this.trigger('refresh', this.get('top'));
+        this.trigger('refresh');
     },
 
     /**
@@ -7758,14 +7771,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             extraWidth: 0,
             $tableContainer: null
         });
-        // resolve the issue that IE7, IE8 emits multiple scroll-events during a single call stack
-        this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
 
         this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
             .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
-            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-            .listenTo(this.grid.renderModel, 'refresh', this._setTopPosition, this);
+            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
     },
 
     tagName: 'div',
@@ -7781,7 +7791,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         '</table>'),
 
     events: {
-        'scroll': '_onScrollDebounced'
+        'scroll': '_onScroll'
     },
 
     /**
@@ -7824,12 +7834,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             obj.scrollLeft = scrollEvent.target.scrollLeft;
         }
 
-        // block scrollChange temporarily to prevent setting scrollTop again by #_onScrollTopChange)
-        this._blockScrollChange = true;
-        _.defer(function(self) {
-            self._blockScrollChange = false;
-        }, this);
-
         renderModel.set(obj);
     },
 
@@ -7852,18 +7856,22 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onScrollTopChange: function(model, value) {
-        if (!this._blockScrollChange) {
-            this.el.scrollTop = value;
-        }
+        this.el.scrollTop = value;
     },
 
     /**
-     * rowList 가 rendering 될 때 top 값을 조정한다.
+     * Reset position and height of a container area.
      * @param {number} top  조정할 top 위치 값
      * @private
      */
-    _setTopPosition: function(top) {
-        this.$tableContainer.css('top', top + 'px');
+    resetContainerArea: function() {
+        var top = this.grid.renderModel.get('top'),
+            height = this.grid.dimensionModel.get('totalRowHeight');
+
+        this.$tableContainer.css({
+            top: top + 'px',
+            height: (height - top) + 'px'
+        });
     },
 
     /**
@@ -9256,7 +9264,7 @@ var View = require('../../base/view');
 var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar.prototype */{
     /**
      * @constructs
-     * @extends module:base/view 
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
@@ -9266,7 +9274,6 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
 
         this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
 
-        this.listenTo(this.grid.dataModel, 'sort add remove reset', this._setHeight, this);
         this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
         this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
     },
@@ -9320,6 +9327,8 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
     _onDimensionChange: function(model) {
         if (model.changed['headerHeight'] || model.changed['bodyHeight']) {
             this.render();
+        } else if (model.changed['totalRowHeight']) {
+            this._setHeight();
         }
     },
 
@@ -9353,6 +9362,7 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
             display: 'block'
         }).html('<div class="content"></div>');
         this._setHeight();
+
         return this;
     },
 
@@ -9361,12 +9371,7 @@ var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar
      * @private
      */
     _setHeight: function() {
-        var grid = this.grid,
-            rowHeight = grid.dimensionModel.get('rowHeight'),
-            rowCount = grid.dataModel.length,
-            height = rowHeight * grid.dataModel.length + (rowCount + 1);
-
-        this.$el.find('.content').height(height);
+        this.$el.find('.content').height(this.grid.dimensionModel.get('totalRowHeight'));
     },
 
     /**
@@ -11386,7 +11391,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
-        var focusModel, whichSide;
+        var focusModel, renderModel, whichSide;
 
         View.prototype.initialize.apply(this, arguments);
 
@@ -11399,18 +11404,20 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             renderedRowKeys: null,
             rowPainter: null
         });
-
+        this.renderCount = 0;
         this._createRowPainter();
         this._delegateTableEventsFromBody();
         this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
         focusModel = this.grid.focusModel;
+        renderModel = this.grid.renderModel;
         this.listenTo(this.collection, 'change', this._onModelChange)
-            .listenTo(focusModel, 'select', this._onSelect, this)
-            .listenTo(focusModel, 'unselect', this._onUnselect, this)
-            .listenTo(focusModel, 'focus', this._onFocus, this)
-            .listenTo(focusModel, 'blur', this._onBlur, this)
-            .listenTo(this.grid.renderModel, 'rowListChanged', this.render, this);
+            .listenTo(focusModel, 'select', this._onSelect)
+            .listenTo(focusModel, 'unselect', this._onUnselect)
+            .listenTo(focusModel, 'focus', this._onFocus)
+            .listenTo(focusModel, 'blur', this._onBlur)
+            .listenTo(renderModel, 'rowListChanged', this.render);
+            // .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 300));
     },
 
     /**
@@ -11586,6 +11593,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
+        this.bodyView.resetContainerArea();
+
         if (isModelChanged) {
             this._resetRows();
         } else {
@@ -11599,8 +11608,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 this._appendNewRows(rowKeys, dupRowKeys);
             }
         }
-        this.renderedRowKeys = rowKeys;
 
+        this.renderedRowKeys = rowKeys;
         this._focusClipboardDebounced();
         this._showLayer();
 
