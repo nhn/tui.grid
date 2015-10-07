@@ -311,31 +311,6 @@ describe('Frame', function() {
             });
         });
 
-        describe('_setHeight', function() {
-            it('grid.dataModel이 변경될 때 호출된다', function() {
-                spyOn(VirtualScrollBar.prototype, '_setHeight');
-                scrollbar = new VirtualScrollBar({
-                    grid: grid
-                });
-
-                grid.dataModel.trigger('sort');
-                expect(scrollbar._setHeight.calls.count()).toBe(1);
-                grid.dataModel.trigger('add');
-                expect(scrollbar._setHeight.calls.count()).toBe(2);
-                grid.dataModel.trigger('remove');
-                expect(scrollbar._setHeight.calls.count()).toBe(3);
-                grid.dataModel.trigger('reset');
-                expect(scrollbar._setHeight.calls.count()).toBe(4);
-            });
-
-            it('row의 개수와 row의 높이를 참조하여 스크롤바의 높이를 설정한다.', function() {
-                scrollbar.render();
-                grid.dimensionModel.set('rowHeight', 20);
-                grid.dataModel.add([0, 1, 2]);
-                expect(scrollbar.$el.find('.content').height()).toBe(20 * 3 + 4);
-            });
-        });
-
         describe('render()', function() {
             beforeEach(function() {
                 grid.dimensionModel.set({

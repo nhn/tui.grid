@@ -33,7 +33,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             renderedRowKeys: null,
             rowPainter: null
         });
-
+        this.renderCount = 0;
         this._createRowPainter();
         this._delegateTableEventsFromBody();
         this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
@@ -45,7 +45,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'unselect', this._onUnselect)
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
-            .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 50));
+            .listenTo(renderModel, 'rowListChanged', this.render);
+            // .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 300));
     },
 
     /**

@@ -17,7 +17,7 @@ describe('View.RowList', function() {
     function createGridMock() {
         var mock = {
             $el: setFixtures('<div />'),
-            hideGridLayer: function () {},
+            hideGridLayer: function() {},
             focusClipboard: function() {},
             columnModel: new ColumnModelData(),
             getElement: function(rowKey, columnName) {
@@ -25,10 +25,10 @@ describe('View.RowList', function() {
                 return this.$el.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
             }
         };
-        mock.dimensionModel = new Dimension({
+        mock.dataModel = new RowListData([], {
             grid: mock
         });
-        mock.dataModel = new RowListData([], {
+        mock.dimensionModel = new Dimension({
             grid: mock
         });
         mock.renderModel = new Renderer({
@@ -70,6 +70,7 @@ describe('View.RowList', function() {
                 ]
             }
         }]);
+
         grid.dataModel.set([
             {
                 c1: '0-1',
@@ -92,6 +93,7 @@ describe('View.RowList', function() {
             el: setFixtures('<table><tbody></tbody></table>').find('tbody'),
             collection: grid.renderModel.getCollection('R'),
             bodyView: {
+                resetContainerArea: function() {},
                 attachTableEventHandler: function() {},
                 redrawTable: redrawTable
             }
