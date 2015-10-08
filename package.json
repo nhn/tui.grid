@@ -1,6 +1,6 @@
 {
   "name": "application-grid",
-  "version": "1.0.4",
+  "version": "1.0.4a",
   "description": "grid",
   "main": "gulpfiles.js",
   "directories": {

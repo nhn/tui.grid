@@ -139,24 +139,6 @@ describe('view.layout.body', function() {
         // });
     });
 
-    describe('grid.renderModel의 refresh 이벤트 발생시', function() {
-        beforeEach(function() {
-            jasmine.getFixtures().set('<div id="wrapper" />');
-            $('#wrapper').append(body.render().el);
-        });
-
-        it('넘겨진 값으로 css top 속성을 설정한다.', function() {
-            var $container = body.$el.find('.table_container');
-            $container.css('position', 'absolute'); // css 파일에서 설정됨
-
-            grid.renderModel.trigger('refresh', 10);
-            expect($container.css('top')).toEqual('10px');
-
-            grid.renderModel.trigger('refresh', 20);
-            expect($container.css('top')).toEqual('20px');
-        });
-    });
-
     describe('grid.dimensionModel의 change:bodyHeight 이벤트 발생시', function() {
         it('el의 height를 dimensionModel의 bodyHeight 값으로 설정한다.', function() {
             grid.dimensionModel.set('bodyHeight', 70);
