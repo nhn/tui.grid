@@ -8,12 +8,12 @@ var Cell = require('../cell');
 
 /**
  * editOption 이 적용되지 않은 cell 의 Painter
- * @module view/painter/cell/normal
+ * @module painter/cell/normal
  */
-var Normal = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/normal.prototype */{
+var Normal = ne.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell
+     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -21,7 +21,7 @@ var Normal = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/normal.
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|select|button|text|text-convertible'
+     * @return {string} editType 'normal|select|button|text|text-convertible'
      */
     getEditType: function() {
         return 'normal';
@@ -65,7 +65,7 @@ var Normal = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/normal.
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {jQuery} $td 해당 cell 엘리먼트
      * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
     /* istanbul ignore next */

@@ -8,12 +8,12 @@ var Normal = require('./normal');
 
 /**
  * Number Cell 의 Painter
- * @module view/painter/cell/number
+ * @module painter/cell/number
  */
-var NumberCell = ne.util.defineClass(Normal,/**@lends module:view/painter/cell/number.prototype */{
+var NumberCell = ne.util.defineClass(Normal,/**@lends module:painter/cell/number.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/normal
+     * @extends module:painter/cell/normal
      */
     init: function() {
         Normal.apply(this, arguments);
@@ -23,7 +23,7 @@ var NumberCell = ne.util.defineClass(Normal,/**@lends module:view/painter/cell/n
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return '_number';

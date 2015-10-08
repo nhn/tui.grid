@@ -79,7 +79,6 @@ describe('view.painter.cell.normal', function() {
             });
         });
         afterEach(function() {
-            console.log('after each: destroy');
             //cellPainter.destroy();
         });
 
@@ -177,7 +176,6 @@ describe('view.painter.cell.normal', function() {
         });
 
         afterEach(function() {
-            console.log('after each: destroy');
             //cellPainter.destroy();
         });
 

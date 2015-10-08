@@ -859,6 +859,7 @@ module.exports = Model;
 'use strict';
 
 var View = require('./view');
+var common = require('./common');
 
 /**
  * Base class for Painters
@@ -867,15 +868,25 @@ var View = require('./view');
  * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
  * @module base/painter
  */
-var Painter = View.extend(/**@lends module:base/painter.prototype */{
-    /**
-     * @constructs
-     * @extends module:base/view
-     */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
+    //View.extend
+var Painter = ne.util.defineClass(/**@lends module:base/painter.prototype */{
+    init: function(attributes) {
+        //View.prototype.initialize.apply(this, arguments);
+        var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
+        this.setOwnProperties({
+            grid: grid
+        });
         this.initializeEventHandler();
     },
+
+    ///**
+    // * @constructs
+    // * @extends module:base/view
+    // */
+    //initialize: function() {
+    //    View.prototype.initialize.apply(this, arguments);
+    //    this.initializeEventHandler();
+    //},
 
     eventHandler: {},
 
@@ -914,10 +925,10 @@ var Painter = View.extend(/**@lends module:base/painter.prototype */{
         throw this.error('implement getHtml() method');
     }
 });
-
+_.assign(Painter.prototype, common);
 module.exports = Painter;
 
-},{"./view":7}],7:[function(require,module,exports){
+},{"./common":4,"./view":7}],7:[function(require,module,exports){
 /**
  * @fileoverview Base class for Views
  * @author NHN Ent. FE Development Team
@@ -9400,14 +9411,16 @@ var util = require('../../util');
 /**
  * Cell Painter Base
  * @module view/painter/cell
+ * Painter.extend
  */
-var Cell = Painter.extend(/**@lends module:view/painter/cell.prototype */{
+var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.prototype */{
     /**
      * @constructs
      * @extends moduel:view/painter
      */
-    initialize: function() {
-        Painter.prototype.initialize.apply(this, arguments);
+    init: function() {
+        //Painter.prototype.initialize.apply(this, arguments);
+        Painter.apply(this, arguments);
         this.setOwnProperties({
             _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
         });
@@ -9847,13 +9860,13 @@ var util = require('../../../util');
  * Painter class for the button cell
  * @module view/painter/cell/button
  */
-var Button = List.extend(/**@lends module:view/painter/cell/button.prototype */{
+var Button = ne.util.defineClass(List,/**@lends module:view/painter/cell/button.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/list 
      */
-    initialize: function() {
-        List.prototype.initialize.apply(this, arguments);
+    init: function() {
+        List.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -10084,13 +10097,13 @@ var Cell = require('../cell');
  * editOption 에 list 를 가지고 있는 형태의 Base 클래스
  * @module view/painter/cell/list
  */
-var List = Cell.extend(/**@lends module:view/painter/cell/list.prototype */{
+var List = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/list.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
     },
 
     redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
@@ -10168,13 +10181,13 @@ var Cell = require('../cell');
  * Painter class for the main button
  * @module view/painter/cell/mainButton
  */
-var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.prototype */{
+var MainButton = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/mainButton.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -10317,13 +10330,13 @@ var Cell = require('../cell');
  * editOption 이 적용되지 않은 cell 의 Painter
  * @module view/painter/cell/normal
  */
-var Normal = Cell.extend(/**@lends module:view/painter/cell/normal.prototype */{
+var Normal = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/normal.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
     },
 
     /**
@@ -10394,13 +10407,13 @@ var Normal = require('./normal');
  * Number Cell 의 Painter
  * @module view/painter/cell/number
  */
-var NumberCell = Normal.extend(/**@lends module:view/painter/cell/number.prototype */{
+var NumberCell = ne.util.defineClass(Normal,/**@lends module:view/painter/cell/number.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/normal
      */
-    initialize: function() {
-        Normal.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Normal.apply(this, arguments);
     },
 
     redrawAttributes: [],
@@ -10447,13 +10460,13 @@ var util = require('../../../util');
  * Painter class for the select cell
  * @module view/painter/cell/select
  */
-var Select = List.extend(/**@lends module:view/painter/cell/select.prototype */{
+var Select = ne.util.defineClass(List,/**@lends module:view/painter/cell/select.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/list 
      */
-    initialize: function() {
-        List.prototype.initialize.apply(this, arguments);
+    init: function() {
+        List.apply(this, arguments);
 
         this.setKeyDownSwitch({
             'ESC': function(keyDownEvent, param) {
@@ -10622,13 +10635,13 @@ var util = require('../../../util');
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @module view/painter/cell/text-convertible
  */
-var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertible.prototype */{
+var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/text 
      */
-    initialize: function() {
-        Text.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Text.apply(this, arguments);
         this.setOwnProperties({
             timeoutIdForClick: 0,
             editingCell: {
@@ -10640,7 +10653,7 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
                 columnName: null
             }
         });
-        this.off('resize');
+        //this.off('resize'); ???????????????
     },
 
     redrawAttributes: ['isDisabled', 'isEditable', 'value'],
@@ -10790,8 +10803,8 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
 
         this._blurEditingCell();
 
-        rowKey = this.getRowKey($td),
-        columnName = this.getColumnName($td),
+        rowKey = this.getRowKey($td);
+        columnName = this.getColumnName($td);
         cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
 
         if (cellState.isEditable && !cellState.isDisabled) {
@@ -10888,14 +10901,14 @@ var Text = require('./text');
  * @extends module:view/painter/cell/text
  * @constructor module:view/painter/cell/text-password
  */
-var Password = Text.extend(/**@lends module:view/painter/cell/text-password.prototype */{
+var Password = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-password.prototype */{
     /**
      * Initializes
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line
-        Text.prototype.initialize.apply(this, arguments);
+    init: function(attributes, options) { // eslint-disable-line
+        Text.apply(this, arguments);
     },
 
     /**
@@ -10932,15 +10945,15 @@ var util = require('../../../util');
  * Painter class for the text cell
  * @module view/painter/cell/text
  */
-var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
+var Text = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/text.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function(attributes, options) { // eslint-disable-line
+        Cell.apply(this, arguments);
         this.setOwnProperties({
             originalText: ''
         });
@@ -11221,7 +11234,7 @@ var Painter = require('../../base/painter');
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
  * @module view/painter/row
  */
-var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
+var RowPainter = ne.util.defineClass(Painter,/**@lends module:view/painter/row.prototype */{
     /**
      * @constructs
      * @extends module:view/painter
@@ -11229,8 +11242,8 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체
      */
-    initialize: function(options) {
-        Painter.prototype.initialize.apply(this, arguments);
+    init: function(options) {
+        Painter.apply(this, arguments);
 
         this.setOwnProperties({
             columnModelList: options.columnModelList
@@ -11253,8 +11266,8 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
      * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
      */
     destroy: function() {
-        this.stopListening();
-        this.remove();
+    //    this.stopListening();
+    //    this.remove();
     },
     
     /**
@@ -11348,22 +11361,23 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
             contents: html,
             className: ''
         });
-    }
-},
-{
+    },
+
     /**
      * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
      * @memberof View.Painter.Row
      * @static
      */
-    _extraHeight: (function() {
-        var value = 0;
-        if (ne.util.browser.msie && ne.util.browser.version === 7) {
-            // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
-            value = -2;
-        }
-        return value;
-    }())
+    static: {
+        _extraHeight: (function() {
+            var value = 0;
+            if (ne.util.browser.msie && ne.util.browser.version === 7) {
+                // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
+                value = -2;
+            }
+            return value;
+        }())
+    }
 });
 
 module.exports = RowPainter;

@@ -8,12 +8,12 @@ var Cell = require('../cell');
 
 /**
  * editOption 에 list 를 가지고 있는 형태의 Base 클래스
- * @module view/painter/cell/list
+ * @module painter/cell/list
  */
-var List = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/list.prototype */{
+var List = ne.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell
+     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -58,7 +58,7 @@ var List = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/list.prot
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
      * @param {jQuery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
+     * @param {boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
      */
     setElementAttribute: function(cellData, $td, hasFocusedElement) { // eslint-disable-line no-unused-vars
         throw this.error('Implement setElementAttribute(cellData, $target) method. ');

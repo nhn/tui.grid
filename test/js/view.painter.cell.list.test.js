@@ -60,7 +60,6 @@ describe('view.painter.cell.base', function() {
     });
 
     afterEach(function() {
-        console.log('after each: destroy');
         //cellPainter.destroy();
     });
 
@@ -83,7 +82,6 @@ describe('view.painter.cell.base', function() {
         });
 
         afterEach(function() {
-            console.log('after each: destroy');
             //cellPainter.destroy();
         });
 

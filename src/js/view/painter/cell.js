@@ -9,16 +9,14 @@ var util = require('../../util');
 
 /**
  * Cell Painter Base
- * @module view/painter/cell
- * Painter.extend
+ * @module painter/cell
  */
-var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.prototype */{
+var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
-     * @extends moduel:view/painter
+     * @extends module:painter
      */
     init: function() {
-        //Painter.prototype.initialize.apply(this, arguments);
         Painter.apply(this, arguments);
         this.setOwnProperties({
             _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
@@ -76,7 +74,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.proto
         $td.attr('class', this._getClassNameList(cellData).join(' '));
         try {
             /*
-            IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
+             * IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
              */
             hasFocusedElement = !!($td.find(':focus').length);
         } catch (e) {
@@ -146,7 +144,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.proto
 
     /**
      * keyDown 이벤트 핸들러
-     * @param {event} keyDownEvent  이벤트 객체
+     * @param {Event} keyDownEvent  이벤트 객체
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
@@ -354,7 +352,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.proto
     /**
      * 인자로 받은 element 로 부터 columnName 을 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {String} 컬럼명
+     * @return {string} 컬럼명
      */
     getColumnName: function($target) {
         return $target.closest('td').attr('columnName');
@@ -363,7 +361,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.proto
     /**
      * 인자로 받은 element 로 부터 rowKey 를 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {String} 행의 키값
+     * @return {string} 행의 키값
      */
     getRowKey: function($target) {
         return $target.closest('tr').attr('key');
@@ -401,7 +399,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.proto
     /**
      * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
      * - 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'normal';
@@ -437,7 +435,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.proto
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {jQuery} $td 해당 cell 엘리먼트
      * @param {Boolean} hasFocusedElement 해당 셀에 실제 focuse 된 엘리먼트가 존재하는지 여부
      */
     setElementAttribute: function(cellData, $td, hasFocusedElement) {} // eslint-disable-line no-unused-vars
