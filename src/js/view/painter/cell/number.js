@@ -10,13 +10,13 @@ var Normal = require('./normal');
  * Number Cell 의 Painter
  * @module view/painter/cell/number
  */
-var NumberCell = Normal.extend(/**@lends module:view/painter/cell/number.prototype */{
+var NumberCell = ne.util.defineClass(Normal,/**@lends module:view/painter/cell/number.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/normal
      */
-    initialize: function() {
-        Normal.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Normal.apply(this, arguments);
     },
 
     redrawAttributes: [],

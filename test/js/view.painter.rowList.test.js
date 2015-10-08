@@ -100,7 +100,7 @@ describe('View.RowList', function() {
     });
 
     afterEach(function() {
-        rowListView.destroy();
+        //rowListView.destroy();
     });
 
     describe('View.Painter.Row', function() {

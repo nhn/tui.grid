@@ -54,7 +54,7 @@ describe('view.painter.cell.text', function() {
     });
 
     afterEach(function() {
-        cellPainter.destroy();
+        //cellPainter.destroy();
     });
 
     describe('View.Painter.Cell.Text 클래스 테스트', function() {

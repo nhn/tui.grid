@@ -12,13 +12,13 @@ var util = require('../../../util');
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @module view/painter/cell/text-convertible
  */
-var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertible.prototype */{
+var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/text 
      */
-    initialize: function() {
-        Text.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Text.apply(this, arguments);
         this.setOwnProperties({
             timeoutIdForClick: 0,
             editingCell: {
@@ -30,7 +30,7 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
                 columnName: null
             }
         });
-        this.off('resize');
+        //this.off('resize'); ???????????????
     },
 
     redrawAttributes: ['isDisabled', 'isEditable', 'value'],
@@ -180,8 +180,8 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
 
         this._blurEditingCell();
 
-        rowKey = this.getRowKey($td),
-        columnName = this.getColumnName($td),
+        rowKey = this.getRowKey($td);
+        columnName = this.getColumnName($td);
         cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
 
         if (cellState.isEditable && !cellState.isDisabled) {

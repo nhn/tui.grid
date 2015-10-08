@@ -11,13 +11,13 @@ var util = require('../../../util');
  * Painter class for the button cell
  * @module view/painter/cell/button
  */
-var Button = List.extend(/**@lends module:view/painter/cell/button.prototype */{
+var Button = ne.util.defineClass(List,/**@lends module:view/painter/cell/button.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/list 
      */
-    initialize: function() {
-        List.prototype.initialize.apply(this, arguments);
+    init: function() {
+        List.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},

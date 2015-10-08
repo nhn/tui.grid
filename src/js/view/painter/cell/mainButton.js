@@ -10,13 +10,13 @@ var Cell = require('../cell');
  * Painter class for the main button
  * @module view/painter/cell/mainButton
  */
-var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.prototype */{
+var MainButton = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/mainButton.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},

@@ -11,7 +11,7 @@ var Painter = require('../../base/painter');
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
  * @module view/painter/row
  */
-var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
+var RowPainter = ne.util.defineClass(Painter,/**@lends module:view/painter/row.prototype */{
     /**
      * @constructs
      * @extends module:view/painter
@@ -19,8 +19,8 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체
      */
-    initialize: function(options) {
-        Painter.prototype.initialize.apply(this, arguments);
+    init: function(options) {
+        Painter.apply(this, arguments);
 
         this.setOwnProperties({
             columnModelList: options.columnModelList
@@ -43,8 +43,8 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
      * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
      */
     destroy: function() {
-        this.stopListening();
-        this.remove();
+    //    this.stopListening();
+    //    this.remove();
     },
     
     /**

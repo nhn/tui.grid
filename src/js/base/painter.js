@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('./view');
+var common = require('./common');
 
 /**
  * Base class for Painters
@@ -13,15 +14,25 @@ var View = require('./view');
  * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
  * @module base/painter
  */
-var Painter = View.extend(/**@lends module:base/painter.prototype */{
-    /**
-     * @constructs
-     * @extends module:base/view
-     */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
+    //View.extend
+var Painter = ne.util.defineClass(/**@lends module:base/painter.prototype */{
+    init: function(attributes) {
+        //View.prototype.initialize.apply(this, arguments);
+        var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
+        this.setOwnProperties({
+            grid: grid
+        });
         this.initializeEventHandler();
     },
+
+    ///**
+    // * @constructs
+    // * @extends module:base/view
+    // */
+    //initialize: function() {
+    //    View.prototype.initialize.apply(this, arguments);
+    //    this.initializeEventHandler();
+    //},
 
     eventHandler: {},
 
@@ -60,5 +71,5 @@ var Painter = View.extend(/**@lends module:base/painter.prototype */{
         throw this.error('implement getHtml() method');
     }
 });
-
+_.assign(Painter.prototype, common);
 module.exports = Painter;

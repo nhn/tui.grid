@@ -11,13 +11,13 @@ var util = require('../../../util');
  * Painter class for the select cell
  * @module view/painter/cell/select
  */
-var Select = List.extend(/**@lends module:view/painter/cell/select.prototype */{
+var Select = ne.util.defineClass(List,/**@lends module:view/painter/cell/select.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/list 
      */
-    initialize: function() {
-        List.prototype.initialize.apply(this, arguments);
+    init: function() {
+        List.apply(this, arguments);
 
         this.setKeyDownSwitch({
             'ESC': function(keyDownEvent, param) {

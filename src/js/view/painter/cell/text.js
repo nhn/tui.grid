@@ -11,15 +11,15 @@ var util = require('../../../util');
  * Painter class for the text cell
  * @module view/painter/cell/text
  */
-var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
+var Text = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/text.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function(attributes, options) { // eslint-disable-line
+        Cell.apply(this, arguments);
         this.setOwnProperties({
             originalText: ''
         });

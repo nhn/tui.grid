@@ -10,14 +10,16 @@ var util = require('../../util');
 /**
  * Cell Painter Base
  * @module view/painter/cell
+ * Painter.extend
  */
-var Cell = Painter.extend(/**@lends module:view/painter/cell.prototype */{
+var Cell = ne.util.defineClass(Painter, /**@lends module:view/painter/cell.prototype */{
     /**
      * @constructs
      * @extends moduel:view/painter
      */
-    initialize: function() {
-        Painter.prototype.initialize.apply(this, arguments);
+    init: function() {
+        //Painter.prototype.initialize.apply(this, arguments);
+        Painter.apply(this, arguments);
         this.setOwnProperties({
             _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
         });

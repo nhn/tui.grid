@@ -68,7 +68,8 @@ describe('view.painter.cell.base', function() {
     });
 
     afterEach(function() {
-        cellPainter.destroy();
+        console.log('after each: destroy');
+        //cellPainter.destroy();
     });
 
     describe('_getClassNameList()', function() {

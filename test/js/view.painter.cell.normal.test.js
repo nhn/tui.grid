@@ -79,7 +79,8 @@ describe('view.painter.cell.normal', function() {
             });
         });
         afterEach(function() {
-            cellPainter.destroy();
+            console.log('after each: destroy');
+            //cellPainter.destroy();
         });
 
         describe('getEditType', function() {
@@ -176,7 +177,8 @@ describe('view.painter.cell.normal', function() {
         });
 
         afterEach(function() {
-            cellPainter.destroy();
+            console.log('after each: destroy');
+            //cellPainter.destroy();
         });
 
         describe('getEditType', function() {

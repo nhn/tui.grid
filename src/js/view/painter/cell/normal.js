@@ -10,13 +10,13 @@ var Cell = require('../cell');
  * editOption 이 적용되지 않은 cell 의 Painter
  * @module view/painter/cell/normal
  */
-var Normal = Cell.extend(/**@lends module:view/painter/cell/normal.prototype */{
+var Normal = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/normal.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
     },
 
     /**

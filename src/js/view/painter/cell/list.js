@@ -10,13 +10,13 @@ var Cell = require('../cell');
  * editOption 에 list 를 가지고 있는 형태의 Base 클래스
  * @module view/painter/cell/list
  */
-var List = Cell.extend(/**@lends module:view/painter/cell/list.prototype */{
+var List = ne.util.defineClass(Cell,/**@lends module:view/painter/cell/list.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
     },
 
     redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
