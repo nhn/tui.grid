@@ -1363,7 +1363,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     addRowClassName: function(rowKey, className) {
         this.dataModel.get(rowKey).addClassName(className);
-        console.log('addRowClassName', rowKey, className);
     },
 
     /**
@@ -1383,7 +1382,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     removeRowClassName: function(rowKey, className) {
         this.dataModel.get(rowKey).removeClassName(className);
-        console.log('removeRowClassName');
     },
 
     /**
