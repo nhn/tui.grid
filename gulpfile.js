@@ -12,12 +12,25 @@ var streamify = require('gulp-streamify');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var karma = require('karma').server;
+var header = require('gulp-header');
 
 var PATH_DIST = 'dist/',
     PATH_BUILD = 'build/',
     PATH_SAMPLE = 'samples/',
     FNAME_JS = 'grid.js',
     FNAME_CSS = 'grid.css';
+
+var pkg = require('./package.json');
+var banner = [
+    '/**',
+    ' * @fileoverview ${name}',
+    ' * @author ${author}',
+    ' * @version ${version}',
+    ' * @license ${license}',
+    ' * @link ${repository.url}',
+    ' */',
+    ''
+].join('\n');
 
 // build
 gulp.task('build-js', function() {
@@ -62,10 +75,12 @@ gulp.task('deploy-js', function() {
     return browserify('src/js/grid.js')
         .bundle()
         .pipe(source(FNAME_JS))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'js'))
         .pipe(streamify(uglify()))
         .pipe(rename({extname: '.min.js'}))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'js'));
 });
@@ -75,10 +90,12 @@ gulp.task('deploy-css', function() {
         .pipe(stylus())
         .pipe(sourcemaps.write())
         .pipe(rename({basename: 'grid'}))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'css'))
         .pipe(minifycss())
         .pipe(rename({extname: '.min.css'}))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'css'));
 });
