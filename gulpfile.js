@@ -64,12 +64,13 @@ gulp.task('test-all', function() {
 gulp.task('deploy-js', function() {
     var banner = [
         '/**',
-        ' * @fileoverview ${pkg.name}',
-        ' * @author ${pkg.author}',
-        ' * @version ${pkg.version}',
-        ' * @license ${pkg.license}',
-        ' * @link ${pkg.repository.url}',
-        ' */'
+        ' * @fileoverview ${name}',
+        ' * @author ${author}',
+        ' * @version ${version}',
+        ' * @license ${license}',
+        ' * @link ${repository.url}',
+        ' */',
+        ''
 
     ].join('\n');
 
