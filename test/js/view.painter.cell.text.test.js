@@ -52,10 +52,7 @@ describe('view.painter.cell.text', function() {
     beforeEach(function() {
         grid = createGridMock();
     });
-
-    afterEach(function() {
-        //cellPainter.destroy();
-    });
+    
 
     describe('View.Painter.Cell.Text 클래스 테스트', function() {
         var options;
