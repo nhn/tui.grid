@@ -323,6 +323,8 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * Set 'isHidden' property of column model to true or false
      * @param {Array|string} columnNames - Column names to set 'isHidden' property
      * @param {boolean} isHidden - Hidden flag for setting
+     *
+     * @todo If the column is in 'Lside' -> columnFixIndex -= 1; ??????
      */
     setHidden: function(columnNames, isHidden) {
         var columnModelMap = this.get('columnModelMap'),
