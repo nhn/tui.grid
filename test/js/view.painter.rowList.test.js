@@ -101,10 +101,6 @@ describe('View.RowList', function() {
         rowListView.render();
     });
 
-    afterEach(function() {
-        rowListView.destroy();
-    });
-
     describe('View.Painter.Row', function() {
         var rowPainter;
 

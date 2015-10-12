@@ -9,17 +9,17 @@ var util = require('../../../util');
 
 /**
  * Painter class for the text cell
- * @module view/painter/cell/text
+ * @module painter/cell/text
  */
-var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
+var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell
+     * @extends module:painter/cell
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function(attributes, options) { // eslint-disable-line
+        Cell.apply(this, arguments);
         this.setOwnProperties({
             originalText: ''
         });
@@ -85,7 +85,6 @@ var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
     /**
      * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
      * - 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     focusOut: function() {
         this.grid.focusClipboard();
@@ -132,7 +131,7 @@ var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     setElementAttribute: function(cellData, $td) {
         var isValueChanged = $.inArray('value', cellData.changed) !== -1,
@@ -167,7 +166,7 @@ var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
      * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
      * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
      * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
-     * View.Base.Painter.Cell로부터 override 해서 구현함)
+     * Painter.Cell로부터 override 해서 구현함)
      * @param {object} cellData Model 의 셀 데이터
      * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
@@ -199,7 +198,7 @@ var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
 
     /**
      * blur 이벤트 핸들러
-     * @param {event} blurEvent 이벤트 객체
+     * @param {Event} blurEvent 이벤트 객체
      * @private
      */
     _onBlur: function(blurEvent) {
@@ -239,7 +238,7 @@ var Text = Cell.extend(/**@lends module:view/painter/cell/text.prototype */{
 
     /**
      * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
-     * @param  {jquery} $input - 인풋 요소의 jquery 객체
+     * @param  {jQuery} $input - 인풋 요소의 jquery 객체
      * @return {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
      * @private
      */

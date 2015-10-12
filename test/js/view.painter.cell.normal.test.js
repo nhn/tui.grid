@@ -78,9 +78,6 @@ describe('view.painter.cell.normal', function() {
                 grid: grid
             });
         });
-        afterEach(function() {
-            cellPainter.destroy();
-        });
 
         describe('getEditType', function() {
             it('normal 문자열을 반환한다.', function() {
@@ -175,9 +172,6 @@ describe('view.painter.cell.normal', function() {
             });
         });
 
-        afterEach(function() {
-            cellPainter.destroy();
-        });
 
         describe('getEditType', function() {
             it('_button 문자열을 반환한다.', function() {

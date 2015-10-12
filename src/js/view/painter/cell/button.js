@@ -9,15 +9,15 @@ var util = require('../../../util');
 
 /**
  * Painter class for the button cell
- * @module view/painter/cell/button
+ * @module painter/cell/button
  */
-var Button = List.extend(/**@lends module:view/painter/cell/button.prototype */{
+var Button = ne.util.defineClass(List,/**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/list 
+     * @extends module:painter/cell/list
      */
-    initialize: function() {
-        List.prototype.initialize.apply(this, arguments);
+    init: function() {
+        List.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -138,7 +138,7 @@ var Button = List.extend(/**@lends module:view/painter/cell/button.prototype */{
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     setElementAttribute: function(cellData, $td) {
         var value = cellData.value,

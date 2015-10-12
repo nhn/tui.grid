@@ -8,15 +8,15 @@ var Cell = require('../cell');
 
 /**
  * Painter class for the main button
- * @module view/painter/cell/mainButton
+ * @module painter/cell/mainButton
  */
-var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.prototype */{
+var MainButton = ne.util.defineClass(Cell,/**@lends module:painter/cell/mainButton.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell
+     * @extends module:painter/cell
      */
-    initialize: function() {
-        Cell.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Cell.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -42,7 +42,7 @@ var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.proto
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return '_button';
@@ -88,7 +88,7 @@ var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.proto
      * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
      * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
+     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     setElementAttribute: function(cellData, $td) {
         var $input = $td.find('input'),
@@ -111,7 +111,6 @@ var MainButton = Cell.extend(/**@lends module:view/painter/cell/mainButton.proto
 
     /**
      * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-     * @param {Object} cellData Model 의 셀 데이터
      * @return {Object} td 에 지정할 attribute 데이터
      */
     getAttributes: function() {

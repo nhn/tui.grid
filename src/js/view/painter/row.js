@@ -9,18 +9,18 @@ var Painter = require('../../base/painter');
 /**
  * Row Painter
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
- * @module view/painter/row
+ * @module painter/row
  */
-var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
+var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter
+     * @extends module:painter
      * @param {object} options - Options
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체
      */
-    initialize: function(options) {
-        Painter.prototype.initialize.apply(this, arguments);
+    init: function(options) {
+        Painter.apply(this, arguments);
 
         this.setOwnProperties({
             columnModelList: options.columnModelList
@@ -31,25 +31,19 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
         'mousedown': '_onMouseDown'
     },
 
-    baseTemplate: _.template('' +
+    baseTemplate: _.template(
+        '' +
         '<tr ' +
         'key="<%=key%>" ' +
         'class="<%=className%>" ' +
         'style="height: <%=height%>px;">' +
         '<%=contents%>' +
-        '</tr>'),
-
-    /**
-     * detachHandlerAll 을 호출하고 기본 destroy 로직을 수행한다.
-     */
-    destroy: function() {
-        this.stopListening();
-        this.remove();
-    },
+        '</tr>'
+    ),
     
     /**
      * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 이벤트 객체
+     * @param {Event} mouseDownEvent 이벤트 객체
      * @private
      */
     _onMouseDown: function(mouseDownEvent) {
@@ -67,7 +61,7 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
     /**
      * model 변경 시 이벤트 핸들러
      * @param {object} model - 변화가 일어난 모델 인스턴스
-     * @param {jquery} $tr - jquery object for tr element
+     * @param {jQuery} $tr - jquery object for tr element
      */
     onModelChange: function(model, $tr) {
         var editType,
@@ -85,9 +79,9 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
     /**
      * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
-     * @param {String} columnName 컬럼명
+     * @param {string} columnName 컬럼명
      * @param {Object} cellData 셀 데이터
-     * @return {String} cellFactory 에서 사용될 editType
+     * @return {string} cellFactory 에서 사용될 editType
      * @private
      */
     _getEditType: function(columnName, cellData) {
@@ -138,22 +132,23 @@ var RowPainter = Painter.extend(/**@lends module:view/painter/row.prototype */{
             contents: html,
             className: ''
         });
+    },
+
+    static: {
+        /**
+         * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
+         * @memberof RowPainter
+         * @static
+         */
+        _extraHeight: (function() {
+            var value = 0;
+            if (ne.util.browser.msie && ne.util.browser.version === 7) {
+                // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
+                value = -2;
+            }
+            return value;
+        }())
     }
-},
-{
-    /**
-     * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
-     * @memberof View.Painter.Row
-     * @static
-     */
-    _extraHeight: (function() {
-        var value = 0;
-        if (ne.util.browser.msie && ne.util.browser.version === 7) {
-            // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
-            value = -2;
-        }
-        return value;
-    }())
 });
 
 module.exports = RowPainter;

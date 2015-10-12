@@ -12,14 +12,14 @@ var Text = require('./text');
  * @extends module:view/painter/cell/text
  * @constructor module:view/painter/cell/text-password
  */
-var Password = Text.extend(/**@lends module:view/painter/cell/text-password.prototype */{
+var Password = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-password.prototype */{
     /**
      * Initializes
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line
-        Text.prototype.initialize.apply(this, arguments);
+    init: function(attributes, options) { // eslint-disable-line
+        Text.apply(this, arguments);
     },
 
     /**

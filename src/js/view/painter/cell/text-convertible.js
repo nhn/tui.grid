@@ -12,13 +12,13 @@ var util = require('../../../util');
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @module view/painter/cell/text-convertible
  */
-var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertible.prototype */{
+var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/text 
      */
-    initialize: function() {
-        Text.prototype.initialize.apply(this, arguments);
+    init: function() {
+        Text.apply(this, arguments);
         this.setOwnProperties({
             timeoutIdForClick: 0,
             editingCell: {
@@ -30,7 +30,6 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
                 columnName: null
             }
         });
-        this.off('resize');
     },
 
     redrawAttributes: ['isDisabled', 'isEditable', 'value'],
@@ -63,7 +62,6 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
     /**
      * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
      * - 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
      */
     focusOut: function() {
         this.grid.focusClipboard();
@@ -180,8 +178,8 @@ var Convertible = Text.extend(/**@lends module:view/painter/cell/text-convertibl
 
         this._blurEditingCell();
 
-        rowKey = this.getRowKey($td),
-        columnName = this.getColumnName($td),
+        rowKey = this.getRowKey($td);
+        columnName = this.getColumnName($td);
         cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
 
         if (cellState.isEditable && !cellState.isDisabled) {

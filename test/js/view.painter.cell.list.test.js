@@ -59,10 +59,6 @@ describe('view.painter.cell.base', function() {
         grid = createGridMock();
     });
 
-    afterEach(function() {
-        cellPainter.destroy();
-    });
-
     describe('Cell.List Base 클래스 테스트', function() {
         beforeEach(function() {
             grid.columnModel.set('columnModelList', [{
@@ -79,10 +75,6 @@ describe('view.painter.cell.base', function() {
             cellPainter = new ListPainter({
                 grid: grid
             });
-        });
-
-        afterEach(function() {
-            cellPainter.destroy();
         });
 
         describe('getOptionList()', function() {

@@ -67,10 +67,6 @@ describe('view.painter.cell.base', function() {
         });
     });
 
-    afterEach(function() {
-        cellPainter.destroy();
-    });
-
     describe('_getClassNameList()', function() {
         var classNameList;
 
