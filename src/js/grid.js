@@ -710,6 +710,22 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
         this.core.updateLayoutData();
     },
     /**
+     * Show columns
+     * @param {...string} arguments - Column names to show
+     */
+    showColumn: function() {
+        var args = ne.util.toArray(arguments);
+        this.core.columnModel.setHidden(args, false);
+    },
+    /**
+     * Hide columns
+     * @param {...string} arguments - Column names to hide
+     */
+    hideColumn: function() {
+        var args = ne.util.toArray(arguments);
+        this.core.columnModel.setHidden(args, true);
+    },
+    /**
      * Destroys the instance.
      */
     destroy: function() {

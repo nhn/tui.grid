@@ -234,11 +234,14 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
 
     /**
      * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
-     * @param {Array} columnModelList   컬럼모델 배열
+     * @param {Array} [columnModelList]   컬럼모델 배열
      * @return {Array}  isHidden 이 설정되지 않은 컬럼모델 배열
      * @private
      */
     _getVisibleList: function(columnModelList) {
+        if(!columnModelList) {
+            columnModelList = this.get('columnModelList');
+        }
         return _.filter(columnModelList, function(item) {
             return !item['isHidden'];
         });
@@ -314,6 +317,40 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnFixIndex = changed['columnFixIndex'] ? changed['columnFixIndex'] : this.get('columnFixIndex');
 
         this._setColumnModelList(columnModelList, columnFixIndex);
+    },
+
+    /**
+     * Set 'isHidden' property of column model to true or false
+     * @param {Array|string} columnNames - Column names to set 'isHidden' property
+     * @param {boolean} isHidden - Hidden flag for setting
+     */
+    setHidden: function(columnNames, isHidden) {
+        var columnModelMap = this.get('columnModelMap'),
+            columnMergeInfoList = this.grid.option('columnMerge'),
+            columnMergeInfoItem;
+
+        if (typeof columnNames === 'string') {
+            columnNames = [columnNames];
+        }
+
+        _.each(columnNames, function(name) {
+            var columnModel = columnModelMap[name];
+
+            if (columnModel) {
+                columnModel.isHidden = isHidden;
+            } else {
+                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {columnName: name});
+                if (columnMergeInfoItem) { //@todo solve-recursive
+                    this.setHidden(columnMergeInfoItem.columnNameList, isHidden);
+                }
+            }
+        }, this);
+
+        this.set({
+            visibleList: this._getVisibleList()
+        }, {silent: true});
+
+        this.trigger('columnModelChange');
     }
 });
 
