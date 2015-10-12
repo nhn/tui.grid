@@ -20,7 +20,17 @@ var PATH_DIST = 'dist/',
     FNAME_JS = 'grid.js',
     FNAME_CSS = 'grid.css';
 
-var pkg = require('package.json');
+var pkg = require('./package.json');
+var banner = [
+    '/**',
+    ' * @fileoverview ${name}',
+    ' * @author ${author}',
+    ' * @version ${version}',
+    ' * @license ${license}',
+    ' * @link ${repository.url}',
+    ' */',
+    ''
+].join('\n');
 
 // build
 gulp.task('build-js', function() {
@@ -62,18 +72,6 @@ gulp.task('test-all', function() {
 
 // deploy
 gulp.task('deploy-js', function() {
-    var banner = [
-        '/**',
-        ' * @fileoverview ${name}',
-        ' * @author ${author}',
-        ' * @version ${version}',
-        ' * @license ${license}',
-        ' * @link ${repository.url}',
-        ' */',
-        ''
-
-    ].join('\n');
-
     return browserify('src/js/grid.js')
         .bundle()
         .pipe(source(FNAME_JS))
@@ -92,10 +90,12 @@ gulp.task('deploy-css', function() {
         .pipe(stylus())
         .pipe(sourcemaps.write())
         .pipe(rename({basename: 'grid'}))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'css'))
         .pipe(minifycss())
         .pipe(rename({extname: '.min.css'}))
+        .pipe(header(banner, pkg))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'css'));
 });
