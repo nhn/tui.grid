@@ -23,6 +23,7 @@
     "fedoc-template": "git+http://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
+    "gulp-header": "^1.7.1",
     "gulp-minify-css": "^1.2.1",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.5.2",
