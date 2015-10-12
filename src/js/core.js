@@ -1362,7 +1362,8 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addRowClassName: function(rowKey, className) {
-        this.dataModel.get(rowKey).addRowClassName(className);
+        this.dataModel.get(rowKey).addClassName(className);
+        console.log('addRowClassName', rowKey, className);
     },
 
     /**
@@ -1381,7 +1382,8 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeRowClassName: function(rowKey, className) {
-        this.dataModel.get(rowKey).removeRowClassName(className);
+        this.dataModel.get(rowKey).removeClassName(className);
+        console.log('removeRowClassName');
     },
 
     /**

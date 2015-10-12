@@ -285,7 +285,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
-    addRowClassName: function(rowKey, className) {
+    addClassName: function(className) {
         var extraData = this._getExtraDataClone(),
             classNameData,
             classNameList;
@@ -323,7 +323,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
-    removeRowClassName: function(rowKey, className) {
+    removeClassName: function(className) {
         var extraData = this._getExtraDataClone(),
             classNameData;
 
