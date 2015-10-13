@@ -658,7 +658,7 @@ describe('data.columnModel', function() {
         });
     });
 
-    describe('_onChange, _setColumnModelList()', function() {
+    describe('_onChange, _setColumnModelList(), setHidden()', function() {
         beforeEach(function() {
             sampleColumnModelList = [
                 {
@@ -777,6 +777,45 @@ describe('data.columnModel', function() {
                     }
                 ];
             expect(visibleList).toEqual(expectResult);
+        });
+
+        it('컬럼모델의 "isHidden"속성이 동적으로 변경되는지 확인한다.', function() {
+            //make mock
+            columnModelInstance.grid = {option: function() {}};
+            spyOn(columnModelInstance.grid, 'option').and.callFake(function(name) {
+                if (name === 'columnMerge') {
+                    return [
+                        {
+                            columnName: 'merge1',
+                            title: 'merge1',
+                            columnNameList: ['column1', 'column2']
+                        }
+                    ];
+                }
+            });
+
+            // test
+            columnModelInstance.setHidden(['column3', 'column4'], true);
+            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column4'].isHidden).toBe(true);
+
+            columnModelInstance.setHidden(['column1', 'column2', 'column3', 'column4'], false);
+            expect(columnModelInstance.get('columnModelMap')['column1'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column2'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column4'].isHidden).toBe(false);
+
+            columnModelInstance.setHidden(['merge1', 'column3'], true);
+            expect(columnModelInstance.get('columnModelMap')['column1'].isHidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column2'].isHidden).toBe(true);
+            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(true);
+
+            columnModelInstance.setHidden(['merge1', 'column3'], false);
+            expect(columnModelInstance.get('columnModelMap')['column1'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column2'].isHidden).toBe(false);
+            expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(false);
+
+            delete columnModelInstance.grid;
         });
     });
 });
