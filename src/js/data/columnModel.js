@@ -6,6 +6,7 @@
 
 var Model = require('../base/model');
 
+var META_COLUMN_LIST = ['_number', '_button'];
 /**
  * 컬럼 모델 데이터를 다루는 객체
  * @module data/columnModel
@@ -23,19 +24,48 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             'text-password': true,
             'text-convertible': true
         };
-        this._setColumnModelList(this.get('columnModelList'), this.get('columnFixIndex'));
+
+        this._setColumnModelList(this.get('columnModelList'));
+        this._setColumnFixCountFromColumnFixIndex();
+
         this.on('change', this._onChange, this);
     },
 
     defaults: {
         keyColumnName: null,
-        columnFixIndex: 0,  //columnFixIndex
+        columnFixCount: 0,
         columnModelList: [],
         visibleList: [],
         hasNumberColumn: true,
         selectType: '',
         columnModelMap: {},
         relationListMap: {}
+    },
+
+    /**
+     * deprecated된 columnFixIndex를 columnFixCount로 변환하여 저장하기 위한 메서드
+     * @private
+     * @return {number} columnFixCount
+     * @todo columnFixIndex가 완전 없어질때, 이 메서드도 지움
+     */
+    _setColumnFixCountFromColumnFixIndex: function() {
+        var columnFixIndex = this.get('columnFixIndex'),
+            columnFixCount = this.get('columnFixCount');
+
+        if (!columnFixCount && columnFixIndex) {
+            columnFixCount = columnFixIndex;
+
+            _.each(META_COLUMN_LIST, function(columnName) {
+                var columnModel = _.getColumnModel(columnName);
+
+                if (!columnModel.isHidden) {
+                    columnFixCount -= 1;
+                }
+            });
+        }
+        this.set( 'columnFixCount', Math.max(0, columnFixCount), {
+            silent: true
+        });
     },
 
     /**
@@ -55,7 +85,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             numberColumn.isHidden = true;
         }
 
-        columnModelList = this._extendColumn(numberColumn, columnModelList);
+        columnModelList = this._extendColumnList(numberColumn, columnModelList);
         return columnModelList;
     },
 
@@ -87,31 +117,46 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             buttonColumn.isHidden = true;
         }
 
-        columnModelList = this._extendColumn(buttonColumn, columnModelList);
+        columnModelList = this._extendColumnList(buttonColumn, columnModelList);
 
         return columnModelList;
     },
 
     /**
-     * column 을 prepend 한다.
+     * column을 추가(push)한다.
      * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
-     * - _number, _button 컬럼 초기화시 사용함.
-     * @param {object} columnObj    prepend 할 컬럼모델
-     * @param {Array} columnModelList   컬럼모델 배열
+     * - 메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.
+     * @param {object} columnObj 추가할 컬럼모델
+     * @param {Array} columnModelList 컬럼모델 배열
      * @return {Array} 확장한 결과 컬럼모델 배열
      * @private
      */
-    _extendColumn: function(columnObj, columnModelList) {
-        var index;
-        if (!ne.util.isUndefined(columnObj) && !ne.util.isUndefined(columnObj['columnName'])) {
-            index = this._indexOfColumnName(columnObj['columnName'], columnModelList);
-            if (index === -1) {
-                columnModelList = _.union([columnObj], columnModelList);
-            } else {
-                columnModelList[index] = $.extend(columnModelList[index], columnObj);
-            }
+    _extendColumnList: function(columnObj, columnModelList) {
+        var columnName = columnObj.columnName,
+            index = _.findIndex(columnModelList, {columnName: columnName});
+
+        if (index === -1) {
+            columnModelList.push(columnObj);
+        } else {
+            columnModelList[index] = $.extend(columnModelList[index], columnObj);
         }
+
+        this._moveMetaColumnsToFirst(columnModelList);
         return columnModelList;
+    },
+
+    /**
+     * 메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.
+     * @param {Array} columnModelList 컬럼모델 배열
+     * @private
+     */
+    _moveMetaColumnsToFirst: function(columnModelList) {
+        _.each(META_COLUMN_LIST, function(metaColumnName, index) {
+            var oldIndex = _.findIndex(columnModelList, {columnName: metaColumnName});
+            if (oldIndex !== index) {
+                columnModelList.splice(index, 0, columnModelList.splice(oldIndex, 1)[0]);
+            }
+        });
     },
 
     /**
@@ -134,31 +179,31 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     indexOfColumnName: function(columnName, isVisible) {
         var columnModelList;
 
-        if (isVisible || isVisible === undefined) {
+        if (isVisible) {
             columnModelList = this.getVisibleColumnModelList();
         } else {
             columnModelList = this.get('columnModelList');
         }
-        return this._indexOfColumnName(columnName, columnModelList);
+        return _.findIndex(columnModelList, {columnName: columnName});
     },
 
-    /**
-     * columnName 에 해당하는 index를 반환한다.
-     * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
-     * @param {string} columnName   컬럼명
-     * @param {Array} columnModelList   컬럼모델 배열
-     * @return {number} 컬럼명에 해당하는 인덱스 값
-     * @private
-     */
-    _indexOfColumnName: function(columnName, columnModelList) {
-        var i = 0, len = columnModelList.length;
-        for (; i < len; i += 1) {
-            if (columnModelList[i]['columnName'] === columnName) {
-                return i;
-            }
-        }
-        return -1;
-    },
+    ///**
+    // * columnName 에 해당하는 index를 반환한다.
+    // * - columnModel 이 내부에 세팅되기 전에 button, number column 을 추가할 때만 사용됨.
+    // * @param {string} columnName   컬럼명
+    // * @param {Array} columnModelList   컬럼모델 배열
+    // * @return {number} 컬럼명에 해당하는 인덱스 값
+    // * @private
+    // */
+    //_indexOfColumnName: function(columnName, columnModelList) {
+    //    var i = 0, len = columnModelList.length;
+    //    for (; i < len; i += 1) {
+    //        if (columnModelList[i]['columnName'] === columnName) {
+    //            return i;
+    //        }
+    //    }
+    //    return -1;
+    //},
 
     /**
      * columnName 이 열고정 영역에 있는 column 인지 반환한다.
@@ -181,20 +226,56 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @return {Array}  조회한 컬럼모델 배열
      */
     getVisibleColumnModelList: function(whichSide) {
+        //var columnModelList = [],
+        //    columnFixIndex = this.get('columnFixIndex');
+        //
+        //whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
+        //
+        //if (whichSide === 'L') {
+        //    columnModelList = this.get('visibleList').slice(0, columnFixIndex);
+        //} else if (whichSide === 'R') {
+        //    columnModelList = this.get('visibleList').slice(columnFixIndex);
+        //} else {
+        //    columnModelList = this.get('visibleList');
+        //}
+        //
+        //return columnModelList;
+        //
+        //
+        //
+
         var columnModelList = [],
-            columnFixIndex = this.get('columnFixIndex');
+            visibleColumnFixIndex = this.getVisibleColumnFixCount();
 
         whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
 
         if (whichSide === 'L') {
-            columnModelList = this.get('visibleList').slice(0, columnFixIndex);
+            columnModelList = this.get('visibleList').slice(0, visibleColumnFixIndex);
         } else if (whichSide === 'R') {
-            columnModelList = this.get('visibleList').slice(columnFixIndex);
+            columnModelList = this.get('visibleList').slice(visibleColumnFixIndex);
         } else {
             columnModelList = this.get('visibleList');
         }
-
         return columnModelList;
+    },
+
+    //@todo realColumnFixCount 구하는 방식 ??
+    getVisibleColumnFixCount: function() {
+        var columnModelList = this.get('columnModelList'),
+            realColumnFixCount = this.get('columnFixCount') + META_COLUMN_LIST.length,
+            visibleColumnFixCount = 0;
+
+
+        ne.util.forEach(this.get('columnModelList'),function(columnModel, index) {
+            if (index >= realColumnFixCount) {
+                return false;
+            }
+            if (!columnModel.isHidden) {
+                visibleColumnFixCount += 1;
+            }
+        });
+
+        return visibleColumnFixCount;
     },
 
     /**
@@ -285,10 +366,10 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
      * 열고정 영역 기준으로 partition 으로 나뉜 visible list 등 내부적으로 사용할 부가정보를 가공하여 저장한다.
      * @param {Array} columnModelList   컬럼모델 배열
-     * @param {Number} columnFixIndex   열고정 인덱스
+     * @param {number} [columnFixCount]   열고정 카운트
      * @private
      */
-    _setColumnModelList: function(columnModelList, columnFixIndex) {
+    _setColumnModelList: function(columnModelList, columnFixCount) {
         var visibleList;
 
         columnModelList = $.extend(true, [], columnModelList);
@@ -299,7 +380,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnModelList: columnModelList,
             columnModelMap: _.indexBy(columnModelList, 'columnName'),
             relationListMap: this._getRelationListMap(columnModelList),
-            columnFixIndex: columnFixIndex,
+            columnFixCount: ne.util.isUndefined(columnFixCount) ? this.get('columnFixCount') : Math.max(0, columnFixCount),
             visibleList: visibleList
         }, {silent: true});
 
@@ -325,12 +406,11 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @param {boolean} isHidden - Hidden flag for setting
      */
     setHidden: function(columnNames, isHidden) {
-        var columnModelMap = this.get('columnModelMap'),
-            columnMergeInfoList = this.grid.option('columnMerge'),
+        var columnMergeInfoList = this.grid.option('columnMerge'),
             columnMergeInfoItem;
 
         _.each(columnNames, function(name) {
-            var columnModel = columnModelMap[name];
+            var columnModel = this.getColumnModel(name);
 
             if (columnModel) {
                 columnModel.isHidden = isHidden;

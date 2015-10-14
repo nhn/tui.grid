@@ -27,7 +27,8 @@
 <script>
 var grid = new ne.Grid({
     el: $('#grid'),
-	columnFixIndex: 2,
+    selectType:'checkbox',
+	columnFixIndex: 3,
 	displayRowCount: 20,
 	headerHeight: 100,
     columnModelList: [
@@ -46,7 +47,7 @@ var grid = new ne.Grid({
 			editOption: {
 				type: 'text'
 			}
-        }, {
+        },{
 			title: 'c3',
 			width: 60,
 			columnName: 'c3'
