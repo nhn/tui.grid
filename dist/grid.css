@@ -1,3 +1,10 @@
+/**
+ * @fileoverview application-grid
+ * @author NHN Ent. FE Development Team
+ * @version 1.0.4b
+ * @license MIT
+ * @link https://github.com/nhnent/fe.application-grid
+ */
 .uio_grid {
   width: 100%;
   background: #fff;
@@ -124,6 +131,7 @@
 .uio_grid .no_row_layer {
   display: none;
   position: absolute;
+  box-sizing: content-box;
   top: 0;
   left: 0;
   width: 100%;
@@ -137,6 +145,7 @@
 .uio_grid .loading_layer {
   display: none;
   position: absolute;
+  box-sizing: content-box;
   top: 0;
   left: 0;
   width: 100%;
@@ -230,8 +239,9 @@
   filter: alpha(opacity=10);
   left: -1px;
 }
-.uio_grid .rside_area .space {
+.uio_grid .rside_area .header_space {
   display: block;
+  box-sizing: content-box;
   position: absolute;
   top: 0;
   right: 0;
@@ -239,16 +249,10 @@
   border: solid 1px #ccc;
   background: #f8f8f8;
 }
-.uio_grid .rside_area .virtual_scrollbar {
-  display: none;
-  overflow-x: hidden;
-  overflow-y: scroll;
+.uio_grid .rside_area .scrollbar_border {
+  display: block;
   position: absolute;
-  width: 18px;
-  right: 0;
-  top: 0;
-}
-.uio_grid .rside_area .virtual_scrollbar .content {
+  right: 17px;
   width: 1px;
   background: #ccc;
 }
@@ -275,8 +279,11 @@
 .uio_grid .header .resize_handle_container .resize_handle_last {
   width: 3px;
 }
-.uio_grid .table_container {
+.uio_grid .body_container {
   position: relative;
+}
+.uio_grid .body_container .table_container {
+  position: absolute;
 }
 .uio_grid table {
   border: 0;
@@ -472,15 +479,15 @@
   border-top: 1px solid #ccc;
   cursor: row-resize;
 }
-.uio_grid .pagination {
+.uio_grid .grid_pagination {
   height: 12px;
   margin-bottom: 12px;
   padding-top: 14px;
   line-height: normal;
   text-align: center;
 }
-.uio_grid .pagination a,
-.uio_grid .pagination strong {
+.uio_grid .grid_pagination a,
+.uio_grid .grid_pagination strong {
   display: inline-block;
   position: relative;
   padding: 3px 8px 4px;
@@ -491,16 +498,16 @@
   text-decoration: none;
   vertical-align: middle;
 }
-.uio_grid .pagination strong {
+.uio_grid .grid_pagination strong {
   padding: 3px 6px 4px;
   color: #ff1313;
   border: 1px solid #d4d4d4;
   background: #e7e7e7;
 }
-.uio_grid .pagination .next,
-.uio_grid .pagination .next_end,
-.uio_grid .pagination .pre,
-.uio_grid .pagination .pre_end {
+.uio_grid .grid_pagination .next,
+.uio_grid .grid_pagination .next_end,
+.uio_grid .grid_pagination .pre,
+.uio_grid .grid_pagination .pre_end {
   overflow: hidden;
   width: 33px;
   height: 11px;
@@ -510,20 +517,20 @@
   line-height: 999px;
   white-space: nowrap;
 }
-.uio_grid .pagination .next {
+.uio_grid .grid_pagination .next {
   margin-left: 10px;
   background-position: 0 -50px;
 }
-.uio_grid .pagination .next_end {
+.uio_grid .grid_pagination .next_end {
   width: 40px;
   margin-left: 11px;
   background-position: 0 -75px;
 }
-.uio_grid .pagination .pre {
+.uio_grid .grid_pagination .pre {
   margin-right: 10px;
   background-position: 0 -100px;
 }
-.uio_grid .pagination .pre_end {
+.uio_grid .grid_pagination .pre_end {
   width: 40px;
   margin-right: 8px;
   background-position: 0 -125px;
