@@ -68,7 +68,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Resets the height of a container div.
-     * @return {[type]} [description]
      */
     _resetContainerHeight: function() {
         this.$bodyContainer.css({
