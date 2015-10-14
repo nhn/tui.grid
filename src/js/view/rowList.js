@@ -46,7 +46,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(renderModel, 'rowListChanged', this.render);
-            // .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 300));
     },
 
     /**
@@ -222,7 +221,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
-        this.bodyView.resetContainerArea();
+        this.bodyView.resetTablePosition();
 
         if (isModelChanged) {
             this._resetRows();

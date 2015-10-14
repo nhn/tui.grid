@@ -63,8 +63,9 @@ $selection-layer =
             {$selection-layer}
             left -1px
 
-    .space
+    .header_space
         display block
+        box-sizing content-box // reset for bootstrap
         position absolute
         top 0
         right 0
@@ -72,16 +73,10 @@ $selection-layer =
         border solid 1px #ccc
         background #f8f8f8
 
-    .virtual_scrollbar
-        display none
-        overflow-x hidden
-        overflow-y scroll
+    .scrollbar_border
+        display block
         position absolute
-        width 18px
-        right 0
-        top 0
-
-    .virtual_scrollbar .content
+        right 17px
         width 1px
         background #ccc
 
@@ -109,5 +104,8 @@ $selection-layer =
         .resize_handle_last
             width 3px
 
-.table_container
+.body_container
     position relative
+
+    .table_container
+        position absolute

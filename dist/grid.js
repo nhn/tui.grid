@@ -1,3 +1,10 @@
+/**
+ * @fileoverview application-grid
+ * @author NHN Ent. FE Development Team
+ * @version 1.0.4b
+ * @license MIT
+ * @link https://github.com/nhnent/fe.application-grid
+ */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * @fileoverview Router for Addon.Net
@@ -2396,7 +2403,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addRowClassName: function(rowKey, className) {
-        this.dataModel.get(rowKey).addRowClassName(className);
+        this.dataModel.get(rowKey).addClassName(className);
     },
 
     /**
@@ -2415,7 +2422,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeRowClassName: function(rowKey, className) {
-        this.dataModel.get(rowKey).removeRowClassName(className);
+        this.dataModel.get(rowKey).removeClassName(className);
     },
 
     /**
@@ -2535,7 +2542,7 @@ Core.prototype.__instance = Core.prototype.__instance || {};
 
 module.exports = Core;
 
-},{"./addon/net":2,"./base/view":7,"./data/columnModel":9,"./data/rowList":11,"./model/dimension":13,"./model/focus":14,"./model/renderer":16,"./model/renderer-smart":15,"./util":19,"./view/cellFactory":20,"./view/clipboard":21,"./view/layer/empty":23,"./view/layer/loading":24,"./view/layer/ready":25,"./view/layout/frame-lside":27,"./view/layout/frame-rside":28,"./view/layout/toolbar":32,"./view/selection":49}],9:[function(require,module,exports){
+},{"./addon/net":2,"./base/view":7,"./data/columnModel":9,"./data/rowList":11,"./model/dimension":13,"./model/focus":14,"./model/renderer":16,"./model/renderer-smart":15,"./util":19,"./view/cellFactory":20,"./view/clipboard":21,"./view/layer/empty":23,"./view/layer/loading":24,"./view/layer/ready":25,"./view/layout/frame-lside":27,"./view/layout/frame-rside":28,"./view/layout/toolbar":32,"./view/selection":48}],9:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
@@ -3145,7 +3152,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
-    addRowClassName: function(rowKey, className) {
+    addClassName: function(className) {
         var extraData = this._getExtraDataClone(),
             classNameData,
             classNameList;
@@ -3183,7 +3190,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
-    removeRowClassName: function(rowKey, className) {
+    removeClassName: function(className) {
         var extraData = this._getExtraDataClone(),
             classNameData;
 
@@ -7121,7 +7128,7 @@ var CellFactory = View.extend(/**@lends module:view/cellFactory.prototype */{
 
 module.exports = CellFactory;
 
-},{"../base/view":7,"./painter/cell/button":38,"./painter/cell/mainButton":40,"./painter/cell/normal":41,"./painter/cell/number":42,"./painter/cell/select":43,"./painter/cell/text":46,"./painter/cell/text-convertible":44,"./painter/cell/text-password":45}],21:[function(require,module,exports){
+},{"../base/view":7,"./painter/cell/button":37,"./painter/cell/mainButton":39,"./painter/cell/normal":40,"./painter/cell/number":41,"./painter/cell/select":42,"./painter/cell/text":45,"./painter/cell/text-convertible":43,"./painter/cell/text-password":44}],21:[function(require,module,exports){
 /**
  * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
  * @author NHN Ent. FE Development Team
@@ -7763,28 +7770,35 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @constructs
      * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R']  어느 영역의 body 인지 여부.
+     *      @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            // Div for setting rendering position of entire child-nodes of $el.
+            $bodyContainer: null,
+            // Div for redraw table element with innerHTML.
+            $tableContainer: null,
             whichSide: options && options.whichSide || 'R',
             isScrollSync: false,
-            extraWidth: 0,
-            $tableContainer: null
+            extraWidth: 0
         });
 
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-            .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
-            .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
-            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
+        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
+            .listenTo(this.grid.dataModel, 'add remove reset', this._resetContainerHeight)
+            .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange)
+            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
     tagName: 'div',
 
     className: 'data',
 
-    template: _.template('<div class="table_container" style="top: 0px"><%=table%></div>'),
+    template: _.template('' +
+        '<div class="body_container">' +
+        '   <div class="table_container"><%=table%></div>' +
+        '</div>'),
 
     templateTable: _.template('' +
         '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
@@ -7807,7 +7821,17 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * 컬럼 너비 변경 이벤트 핸들러
+     * Resets the height of a container div.
+     * @return {[type]} [description]
+     */
+    _resetContainerHeight: function() {
+        this.$bodyContainer.css({
+            height: this.grid.dimensionModel.get('totalRowHeight')
+        });
+    },
+
+    /**
+     * Event handler for 'columnWidthChanged' event on a dimension model.
      * @private
      */
     _onColumnWidthChanged: function() {
@@ -7825,18 +7849,14 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onScroll: function(scrollEvent) {
-        var obj, renderModel;
-
-        renderModel = this.grid.renderModel;
-        obj = {
+        var attrs = {
             scrollTop: scrollEvent.target.scrollTop
         };
 
         if (this.whichSide === 'R') {
-            obj.scrollLeft = scrollEvent.target.scrollLeft;
+            attrs.scrollLeft = scrollEvent.target.scrollLeft;
         }
-
-        renderModel.set(obj);
+        this.grid.renderModel.set(attrs);
     },
 
     /**
@@ -7862,17 +7882,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Reset position and height of a container area.
+     * Reset position of a table container
      * @param {number} top  조정할 top 위치 값
      * @private
      */
-    resetContainerArea: function() {
-        var top = this.grid.renderModel.get('top'),
-            height = this.grid.dimensionModel.get('totalRowHeight');
-
+    resetTablePosition: function() {
         this.$tableContainer.css({
-            top: top + 'px',
-            height: (height - top) + 'px'
+            top: this.grid.renderModel.get('top') + 'px'
         });
     },
 
@@ -7900,11 +7916,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             colGroup: this._getColGroupMarkup(),
             tbody: ''
         });
+
         this.$el.css({
-                height: grid.dimensionModel.get('bodyHeight')
-            }).html(this.template({
-                table: tableHtml
-            }));
+            height: grid.dimensionModel.get('bodyHeight')
+        }).html(this.template({
+            table: tableHtml
+        }));
+        this.$bodyContainer = this.$el.find('div.body_container');
         this.$tableContainer = this.$el.find('div.table_container');
 
         rowList = this.createView(RowListView, {
@@ -7918,7 +7936,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         //selection 을 랜더링한다.
         selection = this.addView(grid.selection.createLayer(whichSide));
-        this.$el.append(selection.render().el);
+        this.$bodyContainer.append(selection.render().el);
 
         return this;
     },
@@ -7989,7 +8007,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7,"../rowList":48}],27:[function(require,module,exports){
+},{"../../base/view":7,"../rowList":47}],27:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -8042,16 +8060,15 @@ module.exports = LsideFrame;
 
 },{"./frame":29}],28:[function(require,module,exports){
 /**
- * @fileoverview Left Side Frame 정의
+ * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 var Frame = require('./frame');
-var VirtualScrollBar = require('./virtualScrollBar');
 
 /**
- * right side 프레임 클래스
+ * right side frame class
  * @module view/layout/frame-rside
  */
 var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
@@ -8062,15 +8079,19 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            whichSide: 'R'
+            whichSide: 'R',
+            $scrollBorder: null
         });
+        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight change:headerHeight',
+            this._resetScrollBorderHeight);
     },
 
     className: 'rside_area',
 
     /**
-     * 컬럼 width 값이 변경되었을때 이벤트 핸들러
+     * Event handler for 'columnWidthChanged' event on dimensionModel
      * @private
+     * @override
      */
     _onColumnWidthChanged: function() {
         var dimensionModel = this.grid.dimensionModel,
@@ -8084,7 +8105,17 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     },
 
     /**
-     * 랜더링하기 전 수행되는 메서드
+     * Resets the height of a vertical scroll-bar border
+     */
+    _resetScrollBorderHeight: function() {
+        var dimensionModel = this.grid.dimensionModel,
+            height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+
+        this.$scrollBorder.height(height);
+    },
+
+    /**
+     * To be called before rendering.
      */
     beforeRender: function() {
         var dimensionModel = this.grid.dimensionModel,
@@ -8099,35 +8130,36 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     },
 
     /**
-     * 랜더링 후 수행되는 메서드
+     * To be called after rendering.
      */
     afterRender: function() {
-        var scrollbar, $space, height;
+        var dimensionModel = this.grid.dimensionModel,
+            $space, $scrollBorder, headerHeight, bodyHeight;
 
         if (!this.grid.option('scrollY')) {
             return;
         }
-        $space = $('<div></div>');
-        height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
+        headerHeight = dimensionModel.get('headerHeight');
+        bodyHeight = dimensionModel.get('bodyHeight');
 
-        $space.css({
-            height: height + 'px'
-        }).addClass('space');
+        // Empty div for hiding scrollbar area in header
+        $space = $('<div />').addClass('header_space');
+        // Empty div for showing a border of vertical scrollbar area in body
+        $scrollBorder = $('<div />').addClass('scrollbar_border');
 
-        this.$el.append($space);
+        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
+        $scrollBorder.css('top', headerHeight + 'px');
 
-        if (!this.grid.option('notUseSmartRendering')) {
-            scrollbar = this.createView(VirtualScrollBar, {
-                grid: this.grid
-            });
-            this.$el.append(scrollbar.render().el);
-        }
+        this.$el.append($space).append($scrollBorder);
+        this.$scrollBorder = $scrollBorder;
+
+        this._resetScrollBorderHeight();
     }
 });
 
 module.exports = RsideFrame;
 
-},{"./frame":29,"./virtualScrollBar":36}],29:[function(require,module,exports){
+},{"./frame":29}],29:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -9076,7 +9108,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     tagName: 'div',
 
-    className: 'pagination',
+    className: 'grid_pagination',
 
     template: _.template('' +
         '<a href="#" class="pre_end">맨앞</a>' +
@@ -9251,145 +9283,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 module.exports = ResizeHandler;
 
 },{"../../../base/view":7}],36:[function(require,module,exports){
-/**
- * @fileoverview VirtualScrollbar for the Body
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var View = require('../../base/view');
-
-/**
- * virtual scrollbar
- * @module view/layout/virtualScrollBar
- */
-var VirtualScrollBar = View.extend(/**@lends module:view/layout/virtualScrollBar.prototype */{
-    /**
-     * @constructs
-     * @extends module:base/view
-     */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
-            hasFocus: false
-        });
-
-        this._onScrollDebounced = _.debounce(_.bind(this._onScroll, this));
-
-        this.listenTo(this.grid.dimensionModel, 'change', this._onDimensionChange, this);
-        this.listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this);
-    },
-
-    tagName: 'div',
-
-    className: 'virtual_scrollbar',
-
-    events: {
-        'scroll': '_onScrollDebounced',
-        'mousedown': '_onMouseDown'
-    },
-
-    /**
-     * 마우스 down 이벤트 핸들러
-     * 스크롤 핸들러를 직접 조작할 경우 rendering 성능 향상을 위해 매번 랜더링 하지 않고 한번에 랜더링 하기위해
-     * hasFocus 내부 변수를 할당하고, document 에 mouseup 이벤트 핸들러를 바인딩한다.
-     * @private
-     */
-    _onMouseDown: function() {
-        this.hasFocus = true;
-        $(document).on('mouseup', $.proxy(this._onMouseUp, this));
-    },
-
-    /**
-     * 마우스 up 이벤트 핸들러
-     * 바인딩 해제한다.
-     * @private
-     */
-    _onMouseUp: function() {
-        this.hasFocus = false;
-        $(document).off('mouseup', $.proxy(this._onMouseUp, this));
-    },
-
-    /**
-     * scroll 이벤트 발생시 renderModel 의 scroll top 값을 변경하여 frame 과 body 의 scrollTop 값을 동기화한다.
-     * @param {event} scrollEvent 스크롤 이벤트
-     * @private
-     */
-    _onScroll: function(scrollEvent) {
-        if (this.hasFocus) {
-            this.grid.renderModel.set('scrollTop', scrollEvent.target.scrollTop);
-        }
-    },
-
-    /**
-     * 크기 값이 변경될 때 해당 사항을 반영한다.
-     * @param {object} model 변경이 발생한 모델
-     * @private
-     */
-    _onDimensionChange: function(model) {
-        if (model.changed['headerHeight'] || model.changed['bodyHeight']) {
-            this.render();
-        } else if (model.changed['totalRowHeight']) {
-            this._setHeight();
-        }
-    },
-
-    /**
-     * scrollTop 이 변경된다면 scrollTop 값을 갱신하고,
-     * scrollTop 값 자체가 잘못된 경우 renderModel 의 scrollTop 값을 정상값으로 갱신한다.
-     * @param {object} model 변경이 발생한 모델
-     * @param {number} value scrollTop 값
-     * @private
-     */
-    _onScrollTopChange: function(model, value) {
-        this.el.scrollTop = value;
-    },
-
-    /**
-     * 랜더링한다.
-     * @return {VirtualScrollBar} - This object
-     */
-    render: function() {
-        var grid = this.grid,
-            height = grid.dimensionModel.get('bodyHeight'),
-            top = grid.dimensionModel.get('headerHeight');
-
-        if (this.grid.option('scrollX')) {
-            height -= this.grid.scrollBarSize;
-        }
-
-        this.$el.css({
-            height: height + 'px',
-            top: top + 'px',
-            display: 'block'
-        }).html('<div class="content"></div>');
-        this._setHeight();
-
-        return this;
-    },
-
-    /**
-     * virtual scrollbar 의 height 를 설정한다.
-     * @private
-     */
-    _setHeight: function() {
-        this.$el.find('.content').height(this.grid.dimensionModel.get('totalRowHeight'));
-    },
-
-    /**
-     * 소멸자
-     */
-    destroy: function() {
-        this.stopListening();
-        this._onMouseUp();
-        this.destroyChildren();
-        this.remove();
-    }
-});
-
-module.exports = VirtualScrollBar;
-
-},{"../../base/view":7}],37:[function(require,module,exports){
 /**
  * @fileoverview CellPainter 의 기초 클래스
  * @author NHN Ent. FE Development Team
@@ -9835,7 +9728,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
 
 module.exports = Cell;
 
-},{"../../base/painter":6,"../../util":19}],38:[function(require,module,exports){
+},{"../../base/painter":6,"../../util":19}],37:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the button cell
  * @author NHN Ent. FE Development Team
@@ -10073,7 +9966,7 @@ var Button = ne.util.defineClass(List,/**@lends module:painter/cell/button.proto
 
 module.exports = Button;
 
-},{"../../../util":19,"./list":39}],39:[function(require,module,exports){
+},{"../../../util":19,"./list":38}],38:[function(require,module,exports){
 /**
  * @fileoverview 리스트 형태의 Cell Painter을 위한 Base 클래스
  * @author NHN Ent. FE Development Team
@@ -10157,7 +10050,7 @@ var List = ne.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype
 
 module.exports = List;
 
-},{"../cell":37}],40:[function(require,module,exports){
+},{"../cell":36}],39:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the main button
  * @author NHN Ent. FE Development Team
@@ -10305,7 +10198,7 @@ var MainButton = ne.util.defineClass(Cell,/**@lends module:painter/cell/mainButt
 
 module.exports = MainButton;
 
-},{"../cell":37}],41:[function(require,module,exports){
+},{"../cell":36}],40:[function(require,module,exports){
 /**
  * @fileoverview 기본 Cell (일반, 숫자, 메인 Checkbox) 관련 Painter 정의
  * @author NHN Ent. FE Development Team
@@ -10382,7 +10275,7 @@ var Normal = ne.util.defineClass(Cell,/**@lends module:painter/cell/normal.proto
 
 module.exports = Normal;
 
-},{"../cell":37}],42:[function(require,module,exports){
+},{"../cell":36}],41:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the number cell
  * @author NHN Ent. FE Development Team
@@ -10434,7 +10327,7 @@ var NumberCell = ne.util.defineClass(Normal,/**@lends module:painter/cell/number
 
 module.exports = NumberCell;
 
-},{"./normal":41}],43:[function(require,module,exports){
+},{"./normal":40}],42:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the select cell
  * @author NHN Ent. FE Development Team
@@ -10608,7 +10501,7 @@ var Select = ne.util.defineClass(List,/**@lends module:view/painter/cell/select.
 
 module.exports = Select;
 
-},{"../../../util":19,"./list":39}],44:[function(require,module,exports){
+},{"../../../util":19,"./list":38}],43:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the text-convertible cell
  * @author NHN Ent. FE Development Team
@@ -10872,7 +10765,7 @@ var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/te
 
 module.exports = Convertible;
 
-},{"../../../util":19,"../cell":37,"./text":46}],45:[function(require,module,exports){
+},{"../../../util":19,"../cell":36,"./text":45}],44:[function(require,module,exports){
 /**
  * @fileoverview Password 타입의 Input을 가진 Cell Painter
  * @author NHN Ent. FE Development Team
@@ -10917,7 +10810,7 @@ var Password = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-
 
 module.exports = Password;
 
-},{"./text":46}],46:[function(require,module,exports){
+},{"./text":45}],45:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the text cell
  * @author NHN Ent. FE Development Team
@@ -11205,7 +11098,7 @@ var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype
 
 module.exports = Text;
 
-},{"../../../util":19,"../cell":37}],47:[function(require,module,exports){
+},{"../../../util":19,"../cell":36}],46:[function(require,module,exports){
 /**
  * @fileoverview Row Painter 정의
  * @author NHN Ent. FE Development Team
@@ -11361,7 +11254,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
 
 module.exports = RowPainter;
 
-},{"../../base/painter":6}],48:[function(require,module,exports){
+},{"../../base/painter":6}],47:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
@@ -11410,7 +11303,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(renderModel, 'rowListChanged', this.render);
-            // .listenTo(renderModel, 'rowListChanged', _.throttle(_.bind(this.render, this), 300));
     },
 
     /**
@@ -11586,7 +11478,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
-        this.bodyView.resetContainerArea();
+        this.bodyView.resetTablePosition();
 
         if (isModelChanged) {
             this._resetRows();
@@ -11657,7 +11549,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7,"./painter/row":47}],49:[function(require,module,exports){
+},{"../base/view":7,"./painter/row":46}],48:[function(require,module,exports){
 /**
  * @fileoverview Selection 클래스 파일
  * @author NHN Ent. FE Development Team
@@ -12296,7 +12188,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
 module.exports = Selection;
 
-},{"../base/view":7,"./selectionLayer":50}],50:[function(require,module,exports){
+},{"../base/view":7,"./selectionLayer":49}],49:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team

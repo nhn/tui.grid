@@ -16,28 +16,35 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @constructs
      * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R']  어느 영역의 body 인지 여부.
+     *      @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            // Div for setting rendering position of entire child-nodes of $el.
+            $bodyContainer: null,
+            // Div for redraw table element with innerHTML.
+            $tableContainer: null,
             whichSide: options && options.whichSide || 'R',
             isScrollSync: false,
-            extraWidth: 0,
-            $tableContainer: null
+            extraWidth: 0
         });
 
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-            .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange, this)
-            .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange, this)
-            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this);
+        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
+            .listenTo(this.grid.dataModel, 'add remove reset', this._resetContainerHeight)
+            .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange)
+            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
     tagName: 'div',
 
     className: 'data',
 
-    template: _.template('<div class="table_container" style="top: 0px"><%=table%></div>'),
+    template: _.template('' +
+        '<div class="body_container">' +
+        '   <div class="table_container"><%=table%></div>' +
+        '</div>'),
 
     templateTable: _.template('' +
         '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
@@ -60,7 +67,16 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * 컬럼 너비 변경 이벤트 핸들러
+     * Resets the height of a container div.
+     */
+    _resetContainerHeight: function() {
+        this.$bodyContainer.css({
+            height: this.grid.dimensionModel.get('totalRowHeight')
+        });
+    },
+
+    /**
+     * Event handler for 'columnWidthChanged' event on a dimension model.
      * @private
      */
     _onColumnWidthChanged: function() {
@@ -78,18 +94,14 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onScroll: function(scrollEvent) {
-        var obj, renderModel;
-
-        renderModel = this.grid.renderModel;
-        obj = {
+        var attrs = {
             scrollTop: scrollEvent.target.scrollTop
         };
 
         if (this.whichSide === 'R') {
-            obj.scrollLeft = scrollEvent.target.scrollLeft;
+            attrs.scrollLeft = scrollEvent.target.scrollLeft;
         }
-
-        renderModel.set(obj);
+        this.grid.renderModel.set(attrs);
     },
 
     /**
@@ -115,17 +127,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Reset position and height of a container area.
+     * Reset position of a table container
      * @param {number} top  조정할 top 위치 값
      * @private
      */
-    resetContainerArea: function() {
-        var top = this.grid.renderModel.get('top'),
-            height = this.grid.dimensionModel.get('totalRowHeight');
-
+    resetTablePosition: function() {
         this.$tableContainer.css({
-            top: top + 'px',
-            height: (height - top) + 'px'
+            top: this.grid.renderModel.get('top') + 'px'
         });
     },
 
@@ -153,11 +161,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             colGroup: this._getColGroupMarkup(),
             tbody: ''
         });
+
         this.$el.css({
-                height: grid.dimensionModel.get('bodyHeight')
-            }).html(this.template({
-                table: tableHtml
-            }));
+            height: grid.dimensionModel.get('bodyHeight')
+        }).html(this.template({
+            table: tableHtml
+        }));
+        this.$bodyContainer = this.$el.find('div.body_container');
         this.$tableContainer = this.$el.find('div.table_container');
 
         rowList = this.createView(RowListView, {
@@ -171,7 +181,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         //selection 을 랜더링한다.
         selection = this.addView(grid.selection.createLayer(whichSide));
-        this.$el.append(selection.render().el);
+        this.$bodyContainer.append(selection.render().el);
 
         return this;
     },

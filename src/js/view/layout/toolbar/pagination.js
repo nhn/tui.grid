@@ -24,7 +24,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     tagName: 'div',
 
-    className: 'pagination',
+    className: 'grid_pagination',
 
     template: _.template('' +
         '<a href="#" class="pre_end">맨앞</a>' +
