@@ -1,14 +1,13 @@
 /**
- * @fileoverview Left Side Frame 정의
+ * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 var Frame = require('./frame');
-var VirtualScrollBar = require('./virtualScrollBar');
 
 /**
- * right side 프레임 클래스
+ * right side frame class
  * @module view/layout/frame-rside
  */
 var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
@@ -19,15 +18,19 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            whichSide: 'R'
+            whichSide: 'R',
+            $scrollBorder: null
         });
+        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight change:headerHeight',
+            this._resetScrollBorderHeight);
     },
 
     className: 'rside_area',
 
     /**
-     * 컬럼 width 값이 변경되었을때 이벤트 핸들러
+     * Event handler for 'columnWidthChanged' event on dimensionModel
      * @private
+     * @override
      */
     _onColumnWidthChanged: function() {
         var dimensionModel = this.grid.dimensionModel,
@@ -41,7 +44,17 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     },
 
     /**
-     * 랜더링하기 전 수행되는 메서드
+     * Resets the height of a vertical scroll-bar border
+     */
+    _resetScrollBorderHeight: function() {
+        var dimensionModel = this.grid.dimensionModel,
+            height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+
+        this.$scrollBorder.height(height);
+    },
+
+    /**
+     * To be called before rendering.
      */
     beforeRender: function() {
         var dimensionModel = this.grid.dimensionModel,
@@ -56,29 +69,30 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     },
 
     /**
-     * 랜더링 후 수행되는 메서드
+     * To be called after rendering.
      */
     afterRender: function() {
-        var scrollbar, $space, height;
+        var dimensionModel = this.grid.dimensionModel,
+            $space, $scrollBorder, headerHeight, bodyHeight;
 
         if (!this.grid.option('scrollY')) {
             return;
         }
-        $space = $('<div></div>');
-        height = this.grid.dimensionModel.get('headerHeight') - 2;  //높이에서 상 하단 border 값 2를 뺀다.
+        headerHeight = dimensionModel.get('headerHeight');
+        bodyHeight = dimensionModel.get('bodyHeight');
 
-        $space.css({
-            height: height + 'px'
-        }).addClass('space');
+        // Empty div for hiding scrollbar area in header
+        $space = $('<div />').addClass('header_space');
+        // Empty div for showing a border of vertical scrollbar area in body
+        $scrollBorder = $('<div />').addClass('scrollbar_border');
 
-        this.$el.append($space);
+        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
+        $scrollBorder.css('top', headerHeight + 'px');
 
-        if (!this.grid.option('notUseSmartRendering')) {
-            scrollbar = this.createView(VirtualScrollBar, {
-                grid: this.grid
-            });
-            this.$el.append(scrollbar.render().el);
-        }
+        this.$el.append($space).append($scrollBorder);
+        this.$scrollBorder = $scrollBorder;
+
+        this._resetScrollBorderHeight();
     }
 });
 
