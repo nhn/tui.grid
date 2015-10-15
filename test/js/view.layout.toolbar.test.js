@@ -103,7 +103,7 @@ describe('view.frame.toolbar', function() {
                 it('hasPagination = true 일 때', function() {
                     options.hasPagination = true;
                     toolbar.render();
-                    expect(toolbar.$el.find('.pagination')).toExist();
+                    expect(toolbar.$el.find('.grid_pagination')).toExist();
                 });
             });
         });

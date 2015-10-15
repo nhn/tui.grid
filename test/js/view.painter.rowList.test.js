@@ -93,7 +93,7 @@ describe('View.RowList', function() {
             el: setFixtures('<table><tbody></tbody></table>').find('tbody'),
             collection: grid.renderModel.getCollection('R'),
             bodyView: {
-                resetContainerArea: function() {},
+                resetTablePosition: function() {},
                 attachTableEventHandler: function() {},
                 redrawTable: redrawTable
             }
