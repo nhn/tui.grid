@@ -154,7 +154,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     _initializeOptions: function(options) {
         var defaultOptions = {
-            columnFixIndex: 0,
+            columnFixCount: 0,
             columnModelList: [],
             keyColumnName: null,
             selectType: '',

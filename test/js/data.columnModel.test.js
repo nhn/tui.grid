@@ -259,7 +259,7 @@ describe('data.columnModel', function() {
     });
 
     describe('isLside()', function() {
-        it('isHidden 이 아닌 컬럼 중 ColumnFixIndex 기준으로 L side 여부를 판단한다.', function() {
+        it('isHidden 이 아닌 컬럼 중 ColumnFixCount 기준으로 L side 여부를 판단한다.', function() {
             sampleColumnModelList = [
                 {
                     columnName: '_button',
@@ -284,7 +284,7 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnFixIndex: 2,
+                columnFixCount: 2,
                 columnModelList: sampleColumnModelList
             });
 
@@ -437,7 +437,7 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 columnModelList: $.extend(true, [], sampleColumnModelList),
-                columnFixIndex: 2
+                columnFixCount: 4
             });
         });
 
@@ -470,7 +470,7 @@ describe('data.columnModel', function() {
             expect(visibleList).toEqual(expectList);
         });
 
-        it('whichSide = L 이라면 L Side 의 visibleList 를 반환한다.', function() {
+        it('whichSide = R 이라면 L Side 의 visibleList 를 반환한다.', function() {
             var expectList = [
                     {
                         columnName: 'column4'
@@ -516,7 +516,7 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 columnModelList: $.extend(true, [], sampleColumnModelList),
-                columnFixIndex: 2
+                columnFixCount: 2
             });
             //_button 과 _number 는 가공되었기 때문에, 인자로 넘긴 columnModel 과는 달라야 한다.
             expect(columnModelInstance.getColumnModel('_button')).not.toEqual(sampleColumnModelList[0]);
@@ -702,7 +702,7 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnFixIndex: 2,
+                columnFixCount: 2,
                 hasNumberColumn: false,
                 columnModelList: $.extend(true, [], sampleColumnModelList)
             });
@@ -731,8 +731,8 @@ describe('data.columnModel', function() {
             expect(relationListMap).toEqual(expectResult);
         });
 
-        it('columnFixIndex가 저장 되었는지 확인한다.', function() {
-            expect(columnModelInstance.get('columnFixIndex')).toEqual(2);
+        it('columnFixCount가 저장 되었는지 확인한다.', function() {
+            expect(columnModelInstance.get('columnFixCount')).toEqual(2);
         });
 
         it('visibleList가 저장 되었는지 확인한다.', function() {
