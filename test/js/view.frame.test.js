@@ -16,7 +16,6 @@ var FrameRside = require('../../src/js/view/layout/frame-rside');
 var FrameLside = require('../../src/js/view/layout/frame-lside');
 var LayoutHeader = require('../../src/js/view/layout/header');
 var LayoutBody = require('../../src/js/view/layout/body');
-var VirtualScrollBar = require('../../src/js/view/layout/virtualScrollBar');
 
 describe('Frame', function() {
     var grid, frame;
@@ -149,12 +148,6 @@ describe('Frame', function() {
     });
 
     describe('Rside', function() {
-        beforeEach(function() {
-            frame = new FrameRside({
-                grid: grid
-            });
-        });
-
         it('whichSide의 값은 무조건 R이다.', function() {
             frame = new FrameRside({
                 grid: grid,
@@ -165,6 +158,9 @@ describe('Frame', function() {
 
         describe('beforeRender()', function() {
             it('grid.dimensionModel에 정의된 값을 참조하여 el의 css속성을 설정한다.', function() {
+                frame = new FrameRside({
+                    grid: grid
+                });
                 frame.$el.css({
                     display: 'inline',
                     width: '10px',
@@ -185,161 +181,31 @@ describe('Frame', function() {
         describe('afterRender()', function() {
             describe('grid.option.scrollY가 true이면', function() {
                 beforeEach(function() {
+                    grid.dimensionModel.set({
+                        headerHeight: 30,
+                        bodyHeight: 200
+                    });
                     grid.options.scrollY = true;
-                    grid.dimensionModel.set('headerHeight', 30);
+                    frame = new FrameRside({
+                        grid: grid
+                    });
                 });
 
-                it('div.space를 생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
+                it('div.header_space를 생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
                     var $space;
                     frame.afterRender();
-                    $space = frame.$el.find('div.space');
+                    $space = frame.$el.find('div.header_space');
                     expect($space.length).toBe(1);
                     expect($space.height()).toBe(28);
                 });
 
-                // describe('grid.option.notUseSmartRendering', function() {
-                //     var barEl;
-                //
-                //     beforeEach(function() {
-                //         barEl = $('<div />')[0];
-                //         spyOn(FrameRside, 'VirtualScrollBar').and.callFake(function() {
-                //             this.render = function() {
-                //                 this.el = barEl;
-                //                 return this;
-                //             };
-                //         });
-                //     });
-                //
-                //     it('true가 아니면 VirtualScrollbar를 생성한다.', function() {
-                //         frame.afterRender();
-                //         expect($(barEl).parent().is(frame.$el)).toBe(true);
-                //     });
-                //
-                //     it('true이면 VirtualScrollbar를 생성하지 않는다', function() {
-                //         grid.options.notUseSmartRendering = true;
-                //         expect(FrameRside.VirtualScrollBar).not.toHaveBeenCalled();
-                //     });
-                // });
-            });
-        });
-    });
-
-    describe('Rside.VirtualScrollBar', function() {
-        var scrollbar;
-
-        beforeEach(function() {
-            scrollbar = new VirtualScrollBar({
-                grid: grid
-            });
-        });
-
-        afterEach(function() {
-            scrollbar.destroy();
-        });
-
-        describe('_onMouseDown', function() {
-            beforeEach(function() {
-                spyOn(scrollbar, '_onMouseUp');
-            });
-
-            it('document에 mouseUp 이벤트 핸들러를 설정한다.', function() {
-                scrollbar._onMouseDown();
-                $(document).trigger('mouseup');
-                expect(scrollbar._onMouseUp).toHaveBeenCalled();
-            });
-
-            it('hasFocus 프로퍼티가 적절히 변경되었는지 확인한다.', function() {
-                scrollbar.hasFocus = false;
-                scrollbar._onMouseDown();
-                expect(scrollbar.hasFocus).toBe(true);
-            });
-        });
-
-        describe('_onMouseUp', function() {
-            beforeEach(function() {
-                spyOn(scrollbar, '_onMouseUp').and.callThrough();
-            });
-
-            it('document에 걸린 mouseUp 이벤트 핸들러를 제거한다.', function() {
-                scrollbar._onMouseUp();
-                $(document).trigger('mouseup');
-                expect(scrollbar._onMouseUp.calls.count()).toBe(1);
-            });
-
-            it('hasFocus 프로퍼티가 적절히 변경되었는지 확인한다.', function() {
-                scrollbar.hasFocus = true;
-                scrollbar._onMouseUp();
-                expect(scrollbar.hasFocus).toBe(false);
-            });
-        });
-
-        describe('_onScrollTopChange', function() {
-            beforeEach(function() {
-                jasmine.getFixtures().set($('<div id="wrapper" />'));
-            });
-
-            it('grid.renderModel의 change:scrollTop 이벤트 발생시 호출된다.', function() {
-                spyOn(VirtualScrollBar.prototype, '_onScrollTopChange');
-                scrollbar.destroy();
-                scrollbar = new VirtualScrollBar({
-                    grid: grid
+                it('div.scrollbar_border생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
+                    var scrollHeight = grid.dimensionModel.get('bodyHeight') - grid.dimensionModel.getScrollXHeight();
+                    frame.afterRender();
+                    frame.$scrollBorder.is('div.scrollbar_border');
+                    expect(frame.$scrollBorder.length).toBe(1);
+                    expect(frame.$scrollBorder.height()).toBe(scrollHeight);
                 });
-                $('#wrapper').append(scrollbar.el);
-                grid.renderModel.set('scrollTop', 40);
-                expect(scrollbar._onScrollTopChange).toHaveBeenCalled();
-            });
-
-            it('엘리먼트에서 표현하지 못하는 scrollTop 값이면 정상 값으로 정정한다.', function() {
-                $('#wrapper').append(scrollbar.el);
-                scrollbar._onScrollTopChange({}, 40);
-                expect(grid.renderModel.get('scrollTop')).toBe(0);
-            });
-        });
-
-        describe('_onDimensionChange', function() {
-            beforeEach(function() {
-                spyOn(scrollbar, 'render');
-            });
-
-            it('dimension모델의 headerHeight 혹은 bodyHeight이 변경되면 render가 호출된다.', function() {
-                grid.dimensionModel.set('headerHeight', 40);
-                expect(scrollbar.render.calls.count()).toBe(1);
-                grid.dimensionModel.set('bodyHeight', 40);
-                expect(scrollbar.render.calls.count()).toBe(2);
-                grid.dimensionModel.set('toolbarHeight', 40);
-                expect(scrollbar.render.calls.count()).toBe(2); // 호출 안됨
-            });
-        });
-
-        describe('render()', function() {
-            beforeEach(function() {
-                grid.dimensionModel.set({
-                    bodyHeight: 100,
-                    headerHeight: 20
-                }, {silent: true});
-            });
-
-            it('grid.dimensionModel의 값을 참조하여 el의 css속성을 설정한다.', function() {
-                scrollbar.render();
-
-                expect(scrollbar.$el.height()).toBe(100);
-                expect(scrollbar.$el.css('top')).toBe('20px');
-                expect(scrollbar.$el.css('display')).toBe('block');
-            });
-
-            it('div.content를 생성하여 자식으로 추가한다.', function() {
-                scrollbar.render();
-
-                expect(scrollbar.$el.find('div.content').length).toBe(1);
-            });
-
-            it('grid.options.scrollX가 true이면 scrollBarSize만큼 height를 감소시킨다.', function() {
-                grid.options.scrollX = true;
-                grid.scrollBarSize = 10;
-
-                scrollbar.render();
-
-                expect(scrollbar.$el.height()).toBe(90);
             });
         });
     });
