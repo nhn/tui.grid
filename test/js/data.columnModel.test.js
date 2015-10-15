@@ -5,7 +5,6 @@ var ColumnModelData = require('../../src/js/data/columnModel');
 describe('data.columnModel', function() {
     var columnModelInstance,
         sampleColumnModelList,
-        resultList,
         expectedColumnModel;
 
     beforeEach(function() {
