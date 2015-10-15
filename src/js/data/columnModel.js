@@ -88,8 +88,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             numberColumn.isHidden = true;
         }
 
-        columnModelList = this._extendColumnList(numberColumn, columnModelList);
-        return columnModelList;
+       this._extendColumnList(numberColumn, columnModelList);
     },
 
     /**
@@ -119,10 +118,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         } else {
             buttonColumn.isHidden = true;
         }
-
-        columnModelList = this._extendColumnList(buttonColumn, columnModelList);
-
-        return columnModelList;
+        this._extendColumnList(buttonColumn, columnModelList);
     },
 
     /**
@@ -145,7 +141,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         }
 
         this._moveMetaColumnsToFirst(columnModelList);
-        return columnModelList;
     },
 
     /**
@@ -156,7 +151,8 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     _moveMetaColumnsToFirst: function(columnModelList) {
         _.each(META_COLUMN_LIST, function(metaColumnName, index) {
             var oldIndex = _.findIndex(columnModelList, {columnName: metaColumnName});
-            if (oldIndex !== index) {
+
+            if (oldIndex > -1 && oldIndex !== index) {
                 columnModelList.splice(index, 0, columnModelList.splice(oldIndex, 1)[0]);
             }
         });
@@ -341,7 +337,8 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnFixCount = this.get('columnFixCount');
         }
         columnModelList = $.extend(true, [], columnModelList);
-        columnModelList = this._initializeNumberColumn(this._initializeButtonColumn(columnModelList));
+        this._initializeNumberColumn(columnModelList);
+        this._initializeButtonColumn(columnModelList);
         visibleList = this._getVisibleList(columnModelList);
 
         this.set({

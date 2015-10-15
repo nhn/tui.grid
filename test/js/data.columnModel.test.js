@@ -106,10 +106,10 @@ describe('data.columnModel', function() {
                 title: 'Not exist column.',
                 width: 60
             };
-            resultList = columnModelInstance._extendColumnList(expectedColumnModel, sampleColumnModelList);
+            columnModelInstance._extendColumnList(expectedColumnModel, sampleColumnModelList);
 
-            expect(resultList.length).toBe(length + 1);
-            expect(resultList[resultList.length - 1]).toEqual(expectedColumnModel);
+            expect(sampleColumnModelList.length).toBe(length + 1);
+            expect(sampleColumnModelList[sampleColumnModelList.length - 1]).toEqual(expectedColumnModel);
         });
 
         it('columnName에 해당하는 컬럼 모델이 존재한다면, 해당 컬럼 모델을 확장한다.', function() {
@@ -118,11 +118,11 @@ describe('data.columnModel', function() {
                 title: 'exist column.',
                 width: 300
             };
-            resultList = columnModelInstance._extendColumnList(sampleColumn, sampleColumnModelList);
+            columnModelInstance._extendColumnList(sampleColumn, sampleColumnModelList);
             expectedColumnModel = $.extend(sampleColumn, _.findWhere(sampleColumnModelList, {columnName: 'none'}));
 
-            expect(resultList.length).toBe(length);
-            expect(_.findWhere(resultList, {columnName: 'none'})).toEqual(expectedColumnModel);
+            expect(sampleColumnModelList.length).toBe(length);
+            expect(_.findWhere(sampleColumnModelList, {columnName: 'none'})).toEqual(expectedColumnModel);
         });
     });
 
@@ -136,8 +136,8 @@ describe('data.columnModel', function() {
             };
 
             columnModelInstance.set('hasNumberColumn', false, {silent: true});
-            resultList = columnModelInstance._initializeNumberColumn(sampleColumnModelList);
-            expect(_.findWhere(resultList, {columnName: '_number'})).toEqual(expectedColumnModel);
+            columnModelInstance._initializeNumberColumn(sampleColumnModelList);
+            expect(_.findWhere(sampleColumnModelList, {columnName: '_number'})).toEqual(expectedColumnModel);
         });
 
         it('hasNumberColumn: true일 때 _number 컬럼이 정상적으로 생성된다.', function() {
@@ -148,8 +148,8 @@ describe('data.columnModel', function() {
             };
 
             columnModelInstance.set('hasNumberColumn', true, {silent: true});
-            resultList = columnModelInstance._initializeNumberColumn(sampleColumnModelList);
-            expect(_.findWhere(resultList, {columnName: '_number'})).toEqual(expectedColumnModel);
+            columnModelInstance._initializeNumberColumn(sampleColumnModelList);
+            expect(_.findWhere(sampleColumnModelList, {columnName: '_number'})).toEqual(expectedColumnModel);
         });
     });
 
@@ -169,8 +169,8 @@ describe('data.columnModel', function() {
                 width: 50
             };
             columnModelInstance.set('selectType', selectType, {silent: true});
-            resultList = columnModelInstance._initializeButtonColumn(sampleColumnModelList);
-            expect(resultList[1]).toEqual(expectedColumnModel);
+            columnModelInstance._initializeButtonColumn(sampleColumnModelList);
+            expect(sampleColumnModelList[1]).toEqual(expectedColumnModel);
         });
 
         it('selectType: radio 일 때', function() {
@@ -188,8 +188,8 @@ describe('data.columnModel', function() {
                 width: 50
             };
             columnModelInstance.set('selectType', selectType, {silent: true});
-            resultList = columnModelInstance._initializeButtonColumn(sampleColumnModelList);
-            expect(resultList[1]).toEqual(expectedColumnModel);
+            columnModelInstance._initializeButtonColumn(sampleColumnModelList);
+            expect(sampleColumnModelList[1]).toEqual(expectedColumnModel);
         });
 
         it('selectType 이 없을때 isHidden: true 로 설정된다.', function() {
@@ -206,8 +206,8 @@ describe('data.columnModel', function() {
                 };
             expectedColumnModel = $.extend(sampleColumnModelList[1], sampleColumnModel);
             columnModelInstance.set('selectType', '', {silent: true});
-            resultList = columnModelInstance._initializeButtonColumn(sampleColumnModelList);
-            expect(resultList[1]).toEqual(expectedColumnModel);
+            columnModelInstance._initializeButtonColumn(sampleColumnModelList);
+            expect(sampleColumnModelList[1]).toEqual(expectedColumnModel);
         });
     });
 
@@ -869,7 +869,7 @@ describe('data.columnModel', function() {
 
         it('visibleColumnFixCount를 확인한다', function() {
             var count = columnModelInstance.getVisibleColumnFixCount();
-
+            
             expect(count).toEqual(4);
         });
     });
