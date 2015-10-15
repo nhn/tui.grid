@@ -126,6 +126,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._initializeDataModelNetwork();
         this._initializeRouter();
         this._initializePagination();
+        this._showToolbarExcelBtns();
 
         this.listenTo(this.grid.dataModel, 'sortChanged', this._onSortChanged, this);
 
@@ -172,6 +173,26 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
         }
     },
+
+    /**
+     * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
+     */
+    _showToolbarExcelBtns: function() {
+        var controlPanel = this.grid.view.toolbar.controlPanel,
+            api = this.options.api;
+
+        if (!controlPanel) {
+            return;
+        }
+
+        if (api.downloadExcel) {
+            controlPanel.$btnExcel.show();
+        }
+        if (api.downloadExcelAll) {
+            controlPanel.$btnExcelAll.show();
+        }
+    },
+
     /**
      * pagination 에서 before page move가 발생했을 때 이벤트 핸들러
      * @param {{page:number}} customEvent pagination 으로부터 전달받는 이벤트 객체
@@ -183,6 +204,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this._readDataAt(page, true);
         }
     },
+
     /**
      * form 의 submit 이벤트 발생시 이벤트 핸들러
      * @param {event} submitEvent   submit 이벤트 객체
@@ -327,6 +349,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             grid.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
         }
     },
+
     /**
      * sortChanged 이벤트 발생시 실행되는 함수
      * @private
@@ -339,6 +362,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this._readDataAt(1, true, sortOptions);
         }
     },
+
     /**
      * 데이터 객체의 정렬 옵션 관련 값을 변경한다.
      * @private

@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../../base/view');
+
 /**
  * Class for the control panel in the toolbar
  * @module view/layout/toolbar/controlPanel
@@ -16,6 +17,10 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
+        this.setOwnProperties({
+            $btnExcel: null,
+            $btnExcelAll: null
+        });
     },
 
     events: {
@@ -26,12 +31,9 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
     className: 'btn_setup',
 
-    template: _.template(
-        '<a href="#" class="excel_download_button btn_text excel_all">' +
-        '<span><em class="excel">전체엑셀다운로드</em></span>' +
-        '</a>' +
-        '<a href="#" class="excel_download_button btn_text excel_page">' +
-        '<span><em class="excel">엑셀다운로드</em></span>' +
+    templateExcelBtn: _.template(
+        '<a href="#" class="excel_download_button btn_text <%=className%>">' +
+        '<span><em class="excel"><%=text%></em></span>' +
         '</a>'
     ),
 
@@ -61,8 +63,20 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @return {View.Layout.Toolbar.ControlPanel} - this object
      */
     render: function() {
-        this.destroyChildren();
-        this.$el.html(this.template());
+        this.$btnExcelAll = $(this.templateExcelBtn({
+            className: 'excel_all',
+            text: '전체엑셀다운로드'
+        }));
+        this.$btnExcel = $(this.templateExcelBtn({
+            className: 'excel_page',
+            text: '엑셀 다운로드'
+        }));
+
+        this.$el.append(
+            this.$btnExcelAll.hide(),
+            this.$btnExcel.hide()
+        );
+
         return this;
     }
 });
