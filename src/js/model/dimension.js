@@ -91,7 +91,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (this.get('scrollY')) {
             availableTotalWidth -= this.get('scrollBarSize');
         }
-
         if (this.columnModel.getVisibleColumnFixCount() > 0) {
             availableTotalWidth -= ROW_BORDER_WIDTH;
         }

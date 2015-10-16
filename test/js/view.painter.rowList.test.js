@@ -299,7 +299,7 @@ describe('View.RowList', function() {
             });
 
             it('rendering 된 엘리먼트 중 해당하는 엘리먼트에 focus, blur 디자인 클래스를 적용한다.', function() {
-                var $firstCell = rowListView.$el.find('tr:first').find('td').eq(1); // 0번째는 _button임
+                var $firstCell = rowListView.$el.find('tr:first').find('td').eq(0);
 
                 rowListView._onFocus(0, 'c1');
                 expect($firstCell).toHaveClass('focused');
@@ -352,7 +352,7 @@ describe('View.RowList', function() {
                     tdList = rowListView.$el.find('td');
 
                 expect(trList.length).toBe(2);
-                expect(tdList.length).toBe(8);
+                expect(tdList.length).toBe(6);
             });
         });
 
