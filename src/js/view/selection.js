@@ -403,7 +403,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
         this._isShown = true;
 
         var dataModel = this.grid.dataModel, // eslint-disable-line vars-on-top
-            columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
             startRow = Math.min.apply(Math, this.range.row),
             endRow = Math.max.apply(Math, this.range.row),
             startColumn = Math.min.apply(Math, this.range.column),
@@ -428,7 +428,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
         this.lside.show(spannedRange);
         this.rside.show({
             row: spannedRange.row,
-            column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
+            column: [Math.max(-1, spannedRange.column[0] - columnFixCount), Math.max(-1, spannedRange.column[1] - columnFixCount)]
         });
         //selection 이 생성될 때에는 무조건 input 에 focus 가 가지 않도록 clipboard에 focus 를 준다.
         this.grid.focusClipboard();

@@ -23,14 +23,6 @@ describe('Dimension', function() {
             columnName: 'keyColumn'
         },
         {
-            title: '_button',
-            columnName: '_button'
-        },
-        {
-            title: '_number',
-            columnName: '_number'
-        },
-        {
             title: 'none',
             columnName: 'none'
         },
@@ -291,10 +283,6 @@ describe('Dimension', function() {
         grid = {},
         defaultConfig;
 
-    function min(widthList) {
-        return _.min(widthList);
-    }
-
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
         columnModelInstance = grid.columnModel = new ColumnModelData();
@@ -320,9 +308,9 @@ describe('Dimension', function() {
     });
 
     describe('getColumnWidthList()', function() {
-        it('ColumnFixIndex 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
+        it('ColumnFixCount 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
             columnModelInstance.set({
-                columnFixIndex: 3
+                columnFixCount: 3
             });
             dimensionModel = new Dimension({
                 grid: grid
@@ -330,18 +318,19 @@ describe('Dimension', function() {
             dimensionModel.set({
                 columnWidthList: [10, 20, 30, 40, 50, 60]
             });
+
             expect(dimensionModel.getColumnWidthList()).toEqual([10, 20, 30, 40, 50, 60]);
-            expect(dimensionModel.getColumnWidthList('L')).toEqual([10, 20, 30]);
-            expect(dimensionModel.getColumnWidthList('R')).toEqual([40, 50, 60]);
+            expect(dimensionModel.getColumnWidthList('L')).toEqual([10, 20, 30, 40]);
+            expect(dimensionModel.getColumnWidthList('R')).toEqual([50, 60]);
 
             columnModelInstance.set({
-                columnFixIndex: 4
+                columnFixCount: 4
             });
             dimensionModel.set({
                 columnWidthList: [10, 20, 30, 40, 50, 60]
             });
-            expect(dimensionModel.getColumnWidthList('L')).toEqual([10, 20, 30, 40]);
-            expect(dimensionModel.getColumnWidthList('R')).toEqual([50, 60]);
+            expect(dimensionModel.getColumnWidthList('L')).toEqual([10, 20, 30, 40, 50]);
+            expect(dimensionModel.getColumnWidthList('R')).toEqual([60]);
         });
     });
 
@@ -358,7 +347,7 @@ describe('Dimension', function() {
         describe('인자로 받은 값으로 columnWidthList 를 제대로 반환한다.', function() {
             beforeEach(function() {
                 columnModelInstance.set({
-                    columnFixIndex: 2
+                    columnFixCount: 2
                 });
                 dimensionModel = new Dimension(defaultConfig);
                 dimensionModel.set('columnWidthList', [10, 20, 30, 40, 50]);
@@ -369,11 +358,11 @@ describe('Dimension', function() {
             });
 
             it('L일 경우 Left Side의 Frame 너비를 반환한다.', function() {
-                expect(dimensionModel.getFrameWidth('L')).toEqual(33);
+                expect(dimensionModel.getFrameWidth('L')).toEqual(64);
             });
 
             it('R일 경우 Right Side의 Frame 너비를 반환한다.', function() {
-                expect(dimensionModel.getFrameWidth('R')).toEqual(124);
+                expect(dimensionModel.getFrameWidth('R')).toEqual(93);
             });
         });
     });
@@ -381,24 +370,24 @@ describe('Dimension', function() {
     describe('_getMinLeftSideWidth()', function() {
         it('Left Side의 최소 너비를 잘 구하는지 확인한다.', function() {
             columnModelInstance.set({
-                columnFixIndex: 3
+                columnFixCount: 3
             });
             dimensionModel = new Dimension({
                 grid: grid,
                 minimumColumnWidth: 20
             });
-            expect(dimensionModel._getMinLeftSideWidth()).toEqual(64);
+            expect(dimensionModel._getMinLeftSideWidth()).toEqual(85);
             columnModelInstance.set({
-                columnFixIndex: 0
+                columnFixCount: 0
             });
-            expect(dimensionModel._getMinLeftSideWidth()).toEqual(0);
+            expect(dimensionModel._getMinLeftSideWidth()).toEqual(22);
         });
     });
 
     describe('_getMaxLeftSideWidth()', function() {
         it('Left Side 의 최대 너비 를 잘 구하는지 확인한다.', function() {
             columnModelInstance.set({
-                columnFixIndex: 3
+                columnFixCount: 3
             });
             dimensionModel = new Dimension({
                 grid: grid,
@@ -409,7 +398,7 @@ describe('Dimension', function() {
             dimensionModel.set({
                 minimumColumnWidth: 200
             });
-            expect(dimensionModel._getMaxLeftSideWidth()).toEqual(604);
+            expect(dimensionModel._getMaxLeftSideWidth()).toEqual(805);
         });
     });
 
@@ -452,9 +441,9 @@ describe('Dimension', function() {
         });
 
         describe('lside와 rside의 너비를 계산한다.', function() {
-            function changeFixIndex(fixIndex, widthList) {
+            function changeFixCount(FixCount, widthList) {
                 widthList = widthList || dimensionModel.get('columnWidthList');
-                columnModelInstance.set({columnFixIndex: fixIndex});
+                columnModelInstance.set({columnFixCount: FixCount});
                 dimensionModel._setColumnWidthVariables(widthList);
             }
 
@@ -463,41 +452,54 @@ describe('Dimension', function() {
                 beforeEach(function() {
                     widthList = [5, 10, 315, 320, 325, 330, 335, 340, 345, 350];
 
-                    columnModelInstance.set({columnFixIndex: 0});
+                    columnModelInstance.set({columnFixCount: 0});
                     dimensionModel._setColumnWidthVariables(widthList);
                 });
 
-                it('columnFixIndex 값이 작아서, 열고정 영역의 너비가 전체의 90%를 넘지 않는 경우', function() {
+                it('columnFixCount 값이 작아서, 열고정 영역의 너비가 전체의 90%를 넘지 않는 경우', function() {
                     expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
                     expect(dimensionModel.get('lsideWidth')).toEqual(0);
                     expect(dimensionModel.get('rsideWidth')).toEqual(1000);
 
-                    changeFixIndex(1);
+                    changeFixCount(1);
                     expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
                     expect(dimensionModel.get('lsideWidth')).toEqual(7);
                     expect(dimensionModel.get('rsideWidth')).toEqual(993);
 
-                    changeFixIndex(2);
+                    changeFixCount(2);
                     expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
                     expect(dimensionModel.get('lsideWidth')).toEqual(18);
                     expect(dimensionModel.get('rsideWidth')).toEqual(982);
 
-                    changeFixIndex(3);
+                    changeFixCount(3);
+                    expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
+                    expect(dimensionModel.get('lsideWidth')).toEqual(18);
+                    expect(dimensionModel.get('rsideWidth')).toEqual(982);
+
+                    changeFixCount(4);
                     expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
                     expect(dimensionModel.get('lsideWidth')).toEqual(334);
                     expect(dimensionModel.get('rsideWidth')).toEqual(666);
 
-                    changeFixIndex(4);
+                    changeFixCount(5);
                     expect(dimensionModel.get('columnWidthList')).toEqual(widthList);
                     expect(dimensionModel.get('lsideWidth')).toEqual(655);
                     expect(dimensionModel.get('rsideWidth')).toEqual(345);
                 });
 
-                it('columnFixIndex 값이 충분히 커서 열고정 영역의 너비가 전체의 90%를 넘어가는 경우 전체의 열고정 영역의 너비를 전체의 90%로 강제 조정한다.', function() {
+                it('columnFixCount 값이 충분히 커서 열고정 영역의 너비가 전체의 90%를 넘어가는 경우 전체의 열고정 영역의 너비를 전체의 90%로 강제 조정한다.', function() {
                     var leftSideframeWidth,
                         rsideWidthList;
 
-                    changeFixIndex(5);
+                    //changeFixCount(5);
+                    //leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
+                    //rsideWidthList = widthList.slice(5);
+                    //expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
+                    //expect(leftSideframeWidth).toEqual(900);
+                    //expect(dimensionModel.get('lsideWidth')).toEqual(900);
+                    //expect(dimensionModel.get('rsideWidth')).toEqual(100);
+
+                    changeFixCount(6);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(5);
                     expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
@@ -505,7 +507,7 @@ describe('Dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
-                    changeFixIndex(6);
+                    changeFixCount(7);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(6);
                     expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
@@ -513,7 +515,7 @@ describe('Dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
-                    changeFixIndex(7);
+                    changeFixCount(8);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(7);
                     expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
@@ -521,7 +523,7 @@ describe('Dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
-                    changeFixIndex(8);
+                    changeFixCount(9);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(8);
                     expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
@@ -529,17 +531,9 @@ describe('Dimension', function() {
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
-                    changeFixIndex(9);
+                    changeFixCount(10);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(9);
-                    expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
-                    expect(leftSideframeWidth).toEqual(900);
-                    expect(dimensionModel.get('lsideWidth')).toEqual(900);
-                    expect(dimensionModel.get('rsideWidth')).toEqual(100);
-
-                    changeFixIndex(10);
-                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
-                    rsideWidthList = widthList.slice(10);
                     expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
@@ -637,7 +631,7 @@ describe('Dimension', function() {
             columnModelInstance.set({
                 selectType: '',
                 hasNumberColumn: false,
-                columnFixIndex: 2
+                columnFixCount: 2
             });
             dataModelInstance.set(rowList, {parse: true});
             dimensionModel = new Dimension(defaultConfig);
