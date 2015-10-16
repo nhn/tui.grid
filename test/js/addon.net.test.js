@@ -96,6 +96,44 @@ describe('addon.net', function() {
                 });
             });
         });
+
+        describe('_showToolbarExcelBtns', function() {
+            var controlPanel;
+
+            beforeEach(function() {
+                controlPanel = grid.core.view.toolbar.controlPanel;
+            });
+
+            it('downloadExcel, downloadExcelAll API가 모두 없으면 버튼이 보여지지 않는다.', function() {
+                createNet({
+                    api: {readData: '/api/read'}
+                });
+                expect(controlPanel.$btnExcel).not.toBeVisible();
+                expect(controlPanel.$btnExcelAll).not.toBeVisible();
+            });
+
+            it('downloadExcel API가 있으면 엑셀다운로드 버튼이 보여진다.', function() {
+                createNet({
+                    api: {
+                        readData: '/api/read',
+                        downloadExcel: '/'
+                    }
+                });
+                expect(controlPanel.$btnExcel).toBeVisible();
+                expect(controlPanel.$btnExcelAll).not.toBeVisible();
+            });
+
+            it('downloadExcelAll API가 있으면 전체엑셀다운로드 버튼이 보여진다.', function() {
+                createNet({
+                    api: {
+                        readData: '/api/read',
+                        downloadExcelAll: '/'
+                    }
+                });
+                expect(controlPanel.$btnExcel).not.toBeVisible();
+                expect(controlPanel.$btnExcelAll).toBeVisible();
+            });
+        });
     });
 
     describe('_ajax', function() {
