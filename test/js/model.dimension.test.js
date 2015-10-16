@@ -491,14 +491,6 @@ describe('Dimension', function() {
                     var leftSideframeWidth,
                         rsideWidthList;
 
-                    //changeFixCount(5);
-                    //leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
-                    //rsideWidthList = widthList.slice(5);
-                    //expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
-                    //expect(leftSideframeWidth).toEqual(900);
-                    //expect(dimensionModel.get('lsideWidth')).toEqual(900);
-                    //expect(dimensionModel.get('rsideWidth')).toEqual(100);
-
                     changeFixCount(6);
                     leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
                     rsideWidthList = widthList.slice(5);

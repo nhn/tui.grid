@@ -121,7 +121,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _refreshHandlerPosition: function() {
         var columnData = this._getColumnData(),
             columnWidthList = columnData.widthList,
-            newColumnWidthList = [],
             $resizeHandleList = this.$el.find('.resize_handle'),
             $table = this.$el.parent().find('table:first'),
             isChanged = false,
@@ -142,7 +141,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             }
             curPos += width + border;
             $handler.css('left', (curPos - 3) + 'px');
-            newColumnWidthList.push(width);
         });
     },
 
@@ -250,7 +248,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return this.whichSide === 'R' ? index + this.grid.columnModel.get('columnFixIndex') : index;
+        return this.whichSide === 'R' ? index + this.grid.columnModel.getVisibleColumnFixCount() : index;
     },
 
     /**
