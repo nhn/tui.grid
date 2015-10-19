@@ -8180,6 +8180,10 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
 
+        if (!this.grid.option('toolbar')) {
+            $scrollCorner.css('bottom', 0);
+        }
+
         this.$el.append($space, $scrollBorder, $scrollCorner);
 
         this.$scrollBorder = $scrollBorder;
