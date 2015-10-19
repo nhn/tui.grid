@@ -1,7 +1,7 @@
 /**
  * @fileoverview application-grid
  * @author NHN Ent. FE Development Team
- * @version 1.0.4b
+ * @version 1.0.4c
  * @license MIT
  * @link https://github.com/nhnent/fe.application-grid
  */
@@ -182,6 +182,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._initializeDataModelNetwork();
         this._initializeRouter();
         this._initializePagination();
+        this._showToolbarExcelBtns();
 
         this.listenTo(this.grid.dataModel, 'sortChanged', this._onSortChanged, this);
 
@@ -228,6 +229,26 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
         }
     },
+
+    /**
+     * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
+     */
+    _showToolbarExcelBtns: function() {
+        var controlPanel = this.grid.view.toolbar.controlPanel,
+            api = this.options.api;
+
+        if (!controlPanel) {
+            return;
+        }
+
+        if (api.downloadExcel) {
+            controlPanel.$btnExcel.show();
+        }
+        if (api.downloadExcelAll) {
+            controlPanel.$btnExcelAll.show();
+        }
+    },
+
     /**
      * pagination 에서 before page move가 발생했을 때 이벤트 핸들러
      * @param {{page:number}} customEvent pagination 으로부터 전달받는 이벤트 객체
@@ -239,6 +260,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this._readDataAt(page, true);
         }
     },
+
     /**
      * form 의 submit 이벤트 발생시 이벤트 핸들러
      * @param {event} submitEvent   submit 이벤트 객체
@@ -383,6 +405,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             grid.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
         }
     },
+
     /**
      * sortChanged 이벤트 발생시 실행되는 함수
      * @private
@@ -395,6 +418,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this._readDataAt(1, true, sortOptions);
         }
     },
+
     /**
      * 데이터 객체의 정렬 옵션 관련 값을 변경한다.
      * @private
@@ -7822,7 +7846,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Resets the height of a container div.
-     * @return {[type]} [description]
      */
     _resetContainerHeight: function() {
         this.$bodyContainer.css({
@@ -8134,7 +8157,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      */
     afterRender: function() {
         var dimensionModel = this.grid.dimensionModel,
-            $space, $scrollBorder, headerHeight, bodyHeight;
+            $space, $scrollBorder, $scrollCorner,
+            headerHeight, bodyHeight;
 
         if (!this.grid.option('scrollY')) {
             return;
@@ -8142,17 +8166,27 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         headerHeight = dimensionModel.get('headerHeight');
         bodyHeight = dimensionModel.get('bodyHeight');
 
-        // Empty div for hiding scrollbar area in header
+        // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass('header_space');
-        // Empty div for showing a border of vertical scrollbar area in body
+
+        // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass('scrollbar_border');
+
+        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
+        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
+        //  casues to be stuck in the same position in Chrome)
+        $scrollCorner = $('<div />').addClass('scrollbar_corner');
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
 
-        this.$el.append($space).append($scrollBorder);
-        this.$scrollBorder = $scrollBorder;
+        if (!this.grid.option('toolbar')) {
+            $scrollCorner.css('bottom', 0);
+        }
 
+        this.$el.append($space, $scrollBorder, $scrollCorner);
+
+        this.$scrollBorder = $scrollBorder;
         this._resetScrollBorderHeight();
     }
 });
@@ -9017,6 +9051,7 @@ module.exports = Toolbar;
 'use strict';
 
 var View = require('../../../base/view');
+
 /**
  * Class for the control panel in the toolbar
  * @module view/layout/toolbar/controlPanel
@@ -9028,6 +9063,10 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
+        this.setOwnProperties({
+            $btnExcel: null,
+            $btnExcelAll: null
+        });
     },
 
     events: {
@@ -9038,12 +9077,9 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
     className: 'btn_setup',
 
-    template: _.template(
-        '<a href="#" class="excel_download_button btn_text excel_all">' +
-        '<span><em class="excel">전체엑셀다운로드</em></span>' +
-        '</a>' +
-        '<a href="#" class="excel_download_button btn_text excel_page">' +
-        '<span><em class="excel">엑셀다운로드</em></span>' +
+    templateExcelBtn: _.template(
+        '<a href="#" class="excel_download_button btn_text <%=className%>">' +
+        '<span><em class="excel"><%=text%></em></span>' +
         '</a>'
     ),
 
@@ -9073,8 +9109,20 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @return {View.Layout.Toolbar.ControlPanel} - this object
      */
     render: function() {
-        this.destroyChildren();
-        this.$el.html(this.template());
+        this.$btnExcelAll = $(this.templateExcelBtn({
+            className: 'excel_all',
+            text: '전체엑셀다운로드'
+        }));
+        this.$btnExcel = $(this.templateExcelBtn({
+            className: 'excel_page',
+            text: '엑셀 다운로드'
+        }));
+
+        this.$el.append(
+            this.$btnExcelAll.hide(),
+            this.$btnExcel.hide()
+        );
+
         return this;
     }
 });

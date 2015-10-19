@@ -34,6 +34,7 @@ https://github.com/nhnent/fe.application-grid/wiki
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://nhnent.github.io/fe.application-grid/1.0.4c">1.0.4c</a> | 수시배포 | 2015.10 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.4b">1.0.4b</a> | 수시배포 | 2015.10 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.4a">1.0.4a</a> | 수시배포 | 2015.10 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/fe.application-grid/1.0.4">1.0.4</a> | [정기배포](https://github.com/nhnent/fe.application-grid/wiki/Release-Note#104) | 2015.10 | FE개발팀 <dl_javascript@nhnent.com> |
