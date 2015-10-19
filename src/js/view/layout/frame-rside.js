@@ -73,7 +73,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      */
     afterRender: function() {
         var dimensionModel = this.grid.dimensionModel,
-            $space, $scrollBorder, headerHeight, bodyHeight;
+            $space, $scrollBorder, $scrollCorner,
+            headerHeight, bodyHeight;
 
         if (!this.grid.option('scrollY')) {
             return;
@@ -81,17 +82,23 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         headerHeight = dimensionModel.get('headerHeight');
         bodyHeight = dimensionModel.get('bodyHeight');
 
-        // Empty div for hiding scrollbar area in header
+        // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass('header_space');
-        // Empty div for showing a border of vertical scrollbar area in body
+
+        // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass('scrollbar_border');
+
+        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
+        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
+        //  casues to be stuck in the same position in Chrome)
+        $scrollCorner = $('<div />').addClass('scrollbar_corner');
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
 
-        this.$el.append($space).append($scrollBorder);
-        this.$scrollBorder = $scrollBorder;
+        this.$el.append($space, $scrollBorder, $scrollCorner);
 
+        this.$scrollBorder = $scrollBorder;
         this._resetScrollBorderHeight();
     }
 });
