@@ -193,6 +193,10 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
             classNameList.push(className);
         });
 
+        if (isPrivateColumnName) {
+            classNameList.push('meta_column');
+        }
+
         return classNameList;
     },
 

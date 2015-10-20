@@ -49,7 +49,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
     events: {},
 
     /**
-     * selection 을 disable 한다.
+     * selection 을 enable 한다.
      */
     enable: function() {
         if (this.grid.option('useDataCopy')) {
@@ -95,7 +95,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
     /**
      * selection 영역에 대한 mouseDown 퍼블릭 이벤트 핸들러
-     * @param {MouseDownEvent} mouseDownEvent Event object
+     * @param {event} mouseDownEvent Event object
      */
     onMouseDown: function(mouseDownEvent) {
         var grid = this.grid,
@@ -344,7 +344,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
      */
     selectAll: function() {
         if (this.isEnable) {
-            this.startSelection(0, 0);
+            this.startSelection(0, this.grid.columnModel.getVisibleMetaColumnCount());
             this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -370,7 +370,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
     updateSelection: function(rowIndex, columnIndex) {
         if (this.isEnable) {
             this.range.row[1] = rowIndex;
-            this.range.column[1] = columnIndex;
+            this.range.column[1] = Math.max(this.grid.columnModel.getVisibleMetaColumnCount(), columnIndex);
             this.show();
         }
     },

@@ -6,7 +6,7 @@
 
 var Model = require('../base/model');
 
-var META_COLUMN_LIST = ['_number', '_button'];
+var META_COLUMN_LIST = ['_button', '_number'];
 /**
  * 컬럼 모델 데이터를 다루는 객체
  * @module data/columnModel
@@ -65,7 +65,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             this.unset('columnFixIndex');
         }
 
-        this.set( 'columnFixCount', Math.max(0, columnFixCount), {
+        this.set('columnFixCount', Math.max(0, columnFixCount), {
             silent: true
         });
         this.trigger('columnModelChange');
@@ -228,7 +228,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             visibleColumnFixCount = realColumnFixCount;
 
 
-        ne.util.forEach(this.get('columnModelList'),function(columnModel, index) {
+        ne.util.forEach(this.get('columnModelList'), function(columnModel, index) {
             if (index >= realColumnFixCount) {
                 return false;
             }
@@ -391,6 +391,26 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             visibleList: this._getVisibleList()
         }, {silent: true});
         this.trigger('columnModelChange');
+    },
+
+    /**
+     *
+     * @param columnName
+     * @returns {boolean}
+     */
+    isMetaColumn: function(columnName) {
+        return _.indexOf(META_COLUMN_LIST, columnName) !== -1;
+    },
+
+    getVisibleMetaColumnCount: function() {
+        var count = 0,
+            columnModelMap = this.get('columnModelMap');
+        _.each(META_COLUMN_LIST, function(columnName) {
+            if (!columnModelMap[columnName].isHidden) {
+                count += 1;
+            }
+        });
+        return count;
     }
 });
 

@@ -50,12 +50,19 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         var $td = $(mouseDownEvent.target).closest('td'),
             $tr = $(mouseDownEvent.target).closest('tr'),
             columnName = $td.attr('columnName'),
-            rowKey = $tr.attr('key');
-        this.grid.focus(rowKey, columnName);
+            rowKey = $tr.attr('key'),
+            columnModel = this.grid.columnModel;
+
         if (this.grid.option('selectType') === 'radio') {
             this.grid.check(rowKey);
         }
-        this.grid.selection.onMouseDown(mouseDownEvent);
+
+        if (columnModel.isMetaColumn(columnName)) {
+            console.log('meta column selected');
+        } else {
+            this.grid.focus(rowKey, columnName);
+            this.grid.selection.onMouseDown(mouseDownEvent);
+        }
     },
 
     /**

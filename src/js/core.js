@@ -518,7 +518,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
-            this.selection.show();
+            //this.selection.show();
             this.focusClipboard();
         }
     },
