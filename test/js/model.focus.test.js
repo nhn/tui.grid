@@ -183,10 +183,19 @@ describe('model.renderer', function() {
                 rowIdx: 1,
                 columnIdx: 1
             });
+        });
+
+        it('메타컬럼은 포커스가 되지 않으므로, "_number"컬럼에 포커스하여도 변경사항이 없다', function() {
+            focusModel.focus(1, 'c1');
+            expect(focusModel.indexOf()).toEqual({
+                rowIdx: 1,
+                columnIdx: 1
+            });
+
             focusModel.focus(1, '_number');
             expect(focusModel.indexOf()).toEqual({
                 rowIdx: 1,
-                columnIdx: 0
+                columnIdx: 1
             });
         });
 

@@ -87,8 +87,8 @@ describe('data.columnModel', function() {
         it('메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.\n 순서는 columnModel.js에서 상수로 정의한 순서', function() {
             columnModelInstance._moveMetaColumnsToFirst(sampleColumnModelList);
 
-            expect(sampleColumnModelList[0].columnName).toEqual('_number');
-            expect(sampleColumnModelList[1].columnName).toEqual('_button');
+            expect(sampleColumnModelList[0].columnName).toEqual('_button');
+            expect(sampleColumnModelList[1].columnName).toEqual('_number');
         });
     });
 
@@ -169,7 +169,7 @@ describe('data.columnModel', function() {
             };
             columnModelInstance.set('selectType', selectType, {silent: true});
             columnModelInstance._initializeButtonColumn(sampleColumnModelList);
-            expect(sampleColumnModelList[1]).toEqual(expectedColumnModel);
+            expect(sampleColumnModelList[0]).toEqual(expectedColumnModel);
         });
 
         it('selectType: radio 일 때', function() {
@@ -188,7 +188,7 @@ describe('data.columnModel', function() {
             };
             columnModelInstance.set('selectType', selectType, {silent: true});
             columnModelInstance._initializeButtonColumn(sampleColumnModelList);
-            expect(sampleColumnModelList[1]).toEqual(expectedColumnModel);
+            expect(sampleColumnModelList[0]).toEqual(expectedColumnModel);
         });
 
         it('selectType 이 없을때 isHidden: true 로 설정된다.', function() {
@@ -206,7 +206,7 @@ describe('data.columnModel', function() {
             expectedColumnModel = $.extend(sampleColumnModelList[1], sampleColumnModel);
             columnModelInstance.set('selectType', '', {silent: true});
             columnModelInstance._initializeButtonColumn(sampleColumnModelList);
-            expect(sampleColumnModelList[1]).toEqual(expectedColumnModel);
+            expect(sampleColumnModelList[0]).toEqual(expectedColumnModel);
         });
     });
 

@@ -133,26 +133,6 @@ describe('grid.core.paste()', function() {
             expect(grid.getValue(1, 'c2')).toBe('1-2');
         });
 
-        it(': 행번호와 버튼', function() {
-            grid = new Core({
-                el: $empty,
-                selectType: 'checkbox',
-                columnModelList: createColumnModelList(['c2'])
-            });
-            grid.setRowList([
-                {
-                    c2: '0-2'
-                }, {
-                    c2: '1-2'
-                }
-            ]);
-            grid.focus(0, '_number');
-            grid.paste([
-                ['number0', 'button0', 'New0-2']
-            ]);
-            expect(grid.getValue(0, 'c2')).toBe('New0-2');
-        });
-
         it(': disabled', function() {
             grid = new Core({
                 el: $empty,

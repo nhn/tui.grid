@@ -140,9 +140,9 @@ describe('view.selection', function() {
         });
 
         describe('selectAll', function() {
-            it('전체 영역을 선택한다', function() {
+            it('전체 영역을 선택한다. 메타컬럼은 range에서 제외된다.', function() {
                 selection.selectAll();
-                expect(selection.getRange()).toEqual({row: [0, 2], column: [0, 3]});
+                expect(selection.getRange()).toEqual({row: [0, 2], column: [1, 3]});
             });
         });
 
