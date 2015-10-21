@@ -4,23 +4,26 @@ var ColumnModelData = require('../../src/js/data/columnModel');
 
 describe('data.columnModel', function() {
     var columnModelInstance,
-        sampleColumnModelList,
+        metaColumnModelList,
+        dataColumnModelList,
         expectedColumnModel;
 
     beforeEach(function() {
         columnModelInstance = new ColumnModelData();
-        sampleColumnModelList = [
+        metaColumnModelList = [
             {
-                title: 'none',
-                columnName: 'none'
+                title: '_number',
+                columnName: '_number'
             },
             {
                 title: '_button',
                 columnName: '_button'
-            },
+            }
+        ];
+        dataColumnModelList = [
             {
-                title: '_number',
-                columnName: '_number'
+                title: 'none',
+                columnName: 'none'
             },
             {
                 title: 'text',
@@ -83,15 +86,16 @@ describe('data.columnModel', function() {
         ];
     });
 
-    describe('_moveMetaColumnsToFirst', function() {
+    describe('_arrangeMetaColumnsOrder', function() {
         it('메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.\n 순서는 columnModel.js에서 상수로 정의한 순서', function() {
-            columnModelInstance._moveMetaColumnsToFirst(sampleColumnModelList);
+            columnModelInstance._arrangeMetaColumnsOrder(metaColumnModelList);
 
-            expect(sampleColumnModelList[0].columnName).toEqual('_button');
-            expect(sampleColumnModelList[1].columnName).toEqual('_number');
+            expect(metaColumnModelList[0].columnName).toEqual('_button');
+            expect(metaColumnModelList[1].columnName).toEqual('_number');
         });
     });
 
+    //@todo 여기부터 TC수정
     describe('_extendColumnList', function() {
         var length;
 
@@ -213,14 +217,16 @@ describe('data.columnModel', function() {
     describe('_getVisibleList()', function() {
         it('_number, _button 을 제외하고 isHidden: true 가 아닌 columnModelList 를 반환한다.', function() {
             var visibleList;
-            sampleColumnModelList = [
+            metaColumnModelList = [
                 {
                     columnName: '_button'
                 },
                 {
                     columnName: '_number',
                     isHidden: true
-                },
+                }
+            ];
+            dataColumnModelList = [
                 {
                     columnName: 'column2'
                 },
@@ -244,7 +250,8 @@ describe('data.columnModel', function() {
     describe('getEditType()', function() {
         it('컬럼모델에 정의된 editType 속성값을 반환한다. 없다면 normal을 반환한다.', function() {
             columnModelInstance.set({
-                columnModelList: sampleColumnModelList
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList
             });
             expect(columnModelInstance.getEditType('hidden')).toBe('normal');
             expect(columnModelInstance.getEditType('none')).toBe('normal');
@@ -284,7 +291,8 @@ describe('data.columnModel', function() {
             ];
             columnModelInstance.set({
                 columnFixCount: 2,
-                columnModelList: sampleColumnModelList
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList
             });
 
             expect(columnModelInstance.isLside('_button')).toBe(false);
@@ -321,7 +329,8 @@ describe('data.columnModel', function() {
             }
         ];
         columnModelInstance.set({
-            columnModelList: sampleColumnModelList
+            metaColumnModelList: metaColumnModelList,
+            dataColumnModelList: dataColumnModelList
         });
 
         expect(columnModelInstance.indexOfColumnName('column2', true)).toBe(0);
@@ -369,7 +378,8 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnModelList: $.extend(true, [], sampleColumnModelList)
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList
             });
         });
 
@@ -435,7 +445,8 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnModelList: $.extend(true, [], sampleColumnModelList),
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList,
                 columnFixCount: 4
             });
         });
@@ -514,7 +525,8 @@ describe('data.columnModel', function() {
                 }
             ];
             columnModelInstance.set({
-                columnModelList: $.extend(true, [], sampleColumnModelList),
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList,
                 columnFixCount: 2
             });
             //_button 과 _number 는 가공되었기 때문에, 인자로 넘긴 columnModel 과는 달라야 한다.
@@ -615,7 +627,8 @@ describe('data.columnModel', function() {
     describe('isTextType()', function() {
         it('textType 인지 확인한다.', function() {
             columnModelInstance.set({
-                columnModelList: $.extend(true, [], sampleColumnModelList)
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList
             });
             expect(columnModelInstance.isTextType('none')).toBe(true);
             expect(columnModelInstance.isTextType('_number')).toBe(false);
@@ -703,7 +716,8 @@ describe('data.columnModel', function() {
             columnModelInstance.set({
                 columnFixCount: 2,
                 hasNumberColumn: false,
-                columnModelList: $.extend(true, [], sampleColumnModelList)
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList
             });
         });
 
@@ -767,6 +781,7 @@ describe('data.columnModel', function() {
             });
 
             // test
+            console.log(columnModelInstance.get('columnModelMap'));
             columnModelInstance.setHidden(['column3', 'column4'], true);
             expect(columnModelInstance.get('columnModelMap')['column3'].isHidden).toBe(true);
             expect(columnModelInstance.get('columnModelMap')['column4'].isHidden).toBe(true);
@@ -862,13 +877,14 @@ describe('data.columnModel', function() {
                 columnFixCount: 3,
                 hasNumberColumn: true,
                 selectType: 'checkbox',
-                columnModelList: $.extend(true, [], sampleColumnModelList)
+                metaColumnModelList: metaColumnModelList,
+                dataColumnModelList: dataColumnModelList
             });
         });
 
         it('visibleColumnFixCount를 확인한다', function() {
             var count = columnModelInstance.getVisibleColumnFixCount();
-            
+
             expect(count).toEqual(4);
         });
     });
