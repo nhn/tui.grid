@@ -166,8 +166,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
                 metaColumnModelList.splice(index, 0, metaColumnModelList.splice(oldIndex, 1)[0]);
             }
         });
-
-        return metaColumnModelList;
     },
 
     /**
