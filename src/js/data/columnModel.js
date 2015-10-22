@@ -361,15 +361,15 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     _setColumnModelList: function(columnModelList, columnFixCount) {
         var division, relationListMap, visibleList;
 
+        columnModelList = $.extend(true, [], columnModelList);
         if (ne.util.isUndefined(columnFixCount)) {
             columnFixCount = this.get('columnFixCount');
         }
-        columnModelList = $.extend(true, [], columnModelList);
+
+        this._initializeMetaColumns(columnModelList);
         division = _.partition(columnModelList, function(model) {
             return _.indexOf(META_COLUMN_LIST, model.columnName) !== -1;
         });
-
-        this._initializeMetaColumns(division[0]);
         relationListMap = this._getRelationListMap(division[1]);
         visibleList = this._makeVisibleColumnModelList(division[0], division[1]);
         this.set({
@@ -380,6 +380,9 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnFixCount: Math.max(0, columnFixCount),
             visibleList: visibleList
         }, {
+            silent: true
+        });
+        this.unset('columnModelList', {
             silent: true
         });
         this.trigger('columnModelChange');
@@ -400,10 +403,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
                 this.get('metaColumnModelList'),
                 this.get('dataColumnModelList')
             );
-        } else {
-            this.unset('columnModelList');
         }
-
         this._setColumnModelList(columnModelList, columnFixCount);
     },
 
