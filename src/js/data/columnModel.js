@@ -175,7 +175,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @return {object} 조회한 컬럼 모델
      */
     at: function(index, isVisible) {
-        var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('columnModelList');
+        var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('dataColumnModelList');
         return columnModelList[index];
     },
 
@@ -191,7 +191,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         if (isVisible) {
             columnModelList = this.getVisibleColumnModelList();
         } else {
-            columnModelList = this.get('columnModelList');
+            columnModelList = this.get('dataColumnModelList');
         }
         return _.findIndex(columnModelList, {columnName: columnName});
     },
@@ -204,7 +204,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     isLside: function(columnName) {
         var index = this.indexOfColumnName(columnName, true);
 
-        return index > -1 && index < this.getVisibleColumnFixCount();
+        return index > -1 && index < this.get('columnFixCount');
     },
 
     /**
@@ -245,16 +245,16 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     },
 
     /**
-     * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다. 메타 컬럼인 '_number', '_button'의 갯수도 포함하여 반환한다.
+     * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
+     * 메타 컬럼인 '_number', '_button'의 갯수는 포함하지 않는다.
      * @returns {number}
      */
     getVisibleColumnFixCount: function() {
-        var columnModelList = this.get('columnModelList'),
-            realColumnFixCount = this.get('columnFixCount') + META_COLUMN_LIST.length,
+        var realColumnFixCount = this.get('columnFixCount'),
             visibleColumnFixCount = realColumnFixCount;
 
 
-        ne.util.forEach(this.get('columnModelList'), function(columnModel, index) {
+        ne.util.forEach(this.get('dataColumnModelList'), function(columnModel, index) {
             if (index >= realColumnFixCount) {
                 return false;
             }
@@ -312,7 +312,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         metaColumnModelList = metaColumnModelList || this.get('metaColumnModelList');
         dataColumnModelList = dataColumnModelList || this.get('dataColumnModelList');
 
-        return _.filter(metaColumnModelList.concat(dataColumnModelList), function(item) {
+        return _.filter(_.union(metaColumnModelList, dataColumnModelList), function(item) {
             return !item['isHidden'];
         });
     },
@@ -359,16 +359,19 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @private
      */
     _setColumnModelList: function(columnModelList, columnFixCount) {
-        var division = _.partition(columnModelList, function(model) {
-                return _.indexOf(META_COLUMN_LIST, model.columnName) !== -1;
-            }),
-            relationListMap = this._getRelationListMap(division[1]),
-            visibleList = this._makeVisibleColumnModelList(division[0], division[1]);
+        var division, relationListMap, visibleList;
 
         if (ne.util.isUndefined(columnFixCount)) {
             columnFixCount = this.get('columnFixCount');
         }
+        columnModelList = $.extend(true, [], columnModelList);
+        division = _.partition(columnModelList, function(model) {
+            return _.indexOf(META_COLUMN_LIST, model.columnName) !== -1;
+        });
+
         this._initializeMetaColumns(division[0]);
+        relationListMap = this._getRelationListMap(division[1]);
+        visibleList = this._makeVisibleColumnModelList(division[0], division[1]);
         this.set({
             metaColumnModelList: division[0],
             dataColumnModelList: division[1],
@@ -390,10 +393,18 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     _onChange: function(model) {
         var changed = model.changed,
             columnFixCount = changed['columnFixCount'],
-            metaColumnModelList = changed['metaColumnModelList'] || this.get('metaColumnModelList'),
-            dataColumnModelList = changed['dataColumnModelList'] || this.get('dataColumnModelList');
+            columnModelList = changed['columnModelList'];
 
-        this._setColumnModelList(metaColumnModelList.concat(dataColumnModelList), columnFixCount);
+        if (!columnModelList) {
+            columnModelList = _.union(
+                this.get('metaColumnModelList'),
+                this.get('dataColumnModelList')
+            );
+        } else {
+            this.unset('columnModelList');
+        }
+
+        this._setColumnModelList(columnModelList, columnFixCount);
     },
 
     /**
