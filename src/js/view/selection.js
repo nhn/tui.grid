@@ -260,7 +260,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         return {
             row: rowIdx,
-            column: columnIdx,
+            column: columnIdx - this.grid.columnModel.getVisibleMetaColumnCount(),
             overflowX: overflowX,
             overflowY: overflowY
         };
