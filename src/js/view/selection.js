@@ -585,7 +585,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
      * @private
      */
     _getRowSpannedIndex: function(spannedRange) {
-        var columnModelList = this.grid.columnModel.get('columnModelList')
+        var columnModelList = this.grid.columnModel.get('dataColumnModelList')
                 .slice(spannedRange.column[0], spannedRange.column[1] + 1),
             dataModel = this.grid.dataModel,
             startIndexList = [spannedRange.row[0]],
