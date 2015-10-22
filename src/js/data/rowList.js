@@ -574,7 +574,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @private
      */
     _createDummyRow: function() {
-        var columnModelList = this.grid.columnModel.get('columnModelList'),
+        var columnModelList = this.grid.columnModel.get('dataColumnModelList'),
             data = {};
         _.each(columnModelList, function(columnModel) {
             data[columnModel['columnName']] = '';

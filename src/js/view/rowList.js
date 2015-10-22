@@ -28,7 +28,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this.setOwnProperties({
             whichSide: whichSide,
             bodyView: options.bodyView,
-            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide),
+            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide, true),
             sortOptions: null,
             renderedRowKeys: null,
             rowPainter: null

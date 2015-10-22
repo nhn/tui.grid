@@ -58,7 +58,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         }
 
         if (columnModel.isMetaColumn(columnName)) {
-            console.log('meta column selected');
+            alert('meta column selected');
         } else {
             this.grid.focus(rowKey, columnName);
             this.grid.selection.onMouseDown(mouseDownEvent);

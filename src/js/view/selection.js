@@ -105,6 +105,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         if (mouseDownEvent.shiftKey) {
             focused = grid.focusModel.indexOf(true);
+            console.log(focused);
             if (!selection.hasSelection()) {
                 selection.startSelection(focused.rowIdx, focused.columnIdx);
             }
@@ -280,13 +281,9 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
     getSelectionToString: function() {
         var columnModelList = this.grid.columnModel.getVisibleColumnModelList()
                 .slice(this.spannedRange.column[0], this.spannedRange.column[1] + 1),
-            filteringMap = {
-                '_button': true
-            },
             columnNameList = [],
             tmpString = [],
             strings = [],
-            startIdx = this.grid.renderModel.get('startNumber') + this.spannedRange.row[0],
             rowList, string;
 
         _.each(columnModelList, function(columnModel) {
@@ -295,17 +292,10 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         rowList = this.grid.dataModel.slice(this.spannedRange.row[0], this.spannedRange.row[1] + 1);
 
-        _.each(rowList, function(row, i) {
+        _.each(rowList, function(row) {
             tmpString = [];
-            _.each(columnNameList, function(columnName, j) {
-                if (!filteringMap[columnName]) {
-                    //number 형태의 경우 실 데이터는 존재하지 않으므로 가공하여 추가한다.
-                    if (columnNameList[j] === '_number') {
-                        tmpString.push(startIdx + i);
-                    } else {
-                        tmpString.push(row.getVisibleText(columnName));
-                    }
-                }
+            _.each(columnNameList, function(columnName) {
+                tmpString.push(row.getVisibleText(columnName));
             });
             strings.push(tmpString.join('\t'));
         });
@@ -344,7 +334,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
      */
     selectAll: function() {
         if (this.isEnable) {
-            this.startSelection(0, this.grid.columnModel.getVisibleMetaColumnCount());
+            this.startSelection(0, 0);
             this.updateSelection(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -370,7 +360,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
     updateSelection: function(rowIndex, columnIndex) {
         if (this.isEnable) {
             this.range.row[1] = rowIndex;
-            this.range.column[1] = Math.max(this.grid.columnModel.getVisibleMetaColumnCount(), columnIndex);
+            this.range.column[1] = columnIndex;
             this.show();
         }
     },
@@ -585,7 +575,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
      * @private
      */
     _getRowSpannedIndex: function(spannedRange) {
-        var columnModelList = this.grid.columnModel.get('dataColumnModelList')
+        var columnModelList = this.grid.columnModel.getVisibleColumnModelList()
                 .slice(spannedRange.column[0], spannedRange.column[1] + 1),
             dataModel = this.grid.dataModel,
             startIndexList = [spannedRange.row[0]],
