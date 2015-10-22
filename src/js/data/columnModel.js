@@ -215,7 +215,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      */
     getVisibleColumnModelList: function(whichSide, withMeta) {
         var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount(),
-            visibleColumnFixCount = this.getVisibleColumnFixCount(),
+            visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta),
             columnModelList;
 
         whichSide = whichSide && whichSide.toUpperCase();
@@ -227,6 +227,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         } else {
             columnModelList = this.get('visibleList').slice(startIndex);
         }
+
         return columnModelList;
     },
 
@@ -246,13 +247,12 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
 
     /**
      * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
-     * 메타 컬럼인 '_number', '_button'의 갯수는 포함하지 않는다.
+     * @param {boolean} [withMeta=false] 현재 보여지고 있는 메타컬럼의 count를 합칠지 여부
      * @returns {number}
      */
-    getVisibleColumnFixCount: function() {
+    getVisibleColumnFixCount: function(withMeta) {
         var realColumnFixCount = this.get('columnFixCount'),
             visibleColumnFixCount = realColumnFixCount;
-
 
         ne.util.forEach(this.get('dataColumnModelList'), function(columnModel, index) {
             if (index >= realColumnFixCount) {
@@ -263,7 +263,8 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             }
         });
 
-        return visibleColumnFixCount;
+        return (withMeta) ? visibleColumnFixCount + this.getVisibleMetaColumnCount()
+            : visibleColumnFixCount;
     },
 
     /**
@@ -341,7 +342,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
      */
     getIgnoredColumnNameList: function() {
-        var columnModelLsit = this.get('columnModelList'),
+        var columnModelLsit = this.get('dataColumnModelList'),
             ignoreColumnNameList = [];
         _.each(columnModelLsit, function(columnModel) {
             if (columnModel.isIgnore) {

@@ -91,7 +91,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (this.get('scrollY')) {
             availableTotalWidth -= this.get('scrollBarSize');
         }
-        if (this.columnModel.getVisibleColumnFixCount() > 0) {
+        if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
             availableTotalWidth -= ROW_BORDER_WIDTH;
         }
         return availableTotalWidth;
@@ -245,7 +245,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Adjust the column widths to make them fit into the dimension.
      * @param {number[]} columnWidthList - An array of column width
-     * @param {boolean} fitToReducedTotal - If set to true and the total width is smaller than dimension(width),
+     * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
      *                                    the column widths will be reduced.
      * @return {number[]} - A new array of column widths
      * @private
@@ -278,7 +278,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _initColumnWidthVariables: function() {
-        var columnModelList = this.columnModel.get('visibleList'),
+        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
             commonMinWidth = this.get('minimumColumnWidth'),
             widthList = [],
             fixedFlags = [],
@@ -314,7 +314,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
-        var columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = this.getColumnWidthList(whichSide),
             frameWidth = this._getFrameWidth(columnWidthList);
         if (ne.util.isUndefined(whichSide) && columnFixCount > 0) {
@@ -341,12 +341,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
      * @param {array} columnWidthList - 컬럼 넓이값 배열
-     * @param {boolean} isSaveWidthList - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
+     * @param {boolean} [isSaveWidthList] - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
      * @private
      */
     _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
         var totalWidth = this.get('width'),
-            columnFixCount = this.columnModel.getVisibleColumnFixCount(),
+            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             maxLeftSideWidth = this._getMaxLeftSideWidth(),
             rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
 
@@ -380,7 +380,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getMinLeftSideWidth: function() {
         var minimumColumnWidth = this.get('minimumColumnWidth'),
-            columnFixCount = this.columnModel.getVisibleColumnFixCount(),
+            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             minWidth = 0,
             borderWidth;
 
@@ -418,7 +418,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
             rowIdx, spanCount,
             columnWidthList = this.get('columnWidthList'),
-            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
+            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(true),
             columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true),
             borderWidth = 1;
 
@@ -581,7 +581,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(),
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = [];
 
         whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;

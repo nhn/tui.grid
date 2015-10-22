@@ -64,7 +64,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         var columnModel = this.grid.columnModel,
             dimensionModel = this.grid.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
+            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
         return {
             widthList: columnWidthList,
             modelList: columnModelList
@@ -248,7 +248,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return this.whichSide === 'R' ? index + this.grid.columnModel.getVisibleColumnFixCount() : index;
+        return this.whichSide === 'R' ? index + this.grid.columnModel.getVisibleColumnFixCount(true) : index;
     },
 
     /**
