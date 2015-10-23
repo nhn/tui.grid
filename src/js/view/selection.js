@@ -105,7 +105,6 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         if (mouseDownEvent.shiftKey) {
             focused = grid.focusModel.indexOf(true);
-            console.log(focused);
             if (!selection.hasSelection()) {
                 selection.startSelection(focused.rowIdx, focused.columnIdx);
             }

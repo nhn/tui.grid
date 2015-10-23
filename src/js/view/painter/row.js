@@ -40,7 +40,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         '<%=contents%>' +
         '</tr>'
     ),
-    
+
     /**
      * mousedown 이벤트 핸들러
      * @param {Event} mouseDownEvent 이벤트 객체
@@ -58,7 +58,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         }
 
         if (columnModel.isMetaColumn(columnName)) {
-            alert('meta column selected');
+            console.log('metaColumn clicked');
         } else {
             this.grid.focus(rowKey, columnName);
             this.grid.selection.onMouseDown(mouseDownEvent);

@@ -241,7 +241,6 @@ describe('grid.normal.test', function() {
     describe('focusInAt()', function() {
         it('주어진 인덱스에 해당하는 셀의 키와 컬럼명으로 focus()를 호출한다.', function() {
             spyOn(grid, 'focus');
-            console.log(grid.view.rside.$el[0]);
             grid.focusInAt(0, 0, true);
             expect(grid.focus).toHaveBeenCalledWith(0, 'c1', true);
         });
