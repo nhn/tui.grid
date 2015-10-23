@@ -500,7 +500,7 @@ describe('model.rowList', function() {
             it('rowSpan 된 경우, mainRow 가 아닌 row 의 extraData 를 변경하면 main row 의 extraData가 변경된다.', function() {
                 var mainRow;
 
-                dataModelInstance.get(3).setExtraData({rowState: 'DISABLED'});
+                dataModelInstance.get(3).setRowState('DISABLED');
 
                 mainRow = rowListModelInstance.get(1);
                 expect(mainRow.get('columnName1').isDisabled).toEqual(true);
@@ -537,7 +537,7 @@ describe('model.rowList', function() {
             it('DISABLED 로 변경 시', function() {
                 var cell0, cell1, cell2, cell3;
 
-                dataModelInstance.get(0).setExtraData({rowState: 'DISABLED'});
+                dataModelInstance.get(0).setRowState('DISABLED');
 
                 cell0 = rowListModelInstance.get(0).get('_button');
                 cell1 = rowListModelInstance.get(0).get('columnName1');
@@ -566,14 +566,15 @@ describe('model.rowList', function() {
             });
 
             it('DISABLED_CHECK 로 변경 시', function() {
-                var cell0, cell1, cell2, cell3;
+                var cell0, cell1, cell2, cell3, rowModel;
 
-                dataModelInstance.get(0).setExtraData({rowState: 'DISABLED_CHECK'});
+                rowModel = rowListModelInstance.get(0);
+                dataModelInstance.get(0).setRowState('DISABLED_CHECK');
 
-                cell0 = rowListModelInstance.get(0).get('_button');
-                cell1 = rowListModelInstance.get(0).get('columnName1');
-                cell2 = rowListModelInstance.get(0).get('columnName2');
-                cell3 = rowListModelInstance.get(0).get('columnName3');
+                cell0 = rowModel.get('_button');
+                cell1 = rowModel.get('columnName1');
+                cell2 = rowModel.get('columnName2');
+                cell3 = rowModel.get('columnName3');
 
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
@@ -597,22 +598,23 @@ describe('model.rowList', function() {
             });
 
             it('className 변경 시', function() {
-                var cell0, cell1, cell2, cell3;
+                var cell0, cell1, cell2, cell3, rowModel,
+                    rowData = dataModelInstance.get(0),
+                    extraData = rowData.get('_extraData');
 
-                dataModelInstance.get(0).setExtraData({
-                    className: {
-                        row: ['rowClass'],
-                        column: {
-                            'columnName1': ['column1Class1', 'column1Class2'],
-                            'columnName2': ['column2Class1', 'column2Class2']
-                        }
+                extraData.set('className', {
+                    row: ['rowClass'],
+                    column: {
+                        columnName1: ['column1Class1', 'column1Class2'],
+                        columnName2: ['column2Class1', 'column2Class2']
                     }
                 });
 
-                cell0 = rowListModelInstance.get(0).get('_button');
-                cell1 = rowListModelInstance.get(0).get('columnName1');
-                cell2 = rowListModelInstance.get(0).get('columnName2');
-                cell3 = rowListModelInstance.get(0).get('columnName3');
+                rowModel = rowListModelInstance.get(0);
+                cell0 = rowModel.get('_button');
+                cell1 = rowModel.get('columnName1');
+                cell2 = rowModel.get('columnName2');
+                cell3 = rowModel.get('columnName3');
 
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);

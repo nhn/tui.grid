@@ -5,6 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
+var ExtraData = require('./extraData');
 var util = require('../util');
 
 /**
@@ -18,86 +19,82 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
+
+        this.listenTo(this.get('_extraData'), 'change', this._onChangeExtraData);
     },
 
     idAttribute: 'rowKey',
-    defaults: {
-        _extraData: {
-            'rowState': null
-        }
+
+    /**
+     * Overrides Backbone's parse method to create ExtraData instance.
+     * @override
+     * @param  {object} data - initial data
+     * @return {object} - parsed data
+     */
+    parse: function(data) {
+        data._extraData = new ExtraData(data._extraData);
+        return data;
     },
 
     /**
-     * extraData 로 부터 rowState 를 object 형태로 반환한다.
+     * Overrids Backbone's toJSON method to correct _extraData value.
+     * @override
+     * @return {object} - Shallow copy of the attributes object
+     */
+    toJSON: function() {
+        var result = {};
+        _.each(this.attributes, function(value, name) {
+            result[name] = (name === '_extraData') ? value.toJSON() : _.clone(value);
+        });
+        return result;
+    },
+
+    /**
+     * Event handler for change event in _extraData.
+     * Reset _extraData value with cloned object to trigger 'change:_extraData' event.
+     */
+    _onChangeExtraData: function() {
+        this.trigger('extraDataChanged', this.get('_extraData'));
+    },
+
+    /**
+     * Returns the object that contains rowState info.
      * @return {{isDisabled: boolean, isDisabledCheck: boolean}} rowState 정보
      */
     getRowState: function() {
-        var extraData = this.get('_extraData'),
-            rowState = extraData && extraData['rowState'],
-            isDisabledCheck = false,
-            isDisabled = false,
-            isChecked = false;
-
-        if (rowState === 'DISABLED') {
-            isDisabled = true;
-        } else if (rowState === 'DISABLED_CHECK') {
-            isDisabledCheck = true;
-        } else if (rowState === 'CHECKED') {
-            isChecked = true;
-        }
-
-        isDisabledCheck = isDisabled ? isDisabled : isDisabledCheck;
-
-        return {
-            isDisabled: isDisabled,
-            isDisabledCheck: isDisabledCheck,
-            isChecked: isChecked
-        };
+        return this.get('_extraData').getRowState();
     },
+
     /**
      * row의 extraData에 설정된 classNameList 를 반환한다.
      * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
      * @return {Array} css 클래스 이름의 배열
      */
     getClassNameList: function(columnName) {
-        var classNameList = [],
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            extraData = this.get('_extraData'),
-            classNameObj = extraData.className,
-            rowClassNameList = (classNameObj && classNameObj['row']) ? classNameObj['row'] : [], //_extraData 의 row 에 할당된 className 을 담는다.
-            columnClassNameList = (classNameObj && classNameObj['column'] && classNameObj['column'][columnName]) ? classNameObj['column'][columnName] : [], //_extraData 의 column 에 할당된 className 을 담는다.
-            tmpList,
-            classNameMap = {},
-            columnModelClassNameList = []; //columnModel 에 할당된 className 리스트
+        var columnModel = this.grid.columnModel.getColumnModel(columnName),
+            classNameList = this.get('_extraData').getClassNameList(columnName);
 
         if (columnModel.className) {
-            columnModelClassNameList.push(columnModel.className);
+            classNameList.push(columnModel.className);
         }
         if (columnModel.isEllipsis) {
-            columnModelClassNameList.push('ellipsis');
+            classNameList.push('ellipsis');
         }
-
-        tmpList = [classNameList, rowClassNameList, columnClassNameList, columnModelClassNameList];
-
-        ne.util.forEachArray(tmpList, function(list) {
-            ne.util.forEachArray(list, function(item) {
-                var sliced = item.slice(' ');
-                if (ne.util.isArray(sliced)) {
-                    ne.util.forEachArray(sliced, function(className) {
-                        classNameMap[className] = true;
-                    });
-                } else {
-                    classNameMap[item] = true;
-                }
-            });
-        });
-
-        ne.util.forEach(classNameMap, function(value, className) {
-            classNameList.push(className);
-        });
-
-        return classNameList;
+        return this._makeUniqueStringArray(classNameList);
     },
+
+    /**
+     * Returns a new array, which splits all comma-separated strings in the targetList and removes duplicated item.
+     * @param  {Array} targetArray - Target array
+     * @return {Array} - New array
+     */
+    _makeUniqueStringArray: function(targetArray) {
+        // split all comma-separated strings in the array
+        var singleStringArray = targetArray.join(' ').split(' ');
+        // make the array unique and remove empty string item
+        return _.chain(singleStringArray).uniq().without('').value();
+    },
+
     /**
      * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
      * @param {String} columnName   컬럼명
@@ -168,39 +165,11 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
      */
     getRowSpanData: function(columnName) {
-        var extraData = this.get('_extraData'),
-            rowSpanData = null;
+        var isRowSpanEnable = this.collection.isRowSpanEnable(),
+            rowKey = this.get('rowKey'),
+            extraData = this.get('_extraData');
 
-        if (this.collection.isRowSpanEnable()) {
-            if (!columnName) {
-                rowSpanData = extraData['rowSpanData'];
-            } else if (extraData && extraData['rowSpanData'] && extraData['rowSpanData'][columnName]) {
-                rowSpanData = extraData['rowSpanData'][columnName];
-            }
-        }
-
-        if (!rowSpanData && columnName) {
-            rowSpanData = {
-                count: 0,
-                isMainRow: true,
-                mainRowKey: this.get('rowKey')
-            };
-        }
-        return rowSpanData;
-    },
-
-    /**
-     * row 의 extraData 를 변경한다.
-     * -Backbone 내부적으로 참조형 데이터의 프로퍼티 변경시 변화를 감지하지 못하므로, 데이터를 복제하여 변경 후 set 한다.
-     * @param {Object} value    extraData 에 설정될 값
-     * @param {Boolean} [silent=false] Backbone 의 'change' 이벤트 발생 여부
-     */
-    setExtraData: function(value, silent) {
-        var extraData = $.extend(true, {}, this.get('_extraData'), value);
-
-        this.set('_extraData', extraData, {
-            silent: silent
-        });
+        return extraData.getRowSpanData(columnName, rowKey, isRowSpanEnable);
     },
 
     /**
@@ -209,33 +178,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {object} data - rowSpan 정보를 가진 객체
      */
     setRowSpanData: function(columnName, data) {
-        var extraData, rowSpanData;
-
-        if (!columnName) {
-            return;
-        }
-        if (ne.util.isFalsy(data)) {
-            extraData = this._getExtraDataClone();
-            if (!extraData) {
-                return;
-            }
-            rowSpanData = extraData.rowSpanData;
-
-            if (rowSpanData && rowSpanData[columnName]) {
-                delete rowSpanData[columnName];
-
-                if (_.isEmpty(rowSpanData)) {
-                    extraData.rowSpanData = null;
-                }
-                this.set('_extraData', extraData);
-            }
-        } else {
-            rowSpanData = {};
-            rowSpanData[columnName] = data;
-            this.setExtraData({
-                rowSpanData: rowSpanData
-            }, true);
-        }
+        this.get('_extraData').setRowSpanData(columnName, data);
     },
 
     /**
@@ -244,17 +187,9 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {boolean} silent 내부 change 이벤트 발생 여부
      */
     setRowState: function(rowState, silent) {
-        this.setExtraData({rowState: rowState}, silent);
-    },
-
-    /**
-     * rowKey 에 해당하는 _extraData 를 복제하여 반환한다.
-     * @param {(Number|String)} rowKey  데이터의 키값
-     * @return {object} 조회한 rowKey 에 해당하는 extraData 사본
-     * @private
-     */
-    _getExtraDataClone: function() {
-        return $.extend(true, {}, this.get('_extraData'));
+        this.get('_extraData').set('rowState', rowState, {
+            silent: silent
+        });
     },
 
     /**
@@ -263,21 +198,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addCellClassName: function(columnName, className) {
-        var extraData = this._getExtraDataClone(),
-            classNameData,
-            classNameList;
-
-        if (!ne.util.isUndefined(extraData)) {
-            classNameData = extraData.className || {};
-            classNameData.column = classNameData.column || {};
-            classNameList = classNameData.column[columnName] || [];
-
-            if (ne.util.inArray(className, classNameList) === -1) {
-                classNameList.push(className);
-                classNameData.column[columnName] = classNameList;
-                this.setExtraData({className: classNameData});
-            }
-        }
+        this.get('_extraData').addCellClassName(columnName, className);
     },
 
     /**
@@ -286,20 +207,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addClassName: function(className) {
-        var extraData = this._getExtraDataClone(),
-            classNameData,
-            classNameList;
-
-        if (!ne.util.isUndefined(extraData)) {
-            classNameData = extraData.className || {};
-            classNameList = classNameData.row || [];
-
-            if (ne.util.inArray(className, classNameList) === -1) {
-                classNameList.push(className);
-                classNameData.row = classNameList;
-                this.setExtraData({className: classNameData});
-            }
-        }
+        this.get('_extraData').addClassName(columnName, className);
     },
 
     /**
@@ -308,14 +216,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeCellClassName: function(columnName, className) {
-        var extraData = this._getExtraDataClone(),
-            classNameData;
-
-        if (ne.util.isExisty(ne.util.pick(extraData, 'className', 'column', columnName))) {
-            classNameData = extraData.className;
-            classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
-            this.set('_extraData', extraData);
-        }
+        this.get('_extraData').removeCellClassName(columnName, className);
     },
 
     /**
@@ -324,29 +225,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
-        var extraData = this._getExtraDataClone(),
-            classNameData;
-
-        if (extraData && extraData.className && extraData.className.row) {
-            classNameData = extraData.className;
-            classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
-            //배열 제거이기 때문에 deep extend 를 하는 setExtraData 를 호출하면 삭제가 반영되지 않는다.
-            this.set('_extraData', extraData);
-        }
-    },
-
-    /**
-     * className 이 담긴 배열로부터 특정 className 을 제거하여 반환한다.
-     * @param {Array} classNameList 디자인 클래스명 리스트
-     * @param {String} className    제거할 클래스명
-     * @return {Array}  제거된 디자인 클래스명 리스트
-     * @private
-     */
-    _removeClassNameFromArray: function(classNameList, className) {
-        //배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
-        var classNameString = classNameList.join(' ');
-        classNameList = classNameString.split(' ');
-        return _.without(classNameList, className);
+        this.get('_extraData').removeClassName(className);
     },
 
     /**
