@@ -1109,7 +1109,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     restore: function() {
         var originalRowList = this.dataModel.getOriginalRowList();
-        this.replaceRowList(originalRowList, false);
+        this.replaceRowList(originalRowList, true);
     },
 
     /**

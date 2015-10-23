@@ -19,20 +19,23 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} options - Options
      */
     initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
-        var rowKey;
+        var dataModel, rowKey, rowData;
 
         Model.prototype.initialize.apply(this, arguments);
+
+        dataModel = this.grid.dataModel;
         rowKey = attributes && attributes['rowKey'];
+        rowData = dataModel.get(rowKey);
 
         this.setOwnProperties({
-            dataModel: this.grid.dataModel,
+            dataModel: dataModel,
             columnModel: this.grid.columnModel,
             renderModel: this.grid.renderModel
         });
 
-        if (this.dataModel.get(rowKey)) {
-            this.listenTo(this.dataModel.get(rowKey), 'change', this._onDataModelChange, this);
-            this.listenTo(this.dataModel.get(rowKey), 'restore', this._onDataModelChange, this);
+        if (rowData) {
+            this.listenTo(rowData, 'change restore', this._onDataModelChange);
+            this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
         }
     },
 
@@ -46,8 +49,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _onDataModelChange: function(model) {
         _.each(model.changed, function(value, columnName) {
             if (columnName === '_extraData') {
-                // 랜더링시 필요한 정보인 extra data 가 변경되었을 때 해당 row 에 disable, editable 상태를 업데이트 한다.
-                // rowSpan 되어있는 행일 경우 main row 에 해당 처리를 수행한다..
                 this._setRowExtraData();
             } else {
                 this.setCell(columnName, {
@@ -63,8 +64,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _setRowExtraData: function() {
         var dataModel = this.dataModel,
+            row = dataModel.get(this.get('rowKey')),
             columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
-            row = this.dataModel.get(this.get('rowKey')),
             rowState = row.getRowState(),
             param;
 

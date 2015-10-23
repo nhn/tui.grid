@@ -53,6 +53,90 @@ describe('Data.RowList - rowSpan', function() {
         }], {parse: true});
     });
 
+    describe('getRowSpanData()', function() {
+        it('columnName 인자가 존재할 경우 항상 같은 형태의 데이터를 리턴한다.', function() {
+            var row = rowList.get(0);
+
+            function test(data) {
+                expect(data.count).toBeDefined();
+                expect(data.isMainRow).toBeDefined();
+                expect(data.mainRowKey).toBeDefined();
+            }
+
+            test(row.getRowSpanData('c1'));
+            test(row.getRowSpanData('c2'));
+            test(row.getRowSpanData('c3'));
+        });
+
+        describe('sort가 되지 않았을 경우', function() {
+            it('columnName 파라미터가 설정되었을 경우 정상적 동작 확인한다.', function() {
+                var mainRow = rowList.get(0);
+
+                expect(mainRow.getRowSpanData('c1')).toEqual({
+                    count: 3,
+                    isMainRow: true,
+                    mainRowKey: 0
+                });
+                expect(rowList.get(1).getRowSpanData('c1')).toEqual({
+                    count: -1,
+                    isMainRow: false,
+                    mainRowKey: 0
+                });
+                expect(rowList.get(2).getRowSpanData('c2')).toEqual({
+                    count: 0,
+                    isMainRow: true,
+                    mainRowKey: 2
+                });
+            });
+
+            it('columnName 파라미터가 설정되지 않은 경우 row에 해당하는 데이터를 MAP 형태로 반환한다.', function() {
+                expect(rowList.get(0).getRowSpanData()).toEqual({
+                    c1: {
+                        count: 3,
+                        isMainRow: true,
+                        mainRowKey: 0
+                    }
+                });
+                expect(rowList.get(1).getRowSpanData()).toEqual({
+                    c1: {
+                        count: -1,
+                        isMainRow: false,
+                        mainRowKey: 0
+                    },
+                    c3: {
+                        count: 3,
+                        isMainRow: true,
+                        mainRowKey: 1
+                    }
+                });
+            });
+        });
+
+        describe('sort 가 되었을 경우 rowSpan 데이터를 무시하고 Empty 값을 반환한다.', function() {
+            beforeEach(function() {
+                rowList.sortByField('c1');
+            });
+
+            it('with columnName parameter', function() {
+                expect(rowList.get(0).getRowSpanData('c1')).toEqual({
+                    count: 0,
+                    isMainRow: true,
+                    mainRowKey: 0
+                });
+                expect(rowList.get(1).getRowSpanData('c1')).toEqual({
+                    count: 0,
+                    isMainRow: true,
+                    mainRowKey: 1
+                });
+            });
+
+            it('without columnName parameter', function() {
+                expect(rowList.get(0).getRowSpanData()).toBeNull();
+                expect(rowList.get(1).getRowSpanData()).toBeNull();
+            });
+        });
+    });
+
     describe('removeRow()', function() {
         it('rowSpan에 포함된 row를 삭제하면 mainRow의 count를 1감소시킨다.', function() {
             rowList.removeRow(2);
@@ -92,7 +176,7 @@ describe('Data.RowList - rowSpan', function() {
             }], {parse: true});
 
             rowList.removeRow(0);
-            
+
             expect(rowList.get(0)).toBeUndefined();
             expect(rowList.get(1).get('c1')).toBe('1-1');
             expect(rowList.get(1).get('c2')).toBe('1-2');

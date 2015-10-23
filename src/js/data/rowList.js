@@ -90,9 +90,9 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
             keyColumnName = this.grid.columnModel.get('keyColumnName'),
             rowKey = (keyColumnName === null) ? this._createRowKey() : row[keyColumnName];
 
-        row['_extraData'] = $.extend(defaultExtraData, row['_extraData']);
-        row['_button'] = (row['_extraData']['rowState'] === 'CHECKED');
-        row['rowKey'] = rowKey;
+        row._extraData = $.extend(defaultExtraData, row._extraData);
+        row._button = row._extraData.rowState === 'CHECKED';
+        row.rowKey = rowKey;
         return row;
     },
 
@@ -632,8 +632,14 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
         rowList = this._formatData(rowData);
 
         _.each(rowList, function(row) {
+            var rowData;
+
             row._button = true;
-            modelList.push(new Row(row, {collection: this}));
+            rowData = new Row(row, {
+                collection: this,
+                parse: true
+            });
+            modelList.push(rowData);
         }, this);
 
         return modelList;
