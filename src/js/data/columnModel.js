@@ -368,8 +368,9 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
 
         this._initializeMetaColumns(columnModelList);
         division = _.partition(columnModelList, function(model) {
-            return _.indexOf(META_COLUMN_LIST, model.columnName) !== -1;
-        });
+            return this.isMetaColumn(model.columnName);
+        }, this);
+
         relationListMap = this._getRelationListMap(division[1]);
         visibleList = this._makeVisibleColumnModelList(division[0], division[1]);
         this.set({
