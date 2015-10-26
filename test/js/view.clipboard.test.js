@@ -346,14 +346,14 @@ describe('view.clipboard', function() {
 
             it('focus위치가 이동되고 getRange()의 값이 변경되는지 확인한다.', function() {
                 grid.selection.startSelection(0, 0);
-                clipboard._updateSelectionByKeyIn(2, 3);
+                clipboard._updateSelectionByKeyIn(2, 1);
                 expect(grid.focusModel.which()).toEqual({rowKey: 2, columnName: 'c2'});
-                expect(grid.selection.getRange()).toEqual({row: [0, 2], column: [0, 3]});
+                expect(grid.selection.getRange()).toEqual({row: [0, 2], column: [0, 1]});
             });
 
             it('selection이 선택되어 있지 않으면 selection start을 호출한다', function() {
                 grid.selection.startSelection = jasmine.createSpy('startSelection');
-                clipboard._updateSelectionByKeyIn(2, 2);
+                clipboard._updateSelectionByKeyIn(2, 1);
                 expect(grid.selection.startSelection).toHaveBeenCalled();
             });
         });

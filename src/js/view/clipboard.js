@@ -14,7 +14,7 @@ var util = require('../util');
 var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * @constructs
-     * @extends module:base/view 
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);

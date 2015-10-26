@@ -238,7 +238,7 @@ describe('grid.normal.test', function() {
         });
     });
 
-    describe('focusInAt()', function() {
+    fdescribe('focusInAt()', function() {
         it('주어진 인덱스에 해당하는 셀의 키와 컬럼명으로 focus()를 호출한다.', function() {
             spyOn(grid, 'focus');
             grid.focusInAt(0, 0, true);
@@ -412,7 +412,7 @@ describe('grid.normal.test', function() {
         it('columnModel의 columnModelList 값을 반환한다.', function() {
             spyOn(grid.columnModel, 'get');
             grid.getColumnModelList();
-            expect(grid.columnModel.get).toHaveBeenCalledWith('columnModelList');
+            expect(grid.columnModel.get).toHaveBeenCalledWith('dataColumnModelList');
         });
     });
 

@@ -181,7 +181,7 @@ describe('model.renderer', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel.indexOf()).toEqual({
                 rowIdx: 1,
-                columnIdx: 1
+                columnIdx: 0
             });
         });
 
@@ -189,13 +189,13 @@ describe('model.renderer', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel.indexOf()).toEqual({
                 rowIdx: 1,
-                columnIdx: 1
+                columnIdx: 0
             });
 
             focusModel.focus(1, '_number');
             expect(focusModel.indexOf()).toEqual({
                 rowIdx: 1,
-                columnIdx: 1
+                columnIdx: 0
             });
         });
 
@@ -204,13 +204,13 @@ describe('model.renderer', function() {
             focusModel.focus('1', 'c2');
             expect(focusModel.indexOf(true)).toEqual({
                 rowIdx: 1,
-                columnIdx: 1
+                columnIdx: 0
             });
 
             focusModel.focus('0', 'c1');
             expect(focusModel.indexOf(true)).toEqual({
                 rowIdx: 1,
-                columnIdx: 2
+                columnIdx: 1
             });
         });
     });
@@ -240,29 +240,29 @@ describe('model.renderer', function() {
         it('offset 만큼 이동한 columnName 을 반환한다.', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel._findColumnName(2)).toBe('c3');
-            expect(focusModel._findColumnName(-1)).toBe('_number');
+            expect(focusModel._findColumnName(-1)).toBe('c1');
 
             expect(focusModel._findColumnName(10)).toBe('c3');
-            expect(focusModel._findColumnName(-100)).toBe('_number');
+            expect(focusModel._findColumnName(-100)).toBe('c1');
         });
     });
 
     describe('nextColumnIndex()', function() {
-        it('다음 columnName 을 반환한다.', function() {
+        it('다음 columnIndex를 반환한다.', function() {
             focusModel.focus(0, 'c1');
-            expect(focusModel.nextColumnIndex()).toBe(2);
+            expect(focusModel.nextColumnIndex()).toBe(1);
             focusModel.focus(0, 'c2');
-            expect(focusModel.nextColumnIndex()).toBe(3);
+            expect(focusModel.nextColumnIndex()).toBe(2);
         });
     });
 
     describe('prevColumnIndex()', function() {
-        it('다음 columnName 을 반환한다.', function() {
-            focusModel.focus(0, 'c2');
+        it('이전 columnIndex를 반환한다.', function() {
+            focusModel.focus(0, 'c3');
             expect(focusModel.prevColumnIndex()).toBe(1);
-            focusModel.focus(0, 'c1');
+            focusModel.focus(0, 'c2');
             expect(focusModel.prevColumnIndex()).toBe(0);
-            focusModel.focus(0, '_number');
+            focusModel.focus(0, 'c1');
             expect(focusModel.prevColumnIndex()).toBe(0);
         });
     });
@@ -284,7 +284,7 @@ describe('model.renderer', function() {
     describe('firstColumnName()', function() {
         it('첫번째 columnName 을 반환한다.', function() {
             focusModel.focus(2, 'c2');
-            expect(focusModel.firstColumnName()).toBe('_number');
+            expect(focusModel.firstColumnName()).toBe('c1');
         });
     });
 

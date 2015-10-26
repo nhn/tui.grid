@@ -1035,7 +1035,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @return {Array}  컬럼모델 리스트
      */
     getColumnModelList: function() {
-        return this.columnModel.get('columnModelList');
+        return this.columnModel.get('dataColumnModelList');
     },
 
     /**
