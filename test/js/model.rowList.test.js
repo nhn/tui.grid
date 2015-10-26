@@ -602,13 +602,14 @@ describe('model.rowList', function() {
                     rowData = dataModelInstance.get(0),
                     extraData = rowData.get('_extraData');
 
-                extraData.set('className', {
+                extraData.className = {
                     row: ['rowClass'],
                     column: {
                         columnName1: ['column1Class1', 'column1Class2'],
                         columnName2: ['column2Class1', 'column2Class2']
                     }
-                });
+                };
+                rowData._triggerExtraDataChangeEvent();
 
                 rowModel = rowListModelInstance.get(0);
                 cell0 = rowModel.get('_button');

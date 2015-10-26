@@ -5,7 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
-var ExtraData = require('./extraData');
+var ExtraDataManager = require('./extraDataManager');
 var util = require('../util');
 
 /**
@@ -20,7 +20,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
 
-        this.listenTo(this.get('_extraData'), 'change', this._onChangeExtraData);
+        this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
     },
 
     idAttribute: 'rowKey',
@@ -32,28 +32,17 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {object} - parsed data
      */
     parse: function(data) {
-        data._extraData = new ExtraData(data._extraData);
+        if (!data._extraData) {
+            data._extraData = {};
+        }
         return data;
-    },
-
-    /**
-     * Overrids Backbone's toJSON method to correct _extraData value.
-     * @override
-     * @return {object} - Shallow copy of the attributes object
-     */
-    toJSON: function() {
-        var result = {};
-        _.each(this.attributes, function(value, name) {
-            result[name] = (name === '_extraData') ? value.toJSON() : _.clone(value);
-        });
-        return result;
     },
 
     /**
      * Event handler for change event in _extraData.
      * Reset _extraData value with cloned object to trigger 'change:_extraData' event.
      */
-    _onChangeExtraData: function() {
+    _triggerExtraDataChangeEvent: function() {
         this.trigger('extraDataChanged', this.get('_extraData'));
     },
 
@@ -62,7 +51,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {{isDisabled: boolean, isDisabledCheck: boolean}} rowState 정보
      */
     getRowState: function() {
-        return this.get('_extraData').getRowState();
+        return this.extraDataManager.getRowState();
     },
 
     /**
@@ -72,7 +61,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     getClassNameList: function(columnName) {
         var columnModel = this.grid.columnModel.getColumnModel(columnName),
-            classNameList = this.get('_extraData').getClassNameList(columnName);
+            classNameList = this.extraDataManager.getClassNameList(columnName);
 
         if (columnModel.className) {
             classNameList.push(columnModel.className);
@@ -166,10 +155,9 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     getRowSpanData: function(columnName) {
         var isRowSpanEnable = this.collection.isRowSpanEnable(),
-            rowKey = this.get('rowKey'),
-            extraData = this.get('_extraData');
+            rowKey = this.get('rowKey');
 
-        return extraData.getRowSpanData(columnName, rowKey, isRowSpanEnable);
+        return this.extraDataManager.getRowSpanData(columnName, rowKey, isRowSpanEnable);
     },
 
     /**
@@ -178,7 +166,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {object} data - rowSpan 정보를 가진 객체
      */
     setRowSpanData: function(columnName, data) {
-        this.get('_extraData').setRowSpanData(columnName, data);
+        this.extraDataManager.setRowSpanData(columnName, data);
+        this._triggerExtraDataChangeEvent();
     },
 
     /**
@@ -187,9 +176,10 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {boolean} silent 내부 change 이벤트 발생 여부
      */
     setRowState: function(rowState, silent) {
-        this.get('_extraData').set('rowState', rowState, {
-            silent: silent
-        });
+        this.extraDataManager.setRowState(rowState);
+        if (!silent) {
+            this._triggerExtraDataChangeEvent();
+        }
     },
 
     /**
@@ -198,7 +188,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addCellClassName: function(columnName, className) {
-        this.get('_extraData').addCellClassName(columnName, className);
+        this.extraDataManager.addCellClassName(columnName, className);
+        this._triggerExtraDataChangeEvent();
     },
 
     /**
@@ -207,7 +198,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     addClassName: function(className) {
-        this.get('_extraData').addClassName(columnName, className);
+        this.extraDataManager.addClassName(columnName, className);
+        this._triggerExtraDataChangeEvent();
     },
 
     /**
@@ -216,7 +208,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeCellClassName: function(columnName, className) {
-        this.get('_extraData').removeCellClassName(columnName, className);
+        this.extraDataManager.removeCellClassName(columnName, className);
+        this._triggerExtraDataChangeEvent();
     },
 
     /**
@@ -225,7 +218,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
-        this.get('_extraData').removeClassName(className);
+        this.extraDataManager.removeClassName(className);
+        this._triggerExtraDataChangeEvent();
     },
 
     /**

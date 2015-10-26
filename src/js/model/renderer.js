@@ -167,11 +167,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
                 //데이터 초기화
                 lsideRow = {
-                    '_extraData': rowModel.get('_extraData').toJSON(),
+                    '_extraData': rowModel.get('_extraData'),
                     'rowKey': rowKey
                 };
                 rsideRow = {
-                    '_extraData': rowModel.get('_extraData').toJSON(),
+                    '_extraData': rowModel.get('_extraData'),
                     'rowKey': rowKey
                 };
 

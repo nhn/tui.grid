@@ -11,29 +11,13 @@ var util = require('../util');
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
  */
-var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
+var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.prototype */{
     /**
      * @constructs
      * @extends module:base/model
      */
-    initialize: function(attributes) {
-        // do nothing
-    },
-
-    defaults: {
-        rowSpan: null,
-        rowSpanData: null,
-        rowState: null
-    },
-
-    /**
-     * Sets the value of specified attributes with cloned object.
-     * (For triggering 'change' event)
-     * @param  {string} name - The name of target attribute
-     */
-    _resetAttribute: function(name) {
-        var value = _.clone(this.get(name));
-        this.set(name, value);
+    init: function(data) {
+        this.data = data;
     },
 
     /**
@@ -47,7 +31,7 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
         var rowSpanData = null;
 
         if (isRowSpanEnable) {
-            rowSpanData = this.get('rowSpanData');
+            rowSpanData = this.data.rowSpanData;
             if (columnName && rowSpanData) {
                 rowSpanData = rowSpanData[columnName];
             }
@@ -74,7 +58,7 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
             isChecked: false
         };
 
-        switch (this.get('rowState')) {
+        switch (this.data.rowState) {
             case 'DISABLED':
                 result.isDisabled = true;
             case 'DISABLED_CHECK':
@@ -87,13 +71,17 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
         return result;
     },
 
+    setRowState: function(rowState) {
+        this.data.rowState = rowState;
+    },
+
     /**
      * Sets the rowSpanData.
      * @param {string} columnName - Column name
      * @param {object} data - Data
      */
     setRowSpanData: function(columnName, data) {
-        var rowSpanData = _.assign({}, this.get('rowSpanData'));
+        var rowSpanData = _.assign({}, this.data.rowSpanData);
 
         if (!columnName) {
             return;
@@ -105,7 +93,7 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
         } else {
             rowSpanData[columnName] = data;
         }
-        this.set('rowSpanData', rowSpanData);
+        this.data.rowSpanData = rowSpanData;
     },
 
     /**
@@ -116,14 +104,14 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
     addCellClassName: function(columnName, className) {
         var classNameData, classNameList;
 
-        classNameData = this.get('className') || {};
+        classNameData = this.data.className || {};
         classNameData.column = classNameData.column || {};
         classNameList = classNameData.column[columnName] || [];
 
         if (ne.util.inArray(className, classNameList) === -1) {
             classNameList.push(className);
             classNameData.column[columnName] = classNameList;
-            this._resetAttribute('className');
+            this.data.className = classNameData;
         }
     },
 
@@ -134,13 +122,13 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
     addClassName: function(className) {
         var classNameData, classNameList;
 
-        classNameData = extraData.className || {};
+        classNameData = this.data.className || {};
         classNameList = classNameData.row || [];
 
         if (ne.util.inArray(className, classNameList) === -1) {
             classNameList.push(className);
             classNameData.row = classNameList;
-            this._resetAttribute('className');
+            this.data.className = classNameData;
         }
     },
 
@@ -150,7 +138,7 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
      * @return {Array} - The array of class names.
      */
     getClassNameList: function(columnName) {
-        var classNameData = this.get('className'),
+        var classNameData = this.data.className,
             arrayPush = Array.prototype.push,
             classNameList = [];
 
@@ -185,11 +173,11 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeCellClassName: function(columnName, className) {
-        var classNameData = this.get('className');
+        var classNameData = this.data.className;
 
         if (ne.util.pick(classNameData, 'column', columnName)) {
             classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
-            this._resetAttribute('className');
+            this.data.className = classNameData;
         }
     },
 
@@ -199,13 +187,13 @@ var ExtraData = Model.extend(/**@lends module:data/extraData.prototype */{
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
-        var classNameData = this.get('className');
+        var classNameData = this.className;
 
         if (classNameData && classNameData.row) {
             classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
-            this._resetAttribute('className');
+            this.className = classNameData;
         }
     }
 });
 
-module.exports = ExtraData;
+module.exports = ExtraDataManager;

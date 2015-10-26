@@ -80,22 +80,22 @@ describe('model.renderer', function() {
 
         it('when scrollTop = 200', function() {
             renderer._setRenderingRange(200);
-            expect(renderer.get('top')).toBe(99);
-            expect(renderer.get('startIndex')).toBe(9);
+            expect(renderer.get('top')).toBe(77);
+            expect(renderer.get('startIndex')).toBe(7);
             expect(renderer.get('endIndex')).toBe(49);
         });
 
         it('when scrollTop = 300', function() {
             renderer._setRenderingRange(300);
-            expect(renderer.get('top')).toBe(198);
-            expect(renderer.get('startIndex')).toBe(18);
+            expect(renderer.get('top')).toBe(176);
+            expect(renderer.get('startIndex')).toBe(16);
             expect(renderer.get('endIndex')).toBe(58);
         });
 
         it('when scrollTop = 400', function() {
             renderer._setRenderingRange(400);
-            expect(renderer.get('top')).toBe(297);
-            expect(renderer.get('startIndex')).toBe(27);
+            expect(renderer.get('top')).toBe(275);
+            expect(renderer.get('startIndex')).toBe(25);
             expect(renderer.get('endIndex')).toBe(67);
         });
     });
@@ -114,7 +114,7 @@ describe('model.renderer', function() {
         it('when scrollTop = 200', function() {
             renderer._setRenderingRange(200);
             expect(renderer._isRenderable(0)).toBe(true);
-            expect(renderer._isRenderable(100)).toBe(true);
+            expect(renderer._isRenderable(100)).toBe(false);
             expect(renderer._isRenderable(200)).toBe(false);
             expect(renderer._isRenderable(300)).toBe(true);
             expect(renderer._isRenderable(400)).toBe(true);
@@ -126,7 +126,7 @@ describe('model.renderer', function() {
             expect(renderer._isRenderable(0)).toBe(true);
             expect(renderer._isRenderable(100)).toBe(true);
             expect(renderer._isRenderable(200)).toBe(true);
-            expect(renderer._isRenderable(300)).toBe(true);
+            expect(renderer._isRenderable(300)).toBe(false);
             expect(renderer._isRenderable(400)).toBe(false);
             expect(renderer._isRenderable(500)).toBe(true);
         });
