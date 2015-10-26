@@ -384,16 +384,6 @@ describe('view.clipboard', function() {
                 }, timeoutDelay);
             });
 
-            it('button 컬럼의 경우 check 한다.', function() {
-                grid.focusIn = jasmine.createSpy('focusIn');
-                expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
-                clipboard._onEnterSpace(0, '_button');
-                expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(true);
-                clipboard._onEnterSpace(0, '_button');
-                expect(grid.getElement(0, '_button').find('input').prop('checked')).toBe(false);
-                expect(grid.focusIn).not.toHaveBeenCalled();
-            });
-
             it('아니라면 focusIn 을 호출한다..', function() {
                 grid.focusIn = jasmine.createSpy('focusIn');
                 clipboard._onEnterSpace(0, 'c1');

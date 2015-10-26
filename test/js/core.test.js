@@ -238,11 +238,12 @@ describe('grid.normal.test', function() {
         });
     });
 
-    fdescribe('focusInAt()', function() {
+    // c1, c2는 editable column, 렌더링 이후에 (setTimeout(fn, 0)) 확인 가능.:
+    describe('focusInAt()', function() {
         it('주어진 인덱스에 해당하는 셀의 키와 컬럼명으로 focus()를 호출한다.', function() {
             spyOn(grid, 'focus');
-            grid.focusInAt(0, 0, true);
-            expect(grid.focus).toHaveBeenCalledWith(0, 'c1', true);
+            grid.focusInAt(0, 2, true);
+            expect(grid.focus).toHaveBeenCalledWith(0, 'c3', true);
         });
     });
 
