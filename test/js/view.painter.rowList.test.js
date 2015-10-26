@@ -149,10 +149,10 @@ describe('View.RowList', function() {
             $trs = rowListView.$el.children('tr');
         }
 
-        fdescribe('rowKey 순으로 정렬되어 있을 때', function() {
+        describe('rowKey 순으로 정렬되어 있을 때', function() {
             var sampleData = (function() {
                 var i, data = [];
-                for (i = 0; i < 100; i += 1) {
+                for (i = 0; i < 50; i += 1) {
                     data.push({c1: i});
                 }
                 return data;
