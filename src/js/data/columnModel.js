@@ -136,7 +136,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     /**
      * column을 추가(push)한다.
      * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
-     * - 메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.
      * @param {object} columnObj 추가할 컬럼모델
      * @param {Array} columnModelList 컬럼모델 배열
      * @return {Array} 확장한 결과 컬럼모델 배열
