@@ -21,9 +21,9 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
-        this.whichSide = options.whichSide;
         this.setOwnProperties({
-            timeoutForAllChecked: 0
+            timeoutForAllChecked: 0,
+            whichSide: options && options.whichSide || 'R'
         });
         this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
             .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
@@ -34,8 +34,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     tagName: 'div',
 
     className: 'header',
-
-    whichSide: 'R',
 
     events: {
         click: '_onClick'
@@ -243,7 +241,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var columnModel = this.grid.columnModel,
             dimensionModel = this.grid.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
+            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+
         return {
             widthList: columnWidthList,
             modelList: columnModelList
@@ -356,7 +355,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             if (columnMergeList) {
                 _.each(columnMergeList, function(columnMerge) {
                     if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
-                        resultList = this._getColumnHierarchy(columnMerge, resultList);
+                        this._getColumnHierarchy(columnMerge, resultList);
                     }
                 }, this);
             }

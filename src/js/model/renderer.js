@@ -141,12 +141,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         //TODO : rendering 해야할 데이터만 가져온다.
         //TODO : eslint 에러 수정
-        var columnFixIndex = this.grid.columnModel.get('columnFixIndex'), // eslint-disable-line
-            columnList = this.grid.columnModel.get('visibleList'),
+        var columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(true), // eslint-disable-line
+            columnList = this.grid.columnModel.getVisibleColumnModelList(null, true),
             columnNameList = _.pluck(columnList, 'columnName'),
 
-            lsideColumnList = columnNameList.slice(0, columnFixIndex),
-            rsideColumnList = columnNameList.slice(columnFixIndex),
+            lsideColumnList = columnNameList.slice(0, columnFixCount),
+            rsideColumnList = columnNameList.slice(columnFixCount),
 
             lsideRowList = [],
             rsideRowList = [],

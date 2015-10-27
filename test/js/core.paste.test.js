@@ -100,9 +100,9 @@ describe('grid.core.paste()', function() {
             endIdx = grid.selection.getEndIndex();
 
             expect(startIdx.rowIdx).toBe(0);
-            expect(startIdx.columnIdx).toBe(1);
+            expect(startIdx.columnIdx).toBe(0);
             expect(endIdx.rowIdx).toBe(1);
-            expect(endIdx.columnIdx).toBe(2);
+            expect(endIdx.columnIdx).toBe(1);
         });
     });
 
@@ -131,26 +131,6 @@ describe('grid.core.paste()', function() {
             expect(grid.getValue(0, 'c2')).toBe('0-2');
             expect(grid.getValue(1, 'c1')).toBe('New1-1');
             expect(grid.getValue(1, 'c2')).toBe('1-2');
-        });
-
-        it(': 행번호와 버튼', function() {
-            grid = new Core({
-                el: $empty,
-                selectType: 'checkbox',
-                columnModelList: createColumnModelList(['c2'])
-            });
-            grid.setRowList([
-                {
-                    c2: '0-2'
-                }, {
-                    c2: '1-2'
-                }
-            ]);
-            grid.focus(0, '_number');
-            grid.paste([
-                ['number0', 'button0', 'New0-2']
-            ]);
-            expect(grid.getValue(0, 'c2')).toBe('New0-2');
         });
 
         it(': disabled', function() {
@@ -264,8 +244,8 @@ describe('grid.core.paste()', function() {
                 c3: '2-3'
             }
         ]);
-        grid.selection.startSelection(0, 1);
-        grid.selection.updateSelection(1, 2);
+        grid.selection.startSelection(0, 0);
+        grid.selection.updateSelection(1, 1);
         grid.focus(1, 'c2');
         grid.paste([
             ['New0-1', 'New0-2'],

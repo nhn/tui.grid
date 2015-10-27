@@ -134,7 +134,7 @@ describe('model.renderer', function() {
         columnModelInstance = grid.columnModel = new ColumnModelData({
             hasNumberColumn: true,
             selectType: 'checkbox',
-            columnFixIndex: 2
+            columnFixCount: 2
         });
         columnModelInstance.set('columnModelList', columnModelList);
         dataModelInstance = grid.dataModel = new RowListData([], {
@@ -176,7 +176,7 @@ describe('model.renderer', function() {
         it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
             var lside, rside;
 
-            columnModelInstance.set('columnFixIndex', 3);
+            columnModelInstance.set('columnFixCount', 3);
             dataModelInstance.set(rowList, {parse: true});
             renderModelInstance.refresh();
             lside = renderModelInstance.get('lside');
@@ -184,8 +184,8 @@ describe('model.renderer', function() {
             expect(renderModelInstance._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
             expect(renderModelInstance._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
             expect(renderModelInstance._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName2').toJSON()).toEqual(rside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName3').toJSON()).toEqual(rside.toJSON());
+            expect(renderModelInstance._getCollectionByColumnName('columnName2').toJSON()).toEqual(lside.toJSON());
+            expect(renderModelInstance._getCollectionByColumnName('columnName3').toJSON()).toEqual(lside.toJSON());
             expect(renderModelInstance._getCollectionByColumnName('columnName4').toJSON()).toEqual(rside.toJSON());
             expect(renderModelInstance._getCollectionByColumnName('columnName5').toJSON()).toEqual(rside.toJSON());
             expect(renderModelInstance._getCollectionByColumnName('columnName6').toJSON()).toEqual(rside.toJSON());
@@ -223,7 +223,7 @@ describe('model.renderer', function() {
                     'columnName7': 'hidden'
                 }
             ];
-            columnModelInstance.set('columnFixIndex', 3);
+            columnModelInstance.set('columnFixCount', 3);
             dataModelInstance.set(rowList, {parse: true});
             renderModelInstance.refresh();
 
@@ -240,7 +240,7 @@ describe('model.renderer', function() {
 
     describe('refresh()', function() {
         beforeEach(function() {
-            columnModelInstance.set('columnFixIndex', 3);
+            columnModelInstance.set('columnFixCount', 3);
             dataModelInstance.set(rowList, {parse: true});
         });
 
@@ -270,8 +270,8 @@ describe('model.renderer', function() {
                 expect(lsideResult._number).toBeDefined();
                 expect(lsideResult._button).toBeDefined();
                 expect(lsideResult.columnName1).toBeDefined();
-                expect(lsideResult.columnName2).not.toBeDefined();
-                expect(lsideResult.columnName3).not.toBeDefined();
+                expect(lsideResult.columnName2).toBeDefined();
+                expect(lsideResult.columnName3).toBeDefined();
                 expect(lsideResult.columnName4).not.toBeDefined();
                 expect(lsideResult.columnName5).not.toBeDefined();
                 expect(lsideResult.columnName6).not.toBeDefined();
@@ -281,8 +281,8 @@ describe('model.renderer', function() {
                 expect(rsideResult._number).not.toBeDefined();
                 expect(rsideResult._button).not.toBeDefined();
                 expect(rsideResult.columnName1).not.toBeDefined();
-                expect(rsideResult.columnName2).toBeDefined();
-                expect(rsideResult.columnName3).toBeDefined();
+                expect(rsideResult.columnName2).not.toBeDefined();
+                expect(rsideResult.columnName3).not.toBeDefined();
                 expect(rsideResult.columnName4).toBeDefined();
                 expect(rsideResult.columnName5).toBeDefined();
                 expect(rsideResult.columnName6).toBeDefined();
@@ -334,7 +334,7 @@ describe('model.renderer', function() {
                 });
                 listenModel.listenTo(renderModelInstance, 'columnModelChanged', callback);
                 columnModelInstance.set({
-                    columnFixIndex: 4
+                    columnFixCount: 4
                 });
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();

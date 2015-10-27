@@ -118,11 +118,12 @@ describe('view.layout.body', function() {
             $cols = $colgroup.find('col');
 
             expect($colgroup.length).toBe(1);
-            expect($cols.length).toBe(3);
-            expect($cols.eq(1).width()).toBe(30 - extraWidth);
-            expect($cols.eq(1).attr('columnname')).toBe('c1');
-            expect($cols.eq(2).width()).toBe(40 - extraWidth);
-            expect($cols.eq(2).attr('columnname')).toBe('c2');
+            expect($cols.length).toBe(2);
+
+            expect($cols.eq(0).width()).toBe(30 - extraWidth);
+            expect($cols.eq(0).attr('columnname')).toBe('c1');
+            expect($cols.eq(1).width()).toBe(40 - extraWidth);
+            expect($cols.eq(1).attr('columnname')).toBe('c2');
         });
 
         it('selection layer가 생성되었는지 확인한다.', function() {
@@ -157,11 +158,11 @@ describe('view.layout.body', function() {
             body.render();
             $cols = body.$el.find('col');
 
-            $cols.eq(1).width(10);
-            expect($cols.eq(1).width()).toBe(10);
+            $cols.eq(0).width(10);
+            expect($cols.eq(0).width()).toBe(10);
 
             grid.dimensionModel.trigger('columnWidthChanged');
-            expect($cols.eq(1).width()).toBe(30 - extraWidth);
+            expect($cols.eq(0).width()).toBe(30 - extraWidth);
         });
     });
 

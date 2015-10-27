@@ -103,11 +103,11 @@ describe('LayoutHeader', function() {
                 $cols = $colgroup.find('col');
 
                 expect($colgroup.length).toBe(1);
-                expect($cols.length).toBe(3);
-                expect($cols.eq(1).width()).toBe(30);
-                expect($cols.eq(1).attr('columnname')).toBe('c1');
-                expect($cols.eq(2).width()).toBe(40);
-                expect($cols.eq(2).attr('columnname')).toBe('c2');
+                expect($cols.length).toBe(2);
+                expect($cols.eq(0).width()).toBe(30);
+                expect($cols.eq(0).attr('columnname')).toBe('c1');
+                expect($cols.eq(1).width()).toBe(40);
+                expect($cols.eq(1).attr('columnname')).toBe('c2');
             });
 
             // TODO: TC 구현
@@ -125,16 +125,24 @@ describe('LayoutHeader', function() {
             // });
 
             describe('_getHeaderMainCheckbox', function() {
+                var lHeader;
+                beforeEach(function() {
+                    lHeader = new LayoutHeader({
+                        grid: grid,
+                        whichSide: 'L'
+                    });
+                });
+
                 it('header에 checkbox가 랜더링 되었을 때, checkbox를 잘 가져오는지 확인한다.', function() {
                     grid.columnModel.set('selectType', 'checkbox');
-                    header.render();
-                    expect(header._getHeaderMainCheckbox().length).toBe(1);
+                    lHeader.render();
+                    expect(lHeader._getHeaderMainCheckbox().length).toBe(1);
                 });
 
                 it('header에 checkbox 가 랜더링 되지 않았을 때', function() {
                     grid.columnModel.set('selectType', 'radio');
-                    header.render();
-                    expect(header._getHeaderMainCheckbox().length).toBe(0);
+                    lHeader.render();
+                    expect(lHeader._getHeaderMainCheckbox().length).toBe(0);
                 });
             });
 
@@ -254,19 +262,19 @@ describe('LayoutHeader', function() {
             describe('_getColumnHierarchyList()', function() {
                 it('Merge된 컬럼의 Hierarchy 데이터를 생성한다', function() {
                     var hList = header._getColumnHierarchyList(),
-                        column1 = hList[1],
-                        column3 = hList[3];
+                        column1 = hList[0],
+                        column3 = hList[2];
 
                     expect(column1.length).toBe(4);
                     expect(column1[0]).toEqual(columnMergeList[2]);
                     expect(column1[1]).toEqual(columnMergeList[1]);
                     expect(column1[2]).toEqual(columnMergeList[0]);
-                    expect(column1[3]).toEqual(columnData.modelList[1]);
+                    expect(column1[3]).toEqual(columnData.modelList[0]);
 
                     expect(column3.length).toBe(3);
                     expect(column3[0]).toEqual(columnMergeList[2]);
                     expect(column3[1]).toEqual(columnMergeList[1]);
-                    expect(column3[2]).toEqual(columnData.modelList[3]);
+                    expect(column3[2]).toEqual(columnData.modelList[2]);
                 });
             });
 
@@ -292,7 +300,12 @@ describe('LayoutHeader', function() {
         });
 
         describe('_syncCheckState()', function() {
+            var lHeader;
             beforeEach(function() {
+                lHeader = new LayoutHeader({
+                    grid: grid,
+                    whichSide: 'L'
+                });
                 grid.options.selectType = 'checkbox';
                 grid.columnModel.set('selectType', 'checkbox');
                 grid.dataModel = new RowListData([
@@ -308,71 +321,83 @@ describe('LayoutHeader', function() {
                     grid: grid,
                     parse: true
                 });
-                header.render();
+                lHeader.render();
             });
 
             it('각 행의 button이 true로 설정되어 있는지 확인하고, header의 checked 상태를 갱신한다.', function() {
-                var $input = header._getHeaderMainCheckbox();
+                var $input = lHeader._getHeaderMainCheckbox();
 
-                header._syncCheckState();
+                lHeader._syncCheckState();
                 expect($input.prop('checked')).toBe(false);
 
                 grid.dataModel.forEach(function(row) {
                     row.set('_button', true);
                 });
-                header._syncCheckState();
+                lHeader._syncCheckState();
                 expect($input.prop('checked')).toBe(true);
             });
 
             it('각 행의 button이 disable 되어 있다면, disable 상태를 고려하여 checkbox 상태를 갱신한다.', function() {
-                var $input = header._getHeaderMainCheckbox();
+                var $input = lHeader._getHeaderMainCheckbox();
 
                 grid.dataModel.forEach(function(row) {
                     row.setRowState('DISABLED');
                 });
-                header._syncCheckState();
+                lHeader._syncCheckState();
                 expect($input.prop('checked')).toBe(true);
             });
         });
 
         describe('_onCheckCountChange()', function() {
+            var lHeader;
+            beforeEach(function() {
+                lHeader = new LayoutHeader({
+                    grid: grid,
+                    whichSide: 'L'
+                });
+            });
+
             it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function(done) {
                 grid.options.selectType = 'checkbox';
-                header._syncCheckState = jasmine.createSpy('_syncCheckState');
-                header._onCheckCountChange();
-                header._onCheckCountChange();
-                header._onCheckCountChange();
-                header._onCheckCountChange();
-                header._onCheckCountChange();
-                header._onCheckCountChange();
-                header._onCheckCountChange();
+                lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
+                lHeader._onCheckCountChange();
+                lHeader._onCheckCountChange();
+                lHeader._onCheckCountChange();
+                lHeader._onCheckCountChange();
+                lHeader._onCheckCountChange();
+                lHeader._onCheckCountChange();
+                lHeader._onCheckCountChange();
 
                 setTimeout(function() {
-                    expect(header._syncCheckState.calls.count()).toBe(1);
+                    expect(lHeader._syncCheckState.calls.count()).toBe(1);
                     done();
                 }, 10);
             });
 
             it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function(done) {
                 grid.options.selectType = 'radio';
-                header._syncCheckState = jasmine.createSpy('_syncCheckState');
-                header._onCheckCountChange();
+                lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
+                lHeader._onCheckCountChange();
 
                 setTimeout(function() {
-                    expect(header._syncCheckState).not.toHaveBeenCalled();
+                    expect(lHeader._syncCheckState).not.toHaveBeenCalled();
                     done();
                 }, 10);
             });
         });
 
         describe('_onClick', function() {
-            var $input, clickEvent;
+            var $input, clickEvent, lHeader;
 
             beforeEach(function() {
+                lHeader = new LayoutHeader({
+                    grid: grid,
+                    whichSide: 'L'
+                });
                 grid.columnModel.set('selectType', 'checkbox');
-                header.render();
+                lHeader.render();
 
-                $input = header._getHeaderMainCheckbox();
+                $input = lHeader._getHeaderMainCheckbox();
                 clickEvent = {target: $input.get(0)};
                 grid.checkAll = jasmine.createSpy('checkAll');
                 grid.uncheckAll = jasmine.createSpy('uncheckAll');
@@ -381,14 +406,14 @@ describe('LayoutHeader', function() {
             describe('selectType 이 checkbox 일 때', function() {
                 it('체크한 상태라면 전체 행을 check 하기 위해 checkAll 을 호출한다.', function() {
                     $input.prop('checked', true);
-                    header._onClick(clickEvent);
+                    lHeader._onClick(clickEvent);
                     expect(grid.checkAll).toHaveBeenCalled();
                     expect(grid.uncheckAll).not.toHaveBeenCalled();
                 });
 
                 it('체크 해제된 상태라면 전체 행을 check 하기 위해 uncheckAll 을 호출한다.', function() {
                     $input.prop('checked', false);
-                    header._onClick(clickEvent);
+                    lHeader._onClick(clickEvent);
                     expect(grid.checkAll).not.toHaveBeenCalled();
                     expect(grid.uncheckAll).toHaveBeenCalled();
                 });
@@ -418,10 +443,9 @@ describe('LayoutHeader', function() {
             });
 
             it('resize handler div 리스트를 잘 생성하는지 확인한다.', function() {
-                expect($handles.eq(0).attr('columnName')).toBe('_number');
-                expect($handles.eq(1).attr('columnName')).toBe('c1');
-                expect($handles.eq(2).attr('columnName')).toBe('c2');
-                expect($handles.length).toBe(3);
+                expect($handles.eq(0).attr('columnName')).toBe('c1');
+                expect($handles.eq(1).attr('columnName')).toBe('c2');
+                expect($handles.length).toBe(2);
             });
 
             it('마지막 resize handler 에 resize_handle_last css 클래스가 할당되는지 확인한다.', function() {
@@ -438,27 +462,27 @@ describe('LayoutHeader', function() {
 
         describe('_getHandlerColumnIndex', function() {
             beforeEach(function() {
-                grid.columnModel.set('columnFixIndex', 4);
+                grid.columnModel.set('columnFixCount', 4);
             });
 
             afterEach(function() {
-                grid.columnModel.set('columnFixIndex', 0);
+                grid.columnModel.set('columnFixCount', 0);
             });
 
-            it('L side 일때 columnFix index 를 고려하여 실제 columnIndex 를 계산한다.', function() {
+            it('R side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
+                handler.whichSide = 'R';
+                expect(handler._getHandlerColumnIndex(0)).toBe(5);
+                expect(handler._getHandlerColumnIndex(1)).toBe(6);
+                expect(handler._getHandlerColumnIndex(2)).toBe(7);
+            });
+
+            it('L side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
                 handler.whichSide = 'L';
                 expect(handler._getHandlerColumnIndex(0)).toBe(0);
                 expect(handler._getHandlerColumnIndex(1)).toBe(1);
                 expect(handler._getHandlerColumnIndex(2)).toBe(2);
                 expect(handler._getHandlerColumnIndex(3)).toBe(3);
-            });
-
-            it('R side 일때 columnFix index 를 고려하여 실제 columnIndex 를 계산한다.', function() {
-                handler.whichSide = 'R';
-                expect(handler._getHandlerColumnIndex(0)).toBe(4);
-                expect(handler._getHandlerColumnIndex(1)).toBe(5);
-                expect(handler._getHandlerColumnIndex(2)).toBe(6);
-                expect(handler._getHandlerColumnIndex(3)).toBe(7);
+                expect(handler._getHandlerColumnIndex(4)).toBe(4);
             });
         });
 
@@ -472,9 +496,8 @@ describe('LayoutHeader', function() {
 
             it('columnWidthList 에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
                 handler._refreshHandlerPosition();
-                expect($handles.eq(0).css('left')).toEqual('58px');
-                expect($handles.eq(1).css('left')).toEqual('89px');
-                expect($handles.eq(2).css('left')).toEqual('130px');
+                expect($handles.eq(0).css('left')).toEqual('28px');
+                expect($handles.eq(1).css('left')).toEqual('69px');
             });
         });
 
@@ -497,9 +520,9 @@ describe('LayoutHeader', function() {
 
                     expect(handler.isResizing).toBe(true);
                     expect(handler.$target.is($handles.eq(0))).toBe(true);
-                    expect(handler.initialLeft).toBe(58);
+                    expect(handler.initialLeft).toBe(28);
                     expect(handler.initialOffsetLeft).toBe(0);
-                    expect(handler.initialWidth).toBe(60);
+                    expect(handler.initialWidth).toBe(30);
                 });
             });
 
@@ -523,7 +546,7 @@ describe('LayoutHeader', function() {
                     handler._onMouseDown(mouseEvent);
                     handler._onMouseMove(mouseEvent);
                     expect($target.css('left')).toBe('300px');
-                    expect(grid.dimensionModel.get('columnWidthList')[0]).toBe(302);
+                    expect(grid.dimensionModel.get('columnWidthList')[1]).toBe(302);
                 });
             });
 

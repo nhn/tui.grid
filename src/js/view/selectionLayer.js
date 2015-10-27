@@ -70,7 +70,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             left = 0,
             width = 0,
             border = 1,
-            rowRange, columnRange, top, height, style, i;
+            additionalIndex = (this.whichSide !== 'R') ? this.grid.columnModel.getVisibleMetaColumnCount() : 0,
+            rowRange, columnRange, top, height, style, i, startColumnIndex, endColumnIndex;
 
         spannedRange = spannedRange || this.indexObj;
         rowRange = spannedRange.row;
@@ -78,9 +79,14 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         top = util.getHeight(rowRange[0], rowHeight) - 1;
         height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - 2;
 
-        for (i = 0; i < columnRange[1] + 1 && i < len; i += 1) {
+        //@todo columnRange[0] = Math.max(0, columnRange[0])이 올바른지?
+        columnRange[0] = Math.max(0, columnRange[0]);
+        endColumnIndex = columnRange[1] + additionalIndex;
+        startColumnIndex = columnRange[0] + additionalIndex;
+
+        for (i = 0; i <= endColumnIndex && i < len; i += 1) {
             //border 두께 (1px) 값도 포함하여 계산한다.
-            if (i < columnRange[0]) {
+            if (i < startColumnIndex) {
                 left += columnWidthList[i] + border;
             } else {
                 width += columnWidthList[i] + border;

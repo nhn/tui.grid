@@ -154,7 +154,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     _initializeOptions: function(options) {
         var defaultOptions = {
-            columnFixIndex: 0,
+            columnFixCount: 0,
             columnModelList: [],
             keyColumnName: null,
             selectType: '',
@@ -227,7 +227,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this,
             hasNumberColumn: this.option('autoNumbering'),
             keyColumnName: this.option('keyColumnName'),
-            columnFixIndex: this.option('columnFixIndex'),
+            columnFixCount: this.option('columnFixCount'),
             selectType: this.option('selectType')
         });
         this.setColumnModelList(this.option('columnModelList'));
@@ -517,7 +517,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
-            this.selection.show();
+            //this.selection.show();
             this.focusClipboard();
         }
     },
@@ -1034,7 +1034,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @return {Array}  컬럼모델 리스트
      */
     getColumnModelList: function() {
-        return this.columnModel.get('columnModelList');
+        return this.columnModel.get('dataColumnModelList');
     },
 
     /**
@@ -1073,13 +1073,15 @@ var Core = View.extend(/**@lends module:core.prototype */{
 
     /**
      * 열 고정 위치를 변경한다.
-     * @param {Number} columnFixIndex 고정시킬 열의 인덱스
+     * @param {Number} columnFixCount 고정시킬 열의 인덱스
      */
-    setColumnFixIndex: function(columnFixIndex) {
+    setColumnFixCount: function(columnFixCount) {
         this.option({
-            columnFixIndex: columnFixIndex
+            columnFixCount: columnFixCount
         });
-        this.columnModel.set({columnFixIndex: columnFixIndex});
+        this.columnModel.set({
+            columnFixCount: columnFixCount
+        });
     },
 
     /**
@@ -1277,8 +1279,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
     paste: function(data) {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
             start = this._getStartIndexToPaste(),
-            end = this._getEndIndexToPaste(start, data, columnModelList),
-            rowIdx, columnIdx, row, value;
+            end = this._getEndIndexToPaste(start, data, columnModelList);
 
         _.each(data, function(row, index) {
             this._setValueForPaste(row, start.rowIdx + index, start.columnIdx, end.columnIdx);

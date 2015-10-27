@@ -17,7 +17,7 @@
         //Possible Errors
         "no-console": 1,
         "no-extra-parens": 0,
-        "quote-props": [2, consistent],
+        "quote-props": [2, "consistent"],
         "valid-jsdoc": 0,
         "valid-typeof": 1,
 

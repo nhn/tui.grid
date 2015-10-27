@@ -13,7 +13,7 @@ var View = require('../../base/view');
 var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
     /**
      * @constructs
-     * @extends module:base/view 
+     * @extends module:base/view
      * @param {Object} options - Options
      *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
      */
@@ -64,7 +64,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         var columnModel = this.grid.columnModel,
             dimensionModel = this.grid.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide);
+            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
         return {
             widthList: columnWidthList,
             modelList: columnModelList
@@ -121,7 +121,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _refreshHandlerPosition: function() {
         var columnData = this._getColumnData(),
             columnWidthList = columnData.widthList,
-            newColumnWidthList = [],
             $resizeHandleList = this.$el.find('.resize_handle'),
             $table = this.$el.parent().find('table:first'),
             isChanged = false,
@@ -142,7 +141,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             }
             curPos += width + border;
             $handler.css('left', (curPos - 3) + 'px');
-            newColumnWidthList.push(width);
         });
     },
 
@@ -250,7 +248,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return this.whichSide === 'R' ? index + this.grid.columnModel.get('columnFixIndex') : index;
+        return (this.whichSide === 'R') ? (index + this.grid.columnModel.getVisibleColumnFixCount(true)) : index;
     },
 
     /**

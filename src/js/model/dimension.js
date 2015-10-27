@@ -53,7 +53,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     models: null,
 
     columnModel: null,
-    
+
     defaults: {
         offsetLeft: 0,
         offsetTop: 0,
@@ -91,7 +91,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (this.get('scrollY')) {
             availableTotalWidth -= this.get('scrollBarSize');
         }
-        if (this.columnModel.get('columnFixIndex') > 0) {
+        if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
             availableTotalWidth -= ROW_BORDER_WIDTH;
         }
         return availableTotalWidth;
@@ -245,7 +245,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Adjust the column widths to make them fit into the dimension.
      * @param {number[]} columnWidthList - An array of column width
-     * @param {boolean} fitToReducedTotal - If set to true and the total width is smaller than dimension(width),
+     * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
      *                                    the column widths will be reduced.
      * @return {number[]} - A new array of column widths
      * @private
@@ -278,7 +278,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _initColumnWidthVariables: function() {
-        var columnModelList = this.columnModel.get('visibleList'),
+        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
             commonMinWidth = this.get('minimumColumnWidth'),
             widthList = [],
             fixedFlags = [],
@@ -314,11 +314,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
-        var columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = this.getColumnWidthList(whichSide),
             frameWidth = this._getFrameWidth(columnWidthList);
-        if (ne.util.isUndefined(whichSide) && columnFixIndex > 0) {
-            //columnFixIndex 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
+        if (ne.util.isUndefined(whichSide) && columnFixCount > 0) {
+            //columnFixCount 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
             frameWidth += 1;
         }
         return frameWidth;
@@ -341,17 +341,17 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
      * @param {array} columnWidthList - 컬럼 넓이값 배열
-     * @param {boolean} isSaveWidthList - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
+     * @param {boolean} [isSaveWidthList] - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
      * @private
      */
     _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
         var totalWidth = this.get('width'),
-            columnFixIndex = this.columnModel.get('columnFixIndex'),
+            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             maxLeftSideWidth = this._getMaxLeftSideWidth(),
             rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
 
-        lsideWidthList = columnWidthList.slice(0, columnFixIndex);
-        rsideWidthList = columnWidthList.slice(columnFixIndex);
+        lsideWidthList = columnWidthList.slice(0, columnFixCount);
+        rsideWidthList = columnWidthList.slice(columnFixCount);
 
         lsideWidth = this._getFrameWidth(lsideWidthList);
         if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
@@ -360,6 +360,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnWidthList = lsideWidthList.concat(rsideWidthList);
         }
         rsideWidth = totalWidth - lsideWidth;
+
         this.set({
             columnWidthList: columnWidthList,
             rsideWidth: rsideWidth,
@@ -379,13 +380,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getMinLeftSideWidth: function() {
         var minimumColumnWidth = this.get('minimumColumnWidth'),
-            columnFixIndex = this.columnModel.get('columnFixIndex'),
+            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             minWidth = 0,
             borderWidth;
 
-        if (columnFixIndex) {
-            borderWidth = (columnFixIndex + 1) * ROW_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFixIndex);
+        if (columnFixCount) {
+            borderWidth = (columnFixCount + 1) * ROW_BORDER_WIDTH;
+            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
         }
         return minWidth;
     },
@@ -417,7 +418,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
             rowIdx, spanCount,
             columnWidthList = this.get('columnWidthList'),
-            columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
+            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(true),
             columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true),
             borderWidth = 1;
 
@@ -434,8 +435,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         top = util.getHeight(rowIdx, rowHeight);
         bottom = top + util.getHeight(spanCount, rowHeight) - borderWidth;
 
-        if (columnFixIndex <= columnIdx) {
-            i = columnFixIndex;
+        if (columnFixCount <= columnIdx) {
+            i = columnFixCount;
         }
 
         for (; i < columnIdx; i += 1) {
@@ -452,7 +453,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * columnFixIndex 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
      * @param {Number} totalWidth   grid 전체 너비
      * @return {Array} 열고정 영역의 너비 리스트
@@ -580,16 +581,17 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
-        var columnFixIndex = this.columnModel.get('columnFixIndex'),
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = [];
 
-        whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
         switch (whichSide) {
+            case 'l':
             case 'L':
-                columnWidthList = this.get('columnWidthList').slice(0, columnFixIndex);
+                columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
                 break;
+            case 'r':
             case 'R':
-                columnWidthList = this.get('columnWidthList').slice(columnFixIndex);
+                columnWidthList = this.get('columnWidthList').slice(columnFixCount);
                 break;
             default :
                 columnWidthList = this.get('columnWidthList');

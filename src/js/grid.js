@@ -8,7 +8,7 @@
  * Grid public API
  *
  * @param {Object} options
- *      @param {number} [options.columnFixIndex=0] - Column index for fixed column. The columns indexed from 0 to this value will alaways be shown on the left side. {@link ne.Grid#setColumnFixIndex|setColumnFixIndex} can be used for setting this value dynamically.
+ *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this value will always be shown on the left side. {@link ne.Grid#setColumnFixCount|setColumnFixCount} can be used for setting this value dynamically.
  *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used. If not specified, the button column will not be shown.
  *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number to each rows when rendering time.
  *      @param {number} [options.headerHeight=35] - The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.
@@ -61,7 +61,7 @@
      <script>
  var grid = new ne.Grid({
     el: $('#grid'),
-    columnFixIndex: 2,  //(default=0)
+    columnFixCount: 2,  //(default=0)
     selectType: 'checkbox', //(default='')
     autoNumbering: true, //(default=true)
     headerHeight: 100, //(default=35)
@@ -598,8 +598,8 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
      * Sets the index of fixed column.
      * @param {number} index - The index of column to be fixed
      */
-    setColumnFixIndex: function(index) {
-        this.core.setColumnFixIndex(index);
+    setColumnFixCount: function(index) {
+        this.core.setColumnFixCount(index);
     },
     /**
      * Sets the list of column model.
@@ -708,6 +708,22 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
      */
     refreshLayout: function() {
         this.core.updateLayoutData();
+    },
+    /**
+     * Show columns
+     * @param {...string} arguments - Column names to show
+     */
+    showColumn: function() {
+        var args = ne.util.toArray(arguments);
+        this.core.columnModel.setHidden(args, false);
+    },
+    /**
+     * Hide columns
+     * @param {...string} arguments - Column names to hide
+     */
+    hideColumn: function() {
+        var args = ne.util.toArray(arguments);
+        this.core.columnModel.setHidden(args, true);
     },
     /**
      * Destroys the instance.

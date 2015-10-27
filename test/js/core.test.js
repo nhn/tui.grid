@@ -205,7 +205,7 @@ describe('grid.normal.test', function() {
         it('focusAt()', function() {
             spyOn(grid.focusModel, 'focus');
             grid.focusAt(0, 0, true);
-            expect(grid.focusModel.focus).toHaveBeenCalledWith(0, '_number', true);
+            expect(grid.focusModel.focus).toHaveBeenCalledWith(0, 'c1', true);
         });
     });
 
@@ -238,11 +238,12 @@ describe('grid.normal.test', function() {
         });
     });
 
+    // c1, c2는 editable column, 렌더링 이후에 (setTimeout(fn, 0)) 확인 가능.:
     describe('focusInAt()', function() {
         it('주어진 인덱스에 해당하는 셀의 키와 컬럼명으로 focus()를 호출한다.', function() {
             spyOn(grid, 'focus');
-            grid.focusInAt(0, 0, true);
-            expect(grid.focus).toHaveBeenCalledWith(0, '_number', true);
+            grid.focusInAt(0, 2, true);
+            expect(grid.focus).toHaveBeenCalledWith(0, 'c3', true);
         });
     });
 
@@ -412,7 +413,7 @@ describe('grid.normal.test', function() {
         it('columnModel의 columnModelList 값을 반환한다.', function() {
             spyOn(grid.columnModel, 'get');
             grid.getColumnModelList();
-            expect(grid.columnModel.get).toHaveBeenCalledWith('columnModelList');
+            expect(grid.columnModel.get).toHaveBeenCalledWith('dataColumnModelList');
         });
     });
 

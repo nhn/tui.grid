@@ -222,7 +222,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             whichSide = this.whichSide,
             dimensionModel = grid.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(whichSide),
-            columnModelList = grid.columnModel.getVisibleColumnModelList(whichSide),
+            columnModelList = grid.columnModel.getVisibleColumnModelList(whichSide, true),
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {

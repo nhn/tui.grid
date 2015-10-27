@@ -49,7 +49,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
     events: {},
 
     /**
-     * selection 을 disable 한다.
+     * selection 을 enable 한다.
      */
     enable: function() {
         if (this.grid.option('useDataCopy')) {
@@ -95,7 +95,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
     /**
      * selection 영역에 대한 mouseDown 퍼블릭 이벤트 핸들러
-     * @param {MouseDownEvent} mouseDownEvent Event object
+     * @param {event} mouseDownEvent Event object
      */
     onMouseDown: function(mouseDownEvent) {
         var grid = this.grid,
@@ -259,7 +259,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         return {
             row: rowIdx,
-            column: columnIdx,
+            column: columnIdx - this.grid.columnModel.getVisibleMetaColumnCount(),
             overflowX: overflowX,
             overflowY: overflowY
         };
@@ -280,13 +280,9 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
     getSelectionToString: function() {
         var columnModelList = this.grid.columnModel.getVisibleColumnModelList()
                 .slice(this.spannedRange.column[0], this.spannedRange.column[1] + 1),
-            filteringMap = {
-                '_button': true
-            },
             columnNameList = [],
             tmpString = [],
             strings = [],
-            startIdx = this.grid.renderModel.get('startNumber') + this.spannedRange.row[0],
             rowList, string;
 
         _.each(columnModelList, function(columnModel) {
@@ -295,17 +291,10 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         rowList = this.grid.dataModel.slice(this.spannedRange.row[0], this.spannedRange.row[1] + 1);
 
-        _.each(rowList, function(row, i) {
+        _.each(rowList, function(row) {
             tmpString = [];
-            _.each(columnNameList, function(columnName, j) {
-                if (!filteringMap[columnName]) {
-                    //number 형태의 경우 실 데이터는 존재하지 않으므로 가공하여 추가한다.
-                    if (columnNameList[j] === '_number') {
-                        tmpString.push(startIdx + i);
-                    } else {
-                        tmpString.push(row.getVisibleText(columnName));
-                    }
-                }
+            _.each(columnNameList, function(columnName) {
+                tmpString.push(row.getVisibleText(columnName));
             });
             strings.push(tmpString.join('\t'));
         });
@@ -403,11 +392,11 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
         this._isShown = true;
 
         var dataModel = this.grid.dataModel, // eslint-disable-line vars-on-top
-            columnFixIndex = this.grid.columnModel.get('columnFixIndex'),
-            startRow = Math.min.apply(Math, this.range.row),
-            endRow = Math.max.apply(Math, this.range.row),
-            startColumn = Math.min.apply(Math, this.range.column),
-            endColumn = Math.max.apply(Math, this.range.column),
+            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
+            startRow = Math.min.apply(null, this.range.row),
+            endRow = Math.max.apply(null, this.range.row),
+            startColumn = Math.min.apply(null, this.range.column),
+            endColumn = Math.max.apply(null, this.range.column),
             spannedRange = {
                 row: [startRow, endRow],
                 column: [startColumn, endColumn]
@@ -428,7 +417,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
         this.lside.show(spannedRange);
         this.rside.show({
             row: spannedRange.row,
-            column: [Math.max(-1, spannedRange.column[0] - columnFixIndex), Math.max(-1, spannedRange.column[1] - columnFixIndex)]
+            column: [Math.max(-1, spannedRange.column[0] - columnFixCount), Math.max(-1, spannedRange.column[1] - columnFixCount)]
         });
         //selection 이 생성될 때에는 무조건 input 에 focus 가 가지 않도록 clipboard에 focus 를 준다.
         this.grid.focusClipboard();
@@ -585,7 +574,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
      * @private
      */
     _getRowSpannedIndex: function(spannedRange) {
-        var columnModelList = this.grid.columnModel.get('columnModelList')
+        var columnModelList = this.grid.columnModel.getVisibleColumnModelList()
                 .slice(spannedRange.column[0], spannedRange.column[1] + 1),
             dataModel = this.grid.dataModel,
             startIndexList = [spannedRange.row[0]],
@@ -619,7 +608,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
             this._concatRowSpanIndexFromEnd(param);
         }, this);
 
-        newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
+        newSpannedRange.row = [Math.min.apply(null, startIndexList), Math.max.apply(null, endIndexList)];
         return newSpannedRange;
     },
 
