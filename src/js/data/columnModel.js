@@ -25,7 +25,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             'text-convertible': true
         };
         this._setColumnModelList(this.get('columnModelList'));
-        this._setColumnFixCountFromColumnFixIndex();
+        this._setColumnFixCountFromIndex();
         this.on('change', this._onChange, this);
     },
 
@@ -47,7 +47,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @return {number} columnFixCount
      * @todo columnFixIndex가 완전 없어질때, 이 메서드도 지움
      */
-    _setColumnFixCountFromColumnFixIndex: function() {
+    _setColumnFixCountFromIndex: function() {
         var columnFixIndex = this.get('columnFixIndex'),
             columnFixCount = this.get('columnFixCount');
 

@@ -393,10 +393,10 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
 
         var dataModel = this.grid.dataModel, // eslint-disable-line vars-on-top
             columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
-            startRow = Math.min.apply(Math, this.range.row),
-            endRow = Math.max.apply(Math, this.range.row),
-            startColumn = Math.min.apply(Math, this.range.column),
-            endColumn = Math.max.apply(Math, this.range.column),
+            startRow = Math.min.apply(null, this.range.row),
+            endRow = Math.max.apply(null, this.range.row),
+            startColumn = Math.min.apply(null, this.range.column),
+            endColumn = Math.max.apply(null, this.range.column),
             spannedRange = {
                 row: [startRow, endRow],
                 column: [startColumn, endColumn]
@@ -608,7 +608,7 @@ var Selection = View.extend(/**@lends module:view/selection.prototype */{
             this._concatRowSpanIndexFromEnd(param);
         }, this);
 
-        newSpannedRange.row = [Math.min.apply(Math, startIndexList), Math.max.apply(Math, endIndexList)];
+        newSpannedRange.row = [Math.min.apply(null, startIndexList), Math.max.apply(null, endIndexList)];
         return newSpannedRange;
     },
 
