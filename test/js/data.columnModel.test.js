@@ -83,15 +83,6 @@ describe('data.columnModel', function() {
         ];
     });
 
-    describe('_arrangeMetaColumnsOrder', function() {
-        it('메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.\n 순서는 columnModel.js에서 상수로 정의한 순서', function() {
-            columnModelInstance._arrangeMetaColumnsOrder(sampleColumnModelList);
-
-            expect(sampleColumnModelList[0].columnName).toEqual('_button');
-            expect(sampleColumnModelList[1].columnName).toEqual('_number');
-        });
-    });
-
     describe('_extendColumnList', function() {
         var length;
 

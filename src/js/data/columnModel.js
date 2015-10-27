@@ -25,7 +25,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             'text-convertible': true
         };
         this._setColumnModelList(this.get('columnModelList'));
-        this._setColumnFixCountFromIndex();
         this.on('change', this._onChange, this);
     },
 
@@ -42,44 +41,30 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     },
 
     /**
-     * deprecated된 columnFixIndex를 columnFixCount로 변환하여 저장하기 위한 메서드
+     * 메타컬럼모델들을 초기화한다.
+     * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
+     * @return {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
      * @private
-     * @return {number} columnFixCount
-     * @todo columnFixIndex가 완전 없어질때, 이 메서드도 지움
      */
-    _setColumnFixCountFromIndex: function() {
-        var columnFixIndex = this.get('columnFixIndex'),
-            columnFixCount = this.get('columnFixCount');
+    _initializeMetaColumns: function(source) {
+        var dest = [];
 
-        if (!columnFixCount && columnFixIndex) {
-            columnFixCount = columnFixIndex;
-
-            _.each(META_COLUMN_LIST, function(columnName) {
-                var columnModel = this.getColumnModel(columnName);
-
-                if (!columnModel.isHidden) {
-                    columnFixCount -= 1;
-                }
-            }, this);
-
-            this.unset('columnFixIndex');
-        }
-
-        this.set('columnFixCount', Math.max(0, columnFixCount), {
-            silent: true
-        });
-        this.trigger('columnModelChange');
+        this._initializeButtonColumn(dest);
+        this._initializeNumberColumn(dest);
+        this._overwriteColumnModelList(dest, source);
+        return dest;
     },
 
     /**
-     * 메타컬럼모델들을 초기화한다.
-     * @param {Array} metaColumnModelList
+     * overwrite column model list
+     * @param {Array} dest - destination model list
+     * @param {Array} source - source model list
      * @private
      */
-    _initializeMetaColumns: function(metaColumnModelList) {
-        this._initializeButtonColumn(metaColumnModelList);
-        this._initializeNumberColumn(metaColumnModelList);
-        this._arrangeMetaColumnsOrder(metaColumnModelList);
+    _overwriteColumnModelList: function(dest, source) {
+        _.each(source, function(columnModel) {
+            this._extendColumnList(columnModel, dest);
+        }, this);
     },
 
     /**
@@ -147,21 +132,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         } else {
             columnModelList[index] = $.extend(columnModelList[index], columnObj);
         }
-    },
-
-    /**
-     * 메타 컬럼들을 정의한 순서대로 정렬한다.
-     * @param {Array} metaColumnModelList
-     * @private
-     */
-    _arrangeMetaColumnsOrder: function(metaColumnModelList) {
-        _.each(META_COLUMN_LIST, function(metaColumnName, index) {
-            var oldIndex = _.findIndex(metaColumnModelList, {columnName: metaColumnName});
-
-            if (oldIndex > -1 && oldIndex !== index) {
-                metaColumnModelList.splice(index, 0, metaColumnModelList.splice(oldIndex, 1)[0]);
-            }
-        });
     },
 
     /**
@@ -356,7 +326,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @private
      */
     _setColumnModelList: function(columnModelList, columnFixCount) {
-        var division, relationListMap, visibleList;
+        var division, relationListMap, visibleList, metaColumnModelList, dataColumnModelList;
 
         columnModelList = $.extend(true, [], columnModelList);
         if (ne.util.isUndefined(columnFixCount)) {
@@ -366,13 +336,15 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         division = _.partition(columnModelList, function(model) {
             return this.isMetaColumn(model.columnName);
         }, this);
-        this._initializeMetaColumns(division[0]);
-        relationListMap = this._getRelationListMap(division[1]);
-        visibleList = this._makeVisibleColumnModelList(division[0], division[1]);
+        metaColumnModelList = this._initializeMetaColumns(division[0]);
+        dataColumnModelList = division[1];
+
+        relationListMap = this._getRelationListMap(dataColumnModelList);
+        visibleList = this._makeVisibleColumnModelList(metaColumnModelList, dataColumnModelList);
         this.set({
-            metaColumnModelList: division[0],
-            dataColumnModelList: division[1],
-            columnModelMap: _.indexBy(division[0].concat(division[1]), 'columnName'),
+            metaColumnModelList: metaColumnModelList,
+            dataColumnModelList: dataColumnModelList,
+            columnModelMap: _.indexBy(metaColumnModelList.concat(dataColumnModelList), 'columnName'),
             relationListMap: relationListMap,
             columnFixCount: Math.max(0, columnFixCount),
             visibleList: visibleList
@@ -396,7 +368,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnModelList = changed['columnModelList'];
 
         if (!columnModelList) {
-            columnModelList = this.get('metaColumnModelList').concat(this.get('dataColumnModelList'));
+            columnModelList = this.get('dataColumnModelList');
         }
         this._setColumnModelList(columnModelList, columnFixCount);
     },

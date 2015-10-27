@@ -227,7 +227,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this,
             hasNumberColumn: this.option('autoNumbering'),
             keyColumnName: this.option('keyColumnName'),
-            columnFixIndex: this.option('columnFixIndex'), //@deprecated, use 'columnFixCount'
             columnFixCount: this.option('columnFixCount'),
             selectType: this.option('selectType')
         });
