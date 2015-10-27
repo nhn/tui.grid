@@ -13,7 +13,7 @@ var View = require('../../base/view');
 var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
     /**
      * @constructs
-     * @extends module:base/view 
+     * @extends module:base/view
      * @param {Object} options - Options
      *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
      */
@@ -248,7 +248,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return this.whichSide === 'R' ? index + this.grid.columnModel.getVisibleColumnFixCount(true) : index;
+        return (this.whichSide === 'R') ? (index + this.grid.columnModel.getVisibleColumnFixCount(true)) : index;
     },
 
     /**

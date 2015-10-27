@@ -203,7 +203,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     isLside: function(columnName) {
         var index = this.indexOfColumnName(columnName, true);
 
-        return index > -1 && index < this.get('columnFixCount');
+        return (index > -1) && (index < this.get('columnFixCount'));
     },
 
     /**
@@ -229,19 +229,18 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
 
         return columnModelList;
     },
-
     /**
      *
      * @returns {number}
      */
     getVisibleMetaColumnCount: function() {
-        var count = 0;
-        _.each(this.get('metaColumnModelList'), function(columnModel) {
-            if (!columnModel.isHidden) {
-                count += 1;
-            }
-        });
-        return count;
+        var models = this.get('metaColumnModelList'),
+            totalLength = models.length,
+            hiddenLength = _.where(models, {
+                isHidden: true
+            }).length;
+
+        return (totalLength - hiddenLength);
     },
 
     /**
@@ -262,7 +261,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             }
         });
 
-        return (withMeta) ? visibleColumnFixCount + this.getVisibleMetaColumnCount()
+        return (withMeta) ? (visibleColumnFixCount + this.getVisibleMetaColumnCount())
             : visibleColumnFixCount;
     },
 
@@ -312,7 +311,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         metaColumnModelList = metaColumnModelList || this.get('metaColumnModelList');
         dataColumnModelList = dataColumnModelList || this.get('dataColumnModelList');
 
-        return _.filter(_.union(metaColumnModelList, dataColumnModelList), function(item) {
+        return _.filter(metaColumnModelList.concat(dataColumnModelList), function(item) {
             return !item['isHidden'];
         });
     },
@@ -400,10 +399,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnModelList = changed['columnModelList'];
 
         if (!columnModelList) {
-            columnModelList = _.union(
-                this.get('metaColumnModelList'),
-                this.get('dataColumnModelList')
-            );
+            columnModelList = this.get('metaColumnModelList').concat(this.get('dataColumnModelList'));
         }
         this._setColumnModelList(columnModelList, columnFixCount);
     },
@@ -423,7 +419,9 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             if (columnModel) {
                 columnModel.isHidden = isHidden;
             } else {
-                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {columnName: name});
+                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
+                    columnName: name
+                });
                 if (columnMergeInfoItem) {
                     this.setHidden(columnMergeInfoItem.columnNameList, isHidden);
                 }

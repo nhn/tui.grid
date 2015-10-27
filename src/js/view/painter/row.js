@@ -51,17 +51,18 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
             $tr = $(mouseDownEvent.target).closest('tr'),
             columnName = $td.attr('columnName'),
             rowKey = $tr.attr('key'),
-            columnModel = this.grid.columnModel;
+            grid = this.grid,
+            columnModel = grid.columnModel;
 
-        if (this.grid.option('selectType') === 'radio') {
-            this.grid.check(rowKey);
+        if (grid.option('selectType') === 'radio') {
+            grid.check(rowKey);
         }
 
         if (columnModel.isMetaColumn(columnName)) {
-            console.log('metaColumn clicked');
+            // meta column clicked
         } else {
-            this.grid.focus(rowKey, columnName);
-            this.grid.selection.onMouseDown(mouseDownEvent);
+            grid.focus(rowKey, columnName);
+            grid.selection.onMouseDown(mouseDownEvent);
         }
     },
 

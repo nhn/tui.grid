@@ -1080,7 +1080,9 @@ var Core = View.extend(/**@lends module:core.prototype */{
         this.option({
             columnFixCount: columnFixCount
         });
-        this.columnModel.set({columnFixCount: columnFixCount});
+        this.columnModel.set({
+            columnFixCount: columnFixCount
+        });
     },
 
     /**

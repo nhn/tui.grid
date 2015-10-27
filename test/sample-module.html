@@ -9,18 +9,45 @@
 	</style>
 </head>
 <body>
-<div>
-	<div id="wrapper">
-		<div id="grid"></div>
-	</div>
-	<div id="log"></div>
-</div>
+    <div>
+        <div id="wrapper">
+            <div id="grid"></div>
+        </div>
+        <div>
+            <button class='show-column' style='width:100px;' data-column-name='c1'>show c1</button>
+            <button class='show-column' style='width:100px;' data-column-name='c2'>show c2</button>
+            <button class='show-column' style='width:100px;' data-column-name='c3'>show c3</button>
+            <button class='show-column' style='width:100px;' data-column-name='c4'>show c4</button>
+            <button class='show-column' style='width:100px;' data-column-name='c5'>show c5</button>
+            <button class='show-column' style='width:100px;' data-column-name='c6'>show c6</button>
+            <button class='show-column' style='width:100px;' data-column-name='c7'>show c7</button>
+            <button class='show-column' style='width:100px;' data-column-name='merge1'>show merge1</button>
+            <button class='show-column' style='width:100px;' data-column-name='merge2'>show merge2</button>
+        </div>
+        <div>
+            <button class='hide-column' style='width:100px;' data-column-name='c1'>hide c1</button>
+            <button class='hide-column' style='width:100px;' data-column-name='c2'>hide c2</button>
+            <button class='hide-column' style='width:100px;' data-column-name='c3'>hide c3</button>
+            <button class='hide-column' style='width:100px;' data-column-name='c4'>hide c4</button>
+            <button class='hide-column' style='width:100px;' data-column-name='c5'>hide c5</button>
+            <button class='hide-column' style='width:100px;' data-column-name='c6'>hide c6</button>
+            <button class='hide-column' style='width:100px;' data-column-name='c7'>hide c7</button>
+            <button class='hide-column' style='width:100px;' data-column-name='merge1'>hide merge1</button>
+            <button class='hide-column' style='width:100px;' data-column-name='merge2'>hide merge2</button>
+		</div>
+        <div>
+            <button class='set-column-fix-count' data-count='1'>setColumnFixCount: 1</button><br>
+            <button class='set-column-fix-count' data-count='2'>setColumnFixCount: 2</button><br>
+            <button class='set-column-fix-count' data-count='3'>setColumnFixCount: 3</button><br>
+            <button class='set-column-fix-count' data-count='4'>setColumnFixCount: 4</button><br>
+        </div>
+        <div id="log"></div>
+    </div>
 </body>
 <script src="../lib/jquery/jquery.js"></script>
 <script src="../lib/jquery-json/src/jquery.json.js"></script>
 <script src="../lib/underscore/underscore.js"></script>
 <script src="../lib/backbone/backbone.js"></script>
-
 <script src="../lib/ne-code-snippet/code-snippet.js"></script>
 <script src="../lib/ne-component-pagination/pagination.js"></script>
 <script src="../build/grid.js"></script>
@@ -253,5 +280,18 @@ var rowList = [{
 grid.setRowList(rowList, function() {
     console.log('done!!');
 });
+$('.show-column').on('click', function() {
+    var columnName = $(this).data('columnName');
+    grid.showColumn(columnName);
+});
+$('.hide-column').on('click', function() {
+    var columnName = $(this).data('columnName');
+    grid.hideColumn(columnName);
+});
+$('.set-column-fix-count').on('click', function() {
+    var count = Number($(this).data('count'));
+    grid.setColumnFixCount(count);
+})
 </script>
 </html>
+

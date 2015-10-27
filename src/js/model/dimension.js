@@ -53,7 +53,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     models: null,
 
     columnModel: null,
-    
+
     defaults: {
         offsetLeft: 0,
         offsetTop: 0,
@@ -584,11 +584,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = [];
 
-        whichSide = (whichSide) ? whichSide.toUpperCase() : undefined;
         switch (whichSide) {
+            case 'l':
             case 'L':
                 columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
                 break;
+            case 'r':
             case 'R':
                 columnWidthList = this.get('columnWidthList').slice(columnFixCount);
                 break;
