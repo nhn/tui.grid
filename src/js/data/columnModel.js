@@ -86,7 +86,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 number column 을 추가한다.
      * @param {Array} metaColumnModelList
      * @private
-     * @return {Array} 확장한 결과 컬럼모델 배열
      */
     _initializeNumberColumn: function(metaColumnModelList) {
         var hasNumberColumn = this.get('hasNumberColumn'),
@@ -106,7 +105,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 button column 을 추가한다.
      * @param {Array} metaColumnModelList
      * @private
-     * @return {Array} 확장한 결과 컬럼모델 배열
      */
     _initializeButtonColumn: function(metaColumnModelList) {
         var selectType = this.get('selectType'),
@@ -138,7 +136,6 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
      * @param {object} columnObj 추가할 컬럼모델
      * @param {Array} columnModelList 컬럼모델 배열
-     * @return {Array} 확장한 결과 컬럼모델 배열
      * @private
      */
     _extendColumnList: function(columnObj, columnModelList) {
