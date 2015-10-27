@@ -34,7 +34,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         columnFixCount: 0,
         metaColumnModelList: [],
         dataColumnModelList: [],
-        visibleList: [],
+        visibleList: [], // 이 리스트는 메타컬럼/데이터컬럼 구분하지 않고 저장
         hasNumberColumn: true,
         selectType: '',
         columnModelMap: {},
@@ -153,7 +153,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     },
 
     /**
-     * 메타 컬럼들은 리스트의 가장 앞에 순서대로 위치하도록 한다.
+     * 메타 컬럼들을 정의한 순서대로 정렬한다.
      * @param {Array} metaColumnModelList
      * @private
      */
@@ -229,9 +229,10 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
 
         return columnModelList;
     },
+
     /**
-     *
-     * @returns {number}
+     * 현재 보여지고 있는 메타컬럼의 카운트를 반환한다.
+     * @returns {number} count
      */
     getVisibleMetaColumnCount: function() {
         var models = this.get('metaColumnModelList'),
@@ -365,17 +366,16 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             columnFixCount = this.get('columnFixCount');
         }
 
-        this._initializeMetaColumns(columnModelList);
         division = _.partition(columnModelList, function(model) {
             return this.isMetaColumn(model.columnName);
         }, this);
-
+        this._initializeMetaColumns(division[0]);
         relationListMap = this._getRelationListMap(division[1]);
         visibleList = this._makeVisibleColumnModelList(division[0], division[1]);
         this.set({
             metaColumnModelList: division[0],
             dataColumnModelList: division[1],
-            columnModelMap: _.indexBy(columnModelList, 'columnName'),
+            columnModelMap: _.indexBy(division[0].concat(division[1]), 'columnName'),
             relationListMap: relationListMap,
             columnFixCount: Math.max(0, columnFixCount),
             visibleList: visibleList
