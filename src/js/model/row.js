@@ -48,13 +48,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _onDataModelChange: function(model) {
         _.each(model.changed, function(value, columnName) {
-            if (columnName === '_extraData') {
-                this._setRowExtraData();
-            } else {
-                this.setCell(columnName, {
-                    value: value
-                });
-            }
+            this.setCell(columnName, {
+                value: value
+            });
         }, this);
     },
 
