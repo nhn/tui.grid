@@ -8,6 +8,13 @@ var Model = require('../base/model');
 var ExtraDataManager = require('./extraDataManager');
 var util = require('../util');
 
+// Propertie names that indicate meta data
+var PRIVATE_PROPERTIES = [
+    '_button',
+    '_number',
+    '_extraData'
+];
+
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
@@ -19,14 +26,15 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
-
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
+
+        this.on('change', this._onChange, this);
     },
 
     idAttribute: 'rowKey',
 
     /**
-     * Overrides Backbone's parse method to create ExtraData instance.
+     * Overrides Backbone's parse method for extraData not to be null.
      * @override
      * @param  {object} data - initial data
      * @return {object} - parsed data
@@ -44,6 +52,106 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     _triggerExtraDataChangeEvent: function() {
         this.trigger('extraDataChanged', this.get('_extraData'));
+    },
+
+    /**
+     * rowData 변경 이벤트 핸들러.
+     * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
+     * @param {object} row  데이터의 키값
+     * @private
+     */
+    _onChange: function() {
+        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+
+        if (this.isDuplicatedPublicChanged(publicChanged)) {
+            return;
+        }
+        _.each(publicChanged, function(value, columnName) {
+            var columnModel = this.grid.columnModel.getColumnModel(columnName);
+            if (!columnModel) {
+                return;
+            }
+            if (!this._executeChangeBeforeCallback(columnName)) {
+                return;
+            }
+            this.collection.syncRowSpannedData(this, columnName, value);
+            this._executeChangeAfterCallback(columnName);
+            if (!this.getRowState().isDisabledCheck && !columnModel.isIgnore) {
+                this.set('_button', true);
+            }
+        }, this);
+    },
+
+    /**
+     * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
+     * @param {object} row row 모델
+     * @param {String} columnName 컬럼명
+     * @return {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}} changeCallback 에 전달될 이벤트 객체
+     * @private
+     */
+    _createChangeCallbackEvent: function(columnName) {
+        return {
+            rowKey: this.get('rowKey'),
+            columnName: columnName,
+            value: this.get(columnName),
+            instance: this.grid.publicInstance
+        };
+    },
+
+    /**
+     * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
+     * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
+     *
+     * @param {object} row row 모델
+     * @param {String} columnName   컬럼명
+     * @return {boolean} changeBeforeCallback 수행 결과값
+     * @private
+     */
+    _executeChangeBeforeCallback: function(columnName) {
+        var columnModel = this.grid.columnModel.getColumnModel(columnName),
+            changeEvent, obj;
+
+        if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
+            changeEvent = this._createChangeCallbackEvent(columnName);
+
+            //beforeChangeCallback 의 결과값이 false 라면 restore 후 false 를 반환한다.
+            if (columnModel.editOption.changeBeforeCallback(changeEvent) === false) {
+                obj = {};
+                obj[columnName] = this.previous(columnName);
+                this.set(obj);
+                this.trigger('restore', {
+                    changed: obj
+                });
+                return false;
+            }
+        }
+        return true;
+    },
+
+    /**
+     * columnModel 에 정의된 changeAfterCallback 을 수행한다.
+     * @param {object} row - row 모델
+     * @param {String} columnName - 컬럼명
+     * @return {boolean} changeAfterCallback 수행 결과값
+     * @private
+     */
+    _executeChangeAfterCallback: function(columnName) {
+        var columnModel = this.grid.columnModel.getColumnModel(columnName),
+            changeEvent;
+
+        if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
+            changeEvent = this._createChangeCallbackEvent(columnName);
+            return !!(columnModel.editOption.changeAfterCallback(changeEvent));
+        }
+        return true;
+    },
+
+    /**
+     * Returns the Array of private property names
+     * @return {array} An array of private property names
+     */
+    getPrivateProperties: function() {
+        return PRIVATE_PROPERTIES;
     },
 
     /**
@@ -78,10 +186,9 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {Array} - New array
      */
     _makeUniqueStringArray: function(targetArray) {
-        // split all comma-separated strings in the array
-        var singleStringArray = targetArray.join(' ').split(' ');
-        // make the array unique and remove empty string item
-        return _.chain(singleStringArray).uniq().without('').value();
+        var singleStringArray = _.uniq(targetArray.join(' ').split(' '));
+
+        return _.without(singleStringArray, '');
     },
 
     /**
@@ -380,6 +487,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
         }, this);
         return relationResult;
     }
+}, {
+    privateProperties: PRIVATE_PROPERTIES
 });
 
 module.exports = Row;

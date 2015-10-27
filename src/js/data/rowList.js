@@ -27,11 +27,6 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
             originalRowList: [],
             originalRowMap: {},
             startIndex: options.startIndex || 1,
-            privateProperties: [
-                '_button',
-                '_number',
-                '_extraData'
-            ],
             sortOptions: {
                 columnName: 'rowKey',
                 isAscending: true,
@@ -41,9 +36,8 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
         if (!this.sortOptions.useClient) {
             this.comparator = null;
         }
-
-        this.on('change', this._onChange, this);
     },
+
     /**
      * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
      * @param {Array} data  원본 데이터
@@ -53,6 +47,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
         data = data && data['contents'] || data;
         return this._formatData(data);
     },
+
     /**
      * 데이터의 _extraData 를 분석하여, Model 에서 사용할 수 있도록 가공한다.
      * _extraData 필드에 rowSpanData 를 추가한다.
@@ -72,6 +67,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
 
         return rowList;
     },
+
     /**
      * row 를 기본 포멧으로 wrapping 한다.
      * 추가적으로 rowKey 를 할당하고, rowState 에 따라 checkbox 의 값을 할당한다.
@@ -222,17 +218,6 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     },
 
     /**
-     * rowData 의 프로퍼티 중 내부에서 사용하는 프로퍼티인지 여부를 반환한다.
-     * - 서버로 전송 시 내부에서 사용하는 데이터 제거시 사용 됨
-     * @param {String} name 확인할 프로퍼티 명
-     * @return {boolean}    private 프로퍼티인지 여부.
-     * @private
-     */
-    _isPrivateProperty: function(name) {
-        return $.inArray(name, this.privateProperties) !== -1;
-    },
-
-    /**
      * rowSpan 이 적용되어야 하는지 여부를 반환한다.
      * 랜더링시 사용된다.
      * - sorted, 혹은 filterd 된 경우 false 를 리턴한다.
@@ -324,35 +309,6 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     },
 
     /**
-     * rowData 변경 이벤트 핸들러.
-     * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
-     * @param {object} row  데이터의 키값
-     * @private
-     */
-    _onChange: function(row) {
-        var columnModel,
-            publicChanged = _.omit(row.changed, this.privateProperties);
-
-        if (row.isDuplicatedPublicChanged(publicChanged)) {
-            return;
-        }
-        _.each(publicChanged, function(value, columnName) {
-            columnModel = this.grid.columnModel.getColumnModel(columnName);
-            if (!columnModel) {
-                return;
-            }
-            if (!this._executeChangeBeforeCallback(row, columnName)) {
-                return;
-            }
-            this._syncRowSpannedData(row, columnName, value);
-            this._executeChangeAfterCallback(row, columnName);
-            if (!row.getRowState().isDisabledCheck && !columnModel.isIgnore) {
-                row.set('_button', true);
-            }
-        }, this);
-    },
-
-    /**
      * row Data 값에 변경이 발생했을 경우, sorting 되지 않은 경우에만
      * rowSpan 된 데이터들도 함께 update 한다.
      *
@@ -361,7 +317,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @param {(String|Number)} value 변경된 값
      * @private
      */
-    _syncRowSpannedData: function(row, columnName, value) {
+    syncRowSpannedData: function(row, columnName, value) {
         var index, rowSpanData, i;
 
         //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
@@ -376,69 +332,6 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
                 }
             }
         }
-    },
-
-    /**
-     * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
-     * @param {object} row row 모델
-     * @param {String} columnName 컬럼명
-     * @return {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}} changeCallback 에 전달될 이벤트 객체
-     * @private
-     */
-    _createChangeCallbackEvent: function(row, columnName) {
-        return {
-            rowKey: row.get('rowKey'),
-            columnName: columnName,
-            value: row.get(columnName),
-            instance: this.grid.publicInstance
-        };
-    },
-
-    /**
-     * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
-     * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
-     *
-     * @param {object} row row 모델
-     * @param {String} columnName   컬럼명
-     * @return {boolean} changeBeforeCallback 수행 결과값
-     * @private
-     */
-    _executeChangeBeforeCallback: function(row, columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
-            changeEvent,
-            obj;
-        if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
-            changeEvent = this._createChangeCallbackEvent(row, columnName);
-            //beforeChangeCallback 의 결과값이 false 라면 restore 후 false 를 반환한다.
-            if (columnModel.editOption.changeBeforeCallback(changeEvent) === false) {
-                obj = {};
-                obj[columnName] = row.previous(columnName);
-                row.set(obj);
-                row.trigger('restore', {
-                    changed: obj
-                });
-                return false;
-            }
-        }
-        return true;
-    },
-
-    /**
-     * columnModel 에 정의된 changeAfterCallback 을 수행한다.
-     * @param {object} row - row 모델
-     * @param {String} columnName - 컬럼명
-     * @return {boolean} changeAfterCallback 수행 결과값
-     * @private
-     */
-    _executeChangeAfterCallback: function(row, columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
-            changeEvent;
-
-        if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
-            changeEvent = this._createChangeCallbackEvent(row, columnName);
-            return !!(columnModel.editOption.changeAfterCallback(changeEvent));
-        }
-        return true;
     },
 
     /**
@@ -473,21 +366,9 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @private
      */
     _removePrivateProp: function(rowList) {
-        var obj,
-            filteredRowList = [];
-
-        _.each(rowList, function(row) {
-            obj = {};
-            //_로 시작하는 property 들은 제거한다.
-            _.each(row, function(value, key) {
-                if (!this._isPrivateProperty(key)) {
-                    obj[key] = value;
-                }
-            }, this);
-            filteredRowList.push(obj);
-        }, this);
-
-        return filteredRowList;
+        return _.map(rowList, function(row) {
+            return _.omit(row, Row.privateProperties);
+        });
     },
 
     /**
@@ -576,9 +457,11 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     _createDummyRow: function() {
         var columnModelList = this.grid.columnModel.get('dataColumnModelList'),
             data = {};
+
         _.each(columnModelList, function(columnModel) {
             data[columnModel['columnName']] = '';
         }, this);
+
         return data;
     },
 
