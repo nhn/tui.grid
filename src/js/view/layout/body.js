@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../base/view');
+var SelectionLayer = require('../../view/selectionLayer');
 var RowListView = require('../rowList');
 
 /**
@@ -145,7 +146,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var grid = this.grid,
             whichSide = this.whichSide,
             collection = grid.renderModel.getCollection(whichSide),
-            selection, rowList, tableHtml;
+            selectionLayer, rowList, tableHtml;
 
         this.destroyChildren();
 
@@ -179,9 +180,12 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         });
         rowList.render();
 
-        //selection 을 랜더링한다.
-        selection = this.addView(grid.selection.createLayer(whichSide));
-        this.$bodyContainer.append(selection.render().el);
+        // selection 을 랜더링한다.
+        selectionLayer = this.createView(SelectionLayer, {
+            grid: grid,
+            whichSide: whichSide
+        });
+        this.$bodyContainer.append(selectionLayer.render().el);
 
         return this;
     },

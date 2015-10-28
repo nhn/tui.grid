@@ -20,33 +20,33 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      */
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList, this);
+
         this.setOwnProperties({
-            columnWidthList: options.columnWidthList,
-            whichSide: options.whichSide || 'R',
-            spannedRange: {
-                row: [-1, -1],
-                column: [-1, -1]
-            }
+            whichSide: options.whichSide || 'R'
         });
+        this._updateColumnWidthList();
+
+        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._updateColumnWidthList);
+        this.listenTo(this.grid.selectionModel, 'show', this._show);
+        this.listenTo(this.grid.selectionModel, 'hide', this._hide);
     },
 
     tagName: 'div',
 
     className: 'selection_layer',
 
-    events: {
-        mousedown: '_onMouseDown'
-    },
+    // events: {
+    //     mousedown: '_onMouseDown'
+    // },
 
     /**
      * selection 영역의 mousedown 이벤트
      * @param {Event} mouseDownEvent - MousedownEvent object
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        this.grid.selection.onMouseDown(mouseDownEvent);
-    },
+    // _onMouseDown: function(mouseDownEvent) {
+    //     this.grid.selection.onMouseDown(mouseDownEvent);
+    // },
 
     /**
      * 컬럼 widthList 값의 변화가 발생했을때 이벤트 핸들러
@@ -113,7 +113,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * 레이어를 노출한다.
      * @param {{row: range, column: range}} spannedRange 인덱스 정보
      */
-    show: function(spannedRange) {
+    _show: function(spannedRange) {
         this.indexObj = spannedRange;
         this.$el.css(this._getGeometryStyles(spannedRange));
     },
@@ -121,7 +121,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
     /**
      * 레이어를 숨긴다.
      */
-    hide: function() {
+    _hide: function() {
         this.$el.css({
             display: 'none',
             width: '0px',
