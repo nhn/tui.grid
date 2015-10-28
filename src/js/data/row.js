@@ -156,7 +156,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
 
     /**
      * Returns the object that contains rowState info.
-     * @return {{isDisabled: boolean, isDisabledCheck: boolean}} rowState 정보
+     * @return {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
      */
     getRowState: function() {
         return this.extraDataManager.getRowState();
@@ -187,7 +187,6 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     _makeUniqueStringArray: function(targetArray) {
         var singleStringArray = _.uniq(targetArray.join(' ').split(' '));
-
         return _.without(singleStringArray, '');
     },
 

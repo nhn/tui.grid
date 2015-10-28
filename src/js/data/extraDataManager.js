@@ -71,6 +71,10 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
         return result;
     },
 
+    /**
+     * Sets the rowSate.
+     * @param {string} rowState - 'DISABLED' | 'DISABLED_CHECK' | 'CHECKED'
+     */
     setRowState: function(rowState) {
         this.data.rowState = rowState;
     },
@@ -162,9 +166,8 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
      */
     _removeClassNameFromArray: function(classNameList, className) {
         //배열 요소가 'class1 class2' 와 같이 두개 이상의 className을 포함할 수 있어, join & split 함.
-        var classNameString = classNameList.join(' ');
-        classNameList = classNameString.split(' ');
-        return _.without(classNameList, className);
+        var singleNameList = classNameList.join(' ').split(' ');
+        return _.without(singleNameList, className);
     },
 
     /**
