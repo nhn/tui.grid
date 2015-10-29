@@ -521,7 +521,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
-            //this.selection.show();
             this.focusClipboard();
         }
     },
@@ -1289,8 +1288,8 @@ var Core = View.extend(/**@lends module:core.prototype */{
             this._setValueForPaste(row, start.rowIdx + index, start.columnIdx, end.columnIdx);
         }, this);
 
-        this.selectionModel.startSelection(start.rowIdx, start.columnIdx);
-        this.selectionModel.updateSelection(end.rowIdx, end.columnIdx);
+        this.selectionModel.start(start.rowIdx, start.columnIdx);
+        this.selectionModel.update(end.rowIdx, end.columnIdx);
     },
 
     /**

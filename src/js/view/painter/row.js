@@ -86,6 +86,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
      * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
      */
     _detachDragEvents: function() {
+        this.grid.selectionModel.stopAutoScroll();
         $(document).off('mousemove', $.proxy(this._onMouseMove, this));
         $(document).off('mouseup', $.proxy(this._detachDragEvents, this));
         $(document).off('selectstart', $.proxy(this._onSelectStart, this));
@@ -137,7 +138,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         if (shiftKey) {
             selectionModel.updateByMousePosition(pageX, pageY);
         } else {
-            selectionModel.endSelection();
+            selectionModel.end();
         }
         this._attachDragEvents(pageX, pageY);
     },
