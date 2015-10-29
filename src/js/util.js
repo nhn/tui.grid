@@ -260,6 +260,15 @@ var util = {
     },
 
     /**
+     * Returns whether the browser is IE7
+     * @return {boolean} True if the browser is IE7
+     */
+    isBrowserIE7: function() {
+        var browser = ne.util.browser;
+        return browser.msie && browser.version === 7;
+    },
+
+    /**
      * form 요소 설정
      * @memberof module:util
      */
