@@ -162,7 +162,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         if (isKeyIdentified) {
             keyDownEvent.preventDefault();
         }
-        selectionModel.endSelection();
+        selectionModel.end();
     },
 
     /**
@@ -379,7 +379,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
         if (selectionModel.hasSelection()) {
             //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
-            range = selectionModel.getRange();
+            range = selectionModel.get('range');
             for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
                 rowKey = dataModel.at(i).get('rowKey');
                 for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
@@ -404,9 +404,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             focused = this.grid.focusModel.indexOf();
 
         if (!selectionModel.hasSelection()) {
-            selectionModel.startSelection(focused.rowIdx, focused.columnIdx);
+            selectionModel.start(focused.rowIdx, focused.columnIdx);
         }
-        selectionModel.updateSelection(rowIndex, columnIndex);
+        selectionModel.update(rowIndex, columnIndex);
         this.grid.focusAt(rowIndex, columnIndex, true);
     },
 
@@ -419,7 +419,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var text,
             selectionModel = this.grid.selectionModel,
             focused = this.grid.focusModel.which();
-        if (selectionModel.isShown()) {
+        if (selectionModel.hasSelection()) {
             text = this.grid.selectionModel.getSelectionToString();
         } else {
             text = this.grid.dataModel.get(focused.rowKey).getVisibleText(focused.columnName);
