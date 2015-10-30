@@ -34,7 +34,7 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     },
 
     /**
-     * selection 을 enable 한다.
+     * Enables the selection.
      */
     enable: function() {
         if (this.grid.option('useDataCopy')) {
@@ -43,16 +43,176 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     },
 
     /**
-     * selection 을 disable 한다.
+     * Disables the selection.
      */
     disable: function() {
         this.end();
         this._isEnabled = false;
     },
 
-
+    /**
+     * Returns whether the selection is enabled.
+     * @return {[type]} [description]
+     */
     isEnabled: function() {
         return this._isEnabled;
+    },
+
+    /**
+     * Starts the selection.
+     * @param {Number} rowIndex - Row index
+     * @param {Number} columnIndex - Column index
+     */
+    start: function(rowIndex, columnIndex) {
+        if (!this._isEnabled) {
+            return;
+        }
+        this.inputRange = {
+            row: [rowIndex, rowIndex],
+            column: [columnIndex, columnIndex]
+        };
+        this._resetRangeAttribute();
+        this.grid.focusClipboard();
+    },
+
+    /**
+     * Starts the selection by mouse position.
+     * @param {number} pageX - X position relative to the document
+     * @param {number} pageY - Y position relative to the document
+     */
+    startByMousePosition: function(pageX, pageY) {
+        var pos = this._getIndexFromMousePosition(pageX, pageY);
+        this.start(pos.row, pos.column);
+    },
+
+    /**
+     * Updates the selection range.
+     * @param {Number} rowIndex - Row index
+     * @param {Number} columnIndex - Column index
+     */
+    update: function(rowIndex, columnIndex) {
+        var focused;
+
+        if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
+            return;
+        }
+
+        if (!this.hasSelection()) {
+            focused = this.grid.focusModel.indexOf(true);
+            this.start(focused.rowIdx, focused.columnIdx);
+        }
+        this.inputRange.row[1] = rowIndex;
+        this.inputRange.column[1] = columnIndex;
+        this._resetRangeAttribute();
+        this.grid.focusClipboard();
+        this.grid.focusAt(rowIndex, columnIndex);
+    },
+
+    /**
+     * Updates the selection range by mouse position.
+     * @param {number} pageX - X position relative to the document
+     * @param {number} pageY - Y position relative to the document
+     */
+    updateByMousePosition: function(pageX, pageY) {
+        var pos = this._getIndexFromMousePosition(pageX, pageY),
+            self = this;
+
+        if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
+            this.stopAutoScroll();
+            this.intervalIdForAutoScroll = setInterval(
+                _.bind(this._adjustScroll, this, pos.overflowX, pos.overflowY)
+            );
+        }
+        this.update(pos.row, pos.column);
+    },
+
+    /**
+     * selection 영역 선택을 종료하고 selection 데이터를 초기화한다.
+     */
+    end: function() {
+        this.inputRange = null;
+        this.set('range', null);
+    },
+
+    /**
+     * Stops the auto-scroll interval.
+     */
+    stopAutoScroll: function() {
+        clearInterval(this.intervalIdForAutoScroll);
+    },
+
+    /**
+     * Selects all data range.
+     */
+    selectAll: function() {
+        if (this._isEnabled) {
+            this.start(0, 0);
+            this.update(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
+        }
+    },
+
+    /**
+     * Returns the row and column indexes of the starting position.
+     * @return {{rowIdx: number, columnIdx: number}} Objects containing indexes
+     */
+    getStartIndex: function() {
+        var range = this.get('range');
+        return {
+            rowIdx: range.row[0],
+            columnIdx: range.column[0]
+        };
+    },
+
+    /**
+     * Returns the row and column indexes of the ending position.
+     * @return {{rowIdx: number, columnIdx: number}} Objects containing indexes
+     */
+    getEndIndex: function() {
+        var range = this.get('range');
+        return {
+            rowIdx: range.row[1],
+            columnIdx: range.column[1]
+        };
+    },
+
+    /**
+     * selection 데이터가 존재하는지 확인한다.
+     * @return {boolean}    selection 데이터 존재여부
+     * @private
+     */
+    hasSelection: function() {
+        return !!this.get('range');
+    },
+
+    /**
+     *  현재 selection 범위내 데이터를 문자열 형태로 변환하여 반환한다.
+     *  @return {String} selection 범위내 데이터 문자열
+     */
+    getSelectionToString: function() {
+        var columnNameList = [],
+            tmpString = [],
+            strings = [],
+            grid = this.grid,
+            range = this.get('range'),
+            columnModelList, rowList, string;
+
+        columnModelList = grid.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
+        _.each(columnModelList, function(columnModel) {
+            columnNameList.push(columnModel['columnName']);
+        });
+
+        rowList = grid.dataModel.slice(range.row[0], range.row[1] + 1);
+
+        _.each(rowList, function(row) {
+            tmpString = [];
+            _.each(columnNameList, function(columnName) {
+                tmpString.push(row.getVisibleText(columnName));
+            });
+            strings.push(tmpString.join('\t'));
+        });
+
+        string = strings.join('\n');
+        return string;
     },
 
     /**
@@ -159,123 +319,9 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     },
 
     /**
-     *  현재 selection 범위내 데이터를 문자열 형태로 변환하여 반환한다.
-     *  @return {String} selection 범위내 데이터 문자열
+     * Expands the 'this.inputRange' if rowspan data exists, and resets the 'range' attributes to the value.
+     * @private
      */
-    getSelectionToString: function() {
-        var columnNameList = [],
-            tmpString = [],
-            strings = [],
-            grid = this.grid,
-            range = this.get('range'),
-            columnModelList, rowList, string;
-
-        columnModelList = grid.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-        _.each(columnModelList, function(columnModel) {
-            columnNameList.push(columnModel['columnName']);
-        });
-
-        rowList = grid.dataModel.slice(range.row[0], range.row[1] + 1);
-
-        _.each(rowList, function(row) {
-            tmpString = [];
-            _.each(columnNameList, function(columnName) {
-                tmpString.push(row.getVisibleText(columnName));
-            });
-            strings.push(tmpString.join('\t'));
-        });
-
-        string = strings.join('\n');
-        return string;
-    },
-
-    /**
-     * 전체 영역을 선택한다.
-     */
-    selectAll: function() {
-        if (this._isEnabled) {
-            this.start(0, 0);
-            this.update(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
-        }
-    },
-
-    /**
-     * selection 영역 선택을 시작한다.
-     * @param {Number} rowIndex 시작점의 row 인덱스 정보
-     * @param {Number} columnIndex 시작점의 column 인덱스 정보
-     */
-    start: function(rowIndex, columnIndex) {
-        if (!this._isEnabled) {
-            return;
-        }
-        this.inputRange = {
-            row: [rowIndex, rowIndex],
-            column: [columnIndex, columnIndex]
-        };
-        this._resetRangeAttribute();
-        this.grid.focusClipboard();
-    },
-
-    /**
-     * start by mouse position
-     */
-    startByMousePosition: function(pageX, pageY) {
-        var pos = this._getIndexFromMousePosition(pageX, pageY);
-        this.start(pos.row, pos.column);
-    },
-
-    /**
-     * selection 영역 선택을 확장한다.
-     * @param {Number} rowIndex 확장할 지점의 row 인덱스 정보
-     * @param {Number} columnIndex 확장할 지점의 column 인덱스 정보
-     */
-    update: function(rowIndex, columnIndex) {
-        var focused;
-
-        if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
-            return;
-        }
-
-        if (!this.hasSelection()) {
-            focused = this.grid.focusModel.indexOf(true);
-            this.start(focused.rowIdx, focused.columnIdx);
-        }
-        this.inputRange.row[1] = rowIndex;
-        this.inputRange.column[1] = columnIndex;
-        this._resetRangeAttribute();
-        this.grid.focusClipboard();
-        this.grid.focusAt(rowIndex, columnIndex);
-    },
-
-    /**
-     * selection 영역에 대한 mouseDown 퍼블릭 이벤트 핸들러
-     * @param {event} mouseDownEvent Event object
-     */
-    updateByMousePosition: function(pageX, pageY) {
-        var pos = this._getIndexFromMousePosition(pageX, pageY),
-            self = this;
-
-        if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
-            this.stopAutoScroll();
-            this.intervalIdForAutoScroll = setInterval(
-                _.bind(this._adjustScroll, this, pos.overflowX, pos.overflowY)
-            );
-        }
-        this.update(pos.row, pos.column);
-    },
-
-    /**
-     * selection 영역 선택을 종료하고 selection 데이터를 초기화한다.
-     */
-    end: function() {
-        this.inputRange = null;
-        this.set('range', null);
-    },
-
-    stopAutoScroll: function() {
-        clearInterval(this.intervalIdForAutoScroll);
-    },
-
     _resetRangeAttribute: function() {
         var dataModel = this.grid.dataModel,
             columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
@@ -298,30 +344,6 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     },
 
     /**
-     * selection이 시작된 셀의 인덱스를 반환한다.
-     * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스정보를 가진 객체
-     */
-    getStartIndex: function() {
-        var range = this.get('range');
-        return {
-            rowIdx: range.row[0],
-            columnIdx: range.column[0]
-        };
-    },
-
-    /**
-     * selection이 끝나는 셀의 인덱스를 반환한다.
-     * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스정보를 가진 객체
-     */
-    getEndIndex: function() {
-        var range = this.get('range');
-        return {
-            rowIdx: range.row[1],
-            columnIdx: range.column[1]
-        };
-    },
-
-    /**
      * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
      * @param {Number} pageX    마우스 x 좌표
      * @param {Number} pageY    마우스 y 좌표
@@ -337,15 +359,6 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
             pageX: containerPosX,
             pageY: containerPosY
         };
-    },
-
-    /**
-     * selection 데이터가 존재하는지 확인한다.
-     * @return {boolean}    selection 데이터 존재여부
-     * @private
-     */
-    hasSelection: function() {
-        return !!this.get('range');
     },
 
     /**
