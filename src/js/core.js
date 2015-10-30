@@ -289,11 +289,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this
         });
 
-        // this.selection = this.createView(Selection, {
-        //     grid: this
-        // });
-
-        //define header & body area
         this.view.lside = this.createView(LsideFrame, {
             grid: this
         });
@@ -309,9 +304,11 @@ var Core = View.extend(/**@lends module:core.prototype */{
         this.view.layer.ready = this.createView(ReadyLayer, {
             grid: this
         });
+
         this.view.layer.empty = this.createView(EmptyLayer, {
             grid: this
         });
+
         this.view.layer.loading = this.createView(LoadingLayer, {
             grid: this
         });
