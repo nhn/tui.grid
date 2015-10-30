@@ -7,9 +7,11 @@ var Collection = require('../../src/js/base/collection');
 var ColumnModelData = require('../../src/js/data/columnModel');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
-var Selection = require('../../src/js/view/selection');
+var Selection = require('../../src/js/model/selection');
 var CellFactory = require('../../src/js/view/cellFactory');
 var LayoutBody = require('../../src/js/view/layout/body');
+var LayoutBodyTable = require('../../src/js/view/layout/bodyTable');
+var SelectionLayer = require('../../src/js/view/selectionLayer');
 
 describe('view.layout.body', function() {
     var grid, body;
@@ -21,9 +23,8 @@ describe('view.layout.body', function() {
             option: function(name) {
                 return this.options[name];
             },
-            showGridLayer: function() {
-
-            },
+            focusClipboard: function() {},
+            showGridLayer: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData({
                 columnModelList: [
@@ -40,13 +41,16 @@ describe('view.layout.body', function() {
             }),
             focusModel: new Model()
         };
+        mock.dataModel.isRowSpanEnable = function() {
+            return true;
+        };
         mock.dimensionModel = new Dimension({
             grid: mock
         });
         mock.renderModel = new Renderer({
             grid: mock
         });
-        mock.selection = new Selection({
+        mock.selectionModel = new Selection({
             grid: mock
         });
         mock.cellFactory = new CellFactory({
@@ -67,9 +71,60 @@ describe('view.layout.body', function() {
     });
 
     describe('initialize', function() {
-        it('프라퍼티 기본값으로 whichSide는 R, isScrollSync는 false를 설정한다.', function() {
+        it('whichSide is default R', function() {
             expect(body.whichSide).toBe('R');
-            expect(body.isScrollSync).toBe(false);
+        });
+    });
+
+    describe('_getMouseMoveDistance', function() {
+        it('피타고라스의 정리를 이용해 거리를 잘 구하는지 확인한다.', function() {
+            var distance;
+
+            body.mouseDownX = 10;
+            body.mouseDownY = 10;
+            distance = body._getMouseMoveDistance(12, 12);
+            expect(distance).toBe(Math.round(Math.sqrt(8)));
+        });
+    });
+
+    describe('_onMouseMove', function() {
+        beforeEach(function() {
+            body.mouseDownX = 10;
+            body.mouseDownY = 10;
+        });
+
+        describe('selection이 없을경우', function() {
+            it('움직인 거리가 10보다 클 경우 selection 을 시작한다.', function() {
+                body._onMouseMove({
+                    pageX: 20,
+                    pageY: 20
+                });
+                expect(grid.selectionModel.hasSelection()).toBe(true);
+            });
+
+            it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다..', function() {
+                body._onMouseMove({
+                    pageX: 15,
+                    pageY: 15
+                });
+                expect(grid.selectionModel.hasSelection()).toBe(false);
+            });
+        });
+
+        describe('selection이 있는 경우', function() {
+            beforeEach(function() {
+                grid.selectionModel.start(0, 0);
+            });
+
+            it('기존의 셀렉션을 확장한다', function() {
+                spyOn(grid.selectionModel, 'updateByMousePosition');
+                body._onMouseMove({
+                    pageX: 15,
+                    pageY: 15
+                });
+
+                expect(grid.selectionModel.updateByMousePosition).toHaveBeenCalledWith(15, 15);
+            });
         });
     });
 
@@ -103,41 +158,15 @@ describe('view.layout.body', function() {
             expect($(body.el).height()).toBe(200);
         });
 
-        it('div.table_container, table, tbody를 생성한다.', function() {
-            body.render();
-            expect(body.$el).toContainElement('div.table_container>table>tbody');
-        });
-
-        it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
-            var extraWidth = LayoutBody.extraWidth,
-                $colgroup, $cols;
-
+        it('selectionLayer와 bodyTable이 생성되었는지 확인한다.', function() {
             body.render();
 
-            $colgroup = body.$el.find('colgroup');
-            $cols = $colgroup.find('col');
-
-            expect($colgroup.length).toBe(1);
-            expect($cols.length).toBe(2);
-
-            expect($cols.eq(0).width()).toBe(30 - extraWidth);
-            expect($cols.eq(0).attr('columnname')).toBe('c1');
-            expect($cols.eq(1).width()).toBe(40 - extraWidth);
-            expect($cols.eq(1).attr('columnname')).toBe('c2');
+            expect(body._viewList.length).toBe(2);
+            _.each(body._viewList, function(childView) {
+                expect(childView instanceof SelectionLayer || childView instanceof LayoutBodyTable).toBe(true);
+                expect(body.$container).toContainElement(childView.el);
+            });
         });
-
-        it('selection layer가 생성되었는지 확인한다.', function() {
-            body.render();
-            $(grid.selection.el).parent().is(body.el);
-        });
-
-        // TODO: TC 구현
-        // it('View.RowList를 생성하고, render를 실행한다.', function() {
-        //     spyOn(RowListView, 'render');
-        //
-        //     body.render();
-        //     expect(RowListView.render).toHaveBeenCalled();
-        // });
     });
 
     describe('grid.dimensionModel의 change:bodyHeight 이벤트 발생시', function() {
@@ -147,96 +176,6 @@ describe('view.layout.body', function() {
 
             grid.dimensionModel.set('bodyHeight', 80);
             expect(body.$el.height()).toBe(80);
-        });
-    });
-
-    describe('grid.dimensionModel의 columnWidthChanged 이벤트 발생시', function() {
-        it('각 col요소의 넓이를 재설정한다.', function() {
-            var extraWidth = LayoutBody.extraWidth,
-                $cols;
-
-            body.render();
-            $cols = body.$el.find('col');
-
-            $cols.eq(0).width(10);
-            expect($cols.eq(0).width()).toBe(10);
-
-            grid.dimensionModel.trigger('columnWidthChanged');
-            expect($cols.eq(0).width()).toBe(30 - extraWidth);
-        });
-    });
-
-    describe('redrawTable()', function() {
-        var tbodyHtml = '<tr><td>1-1</td><td>1-2</td></tr>',
-            expectedHtml;
-
-        beforeEach(function() {
-            body.render();
-            expectedHtml = $('<tbody />').append(tbodyHtml).html(); // 브라우저별로 생성된 innerHTML이 다를경우를 위한 처리
-        });
-
-        it('주어진 tbody의 innerHTML로 table 요소를 다시 생성한다.', function() {
-            var $table = body.$el.find('table'),
-                $newTable;
-
-            body.redrawTable(tbodyHtml);
-            $newTable = body.$el.find('table');
-
-            expect($table[0]).not.toBe($newTable[0]);
-            expect($newTable.find('tbody').html()).toBe(expectedHtml);
-        });
-
-        it('생성된 table의 tbody를 반환한다.', function() {
-            var $tbody = body.redrawTable(tbodyHtml);
-            expect($tbody[0]).toBe(body.$el.find('tbody')[0]);
-        });
-    });
-
-    describe('attachTableEventHandler()', function() {
-        var $cell1, $cell2, clickSpy, focusSpy;
-
-        beforeEach(function() {
-            $cell1 = $('<td edit-type="type1"><input /></td>');
-            $cell2 = $('<td edit-type="type2" />');
-            clickSpy = jasmine.createSpy('onClick');
-            focusSpy = jasmine.createSpy('onFocus');
-            body.render();
-            grid.$el.append(body.$el);
-            body.$tableContainer.off();
-
-            body.$tableContainer.find('tbody')
-                .append($('<tr />').append($cell1))
-                .append($('<tr />').append($cell2));
-
-            body.attachTableEventHandler('td[edit-type=type1]', {
-                click: {
-                    selector: 'input',
-                    handler: clickSpy
-                },
-                focus: {
-                    selector: '',
-                    handler: focusSpy
-                }
-            });
-        });
-
-        it('selector로 지정한 셀에서의 이벤트만 Delegation 한다.', function() {
-            $cell1.trigger('click');
-            expect(clickSpy).not.toHaveBeenCalled();
-
-            $cell2.trigger('click');
-            expect(clickSpy).not.toHaveBeenCalled();
-
-            $cell1.find('input').trigger('click');
-            expect(clickSpy).toHaveBeenCalled();
-        });
-
-        it('지정된 이벤트만 Delegation 한다.', function() {
-            $cell1.find('input').trigger('click');
-            expect(focusSpy).not.toHaveBeenCalled();
-
-            $cell1.trigger('focus');
-            expect(focusSpy).toHaveBeenCalled();
         });
     });
 });
