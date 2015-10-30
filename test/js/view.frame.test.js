@@ -10,7 +10,7 @@ var RowListData = require('../../src/js/data/rowList');
 var Frame = require('../../src/js/view/layout/frame');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
-var Selection = require('../../src/js/view/selection');
+var Selection = require('../../src/js/model/selection');
 var CellFactory = require('../../src/js/view/cellFactory');
 var FrameRside = require('../../src/js/view/layout/frame-rside');
 var FrameLside = require('../../src/js/view/layout/frame-lside');
@@ -38,7 +38,7 @@ describe('Frame', function() {
         mock.renderModel = new Renderer({
             grid: mock
         });
-        mock.selection = new Selection({
+        mock.selectionModel = new Selection({
             grid: mock
         });
         mock.cellFactory = new CellFactory({

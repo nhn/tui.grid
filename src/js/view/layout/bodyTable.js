@@ -8,8 +8,6 @@ var View = require('../../base/view');
 var RowListView = require('../rowList');
 var util = require('../../util');
 
-// IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
-var EXTRA_WIDTH = util.isBrowserIE7() ? 20 : 0;
 
 /**
  * Class for the body layout
@@ -51,7 +49,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/body.prototype */{
             $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', (width - EXTRA_WIDTH) + 'px');
+            $colList.eq(index).css('width', (width - BodyTable.EXTRA_WIDTH) + 'px');
         }, this);
     },
 
@@ -109,7 +107,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/body.prototype */{
      * @return {jquery} - 새로 생성된 table의 tbody 요소
      */
     redrawTable: function(tbodyHtml) {
-        this.$el[0].innerHTML = this.templateTable({
+        this.$el[0].innerHTML = this.template({
             colGroup: this._getColGroupMarkup(),
             tbody: tbodyHtml
         });
@@ -132,12 +130,15 @@ var BodyTable = View.extend(/**@lends module:view/layout/body.prototype */{
 
         _.each(columnModelList, function(columnModel, index) {
             var name = columnModel['columnName'],
-                width = columnWidthList[index] - EXTRA_WIDTH;
+                width = columnWidthList[index] - BodyTable.EXTRA_WIDTH;
 
             html += '<col columnname="' + name + '" style="width:' + width + 'px">';
         });
         return html;
     }
+}, {
+    // IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
+    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0
 });
 
 module.exports = BodyTable;

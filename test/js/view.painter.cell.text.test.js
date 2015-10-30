@@ -6,7 +6,7 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
 var Focus = require('../../src/js/model/focus');
-var Selection = require('../../src/js/view/selection');
+var Selection = require('../../src/js/model/selection');
 var TextPainter = require('../../src/js/view/painter/cell/text');
 var ConvertiblePainter = require('../../src/js/view/painter/cell/text-convertible');
 
@@ -40,7 +40,7 @@ describe('view.painter.cell.text', function() {
         mock.focusModel = new Focus({
             grid: mock
         });
-        mock.selection = new Selection({
+        mock.selectionModel = new Selection({
             grid: mock
         });
         mock.dataModel = new RowListData([], {
@@ -52,7 +52,7 @@ describe('view.painter.cell.text', function() {
     beforeEach(function() {
         grid = createGridMock();
     });
-    
+
 
     describe('View.Painter.Cell.Text 클래스 테스트', function() {
         var options;
@@ -165,9 +165,9 @@ describe('view.painter.cell.text', function() {
             });
 
             it('grid 의 selection.disable() 을 호출하는지 확인한다.', function() {
-                grid.selection.disable = jasmine.createSpy('disable');
+                grid.selectionModel.disable = jasmine.createSpy('disable');
                 cellPainter._onFocus({target: $input.get(0)});
-                expect(grid.selection.disable).toHaveBeenCalled();
+                expect(grid.selectionModel.disable).toHaveBeenCalled();
             });
         });
 
@@ -202,10 +202,10 @@ describe('view.painter.cell.text', function() {
                 cellPainter._onFocus({target: $input.get(0)});
             });
 
-            it('grid.selection.enable 를 호출하는지 확인한다.', function() {
-                grid.selection.enable = jasmine.createSpy('enable');
+            it('grid.selectionModel.enable 를 호출하는지 확인한다.', function() {
+                grid.selectionModel.enable = jasmine.createSpy('enable');
                 cellPainter._onBlur({target: $input.get(0)});
-                expect(grid.selection.enable).toHaveBeenCalled();
+                expect(grid.selectionModel.enable).toHaveBeenCalled();
             });
 
             it('_isEdited === true 일 때 setValue 를 호출하는지 확인한다.', function() {
@@ -405,9 +405,9 @@ describe('view.painter.cell.text', function() {
             });
 
             it('grid.selection.enable 를 호출하는지 확인한다.', function() {
-                spyOn(grid.selection, 'enable');
+                spyOn(grid.selectionModel, 'enable');
                 cellPainter._onBlurConvertible({target: $input.get(0)});
-                expect(grid.selection.enable).toHaveBeenCalled();
+                expect(grid.selectionModel.enable).toHaveBeenCalled();
             });
 
             it('_endEdit 를 호출하는지 확인한다.', function() {

@@ -6,7 +6,7 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
 var Focus = require('../../src/js/model/focus');
-var Selection = require('../../src/js/view/selection');
+var Selection = require('../../src/js/model/selection');
 var ListPainter = require('../../src/js/view/painter/cell/list');
 var SelectPainter = require('../../src/js/view/painter/cell/select');
 var ButtonPainter = require('../../src/js/view/painter/cell/button');
@@ -38,7 +38,7 @@ describe('view.painter.cell.base', function() {
         mock.focusModel = new Focus({
             grid: mock
         });
-        mock.selection = new Selection({
+        mock.selectionModel = new Selection({
             grid: mock
         });
         mock.dataModel = new RowListData([], {

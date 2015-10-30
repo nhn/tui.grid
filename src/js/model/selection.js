@@ -93,7 +93,7 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     update: function(rowIndex, columnIndex) {
         var focused;
 
-        if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
+        if (!this._isEnabled || !this.inputRange || rowIndex < 0 || columnIndex < 0) {
             return;
         }
 
