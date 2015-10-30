@@ -37,18 +37,28 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
     className: 'selection_layer',
 
     /**
-     * 컬럼 widthList 값의 변화가 발생했을때 이벤트 핸들러
+     * Updates this.columnWidthList
      * @private
      */
     _updateColumnWidthList: function() {
         this.columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide);
     },
 
+    /**
+     * Event handler for 'columnWidthChanged' evnet on Dimension model.
+     * @private
+     */
     _onChangeColumnWidth: function() {
         this._updateColumnWidthList();
         this.render();
     },
 
+    /**
+     * Returns relative column range based on 'this.whichSide'
+     * @private
+     * @param {array} columnRange - Column range indexes. [start, end]
+     * @return {array} - Relative column range indexes. [start, end]
+     */
     _getMySideColumnRange: function(columnRange) {
         var columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
             myColumnRange = null;
@@ -70,6 +80,12 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         return myColumnRange;
     },
 
+    /**
+     * Returns the object containing 'top' and 'height' css value.
+     * @private
+     * @param  {array} rowRange - Row range indexes. [start, end]
+     * @return {{top: string, height: string}} - css values
+     */
     _getVerticalStyles: function(rowRange) {
         var rowHeight = this.grid.dimensionModel.get('rowHeight'),
             top = util.getHeight(rowRange[0], rowHeight) - CELL_BORDER_WIDTH,
@@ -81,6 +97,12 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         }
     },
 
+    /**
+     * Returns the object containing 'left' and 'width' css value.
+     * @private
+     * @param  {array} columnRange - Column range indexes. [start, end]
+     * @return {{left: string, width: string}} - css values
+     */
     _getHorizontalStyles: function(columnRange) {
         var columnWidthList = this.columnWidthList,
             metaColumnCount = this.grid.columnModel.getVisibleMetaColumnCount(),
@@ -103,8 +125,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
                 width += columnWidthList[i] + CELL_BORDER_WIDTH;
             }
         }
-        // subtract last border width
-        width -= CELL_BORDER_WIDTH;
+        width -= CELL_BORDER_WIDTH; // subtract last border width
 
         return {
             left: left + 'px',
@@ -113,8 +134,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
     },
 
     /**
-     * 렌더링한다.
-     * @return {View.Selection.Layer} this object
+     * Render.
+     * @return {SelectionLayer} this object
      */
     render: function() {
         var range = this.grid.selectionModel.get('range'),
