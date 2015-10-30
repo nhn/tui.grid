@@ -91,6 +91,9 @@ describe('view.layout.body', function() {
         beforeEach(function() {
             body.mouseDownX = 10;
             body.mouseDownY = 10;
+            grid.selectionModel._isAutoScrollable = function() {
+                return false;
+            }
         });
 
         describe('selection이 없을경우', function() {

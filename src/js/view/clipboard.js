@@ -420,7 +420,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             selectionModel = this.grid.selectionModel,
             focused = this.grid.focusModel.which();
         if (selectionModel.hasSelection()) {
-            text = this.grid.selectionModel.getSelectionToString();
+            text = this.grid.selectionModel.getValuesToString();
         } else {
             text = this.grid.dataModel.get(focused.rowKey).getVisibleText(focused.columnName);
         }
