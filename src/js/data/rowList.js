@@ -315,7 +315,6 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @param {object} row row 모델
      * @param {String} columnName   변경이 발생한 컬럼명
      * @param {(String|Number)} value 변경된 값
-     * @private
      */
     syncRowSpannedData: function(row, columnName, value) {
         var index, rowSpanData, i;

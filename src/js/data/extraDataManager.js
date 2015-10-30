@@ -61,6 +61,7 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
         switch (this.data.rowState) {
             case 'DISABLED':
                 result.isDisabled = true;
+                // intentional no break
             case 'DISABLED_CHECK':
                 result.isDisabledCheck = true;
                 break;
@@ -90,7 +91,7 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
         if (!columnName) {
             return;
         }
-        if (ne.util.isFalsy(data)) {
+        if (!data) {
             if (rowSpanData[columnName]) {
                 delete rowSpanData[columnName];
             }
@@ -112,7 +113,7 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
         classNameData.column = classNameData.column || {};
         classNameList = classNameData.column[columnName] || [];
 
-        if (ne.util.inArray(className, classNameList) === -1) {
+        if (!_.contains(classNameList, className)) {
             classNameList.push(className);
             classNameData.column[columnName] = classNameList;
             this.data.className = classNameData;
