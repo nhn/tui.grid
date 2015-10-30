@@ -494,6 +494,7 @@ describe('grid.normal.test', function() {
             expect(grid.isChanged()).toBe(true);
         });
     });
+
     describe('restore()', function() {
         beforeEach(function() {
             grid.appendRow({

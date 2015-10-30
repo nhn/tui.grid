@@ -303,212 +303,6 @@ describe('data.rowList', function() {
     });
 
     describe('Model 테스트', function() {
-        describe('getRowState()', function() {
-            var testList, rowState;
-
-            beforeEach(function() {
-                testList = [
-                    {},
-                    {
-                        '_extraData': {
-                            'rowState': 'CHECKED'
-                        }
-                    },
-                    {
-                        '_extraData': {
-                            'rowState': 'DISABLED'
-                        }
-                    },
-                    {
-                        '_extraData': {
-                            'rowState': 'DISABLED_CHECK'
-                        }
-                    },
-                    {}
-                ];
-                dataModelInstance.set(testList, {
-                    parse: true
-                });
-            });
-
-            it('데이터는 항상 동일한 포멧이다.', function() {
-                rowState = dataModelInstance.get(0).getRowState();
-                expect(rowState.isDisabled).toBeDefined();
-                expect(rowState.isDisabledCheck).toBeDefined();
-                expect(rowState.isChecked).toBeDefined();
-
-
-                rowState = dataModelInstance.get(1).getRowState();
-                expect(rowState.isDisabled).toBeDefined();
-                expect(rowState.isDisabledCheck).toBeDefined();
-                expect(rowState.isChecked).toBeDefined();
-            });
-
-            it('아무 값이 없을 때', function() {
-                rowState = dataModelInstance.get(0).getRowState();
-                expect(rowState.isDisabled).toBe(false);
-                expect(rowState.isDisabledCheck).toBe(false);
-                expect(rowState.isChecked).toBe(false);
-            });
-
-            it('CHECKED 일 때', function() {
-                rowState = dataModelInstance.get(1).getRowState();
-                expect(rowState.isDisabled).toBe(false);
-                expect(rowState.isDisabledCheck).toBe(false);
-                expect(rowState.isChecked).toBe(true);
-            });
-
-            it('DISABLED 일 때', function() {
-                rowState = dataModelInstance.get(2).getRowState();
-                expect(rowState.isDisabled).toBe(true);
-                expect(rowState.isDisabledCheck).toBe(true);
-                expect(rowState.isChecked).toBe(false);
-            });
-
-            it('DISABLED_CHECK 일 때', function() {
-                rowState = dataModelInstance.get(3).getRowState();
-                expect(rowState.isDisabled).toBe(false);
-                expect(rowState.isDisabledCheck).toBe(true);
-                expect(rowState.isChecked).toBe(false);
-            });
-        });
-
-        describe('getRowSpanData()', function() {
-            var testList,
-                rowSpanData;
-
-            beforeEach(function() {
-                testList = [
-                    {},
-                    {
-                        '_extraData': {
-                            'rowSpan': {
-                                'none': 2,
-                                'text': 3
-                            }
-                        }
-                    },
-                    {},
-                    {},
-                    {},
-                    {
-                        '_extraData': {
-                            'rowSpan': {
-                                'none': 4
-                            }
-                        }
-                    },
-                    {},
-                    {},
-                    {},
-                    {}
-                ];
-                dataModelInstance.set(testList, {
-                    parse: true
-                });
-            });
-
-            it('columnName 인자가 존재할 경우 항상 같은 형태의 데이터를 리턴한다.', function() {
-                rowSpanData = dataModelInstance.get(1).getRowSpanData('text');
-                expect(rowSpanData.count).toBeDefined();
-                expect(rowSpanData.isMainRow).toBeDefined();
-                expect(rowSpanData.mainRowKey).toBeDefined();
-
-                rowSpanData = dataModelInstance.get(1).getRowSpanData('none');
-                expect(rowSpanData.count).toBeDefined();
-                expect(rowSpanData.isMainRow).toBeDefined();
-                expect(rowSpanData.mainRowKey).toBeDefined();
-
-                rowSpanData = dataModelInstance.get(0).getRowSpanData('text');
-                expect(rowSpanData.count).toBeDefined();
-                expect(rowSpanData.isMainRow).toBeDefined();
-                expect(rowSpanData.mainRowKey).toBeDefined();
-
-                rowSpanData = dataModelInstance.get(0).getRowSpanData('none');
-                expect(rowSpanData.count).toBeDefined();
-                expect(rowSpanData.isMainRow).toBeDefined();
-                expect(rowSpanData.mainRowKey).toBeDefined();
-            });
-
-            describe('sort가 되지 않았을 경우', function() {
-                it('columnName 파라미터가 설정되었을 경우 정상적 동작 확인한다.', function() {
-                    expect(dataModelInstance.get(1).getRowSpanData('none')).toEqual({
-                        count: 2,
-                        isMainRow: true,
-                        mainRowKey: 1
-                    });
-                    expect(dataModelInstance.get(2).getRowSpanData('none')).toEqual({
-                        count: -1,
-                        isMainRow: false,
-                        mainRowKey: 1
-                    });
-                    expect(dataModelInstance.get(3).getRowSpanData('none')).toEqual({
-                        count: 0,
-                        isMainRow: true,
-                        mainRowKey: 3
-                    });
-                });
-
-                it('columnName 파라미터가 설정되지 않은 경우 row에 해당하는 데이터를 MAP 형태로 반환한다.', function() {
-                    expect(dataModelInstance.get(1).getRowSpanData()).toEqual({
-                        'none': {
-                            'count': 2,
-                            'isMainRow': true,
-                            'mainRowKey': 1
-                        },
-                        'text': {
-                            'count': 3,
-                            'isMainRow': true,
-                            'mainRowKey': 1
-                        }
-                    });
-                    expect(dataModelInstance.get(2).getRowSpanData()).toEqual({
-                        'none': {
-                            'count': -1,
-                            'isMainRow': false,
-                            'mainRowKey': 1
-                        },
-                        'text': {
-                            'count': -1,
-                            'isMainRow': false,
-                            'mainRowKey': 1
-                        }
-                    });
-                    expect(dataModelInstance.get(3).getRowSpanData()).toEqual({
-                        'text': {
-                            'count': -2,
-                            'isMainRow': false,
-                            'mainRowKey': 1
-                        }
-                    });
-                });
-            });
-
-            describe('sort 가 되었을 경우 ', function() {
-                beforeEach(function() {
-                    dataModelInstance.sortByField('none');
-                });
-
-                it('columnName 파라미터가 설정되었을 경우 정상적 동작 확인한다.', function() {
-                    expect(dataModelInstance.get(1).getRowSpanData('none')).toEqual({
-                        count: 0,
-                        isMainRow: true,
-                        mainRowKey: 1
-                    });
-                    expect(dataModelInstance.get(2).getRowSpanData('none')).toEqual({
-                        count: 0,
-                        isMainRow: true,
-                        mainRowKey: 2
-                    });
-                });
-
-                it('columnName 파라미터가 설정되지 않은 경우 Null을 반환한다.', function() {
-                    expect(dataModelInstance.get(1).getRowSpanData()).toBeNull();
-                    expect(dataModelInstance.get(2).getRowSpanData()).toBeNull();
-                });
-            });
-        });
-
         describe('getHTMLEncodedString()', function() {
             var testString, sampleList;
 
@@ -1117,7 +911,6 @@ describe('data.rowList', function() {
                     });
                 });
             });
-
             describe('_setExtraRowSpanData()', function() {
                 it('자신과 자식 row 까지 rowSpanData를 잘 설정하는지 확인한다.', function() {
                     //_baseFormat 을 타고 온다고 가정하기 때문에 셈플 데이터에 rowKey 를 할당한다
@@ -1340,15 +1133,6 @@ describe('data.rowList', function() {
             });
         });
 
-        describe('_isPrivateProperty()', function() {
-            it('rowData 에서 내부용으로만 사용되는 데이터인지 확인한다.', function() {
-                expect(dataModelInstance._isPrivateProperty('_button')).toBe(true);
-                expect(dataModelInstance._isPrivateProperty('_number')).toBe(true);
-                expect(dataModelInstance._isPrivateProperty('_extraData')).toBe(true);
-                expect(dataModelInstance._isPrivateProperty('none')).toBe(false);
-            });
-        });
-
         describe('getRowList', function() {
             it('isRaw 옵션값이 설정되어 있으면 내부용 데이터를 제거하지 않고 반환한다.', function() {
                 var myRowList;
@@ -1408,7 +1192,7 @@ describe('data.rowList', function() {
         });
 
         describe('_onChange() 테스트', function() {
-            describe('_syncRowSpannedData()', function() {
+            describe('syncRowSpannedData()', function() {
                 describe('데이터에 변경이 있다면, rowSpan 된 데이터를 함께 업데이트 해준다.', function() {
                     var testRowList;
 
@@ -1445,7 +1229,7 @@ describe('data.rowList', function() {
 
                     it('Main row 를 변경했을 때 자식 row 도 변경되는지 확인한다.', function() {
                         var spannedRow = dataModelInstance.at(1);
-                        dataModelInstance._syncRowSpannedData(spannedRow, 'text', 'changed');
+                        dataModelInstance.syncRowSpannedData(spannedRow, 'text', 'changed');
 
                         expect(dataModelInstance.at(0).get('text')).toBe(1);
                         expect(dataModelInstance.at(1).get('text')).toBe('changed');
@@ -1456,7 +1240,7 @@ describe('data.rowList', function() {
 
                     it('자식 row 를 변경했을 때 Main row 도 변경되는지 확인한다.', function() {
                         var childRow = dataModelInstance.at(3);
-                        dataModelInstance._syncRowSpannedData(childRow, 'text', 'changed');
+                        dataModelInstance.syncRowSpannedData(childRow, 'text', 'changed');
 
                         expect(dataModelInstance.at(0).get('text')).toBe(1);
                         expect(dataModelInstance.at(1).get('text')).toBe('changed');
@@ -1467,7 +1251,7 @@ describe('data.rowList', function() {
 
                     it('rowSpan 하지 않은 row 에 대해서는 아무 동작 하지 않는다.', function() {
                         var childRow = dataModelInstance.at(0);
-                        dataModelInstance._syncRowSpannedData(childRow, 'text', 'changed');
+                        dataModelInstance.syncRowSpannedData(childRow, 'text', 'changed');
 
                         expect(dataModelInstance.at(0).get('text')).toBe(1);
                         expect(dataModelInstance.at(1).get('text')).toBe(2);
@@ -1479,134 +1263,13 @@ describe('data.rowList', function() {
                     it('sort 되지 않았을 경우는 Spanned 된 데이터라도 업데이트 하지 않는다.', function() {
                         var spannedRow = dataModelInstance.at(1);
                         dataModelInstance.sortByField('text');
-                        dataModelInstance._syncRowSpannedData(spannedRow, 'text', 'changed');
+                        dataModelInstance.syncRowSpannedData(spannedRow, 'text', 'changed');
 
                         expect(dataModelInstance.at(0).get('text')).toBe(1);
                         expect(dataModelInstance.at(1).get('text')).toBe(2);
                         expect(dataModelInstance.at(2).get('text')).toBe(2);
                         expect(dataModelInstance.at(3).get('text')).toBe(2);
                         expect(dataModelInstance.at(4).get('text')).toBe(5);
-                    });
-                });
-            });
-
-            describe('_executeChangeBeforeCallback()', function() {
-                var testRowList;
-
-                beforeEach(function() {
-                    testRowList = [
-                        {
-                            'none': 1,
-                            'text': 1,
-                            'changeCallback': true
-                        }, {
-                            'none': 2,
-                            'text': 2,
-                            'changeCallback': false
-                        }, {
-                            'none': 3,
-                            'text': 3,
-                            'changeCallback': true
-                        }, {
-                            'none': 4,
-                            'text': 4,
-                            'changeCallback': false
-                        }, {
-                            'none': 5,
-                            'text': 5,
-                            'changeCallback': true
-                        }, {
-                            'none': 6,
-                            'text': 6,
-                            'changeCallback': false
-                        }
-                    ];
-                    dataModelInstance.set(testRowList, {parse: true});
-                });
-
-                it('changeBeforeCallback 이 정의되지 않았을 경우 true 를 리턴한다.', function() {
-                    var row = dataModelInstance.at(0),
-                        result = dataModelInstance._executeChangeBeforeCallback(row, 'text');
-                    expect(result).toBe(true);
-                });
-
-                it('changeBeforeCallback 이 정의된 경우, changeCallback 의 반환 값을 리턴한다.', function() {
-                    var row = dataModelInstance.at(0),
-                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
-
-                    expect(result).toBe(true);
-
-                    row = dataModelInstance.at(1);
-                    result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
-                    expect(result).toBe(false);
-                });
-
-                describe('changeBeforeCallback 의 결과값에 따른 동작 확인', function() {
-                    var row,
-                        result;
-
-                    beforeEach(function() {
-                        row = dataModelInstance.at(0);
-                    });
-
-                    it('callback 결과 값이 true 인 경우 정상적으로 값이 변경된다.', function() {
-                        row.set('changeCallback', 1, {silent: true});
-                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
-                        expect(result).toBe(true);
-                        expect(row.get('changeCallback')).toBe(1);
-                    });
-
-                    it('callback 결과 값이 false 인 경우 이전 값으로 복원되어야 한다..', function() {
-                        var previous = row.get('changeCallback');
-                        row.set('changeCallback', false, {silent: true});
-                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
-                        expect(result).toBe(false);
-
-                        //이전 값으로 복원 되었는지 확인 한다.
-                        expect(row.get('changeCallback')).toBe(previous);
-                    });
-
-                    it('callback 결과 값이 false 인 경우 restore 이벤트가 발생한다.', function() {
-                        var previous = row.get('changeCallback'),
-                            listenModel = new Model(),
-                            callback = jasmine.createSpy('callback');
-
-                        listenModel.listenTo(dataModelInstance, 'restore', callback);
-
-                        row.set('changeCallback', false, {silent: true});
-                        result = dataModelInstance._executeChangeBeforeCallback(row, 'changeCallback');
-                        expect(result).toBe(false);
-                        expect(row.get('changeCallback')).toBe(previous);
-                        expect(callback).toHaveBeenCalledWith({changed: {changeCallback: true}});
-                    });
-                });
-            });
-
-            describe('_executeChangeAfterCallback()', function() {
-                var callback;
-
-                beforeEach(function() {
-                    callback = jasmine.createSpy('callback');
-                    columnModelInstance.set('columnModelList', [{
-                        title: 'changeCallback',
-                        columnName: 'changeCallback',
-                        editOption: {
-                            changeAfterCallback: function(changeEvent) {
-                                callback(changeEvent);
-                            }
-                        }
-                    }]);
-                    dataModelInstance.set(rowList, {parse: true});
-                });
-
-                it('데이터 변경이 완료된 이후 changeAfterCallback 을 수행한다.', function() {
-                    var row = dataModelInstance.at(0);
-                    row.set('changeCallback', 'new value');
-                    expect(callback).toHaveBeenCalledWith({
-                        rowKey: 0,
-                        columnName: 'changeCallback',
-                        value: 'new value',
-                        instance: 'publicInstance'
                     });
                 });
             });

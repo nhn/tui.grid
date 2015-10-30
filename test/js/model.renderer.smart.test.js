@@ -24,10 +24,10 @@ describe('model.renderer', function() {
     };
 
     var rowList = [],
-        columnModelInstance,
-        dataModelInstance,
-        renderInstance,
-        dimensionModelInstance,
+        columnModel,
+        dataModel,
+        renderer,
+        dimensionModel,
         grid = {};
 
     (function setSampleRows() {
@@ -37,122 +37,119 @@ describe('model.renderer', function() {
         }
     })();
 
-    columnModelInstance = grid.columnModel = new ColumnModelData({});
-    columnModelInstance.set('columnModelList', columnModelList);
-    dataModelInstance = grid.dataModel = new RowListData([], {
-        grid: grid
-    });
-    dimensionModelInstance = grid.dimensionModel = new Dimension({
-        grid: grid,
-        offsetLeft: 100,
-        offsetTop: 200,
-        width: 500,
-        height: 500,
-        headerHeight: 150,
-        rowHeight: 10,
-        displayRowCount: 20,
-        scrollX: true,
-        scrollBarSize: 17,
-        bodyHeight: 100,
-        minimumColumnWidth: 20
-    });
-
-    dimensionModelInstance.set('bodyHeight',
-        util.getHeight(dimensionModelInstance.get('displayRowCount'), dimensionModelInstance.get('rowHeight')));
-
     beforeEach(function() {
-        dataModelInstance.set(rowList, {parse: true});
-        renderInstance = new SmartRenderer({
+        columnModel = grid.columnModel = new ColumnModelData({});
+        columnModel.set('columnModelList', columnModelList);
+        dataModel = grid.dataModel = new RowListData([], {
             grid: grid
         });
-        renderInstance.refresh();
+        dimensionModel = grid.dimensionModel = new Dimension({
+            grid: grid,
+            offsetLeft: 100,
+            offsetTop: 200,
+            width: 500,
+            height: 500,
+            headerHeight: 150,
+            rowHeight: 10,
+            displayRowCount: 20,
+            scrollX: true,
+            scrollBarSize: 17,
+            minimumColumnWidth: 20
+        });
+        dataModel.reset(rowList, {parse: true});
+        renderer = new SmartRenderer({
+            grid: grid
+        });
+        renderer.refresh();
     });
 
     describe('_setRenderingRange()', function() {
-        it('scrollTop 변경에 따라 값을 설정한다.', function() {
-            function getDiff(start, end) {
-                return end - start;
-            }
-            renderInstance._setRenderingRange(0);
-            expect(renderInstance.get('top')).toBe(0);
-            expect(renderInstance.get('startIndex')).toBe(0);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(39);
+        it('when scrollTop = 0', function() {
+            renderer._setRenderingRange(0);
+            expect(renderer.get('top')).toBe(0);
+            expect(renderer.get('startIndex')).toBe(0);
+            expect(renderer.get('endIndex')).toBe(40);
+        });
 
-            renderInstance._setRenderingRange(100);
-            expect(renderInstance.get('top')).toBe(0);
-            expect(renderInstance.get('startIndex')).toBe(0);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(39);
+        it('when scrollTop = 100', function() {
+            renderer._setRenderingRange(100);
+            expect(renderer.get('top')).toBe(0);
+            expect(renderer.get('startIndex')).toBe(0);
+            expect(renderer.get('endIndex')).toBe(40);
+        });
 
-            renderInstance._setRenderingRange(200);
-            expect(renderInstance.get('top')).toBe(77);
-            expect(renderInstance.get('startIndex')).toBe(7);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(41);
+        it('when scrollTop = 200', function() {
+            renderer._setRenderingRange(200);
+            expect(renderer.get('top')).toBe(77);
+            expect(renderer.get('startIndex')).toBe(7);
+            expect(renderer.get('endIndex')).toBe(49);
+        });
 
-            renderInstance._setRenderingRange(300);
-            expect(renderInstance.get('top')).toBe(176);
-            expect(renderInstance.get('startIndex')).toBe(16);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(41);
+        it('when scrollTop = 300', function() {
+            renderer._setRenderingRange(300);
+            expect(renderer.get('top')).toBe(176);
+            expect(renderer.get('startIndex')).toBe(16);
+            expect(renderer.get('endIndex')).toBe(58);
+        });
 
-            renderInstance._setRenderingRange(400);
-            expect(renderInstance.get('top')).toBe(275);
-            expect(renderInstance.get('startIndex')).toBe(25);
-            expect(getDiff(renderInstance.get('startIndex'), renderInstance.get('endIndex'))).toBe(41);
+        it('when scrollTop = 400', function() {
+            renderer._setRenderingRange(400);
+            expect(renderer.get('top')).toBe(275);
+            expect(renderer.get('startIndex')).toBe(25);
+            expect(renderer.get('endIndex')).toBe(67);
         });
     });
 
     describe('_isRenderable()', function() {
-        it('scrollTop 변경에 따라 rendering 해야할지 여부를 판단하여 반환한다.', function () {
-            renderInstance._setRenderingRange(0);
-            expect(renderInstance._isRenderable(0)).toBe(false);
-            expect(renderInstance._isRenderable(100)).toBe(false);
-            expect(renderInstance._isRenderable(200)).toBe(true);
-            expect(renderInstance._isRenderable(300)).toBe(true);
-            expect(renderInstance._isRenderable(400)).toBe(true);
-            expect(renderInstance._isRenderable(500)).toBe(true);
+        it('when scrollTop = 0', function() {
+            renderer._setRenderingRange(0);
+            expect(renderer._isRenderable(0)).toBe(false);
+            expect(renderer._isRenderable(100)).toBe(false);
+            expect(renderer._isRenderable(200)).toBe(true);
+            expect(renderer._isRenderable(300)).toBe(true);
+            expect(renderer._isRenderable(400)).toBe(true);
+            expect(renderer._isRenderable(500)).toBe(true);
+        });
 
-            renderInstance._setRenderingRange(200);
-            expect(renderInstance._isRenderable(0)).toBe(true);
-            expect(renderInstance._isRenderable(100)).toBe(false);
-            expect(renderInstance._isRenderable(200)).toBe(false);
-            expect(renderInstance._isRenderable(300)).toBe(true);
-            expect(renderInstance._isRenderable(400)).toBe(true);
-            expect(renderInstance._isRenderable(500)).toBe(true);
+        it('when scrollTop = 200', function() {
+            renderer._setRenderingRange(200);
+            expect(renderer._isRenderable(0)).toBe(true);
+            expect(renderer._isRenderable(100)).toBe(false);
+            expect(renderer._isRenderable(200)).toBe(false);
+            expect(renderer._isRenderable(300)).toBe(true);
+            expect(renderer._isRenderable(400)).toBe(true);
+            expect(renderer._isRenderable(500)).toBe(true);
+        });
 
-            renderInstance._setRenderingRange(400);
-            expect(renderInstance._isRenderable(0)).toBe(true);
-            expect(renderInstance._isRenderable(100)).toBe(true);
-            expect(renderInstance._isRenderable(200)).toBe(true);
-            expect(renderInstance._isRenderable(300)).toBe(false);
-            expect(renderInstance._isRenderable(400)).toBe(false);
-            expect(renderInstance._isRenderable(500)).toBe(true);
+        it('when scrollTop = 400', function() {
+            renderer._setRenderingRange(400);
+            expect(renderer._isRenderable(0)).toBe(true);
+            expect(renderer._isRenderable(100)).toBe(true);
+            expect(renderer._isRenderable(200)).toBe(true);
+            expect(renderer._isRenderable(300)).toBe(false);
+            expect(renderer._isRenderable(400)).toBe(false);
+            expect(renderer._isRenderable(500)).toBe(true);
         });
     });
 
-    describe('_onChange()', function() {
-        it('bodyHeight', function () {
-            renderInstance._setRenderingRange(0);
-            expect(renderInstance._isRenderable(0)).toBe(false);
-            expect(renderInstance._isRenderable(100)).toBe(false);
-            expect(renderInstance._isRenderable(200)).toBe(true);
-            expect(renderInstance._isRenderable(300)).toBe(true);
-            expect(renderInstance._isRenderable(400)).toBe(true);
-            expect(renderInstance._isRenderable(500)).toBe(true);
+    describe('When dimension.bodyHeight is changed', function() {
+        var proto;
 
-            renderInstance._setRenderingRange(200);
-            expect(renderInstance._isRenderable(0)).toBe(true);
-            expect(renderInstance._isRenderable(100)).toBe(false);
-            expect(renderInstance._isRenderable(200)).toBe(false);
-            expect(renderInstance._isRenderable(300)).toBe(true);
-            expect(renderInstance._isRenderable(400)).toBe(true);
-            expect(renderInstance._isRenderable(500)).toBe(true);
+        beforeEach(function() {
+            renderer._setRenderingRange(0);
+            proto = renderer.constructor.prototype;
+            spyOn(proto, 'refresh');
+        });
 
-            renderInstance._setRenderingRange(400);
-            expect(renderInstance._isRenderable(0)).toBe(true);
-            expect(renderInstance._isRenderable(100)).toBe(true);
-            expect(renderInstance._isRenderable(200)).toBe(true);
-            expect(renderInstance._isRenderable(300)).toBe(false);
-            expect(renderInstance._isRenderable(400)).toBe(false);
-            expect(renderInstance._isRenderable(500)).toBe(true);
+        it('refresh() method will be called if renderable', function() {
+            dimensionModel.set('bodyHeight', 200);
+            expect(proto.refresh).not.toHaveBeenCalled();
+
+            dimensionModel.set('bodyHeight', 300);
+            expect(proto.refresh).not.toHaveBeenCalled();
+
+            dimensionModel.set('bodyHeight', 500);
+            expect(proto.refresh).toHaveBeenCalled();
         });
     });
 });

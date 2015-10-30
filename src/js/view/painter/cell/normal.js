@@ -46,7 +46,7 @@ var Normal = ne.util.defineClass(Cell,/**@lends module:painter/cell/normal.proto
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
             rowKey = cellData.rowKey;
         if (ne.util.isFunction(columnModel.formatter)) {
-            value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).attributes, columnModel);
+            value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
         }
         if (!ne.util.isExisty(value)) {
             value = '';
