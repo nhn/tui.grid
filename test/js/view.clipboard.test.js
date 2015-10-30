@@ -363,12 +363,12 @@ describe('view.clipboard', function() {
                 grid.focus(0, 'c1');
             });
 
-            it('selection 이 선택되어 있다면 grid.selection.getSelectionToString 을 호출한다', function() {
+            it('selection 이 선택되어 있다면 grid.selection.getValuesToString 을 호출한다', function() {
                 grid.selectionModel.start(0, 0);
                 grid.selectionModel.update(2, 2);
-                grid.selectionModel.getSelectionToString = jasmine.createSpy('getSelectionToString');
+                grid.selectionModel.getValuesToString = jasmine.createSpy('getValuesToString');
                 clipboard._getClipboardString();
-                expect(grid.selectionModel.getSelectionToString).toHaveBeenCalled();
+                expect(grid.selectionModel.getValuesToString).toHaveBeenCalled();
             });
 
             it('아니라면 현재 focus된 컬럼의 내용만 리턴한다.', function() {

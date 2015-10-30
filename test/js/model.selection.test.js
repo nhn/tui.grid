@@ -96,11 +96,11 @@ describe('model/selection', function() {
             });
         });
 
-        describe('getSelectionToString', function() {
+        describe('getValuesToString', function() {
             it('현재 selection 범위에 대해  string 으로 반환한다.', function() {
                 selection.start(0, 1);
                 selection.update(2, 2);
-                expect(selection.getSelectionToString()).toEqual('' +
+                expect(selection.getValuesToString()).toEqual('' +
                 '0-2\topt1\n' +
                 '1-2\topt2\n' +
                 '2-2\topt3'
@@ -117,16 +117,44 @@ describe('model/selection', function() {
         });
 
         describe('_adjustScroll', function() {
-            it('', function() {
+            beforeEach(function() {
                 grid.renderModel.set({
-                    maxScrollLeft: 10
+                    maxScrollLeft: 20,
+                    maxScrollTop: 20
                 });
-                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
-                selection._adjustScroll(1, 0);
+                selection.scrollPixelScale = 10;
+            });
 
+            it('첫번째 파라미터가 음수/양수이냐에 따라 scrollLeft 값을 scrollPixelScale 값만큼 증가/감소시킨다.', function() {
+                selection._adjustScroll(1, 0);
                 expect(grid.renderModel.get('scrollLeft')).toEqual(10);
+
                 selection._adjustScroll(-1, 0);
                 expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+            });
+
+            it('두번째 파라미터가 음수/양수이냐에 따라 scrollTop 값을 scrollPixelScale 값만큼 증가/감소시킨다.', function() {
+                selection._adjustScroll(0, 1);
+                expect(grid.renderModel.get('scrollTop')).toEqual(10);
+
+                selection._adjustScroll(0, -1);
+                expect(grid.renderModel.get('scrollTop')).toEqual(0);
+            });
+
+            it('변경된 값은 0보다 커야 한다.', function() {
+                selection._adjustScroll(-1, -1);
+                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+                expect(grid.renderModel.get('scrollTop')).toEqual(0);
+            });
+
+            it('변경된 값은 maxScrollTop, maxScrollLeft 보다 작아야 한다.', function() {
+                grid.renderModel.set({
+                    maxScrollLeft: 5,
+                    maxScrollTop: 5
+                });
+                selection._adjustScroll(1, 1);
+                expect(grid.renderModel.get('scrollLeft')).toEqual(5);
+                expect(grid.renderModel.get('scrollTop')).toEqual(5);
             });
         });
 
@@ -206,7 +234,9 @@ describe('model/selection', function() {
                     selection._getIndexFromMousePosition = function(pageX, pageY) {
                         return {
                             row: pageX,
-                            column: pageY
+                            column: pageY,
+                            overflowX: 0,
+                            overflowY: 0
                         };
                     };
                     selection.updateByMousePosition(2, 2);

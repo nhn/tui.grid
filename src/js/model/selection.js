@@ -22,14 +22,18 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
             inputRange: null,
             intervalIdForAutoScroll: 0,
             scrollPixelScale: 40,
-            _isEnabled: true,
-            _isShown: false
+            _isEnabled: true
         });
 
         this.listenTo(this.grid.dataModel, 'add remove sort reset', this.end);
     },
 
     defaults: {
+        /**
+         * Selection range
+         * ex) {row: [0, 1], column: [1, 2]}
+         * @type {{row: array, column: array}}
+         */
         range: null
     },
 
@@ -185,10 +189,10 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     },
 
     /**
-     *  현재 selection 범위내 데이터를 문자열 형태로 변환하여 반환한다.
-     *  @return {String} selection 범위내 데이터 문자열
+     * Returns the string value of all cells in the selection range as a single string.
+     * @return {String} string value
      */
-    getSelectionToString: function() {
+    getValuesToString: function() {
         var columnNameList = [],
             tmpString = [],
             strings = [],
@@ -236,19 +240,27 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
         var renderModel = this.grid.renderModel,
             scrollLeft = renderModel.get('scrollLeft'),
             maxScrollLeft = renderModel.get('maxScrollLeft'),
-            scrollTop = renderModel.get('scrollTop');
+            scrollTop = renderModel.get('scrollTop'),
+            maxScrollTop = renderModel.get('maxScrollTop'),
+            pixelScale = this.scrollPixelScale;
 
-        if (overflowX < 0) {
-            renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft - this.scrollPixelScale), maxScrollLeft));
-        } else if (overflowX > 0) {
-            renderModel.set('scrollLeft', Math.min(Math.max(0, scrollLeft + this.scrollPixelScale), maxScrollLeft));
+        if (overflowX) {
+            if (overflowX < 0) {
+                scrollLeft = Math.max(0, scrollLeft - pixelScale);
+            } else {
+                scrollLeft = Math.min(maxScrollLeft, scrollLeft + pixelScale);
+            }
+            renderModel.set('scrollLeft', scrollLeft);
         }
 
         /* istanbul ignore next: scrollTop 은 보정로직과 얽혀있어 확인이 어렵기 때문에 무시한다. */
-        if (overflowY < 0) {
-            renderModel.set('scrollTop', Math.max(0, scrollTop - this.scrollPixelScale));
-        } else if (overflowY > 0) {
-            renderModel.set('scrollTop', Math.max(0, scrollTop + this.scrollPixelScale));
+        if (overflowY) {
+            if (overflowY < 0) {
+                scrollTop = Math.max(0, scrollTop - pixelScale);
+            } else {
+                scrollTop = Math.min(maxScrollTop, scrollTop + pixelScale);
+            }
+            renderModel.set('scrollTop', scrollTop);
         }
     },
 
