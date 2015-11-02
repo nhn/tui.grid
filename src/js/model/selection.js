@@ -192,30 +192,22 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @return {String} string value
      */
     getValuesToString: function() {
-        var columnNameList = [],
-            tmpString = [],
-            strings = [],
-            grid = this.grid,
+        var grid = this.grid,
             range = this.get('range'),
-            columnModelList, rowList, string;
+            columnModelList, rowList, columnNameList, rowValues;
 
         columnModelList = grid.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-        _.each(columnModelList, function(columnModel) {
-            columnNameList.push(columnModel['columnName']);
-        });
-
         rowList = grid.dataModel.slice(range.row[0], range.row[1] + 1);
 
-        _.each(rowList, function(row) {
-            tmpString = [];
-            _.each(columnNameList, function(columnName) {
-                tmpString.push(row.getVisibleText(columnName));
+        columnNameList = _.pluck(columnModelList, 'columnName');
+        rowValues = _.map(rowList, function(row) {
+            var tmpString = _.map(columnNameList, function(columnName) {
+                return row.getVisibleText(columnName);
             });
-            strings.push(tmpString.join('\t'));
+            return tmpString.join('\t');
         });
 
-        string = strings.join('\n');
-        return string;
+        return rowValues.join('\n');
     },
 
     /**
@@ -230,37 +222,58 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * scrollTop 과 scrollLeft 값을 조정한다.
+     * Adjusts scrollTop and scrollLeft value.
      * @param {Number} overflowX    가로축 기준 영역 overflow 값
      * @param {Number} overflowY    세로축 기준 영역 overflow 값
      * @private
      */
     _adjustScroll: function(overflowX, overflowY) {
-        var renderModel = this.grid.renderModel,
-            scrollLeft = renderModel.get('scrollLeft'),
-            maxScrollLeft = renderModel.get('maxScrollLeft'),
-            scrollTop = renderModel.get('scrollTop'),
-            maxScrollTop = renderModel.get('maxScrollTop'),
-            pixelScale = this.scrollPixelScale;
+        var renderModel = this.grid.renderModel;
 
         if (overflowX) {
-            if (overflowX < 0) {
-                scrollLeft = Math.max(0, scrollLeft - pixelScale);
-            } else {
-                scrollLeft = Math.min(maxScrollLeft, scrollLeft + pixelScale);
-            }
-            renderModel.set('scrollLeft', scrollLeft);
+            this._adjustScrollLeft(overflowX, renderModel.get('scrollLeft'), renderModel.get('maxScrollLeft'));
         }
-
-        /* istanbul ignore next: scrollTop 은 보정로직과 얽혀있어 확인이 어렵기 때문에 무시한다. */
         if (overflowY) {
-            if (overflowY < 0) {
-                scrollTop = Math.max(0, scrollTop - pixelScale);
-            } else {
-                scrollTop = Math.min(maxScrollTop, scrollTop + pixelScale);
-            }
-            renderModel.set('scrollTop', scrollTop);
+            this._adjustScrollTop(overflowY, renderModel.get('scrollTop'), renderModel.get('maxScrollTop'));
         }
+    },
+
+    /**
+     * Adjusts scrollLeft value.
+     * @param  {number} overflowX - 1 | 0 | -1
+     * @param  {number} scrollLeft - Current scrollLeft value
+     * @param  {number} maxScrollLeft - Max scrollLeft value
+     * @private
+     */
+    _adjustScrollLeft: function(overflowX, scrollLeft, maxScrollLeft) {
+        var adjusted = scrollLeft,
+            pixelScale = this.scrollPixelScale;
+
+        if (overflowX < 0) {
+            adjusted = Math.max(0, scrollLeft - pixelScale);
+        } else if (overflowX > 0) {
+            adjusted = Math.min(maxScrollLeft, scrollLeft + pixelScale);
+        }
+        this.grid.renderModel.set('scrollLeft', adjusted);
+    },
+
+    /**
+     * Adjusts scrollTop value.
+     * @param  {[type]} overflowY - 1 | 0 | -1
+     * @param  {number} scrollTop - Current scrollTop value
+     * @param  {number} maxScrollTop - Max scrollTop value
+     * @private
+     */
+    _adjustScrollTop: function(overflowY, scrollTop, maxScrollTop) {
+        var adjusted = scrollTop,
+            pixelScale = this.scrollPixelScale;
+
+        if (overflowY < 0) {
+            adjusted = Math.max(0, scrollTop - pixelScale);
+        } else if (overflowY > 0) {
+            adjusted = Math.min(maxScrollTop, scrollTop + pixelScale);
+        }
+        this.grid.renderModel.set('scrollTop', adjusted);
     },
 
     /**
@@ -336,7 +349,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _resetRangeAttribute: function() {
         var dataModel = this.grid.dataModel,
-            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
             spannedRange = null,
             tmpRowRange;
 

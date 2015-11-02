@@ -59,25 +59,25 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @param {array} columnRange - Column range indexes. [start, end]
      * @return {array} - Relative column range indexes. [start, end]
      */
-    _getMySideColumnRange: function(columnRange) {
+    _getOwnSideColumnRange: function(columnRange) {
         var columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
-            myColumnRange = null;
+            ownColumnRange = null;
 
         if (this.whichSide === 'L') {
             if (columnRange[0] < columnFixCount) {
-                myColumnRange = [
+                ownColumnRange = [
                     columnRange[0],
                     Math.min(columnRange[1], columnFixCount - 1)
                 ];
             }
         } else if (columnRange[1] >= columnFixCount) {
-            myColumnRange = [
+            ownColumnRange = [
                 Math.max(columnRange[0], columnFixCount) - columnFixCount,
                 columnRange[1] - columnFixCount
             ];
         }
 
-        return myColumnRange;
+        return ownColumnRange;
     },
 
     /**
@@ -142,7 +142,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             styles, columnRange;
 
         if (range) {
-            columnRange = this._getMySideColumnRange(range.column);
+            columnRange = this._getOwnSideColumnRange(range.column);
         }
         if (columnRange) {
             styles = _.assign({},
