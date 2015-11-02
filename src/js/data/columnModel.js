@@ -76,7 +76,9 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         var hasNumberColumn = this.get('hasNumberColumn'),
             numberColumn = {
                 columnName: '_number',
+                align: 'center',
                 title: 'No.',
+                isFixedWidth: true,
                 width: 60
             };
         if (!hasNumberColumn) {
@@ -102,7 +104,8 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
                         value: 'selected'
                     }]
                 },
-                width: 50
+                isFixedWidth: true,
+                width: 40 
             };
 
         if (selectType === 'checkbox') {

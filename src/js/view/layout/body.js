@@ -5,7 +5,7 @@
 'use strict';
 
 var View = require('../../base/view');
-var SelectionLayer = require('../../view/selectionLayer');
+var SelectionLayer = require('../selectionLayer');
 var BodyTableView = require('./bodyTable');
 
 var HTML_CONTAINER = '<div class="body_container"></div>';

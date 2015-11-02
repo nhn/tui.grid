@@ -358,7 +358,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (this.inputRange) {
             spannedRange = {
                 row: _.sortBy(this.inputRange.row),
-                column: _.sortBy(this.inputRange.column),
+                column: _.sortBy(this.inputRange.column)
             }
             if (dataModel.isRowSpanEnable()) {
                 do {
