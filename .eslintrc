@@ -67,6 +67,9 @@
         //Legacy
         "no-plusplus": 2,
 
+        // IE7
+        "comma-dangle": [2, "never"],
+
         //only for this project
         "no-undefined": 0,
         "no-alert": 0,
