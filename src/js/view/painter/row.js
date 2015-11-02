@@ -27,10 +27,6 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         });
     },
 
-    eventHandler: {
-        'mousedown': '_onMouseDown'
-    },
-
     baseTemplate: _.template(
         '' +
         '<tr ' +
@@ -40,31 +36,6 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
         '<%=contents%>' +
         '</tr>'
     ),
-
-    /**
-     * mousedown 이벤트 핸들러
-     * @param {Event} mouseDownEvent 이벤트 객체
-     * @private
-     */
-    _onMouseDown: function(mouseDownEvent) {
-        var $td = $(mouseDownEvent.target).closest('td'),
-            $tr = $(mouseDownEvent.target).closest('tr'),
-            columnName = $td.attr('columnName'),
-            rowKey = $tr.attr('key'),
-            grid = this.grid,
-            columnModel = grid.columnModel;
-
-        if (grid.option('selectType') === 'radio') {
-            grid.check(rowKey);
-        }
-
-        if (columnModel.isMetaColumn(columnName)) {
-            // meta column clicked
-        } else {
-            grid.focus(rowKey, columnName);
-            grid.selection.onMouseDown(mouseDownEvent);
-        }
-    },
 
     /**
      * model 변경 시 이벤트 핸들러

@@ -34,11 +34,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rside: rside
         });
 
-        this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange, this)
-            .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange, this)
-            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange, this)
-            .listenTo(lside, 'valueChange', this._onValueChange, this)
-            .listenTo(rside, 'valueChange', this._onValueChange, this);
+        this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange)
+            .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange)
+            .listenTo(lside, 'valueChange', this._onValueChange)
+            .listenTo(rside, 'valueChange', this._onValueChange)
+            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange)
+            .listenTo(this.grid.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
+                this._onHeightChange);
     },
 
     defaults: {
@@ -46,6 +48,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         scrollTop: 0,
         scrollLeft: 0,
         maxScrollLeft: 0,
+        maxScrollTop: 0,
         startIndex: 0,
         endIndex: 0,
         startNumber: 1,
@@ -69,6 +72,17 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onWidthChange: function() {
         var dimension = this.grid.dimensionModel;
         this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
+    },
+
+    /**
+     * Event handler to reset 'maxScrollTop' attribute.
+     * @private
+     */
+    _onHeightChange: function() {
+        var dimension = this.grid.dimensionModel,
+            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
+
+        this.set('maxScrollTop', maxScrollTop);
     },
 
     /**

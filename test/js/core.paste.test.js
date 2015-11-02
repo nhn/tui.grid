@@ -96,8 +96,8 @@ describe('grid.core.paste()', function() {
                 ['New1-1', 'New1-2'],
                 ['New2-1', 'New2-2']
             ]);
-            startIdx = grid.selection.getStartIndex();
-            endIdx = grid.selection.getEndIndex();
+            startIdx = grid.selectionModel.getStartIndex();
+            endIdx = grid.selectionModel.getEndIndex();
 
             expect(startIdx.rowIdx).toBe(0);
             expect(startIdx.columnIdx).toBe(0);
@@ -244,8 +244,8 @@ describe('grid.core.paste()', function() {
                 c3: '2-3'
             }
         ]);
-        grid.selection.startSelection(0, 0);
-        grid.selection.updateSelection(1, 1);
+        grid.selectionModel.start(0, 0);
+        grid.selectionModel.update(1, 1);
         grid.focus(1, 'c2');
         grid.paste([
             ['New0-1', 'New0-2'],

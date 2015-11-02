@@ -2,17 +2,12 @@
 
 var Core = require('../../src/js/core');
 
-describe('view.selection', function() {
-    var grid,
-        $empty;
-
-    jasmine.getFixtures().fixturesPath = 'base/';
-    loadFixtures('test/fixtures/empty.html');
-    $empty = $('#empty');
+describe('model/selection', function() {
+    var grid;
 
     beforeEach(function() {
         grid = new Core({
-            el: $empty,
+            el: setFixtures('<div />'),
             columnModelList: [
                 {
                     title: 'c1',
@@ -68,23 +63,24 @@ describe('view.selection', function() {
         var selection;
 
         beforeEach(function() {
-            selection = grid.selection;
+            selection = grid.selectionModel;
         });
+
         afterEach(function() {
             selection.destroy();
         });
 
         it('enable', function() {
             selection.enable();
-            expect(selection.isEnable).toBe(true);
+            expect(selection.isEnabled()).toBe(true);
         });
 
         it('disable', function() {
-            selection.endSelection = jasmine.createSpy('endSelection');
+            selection.end = jasmine.createSpy('end');
 
             selection.disable();
-            expect(selection.isEnable).toBe(false);
-            expect(selection.endSelection).toHaveBeenCalled();
+            expect(selection.isEnabled()).toBe(false);
+            expect(selection.end).toHaveBeenCalled();
         });
 
         describe('_isAutoScrollable()', function() {
@@ -100,63 +96,65 @@ describe('view.selection', function() {
             });
         });
 
-        describe('_adjustScroll', function() {
-
-        });
-
-        describe('_getDistance', function() {
-            it('피타고라스의 정리를 이용해 거리를 잘 구하는지 확인한다.', function() {
-                var distance;
-
-                selection.pageX = 10;
-                selection.pageY = 10;
-                distance = selection._getDistance({
-                    pageX: 12,
-                    pageY: 12
-                });
-                expect(distance).toBe(Math.round(Math.sqrt(8)));
-            });
-        });
-
-        describe('_onMouseUp', function() {
-            it('detachMouseEvent 를 호출하는지 확인한다.', function() {
-                selection.detachMouseEvent = jasmine.createSpy('detachMouseEvent');
-                selection._onMouseUp();
-                expect(selection.detachMouseEvent).toHaveBeenCalled();
-            });
-        });
-
-        describe('getSelectionToString', function() {
+        describe('getValuesToString', function() {
             it('현재 selection 범위에 대해  string 으로 반환한다.', function() {
-                selection.startSelection(0, 1);
-                selection.updateSelection(2, 2);
-                expect(selection.getSelectionToString()).toEqual('' +
+                selection.start(0, 1);
+                selection.update(2, 2);
+                expect(selection.getValuesToString()).toEqual('' +
                 '0-2\topt1\n' +
                 '1-2\topt2\n' +
                 '2-2\topt3'
                 );
-                selection.endSelection();
+                selection.end();
             });
         });
 
         describe('selectAll', function() {
             it('전체 영역을 선택한다. 메타컬럼은 range에서 제외된다.', function() {
                 selection.selectAll();
-                expect(selection.getRange()).toEqual({row: [0, 2], column: [0, 2]});
+                expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 2]});
             });
         });
 
         describe('_adjustScroll', function() {
-            it('', function() {
+            beforeEach(function() {
                 grid.renderModel.set({
-                    maxScrollLeft: 10
+                    maxScrollLeft: 20,
+                    maxScrollTop: 20
                 });
-                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
-                selection._adjustScroll(1, 0);
+                selection.scrollPixelScale = 10;
+            });
 
+            it('첫번째 파라미터가 음수/양수이냐에 따라 scrollLeft 값을 scrollPixelScale 값만큼 증가/감소시킨다.', function() {
+                selection._adjustScroll(1, 0);
                 expect(grid.renderModel.get('scrollLeft')).toEqual(10);
+
                 selection._adjustScroll(-1, 0);
                 expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+            });
+
+            it('두번째 파라미터가 음수/양수이냐에 따라 scrollTop 값을 scrollPixelScale 값만큼 증가/감소시킨다.', function() {
+                selection._adjustScroll(0, 1);
+                expect(grid.renderModel.get('scrollTop')).toEqual(10);
+
+                selection._adjustScroll(0, -1);
+                expect(grid.renderModel.get('scrollTop')).toEqual(0);
+            });
+
+            it('변경된 값은 0보다 커야 한다.', function() {
+                selection._adjustScroll(-1, -1);
+                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+                expect(grid.renderModel.get('scrollTop')).toEqual(0);
+            });
+
+            it('변경된 값은 maxScrollTop, maxScrollLeft 보다 작아야 한다.', function() {
+                grid.renderModel.set({
+                    maxScrollLeft: 5,
+                    maxScrollTop: 5
+                });
+                selection._adjustScroll(1, 1);
+                expect(grid.renderModel.get('scrollLeft')).toEqual(5);
+                expect(grid.renderModel.get('scrollTop')).toEqual(5);
             });
         });
 
@@ -225,56 +223,27 @@ describe('view.selection', function() {
             // TODO: 구현
         });
 
-        describe('_onMouseMove', function() {
-            afterEach(function() {
-                clearInterval(selection.intervalIdForAutoScroll);
-            });
-
+        describe('updateByMousePosition()', function() {
             describe('selection 이 있을경우', function() {
                 beforeEach(function() {
-                    selection.startSelection(0, 0);
-                    selection.updateSelection(1, 1);
+                    selection.start(0, 0);
+                    selection.update(1, 1);
                 });
 
                 it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
-                    expect(selection.getRange()).toEqual({row: [0, 1], column: [0, 1]});
-                    selection.getIndexFromMousePosition = function(pageX, pageY) {
+                    selection._getIndexFromMousePosition = function(pageX, pageY) {
                         return {
                             row: pageX,
-                            column: pageY
+                            column: pageY,
+                            overflowX: 0,
+                            overflowY: 0
                         };
                     };
-                    selection._onMouseMove({
-                        pageX: 2,
-                        pageY: 2
-                    });
-                    expect(selection.getRange()).toEqual({row: [0, 2], column: [0, 2]});
+                    selection.updateByMousePosition(2, 2);
+                    expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 2]});
                 });
-            });
-
-            describe('selection 이 없을경우', function() {
-                it('움직인 거리가 10보다 클 경우 selection 을 시작한다.', function() {
-                    selection._getDistance = function() {
-                        return 11;
-                    };
-                    selection._onMouseMove({
-                        pageX: 100,
-                        pageY: 200
-                    });
-                    expect(selection.hasSelection()).toBe(true);
-                });
-
-                it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다..', function() {
-                    selection._getDistance = function () {
-                        return 8;
-                    };
-                    selection._onMouseMove({
-                        pageX: 100,
-                        pageY: 200
-                    });
-                    expect(selection.hasSelection()).toBe(false);
-                });
-            });
+            })
         });
+        ;
     });
 });

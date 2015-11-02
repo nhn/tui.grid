@@ -5,7 +5,10 @@
 'use strict';
 
 var View = require('../../base/view');
-var RowListView = require('../rowList');
+var SelectionLayer = require('../../view/selectionLayer');
+var BodyTableView = require('./bodyTable');
+
+var HTML_CONTAINER = '<div class="body_container"></div>';
 
 /**
  * Class for the body layout
@@ -21,17 +24,12 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            // Div for setting rendering position of entire child-nodes of $el.
-            $bodyContainer: null,
-            // Div for redraw table element with innerHTML.
-            $tableContainer: null,
-            whichSide: options && options.whichSide || 'R',
-            isScrollSync: false,
-            extraWidth: 0
+            // DIV for setting rendering position of entire child-nodes of $el.
+            $container: null,
+            whichSide: options && options.whichSide || 'R'
         });
 
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
-            .listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
+        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
             .listenTo(this.grid.dataModel, 'add remove reset', this._resetContainerHeight)
             .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange)
             .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
@@ -41,19 +39,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     className: 'data',
 
-    template: _.template('' +
-        '<div class="body_container">' +
-        '   <div class="table_container"><%=table%></div>' +
-        '</div>'),
-
-    templateTable: _.template('' +
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
-        '   <colgroup><%=colGroup%></colgroup>' +
-        '   <tbody><%=tbody%></tbody>' +
-        '</table>'),
-
     events: {
-        'scroll': '_onScroll'
+        'scroll': '_onScroll',
+        'mousedown .body_container': '_onMouseDown'
     },
 
     /**
@@ -70,22 +58,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Resets the height of a container div.
      */
     _resetContainerHeight: function() {
-        this.$bodyContainer.css({
+        this.$container.css({
             height: this.grid.dimensionModel.get('totalRowHeight')
         });
-    },
-
-    /**
-     * Event handler for 'columnWidthChanged' event on a dimension model.
-     * @private
-     */
-    _onColumnWidthChanged: function() {
-        var columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide),
-            $colList = this.$el.find('col');
-
-        _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', (width - Body.extraWidth) + 'px');
-        }, this);
     },
 
     /**
@@ -127,14 +102,118 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Reset position of a table container
-     * @param {number} top  조정할 top 위치 값
+     * mousedown 이벤트 핸들러
+     * @param {Event} mouseDownEvent 이벤트 객체
      * @private
      */
-    resetTablePosition: function() {
-        this.$tableContainer.css({
-            top: this.grid.renderModel.get('top') + 'px'
+    _onMouseDown: function(event) {
+        var $td = $(event.target).closest('td'),
+            $tr = $(event.target).closest('tr'),
+            columnName = $td.attr('columnName'),
+            rowKey = $tr.attr('key'),
+            grid = this.grid,
+            columnModel = grid.columnModel;
+
+        if (grid.option('selectType') === 'radio') {
+            grid.check(rowKey);
+        }
+
+        if (columnModel.isMetaColumn(columnName)) {
+            // meta column clicked
+        } else {
+            grid.focus(rowKey, columnName);
+            this._checkSelectionAction(event.pageX, event.pageY, event.shiftKey);
+        }
+    },
+
+    /**
+     * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
+     * @param {Number} pageX    초기값으로 설정할 마우스 x좌표
+     * @param {Number} pageY    초기값으로 설정할 마우스 y 좌표
+     */
+    _attachDragEvents: function(pageX, pageY) {
+        this.setOwnProperties({
+            mouseDownX: pageX,
+            mouseDownY: pageY
         });
+        this.grid.updateLayoutData();
+        $(document)
+            .on('mousemove', $.proxy(this._onMouseMove, this))
+            .on('mouseup', $.proxy(this._detachDragEvents, this))
+            .on('selectstart', $.proxy(this._onSelectStart, this));
+    },
+
+    /**
+     * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
+     */
+    _detachDragEvents: function() {
+        this.grid.selectionModel.stopAutoScroll();
+        $(document)
+            .off('mousemove', $.proxy(this._onMouseMove, this))
+            .off('mouseup', $.proxy(this._detachDragEvents, this))
+            .off('selectstart', $.proxy(this._onSelectStart, this));
+    },
+
+    /**
+     * Event handler for 'mousemove' event during drag
+     * @param {MouseEvent} event - MouseEvent object
+     */
+    _onMouseMove: function(event) {
+        var selectionModel = this.grid.selectionModel,
+            pageX = event.pageX,
+            pageY = event.pageY;
+
+        if (selectionModel.hasSelection()) {
+            selectionModel.updateByMousePosition(pageX, pageY);
+        } else if (this._getMouseMoveDistance(pageX, pageY) > 10) {
+            selectionModel.startByMousePosition(this.mouseDownX, this.mouseDownY);
+            selectionModel.updateByMousePosition(pageX, pageY);
+        }
+    },
+
+    /**
+     * Returns the distance between 'mousedown' position and specified position.
+     * @param {number} pageX - X position relative to the document
+     * @param {number} pageY - Y position relative to the document
+     * @return {number} Distance
+     * @private
+     */
+    _getMouseMoveDistance: function(pageX, pageY) {
+        var dx = Math.abs(this.mouseDownX - pageX),
+            dy = Math.abs(this.mouseDownY - pageY);
+
+        return Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
+    },
+
+    /**
+     * select start 이벤트를 방지한다.
+     * @param {event} selectStartEvent 이벤트 객체
+     * @returns {boolean} false
+     * @private
+     */
+    _onSelectStart: function(event) {
+        event.preventDefault();
+        return false;
+    },
+
+    /**
+     * Checks the state of selection model and event, and process actions related to selection.
+     * @param {number} pageX - X position relative to the document
+     * @param {number} pageY - Y position relative to the document
+     * @param {boolean} shiftKey - True if the shiftKey was down
+     */
+    _checkSelectionAction: function(pageX, pageY, shiftKey) {
+        var selectionModel = this.grid.selectionModel;
+
+        if (!selectionModel.isEnabled()) {
+            return;
+        }
+        if (shiftKey) {
+            selectionModel.updateByMousePosition(pageX, pageY);
+        } else {
+            selectionModel.end();
+        }
+        this._attachDragEvents(pageX, pageY);
     },
 
     /**
@@ -144,110 +223,36 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     render: function() {
         var grid = this.grid,
             whichSide = this.whichSide,
-            collection = grid.renderModel.getCollection(whichSide),
-            selection, rowList, tableHtml;
+            selectionLayer, bodyTableView;
 
         this.destroyChildren();
 
         if (!this.grid.option('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
-
         if (!this.grid.option('scrollY') && whichSide === 'R') {
             this.$el.css('overflow-y', 'hidden');
         }
+        this.$el.css('height', grid.dimensionModel.get('bodyHeight'));
 
-        tableHtml = this.templateTable({
-            colGroup: this._getColGroupMarkup(),
-            tbody: ''
-        });
+        this.$container = $(HTML_CONTAINER);
+        this.$el.append(this.$container);
 
-        this.$el.css({
-            height: grid.dimensionModel.get('bodyHeight')
-        }).html(this.template({
-            table: tableHtml
-        }));
-        this.$bodyContainer = this.$el.find('div.body_container');
-        this.$tableContainer = this.$el.find('div.table_container');
-
-        rowList = this.createView(RowListView, {
+        bodyTableView = this.createView(BodyTableView, {
             grid: grid,
-            collection: collection,
-            bodyView: this,
-            el: this.$el.find('tbody'),
             whichSide: whichSide
         });
-        rowList.render();
+        selectionLayer = this.createView(SelectionLayer, {
+            grid: grid,
+            whichSide: whichSide
+        });
 
-        //selection 을 랜더링한다.
-        selection = this.addView(grid.selection.createLayer(whichSide));
-        this.$bodyContainer.append(selection.render().el);
-
+        this.$container.append(
+            bodyTableView.render().el,
+            selectionLayer.render().el
+        );
         return this;
-    },
-
-    /**
-     * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
-     * @param {string} selector - 선택자
-     * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
-     */
-    attachTableEventHandler: function(selector, handlerInfos) {
-        _.each(handlerInfos, function(obj, eventName) {
-            this.$tableContainer.on(eventName, selector + ' ' + obj.selector, obj.handler);
-        }, this);
-    },
-
-    /**
-     * table 요소를 새로 생성한다.
-     * (IE7-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
-     * @param {string} tbodyHtml - tbody의 innerHTML 문자열
-     * @return {jquery} - 새로 생성된 table의 tbody 요소
-     */
-    redrawTable: function(tbodyHtml) {
-        this.$tableContainer[0].innerHTML = this.templateTable({
-            colGroup: this._getColGroupMarkup(),
-            tbody: tbodyHtml
-        });
-
-        return this.$tableContainer.find('tbody');
-    },
-
-    /**
-     * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
-     * @return {string} <colgroup> 안에 들어갈 마크업 문자열
-     * @private
-     */
-    _getColGroupMarkup: function() {
-        var grid = this.grid,
-            whichSide = this.whichSide,
-            dimensionModel = grid.dimensionModel,
-            columnWidthList = dimensionModel.getColumnWidthList(whichSide),
-            columnModelList = grid.columnModel.getVisibleColumnModelList(whichSide, true),
-            html = '';
-
-        _.each(columnModelList, function(columnModel, index) {
-            var name = columnModel['columnName'],
-                width = columnWidthList[index] - Body.extraWidth;
-
-            html += '<col columnname="' + name + '" style="width:' + width + 'px">';
-        });
-        return html;
     }
-},
-{
-    /**
-     * IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
-     * @memberof View.Layout.Body
-     * @static
-     */
-    extraWidth: (function() {
-        var value = 0;
-        if (ne.util.browser.msie && ne.util.browser.version === 7) {
-            // Grid.css의 padding값이 변경되면 다음 값을 같이 변경해 주어야함.
-            value = 20;
-        }
-        return value;
-    }())
 });
 
 module.exports = Body;

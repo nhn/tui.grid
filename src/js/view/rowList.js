@@ -27,8 +27,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         whichSide = (options && options.whichSide) || 'R';
         this.setOwnProperties({
             whichSide: whichSide,
-            bodyView: options.bodyView,
+            bodyTableView: options.bodyTableView,
             columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide, true),
+            collection: this.grid.renderModel.getCollection(whichSide),
             sortOptions: null,
             renderedRowKeys: null,
             rowPainter: null
@@ -93,7 +94,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $tbody;
 
         if (RowList.isInnerHtmlOfTbodyReadOnly) {
-            $tbody = this.bodyView.redrawTable(html);
+            $tbody = this.bodyTableView.redrawTable(html);
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
             // IE7에서 레이아웃이 틀어지는 현상 방지
@@ -221,7 +222,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
-        this.bodyView.resetTablePosition();
+        this.bodyTableView.resetTablePosition();
 
         if (isModelChanged) {
             this._resetRows();
@@ -249,13 +250,13 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _delegateTableEventsFromBody: function() {
-        this.bodyView.attachTableEventHandler('tr', this.rowPainter.getEventHandlerInfo());
+        this.bodyTableView.attachTableEventHandler('tr', this.rowPainter.getEventHandlerInfo());
 
         _.each(this.rowPainter.getCellPainters(), function(painter, editType) {
             var selector = 'td[edit-type=' + editType + ']',
                 handlerInfo = painter.getEventHandlerInfo();
 
-            this.bodyView.attachTableEventHandler(selector, handlerInfo);
+            this.bodyTableView.attachTableEventHandler(selector, handlerInfo);
         }, this);
     },
 

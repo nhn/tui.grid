@@ -210,7 +210,7 @@ var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype
         if (this._isEdited($target)) {
             this.grid.setValue(rowKey, columnName, $target.val());
         }
-        this.grid.selection.enable();
+        this.grid.selectionModel.enable();
     },
 
     /**
@@ -223,7 +223,7 @@ var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype
 
         this.originalText = $input.val();
         this._executeInputEventHandler(focusEvent, 'focus');
-        this.grid.selection.disable();
+        this.grid.selectionModel.disable();
     },
 
     /**

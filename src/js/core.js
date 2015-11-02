@@ -15,10 +15,10 @@ var DimensionModel = require('./model/dimension');
 var FocusModel = require('./model/focus');
 var RenderModel = require('./model/renderer');
 var SmartRenderModel = require('./model/renderer-smart');
+var SelectionModel = require('./model/selection');
 
 // views
 var CellFactory = require('./view/cellFactory');
-var Selection = require('./view/selection');
 var Clipboard = require('./view/clipboard');
 
 // layouts
@@ -189,7 +189,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
     _initializeProperties: function() {
         this.setOwnProperties({
             'cellFactory': null,
-            'selection': null,
+            'selectionModel': null,
             'columnModel': null,
             'dataModel': null,
             'renderModel': null,
@@ -261,6 +261,14 @@ var Core = View.extend(/**@lends module:core.prototype */{
             scrollBarSize: this.scrollBarSize
         });
 
+        this.selectionModel = new SelectionModel({
+            grid: this
+        });
+
+        if (!this.option('useDataCopy')) {
+            this.selectionModel.disable();
+        }
+
         if (this.option('notUseSmartRendering')) {
             this.renderModel = new RenderModel({
                 grid: this
@@ -281,11 +289,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this
         });
 
-        this.selection = this.createView(Selection, {
-            grid: this
-        });
-
-        //define header & body area
         this.view.lside = this.createView(LsideFrame, {
             grid: this
         });
@@ -301,9 +304,11 @@ var Core = View.extend(/**@lends module:core.prototype */{
         this.view.layer.ready = this.createView(ReadyLayer, {
             grid: this
         });
+
         this.view.layer.empty = this.createView(EmptyLayer, {
             grid: this
         });
+
         this.view.layer.loading = this.createView(LoadingLayer, {
             grid: this
         });
@@ -311,10 +316,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         this.view.clipboard = this.createView(Clipboard, {
             grid: this
         });
-
-        if (this.options && !this.options.useDataCopy) {
-            this.selection.disable();
-        }
     },
 
     /**
@@ -517,7 +518,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
-            //this.selection.show();
             this.focusClipboard();
         }
     },
@@ -1285,8 +1285,8 @@ var Core = View.extend(/**@lends module:core.prototype */{
             this._setValueForPaste(row, start.rowIdx + index, start.columnIdx, end.columnIdx);
         }, this);
 
-        this.selection.startSelection(start.rowIdx, start.columnIdx);
-        this.selection.updateSelection(end.rowIdx, end.columnIdx);
+        this.selectionModel.start(start.rowIdx, start.columnIdx);
+        this.selectionModel.update(end.rowIdx, end.columnIdx);
     },
 
     /**
@@ -1296,8 +1296,8 @@ var Core = View.extend(/**@lends module:core.prototype */{
     _getStartIndexToPaste: function() {
         var startIdx;
 
-        if (this.selection.hasSelection()) {
-            startIdx = this.selection.getStartIndex();
+        if (this.selectionModel.hasSelection()) {
+            startIdx = this.selectionModel.getStartIndex();
         } else {
             startIdx = this.focusModel.indexOf();
         }
