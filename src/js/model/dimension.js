@@ -47,6 +47,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
         this._initColumnWidthVariables();
+        this._initToolbarHeight();
         this._setBodyHeight();
     },
 
@@ -62,7 +63,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         headerHeight: 0,
         bodyHeight: 0,
-        toolbarHeight: 0,
+        toolbarHeight: 65,
 
         rowHeight: 0,
         totalRowHeight: 0,
@@ -125,6 +126,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             totalBorderWidth = rowCount + 1;
 
         this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
+    },
+
+    /**
+     * Sets the toolbar height to 0 if the toolbar option has no value.
+     */
+    _initToolbarHeight: function() {
+        var option = this.grid.option('toolbar');
+        if (!option || (!option.hasPagination && !option.hasControlPanel && !option.hasResizeHandler)) {
+            this.set('toolbarHeight', 0);
+        }
     },
 
     /**

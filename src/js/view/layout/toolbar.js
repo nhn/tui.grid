@@ -37,30 +37,33 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      */
     render: function() {
         var option = this.grid.option('toolbar'),
+            toolbarHeight = this.grid.dimensionModel.get('toolbarHeight'),
             resizeHandler, controlPanel, pagination;
 
         this.destroyChildren();
         this.$el.empty();
 
-        if (option && option.hasControlPanel) {
-            controlPanel = this.createView(ControlPanel, {
-                grid: this.grid
-            });
-            this.$el.append(controlPanel.render().el);
-        }
+        if (option) {
+            if (option.hasControlPanel) {
+                controlPanel = this.createView(ControlPanel, {
+                    grid: this.grid
+                });
+                this.$el.append(controlPanel.render().el);
+            }
 
-        if (option && option.hasResizeHandler) {
-            resizeHandler = this.createView(ResizeHandler, {
-                grid: this.grid
-            });
-            this.$el.append(resizeHandler.render().el);
-        }
+            if (option.hasResizeHandler) {
+                resizeHandler = this.createView(ResizeHandler, {
+                    grid: this.grid
+                });
+                this.$el.append(resizeHandler.render().el);
+            }
 
-        if (option && option.hasPagination) {
-            pagination = this.createView(Pagination, {
-                grid: this.grid
-            });
-            this.$el.append(pagination.render().el);
+            if (option.hasPagination) {
+                pagination = this.createView(Pagination, {
+                    grid: this.grid
+                });
+                this.$el.append(pagination.render().el);
+            }
         }
         this.setOwnProperties({
             controlPanel: controlPanel,
@@ -68,11 +71,11 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
             pagination: pagination
         });
 
-        if (!controlPanel && !resizeHandler && !pagination) {
-            this.$el.height(0);
-        } else {
+        this.$el.height(toolbarHeight);
+        if (toolbarHeight) {
             this.$el.show();
         }
+        
         return this;
     }
 });
