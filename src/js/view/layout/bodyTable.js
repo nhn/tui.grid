@@ -1,5 +1,5 @@
 /**
- * @fileoverview Class for the body layout
+ * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -10,10 +10,10 @@ var util = require('../../util');
 
 
 /**
- * Class for the body layout
- * @module view/layout/body
+ * Class for the table layout in the body(data) area
+ * @module view/layout/bodyTable
  */
-var BodyTable = View.extend(/**@lends module:view/layout/body.prototype */{
+var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     /**
      * @constructs
      * @extends module:base/view
@@ -56,7 +56,6 @@ var BodyTable = View.extend(/**@lends module:view/layout/body.prototype */{
     /**
      * Reset position of a table container
      * @param {number} top  조정할 top 위치 값
-     * @private
      */
     resetTablePosition: function() {
         this.$el.css({

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Selection 클래스 파일
+ * @fileoverview Selection Model class
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -7,10 +7,10 @@
 var Model = require('../base/model');
 
 /**
- *  selection layer 의 컨트롤을 담당하는 틀래스
- *  @module view/selection
+ *  Selection Model class
+ *  @module model/selection
  */
-var Selection = Model.extend(/**@lends module:view/selection.prototype */{
+var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     /**
      * @constructs
      * @extends module:base/view
@@ -181,8 +181,7 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
 
     /**
      * selection 데이터가 존재하는지 확인한다.
-     * @return {boolean}    selection 데이터 존재여부
-     * @private
+     * @return {boolean} selection 데이터 존재여부
      */
     hasSelection: function() {
         return !!this.get('range');
@@ -269,6 +268,7 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
      * @param {Number} pageX    마우스 x좌표
      * @param {Number} pageY    마우스 y 좌표
      * @return {{row: number, column: number, overflowX: number, overflowY: number}} row, column의 인덱스 정보와 x, y축 overflow 정보.
+     * @private
      */
     _getIndexFromMousePosition: function(pageX, pageY) {
         var containerPos = this._getContainerPosition(pageX, pageY),
@@ -376,6 +376,7 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     /**
      * row start index 기준으로 rowspan 을 확인하며 startRangeList 업데이트 하는 함수
      * @param {object} param - parameters
+     * @private
      */
     _concatRowSpanIndexFromStart: function(param) {
         var startIndex = param.startIndex,
@@ -402,6 +403,7 @@ var Selection = Model.extend(/**@lends module:view/selection.prototype */{
     /**
      * row end index 기준으로 rowspan 을 확인하며 endRangeList 를 업데이트 하는 함수
      * @param {object} param - parameters
+     * @private
      */
     _concatRowSpanIndexFromEnd: function(param) {
         var endIndex = param.endIndex,

@@ -26,10 +26,6 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
             columnModelList: options.columnModelList
         });
     },
-    //
-    // eventHandler: {
-    //     'mousedown': '_onMouseDown'
-    // },
 
     baseTemplate: _.template(
         '' +

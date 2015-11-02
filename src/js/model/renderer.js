@@ -74,6 +74,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
     },
 
+    /**
+     * Event handler to reset 'maxScrollTop' attribute.
+     * @private
+     */
     _onHeightChange: function() {
         var dimension = this.grid.dimensionModel,
             maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
