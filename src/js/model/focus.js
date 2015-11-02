@@ -106,7 +106,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.trigger('focus', rowKey, columnName);
 
         if (isScrollable) {
-            //TODO: scrolltop 및 left 값 조정하는 로직 필요.
             scrollPosition = this._getScrollPosition();
             if (!ne.util.isEmpty(scrollPosition)) {
                 this.grid.renderModel.set(scrollPosition);
@@ -134,7 +133,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             scrollXSize = +this.get('scrollX') * this.get('scrollBarSize'),
             scrollYSize = +this.get('scrollY') * this.get('scrollBarSize'),
             scrollPosition = {};
-
 
         //수직 스크롤 조정
         if (position.top < scrollTop) {

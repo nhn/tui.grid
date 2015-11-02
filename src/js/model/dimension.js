@@ -10,8 +10,8 @@ var util = require('../util');
 // The width of the border of the dimension.
 var BORDER_WIDTH = 1;
 
-// The width of the border of table row.
-var ROW_BORDER_WIDTH = 1;
+// The width of the border of table cell.
+var CELL_BORDER_WIDTH = 1;
 
 /**
  * 크기 관련 데이터 저장
@@ -93,7 +93,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             availableTotalWidth -= this.get('scrollBarSize');
         }
         if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
-            availableTotalWidth -= ROW_BORDER_WIDTH;
+            availableTotalWidth -= CELL_BORDER_WIDTH;
         }
         return availableTotalWidth;
     },
@@ -344,7 +344,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     _getFrameWidth: function(widthList) {
         var frameWidth = 0;
         if (widthList.length) {
-            frameWidth = util.sum(widthList) + ((widthList.length + 1) * ROW_BORDER_WIDTH);
+            frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
         }
         return frameWidth;
     },
@@ -396,7 +396,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             borderWidth;
 
         if (columnFixCount) {
-            borderWidth = (columnFixCount + 1) * ROW_BORDER_WIDTH;
+            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
             minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
         }
         return minWidth;
@@ -423,16 +423,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
      */
     getCellPosition: function(rowKey, columnName) {
-        var top, left = 0, right, bottom, i = 0,
-            dataModel = this.grid.dataModel,
+        var dataModel = this.grid.dataModel,
+            columnModel = this.grid.columnModel,
             rowHeight = this.get('rowHeight'),
             rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
             rowIdx, spanCount,
-            columnWidthList = this.get('columnWidthList'),
-            columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(true),
-            columnIdx = this.grid.columnModel.indexOfColumnName(columnName, true),
-            borderWidth = 1;
-
+            metaColumnCount = columnModel.getVisibleMetaColumnCount(),
+            columnWidthList = this.get('columnWidthList').slice(metaColumnCount),
+            columnFixCount = columnModel.getVisibleColumnFixCount(),
+            columnIdx = columnModel.indexOfColumnName(columnName, true),
+            top, left, right, bottom, i;
 
         if (!rowSpanData.isMainRow) {
             rowKey = rowSpanData.mainRowKey;
@@ -444,16 +444,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         rowIdx = dataModel.indexOfRowKey(rowKey);
 
         top = util.getHeight(rowIdx, rowHeight);
-        bottom = top + util.getHeight(spanCount, rowHeight) - borderWidth;
+        bottom = top + util.getHeight(spanCount, rowHeight) - CELL_BORDER_WIDTH;
 
+        left = i = 0;
         if (columnFixCount <= columnIdx) {
             i = columnFixCount;
         }
-
         for (; i < columnIdx; i += 1) {
-            left += columnWidthList[i] + borderWidth;
+            left += columnWidthList[i] + CELL_BORDER_WIDTH;
         }
-        right = left + columnWidthList[i] + borderWidth;
+        right = left + columnWidthList[i] + CELL_BORDER_WIDTH;
 
         return {
             top: top,
@@ -564,7 +564,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getMinBodyHeight: function() {
-        return this.get('rowHeight') + (ROW_BORDER_WIDTH * 2) + this.getScrollXHeight();
+        return this.get('rowHeight') + (CELL_BORDER_WIDTH * 2) + this.getScrollXHeight();
     },
 
     /**

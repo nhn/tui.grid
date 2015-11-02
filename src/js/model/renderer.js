@@ -38,9 +38,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange)
             .listenTo(lside, 'valueChange', this._onValueChange)
             .listenTo(rside, 'valueChange', this._onValueChange)
-            .listenTo(this.grid.dimensionModel, 'change:width', this._onWidthChange)
+            .listenTo(this.grid.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.grid.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
-                this._onHeightChange);
+                this._updateMaxScrollTop);
+
+        this._updateMaxScrollLeft();
     },
 
     defaults: {
@@ -69,7 +71,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Event handler for 'chage:width' event on Dimension.
      * @private
      */
-    _onWidthChange: function() {
+    _updateMaxScrollLeft: function() {
         var dimension = this.grid.dimensionModel;
         this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
     },
@@ -78,7 +80,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Event handler to reset 'maxScrollTop' attribute.
      * @private
      */
-    _onHeightChange: function() {
+    _updateMaxScrollTop: function() {
         var dimension = this.grid.dimensionModel,
             maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
 

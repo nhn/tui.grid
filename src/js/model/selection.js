@@ -20,7 +20,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         this.setOwnProperties({
             inputRange: null,
-            intervalIdForAutoScroll: 0,
+            intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             _isEnabled: true
         });
@@ -121,8 +121,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var pos = this._getIndexFromMousePosition(pageX, pageY),
             self = this;
 
+        this.stopAutoScroll();
         if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
-            this.stopAutoScroll();
             this.intervalIdForAutoScroll = setInterval(
                 _.bind(this._adjustScroll, this, pos.overflowX, pos.overflowY)
             );
@@ -142,7 +142,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Stops the auto-scroll interval.
      */
     stopAutoScroll: function() {
-        clearInterval(this.intervalIdForAutoScroll);
+        if (!_.isNull(this.intervalIdForAutoScroll)) {
+            clearInterval(this.intervalIdForAutoScroll);
+            this.intervalIdForAutoScroll = null;
+        }
     },
 
     /**
