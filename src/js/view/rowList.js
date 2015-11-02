@@ -34,7 +34,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             renderedRowKeys: null,
             rowPainter: null
         });
-        this.renderCount = 0;
         this._createRowPainter();
         this._delegateTableEventsFromBody();
         this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
