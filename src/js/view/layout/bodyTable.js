@@ -49,7 +49,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', (width - BodyTable.EXTRA_WIDTH) + 'px');
+            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH);
         }, this);
     },
 
@@ -58,9 +58,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @param {number} top  조정할 top 위치 값
      */
     resetTablePosition: function() {
-        this.$el.css({
-            top: this.grid.renderModel.get('top') + 'px'
-        });
+        this.$el.css('top', this.grid.renderModel.get('top'));
     },
 
     /**

@@ -137,9 +137,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             mouseDownY: pageY
         });
         this.grid.updateLayoutData();
-        $(document).on('mousemove', $.proxy(this._onMouseMove, this));
-        $(document).on('mouseup', $.proxy(this._detachDragEvents, this));
-        $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+        $(document)
+            .on('mousemove', $.proxy(this._onMouseMove, this))
+            .on('mouseup', $.proxy(this._detachDragEvents, this))
+            .on('selectstart', $.proxy(this._onSelectStart, this));
     },
 
     /**
@@ -147,9 +148,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _detachDragEvents: function() {
         this.grid.selectionModel.stopAutoScroll();
-        $(document).off('mousemove', $.proxy(this._onMouseMove, this));
-        $(document).off('mouseup', $.proxy(this._detachDragEvents, this));
-        $(document).off('selectstart', $.proxy(this._onSelectStart, this));
+        $(document)
+            .off('mousemove', $.proxy(this._onMouseMove, this))
+            .off('mouseup', $.proxy(this._detachDragEvents, this))
+            .off('selectstart', $.proxy(this._onSelectStart, this));
     },
 
     /**

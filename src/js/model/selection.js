@@ -399,15 +399,17 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             endIndexList = param.endIndexList,
             spannedIndex;
 
-        if (rowSpanData) {
-            if (!rowSpanData['isMainRow']) {
-                spannedIndex = startIndex + rowSpanData['count'];
-                startIndexList.push(spannedIndex);
-            } else {
-                spannedIndex = startIndex + rowSpanData['count'] - 1;
-                if (spannedIndex > endIndex) {
-                    endIndexList.push(spannedIndex);
-                }
+        if (!rowSpanData) {
+            return;
+        }
+
+        if (!rowSpanData['isMainRow']) {
+            spannedIndex = startIndex + rowSpanData['count'];
+            startIndexList.push(spannedIndex);
+        } else {
+            spannedIndex = startIndex + rowSpanData['count'] - 1;
+            if (spannedIndex > endIndex) {
+                endIndexList.push(spannedIndex);
             }
         }
     },
@@ -425,18 +427,20 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             dataModel = param.dataModel,
             spannedIndex, tmpRowSpanData;
 
-        if (rowSpanData) {
-            if (!rowSpanData['isMainRow']) {
-                spannedIndex = endIndex + rowSpanData['count'];
-                tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-                spannedIndex += tmpRowSpanData['count'] - 1;
-                if (spannedIndex > endIndex) {
-                    endIndexList.push(spannedIndex);
-                }
-            } else {
-                spannedIndex = endIndex + rowSpanData['count'] - 1;
+        if (!rowSpanData) {
+            return;
+        }
+
+        if (!rowSpanData['isMainRow']) {
+            spannedIndex = endIndex + rowSpanData['count'];
+            tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
+            spannedIndex += tmpRowSpanData['count'] - 1;
+            if (spannedIndex > endIndex) {
                 endIndexList.push(spannedIndex);
             }
+        } else {
+            spannedIndex = endIndex + rowSpanData['count'] - 1;
+            endIndexList.push(spannedIndex);
         }
     },
 
