@@ -257,7 +257,7 @@ var View = require('./base/view');
 var Core = require('./core');
 
  /**
-  * ne
+  * Toast UI 
   * @namespace
   */
 tui = window.tui = tui || {};

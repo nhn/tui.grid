@@ -56,7 +56,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns whether the selection is enabled.
-     * @return {[type]} [description]
+     * @return {boolean} True is selection is enabled.
      */
     isEnabled: function() {
         return this._isEnabled;
@@ -262,7 +262,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Adjusts scrollTop value.
-     * @param  {[type]} overflowY - 1 | 0 | -1
+     * @param  {number} overflowY - 1 | 0 | -1
      * @param  {number} scrollTop - Current scrollTop value
      * @param  {number} maxScrollTop - Max scrollTop value
      * @private

@@ -14,7 +14,7 @@
         "default": {
             "outputSourceFiles" : true
         },
-        "applicationName": "Grid",
+        "applicationName": "tui-grid",
         "disqus": "",
         "googleAnalytics": "",
         "openGraph": {
