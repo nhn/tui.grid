@@ -101,7 +101,7 @@
     var $result = $('result'),
             url = './js/data/grid-response.json';
 
-    var grid = new ne.Grid({
+    var grid = new tui.Grid({
         el: $('#grid'),
         columnModelList: [
             {

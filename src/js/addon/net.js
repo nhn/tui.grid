@@ -37,7 +37,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      </form>
      <script>
      var net,
-     grid = new ne.Grid({
+     grid = new tui.Grid({
             //...option 생략...
     });
 

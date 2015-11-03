@@ -1,9 +1,9 @@
 /**
- * @fileoverview application-grid
+ * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.0.4c
+ * @version 1.1.0
  * @license MIT
- * @link https://github.com/nhnent/fe.application-grid
+ * @link https://github.com/nhnent/tui.grid
  */
 .uio_grid {
   width: 100%;
@@ -188,6 +188,12 @@
 .uio_grid .lside_area .data table {
   *margin-right: -17px;
 }
+.uio_grid .lside_area .data table .meta_column {
+  background: #f8f8f8;
+}
+.uio_grid .lside_area .data table .meta_column.selected {
+  background: #e0e0e0;
+}
 .uio_grid .lside_area .data .selection_layer {
   display: none;
   position: absolute;
@@ -255,7 +261,7 @@
 }
 .uio_grid .rside_area .scrollbar_corner {
   position: absolute;
-  bottom: 65px;
+  bottom: 0;
   right: 0;
   width: 17px;
   height: 17px;
