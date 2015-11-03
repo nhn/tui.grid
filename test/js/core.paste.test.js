@@ -7,7 +7,7 @@ describe('grid.core.paste()', function() {
 
     function createColumnModelList(names) {
         var models = [];
-        ne.util.forEachArray(names, function(name, editType) {
+        tui.util.forEachArray(names, function(name, editType) {
             models.push({
                 title: name,
                 columnName: name,

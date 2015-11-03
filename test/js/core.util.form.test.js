@@ -27,7 +27,7 @@ describe('core.util.form', function() {
 
         it('name에 해당하는 input요소들을 배열 형태로 반환한다.', function() {
             var names = ['delivery_number', 'user_name', 'weather'];
-            ne.util.forEachArray(names, function(name) {
+            tui.util.forEachArray(names, function(name) {
                 var element = util.form.getFormElement($form, name);
                 expect(element.length).toBe(1);
                 expect(element[0].name).toBe(name);

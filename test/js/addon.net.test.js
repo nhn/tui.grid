@@ -34,7 +34,7 @@ describe('addon.net', function() {
         jasmine.getFixtures().fixturesPath = 'base/';
         loadFixtures('test/fixtures/addon.net.html');
         $grid = $('#grid');
-        grid = new ne.Grid({
+        grid = new tui.Grid({
             el: $grid,
             columnModelList: columnModelList,
             selectType: 'checkbox'

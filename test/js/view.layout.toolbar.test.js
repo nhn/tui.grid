@@ -211,7 +211,7 @@ describe('view.frame.toolbar', function() {
         });
 
         it('Pagination Instance를 잘 생성하는지 확인한다.', function() {
-            expect(pagination.instance instanceof ne.component.Pagination).toBe(true);
+            expect(pagination.instance instanceof tui.component.Pagination).toBe(true);
         });
 
         it('이미 pagination instance가 존재하면 instance를 다시 생성하지 않는다', function() {
