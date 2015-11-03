@@ -122,6 +122,8 @@ describe('data.columnModel', function() {
         it('hasNumberColumn: false라면 _number 컬럼의 isHidden 프로퍼티를 true로 설정한다.', function() {
             expectedColumnModel = {
                 columnName: '_number',
+                align: 'center',
+                isFixedWidth: true,
                 title: 'No.',
                 width: 60,
                 isHidden: true
@@ -135,6 +137,8 @@ describe('data.columnModel', function() {
         it('hasNumberColumn: true일 때 _number 컬럼이 정상적으로 생성된다.', function() {
             expectedColumnModel = {
                 columnName: '_number',
+                align: 'center',
+                isFixedWidth: true,
                 title: 'No.',
                 width: 60
             };
@@ -152,13 +156,14 @@ describe('data.columnModel', function() {
                 title: '<input type="checkbox"/>',
                 columnName: '_button',
                 isHidden: false,
+                isFixedWidth: true,
                 editOption: {
                     type: selectType,
                     list: [{
                         value: 'selected'
                     }]
                 },
-                width: 50
+                width: 40
             };
             columnModelInstance.set('selectType', selectType, {silent: true});
             columnModelInstance._initializeButtonColumn(sampleColumnModelList);
@@ -171,13 +176,14 @@ describe('data.columnModel', function() {
                 title: '선택',
                 columnName: '_button',
                 isHidden: false,
+                isFixedWidth: true,
                 editOption: {
                     type: selectType,
                     list: [{
                         value: 'selected'
                     }]
                 },
-                width: 50
+                width: 40
             };
             columnModelInstance.set('selectType', selectType, {silent: true});
             columnModelInstance._initializeButtonColumn(sampleColumnModelList);
@@ -193,7 +199,8 @@ describe('data.columnModel', function() {
                             value: 'selected'
                         }]
                     },
-                    width: 50,
+                    width: 40,
+                    isFixedWidth: true,
                     isHidden: true
                 };
             expectedColumnModel = $.extend(

@@ -16,6 +16,7 @@ describe('View.RowList', function() {
 
     function createGridMock() {
         var mock = {
+            option: function() {},
             $el: setFixtures('<div />'),
             hideGridLayer: function() {},
             focusClipboard: function() {},

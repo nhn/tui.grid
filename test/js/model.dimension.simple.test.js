@@ -5,7 +5,9 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 
 describe('model.dimension', function() {
-    var grid = {},
+    var grid = {
+            option: function() {}
+        },
         defaultConfig;
 
     beforeEach(function() {
@@ -117,6 +119,7 @@ describe('model.dimension', function() {
                 });
                 dimension = new Dimension(config);
                 dimension._minColumnWidthList = [50, 50, 50, 50, 50];
+                dimension._columnWidthFixedFlags = [false, false, false, false, false];
             });
 
             it('100, 100, 100, 50, 50', function() {

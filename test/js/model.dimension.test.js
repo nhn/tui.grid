@@ -280,7 +280,9 @@ describe('Dimension', function() {
         dataModelInstance,
         columnModelInstance,
         dimensionModel,
-        grid = {},
+        grid = {
+            option: function() {}
+        },
         defaultConfig;
 
     beforeEach(function() {
