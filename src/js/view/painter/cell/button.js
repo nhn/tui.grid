@@ -11,7 +11,7 @@ var util = require('../../../util');
  * Painter class for the button cell
  * @module painter/cell/button
  */
-var Button = ne.util.defineClass(List,/**@lends module:painter/cell/button.prototype */{
+var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell/list
@@ -100,12 +100,12 @@ var Button = ne.util.defineClass(List,/**@lends module:painter/cell/button.proto
             isDisabled = cellData.isDisabled,
             id;
 
-        if (ne.util.isNull(html)) {
-            ne.util.forEachArray(checkedList, function(item) {
+        if (tui.util.isNull(html)) {
+            tui.util.forEachArray(checkedList, function(item) {
                 checkedMap[item] = true;
             });
 
-            ne.util.forEachArray(list, function(item) {
+            tui.util.forEachArray(list, function(item) {
                 id = name + '_' + item.value;
 
                 htmlArr.push('<input type="');
@@ -146,7 +146,7 @@ var Button = ne.util.defineClass(List,/**@lends module:painter/cell/button.proto
 
         $td.find('input:checked').prop('checked', false);
 
-        ne.util.forEachArray(checkedList, function(item) {
+        tui.util.forEachArray(checkedList, function(item) {
             $td.find('input[value="' + item + '"]').prop('checked', true);
         });
     },
@@ -214,7 +214,7 @@ var Button = ne.util.defineClass(List,/**@lends module:painter/cell/button.proto
         var $checkedList = $target.closest('td').find('input:checked'),
             checkedList = [];
 
-        ne.util.forEachArray($checkedList, function($checked, index) {
+        tui.util.forEachArray($checkedList, function($checked, index) {
             checkedList.push($checkedList.eq(index).val());
         });
 

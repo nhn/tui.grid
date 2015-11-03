@@ -223,7 +223,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         var realColumnFixCount = this.get('columnFixCount'),
             visibleColumnFixCount = realColumnFixCount;
 
-        ne.util.forEach(this.get('dataColumnModelList'), function(columnModel, index) {
+        tui.util.forEach(this.get('dataColumnModelList'), function(columnModel, index) {
             if (index >= realColumnFixCount) {
                 return false;
             }
@@ -332,7 +332,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         var division, relationListMap, visibleList, metaColumnModelList, dataColumnModelList;
 
         columnModelList = $.extend(true, [], columnModelList);
-        if (ne.util.isUndefined(columnFixCount)) {
+        if (tui.util.isUndefined(columnFixCount)) {
             columnFixCount = this.get('columnFixCount');
         }
 

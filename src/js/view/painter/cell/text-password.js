@@ -12,7 +12,7 @@ var Text = require('./text');
  * @extends module:view/painter/cell/text
  * @constructor module:view/painter/cell/text-password
  */
-var Password = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-password.prototype */{
+var Password = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text-password.prototype */{
     /**
      * Initializes
      * @param {object} attributes Attributes

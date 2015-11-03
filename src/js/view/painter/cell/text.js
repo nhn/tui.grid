@@ -11,7 +11,7 @@ var util = require('../../../util');
  * Painter class for the text cell
  * @module painter/cell/text
  */
-var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
+var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -110,12 +110,12 @@ var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             html;
 
-        if (ne.util.isUndefined(value)) {
+        if (tui.util.isUndefined(value)) {
             value = '';
         }
         html = this._getConvertedHtml(value, cellData);
 
-        if (ne.util.isNull(html)) {
+        if (tui.util.isNull(html)) {
             html = this.template({
                 type: this._getInputType(),
                 value: value,
@@ -179,7 +179,7 @@ var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype
             content = '',
             beforeContent, afterContent;
 
-        if (!ne.util.isExisty(cellData.value)) {
+        if (!tui.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
@@ -264,7 +264,7 @@ var Text = ne.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype
         var $input = $(event.target),
             cellInfo = this._getCellInfoFromInput($input),
             columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
-            eventHandler = ne.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
+            eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
 
         if (_.isFunction(eventHandler)) {
             return eventHandler(event, cellInfo);

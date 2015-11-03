@@ -340,8 +340,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
             isTextType = this.grid.columnModel.isTextType(columnName),
             value = this.get(columnName),
             notUseHtmlEntity = columnModel.notUseHtmlEntity;
-        if (!notUseHtmlEntity && isTextType && ne.util.hasEncodableString(value)) {
-            value = ne.util.encodeHTMLEntity(value);
+        if (!notUseHtmlEntity && isTextType && tui.util.hasEncodableString(value)) {
+            value = tui.util.encodeHTMLEntity(value);
         }
         return value;
     },
@@ -360,7 +360,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             resultOptionList, editOptionList, typeExpected, valueList;
 
-        if (ne.util.isExisty(ne.util.pick(columnModel, 'editOption', 'list'))) {
+        if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
             resultOptionList = this.getRelationResult(['optionListChange'])[columnName];
             editOptionList = resultOptionList && resultOptionList['optionList'] ?
                     resultOptionList['optionList'] : columnModel.editOption.list;
@@ -420,7 +420,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
             model = columnModel.getColumnModel(columnName);
             //list type 의 editType 이 존재하는 경우
             if (listTypeMap[editType]) {
-                if (ne.util.isExisty(ne.util.pick(model, 'editOption', 'list', 0, 'value'))) {
+                if (tui.util.isExisty(tui.util.pick(model, 'editOption', 'list', 0, 'value'))) {
                     value = this._getListTypeVisibleText(columnName);
                 } else {
                     throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
@@ -430,7 +430,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
                 value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
             }
         }
-        value = !ne.util.isUndefined(value) ? value.toString() : value;
+        value = !tui.util.isUndefined(value) ? value.toString() : value;
         return value;
     },
 

@@ -30,8 +30,8 @@ module.exports = function(config) {
             {pattern: 'lib/jquery-json/src/jquery.json.js', watched: false},
             {pattern: 'lib/underscore/underscore.js', watched: false},
             {pattern: 'lib/backbone/backbone.js', watched: false},
-            {pattern: 'lib/ne-code-snippet/code-snippet.js', watched: false},
-            {pattern: 'lib/ne-component-pagination/pagination.js', watched: false},
+            {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
+            {pattern: 'lib/tui-component-pagination/pagination.js', watched: false},
 
             {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false},
             {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false},

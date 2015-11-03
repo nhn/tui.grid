@@ -13,7 +13,7 @@ var common = require('./common');
  * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
  * @module painter
  */
-var Painter = ne.util.defineClass(/**@lends module:painter.prototype */{
+var Painter = tui.util.defineClass(/**@lends module:painter.prototype */{
     /**
      * @constructs
      */

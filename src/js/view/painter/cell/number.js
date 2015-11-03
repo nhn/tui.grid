@@ -10,7 +10,7 @@ var Normal = require('./normal');
  * Number Cell 의 Painter
  * @module painter/cell/number
  */
-var NumberCell = ne.util.defineClass(Normal,/**@lends module:painter/cell/number.prototype */{
+var NumberCell = tui.util.defineClass(Normal,/**@lends module:painter/cell/number.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell/normal

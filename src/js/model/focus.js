@@ -107,7 +107,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         if (isScrollable) {
             scrollPosition = this._getScrollPosition();
-            if (!ne.util.isEmpty(scrollPosition)) {
+            if (!tui.util.isEmpty(scrollPosition)) {
                 this.grid.renderModel.set(scrollPosition);
             }
         }

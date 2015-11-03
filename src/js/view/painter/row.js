@@ -11,7 +11,7 @@ var Painter = require('../../base/painter');
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
  * @module painter/row
  */
-var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
+var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
     /**
      * @constructs
      * @extends module:painter
@@ -90,7 +90,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
             html = '',
             columnName, cellData, editType, cellInstance;
 
-        if (ne.util.isUndefined(model.get('rowKey'))) {
+        if (tui.util.isUndefined(model.get('rowKey'))) {
            return html;
         }
 
@@ -121,7 +121,7 @@ var RowPainter = ne.util.defineClass(Painter,/**@lends module:painter/row.protot
          */
         _extraHeight: (function() {
             var value = 0;
-            if (ne.util.browser.msie && ne.util.browser.version === 7) {
+            if (tui.util.browser.msie && tui.util.browser.version === 7) {
                 // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
                 value = -2;
             }

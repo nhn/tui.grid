@@ -563,7 +563,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
     option: function(key, value) {
         var result;
 
-        if (ne.util.isUndefined(value)) {
+        if (tui.util.isUndefined(value)) {
             this.options = this.options || {};
             result = this.options[key];
         } else {
@@ -584,7 +584,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        if (ne.util.isExisty(ne.util.pick(this, 'view', 'clipboard'))) {
+        if (tui.util.isExisty(tui.util.pick(this, 'view', 'clipboard'))) {
             this.view.clipboard.$el.focus();
         }
     },
@@ -795,7 +795,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
      */
     replaceRowList: function(rowList, isParse) {
-        var callback = ne.util.bind(function() {
+        var callback = tui.util.bind(function() {
             this.dataModel.set(rowList, {
                 parse: isParse
             });
@@ -820,7 +820,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {function} [callback] 완료시 호출될 함수
      */
     setRowList: function(rowList, isParse, callback) {
-        var doProcess = ne.util.bind(function() {
+        var doProcess = tui.util.bind(function() {
             this.dataModel.reset(rowList, {
                 parse: isParse
             });
@@ -1093,7 +1093,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         var modifiedRowMap = this.getModifiedRowList(),
             result = false;
 
-        ne.util.forEach(modifiedRowMap, function(data) {
+        tui.util.forEach(modifiedRowMap, function(data) {
             if (data.length) {
                 result = true;
                 return false;
@@ -1468,24 +1468,24 @@ var Core = View.extend(/**@lends module:core.prototype */{
         _.each(this, function(value, property) {
             if (property !== 'publicInstance') {
                 if (value instanceof View) {
-                    if (value && ne.util.isFunction(value.destroy)) {
+                    if (value && tui.util.isFunction(value.destroy)) {
                         value.destroy();
                     }
                 }
                 if (property === 'view') {
                     _.each(value, function(instance) {
-                        if (instance && ne.util.isFunction(instance.destroy)) {
+                        if (instance && tui.util.isFunction(instance.destroy)) {
                             instance.destroy();
                         }
                     }, this);
                 }
             }
 
-            if (value && ne.util.isFunction(value._destroy)) {
+            if (value && tui.util.isFunction(value._destroy)) {
                 value._destroy();
             }
 
-            if (value && ne.util.isFunction(value.stopListening)) {
+            if (value && tui.util.isFunction(value.stopListening)) {
                 value.stopListening();
             }
 

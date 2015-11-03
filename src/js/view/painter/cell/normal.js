@@ -10,7 +10,7 @@ var Cell = require('../cell');
  * editOption 이 적용되지 않은 cell 의 Painter
  * @module painter/cell/normal
  */
-var Normal = ne.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
+var Normal = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -45,10 +45,10 @@ var Normal = ne.util.defineClass(Cell,/**@lends module:painter/cell/normal.proto
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
             rowKey = cellData.rowKey;
-        if (ne.util.isFunction(columnModel.formatter)) {
+        if (tui.util.isFunction(columnModel.formatter)) {
             value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
         }
-        if (!ne.util.isExisty(value)) {
+        if (!tui.util.isExisty(value)) {
             value = '';
         }
         return value;

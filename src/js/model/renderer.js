@@ -108,7 +108,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @return {Object} collection  해당 영역의 랜더 데이터 콜랙션
      */
     getCollection: function(whichSide) {
-        return this.get(ne.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
+        return this.get(tui.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
     },
 
     /**

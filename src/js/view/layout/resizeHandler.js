@@ -130,11 +130,11 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             border = 1,
             width;
 
-        ne.util.forEachArray($resizeHandleList, function(item, index) {
+        tui.util.forEachArray($resizeHandleList, function(item, index) {
             $handler = $resizeHandleList.eq(index);
             columnName = $handler.attr('columnname');
             width = $table.find('th[columnname="' + columnName + '"]').width();
-            if (ne.util.isExisty(width)) {
+            if (tui.util.isExisty(width)) {
                 isChanged = isChanged || (width !== columnWidthList[index]);
             } else {
                 width = columnWidthList[index];

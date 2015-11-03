@@ -97,7 +97,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
             // IE7에서 레이아웃이 틀어지는 현상 방지
-            if (ne.util.browser.msie && ne.util.browser.version <= 7) {
+            if (tui.util.browser.msie && tui.util.browser.version <= 7) {
                 $tbody.width($tbody.width());
             }
         } else {
@@ -287,7 +287,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @memberof RowList
      * @static
      */
-    isInnerHtmlOfTbodyReadOnly: (ne.util.browser.msie && ne.util.browser.version <= 9)
+    isInnerHtmlOfTbodyReadOnly: (tui.util.browser.msie && tui.util.browser.version <= 9)
 });
 
 module.exports = RowList;

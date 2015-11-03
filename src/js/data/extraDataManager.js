@@ -11,7 +11,7 @@ var util = require('../util');
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
  */
-var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.prototype */{
+var ExtraDataManager = tui.util.defineClass(/**@lends module:data/extraData.prototype */{
     /**
      * @constructs
      * @extends module:base/model
@@ -130,7 +130,7 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
         classNameData = this.data.className || {};
         classNameList = classNameData.row || [];
 
-        if (ne.util.inArray(className, classNameList) === -1) {
+        if (tui.util.inArray(className, classNameList) === -1) {
             classNameList.push(className);
             classNameData.row = classNameList;
             this.data.className = classNameData;
@@ -179,7 +179,7 @@ var ExtraDataManager = ne.util.defineClass(/**@lends module:data/extraData.proto
     removeCellClassName: function(columnName, className) {
         var classNameData = this.data.className;
 
-        if (ne.util.pick(classNameData, 'column', columnName)) {
+        if (tui.util.pick(classNameData, 'column', columnName)) {
             classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
             this.data.className = classNameData;
         }

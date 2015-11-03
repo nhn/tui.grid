@@ -1,5 +1,5 @@
 /**
- * @fileoverview The ne.Grid class for the external API.
+ * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,7 +8,7 @@
  * Grid public API
  *
  * @param {Object} options
- *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this value will always be shown on the left side. {@link ne.Grid#setColumnFixCount|setColumnFixCount} can be used for setting this value dynamically.
+ *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount} can be used for setting this value dynamically.
  *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used. If not specified, the button column will not be shown.
  *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number to each rows when rendering time.
  *      @param {number} [options.headerHeight=35] - The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.
@@ -55,11 +55,11 @@
  *              @param {function} [options.columnModelList.relationList.isEditable] - If returns true, target columns will be editable.
  *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return value specifies the option list for the 'select', 'radio', 'checkbox' type. The options list of target columns will be replaced with the return value of this function.
  *      @param {array} options.columnMerge - The array that specifies the merged column. This options does not merge the cells of multiple columns into a single cell. This options only effects to the headers of the multiple columns, creates a new parent header that includes the headers of spcified columns, and sets up the hierarchy.
- * @constructor ne.Grid
+ * @constructor tui.Grid
  * @example
      <div id='grid'></div>
      <script>
- var grid = new ne.Grid({
+ var grid = new tui.Grid({
     el: $('#grid'),
     columnFixCount: 2,  //(default=0)
     selectType: 'checkbox', //(default='')
@@ -260,9 +260,9 @@ var Core = require('./core');
   * ne
   * @namespace
   */
-ne = window.ne = ne || {};
+tui = window.tui = tui || {};
 
-ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
+tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Initializes the instance.
      * @param {Object} options - Options for the constructor
@@ -475,7 +475,7 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
      * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be removed although the target is first cell of them.
      */
     removeRow: function(rowKey, options) {
-        if (ne.util.isBoolean(options) && options) {
+        if (tui.util.isBoolean(options) && options) {
             options = {
                 removeOriginalData: true
             };
@@ -576,7 +576,7 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
     },
     /**
      * Restores the data to the original data.
-     * (Original data is set by {@link ne.Grid#setRowList|setRowList}
+     * (Original data is set by {@link tui.Grid#setRowList|setRowList}
      */
     restore: function() {
         this.core.restore();
@@ -612,7 +612,7 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
      * Create an specified AddOn and use it on this instance.
      * @param {string} name - The name of the AddOn to use.
      * @param {object} options - The option objects for configuring the AddON.
-     * @return {ne.Grid} - This instance.
+     * @return {tui.Grid} - This instance.
      */
     use: function(name, options) {
         this.core.use(name, options);
@@ -714,7 +714,7 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
      * @param {...string} arguments - Column names to show
      */
     showColumn: function() {
-        var args = ne.util.toArray(arguments);
+        var args = tui.util.toArray(arguments);
         this.core.columnModel.setHidden(args, false);
     },
     /**
@@ -722,7 +722,7 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
      * @param {...string} arguments - Column names to hide
      */
     hideColumn: function() {
-        var args = ne.util.toArray(arguments);
+        var args = tui.util.toArray(arguments);
         this.core.columnModel.setHidden(args, true);
     },
     /**
@@ -734,6 +734,6 @@ ne.Grid = View.extend(/**@lends ne.Grid.prototype */{
     }
 });
 
-ne.Grid.getInstanceById = function(id) {
+tui.Grid.getInstanceById = function(id) {
     return Core.prototype.__instance[id];
 };

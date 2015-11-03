@@ -65,7 +65,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             rowState = row.getRowState(),
             param;
 
-        if (ne.util.isUndefined(this.collection)) {
+        if (tui.util.isUndefined(this.collection)) {
             return;
         }
 
@@ -75,7 +75,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 rowModel = this,
                 isEditable, isDisabled;
 
-            if (!ne.util.isUndefined(cellData)) {
+            if (!tui.util.isUndefined(cellData)) {
                 isEditable = row.isEditable(columnName);
                 isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
                 if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {

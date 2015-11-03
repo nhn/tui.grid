@@ -49,7 +49,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @private
      */
     _setPaginationInstance: function() {
-        var PaginationClass = ne && ne.component && ne.component.Pagination,
+        var PaginationClass = tui && tui.component && tui.component.Pagination,
             pagination = this.instance;
         if (!pagination && PaginationClass) {
             pagination = new PaginationClass({

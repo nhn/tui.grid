@@ -11,7 +11,7 @@ var util = require('../../util');
  * Cell Painter Base
  * @module painter/cell
  */
-var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
+var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
      * @extends module:painter
@@ -64,7 +64,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
             isRedraw = false,
             hasFocusedElement;
 
-        ne.util.forEachArray(this.redrawAttributes, function(attribute) {
+        tui.util.forEachArray(this.redrawAttributes, function(attribute) {
             if ($.inArray(attribute, cellData.changed) !== -1) {
                 isRedraw = true;
                 return false;
@@ -189,7 +189,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
             classNameMap['disabled'] = true;
         }
 
-        ne.util.forEach(classNameMap, function(val, className) {
+        tui.util.forEach(classNameMap, function(val, className) {
             classNameList.push(className);
         });
 
@@ -212,7 +212,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             editOption = columnModel.editOption || {},
             defaultValue = columnModel.defaultValue,
-            isExisty = ne.util.isExisty,
+            isExisty = tui.util.isExisty,
             beforeContent, afterContent, content;
 
         if (!isExisty(cellData.value)) {
@@ -237,12 +237,12 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
         var contentValue = content,
             row, cellValue;
 
-        if (ne.util.isFunction(content)) {
+        if (tui.util.isFunction(content)) {
             row = this.grid.dataModel.get(cellData.rowKey);
             cellValue = row.getHTMLEncodedString(cellData.columnName);
             contentValue = content(cellValue, row.attributes);
         }
-        if (!ne.util.isExisty(contentValue)) {
+        if (!tui.util.isExisty(contentValue)) {
             contentValue = '';
         }
         return contentValue;
@@ -256,7 +256,7 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
      * @private
      */
     _getSpanWrapContent: function(content, className) {
-        if (ne.util.isFalsy(content)) {
+        if (tui.util.isFalsy(content)) {
             content = '';
         }
         return '<span class="' + className + '">' + content + '</span>';
@@ -344,10 +344,10 @@ var Cell = ne.util.defineClass(Painter, /**@lends module:painter/cell.prototype 
             editOption = columnModel.editOption,
             html;
 
-        if (editOption && ne.util.isFunction(editOption.converter)) {
+        if (editOption && tui.util.isFunction(editOption.converter)) {
             html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
         }
-        if (ne.util.isFalsy(html)) {
+        if (tui.util.isFalsy(html)) {
             html = null;
         }
         return html;

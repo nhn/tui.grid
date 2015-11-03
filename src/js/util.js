@@ -45,11 +45,11 @@ var util = {
         var totalReplaced = [],
             replaced;
 
-        if (!ne.util.isArray(mapper)) {
+        if (!tui.util.isArray(mapper)) {
             mapper = [mapper];
         }
 
-        ne.util.forEach(mapper, function(mapdata) {
+        tui.util.forEach(mapper, function(mapdata) {
             replaced = template.replace(/<%=([^%]+)%>/g, function(matchedString, name) {
                 return mapdata[name] ? mapdata[name].toString() : '';
             });
@@ -133,7 +133,7 @@ var util = {
             };
         if (typeof target !== typeof dist) {
             return false;
-        } else if (ne.util.isArray(target) && target.length !== dist.length) {
+        } else if (tui.util.isArray(target) && target.length !== dist.length) {
             return false;
         } else if (typeof target === 'object') {
             isDiff = !compareObject(target, dist) || !compareObject(dist, target);
@@ -151,7 +151,7 @@ var util = {
      * @return {boolean} True if target is undefined or null or ''
      */
     isBlank: function(target) {
-        if (ne.util.isString(target)) {
+        if (tui.util.isString(target)) {
             return !target.length;
         }
         return target === undefined || target === null;
@@ -166,14 +166,14 @@ var util = {
     stripTags: function(htmlString) {
         var matchResult;
         htmlString = htmlString.replace(/[\n\r\t]/g, '');
-        if (ne.util.hasEncodableString(htmlString)) {
+        if (tui.util.hasEncodableString(htmlString)) {
             if (/<img/i.test(htmlString)) {
                 matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/i);
                 htmlString = matchResult ? matchResult[1] : '';
             } else {
                 htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
             }
-            htmlString = $.trim(ne.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')));
+            htmlString = $.trim(tui.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')));
         }
         return htmlString;
     },
@@ -197,7 +197,7 @@ var util = {
     toQueryString: function(dataObj) {
         var queryList = [];
 
-        ne.util.forEach(dataObj, function(value, name) {
+        tui.util.forEach(dataObj, function(value, name) {
             if (typeof value !== 'string' && typeof value !== 'number') {
                 value = $.toJSON(value);
             }
@@ -217,7 +217,7 @@ var util = {
         var queryList = queryString.split('&'),
             obj = {};
 
-        ne.util.forEach(queryList, function(query) {
+        tui.util.forEach(queryList, function(query) {
             var tmp = query.split('='),
                 key,
                 value;
@@ -264,7 +264,7 @@ var util = {
      * @return {boolean} True if the browser is IE7
      */
     isBrowserIE7: function() {
-        var browser = ne.util.browser;
+        var browser = tui.util.browser;
         return browser.msie && browser.version === 7;
     },
 
@@ -288,7 +288,7 @@ var util = {
              * @return {Array} 변환된 배열 결과 값
              */
             '_changeToStringInArray': function(arr) {
-                ne.util.forEach(arr, function(value, i) {
+                tui.util.forEach(arr, function(value, i) {
                     arr[i] = String(value);
                 }, this);
                 return arr;
@@ -313,7 +313,7 @@ var util = {
              * @param {String} formValue - Form value
              */
             'checkbox': function(targetElement, formValue) {
-                if (ne.util.isArray(formValue)) {
+                if (tui.util.isArray(formValue)) {
                     targetElement.checked = $.inArray(targetElement.value, this._changeToStringInArray(formValue)) !== -1;
                 } else {
                     targetElement.checked = (targetElement.value === formValue);
@@ -328,10 +328,10 @@ var util = {
              * @param {String} formValue - Form value
              */
             'select-one': function(targetElement, formValue) {
-                var options = ne.util.toArray(targetElement.options),
+                var options = tui.util.toArray(targetElement.options),
                     index = -1;
 
-                ne.util.forEach(options, function(targetOption, i) {
+                tui.util.forEach(options, function(targetOption, i) {
                     if (targetOption.value === formValue || targetOption.text === formValue) {
                         index = i;
                         return false;
@@ -349,11 +349,11 @@ var util = {
              * @param {String} formValue - Form value
              */
             'select-multiple': function(targetElement, formValue) {
-                var options = ne.util.toArray(targetElement.options);
+                var options = tui.util.toArray(targetElement.options);
 
-                if (ne.util.isArray(formValue)) {
+                if (tui.util.isArray(formValue)) {
                     formValue = this._changeToStringInArray(formValue);
-                    ne.util.forEach(options, function(targetOption) {
+                    tui.util.forEach(options, function(targetOption) {
                         targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
                         $.inArray(targetOption.text, formValue) !== -1;
                     }, this);
@@ -385,10 +385,10 @@ var util = {
             var result = {},
                 valueList = $form.serializeArray();
 
-            ne.util.forEach(valueList, function(obj) {
+            tui.util.forEach(valueList, function(obj) {
                 var value = obj.value,
                     name = obj.name;
-                if (ne.util.isExisty(result[name])) {
+                if (tui.util.isExisty(result[name])) {
                     if (!result[name].push) {
                         result[name] = [result[name]];
                     }
@@ -429,7 +429,7 @@ var util = {
          * @param {Object} formData 폼에 설정할 폼 데이터 객체
          **/
         setFormData: function($form, formData) {
-            ne.util.forEachOwnProperties(formData, function(value, property) {
+            tui.util.forEachOwnProperties(formData, function(value, property) {
                 this.setFormElementValue($form, property, value);
             }, this);
         },
@@ -450,12 +450,12 @@ var util = {
             if (!elementList) {
                 return;
             }
-            if (!ne.util.isArray(formValue)) {
+            if (!tui.util.isArray(formValue)) {
                 formValue = String(formValue);
             }
-            elementList = ne.util.isHTMLTag(elementList) ? [elementList] : elementList;
-            elementList = ne.util.toArray(elementList);
-            ne.util.forEach(elementList, function(targetElement) {
+            elementList = tui.util.isHTMLTag(elementList) ? [elementList] : elementList;
+            elementList = tui.util.toArray(elementList);
+            tui.util.forEach(elementList, function(targetElement) {
                 type = this.setInput[targetElement.type] ? targetElement.type : 'defaultAction';
                 this.setInput[type](targetElement, formValue);
             }, this);

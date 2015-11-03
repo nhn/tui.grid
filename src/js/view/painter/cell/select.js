@@ -11,7 +11,7 @@ var util = require('../../../util');
  * Painter class for the select cell
  * @module view/painter/cell/select
  */
-var Select = ne.util.defineClass(List,/**@lends module:view/painter/cell/select.prototype */{
+var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/list 
@@ -74,12 +74,12 @@ var Select = ne.util.defineClass(List,/**@lends module:view/painter/cell/select.
             htmlArr = [],
             html = this._getConvertedHtml(cellData.value, cellData);
 
-        if (ne.util.isNull(html)) {
+        if (tui.util.isNull(html)) {
             htmlArr.push('<select name="' + util.getUniqueKey() + '"');
             htmlArr.push(isDisabled ? ' disabled ' : '');
             htmlArr.push('>');
 
-            ne.util.forEachArray(list, function(item) {
+            tui.util.forEachArray(list, function(item) {
                 htmlArr.push('<option ');
                 htmlArr.push('value="' + item.value + '"');
                 //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
@@ -113,7 +113,7 @@ var Select = ne.util.defineClass(List,/**@lends module:view/painter/cell/select.
             content = '',
             beforeContent, afterContent;
 
-        if (!ne.util.isExisty(cellData.value)) {
+        if (!tui.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);

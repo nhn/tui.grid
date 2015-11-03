@@ -329,7 +329,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         } else if (totalColumnWidth < dataPosX) {
             columnIdx = len - 1;
         } else {
-            ne.util.forEachArray(columnWidthList, function(columnWidth, i) {
+            tui.util.forEachArray(columnWidthList, function(columnWidth, i) {
                 curWidth += columnWidth + 1;
                 if (dataPosX <= curWidth) {
                     columnIdx = i;

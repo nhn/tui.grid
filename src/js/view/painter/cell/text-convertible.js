@@ -12,7 +12,7 @@ var util = require('../../../util');
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @module view/painter/cell/text-convertible
  */
-var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
+var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
     /**
      * @constructs
      * @extends module:view/painter/cell/text 
@@ -87,12 +87,12 @@ var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/te
             value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
             htmlArr = [];
 
-        if (ne.util.isUndefined(value)) {
+        if (tui.util.isUndefined(value)) {
             value = '';
         }
 
         if (!this._isEditingCell(cellData)) {
-            if (ne.util.isFunction(columnModel.formatter)) {
+            if (tui.util.isFunction(columnModel.formatter)) {
                 value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
             }
             return value;
@@ -225,7 +225,7 @@ var Convertible = ne.util.defineClass(Text,/**@lends module:view/painter/cell/te
             columnName = this.editingCell.columnName,
             $td;
 
-        if (!ne.util.isNull(rowKey) && !ne.util.isNull(columnName)) {
+        if (!tui.util.isNull(rowKey) && !tui.util.isNull(columnName)) {
             $td = this.grid.getElement(rowKey, columnName);
             $td.find('input')[0].blur();
         }

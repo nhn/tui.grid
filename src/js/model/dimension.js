@@ -328,7 +328,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = this.getColumnWidthList(whichSide),
             frameWidth = this._getFrameWidth(columnWidthList);
-        if (ne.util.isUndefined(whichSide) && columnFixCount > 0) {
+        if (tui.util.isUndefined(whichSide) && columnFixCount > 0) {
             //columnFixCount 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
             frameWidth += 1;
         }

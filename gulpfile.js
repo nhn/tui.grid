@@ -112,8 +112,8 @@ gulp.task('copy-sample-lib', function() {
            'lib/jquery-json/src/jquery.json.js',
            'lib/underscore/underscore.js',
            'lib/backbone/backbone.js',
-           'lib/ne-code-snippet/code-snippet.min.js',
-           'lib/ne-component-pagination/pagination.min.js'
+           'lib/tui-code-snippet/code-snippet.min.js',
+           'lib/tui-component-pagination/pagination.min.js'
        ])
        .pipe(gulp.dest(PATH_SAMPLE + 'js/lib'));
 });
