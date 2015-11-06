@@ -27,7 +27,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
         });
     },
 
-    baseTemplate: _.template(
+    template: _.template(
         '' +
         '<tr ' +
         'key="<%=key%>" ' +
@@ -105,7 +105,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
             }
         }, this);
 
-        return this.baseTemplate({
+        return this.template({
             key: model.get('rowKey'),
             height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
             contents: html,

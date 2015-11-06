@@ -28,6 +28,22 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     redrawAttributes: ['isEditable', 'optionList', 'value'],
 
+    /*
+     * Markup template
+     * If use '<%=class%>' key word, an error occurs.
+     * So use '<%=className%>' instead of '<%=class%>'
+     */
+    template: _.template(
+        '<td' +
+        ' columnname="<%=columnName%>"' +
+        ' class="<%=className%>"' +
+        ' edit-type="<%=editType%>"' +
+        ' <%=rowSpan%>' +
+        '<%=attributeString%>' +
+        '>' +
+        '<%=contentHtml%>' +
+        '</td>'
+    ),
     /**
      * keyDownEvent 발생시 기본 동작 switch
      * @private
@@ -270,23 +286,17 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     getHtml: function(cellData) {
         var attributeString = util.getAttributesString(this.getAttributes(cellData)),
-            htmlArr = [];
+            html;
 
-        htmlArr.push('<td');
-        htmlArr.push(' columnName="');
-        htmlArr.push(cellData.columnName);
-        htmlArr.push('" ');
-        htmlArr.push(cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '');
-        htmlArr.push(' class="');
-        htmlArr.push(this._getClassNameList(cellData).join(' '));
-        htmlArr.push('" ');
-        htmlArr.push(attributeString);
-        htmlArr.push(' edit-type="');
-        htmlArr.push(this.getEditType());
-        htmlArr.push('">');
-        htmlArr.push(this._getContentHtml(cellData));
-        htmlArr.push('</td>');
-        return htmlArr.join('');
+        html = this.template({
+            columnName: cellData.columnName,
+            rowSpan: cellData.rowSpan ? ('rowSpan="' + cellData.rowSpan + '"') : '',
+            className: this._getClassNameList(cellData).join(' '),
+            editType: this.getEditType(),
+            attributeString: attributeString,
+            contentHtml: this._getContentHtml(cellData)
+        });
+        return html;
     },
 
     /**

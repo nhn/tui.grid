@@ -62,6 +62,26 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
         return 'button';
     },
 
+    contentTemplate: _.template(
+        '<input' +
+        ' type="<%=type%>"' +
+        ' name="<%=name%>"' +
+        ' id="<%=id%>"' +
+        ' value="<%=value%>"' +
+        ' <% if (isChecked) print("checked"); %>' +
+        ' <% if (isDisabled) print("disabled"); %>' +
+        '/>'
+    ),
+
+    labelTemplate: _.template(
+        '<label' +
+        ' for="<%=id>"' +
+        ' style="margin-right:10px;"' +
+        '>' +
+        '<%=labelText>' +
+        '</label>'
+    ),
+
     /**
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
@@ -98,36 +118,34 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
             htmlArr = [],
             name = util.getUniqueKey(),
             isDisabled = cellData.isDisabled,
-            id;
+            id,
+            inputHtml,
+            type = columnModel.editOption.type;
 
-        if (tui.util.isNull(html)) {
-            tui.util.forEachArray(checkedList, function(item) {
+        if (_.isNull(html)) {
+            _.each(checkedList, function(item) {
                 checkedMap[item] = true;
             });
 
-            tui.util.forEachArray(list, function(item) {
+            _.each(list, function(item) {
                 id = name + '_' + item.value;
 
-                htmlArr.push('<input type="');
-                htmlArr.push(columnModel.editOption.type);
-                htmlArr.push('" name="');
-                htmlArr.push(name);
-                htmlArr.push('" id="');
-                htmlArr.push(id);
-                htmlArr.push('" value="');
-                htmlArr.push(item.value);
-                htmlArr.push('" ');
-                htmlArr.push(checkedMap[item.value] ? 'checked' : '');
-                htmlArr.push(isDisabled ? 'disabled' : '');
-                htmlArr.push('/>');
+                inputHtml = this.contentTemplate({
+                    type: type,
+                    name: name,
+                    id: id,
+                    value: item.value,
+                    isChecked: !!checkedMap[item.value],
+                    isDisabled: isDisabled
+                });
 
                 if (item.text) {
-                    htmlArr.push('<label for="');
-                    htmlArr.push(id);
-                    htmlArr.push('" style="margin-right:10px">');
-                    htmlArr.push(item.text);
-                    htmlArr.push('</label>');
+                    inputHtml += this.labelTemplate({
+                        id: id,
+                        labelText: item.text
+                    });
                 }
+                htmlArr.push(inputHtml);
             }, this);
             html = htmlArr.join('');
         }

@@ -48,7 +48,7 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         'selectstart input': '_onSelectStart'
     },
 
-    template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
+    contentTemplate: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
 
     /**
      * input type 을 반환한다.
@@ -116,7 +116,7 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         html = this._getConvertedHtml(value, cellData);
 
         if (tui.util.isNull(html)) {
-            html = this.template({
+            html = this.contentTemplate({
                 type: this._getInputType(),
                 value: value,
                 name: util.getUniqueKey(),
