@@ -15,7 +15,7 @@ var util = require('../../../util');
 var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/text 
+     * @extends module:view/painter/cell/text
      */
     init: function() {
         Text.apply(this, arguments);
@@ -42,6 +42,23 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
         'focus input': '_onFocus',
         'selectstart input': '_onSelectStart'
     },
+
+    /**
+     * Content markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<span class="input">' +
+        '<input' +
+        ' type="<%=type%>"' +
+        ' value="<%=value%>"' +
+        ' name="<%=name%>"' +
+        ' align="center"' +
+        ' maxLength="<%=maxLength%>"' +
+        ' <% if (isDisabled) print("disabled") %>' +
+        '/>' +
+        '</span>'
+    ),
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -82,10 +99,8 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
      */
     getContentHtml: function(cellData) {
         // FIXME: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
-        // TODO: html template 형태로 변경
         var columnModel = this.getColumnModel(cellData),
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-            htmlArr = [];
+            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
 
         if (tui.util.isUndefined(value)) {
             value = '';
@@ -97,21 +112,14 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
             }
             return value;
         }
-        htmlArr.push('<span class="input">');
-        htmlArr.push('<input type="');
-        htmlArr.push(this._getInputType());
-        htmlArr.push('" value="');
-        htmlArr.push(value);
-        htmlArr.push('" name="');
-        htmlArr.push(util.getUniqueKey());
-        htmlArr.push('" align="center" ');
-        htmlArr.push(cellData.isDisabled ? 'disabled' : '');
-        htmlArr.push(' maxLength="');
-        htmlArr.push(columnModel.editOption.maxLength);
-        htmlArr.push('"/>');
-        htmlArr.push('</span>');
 
-        return htmlArr.join('');
+        return this.contentTemplate({
+            type: this._getInputType(),
+            value: value,
+            name: util.getUniqueKey(),
+            isDisabled: cellData.isDisabled,
+            maxLength: columnModel.editOption.maxLength
+        });
     },
 
     /**

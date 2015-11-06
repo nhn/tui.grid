@@ -34,6 +34,10 @@ var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select
         'keydown select': '_onKeyDown'
     },
 
+    /**
+     * Content markup template
+     * @return {string} html
+     */
     contentTemplate: _.template(
         '<select' +
         ' name="<%=name%>"' +
@@ -44,8 +48,10 @@ var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select
     ),
 
     /**
-     * '=='구문은 의도된 구문.
-     * The value of option is a type of stirng, and use '==' operator for comparison regardless of some types of value in cellData
+     * Options markup template
+     * It will be added to content
+     * :: The value of option is a type of stirng, and use '==' operator for comparison regardless of some types of value in cellData
+     * @return {string} html
      */
     optionTemplate: _.template(
         '<option' +

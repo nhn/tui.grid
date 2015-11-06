@@ -32,18 +32,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Markup template
      * If use '<%=class%>' key word, an error occurs.
      * So use '<%=className%>' instead of '<%=class%>'
+     * @return {string} template
      */
     template: _.template(
         '<td' +
         ' columnname="<%=columnName%>"' +
         ' class="<%=className%>"' +
         ' edit-type="<%=editType%>"' +
-        ' <%=rowSpan%>' +
+        ' <% if(rowSpan) print("rowSpan=" + rowSpan )%>' +
         '<%=attributeString%>' +
         '>' +
         '<%=contentHtml%>' +
         '</td>'
     ),
+
     /**
      * keyDownEvent 발생시 기본 동작 switch
      * @private
@@ -290,7 +292,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         html = this.template({
             columnName: cellData.columnName,
-            rowSpan: cellData.rowSpan ? ('rowSpan="' + cellData.rowSpan + '"') : '',
+            rowSpan: cellData.rowSpan,
             className: this._getClassNameList(cellData).join(' '),
             editType: this.getEditType(),
             attributeString: attributeString,

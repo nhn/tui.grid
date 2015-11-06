@@ -62,6 +62,10 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
         return 'button';
     },
 
+    /**
+     * Contents markup template
+     * @return {string} html
+     */
     contentTemplate: _.template(
         '<input' +
         ' type="<%=type%>"' +
@@ -73,12 +77,17 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
         '/>'
     ),
 
+    /**
+     * Label markup template
+     * It will be added to content
+     * @return {string} html
+     */
     labelTemplate: _.template(
         '<label' +
-        ' for="<%=id>"' +
+        ' for="<%=id%>"' +
         ' style="margin-right:10px;"' +
         '>' +
-        '<%=labelText>' +
+        '<%=labelText%>' +
         '</label>'
     ),
 
@@ -115,22 +124,20 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
             checkedList = ('' + value).split(','),
             checkedMap = {},
             html = this._getConvertedHtml(value, cellData),
-            htmlArr = [],
             name = util.getUniqueKey(),
             isDisabled = cellData.isDisabled,
-            id,
-            inputHtml,
-            type = columnModel.editOption.type;
+            type = columnModel.editOption.type,
+            id;
 
         if (_.isNull(html)) {
+            html = '';
+
             _.each(checkedList, function(item) {
                 checkedMap[item] = true;
             });
-
             _.each(list, function(item) {
                 id = name + '_' + item.value;
-
-                inputHtml = this.contentTemplate({
+                html += this.contentTemplate({
                     type: type,
                     name: name,
                     id: id,
@@ -138,16 +145,13 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
                     isChecked: !!checkedMap[item.value],
                     isDisabled: isDisabled
                 });
-
                 if (item.text) {
-                    inputHtml += this.labelTemplate({
+                    html += this.labelTemplate({
                         id: id,
                         labelText: item.text
                     });
                 }
-                htmlArr.push(inputHtml);
             }, this);
-            html = htmlArr.join('');
         }
         return html;
     },

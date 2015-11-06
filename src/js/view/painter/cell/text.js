@@ -48,7 +48,20 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         'selectstart input': '_onSelectStart'
     },
 
-    contentTemplate: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
+    /**
+     * Content markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<input' +
+        ' type="<%=type%>"' +
+        ' value="<%=value%>"' +
+        ' name="<%=name%>"' +
+        ' align="center"' +
+        ' maxLength="<%=maxLength%>"' +
+        ' <% if (isDisabled) print("disabled"); %>' +
+        '/>'
+    ),
 
     /**
      * input type 을 반환한다.
@@ -120,8 +133,8 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
                 type: this._getInputType(),
                 value: value,
                 name: util.getUniqueKey(),
-                disabled: cellData.isDisabled ? 'disabled' : '',
-                maxLength: editOption.maxLength || ''
+                isDisabled: cellData.isDisabled,
+                maxLength: editOption.maxLength
             });
         }
         return html;
