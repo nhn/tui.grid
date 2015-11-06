@@ -7,6 +7,7 @@
 var View = require('../base/view');
 var Router = require('./net-router');
 var util = require('../util');
+var formUtil = require('../formUtil');
 
 /**
  * Net Addon
@@ -227,7 +228,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     setFormData: function(formData) {
         //form data 를 실제 form 에 반영한다.
         /* istanbul ignore next */
-        util.form.setFormData(this.$el, formData);
+        formUtil.setFormData(this.$el, formData);
     },
 
     /**
@@ -276,7 +277,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getFormData: function() {
         /* istanbul ignore next*/
-        return util.form.getFormData(this.$el);
+        return formUtil.getFormData(this.$el);
     },
 
     /**

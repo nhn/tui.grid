@@ -2,6 +2,7 @@
 
 var util = require('../../src/js/util');
 var Model = require('../../src/js/base/model');
+var formUtil = require('../../src/js/formUtil');
 
 describe('addon.net', function() {
     var columnModelList = [{
@@ -206,7 +207,7 @@ describe('addon.net', function() {
                 input2: 'data2'
             };
             net.setFormData(inputData);
-            actualData = util.form.getFormData($form);
+            actualData = formUtil.getFormData($form);
             expect(actualData).toEqual(inputData);
         });
 
@@ -215,7 +216,7 @@ describe('addon.net', function() {
             net.setFormData({
                 input: 'data1'
             });
-            expect(util.form.getFormData(net.$el)).toEqual({});
+            expect(formUtil.getFormData(net.$el)).toEqual({});
         });
     });
 

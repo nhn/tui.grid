@@ -6,6 +6,7 @@
 
 var Cell = require('../cell');
 var util = require('../../../util');
+var formUtil = require('../../../formUtil');
 
 /**
  * Painter class for the text cell
@@ -90,7 +91,7 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         if ($input.prop('disabled')) {
             this.grid.focusClipboard();
         } else {
-            util.form.setCursorToEnd($input.get(0));
+            formUtil.setCursorToEnd($input.get(0));
             $input.select();
         }
     },
