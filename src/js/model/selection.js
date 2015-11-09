@@ -309,7 +309,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (!isLside) {
             dataPosX = dataPosX + scrollLeft;
         }
-        rowIdx = Math.max(0, Math.min(Math.floor(dataPosY / (dimensionModel.get('rowHeight') + 1)), this.grid.dataModel.length - 1));
 
         if (containerPos.pageY < 0) {
             overflowY = -1;
@@ -337,9 +336,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             });
         }
 
+        rowIdx = Math.max(0, Math.min(Math.floor(dataPosY / (dimensionModel.get('rowHeight') + 1)), this.grid.dataModel.length - 1));
+        columnIdx = Math.max(0, (columnIdx - this.grid.columnModel.getVisibleMetaColumnCount()));
         return {
             row: rowIdx,
-            column: columnIdx - this.grid.columnModel.getVisibleMetaColumnCount(),
+            column: columnIdx,
             overflowX: overflowX,
             overflowY: overflowY
         };
