@@ -39,7 +39,8 @@ describe('view.layout.body', function() {
                     }
                 ]
             }),
-            focusModel: new Model()
+            focusModel: new Model(),
+            focusAt: function() {}
         };
         mock.dataModel.isRowSpanEnable = function() {
             return true;
@@ -74,6 +75,15 @@ describe('view.layout.body', function() {
         it('whichSide is default R', function() {
             expect(body.whichSide).toBe('R');
         });
+    });
+
+    xdescribe('_onMouseDown', function() {
+        var el = $('<tr key="0"><td columnname="_number">1</td></tr>').find('td')[0],
+            eventMock = {
+                target: el,
+                pageX: 20,
+                pageY: 20
+            };
     });
 
     describe('_getMouseMoveDistance', function() {

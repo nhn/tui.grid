@@ -114,12 +114,19 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             grid = this.grid,
             columnModel = grid.columnModel;
 
+        if (!columnName || !rowKey) {
+            return;
+        }
+
         if (grid.option('selectType') === 'radio') {
             grid.check(rowKey);
         }
 
         if (columnModel.isMetaColumn(columnName)) {
-            // meta column clicked
+            if (columnName === '_number') {
+                grid.selectionModel.selectRow(rowKey);
+                grid.focusAt(rowKey, 0);
+            }
         } else {
             grid.focus(rowKey, columnName);
             this._checkSelectionAction(event.pageX, event.pageY, event.shiftKey);

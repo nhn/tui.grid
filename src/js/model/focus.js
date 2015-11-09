@@ -97,13 +97,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             return this;
         }
         this._savePrevious();
-        this.blur();
-
-        if (rowKey !== curRowKey) {
-            this.select(rowKey);
-        }
-        this.set('columnName', columnName);
-        this.trigger('focus', rowKey, columnName);
+        this.blur()
+            .select(rowKey)
+            .set('columnName', columnName)
+            .trigger('focus', rowKey, columnName);
 
         if (isScrollable) {
             scrollPosition = this._getScrollPosition();

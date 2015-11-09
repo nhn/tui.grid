@@ -148,6 +148,26 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
+     * Select all data in a row
+     */
+    selectRow: function(rowKey) {
+        if (this._isEnabled) {
+            this.start(rowKey, this.grid.columnModel.getVisibleColumnModelList().length - 1);
+            this.update(rowKey, 0);
+        }
+    },
+
+    /**
+     * Select all data in a column
+     */
+    selectColumn: function(columnIdx) {
+        if (this._isEnabled) {
+            this.start(this.grid.dataModel.length - 1, columnIdx);
+            this.update(0, columnIdx);
+        }
+    },
+
+    /**
      * Selects all data range.
      */
     selectAll: function() {
