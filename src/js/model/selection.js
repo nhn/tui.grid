@@ -118,8 +118,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {number} pageY - Y position relative to the document
      */
     updateByMousePosition: function(pageX, pageY) {
-        var pos = this._getIndexFromMousePosition(pageX, pageY),
-            self = this;
+        var pos = this._getIndexFromMousePosition(pageX, pageY);
 
         this.stopAutoScroll();
         if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
@@ -359,7 +358,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             spannedRange = {
                 row: _.sortBy(this.inputRange.row),
                 column: _.sortBy(this.inputRange.column)
-            }
+            };
             if (dataModel.isRowSpanEnable()) {
                 do {
                     tmpRowRange = _.assign([], spannedRange.row);
