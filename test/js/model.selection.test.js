@@ -231,7 +231,7 @@ describe('model/selection', function() {
                 });
 
                 it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
-                    selection._getIndexFromMousePosition = function(pageX, pageY) {
+                    selection.getIndexFromMousePosition = function(pageX, pageY) {
                         return {
                             row: pageX,
                             column: pageY,

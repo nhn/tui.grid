@@ -5,7 +5,11 @@
 'use strict';
 
 var Model = require('../base/model');
-
+var SELECTION_STATE = {
+    cell: 'cell',
+    row: 'row',
+    column: 'column'
+};
 /**
  *  Selection Model class
  *  @module model/selection
@@ -22,7 +26,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             inputRange: null,
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
-            _isEnabled: true
+            _isEnabled: true,
+            selectionState: SELECTION_STATE.cell
         });
 
         this.listenTo(this.grid.dataModel, 'add remove sort reset', this.end);
@@ -35,6 +40,16 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
          * @type {{row: array, column: array}}
          */
         range: null
+    },
+
+    /**
+     * Set selection state
+     * @param {string} state - Selection state (cell, row, column)
+     */
+    setState: function(state) {
+        if (state) {
+            this.selectionState = state;
+        }
     },
 
     /**
@@ -66,11 +81,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Starts the selection.
      * @param {Number} rowIndex - Row index
      * @param {Number} columnIndex - Column index
+     * @param {string} state - Selection state
      */
-    start: function(rowIndex, columnIndex) {
+    start: function(rowIndex, columnIndex, state) {
         if (!this._isEnabled) {
             return;
         }
+        this.setState(state);
         this.inputRange = {
             row: [rowIndex, rowIndex],
             column: [columnIndex, columnIndex]
@@ -83,42 +100,46 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Starts the selection by mouse position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
+     * @param {string} state - Selection state
      */
-    startByMousePosition: function(pageX, pageY) {
-        var pos = this._getIndexFromMousePosition(pageX, pageY);
-        this.start(pos.row, pos.column);
+    startByMousePosition: function(pageX, pageY, state) {
+        var pos = this.getIndexFromMousePosition(pageX, pageY);
+        this.start(pos.row, pos.column, state);
     },
 
     /**
      * Updates the selection range.
      * @param {Number} rowIndex - Row index
      * @param {Number} columnIndex - Column index
+     * @param {string} [state] - Selection state
      */
-    update: function(rowIndex, columnIndex) {
+    update: function(rowIndex, columnIndex, state) {
         var focused;
 
-        if (!this._isEnabled || !this.inputRange || rowIndex < 0 || columnIndex < 0) {
+        if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
             return;
         }
 
         if (!this.hasSelection()) {
-            focused = this.grid.focusModel.indexOf(true);
-            this.start(focused.rowIdx, focused.columnIdx);
+            focused = this.grid.focusModel.indexOf();
+            this.start(focused.rowIdx, focused.columnIdx, state);
+        } else {
+            this.setState(state);
         }
         this.inputRange.row[1] = rowIndex;
         this.inputRange.column[1] = columnIndex;
         this._resetRangeAttribute();
         this.grid.focusClipboard();
-        this.grid.focusAt(rowIndex, columnIndex);
     },
 
     /**
      * Updates the selection range by mouse position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
+     * @param {string} [state] - Selection state
      */
-    updateByMousePosition: function(pageX, pageY) {
-        var pos = this._getIndexFromMousePosition(pageX, pageY);
+    updateByMousePosition: function(pageX, pageY, state) {
+        var pos = this.getIndexFromMousePosition(pageX, pageY);
 
         this.stopAutoScroll();
         if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
@@ -126,7 +147,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
                 _.bind(this._adjustScroll, this, pos.overflowX, pos.overflowY)
             );
         }
-        this.update(pos.row, pos.column);
+        this.update(pos.row, pos.column, state);
     },
 
     /**
@@ -134,7 +155,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     end: function() {
         this.inputRange = null;
-        this.set('range', null);
+        this.unset('range');
     },
 
     /**
@@ -152,8 +173,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     selectRow: function(rowKey) {
         if (this._isEnabled) {
-            this.start(rowKey, this.grid.columnModel.getVisibleColumnModelList().length - 1);
-            this.update(rowKey, 0);
+            this.start(rowKey, 0, SELECTION_STATE.row);
+            this.update(rowKey, this.grid.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
 
@@ -162,8 +183,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     selectColumn: function(columnIdx) {
         if (this._isEnabled) {
-            this.start(this.grid.dataModel.length - 1, columnIdx);
-            this.update(0, columnIdx);
+            this.start(0, columnIdx, SELECTION_STATE.column);
+            this.update(this.grid.dataModel.length - 1, columnIdx);
         }
     },
 
@@ -172,7 +193,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     selectAll: function() {
         if (this._isEnabled) {
-            this.start(0, 0);
+            this.start(0, 0, SELECTION_STATE.cell);
             this.update(this.grid.dataModel.length - 1, this.grid.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -302,10 +323,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * 마우스 위치 정보에 해당하는 row 와 column index 를 반환한다.
      * @param {Number} pageX    마우스 x좌표
      * @param {Number} pageY    마우스 y 좌표
+     * @param {boolean} [withMeta] columnIndex의 메타영역 포함 여부
      * @return {{row: number, column: number, overflowX: number, overflowY: number}} row, column의 인덱스 정보와 x, y축 overflow 정보.
      * @private
      */
-    _getIndexFromMousePosition: function(pageX, pageY) {
+    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
         var containerPos = this._getContainerPosition(pageX, pageY),
             dimensionModel = this.grid.dimensionModel,
             renderModel = this.grid.renderModel,
@@ -357,7 +379,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         rowIdx = Math.max(0, Math.min(Math.floor(dataPosY / (dimensionModel.get('rowHeight') + 1)), this.grid.dataModel.length - 1));
-        columnIdx = Math.max(0, (columnIdx - this.grid.columnModel.getVisibleMetaColumnCount()));
+        if (!withMeta) {
+            columnIdx = Math.max(0, (columnIdx - this.grid.columnModel.getVisibleMetaColumnCount()));
+        }
         return {
             row: rowIdx,
             column: columnIdx,
@@ -372,22 +396,55 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _resetRangeAttribute: function() {
         var dataModel = this.grid.dataModel,
-            spannedRange = null,
-            tmpRowRange;
+            spannedRange, tmpRowRange;
 
-        if (this.inputRange) {
-            spannedRange = {
-                row: _.sortBy(this.inputRange.row),
-                column: _.sortBy(this.inputRange.column)
-            };
-            if (dataModel.isRowSpanEnable()) {
-                do {
-                    tmpRowRange = _.assign([], spannedRange.row);
-                    spannedRange = this._getRowSpannedIndex(spannedRange);
-                } while (spannedRange.row[0] !== tmpRowRange[0] || spannedRange.row[1] !== tmpRowRange[1]);
-            }
+        if (!this.inputRange) {
+            this.set('range', null);
+            return;
+        }
+
+        spannedRange = {
+            row: _.sortBy(this.inputRange.row),
+            column: _.sortBy(this.inputRange.column)
+        };
+        if (dataModel.isRowSpanEnable()) {
+            do {
+                tmpRowRange = _.assign([], spannedRange.row);
+                spannedRange = this._getRowSpannedIndex(spannedRange);
+            } while (spannedRange.row[0] !== tmpRowRange[0] || spannedRange.row[1] !== tmpRowRange[1]);
+        }
+
+        this._setRangeMinMax(spannedRange.row, spannedRange.column);
+        switch (this.selectionState) {
+            case SELECTION_STATE.row:
+                spannedRange.column = [0, this.grid.columnModel.getVisibleColumnModelList().length - 1];
+                break;
+            case SELECTION_STATE.column:
+                //@todo column selected
+                break;
+            case SELECTION_STATE.cell:
+            default:
+                break;
         }
         this.set('range', spannedRange);
+    },
+
+    /**
+     * Set min, max value of range(row, column)
+     * @param {Array} rowRange Row range
+     * @param {Array} columnRange Column range
+     * @private
+     */
+    _setRangeMinMax: function(rowRange, columnRange) {
+        if (rowRange) {
+            rowRange[0] = Math.max(0, rowRange[0]);
+            rowRange[1] = Math.min(this.grid.getRowCount() - 1, rowRange[1]);
+        }
+
+        if (columnRange) {
+            columnRange[0] = Math.max(0, columnRange[0]);
+            columnRange[1] = Math.min(this.grid.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
+        }
     },
 
     /**

@@ -103,33 +103,79 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * mousedown 이벤트 핸들러
-     * @param {Event} mouseDownEvent 이벤트 객체
+     * @param {Event} event Event-object of mousedown
      * @private
+     * @todo refactoring
      */
     _onMouseDown: function(event) {
-        var $td = $(event.target).closest('td'),
+        var grid = this.grid,
+            columnModel = grid.columnModel,
+            $td = $(event.target).closest('td'),
             $tr = $(event.target).closest('tr'),
             columnName = $td.attr('columnName'),
-            rowKey = $tr.attr('key'),
-            grid = this.grid,
-            columnModel = grid.columnModel;
+            rowIndex = Number($tr.attr('key')),
+            indexObj = {
+                columnName: columnName,
+                column: columnModel.indexOfColumnName(columnName, true),
+                row: rowIndex
+            },
+            list;
 
-        if (!columnName || !rowKey) {
+        if (grid.option('selectType') === 'radio') {
+            grid.check(rowIndex);
+        }
+
+        if (!columnName || tui.util.isFalsy(rowIndex)) {
+            _.extend(indexObj, grid.selectionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
+            list = columnModel.getVisibleColumnModelList(null, true);
+
+            // columnName과 columnIndex 재조정
+            columnName = list[indexObj.column].columnName;
+            indexObj.columnName = columnName;
+            indexObj.column = columnModel.indexOfColumnName(columnName);
+        }
+        this._controlAction(event.pageX, event.pageY, event.shiftKey, indexObj);
+    },
+
+    /**
+     * Control action when mousedown event fired
+     * @param pageX
+     * @param pageY
+     * @param shiftKey
+     * @param indexObj
+     * @private
+     * @todo refactoring??
+     */
+    _controlAction: function(pageX, pageY, shiftKey, indexObj) {
+        var columnModel = this.grid.columnModel,
+            selectionModel = this.grid.selectionModel,
+            columnName = indexObj.columnName,
+            columnIndex = indexObj.column,
+            rowIndex = indexObj.row;
+
+        if (!selectionModel.isEnabled()) {
             return;
         }
 
-        if (grid.option('selectType') === 'radio') {
-            grid.check(rowKey);
-        }
-
-        if (columnModel.isMetaColumn(columnName)) {
-            if (columnName === '_number') {
-                grid.selectionModel.selectRow(rowKey);
-                grid.focusAt(rowKey, 0);
+        this._attachDragEvents(pageX, pageY);
+        if (!columnModel.isMetaColumn(columnName)) {
+            selectionModel.setState('cell');
+            if (shiftKey) {
+                selectionModel.update(rowIndex, columnIndex);
+            } else {
+                this.grid.focus(rowIndex, columnName);
+                selectionModel.end();
+            }
+        } else if (columnName === '_number') {
+            selectionModel.setState('row');
+            if (shiftKey) {
+                selectionModel.update(rowIndex, 0);
+            } else {
+                this.grid.focusAt(rowIndex, 0);
+                selectionModel.selectRow(rowIndex);
             }
         } else {
-            grid.focus(rowKey, columnName);
-            this._checkSelectionAction(event.pageX, event.pageY, event.shiftKey);
+            this._detachDragEvents();
         }
     },
 
@@ -156,9 +202,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     _detachDragEvents: function() {
         this.grid.selectionModel.stopAutoScroll();
         $(document)
-            .off('mousemove', $.proxy(this._onMouseMove, this))
-            .off('mouseup', $.proxy(this._detachDragEvents, this))
-            .off('selectstart', $.proxy(this._onSelectStart, this));
+            .off('mousemove', this._onMouseMove)
+            .off('mouseup', this._detachDragEvents)
+            .off('selectstart', this._onSelectStart);
     },
 
     /**
@@ -194,33 +240,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * select start 이벤트를 방지한다.
-     * @param {event} selectStartEvent 이벤트 객체
+     * @param {Event} event selectStart 이벤트 객체
      * @returns {boolean} false
      * @private
      */
     _onSelectStart: function(event) {
         event.preventDefault();
         return false;
-    },
-
-    /**
-     * Checks the state of selection model and event, and process actions related to selection.
-     * @param {number} pageX - X position relative to the document
-     * @param {number} pageY - Y position relative to the document
-     * @param {boolean} shiftKey - True if the shiftKey was down
-     */
-    _checkSelectionAction: function(pageX, pageY, shiftKey) {
-        var selectionModel = this.grid.selectionModel;
-
-        if (!selectionModel.isEnabled()) {
-            return;
-        }
-        if (shiftKey) {
-            selectionModel.updateByMousePosition(pageX, pageY);
-        } else {
-            selectionModel.end();
-        }
-        this._attachDragEvents(pageX, pageY);
     },
 
     /**

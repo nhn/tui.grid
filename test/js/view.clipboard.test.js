@@ -352,7 +352,12 @@ describe('view.clipboard', function() {
             });
 
             it('selection이 선택되어 있지 않으면 selection start을 호출한다', function() {
-                grid.selectionModel.start = jasmine.createSpy('start');
+                spyOn(grid.selectionModel, 'start').and.callFake(function() {
+                    grid.selectionModel.inputRange = {
+                        row: [2, 2],
+                        column: [1, 1]
+                    }
+                });
                 clipboard._updateSelectionByKeyIn(2, 1);
                 expect(grid.selectionModel.start).toHaveBeenCalled();
             });

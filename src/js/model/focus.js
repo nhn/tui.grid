@@ -90,8 +90,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {Model.Focus} This object
      */
     focus: function(rowKey, columnName, isScrollable) {
-        var scrollPosition,
-            curRowKey = this.get('rowKey');
+        var scrollPosition;
 
         if (util.isBlank(rowKey) || util.isBlank(columnName) || this.grid.columnModel.isMetaColumn(columnName)) {
             return this;
