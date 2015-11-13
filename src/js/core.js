@@ -639,14 +639,15 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
      * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-     * @return {(Number|String)}    조회한 셀의 값.
+     * @return {(Number|String|undefined)}    조회한 셀의 값.
      */
     getValue: function(rowKey, columnName, isOriginal) {
-        var value;
+        var value, row;
         if (isOriginal) {
             value = this.dataModel.getOriginal(rowKey, columnName);
         } else {
-            value = this.dataModel.get(rowKey).get(columnName);
+            row = this.dataModel.get(rowKey);
+            value = row && row.get(columnName);
         }
         return value;
     },

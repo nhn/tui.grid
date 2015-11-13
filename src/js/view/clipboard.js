@@ -199,13 +199,16 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
             selectionRange = grid.selectionModel.get('range'),
             isSelection = true,
-            focusedIndex, rowIndex, columnIndex, el;
+            rowIndex = 0,
+            columnIndex = 0,
+            focusedIndex = focusModel.indexOf(),
+            columnModel, scrollPosition, isValid;
 
         if (selectionRange) {
+            //@todo
             rowIndex = selectionRange.row[1];
             columnIndex = selectionRange.column[1];
         } else {
-            focusedIndex = focusModel.indexOf();
             rowIndex = focusedIndex.rowIdx;
             columnIndex = focusedIndex.columnIdx;
         }
@@ -248,11 +251,16 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 break;
         }
 
-        if (isSelection && columnIndex > -1 && columnIndex < columnModelList.length) {
+        isValid = !!(
+            grid.getRow(rowIndex) &&
+            (columnModel = columnModelList[columnIndex])
+        );
+
+        if (isSelection && isValid) {
             this._updateSelectionByKeyIn(rowIndex, columnIndex);
-            el = grid.getElement(rowIndex, columnModelList[columnIndex].columnName)[0];
-            if (el) {
-                el.scrollIntoView(false);
+            scrollPosition = focusModel.getScrollPosition(rowIndex, columnModel.columnName);
+            if (scrollPosition) {
+                grid.renderModel.set(scrollPosition);
             }
         }
 

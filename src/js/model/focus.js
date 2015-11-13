@@ -102,7 +102,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             .trigger('focus', rowKey, columnName);
 
         if (isScrollable) {
-            scrollPosition = this._getScrollPosition();
+            scrollPosition = this.getScrollPosition(rowKey, columnName);
             if (!tui.util.isEmpty(scrollPosition)) {
                 this.grid.renderModel.set(scrollPosition);
             }
@@ -112,18 +112,18 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * focus 이동에 맞추어 scroll 위치를 조정한 값을 반환한다.
+     * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
+     * @param {String} columnName focus 처리할 셀의 컬럼명
      * @return {{scrollTop: number, scrollLeft: number}} 위치 조정한 값
-     * @private
      */
-    _getScrollPosition: function() {
-        var focused = this.which(),
-            dimensionModel = this.grid.dimensionModel,
+    getScrollPosition: function(rowKey, columnName) {
+        var dimensionModel = this.grid.dimensionModel,
             renderModel = this.grid.renderModel,
             scrollTop = renderModel.get('scrollTop'),
             scrollLeft = renderModel.get('scrollLeft'),
             bodyHeight = dimensionModel.get('bodyHeight'),
             rsideWidth = dimensionModel.get('rsideWidth'),
-            position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName),
+            position = dimensionModel.getCellPosition(rowKey, columnName),
             currentLeft = scrollLeft,
             currentRight = scrollLeft + rsideWidth,
             scrollXSize = +this.get('scrollX') * this.get('scrollBarSize'),
@@ -138,7 +138,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         }
 
         //수평 스크롤 조정
-        if (!this.grid.columnModel.isLside(focused.columnName)) {
+        if (!this.grid.columnModel.isLside(columnName)) {
             if (position.left < currentLeft) {
                 scrollPosition.scrollLeft = position.left;
             } else if (position.right > currentRight) {
