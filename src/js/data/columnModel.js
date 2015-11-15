@@ -382,23 +382,20 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @param {boolean} isHidden - Hidden flag for setting
      */
     setHidden: function(columnNames, isHidden) {
-        var columnMergeInfoList = this.grid.option('columnMerge'),
-            columnMergeInfoItem, visibleList;
+        var name, names, columnModel, visibleList;
 
-        _.each(columnNames, function(name) {
-            var columnModel = this.getColumnModel(name);
+        while (columnNames.length) {
+            name = columnNames.pop();
+            columnModel = this.getColumnModel(name);
 
             if (columnModel) {
                 columnModel.isHidden = isHidden;
             } else {
-                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
-                    columnName: name
-                });
-                if (columnMergeInfoItem) {
-                    this.setHidden(columnMergeInfoItem.columnNameList, isHidden);
-                }
+                names = this.getUnitColumnNamesIfMerged(name);
+                columnNames.push.apply(columnNames, names);
             }
-        }, this);
+        }
+
         visibleList = this._makeVisibleColumnModelList(
             this.get('metaColumnModelList'),
             this.get('dataColumnModelList')
@@ -407,6 +404,31 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
             silent: true
         });
         this.trigger('columnModelChange');
+    },
+
+    getUnitColumnNamesIfMerged: function(columnName) {
+        var columnMergeInfoList = this.grid.option('columnMerge'),
+            stackForSearch = [],
+            searchedNames = [],
+            name, columnModel, columnMergeInfoItem;
+
+        stackForSearch.push(columnName);
+        while (stackForSearch.length) {
+            name = stackForSearch.pop();
+            columnModel = this.getColumnModel(name);
+
+            if (columnModel) {
+                searchedNames.push(name);
+            } else {
+                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
+                    columnName: name
+                });
+                if (columnMergeInfoItem) {
+                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.columnNameList);
+                }
+            }
+        }
+        return searchedNames;
     },
 
     /**
