@@ -184,6 +184,36 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
+     * Return index for reference of selection before moving by key event.
+     * @param {{row: number, column: number}|undefined} selectionRange
+     * @param {{rowIdx: number, columnIdx: number}} focusedIndex
+     * @returns {{row: number, column:number}} index
+     * @private
+     */
+    _getIndexBeforeMove: function(selectionRange, focusedIndex) {
+        var selectionRow, selectionColumn,
+            index = {
+                row: focusedIndex.rowIdx,
+                column: focusedIndex.columnIdx
+            };
+
+        if (selectionRange) {
+            selectionRow = selectionRange.row;
+            selectionColumn = selectionRange.column;
+            index.row = selectionRow[0];
+            index.column = selectionColumn[0];
+
+            if (selectionRow[1] > focusedIndex.rowIdx) {
+                index.row = selectionRow[1];
+            }
+            if (selectionColumn[1] > focusedIndex.columnIdx) {
+                index.column = selectionColumn[1];
+            }
+        }
+        return index;
+    },
+
+    /**
      * shift 가 눌린 상태에서의 key down event handler
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
@@ -199,44 +229,35 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
             selectionRange = grid.selectionModel.get('range'),
             isSelection = true,
-            rowIndex = 0,
-            columnIndex = 0,
             focusedIndex = focusModel.indexOf(),
-            columnModel, scrollPosition, isValid;
+            index, columnModel, scrollPosition, isValid;
 
-        if (selectionRange) {
-            //@todo
-            rowIndex = selectionRange.row[1];
-            columnIndex = selectionRange.column[1];
-        } else {
-            rowIndex = focusedIndex.rowIdx;
-            columnIndex = focusedIndex.columnIdx;
-        }
+        index = this._getIndexBeforeMove(selectionRange, focusedIndex);
 
         switch (keyCode) {
             case keyMap['UP_ARROW']:
-                rowIndex -= 1;
+                index.row -= 1;
                 break;
             case keyMap['DOWN_ARROW']:
-                rowIndex += 1;
+                index.row += 1;
                 break;
             case keyMap['LEFT_ARROW']:
-                columnIndex -= 1;
+                index.column -= 1;
                 break;
             case keyMap['RIGHT_ARROW']:
-                columnIndex += 1;
+                index.column += 1;
                 break;
             case keyMap['PAGE_UP']:
-                rowIndex = focusModel.prevRowIndex(displayRowCount - 1);
+                index.row = focusModel.prevRowIndex(displayRowCount - 1);
                 break;
             case keyMap['PAGE_DOWN']:
-                rowIndex = focusModel.nextRowIndex(displayRowCount - 1);
+                index.row = focusModel.nextRowIndex(displayRowCount - 1);
                 break;
             case keyMap['HOME']:
-                columnIndex = 0;
+                index.column = 0;
                 break;
             case keyMap['END']:
-                columnIndex = columnModelList.length - 1;
+                index.column = columnModelList.length - 1;
                 break;
             case keyMap['ENTER']:
                 isSelection = false;
@@ -252,13 +273,13 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         isValid = !!(
-            grid.getRow(rowIndex) &&
-            (columnModel = columnModelList[columnIndex])
+            grid.getRow(index.row) &&
+            (columnModel = columnModelList[index.column])
         );
 
         if (isSelection && isValid) {
-            this._updateSelectionByKeyIn(rowIndex, columnIndex);
-            scrollPosition = focusModel.getScrollPosition(rowIndex, columnModel.columnName);
+            this._updateSelectionByKeyIn(index.row, index.column);
+            scrollPosition = focusModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
                 grid.renderModel.set(scrollPosition);
             }
