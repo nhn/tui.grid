@@ -36,7 +36,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     className: 'header',
 
     events: {
-        click: '_onClick'
+        'click': '_onClick',
+        'mousedown': '_onMouseDown'
     },
 
     /**
@@ -47,6 +48,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     '        <colgroup><%=colGroup%></colgroup>' +
     '        <tbody><%=tBody%></tbody>' +
     '    </table>'),
+
     /**
      * <th> 템플릿
      */
@@ -61,6 +63,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     '<%}%>' +
     '><%=title%><%=btnSort%></th>' +
     ''),
+
     /**
      * <col> 템플릿
      */
@@ -95,6 +98,28 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }, this);
         return htmlList.join('');
     },
+
+    _onMouseDown: function(event) {
+        var grid = this.grid,
+            columnModel = grid.columnModel,
+            columnName = $(event.target).closest('th').attr('columnName'),
+            columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
+
+        _.each(columnNames, function(name) {
+            this._selectColumn(name);
+        }, this);
+    },
+
+    _selectColumn: function(columnName) {
+        var grid = this.grid,
+            columnModel =  grid.columnModel;
+
+        if (columnModel.isMetaColumn(columnName)) {
+            return;
+        }
+        console.log('todo: implementation');
+    },
+
     /**
      * 그리드의 checkCount 가 변경되었을 때 수행하는 헨들러
      * @private
