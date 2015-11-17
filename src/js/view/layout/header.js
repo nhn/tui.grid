@@ -22,6 +22,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            firstSelectedColumns: null,
             timeoutForAllChecked: 0,
             whichSide: options && options.whichSide || 'R'
         });
@@ -99,17 +100,61 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return htmlList.join('');
     },
 
+    /**
+     *
+     * @param event
+     * @private
+     */
     _onMouseDown: function(event) {
         var grid = this.grid,
             columnModel = grid.columnModel,
             columnName = $(event.target).closest('th').attr('columnName'),
             columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
 
+        grid.selectionModel.selectColumn(columnModel.indexOfColumnName(columnNames[0], true));
+        _.each(columnNames, function(name) {
+            this._selectColumn(name);
+        }, this);
+
+        this._attachDragEvents();
+    },
+
+    _attachDragEvents: function() {
+        $(document)
+            .on('mousemove', $.proxy(this._onMouseMove, this))
+            .on('mouseup', $.proxy(this._detachDragEvents, this))
+            .on('selectstart', $.proxy(this._onSelectStart, this));
+    },
+
+    _detachDragEvents: function() {
+        $(document)
+            .off('mousemove', this._onMouseMove)
+            .off('mouseup', this._detachDragEvents)
+            .off('selectstart', this._onSelectStart);
+    },
+
+    _onMouseMove: function(event) {
+        var grid = this.grid,
+            columnModel = grid.columnModel,
+            columnName = $(event.target).closest('th').attr('columnName'),
+            columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
+
+        grid.selectionModel.selectColumn(columnModel.indexOfColumnName(columnNames[0], true));
         _.each(columnNames, function(name) {
             this._selectColumn(name);
         }, this);
     },
 
+    _onSelectStart: function(event) {
+        event.preventDefault();
+        return false;
+    },
+
+    /**
+     *
+     * @param columnName
+     * @private
+     */
     _selectColumn: function(columnName) {
         var grid = this.grid,
             columnModel =  grid.columnModel;
@@ -117,7 +162,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (columnModel.isMetaColumn(columnName)) {
             return;
         }
-        console.log('todo: implementation');
+        grid.selectionModel.update(0, columnModel.indexOfColumnName(columnName, true), 'column');
     },
 
     /**

@@ -385,7 +385,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         var name, names, columnModel, visibleList;
 
         while (columnNames.length) {
-            name = columnNames.pop();
+            name = columnNames.shift();
             columnModel = this.getColumnModel(name);
 
             if (columnModel) {
@@ -414,7 +414,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
 
         stackForSearch.push(columnName);
         while (stackForSearch.length) {
-            name = stackForSearch.pop();
+            name = stackForSearch.shift();
             columnModel = this.getColumnModel(name);
 
             if (columnModel) {
@@ -428,7 +428,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
                 }
             }
         }
-        return searchedNames;
+        return _.uniq(searchedNames);
     },
 
     /**

@@ -171,7 +171,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (shiftKey) {
                 selectionModel.update(rowIndex, 0);
             } else {
-                this.grid.focusAt(rowIndex, 0);
                 selectionModel.selectRow(rowIndex);
             }
         } else {

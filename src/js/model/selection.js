@@ -173,6 +173,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     selectRow: function(rowKey) {
         if (this._isEnabled) {
+            this.grid.focusAt(rowKey, 0);
             this.start(rowKey, 0, SELECTION_STATE.row);
             this.update(rowKey, this.grid.columnModel.getVisibleColumnModelList().length - 1);
         }
@@ -183,6 +184,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     selectColumn: function(columnIdx) {
         if (this._isEnabled) {
+            this.grid.focusAt(0, columnIdx);
             this.start(0, columnIdx, SELECTION_STATE.column);
             this.update(this.grid.dataModel.length - 1, columnIdx);
         }
@@ -395,7 +397,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _resetRangeAttribute: function() {
-        var dataModel = this.grid.dataModel,
+        var grid = this.grid,
+            dataModel = grid.dataModel,
             spannedRange, tmpRowRange;
 
         if (!this.inputRange) {
@@ -417,10 +420,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         this._setRangeMinMax(spannedRange.row, spannedRange.column);
         switch (this.selectionState) {
             case SELECTION_STATE.row:
-                spannedRange.column = [0, this.grid.columnModel.getVisibleColumnModelList().length - 1];
+                spannedRange.column = [0, grid.columnModel.getVisibleColumnModelList().length - 1];
                 break;
             case SELECTION_STATE.column:
-                //@todo column selected
+                spannedRange.row = [0, dataModel.length - 1];
                 break;
             case SELECTION_STATE.cell:
             default:
@@ -436,14 +439,16 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _setRangeMinMax: function(rowRange, columnRange) {
+        var grid = this.grid;
+
         if (rowRange) {
             rowRange[0] = Math.max(0, rowRange[0]);
-            rowRange[1] = Math.min(this.grid.getRowCount() - 1, rowRange[1]);
+            rowRange[1] = Math.min(grid.dataModel.length - 1, rowRange[1]);
         }
 
         if (columnRange) {
             columnRange[0] = Math.max(0, columnRange[0]);
-            columnRange[1] = Math.min(this.grid.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
+            columnRange[1] = Math.min(grid.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
         }
     },
 

@@ -43,7 +43,9 @@
     "karma-ie-launcher": "^0.1.5",
     "karma-jasmine": "latest",
     "karma-junit-reporter": "^0.3.6",
+    "karma-opera-launcher": "^0.3.0",
     "karma-phantomjs-launcher": "^0.2.1",
+    "karma-safari-launcher": "^0.1.1",
     "karma-webdriver-launcher": "git://github.com/everedifice/karma-webdriver-launcher.git",
     "phantomjs": "^1.9.18",
     "vinyl-source-stream": "^1.1.0"
