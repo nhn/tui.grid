@@ -47,6 +47,34 @@ var util = {
     },
 
     /**
+     * Return min and max value in array
+     * @param {Array} arr
+     * @returns {{min: number, max: number}|undefined}
+     */
+    getMinMax: function(arr) {
+        var min = Number.MAX_SAFE_INTEGER || 9007199254740991,
+            max = Number.MIN_SAFE_INTEGER || -9007199254740991;
+
+        if (!arr.length) {
+            return;
+        }
+
+        _.each(arr, function(value) {
+            if (min > value) {
+                min = value;
+            }
+            if (max < value) {
+                max = value;
+            }
+        });
+
+        return {
+            min: min,
+            max: max
+        };
+    },
+
+    /**
      * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
      * @memberof module:util
      * @param {number} rowCount  행 개수

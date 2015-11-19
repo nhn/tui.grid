@@ -27,11 +27,12 @@
 var grid = new tui.Grid({
     el: $('#grid'),
 	columnFixCount: 2,
+    rowHeight: 30,
 	displayRowCount: 20,
 	headerHeight: 100,
-    toolbar: {
-        hasPagination: false
-    },
+//    toolbar: {
+//        hasPagination: false
+//    },
     columnMerge : [
         {
             columnName : "mergeColumn1",
@@ -245,11 +246,11 @@ var grid = new tui.Grid({
         }
     ]
 });
-grid.use('Net', {
-    api: {
-        downloadExcel: '#', // 엑셀 다운로드 (현재 페이지) URL
-    }
-});
+//grid.use('Net', {
+//    api: {
+//        downloadExcel: '#', // 엑셀 다운로드 (현재 페이지) URL
+//    }
+//});
 grid.setRowList(dummyRowList, function() {
     console.log('done!!');
 });

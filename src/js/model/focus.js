@@ -42,6 +42,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (this.get('columnName')) {
             this.set('prevColumnName', this.get('columnName'));
         }
+        return this;
     },
 
     /**
@@ -95,8 +96,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (util.isBlank(rowKey) || util.isBlank(columnName) || this.grid.columnModel.isMetaColumn(columnName)) {
             return this;
         }
-        this._savePrevious();
-        this.blur()
+        this._savePrevious()
+            .blur()
             .select(rowKey)
             .set('columnName', columnName)
             .trigger('focus', rowKey, columnName);

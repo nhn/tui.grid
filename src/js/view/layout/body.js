@@ -102,16 +102,17 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {Event} event Event-object of mousedown
+     * Mousedown event handler
+     * @param {Event} event
      * @private
-     * @todo refactoring
      */
     _onMouseDown: function(event) {
         var grid = this.grid,
             columnModel = grid.columnModel,
-            $td = $(event.target).closest('td'),
-            $tr = $(event.target).closest('tr'),
+            $target = $(event.target),
+            isInput = $target.is('input'),
+            $td = $target.closest('td'),
+            $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
             rowIndex = Number($tr.attr('key')),
             indexObj = {
@@ -132,21 +133,22 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             // columnName과 columnIndex 재조정
             columnName = list[indexObj.column].columnName;
             indexObj.columnName = columnName;
-            indexObj.column = columnModel.indexOfColumnName(columnName);
+            indexObj.column = columnModel.indexOfColumnName(columnName, true);
         }
-        this._controlAction(event.pageX, event.pageY, event.shiftKey, indexObj);
+
+        this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, isInput);
     },
 
     /**
-     * Control action when mousedown event fired
-     * @param pageX
-     * @param pageY
-     * @param shiftKey
-     * @param indexObj
+     * Control selection action when started
+     * @param {number} pageX - Mouse position X
+     * @param {number} pageY - Mouse position Y
+     * @param {boolean} shiftKey - Whether the shift-key is pressed.
+     * @param {{columnName:string, column:number, row:number}} indexObj
+     * @param {boolean} isInput - Whether the target is input element.
      * @private
-     * @todo refactoring??
      */
-    _controlAction: function(pageX, pageY, shiftKey, indexObj) {
+    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, isInput) {
         var columnModel = this.grid.columnModel,
             selectionModel = this.grid.selectionModel,
             columnName = indexObj.columnName,
@@ -160,7 +162,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         this._attachDragEvents(pageX, pageY);
         if (!columnModel.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
-            if (shiftKey) {
+            if (shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
                 this.grid.focus(rowIndex, columnName);

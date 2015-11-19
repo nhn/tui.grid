@@ -5,6 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
+var util = require('../util');
 var SELECTION_STATE = {
     cell: 'cell',
     row: 'row',
@@ -27,7 +28,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             _isEnabled: true,
-            selectionState: SELECTION_STATE.cell
+            _selectionState: SELECTION_STATE.cell
         });
 
         this.listenTo(this.grid.dataModel, 'add remove sort reset', this.end);
@@ -48,8 +49,16 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     setState: function(state) {
         if (state) {
-            this.selectionState = state;
+            this._selectionState = state;
         }
+    },
+
+    /**
+     * Return the selection state
+     * @returns {string} state - Selection state (cell, row, column)
+     */
+    getState: function() {
+        return this._selectionState;
     },
 
     /**
@@ -109,12 +118,12 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Updates the selection range.
-     * @param {Number} rowIndex - Row index
-     * @param {Number} columnIndex - Column index
+     * @param {number} rowIndex - Row index
+     * @param {number} columnIndex - Column index
      * @param {string} [state] - Selection state
      */
     update: function(rowIndex, columnIndex, state) {
-        var focused;
+        var inputRange, focused;
 
         if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
             return;
@@ -126,11 +135,62 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         } else {
             this.setState(state);
         }
-        this.inputRange.row[1] = rowIndex;
-        this.inputRange.column[1] = columnIndex;
+
+        inputRange = this.inputRange;
+        inputRange.row[1] = rowIndex;
+        inputRange.column[1] = columnIndex;
         this._resetRangeAttribute();
         this.grid.focusClipboard();
     },
+
+    /**
+     * Extend column selection
+     * @param {undefined|Array} columnIndexes
+     * @param {number} pageX
+     * @param {number} pageY
+     */
+    extendColumnSelection: function(columnIndexes, pageX, pageY) {
+        var minimumColumnRange = this._minimumColumnRange,
+            pos = this.getIndexFromMousePosition(pageX, pageY),
+            range = {
+                row: [0, 0]
+            },
+            minMax;
+
+        if (!columnIndexes || !columnIndexes.length) {
+            columnIndexes = [pos.column]
+        }
+
+        this._setScrolling(pos);
+
+        if (minimumColumnRange) {
+            minMax = util.getMinMax(columnIndexes.concat(minimumColumnRange.column));
+        } else {
+            columnIndexes.push(this.inputRange.column[0]);
+            minMax = util.getMinMax(columnIndexes);
+        }
+        range.column = [minMax.min, minMax.max];
+        this._resetRangeAttribute(range);
+    },
+
+    /**
+     * Set auto scrolling for selection
+     * @param position
+     * @private
+     */
+    _setScrolling: function(position) {
+        if (!position) {
+            return;
+        }
+
+        this.stopAutoScroll();
+        if (this._isAutoScrollable(position.overflowX, position.overflowY)) {
+            this.intervalIdForAutoScroll = setInterval(
+                _.bind(this._adjustScroll, this, position.overflowX, position.overflowY)
+            );
+        }
+    },
+
 
     /**
      * Updates the selection range by mouse position.
@@ -141,12 +201,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     updateByMousePosition: function(pageX, pageY, state) {
         var pos = this.getIndexFromMousePosition(pageX, pageY);
 
-        this.stopAutoScroll();
-        if (this._isAutoScrollable(pos.overflowX, pos.overflowY)) {
-            this.intervalIdForAutoScroll = setInterval(
-                _.bind(this._adjustScroll, this, pos.overflowX, pos.overflowY)
-            );
-        }
+        this._setScrolling(pos);
         this.update(pos.row, pos.column, state);
     },
 
@@ -156,6 +211,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     end: function() {
         this.inputRange = null;
         this.unset('range');
+        this.unsetMinimumColumnRange();
     },
 
     /**
@@ -394,21 +450,23 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Expands the 'this.inputRange' if rowspan data exists, and resets the 'range' attributes to the value.
+     * @param {Array} [inputRange = this.inputRange]
      * @private
      */
-    _resetRangeAttribute: function() {
+    _resetRangeAttribute: function(inputRange) {
         var grid = this.grid,
             dataModel = grid.dataModel,
             spannedRange, tmpRowRange;
 
-        if (!this.inputRange) {
+        inputRange = inputRange || this.inputRange;
+        if (!inputRange) {
             this.set('range', null);
             return;
         }
 
         spannedRange = {
-            row: _.sortBy(this.inputRange.row),
-            column: _.sortBy(this.inputRange.column)
+            row: _.sortBy(inputRange.row),
+            column: _.sortBy(inputRange.column)
         };
         if (dataModel.isRowSpanEnable()) {
             do {
@@ -418,18 +476,34 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         this._setRangeMinMax(spannedRange.row, spannedRange.column);
-        switch (this.selectionState) {
-            case SELECTION_STATE.row:
-                spannedRange.column = [0, grid.columnModel.getVisibleColumnModelList().length - 1];
-                break;
+        switch (this._selectionState) {
             case SELECTION_STATE.column:
                 spannedRange.row = [0, dataModel.length - 1];
+                break;
+            case SELECTION_STATE.row:
+                spannedRange.column = [0, grid.columnModel.getVisibleColumnModelList().length - 1];
                 break;
             case SELECTION_STATE.cell:
             default:
                 break;
         }
+
         this.set('range', spannedRange);
+    },
+
+    /**
+     * Set minimum column range
+     * @param {Array} range
+     */
+    setMinimumColumnRange: function(range) {
+        this._minimumColumnRange = _.extend(range);
+    },
+
+    /**
+     * Unset minimum column range
+     */
+    unsetMinimumColumnRange: function() {
+        this._minimumColumnRange = null;
     },
 
     /**

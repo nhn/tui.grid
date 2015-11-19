@@ -237,7 +237,7 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
 
         this.originalText = $input.val();
         this._executeInputEventHandler(focusEvent, 'focus');
-        this.grid.selectionModel.disable();
+        this.grid.selectionModel.end();
     },
 
     /**

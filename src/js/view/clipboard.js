@@ -230,7 +230,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             selectionRange = grid.selectionModel.get('range'),
             isSelection = true,
             focusedIndex = focusModel.indexOf(),
-            index, columnModel, scrollPosition, isValid;
+            index, columnModel, scrollPosition, isValid, selectionState;
 
         index = this._getIndexBeforeMove(selectionRange, focusedIndex);
 
@@ -281,6 +281,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             this._updateSelectionByKeyIn(index.row, index.column);
             scrollPosition = focusModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
+                selectionState = grid.selectionModel.getState();
+                if (selectionState === 'column') {
+                    delete scrollPosition['scrollTop'];
+                } else if (selectionState === 'row') {
+                    delete scrollPosition['scrollLeft'];
+                }
                 grid.renderModel.set(scrollPosition);
             }
         }
@@ -454,8 +460,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     _updateSelectionByKeyIn: function(rowIndex, columnIndex) {
         var selectionModel = this.grid.selectionModel;
 
-        selectionModel.update(rowIndex, columnIndex, 'cell');
-        //this.grid.focusAt(rowIndex, columnIndex, true);
+        selectionModel.update(rowIndex, columnIndex);
     },
 
     /**

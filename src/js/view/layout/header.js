@@ -22,7 +22,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            firstSelectedColumns: null,
             timeoutForAllChecked: 0,
             whichSide: options && options.whichSide || 'R'
         });
@@ -38,7 +37,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     events: {
         'click': '_onClick',
-        'mousedown': '_onMouseDown'
+        'mousedown th[columnName]': '_onMouseDown'
     },
 
     /**
@@ -81,7 +80,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * col group 마크업을 생성한다.
-     *
      * @return {string} <colgroup>에 들어갈 html 마크업 스트링
      * @private
      */
@@ -101,24 +99,59 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     *
-     * @param event
+     * Mousedown event handler
+     * @param {Event} event
      * @private
      */
     _onMouseDown: function(event) {
         var grid = this.grid,
             columnModel = grid.columnModel,
+            selectionModel = grid.selectionModel,
             columnName = $(event.target).closest('th').attr('columnName'),
             columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
 
-        grid.selectionModel.selectColumn(columnModel.indexOfColumnName(columnNames[0], true));
-        _.each(columnNames, function(name) {
-            this._selectColumn(name);
-        }, this);
+        if (!selectionModel.isEnabled() || this._hasMetaColumn(columnNames)) {
+            return;
+        }
+        this._controlStartAction(columnNames, event.pageX, event.pageY, event.shiftKey);
+    },
 
+    /**
+     * Control selection action when started
+     * @param {Array} columnNames
+     * @param {number} pageX - Mouse position X
+     * @param {number} pageY - Mouse position Y
+     * @param {boolean} shiftKey - Whether the shift-key is pressed.
+     * @private
+     */
+    _controlStartAction: function(columnNames, pageX, pageY, shiftKey) {
+        var grid = this.grid,
+            selectionModel = grid.selectionModel,
+            columnModel = grid.columnModel,
+            columnIndexes = _.map(columnNames, function(name) {
+                return columnModel.indexOfColumnName(name, true);
+            }),
+            minMax = util.getMinMax(columnIndexes),
+            min = minMax.min,
+            max = minMax.max;
+
+        if (shiftKey) {
+            selectionModel.update(0, max, 'column');
+            selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
+        } else {
+            selectionModel.setMinimumColumnRange({
+                column: [min, max]
+            });
+            selectionModel.selectColumn(min);
+            selectionModel.update(0, max);
+        }
         this._attachDragEvents();
     },
 
+    /**
+     * Attach mouse drag event
+     * @private
+     */
     _attachDragEvents: function() {
         $(document)
             .on('mousemove', $.proxy(this._onMouseMove, this))
@@ -126,6 +159,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .on('selectstart', $.proxy(this._onSelectStart, this));
     },
 
+    /**
+     * Detach mouse drag event
+     * @private
+     */
     _detachDragEvents: function() {
         $(document)
             .off('mousemove', this._onMouseMove)
@@ -133,36 +170,62 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .off('selectstart', this._onSelectStart);
     },
 
+    /**
+     * Mousemove event handler
+     * @param {Event} event
+     * @private
+     */
     _onMouseMove: function(event) {
         var grid = this.grid,
             columnModel = grid.columnModel,
+            selectionModel = grid.selectionModel,
             columnName = $(event.target).closest('th').attr('columnName'),
+            isExtending = true,
+            columnNames, columnIndexes;
+
+        if (columnName) {
             columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
+            columnIndexes = _.map(columnNames, function(name) {
+                return columnModel.indexOfColumnName(name, true);
+            });
+        } else if ($.contains(this.el, event.target)) {
+            isExtending = false;
+        }
 
-        grid.selectionModel.selectColumn(columnModel.indexOfColumnName(columnNames[0], true));
-        _.each(columnNames, function(name) {
-            this._selectColumn(name);
-        }, this);
-    },
-
-    _onSelectStart: function(event) {
-        event.preventDefault();
-        return false;
+        if (isExtending) {
+            selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
+        }
     },
 
     /**
-     *
-     * @param columnName
+     * Does this columnNames array have the meta column?
+     * @param {Array} columnNames
+     * @returns {boolean} Whether this columnNames-array has the meta column name.
      * @private
      */
-    _selectColumn: function(columnName) {
-        var grid = this.grid,
-            columnModel =  grid.columnModel;
+    _hasMetaColumn: function(columnNames) {
+        var result = false,
+            columnModel = this.grid.columnModel;
 
-        if (columnModel.isMetaColumn(columnName)) {
-            return;
-        }
-        grid.selectionModel.update(0, columnModel.indexOfColumnName(columnName, true), 'column');
+        tui.util.forEach(columnNames, function(name) {
+            if (columnModel.isMetaColumn(name)) {
+                result = true;
+                return false;
+            }
+        });
+
+        return result;
+    },
+
+    /**
+     * Selectstart event handler
+     * @param {Event} event
+     * @returns {boolean} false for preventDefault
+     * @private
+     */
+    _onSelectStart: function(event) {
+        event.preventDefault();
+        return false;
     },
 
     /**
@@ -175,6 +238,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
         }
     },
+
     /**
      * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
      * @return {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
@@ -183,6 +247,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _getHeaderMainCheckbox: function() {
         return this.$el.find('th[columnname="_button"] input');
     },
+
     /**
      * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
      * @private
@@ -223,6 +288,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             $colList.eq(index).css('width', columnWidth + 'px');
         });
     },
+
     /**
      * scroll left 값이 변경되었을 때 header 싱크를 맞추는 이벤트 핸들러
      * @param {Object} model    변경이 발생한 model 인스턴스
@@ -235,9 +301,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             this.el.scrollLeft = value;
         }
     },
+
     /**
      * 클릭 이벤트 핸들러
-     * @param {Event} clickEvent    클릭이벤트
+     * @param {Event} clickEvent 클릭이벤트
      * @private
      */
     _onClick: function(clickEvent) {
@@ -255,6 +322,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             this.grid.sort(columnName);
         }
     },
+
     /**
      * 정렬 버튼의 상태를 변경한다.
      * @private
@@ -378,7 +446,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
-     *
      * @param {Array} hierarchyList 헤더 마크업 생성시 사용될 계층구조 데이터
      * @return {number} 헤더 영역의 row 최대값
      * @private
