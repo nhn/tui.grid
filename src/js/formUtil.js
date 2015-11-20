@@ -23,9 +23,9 @@ var formUtil = {
          * @return {Array} 변환된 배열 결과 값
          */
         '_changeToStringInArray': function(arr) {
-            tui.util.forEach(arr, function(value, i) {
+            _.each(arr, function(value, i) {
                 arr[i] = String(value);
-            }, this);
+            });
             return arr;
         },
 
@@ -48,7 +48,7 @@ var formUtil = {
          * @param {String} formValue - Form value
          */
         'checkbox': function(targetElement, formValue) {
-            if (tui.util.isArray(formValue)) {
+            if (_.isArray(formValue)) {
                 targetElement.checked = $.inArray(targetElement.value, this._changeToStringInArray(formValue)) !== -1;
             } else {
                 targetElement.checked = (targetElement.value === formValue);
@@ -71,7 +71,7 @@ var formUtil = {
                     index = i;
                     return false;
                 }
-            }, this);
+            });
 
             targetElement.selectedIndex = index;
         },
@@ -86,12 +86,12 @@ var formUtil = {
         'select-multiple': function(targetElement, formValue) {
             var options = tui.util.toArray(targetElement.options);
 
-            if (tui.util.isArray(formValue)) {
+            if (_.isArray(formValue)) {
                 formValue = this._changeToStringInArray(formValue);
-                tui.util.forEach(options, function(targetOption) {
+                _.each(options, function(targetOption) {
                     targetOption.selected = $.inArray(targetOption.value, formValue) !== -1 ||
                     $.inArray(targetOption.text, formValue) !== -1;
-                }, this);
+                });
             } else {
                 this['select-one'].apply(this, arguments);
             }
@@ -118,12 +118,13 @@ var formUtil = {
      **/
     getFormData: function($form) {
         var result = {},
-            valueList = $form.serializeArray();
+            valueList = $form.serializeArray(),
+            isExisty = tui.util.isExisty;
 
-        tui.util.forEach(valueList, function(obj) {
+        _.each(valueList, function(obj) {
             var value = obj.value,
                 name = obj.name;
-            if (tui.util.isExisty(result[name])) {
+            if (isExisty(result[name])) {
                 if (!result[name].push) {
                     result[name] = [result[name]];
                 }
@@ -131,7 +132,7 @@ var formUtil = {
             } else {
                 result[name] = value || '';
             }
-        }, this);
+        });
 
         return result;
     },
@@ -164,7 +165,7 @@ var formUtil = {
      * @param {Object} formData 폼에 설정할 폼 데이터 객체
      **/
     setFormData: function($form, formData) {
-        tui.util.forEachOwnProperties(formData, function(value, property) {
+        _.each(formData, function(value, property) {
             this.setFormElementValue($form, property, value);
         }, this);
     },
@@ -185,12 +186,12 @@ var formUtil = {
         if (!elementList) {
             return;
         }
-        if (!tui.util.isArray(formValue)) {
+        if (!_.isArray(formValue)) {
             formValue = String(formValue);
         }
         elementList = tui.util.isHTMLTag(elementList) ? [elementList] : elementList;
         elementList = tui.util.toArray(elementList);
-        tui.util.forEach(elementList, function(targetElement) {
+        _.each(elementList, function(targetElement) {
             type = this.setInput[targetElement.type] ? targetElement.type : 'defaultAction';
             this.setInput[type](targetElement, formValue);
         }, this);

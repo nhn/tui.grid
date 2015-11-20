@@ -131,7 +131,7 @@ var util = {
             return false;
         } else if (_.isArray(target) && target.length !== dist.length) {
             return false;
-        } else if (typeof target === 'object') {
+        } else if (_.isObject(target)) {
             isDiff = !compareObject(target, dist) || !compareObject(dist, target);
             return !isDiff;
         } else if (target !== dist) {
@@ -147,7 +147,7 @@ var util = {
      * @return {boolean} True if target is undefined or null or ''
      */
     isBlank: function(target) {
-        if (tui.util.isString(target)) {
+        if (_.isString(target)) {
             return !target.length;
         }
         return target === undefined || target === null;
@@ -193,13 +193,14 @@ var util = {
     toQueryString: function(dataObj) {
         var queryList = [];
 
-        tui.util.forEach(dataObj, function(value, name) {
-            if (typeof value !== 'string' && typeof value !== 'number') {
+        _.each(dataObj, function(value, name) {
+            if (!_.isString(value) && !_.isNumber(value)) {
                 value = $.toJSON(value);
             }
             value = encodeURIComponent(value);
             queryList.push(name + '=' + value);
-        }, this);
+        });
+
         return queryList.join('&');
     },
 
@@ -213,17 +214,18 @@ var util = {
         var queryList = queryString.split('&'),
             obj = {};
 
-        tui.util.forEach(queryList, function(query) {
+        _.each(queryList, function(query) {
             var tmp = query.split('='),
-                key,
-                value;
+                key, value;
+
             key = tmp[0];
             value = decodeURIComponent(tmp[1]);
             try {
                 value = $.parseJSON(value);
             } catch(e) {} // eslint-disable-line
+
             obj[key] = value;
-        }, this);
+        });
 
         return obj;
     },
