@@ -132,7 +132,9 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this.listenTo(this.grid.dataModel, 'sortChanged', this._onSortChanged, this);
 
         if (options.initialRequest) {
-            this._readDataAt(1, false);
+            if (!this.lastRequestedReadData) {
+                this._readDataAt(1, false);
+            }
         }
     },
 
