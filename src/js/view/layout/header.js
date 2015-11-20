@@ -105,15 +105,18 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onMouseDown: function(event) {
         var grid = this.grid,
-            columnModel = grid.columnModel,
-            selectionModel = grid.selectionModel,
-            columnName = $(event.target).closest('th').attr('columnName'),
-            columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
+            columnName, columnNames;
 
-        if (!selectionModel.isEnabled() || this._hasMetaColumn(columnNames)) {
+        if (!grid.selectionModel.isEnabled()) {
             return;
         }
-        this._controlStartAction(columnNames, event.pageX, event.pageY, event.shiftKey);
+
+        columnName = $(event.target).closest('th').attr('columnName');
+        columnNames = grid.columnModel.getUnitColumnNamesIfMerged(columnName);
+
+        if (!this._hasMetaColumn(columnNames)) {
+            this._controlStartAction(columnNames, event.pageX, event.pageY, event.shiftKey);
+        }
     },
 
     /**
@@ -178,9 +181,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onMouseMove: function(event) {
         var grid = this.grid,
             columnModel = grid.columnModel,
-            selectionModel = grid.selectionModel,
-            columnName = $(event.target).closest('th').attr('columnName'),
             isExtending = true,
+            columnName = $(event.target).closest('th').attr('columnName'),
             columnNames, columnIndexes;
 
         if (columnName) {
@@ -193,14 +195,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }
 
         if (isExtending) {
-            selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
+            grid.selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
         }
     },
 
     /**
-     * Does this columnNames array have the meta column?
+     * Whether this columnNames array has a meta column name.
      * @param {Array} columnNames
-     * @returns {boolean} Whether this columnNames-array has the meta column name.
+     * @returns {boolean} Has a meta column name or not.
      * @private
      */
     _hasMetaColumn: function(columnNames) {
