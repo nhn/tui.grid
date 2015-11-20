@@ -180,22 +180,22 @@ describe('model.renderer', function() {
         it('현재 focus 정보를 화면에 노출되는 Index 기준으로 반환하는지 확인한다.', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel.indexOf()).toEqual({
-                rowIdx: 1,
-                columnIdx: 0
+                row: 1,
+                column: 0
             });
         });
 
         it('메타컬럼은 포커스가 되지 않으므로, "_number"컬럼에 포커스하여도 변경사항이 없다', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel.indexOf()).toEqual({
-                rowIdx: 1,
-                columnIdx: 0
+                row: 1,
+                column: 0
             });
 
             focusModel.focus(1, '_number');
             expect(focusModel.indexOf()).toEqual({
-                rowIdx: 1,
-                columnIdx: 0
+                row: 1,
+                column: 0
             });
         });
 
@@ -203,14 +203,14 @@ describe('model.renderer', function() {
             focusModel.focus('1', 'c1');
             focusModel.focus('1', 'c2');
             expect(focusModel.indexOf(true)).toEqual({
-                rowIdx: 1,
-                columnIdx: 0
+                row: 1,
+                column: 0
             });
 
             focusModel.focus('0', 'c1');
             expect(focusModel.indexOf(true)).toEqual({
-                rowIdx: 1,
-                columnIdx: 1
+                row: 1,
+                column: 1
             });
         });
     });

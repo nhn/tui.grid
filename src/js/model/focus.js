@@ -177,15 +177,15 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 정보를 index 기준으로 반환한다.
      * @param {boolean} isPrevious 이전 focus 정보를 반환할지 여부
-     * @return {{rowIdx: number, columnIdx: number}} The object that contains index info
+     * @return {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
         var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
             columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
 
         return {
-            rowIdx: this.grid.dataModel.indexOfRowKey(rowKey),
-            columnIdx: this.grid.columnModel.indexOfColumnName(columnName, true)
+            row: this.grid.dataModel.indexOfRowKey(rowKey),
+            column: this.grid.columnModel.indexOfColumnName(columnName, true)
         };
     },
 

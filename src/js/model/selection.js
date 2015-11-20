@@ -90,7 +90,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Starts the selection.
      * @param {Number} rowIndex - Row index
      * @param {Number} columnIndex - Column index
-     * @param {string} state - Selection state
+     * @param {string} state - Selection state강지
      */
     start: function(rowIndex, columnIndex, state) {
         if (!this._isEnabled) {
@@ -123,15 +123,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} [state] - Selection state
      */
     update: function(rowIndex, columnIndex, state) {
-        var inputRange, focused;
+        var inputRange, focusedIndex;
 
         if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
             return;
         }
 
         if (!this.hasSelection()) {
-            focused = this.grid.focusModel.indexOf();
-            this.start(focused.rowIdx, focused.columnIdx, state);
+            focusedIndex = this.grid.focusModel.indexOf();
+            this.start(focusedIndex.row, focusedIndex.column, state);
         } else {
             this.setState(state);
         }
@@ -258,25 +258,25 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the row and column indexes of the starting position.
-     * @return {{rowIdx: number, columnIdx: number}} Objects containing indexes
+     * @return {{row: number, column: number}} Objects containing indexes
      */
     getStartIndex: function() {
         var range = this.get('range');
         return {
-            rowIdx: range.row[0],
-            columnIdx: range.column[0]
+            row: range.row[0],
+            column: range.column[0]
         };
     },
 
     /**
      * Returns the row and column indexes of the ending position.
-     * @return {{rowIdx: number, columnIdx: number}} Objects containing indexes
+     * @return {{row: number, column: number}} Objects containing indexes
      */
     getEndIndex: function() {
         var range = this.get('range');
         return {
-            rowIdx: range.row[1],
-            columnIdx: range.column[1]
+            row: range.row[1],
+            column: range.column[1]
         };
     },
 

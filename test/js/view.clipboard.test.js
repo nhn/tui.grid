@@ -201,11 +201,36 @@ describe('view.clipboard', function() {
             });
         });
 
+        describe('_getIndexBeforeMove', function() {
+            it('In defect of selection range, It will return focused index', function() {
+                var index;
+
+                grid.focusAt(0, 0);
+                index = clipboard._getIndexBeforeMove();
+                expect(index).toEqual({
+                    row: 0,
+                    column: 0
+                });
+            });
+
+            it('In selection range, It will return selection index', function() {
+                var index;
+                grid.focusAt(0, 0);
+                grid.selectionModel.update(1, 1, 'cell');
+                index = clipboard._getIndexBeforeMove();
+
+                expect(index).toEqual({
+                    row: 1,
+                    column: 1
+                });
+            });
+        });
+
         describe('_keyInWithShift', function() {
             var keyEvent;
 
             beforeEach(function() {
-                grid.focus(0, 'columnName1');
+                grid.focusAt(1, 1);
                 grid.focusIn = jasmine.createSpy('focusIn');
                 clipboard._updateSelectionByKeyIn = jasmine.createSpy('_updateSelectionByKeyIn');
             });
@@ -219,41 +244,49 @@ describe('view.clipboard', function() {
 
             it('_updateSelectionByKeyIn 를 호출하는 키는 _updateSelectionByKeyIn 호출하는지 확인한다.', function() {
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('UP_ARROW');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(1);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('DOWN_ARROW');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(2);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('LEFT_ARROW');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(3);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('RIGHT_ARROW');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(4);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('PAGE_DOWN');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(5);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('PAGE_UP');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(6);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('HOME');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(7);
 
                 clipboard._unlock();
+                grid.focusAt(1, 1);
                 keyEvent = getKeyEvent('END');
                 clipboard._keyInWithShift(keyEvent);
                 expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(8);
@@ -332,7 +365,7 @@ describe('view.clipboard', function() {
                 expect(grid.del.calls.count()).toEqual(9);
             });
 
-            it('아니라면 한번 호출한 것을 확인한다..', function() {
+            it('아니라면 한번 호출한 것을 확인한다.', function() {
                 clipboard._del();
                 expect(grid.del.calls.count()).toEqual(1);
             });
@@ -340,14 +373,19 @@ describe('view.clipboard', function() {
 
         describe('_updateSelectionByKeyIn', function() {
             beforeEach(function() {
-                grid.focus(0, '_number');
+                grid.focus(0, 'c1');
                 grid.del = jasmine.createSpy('del');
             });
 
-            it('focus위치가 이동되고 getRange()의 값이 변경되는지 확인한다.', function() {
-                grid.selectionModel.start(0, 0);
+            it('Check focused index is remaining during selection', function() {
+                grid.selectionModel.start(0, 0, 'cell');
+                grid.selectionModel.update(3, 3);
+                expect(grid.focusModel.which()).toEqual({rowKey: 0, columnName: 'c1'});
+            });
+
+            it('getRange()의 값이 변경되는지 확인한다.', function() {
+                grid.selectionModel.start(0, 0, 'cell');
                 clipboard._updateSelectionByKeyIn(2, 1);
-                expect(grid.focusModel.which()).toEqual({rowKey: 2, columnName: 'c2'});
                 expect(grid.selectionModel.get('range')).toEqual({row: [0, 2], column: [0, 1]});
             });
 

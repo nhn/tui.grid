@@ -427,11 +427,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnModel = this.grid.columnModel,
             rowHeight = this.get('rowHeight'),
             rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
-            rowIdx, spanCount,
             metaColumnCount = columnModel.getVisibleMetaColumnCount(),
             columnWidthList = this.get('columnWidthList').slice(metaColumnCount),
             columnFixCount = columnModel.getVisibleColumnFixCount(),
             columnIdx = columnModel.indexOfColumnName(columnName, true),
+            rowIdx, spanCount,
             top, left, right, bottom, i;
 
         if (!rowSpanData.isMainRow) {

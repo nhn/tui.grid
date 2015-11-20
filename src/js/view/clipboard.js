@@ -185,29 +185,28 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * Return index for reference of selection before moving by key event.
-     * @param {{row: number, column: number}|undefined} selectionRange
-     * @param {{rowIdx: number, columnIdx: number}} focusedIndex
      * @returns {{row: number, column:number}} index
      * @private
      */
-    _getIndexBeforeMove: function(selectionRange, focusedIndex) {
-        var selectionRow, selectionColumn,
-            index = {
-                row: focusedIndex.rowIdx,
-                column: focusedIndex.columnIdx
-            };
+    _getIndexBeforeMove: function() {
+        var grid  = this.grid,
+            focusedIndex = grid.focusModel.indexOf(),
+            selectionRange = grid.selectionModel.get('range'),
+            index = _.extend({}, focusedIndex),
+            selectionRowRange, selectionColumnRange;
 
         if (selectionRange) {
-            selectionRow = selectionRange.row;
-            selectionColumn = selectionRange.column;
-            index.row = selectionRow[0];
-            index.column = selectionColumn[0];
+            selectionRowRange = selectionRange.row;
+            selectionColumnRange = selectionRange.column;
 
-            if (selectionRow[1] > focusedIndex.rowIdx) {
-                index.row = selectionRow[1];
+            index.row = selectionRowRange[0];
+            index.column = selectionColumnRange[0];
+
+            if (selectionRowRange[1] > focusedIndex.row) {
+                index.row = selectionRowRange[1];
             }
-            if (selectionColumn[1] > focusedIndex.columnIdx) {
-                index.column = selectionColumn[1];
+            if (selectionColumnRange[1] > focusedIndex.column) {
+                index.column = selectionColumnRange[1];
             }
         }
         return index;
@@ -224,15 +223,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             focusModel = grid.focusModel,
             columnModelList = grid.columnModel.getVisibleColumnModelList(),
             focused = focusModel.which(),
-            isKeyIdentified = true,
             displayRowCount = grid.dimensionModel.getDisplayRowCount(),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-            selectionRange = grid.selectionModel.get('range'),
+            index = this._getIndexBeforeMove(),
+            isKeyIdentified = true,
             isSelection = true,
-            focusedIndex = focusModel.indexOf(),
-            index, columnModel, scrollPosition, isValid, selectionState;
-
-        index = this._getIndexBeforeMove(selectionRange, focusedIndex);
+            columnModel, scrollPosition, isValid, selectionState;
 
         switch (keyCode) {
             case keyMap['UP_ARROW']:
