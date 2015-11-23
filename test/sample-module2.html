@@ -30,9 +30,11 @@ var grid = new tui.Grid({
     rowHeight: 30,
 	displayRowCount: 20,
 	headerHeight: 100,
-//    toolbar: {
-//        hasPagination: false
-//    },
+    toolbar: {
+        hasResizeHandler: false,
+        hasControlPanel: false,
+        hasPagination: false
+    },
     columnMerge : [
         {
             columnName : "mergeColumn1",

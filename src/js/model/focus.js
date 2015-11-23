@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var Model = require('../base/model');
-var util = require('../util');
+var Model = require('../base/model'),
+    util = require('../util');
 
 /**
  * Focus model
@@ -34,6 +34,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 이전 focus 정보를 저장한다.
      * @private
+     * @return {Model.Focus} This object
      */
     _savePrevious: function() {
         if (this.get('rowKey') !== null) {

@@ -806,9 +806,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
             clearTimeout(this.timeoutIdForSetRowList);
-            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
-                callback();
-            }, this), 0);
+            this.timeoutIdForSetRowList = setTimeout(callback, 0);
         } else {
             callback();
         }
@@ -835,9 +833,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
             clearTimeout(this.timeoutIdForSetRowList);
-            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
-                doProcess();
-            }, this), 0);
+            this.timeoutIdForSetRowList = setTimeout(doProcess, 0);
         } else {
             doProcess();
         }

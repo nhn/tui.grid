@@ -5,6 +5,11 @@
 'use strict';
 
 var Model = require('../base/model');
+
+/**
+ * @const
+ * @type {string[]} META_COLUMN_LIST
+ */
 var META_COLUMN_LIST = ['_button', '_number'];
 
 /**
@@ -406,6 +411,11 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         this.trigger('columnModelChange');
     },
 
+    /**
+     * Get unit column names
+     * @param {string} columnName - columnName
+     * @returns {Array.<string>} Unit column names
+     */
     getUnitColumnNamesIfMerged: function(columnName) {
         var columnMergeInfoList = this.grid.option('columnMerge'),
             stackForSearch = [],
@@ -432,12 +442,12 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     },
 
     /**
-     *
-     * @param columnName
-     * @returns {boolean}
+     * Return whether the column is meta column
+     * @param {string} columnName - columnName
+     * @returns {boolean} Whether the column is meta column.
      */
     isMetaColumn: function(columnName) {
-        return _.indexOf(META_COLUMN_LIST, columnName) !== -1;
+        return _.indexOf(META_COLUMN_LIST, columnName) >= 0;
     }
 });
 

@@ -4,9 +4,9 @@
  */
 'use strict';
 
-var View = require('../../base/view');
-var util = require('../../util');
-var ResizeHandler = require('./resizeHandler');
+var View = require('../../base/view'),
+    util = require('../../util'),
+    ResizeHandler = require('./resizeHandler');
 
 /**
  * Header 레이아웃 View

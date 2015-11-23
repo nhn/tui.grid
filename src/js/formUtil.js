@@ -63,17 +63,14 @@ var formUtil = {
          * @param {String} formValue - Form value
          */
         'select-one': function(targetElement, formValue) {
-            var options = tui.util.toArray(targetElement.options),
-                index = -1;
+            var options = tui.util.toArray(targetElement.options);
 
-            tui.util.forEach(options, function(targetOption, i) {
+            tui.util.forEach(options, function(targetOption, index) {
                 if (targetOption.value === formValue || targetOption.text === formValue) {
-                    index = i;
+                    targetElement.selectedIndex = index;
                     return false;
                 }
             });
-
-            targetElement.selectedIndex = index;
         },
 
         /**
@@ -122,15 +119,13 @@ var formUtil = {
             isExisty = tui.util.isExisty;
 
         _.each(valueList, function(obj) {
-            var value = obj.value,
+            var value = obj.value || '',
                 name = obj.name;
+
             if (isExisty(result[name])) {
-                if (!result[name].push) {
-                    result[name] = [result[name]];
-                }
-                result[name].push(value || '');
+                result[name] = [].concat(result[name], value);
             } else {
-                result[name] = value || '';
+                result[name] = value;
             }
         });
 
@@ -141,9 +136,9 @@ var formUtil = {
      * 폼 안에 있는 모든 인풋 엘리먼트를 배열로 리턴하거나, elementName에 해당하는 인풋 엘리먼트를 리턴한다.
      * @memberof module:util
      * @alias form.getFormElement
-     * @param {jquery} $form jQuery()로 감싼 폼엘리먼트
+     * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
      * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
-     * @return {jQuery}  jQuery 로 감싼 엘리먼트를 반환한다.
+     * @return {jQuery} jQuery 로 감싼 엘리먼트를 반환한다.
      */
     getFormElement: function($form, elementName) {
         var formElement;
@@ -180,18 +175,19 @@ var formUtil = {
      * @param {String|Array} formValue 인풋 엘리먼트에 설정할 값으로 체크박스나 멀티플 셀렉트박스인 경우에는 배열로 설정할 수 있다.
      **/
     setFormElementValue: function($form, elementName, formValue) {
-        var type,
-            elementList = this.getFormElement($form, elementName);
+        var $elementList = this.getFormElement($form, elementName),
+            type;
 
-        if (!elementList) {
+        if (!$elementList.length) {
             return;
         }
         if (!_.isArray(formValue)) {
             formValue = String(formValue);
         }
-        elementList = tui.util.isHTMLTag(elementList) ? [elementList] : elementList;
-        elementList = tui.util.toArray(elementList);
-        _.each(elementList, function(targetElement) {
+
+        $elementList = tui.util.isHTMLTag($elementList) ? [$elementList] : $elementList;
+        $elementList = tui.util.toArray($elementList);
+        _.each($elementList, function(targetElement) {
             type = this.setInput[targetElement.type] ? targetElement.type : 'defaultAction';
             this.setInput[type](targetElement, formValue);
         }, this);
