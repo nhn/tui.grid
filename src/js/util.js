@@ -50,27 +50,12 @@ var util = {
      * Return min and max value in array
      * @param {Array} arr
      * @returns {{min: number, max: number}|undefined}
+     * @see {@link http://jsperf.com/getminmax}
      */
     getMinMax: function(arr) {
-        var min = Number.MAX_SAFE_INTEGER || 9007199254740991,
-            max = Number.MIN_SAFE_INTEGER || -9007199254740991;
-
-        if (!arr.length) {
-            return;
-        }
-
-        _.each(arr, function(value) {
-            if (min > value) {
-                min = value;
-            }
-            if (max < value) {
-                max = value;
-            }
-        });
-
         return {
-            min: min,
-            max: max
+            min: Math.min.apply(undefined, arr),
+            max: Math.max.apply(undefined, arr)
         };
     },
 

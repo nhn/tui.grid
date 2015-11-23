@@ -4,8 +4,13 @@
  */
 'use strict';
 
-var Model = require('../base/model');
-var util = require('../util');
+var Model = require('../base/model'),
+    util = require('../util');
+
+/**
+ * @const
+ * @type {{cell: string, row: string, column: string}} State of selection
+ */
 var SELECTION_STATE = {
     cell: 'cell',
     row: 'row',
@@ -480,7 +485,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _resetRangeAttribute: function(inputRange) {
         var grid = this.grid,
             dataModel = grid.dataModel,
-            spannedRange, tmpRowRange;
+            hasSpannedRange, spannedRange, tmpRowRange;
 
         inputRange = inputRange || this.inputRange;
         if (!inputRange) {
@@ -492,11 +497,17 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             row: _.sortBy(inputRange.row),
             column: _.sortBy(inputRange.column)
         };
+
         if (dataModel.isRowSpanEnable()) {
             do {
                 tmpRowRange = _.assign([], spannedRange.row);
                 spannedRange = this._getRowSpannedIndex(spannedRange);
-            } while (spannedRange.row[0] !== tmpRowRange[0] || spannedRange.row[1] !== tmpRowRange[1]);
+
+                hasSpannedRange = (
+                    spannedRange.row[0] !== tmpRowRange[0] ||
+                    spannedRange.row[1] !== tmpRowRange[1]
+                );
+            } while (hasSpannedRange);
         }
 
         this._setRangeMinMax(spannedRange.row, spannedRange.column);

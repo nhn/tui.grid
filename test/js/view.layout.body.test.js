@@ -77,15 +77,6 @@ describe('view.layout.body', function() {
         });
     });
 
-    xdescribe('_onMouseDown', function() {
-        var el = $('<tr key="0"><td columnname="_number">1</td></tr>').find('td')[0],
-            eventMock = {
-                target: el,
-                pageX: 20,
-                pageY: 20
-            };
-    });
-
     describe('_getMouseMoveDistance', function() {
         it('피타고라스의 정리를 이용해 거리를 잘 구하는지 확인한다.', function() {
             var distance;
