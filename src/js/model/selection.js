@@ -53,9 +53,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} state - Selection state (cell, row, column)
      */
     setState: function(state) {
-        if (state) {
-            this._selectionState = state;
-        }
+        this._selectionState = SELECTION_STATE[state] || this._selectionState;
     },
 
     /**

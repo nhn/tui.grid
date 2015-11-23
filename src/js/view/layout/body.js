@@ -65,7 +65,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * 스크롤 이벤트 핸들러
-     * @param {event} scrollEvent   스크롤 이벤트
+     * @param {jQuery.Event} scrollEvent   스크롤 이벤트
      * @private
      */
     _onScroll: function(scrollEvent) {
@@ -103,7 +103,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {Event} event
+     * @param {jQuery.Event} event
      * @private
      */
     _onMouseDown: function(event) {
@@ -210,7 +210,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Event handler for 'mousemove' event during drag
-     * @param {MouseEvent} event - MouseEvent object
+     * @param {jQuery.Event} event - MouseEvent object
      */
     _onMouseMove: function(event) {
         var selectionModel = this.grid.selectionModel,
@@ -241,7 +241,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * select start 이벤트를 방지한다.
-     * @param {Event} event selectStart 이벤트 객체
+     * @param {jQuery.Event} event selectStart 이벤트 객체
      * @returns {boolean} false
      * @private
      */

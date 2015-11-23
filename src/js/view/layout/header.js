@@ -100,7 +100,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {Event} event
+     * @param {jQuery.Event} event
      * @private
      */
     _onMouseDown: function(event) {
@@ -175,7 +175,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousemove event handler
-     * @param {Event} event
+     * @param {jQuery.Event} event
      * @private
      */
     _onMouseMove: function(event) {
@@ -221,7 +221,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Selectstart event handler
-     * @param {Event} event
+     * @param {jQuery.Event} event
      * @returns {boolean} false for preventDefault
      * @private
      */
@@ -306,7 +306,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * 클릭 이벤트 핸들러
-     * @param {Event} clickEvent 클릭이벤트
+     * @param {jQuery.Event} clickEvent 클릭이벤트
      * @private
      */
     _onClick: function(clickEvent) {
