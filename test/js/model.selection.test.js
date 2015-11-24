@@ -220,7 +220,18 @@ describe('model/selection', function() {
         });
 
         describe('getIndexFromMousePosition()', function() {
-            // TODO: 구현
+            it('should return first cell when (0,0)', function() {
+                var result = selection.getIndexFromMousePosition(0, 0);
+
+                expect(result).toEqual(jasmine.any(Object));
+                expect(result).toEqual({
+                    row: 0,
+                    column: 0,
+                    overflowX: -1,
+                    overflowY: -1
+                });
+            });
+            //@todo More test case
         });
 
         describe('updateByMousePosition()', function() {
@@ -244,6 +255,59 @@ describe('model/selection', function() {
                 });
             })
         });
-        ;
+
+        describe('start selection', function() {
+            it('selectRow(rowKey)', function() {
+                var columnModel = grid.columnModel,
+                    focused,
+                    range;
+
+                selection.selectRow(0);
+                range = selection.get('range');
+                focused = grid.focusModel.indexOf();
+
+                expect(range).toEqual({
+                    row: [0, 0],
+                    column: [0, columnModel.getVisibleColumnModelList().length - 1]
+                });
+                expect(focused).toEqual({
+                    row: 0,
+                    column: 0
+                });
+            });
+
+            it('selectColumn(columnIdx)', function() {
+                var dataModel = grid.dataModel,
+                    focused,
+                    range;
+
+                selection.selectColumn(2);
+                range = selection.get('range');
+                focused = grid.focusModel.indexOf();
+
+                expect(range).toEqual({
+                    row: [0, dataModel.length - 1],
+                    column: [2, 2]
+                });
+                expect(focused).toEqual({
+                    row: 0,
+                    column: 2
+                });
+            });
+
+            it('selectAll()', function() {
+                var dataModel = grid.dataModel,
+                    columnModel = grid.columnModel,
+                    range;
+
+                selection.selectAll();
+                range = selection.get('range');
+
+                expect(range).toEqual({
+                    row: [0, dataModel.length - 1],
+                    column: [0, columnModel.getVisibleColumnModelList().length - 1]
+                });
+            });
+        });
     });
 });

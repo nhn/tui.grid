@@ -167,6 +167,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _detachDragEvents: function() {
+        this.grid.selectionModel.stopAutoScroll();
         $(document)
             .off('mousemove', this._onMouseMove)
             .off('mouseup', this._detachDragEvents)

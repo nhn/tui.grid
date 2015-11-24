@@ -168,7 +168,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var minimumColumnRange = this._minimumColumnRange,
             pos = this.getIndexFromMousePosition(pageX, pageY),
             range = {
-                row: [0, 0]
+                row: [0, 0],
+                column: []
             },
             minMax;
 
@@ -177,14 +178,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         this._setScrolling(pos);
-
         if (minimumColumnRange) {
             minMax = util.getMinMax(columnIndexes.concat(minimumColumnRange.column));
         } else {
             columnIndexes.push(this.inputRange.column[0]);
             minMax = util.getMinMax(columnIndexes);
         }
-        range.column = [minMax.min, minMax.max];
+        range.column.push(minMax.min, minMax.max);
         this._resetRangeAttribute(range);
     },
 
@@ -242,15 +242,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     /**
      * Select all data in a row
      */
-    selectRow: function(rowKey) {
+    selectRow: function(rowIndex) {
         var grid;
 
         if (this._isEnabled) {
             grid = this.grid;
 
-            grid.focusAt(rowKey, 0);
-            this.start(rowKey, 0, SELECTION_STATE.row);
-            this.update(rowKey, grid.columnModel.getVisibleColumnModelList().length - 1);
+            grid.focusAt(rowIndex, 0);
+            this.start(rowIndex, 0, SELECTION_STATE.row);
+            this.update(rowIndex, grid.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
 
@@ -477,7 +477,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Expands the 'this.inputRange' if rowspan data exists, and resets the 'range' attributes to the value.
-     * @param {Array} [inputRange = this.inputRange] - Input range
+     * @param {{column: number[], row: number[]}} [inputRange = this.inputRange] - Input range
      * @private
      */
     _resetRangeAttribute: function(inputRange) {
