@@ -14,7 +14,7 @@ var Painter = require('../../base/painter');
 var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
     /**
      * @constructs
-     * @extends module:painter
+     * @extends module:base/painter
      * @param {object} options - Options
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체

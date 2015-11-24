@@ -14,7 +14,7 @@ var util = require('../../util');
 var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
-     * @extends module:painter
+     * @extends module:base/painter
      */
     init: function() {
         Painter.apply(this, arguments);

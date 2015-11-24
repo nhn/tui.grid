@@ -11,7 +11,7 @@ var util = require('../../../util');
  * Painter class for the select cell
  * @module painter/cell/select
  */
-var SelectCell = tui.util.defineClass(ListCell,/**@lends module:view/painter/cell/select.prototype */{
+var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/select.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell/list

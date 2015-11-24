@@ -9,12 +9,12 @@ var TextCell = require('./text');
 
 /**
  * Password 타입의 cell renderer
- * @extends module:painter/cell/text
- * @constructor module:painter/cell/text-password
+ * @module painter/cell/text-password
  */
 var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-password.prototype */{
     /**
-     * Initializes
+     * @construct
+     * @extends module:painter/cell/text
      * @param {object} attributes Attributes
      * @param {object} options Options
      */

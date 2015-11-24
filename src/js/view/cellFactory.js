@@ -22,7 +22,7 @@ var TextPasswordCell = require('./painter/cell/text-password');
 var CellFactory = View.extend(/**@lends module:view/cellFactory.prototype */{
     /**
      * @constructs
-     * @extends module:view/base 
+     * @extends module:base/view
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
