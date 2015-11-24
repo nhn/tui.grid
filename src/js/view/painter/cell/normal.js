@@ -10,7 +10,7 @@ var Cell = require('../cell');
  * editOption 이 적용되지 않은 cell 의 Painter
  * @module painter/cell/normal
  */
-var Normal = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
+var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -72,4 +72,4 @@ var Normal = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prot
     setElementAttribute: function(cellData, $td, hasFocusedElement) {} // eslint-disable-line
 });
 
-module.exports = Normal;
+module.exports = NormalCell;

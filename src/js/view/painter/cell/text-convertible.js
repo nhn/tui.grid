@@ -5,21 +5,21 @@
 'use strict';
 
 var Cell = require('../cell');
-var Text = require('./text');
+var TextCell = require('./text');
 var util = require('../../../util');
 var formUtil = require('../../../formUtil');
 
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
- * @module view/painter/cell/text-convertible
+ * @module painter/cell/text-convertible
  */
-var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
+var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-convertible.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/text
+     * @extends module:painter/cell/text
      */
     init: function() {
-        Text.apply(this, arguments);
+        TextCell.apply(this, arguments);
         this.setOwnProperties({
             timeoutIdForClick: 0,
             editingCell: {
@@ -136,7 +136,7 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
         var targetProto;
 
         if (this._isEditingCell(cellData)) {
-            targetProto = Text.prototype;
+            targetProto = TextCell.prototype;
         } else {
             targetProto = Cell.prototype;
         }
@@ -268,4 +268,4 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
     }
 });
 
-module.exports = Convertible;
+module.exports = ConvertibleCell;

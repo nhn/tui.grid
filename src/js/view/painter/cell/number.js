@@ -4,19 +4,19 @@
  */
 'use strict';
 
-var Normal = require('./normal');
+var NormalCell = require('./normal');
 
 /**
  * Number Cell 의 Painter
  * @module painter/cell/number
  */
-var NumberCell = tui.util.defineClass(Normal,/**@lends module:painter/cell/number.prototype */{
+var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/number.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell/normal
      */
     init: function() {
-        Normal.apply(this, arguments);
+        NormalCell.apply(this, arguments);
     },
 
     redrawAttributes: [],

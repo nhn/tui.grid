@@ -4,20 +4,20 @@
  */
 'use strict';
 
-var List = require('./list');
+var ListCell = require('./list');
 var util = require('../../../util');
 
 /**
  * Painter class for the select cell
- * @module view/painter/cell/select
+ * @module painter/cell/select
  */
-var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select.prototype */{
+var SelectCell = tui.util.defineClass(ListCell,/**@lends module:view/painter/cell/select.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/list
+     * @extends module:painter/cell/list
      */
     init: function() {
-        List.apply(this, arguments);
+        ListCell.apply(this, arguments);
 
         this.setKeyDownSwitch({
             'ESC': function(keyDownEvent, param) {
@@ -194,4 +194,4 @@ var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select
     }
 });
 
-module.exports = Select;
+module.exports = SelectCell;

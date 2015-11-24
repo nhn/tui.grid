@@ -4,20 +4,20 @@
  */
 'use strict';
 
-var List = require('./list');
+var ListCell = require('./list');
 var util = require('../../../util');
 
 /**
  * Painter class for the button cell
  * @module painter/cell/button
  */
-var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prototype */{
+var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell/list
      */
     init: function() {
-        List.apply(this, arguments);
+        ListCell.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -255,4 +255,4 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
     }
 });
 
-module.exports = Button;
+module.exports = ButtonCell;

@@ -12,7 +12,7 @@ var formUtil = require('../../../formUtil');
  * Painter class for the text cell
  * @module painter/cell/text
  */
-var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
+var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -297,4 +297,4 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
     }
 });
 
-module.exports = Text;
+module.exports = TextCell;
