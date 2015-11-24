@@ -7,8 +7,11 @@
 var Model = require('../base/model');
 
 /**
+ * @ignore
  * @const
- * @type {string[]} Meta column name list
+ * @type {string[]}
+ * @desc
+ *  Meta column names
  */
 var META_COLUMN_LIST = ['_button', '_number'];
 

@@ -8,8 +8,11 @@ var Model = require('../base/model'),
     util = require('../util');
 
 /**
+ * @ignore
  * @const
- * @type {{cell: string, row: string, column: string}} State of selection
+ * @type {{cell: string, row: string, column: string}}
+ * @desc
+ *  Selection states
  */
 var SELECTION_STATE = {
     cell: 'cell',
