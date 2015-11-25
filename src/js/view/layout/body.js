@@ -114,7 +114,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
-            rowIndex = Number($tr.attr('key')),
+            rowIndex = $tr.index(),
             indexObj = {
                 columnName: columnName,
                 column: columnModel.indexOfColumnName(columnName, true),

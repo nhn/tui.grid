@@ -470,6 +470,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (!withMeta) {
             columnIdx = Math.max(0, (columnIdx - this.grid.columnModel.getVisibleMetaColumnCount()));
         }
+
         return {
             row: rowIdx,
             column: columnIdx,

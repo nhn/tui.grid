@@ -30,7 +30,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
             sortOptions: {
                 columnName: 'rowKey',
                 isAscending: true,
-                useClient: (tui.util.isBoolean(options.useClientSort) ? options.useClientSort : true)
+                useClient: (_.isBoolean(options.useClientSort) ? options.useClientSort : true)
             }
         });
         if (!this.sortOptions.useClient) {
@@ -245,10 +245,10 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
         var options = this.sortOptions,
             isChanged = false;
 
-        if (tui.util.isUndefined(columnName)) {
+        if (_.isUndefined(columnName)) {
             columnName = 'rowKey';
         }
-        if (tui.util.isUndefined(isAscending)) {
+        if (_.isUndefined(isAscending)) {
             isAscending = true;
         }
 
@@ -275,7 +275,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     sortByField: function(columnName, isAscending) {
         var options = this.sortOptions;
 
-        if (tui.util.isUndefined(isAscending)) {
+        if (_.isUndefined(isAscending)) {
             isAscending = (options.columnName === columnName) ? !options.isAscending : true;
         }
         this.setSortOptionValues(columnName, isAscending, !options.useClient);
@@ -508,7 +508,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
             rowList;
 
         rowData = rowData || this._createDummyRow();
-        if (!tui.util.isArray(rowData)) {
+        if (!_.isArray(rowData)) {
             rowData = [rowData];
         }
         rowList = this._formatData(rowData);
