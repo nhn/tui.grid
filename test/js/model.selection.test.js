@@ -56,6 +56,7 @@ describe('model/selection', function() {
     });
 
     // @todo onmousedown !!!
+    // @todo $tr.attr('key') --> '$tr.index()'
 
     afterEach(function() {
         grid.destroy();

@@ -36,16 +36,30 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * 클립보드 focus 이벤트 핸들러
      * @private
+     * @todo rowKey, rowIndex, columnName, columnIndex - Test Case
      */
     _onFocus: function() {
-        var focusModel = this.grid.focusModel,
+        var grid = this.grid,
+            focusModel = grid.focusModel,
+            columnModel = grid.columnModel,
+            dataModel = grid.dataModel,
             focused = focusModel.which(),
-            rowIdx;
+            columnName = focused.columnName,
+            rowKey = focused.rowKey,
+            columnIdx, rowIdx;
 
-        if (util.isBlank(focused.columnName)) {
-            rowIdx = util.isBlank(focused.rowKey) ? 0 : this.grid.getIndexOfRow(focused.rowKey);
-            this.grid.focusAt(rowIdx, 0);
+        if (util.isBlank(columnName)) {
+            columnIdx = 0;
+        } else {
+            columnIdx = Math.max(0, columnModel.indexOfColumnName(columnName));
         }
+
+        if (util.isBlank(rowKey)) {
+            rowIdx = 0;
+        } else {
+            rowIdx = Math.max(0, dataModel.indexOfRowKey(rowKey));
+        }
+        grid.focusAt(rowIdx, columnIdx);
     },
 
     /**

@@ -105,6 +105,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Mousedown event handler
      * @param {jQuery.Event} event
      * @private
+     * @todo rowKey, rowIndex - Test Case
      */
     _onMouseDown: function(event) {
         var grid = this.grid,
@@ -114,7 +115,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
-            rowIndex = $tr.index(),
+            rowKey = $tr.attr('key'),
+            rowIndex = grid.dataModel.indexOfRowKey(rowKey),
             indexObj = {
                 columnName: columnName,
                 column: columnModel.indexOfColumnName(columnName, true),
@@ -165,7 +167,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                this.grid.focus(rowIndex, columnName);
+                this.grid.focusAt(rowIndex, columnIndex);
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
