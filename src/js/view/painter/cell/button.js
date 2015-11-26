@@ -4,20 +4,20 @@
  */
 'use strict';
 
-var List = require('./list');
+var ListCell = require('./list');
 var util = require('../../../util');
 
 /**
  * Painter class for the button cell
  * @module painter/cell/button
  */
-var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prototype */{
+var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell/list
      */
     init: function() {
-        List.apply(this, arguments);
+        ListCell.apply(this, arguments);
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -63,6 +63,35 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
     },
 
     /**
+     * Contents markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<input' +
+        ' type="<%=type%>"' +
+        ' name="<%=name%>"' +
+        ' id="<%=id%>"' +
+        ' value="<%=value%>"' +
+        ' <% if (isChecked) print("checked"); %>' +
+        ' <% if (isDisabled) print("disabled"); %>' +
+        '/>'
+    ),
+
+    /**
+     * Label markup template
+     * It will be added to content
+     * @return {string} html
+     */
+    labelTemplate: _.template(
+        '<label' +
+        ' for="<%=id%>"' +
+        ' style="margin-right:10px;"' +
+        '>' +
+        '<%=labelText%>' +
+        '</label>'
+    ),
+
+    /**
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
@@ -95,41 +124,34 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
             checkedList = ('' + value).split(','),
             checkedMap = {},
             html = this._getConvertedHtml(value, cellData),
-            htmlArr = [],
             name = util.getUniqueKey(),
             isDisabled = cellData.isDisabled,
+            type = columnModel.editOption.type,
             id;
 
-        if (tui.util.isNull(html)) {
-            tui.util.forEachArray(checkedList, function(item) {
+        if (_.isNull(html)) {
+            html = '';
+
+            _.each(checkedList, function(item) {
                 checkedMap[item] = true;
             });
-
-            tui.util.forEachArray(list, function(item) {
+            _.each(list, function(item) {
                 id = name + '_' + item.value;
-
-                htmlArr.push('<input type="');
-                htmlArr.push(columnModel.editOption.type);
-                htmlArr.push('" name="');
-                htmlArr.push(name);
-                htmlArr.push('" id="');
-                htmlArr.push(id);
-                htmlArr.push('" value="');
-                htmlArr.push(item.value);
-                htmlArr.push('" ');
-                htmlArr.push(checkedMap[item.value] ? 'checked' : '');
-                htmlArr.push(isDisabled ? 'disabled' : '');
-                htmlArr.push('/>');
-
+                html += this.contentTemplate({
+                    type: type,
+                    name: name,
+                    id: id,
+                    value: item.value,
+                    isChecked: !!checkedMap[item.value],
+                    isDisabled: isDisabled
+                });
                 if (item.text) {
-                    htmlArr.push('<label for="');
-                    htmlArr.push(id);
-                    htmlArr.push('" style="margin-right:10px">');
-                    htmlArr.push(item.text);
-                    htmlArr.push('</label>');
+                    html += this.labelTemplate({
+                        id: id,
+                        labelText: item.text
+                    });
                 }
             }, this);
-            html = htmlArr.join('');
         }
         return html;
     },
@@ -233,4 +255,4 @@ var Button = tui.util.defineClass(List,/**@lends module:painter/cell/button.prot
     }
 });
 
-module.exports = Button;
+module.exports = ButtonCell;

@@ -36,16 +36,30 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * 클립보드 focus 이벤트 핸들러
      * @private
+     * @todo rowKey, rowIndex, columnName, columnIndex - Test Case
      */
     _onFocus: function() {
-        var focusModel = this.grid.focusModel,
+        var grid = this.grid,
+            focusModel = grid.focusModel,
+            columnModel = grid.columnModel,
+            dataModel = grid.dataModel,
             focused = focusModel.which(),
-            rowIdx;
+            columnName = focused.columnName,
+            rowKey = focused.rowKey,
+            columnIdx, rowIdx;
 
-        if (util.isBlank(focused.columnName)) {
-            rowIdx = util.isBlank(focused.rowKey) ? 0 : this.grid.getIndexOfRow(focused.rowKey);
-            this.grid.focusAt(rowIdx, 0);
+        if (util.isBlank(columnName)) {
+            columnIdx = 0;
+        } else {
+            columnIdx = Math.max(0, columnModel.indexOfColumnName(columnName));
         }
+
+        if (util.isBlank(rowKey)) {
+            rowIdx = 0;
+        } else {
+            rowIdx = Math.max(0, dataModel.indexOfRowKey(rowKey));
+        }
+        grid.focusAt(rowIdx, columnIdx);
     },
 
     /**
@@ -76,7 +90,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * keyDown 이벤트 핸들러
-     * @param {event} keyDownEvent 이벤트 객체
+     * @param {Event} keyDownEvent 이벤트 객체
      * @return {boolean} False if locked
      * @private
      */
@@ -184,8 +198,37 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
+     * Return index for reference of selection before moving by key event.
+     * @returns {{row: number, column:number}} index
+     * @private
+     */
+    _getIndexBeforeMove: function() {
+        var grid  = this.grid,
+            focusedIndex = grid.focusModel.indexOf(),
+            selectionRange = grid.selectionModel.get('range'),
+            index = _.extend({}, focusedIndex),
+            selectionRowRange, selectionColumnRange;
+
+        if (selectionRange) {
+            selectionRowRange = selectionRange.row;
+            selectionColumnRange = selectionRange.column;
+
+            index.row = selectionRowRange[0];
+            index.column = selectionColumnRange[0];
+
+            if (selectionRowRange[1] > focusedIndex.row) {
+                index.row = selectionRowRange[1];
+            }
+            if (selectionColumnRange[1] > focusedIndex.column) {
+                index.column = selectionColumnRange[1];
+            }
+        }
+        return index;
+    },
+
+    /**
      * shift 가 눌린 상태에서의 key down event handler
-     * @param {event} keyDownEvent 이벤트 객체
+     * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
     _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
@@ -193,46 +236,69 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyMap = grid.keyMap,
             focusModel = grid.focusModel,
             columnModelList = grid.columnModel.getVisibleColumnModelList(),
-            focusedIndex = grid.focusModel.indexOf(),
             focused = focusModel.which(),
-            isKeyIdentified = true,
             displayRowCount = grid.dimensionModel.getDisplayRowCount(),
-            keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+            keyCode = keyDownEvent.keyCode || keyDownEvent.which,
+            index = this._getIndexBeforeMove(),
+            isKeyIdentified = true,
+            isSelection = true,
+            columnModel, scrollPosition, isValid, selectionState;
 
         switch (keyCode) {
             case keyMap['UP_ARROW']:
-                this._updateSelectionByKeyIn(focusModel.prevRowIndex(), focusedIndex.columnIdx);
+                index.row -= 1;
                 break;
             case keyMap['DOWN_ARROW']:
-                this._updateSelectionByKeyIn(focusModel.nextRowIndex(), focusedIndex.columnIdx);
+                index.row += 1;
                 break;
             case keyMap['LEFT_ARROW']:
-                this._updateSelectionByKeyIn(focusedIndex.rowIdx, focusModel.prevColumnIndex());
+                index.column -= 1;
                 break;
             case keyMap['RIGHT_ARROW']:
-                this._updateSelectionByKeyIn(focusedIndex.rowIdx, focusModel.nextColumnIndex());
+                index.column += 1;
                 break;
             case keyMap['PAGE_UP']:
-                this._updateSelectionByKeyIn(focusModel.prevRowIndex(displayRowCount - 1), focusedIndex.columnIdx);
+                index.row = focusModel.prevRowIndex(displayRowCount - 1);
                 break;
             case keyMap['PAGE_DOWN']:
-                this._updateSelectionByKeyIn(focusModel.nextRowIndex(displayRowCount - 1), focusedIndex.columnIdx);
+                index.row = focusModel.nextRowIndex(displayRowCount - 1);
                 break;
             case keyMap['HOME']:
-                this._updateSelectionByKeyIn(focusedIndex.rowIdx, 0);
+                index.column = 0;
                 break;
             case keyMap['END']:
-                this._updateSelectionByKeyIn(focusedIndex.rowIdx, columnModelList.length - 1);
+                index.column = columnModelList.length - 1;
                 break;
             case keyMap['ENTER']:
+                isSelection = false;
                 break;
             case keyMap['TAB']:
+                isSelection = false;
                 grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
             default:
+                isSelection = false;
                 isKeyIdentified = false;
                 break;
         }
+
+        columnModel = columnModelList[index.column];
+        isValid = !!(columnModel && grid.getRow(index.row));
+
+        if (isSelection && isValid) {
+            this._updateSelectionByKeyIn(index.row, index.column);
+            scrollPosition = focusModel.getScrollPosition(index.row, columnModel.columnName);
+            if (scrollPosition) {
+                selectionState = grid.selectionModel.getState();
+                if (selectionState === 'column') {
+                    delete scrollPosition['scrollTop'];
+                } else if (selectionState === 'row') {
+                    delete scrollPosition['scrollLeft'];
+                }
+                grid.renderModel.set(scrollPosition);
+            }
+        }
+
         if (isKeyIdentified) {
             keyDownEvent.preventDefault();
         }
@@ -240,7 +306,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * ctrl 가 눌린 상태에서의 key down event handler
-     * @param {event} keyDownEvent 이벤트 객체
+     * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
     _keyInWithCtrl: function(keyDownEvent) {
@@ -335,7 +401,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * ctrl, shift 둘다 눌린 상태에서의 key down event handler
-     * @param {event} keyDownEvent 이벤트 객체
+     * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
     _keyInWithShiftAndCtrl: function(keyDownEvent) {
@@ -400,14 +466,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _updateSelectionByKeyIn: function(rowIndex, columnIndex) {
-        var selectionModel = this.grid.selectionModel,
-            focused = this.grid.focusModel.indexOf();
+        var selectionModel = this.grid.selectionModel;
 
-        if (!selectionModel.hasSelection()) {
-            selectionModel.start(focused.rowIdx, focused.columnIdx);
-        }
         selectionModel.update(rowIndex, columnIndex);
-        this.grid.focusAt(rowIndex, columnIndex, true);
     },
 
     /**

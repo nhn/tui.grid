@@ -65,7 +65,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * 스크롤 이벤트 핸들러
-     * @param {event} scrollEvent   스크롤 이벤트
+     * @param {jQuery.Event} scrollEvent   스크롤 이벤트
      * @private
      */
     _onScroll: function(scrollEvent) {
@@ -102,27 +102,83 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {Event} mouseDownEvent 이벤트 객체
+     * Mousedown event handler
+     * @param {jQuery.Event} event
      * @private
+     * @todo rowKey, rowIndex - Test Case
      */
     _onMouseDown: function(event) {
-        var $td = $(event.target).closest('td'),
-            $tr = $(event.target).closest('tr'),
+        var grid = this.grid,
+            columnModel = grid.columnModel,
+            $target = $(event.target),
+            isInput = $target.is('input'),
+            $td = $target.closest('td'),
+            $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
             rowKey = $tr.attr('key'),
-            grid = this.grid,
-            columnModel = grid.columnModel;
+            rowIndex = grid.dataModel.indexOfRowKey(rowKey),
+            indexObj = {
+                columnName: columnName,
+                column: columnModel.indexOfColumnName(columnName, true),
+                row: rowIndex
+            },
+            list;
 
         if (grid.option('selectType') === 'radio') {
-            grid.check(rowKey);
+            grid.check(rowIndex);
         }
 
-        if (columnModel.isMetaColumn(columnName)) {
-            // meta column clicked
+        if (!columnName || tui.util.isFalsy(rowIndex)) {
+            _.extend(indexObj, grid.selectionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
+            list = columnModel.getVisibleColumnModelList(null, true);
+
+            // columnName과 columnIndex 재조정
+            columnName = list[indexObj.column].columnName;
+            indexObj.columnName = columnName;
+            indexObj.column = columnModel.indexOfColumnName(columnName, true);
+        }
+
+        this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, isInput);
+    },
+
+    /**
+     * Control selection action when started
+     * @param {number} pageX - Mouse position X
+     * @param {number} pageY - Mouse position Y
+     * @param {boolean} shiftKey - Whether the shift-key is pressed.
+     * @param {{columnName:string, column:number, row:number}} indexObj
+     * @param {boolean} isInput - Whether the target is input element.
+     * @private
+     */
+    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, isInput) {
+        var columnModel = this.grid.columnModel,
+            selectionModel = this.grid.selectionModel,
+            columnName = indexObj.columnName,
+            columnIndex = indexObj.column,
+            rowIndex = indexObj.row;
+
+        if (!selectionModel.isEnabled()) {
+            return;
+        }
+
+        this._attachDragEvents(pageX, pageY);
+        if (!columnModel.isMetaColumn(columnName)) {
+            selectionModel.setState('cell');
+            if (shiftKey && !isInput) {
+                selectionModel.update(rowIndex, columnIndex);
+            } else {
+                this.grid.focusAt(rowIndex, columnIndex);
+                selectionModel.end();
+            }
+        } else if (columnName === '_number') {
+            selectionModel.setState('row');
+            if (shiftKey) {
+                selectionModel.update(rowIndex, 0);
+            } else {
+                selectionModel.selectRow(rowIndex);
+            }
         } else {
-            grid.focus(rowKey, columnName);
-            this._checkSelectionAction(event.pageX, event.pageY, event.shiftKey);
+            this._detachDragEvents();
         }
     },
 
@@ -149,14 +205,14 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     _detachDragEvents: function() {
         this.grid.selectionModel.stopAutoScroll();
         $(document)
-            .off('mousemove', $.proxy(this._onMouseMove, this))
-            .off('mouseup', $.proxy(this._detachDragEvents, this))
-            .off('selectstart', $.proxy(this._onSelectStart, this));
+            .off('mousemove', this._onMouseMove)
+            .off('mouseup', this._detachDragEvents)
+            .off('selectstart', this._onSelectStart);
     },
 
     /**
      * Event handler for 'mousemove' event during drag
-     * @param {MouseEvent} event - MouseEvent object
+     * @param {jQuery.Event} event - MouseEvent object
      */
     _onMouseMove: function(event) {
         var selectionModel = this.grid.selectionModel,
@@ -187,33 +243,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * select start 이벤트를 방지한다.
-     * @param {event} selectStartEvent 이벤트 객체
+     * @param {jQuery.Event} event selectStart 이벤트 객체
      * @returns {boolean} false
      * @private
      */
     _onSelectStart: function(event) {
         event.preventDefault();
         return false;
-    },
-
-    /**
-     * Checks the state of selection model and event, and process actions related to selection.
-     * @param {number} pageX - X position relative to the document
-     * @param {number} pageY - Y position relative to the document
-     * @param {boolean} shiftKey - True if the shiftKey was down
-     */
-    _checkSelectionAction: function(pageX, pageY, shiftKey) {
-        var selectionModel = this.grid.selectionModel;
-
-        if (!selectionModel.isEnabled()) {
-            return;
-        }
-        if (shiftKey) {
-            selectionModel.updateByMousePosition(pageX, pageY);
-        } else {
-            selectionModel.end();
-        }
-        this._attachDragEvents(pageX, pageY);
     },
 
     /**

@@ -5,21 +5,21 @@
  */
 'use strict';
 
-var Text = require('./text');
+var TextCell = require('./text');
 
 /**
  * Password 타입의 cell renderer
- * @extends module:view/painter/cell/text
- * @constructor module:view/painter/cell/text-password
+ * @module painter/cell/text-password
  */
-var Password = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text-password.prototype */{
+var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-password.prototype */{
     /**
-     * Initializes
+     * @construct
+     * @extends module:painter/cell/text
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
     init: function(attributes, options) { // eslint-disable-line
-        Text.apply(this, arguments);
+        TextCell.apply(this, arguments);
     },
 
     /**
@@ -40,4 +40,4 @@ var Password = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text
     }
 });
 
-module.exports = Password;
+module.exports = PasswordCell;

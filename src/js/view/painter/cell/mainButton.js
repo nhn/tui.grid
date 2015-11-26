@@ -10,7 +10,7 @@ var Cell = require('../cell');
  * Painter class for the main button
  * @module painter/cell/mainButton
  */
-var MainButton = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainButton.prototype */{
+var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainButton.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -41,6 +41,19 @@ var MainButton = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainBut
     },
 
     /**
+     * Content markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<input' +
+        ' type="<%=type%>"' +
+        ' name="<%=name%>"' +
+        ' <% if (isChecked) print("checked") %>' +
+        ' <% if (isDisabled) print("disabled") %>' +
+        '/>'
+    ),
+
+    /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
      * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
@@ -62,17 +75,14 @@ var MainButton = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainBut
      * </select>
      */
     getContentHtml: function(cellData) {
-        var isDisabled = cellData.isDisabled,
-            htmlArr = [];
-        htmlArr.push('<input type="');
-        htmlArr.push(this.grid.option('selectType'));
-        htmlArr.push('" name="');
-        htmlArr.push(this.grid.id);
-        htmlArr.push('" ');
-        htmlArr.push(cellData.value ? 'checked' : '');
-        htmlArr.push(isDisabled ? 'disabled' : '');
-        htmlArr.push('/>');
-        return htmlArr.join('');
+        var isDisabled = cellData.isDisabled;
+
+        return this.contentTemplate({
+            type: this.grid.option('selectType'),
+            name: this.grid.id,
+            isChecked: !!cellData.value,
+            isDisabled: isDisabled
+        });
     },
 
     /**
@@ -143,4 +153,4 @@ var MainButton = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainBut
     }
 });
 
-module.exports = MainButton;
+module.exports = MainButtonCell;

@@ -14,7 +14,7 @@ var util = require('../../util');
 var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
-     * @extends module:painter
+     * @extends module:base/painter
      */
     init: function() {
         Painter.apply(this, arguments);
@@ -27,6 +27,24 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
      */
     redrawAttributes: ['isEditable', 'optionList', 'value'],
+
+    /*
+     * Markup template
+     * If use '<%=class%>' key word, an error occurs.
+     * So use '<%=className%>' instead of '<%=class%>'
+     * @return {string} template
+     */
+    template: _.template(
+        '<td' +
+        ' columnname="<%=columnName%>"' +
+        ' class="<%=className%>"' +
+        ' edit-type="<%=editType%>"' +
+        ' <% if(rowSpan) print("rowSpan=" + rowSpan )%>' +
+        '<%=attributeString%>' +
+        '>' +
+        '<%=contentHtml%>' +
+        '</td>'
+    ),
 
     /**
      * keyDownEvent 발생시 기본 동작 switch
@@ -270,23 +288,17 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     getHtml: function(cellData) {
         var attributeString = util.getAttributesString(this.getAttributes(cellData)),
-            htmlArr = [];
+            html;
 
-        htmlArr.push('<td');
-        htmlArr.push(' columnName="');
-        htmlArr.push(cellData.columnName);
-        htmlArr.push('" ');
-        htmlArr.push(cellData.rowSpan ? 'rowSpan="' + cellData.rowSpan + '"' : '');
-        htmlArr.push(' class="');
-        htmlArr.push(this._getClassNameList(cellData).join(' '));
-        htmlArr.push('" ');
-        htmlArr.push(attributeString);
-        htmlArr.push(' edit-type="');
-        htmlArr.push(this.getEditType());
-        htmlArr.push('">');
-        htmlArr.push(this._getContentHtml(cellData));
-        htmlArr.push('</td>');
-        return htmlArr.join('');
+        html = this.template({
+            columnName: cellData.columnName,
+            rowSpan: cellData.rowSpan,
+            className: this._getClassNameList(cellData).join(' '),
+            editType: this.getEditType(),
+            attributeString: attributeString,
+            contentHtml: this._getContentHtml(cellData)
+        });
+        return html;
     },
 
     /**

@@ -39,7 +39,8 @@ describe('view.layout.body', function() {
                     }
                 ]
             }),
-            focusModel: new Model()
+            focusModel: new Model(),
+            focusAt: function() {}
         };
         mock.dataModel.isRowSpanEnable = function() {
             return true;

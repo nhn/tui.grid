@@ -639,14 +639,15 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
      * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-     * @return {(Number|String)}    조회한 셀의 값.
+     * @return {(Number|String|undefined)}    조회한 셀의 값.
      */
     getValue: function(rowKey, columnName, isOriginal) {
-        var value;
+        var value, row;
         if (isOriginal) {
             value = this.dataModel.getOriginal(rowKey, columnName);
         } else {
-            value = this.dataModel.get(rowKey).get(columnName);
+            row = this.dataModel.get(rowKey);
+            value = row && row.get(columnName);
         }
         return value;
     },
@@ -805,9 +806,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
             clearTimeout(this.timeoutIdForSetRowList);
-            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
-                callback();
-            }, this), 0);
+            this.timeoutIdForSetRowList = setTimeout(callback, 0);
         } else {
             callback();
         }
@@ -834,9 +833,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
             clearTimeout(this.timeoutIdForSetRowList);
-            this.timeoutIdForSetRowList = setTimeout($.proxy(function() {
-                doProcess();
-            }, this), 0);
+            this.timeoutIdForSetRowList = setTimeout(doProcess, 0);
         } else {
             doProcess();
         }
@@ -1278,20 +1275,20 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     paste: function(data) {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
-            start = this._getStartIndexToPaste(),
-            end = this._getEndIndexToPaste(start, data, columnModelList);
+            startIdx = this._getStartIndexToPaste(),
+            endIdx = this._getEndIndexToPaste(startIdx, data, columnModelList);
 
         _.each(data, function(row, index) {
-            this._setValueForPaste(row, start.rowIdx + index, start.columnIdx, end.columnIdx);
+            this._setValueForPaste(row, startIdx.row + index, startIdx.column, endIdx.column);
         }, this);
 
-        this.selectionModel.start(start.rowIdx, start.columnIdx);
-        this.selectionModel.update(end.rowIdx, end.columnIdx);
+        this.selectionModel.start(startIdx.row, startIdx.column);
+        this.selectionModel.update(endIdx.row, endIdx.column);
     },
 
     /**
      * 붙여넣기를 실행할때 시작점이 될 셀의 인덱스를 반환한다.
-     * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
+     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getStartIndexToPaste: function() {
         var startIdx;
@@ -1306,15 +1303,15 @@ var Core = View.extend(/**@lends module:core.prototype */{
 
     /**
      * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
-     * @param  {{rowIdx: number, columnIdx: number}} startIdx - 시작점이 될 셀의 인덱스
+     * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
      * @param  {Array[]} data - 붙여넣기할 데이터
      * @param  {Array} columnModelList - 현재 화면에 보여지는 컬럼모델의 목록
-     * @return {{rowIdx: number, columnIdx: number}} 행과 열의 인덱스 정보를 가진 객체
+     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getEndIndexToPaste: function(startIdx, data, columnModelList) {
         var endIdx = {
-            rowIdx: data.length + startIdx.rowIdx - 1,
-            columnIdx: Math.min(data[0].length + startIdx.columnIdx, columnModelList.length) - 1
+            row: data.length + startIdx.row - 1,
+            column: Math.min(data[0].length + startIdx.column, columnModelList.length) - 1
         };
         return endIdx;
     },

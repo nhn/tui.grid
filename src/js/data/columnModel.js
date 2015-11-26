@@ -5,6 +5,14 @@
 'use strict';
 
 var Model = require('../base/model');
+
+/**
+ * @ignore
+ * @const
+ * @type {string[]}
+ * @desc
+ *  Meta column names
+ */
 var META_COLUMN_LIST = ['_button', '_number'];
 
 /**
@@ -382,23 +390,20 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @param {boolean} isHidden - Hidden flag for setting
      */
     setHidden: function(columnNames, isHidden) {
-        var columnMergeInfoList = this.grid.option('columnMerge'),
-            columnMergeInfoItem, visibleList;
+        var name, names, columnModel, visibleList;
 
-        _.each(columnNames, function(name) {
-            var columnModel = this.getColumnModel(name);
+        while (columnNames.length) {
+            name = columnNames.shift();
+            columnModel = this.getColumnModel(name);
 
             if (columnModel) {
                 columnModel.isHidden = isHidden;
             } else {
-                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
-                    columnName: name
-                });
-                if (columnMergeInfoItem) {
-                    this.setHidden(columnMergeInfoItem.columnNameList, isHidden);
-                }
+                names = this.getUnitColumnNamesIfMerged(name);
+                columnNames.push.apply(columnNames, names);
             }
-        }, this);
+        }
+
         visibleList = this._makeVisibleColumnModelList(
             this.get('metaColumnModelList'),
             this.get('dataColumnModelList')
@@ -410,12 +415,42 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
     },
 
     /**
-     *
-     * @param columnName
-     * @returns {boolean}
+     * Get unit column names
+     * @param {string} columnName - columnName
+     * @returns {Array.<string>} Unit column names
+     */
+    getUnitColumnNamesIfMerged: function(columnName) {
+        var columnMergeInfoList = this.grid.option('columnMerge'),
+            stackForSearch = [],
+            searchedNames = [],
+            name, columnModel, columnMergeInfoItem;
+
+        stackForSearch.push(columnName);
+        while (stackForSearch.length) {
+            name = stackForSearch.shift();
+            columnModel = this.getColumnModel(name);
+
+            if (columnModel) {
+                searchedNames.push(name);
+            } else {
+                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
+                    columnName: name
+                });
+                if (columnMergeInfoItem) {
+                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.columnNameList);
+                }
+            }
+        }
+        return _.uniq(searchedNames);
+    },
+
+    /**
+     * Return whether the column is meta column
+     * @param {string} columnName - columnName
+     * @returns {boolean} Whether the column is meta column.
      */
     isMetaColumn: function(columnName) {
-        return _.indexOf(META_COLUMN_LIST, columnName) !== -1;
+        return _.indexOf(META_COLUMN_LIST, columnName) >= 0;
     }
 });
 

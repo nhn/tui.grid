@@ -5,20 +5,21 @@
 'use strict';
 
 var Cell = require('../cell');
-var Text = require('./text');
+var TextCell = require('./text');
 var util = require('../../../util');
+var formUtil = require('../../../formUtil');
 
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
- * @module view/painter/cell/text-convertible
+ * @module painter/cell/text-convertible
  */
-var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/text-convertible.prototype */{
+var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-convertible.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/text 
+     * @extends module:painter/cell/text
      */
     init: function() {
-        Text.apply(this, arguments);
+        TextCell.apply(this, arguments);
         this.setOwnProperties({
             timeoutIdForClick: 0,
             editingCell: {
@@ -42,6 +43,23 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
         'focus input': '_onFocus',
         'selectstart input': '_onSelectStart'
     },
+
+    /**
+     * Content markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<span class="input">' +
+        '<input' +
+        ' type="<%=type%>"' +
+        ' value="<%=value%>"' +
+        ' name="<%=name%>"' +
+        ' align="center"' +
+        ' maxLength="<%=maxLength%>"' +
+        ' <% if (isDisabled) print("disabled") %>' +
+        '/>' +
+        '</span>'
+    ),
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -82,10 +100,8 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
      */
     getContentHtml: function(cellData) {
         // FIXME: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
-        // TODO: html template 형태로 변경
         var columnModel = this.getColumnModel(cellData),
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-            htmlArr = [];
+            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
 
         if (tui.util.isUndefined(value)) {
             value = '';
@@ -97,21 +113,14 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
             }
             return value;
         }
-        htmlArr.push('<span class="input">');
-        htmlArr.push('<input type="');
-        htmlArr.push(this._getInputType());
-        htmlArr.push('" value="');
-        htmlArr.push(value);
-        htmlArr.push('" name="');
-        htmlArr.push(util.getUniqueKey());
-        htmlArr.push('" align="center" ');
-        htmlArr.push(cellData.isDisabled ? 'disabled' : '');
-        htmlArr.push(' maxLength="');
-        htmlArr.push(columnModel.editOption.maxLength);
-        htmlArr.push('"/>');
-        htmlArr.push('</span>');
 
-        return htmlArr.join('');
+        return this.contentTemplate({
+            type: this._getInputType(),
+            value: value,
+            name: util.getUniqueKey(),
+            isDisabled: cellData.isDisabled,
+            maxLength: columnModel.editOption.maxLength
+        });
     },
 
     /**
@@ -127,7 +136,7 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
         var targetProto;
 
         if (this._isEditingCell(cellData)) {
-            targetProto = Text.prototype;
+            targetProto = TextCell.prototype;
         } else {
             targetProto = Cell.prototype;
         }
@@ -191,7 +200,7 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
             this.redraw(this._getCellData($td), $td);
             $input = $td.find('input');
             this.originalText = $input.val();
-            util.form.setCursorToEnd($input.get(0));
+            formUtil.setCursorToEnd($input.get(0));
             $input.select();
         }
     },
@@ -259,4 +268,4 @@ var Convertible = tui.util.defineClass(Text,/**@lends module:view/painter/cell/t
     }
 });
 
-module.exports = Convertible;
+module.exports = ConvertibleCell;

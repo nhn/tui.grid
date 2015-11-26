@@ -4,20 +4,20 @@
  */
 'use strict';
 
-var List = require('./list');
+var ListCell = require('./list');
 var util = require('../../../util');
 
 /**
  * Painter class for the select cell
- * @module view/painter/cell/select
+ * @module painter/cell/select
  */
-var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select.prototype */{
+var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/select.prototype */{
     /**
      * @constructs
-     * @extends module:view/painter/cell/list 
+     * @extends module:painter/cell/list
      */
     init: function() {
-        List.apply(this, arguments);
+        ListCell.apply(this, arguments);
 
         this.setKeyDownSwitch({
             'ESC': function(keyDownEvent, param) {
@@ -33,6 +33,34 @@ var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select
         'change select': '_onChange',
         'keydown select': '_onKeyDown'
     },
+
+    /**
+     * Content markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<select' +
+        ' name="<%=name%>"' +
+        ' <% if (isDisabled) print("disabled"); %>' +
+        '>' +
+        '<%=options%>' +
+        '</select>'
+    ),
+
+    /**
+     * Options markup template
+     * It will be added to content
+     * :: The value of option is a type of stirng, and use '==' operator for comparison regardless of some types of value in cellData
+     * @return {string} html
+     */
+    optionTemplate: _.template(
+        '<option' +
+        ' value="<%=value%>"' +
+        ' <% if (cellDataValue == value)  print("selected"); %>' +
+        '>' +
+        '<%=text%>' +
+        '</option>'
+    ),
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
@@ -71,27 +99,24 @@ var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select
     getContentHtml: function(cellData) {
         var list = this.getOptionList(cellData),
             isDisabled = cellData.isDisabled,
-            htmlArr = [],
-            html = this._getConvertedHtml(cellData.value, cellData);
+            html = this._getConvertedHtml(cellData.value, cellData),
+            optionsHtml = '';
 
+        //@todo html !== null인경우 tc부족
         if (tui.util.isNull(html)) {
-            htmlArr.push('<select name="' + util.getUniqueKey() + '"');
-            htmlArr.push(isDisabled ? ' disabled ' : '');
-            htmlArr.push('>');
+           _.each(list, function(item) {
+               optionsHtml += this.optionTemplate({
+                   value: item.value,
+                   cellDataValue: cellData.value,
+                   text: item.text
+               });
+           }, this);
 
-            tui.util.forEachArray(list, function(item) {
-                htmlArr.push('<option ');
-                htmlArr.push('value="' + item.value + '"');
-                //option의 value 는 문자열 형태인데, cellData 의 변수 type과 관계없이 비교하기 위해 == 연산자를 사용함
-                if (cellData.value == item.value) { // eslint-disable-line eqeqeq
-                    htmlArr.push(' selected');
-                }
-                htmlArr.push(' >');
-                htmlArr.push(item.text);
-                htmlArr.push('</option>');
-            });
-            htmlArr.push('</select>');
-            html = htmlArr.join('');
+           html = this.contentTemplate({
+               name: util.getUniqueKey(),
+               isDisabled: isDisabled,
+               options: optionsHtml
+           });
         }
         return html;
     },
@@ -169,4 +194,4 @@ var Select = tui.util.defineClass(List,/**@lends module:view/painter/cell/select
     }
 });
 
-module.exports = Select;
+module.exports = SelectCell;

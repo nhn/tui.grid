@@ -164,10 +164,10 @@ describe('view.painter.cell.text', function() {
                 expect(cellPainter.originalText).toEqual('0-1');
             });
 
-            it('grid 의 selection.disable() 을 호출하는지 확인한다.', function() {
-                grid.selectionModel.disable = jasmine.createSpy('disable');
+            it('grid 의 selection.end() 을 호출하는지 확인한다.', function() {
+                grid.selectionModel.end = jasmine.createSpy('end');
                 cellPainter._onFocus({target: $input.get(0)});
-                expect(grid.selectionModel.disable).toHaveBeenCalled();
+                expect(grid.selectionModel.end).toHaveBeenCalled();
             });
         });
 

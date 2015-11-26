@@ -148,13 +148,16 @@ describe('view.painter.cell.base', function() {
     describe('getHtml()', function() {
         it('html 문자열을 생성한다.', function() {
             var html = cellPainter.getHtml({
-                columnName: 'c1',
-                rowKey: 0,
-                className: '',
-                isEditable: true,
-                isDisabled: true
-            });
-            expect(html).toEqual('<td columnName="c1"  class="editable disabled"  align="left" edit-type="normal"></td>');
+                    columnName: 'c1',
+                    rowKey: 0,
+                    className: '',
+                    isEditable: true,
+                    isDisabled: true
+                }),
+                $actualDOM = $(html),
+                $expectedDom = $('<td columnname="c1" class="editable disabled" align="left" edit-type="normal"></td>');
+
+            expect($actualDOM.html()).toEqual($expectedDom.html());
         });
 
         describe('beforeText와 afterText가 설정되었을 때 ', function() {

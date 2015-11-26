@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var Model = require('../base/model');
-var util = require('../util');
+var Model = require('../base/model'),
+    util = require('../util');
 
 /**
  * Focus model
@@ -34,6 +34,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 이전 focus 정보를 저장한다.
      * @private
+     * @return {Model.Focus} This object
      */
     _savePrevious: function() {
         if (this.get('rowKey') !== null) {
@@ -42,6 +43,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (this.get('columnName')) {
             this.set('prevColumnName', this.get('columnName'));
         }
+        return this;
     },
 
     /**
@@ -90,23 +92,19 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {Model.Focus} This object
      */
     focus: function(rowKey, columnName, isScrollable) {
-        var scrollPosition,
-            curRowKey = this.get('rowKey');
+        var scrollPosition;
 
         if (util.isBlank(rowKey) || util.isBlank(columnName) || this.grid.columnModel.isMetaColumn(columnName)) {
             return this;
         }
-        this._savePrevious();
-        this.blur();
-
-        if (rowKey !== curRowKey) {
-            this.select(rowKey);
-        }
-        this.set('columnName', columnName);
-        this.trigger('focus', rowKey, columnName);
+        this._savePrevious()
+            .blur()
+            .select(rowKey)
+            .set('columnName', columnName)
+            .trigger('focus', rowKey, columnName);
 
         if (isScrollable) {
-            scrollPosition = this._getScrollPosition();
+            scrollPosition = this.getScrollPosition(rowKey, columnName);
             if (!tui.util.isEmpty(scrollPosition)) {
                 this.grid.renderModel.set(scrollPosition);
             }
@@ -116,18 +114,18 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * focus 이동에 맞추어 scroll 위치를 조정한 값을 반환한다.
+     * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
+     * @param {String} columnName focus 처리할 셀의 컬럼명
      * @return {{scrollTop: number, scrollLeft: number}} 위치 조정한 값
-     * @private
      */
-    _getScrollPosition: function() {
-        var focused = this.which(),
-            dimensionModel = this.grid.dimensionModel,
+    getScrollPosition: function(rowKey, columnName) {
+        var dimensionModel = this.grid.dimensionModel,
             renderModel = this.grid.renderModel,
             scrollTop = renderModel.get('scrollTop'),
             scrollLeft = renderModel.get('scrollLeft'),
             bodyHeight = dimensionModel.get('bodyHeight'),
             rsideWidth = dimensionModel.get('rsideWidth'),
-            position = dimensionModel.getCellPosition(focused.rowKey, focused.columnName),
+            position = dimensionModel.getCellPosition(rowKey, columnName),
             currentLeft = scrollLeft,
             currentRight = scrollLeft + rsideWidth,
             scrollXSize = +this.get('scrollX') * this.get('scrollBarSize'),
@@ -142,7 +140,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         }
 
         //수평 스크롤 조정
-        if (!this.grid.columnModel.isLside(focused.columnName)) {
+        if (!this.grid.columnModel.isLside(columnName)) {
             if (position.left < currentLeft) {
                 scrollPosition.scrollLeft = position.left;
             } else if (position.right > currentRight) {
@@ -180,15 +178,15 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 정보를 index 기준으로 반환한다.
      * @param {boolean} isPrevious 이전 focus 정보를 반환할지 여부
-     * @return {{rowIdx: number, columnIdx: number}} The object that contains index info
+     * @return {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
         var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
             columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
 
         return {
-            rowIdx: this.grid.dataModel.indexOfRowKey(rowKey),
-            columnIdx: this.grid.columnModel.indexOfColumnName(columnName, true)
+            row: this.grid.dataModel.indexOfRowKey(rowKey),
+            column: this.grid.columnModel.indexOfColumnName(columnName, true)
         };
     },
 

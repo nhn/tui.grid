@@ -99,10 +99,10 @@ describe('grid.core.paste()', function() {
             startIdx = grid.selectionModel.getStartIndex();
             endIdx = grid.selectionModel.getEndIndex();
 
-            expect(startIdx.rowIdx).toBe(0);
-            expect(startIdx.columnIdx).toBe(0);
-            expect(endIdx.rowIdx).toBe(1);
-            expect(endIdx.columnIdx).toBe(1);
+            expect(startIdx.row).toBe(0);
+            expect(startIdx.column).toBe(0);
+            expect(endIdx.row).toBe(1);
+            expect(endIdx.column).toBe(1);
         });
     });
 

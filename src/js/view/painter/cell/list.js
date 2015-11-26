@@ -10,7 +10,7 @@ var Cell = require('../cell');
  * editOption 에 list 를 가지고 있는 형태의 Base 클래스
  * @module painter/cell/list
  */
-var List = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
+var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -79,4 +79,4 @@ var List = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototyp
     }
 });
 
-module.exports = List;
+module.exports = ListCell;

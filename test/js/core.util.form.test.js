@@ -1,8 +1,9 @@
 'use strict';
 
 var util = require('../../src/js/util');
+var formUtil = require('../../src/js/formUtil');
 
-describe('core.util.form', function() {
+describe('core.formUtil', function() {
     var $form;
 
     beforeEach(function() {
@@ -16,24 +17,24 @@ describe('core.util.form', function() {
         });
 
         it('name에 해당하는 input이 존재하지 않는 경우 길이가 0인 배열을 반환한다.', function() {
-            var $element = util.form.getFormElement($form, 'not_found_delivery_number');
+            var $element = formUtil.getFormElement($form, 'not_found_delivery_number');
             expect($element.length).toEqual(0);
         });
 
         it('$form이 존재하지 않는 경우 길이가 0인 배열을 반환한다.', function() {
-            var $element = util.form.getFormElement('', 'delivery_number');
+            var $element = formUtil.getFormElement('', 'delivery_number');
             expect($element.length).toEqual(0);
         });
 
         it('name에 해당하는 input요소들을 배열 형태로 반환한다.', function() {
             var names = ['delivery_number', 'user_name', 'weather'];
             tui.util.forEachArray(names, function(name) {
-                var element = util.form.getFormElement($form, name);
+                var element = formUtil.getFormElement($form, name);
                 expect(element.length).toBe(1);
                 expect(element[0].name).toBe(name);
-            })
-            expect(util.form.getFormElement($form, 'gender').length).toBe(2);
-            expect(util.form.getFormElement($form, 'hobby').length).toBe(4);
+            });
+            expect(formUtil.getFormElement($form, 'gender').length).toBe(2);
+            expect(formUtil.getFormElement($form, 'hobby').length).toBe(4);
         });
     });
 
@@ -50,7 +51,7 @@ describe('core.util.form', function() {
                     expectResult = 'defaultText';
                 $form.append(htmlText);
 
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['user_name']).toEqual(expectResult);
             });
 
@@ -64,7 +65,7 @@ describe('core.util.form', function() {
                     expectResult = 'summer',
                     formData;
                 $form.append(htmlText);
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['weather']).toEqual(expectResult);
             });
 
@@ -81,7 +82,7 @@ describe('core.util.form', function() {
                     expectResult = ['soju', 'whiskey'],
                     formData;
                 $form.append(htmlText);
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['drink']).toEqual(expectResult);
             });
 
@@ -98,7 +99,7 @@ describe('core.util.form', function() {
                     expectResult = 'whiskey',
                     formData;
                 $form.append(htmlText);
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['drink']).toEqual(expectResult);
             });
 
@@ -110,7 +111,7 @@ describe('core.util.form', function() {
 
                 $form.append(htmlText);
 
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['gender']).toEqual(expectResult);
             });
 
@@ -124,7 +125,7 @@ describe('core.util.form', function() {
 
                 $form.append(htmlText);
 
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['hobby']).toEqual(expectResult);
             });
 
@@ -138,7 +139,7 @@ describe('core.util.form', function() {
 
                 $form.append(htmlText);
 
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['hobby']).toEqual(expectResult);
             });
         });
@@ -157,9 +158,9 @@ describe('core.util.form', function() {
                     expectResult = 'defaultText';
 
                 $form.append(htmlText);
-                util.form.setFormElementValue($form, 'user_name', expectResult);
+                formUtil.setFormElementValue($form, 'user_name', expectResult);
 
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['user_name']).toEqual(expectResult);
             });
 
@@ -174,8 +175,8 @@ describe('core.util.form', function() {
                     formData;
 
                 $form.append(htmlText);
-                util.form.setFormElementValue($form, 'weather', expectResult);
-                formData = util.form.getFormData($form);
+                formUtil.setFormElementValue($form, 'weather', expectResult);
+                formData = formUtil.getFormData($form);
                 expect(formData['weather']).toEqual(expectResult);
             });
 
@@ -200,26 +201,26 @@ describe('core.util.form', function() {
 
                 it('배열을 인자로 하여 설정할 수 있다', function() {
                     expectResult = ['redWine', 'whiteWine'];
-                    util.form.setFormElementValue($form, 'drink', expectResult);
-                    formData = util.form.getFormData($form);
+                    formUtil.setFormElementValue($form, 'drink', expectResult);
+                    formData = formUtil.getFormData($form);
                     expect(formData['drink']).toEqual(expectResult);
 
-                    util.form.setFormElementValue($form, 'drink', ['redWine']);
-                    formData = util.form.getFormData($form);
+                    formUtil.setFormElementValue($form, 'drink', ['redWine']);
+                    formData = formUtil.getFormData($form);
                     expect(formData['drink']).toEqual('redWine');
                 });
 
                 it('String 형태 인자로 설정할 수 있다.', function() {
                     expectResult = 'redWine';
-                    util.form.setFormElementValue($form, 'drink', expectResult);
-                    formData = util.form.getFormData($form);
+                    formUtil.setFormElementValue($form, 'drink', expectResult);
+                    formData = formUtil.getFormData($form);
                     expect(formData['drink']).toEqual(expectResult);
                 });
 
                 it('Number 형태도 사용 가능하다.', function() {
                     expectResult = '1';
-                    util.form.setFormElementValue($form, 'drink', 1);
-                    formData = util.form.getFormData($form);
+                    formUtil.setFormElementValue($form, 'drink', 1);
+                    formData = formUtil.getFormData($form);
                     expect(formData['drink']).toEqual(expectResult);
                 });
             });
@@ -231,9 +232,9 @@ describe('core.util.form', function() {
                     formData;
 
                 $form.append(htmlText);
-                util.form.setFormElementValue($form, 'gender', expectResult);
+                formUtil.setFormElementValue($form, 'gender', expectResult);
 
-                formData = util.form.getFormData($form);
+                formData = formUtil.getFormData($form);
                 expect(formData['gender']).toEqual(expectResult);
             });
 
@@ -254,28 +255,28 @@ describe('core.util.form', function() {
                 it('배열을 인자로 하여 설정할 수 있다', function() {
                     expectResult = ['sewing', 'drinking', 'sport', 'dancing'];
 
-                    util.form.setFormElementValue($form, 'hobby', expectResult);
-                    formData = util.form.getFormData($form);
+                    formUtil.setFormElementValue($form, 'hobby', expectResult);
+                    formData = formUtil.getFormData($form);
                     expect(formData['hobby'].sort()).toEqual(expectResult.sort());
 
-                    util.form.setFormElementValue($form, 'hobby', ['sewing']);
-                    formData = util.form.getFormData($form);
+                    formUtil.setFormElementValue($form, 'hobby', ['sewing']);
+                    formData = formUtil.getFormData($form);
                     expect(formData['hobby']).toEqual('sewing');
                 });
 
                 it('String 형태 인자로 설정할 수 있다.', function() {
                     expectResult = 'sewing';
-                    util.form.setFormElementValue($form, 'hobby', expectResult);
+                    formUtil.setFormElementValue($form, 'hobby', expectResult);
 
-                    formData = util.form.getFormData($form);
+                    formData = formUtil.getFormData($form);
                     expect(formData['hobby']).toEqual(expectResult);
                 });
 
                 it('Number 형태도 사용 가능하다.', function() {
                     expectResult = '1';
-                    util.form.setFormElementValue($form, 'hobby', 1);
+                    formUtil.setFormElementValue($form, 'hobby', 1);
 
-                    formData = util.form.getFormData($form);
+                    formData = formUtil.getFormData($form);
                     expect(formData['hobby']).toEqual(expectResult);
                 });
             });
@@ -298,9 +299,9 @@ describe('core.util.form', function() {
         });
 
         it('Object 형태의 데이터를 전달하여 form 엘리먼트들의 data 들을 설정할 수 있다.', function() {
-            util.form.setFormData($form, sampleFormData);
+            formUtil.setFormData($form, sampleFormData);
             sampleFormData['delivery_number'] = String(sampleFormData['delivery_number']);
-            var formData = util.form.getFormData($form);
+            var formData = formUtil.getFormData($form);
             expect(formData).toEqual(sampleFormData);
         });
     });

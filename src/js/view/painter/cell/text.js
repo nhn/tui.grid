@@ -6,12 +6,13 @@
 
 var Cell = require('../cell');
 var util = require('../../../util');
+var formUtil = require('../../../formUtil');
 
 /**
  * Painter class for the text cell
  * @module painter/cell/text
  */
-var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
+var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
      * @extends module:painter/cell
@@ -48,7 +49,20 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         'selectstart input': '_onSelectStart'
     },
 
-    template: _.template('<input type="<%=type%>" value="<%=value%>" name="<%=name%>" align="center" <%=disabled%> maxLength="<%=maxLength%>"/>'),
+    /**
+     * Content markup template
+     * @return {string} html
+     */
+    contentTemplate: _.template(
+        '<input' +
+        ' type="<%=type%>"' +
+        ' value="<%=value%>"' +
+        ' name="<%=name%>"' +
+        ' align="center"' +
+        ' maxLength="<%=maxLength%>"' +
+        ' <% if (isDisabled) print("disabled"); %>' +
+        '/>'
+    ),
 
     /**
      * input type 을 반환한다.
@@ -77,7 +91,7 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         if ($input.prop('disabled')) {
             this.grid.focusClipboard();
         } else {
-            util.form.setCursorToEnd($input.get(0));
+            formUtil.setCursorToEnd($input.get(0));
             $input.select();
         }
     },
@@ -116,12 +130,12 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
         html = this._getConvertedHtml(value, cellData);
 
         if (tui.util.isNull(html)) {
-            html = this.template({
+            html = this.contentTemplate({
                 type: this._getInputType(),
                 value: value,
                 name: util.getUniqueKey(),
-                disabled: cellData.isDisabled ? 'disabled' : '',
-                maxLength: editOption.maxLength || ''
+                isDisabled: cellData.isDisabled,
+                maxLength: editOption.maxLength
             });
         }
         return html;
@@ -223,7 +237,7 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
 
         this.originalText = $input.val();
         this._executeInputEventHandler(focusEvent, 'focus');
-        this.grid.selectionModel.disable();
+        this.grid.selectionModel.end();
     },
 
     /**
@@ -283,4 +297,4 @@ var Text = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototyp
     }
 });
 
-module.exports = Text;
+module.exports = TextCell;
