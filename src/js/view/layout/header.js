@@ -107,7 +107,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var grid = this.grid,
             columnName, columnNames;
 
-        if (!grid.selectionModel.isEnabled()) {
+        if (!grid.selectionModel.isEnabled() || $(event.target).is('a.btn_sorting')) {
             return;
         }
 
