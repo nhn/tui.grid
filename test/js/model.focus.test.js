@@ -141,6 +141,16 @@ describe('model.renderer', function() {
             expect(focusModel.get('prevRowKey')).toEqual(0);
             expect(focusModel.get('prevColumnName')).toEqual('c1');
         });
+
+        it('if "isScrollable" option is true, it should set a scrollPosition from cell index to renderModel.', function() {
+            var rowKey = 0,
+                columnName = 'c1',
+                scrollPosition = focusModel.getScrollPosition(rowKey, columnName);
+
+            spyOn(grid.renderModel, 'set');
+            focusModel.focus(rowKey, columnName, true);
+            expect(grid.renderModel.set).toHaveBeenCalledWith(scrollPosition);
+        });
     });
 
     describe('blur()', function() {
@@ -293,17 +303,6 @@ describe('model.renderer', function() {
             focusModel.focus(2, 'c2');
             expect(focusModel.lastColumnName()).toBe('c3');
         });
-    });
-
-    // TODO: TC 구현
-    describe('_adjustScroll()', function() {
-        // it('현재 focus 위치에 맞추어 scrollTop 과 scrollLeft 값을 반환한다.', function() {
-        //     focusModel.focus(0, 'c1');
-        //     expect(focusModel._getScrollPosition()).toEqual({scrollLeft: 80});
-        //
-        //     focusModel.focus(3, 'c2');
-        //     expect(focusModel._getScrollPosition()).toEqual({scrollLeft: 81, scrollTop: 3});
-        // });
     });
 
     describe('with rowSpan Data', function() {

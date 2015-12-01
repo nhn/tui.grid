@@ -182,7 +182,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         this._setScrolling(pos);
         if (minimumColumnRange) {
-            minMax = util.getMinMax(columnIndexes.concat(minimumColumnRange.column));
+            minMax = util.getMinMax(columnIndexes.concat(minimumColumnRange));
         } else {
             columnIndexes.push(this.inputRange.column[0]);
             minMax = util.getMinMax(columnIndexes);
