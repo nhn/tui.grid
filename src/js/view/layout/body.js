@@ -105,7 +105,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Mousedown event handler
      * @param {jQuery.Event} event
      * @private
-     * @todo rowKey, rowIndex - Test Case
      */
     _onMouseDown: function(event) {
         var grid = this.grid,
@@ -134,6 +133,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
             // columnName과 columnIndex 재조정
             columnName = list[indexObj.column].columnName;
+
             indexObj.columnName = columnName;
             indexObj.column = columnModel.indexOfColumnName(columnName, true);
         }

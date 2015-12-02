@@ -45,6 +45,9 @@ describe('view.layout.body', function() {
         mock.dataModel.isRowSpanEnable = function() {
             return true;
         };
+        mock.dataModel.indexOfRowKey= function() {
+            return -1;
+        };
         mock.dimensionModel = new Dimension({
             grid: mock
         });
@@ -57,6 +60,8 @@ describe('view.layout.body', function() {
         mock.cellFactory = new CellFactory({
             grid: grid
         });
+        mock.updateLayoutData = function() {};
+
         return mock;
     }
 
@@ -88,6 +93,79 @@ describe('view.layout.body', function() {
         });
     });
 
+    describe('_onMouseDown', function() {
+        var $tr, eventMock;
+
+        beforeEach(function() {
+            $tr = $(
+                '<tr key="2" style="height: 30px;">' +
+                    '<td columnname="c1" class="editable" edit-type="text-convertible" align="left">2-1</td>' +
+                    '<td columnname="c2" class="editable" edit-type="text-convertible" align="left">2-2</td>' +
+                '</tr>'
+            );
+
+            eventMock = {
+                pageX: 0,
+                pageY: 0,
+                shiftKey: false,
+                target: $tr.find('td')[1]
+            };
+            spyOn(grid.dataModel, 'indexOfRowKey').and.returnValue(2);
+        });
+
+        it('Should call "_controlStartAction" with expected params', function() {
+            spyOn(body, '_controlStartAction');
+
+            body._onMouseDown(eventMock);
+
+            expect(body._controlStartAction).toHaveBeenCalledWith(0, 0, false, {
+                columnName: 'c2',
+                column: 1,
+                row: 2
+            }, false)
+        });
+
+        it('If the grid has a selectType-radio option, check the row', function() {
+            grid.options.selectType = 'radio';
+            grid.check = jasmine.createSpy('check');
+
+            body._onMouseDown(eventMock);
+
+            expect(grid.check).toHaveBeenCalledWith(2);
+        });
+
+        it('If click the meta("_number") column, adjust indexes', function() {
+            eventMock.target = null;
+            spyOn(grid.selectionModel, 'getIndexFromMousePosition').and.returnValue({
+                column: 0,
+                row: 2
+            });
+            spyOn(grid.columnModel, 'getVisibleColumnModelList').and.callFake(function(whichSide, withMeta) {
+                var returnValue = [
+                    {columnName: 'c1'},
+                    {columnName: 'c2'}
+                ];
+                if (withMeta) {
+                    returnValue.unshift({columnName: '_number'});
+                }
+                return returnValue;
+            });
+            spyOn(body, '_controlStartAction');
+
+            body._onMouseDown(eventMock);
+
+            expect(body._controlStartAction).toHaveBeenCalledWith(0, 0, false, {
+                columnName: '_number',
+                column: -1,
+                row: 2
+            }, false)
+        });
+    });
+
+    describe('_controlStartAction', function() {
+
+    });
+
     describe('_onMouseMove', function() {
         beforeEach(function() {
             body.mouseDownX = 10;
@@ -106,7 +184,7 @@ describe('view.layout.body', function() {
                 expect(grid.selectionModel.hasSelection()).toBe(true);
             });
 
-            it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다..', function() {
+            it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다.', function() {
                 body._onMouseMove({
                     pageX: 15,
                     pageY: 15
