@@ -340,9 +340,13 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * 클립보드 blur 이벤트 핸들러
      * @private
      */
-    _onBlur: function() {
-        clearTimeout(this.timeoutIdForBlur);
-        this.timeoutIdForBlur = setTimeout($.proxy(this._doBlur, this), 0);
+    _onBlur: function(event) {
+        var clipboardElement = tui.util.pick(this, 'view', 'clipboard', 'el');
+        
+        if (clipboardElement !== event.target) {
+            clearTimeout(this.timeoutIdForBlur);
+            this.timeoutIdForBlur = setTimeout($.proxy(this._doBlur, this), 0);
+        }
     },
 
     /**

@@ -94,9 +94,13 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     focus: function(rowKey, columnName, isScrollable) {
         var scrollPosition;
 
-        if (util.isBlank(rowKey) || util.isBlank(columnName) || this.grid.columnModel.isMetaColumn(columnName)) {
+        if (util.isBlank(rowKey) ||
+            util.isBlank(columnName) ||
+            this.grid.columnModel.isMetaColumn(columnName) ||
+            (this.get('rowKey') === rowKey && this.get('columnName') === columnName)) {
             return this;
         }
+        
         this._savePrevious()
             .blur()
             .select(rowKey)
