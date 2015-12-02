@@ -171,9 +171,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
-            selectionModel.setState('row');
             if (shiftKey) {
-                selectionModel.update(rowIndex, 0);
+                selectionModel.update(rowIndex, 0, 'row');
             } else {
                 selectionModel.selectRow(rowIndex);
             }

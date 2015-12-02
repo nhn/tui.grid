@@ -163,7 +163,97 @@ describe('view.layout.body', function() {
     });
 
     describe('_controlStartAction', function() {
+        var pageX, pageY, shiftKey,
+            isInput, indexObj,
+            selectionModel;
 
+        beforeEach(function() {
+            selectionModel = grid.selectionModel;
+            pageX = 0;
+            pageY = 0;
+            shiftKey = false;
+            isInput = false;
+            indexObj = {
+                row: 2,
+                column: 1,
+                columnName: 'c2'
+            };
+        });
+
+        it('When selection model is disabled, then no action.', function() {
+            spyOn(body, '_attachDragEvents');
+            selectionModel.disable();
+
+            body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+
+            expect(body._attachDragEvents).not.toHaveBeenCalled();
+        });
+
+        describe('When target is not meta column', function() {
+            it('without shiftKey, it should focus the target cell and end the selection', function() {
+                spyOn(selectionModel, 'end');
+                spyOn(grid, 'focusAt');
+
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+
+                expect(grid.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(selectionModel.end).toHaveBeenCalled();
+            });
+
+            it('with shiftKey and target is an input element, it should focus the target cell and end the selection', function() {
+                shiftKey = true;
+                isInput = true;
+                spyOn(selectionModel, 'end');
+                spyOn(grid, 'focusAt');
+
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+
+                expect(grid.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(selectionModel.end).toHaveBeenCalled();
+            });
+
+            it('with shiftKey and target is not an input element, it should update SelectionModel', function() {
+                var rowIndex = indexObj.row,
+                    columnIndex = indexObj.column;
+
+                shiftKey = true;
+                spyOn(selectionModel, 'update');
+
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+
+                expect(selectionModel.update).toHaveBeenCalledWith(rowIndex, columnIndex);
+            });
+        });
+
+        describe('Target is the "_number" column', function() {
+            beforeEach(function() {
+                indexObj.columnName = '_number';
+            });
+
+            it('without shiftKey, it should select a row', function() {
+                spyOn(selectionModel, 'selectRow');
+
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                expect(selectionModel.selectRow).toHaveBeenCalledWith(indexObj.row);
+            });
+
+            it('with shiftKey, it should update selection with row state', function() {
+                shiftKey = true;
+                spyOn(selectionModel, 'update');
+
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                expect(selectionModel.update).toHaveBeenCalledWith(indexObj.row, 0, 'row');
+            });
+        });
+
+        it('Target is the meta column and not the "_number" column', function() {
+            indexObj.columnName = '_button';
+
+            spyOn(body, '_detachDragEvents');
+
+            body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+            expect(body._detachDragEvents).toHaveBeenCalled();
+        });
     });
 
     describe('_onMouseMove', function() {
