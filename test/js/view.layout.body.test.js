@@ -180,7 +180,7 @@ describe('view.layout.body', function() {
             };
         });
 
-        it('When selection model is disabled, then no action.', function() {
+        it('If selectionModel is disabled, should interrupt action', function() {
             spyOn(body, '_attachDragEvents');
             selectionModel.disable();
 

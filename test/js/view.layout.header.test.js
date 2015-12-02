@@ -6,6 +6,7 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
 var LayoutHeader = require('../../src/js/view/layout/header');
+var Selection = require('../../src/js/model/selection');
 
 describe('Header', function() {
     var grid, header;
@@ -18,7 +19,19 @@ describe('Header', function() {
             },
             sort: function() {},
             dataModel: new Collection(),
-            columnModel: new ColumnModelData()
+            columnModel: new ColumnModelData({
+                columnModelList: [
+                    {
+                        title: 'c1',
+                        columnName: 'c1',
+                        width: 30
+                    }, {
+                        title: 'c2',
+                        columnName: 'c2',
+                        width: 40
+                    }
+                ]
+            })
         };
         mock.dimensionModel = new Dimension({
             grid: mock
@@ -26,23 +39,14 @@ describe('Header', function() {
         mock.renderModel = new Renderer({
             grid: mock
         });
+        mock.selectionModel = new Selection({
+            grid: mock
+        });
         return mock;
     }
 
-    beforeAll(function() {
+    beforeEach(function() {
         grid = createGridMock();
-        grid.columnModel.set('columnModelList', [
-            {
-                title: 'c1',
-                columnName: 'c1',
-                width: 30
-            }, {
-                title: 'c2',
-                columnName: 'c2',
-                width: 40
-            }
-        ]);
-
         header = new LayoutHeader({
             grid: grid
         });
