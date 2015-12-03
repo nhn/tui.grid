@@ -293,6 +293,8 @@ describe('view.clipboard', function() {
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 0);
 
+                    clipboard._updateSelectionByKeyIn.calls.reset();
+
                     grid.focusAt(1, 1);
                     keyEvent = getKeyEvent('END');
                     clipboard._keyInWithShift(keyEvent);
