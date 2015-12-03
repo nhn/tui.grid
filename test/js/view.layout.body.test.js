@@ -113,7 +113,7 @@ describe('view.layout.body', function() {
             spyOn(grid.dataModel, 'indexOfRowKey').and.returnValue(2);
         });
 
-        it('Should call "_controlStartAction" with expected params', function() {
+        it('should call "_controlStartAction" with expected params', function() {
             spyOn(body, '_controlStartAction');
 
             body._onMouseDown(eventMock);
@@ -125,7 +125,7 @@ describe('view.layout.body', function() {
             }, false)
         });
 
-        it('If the grid has a selectType-radio option, check the row', function() {
+        it('if the grid has a selectType-radio option, check the row', function() {
             grid.options.selectType = 'radio';
             grid.check = jasmine.createSpy('check');
 
@@ -134,7 +134,7 @@ describe('view.layout.body', function() {
             expect(grid.check).toHaveBeenCalledWith(2);
         });
 
-        it('If click the meta("_number") column, adjust indexes', function() {
+        it('if click the meta("_number") column, adjust indexes', function() {
             eventMock.target = null;
             spyOn(grid.selectionModel, 'getIndexFromMousePosition').and.returnValue({
                 column: 0,
@@ -180,7 +180,7 @@ describe('view.layout.body', function() {
             };
         });
 
-        it('If selectionModel is disabled, should interrupt action', function() {
+        it('if selectionModel is disabled, should interrupt action', function() {
             spyOn(body, '_attachDragEvents');
             selectionModel.disable();
 
@@ -189,7 +189,7 @@ describe('view.layout.body', function() {
             expect(body._attachDragEvents).not.toHaveBeenCalled();
         });
 
-        describe('When target is not meta column', function() {
+        describe('when target is not meta column', function() {
             it('without shiftKey, it should focus the target cell and end the selection', function() {
                 spyOn(selectionModel, 'end');
                 spyOn(grid, 'focusAt');
@@ -225,7 +225,7 @@ describe('view.layout.body', function() {
             });
         });
 
-        describe('Target is the "_number" column', function() {
+        describe('target is the "_number" column', function() {
             beforeEach(function() {
                 indexObj.columnName = '_number';
             });
@@ -246,7 +246,7 @@ describe('view.layout.body', function() {
             });
         });
 
-        it('Target is the meta column and not the "_number" column', function() {
+        it('target is the meta column and not the "_number" column', function() {
             indexObj.columnName = '_button';
 
             spyOn(body, '_detachDragEvents');

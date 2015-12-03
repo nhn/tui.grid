@@ -530,7 +530,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Set minimum column range
-     * @param {Array} range - Column range
+     * @param {Array} range - Minimum column range
      */
     setMinimumColumnRange: function(range) {
         this._minimumColumnRange = _.extend(range);

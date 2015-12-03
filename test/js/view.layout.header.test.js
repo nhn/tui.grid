@@ -31,7 +31,8 @@ describe('Header', function() {
                         width: 40
                     }
                 ]
-            })
+            }),
+            focusAt: function() {}
         };
         mock.dimensionModel = new Dimension({
             grid: mock

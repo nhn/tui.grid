@@ -268,8 +268,8 @@ describe('model/selection', function() {
                 selection.update(0, 3);
             });
 
-            describe('When called with columnIndexes[0, 1]', function() {
-                it('With minimumColumnRange, should extend column selection to [0, 3].', function() {
+            describe('when called with columnIndexes[0, 1]', function() {
+                it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
                     spyOn(selection, 'getIndexFromMousePosition').and.callFake(function() {});
                     selection.setMinimumColumnRange([2, 3]);
@@ -281,7 +281,7 @@ describe('model/selection', function() {
                     });
                 });
 
-                it('Without minimumColumnRange, should extend column selection to [1, 2].', function() {
+                it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
                     spyOn(selection, '_resetRangeAttribute');
                     spyOn(selection, 'getIndexFromMousePosition').and.callFake(function() {});
                     selection.unsetMinimumColumnRange();
@@ -294,8 +294,8 @@ describe('model/selection', function() {
                 });
             });
 
-            describe('When called without columnIndexes(=null or undefined) and with cell index', function() {
-                it('With minimumColumnRange, should extend column selection to [1, 3]', function() {
+            describe('when called without columnIndexes(=null or undefined) and with cell index', function() {
+                it('with minimumColumnRange, should extend column selection to [1, 3]', function() {
                     spyOn(selection, '_resetRangeAttribute');
                     spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
@@ -312,7 +312,7 @@ describe('model/selection', function() {
                     });
                 });
 
-                it('Without minimumColumnRange, should extend column selection to [1, 2]', function() {
+                it('without minimumColumnRange, should extend column selection to [1, 2]', function() {
                     spyOn(selection, '_resetRangeAttribute');
                     spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
