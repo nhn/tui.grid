@@ -51,7 +51,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         if (util.isBlank(columnName)) {
             columnIdx = 0;
         } else {
-            columnIdx = Math.max(0, columnModel.indexOfColumnName(columnName));
+            columnIdx = Math.max(0, columnModel.indexOfColumnName(columnName, true));
         }
 
         if (util.isBlank(rowKey)) {
