@@ -242,54 +242,117 @@ describe('view.clipboard', function() {
                 expect(grid.focusIn.calls.count()).toBe(1);
             });
 
-            it('_updateSelectionByKeyIn 를 호출하는 키는 _updateSelectionByKeyIn 호출하는지 확인한다.', function() {
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('UP_ARROW');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(1);
+            describe('_updateSelectionByKeyIn 를 호출하는 키는 _updateSelectionByKeyIn를 올바르게 호출하는지 확인한다.', function() {
+                it('ARROW keys', function() {
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('UP_ARROW');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(0, 1);
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('DOWN_ARROW');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(2);
+                    clipboard._updateSelectionByKeyIn.calls.reset();
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('LEFT_ARROW');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(3);
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('DOWN_ARROW');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(2, 1);
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('RIGHT_ARROW');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(4);
+                    clipboard._updateSelectionByKeyIn.calls.reset();
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('PAGE_DOWN');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(5);
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('LEFT_ARROW');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 0);
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('PAGE_UP');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(6);
+                    clipboard._updateSelectionByKeyIn.calls.reset();
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('HOME');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(7);
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('RIGHT_ARROW');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 2);
 
-                clipboard._unlock();
-                grid.focusAt(1, 1);
-                keyEvent = getKeyEvent('END');
-                clipboard._keyInWithShift(keyEvent);
-                expect(clipboard._updateSelectionByKeyIn.calls.count()).toBe(8);
+                    clipboard._updateSelectionByKeyIn.calls.reset();
+                });
+
+                it('PAGE-UP/DOWN, HOME/END, ENTER, unknown keys', function() {
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('PAGE_DOWN');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(2, 1);
+
+                    clipboard._updateSelectionByKeyIn.calls.reset();
+
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('PAGE_UP');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(0, 1);
+
+                    clipboard._updateSelectionByKeyIn.calls.reset();
+
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('HOME');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 0);
+
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('END');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 2);
+
+                    clipboard._updateSelectionByKeyIn.calls.reset();
+
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('ENTER');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).not.toHaveBeenCalled();
+
+                    grid.focusAt(1, 1);
+                    keyEvent = getKeyEvent('unknown');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(clipboard._updateSelectionByKeyIn).not.toHaveBeenCalled();
+                });
+            });
+
+            describe('with scrolling', function() {
+                beforeEach(function() {
+                    spyOn(grid.focusModel, 'getScrollPosition').and.returnValue({
+                        scrollLeft: 1,
+                        scrollTop: 1
+                    });
+                    spyOn(grid.renderModel, 'set');
+                });
+
+                afterEach(function() {
+                    grid.focusModel.getScrollPosition.calls.reset();
+                    grid.renderModel.set.calls.reset();
+                });
+
+                it('if selection state is "column", should set a scrollPosition to render model without scrollTop', function() {
+                    var scrollPosition = {
+                        asymmetricMatch: function(actual) {
+                            return actual && actual.scrollLeft && !actual.scrollTop
+                        }
+                    };
+                    grid.focusAt(1, 1);
+                    grid.selectionModel.setState('column');
+
+                    keyEvent = getKeyEvent('DOWN_ARROW');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(grid.renderModel.set).toHaveBeenCalledWith(scrollPosition);
+                });
+
+                it('if selection state is "row", should set a scrollPosition to render model without scrollLeft', function() {
+                    var scrollPosition = {
+                        asymmetricMatch: function(actual) {
+                            return actual && actual.scrollTop && !actual.scrollLeft
+                        }
+                    };
+                    grid.focusAt(1, 1);
+                    grid.selectionModel.setState('row');
+
+                    keyEvent = getKeyEvent('DOWN_ARROW');
+                    clipboard._keyInWithShift(keyEvent);
+                    expect(grid.renderModel.set).toHaveBeenCalledWith(scrollPosition);
+                });
             });
         });
 
@@ -397,7 +460,7 @@ describe('view.clipboard', function() {
                     }
                 });
                 clipboard._updateSelectionByKeyIn(2, 1);
-                expect(grid.selectionModel.start).toHaveBeenCalled();
+                expect(grid.selectionModel.start).toHaveBeenCalledWith(0, 0, undefined);
             });
         });
 
