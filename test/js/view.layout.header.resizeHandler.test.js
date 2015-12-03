@@ -2,10 +2,8 @@
 
 var Collection = require('../../src/js/base/collection');
 var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
-var LayoutHeader = require('../../src/js/view/layout/header');
 var ResizeHandler = require('../../src/js/view/layout/resizeHandler');
 
 describe('ResizeHandler', function() {
@@ -17,7 +15,6 @@ describe('ResizeHandler', function() {
             option: function(name) {
                 return this.options[name];
             },
-            sort: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
@@ -30,7 +27,7 @@ describe('ResizeHandler', function() {
         return mock;
     }
 
-    beforeEach(function() {
+    beforeAll(function() {
         grid = createGridMock();
         grid.columnModel.set('columnModelList', [
             {
@@ -43,6 +40,9 @@ describe('ResizeHandler', function() {
                 width: 40
             }
         ]);
+    });
+
+    beforeEach(function() {
         handler = new ResizeHandler({
             grid: grid,
             whichSide: 'R'
@@ -52,6 +52,7 @@ describe('ResizeHandler', function() {
     afterEach(function() {
         handler.destroy();
     });
+
 
     describe('render()', function() {
         beforeEach(function() {
