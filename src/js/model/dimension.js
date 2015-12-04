@@ -421,18 +421,26 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number|String} rowKey - 데이터의 키값
      * @param {String} columnName - 칼럼명
      * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
+     * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
         var dataModel = this.grid.dataModel,
             columnModel = this.grid.columnModel,
             rowHeight = this.get('rowHeight'),
-            rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
+            row = dataModel.get(rowKey),
             metaColumnCount = columnModel.getVisibleMetaColumnCount(),
             columnWidthList = this.get('columnWidthList').slice(metaColumnCount),
             columnFixCount = columnModel.getVisibleColumnFixCount(),
             columnIdx = columnModel.indexOfColumnName(columnName, true),
+            rowSpanData,
             rowIdx, spanCount,
             top, left, right, bottom, i;
+
+        if (!row) {
+            return {};
+        }
+
+        rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
 
         if (!rowSpanData.isMainRow) {
             rowKey = rowSpanData.mainRowKey;
@@ -461,6 +469,52 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             right: right,
             bottom: bottom
         };
+    },
+
+    /**
+     * Return scroll position from the received index
+     * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
+     * @param {String} columnName focus 처리할 셀의 컬럼명
+     * @return {{scrollTop: number, scrollLeft: number}} 위치 조정한 값
+     * @todo tc
+     */
+    getScrollPosition: function(rowKey, columnName) {
+        var renderModel = this.grid.renderModel,
+            scrollTop = renderModel.get('scrollTop'),
+            scrollLeft = renderModel.get('scrollLeft'),
+            bodyHeight = this.get('bodyHeight'),
+            rsideWidth = this.get('rsideWidth'),
+            position = this.getCellPosition(rowKey, columnName),
+            currentLeft = scrollLeft,
+            currentRight = scrollLeft + rsideWidth,
+            scrollXSize = 0,
+            scrollYSize = 0,
+            scrollPosition = {};
+
+        if (this.get('scrollX')) {
+            scrollXSize = this.get('scrollBarSize');
+        }
+
+        if (this.get('scrollY')) {
+            scrollYSize = this.get('scrollBarSize');
+        }
+
+        //수직 스크롤 조정
+        if (position.top < scrollTop) {
+            scrollPosition.scrollTop = position.top;
+        } else if (position.bottom > bodyHeight + scrollTop - scrollXSize) {
+            scrollPosition.scrollTop = position.bottom - bodyHeight + scrollXSize;
+        }
+
+        //수평 스크롤 조정
+        if (!this.grid.columnModel.isLside(columnName)) {
+            if (position.left < currentLeft) {
+                scrollPosition.scrollLeft = position.left;
+            } else if (position.right > currentRight) {
+                scrollPosition.scrollLeft = position.right - rsideWidth + scrollYSize + 1;
+            }
+        }
+        return scrollPosition;
     },
 
     /**

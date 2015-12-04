@@ -235,9 +235,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var grid = this.grid,
             keyMap = grid.keyMap,
             focusModel = grid.focusModel,
+            dimensionModel = grid.dimensionModel,
             columnModelList = grid.columnModel.getVisibleColumnModelList(),
             focused = focusModel.which(),
-            displayRowCount = grid.dimensionModel.getDisplayRowCount(),
+            displayRowCount = dimensionModel.getDisplayRowCount(),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
             index = this._getIndexBeforeMove(),
             isKeyIdentified = true,
@@ -287,7 +288,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
         if (isSelection && isValid) {
             this._updateSelectionByKeyIn(index.row, index.column);
-            scrollPosition = focusModel.getScrollPosition(index.row, columnModel.columnName);
+            scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
                 selectionState = grid.selectionModel.getState();
                 if (selectionState === 'column') {

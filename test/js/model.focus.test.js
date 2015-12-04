@@ -142,14 +142,37 @@ describe('model.renderer', function() {
             expect(focusModel.get('prevColumnName')).toEqual('c1');
         });
 
-        it('if "isScrollable" option is true, it should set a scrollPosition from cell index to renderModel.', function() {
+        it('if "isScrollable" option is true, it should scroll to focus.', function() {
             var rowKey = 0,
-                columnName = 'c1',
-                scrollPosition = focusModel.getScrollPosition(rowKey, columnName);
+                columnName = 'c1';
 
-            spyOn(grid.renderModel, 'set');
+            spyOn(focusModel, 'scrollToFocus');
             focusModel.focus(rowKey, columnName, true);
-            expect(grid.renderModel.set).toHaveBeenCalledWith(scrollPosition);
+
+            expect(focusModel.scrollToFocus).toHaveBeenCalled();
+        });
+    });
+
+    describe('scrollToPosition()', function() {
+        beforeEach(function() {
+            spyOn(grid.renderModel, 'set');
+        });
+
+        it('should scroll to focused index', function() {
+            spyOn(grid.dimensionModel, 'getScrollPosition').and.returnValue({
+                scrollTop: 1,
+                scrollLeft: 1
+            });
+            focusModel.scrollToFocus();
+
+            expect(grid.renderModel.set).toHaveBeenCalled();
+        });
+
+        it('should not scroll if index is invalid', function() {
+            focusModel.set('rowKey', undefined);
+            focusModel.scrollToFocus();
+
+            expect(grid.renderModel.set).not.toHaveBeenCalled();
         });
     });
 
