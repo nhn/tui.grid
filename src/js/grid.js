@@ -257,7 +257,7 @@ var View = require('./base/view');
 var Core = require('./core');
 
  /**
-  * Toast UI 
+  * Toast UI
   * @namespace
   */
 tui = window.tui = tui || {};
@@ -427,7 +427,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Makes view ready to get keyboard input.
      */
     readyForKeyControl: function() {
-        this.core.readyForKeyControl();
+        this.core.focusClipboard();
     },
     /**
      * Removes focus from the focused cell.

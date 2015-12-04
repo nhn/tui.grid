@@ -100,9 +100,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             (this.get('rowKey') === rowKey && this.get('columnName') === columnName)) {
             return this;
         }
-        
-        this._savePrevious()
-            .blur()
+
+        this.blur()
             .select(rowKey)
             .set('columnName', columnName)
             .trigger('focus', rowKey, columnName);
@@ -160,6 +159,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     blur: function() {
         if (this.has()) {
+            this._savePrevious();
             this.trigger('blur', this.get('rowKey'), this.get('columnName'));
             if (this.get('rowKey') !== null) {
                 this.set('columnName', '');
@@ -195,12 +195,38 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * 현재 focus를 가지고 있는지 여부를 리턴한다.
-     * @return {boolean} 현재 focus 가 설정되어 있는지 여부
+     * Returns whether has focus.
+     * @return {boolean} True if has focus.
      */
     has: function() {
-        var has = !util.isBlank(this.get('rowKey')) && !util.isBlank(this.get('columnName'));
-        return has;
+        return this._isValidCell(this.get('rowKey'), this.get('columnName'));
+    },
+
+    /**
+     * Restore previous focus data.
+     * @return {boolean} True if restored
+     */
+    restore: function() {
+        var prevRowKey = this.get('prevRowKey'),
+            prevColumnName = this.get('prevColumnName'),
+            restored = false;
+
+        if (this._isValidCell(prevRowKey, prevColumnName)) {
+            this.focus(prevRowKey, prevColumnName);
+            restored = true;
+        }
+        return restored;
+    },
+
+    /**
+     * Returns whether the specified cell is exist
+     * @return {boolean} True if exist
+     */
+    _isValidCell: function(rowKey, columnName) {
+        var isValidRowKey = !util.isBlank(rowKey) && !!this.grid.dataModel.get(rowKey),
+            isValidColumnName = !util.isBlank(columnName) && !!this.grid.columnModel.getColumnModel(columnName);
+
+        return isValidRowKey && isValidColumnName;
     },
 
     /**

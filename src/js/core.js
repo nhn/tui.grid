@@ -333,39 +333,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     _attachExtraEvent: function() {
         $(window).on('resize', $.proxy(this._onWindowResize, this));
-        $(document).on('focusin', $.proxy(this._onBlur, this));
-    },
-
-    /**
-     * 클립보드 blur 이벤트 핸들러
-     * @private
-     */
-    _onBlur: function(event) {
-        var clipboardElement = tui.util.pick(this, 'view', 'clipboard', 'el');
-        
-        if (clipboardElement !== event.target) {
-            clearTimeout(this.timeoutIdForBlur);
-            this.timeoutIdForBlur = setTimeout($.proxy(this._doBlur, this), 0);
-        }
-    },
-
-    /**
-     * 실제 blur 를 한다.
-     * @private
-     */
-    _doBlur: function() {
-        var $focused, hasFocusedElement;
-
-        if (this.$el) {
-            $focused = this.$el.find(':focus');
-            hasFocusedElement = !!$focused.length;
-
-            if (!hasFocusedElement) {
-                this.focusModel.blur();
-            } else if ($focused.is('td') || $focused.is('a')) {
-                this.focusClipboard();
-            }
-        }
     },
 
     /**
@@ -578,10 +545,11 @@ var Core = View.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * Makes view ready to get keyboard input.
+     * Returns whether the element has a focused child element
+     * @return {boolean} True if the element has focused child element
      */
-    readyForKeyControl: function() {
-        this.focusClipboard();
+    hasFocusedElement: function() {
+        return !!this.$el.find(':focus').length;
     },
 
     /**
@@ -589,7 +557,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      */
     focusClipboard: function() {
         if (tui.util.isExisty(tui.util.pick(this, 'view', 'clipboard'))) {
-            this.view.clipboard.$el.focus();
+            this.view.clipboard.focus();
         }
     },
 
