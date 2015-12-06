@@ -501,7 +501,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Judge scroll driection.
+     * Judge scroll direction.
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {{height: number, width: number}} bodySize - Size of grid (L or R side)
      * @param {boolean} isRsideColumn - Whether the target cell is in rside
@@ -530,8 +530,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Maek scroll position
-     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Dieection
+     * Make scroll position
+     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {{height: number, width: number}} bodySize - Size of grid (L or R side)
      * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
