@@ -281,7 +281,12 @@ describe('Dimension', function() {
         columnModelInstance,
         dimensionModel,
         grid = {
-            option: function() {}
+            option: function() {},
+            renderModel: {
+                get: function() {
+                    return 0;
+                }
+            }
         },
         defaultConfig;
 
@@ -306,16 +311,14 @@ describe('Dimension', function() {
 
             minimumColumnWidth: 20,
             displayRowCount: 20
-        };
+        },
+        dimensionModel = new Dimension(defaultConfig);
     });
 
     describe('getColumnWidthList()', function() {
         it('ColumnFixCount 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
             columnModelInstance.set({
                 columnFixCount: 3
-            });
-            dimensionModel = new Dimension({
-                grid: grid
             });
             dimensionModel.set({
                 columnWidthList: [10, 20, 30, 40, 50, 60]
@@ -339,7 +342,6 @@ describe('Dimension', function() {
     describe('_getFrameWidth()', function() {
         it('인자로 받은 columnModelList로부터 border 값을 포함하여 해당 columnModelList를 감싸고 있는 frame width를 구한다.', function() {
             var widthList = [10, 20, 30, 40, 50];
-            dimensionModel = new Dimension(defaultConfig);
             expect(dimensionModel._getFrameWidth(widthList)).toEqual(156);
             expect(dimensionModel._getFrameWidth([])).toEqual(0);
         });
@@ -351,7 +353,6 @@ describe('Dimension', function() {
                 columnModelInstance.set({
                     columnFixCount: 2
                 });
-                dimensionModel = new Dimension(defaultConfig);
                 dimensionModel.set('columnWidthList', [10, 20, 30, 40, 50]);
             });
 
@@ -435,7 +436,6 @@ describe('Dimension', function() {
                 hasNumberColumn: false,
                 selectType: ''
             });
-            dimensionModel = new Dimension(defaultConfig);
             dimensionModel.set({
                 width: 1000,
                 minimumWidth: 20
@@ -541,8 +541,7 @@ describe('Dimension', function() {
         var widthList;
 
         beforeEach(function() {
-            dimensionModel = new Dimension({
-                grid: grid,
+            dimensionModel.set({
                 minimumColumnWidth: 10
             });
             widthList = [100, 80, 60, 40, 30, 20, 10];
@@ -559,10 +558,6 @@ describe('Dimension', function() {
 
     describe('_setBodyHeight()', function() {
         describe('displayRowHeight 와 rowHeight 값을 기반으로 bodyHeight 값을 계산한다.', function() {
-            beforeEach(function() {
-                dimensionModel = new Dimension(defaultConfig);
-            });
-
             it('scrollX 옵션이 false 일 경우', function() {
                 dimensionModel.set({
                     displayRowCount: 10,
@@ -586,10 +581,6 @@ describe('Dimension', function() {
     });
 
     describe('getDisplayRowCount()', function() {
-        beforeEach(function() {
-            dimensionModel = new Dimension(defaultConfig);
-        });
-
         it('bodyHeight 값에서 toolbar 영역을 제외한 컨텐트 영역에 보여지는 행의 개수를 구한다.', function() {
             dimensionModel.set({
                 bodyHeight: 150,
@@ -601,10 +592,6 @@ describe('Dimension', function() {
     });
 
     describe('getScrollXHeight() scrollX 옵션값에 따라 scrollXHeight 를 반환한다.', function() {
-        beforeEach(function() {
-            dimensionModel = new Dimension(defaultConfig);
-        });
-
         it('scrollX 가 false 로 설정되어 있을 경우', function() {
             dimensionModel.set({
                 scrollX: false
@@ -628,55 +615,256 @@ describe('Dimension', function() {
                 columnFixCount: 2
             });
             dataModelInstance.set(rowList, {parse: true});
-            dimensionModel = new Dimension(defaultConfig);
         });
 
         it('rowSpan 이 없는 경우', function() {
-            expect(dimensionModel.getCellPosition(0, 'changeCallback')).toEqual(
-                {'top': 0, 'left': 0, 'right': 40, 'bottom': 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual(
-                {'top': 0, 'left': 40, 'right': 80, 'bottom': 101}
-            );
+            expect(dimensionModel.getCellPosition(0, 'changeCallback')).toEqual({
+                'top': 0,
+                'left': 0,
+                'right': 40,
+                'bottom': 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual({
+                'top': 0,
+                'left': 40,
+                'right': 80,
+                'bottom': 101
+            });
             //columnFix Index 이기 때문에 left 가 0부터 시작된다.
-            expect(dimensionModel.getCellPosition(0, 'none')).toEqual(
-                {top: 0, left: 0, right: 40, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual(
-                {top: 0, left: 40, right: 80, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual(
-                {top: 0, left: 80, right: 120, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual(
-                {top: 0, left: 120, right: 160, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'text')).toEqual(
-                {top: 0, left: 160, right: 200, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual(
-                {top: 0, left: 200, right: 240, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual(
-                {top: 102, left: 0, right: 40, bottom: 203}
-            );
-            expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual(
-                {top: 102, left: 40, right: 80, bottom: 203}
-            );
+            expect(dimensionModel.getCellPosition(0, 'none')).toEqual({
+                top: 0,
+                left: 0,
+                right: 40,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual({
+                top: 0,
+                left: 40,
+                right: 80,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual({
+                top: 0,
+                left: 80,
+                right: 120,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual({
+                top: 0,
+                left: 120,
+                right: 160,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'text')).toEqual({
+                top: 0,
+                left: 160,
+                right: 200,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual({
+                top: 0,
+                left: 200,
+                right: 240,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual({
+                top: 102,
+                left: 0,
+                right: 40,
+                bottom: 203
+            });
+            expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual({
+                top: 102,
+                left: 40,
+                right: 80,
+                bottom: 203
+            });
         });
 
         it('rowSpan 이 있는 경우 main row 가 아닌 row 라도 정상적으로 반환한다.', function() {
-            var expectPosition = {top: 102, left: 0, right: 40, bottom: 304};
-            //columnFix Index 이기 때문에 left 가 0부터 시작된다.
-            expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectPosition);
-            expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectPosition);
+            var expectedPosition = {
+                top: 102,
+                left: 0,
+                right: 40,
+                bottom: 304
+            };
+            expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectedPosition);
+            expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectedPosition);
         });
 
         it('rowSpan 이 3인 경우', function() {
-            var expectPosition = {top: 102, left: 160, right: 200, bottom: 405};
-            expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectPosition);
-            expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectPosition);
-            expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectPosition);
+            var expectedPosition = {
+                top: 102,
+                left: 160,
+                right: 200,
+                bottom: 405
+            };
+            expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectedPosition);
+            expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectedPosition);
+            expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectedPosition);
+        });
+    });
+
+    describe('Scroll position', function() {
+        describe('_judgeScrollDirection', function() {
+            var isRsideColumn, targetPosition, bodySize;
+
+            beforeEach(function() {
+                isRsideColumn = false;
+                targetPosition = {
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                };
+                bodySize = {
+                    height: 100,
+                    width: 100
+                };
+            });
+
+            it('up', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: true,
+                        isDown: false,
+                        isLeft: false,
+                        isRight: false
+                    };
+                spyOn(grid.renderModel, 'get').and.callFake(function(key) {
+                    if (key === 'scrollTop') {
+                        return 200;
+                    }
+                    return 0;
+                });
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                expect(actual).toEqual(expectedDirection);
+            });
+
+            it('down', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: false,
+                        isDown: true,
+                        isLeft: false,
+                        isRight: false
+                    };
+                targetPosition.bottom = 200;
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                expect(actual).toEqual(expectedDirection);
+            });
+
+            it('left', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: false,
+                        isDown: false,
+                        isLeft: true,
+                        isRight: false
+                    };
+                isRsideColumn = true;
+                spyOn(grid.renderModel, 'get').and.callFake(function(key) {
+                    if (key === 'scrollLeft') {
+                        return 200;
+                    }
+                    return 0;
+                });
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                expect(actual).toEqual(expectedDirection);
+            });
+
+            it('right', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: false,
+                        isDown: false,
+                        isLeft: false,
+                        isRight: true
+                    };
+                isRsideColumn = true;
+                targetPosition.right = 200;
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                expect(actual).toEqual(expectedDirection);
+            });
+        });
+
+        describe('_makeScrollPosition', function() {
+            var scrollDirection, targetPosition, bodySize;
+
+            beforeEach(function() {
+                scrollDirection = {
+                    isUp: false,
+                    isDown: false,
+                    isLeft: false,
+                    isRight: false
+                };
+                targetPosition = {
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                };
+                bodySize = {
+                    height: 100,
+                    width: 100
+                };
+            });
+
+            it('when direction is "up", should return a scrollTop for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollTop: 1
+                    };
+                scrollDirection.isUp = true;
+                targetPosition.top = 1;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+
+            it('when direction is "down", should return a scrollTop for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollTop: 100
+                    };
+                scrollDirection.isDown = true;
+                targetPosition.bottom = 200;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+
+            it('when direction is "left", should return a scrollLeft for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollLeft: 1
+                    };
+                scrollDirection.isLeft = true;
+                targetPosition.left = 1;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+
+            it('when direction is "right", should return a scrollLeft for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollLeft: 200
+                    };
+                scrollDirection.isRight = true;
+                targetPosition.right = 300;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+        });
+
+        describe('getScrollPosition', function() {
+
         });
     });
 

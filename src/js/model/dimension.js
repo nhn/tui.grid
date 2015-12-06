@@ -473,48 +473,86 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Return scroll position from the received index
-     * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
-     * @param {String} columnName focus 처리할 셀의 컬럼명
-     * @return {{scrollTop: number, scrollLeft: number}} 위치 조정한 값
+     * @param {Number|String} rowKey - Row-key of target cell
+     * @param {String} columnName - Column name of target cell
+     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
      * @todo tc
      */
     getScrollPosition: function(rowKey, columnName) {
-        var renderModel = this.grid.renderModel,
-            scrollTop = renderModel.get('scrollTop'),
-            scrollLeft = renderModel.get('scrollLeft'),
-            bodyHeight = this.get('bodyHeight'),
-            rsideWidth = this.get('rsideWidth'),
+        var isRsideColumn = !this.grid.columnModel.isLside(columnName),
+            scrollBarSize = this.get('scrollBarSize'),
             position = this.getCellPosition(rowKey, columnName),
-            currentLeft = scrollLeft,
-            currentRight = scrollLeft + rsideWidth,
-            scrollXSize = 0,
-            scrollYSize = 0,
-            scrollPosition = {};
+            bodySize = {
+                width: this.get('rsideWidth') - 1,
+                height: this.get('bodyHeight')
+            },
+            scrollDirection, scrollPosition;
 
         if (this.get('scrollX')) {
-            scrollXSize = this.get('scrollBarSize');
+            bodySize.height -= scrollBarSize;
         }
-
         if (this.get('scrollY')) {
-            scrollYSize = this.get('scrollBarSize');
+            bodySize.width  -= scrollBarSize;
         }
 
-        //수직 스크롤 조정
-        if (position.top < scrollTop) {
-            scrollPosition.scrollTop = position.top;
-        } else if (position.bottom > bodyHeight + scrollTop - scrollXSize) {
-            scrollPosition.scrollTop = position.bottom - bodyHeight + scrollXSize;
+        scrollDirection = this._judgeScrollDirection(position, bodySize, isRsideColumn);
+        scrollPosition = this._makeScrollPosition(scrollDirection, position, bodySize);
+        return scrollPosition
+    },
+
+    /**
+     * Judge scroll driection.
+     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
+     * @param {{height: number, width: number}} bodySize - Size of grid (L or R side)
+     * @param {boolean} isRsideColumn - Whether the target cell is in rside
+     * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
+     * @private
+     */
+    _judgeScrollDirection: function(targetPosition, bodySize, isRsideColumn) {
+        var renderModel = this.grid.renderModel,
+            currentTop = renderModel.get('scrollTop'),
+            currentLeft = renderModel.get('scrollLeft'),
+            isUp, isDown, isLeft, isRight;
+
+        isUp = targetPosition.top < currentTop;
+        isDown = !isUp && targetPosition.bottom > currentTop + bodySize.height;
+        if (isRsideColumn) {
+            isLeft = targetPosition.left < currentLeft;
+            isRight = !isLeft && targetPosition.right > currentLeft + bodySize.width;
         }
 
-        //수평 스크롤 조정
-        if (!this.grid.columnModel.isLside(columnName)) {
-            if (position.left < currentLeft) {
-                scrollPosition.scrollLeft = position.left;
-            } else if (position.right > currentRight) {
-                scrollPosition.scrollLeft = position.right - rsideWidth + scrollYSize + 1;
-            }
+        return {
+            isUp: isUp,
+            isDown: isDown,
+            isLeft: !!isLeft,
+            isRight: !!isRight
+        };
+    },
+
+    /**
+     * Maek scroll position
+     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Dieection
+     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
+     * @param {{height: number, width: number}} bodySize - Size of grid (L or R side)
+     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
+     * @private
+     */
+    _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
+        var pos = {};
+
+        if (scrollDirection.isUp) {
+            pos.scrollTop = targetPosition.top;
+        } else if (scrollDirection.isDown) {
+            pos.scrollTop = targetPosition.bottom - bodySize.height;
         }
-        return scrollPosition;
+
+        if (scrollDirection.isLeft) {
+            pos.scrollLeft = targetPosition.left;
+        } else if (scrollDirection.isRight) {
+            pos.scrollLeft = targetPosition.right - bodySize.width;
+        }
+
+        return pos;
     },
 
     /**
