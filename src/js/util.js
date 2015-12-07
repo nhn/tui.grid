@@ -49,13 +49,13 @@ var util = {
     /**
      * Return min and max value in array
      * @param {Array} arr
-     * @returns {{min: number, max: number}|undefined}
+     * @returns {{min: number, max: number}}
      * @see {@link http://jsperf.com/getminmax}
      */
     getMinMax: function(arr) {
         return {
-            min: Math.min.apply(undefined, arr),
-            max: Math.max.apply(undefined, arr)
+            min: Math.min.apply(null, arr),
+            max: Math.max.apply(null, arr)
         };
     },
 

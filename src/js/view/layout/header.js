@@ -150,7 +150,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
         var selectionModel = this.grid.selectionModel,
-            max = Math.max.apply(undefined, columnIndexes);
+            max = Math.max.apply(null, columnIndexes);
 
         selectionModel.update(0, max, 'column');
         selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);

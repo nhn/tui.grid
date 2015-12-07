@@ -533,7 +533,7 @@ describe('Header', function() {
                 spyOn(selectionModel, 'extendColumnSelection');
             });
 
-            it('should start(update) column selection with extend', function() {
+            it('should start(update) column selection with extending', function() {
                 header._controlStartAction(columnNames, pageX, pageY, shiftKey);
                 expect(selectionModel.update).toHaveBeenCalledWith(0, 3, 'column');
                 expect(selectionModel.extendColumnSelection).toHaveBeenCalledWith([1, 2, 3], pageX, pageY);
