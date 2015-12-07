@@ -722,7 +722,8 @@ describe('Dimension', function() {
                     actualBodySize,
                     expected = {
                         height: dimensionModel.get('bodyHeight'),
-                        width: dimensionModel.get('rsideWidth') - 1 - scrollBarSize
+                        rsideWidth: dimensionModel.get('rsideWidth') - scrollBarSize,
+                        totalWidth: dimensionModel.get('rsideWidth') + dimensionModel.get('lsideWidth') - scrollBarSize
                     };
 
                 dimensionModel.set({
@@ -739,7 +740,8 @@ describe('Dimension', function() {
                     actualBodySize,
                     expected = {
                         height: dimensionModel.get('bodyHeight') - scrollBarSize,
-                        width: dimensionModel.get('rsideWidth') - 1
+                        rsideWidth: dimensionModel.get('rsideWidth'),
+                        totalWidth: dimensionModel.get('rsideWidth') + dimensionModel.get('lsideWidth')
                     };
 
                 dimensionModel.set({
@@ -769,7 +771,7 @@ describe('Dimension', function() {
                 };
                 bodySize = {
                     height: 100,
-                    width: 100
+                    rsideWidth: 100
                 };
             });
 
@@ -860,7 +862,7 @@ describe('Dimension', function() {
                 };
                 bodySize = {
                     height: 100,
-                    width: 100
+                    rsideWidth: 100
                 };
             });
 
@@ -907,7 +909,7 @@ describe('Dimension', function() {
                         scrollLeft: 250
                     };
                 scrollDirection.isRight = true;
-                bodySize.width = 50;
+                bodySize.rsideWidth = 51;
                 targetPosition.right = 300;
 
                 actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
@@ -916,7 +918,7 @@ describe('Dimension', function() {
         });
     });
 
-    xdescribe('getIndexFromMousePosition()', function() {
+    describe('getIndexFromMousePosition()', function() {
         it('should return first cell when (0,0)', function() {
             var result = dimensionModel.getIndexFromMousePosition(0, 0);
 

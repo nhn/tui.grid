@@ -487,32 +487,34 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Calc body size of grid(= R-side ) except scrollBarSize
-     * @returns {{width: number, height: number}} Body size
+     * Calc body size of grid except scrollBarSize
+     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
      * @private
      */
     _calcBodySize: function() {
         var scrollBarSize = this.get('scrollBarSize'),
-            width = this.get('rsideWidth') - 1,
+            rsideWidth = this.get('rsideWidth'),
+            lsideWidth = this.get('lsideWidth'),
             height = this.get('bodyHeight');
 
         if (this.get('scrollY')) {
-            width -= scrollBarSize;
+            rsideWidth -= scrollBarSize;
         }
         if (this.get('scrollX')) {
             height -= scrollBarSize;
         }
 
         return {
-            width: width,
-            height: height
+            height: height,
+            rsideWidth: rsideWidth,
+            totalWidth: rsideWidth + lsideWidth
         };
     },
 
     /**
      * Judge scroll direction.
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {{height: number, width: number}} bodySize - Size of grid (L or R side)
+     * @param {{height: number, rsideWidth: number}} bodySize - Size of grid (L or R side)
      * @param {boolean} isRsideColumn - Whether the target cell is in rside
      * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
      * @private
@@ -527,7 +529,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         isDown = !isUp && targetPosition.bottom > currentTop + bodySize.height;
         if (isRsideColumn) {
             isLeft = targetPosition.left < currentLeft;
-            isRight = !isLeft && targetPosition.right > currentLeft + bodySize.width;
+            isRight = !isLeft && targetPosition.right > currentLeft + bodySize.rsideWidth - 1;
         }
 
         return {
@@ -542,7 +544,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Make scroll position
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {{height: number, width: number}} bodySize - Size of grid (L or R side)
+     * @param {{height: number, rsideWidth: number}} bodySize - Size of grid (L or R side)
      * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
      * @private
      */
@@ -558,7 +560,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (scrollDirection.isLeft) {
             pos.scrollLeft = targetPosition.left;
         } else if (scrollDirection.isRight) {
-            pos.scrollLeft = targetPosition.right - bodySize.width;
+            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + 1;
         }
 
         return pos;
@@ -601,7 +603,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         if (containerPos.pageX < 0) {
             overflowX = -1;
-        } else if (containerPos.pageX > bodySize.width) {
+        } else if (containerPos.pageX > bodySize.totalWidth) {
             overflowX = 1;
         }
 
