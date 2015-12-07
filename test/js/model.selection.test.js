@@ -3,7 +3,7 @@
 var Core = require('../../src/js/core');
 
 describe('model/selection', function() {
-    var grid;
+    var grid, selection;
 
     beforeEach(function() {
         grid = new Core({
@@ -53,6 +53,8 @@ describe('model/selection', function() {
                 c3: 3
             }
         ]);
+
+        selection = grid.selectionModel;
     });
 
     afterEach(function() {
@@ -60,34 +62,33 @@ describe('model/selection', function() {
     });
 
     describe('selection test', function() {
-        var selection;
-
-        beforeEach(function() {
-            selection = grid.selectionModel;
-        });
-
-        afterEach(function() {
-            selection.destroy();
-        });
-
         it('enable', function() {
             selection.enable();
+
             expect(selection.isEnabled()).toBe(true);
         });
 
         it('disable', function() {
             spyOn(selection, 'end');
-            spyOn(selection, '_resetRangeAttribute');
-
             selection.disable();
+
             expect(selection.isEnabled()).toBe(false);
             expect(selection.end).toHaveBeenCalled();
+
+            selection.enable();
+        });
+
+        it('should not call start and update if disabled', function() {
+            spyOn(selection, '_resetRangeAttribute');
+            selection.disable();
 
             selection.start(0, 0);
             expect(selection._resetRangeAttribute).not.toHaveBeenCalled();
 
             selection.update(1, 1);
             expect(selection._resetRangeAttribute).not.toHaveBeenCalled();
+
+            selection.enable();
         });
 
         describe('_isAutoScrollable()', function() {
