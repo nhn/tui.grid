@@ -576,62 +576,86 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     getIndexFromMousePosition: function(pageX, pageY, withMeta) {
         var containerPos = this._getContainerPosition(pageX, pageY),
-            renderModel = this.grid.renderModel,
-            columnWidthList = this.getColumnWidthList(),
-            scrollTop = renderModel.get('scrollTop'),
-            scrollLeft = renderModel.get('scrollLeft'),
-            totalColumnWidth = this.getFrameWidth(),
-            dataPosY = containerPos.pageY + scrollTop,
-            dataPosX = containerPos.pageX,
+            containerX = containerPos.x,
+            containerY = containerPos.y,
+            overflow = this._calcOverflowFromMousePosition(containerX, containerY),
+            index = this._calcCellIndexFromMousePosition(containerX, containerY, withMeta);
+
+        return _.extend(overflow, index);
+    },
+
+    /**
+     *
+     * @param containerX
+     * @param containerY
+     * @returns {{overflowX: number, overflowY: number}}
+     * @private
+     */
+    _calcOverflowFromMousePosition: function(containerX, containerY) {
+        var overflowY = 0,
             overflowX = 0,
-            overflowY = 0,
-            isLside = (this.get('lsideWidth') > containerPos.pageX),
-            len = columnWidthList.length,
-            curWidth = 0,
-            bodySize = this._calcBodySize(),
-            rowIdx, columnIdx;
+            bodySize = this._calcBodySize();
 
-        if (!isLside) {
-            dataPosX = dataPosX + scrollLeft;
-        }
-
-        if (containerPos.pageY < 0) {
+        if (containerY < 0) {
             overflowY = -1;
-        } else if (containerPos.pageY > bodySize.height) {
+        } else if (containerY > bodySize.height) {
             overflowY = 1;
         }
 
-        if (containerPos.pageX < 0) {
+        if (containerX < 0) {
             overflowX = -1;
-        } else if (containerPos.pageX > bodySize.totalWidth) {
+        } else if (containerX > bodySize.totalWidth) {
             overflowX = 1;
         }
 
-        if (dataPosX < 0) {
+        return {
+            overflowX: overflowX,
+            overflowY: overflowY
+        }
+    },
+
+    /**
+     *
+     * @param containerX
+     * @param containerY
+     * @param withMeta
+     * @returns {{row: (number|*), column: *}}
+     * @private
+     */
+    _calcCellIndexFromMousePosition: function(containerX, containerY, withMeta) {
+        var grid = this.grid,
+            renderModel = grid.renderModel,
+            isLside = (this.get('lsideWidth') > containerX),
+            columnWidthList = this.getColumnWidthList(),
+            totalColumnWidth = this.getFrameWidth(),
+            cellX = (isLside) ? containerX : containerX + renderModel.get('scrollLeft'),
+            cellY = containerY + renderModel.get('scrollTop'),
+            curWidth = 0,
+            rowIdx, columnIdx;
+
+        if (cellX < 0) {
             columnIdx = 0;
-        } else if (totalColumnWidth < dataPosX) {
-            columnIdx = len - 1;
+        } else if (totalColumnWidth < cellX) {
+            columnIdx = columnWidthList.length - 1;
         } else {
             tui.util.forEachArray(columnWidthList, function(columnWidth, i) {
                 curWidth += columnWidth + 1;
-                if (dataPosX <= curWidth) {
+                if (cellX <= curWidth) {
                     columnIdx = i;
                     return false;
                 }
             });
         }
 
-        rowIdx = Math.max(0, Math.min(Math.floor(dataPosY / (this.get('rowHeight') + 1)), this.grid.dataModel.length - 1));
+        rowIdx = Math.max(0, Math.min(Math.floor(cellY / (this.get('rowHeight') + 1)), grid.dataModel.length - 1));
         if (!withMeta) {
-            columnIdx = Math.max(0, (columnIdx - this.grid.columnModel.getVisibleMetaColumnCount()));
+            columnIdx = Math.max(0, (columnIdx - grid.columnModel.getVisibleMetaColumnCount()));
         }
 
         return {
             row: rowIdx,
-            column: columnIdx,
-            overflowX: overflowX,
-            overflowY: overflowY
-        };
+            column: columnIdx
+        }
     },
 
     /**
@@ -646,8 +670,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
 
         return {
-            pageX: containerPosX,
-            pageY: containerPosY
+            x: containerPosX,
+            y: containerPosY
         };
     },
 
