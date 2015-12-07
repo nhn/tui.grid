@@ -864,7 +864,11 @@ describe('Dimension', function() {
         });
 
         describe('getScrollPosition', function() {
-
+            var rowKey, columnName;
+            it('', function() {
+                console.log(dimensionModel.get('rsideWidth'));
+                console.log(dimensionModel.get('bodyHeight'));
+            });
         });
     });
 
