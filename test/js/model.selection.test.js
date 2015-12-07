@@ -247,24 +247,15 @@ describe('model/selection', function() {
             });
         });
 
-        describe('getIndexFromMousePosition()', function() {
-            it('should return first cell when (0,0)', function() {
-                var result = selection.getIndexFromMousePosition(0, 0);
-
-                expect(result).toEqual(jasmine.any(Object));
-                expect(result).toEqual({
-                    row: 0,
-                    column: 0,
-                    overflowX: -1,
-                    overflowY: -1
-                });
-            });
-            //@todo move to dimensionModel test
-        });
-
         describe('updateByMousePosition()', function() {
             it('it should call the "setScrolling" method.', function() {
                 spyOn(selection, '_setScrolling');
+                spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                    row: 2,
+                    column: 2,
+                    overflowX: 0,
+                    overflowY: 0
+                });
                 selection.updateByMousePosition(2, 2);
                 expect(selection._setScrolling).toHaveBeenCalled();
             });
@@ -272,7 +263,7 @@ describe('model/selection', function() {
             it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
                 selection.start(0, 0);
                 selection.update(1, 1);
-                spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
+                spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                     row: 2,
                     column: 2,
                     overflowX: 0,
@@ -295,7 +286,7 @@ describe('model/selection', function() {
             describe('when called with columnIndexes[0, 1]', function() {
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection, 'getIndexFromMousePosition').and.stub();
+                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.stub();
                     selection.setMinimumColumnRange([2, 3]);
                     selection.extendColumnSelection([0, 1], null, null);
 
@@ -307,7 +298,7 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection, 'getIndexFromMousePosition').and.stub();
+                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.stub();
                     selection.unsetMinimumColumnRange();
                     selection.extendColumnSelection([0, 1], null, null);
 
@@ -321,7 +312,7 @@ describe('model/selection', function() {
             describe('when called without columnIndexes(=null or undefined) and with cell index', function() {
                 it('with minimumColumnRange, should extend column selection to [1, 3]', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
+                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
                         column: 1,
                         overflowX: 0,
@@ -338,7 +329,7 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2]', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
+                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
                         column: 1,
                         overflowX: 0,

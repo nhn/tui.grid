@@ -128,7 +128,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!columnName || tui.util.isFalsy(rowIndex)) {
-            _.extend(indexObj, grid.selectionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
+            _.extend(indexObj, grid.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
             list = columnModel.getVisibleColumnModelList(null, true);
 
             // columnName과 columnIndex 재조정

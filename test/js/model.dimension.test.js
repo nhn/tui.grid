@@ -916,6 +916,19 @@ describe('Dimension', function() {
         });
     });
 
+    xdescribe('getIndexFromMousePosition()', function() {
+        it('should return first cell when (0,0)', function() {
+            var result = dimensionModel.getIndexFromMousePosition(0, 0);
+
+            expect(result).toEqual({
+                row: 0,
+                column: 0,
+                overflowX: -1,
+                overflowY: -1
+            });
+        });
+    });
+
     describe('change:displayRowCount', function() {
         it('이벤트 발생시 bodyHeight를 재설정한다.', function() {
             dimensionModel.set('displayRowCount', 10);

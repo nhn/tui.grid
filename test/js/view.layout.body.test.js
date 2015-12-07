@@ -137,7 +137,7 @@ describe('view.layout.body', function() {
 
         it('if click the meta("_number") column, adjust indexes', function() {
             eventMock.target = null;
-            spyOn(grid.selectionModel, 'getIndexFromMousePosition').and.returnValue({
+            spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                 column: 0,
                 row: 2
             });
