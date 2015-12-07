@@ -125,7 +125,7 @@ describe('view.clipboard', function() {
             var keyEvent;
 
             beforeEach(function() {
-                grid.focus(0, 'columnName1');
+                grid.focus(0, 'c1');
                 grid.focus = jasmine.createSpy('focus');
                 grid.focusIn = jasmine.createSpy('focusIn');
                 clipboard._onEnterSpace = jasmine.createSpy('_onEnterSpace');
