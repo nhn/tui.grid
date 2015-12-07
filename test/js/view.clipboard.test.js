@@ -269,11 +269,9 @@ describe('view.clipboard', function() {
                     keyEvent = getKeyEvent('RIGHT_ARROW');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 2);
-
-                    clipboard._updateSelectionByKeyIn.calls.reset();
                 });
 
-                it('PAGE-UP/DOWN, HOME/END, ENTER, unknown keys', function() {
+                it('PAGE-UP/DOWN', function() {
                     grid.focusAt(1, 1);
                     keyEvent = getKeyEvent('PAGE_DOWN');
                     clipboard._keyInWithShift(keyEvent);
@@ -285,9 +283,9 @@ describe('view.clipboard', function() {
                     keyEvent = getKeyEvent('PAGE_UP');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(0, 1);
+                });
 
-                    clipboard._updateSelectionByKeyIn.calls.reset();
-
+                it('HOME/END', function() {
                     grid.focusAt(1, 1);
                     keyEvent = getKeyEvent('HOME');
                     clipboard._keyInWithShift(keyEvent);
@@ -299,14 +297,16 @@ describe('view.clipboard', function() {
                     keyEvent = getKeyEvent('END');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 2);
+                });
 
-                    clipboard._updateSelectionByKeyIn.calls.reset();
-
+                it('ENTER', function() {
                     grid.focusAt(1, 1);
                     keyEvent = getKeyEvent('ENTER');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).not.toHaveBeenCalled();
+                });
 
+                it('unknown keys', function() {
                     grid.focusAt(1, 1);
                     keyEvent = getKeyEvent('unknown');
                     clipboard._keyInWithShift(keyEvent);
