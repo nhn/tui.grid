@@ -40,6 +40,7 @@ describe('view.layout.body', function() {
                 ]
             }),
             focusModel: new Model(),
+            updateLayoutData: function() {},
             focusAt: function() {}
         };
         mock.dataModel.isRowSpanEnable = function() {
@@ -60,7 +61,6 @@ describe('view.layout.body', function() {
         mock.cellFactory = new CellFactory({
             grid: grid
         });
-        mock.updateLayoutData = function() {};
 
         return mock;
     }
@@ -142,11 +142,16 @@ describe('view.layout.body', function() {
             });
             spyOn(grid.columnModel, 'getVisibleColumnModelList').and.callFake(function(whichSide, withMeta) {
                 var returnValue = [
-                    {columnName: 'c1'},
-                    {columnName: 'c2'}
+                    {
+                        columnName: 'c1'
+                    }, {
+                        columnName: 'c2'
+                    }
                 ];
                 if (withMeta) {
-                    returnValue.unshift({columnName: '_number'});
+                    returnValue.unshift({
+                        columnName: '_number'
+                    });
                 }
                 return returnValue;
             });
@@ -163,11 +168,11 @@ describe('view.layout.body', function() {
     });
 
     describe('_controlStartAction', function() {
-        var pageX, pageY, shiftKey,
-            isInput, indexObj,
-            selectionModel;
+        var selectionModel,
+            pageX, pageY, shiftKey,
+            isInput, indexObj;
 
-        beforeEach(function() {
+        it('if selectionModel is disabled, should interrupt action', function() {
             selectionModel = grid.selectionModel;
             pageX = 0;
             pageY = 0;
@@ -178,19 +183,27 @@ describe('view.layout.body', function() {
                 column: 1,
                 columnName: 'c2'
             };
-        });
-
-        it('if selectionModel is disabled, should interrupt action', function() {
             spyOn(body, '_attachDragEvents');
             selectionModel.disable();
 
             body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
             expect(body._attachDragEvents).not.toHaveBeenCalled();
+            selectionModel.enable();
         });
 
         describe('when target is not meta column', function() {
             it('without shiftKey, it should focus the target cell and end the selection', function() {
+                selectionModel = grid.selectionModel;
+                pageX = 0;
+                pageY = 0;
+                shiftKey = false;
+                isInput = false;
+                indexObj = {
+                    row: 2,
+                    column: 1,
+                    columnName: 'c2'
+                };
                 spyOn(selectionModel, 'end');
                 spyOn(grid, 'focusAt');
 
@@ -201,8 +214,16 @@ describe('view.layout.body', function() {
             });
 
             it('with shiftKey and target is an input element, it should focus the target cell and end the selection', function() {
+                selectionModel = grid.selectionModel;
+                pageX = 0;
+                pageY = 0;
                 shiftKey = true;
                 isInput = true;
+                indexObj = {
+                    row: 2,
+                    column: 1,
+                    columnName: 'c2'
+                };
                 spyOn(selectionModel, 'end');
                 spyOn(grid, 'focusAt');
 
@@ -213,10 +234,19 @@ describe('view.layout.body', function() {
             });
 
             it('with shiftKey and target is not an input element, it should update SelectionModel', function() {
-                var rowIndex = indexObj.row,
-                    columnIndex = indexObj.column;
+                var rowIndex = 2,
+                    columnIndex = 1;
 
+                selectionModel = grid.selectionModel;
+                pageX = 0;
+                pageY = 0;
                 shiftKey = true;
+                isInput = false;
+                indexObj = {
+                    row: rowIndex,
+                    column: columnIndex,
+                    columnName: 'c2'
+                };
                 spyOn(selectionModel, 'update');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
@@ -226,11 +256,17 @@ describe('view.layout.body', function() {
         });
 
         describe('target is the "_number" column', function() {
-            beforeEach(function() {
-                indexObj.columnName = '_number';
-            });
-
             it('without shiftKey, it should select a row', function() {
+                selectionModel = grid.selectionModel;
+                pageX = 0;
+                pageY = 0;
+                shiftKey = false;
+                isInput = false;
+                indexObj = {
+                    row: 2,
+                    column: 1,
+                    columnName: '_number'
+                };
                 spyOn(selectionModel, 'selectRow');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
@@ -238,7 +274,16 @@ describe('view.layout.body', function() {
             });
 
             it('with shiftKey, it should update selection with row state', function() {
+                selectionModel = grid.selectionModel;
+                pageX = 0;
+                pageY = 0;
                 shiftKey = true;
+                isInput = false;
+                indexObj = {
+                    row: 2,
+                    column: 1,
+                    columnName: '_number'
+                };
                 spyOn(selectionModel, 'update');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
@@ -247,8 +292,15 @@ describe('view.layout.body', function() {
         });
 
         it('target is the meta column and not the "_number" column', function() {
-            indexObj.columnName = '_button';
-
+            pageX = 0;
+            pageY = 0;
+            shiftKey = false;
+            isInput = false;
+            indexObj = {
+                row: 2,
+                column: 1,
+                columnName: '_button'
+            };
             spyOn(body, '_detachDragEvents');
 
             body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
@@ -260,9 +312,7 @@ describe('view.layout.body', function() {
         beforeEach(function() {
             body.mouseDownX = 10;
             body.mouseDownY = 10;
-            grid.selectionModel._isAutoScrollable = function() {
-                return false;
-            }
+            spyOn(grid.selectionModel, '_isAutoScrollable').and.returnValue(false);
         });
 
         describe('selection이 없을경우', function() {
