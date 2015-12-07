@@ -180,9 +180,14 @@ describe('Header', function() {
         });
 
         it('버튼을 클릭하면 grid.sort()를 실행한다.', function() {
-            var $btn = header.$el.find('a.btn_sorting');
+            var $btn = header.$el.find('a.btn_sorting'),
+                eventMock = {
+                    target: $btn[0]
+                };
             spyOn(grid, 'sort');
-            $btn.trigger('click');
+
+            // click the button
+            header._onClick(eventMock);
             expect(grid.sort).toHaveBeenCalled();
         });
 
@@ -349,9 +354,15 @@ describe('Header', function() {
                 grid: grid,
                 whichSide: 'L'
             });
+
+            jasmine.clock().install();
         });
 
-        it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function(done) {
+        afterEach(function() {
+            jasmine.clock().uninstall();
+        });
+
+        it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function() {
             grid.options.selectType = 'checkbox';
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
@@ -362,21 +373,19 @@ describe('Header', function() {
             lHeader._onCheckCountChange();
             lHeader._onCheckCountChange();
 
-            setTimeout(function() {
-                expect(lHeader._syncCheckState.calls.count()).toBe(1);
-                done();
-            }, 10);
+            jasmine.clock().tick(11);
+
+            expect(lHeader._syncCheckState.calls.count()).toBe(1);
         });
 
-        it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function(done) {
+        it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function() {
             grid.options.selectType = 'radio';
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
 
-            setTimeout(function() {
-                expect(lHeader._syncCheckState).not.toHaveBeenCalled();
-                done();
-            }, 10);
+            jasmine.clock().tick(11);
+
+            expect(lHeader._syncCheckState).not.toHaveBeenCalled();
         });
     });
 
@@ -540,7 +549,7 @@ describe('Header', function() {
             });
 
             // For more detailed test,
-            //  the test case requires the real grid core and real models.
+            //  it requires the real grid core and real models.
         });
     });
 });
