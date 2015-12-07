@@ -311,7 +311,7 @@ describe('Dimension', function() {
 
             minimumColumnWidth: 20,
             displayRowCount: 20
-        },
+        };
         dimensionModel = new Dimension(defaultConfig);
     });
 
@@ -630,7 +630,6 @@ describe('Dimension', function() {
                 'right': 80,
                 'bottom': 101
             });
-            //columnFix Index 이기 때문에 left 가 0부터 시작된다.
             expect(dimensionModel.getCellPosition(0, 'none')).toEqual({
                 top: 0,
                 left: 0,
@@ -829,9 +828,10 @@ describe('Dimension', function() {
             it('when direction is "down", should return a scrollTop for displaying the target', function() {
                 var actual,
                     expected = {
-                        scrollTop: 100
+                        scrollTop: 150
                     };
                 scrollDirection.isDown = true;
+                bodySize.height = 50;
                 targetPosition.bottom = 200;
 
                 actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
@@ -853,9 +853,10 @@ describe('Dimension', function() {
             it('when direction is "right", should return a scrollLeft for displaying the target', function() {
                 var actual,
                     expected = {
-                        scrollLeft: 200
+                        scrollLeft: 250
                     };
                 scrollDirection.isRight = true;
+                bodySize.width = 50;
                 targetPosition.right = 300;
 
                 actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
@@ -866,8 +867,8 @@ describe('Dimension', function() {
         describe('getScrollPosition', function() {
             var rowKey, columnName;
             it('', function() {
-                console.log(dimensionModel.get('rsideWidth'));
-                console.log(dimensionModel.get('bodyHeight'));
+                //console.log(dimensionModel.get('rsideWidth'));
+                //console.log(dimensionModel.get('bodyHeight'));
             });
         });
     });

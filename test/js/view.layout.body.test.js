@@ -32,7 +32,8 @@ describe('view.layout.body', function() {
                         title: 'c1',
                         columnName: 'c1',
                         width: 30
-                    }, {
+                    },
+                    {
                         title: 'c2',
                         columnName: 'c2',
                         width: 40
@@ -144,7 +145,8 @@ describe('view.layout.body', function() {
                 var returnValue = [
                     {
                         columnName: 'c1'
-                    }, {
+                    },
+                    {
                         columnName: 'c2'
                     }
                 ];

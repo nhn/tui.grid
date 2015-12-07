@@ -13,23 +13,37 @@ describe('model/selection', function() {
                     title: 'c1',
                     columnName: 'c1',
                     width: 100
-                }, {
+                },
+                {
                     title: 'c2',
                     columnName: 'c2',
                     width: 150,
                     editOption: {
                         type: 'text'
                     }
-                }, {
+                },
+                {
                     title: 'c3',
                     columnName: 'c3',
                     editOption: {
                         type: 'select',
                         list: [
-                            {text: 'opt1', value: 1},
-                            {text: 'opt2', value: 2},
-                            {text: 'opt3', value: 3},
-                            {text: 'opt4', value: 4}
+                            {
+                                text: 'opt1',
+                                value: 1
+                            },
+                            {
+                                text: 'opt2',
+                                value: 2
+                            },
+                            {
+                                text: 'opt3',
+                                value: 3
+                            },
+                            {
+                                text: 'opt4',
+                                value: 4
+                            }
                         ]
                     }
                 }
@@ -40,14 +54,16 @@ describe('model/selection', function() {
                 c1: '0-1',
                 c2: '0-2',
                 c3: 1
-            }, {
+            },
+            {
                 _extraData: {
                     rowState: 'DISABLED'
                 },
                 c1: '1-1',
                 c2: '1-2',
                 c3: 2
-            }, {
+            },
+            {
                 c1: '2-1',
                 c2: '2-2',
                 c3: 3
@@ -171,7 +187,9 @@ describe('model/selection', function() {
                 grid.setRowList([
                     {
                         _extraData: {
-                            rowSpan: {c1: 2}
+                            rowSpan: {
+                                c1: 2
+                            }
                         },
                         c1: '1',
                         c2: '2',
@@ -183,7 +201,9 @@ describe('model/selection', function() {
                     },
                     {
                         _extraData: {
-                            rowSpan: {c2: 2}
+                            rowSpan: {
+                                c2: 2
+                            }
                         },
                         c1: '1',
                         c2: '2',
@@ -259,7 +279,10 @@ describe('model/selection', function() {
                     overflowY: 0
                 });
                 selection.updateByMousePosition(2, 2);
-                expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 2]});
+                expect(selection.get('range')).toEqual({
+                    row: [0, 2],
+                    column: [0, 2]
+                });
             });
         });
 
@@ -272,7 +295,7 @@ describe('model/selection', function() {
             describe('when called with columnIndexes[0, 1]', function() {
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection, 'getIndexFromMousePosition').and.callFake(function() {});
+                    spyOn(selection, 'getIndexFromMousePosition').and.stub();
                     selection.setMinimumColumnRange([2, 3]);
                     selection.extendColumnSelection([0, 1], null, null);
 
@@ -284,7 +307,7 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection, 'getIndexFromMousePosition').and.callFake(function() {});
+                    spyOn(selection, 'getIndexFromMousePosition').and.stub();
                     selection.unsetMinimumColumnRange();
                     selection.extendColumnSelection([0, 1], null, null);
 

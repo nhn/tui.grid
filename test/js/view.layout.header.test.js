@@ -25,7 +25,8 @@ describe('Header', function() {
                         title: 'c1',
                         columnName: 'c1',
                         width: 30
-                    }, {
+                    },
+                    {
                         title: 'c2',
                         columnName: 'c2',
                         width: 40
@@ -156,11 +157,13 @@ describe('Header', function() {
                     title: 'c1',
                     columnName: 'c1',
                     isSortable: true
-                }, {
+                },
+                {
                     title: 'c2',
                     columnName: 'c2',
                     isSortable: true
-                }, {
+                },
+                {
                     title: 'c3',
                     columnName: 'c3'
                 }
@@ -237,15 +240,18 @@ describe('Header', function() {
                     title: 'c1',
                     columnName: 'c1',
                     width: 30
-                }, {
+                },
+                {
                     title: 'c2',
                     columnName: 'c2',
                     width: 40
-                }, {
+                },
+                {
                     title: 'c3',
                     columnName: 'c3',
                     width: 45
-                }, {
+                },
+                {
                     title: 'c4',
                     columnName: 'c4',
                     width: 20
@@ -307,19 +313,22 @@ describe('Header', function() {
             });
             grid.options.selectType = 'checkbox';
             grid.columnModel.set('selectType', 'checkbox');
-            grid.dataModel = new RowListData([
+            grid.dataModel = new RowListData(
+                [
+                    {
+                        c1: '0-1',
+                        c2: '0-2'
+                    },
+                    {
+                        c1: '1-1',
+                        c2: '1-2'
+                    }
+                ],
                 {
-                    c1: '0-1',
-                    c2: '0-2'
-                },
-                {
-                    c1: '1-1',
-                    c2: '1-2'
+                    grid: grid,
+                    parse: true
                 }
-            ], {
-                grid: grid,
-                parse: true
-            });
+            );
             lHeader.render();
         });
 
