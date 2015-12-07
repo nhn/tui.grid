@@ -545,11 +545,16 @@ var Core = View.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * Returns whether the element has a focused child element
-     * @return {boolean} True if the element has focused child element
+     * Refresh focus state
      */
-    hasFocusedElement: function() {
-        return !!this.$el.find(':focus').length;
+    refreshFocusState: function() {
+        var focusModel = this.focusModel;
+
+        if (!this.$el.find(':focus').length) {
+            focusModel.blur();
+        } else if (!focusModel.has() && !focusModel.restore()) {
+            this.focusAt(0, 0);
+        }
     },
 
     /**

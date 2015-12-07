@@ -498,5 +498,35 @@ describe('view.clipboard', function() {
                 expect(grid.focusIn).toHaveBeenCalled();
             });
         });
+
+        describe('_onBlur', function() {
+            it('Call deffered function of the grid.refreshFocusState()', function() {
+                jasmine.clock().install();
+
+                spyOn(grid, 'refreshFocusState')
+                clipboard._onBlur();
+
+                expect(grid.refreshFocusState).not.toHaveBeenCalled();
+                jasmine.clock().tick(1);
+                expect(grid.refreshFocusState).toHaveBeenCalled();
+
+                jasmine.clock().uninstall();
+            });
+        });
+
+        describe('focus', function() {
+            it('Focus on the $el and call grid.refreshFocusState()', function() {
+                var focused = false;
+
+                spyOn(grid, 'refreshFocusState');
+                clipboard.$el.focus(function() {
+                    focused = true;
+                });
+
+                clipboard.focus();
+                expect(grid.refreshFocusState).toHaveBeenCalled();
+                expect(focused).toBe(true);
+            });
+        });
     });
 });

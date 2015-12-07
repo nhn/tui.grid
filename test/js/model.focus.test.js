@@ -228,10 +228,15 @@ describe('model.renderer', function() {
     describe('has()', function() {
         it('현재 focus 를 가지고 있는지 확인한다.', function() {
             focusModel.focus(0, 'c1');
-            expect(focusModel.has()).toBeTruthy();
+            expect(focusModel.has()).toBe(true);
 
             focusModel.blur();
-            expect(focusModel.has()).toBeFalsy();
+            expect(focusModel.has()).toBe(false);
+        });
+
+        it('If focused cell is not valid, return false', function() {
+            focusModel.focus(0, 'c5');
+            expect(focusModel.has()).toBe(false);
         });
     });
 
@@ -302,6 +307,38 @@ describe('model.renderer', function() {
         it('마지막 columnName 을 반환한다.', function() {
             focusModel.focus(2, 'c2');
             expect(focusModel.lastColumnName()).toBe('c3');
+        });
+    });
+
+    describe('_isValidCell', function() {
+        it('Returns where specified cell is valid', function() {
+            expect(focusModel._isValidCell(1, 'c1')).toBe(true);
+            expect(focusModel._isValidCell(2, 'c3')).toBe(true);
+            expect(focusModel._isValidCell(1, 'c4')).toBe(false);
+            expect(focusModel._isValidCell(5, 'c1')).toBe(false);
+        });
+    });
+
+    describe('restore', function() {
+        it('If previous data exist, restore it and return true', function() {
+            var result;
+
+            focusModel.focus(0, 'c1');
+            focusModel.blur();
+            result = focusModel.restore();
+
+            expect(result).toBe(true);
+            expect(focusModel.which()).toEqual({
+                rowKey: 0,
+                columnName: 'c1'
+            });
+        });
+
+        it('If previous data does not exist, return false', function() {
+            var result = focusModel.restore();
+
+            expect(result).toBe(false);
+            expect(focusModel.has()).toBe(false);
         });
     });
 

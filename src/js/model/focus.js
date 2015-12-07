@@ -256,6 +256,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             columnModel = this.grid.columnModel,
             columnModelList = columnModel.getVisibleColumnModelList(),
             columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
+
         if (this.has()) {
             index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
             return columnModelList[index] && columnModelList[index]['columnName'];

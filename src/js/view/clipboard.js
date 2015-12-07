@@ -41,9 +41,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var grid = this.grid;
 
         _.defer(function() {
-            if (!grid.hasFocusedElement()) {
-                grid.focusModel.blur();
-            }
+            grid.refreshFocusState();
         });
     },
 
@@ -51,13 +49,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * Focus on the clipboard element and restore the focusModel.
      */
     focus: function() {
-        var grid = this.grid,
-            focusModel = grid.focusModel;
-
-        this.$el.focus();
-        
-        if (!focusModel.has() && !focusModel.restore()) {
-            grid.focusAt(0, 0);
+        if (!this.$el.is(':focus')) {
+            this.$el.focus();
+            this.grid.refreshFocusState();
         }
     },
 
