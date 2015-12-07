@@ -705,10 +705,61 @@ describe('Dimension', function() {
     });
 
     describe('Scroll position', function() {
+        var originalAttr = {};
+
+        beforeEach(function() {
+            originalAttr.scrollX = dimensionModel.get('scrollX');
+            originalAttr.scrollY = dimensionModel.get('scrollY');
+        });
+
+        afterEach(function() {
+            dimensionModel.set(originalAttr);
+        });
+
+        describe('_calcBodySize', function() {
+            it('should subtract scrollBar-Y size + 1 from (rsideWidth - 1) if exists', function() {
+                var scrollBarSize = dimensionModel.get('scrollBarSize'),
+                    actualBodySize,
+                    expected = {
+                        height: dimensionModel.get('bodyHeight'),
+                        width: dimensionModel.get('rsideWidth') - 1 - scrollBarSize
+                    };
+
+                dimensionModel.set({
+                    scrollY: true,
+                    scrollX: false
+                });
+                dimensionModel.set('scrollY', true);
+                actualBodySize = dimensionModel._calcBodySize();
+                expect(actualBodySize).toEqual(expected);
+            });
+
+            it('should subtract scrollBar-X size from height if exists', function() {
+                var scrollBarSize = dimensionModel.get('scrollBarSize'),
+                    actualBodySize,
+                    expected = {
+                        height: dimensionModel.get('bodyHeight') - scrollBarSize,
+                        width: dimensionModel.get('rsideWidth') - 1
+                    };
+
+                dimensionModel.set({
+                    scrollX: true,
+                    scrollY: false
+                });
+                actualBodySize = dimensionModel._calcBodySize();
+                expect(actualBodySize).toEqual(expected);
+            });
+        });
+
         describe('_judgeScrollDirection', function() {
             var isRsideColumn, targetPosition, bodySize;
 
             beforeEach(function() {
+                /**
+                 * Given:
+                 *  current scrollTop: 0
+                 *  current scrollLeft: 0
+                 */
                 isRsideColumn = false;
                 targetPosition = {
                     top: 0,
@@ -794,7 +845,7 @@ describe('Dimension', function() {
         describe('_makeScrollPosition', function() {
             var scrollDirection, targetPosition, bodySize;
 
-            beforeEach(function() {
+            beforeEach(function() { // Given
                 scrollDirection = {
                     isUp: false,
                     isDown: false,
@@ -861,14 +912,6 @@ describe('Dimension', function() {
 
                 actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
                 expect(actual).toEqual(expected);
-            });
-        });
-
-        describe('getScrollPosition', function() {
-            var rowKey, columnName;
-            it('', function() {
-                //console.log(dimensionModel.get('rsideWidth'));
-                //console.log(dimensionModel.get('bodyHeight'));
             });
         });
     });

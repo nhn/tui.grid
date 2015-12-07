@@ -476,28 +476,37 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number|String} rowKey - Row-key of target cell
      * @param {String} columnName - Column name of target cell
      * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
-     * @todo tc
      */
     getScrollPosition: function(rowKey, columnName) {
         var isRsideColumn = !this.grid.columnModel.isLside(columnName),
-            scrollBarSize = this.get('scrollBarSize'),
-            position = this.getCellPosition(rowKey, columnName),
-            bodySize = {
-                width: this.get('rsideWidth') - 1,
-                height: this.get('bodyHeight')
-            },
-            scrollDirection, scrollPosition;
+            targetPosition = this.getCellPosition(rowKey, columnName),
+            bodySize = this._calcBodySize(),
+            scrollDirection = this._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
 
-        if (this.get('scrollX')) {
-            bodySize.height -= scrollBarSize;
-        }
+        return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+    },
+
+    /**
+     * Calc body size of grid(= R-side ) except scrollBarSize
+     * @returns {{width: number, height: number}} Body size
+     * @private
+     */
+    _calcBodySize: function() {
+        var scrollBarSize = this.get('scrollBarSize'),
+            width = this.get('rsideWidth') - 1,
+            height = this.get('bodyHeight');
+
         if (this.get('scrollY')) {
-            bodySize.width  -= scrollBarSize;
+            width -= scrollBarSize;
+        }
+        if (this.get('scrollX')) {
+            height -= scrollBarSize;
         }
 
-        scrollDirection = this._judgeScrollDirection(position, bodySize, isRsideColumn);
-        scrollPosition = this._makeScrollPosition(scrollDirection, position, bodySize);
-        return scrollPosition
+        return {
+            width: width,
+            height: height
+        };
     },
 
     /**
