@@ -153,7 +153,7 @@ describe('model.renderer', function() {
         });
     });
 
-    describe('scrollToPosition()', function() {
+    describe('scrollToFocus()', function() {
         beforeEach(function() {
             spyOn(grid.renderModel, 'set');
         });

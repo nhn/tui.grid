@@ -567,31 +567,31 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * 마우스 위치 정보에 해당하는 row 와 column index 를 반환한다.
-     * @param {Number} pageX    마우스 x좌표
-     * @param {Number} pageY    마우스 y 좌표
-     * @param {boolean} [withMeta] columnIndex의 메타영역 포함 여부
-     * @return {{row: number, column: number, overflowX: number, overflowY: number}} row, column의 인덱스 정보와 x, y축 overflow 정보.
+     * Get cell index(with overflow) from mouse position
+     * @param {Number} pageX - Mouse X-position based on page
+     * @param {Number} pageY - Mouse Y-position based on page
+     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
+     * @return {{row: number, column: number, overflowX: number, overflowY: number}} Cell index and mouse-overflow
      * @private
      */
     getIndexFromMousePosition: function(pageX, pageY, withMeta) {
         var containerPos = this._getContainerPosition(pageX, pageY),
             containerX = containerPos.x,
             containerY = containerPos.y,
-            overflow = this._calcOverflowFromMousePosition(containerX, containerY),
-            index = this._calcCellIndexFromMousePosition(containerX, containerY, withMeta);
+            overflow = this._calcOverflowFromPosition(containerX, containerY),
+            index = this._calcCellIndexFromPosition(containerX, containerY, withMeta);
 
         return _.extend(overflow, index);
     },
 
     /**
-     *
-     * @param containerX
-     * @param containerY
-     * @returns {{overflowX: number, overflowY: number}}
+     * Calc and get overflow values from container position
+     * @param {number} containerX - X-position based on the container
+     * @param {number} containerY - Y-position based on the container
+     * @returns {{overflowX: number, overflowY: number}} Mouse-overflow values
      * @private
      */
-    _calcOverflowFromMousePosition: function(containerX, containerY) {
+    _calcOverflowFromPosition: function(containerX, containerY) {
         var overflowY = 0,
             overflowX = 0,
             bodySize = this._calcBodySize();
@@ -615,47 +615,69 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     *
-     * @param containerX
-     * @param containerY
-     * @param withMeta
+     * Calc and get cell index from container position
+     * @param {number} containerX - X-position based on the container
+     * @param {number} containerY - Y-position based on the container
+     * @param {boolean} withMeta - Whether the meta columns go with this calculation
      * @returns {{row: (number|*), column: *}}
      * @private
      */
-    _calcCellIndexFromMousePosition: function(containerX, containerY, withMeta) {
+    _calcCellIndexFromPosition: function(containerX, containerY, withMeta) {
+        return {
+            row: this._calcRowIndexFromPositionY(containerY),
+            column: this._calcColumnIndexFromPositionX(containerX, withMeta)
+        };
+    },
+
+    /**
+     * Calc and get column index from X-position based on the container
+     * @param {number} containerX - X-position based on the container
+     * @param {boolean} withMeta - Whether the meta columns go with this calculation
+     * @returns {number} Column index
+     * @private
+     */
+    _calcColumnIndexFromPositionX: function(containerX, withMeta) {
         var grid = this.grid,
-            renderModel = grid.renderModel,
-            isLside = (this.get('lsideWidth') > containerX),
             columnWidthList = this.getColumnWidthList(),
             totalColumnWidth = this.getFrameWidth(),
-            cellX = (isLside) ? containerX : containerX + renderModel.get('scrollLeft'),
-            cellY = containerY + renderModel.get('scrollTop'),
-            curWidth = 0,
-            rowIdx, columnIdx;
+            cellX = containerX,
+            isRside = containerX >= this.get('lsideWidth'),
+            adjustableIndex = (withMeta) ? 0 : grid.columnModel.getVisibleMetaColumnCount(),
+            columnIndex;
 
-        if (cellX < 0) {
-            columnIdx = 0;
-        } else if (totalColumnWidth < cellX) {
-            columnIdx = columnWidthList.length - 1;
+        if (isRside) {
+            cellX += grid.renderModel.get('scrollLeft');
+        }
+        if (cellX >= totalColumnWidth) {
+            columnIndex = columnWidthList.length - 1;
         } else {
-            tui.util.forEachArray(columnWidthList, function(columnWidth, i) {
-                curWidth += columnWidth + 1;
-                if (cellX <= curWidth) {
-                    columnIdx = i;
+            tui.util.forEachArray(columnWidthList, function(width, index) {
+                if (cellX <= width) {
+                    columnIndex = index;
                     return false;
+                } else {
+                    cellX -= width;
                 }
             });
         }
 
-        rowIdx = Math.max(0, Math.min(Math.floor(cellY / (this.get('rowHeight') + 1)), grid.dataModel.length - 1));
-        if (!withMeta) {
-            columnIdx = Math.max(0, (columnIdx - grid.columnModel.getVisibleMetaColumnCount()));
-        }
+        return Math.max(0, columnIndex - adjustableIndex);
+    },
 
-        return {
-            row: rowIdx,
-            column: columnIdx
-        }
+    /**
+     * Calc and get column index from Y-position based on the container
+     * @param {number} containerY - X-position based on the container
+     * @returns {number} Row index
+     * @private
+     */
+    _calcRowIndexFromPositionY: function(containerY) {
+        var grid = this.grid,
+            cellY = containerY + grid.renderModel.get('scrollTop'),
+            tempIndex = Math.floor(cellY / this.get('rowHeight') + 1),
+            min = 0,
+            max = Math.max(min, grid.dataModel.length - 1);
+
+        return util.clamp(tempIndex, min, max);
     },
 
     /**

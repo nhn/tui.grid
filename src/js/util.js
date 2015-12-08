@@ -243,6 +243,26 @@ var util = {
     },
 
     /**
+     * Returns a number whose value is limited to the given range.
+     * @param {Number} value - A number to force within given min-max range
+     * @param {Number} min - The lower boundary of the output range
+     * @param {Number} max - The upper boundary of the output range
+     * @returns {number} A number in the range [min, max]
+     * @Example
+     *      // limit the output of this computation to between 0 and 255
+     *      value = clamp(value, 0, 255);
+     */
+    clamp: function(value, min, max) {
+        var temp;
+        if (min > max) { // swap
+            temp = min;
+            min = max;
+            max = temp;
+        }
+        return Math.max(min, Math.min(value, max));
+    },
+
+    /**
      * Returns whether the browser is IE7
      * @return {boolean} True if the browser is IE7
      */
