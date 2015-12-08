@@ -920,14 +920,63 @@ describe('Dimension', function() {
 
     describe('getIndexFromMousePosition()', function() {
         it('should return first cell when (0,0)', function() {
-            var result = dimensionModel.getIndexFromMousePosition(0, 0);
+            var actual = dimensionModel.getIndexFromMousePosition(0, 0),
+                expected = {
+                    row: 0,
+                    column: 0,
+                    overflowX: -1,
+                    overflowY: -1
+                };
 
-            expect(result).toEqual({
-                row: 0,
-                column: 0,
-                overflowX: -1,
-                overflowY: -1
-            });
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calcOverflowFromPosition', function() {
+        var containerX, containerY;
+
+        it('should return -1 when position is negative', function() {
+            var actual,
+                expected = {
+                    overflowX: -1,
+                    overflowY: -1
+                };
+
+            containerX = -10;
+            containerY = -1;
+            actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return 0 when position is in container', function() {
+            var actual,
+                expected = {
+                    overflowX: 0,
+                    overflowY: 0
+                };
+
+            containerX = 10;
+            containerY = 10;
+            actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return 1 when position value is over the container size', function() {
+            var bodySize = dimensionModel._calcBodySize(),
+                expected = {
+                    overflowX: 1,
+                    overflowY: 1
+                },
+                actual;
+
+            containerX = bodySize.totalWidth + 100;
+            containerY = bodySize.height + 10;
+
+            actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
+
+            expect(actual).toEqual(expected);
         });
     });
 

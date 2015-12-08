@@ -673,7 +673,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     _calcRowIndexFromPositionY: function(containerY) {
         var grid = this.grid,
             cellY = containerY + grid.renderModel.get('scrollTop'),
-            tempIndex = Math.floor(cellY / this.get('rowHeight') + 1),
+            tempIndex = Math.floor(cellY / (this.get('rowHeight') + 1)),
             min = 0,
             max = Math.max(min, grid.dataModel.length - 1);
 
