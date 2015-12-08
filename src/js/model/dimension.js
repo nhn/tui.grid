@@ -630,6 +630,22 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
+     * Calc and get column index from Y-position based on the container
+     * @param {number} containerY - X-position based on the container
+     * @returns {number} Row index
+     * @private
+     */
+    _calcRowIndexFromPositionY: function(containerY) {
+        var grid = this.grid,
+            cellY = containerY + grid.renderModel.get('scrollTop'),
+            tempIndex = Math.floor(cellY / (this.get('rowHeight') + 1)),
+            min = 0,
+            max = Math.max(min, grid.dataModel.length - 1);
+
+        return util.clamp(tempIndex, min, max);
+    },
+
+    /**
      * Calc and get column index from X-position based on the container
      * @param {number} containerX - X-position based on the container
      * @param {boolean} withMeta - Whether the meta columns go with this calculation
@@ -641,11 +657,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnWidthList = this.getColumnWidthList(),
             totalColumnWidth = this.getFrameWidth(),
             cellX = containerX,
-            isRside = containerX >= this.get('lsideWidth'),
+            isRsidePosition = containerX >= this.get('lsideWidth'),
             adjustableIndex = (withMeta) ? 0 : grid.columnModel.getVisibleMetaColumnCount(),
             columnIndex;
 
-        if (isRside) {
+        if (isRsidePosition) {
             cellX += grid.renderModel.get('scrollLeft');
         }
         if (cellX >= totalColumnWidth) {
@@ -662,22 +678,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         }
 
         return Math.max(0, columnIndex - adjustableIndex);
-    },
-
-    /**
-     * Calc and get column index from Y-position based on the container
-     * @param {number} containerY - X-position based on the container
-     * @returns {number} Row index
-     * @private
-     */
-    _calcRowIndexFromPositionY: function(containerY) {
-        var grid = this.grid,
-            cellY = containerY + grid.renderModel.get('scrollTop'),
-            tempIndex = Math.floor(cellY / (this.get('rowHeight') + 1)),
-            min = 0,
-            max = Math.max(min, grid.dataModel.length - 1);
-
-        return util.clamp(tempIndex, min, max);
     },
 
     /**

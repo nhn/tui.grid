@@ -1017,7 +1017,60 @@ describe('Dimension', function() {
     });
 
     describe('_calcRowIndexFromPositionY', function() {
+        beforeEach(function() {
+            spyOn(grid.renderModel, 'get').and.returnValue(0);
+        });
 
+        it('should return 0 when the Y-position is in first row', function() {
+            var containerY = 100,
+                actual;
+
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return 100;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return 0 when the Y-position is negative', function() {
+            var containerY = -150,
+                actual;
+
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return 100;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return last index of row ' +
+            'when the Y-position is over the container', function() {
+            var containerY = Number.MAX_SAFE_INTEGER || 9007199254740991,
+                expectedIndex = 10,
+                actual;
+
+            grid.dataModel.length = 10 + 1;
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return 100;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(expectedIndex);
+        });
     });
 
     describe('_calcColumnIndexFromPositionX', function() {
