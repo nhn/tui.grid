@@ -619,7 +619,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number} containerX - X-position based on the container
      * @param {number} containerY - Y-position based on the container
      * @param {boolean} withMeta - Whether the meta columns go with this calculation
-     * @returns {{row: (number|*), column: *}}
+     * @returns {{row: number, column: number}}
      * @private
      */
     _calcCellIndexFromPosition: function(containerX, containerY, withMeta) {

@@ -930,12 +930,48 @@ describe('Dimension', function() {
 
             expect(actual).toEqual(expected);
         });
+        /************************************************
+         * See the more test cases of unit functions
+         * ----------------------------------------------
+         *   1. _getContainerPosition
+         *   2. _calcOverflowFromPosition
+         *   3. _calcRowIndexFromPositionY
+         *   4. _calcColumnIndexFromPositionX
+         * ----------------------------------------------
+         ************************************************/
+    });
+
+    describe('_getContainerPosition', function() {
+        it('should return container position ' +
+            'which subtracts the offset values from mouse position', function() {
+            var pageX = 300,
+                pageY = 300,
+                expected = {
+                    x: 200,
+                    y: 98
+                },
+                actual;
+
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                switch(key) {
+                    case 'offsetLeft':      // Don't break
+                    case 'offsetTop':       // Don't break
+                    case 'headerHeight':    // Don't break
+                        return 100;
+                    default:
+                        return 0;
+                }
+            });
+            actual = dimensionModel._getContainerPosition(pageX, pageY);
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     describe('_calcOverflowFromPosition', function() {
         var containerX, containerY;
 
-        it('should return -1 when position is negative', function() {
+        it('should return -1 when the position is negative', function() {
             var actual,
                 expected = {
                     overflowX: -1,
@@ -949,7 +985,7 @@ describe('Dimension', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should return 0 when position is in container', function() {
+        it('should return 0 when the position is in container', function() {
             var actual,
                 expected = {
                     overflowX: 0,
@@ -963,7 +999,7 @@ describe('Dimension', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('should return 1 when position value is over the container size', function() {
+        it('should return 1 when the position is over the container size', function() {
             var bodySize = dimensionModel._calcBodySize(),
                 expected = {
                     overflowX: 1,
@@ -972,12 +1008,20 @@ describe('Dimension', function() {
                 actual;
 
             containerX = bodySize.totalWidth + 100;
-            containerY = bodySize.height + 10;
+            containerY = bodySize.height + 100;
 
             actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
 
             expect(actual).toEqual(expected);
         });
+    });
+
+    describe('_calcRowIndexFromPositionY', function() {
+
+    });
+
+    describe('_calcColumnIndexFromPositionX', function() {
+
     });
 
     describe('change:displayRowCount', function() {
