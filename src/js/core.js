@@ -545,7 +545,8 @@ var Core = View.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * Refresh focus state
+     * If the grid has focused element, make sure that focusModel has a valid data,
+     * Otherwise call focusModel.blur().
      */
     refreshFocusState: function() {
         var focusModel = this.focusModel;
