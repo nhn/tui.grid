@@ -3,7 +3,7 @@
 var Core = require('../../src/js/core');
 
 describe('model/selection', function() {
-    var grid;
+    var grid, selection;
 
     beforeEach(function() {
         grid = new Core({
@@ -53,37 +53,42 @@ describe('model/selection', function() {
                 c3: 3
             }
         ]);
-    });
 
-    // @todo onmousedown !!!
-    // @todo $tr.attr('key') --> '$tr.index()'
+        selection = grid.selectionModel;
+    });
 
     afterEach(function() {
         grid.destroy();
     });
 
     describe('selection test', function() {
-        var selection;
-
-        beforeEach(function() {
-            selection = grid.selectionModel;
-        });
-
-        afterEach(function() {
-            selection.destroy();
-        });
-
         it('enable', function() {
             selection.enable();
+
             expect(selection.isEnabled()).toBe(true);
         });
 
         it('disable', function() {
-            selection.end = jasmine.createSpy('end');
-
+            spyOn(selection, 'end');
             selection.disable();
+
             expect(selection.isEnabled()).toBe(false);
             expect(selection.end).toHaveBeenCalled();
+
+            selection.enable();
+        });
+
+        it('should not call start and update if disabled', function() {
+            spyOn(selection, '_resetRangeAttribute');
+            selection.disable();
+
+            selection.start(0, 0);
+            expect(selection._resetRangeAttribute).not.toHaveBeenCalled();
+
+            selection.update(1, 1);
+            expect(selection._resetRangeAttribute).not.toHaveBeenCalled();
+
+            selection.enable();
         });
 
         describe('_isAutoScrollable()', function() {
@@ -234,29 +239,97 @@ describe('model/selection', function() {
                     overflowY: -1
                 });
             });
-            //@todo More test case
+            //@todo move to dimensionModel test
         });
 
         describe('updateByMousePosition()', function() {
-            describe('selection 이 있을경우', function() {
-                beforeEach(function() {
-                    selection.start(0, 0);
-                    selection.update(1, 1);
+            it('it should call the "setScrolling" method.', function() {
+                spyOn(selection, '_setScrolling');
+                selection.updateByMousePosition(2, 2);
+                expect(selection._setScrolling).toHaveBeenCalled();
+            });
+
+            it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
+                selection.start(0, 0);
+                selection.update(1, 1);
+                spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
+                    row: 2,
+                    column: 2,
+                    overflowX: 0,
+                    overflowY: 0
+                });
+                selection.updateByMousePosition(2, 2);
+                expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 2]});
+            });
+        });
+
+        describe('extendColumnSelection', function() {
+            beforeEach(function() {
+                selection.selectColumn(2);
+                selection.update(0, 3);
+            });
+
+            describe('when called with columnIndexes[0, 1]', function() {
+                it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
+                    spyOn(selection, '_resetRangeAttribute');
+                    spyOn(selection, 'getIndexFromMousePosition').and.callFake(function() {});
+                    selection.setMinimumColumnRange([2, 3]);
+                    selection.extendColumnSelection([0, 1], null, null);
+
+                    expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
+                        row: [0, 0],
+                        column: [0, 3]
+                    });
                 });
 
-                it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
-                    selection.getIndexFromMousePosition = function(pageX, pageY) {
-                        return {
-                            row: pageX,
-                            column: pageY,
-                            overflowX: 0,
-                            overflowY: 0
-                        };
-                    };
-                    selection.updateByMousePosition(2, 2);
-                    expect(selection.get('range')).toEqual({row: [0, 2], column: [0, 2]});
+                it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
+                    spyOn(selection, '_resetRangeAttribute');
+                    spyOn(selection, 'getIndexFromMousePosition').and.callFake(function() {});
+                    selection.unsetMinimumColumnRange();
+                    selection.extendColumnSelection([0, 1], null, null);
+
+                    expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
+                        row: [0, 0],
+                        column: [0, 2]
+                    });
                 });
-            })
+            });
+
+            describe('when called without columnIndexes(=null or undefined) and with cell index', function() {
+                it('with minimumColumnRange, should extend column selection to [1, 3]', function() {
+                    spyOn(selection, '_resetRangeAttribute');
+                    spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
+                        row: 0,
+                        column: 1,
+                        overflowX: 0,
+                        overflowY: 0
+                    });
+                    selection.setMinimumColumnRange([2, 3]);
+                    selection.extendColumnSelection(undefined, null, null);
+
+                    expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
+                        row: [0, 0],
+                        column: [1, 3]
+                    });
+                });
+
+                it('without minimumColumnRange, should extend column selection to [1, 2]', function() {
+                    spyOn(selection, '_resetRangeAttribute');
+                    spyOn(selection, 'getIndexFromMousePosition').and.returnValue({
+                        row: 0,
+                        column: 1,
+                        overflowX: 0,
+                        overflowY: 0
+                    });
+                    selection.unsetMinimumColumnRange();
+                    selection.extendColumnSelection(undefined, null, null);
+
+                    expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
+                        row: [0, 0],
+                        column: [1, 2]
+                    });
+                });
+            });
         });
 
         describe('start selection', function() {

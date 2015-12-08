@@ -128,27 +128,48 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _controlStartAction: function(columnNames, pageX, pageY, shiftKey) {
-        var grid = this.grid,
-            selectionModel = grid.selectionModel,
-            columnModel = grid.columnModel,
+        var columnModel = this.grid.columnModel,
             columnIndexes = _.map(columnNames, function(name) {
                 return columnModel.indexOfColumnName(name, true);
-            }),
+            });
+
+        if (shiftKey) {
+            this._startColumnSelectionWithShiftKey(columnIndexes, pageX, pageY);
+        } else {
+            this._startColumnSelectionWithoutShiftKey(columnIndexes);
+        }
+        this._attachDragEvents();
+    },
+
+    /**
+     * Start column selection with shiftKey pressed
+     * @param {Array.<number>} columnIndexes - Indexes of columns
+     * @param {number} pageX - Mouse position X
+     * @param {number} pageY - Mouse position Y
+     * @private
+     */
+    _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
+        var selectionModel = this.grid.selectionModel,
+            max = Math.max.apply(null, columnIndexes);
+
+        selectionModel.update(0, max, 'column');
+        selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
+    },
+
+    /**
+     * Start column selection when shiftKey is not pressed
+     * @param {Array.<number>} columnIndexes - Indexes of columns
+     * @private
+     */
+    _startColumnSelectionWithoutShiftKey: function(columnIndexes) {
+        var selectionModel = this.grid.selectionModel,
             minMax = util.getMinMax(columnIndexes),
             min = minMax.min,
             max = minMax.max;
 
-        if (shiftKey) {
-            selectionModel.update(0, max, 'column');
-            selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
-        } else {
-            selectionModel.setMinimumColumnRange({
-                column: [min, max]
-            });
-            selectionModel.selectColumn(min);
-            selectionModel.update(0, max);
-        }
-        this._attachDragEvents();
+        selectionModel.setMinimumColumnRange([min, max]);
+        selectionModel.selectColumn(min);
+        selectionModel.update(0, max);
     },
 
     /**
