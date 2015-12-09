@@ -807,7 +807,7 @@ describe('Dimension', function() {
                     return 0;
                 });
 
-                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
                 expect(actual).toEqual(expectedDirection);
             });
 
@@ -821,7 +821,7 @@ describe('Dimension', function() {
                     };
                 targetPosition.bottom = 200;
 
-                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
                 expect(actual).toEqual(expectedDirection);
             });
 
@@ -841,7 +841,7 @@ describe('Dimension', function() {
                     return 0;
                 });
 
-                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
                 expect(actual).toEqual(expectedDirection);
             });
 
@@ -856,7 +856,7 @@ describe('Dimension', function() {
                 isRsideColumn = true;
                 targetPosition.right = 200;
 
-                actual = dimensionModel._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
                 expect(actual).toEqual(expectedDirection);
             });
         });

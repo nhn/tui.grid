@@ -478,7 +478,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         var isRsideColumn = !this.grid.columnModel.isLside(columnName),
             targetPosition = this.getCellPosition(rowKey, columnName),
             bodySize = this._getBodySize(),
-            scrollDirection = this._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
+            scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
 
         return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
     },
@@ -489,32 +489,32 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getBodySize: function() {
-        var scrollBarSize = this.get('scrollBarSize'),
-            lsideWidth = this.get('lsideWidth'),
+        var lsideWidth = this.get('lsideWidth'),
             rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
             height = this.get('bodyHeight') - this.getScrollXHeight();
 
         return {
             height: height,
             rsideWidth: rsideWidth,
-            totalWidth: rsideWidth + lsideWidth
+            totalWidth: lsideWidth + rsideWidth
         };
     },
 
     /**
      * Judge scroll direction.
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {{height: number, rsideWidth: number}} bodySize - Size of grid (L or R side)
      * @param {boolean} isRsideColumn - Whether the target cell is in rside
+     * @param {{height: number, rsideWidth: number}} [bodySize] - Optional parameter for using cached bodySize
      * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
      * @private
      */
-    _judgeScrollDirection: function(targetPosition, bodySize, isRsideColumn) {
+    _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
         var renderModel = this.grid.renderModel,
             currentTop = renderModel.get('scrollTop'),
             currentLeft = renderModel.get('scrollLeft'),
             isUp, isDown, isLeft, isRight;
 
+        bodySize = bodySize || this._getBodySize();
         isUp = targetPosition.top < currentTop;
         isDown = !isUp && targetPosition.bottom > currentTop + bodySize.height;
         if (isRsideColumn) {
@@ -534,13 +534,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Make scroll position
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {{height: number, rsideWidth: number}} bodySize - Size of grid (L or R side)
+     * @param {{height: number, rsideWidth: number}} [bodySize] - Optional parameter for using cached bodySize
      * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
      * @private
      */
     _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
         var pos = {};
 
+        bodySize = bodySize || this._getBodySize();
         if (scrollDirection.isUp) {
             pos.scrollTop = targetPosition.top;
         } else if (scrollDirection.isDown) {
@@ -649,7 +650,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             cellX = containerX,
             isRsidePosition = containerX >= this.get('lsideWidth'),
             adjustableIndex = (withMeta) ? 0 : grid.columnModel.getVisibleMetaColumnCount(),
-            columnIndex;
+            columnIndex = 0;
 
         if (isRsidePosition) {
             cellX += grid.renderModel.get('scrollLeft');

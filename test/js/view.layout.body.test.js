@@ -319,6 +319,10 @@ describe('view.layout.body', function() {
 
         describe('selection이 없을경우', function() {
             it('움직인 거리가 10보다 클 경우 selection 을 시작한다.', function() {
+                grid.focusModel.indexOf = jasmine.createSpy().and.returnValue({
+                    row: 0,
+                    column: 0
+                });
                 body._onMouseMove({
                     pageX: 20,
                     pageY: 20
