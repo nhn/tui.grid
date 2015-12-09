@@ -472,7 +472,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Return scroll position from the received index
      * @param {Number|String} rowKey - Row-key of target cell
      * @param {String} columnName - Column name of target cell
-     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
+     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
         var isRsideColumn = !this.grid.columnModel.isLside(columnName),
@@ -484,7 +484,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Calc body size of grid except scrollBarSize
+     * Calc body size of grid except scrollBar
      * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
      * @private
      */
@@ -535,7 +535,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {{height: number, rsideWidth: number}} [bodySize] - Optional parameter for using cached bodySize
-     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position of scroll
+     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
      * @private
      */
     _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
@@ -734,18 +734,18 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Return height of X-scrollbar.
-     *  If no X-scrollbar, return 0
-     * @return {number} Height of X-scrollbar
+     * Return height of X-scrollBar.
+     *  If no X-scrollBar, return 0
+     * @return {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
         return (this.get('scrollX')) ? this.get('scrollBarSize') : 0;
     },
 
     /**
-     * Return width of Y-scrollbar.
-     *  If no Y-scrollbar, return 0
-     * @returns {number} Width of Y-scrollbar
+     * Return width of Y-scrollBar.
+     *  If no Y-scrollBar, return 0
+     * @returns {number} Width of Y-scrollBar
      */
     getScrollYWidth: function() {
         return (this.get('scrollY')) ? this.get('scrollBarSize') : 0;
