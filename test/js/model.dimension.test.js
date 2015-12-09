@@ -1070,13 +1070,34 @@ describe('Dimension', function() {
             expect(actual).toEqual(0);
         });
 
-        it('should return last index of row ' +
-            'when the Y-position is over the container', function() {
-            var containerY = Number.MAX_SAFE_INTEGER || 9007199254740991,
-                expectedIndex = 10,
+        it('should return normal index when the Y-position is in container', function() {
+            var rowHeight = 10,
+                rowCount = 10,
+                containerY = (rowHeight + 1) * 5,
+                expectedIndex = 5,
                 actual;
 
-            grid.dataModel.length = 10 + 1;
+            grid.dataModel.length = rowCount;
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return rowHeight;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(expectedIndex);
+        });
+
+        it('should return last index of rows ' +
+            'when the Y-position is over the container', function() {
+            var containerY = Number.MAX_SAFE_INTEGER || 9007199254740991,
+                rowCount = 10,
+                expectedIndex = rowCount - 1,
+                actual;
+
+            grid.dataModel.length = rowCount;
             spyOn(dimensionModel, 'get').and.callFake(function(key) {
                 if (key === 'rowHeight') {
                     return 100;
@@ -1091,7 +1112,68 @@ describe('Dimension', function() {
     });
 
     describe('_calcColumnIndexFromPositionX', function() {
+        var columnWidthList = [10, 20, 30, 40];
 
+        beforeEach(function() {
+            /*********
+             * Given
+             *********/
+            spyOn(grid.columnModel, 'getVisibleMetaColumnCount')
+                .and
+                .returnValue(1);
+            spyOn(dimensionModel, 'getColumnWidthList')
+                .and
+                .returnValue(columnWidthList);
+        });
+
+        it('should return 0 when the X-position is in first cell', function() {
+            var containerX = dimensionModel.getColumnWidthList()[0] - 1,
+                withMeta = false,
+                actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return 0 when the X-position is negative', function() {
+            var containerX = -1,
+                withMeta = false,
+                actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return normal index considered meta columns ' +
+            'when the X-position is in container', function() {
+            var withMeta = true,
+                containerX = columnWidthList[0] + columnWidthList[1] + columnWidthList[1],
+                expectedIndex = 2,
+                actual;
+
+            actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+            expect(actual).toEqual(expectedIndex);
+        });
+
+        it('should return normal index that is not considered meta columns' +
+            'when the X-position is in container', function() {
+            var withMeta = false,
+                containerX = columnWidthList[0] + columnWidthList[1] + columnWidthList[2],
+                expectedIndex = 1,  // because meta column count is 1, see 'beforeEach'
+                actual;
+
+            actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+            expect(actual).toEqual(expectedIndex);
+        });
+
+        it('should return last index of columns ' +
+            'when the X-position is over the container', function() {
+            var containerX = Number.MAX_SAFE_INTEGER || 9007199254740991,
+                withMeta = false,
+                expectedIndex = 2,  // because meta column count is 1, see 'beforeEach'
+                actual;
+
+            actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+            expect(actual).toEqual(expectedIndex);
+        });
     });
 
     describe('change:displayRowCount', function() {
