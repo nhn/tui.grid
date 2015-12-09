@@ -591,19 +591,37 @@ describe('Dimension', function() {
         });
     });
 
-    describe('getScrollXHeight() scrollX 옵션값에 따라 scrollXHeight 를 반환한다.', function() {
-        it('scrollX 가 false 로 설정되어 있을 경우', function() {
+    describe('getScrollXHeight()', function() {
+        it('Should return 0 when the "scrollX" attr is false', function() {
             dimensionModel.set({
                 scrollX: false
             });
             expect(dimensionModel.getScrollXHeight()).toEqual(0);
         });
 
-        it('scrollX 가 true 로 설정되어 있을 경우', function() {
+        it('Should return scrollbar size when the "scrollX" attr is true', function() {
             dimensionModel.set({
-                scrollX: true
+                scrollX: true,
+                scrollbarSize: 17
             });
             expect(dimensionModel.getScrollXHeight()).toEqual(17);
+        });
+    });
+
+    describe('getScrollYWidth()', function() {
+        it('Should return 0 when the "scrollY" attr is false', function() {
+            dimensionModel.set({
+                scrollY: false
+            });
+            expect(dimensionModel.getScrollYWidth()).toEqual(0);
+        });
+
+        it('Should return scrollbar size when the "scrollY" attr is true', function() {
+            dimensionModel.set({
+                scrollY: true,
+                scrollbarSize: 17
+            });
+            expect(dimensionModel.getScrollYWidth()).toEqual(17);
         });
     });
 
@@ -716,8 +734,8 @@ describe('Dimension', function() {
             dimensionModel.set(originalAttr);
         });
 
-        describe('_calcBodySize', function() {
-            it('should subtract scrollBar-Y size + 1 from (rsideWidth - 1) if exists', function() {
+        describe('_getBodySize', function() {
+            it('should subtract scrollBar-Y width from rsideWidth', function() {
                 var scrollBarSize = dimensionModel.get('scrollBarSize'),
                     actualBodySize,
                     expected = {
@@ -727,15 +745,14 @@ describe('Dimension', function() {
                     };
 
                 dimensionModel.set({
-                    scrollY: true,
-                    scrollX: false
+                    scrollX: false,
+                    scrollY: true
                 });
-                dimensionModel.set('scrollY', true);
-                actualBodySize = dimensionModel._calcBodySize();
+                actualBodySize = dimensionModel._getBodySize();
                 expect(actualBodySize).toEqual(expected);
             });
 
-            it('should subtract scrollBar-X size from height if exists', function() {
+            it('should subtract scrollBar-X height from bodyHeight', function() {
                 var scrollBarSize = dimensionModel.get('scrollBarSize'),
                     actualBodySize,
                     expected = {
@@ -748,7 +765,7 @@ describe('Dimension', function() {
                     scrollX: true,
                     scrollY: false
                 });
-                actualBodySize = dimensionModel._calcBodySize();
+                actualBodySize = dimensionModel._getBodySize();
                 expect(actualBodySize).toEqual(expected);
             });
         });
@@ -954,9 +971,9 @@ describe('Dimension', function() {
 
             spyOn(dimensionModel, 'get').and.callFake(function(key) {
                 switch(key) {
-                    case 'offsetLeft':      // Don't break
-                    case 'offsetTop':       // Don't break
-                    case 'headerHeight':    // Don't break
+                    case 'offsetLeft':  // No break
+                    case 'offsetTop':   // No break
+                    case 'headerHeight':
                         return 100;
                     default:
                         return 0;
@@ -1000,7 +1017,7 @@ describe('Dimension', function() {
         });
 
         it('should return 1 when the position is over the container size', function() {
-            var bodySize = dimensionModel._calcBodySize(),
+            var bodySize = dimensionModel._getBodySize(),
                 expected = {
                     overflowX: 1,
                     overflowY: 1

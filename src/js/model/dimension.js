@@ -87,11 +87,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getAvailableTotalWidth: function(columnLength) {
         var totalWidth = this.get('width'),
-            availableTotalWidth = totalWidth - columnLength - 1;
+            availableTotalWidth = totalWidth - this.getScrollYWidth() - columnLength - 1;
 
-        if (this.get('scrollY')) {
-            availableTotalWidth -= this.get('scrollBarSize');
-        }
         if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
             availableTotalWidth -= CELL_BORDER_WIDTH;
         }
@@ -480,7 +477,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     getScrollPosition: function(rowKey, columnName) {
         var isRsideColumn = !this.grid.columnModel.isLside(columnName),
             targetPosition = this.getCellPosition(rowKey, columnName),
-            bodySize = this._calcBodySize(),
+            bodySize = this._getBodySize(),
             scrollDirection = this._judgeScrollDirection(targetPosition, bodySize, isRsideColumn);
 
         return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
@@ -491,18 +488,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
      * @private
      */
-    _calcBodySize: function() {
+    _getBodySize: function() {
         var scrollBarSize = this.get('scrollBarSize'),
-            rsideWidth = this.get('rsideWidth'),
             lsideWidth = this.get('lsideWidth'),
-            height = this.get('bodyHeight');
-
-        if (this.get('scrollY')) {
-            rsideWidth -= scrollBarSize;
-        }
-        if (this.get('scrollX')) {
-            height -= scrollBarSize;
-        }
+            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
+            height = this.get('bodyHeight') - this.getScrollXHeight();
 
         return {
             height: height,
@@ -594,7 +584,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     _calcOverflowFromPosition: function(containerX, containerY) {
         var overflowY = 0,
             overflowX = 0,
-            bodySize = this._calcBodySize();
+            bodySize = this._getBodySize();
 
         if (containerY < 0) {
             overflowY = -1;
@@ -729,9 +719,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _setBodyHeight: function() {
         var height = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
-        if (this.get('scrollX')) {
-            height += this.get('scrollBarSize');
-        }
+
+        height += this.getScrollXHeight();
         this.set('bodyHeight', height);
     },
 
@@ -744,11 +733,21 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
-     * @return {number} 수평 스크롤바의 높이
+     * Return height of X-scrollbar.
+     *  If no X-scrollbar, return 0
+     * @return {number} Height of X-scrollbar
      */
     getScrollXHeight: function() {
         return +this.get('scrollX') * this.get('scrollBarSize');
+    },
+
+    /**
+     * Return width of Y-scrollbar.
+     *  If no Y-scrollbar, return 0
+     * @returns {number} Width of Y-scrollbar
+     */
+    getScrollYWidth: function() {
+        return +this.get('scrollY') * this.get('scrollBarSize');
     },
 
     /**
@@ -788,7 +787,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {number} The height of the table body
      * @private
      */
-    _getBodyHeight: function(height) {
+    _calcRealBodyHeight: function(height) {
         return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
     },
 
@@ -807,7 +806,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param  {number} height - The height of the dimension
      */
     setHeight: function(height) {
-        this.set('bodyHeight', Math.max(this._getBodyHeight(height), this._getMinBodyHeight()));
+        this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
         this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
     },
 
