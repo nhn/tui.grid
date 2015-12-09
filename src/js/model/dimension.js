@@ -738,7 +738,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {number} Height of X-scrollbar
      */
     getScrollXHeight: function() {
-        return +this.get('scrollX') * this.get('scrollBarSize');
+        return (this.get('scrollX')) ? this.get('scrollBarSize') : 0;
     },
 
     /**
@@ -747,7 +747,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {number} Width of Y-scrollbar
      */
     getScrollYWidth: function() {
-        return +this.get('scrollY') * this.get('scrollBarSize');
+        return (this.get('scrollY')) ? this.get('scrollBarSize') : 0;
     },
 
     /**
