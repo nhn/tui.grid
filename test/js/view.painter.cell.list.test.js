@@ -441,6 +441,13 @@ describe('view.painter.cell.base', function() {
                 $td.attr('columnname', 'c1').html(cellPainter.getContentHtml(cellData));
                 $input = $td.find('input');
                 $target = $input.eq(0);
+
+                grid.dataModel.reset([{
+                    c1: '1',
+                    c2: '2'
+                }], {
+                    parse: true
+                });
             });
 
             it('정의된 키 액션은 true 를 반환하는지 확인한다.', function() {

@@ -108,7 +108,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             column: [columnIndex, columnIndex]
         };
         this._resetRangeAttribute();
-        this.grid.focusClipboard();
     },
 
     /**
@@ -145,7 +144,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         this._updateInputRange(rowIndex, columnIndex);
         this._resetRangeAttribute();
-        grid.focusClipboard();
     },
 
     /**

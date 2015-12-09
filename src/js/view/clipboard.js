@@ -30,36 +30,29 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     events: {
         'keydown': '_onKeyDown',
-        'focusin': '_onFocus'
+        'blur': '_onBlur'
     },
 
     /**
-     * 클립보드 focus 이벤트 핸들러
+     * Event handler for blur event.
      * @private
-     * @todo rowKey, rowIndex, columnName, columnIndex - Test Case
      */
-    _onFocus: function() {
-        var grid = this.grid,
-            focusModel = grid.focusModel,
-            columnModel = grid.columnModel,
-            dataModel = grid.dataModel,
-            focused = focusModel.which(),
-            columnName = focused.columnName,
-            rowKey = focused.rowKey,
-            columnIdx, rowIdx;
+    _onBlur: function() {
+        var grid = this.grid;
 
-        if (util.isBlank(columnName)) {
-            columnIdx = 0;
-        } else {
-            columnIdx = Math.max(0, columnModel.indexOfColumnName(columnName, true));
-        }
+        _.defer(function() {
+            grid.refreshFocusState();
+        });
+    },
 
-        if (util.isBlank(rowKey)) {
-            rowIdx = 0;
-        } else {
-            rowIdx = Math.max(0, dataModel.indexOfRowKey(rowKey));
+    /**
+     * Focus on the clipboard element and restore the focusModel.
+     */
+    focus: function() {
+        if (!this.$el.is(':focus')) {
+            this.$el.focus();
+            this.grid.refreshFocusState();
         }
-        grid.focusAt(rowIdx, columnIdx);
     },
 
     /**
