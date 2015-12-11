@@ -193,7 +193,18 @@ describe('core.util', function() {
             expect(util.convertValueType(str, 'nothing')).toEqual(str);
             expect(util.convertValueType(obj, 'nothing')).toEqual(obj);
             expect(util.convertValueType(arr, 'nothing')).toEqual(arr);
-
         });
     });
+
+    describe('clamp', function() {
+        it('should return 1 when value = 1, min = 0, max = 2', function() {
+            expect(util.clamp(1, 0, 2)).toBe(1);
+        });
+        it('should return 0 when value = -1, min = 0, max = 1', function() {
+            expect(util.clamp(-1, 0, 1)).toBe(0);
+        });
+        it('should return 1 when value = 2, min = 0, max = 1', function() {
+            expect(util.clamp(2, 0, 1)).toBe(1);
+        });
+    })
 });

@@ -281,7 +281,12 @@ describe('Dimension', function() {
         columnModelInstance,
         dimensionModel,
         grid = {
-            option: function() {}
+            option: function() {},
+            renderModel: {
+                get: function() {
+                    return 0;
+                }
+            }
         },
         defaultConfig;
 
@@ -307,15 +312,13 @@ describe('Dimension', function() {
             minimumColumnWidth: 20,
             displayRowCount: 20
         };
+        dimensionModel = new Dimension(defaultConfig);
     });
 
     describe('getColumnWidthList()', function() {
         it('ColumnFixCount 를 기반으로 Left side 와 Right Side 를 잘 반환하는지 확인한다.', function() {
             columnModelInstance.set({
                 columnFixCount: 3
-            });
-            dimensionModel = new Dimension({
-                grid: grid
             });
             dimensionModel.set({
                 columnWidthList: [10, 20, 30, 40, 50, 60]
@@ -339,7 +342,6 @@ describe('Dimension', function() {
     describe('_getFrameWidth()', function() {
         it('인자로 받은 columnModelList로부터 border 값을 포함하여 해당 columnModelList를 감싸고 있는 frame width를 구한다.', function() {
             var widthList = [10, 20, 30, 40, 50];
-            dimensionModel = new Dimension(defaultConfig);
             expect(dimensionModel._getFrameWidth(widthList)).toEqual(156);
             expect(dimensionModel._getFrameWidth([])).toEqual(0);
         });
@@ -351,7 +353,6 @@ describe('Dimension', function() {
                 columnModelInstance.set({
                     columnFixCount: 2
                 });
-                dimensionModel = new Dimension(defaultConfig);
                 dimensionModel.set('columnWidthList', [10, 20, 30, 40, 50]);
             });
 
@@ -435,7 +436,6 @@ describe('Dimension', function() {
                 hasNumberColumn: false,
                 selectType: ''
             });
-            dimensionModel = new Dimension(defaultConfig);
             dimensionModel.set({
                 width: 1000,
                 minimumWidth: 20
@@ -541,8 +541,7 @@ describe('Dimension', function() {
         var widthList;
 
         beforeEach(function() {
-            dimensionModel = new Dimension({
-                grid: grid,
+            dimensionModel.set({
                 minimumColumnWidth: 10
             });
             widthList = [100, 80, 60, 40, 30, 20, 10];
@@ -559,10 +558,6 @@ describe('Dimension', function() {
 
     describe('_setBodyHeight()', function() {
         describe('displayRowHeight 와 rowHeight 값을 기반으로 bodyHeight 값을 계산한다.', function() {
-            beforeEach(function() {
-                dimensionModel = new Dimension(defaultConfig);
-            });
-
             it('scrollX 옵션이 false 일 경우', function() {
                 dimensionModel.set({
                     displayRowCount: 10,
@@ -586,10 +581,6 @@ describe('Dimension', function() {
     });
 
     describe('getDisplayRowCount()', function() {
-        beforeEach(function() {
-            dimensionModel = new Dimension(defaultConfig);
-        });
-
         it('bodyHeight 값에서 toolbar 영역을 제외한 컨텐트 영역에 보여지는 행의 개수를 구한다.', function() {
             dimensionModel.set({
                 bodyHeight: 150,
@@ -600,23 +591,37 @@ describe('Dimension', function() {
         });
     });
 
-    describe('getScrollXHeight() scrollX 옵션값에 따라 scrollXHeight 를 반환한다.', function() {
-        beforeEach(function() {
-            dimensionModel = new Dimension(defaultConfig);
-        });
-
-        it('scrollX 가 false 로 설정되어 있을 경우', function() {
+    describe('getScrollXHeight()', function() {
+        it('Should return 0 when the "scrollX" attr is false', function() {
             dimensionModel.set({
                 scrollX: false
             });
             expect(dimensionModel.getScrollXHeight()).toEqual(0);
         });
 
-        it('scrollX 가 true 로 설정되어 있을 경우', function() {
+        it('Should return scrollbar size when the "scrollX" attr is true', function() {
             dimensionModel.set({
-                scrollX: true
+                scrollX: true,
+                scrollbarSize: 17
             });
             expect(dimensionModel.getScrollXHeight()).toEqual(17);
+        });
+    });
+
+    describe('getScrollYWidth()', function() {
+        it('Should return 0 when the "scrollY" attr is false', function() {
+            dimensionModel.set({
+                scrollY: false
+            });
+            expect(dimensionModel.getScrollYWidth()).toEqual(0);
+        });
+
+        it('Should return scrollbar size when the "scrollY" attr is true', function() {
+            dimensionModel.set({
+                scrollY: true,
+                scrollbarSize: 17
+            });
+            expect(dimensionModel.getScrollYWidth()).toEqual(17);
         });
     });
 
@@ -628,55 +633,567 @@ describe('Dimension', function() {
                 columnFixCount: 2
             });
             dataModelInstance.set(rowList, {parse: true});
-            dimensionModel = new Dimension(defaultConfig);
         });
 
         it('rowSpan 이 없는 경우', function() {
-            expect(dimensionModel.getCellPosition(0, 'changeCallback')).toEqual(
-                {'top': 0, 'left': 0, 'right': 40, 'bottom': 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual(
-                {'top': 0, 'left': 40, 'right': 80, 'bottom': 101}
-            );
-            //columnFix Index 이기 때문에 left 가 0부터 시작된다.
-            expect(dimensionModel.getCellPosition(0, 'none')).toEqual(
-                {top: 0, left: 0, right: 40, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual(
-                {top: 0, left: 40, right: 80, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual(
-                {top: 0, left: 80, right: 120, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual(
-                {top: 0, left: 120, right: 160, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'text')).toEqual(
-                {top: 0, left: 160, right: 200, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual(
-                {top: 0, left: 200, right: 240, bottom: 101}
-            );
-            expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual(
-                {top: 102, left: 0, right: 40, bottom: 203}
-            );
-            expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual(
-                {top: 102, left: 40, right: 80, bottom: 203}
-            );
+            expect(dimensionModel.getCellPosition(0, 'changeCallback')).toEqual({
+                'top': 0,
+                'left': 0,
+                'right': 40,
+                'bottom': 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual({
+                'top': 0,
+                'left': 40,
+                'right': 80,
+                'bottom': 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'none')).toEqual({
+                top: 0,
+                left: 0,
+                right: 40,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual({
+                top: 0,
+                left: 40,
+                right: 80,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual({
+                top: 0,
+                left: 80,
+                right: 120,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual({
+                top: 0,
+                left: 120,
+                right: 160,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'text')).toEqual({
+                top: 0,
+                left: 160,
+                right: 200,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual({
+                top: 0,
+                left: 200,
+                right: 240,
+                bottom: 101
+            });
+            expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual({
+                top: 102,
+                left: 0,
+                right: 40,
+                bottom: 203
+            });
+            expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual({
+                top: 102,
+                left: 40,
+                right: 80,
+                bottom: 203
+            });
         });
 
         it('rowSpan 이 있는 경우 main row 가 아닌 row 라도 정상적으로 반환한다.', function() {
-            var expectPosition = {top: 102, left: 0, right: 40, bottom: 304};
-            //columnFix Index 이기 때문에 left 가 0부터 시작된다.
-            expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectPosition);
-            expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectPosition);
+            var expectedPosition = {
+                top: 102,
+                left: 0,
+                right: 40,
+                bottom: 304
+            };
+            expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectedPosition);
+            expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectedPosition);
         });
 
         it('rowSpan 이 3인 경우', function() {
-            var expectPosition = {top: 102, left: 160, right: 200, bottom: 405};
-            expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectPosition);
-            expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectPosition);
-            expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectPosition);
+            var expectedPosition = {
+                top: 102,
+                left: 160,
+                right: 200,
+                bottom: 405
+            };
+            expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectedPosition);
+            expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectedPosition);
+            expect(dimensionModel.getCellPosition(3, 'text')).toEqual(expectedPosition);
+        });
+    });
+
+    describe('Scroll position', function() {
+        var scrollBarSize = 17,
+            bodyHeight = 100,
+            rsideWidth = 100,
+            lsideWidth = 100;
+
+        beforeEach(function() {
+            dimensionModel.set({ // defaults
+                bodyHeight: bodyHeight,
+                rsideWidth: rsideWidth,
+                lsideWidth: lsideWidth,
+                scrollBarSize: scrollBarSize
+            });
+        });
+
+        describe('_getBodySize', function() {
+            it('should return calculated values without scrollbars', function() {
+                var actualBodySize,
+                    expected = {
+                        height: 100,
+                        rsideWidth: 100,
+                        totalWidth: 200
+                    };
+
+                dimensionModel.set({
+                    scrollX: false,
+                    scrollY: false
+                });
+
+                actualBodySize = dimensionModel._getBodySize();
+                expect(actualBodySize).toEqual(expected);
+            });
+
+            it('should subtract scrollBar-Y width from rsideWidth', function() {
+                var actualBodySize;
+
+                dimensionModel.set({ // conditions
+                    scrollX: false,
+                    scrollY: true
+                });
+                actualBodySize = dimensionModel._getBodySize();
+                expect(actualBodySize).toEqual({
+                    height: 100,
+                    rsideWidth: 83,
+                    totalWidth: 183
+                });
+            });
+
+            it('should subtract scrollBar-X height from bodyHeight', function() {
+                var actualBodySize;
+
+                dimensionModel.set({
+                    scrollX: true,
+                    scrollY: false
+                });
+                actualBodySize = dimensionModel._getBodySize();
+                expect(actualBodySize).toEqual({
+                    height: 83,
+                    rsideWidth: 100,
+                    totalWidth: 200
+                });
+            });
+        });
+
+        describe('_judgeScrollDirection', function() {
+            var isRsideColumn, targetPosition, bodySize;
+
+            beforeEach(function() {
+                /**
+                 * Given:
+                 *  current scrollTop: 0
+                 *  current scrollLeft: 0
+                 */
+                isRsideColumn = false;
+                targetPosition = {
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                };
+                bodySize = {
+                    height: 100,
+                    rsideWidth: 100
+                };
+            });
+
+            it('up', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: true,
+                        isDown: false,
+                        isLeft: false,
+                        isRight: false
+                    };
+                spyOn(grid.renderModel, 'get').and.callFake(function(key) {
+                    if (key === 'scrollTop') {
+                        return 200;
+                    }
+                    return 0;
+                });
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+                expect(actual).toEqual(expectedDirection);
+            });
+
+            it('down', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: false,
+                        isDown: true,
+                        isLeft: false,
+                        isRight: false
+                    };
+                targetPosition.bottom = 200;
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+                expect(actual).toEqual(expectedDirection);
+            });
+
+            it('left', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: false,
+                        isDown: false,
+                        isLeft: true,
+                        isRight: false
+                    };
+                isRsideColumn = true;
+                spyOn(grid.renderModel, 'get').and.callFake(function(key) {
+                    if (key === 'scrollLeft') {
+                        return 200;
+                    }
+                    return 0;
+                });
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+                expect(actual).toEqual(expectedDirection);
+            });
+
+            it('right', function() {
+                var actual,
+                    expectedDirection = {
+                        isUp: false,
+                        isDown: false,
+                        isLeft: false,
+                        isRight: true
+                    };
+                isRsideColumn = true;
+                targetPosition.right = 200;
+
+                actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+                expect(actual).toEqual(expectedDirection);
+            });
+        });
+
+        describe('_makeScrollPosition', function() {
+            var scrollDirection, targetPosition, bodySize;
+
+            beforeEach(function() { // Given
+                scrollDirection = {
+                    isUp: false,
+                    isDown: false,
+                    isLeft: false,
+                    isRight: false
+                };
+                targetPosition = {
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0
+                };
+                bodySize = {
+                    height: 100,
+                    rsideWidth: 100
+                };
+            });
+
+            it('when direction is "up", should return a scrollTop for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollTop: 1
+                    };
+                scrollDirection.isUp = true;
+                targetPosition.top = 1;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+
+            it('when direction is "down", should return a scrollTop for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollTop: 150
+                    };
+                scrollDirection.isDown = true;
+                bodySize.height = 50;
+                targetPosition.bottom = 200;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+
+            it('when direction is "left", should return a scrollLeft for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollLeft: 1
+                    };
+                scrollDirection.isLeft = true;
+                targetPosition.left = 1;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+
+            it('when direction is "right", should return a scrollLeft for displaying the target', function() {
+                var actual,
+                    expected = {
+                        scrollLeft: 250
+                    };
+                scrollDirection.isRight = true;
+                bodySize.rsideWidth = 51;
+                targetPosition.right = 300;
+
+                actual = dimensionModel._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+                expect(actual).toEqual(expected);
+            });
+        });
+    });
+
+    describe('getIndexFromMousePosition()', function() {
+        it('should return first cell when (0,0)', function() {
+            var actual = dimensionModel.getIndexFromMousePosition(0, 0),
+                expected = {
+                    row: 0,
+                    column: 0
+                };
+
+            expect(actual).toEqual(expected);
+        });
+        /************************************************
+         * See the more test cases of unit functions
+         * ----------------------------------------------
+         *   1. _rebasePositionToContainer
+         *   2. getOverflowFromMousePosition
+         *   3. _calcRowIndexFromPositionY
+         *   4. _calcColumnIndexFromPositionX
+         * ----------------------------------------------
+         ************************************************/
+    });
+
+    describe('_rebasePositionToContainer', function() {
+        it('should return rebased position ' +
+            'which subtracts the offset values from mouse position', function() {
+            var pageX = 300,
+                pageY = 300,
+                expected = {
+                    x: 200,
+                    y: 98
+                },
+                actual;
+
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                switch(key) {
+                    case 'offsetLeft':  // No break
+                    case 'offsetTop':   // No break
+                    case 'headerHeight':
+                        return 100;
+                    default:
+                        return 0;
+                }
+            });
+            actual = dimensionModel._rebasePositionToContainer(pageX, pageY);
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('getOverflowFromMousePosition', function() {
+        var pageX, pageY;
+
+        it('should return -1 when the position is negative', function() {
+            var actual,
+                expected = {
+                    x: -1,
+                    y: -1
+                };
+
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: -10,
+                y: -10
+            });
+            actual = dimensionModel.getOverflowFromMousePosition(pageX, pageY);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return 0 when the position is in container', function() {
+            var actual,
+                bodySize = dimensionModel._getBodySize(),
+                expected = {
+                    x: 0,
+                    y: 0
+                };
+
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: bodySize.totalWidth - 1,
+                y: bodySize.height - 1
+            });
+            actual = dimensionModel.getOverflowFromMousePosition(pageX, pageY);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return 1 when the position is over the container size', function() {
+            var bodySize = dimensionModel._getBodySize(),
+                expected = {
+                    x: 1,
+                    y: 1
+                },
+                actual;
+
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: bodySize.totalWidth + 100,
+                y: bodySize.height + 100
+            });
+
+            actual = dimensionModel.getOverflowFromMousePosition(pageX, pageY);
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
+    describe('_calcRowIndexFromPositionY', function() {
+        beforeEach(function() {
+            spyOn(grid.renderModel, 'get').and.returnValue(0);
+        });
+
+        it('should return 0 when the Y-position is in first row', function() {
+            var containerY = 100,
+                actual;
+
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return 100;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return 0 when the Y-position is negative', function() {
+            var containerY = -150,
+                actual;
+
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return 100;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return normal index when the Y-position is in container', function() {
+            var rowHeight = 10,
+                rowCount = 10,
+                containerY = (rowHeight + 1) * 5,
+                expectedIndex = 5,
+                actual;
+
+            grid.dataModel.length = rowCount;
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return rowHeight;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(expectedIndex);
+        });
+
+        it('should return last index of rows ' +
+            'when the Y-position is over the container', function() {
+            var containerY = Number.MAX_SAFE_INTEGER || 9007199254740991,
+                rowCount = 10,
+                expectedIndex = rowCount - 1,
+                actual;
+
+            grid.dataModel.length = rowCount;
+            spyOn(dimensionModel, 'get').and.callFake(function(key) {
+                if (key === 'rowHeight') {
+                    return 100;
+                }
+                return 0;
+            });
+
+            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
+
+            expect(actual).toEqual(expectedIndex);
+        });
+    });
+
+    describe('_calcColumnIndexFromPositionX', function() {
+        var columnWidthList = [10, 20, 30, 40];
+
+        beforeEach(function() {
+            /*********
+             * Given
+             *********/
+            spyOn(grid.columnModel, 'getVisibleMetaColumnCount')
+                .and
+                .returnValue(1);
+            spyOn(dimensionModel, 'getColumnWidthList')
+                .and
+                .returnValue(columnWidthList);
+        });
+
+        it('should return 0 when the X-position is in first cell', function() {
+            var containerX = dimensionModel.getColumnWidthList()[0] - 1,
+                withMeta = false,
+                actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return 0 when the X-position is negative', function() {
+            var containerX = -1,
+                withMeta = false,
+                actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+
+            expect(actual).toEqual(0);
+        });
+
+        it('should return normal index considered meta columns ' +
+            'when the X-position is in container', function() {
+            var withMeta = true,
+                containerX = columnWidthList[0] + columnWidthList[1] + columnWidthList[1],
+                expectedIndex = 2,
+                actual;
+
+            actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+            expect(actual).toEqual(expectedIndex);
+        });
+
+        it('should return normal index that is not considered meta columns' +
+            'when the X-position is in container', function() {
+            var withMeta = false,
+                containerX = columnWidthList[0] + columnWidthList[1] + columnWidthList[2],
+                expectedIndex = 1,  // because meta column count is 1, see 'beforeEach'
+                actual;
+
+            actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+            expect(actual).toEqual(expectedIndex);
+        });
+
+        it('should return last index of columns ' +
+            'when the X-position is over the container', function() {
+            var containerX = Number.MAX_SAFE_INTEGER || 9007199254740991,
+                withMeta = false,
+                expectedIndex = 2,  // because meta column count is 1, see 'beforeEach'
+                actual;
+
+            actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
+            expect(actual).toEqual(expectedIndex);
         });
     });
 

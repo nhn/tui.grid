@@ -128,7 +128,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!columnName || tui.util.isFalsy(rowIndex)) {
-            _.extend(indexObj, grid.selectionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
+            _.extend(indexObj, grid.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
             list = columnModel.getVisibleColumnModelList(null, true);
 
             // columnName과 columnIndex 재조정
@@ -216,12 +216,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     _onMouseMove: function(event) {
         var selectionModel = this.grid.selectionModel,
             pageX = event.pageX,
-            pageY = event.pageY;
+            pageY = event.pageY,
+            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10;
 
-        if (selectionModel.hasSelection()) {
-            selectionModel.updateByMousePosition(pageX, pageY);
-        } else if (this._getMouseMoveDistance(pageX, pageY) > 10) {
-            selectionModel.startByMousePosition(this.mouseDownX, this.mouseDownY);
+        if (selectionModel.hasSelection() || isMoved) {
             selectionModel.updateByMousePosition(pageX, pageY);
         }
     },

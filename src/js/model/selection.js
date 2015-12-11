@@ -117,8 +117,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} state - Selection state
      */
     startByMousePosition: function(pageX, pageY, state) {
-        var pos = this.getIndexFromMousePosition(pageX, pageY);
-        this.start(pos.row, pos.column, state);
+        var index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        this.start(index.row, index.column, state);
     },
 
     /**
@@ -167,7 +167,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this._minimumColumnRange,
-            pos = this.getIndexFromMousePosition(pageX, pageY),
+            index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY),
             range = {
                 row: [0, 0],
                 column: []
@@ -175,10 +175,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             minMax;
 
         if (!columnIndexes || !columnIndexes.length) {
-            columnIndexes = [pos.column]
+            columnIndexes = [index.column]
         }
 
-        this._setScrolling(pos);
+        this._setScrolling(pageX, pageY);
         if (minimumColumnRange) {
             minMax = util.getMinMax(columnIndexes.concat(minimumColumnRange));
         } else {
@@ -191,22 +191,20 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Set auto scrolling for selection
-     * @param {{overflowX:number, overflowY:number}} position - Position values of overflow
+     * @param {number} pageX - Mouse position X
+     * @param {number} pageY - Mouse positino Y
      * @private
      */
-    _setScrolling: function(position) {
-        if (!position) {
-            return;
-        }
+    _setScrolling: function(pageX, pageY) {
+        var overflow = this.grid.dimensionModel.getOverflowFromMousePosition(pageX, pageY);
 
         this.stopAutoScroll();
-        if (this._isAutoScrollable(position.overflowX, position.overflowY)) {
+        if (this._isAutoScrollable(overflow.x, overflow.y)) {
             this.intervalIdForAutoScroll = setInterval(
-                _.bind(this._adjustScroll, this, position.overflowX, position.overflowY)
+                _.bind(this._adjustScroll, this, overflow.x, overflow.y)
             );
         }
     },
-
 
     /**
      * Updates the selection range by mouse position.
@@ -215,10 +213,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} [state] - Selection state
      */
     updateByMousePosition: function(pageX, pageY, state) {
-        var pos = this.getIndexFromMousePosition(pageX, pageY);
+        var index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
 
-        this._setScrolling(pos);
-        this.update(pos.row, pos.column, state);
+        this._setScrolling(pageX, pageY);
+        this.update(index.row, index.column, state);
     },
 
     /**
@@ -406,78 +404,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * 마우스 위치 정보에 해당하는 row 와 column index 를 반환한다.
-     * @param {Number} pageX    마우스 x좌표
-     * @param {Number} pageY    마우스 y 좌표
-     * @param {boolean} [withMeta] columnIndex의 메타영역 포함 여부
-     * @return {{row: number, column: number, overflowX: number, overflowY: number}} row, column의 인덱스 정보와 x, y축 overflow 정보.
-     * @private
-     */
-    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
-        var containerPos = this._getContainerPosition(pageX, pageY),
-            dimensionModel = this.grid.dimensionModel,
-            renderModel = this.grid.renderModel,
-            columnWidthList = dimensionModel.getColumnWidthList(),
-            scrollTop = renderModel.get('scrollTop'),
-            scrollLeft = renderModel.get('scrollLeft'),
-            totalColumnWidth = dimensionModel.getFrameWidth(),
-            dataPosY = containerPos.pageY + scrollTop,
-            dataPosX = containerPos.pageX,
-            overflowX = 0,
-            overflowY = 0,
-            isLside = (dimensionModel.get('lsideWidth') > containerPos.pageX),
-            len = columnWidthList.length,
-            curWidth = 0,
-            height = this.grid.option('scrollX') ?
-                dimensionModel.get('bodyHeight') - this.grid.scrollBarSize : dimensionModel.get('bodyHeight'),
-            width = this.grid.option('scrollY') ?
-                dimensionModel.get('width') - this.grid.scrollBarSize : dimensionModel.get('width'),
-            rowIdx, columnIdx;
-
-        if (!isLside) {
-            dataPosX = dataPosX + scrollLeft;
-        }
-
-        if (containerPos.pageY < 0) {
-            overflowY = -1;
-        } else if (containerPos.pageY > height) {
-            overflowY = 1;
-        }
-
-        if (containerPos.pageX < 0) {
-            overflowX = -1;
-        } else if (containerPos.pageX > width) {
-            overflowX = 1;
-        }
-
-        if (dataPosX < 0) {
-            columnIdx = 0;
-        } else if (totalColumnWidth < dataPosX) {
-            columnIdx = len - 1;
-        } else {
-            tui.util.forEachArray(columnWidthList, function(columnWidth, i) {
-                curWidth += columnWidth + 1;
-                if (dataPosX <= curWidth) {
-                    columnIdx = i;
-                    return false;
-                }
-            });
-        }
-
-        rowIdx = Math.max(0, Math.min(Math.floor(dataPosY / (dimensionModel.get('rowHeight') + 1)), this.grid.dataModel.length - 1));
-        if (!withMeta) {
-            columnIdx = Math.max(0, (columnIdx - this.grid.columnModel.getVisibleMetaColumnCount()));
-        }
-
-        return {
-            row: rowIdx,
-            column: columnIdx,
-            overflowX: overflowX,
-            overflowY: overflowY
-        };
-    },
-
-    /**
      * Expands the 'this.inputRange' if rowspan data exists, and resets the 'range' attributes to the value.
      * @param {{column: number[], row: number[]}} [inputRange = this.inputRange] - Input range
      * @private
@@ -559,24 +485,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             columnRange[0] = Math.max(0, columnRange[0]);
             columnRange[1] = Math.min(grid.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
         }
-    },
-
-    /**
-     * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-     * @param {Number} pageX    마우스 x 좌표
-     * @param {Number} pageY    마우스 y 좌표
-     * @return {{pageX: number, pageY: number}} 그리드 container 기준의 pageX, pageY 값
-     * @private
-     */
-    _getContainerPosition: function(pageX, pageY) {
-        var dimensionModel = this.grid.dimensionModel,
-            containerPosX = pageX - dimensionModel.get('offsetLeft'),
-            containerPosY = pageY - (dimensionModel.get('offsetTop') + dimensionModel.get('headerHeight') + 2);
-
-        return {
-            pageX: containerPosX,
-            pageY: containerPosY
-        };
     },
 
     /**

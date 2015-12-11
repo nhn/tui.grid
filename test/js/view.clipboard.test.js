@@ -316,7 +316,7 @@ describe('view.clipboard', function() {
 
             describe('with scrolling', function() {
                 beforeEach(function() {
-                    spyOn(grid.focusModel, 'getScrollPosition').and.returnValue({
+                    spyOn(grid.dimensionModel, 'getScrollPosition').and.returnValue({
                         scrollLeft: 1,
                         scrollTop: 1
                     });
@@ -324,7 +324,6 @@ describe('view.clipboard', function() {
                 });
 
                 afterEach(function() {
-                    grid.focusModel.getScrollPosition.calls.reset();
                     grid.renderModel.set.calls.reset();
                 });
 

@@ -87,11 +87,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getAvailableTotalWidth: function(columnLength) {
         var totalWidth = this.get('width'),
-            availableTotalWidth = totalWidth - columnLength - 1;
+            availableTotalWidth = totalWidth - this.getScrollYWidth() - columnLength - 1;
 
-        if (this.get('scrollY')) {
-            availableTotalWidth -= this.get('scrollBarSize');
-        }
         if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
             availableTotalWidth -= CELL_BORDER_WIDTH;
         }
@@ -421,18 +418,26 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number|String} rowKey - 데이터의 키값
      * @param {String} columnName - 칼럼명
      * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
+     * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
         var dataModel = this.grid.dataModel,
             columnModel = this.grid.columnModel,
             rowHeight = this.get('rowHeight'),
-            rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName),
+            row = dataModel.get(rowKey),
             metaColumnCount = columnModel.getVisibleMetaColumnCount(),
             columnWidthList = this.get('columnWidthList').slice(metaColumnCount),
             columnFixCount = columnModel.getVisibleColumnFixCount(),
             columnIdx = columnModel.indexOfColumnName(columnName, true),
+            rowSpanData,
             rowIdx, spanCount,
             top, left, right, bottom, i;
+
+        if (!row) {
+            return {};
+        }
+
+        rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
 
         if (!rowSpanData.isMainRow) {
             rowKey = rowSpanData.mainRowKey;
@@ -460,6 +465,223 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             left: left,
             right: right,
             bottom: bottom
+        };
+    },
+
+    /**
+     * Return scroll position from the received index
+     * @param {Number|String} rowKey - Row-key of target cell
+     * @param {String} columnName - Column name of target cell
+     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
+     */
+    getScrollPosition: function(rowKey, columnName) {
+        var isRsideColumn = !this.grid.columnModel.isLside(columnName),
+            targetPosition = this.getCellPosition(rowKey, columnName),
+            bodySize = this._getBodySize(),
+            scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+
+        return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+    },
+
+    /**
+     * Calc body size of grid except scrollBar
+     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
+     * @private
+     */
+    _getBodySize: function() {
+        var lsideWidth = this.get('lsideWidth'),
+            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
+            height = this.get('bodyHeight') - this.getScrollXHeight();
+
+        return {
+            height: height,
+            rsideWidth: rsideWidth,
+            totalWidth: lsideWidth + rsideWidth
+        };
+    },
+
+    /**
+     * Judge scroll direction.
+     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
+     * @param {boolean} isRsideColumn - Whether the target cell is in rside
+     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
+     * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
+     * @private
+     */
+    _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
+        var renderModel = this.grid.renderModel,
+            currentTop = renderModel.get('scrollTop'),
+            currentLeft = renderModel.get('scrollLeft'),
+            isUp, isDown, isLeft, isRight;
+
+        isUp = targetPosition.top < currentTop;
+        isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
+        if (isRsideColumn) {
+            isLeft = targetPosition.left < currentLeft;
+            isRight = !isLeft && (targetPosition.right > (currentLeft + bodySize.rsideWidth - 1));
+        } else {
+            isLeft = isRight = false;
+        }
+
+        return {
+            isUp: isUp,
+            isDown: isDown,
+            isLeft: isLeft,
+            isRight: isRight
+        };
+    },
+
+    /**
+     * Make scroll position
+     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
+     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
+     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
+     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
+     * @private
+     */
+    _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
+        var pos = {};
+
+        if (scrollDirection.isUp) {
+            pos.scrollTop = targetPosition.top;
+        } else if (scrollDirection.isDown) {
+            pos.scrollTop = targetPosition.bottom - bodySize.height;
+        }
+
+        if (scrollDirection.isLeft) {
+            pos.scrollLeft = targetPosition.left;
+        } else if (scrollDirection.isRight) {
+            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + BORDER_WIDTH;
+        }
+
+        return pos;
+    },
+
+    /**
+     * Calc and get overflow values from container position
+     * @param {Number} pageX - Mouse X-position based on page
+     * @param {Number} pageY - Mouse Y-position based on page
+     * @returns {{x: number, y: number}} Mouse-overflow
+     */
+    getOverflowFromMousePosition: function(pageX, pageY) {
+        var containerPos = this._rebasePositionToContainer(pageX, pageY),
+            bodySize = this._getBodySize();
+
+        return this._judgeOverflow(containerPos, bodySize);
+    },
+
+    /**
+     * Judge overflow
+     * @param {{x: number, y: number}} containerPosition - Position values based on container
+     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
+     * @returns {{x: number, y: number}} Overflow values
+     * @private
+     */
+    _judgeOverflow: function(containerPosition, bodySize) {
+        var containerX = containerPosition.x,
+            containerY = containerPosition.y,
+            overflowY = 0,
+            overflowX = 0;
+
+        if (containerY < 0) {
+            overflowY = -1;
+        } else if (containerY > bodySize.height) {
+            overflowY = 1;
+        }
+
+        if (containerX < 0) {
+            overflowX = -1;
+        } else if (containerX > bodySize.totalWidth) {
+            overflowX = 1;
+        }
+
+        return {
+            x: overflowX,
+            y: overflowY
+        }
+    },
+
+    /**
+     * Get cell index from mouse position
+     * @param {Number} pageX - Mouse X-position based on page
+     * @param {Number} pageY - Mouse Y-position based on page
+     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
+     * @return {{row: number, column: number}} Cell index
+     */
+    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
+        var containerPos = this._rebasePositionToContainer(pageX, pageY);
+
+        return {
+            row: this._calcRowIndexFromPositionY(containerPos.y),
+            column: this._calcColumnIndexFromPositionX(containerPos.x, withMeta)
+        };
+    },
+
+    /**
+     * Calc and get column index from Y-position based on the container
+     * @param {number} containerY - X-position based on the container
+     * @returns {number} Row index
+     * @private
+     */
+    _calcRowIndexFromPositionY: function(containerY) {
+        var grid = this.grid,
+            cellY = containerY + grid.renderModel.get('scrollTop'),
+            tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH)),
+            min = 0,
+            max = Math.max(min, grid.dataModel.length - 1);
+
+        return util.clamp(tempIndex, min, max);
+    },
+
+    /**
+     * Calc and get column index from X-position based on the container
+     * @param {number} containerX - X-position based on the container
+     * @param {boolean} withMeta - Whether the meta columns go with this calculation
+     * @returns {number} Column index
+     * @private
+     */
+    _calcColumnIndexFromPositionX: function(containerX, withMeta) {
+        var grid = this.grid,
+            columnWidthList = this.getColumnWidthList(),
+            totalColumnWidth = this.getFrameWidth(),
+            cellX = containerX,
+            isRsidePosition = containerX >= this.get('lsideWidth'),
+            adjustableIndex = (withMeta) ? 0 : grid.columnModel.getVisibleMetaColumnCount(),
+            columnIndex = 0;
+
+        if (isRsidePosition) {
+            cellX += grid.renderModel.get('scrollLeft');
+        }
+        if (cellX >= totalColumnWidth) {
+            columnIndex = columnWidthList.length - 1;
+        } else {
+            tui.util.forEachArray(columnWidthList, function(width, index) {
+                if (cellX <= width) {
+                    columnIndex = index;
+                    return false;
+                } else {
+                    cellX -= width;
+                }
+            });
+        }
+
+        return Math.max(0, columnIndex - adjustableIndex);
+    },
+
+    /**
+     * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
+     * @param {Number} pageX    마우스 x 좌표
+     * @param {Number} pageY    마우스 y 좌표
+     * @return {{x: number, y: number}} 그리드 container 기준의 x, y 값
+     * @private
+     */
+    _rebasePositionToContainer: function(pageX, pageY) {
+        var containerPosX = pageX - this.get('offsetLeft'),
+            containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
+
+        return {
+            x: containerPosX,
+            y: containerPosY
         };
     },
 
@@ -495,9 +717,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _setBodyHeight: function() {
         var height = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
-        if (this.get('scrollX')) {
-            height += this.get('scrollBarSize');
-        }
+
+        height += this.getScrollXHeight();
         this.set('bodyHeight', height);
     },
 
@@ -510,11 +731,21 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * 수평 스크롤바의 높이를 구한다. 수평 스크롤바를 사용하지 않을 경우 0을 반환한다.
-     * @return {number} 수평 스크롤바의 높이
+     * Return height of X-scrollBar.
+     *  If no X-scrollBar, return 0
+     * @return {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
-        return +this.get('scrollX') * this.get('scrollBarSize');
+        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
+    },
+
+    /**
+     * Return width of Y-scrollBar.
+     *  If no Y-scrollBar, return 0
+     * @returns {number} Width of Y-scrollBar
+     */
+    getScrollYWidth: function() {
+        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
     },
 
     /**
@@ -554,7 +785,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {number} The height of the table body
      * @private
      */
-    _getBodyHeight: function(height) {
+    _calcRealBodyHeight: function(height) {
         return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
     },
 
@@ -573,7 +804,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param  {number} height - The height of the dimension
      */
     setHeight: function(height) {
-        this.set('bodyHeight', Math.max(this._getBodyHeight(height), this._getMinBodyHeight()));
+        this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
         this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
     },
 

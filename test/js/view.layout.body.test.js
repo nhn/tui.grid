@@ -32,7 +32,8 @@ describe('view.layout.body', function() {
                         title: 'c1',
                         columnName: 'c1',
                         width: 30
-                    }, {
+                    },
+                    {
                         title: 'c2',
                         columnName: 'c2',
                         width: 40
@@ -136,7 +137,7 @@ describe('view.layout.body', function() {
 
         it('if click the meta("_number") column, adjust indexes', function() {
             eventMock.target = null;
-            spyOn(grid.selectionModel, 'getIndexFromMousePosition').and.returnValue({
+            spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                 column: 0,
                 row: 2
             });
@@ -144,7 +145,8 @@ describe('view.layout.body', function() {
                 var returnValue = [
                     {
                         columnName: 'c1'
-                    }, {
+                    },
+                    {
                         columnName: 'c2'
                     }
                 ];
@@ -313,10 +315,15 @@ describe('view.layout.body', function() {
             body.mouseDownX = 10;
             body.mouseDownY = 10;
             spyOn(grid.selectionModel, '_isAutoScrollable').and.returnValue(false);
+            spyOn(grid.selectionModel, '_setScrolling').and.stub();
         });
 
         describe('selection이 없을경우', function() {
             it('움직인 거리가 10보다 클 경우 selection 을 시작한다.', function() {
+                grid.focusModel.indexOf = jasmine.createSpy().and.returnValue({
+                    row: 0,
+                    column: 0
+                });
                 body._onMouseMove({
                     pageX: 20,
                     pageY: 20
