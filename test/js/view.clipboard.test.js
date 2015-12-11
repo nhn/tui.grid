@@ -1,6 +1,7 @@
 'use strict';
 
 var Core = require('../../src/js/core');
+var keyCodeMap = require('../../src/js/common/keyConst').keyCode;
 
 describe('view.clipboard', function() {
     var grid,
@@ -10,8 +11,8 @@ describe('view.clipboard', function() {
     function getKeyEvent(keyName, $target) {
         $target = $target || $('<div>');
         return {
-            keyCode: grid.keyMap[keyName],
-            which: grid.keyMap[keyName],
+            keyCode: keyCodeMap[keyName],
+            which: keyCodeMap[keyName],
             target: $target.get(0),
             preventDefault: function() {}
         };

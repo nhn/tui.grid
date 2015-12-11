@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var util = require('../util');
+var keyCodeMap = require('../common/keyConst').keyCode;
 
 /**
  * Clipboard view class
@@ -112,7 +113,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _keyIn: function(keyDownEvent) { // eslint-disable-line complexity
         var grid = this.grid,
-            keyMap = grid.keyMap,
             focusModel = grid.focusModel,
             selectionModel = grid.selectionModel,
             focused = focusModel.which(),
@@ -127,39 +127,39 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         switch (keyCode) {
-            case keyMap['UP_ARROW']:
+            case keyCodeMap['UP_ARROW']:
                 grid.focus(focusModel.prevRowKey(), columnName, true);
                 break;
-            case keyMap['DOWN_ARROW']:
+            case keyCodeMap['DOWN_ARROW']:
                 grid.focus(focusModel.nextRowKey(), columnName, true);
                 break;
-            case keyMap['LEFT_ARROW']:
+            case keyCodeMap['LEFT_ARROW']:
                 grid.focus(rowKey, focusModel.prevColumnName(), true);
                 break;
-            case keyMap['RIGHT_ARROW']:
+            case keyCodeMap['RIGHT_ARROW']:
                 grid.focus(rowKey, focusModel.nextColumnName(), true);
                 break;
-            case keyMap['PAGE_UP']:
+            case keyCodeMap['PAGE_UP']:
                 grid.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
                 break;
-            case keyMap['PAGE_DOWN']:
+            case keyCodeMap['PAGE_DOWN']:
                 grid.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
                 break;
-            case keyMap['HOME']:
+            case keyCodeMap['HOME']:
                 grid.focus(rowKey, focusModel.firstColumnName(), true);
                 break;
-            case keyMap['END']:
+            case keyCodeMap['END']:
                 grid.focus(rowKey, focusModel.lastColumnName(), true);
                 break;
             //space 와 enter 는 동일동작
-            case keyMap['SPACE']:
-            case keyMap['ENTER']:
+            case keyCodeMap['SPACE']:
+            case keyCodeMap['ENTER']:
                 this._onEnterSpace(rowKey, columnName);
                 break;
-            case keyMap['DEL']:
+            case keyCodeMap['DEL']:
                 this._del(rowKey, columnName);
                 break;
-            case keyMap['TAB']:
+            case keyCodeMap['TAB']:
                 grid.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
             default:
@@ -226,7 +226,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
         var grid = this.grid,
-            keyMap = grid.keyMap,
             focusModel = grid.focusModel,
             dimensionModel = grid.dimensionModel,
             columnModelList = grid.columnModel.getVisibleColumnModelList(),
@@ -239,34 +238,34 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             columnModel, scrollPosition, isValid, selectionState;
 
         switch (keyCode) {
-            case keyMap['UP_ARROW']:
+            case keyCodeMap['UP_ARROW']:
                 index.row -= 1;
                 break;
-            case keyMap['DOWN_ARROW']:
+            case keyCodeMap['DOWN_ARROW']:
                 index.row += 1;
                 break;
-            case keyMap['LEFT_ARROW']:
+            case keyCodeMap['LEFT_ARROW']:
                 index.column -= 1;
                 break;
-            case keyMap['RIGHT_ARROW']:
+            case keyCodeMap['RIGHT_ARROW']:
                 index.column += 1;
                 break;
-            case keyMap['PAGE_UP']:
+            case keyCodeMap['PAGE_UP']:
                 index.row = focusModel.prevRowIndex(displayRowCount - 1);
                 break;
-            case keyMap['PAGE_DOWN']:
+            case keyCodeMap['PAGE_DOWN']:
                 index.row = focusModel.nextRowIndex(displayRowCount - 1);
                 break;
-            case keyMap['HOME']:
+            case keyCodeMap['HOME']:
                 index.column = 0;
                 break;
-            case keyMap['END']:
+            case keyCodeMap['END']:
                 index.column = columnModelList.length - 1;
                 break;
-            case keyMap['ENTER']:
+            case keyCodeMap['ENTER']:
                 isSelection = false;
                 break;
-            case keyMap['TAB']:
+            case keyCodeMap['TAB']:
                 isSelection = false;
                 grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
@@ -305,24 +304,23 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _keyInWithCtrl: function(keyDownEvent) {
         var grid = this.grid,
-            keyMap = grid.keyMap,
             focusModel = grid.focusModel,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
-            case keyMap['CHAR_A']:
+            case keyCodeMap['CHAR_A']:
                 this.grid.selectionModel.selectAll();
                 break;
-            case keyMap['CHAR_C']:
+            case keyCodeMap['CHAR_C']:
                 this._copyToClipboard();
                 break;
-            case keyMap['HOME']:
+            case keyCodeMap['HOME']:
                 grid.focus(focusModel.firstRowKey(), focusModel.firstColumnName(), true);
                 break;
-            case keyMap['END']:
+            case keyCodeMap['END']:
                 grid.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                 break;
-            case keyMap['CHAR_V']:
+            case keyCodeMap['CHAR_V']:
                 this._paste();
                 break;
             default:
@@ -400,16 +398,15 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _keyInWithShiftAndCtrl: function(keyDownEvent) {
         var grid = this.grid,
-            keyMap = grid.keyMap,
             isKeyIdentified = true,
             columnModelList = grid.columnModel.getVisibleColumnModelList(),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
-            case keyMap['HOME']:
+            case keyCodeMap['HOME']:
                 this._updateSelectionByKeyIn(0, 0);
                 break;
-            case keyMap['END']:
+            case keyCodeMap['END']:
                 this._updateSelectionByKeyIn(grid.dataModel.length - 1, columnModelList.length - 1);
                 break;
             default:

@@ -95,58 +95,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         'mouseout': '_onMouseOut'
     },
 
-    keyMap: {
-        'TAB': 9,
-        'ENTER': 13,
-        'CTRL': 17,
-        'ESC': 27,
-        'LEFT_ARROW': 37,
-        'UP_ARROW': 38,
-        'RIGHT_ARROW': 39,
-        'DOWN_ARROW': 40,
-        'CHAR_A': 65,
-        'CHAR_C': 67,
-        'CHAR_F': 70,
-        'CHAR_R': 82,
-        'CHAR_V': 86,
-        'LEFT_WINDOW_KEY': 91,
-        'F5': 116,
-        'BACKSPACE': 8,
-        'SPACE': 32,
-        'PAGE_UP': 33,
-        'PAGE_DOWN': 34,
-        'HOME': 36,
-        'END': 35,
-        'DEL': 46,
-        'UNDEFINED': 229
-    },
-
-    keyName: {
-        9: 'TAB',
-        13: 'ENTER',
-        17: 'CTRL',
-        27: 'ESC',
-        37: 'LEFT_ARROW',
-        38: 'UP_ARROW',
-        39: 'RIGHT_ARROW',
-        40: 'DOWN_ARROW',
-        65: 'CHAR_A',
-        67: 'CHAR_C',
-        70: 'CHAR_F',
-        82: 'CHAR_R',
-        86: 'CHAR_V',
-        91: 'LEFT_WINDOW_KEY',
-        116: 'F5',
-        8: 'BACKSPACE',
-        32: 'SPACE',
-        33: 'PAGE_UP',
-        34: 'PAGE_DOWN',
-        36: 'HOME',
-        35: 'END',
-        46: 'DEL',
-        229: 'UNDEFINED'
-    },
-
     /**
      * default 설정된 옵션에서 생성자로부터 인자로 받은 옵션들을 확장하여 옵션을 설정한다.
      * @param {Object} options Grid.js 의 생성자 option 과 동일값.
