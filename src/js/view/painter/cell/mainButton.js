@@ -78,7 +78,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
         var isDisabled = cellData.isDisabled;
 
         return this.contentTemplate({
-            type: this.grid.option('selectType'),
+            type: this.grid.columnModel.get('selectType'),
             name: this.grid.id,
             isChecked: !!cellData.value,
             isDisabled: isDisabled
@@ -114,7 +114,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
      */
     toggle: function($td) {
         var $input = $td.find('input');
-        if (this.grid.option('selectType') === 'checkbox') {
+        if (this.grid.columnModel('selectType') === 'checkbox') {
             $input.prop('checked', !$input.prop('checked'));
         }
     },

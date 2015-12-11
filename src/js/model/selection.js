@@ -71,9 +71,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Enables the selection.
      */
     enable: function() {
-        if (this.grid.option('useDataCopy')) {
-            this._isEnabled = true;
-        }
+        this._isEnabled = true;
     },
 
     /**

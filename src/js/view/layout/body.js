@@ -123,7 +123,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             },
             list;
 
-        if (grid.option('selectType') === 'radio') {
+        if (grid.columnModel.get('selectType') === 'radio') {
             grid.check(rowIndex);
         }
 
@@ -260,10 +260,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         this.destroyChildren();
 
-        if (!this.grid.option('scrollX')) {
+        if (!this.grid.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
-        if (!this.grid.option('scrollY') && whichSide === 'R') {
+        if (!this.grid.dimensionModel.get('scrollY') && whichSide === 'R') {
             this.$el.css('overflow-y', 'hidden');
         }
         this.$el.css('height', grid.dimensionModel.get('bodyHeight'));

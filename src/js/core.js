@@ -38,6 +38,31 @@ var addOn = {
     Net: Net
 };
 
+var defaultOptions = {
+    columnFixCount: 0,
+    columnModelList: [],
+    keyColumnName: null,
+    selectType: '',
+
+    autoNumbering: true,
+
+    headerHeight: 35,
+    rowHeight: 27,
+    displayRowCount: 10,
+    minimumColumnWidth: 50,
+    notUseSmartRendering: false,
+    columnMerge: [],
+    scrollX: true,
+    scrollY: true,
+    useClientSort: true,
+    singleClickEdit: false,
+    toolbar: {
+        hasResizeHandler: true,
+        hasControlPanel: true,
+        hasPagination: true
+    }
+};
+
 /**
  * Grid Core
  * @module core
@@ -51,15 +76,15 @@ var Core = View.extend(/**@lends module:core.prototype */{
     initialize: function(options) {
         var id = util.getUniqueKey();
 
+        options = $.extend(true, defaultOptions, options);
         View.prototype.initialize.apply(this, arguments);
 
         this.publicInstance = options.publicInstance;
+        this.singleClickEdit = options.singleClickEdit;
         this.__instance[id] = this;
         this.id = id;
 
-        this._initializeOptions(options);
         this._initializeProperties();
-
         this._initializeModel();
         this._initializeListener();
         this._initializeView();
@@ -71,20 +96,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         this.updateLayoutData();
     },
 
-    /**
-     * 스크롤바의 높이
-     * @type {Number}
-     */
-    scrollBarSize: 17,
-
-    lside: null,
-
-    rside: null,
-
-    toolbar: null,
-
-    cellFactory: null,
-
     events: {
         'click': '_onClick',
         'dblclick': '_onDblClick',
@@ -93,41 +104,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         'dragstart': '_preventDrag',
         'mouseover': '_onMouseOver',
         'mouseout': '_onMouseOut'
-    },
-
-    /**
-     * default 설정된 옵션에서 생성자로부터 인자로 받은 옵션들을 확장하여 옵션을 설정한다.
-     * @param {Object} options Grid.js 의 생성자 option 과 동일값.
-     * @private
-     */
-    _initializeOptions: function(options) {
-        var defaultOptions = {
-            columnFixCount: 0,
-            columnModelList: [],
-            keyColumnName: null,
-            selectType: '',
-
-            autoNumbering: true,
-
-            headerHeight: 35,
-            rowHeight: 27,
-            displayRowCount: 10,
-            minimumColumnWidth: 50,
-            notUseSmartRendering: false,
-            columnMerge: [],
-            scrollX: true,
-            scrollY: true,
-            useDataCopy: true,
-            useClientSort: true,
-            singleClickEdit: false,
-            toolbar: {
-                hasResizeHandler: true,
-                hasControlPanel: true,
-                hasPagination: true
-            }
-        };
-
-        this.options = $.extend(true, defaultOptions, options);
     },
 
     /**
@@ -168,21 +144,22 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * Initialize data model instances
      * @private
      */
-    _initializeModel: function() {
+    _initializeModel: function(options) {
         var offset = this.$el.offset();
 
         this.columnModel = new ColumnModelData({
             grid: this,
-            hasNumberColumn: this.option('autoNumbering'),
-            keyColumnName: this.option('keyColumnName'),
-            columnFixCount: this.option('columnFixCount'),
-            selectType: this.option('selectType')
+            hasNumberColumn: options.autoNumbering,
+            keyColumnName: options.keyColumnName,
+            columnFixCount: options.columnFixCount,
+            selectType: options.selectType,
+            columnMerge: options.columnMerge
         });
-        this.setColumnModelList(this.option('columnModelList'));
+        this.setColumnModelList(options.columnModelList);
 
         this.dataModel = new RowListData([], {
             grid: this,
-            useClientSort: this.option('useClientSort')
+            useClientSort: options.useClientSort
         });
         this.dataModel.reset([]);
 
@@ -191,21 +168,22 @@ var Core = View.extend(/**@lends module:core.prototype */{
             offsetTop: offset.top,
             offsetLeft: offset.left,
             width: this.$el.width(),
-            headerHeight: this.option('headerHeight'),
-            rowHeight: this.option('rowHeight'),
+            headerHeight: options.headerHeight,
+            rowHeight: options.rowHeight,
 
-            scrollX: !!this.option('scrollX'),
-            scrollY: !!this.option('scrollY'),
+            scrollX: !!options.scrollX,
+            scrollY: !!options.scrollY,
             scrollBarSize: this.scrollBarSize,
 
-            minimumColumnWidth: this.option('minimumColumnWidth'),
-            displayRowCount: this.option('displayRowCount')
+            minimumColumnWidth: options.minimumColumnWidth,
+            displayRowCount: options.displayRowCount,
+            toolbarOptions: options.toolbar
         });
 
         this.focusModel = new FocusModel({
             grid: this,
-            scrollX: !!this.option('scrollX'),
-            scrollY: !!this.option('scrollY'),
+            scrollX: !!options.scrollX,
+            scrollY: !!options.scrollY,
             scrollBarSize: this.scrollBarSize
         });
 
@@ -213,11 +191,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this
         });
 
-        if (!this.option('useDataCopy')) {
-            this.selectionModel.disable();
-        }
-
-        if (this.option('notUseSmartRendering')) {
+        if (options.notUseSmartRendering) {
             this.renderModel = new RenderModel({
                 grid: this
             });
@@ -318,7 +292,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (this.option('singleClickEdit') && !$target.is('input')) {
+            if (this.singleClickEdit && !$target.is('input')) {
                 this.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
@@ -471,25 +445,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
             width: this.$el.width(),
             toolbarHeight: this.view.toolbar.$el.height()
         });
-    },
-
-    /**
-     * option 값을 설정하거나 가져온다.
-     * @param {(String|Number)} key 데이터의 key
-     * @param {*} [value]   설정할 값. 두번째 값이 설정되어 있지 않다면 getter 로 활용된다.
-     * @return {*}  결과값
-     */
-    option: function(key, value) {
-        var result;
-
-        if (tui.util.isUndefined(value)) {
-            this.options = this.options || {};
-            result = this.options[key];
-        } else {
-            this.options[key] = value;
-            result = this;
-        }
-        return result;
     },
 
     /**
@@ -999,9 +954,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {Number} columnFixCount 고정시킬 열의 인덱스
      */
     setColumnFixCount: function(columnFixCount) {
-        this.option({
-            columnFixCount: columnFixCount
-        });
         this.columnModel.set({
             columnFixCount: columnFixCount
         });
@@ -1181,7 +1133,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
             isDisabledCheck = this.dataModel.get(mainRowKey).getRowState().isDisabledCheck,
             deletableEditTypeList = ['text', 'text-convertible', 'text-password'],
             isDeletable = $.inArray(editType, deletableEditTypeList) !== -1,
-            selectType = this.option('selectType'),
+            selectType = this.columnModel.get('selectType'),
             cellState = this.getCellState(mainRowKey, columnName),
             isRemovable = !!(isDeletable && cellState.isEditable && !cellState.isDisabled);
 

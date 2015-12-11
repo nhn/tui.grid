@@ -45,7 +45,8 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
         hasNumberColumn: true,
         selectType: '',
         columnModelMap: {},
-        relationListMap: {}
+        relationListMap: {},
+        columnMerge: []
     },
 
     /**
@@ -113,7 +114,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
                     }]
                 },
                 isFixedWidth: true,
-                width: 40 
+                width: 40
             };
 
         if (selectType === 'checkbox') {
@@ -420,7 +421,7 @@ var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
      * @returns {Array.<string>} Unit column names
      */
     getUnitColumnNamesIfMerged: function(columnName) {
-        var columnMergeInfoList = this.grid.option('columnMerge'),
+        var columnMergeInfoList = this.get('columnMerge'),
             stackForSearch = [],
             searchedNames = [],
             name, columnModel, columnMergeInfoItem;

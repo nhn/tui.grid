@@ -76,7 +76,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             $space, $scrollBorder, $scrollCorner,
             headerHeight, bodyHeight;
 
-        if (!this.grid.option('scrollY')) {
+        if (!this.grid.dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');

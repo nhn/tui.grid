@@ -36,7 +36,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * @return {View.Layout.Toolbar} this object
      */
     render: function() {
-        var option = this.grid.option('toolbar'),
+        var option = this.grid.dimensionModel.get('toolbarOptions'),
             toolbarHeight = this.grid.dimensionModel.get('toolbarHeight'),
             resizeHandler, controlPanel, pagination;
 
@@ -75,7 +75,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
         if (toolbarHeight) {
             this.$el.show();
         }
-        
+
         return this;
     }
 });

@@ -257,7 +257,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onCheckCountChange: function() {
-        if (this.grid.option('selectType') === 'checkbox') {
+        if (this.grid.columnModel.get('selectType') === 'checkbox') {
             clearTimeout(this.timeoutForAllChecked);
             this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
         }
@@ -279,7 +279,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _syncCheckState: function() {
         var $input, enableCount, checkedCount;
 
-        if (this.grid.option('selectType') !== 'checkbox') {
+        if (this.grid.columnModel('selectType') !== 'checkbox') {
             return;
         }
 
@@ -375,11 +375,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             whichSide: this.whichSide,
             grid: this.grid
         });
-        if (!this.grid.option('scrollX')) {
+        if (!this.grid.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
 
-        if (!this.grid.option('scrollY')) {
+        if (!this.grid.dimensionModel.get('scrollY')) {
             this.$el.css('overflow-y', 'hidden');
         }
 
@@ -507,7 +507,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnHierarchy: function(columnModel, resultList) {
-        var columnMergeList = this.grid.option('columnMerge');
+        var columnMergeList = this.grid.columnModel.get('columnMerge');
         resultList = resultList || [];
         /* istanbul ignore else */
         if (columnModel) {
