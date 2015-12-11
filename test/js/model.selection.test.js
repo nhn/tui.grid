@@ -248,14 +248,19 @@ describe('model/selection', function() {
         });
 
         describe('updateByMousePosition()', function() {
-            it('it should call the "setScrolling" method.', function() {
-                spyOn(selection, '_setScrolling');
+            beforeEach(function() {
                 spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                     row: 2,
-                    column: 2,
-                    overflowX: 0,
-                    overflowY: 0
+                    column: 2
                 });
+                spyOn(grid.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
+                    x: 0,
+                    y: 0
+                });
+            });
+            it('it should call the "setScrolling" method.', function() {
+                spyOn(selection, '_setScrolling');
+
                 selection.updateByMousePosition(2, 2);
                 expect(selection._setScrolling).toHaveBeenCalled();
             });
@@ -263,12 +268,7 @@ describe('model/selection', function() {
             it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
                 selection.start(0, 0);
                 selection.update(1, 1);
-                spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
-                    row: 2,
-                    column: 2,
-                    overflowX: 0,
-                    overflowY: 0
-                });
+
                 selection.updateByMousePosition(2, 2);
                 expect(selection.get('range')).toEqual({
                     row: [0, 2],
@@ -281,12 +281,18 @@ describe('model/selection', function() {
             beforeEach(function() {
                 selection.selectColumn(2);
                 selection.update(0, 3);
+                spyOn(grid.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
+                    x: 0,
+                    y: 0
+                });
             });
 
             describe('when called with columnIndexes[0, 1]', function() {
+                beforeEach(function() {
+                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.stub();
+                });
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.stub();
                     selection.setMinimumColumnRange([2, 3]);
                     selection.extendColumnSelection([0, 1], null, null);
 
@@ -298,7 +304,6 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.stub();
                     selection.unsetMinimumColumnRange();
                     selection.extendColumnSelection([0, 1], null, null);
 
@@ -314,9 +319,7 @@ describe('model/selection', function() {
                     spyOn(selection, '_resetRangeAttribute');
                     spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
-                        column: 1,
-                        overflowX: 0,
-                        overflowY: 0
+                        column: 1
                     });
                     selection.setMinimumColumnRange([2, 3]);
                     selection.extendColumnSelection(undefined, null, null);
@@ -331,9 +334,7 @@ describe('model/selection', function() {
                     spyOn(selection, '_resetRangeAttribute');
                     spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
-                        column: 1,
-                        overflowX: 0,
-                        overflowY: 0
+                        column: 1
                     });
                     selection.unsetMinimumColumnRange();
                     selection.extendColumnSelection(undefined, null, null);

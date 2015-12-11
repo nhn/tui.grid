@@ -940,9 +940,7 @@ describe('Dimension', function() {
             var actual = dimensionModel.getIndexFromMousePosition(0, 0),
                 expected = {
                     row: 0,
-                    column: 0,
-                    overflowX: -1,
-                    overflowY: -1
+                    column: 0
                 };
 
             expect(actual).toEqual(expected);
@@ -950,16 +948,16 @@ describe('Dimension', function() {
         /************************************************
          * See the more test cases of unit functions
          * ----------------------------------------------
-         *   1. _getContainerPosition
-         *   2. _calcOverflowFromPosition
+         *   1. _rebasePositionToContainer
+         *   2. getOverflowFromMousePosition
          *   3. _calcRowIndexFromPositionY
          *   4. _calcColumnIndexFromPositionX
          * ----------------------------------------------
          ************************************************/
     });
 
-    describe('_getContainerPosition', function() {
-        it('should return container position ' +
+    describe('_rebasePositionToContainer', function() {
+        it('should return rebased position ' +
             'which subtracts the offset values from mouse position', function() {
             var pageX = 300,
                 pageY = 300,
@@ -979,39 +977,44 @@ describe('Dimension', function() {
                         return 0;
                 }
             });
-            actual = dimensionModel._getContainerPosition(pageX, pageY);
+            actual = dimensionModel._rebasePositionToContainer(pageX, pageY);
 
             expect(actual).toEqual(expected);
         });
     });
 
-    describe('_calcOverflowFromPosition', function() {
-        var containerX, containerY;
+    describe('getOverflowFromMousePosition', function() {
+        var pageX, pageY;
 
         it('should return -1 when the position is negative', function() {
             var actual,
                 expected = {
-                    overflowX: -1,
-                    overflowY: -1
+                    x: -1,
+                    y: -1
                 };
 
-            containerX = -10;
-            containerY = -1;
-            actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: -10,
+                y: -10
+            });
+            actual = dimensionModel.getOverflowFromMousePosition(pageX, pageY);
 
             expect(actual).toEqual(expected);
         });
 
         it('should return 0 when the position is in container', function() {
             var actual,
+                bodySize = dimensionModel._getBodySize(),
                 expected = {
-                    overflowX: 0,
-                    overflowY: 0
+                    x: 0,
+                    y: 0
                 };
 
-            containerX = 10;
-            containerY = 10;
-            actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: bodySize.totalWidth - 1,
+                y: bodySize.height - 1
+            });
+            actual = dimensionModel.getOverflowFromMousePosition(pageX, pageY);
 
             expect(actual).toEqual(expected);
         });
@@ -1019,15 +1022,17 @@ describe('Dimension', function() {
         it('should return 1 when the position is over the container size', function() {
             var bodySize = dimensionModel._getBodySize(),
                 expected = {
-                    overflowX: 1,
-                    overflowY: 1
+                    x: 1,
+                    y: 1
                 },
                 actual;
 
-            containerX = bodySize.totalWidth + 100;
-            containerY = bodySize.height + 100;
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: bodySize.totalWidth + 100,
+                y: bodySize.height + 100
+            });
 
-            actual = dimensionModel._calcOverflowFromPosition(containerX, containerY);
+            actual = dimensionModel.getOverflowFromMousePosition(pageX, pageY);
 
             expect(actual).toEqual(expected);
         });

@@ -504,7 +504,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Judge scroll direction.
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {boolean} isRsideColumn - Whether the target cell is in rside
-     * @param {{height: number, rsideWidth: number}} [bodySize] - Optional parameter for using cached bodySize
+     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
      * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
      * @private
      */
@@ -514,19 +514,20 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             currentLeft = renderModel.get('scrollLeft'),
             isUp, isDown, isLeft, isRight;
 
-        bodySize = bodySize || this._getBodySize();
         isUp = targetPosition.top < currentTop;
-        isDown = !isUp && targetPosition.bottom > currentTop + bodySize.height;
+        isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
         if (isRsideColumn) {
             isLeft = targetPosition.left < currentLeft;
-            isRight = !isLeft && targetPosition.right > currentLeft + bodySize.rsideWidth - 1;
+            isRight = !isLeft && (targetPosition.right > (currentLeft + bodySize.rsideWidth - 1));
+        } else {
+            isLeft = isRight = false;
         }
 
         return {
             isUp: isUp,
             isDown: isDown,
-            isLeft: !!isLeft,
-            isRight: !!isRight
+            isLeft: isLeft,
+            isRight: isRight
         };
     },
 
@@ -534,14 +535,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Make scroll position
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {{height: number, rsideWidth: number}} [bodySize] - Optional parameter for using cached bodySize
+     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
      * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
      * @private
      */
     _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
         var pos = {};
 
-        bodySize = bodySize || this._getBodySize();
         if (scrollDirection.isUp) {
             pos.scrollTop = targetPosition.top;
         } else if (scrollDirection.isDown) {
@@ -551,41 +551,37 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (scrollDirection.isLeft) {
             pos.scrollLeft = targetPosition.left;
         } else if (scrollDirection.isRight) {
-            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + 1;
+            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + BORDER_WIDTH;
         }
 
         return pos;
     },
 
     /**
-     * Get cell index(with overflow) from mouse position
+     * Calc and get overflow values from container position
      * @param {Number} pageX - Mouse X-position based on page
      * @param {Number} pageY - Mouse Y-position based on page
-     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
-     * @return {{row: number, column: number, overflowX: number, overflowY: number}} Cell index and mouse-overflow
-     * @private
+     * @returns {{x: number, y: number}} Mouse-overflow
      */
-    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
-        var containerPos = this._getContainerPosition(pageX, pageY),
-            containerX = containerPos.x,
-            containerY = containerPos.y,
-            overflow = this._calcOverflowFromPosition(containerX, containerY),
-            index = this._calcCellIndexFromPosition(containerX, containerY, withMeta);
+    getOverflowFromMousePosition: function(pageX, pageY) {
+        var containerPos = this._rebasePositionToContainer(pageX, pageY),
+            bodySize = this._getBodySize();
 
-        return _.extend(overflow, index);
+        return this._judgeOverflow(containerPos, bodySize);
     },
 
     /**
-     * Calc and get overflow values from container position
-     * @param {number} containerX - X-position based on the container
-     * @param {number} containerY - Y-position based on the container
-     * @returns {{overflowX: number, overflowY: number}} Mouse-overflow values
+     * Judge overflow
+     * @param {{x: number, y: number}} containerPosition - Position values based on container
+     * @param {{height: number, totalWidth: number, rsideWidth: number}} bodySize - Real body size
+     * @returns {{x: number, y: number}} Overflow values
      * @private
      */
-    _calcOverflowFromPosition: function(containerX, containerY) {
-        var overflowY = 0,
-            overflowX = 0,
-            bodySize = this._getBodySize();
+    _judgeOverflow: function(containerPosition, bodySize) {
+        var containerX = containerPosition.x,
+            containerY = containerPosition.y,
+            overflowY = 0,
+            overflowX = 0;
 
         if (containerY < 0) {
             overflowY = -1;
@@ -600,23 +596,24 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         }
 
         return {
-            overflowX: overflowX,
-            overflowY: overflowY
+            x: overflowX,
+            y: overflowY
         }
     },
 
     /**
-     * Calc and get cell index from container position
-     * @param {number} containerX - X-position based on the container
-     * @param {number} containerY - Y-position based on the container
-     * @param {boolean} withMeta - Whether the meta columns go with this calculation
-     * @returns {{row: number, column: number}}
-     * @private
+     * Get cell index from mouse position
+     * @param {Number} pageX - Mouse X-position based on page
+     * @param {Number} pageY - Mouse Y-position based on page
+     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
+     * @return {{row: number, column: number}} Cell index
      */
-    _calcCellIndexFromPosition: function(containerX, containerY, withMeta) {
+    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
+        var containerPos = this._rebasePositionToContainer(pageX, pageY);
+
         return {
-            row: this._calcRowIndexFromPositionY(containerY),
-            column: this._calcColumnIndexFromPositionX(containerX, withMeta)
+            row: this._calcRowIndexFromPositionY(containerPos.y),
+            column: this._calcColumnIndexFromPositionX(containerPos.x, withMeta)
         };
     },
 
@@ -629,7 +626,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     _calcRowIndexFromPositionY: function(containerY) {
         var grid = this.grid,
             cellY = containerY + grid.renderModel.get('scrollTop'),
-            tempIndex = Math.floor(cellY / (this.get('rowHeight') + 1)),
+            tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH)),
             min = 0,
             max = Math.max(min, grid.dataModel.length - 1);
 
@@ -675,10 +672,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
      * @param {Number} pageX    마우스 x 좌표
      * @param {Number} pageY    마우스 y 좌표
-     * @return {{pageX: number, pageY: number}} 그리드 container 기준의 pageX, pageY 값
+     * @return {{x: number, y: number}} 그리드 container 기준의 x, y 값
      * @private
      */
-    _getContainerPosition: function(pageX, pageY) {
+    _rebasePositionToContainer: function(pageX, pageY) {
         var containerPosX = pageX - this.get('offsetLeft'),
             containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
 
@@ -739,7 +736,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
-        return (this.get('scrollX')) ? this.get('scrollBarSize') : 0;
+        return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
     },
 
     /**
@@ -748,7 +745,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {number} Width of Y-scrollBar
      */
     getScrollYWidth: function() {
-        return (this.get('scrollY')) ? this.get('scrollBarSize') : 0;
+        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
     },
 
     /**

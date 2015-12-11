@@ -7086,7 +7086,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _getIndexFromMousePosition: function(pageX, pageY) {
-        var containerPos = this._getContainerPosition(pageX, pageY),
+        var containerPos = this._rebasePositionToContainer(pageX, pageY),
             dimensionModel = this.grid.dimensionModel,
             renderModel = this.grid.renderModel,
             columnWidthList = dimensionModel.getColumnWidthList(),
@@ -7176,7 +7176,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @return {{pageX: number, pageY: number}} 그리드 container 기준의 pageX, pageY 값
      * @private
      */
-    _getContainerPosition: function(pageX, pageY) {
+    _rebasePositionToContainer: function(pageX, pageY) {
         var dimensionModel = this.grid.dimensionModel,
             containerPosX = pageX - dimensionModel.get('offsetLeft'),
             containerPosY = pageY - (dimensionModel.get('offsetTop') + dimensionModel.get('headerHeight') + 2);

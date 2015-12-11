@@ -118,8 +118,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} state - Selection state
      */
     startByMousePosition: function(pageX, pageY, state) {
-        var pos = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
-        this.start(pos.row, pos.column, state);
+        var index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        this.start(index.row, index.column, state);
     },
 
     /**
@@ -169,7 +169,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this._minimumColumnRange,
-            pos = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY),
+            index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY),
             range = {
                 row: [0, 0],
                 column: []
@@ -177,10 +177,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             minMax;
 
         if (!columnIndexes || !columnIndexes.length) {
-            columnIndexes = [pos.column]
+            columnIndexes = [index.column]
         }
 
-        this._setScrolling(pos);
+        this._setScrolling(pageX, pageY);
         if (minimumColumnRange) {
             minMax = util.getMinMax(columnIndexes.concat(minimumColumnRange));
         } else {
@@ -193,18 +193,17 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Set auto scrolling for selection
-     * @param {{overflowX:number, overflowY:number}} position - Position values of overflow
+     * @param {number} pageX - Mouse position X
+     * @param {number} pageY - Mouse positino Y
      * @private
      */
-    _setScrolling: function(position) {
-        if (!position) {
-            return;
-        }
+    _setScrolling: function(pageX, pageY) {
+        var overflow = this.grid.dimensionModel.getOverflowFromMousePosition(pageX, pageY);
 
         this.stopAutoScroll();
-        if (this._isAutoScrollable(position.overflowX, position.overflowY)) {
+        if (this._isAutoScrollable(overflow.x, overflow.y)) {
             this.intervalIdForAutoScroll = setInterval(
-                _.bind(this._adjustScroll, this, position.overflowX, position.overflowY)
+                _.bind(this._adjustScroll, this, overflow.x, overflow.y)
             );
         }
     },
@@ -216,10 +215,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} [state] - Selection state
      */
     updateByMousePosition: function(pageX, pageY, state) {
-        var pos = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
 
-        this._setScrolling(pos);
-        this.update(pos.row, pos.column, state);
+        this._setScrolling(pageX, pageY);
+        this.update(index.row, index.column, state);
     },
 
     /**

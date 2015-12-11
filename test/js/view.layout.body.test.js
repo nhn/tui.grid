@@ -315,6 +315,7 @@ describe('view.layout.body', function() {
             body.mouseDownX = 10;
             body.mouseDownY = 10;
             spyOn(grid.selectionModel, '_isAutoScrollable').and.returnValue(false);
+            spyOn(grid.selectionModel, '_setScrolling').and.stub();
         });
 
         describe('selection이 없을경우', function() {

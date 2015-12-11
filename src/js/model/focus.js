@@ -89,11 +89,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {Model.Focus} This object
      */
     focus: function(rowKey, columnName, isScrollable) {
-        var grid = this.grid;
-
         if (util.isBlank(rowKey) ||
             util.isBlank(columnName) ||
-            grid.columnModel.isMetaColumn(columnName) ||
+            this.grid.columnModel.isMetaColumn(columnName) ||
             (this.get('rowKey') === rowKey && this.get('columnName') === columnName)) {
             return this;
         }

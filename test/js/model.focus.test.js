@@ -331,28 +331,41 @@ describe('model.renderer', function() {
     describe('with rowSpan Data', function() {
         beforeEach(function() {
             grid.dataModel.lastRowKey = -1;
-            grid.dataModel.reset([{
-                c1: '0-1',
-                c2: '0-2',
-                c3: '0-3'
-            }, {
-                _extraData: {
-                    rowSpan: {c1: 3}
-                },
-                c1: '1-1',
-                c2: '1-2',
-                c3: '1-3'
-            }, {
-                c2: '2-2',
-                c3: '2-3'
-            }, {
-                c2: '3-2',
-                c3: '3-3'
-            }, {
-                c1: '4-1',
-                c2: '4-2',
-                c3: '4-3'
-            }], {parse: true});
+            grid.dataModel.reset(
+                [
+                    {
+                        c1: '0-1',
+                        c2: '0-2',
+                        c3: '0-3'
+                    },
+                    {
+                        _extraData: {
+                            rowSpan: {
+                                c1: 3
+                            }
+                        },
+                        c1: '1-1',
+                        c2: '1-2',
+                        c3: '1-3'
+                    },
+                    {
+                        c2: '2-2',
+                        c3: '2-3'
+                    },
+                    {
+                        c2: '3-2',
+                        c3: '3-3'
+                    },
+                    {
+                        c1: '4-1',
+                        c2: '4-2',
+                        c3: '4-3'
+                    }
+                ],
+                {
+                    parse: true
+                }
+            );
         });
 
         describe('nextRowIndex()', function() {
