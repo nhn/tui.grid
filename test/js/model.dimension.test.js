@@ -723,50 +723,66 @@ describe('Dimension', function() {
     });
 
     describe('Scroll position', function() {
-        var originalAttr = {};
+        var scrollBarSize = 17,
+            bodyHeight = 100,
+            rsideWidth = 100,
+            lsideWidth = 100;
 
         beforeEach(function() {
-            originalAttr.scrollX = dimensionModel.get('scrollX');
-            originalAttr.scrollY = dimensionModel.get('scrollY');
-        });
-
-        afterEach(function() {
-            dimensionModel.set(originalAttr);
+            dimensionModel.set({ // defaults
+                bodyHeight: bodyHeight,
+                rsideWidth: rsideWidth,
+                lsideWidth: lsideWidth,
+                scrollBarSize: scrollBarSize
+            });
         });
 
         describe('_getBodySize', function() {
-            it('should subtract scrollBar-Y width from rsideWidth', function() {
-                var scrollBarSize = dimensionModel.get('scrollBarSize'),
-                    actualBodySize,
+            it('should return calculated values without scrollbars', function() {
+                var actualBodySize,
                     expected = {
-                        height: dimensionModel.get('bodyHeight'),
-                        rsideWidth: dimensionModel.get('rsideWidth') - scrollBarSize,
-                        totalWidth: dimensionModel.get('rsideWidth') + dimensionModel.get('lsideWidth') - scrollBarSize
+                        height: 100,
+                        rsideWidth: 100,
+                        totalWidth: 200
                     };
 
                 dimensionModel.set({
                     scrollX: false,
-                    scrollY: true
+                    scrollY: false
                 });
+
                 actualBodySize = dimensionModel._getBodySize();
                 expect(actualBodySize).toEqual(expected);
             });
 
+            it('should subtract scrollBar-Y width from rsideWidth', function() {
+                var actualBodySize;
+
+                dimensionModel.set({ // conditions
+                    scrollX: false,
+                    scrollY: true
+                });
+                actualBodySize = dimensionModel._getBodySize();
+                expect(actualBodySize).toEqual({
+                    height: 100,
+                    rsideWidth: 83,
+                    totalWidth: 183
+                });
+            });
+
             it('should subtract scrollBar-X height from bodyHeight', function() {
-                var scrollBarSize = dimensionModel.get('scrollBarSize'),
-                    actualBodySize,
-                    expected = {
-                        height: dimensionModel.get('bodyHeight') - scrollBarSize,
-                        rsideWidth: dimensionModel.get('rsideWidth'),
-                        totalWidth: dimensionModel.get('rsideWidth') + dimensionModel.get('lsideWidth')
-                    };
+                var actualBodySize;
 
                 dimensionModel.set({
                     scrollX: true,
                     scrollY: false
                 });
                 actualBodySize = dimensionModel._getBodySize();
-                expect(actualBodySize).toEqual(expected);
+                expect(actualBodySize).toEqual({
+                    height: 83,
+                    rsideWidth: 100,
+                    totalWidth: 200
+                });
             });
         });
 
