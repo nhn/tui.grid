@@ -68,15 +68,6 @@ describe('grid.normal.test', function() {
         expect(grid.dataModel.length).toBe(3);
     });
 
-    describe('option()', function() {
-        it('option의 동작을 확인한다.', function() {
-            grid.option('temp', 'test_value');
-            expect(grid.option('temp')).toEqual('test_value');
-            grid.option('temp', 'test_value_changed');
-            expect(grid.option('temp')).toEqual('test_value_changed');
-        });
-    });
-
     describe('getValue(), setValue()', function() {
         it('getValue 는 값을 잘 가져온다.', function() {
             expect(grid.getValue(0, 'c1')).toBe('0-1');
@@ -619,7 +610,7 @@ describe('grid.normal.test', function() {
                     }
                 ]
             });
-            core.option('singleClickEdit', true);
+            core.singleClickEdit = true;
             core.setRowList([{
                 c1: '0-1'
             }]);

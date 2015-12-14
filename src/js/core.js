@@ -43,9 +43,7 @@ var defaultOptions = {
     columnModelList: [],
     keyColumnName: null,
     selectType: '',
-
     autoNumbering: true,
-
     headerHeight: 35,
     rowHeight: 27,
     displayRowCount: 10,
@@ -76,16 +74,18 @@ var Core = View.extend(/**@lends module:core.prototype */{
     initialize: function(options) {
         var id = util.getUniqueKey();
 
-        options = $.extend(true, defaultOptions, options);
+        options = $.extend(true, {}, defaultOptions, options);
         View.prototype.initialize.apply(this, arguments);
 
         this.publicInstance = options.publicInstance;
         this.singleClickEdit = options.singleClickEdit;
+        this.emptyMessage = options.emptyMessage;
+
         this.__instance[id] = this;
         this.id = id;
 
         this._initializeProperties();
-        this._initializeModel();
+        this._initializeModel(options);
         this._initializeListener();
         this._initializeView();
 
@@ -1156,6 +1156,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
             startIdx = this._getStartIndexToPaste(),
             endIdx = this._getEndIndexToPaste(startIdx, data, columnModelList);
 
+        // console.log('startIdx', startIdx, 'endIdx', endIdx);
         _.each(data, function(row, index) {
             this._setValueForPaste(row, startIdx.row + index, startIdx.column, endIdx.column);
         }, this);
@@ -1210,6 +1211,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
         if (!row) {
             row = this.dataModel.append({})[0];
         }
+        // console.log('columnModel', this.columnModel.get('dataColumnModelList'));
         for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
             columnName = this.columnModel.at(columnIdx, true).columnName;
             cellState = row.getCellState(columnName);
@@ -1219,6 +1221,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
                 attributes[columnName] = rowData[columnIdx - columnStartIdx];
             }
         }
+        // console.log('attributes', attributes);
         row.set(attributes);
     },
 

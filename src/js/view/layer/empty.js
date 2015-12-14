@@ -20,7 +20,7 @@ var Empty = Layer.extend(/**@lends module:view/layer/empty.prototype */{
     initialize: function() {
         Layer.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            text: this.grid.options.emptyMessage || '데이터가 존재하지 않습니다.'
+            text: this.grid.emptyMessage || '데이터가 존재하지 않습니다.'
         });
     },
 

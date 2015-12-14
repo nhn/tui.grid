@@ -279,7 +279,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _syncCheckState: function() {
         var $input, enableCount, checkedCount;
 
-        if (this.grid.columnModel('selectType') !== 'checkbox') {
+
+        if (!this.grid.columnModel || this.grid.columnModel.get('selectType') !== 'checkbox') {
             return;
         }
 

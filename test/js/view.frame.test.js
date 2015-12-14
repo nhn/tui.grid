@@ -179,13 +179,13 @@ describe('Frame', function() {
         });
 
         describe('afterRender()', function() {
-            describe('grid.option.scrollY가 true이면', function() {
+            describe('grid.dimensionModel.scrollY가 true이면', function() {
                 beforeEach(function() {
                     grid.dimensionModel.set({
                         headerHeight: 30,
-                        bodyHeight: 200
+                        bodyHeight: 200,
+                        scrollY: true
                     });
-                    grid.options.scrollY = true;
                     frame = new FrameRside({
                         grid: grid
                     });

@@ -166,7 +166,7 @@ describe('view.painter.cell.normal', function() {
 
     describe('View.Painter.Cell.MainButton 클래스 테스트', function() {
         beforeEach(function() {
-            grid.options.selectType = 'checkbox';
+            grid.columnModel.set('selectType', 'checkbox');
             cellPainter = new MainButtonPainter({
                 grid: grid
             });
@@ -199,14 +199,14 @@ describe('view.painter.cell.normal', function() {
 
             describe('selectType 에 따라 input 이 잘 생성되는지 확인한다.', function() {
                 it('checkbox', function() {
-                    grid.options.selectType = 'checkbox';
+                    grid.columnModel.set('selectType', 'checkbox');
                     $button = $(cellPainter.getContentHtml({}));
 
                     expect($button.attr('type')).toEqual('checkbox');
                 });
 
                 it('radio', function() {
-                    grid.options.selectType = 'radio';
+                    grid.columnModel.set('selectType', 'radio');
                     $button = $(cellPainter.getContentHtml({}));
 
                     expect($button.attr('type')).toEqual('radio');
@@ -238,7 +238,7 @@ describe('view.painter.cell.normal', function() {
             var $td, $button;
 
             it('checkbox 일때 값을 toggle 하는지 확인한다.', function() {
-                grid.options.selectType = 'checkbox';
+                grid.columnModel.set('selectType', 'checkbox');
                 $button = $(cellPainter.getContentHtml({}));
                 $td = $('<td>').append($button);
 
@@ -250,7 +250,7 @@ describe('view.painter.cell.normal', function() {
             });
 
             it('radio 일때 값을 toggle 하지 않는지 확인한다.', function() {
-                grid.options.selectType = 'radio';
+                grid.columnModel.set('selectType', 'radio');
                 $button = $(cellPainter.getContentHtml({}));
                 $td = $('<td>').append($button);
 
@@ -276,7 +276,7 @@ describe('view.painter.cell.normal', function() {
             beforeEach(function() {
                 var $table = jasmine.getFixtures().set('<table><tr><td></td></tr></table>');
 
-                grid.options.selectType = 'checkbox';
+                grid.columnModel.set('selectType', 'checkbox');
                 $button = $(cellPainter.getContentHtml({}));
                 $td = $table.find('td').append($button);
                 mouseDownEvent = {
@@ -299,7 +299,7 @@ describe('view.painter.cell.normal', function() {
             beforeEach(function() {
                 var $table;
 
-                grid.options.selectType = 'checkbox';
+                grid.columnModel.set('selectType', 'checkbox');
                 grid.dataModel.set([
                     {
                         c1: '0-1',

@@ -71,19 +71,23 @@ describe('Header', function() {
             expect(header.$el.height()).toEqual(20);
         });
 
-        it('grid.option의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
+        it('grid.dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
             header.$el.css({
                 'overflow-x': 'visible',
                 'overflow-y': 'visible'
             });
-            grid.options.scrollX = true;
-            grid.options.scrollY = true;
+            grid.dimensionModel.set({
+                scrollX: true,
+                scrollY: true
+            });
             header.render();
             expect(header.$el.css('overflow-x')).toBe('visible');
             expect(header.$el.css('overflow-y')).toBe('visible');
 
-            grid.options.scrollX = false;
-            grid.options.scrollY = false;
+            grid.dimensionModel.set({
+                scrollX: false,
+                scrollY: false
+            });
             header.render();
             expect(header.$el.css('overflow-x')).toBe('hidden');
             expect(header.$el.css('overflow-y')).toBe('hidden');
@@ -259,8 +263,10 @@ describe('Header', function() {
             ];
 
         beforeEach(function() {
-            grid.columnModel.set('columnModelList', columnModelList);
-            grid.options.columnMerge = columnMergeList;
+            grid.columnModel.set({
+                columnModelList: columnModelList,
+                columnMerge: columnMergeList
+            });
             columnData = header._getColumnData();
         });
 
@@ -289,14 +295,13 @@ describe('Header', function() {
                     maxRow = header._getHierarchyMaxRowCount(hierarchyList);
 
                 expect(maxRow).toEqual(4);
-
-                grid.options.columnMerge = [
+                grid.columnModel.set('columnMerge', [
                     {
                         columnName: 'merge1',
                         title: 'c1-c2',
                         columnNameList: ['c1', 'c2']
                     }
-                ];
+                ]);
                 hierarchyList = header._getColumnHierarchyList();
                 maxRow = header._getHierarchyMaxRowCount(hierarchyList);
                 expect(maxRow).toEqual(2);
@@ -311,7 +316,6 @@ describe('Header', function() {
                 grid: grid,
                 whichSide: 'L'
             });
-            grid.options.selectType = 'checkbox';
             grid.columnModel.set('selectType', 'checkbox');
             grid.dataModel = new RowListData(
                 [
@@ -372,7 +376,7 @@ describe('Header', function() {
         });
 
         it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function() {
-            grid.options.selectType = 'checkbox';
+            grid.columnModel.set('selectType', 'checkbox');
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
             lHeader._onCheckCountChange();
@@ -388,7 +392,7 @@ describe('Header', function() {
         });
 
         it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function() {
-            grid.options.selectType = 'radio';
+            grid.columnModel.set('selectType', 'radio');
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
 

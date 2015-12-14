@@ -4,8 +4,7 @@ var EmptyLayer = require('../../src/js/view/layer/empty');
 
 function createGridMock() {
     return {
-        dimensionModel: new Backbone.Model(),
-        options: {}
+        dimensionModel: new Backbone.Model()
     }
 }
 describe('view.layer.empty', function() {
@@ -19,12 +18,12 @@ describe('view.layer.empty', function() {
         expect(layer.$el.html()).toEqual('데이터가 존재하지 않습니다.');
     });
 
-    it('initialize() with emptyMessage option', function() {
+    it('initialize()', function() {
         var gridMock = createGridMock(),
             emptyMessage = 'Empty!',
             layer;
 
-        gridMock.options.emptyMessage = emptyMessage;
+        gridMock.emptyMessage = emptyMessage;
         layer = new EmptyLayer({
             grid: gridMock
         });

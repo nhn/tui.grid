@@ -64,18 +64,22 @@ describe('view.frame.toolbar', function() {
             var options;
 
             beforeEach(function() {
-                options = grid.options.toolbar;
+                options = grid.dimensionModel.get('toolbarOptions') || {};
             });
 
             describe('hasControlPanel', function() {
                 it('hasControlPanel = false 일 때', function() {
-                    options.hasControlPanel = false;
+                    grid.dimensionModel.set('toolbarOptions', {
+                        hasControlPanel: false
+                    });
                     toolbar.render();
                     expect(toolbar.$el.find('.btn_setup')).not.toExist();
                 });
 
                 it('hasControlPanel = true 일 때', function() {
-                    options.hasControlPanel = true;
+                    grid.dimensionModel.set('toolbarOptions', {
+                        hasControlPanel: true
+                    });
                     toolbar.render();
                     expect(toolbar.$el.find('.btn_setup')).toExist();
                 });
@@ -83,12 +87,16 @@ describe('view.frame.toolbar', function() {
 
             describe('hasResizeHandler', function() {
                 it('hasResizeHandler = false 일 때', function() {
-                    options.hasResizeHandler = false;
+                    grid.dimensionModel.set('toolbarOptions', {
+                        hasResizeHandler: false
+                    });
                     toolbar.render();
                     expect(toolbar.$el.find('.height_resize_bar')).not.toExist();
                 });
                 it('hasResizeHandler = true 일 때', function() {
-                    options.hasResizeHandler = true;
+                    grid.dimensionModel.set('toolbarOptions', {
+                        hasResizeHandler: true
+                    });
                     toolbar.render();
                     expect(toolbar.$el.find('.height_resize_bar')).toExist();
                 });
@@ -96,12 +104,16 @@ describe('view.frame.toolbar', function() {
 
             describe('hasPagination', function() {
                 it('hasPagination = false 일 때', function() {
-                    options.hasPagination = false;
+                    grid.dimensionModel.set('toolbarOptions', {
+                        hasPagination: false
+                    });
                     toolbar.render();
                     expect(toolbar.$el.find('.pagination')).not.toExist();
                 });
                 it('hasPagination = true 일 때', function() {
-                    options.hasPagination = true;
+                    grid.dimensionModel.set('toolbarOptions', {
+                        hasPagination: true
+                    });
                     toolbar.render();
                     expect(toolbar.$el.find('.grid_pagination')).toExist();
                 });
@@ -179,7 +191,7 @@ describe('view.frame.toolbar', function() {
             it('bodyHeight를 header와 toolbar를 제외한 높이로 조정한다.', function(done) {
                 mouseEvent.pageY = 300;
                 resize._onMouseMove(mouseEvent);
-                setTimeout(function () {
+                setTimeout(function() {
                     expect(grid.dimensionModel.get('bodyHeight')).toBe(200);
                     done();
                 }, 10);
@@ -188,7 +200,7 @@ describe('view.frame.toolbar', function() {
             it('scrollbarSize와 rowHeight를 더한 값 이하로 높이가 줄어들지 않는다.', function(done) {
                 mouseEvent.pageY = 100;
                 resize._onMouseMove(mouseEvent);
-                setTimeout(function () {
+                setTimeout(function() {
                     expect(grid.dimensionModel.get('bodyHeight')).toBe(30);
                     done();
                 }, 10);

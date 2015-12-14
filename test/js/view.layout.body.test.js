@@ -127,7 +127,7 @@ describe('view.layout.body', function() {
         });
 
         it('if the grid has a selectType-radio option, check the row', function() {
-            grid.options.selectType = 'radio';
+            grid.columnModel.set('selectType', 'radio');
             grid.check = jasmine.createSpy('check');
 
             body._onMouseDown(eventMock);
@@ -358,19 +358,23 @@ describe('view.layout.body', function() {
     });
 
     describe('render()', function() {
-        it('whichSide값과 grid.option의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
+        it('whichSide값과 grid.dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
             body.$el.css({
                 'overflow-x': 'visible',
                 'overflow-y': 'visible'
             });
-            grid.options.scrollX = true;
-            grid.options.scrollY = true;
+            grid.dimensionModel.set({
+                scrollX: true,
+                scrollY: true
+            });
             body.render();
             expect(body.$el.css('overflow-x')).toBe('visible');
             expect(body.$el.css('overflow-y')).toBe('visible');
 
-            grid.options.scrollX = false;
-            grid.options.scrollY = false;
+            grid.dimensionModel.set({
+                scrollX: false,
+                scrollY: false    
+            });
             body.whichSide = 'L';
             body.render();
             expect(body.$el.css('overflow-x')).toBe('hidden');

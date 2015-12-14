@@ -114,7 +114,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
      */
     toggle: function($td) {
         var $input = $td.find('input');
-        if (this.grid.columnModel('selectType') === 'checkbox') {
+        if (this.grid.columnModel.get('selectType') === 'checkbox') {
             $input.prop('checked', !$input.prop('checked'));
         }
     },
