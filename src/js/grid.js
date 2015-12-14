@@ -274,8 +274,21 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
         var core, container, controller, coreOptions;
 
-        // $el = $(options.el || options.$el);
-        coreOptions = _.assign({}, options, {
+        core = this._createCore(options);
+        container = this._createContainerView(core);
+        controller = new Controller(container);
+
+        this.core = core;
+        instanceMap[core.id] = core;
+        this.listenTo(core, 'all', this._relayEvent, this);
+
+        core.setController(controller);
+        container.render();
+        core.updateLayoutData();
+    },
+
+    _createCore: function(options) {
+        var coreOptions = _.assign({}, options, {
             publicInstance: this,
             offsetTop: this.$el.offset().top,
             offsetLeft: this.$el.offset().left,
@@ -283,20 +296,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         });
         coreOptions.el = null;
 
-        core = new Core(coreOptions);
-        container = new ContainerView({
+        return new Core(coreOptions);
+    },
+
+    _createContainerView: function(core) {
+        return new ContainerView({
             grid: core,
             el: this.$el
         });
-        controller = new Controller(container);
-        core.setController(controller);
-
-        container.render();
-        // core.updateLayoutData();
-
-        this.listenTo(core, 'all', this._relayEvent, this);
-        this.core = core;
-        instanceMap[core.id] = core;
     },
 
     /**

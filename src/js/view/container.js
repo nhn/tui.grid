@@ -270,13 +270,10 @@ var Container = View.extend(/**@lends module:container.prototype */{
     _setHeight: function() {
         var bodyHeight = this.grid.dimensionModel.get('bodyHeight'),
             headerHeight = this.grid.dimensionModel.get('headerHeight'),
-            toolbarHeight = this.children.toolbar.$el.height(),
+            toolbarHeight = this.grid.dimensionModel.get('toolbarHeight'),
             height = toolbarHeight + headerHeight + bodyHeight;
 
-        this.$el.css('height', height + 'px');
-        this.grid.dimensionModel.set({
-            toolbarHeight: toolbarHeight
-        });
+        this.$el.css('height', height);
     },
 
     /**

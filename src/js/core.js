@@ -437,7 +437,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.focus(rowKey, columnName, isScrollable);
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
         if (this.isEditable(rowKey, columnName)) {
-            cellPainter = this.controller.getCellFactory().getInstance(this.columnModel.getEditType(columnName));
+            cellPainter = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
             cellPainter.focusIn(this.getElement(rowKey, columnName));
         } else {
             this.focusClipboard();
@@ -1006,8 +1006,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.dimensionModel.set({
             offsetTop: offset.top,
             offsetLeft: offset.left,
-            width: this.controller.getWidth(),
-            toolbarHeight: this.controller.getToolbarHeight()
+            width: this.controller.getWidth()
         });
     },
 

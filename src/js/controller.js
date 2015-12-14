@@ -72,10 +72,6 @@ var Controller = tui.util.defineClass({
         return this.container.$el.width();
     },
 
-    getToolbarHeight: function() {
-        return this.container.children.toolbar.$el.height();
-    },
-
     hasFocusedElement: function() {
         return !!this.container.$el.find(':focus').length;
     },
