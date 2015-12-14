@@ -255,6 +255,10 @@
 
 var View = require('./base/view');
 var Core = require('./core');
+var ContainerView = require('./view/container');
+var Controller = require('./controller');
+
+var instanceMap = {};
 
  /**
   * Toast UI
@@ -268,11 +272,33 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options for the constructor
      */
     initialize: function(options) {
-        //grid 에서 public instance 를 참조할 수 있도록 자신의 참조 추가
-        options.publicInstance = this;
-        this.core = new Core(options);
-        this.listenTo(this.core, 'all', this._relayEvent, this);
+        var core, container, controller, coreOptions;
+
+        // $el = $(options.el || options.$el);
+        coreOptions = _.assign({}, options, {
+            publicInstance: this,
+            offsetTop: this.$el.offset().top,
+            offsetLeft: this.$el.offset().left,
+            width: this.$el.width()
+        });
+        coreOptions.el = null;
+
+        core = new Core(coreOptions);
+        container = new ContainerView({
+            grid: core,
+            el: this.$el
+        });
+        controller = new Controller(container);
+        core.setController(controller);
+
+        container.render();
+        // core.updateLayoutData();
+
+        this.listenTo(core, 'all', this._relayEvent, this);
+        this.core = core;
+        instanceMap[core.id] = core;
     },
+
     /**
      * Relay the internal events to the external.
      * @private
@@ -735,5 +761,5 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 });
 
 tui.Grid.getInstanceById = function(id) {
-    return Core.prototype.__instance[id];
+    return instanceMap[id];
 };

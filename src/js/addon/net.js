@@ -181,18 +181,18 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
      */
     _showToolbarExcelBtns: function() {
-        var controlPanel = this.grid.view.toolbar.controlPanel,
+        var controller = this.grid.controller,
             api = this.options.api;
 
-        if (!controlPanel) {
+        if (!controller) {
             return;
         }
 
         if (api.downloadExcel) {
-            controlPanel.$btnExcel.show();
+            controller.showExcelButton();
         }
         if (api.downloadExcelAll) {
-            controlPanel.$btnExcelAll.show();
+            controller.showExcelAllButton();
         }
     },
 
