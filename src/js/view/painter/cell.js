@@ -6,6 +6,7 @@
 
 var Painter = require('../../base/painter');
 var util = require('../../common/util');
+var keyNameMap = require('../../common/keyConst').keyName;
 
 /**
  * Cell Painter Base
@@ -128,7 +129,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             focusModel: grid.focusModel,
             rowKey: rowKey,
             columnName: columnName,
-            keyName: grid.keyName[keyCode]
+            keyName: keyNameMap[keyCode]
         };
     },
 
@@ -140,7 +141,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     _executeKeyDownSwitch: function(keyDownEvent) {
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-            keyName = this.grid.keyName[keyCode],
+            keyName = keyNameMap[keyCode],
             param = this._getParamForKeyDownSwitch(keyDownEvent);
         (this._keyDownSwitch[keyName] || this._keyDownSwitch['defaultAction']).call(this, keyDownEvent, param);
         return !!this._keyDownSwitch[keyName];
