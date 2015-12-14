@@ -6,8 +6,8 @@
 
 var View = require('../base/view');
 var Router = require('./net-router');
-var util = require('../util');
-var formUtil = require('../formUtil');
+var util = require('../common/util');
+var formUtil = require('../common/formUtil');
 
 /**
  * Net Addon

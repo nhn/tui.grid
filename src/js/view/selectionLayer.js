@@ -5,7 +5,7 @@
 'use strict';
 
 var View = require('../base/view');
-var util = require('../util');
+var util = require('../common/util');
 
 var CELL_BORDER_WIDTH = 1;
 

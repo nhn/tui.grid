@@ -5,8 +5,8 @@
 'use strict';
 
 var Cell = require('../cell');
-var util = require('../../../util');
-var formUtil = require('../../../formUtil');
+var util = require('../../../common/util');
+var formUtil = require('../../../common/formUtil');
 
 /**
  * Painter class for the text cell

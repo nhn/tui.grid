@@ -5,7 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
-var util = require('../util');
+var util = require('../common/util');
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)

@@ -6,7 +6,7 @@
 
 var View = require('../../base/view');
 var RowListView = require('../rowList');
-var util = require('../../util');
+var util = require('../../common/util');
 
 
 /**

@@ -6,8 +6,8 @@
 
 var Cell = require('../cell');
 var TextCell = require('./text');
-var util = require('../../../util');
-var formUtil = require('../../../formUtil');
+var util = require('../../../common/util');
+var formUtil = require('../../../common/formUtil');
 
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer

@@ -6,7 +6,7 @@
 
 var Model = require('../base/model');
 var ExtraDataManager = require('./extraDataManager');
-var util = require('../util');
+var util = require('../common/util');
 
 // Propertie names that indicate meta data
 var PRIVATE_PROPERTIES = [

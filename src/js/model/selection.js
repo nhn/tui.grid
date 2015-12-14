@@ -5,7 +5,7 @@
 'use strict';
 
 var Model = require('../base/model'),
-    util = require('../util');
+    util = require('../common/util');
 
 /**
  * @ignore

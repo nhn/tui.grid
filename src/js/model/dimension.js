@@ -5,7 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
-var util = require('../util');
+var util = require('../common/util');
 
 // The width of the border of the dimension.
 var BORDER_WIDTH = 1;

@@ -1,8 +1,8 @@
 'use strict';
 
-var util = require('../../src/js/util');
+var util = require('../../src/js/common/util');
 var Model = require('../../src/js/base/model');
-var formUtil = require('../../src/js/formUtil');
+var formUtil = require('../../src/js/common/formUtil');
 
 describe('addon.net', function() {
     var columnModelList = [{

@@ -5,7 +5,7 @@
 'use strict';
 
 var common = require('../base/common');
-var util = require('../util');
+var util = require('../common/util');
 
 /**
  * Router for Addon.Net

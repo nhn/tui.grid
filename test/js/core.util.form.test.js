@@ -1,7 +1,7 @@
 'use strict';
 
-var util = require('../../src/js/util');
-var formUtil = require('../../src/js/formUtil');
+var util = require('../../src/js/common/util');
+var formUtil = require('../../src/js/common/formUtil');
 
 describe('core.formUtil', function() {
     var $form;

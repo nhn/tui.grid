@@ -5,7 +5,7 @@
 'use strict';
 
 var View = require('../base/view');
-var util = require('../util');
+var util = require('../common/util');
 var keyCodeMap = require('../common/keyConst').keyCode;
 
 /**

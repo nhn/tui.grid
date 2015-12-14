@@ -5,7 +5,7 @@
 'use strict';
 
 var View = require('../../base/view'),
-    util = require('../../util'),
+    util = require('../../common/util'),
     ResizeHandler = require('./resizeHandler');
 
 /**

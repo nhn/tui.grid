@@ -32,7 +32,7 @@ var EmptyLayer = require('./view/layer/empty');
 var LoadingLayer = require('./view/layer/loading');
 
 var Net = require('./addon/net');
-var util = require('./util');
+var util = require('./common/util');
 
 var addOn = {
     Net: Net
@@ -1294,29 +1294,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * 데이터 필터링 기능 함수. 전체 그리드 데이터의 columnName에 해당하는 데이터와 columnValue를 비교하여 필터링 한 결과를 그리드에 출력한다
-     * @todo 기능 구현
-     * @param {String} columnName 컬럼 이름
-     * @param {(String|Number)} columnValue 컬럼 이름
-     */
-    filterData: function(columnName, columnValue) { // eslint-disable-line no-unused-vars
-    },
-
-    /**
-     * 그리드를 편집할 수 있도록 막았던 포커스를 풀고 딤드를 제거한다.
-     * @todo 기능 구현
-     */
-    enable: function() {
-    },
-
-    /**
-     * 그리드를 편집할 수 없도록 입력 엘리먼트들의 포커스를 막고, 옵션에 따라 딤드 처리한다.
-     * @todo 기능 구현
-     */
-    disable: function() {
-    },
-
-    /**
      * Sets the width and height of the dimension.
      * @param {(number|null)} width - Width
      * @param {(number|null)} height - Height
@@ -1330,12 +1307,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         }
         this.updateLayoutData();
     },
-
-    /**
-     * 스크롤 핸들러의 위치를 변경한다.
-     * @todo 기능 구현
-     */
-    setScrollHandlerPosition: function() {},
 
     /**
      * 소멸자

@@ -5,7 +5,7 @@
 'use strict';
 
 var Renderer = require('./renderer');
-var util = require('../util');
+var util = require('../common/util');
 
 /**
  *  View 에서 Rendering 시 사용할 객체

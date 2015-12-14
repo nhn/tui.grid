@@ -5,7 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
-var util = require('../util');
+var util = require('../common/util');
 
 /**
  * Row Model

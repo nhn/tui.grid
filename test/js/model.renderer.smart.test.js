@@ -4,7 +4,7 @@ var ColumnModelData = require('../../src/js/data/columnModel');
 var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 var SmartRenderer = require('../../src/js/model/renderer-smart');
-var util = require('../../src/js/util');
+var util = require('../../src/js/common/util');
 
 describe('model.renderer', function() {
     var columnModelList = [

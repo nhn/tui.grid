@@ -5,7 +5,7 @@
 'use strict';
 
 var Painter = require('../../base/painter');
-var util = require('../../util');
+var util = require('../../common/util');
 
 /**
  * Cell Painter Base

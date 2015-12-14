@@ -1,6 +1,6 @@
 'use strict';
 
-var util = require('../../src/js/util');
+var util = require('../../src/js/common/util');
 
 describe('core.util', function() {
     beforeEach(function() {
