@@ -46,12 +46,7 @@ var defaultOptions = {
         hasResizeHandler: true,
         hasControlPanel: true,
         hasPagination: true
-    },
-
-    // computed values for dimension
-    offsetTop: 0,
-    offsetLeft: 0,
-    width: 0
+    }
 };
 
 /**
@@ -68,6 +63,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         options = $.extend(true, {}, defaultOptions, options);
 
         this.publicInstance = options.publicInstance;
+        this.domState = options.domState;
         this.singleClickEdit = options.singleClickEdit;
         this.emptyMessage = options.emptyMessage;
 
@@ -80,7 +76,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.cellFactory = new CellFactory({
             grid: this
         });
-        // this.updateLayoutData();
     },
 
     /**
@@ -107,6 +102,8 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      * @private
      */
     _initializeModel: function(options) {
+        var offset = this.domState.getOffset();
+
         this.columnModel = new ColumnModelData({
             grid: this,
             hasNumberColumn: options.autoNumbering,
@@ -127,9 +124,9 @@ var Core = Model.extend(/**@lends module:core.prototype */{
 
         this.dimensionModel = new DimensionModel({
             grid: this,
-            offsetTop: options.offsetTop,
-            offsetLeft: options.offsetLeft,
-            width: options.width,
+            offsetTop: offset.top,
+            offsetLeft: offset.left,
+            width: this.domState.getWidth(),
             headerHeight: options.headerHeight,
             rowHeight: options.rowHeight,
 
@@ -195,7 +192,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     refreshFocusState: function() {
         var focusModel = this.focusModel;
 
-        if (!this.controller.hasFocusedElement) {
+        if (!this.domState.hasFocusedElement()) {
             focusModel.blur();
         } else if (!focusModel.has() && !focusModel.restore()) {
             this.focusAt(0, 0);
@@ -206,7 +203,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        this.controller.focusClipboard();
+        this.focusModel.trigger('focusClipboard');
     },
 
     /**
@@ -283,7 +280,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         var isLside = this.columnModel.isLside(columnName);
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
-        return this.controller.getElement(rowKey, columnName, isLside);
+        return this.domState.getElement(rowKey, columnName, isLside);
     },
 
     /**
@@ -684,21 +681,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * Grid Layer 를 모두 감춘다.
-     */
-    hideGridLayer: function() {
-        this.controller.hideGridLayer();
-    },
-
-    /**
-     * name 에 해당하는 Grid Layer를 보여준다.
-     * @param {String} name ready|empty|loading 중 하나를 설정한다.
-     */
-    showGridLayer: function(name) {
-        this.controller.showGridLayer(name);
-    },
-
-    /**
      * addon 을 활성화한다.
      * @param {string} name addon 이름
      * @param {object} options addon 에 넘길 파라미터
@@ -836,7 +818,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             startIdx = this._getStartIndexToPaste(),
             endIdx = this._getEndIndexToPaste(startIdx, data, columnModelList);
 
-        // console.log('startIdx', startIdx, 'endIdx', endIdx);
         _.each(data, function(row, index) {
             this._setValueForPaste(row, startIdx.row + index, startIdx.column, endIdx.column);
         }, this);
@@ -891,7 +872,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         if (!row) {
             row = this.dataModel.append({})[0];
         }
-        // console.log('columnModel', this.columnModel.get('dataColumnModelList'));
         for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
             columnName = this.columnModel.at(columnIdx, true).columnName;
             cellState = row.getCellState(columnName);
@@ -901,7 +881,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
                 attributes[columnName] = rowData[columnIdx - columnStartIdx];
             }
         }
-        // console.log('attributes', attributes);
         row.set(attributes);
     },
 
@@ -979,25 +958,19 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      * @param {(number|null)} height - Height
      */
     setSize: function(width, height) {
-        if (width > 0) {
-            this.controller.setWidth(width);
-        }
-        if (height > 0) {
-            this.dimensionModel.setHeight(height);
-        }
-        this.updateLayoutData();
+        this.dimensionModel.setSize(width, height);
     },
 
     /**
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      */
     updateLayoutData: function() {
-        var offset = this.controller.getOffset();
+        var offset = this.domState.getOffset();
 
         this.dimensionModel.set({
             offsetTop: offset.top,
             offsetLeft: offset.left,
-            width: this.controller.getWidth()
+            width: this.domState.getWidth()
         });
     },
 
@@ -1014,10 +987,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             }
             this[property] = null;
         }, this);
-    },
-
-    setController: function(controller) {
-        this.controller = controller;
     }
 });
 

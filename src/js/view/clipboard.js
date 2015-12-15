@@ -23,6 +23,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
+        this.listenTo(this.grid.focusModel, 'focusClipboard', this._onFocus);
     },
 
     tagName: 'textarea',
@@ -49,7 +50,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * Focus on the clipboard element and restore the focusModel.
      */
-    focus: function() {
+    _onFocus: function() {
         if (!this.$el.is(':focus')) {
             this.$el.focus();
             this.grid.refreshFocusState();

@@ -802,9 +802,32 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * (Resets the bodyHeight and displayRowCount relative to the dimension height)
      * @param  {number} height - The height of the dimension
      */
-    setHeight: function(height) {
+    _setHeight: function(height) {
         this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
         this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
+    },
+
+    /**
+     * Sets the width and height of the dimension.
+     * @param {(Number|Null)} width - Width
+     * @param {(Number|Null)} height - Height
+     */
+    setSize: function(width, height) {
+        if (width > 0) {
+            this.set('width', width);
+        }
+        if (height > 0) {
+            this._setHeight(height);
+        }
+        this.trigger('setSize');
+    },
+
+    /**
+     * Returns the height of the dimension.
+     * @return {Number} Height
+     */
+    getHeight: function() {
+        return this.get('bodyHeight') + this.get('headerHeight') + this.get('toolbarHeight');
     },
 
     /**

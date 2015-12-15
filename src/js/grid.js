@@ -256,7 +256,7 @@
 var View = require('./base/view');
 var Core = require('./core');
 var ContainerView = require('./view/container');
-var Controller = require('./controller');
+var DomState = require('./domState');
 
 var instanceMap = {};
 
@@ -272,17 +272,19 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options for the constructor
      */
     initialize: function(options) {
-        var core, container, controller, coreOptions;
+        var core, container, domState, coreOptions;
 
         core = this._createCore(options);
         container = this._createContainerView(core);
-        controller = new Controller(container);
 
         this.core = core;
         instanceMap[core.id] = core;
-        this.listenTo(core, 'all', this._relayEvent, this);
 
-        core.setController(controller);
+        // events
+        this.listenTo(core, 'all', this._relayEvent, this);
+        $(window).on('resize', $.proxy(this.refreshLayout, this));
+
+        // render
         container.render();
         core.updateLayoutData();
     },
@@ -290,9 +292,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     _createCore: function(options) {
         var coreOptions = _.assign({}, options, {
             publicInstance: this,
-            offsetTop: this.$el.offset().top,
-            offsetLeft: this.$el.offset().left,
-            width: this.$el.width()
+            domState: new DomState(this.$el)
         });
         coreOptions.el = null;
 

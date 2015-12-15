@@ -1,5 +1,5 @@
 /**
- * @fileoverview The View class that conaints a top element of the DOM structure for the grid.
+ * @fileoverview View class that conaints a top element of the DOM structure for the grid.
  * @author NHN Ent. FE Development Team
  */
  'use strict';
@@ -27,9 +27,9 @@ var Container = View.extend(/**@lends module:container.prototype */{
 
         this.children = {};
 
-        this._initializeListener();
-        this._initializeView();
-        this._attachExtraEvent();
+        this._createChildViews();
+        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._setHeight);
+        this.listenTo(this.grid.dimensionModel, 'setSize', this._onSetSize);
 
         this.__$el = this.$el.clone();
     },
@@ -50,7 +50,7 @@ var Container = View.extend(/**@lends module:container.prototype */{
      * 내부에서 사용할 view 인스턴스들을 초기화한다.
      * @private
      */
-    _initializeView: function() {
+    _createChildViews: function() {
         this.children.lside = this.createView(LsideFrame, {
             grid: this.grid
         });
@@ -63,29 +63,13 @@ var Container = View.extend(/**@lends module:container.prototype */{
             grid: this.grid
         });
 
-        this.children.layer = this.createView(StateLayer, {
+        this.children.stateLayer = this.createView(StateLayer, {
             grid: this.grid
         });
 
         this.children.clipboard = this.createView(Clipboard, {
             grid: this.grid
         });
-    },
-
-    /**
-     * 커스텀 이벤트 리스너를 초기화한다.
-     * @private
-     */
-    _initializeListener: function() {
-        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._setHeight)
-    },
-
-    /**
-     * event 속성에 정의되지 않은 이벤트 attach 한다.
-     * @private
-     */
-    _attachExtraEvent: function() {
-        $(window).on('resize', $.proxy(this._onWindowResize, this));
     },
 
     /**
@@ -98,13 +82,10 @@ var Container = View.extend(/**@lends module:container.prototype */{
     },
 
     /**
-     * window resize  이벤트 핸들러
-     * @private
+     * Event handler for 'setSize' event on Dimension
      */
-    _onWindowResize: function() {
-        if (this.$el) {
-            this.grid.dimensionModel.set('width', this.$el.width());
-        }
+    _onSetSize: function() {
+        this.$el.width(this.grid.dimensionModel.get('width'));
     },
 
     /**
@@ -252,12 +233,7 @@ var Container = View.extend(/**@lends module:container.prototype */{
      * @private
      */
     _setHeight: function() {
-        var bodyHeight = this.grid.dimensionModel.get('bodyHeight'),
-            headerHeight = this.grid.dimensionModel.get('headerHeight'),
-            toolbarHeight = this.grid.dimensionModel.get('toolbarHeight'),
-            height = toolbarHeight + headerHeight + bodyHeight;
-
-        this.$el.css('height', height);
+        this.$el.height(this.grid.dimensionModel.getHeight());
     },
 
     /**
@@ -267,16 +243,15 @@ var Container = View.extend(/**@lends module:container.prototype */{
         var leftLine = $('<div>').addClass('left_line'),
             rightLine = $('<div>').addClass('right_line');
 
-        this.$el
-            .addClass('grid_wrapper uio_grid')
+        this.$el.addClass('grid_wrapper uio_grid')
             .attr('instanceId', this.grid.id)
-            .append(this.children.layer.render().el)
+            .append(this.children.stateLayer.render().el)
             .append(this.children.lside.render().el)
             .append(this.children.rside.render().el)
             .append(this.children.toolbar.render().el)
+            .append(this.children.clipboard.render().el)
             .append(leftLine)
-            .append(rightLine)
-            .append(this.children.clipboard.render().el);
+            .append(rightLine);
 
         this._setHeight();
         this.grid.trigger('rendered');
