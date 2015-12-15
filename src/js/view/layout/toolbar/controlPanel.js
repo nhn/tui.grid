@@ -25,7 +25,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         });
 
         this.listenTo(this.grid.toolbarModel,
-            'change:isExcelButtonVisible, change:isExcelAllButtonVisible', this.render)
+            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render)
     },
 
     events: {
@@ -81,7 +81,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         if (toolbarModel.get('isExcelAllButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
                 className: 'excel_all',
-                text: '전체엑셀 다운로드'
+                text: '전체 엑셀 다운로드'
             }));
         }
         return this;
