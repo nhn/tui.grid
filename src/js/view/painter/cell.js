@@ -6,7 +6,7 @@
 
 var Painter = require('../../base/painter');
 var util = require('../../common/util');
-var keyNameMap = require('../../common/keyConst').keyName;
+var keyNameMap = require('../../common/constMap').keyName;
 
 /**
  * Cell Painter Base

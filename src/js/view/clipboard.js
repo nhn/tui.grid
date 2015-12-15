@@ -6,7 +6,7 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
-var keyCodeMap = require('../common/keyConst').keyCode;
+var keyCodeMap = require('../common/constMap').keyCode;
 
 /**
  * Clipboard view class

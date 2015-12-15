@@ -53,8 +53,9 @@ var grid = new tui.Grid({
 	]
 });
 
-// var rowList = [];
-//
+var rowList = [];
+
+
 // (function() {
 // 	_.times(5, function(number) {
 // 	    rowList.push({
@@ -76,7 +77,7 @@ grid.use('Net', {
 		readData: '/sample',
 		downloadExcel: '/download/excel',
 		downloadExcelAll: '/download/excelAll',
-		updateData: '/update'
+		// updateData: '/update'
 	}
 });
 var net = grid.getAddOn('Net');

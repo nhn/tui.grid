@@ -279,8 +279,6 @@ var Container = View.extend(/**@lends module:container.prototype */{
             .append(this.children.clipboard.render().el);
 
         this._setHeight();
-
-        this.grid.renderModel.set('state', 'EMPTY');
         this.grid.trigger('rendered');
     },
 

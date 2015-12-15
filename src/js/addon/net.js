@@ -9,6 +9,8 @@ var Router = require('./net-router');
 var util = require('../common/util');
 var formUtil = require('../common/formUtil');
 
+var renderStateMap = require('../common/constMap').renderState;
+
 /**
  * Net Addon
  * @module addon/net
@@ -259,7 +261,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _lock: function() {
-        this.grid.showGridLayer('loading');
+        this.grid.renderModel.set('state', renderStateMap.LOADING);
         this.isLocked = true;
     },
 
@@ -707,7 +709,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             requestParameter: options.data,
             responseData: null
         });
-        this.grid.renderModel.set('state', 'DONE');
+        this.grid.renderModel.set('state', renderStateMap.DONE);
 
         this.grid.trigger('response', eventData);
         if (eventData.isStopped()) {

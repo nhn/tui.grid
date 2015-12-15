@@ -6,22 +6,20 @@
 
 var Model = require('./base/model');
 
-// data models
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
-
-// models
 var ToolbarModel = require('./model/toolbar');
 var DimensionModel = require('./model/dimension');
 var FocusModel = require('./model/focus');
 var RenderModel = require('./model/renderer');
 var SmartRenderModel = require('./model/renderer-smart');
 var SelectionModel = require('./model/selection');
-
 var CellFactory = require('./view/cellFactory');
 
 var Net = require('./addon/net');
 var util = require('./common/util');
+
+var renderStateMap = require('./common/constMap').renderState;
 
 var addOn = {
     Net: Net
@@ -380,7 +378,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
                 parse: isParse
             });
         }, this);
-        this.renderModel.set('state', 'LOADING');
+        this.renderModel.set('state', renderStateMap.LOADING);
         isParse = isParse === undefined ? true : isParse;
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
@@ -407,7 +405,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
                 callback();
             }
         }, this);
-        this.renderModel.set('state', 'LOADING');
+        this.renderModel.set('state', renderStateMap.LOADING);
         isParse = isParse === undefined ? true : isParse;
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {

@@ -5,17 +5,16 @@
 'use strict';
 
 var View = require('../base/view');
+var renderStateMap = require('../common/constMap').renderState;
 
-var message = {
-    LOADING: '요청을 처리 중입니다.',
-    EMPTY: '데이터가 존재하지 않습니다.'
-};
+var MSG_LOADING = '요청을 처리 중입니다.',
+    MSG_EMPTY = '데이터가 존재하지 않습니다.';
 
 /**
- * Base class for layers
- * @module view/layer
+ * Layer class that represents the state of rendering phase.
+ * @module view/stateLayer
  */
-var StateLayer = View.extend(/**@lends module:view/layer.prototype */{
+var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     /**
      * @constructs
      * @extends module:base/view
@@ -39,19 +38,18 @@ var StateLayer = View.extend(/**@lends module:view/layer.prototype */{
     ),
 
     /**
-     * 랜더링 한다.
-     * @param {String} text 레이어에 노출할 text
-     * @return {View.Layer.Base} this object
+     * Render
+     * @return {object} This object
      */
-    render: function(text) {
+    render: function() {
         var renderState = this.grid.renderModel.get('state');
 
-        if (renderState === 'DONE') {
+        if (renderState === renderStateMap.DONE) {
             this.$el.hide();
         } else {
             this.$el.html(this.template({
-                text: message[renderState],
-                isLoading: (renderState === 'LOADING')
+                text: this._getMessage(renderState),
+                isLoading: (renderState === renderStateMap.LOADING)
             })).show();
             this._resize();
         }
@@ -59,7 +57,23 @@ var StateLayer = View.extend(/**@lends module:view/layer.prototype */{
     },
 
     /**
-     * 그리드의 크기에 맞추어 resize 한다.
+     * Returns the message based on the renderState value
+     * @param  {string} renderState - Renderer.state value
+     * @return {string} - Message
+     */
+    _getMessage: function(renderState) {
+        switch (renderState) {
+            case renderStateMap.LOADING:
+                return MSG_LOADING;
+            case renderStateMap.EMPTY:
+                return MSG_EMPTY;
+            default:
+                return null;
+        }
+    },
+
+    /**
+     * Sets the marginTop and height value.
      * @private
      */
     _resize: function() {
