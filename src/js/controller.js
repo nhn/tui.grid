@@ -29,17 +29,6 @@ var Controller = tui.util.defineClass({
     },
 
     /**
-     * pagination instance 를 반환한다.
-     * @return {instance} pagination 인스턴스
-     */
-    getPaginationInstance: function() {
-        var paginationView = this.container.children.toolbar.pagination;
-        if (paginationView) {
-            return paginationView.instance;
-        }
-    },
-
-    /**
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
@@ -74,14 +63,6 @@ var Controller = tui.util.defineClass({
 
     hasFocusedElement: function() {
         return !!this.container.$el.find(':focus').length;
-    },
-
-    showExcelButton: function() {
-        this.container.children.toolbar.controlPanel.$btnExcel.show();
-    },
-
-    showExcelAllButton: function() {
-        this.container.children.toolbar.controlPanel.$btnExcelAll.show();
     }
 });
 

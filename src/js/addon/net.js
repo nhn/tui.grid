@@ -112,7 +112,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             enableAjaxHistory: true
         };
         options = $.extend(true, defaultOptions, attributes); // deep extend
-        pagination = this.grid.getPaginationInstance();
+        pagination = this.grid.toolbarModel.get('pagination');
 
         this.setOwnProperties({
             curPage: 1,
@@ -181,18 +181,18 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
      */
     _showToolbarExcelBtns: function() {
-        var controller = this.grid.controller,
+        var toolbarModel = this.grid.toolbarModel,
             api = this.options.api;
 
-        if (!controller) {
+        if (!toolbarModel) {
             return;
         }
 
         if (api.downloadExcel) {
-            controller.showExcelButton();
+            toolbarModel.set('isExcelButtonVisible', true);
         }
         if (api.downloadExcelAll) {
-            controller.showExcelAllButton();
+            toolbarModel.set('isExcelAllButtonVisible', true);
         }
     },
 

@@ -76,9 +76,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         displayRowCount: 1,
         scrollBarSize: 17,
         scrollX: true,
-        scrollY: true,
-
-        toolbarOptions: null
+        scrollY: true
     },
 
     /**
@@ -131,8 +129,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Sets the toolbar height to 0 if the toolbar option has no value.
      */
     _initToolbarHeight: function() {
-        var option = this.get('toolbarOptions');
-        if (!option || (!option.hasPagination && !option.hasControlPanel && !option.hasResizeHandler)) {
+        if (!this.grid.toolbarModel.isVisible()) {
             this.set('toolbarHeight', 0);
         }
     },

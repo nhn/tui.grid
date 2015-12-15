@@ -20,11 +20,6 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      */
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
-            controlPanel: null,
-            resizeHandler: null,
-            pagination: null
-        });
     },
 
     tagName: 'div',
@@ -36,47 +31,42 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * @return {View.Layout.Toolbar} this object
      */
     render: function() {
-        var option = this.grid.dimensionModel.get('toolbarOptions'),
-            toolbarHeight = this.grid.dimensionModel.get('toolbarHeight'),
+        var toolbarModel = this.grid.toolbarModel,
             resizeHandler, controlPanel, pagination;
 
         this.destroyChildren();
         this.$el.empty();
 
-        if (option) {
-            if (option.hasControlPanel) {
-                controlPanel = this.createView(ControlPanel, {
-                    grid: this.grid
-                });
-                this.$el.append(controlPanel.render().el);
-            }
-
-            if (option.hasResizeHandler) {
-                resizeHandler = this.createView(ResizeHandler, {
-                    grid: this.grid
-                });
-                this.$el.append(resizeHandler.render().el);
-            }
-
-            if (option.hasPagination) {
-                pagination = this.createView(Pagination, {
-                    grid: this.grid
-                });
-                this.$el.append(pagination.render().el);
-            }
-        }
-        this.setOwnProperties({
-            controlPanel: controlPanel,
-            resizeHandler: resizeHandler,
-            pagination: pagination
-        });
-
-        this.$el.height(toolbarHeight);
-        if (toolbarHeight) {
-            this.$el.show();
+        if (toolbarModel.get('hasControlPanel')) {
+            controlPanel = this.createView(ControlPanel, {
+                grid: this.grid
+            });
+            this.$el.append(controlPanel.render().el);
         }
 
+        if (toolbarModel.get('hasResizeHandler')) {
+            resizeHandler = this.createView(ResizeHandler, {
+                grid: this.grid
+            });
+            this.$el.append(resizeHandler.render().el);
+        }
+
+        if (toolbarModel.get('hasPagination')) {
+            pagination = this.createView(Pagination, {
+                grid: this.grid
+            });
+            this.$el.append(pagination.render().el);
+        }
+
+        this._refreshHeight();
         return this;
+    },
+
+    _refreshHeight: function() {
+        var height = this.grid.dimensionModel.get('toolbarHeight');
+
+        this.$el.height(height);
+        this.$el.toggle(!!height);
     }
 });
 

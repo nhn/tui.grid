@@ -11,6 +11,7 @@ var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
 
 // models
+var ToolbarModel = require('./model/toolbar');
 var DimensionModel = require('./model/dimension');
 var FocusModel = require('./model/focus');
 var RenderModel = require('./model/renderer');
@@ -49,7 +50,7 @@ var defaultOptions = {
         hasPagination: true
     },
 
-    // computed dimension values
+    // computed values for dimension
     offsetTop: 0,
     offsetLeft: 0,
     width: 0
@@ -124,6 +125,8 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         });
         this.dataModel.reset([]);
 
+        this.toolbarModel = new ToolbarModel(options.toolbar);
+
         this.dimensionModel = new DimensionModel({
             grid: this,
             offsetTop: options.offsetTop,
@@ -137,8 +140,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             scrollBarSize: this.scrollBarSize,
 
             minimumColumnWidth: options.minimumColumnWidth,
-            displayRowCount: options.displayRowCount,
-            toolbarOptions: options.toolbar
+            displayRowCount: options.displayRowCount
         });
 
         this.focusModel = new FocusModel({
@@ -697,15 +699,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     showGridLayer: function(name) {
         this.controller.showGridLayer(name);
     },
-
-    /**
-     * pagination instance 를 반환한다.
-     * @return {instance} pagination 인스턴스
-     */
-    getPaginationInstance: function() {
-        return this.controller.getPaginationInstance();
-    },
-
 
     /**
      * addon 을 활성화한다.
