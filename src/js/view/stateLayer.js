@@ -7,9 +7,6 @@
 var View = require('../base/view');
 var renderStateMap = require('../common/constMap').renderState;
 
-var MSG_LOADING = '요청을 처리 중입니다.',
-    MSG_EMPTY = '데이터가 존재하지 않습니다.';
-
 /**
  * Layer class that represents the state of rendering phase.
  * @module view/stateLayer
@@ -22,7 +19,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     initialize: function() {
         View.prototype.initialize.apply(this, arguments);
 
-        this.listenTo(this.grid.dimensionModel, 'change', this._resize);
+        this.listenTo(this.grid.dimensionModel, 'change', this._refreshLayout);
         this.listenTo(this.grid.renderModel, 'change:state', this.render);
     },
 
@@ -51,7 +48,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
                 text: this._getMessage(renderState),
                 isLoading: (renderState === renderStateMap.LOADING)
             })).show();
-            this._resize();
+            this._refreshLayout();
         }
         return this;
     },
@@ -64,9 +61,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     _getMessage: function(renderState) {
         switch (renderState) {
             case renderStateMap.LOADING:
-                return MSG_LOADING;
+                return '요청을 처리 중입니다.';
             case renderStateMap.EMPTY:
-                return MSG_EMPTY;
+                return '데이터가 존재하지 않습니다.';
             default:
                 return null;
         }
@@ -76,7 +73,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      * Sets the marginTop and height value.
      * @private
      */
-    _resize: function() {
+    _refreshLayout: function() {
         var dimensionModel = this.grid.dimensionModel;
 
         this.$el.css({

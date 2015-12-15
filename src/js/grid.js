@@ -272,7 +272,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options for the constructor
      */
     initialize: function(options) {
-        var core, container, domState, coreOptions;
+        var core, container, domState;
 
         core = this._createCore(options);
         container = this._createContainerView(core);
@@ -289,6 +289,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         core.updateLayoutData();
     },
 
+    /**
+     * Creates core model and returns it.
+     * @param {Object} options - Options from user setting
+     * @return {Core} - New core object
+     */
     _createCore: function(options) {
         var coreOptions = _.assign({}, options, {
             publicInstance: this,
@@ -299,6 +304,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new Core(coreOptions);
     },
 
+    /**
+     * Creates container view and returns it.
+     * @param {Core} - core
+     * @return {ContainerView} - New container view
+     */
     _createContainerView: function(core) {
         return new ContainerView({
             grid: core,

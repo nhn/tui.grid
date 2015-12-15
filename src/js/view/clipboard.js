@@ -48,7 +48,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
-     * Focus on the clipboard element and restore the focusModel.
+     * Event handler for focus event
+     * @private
      */
     _onFocus: function() {
         if (!this.$el.is(':focus')) {

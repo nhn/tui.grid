@@ -34,6 +34,10 @@ var Toolbar = Model.extend(/**@lends module:model/row.prototype */{
         pagination: null
     },
 
+    /**
+     * Returns whether the toolbar is visible
+     * @return {Boolean} True if the toolbar is visible
+     */
     isVisible: function() {
         return this.get('hasControlPanel') || this.get('hasPagination') || this.get('hasResizeHandler');
     }
