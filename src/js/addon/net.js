@@ -707,7 +707,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             requestParameter: options.data,
             responseData: null
         });
-        this.grid.hideGridLayer();
+        this.grid.renderModel.set('state', 'DONE');
 
         this.grid.trigger('response', eventData);
         if (eventData.isStopped()) {

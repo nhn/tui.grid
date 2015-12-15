@@ -9,26 +9,6 @@ var Controller = tui.util.defineClass({
     },
 
     /**
-     * Grid Layer 를 모두 감춘다.
-     */
-    hideGridLayer: function() {
-        _.each(this.container.children.layer, function(view) {
-            view.hide();
-        }, this);
-    },
-
-    /**
-     * name 에 해당하는 Grid Layer를 보여준다.
-     * @param {String} name ready|empty|loading 중 하나를 설정한다.
-     */
-    showGridLayer: function(name) {
-        this.hideGridLayer();
-        if (this.container.children.layer[name]) {
-            this.container.children.layer[name].show();
-        }
-    },
-
-    /**
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {

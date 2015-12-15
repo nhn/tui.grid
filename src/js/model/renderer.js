@@ -55,7 +55,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         endIndex: 0,
         startNumber: 1,
         lside: null,
-        rside: null
+        rside: null,
+        state: 'INIT' // init, loading, done
     },
 
     /**
@@ -230,7 +231,16 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         } else {
             this.trigger('rowListChanged', isDataModelChanged);
         }
+        this._refreshState();
         this.trigger('refresh');
+    },
+
+    _refreshState: function() {
+        if (!this.grid.dataModel.length) {
+            this.set('state', 'EMPTY');
+        } else {
+            this.set('state', 'DONE');
+        }
     },
 
     /**

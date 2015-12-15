@@ -1,22 +1,4 @@
-.initializing_layer
-    width 100%
-    height 100%
-    font-weight bold
-    text-align center
-    border-top solid 1px #ccc
-    border-bottom solid 1px #ccc
-    position absolute
-    background #fff
-
-    div
-        margin-top 50px
-
-    img
-        display block
-        margin 10px auto 0
-
-$layer-common =
-    display none
+.state_layer
     position absolute
     box-sizing content-box // reset for bootstrap
     top 0
@@ -28,17 +10,7 @@ $layer-common =
     background #fff
     font-weight bold
     text-align center
-
-.no_row_layer
-    {$layer-common}
-
-.loading_layer
-    {$layer-common}
-    z-index 9
-
-    img
-        display block
-        margin 10px auto 0
+    z-index 10
 
     .loading_img
         display block

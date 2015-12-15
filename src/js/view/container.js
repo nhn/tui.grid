@@ -6,18 +6,11 @@
 
 var View = require('../base/view');
 
-// views
 var Clipboard = require('./clipboard');
-
-// layouts
 var LsideFrame = require('./layout/frame-lside');
 var RsideFrame = require('./layout/frame-rside');
 var ToolbarLayout = require('./layout/toolbar');
-
-// layers
-var ReadyLayer = require('./layer/ready');
-var EmptyLayer = require('./layer/empty');
-var LoadingLayer = require('./layer/loading');
+var StateLayer = require('./stateLayer');
 
 /**
  * Container View
@@ -37,20 +30,20 @@ var Container = View.extend(/**@lends module:container.prototype */{
         this._initializeListener();
         this._initializeView();
         this._attachExtraEvent();
-        // this.render();
 
         this.__$el = this.$el.clone();
-        // this.grid.updateLayoutData();
     },
 
     events: {
         'click': '_onClick',
         'dblclick': '_onDblClick',
         'mousedown': '_onMouseDown',
-        'selectstart': '_preventDrag',
-        'dragstart': '_preventDrag',
         'mouseover': '_onMouseOver',
-        'mouseout': '_onMouseOut'
+        'mouseout': '_onMouseOut',
+
+        // for preventing drag
+        'selectstart': '_preventDrag',
+        'dragstart': '_preventDrag'
     },
 
     /**
@@ -70,16 +63,7 @@ var Container = View.extend(/**@lends module:container.prototype */{
             grid: this.grid
         });
 
-        this.children.layer = {};
-        this.children.layer.ready = this.createView(ReadyLayer, {
-            grid: this.grid
-        });
-
-        this.children.layer.empty = this.createView(EmptyLayer, {
-            grid: this.grid
-        });
-
-        this.children.layer.loading = this.createView(LoadingLayer, {
+        this.children.layer = this.createView(StateLayer, {
             grid: this.grid
         });
 
@@ -283,23 +267,20 @@ var Container = View.extend(/**@lends module:container.prototype */{
         var leftLine = $('<div>').addClass('left_line'),
             rightLine = $('<div>').addClass('right_line');
 
-        this.$el.addClass('grid_wrapper')
-            .addClass('uio_grid')
+        this.$el
+            .addClass('grid_wrapper uio_grid')
             .attr('instanceId', this.grid.id)
-            .append(this.children.layer.empty.render().el)
-            .append(this.children.layer.loading.render().el)
-            .append(this.children.layer.ready.render().el);
-
-        this.children.layer.loading.show('초기화 중입니다.');
-
-        this.$el.append(this.children.lside.render().el)
+            .append(this.children.layer.render().el)
+            .append(this.children.lside.render().el)
             .append(this.children.rside.render().el)
             .append(this.children.toolbar.render().el)
             .append(leftLine)
             .append(rightLine)
             .append(this.children.clipboard.render().el);
+
         this._setHeight();
 
+        this.grid.renderModel.set('state', 'EMPTY');
         this.grid.trigger('rendered');
     },
 
