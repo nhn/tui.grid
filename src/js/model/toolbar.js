@@ -21,7 +21,7 @@ var Toolbar = Model.extend(/**@lends module:model/row.prototype */{
         Model.prototype.initialize.apply(this, arguments);
     },
 
-    defatuls: {
+    defaults: {
         hasControlPanel: false,
         hasPagination: false,
         hasResizeHandler: false,

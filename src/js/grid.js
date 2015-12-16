@@ -269,51 +269,50 @@ tui = window.tui = tui || {};
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Initializes the instance.
-     * @param {Object} options - Options for the constructor
+     * @param {Object} options - Options set by user
      */
     initialize: function(options) {
         var core, container, domState;
 
         core = this._createCore(options);
-        container = this._createContainerView(core);
+        container = this._createContainerView(options, core);
 
-        this.core = core;
-        instanceMap[core.id] = core;
-
-        // events
         this.listenTo(core, 'all', this._relayEvent, this);
-        $(window).on('resize', $.proxy(this.refreshLayout, this));
-
-        // render
         container.render();
         core.updateLayoutData();
+
+        this.core = core;
+        this.container = container;
+        instanceMap[core.id] = core;
     },
 
     /**
      * Creates core model and returns it.
-     * @param {Object} options - Options from user setting
+     * @param {Object} options - Options set by user
      * @return {Core} - New core object
      */
     _createCore: function(options) {
-        var coreOptions = _.assign({}, options, {
-            publicInstance: this,
-            domState: new DomState(this.$el)
-        });
-        coreOptions.el = null;
+        var coreOptions = _.assign({}, options),
+            domState = new DomState(this.$el);
 
-        return new Core(coreOptions);
+        _.omit(coreOptions, 'el', 'singleClickEdit');
+
+        return new Core(coreOptions, domState, this);
     },
 
     /**
      * Creates container view and returns it.
-     * @param {Core} - core
+     * @param {Core} core - Core object
+     * @param {Object} options - Options set by user
      * @return {ContainerView} - New container view
      */
-    _createContainerView: function(core) {
-        return new ContainerView({
-            grid: core,
-            el: this.$el
-        });
+    _createContainerView: function(options, core) {
+        var containerOptions = {
+            el: this.$el,
+            singleClickEdit: options.singleClickEdit
+        };
+
+        return new ContainerView(containerOptions, core);
     },
 
     /**
@@ -773,7 +772,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     destroy: function() {
         this.core.destroy();
-        this.core = null;
+        this.container.destroy();
+        this.core = this.container = null;
     }
 });
 

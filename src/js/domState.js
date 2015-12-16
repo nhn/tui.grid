@@ -15,7 +15,7 @@ var DomState = tui.util.defineClass({
      * @param {String} columnName - Column name
      * @return {jQuery} Cell(TD) element
      */
-    getElement: function(rowKey, columnName, isLside) {
+    getElement: function(rowKey, columnName) {
         return this.$el.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
     },
 

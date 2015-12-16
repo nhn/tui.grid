@@ -22,14 +22,17 @@ var Container = View.extend(/**@lends module:container.prototype */{
      * @extends module:base/view
      * @param {Object} options
      */
-    initialize: function(options) {
+    initialize: function(options, core) {
         View.prototype.initialize.apply(this, arguments);
 
-        this.children = {};
+        this.grid = core;
+        this.singleClickEdit = options.singleClickEdit;
 
         this._createChildViews();
+
         this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._setHeight);
         this.listenTo(this.grid.dimensionModel, 'setSize', this._onSetSize);
+        $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
         this.__$el = this.$el.clone();
     },
@@ -51,6 +54,8 @@ var Container = View.extend(/**@lends module:container.prototype */{
      * @private
      */
     _createChildViews: function() {
+        this.children = {};
+
         this.children.lside = this.createView(LsideFrame, {
             grid: this.grid
         });
@@ -70,6 +75,13 @@ var Container = View.extend(/**@lends module:container.prototype */{
         this.children.clipboard = this.createView(Clipboard, {
             grid: this.grid
         });
+    },
+
+    /**
+     * Event handler for resize event on window.
+     */
+    _onResizeWindow: function() {
+        this.grid.updateLayoutData();
     },
 
     /**
@@ -104,7 +116,7 @@ var Container = View.extend(/**@lends module:container.prototype */{
         }
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (this.grid.singleClickEdit && !$target.is('input')) {
+            if (this.singleClickEdit && !$target.is('input')) {
                 this.grid.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
@@ -262,6 +274,7 @@ var Container = View.extend(/**@lends module:container.prototype */{
      */
     destroy: function() {
         this.stopListening();
+        $(window).off('resize.grid');
         this.destroyChildren();
 
         this.$el.replaceWith(this.__$el);

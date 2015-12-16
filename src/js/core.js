@@ -58,13 +58,11 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      * @extends module:base/model
      * @param {Object} options Grid.js 의 생성자 option 과 동일값.
      */
-    initialize: function(options) {
+    initialize: function(options, domState, publicInstance) {
         options = $.extend(true, {}, defaultOptions, options);
 
-        this.publicInstance = options.publicInstance;
-        this.domState = options.domState;
-        this.singleClickEdit = options.singleClickEdit;
-
+        this.domState = domState;
+        this.publicInstance = publicInstance;
         this.id = util.getUniqueKey();
 
         this._initializeProperties();
@@ -274,10 +272,9 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      * @return {jQuery} 해당 jQuery Element
      */
     getElement: function(rowKey, columnName) {
-        var isLside = this.columnModel.isLside(columnName);
-        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        var rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
-        return this.domState.getElement(rowKey, columnName, isLside);
+        return this.domState.getElement(rowKey, columnName);
     },
 
     /**
