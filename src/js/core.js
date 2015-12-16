@@ -65,29 +65,14 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.publicInstance = publicInstance;
         this.id = util.getUniqueKey();
 
-        this._initializeProperties();
+        this.addOn = {};
+        this.timeoutIdForSetRowList = 0;
+
         this._initializeModel(options);
         this._initializeListener();
 
         this.cellFactory = new CellFactory({
             grid: this
-        });
-    },
-
-    /**
-     * 내부 properties 를 초기화한다.
-     * @private
-     */
-    _initializeProperties: function() {
-        this.setOwnProperties({
-            selectionModel: null,
-            columnModel: null,
-            dataModel: null,
-            renderModel: null,
-            layoutModel: null,
-            focusModel: null,
-            addOn: {},
-            timeoutIdForSetRowList: 0
         });
     },
 
