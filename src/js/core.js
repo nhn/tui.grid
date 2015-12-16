@@ -115,8 +115,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         });
         this.dataModel.reset([]);
 
-        this.toolbarModel = new ToolbarModel(options.toolbar);
-
         this.dimensionModel = new DimensionModel({
             grid: this,
             offsetTop: offset.top,
@@ -132,6 +130,11 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             minimumColumnWidth: options.minimumColumnWidth,
             displayRowCount: options.displayRowCount
         });
+
+        this.toolbarModel = new ToolbarModel(options.toolbar);
+        if (!this.toolbarModel.isVisible()) {
+            this.dimensionModel.set('toolbarHeight', 0);
+        }
 
         this.focusModel = new FocusModel({
             grid: this,

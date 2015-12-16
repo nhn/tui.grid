@@ -22,7 +22,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @extends module:base/model
      * @constructs
      */
-    initialize: function() {
+    initialize: function(options) {
         Model.prototype.initialize.apply(this, arguments);
 
         /**
@@ -47,7 +47,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
         this._initColumnWidthVariables();
-        this._initToolbarHeight();
         this._setBodyHeight();
     },
 
@@ -123,15 +122,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             totalBorderWidth = rowCount + 1;
 
         this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
-    },
-
-    /**
-     * Sets the toolbar height to 0 if the toolbar option has no value.
-     */
-    _initToolbarHeight: function() {
-        if (!this.grid.toolbarModel.isVisible()) {
-            this.set('toolbarHeight', 0);
-        }
     },
 
     /**
