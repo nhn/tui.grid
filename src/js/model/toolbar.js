@@ -1,5 +1,5 @@
 /**
- * @fileoverview Selection Model class
+ * @fileoverview Toolbar model class
  * @author NHN Ent. FE Development Team
  */
 'use strict';

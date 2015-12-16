@@ -63,7 +63,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
             case renderStateMap.LOADING:
                 return '요청을 처리 중입니다.';
             case renderStateMap.EMPTY:
-                return '데이터가 존재하지 않습니다.';
+                return (this.grid.renderModel.get('emptyMessage') || '데이터가 존재하지 않습니다.');
             default:
                 return null;
         }

@@ -58,6 +58,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         lside: null,
         rside: null,
 
+        // text that will be shown if no data to render (custom value set by user)
+        emptyMessage: null,
+
         // constMap.renderState
         state: renderStateMap.EMPTY
     },

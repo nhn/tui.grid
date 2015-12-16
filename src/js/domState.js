@@ -10,7 +10,7 @@ var DomState = tui.util.defineClass({
     },
 
     /**
-     * Returns the Element of the table-cell identified by rowKey and columnName
+     * Returns the element of the table-cell identified by rowKey and columnName
      * @param {(Number|String)} rowKey - Row key
      * @param {String} columnName - Column name
      * @return {jQuery} Cell(TD) element
@@ -20,7 +20,7 @@ var DomState = tui.util.defineClass({
     },
 
     /**
-     * Returns the offset of Container element
+     * Returns the offset of the container element
      * @return {{top: Number, left: Number} Offset object
      */
     getOffset: function() {

@@ -26,7 +26,6 @@ var addOn = {
 };
 
 var defaultOptions = {
-    // user setting values
     columnFixCount: 0,
     columnModelList: [],
     keyColumnName: null,
@@ -65,7 +64,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.publicInstance = options.publicInstance;
         this.domState = options.domState;
         this.singleClickEdit = options.singleClickEdit;
-        this.emptyMessage = options.emptyMessage;
 
         this.id = util.getUniqueKey();
 
@@ -84,25 +82,24 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      */
     _initializeProperties: function() {
         this.setOwnProperties({
-            'selectionModel': null,
-            'columnModel': null,
-            'dataModel': null,
-            'renderModel': null,
-            'layoutModel': null,
-            'focusModel': null,
-            'addOn': {},
-            'timeoutIdForSetRowList': 0
+            selectionModel: null,
+            columnModel: null,
+            dataModel: null,
+            renderModel: null,
+            layoutModel: null,
+            focusModel: null,
+            addOn: {},
+            timeoutIdForSetRowList: 0
         });
     },
 
     /**
-     * 내부에서 사용할 모델 instance를 초기화한다.
-     *
-     * Initialize data model instances
+     * Initialize model instances
      * @private
      */
     _initializeModel: function(options) {
-        var offset = this.domState.getOffset();
+        var offset = this.domState.getOffset(),
+            renderOptions;
 
         this.columnModel = new ColumnModelData({
             grid: this,
@@ -149,14 +146,14 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             grid: this
         });
 
+        renderOptions = {
+            grid: this,
+            emptyMessage: options.emptyMessage
+        };
         if (options.notUseSmartRendering) {
-            this.renderModel = new RenderModel({
-                grid: this
-            });
+            this.renderModel = new RenderModel(renderOptions);
         } else {
-            this.renderModel = new SmartRenderModel({
-                grid: this
-            });
+            this.renderModel = new SmartRenderModel(renderOptions);
         }
     },
 
