@@ -23,15 +23,7 @@ describe('view.painter.cell.normal', function() {
                 13: 'ENTER',
                 37: 'LEFT_ARROW'
             },
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
             focusIn: function() {},
-            setValue: function() {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
@@ -315,9 +307,9 @@ describe('view.painter.cell.normal', function() {
                 var changeEvent = {
                     target: $button.get(0)
                 };
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
                 cellPainter._onChange(changeEvent);
-                expect(grid.setValue).toHaveBeenCalledWith('0', '_button', $button.prop('checked'));
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', '_button', $button.prop('checked'));
             });
         });
 

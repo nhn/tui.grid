@@ -525,6 +525,154 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     },
 
     /**
+     * rowKey 와 columnName 에 해당하는 값을 반환한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {String} columnName   컬럼 이름
+     * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
+     * @return {(Number|String|undefined)}    조회한 셀의 값.
+     */
+    getValue: function(rowKey, columnName, isOriginal) {
+        var value, row;
+
+        if (isOriginal) {
+            value = this.getOriginal(rowKey, columnName);
+        } else {
+            row = this.get(rowKey);
+            value = row && row.get(columnName);
+        }
+        return value;
+    },
+
+    /**
+     * Sets the vlaue of the cell identified by the specified rowKey and columnName.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {String} columnName   컬럼 이름
+     * @param {(Number|String)} columnValue 할당될 값
+     * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+     * @returns {Boolean} True if affected row is exist
+     */
+    setValue: function(rowKey, columnName, columnValue, silent) {
+        var row = this.get(rowKey),
+            obj = {},
+            result;
+
+        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
+        if (row) {
+            obj[columnName] = columnValue;
+            row.set(obj, {
+                silent: silent
+            });
+            result = true;
+        } else {
+            result = false;
+        }
+
+        return result;
+    },
+
+    /**
+     * columnName에 해당하는 column data list를 리턴한다.
+     * @param {String} columnName   컬럼명
+     * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+     * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
+     */
+    getColumnValues: function(columnName, isJsonString) {
+        var valueList = this.pluck(columnName);
+        return isJsonString ? $.toJSON(valueList) : valueList;
+    },
+
+    /**
+     * columnName 에 해당하는 값을 전부 변경한다.
+     * @param {String} columnName 컬럼명
+     * @param {(Number|String)} columnValue 변경할 컬럼 값
+     * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
+     * @param {Boolean} [silent=false] change 이벤트 trigger 할지 여부.
+     */
+    setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
+        var obj = {},
+            cellState = {
+                isDisabled: false,
+                isEditable: true
+            };
+
+        obj[columnName] = columnValue;
+        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+
+        this.forEach(function(row) {
+            if (isCheckCellState) {
+                cellState = row.getCellState(columnName);
+            }
+            if (!cellState.isDisabled && cellState.isEditable) {
+                row.set(obj, {
+                    silent: silent
+                });
+            }
+        }, this);
+    },
+
+    /**
+     * rowKey에 해당하는 행을 활성화시킨다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     */
+    enableRow: function(rowKey) {
+        this.get(rowKey).setRowState('');
+    },
+
+    /**
+     * rowKey에 해당하는 행을 비활성화 시킨다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     */
+    disableRow: function(rowKey) {
+        this.get(rowKey).setRowState('DISABLED');
+    },
+
+    /**
+     * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     */
+    enableCheck: function(rowKey) {
+        this.get(rowKey).setRowState('');
+    },
+
+    /**
+     * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     */
+    disableCheck: function(rowKey) {
+        this.get(rowKey).setRowState('DISABLED_CHECK');
+    },
+
+    /**
+     * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     */
+    check: function(rowKey) {
+        this.setValue(rowKey, '_button', true);
+    },
+
+    /**
+     * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     */
+    uncheck: function(rowKey) {
+        this.setValue(rowKey, '_button', false);
+    },
+
+    /**
+     * 전체 행을 선택한다.
+     */
+    checkAll: function() {
+        this.setColumnValues('_button', true);
+    },
+
+    /**
+     * 모든 행을 선택 해제 한다.
+     */
+    uncheckAll: function() {
+        this.setColumnValues('_button', false);
+    },
+
+    /**
      * 주어진 데이터로 모델 목록을 생성하여 반환한다.
      * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
      * @return {Row[]} 생성된 모델 목록

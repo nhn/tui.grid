@@ -63,7 +63,7 @@ describe('grid.core.paste()', function() {
         it('단일 데이터 붙여넣기', function() {
             grid.focus(2, 'c2');
             grid.paste([['New2-2']]);
-            expect(grid.getValue(2, 'c2')).toBe('New2-2');
+            expect(grid.dataModel.getValue(2, 'c2')).toBe('New2-2');
         });
 
         it('2 x 2 배열 붙여넣기', function() {
@@ -72,16 +72,16 @@ describe('grid.core.paste()', function() {
                 ['New1-1', 'New1-2'],
                 ['New2-1', 'New2-2']
             ]);
-            expect(grid.getValue(1, 'c1')).toBe('New1-1');
-            expect(grid.getValue(1, 'c2')).toBe('New1-2');
-            expect(grid.getValue(2, 'c1')).toBe('New2-1');
-            expect(grid.getValue(2, 'c2')).toBe('New2-2');
+            expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
+            expect(grid.dataModel.getValue(1, 'c2')).toBe('New1-2');
+            expect(grid.dataModel.getValue(2, 'c1')).toBe('New2-1');
+            expect(grid.dataModel.getValue(2, 'c2')).toBe('New2-2');
         });
 
         it('컬럼 범위를 넘어가는 값은 무시한다.', function() {
             grid.focus(2, 'c3');
             grid.paste([['New2-3', 'New2-4', 'New2-5']]);
-            expect(grid.getValue(2, 'c3')).toBe('New2-3');
+            expect(grid.dataModel.getValue(2, 'c3')).toBe('New2-3');
         });
 
         it('행 범위를 넘어가는 값이 있으면 행을 추가해준다.', function() {
@@ -90,10 +90,10 @@ describe('grid.core.paste()', function() {
                 ['New2-2', 'New2-3'],
                 ['New3-2', 'New3-3']
             ]);
-            expect(grid.getValue(2, 'c2')).toBe('New2-2');
-            expect(grid.getValue(2, 'c3')).toBe('New2-3');
-            expect(grid.getValue(3, 'c2')).toBe('New3-2');
-            expect(grid.getValue(3, 'c3')).toBe('New3-3');
+            expect(grid.dataModel.getValue(2, 'c2')).toBe('New2-2');
+            expect(grid.dataModel.getValue(2, 'c3')).toBe('New2-3');
+            expect(grid.dataModel.getValue(3, 'c2')).toBe('New3-2');
+            expect(grid.dataModel.getValue(3, 'c3')).toBe('New3-3');
         });
 
         it('붙여넣기가 끝나면 변경된 범위만큼 셀렉션을 만들어준다.', function() {
@@ -131,10 +131,10 @@ describe('grid.core.paste()', function() {
                 ['New0-1', 'New0-2'],
                 ['New1-1', 'New1-2']
             ]);
-            expect(grid.getValue(0, 'c1')).toBe('New0-1');
-            expect(grid.getValue(0, 'c2')).toBe('0-2');
-            expect(grid.getValue(1, 'c1')).toBe('New1-1');
-            expect(grid.getValue(1, 'c2')).toBe('1-2');
+            expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
+            expect(grid.dataModel.getValue(0, 'c2')).toBe('0-2');
+            expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
+            expect(grid.dataModel.getValue(1, 'c2')).toBe('1-2');
         });
 
         it(': disabled', function() {
@@ -156,10 +156,10 @@ describe('grid.core.paste()', function() {
                 ['New0-1', 'New0-2'],
                 ['New1-1', 'New1-2']
             ]);
-            expect(grid.getValue(0, 'c1')).toBe('0-1');
-            expect(grid.getValue(0, 'c2')).toBe('0-2');
-            expect(grid.getValue(1, 'c1')).toBe('New1-1');
-            expect(grid.getValue(1, 'c2')).toBe('New1-2');
+            expect(grid.dataModel.getValue(0, 'c1')).toBe('0-1');
+            expect(grid.dataModel.getValue(0, 'c2')).toBe('0-2');
+            expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
+            expect(grid.dataModel.getValue(1, 'c2')).toBe('New1-2');
         });
     });
 
@@ -183,12 +183,12 @@ describe('grid.core.paste()', function() {
             ['New0-1', 'New0-3'],
             ['New1-1', 'New1-3']
         ]);
-        expect(grid.getValue(0, 'c1')).toBe('New0-1');
-        expect(grid.getValue(0, 'c2')).toBe('0-2');
-        expect(grid.getValue(0, 'c3')).toBe('New0-3');
-        expect(grid.getValue(1, 'c1')).toBe('New1-1');
-        expect(grid.getValue(1, 'c2')).toBe('1-2');
-        expect(grid.getValue(1, 'c3')).toBe('New1-3');
+        expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
+        expect(grid.dataModel.getValue(0, 'c2')).toBe('0-2');
+        expect(grid.dataModel.getValue(0, 'c3')).toBe('New0-3');
+        expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
+        expect(grid.dataModel.getValue(1, 'c2')).toBe('1-2');
+        expect(grid.dataModel.getValue(1, 'c3')).toBe('New1-3');
     });
 
     it('RowSpan이 적용된 컬럼일 경우 MainRow의 값만 변경한다', function() {
@@ -212,10 +212,10 @@ describe('grid.core.paste()', function() {
             ['New0-1', 'New0-2'],
             ['New1-1', 'New1-2']
         ]);
-        expect(grid.getValue(0, 'c1')).toBe('New0-1');
-        expect(grid.getValue(0, 'c2')).toBe('New0-2');
-        expect(grid.getValue(1, 'c1')).toBe('New1-1');
-        expect(grid.getValue(1, 'c2')).toBe('New0-2');
+        expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
+        expect(grid.dataModel.getValue(0, 'c2')).toBe('New0-2');
+        expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
+        expect(grid.dataModel.getValue(1, 'c2')).toBe('New0-2');
     });
 
     it('셀렉션이 존재하는 경우 포커스된 셀이 아닌 셀렉션의 왼쪽 상단 셀을 기준으로 붙여넣기 한다', function() {
@@ -242,9 +242,9 @@ describe('grid.core.paste()', function() {
             ['New0-1', 'New0-2'],
             ['New1-1', 'New1-2']
         ]);
-        expect(grid.getValue(0, 'c1')).toBe('New0-1');
-        expect(grid.getValue(0, 'c2')).toBe('New0-2');
-        expect(grid.getValue(1, 'c1')).toBe('New1-1');
-        expect(grid.getValue(1, 'c2')).toBe('New1-2');
+        expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
+        expect(grid.dataModel.getValue(0, 'c2')).toBe('New0-2');
+        expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
+        expect(grid.dataModel.getValue(1, 'c2')).toBe('New1-2');
     });
 });

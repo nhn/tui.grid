@@ -5,6 +5,7 @@ var ColumnModelData = require('../../src/js/data/columnModel');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
 var ResizeHandler = require('../../src/js/view/layout/resizeHandler');
+var DomState = require('../../src/js/domState');
 
 describe('ResizeHandler', function() {
     var grid, handler, $handles;
@@ -16,7 +17,8 @@ describe('ResizeHandler', function() {
                 return this.options[name];
             },
             dataModel: new Collection(),
-            columnModel: new ColumnModelData()
+            columnModel: new ColumnModelData(),
+            domState: new DomState()
         };
         mock.dimensionModel = new Dimension({
             grid: mock

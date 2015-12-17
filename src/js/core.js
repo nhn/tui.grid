@@ -190,37 +190,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 값을 반환한다.
-     *
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {String} columnName   컬럼 이름
-     * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-     * @return {(Number|String|undefined)}    조회한 셀의 값.
-     */
-    getValue: function(rowKey, columnName, isOriginal) {
-        var value, row;
-        if (isOriginal) {
-            value = this.dataModel.getOriginal(rowKey, columnName);
-        } else {
-            row = this.dataModel.get(rowKey);
-            value = row && row.get(columnName);
-        }
-        return value;
-    },
-
-    /**
-     * columnName에 해당하는 column data list를 리턴한다.
-     *
-     * @param {String} columnName   컬럼명
-     * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
-     */
-    getColumnValues: function(columnName, isJsonString) {
-        var valueList = this.dataModel.pluck(columnName);
-        return isJsonString ? $.toJSON(valueList) : valueList;
-    },
-
-    /**
      * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
      * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -255,62 +224,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      */
     getSelectedRowKey: function() {
         return this.focusModel.which().rowKey;
-    },
-
-    /**
-     * Sets the vlaue of the cell identified by the specified rowKey and columnName.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {String} columnName   컬럼 이름
-     * @param {(Number|String)} columnValue 할당될 값
-     * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
-     * @returns {Boolean} True if affected row is exist
-     */
-    setValue: function(rowKey, columnName, columnValue, silent) {
-        var row = this.dataModel.get(rowKey),
-            obj = {},
-            result;
-
-        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
-        if (row) {
-            obj[columnName] = columnValue;
-            row.set(obj, {
-                silent: silent
-            });
-            result = true;
-        } else {
-            result = false;
-        }
-
-        return result;
-    },
-
-    /**
-     * columnName 에 해당하는 값을 전부 변경한다.
-     * @param {String} columnName 컬럼명
-     * @param {(Number|String)} columnValue 변경할 컬럼 값
-     * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
-     * @param {Boolean} [silent=false] change 이벤트 trigger 할지 여부.
-     */
-    setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
-        var obj = {},
-            cellState = {
-                isDisabled: false,
-                isEditable: true
-            };
-
-        obj[columnName] = columnValue;
-        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
-
-        this.dataModel.forEach(function(row) {
-            if (isCheckCellState) {
-                cellState = this.getCellState(row.get('rowKey'), columnName);
-            }
-            if (!cellState.isDisabled && cellState.isEditable) {
-                row.set(obj, {
-                    silent: silent
-                });
-            }
-        }, this);
     },
 
     /**
@@ -426,127 +339,11 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * 전체 행을 선택한다.
-     */
-    checkAll: function() {
-        this.setColumnValues('_button', true);
-    },
-
-    /**
-     * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     */
-    check: function(rowKey) {
-        this.setValue(rowKey, '_button', true);
-    },
-
-    /**
-     * 모든 행을 선택 해제 한다.
-     */
-    uncheckAll: function() {
-        this.setColumnValues('_button', false);
-    },
-
-    /**
-     * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     */
-    uncheck: function(rowKey) {
-        this.setValue(rowKey, '_button', false);
-    },
-
-    /**
      * 그리드의 모든 데이터를 삭제하고 norowlayer 클래스명을 가지는 엘리먼트를 보여준다.
      */
     clear: function() {
         //@todo: empty 레이어 추가
         this.setRowList([]);
-    },
-
-    /**
-     * rowKey에 해당하는 그리드 데이터를 삭제한다.
-     * @param {(Number|String)} rowKey - 행 데이터의 고유 키
-     * @param {boolean|object} options - 삭제 옵션
-     * @param {boolean} options.removeOriginalData - 원본 데이터도 함께 삭제할 지 여부
-     * @param {boolean} options.keepRowSpanData - rowSpan이 mainRow를 삭제하는 경우 데이터를 유지할지 여부
-     */
-    removeRow: function(rowKey, options) {
-        this.dataModel.removeRow(rowKey, options);
-    },
-
-    /**
-     * chcked된 행을 삭제한다.
-     * @param {boolean} isConfirm 삭제하기 전에 confirm 메시지를 표시할지 여부
-     * @return {boolean} 삭제된 행이 있으면 true, 없으면 false
-     */
-    removeCheckedRows: function(isConfirm) {
-        var rowKeyList = this.getCheckedRowKeyList(),
-            message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
-
-        if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
-            _.each(rowKeyList, function(rowKey) {
-                this.removeRow(rowKey);
-            }, this);
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * rowKey에 해당하는 행을 활성화시킨다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 키
-     */
-    enableRow: function(rowKey) {
-        this.dataModel.get(rowKey).setRowState('');
-    },
-
-    /**
-     * rowKey에 해당하는 행을 비활성화 시킨다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     */
-    disableRow: function(rowKey) {
-        this.dataModel.get(rowKey).setRowState('DISABLED');
-    },
-
-    /**
-     * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 키
-     */
-    enableCheck: function(rowKey) {
-        this.dataModel.get(rowKey).setRowState('');
-    },
-
-    /**
-     * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 키
-     */
-    disableCheck: function(rowKey) {
-        this.dataModel.get(rowKey).setRowState('DISABLED_CHECK');
-    },
-
-    /**
-     * 현재 선택된 행들의 키값만을 배열로 리턴한다.
-     * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-     * @return {Array|String} 선택된 행들의 키값 리스트.
-     */
-    getCheckedRowKeyList: function(isJsonString) {
-        var rowKeyList = [];
-        _.each(this.dataModel.where({
-            _button: true
-        }), function(row) {
-            rowKeyList.push(row.get('rowKey'));
-        }, this);
-        return isJsonString ? $.toJSON(rowKeyList) : rowKeyList;
-    },
-
-    /**
-     * 현재 선택된 행들의 모든 데이터를 배열로 리턴한다.
-     * @param {Boolean} [isJsonString=false]  true 일 경우 json 문자열을 리턴한다.
-     * @return {Array|String} 선택된 행들의 데이터값 리스트.
-     */
-    getCheckedRowList: function(isJsonString) {
-        var checkedRowList = this.dataModel.getRowList(true);
-        return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
     },
 
     /**
@@ -571,24 +368,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     getModifiedRowList: function(options) {
         //@todo 파라미터 옵션에 따른 데이터 형 변화
         return this.dataModel.getModifiedRowList(options);
-    },
-
-    /**
-     * 현재 그리드의 제일 끝에 행을 추가한다.
-     * @param {object} [row] - row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
-     * @param {object} [options] - 옵션 객체
-     * @param {number} options.at - 데이터를 append 할 index
-     */
-    appendRow: function(row, options) {
-        this.dataModel.append(row, options);
-    },
-
-    /**
-     * 현재 그리드의 제일 앞에 행을 추가한다.
-     * @param {object} [row]  row 데이터 오브젝트 없을경우 임의로 빈 데이터를 추가한다.
-     */
-    prependRow: function(row) {
-        this.dataModel.prepend(row);
     },
 
     /**
@@ -643,14 +422,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             this.addOn[name] = new Constructor(options);
         }
         return this;
-    },
-
-    /**
-     * 정렬이 되었는지 여부 반환
-     * @return {Boolean} 현재 정렬이 되어있는지 여부
-     */
-    isSorted: function() {
-        return this.dataModel.isSortedByField();
     },
 
     /**
@@ -716,23 +487,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * columnName 기준으로 정렬한다.
-     * @param {String} columnName 정렬할 컬럼명
-     * @param {Boolean} isAscending 오름차순 여부
-     */
-    sort: function(columnName, isAscending) {
-        this.dataModel.sortByField(columnName, isAscending);
-    },
-
-    /**
-     * 현재 그리드의 rowList 를 반환한다.
-     * @return {Array} 그리드의 데이터 리스트
-     */
-    getRowList: function() {
-        return this.dataModel.getRowList();
-    },
-
-    /**
      * rowKey 와 columnName 에 해당하는 text 형태의 셀의 값을 삭제한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 키
      * @param {String} columnName 컬럼 이름
@@ -749,10 +503,10 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             isRemovable = !!(isDeletable && cellState.isEditable && !cellState.isDisabled);
 
         if (isRemovable) {
-            this.setValue(mainRowKey, columnName, '', silent);
+            this.dataModel.setValue(mainRowKey, columnName, '', silent);
             //silent 의 경우 데이터 모델의 change 이벤트가 발생하지 않기 때문에, 강제로 checkbox 를 세팅한다.
             if (silent && selectType === 'checkbox' && !isDisabledCheck) {
-                this.setValue(mainRowKey, '_button', true, silent);
+                this.dataModel.setValue(mainRowKey, '_button', true, silent);
             }
         }
     },
@@ -831,44 +585,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             }
         }
         row.set(attributes);
-    },
-
-    /**
-     * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} columnName 컬럼 이름
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    addCellClassName: function(rowKey, columnName, className) {
-        this.dataModel.get(rowKey).addCellClassName(columnName, className);
-    },
-
-    /**
-     * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    addRowClassName: function(rowKey, className) {
-        this.dataModel.get(rowKey).addClassName(className);
-    },
-
-    /**
-     * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} columnName 컬럼 이름
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    removeCellClassName: function(rowKey, columnName, className) {
-        this.dataModel.get(rowKey).removeCellClassName(columnName, className);
-    },
-
-    /**
-     * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
-     * @param {String} className 지정할 디자인 클래스명
-     */
-    removeRowClassName: function(rowKey, className) {
-        this.dataModel.get(rowKey).removeClassName(className);
     },
 
     /**

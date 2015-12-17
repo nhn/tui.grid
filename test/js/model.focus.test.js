@@ -22,7 +22,6 @@ describe('model.renderer', function() {
             },
             focusIn: function() {},
             selection: {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };

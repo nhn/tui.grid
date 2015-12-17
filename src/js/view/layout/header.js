@@ -344,7 +344,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 this.grid.uncheckAll();
             }
         } else if ($target.is('a.btn_sorting')) {
-            this.grid.sort(columnName);
+            this.grid.dataModel.sortByField(columnName);
         }
     },
 

@@ -326,14 +326,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {(number|string)} rowKey - The unique key of the target row
      */
     disableRow: function(rowKey) {
-        this.core.disableRow(rowKey);
+        this.core.dataModel.disableRow(rowKey);
     },
     /**
      * Enables the row identified by the rowKey.
      * @param {(number|string)} rowKey - The unique key of the target row
      */
     enableRow: function(rowKey) {
-        this.core.enableRow(rowKey);
+        this.core.dataModel.enableRow(rowKey);
     },
     /**
      * Returns the value of the cell identified by the rowKey and columnName.
@@ -343,7 +343,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {(number|string)} - The value of the cell
      */
     getValue: function(rowKey, columnName, isOriginal) {
-        return this.core.getValue(rowKey, columnName, isOriginal);
+        return this.core.dataModel.getValue(rowKey, columnName, isOriginal);
     },
     /**
      * Returns a list of all values in the specified column.
@@ -352,7 +352,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
      */
     getColumnValues: function(columnName, isJsonString) {
-        return this.core.getColumnValues(columnName, isJsonString);
+        return this.core.dataModel.getColumnValues(columnName, isJsonString);
     },
 
     /**
@@ -405,7 +405,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {(number|string)} columnValue - The value to be set
      */
     setValue: function(rowKey, columnName, columnValue) {
-        this.core.setValue(rowKey, columnName, columnValue);
+        this.core.dataModel.setValue(rowKey, columnName, columnValue);
     },
     /**
      * Sets the all values in the specified column.
@@ -483,27 +483,27 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Checks all rows.
      */
     checkAll: function() {
-        this.core.checkAll();
+        this.core.dataModel.checkAll();
     },
     /**
      * Checks the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     check: function(rowKey) {
-        this.core.check(rowKey);
+        this.core.dataModel.check(rowKey);
     },
     /**
      * Unchecks all rows.
      */
     uncheckAll: function() {
-        this.core.uncheckAll();
+        this.core.dataModel.uncheckAll();
     },
     /**
      * Unchecks the row identified by the specified rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     uncheck: function(rowKey) {
-        this.core.uncheck(rowKey);
+        this.core.dataModel.uncheck(rowKey);
     },
     /**
      * Removes all rows.
@@ -524,7 +524,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
                 removeOriginalData: true
             };
         }
-        this.core.removeRow(rowKey, options);
+        this.core.dataModel.removeRow(rowKey, options);
     },
     /**
      * Removes all checked rows.
@@ -532,21 +532,30 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {boolean} - True if there's at least one row removed.
      */
     removeCheckedRows: function(isConfirm) {
-        return this.core.removeCheckedRows(isConfirm);
+        var rowKeyList = this.core.getCheckedRowKeyList(),
+            message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
+
+        if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
+            _.each(rowKeyList, function(rowKey) {
+                this.core.dataModel.removeRow(rowKey);
+            }, this);
+            return true;
+        }
+        return false;
     },
     /**
      * Enables the row identified by the rowKey to be able to check.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     enableCheck: function(rowKey) {
-        this.core.enableCheck(rowKey);
+        this.core.dataModel.enableCheck(rowKey);
     },
     /**
       * Disables the row identified by the spcified rowKey to not be abled to check.
      * @param {(number|string)} rowKey - The unique keyof the row.
      */
     disableCheck: function(rowKey) {
-        this.core.disableCheck(rowKey);
+        this.core.dataModel.disableCheck(rowKey);
     },
     /**
      * Returns a list of the rowKey of checked rows.
@@ -554,7 +563,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
-        var checkedRowKeyList = this.core.getCheckedRowKeyList();
+        var checkedRowList = this.core.dataModel.getRowList(true),
+            checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
+
         return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
     },
     /**
@@ -563,9 +574,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
     getCheckedRowList: function(isJsonString) {
-        var checkedRowList = this.core.getCheckedRowList();
+        var checkedRowList = this.core.dataModel.getRowList(true);
+
         return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
     },
+
     /**
      * Returns a list of the column model.
      * @return {Array} - A list of the column model.
@@ -594,14 +607,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index has a rowspan data, the new row will extend the existing rowspan data.
      */
     appendRow: function(row, options) {
-        this.core.appendRow(row, options);
+        this.core.dataModel.append(row, options);
     },
     /**
      * Insert the new row with specified data to the beginning of table.
      * @param {object} [row] - The data for the new row
      */
     prependRow: function(row) {
-        this.core.prependRow(row);
+        this.core.dataModel.prepend(row);
     },
     /**
      * Returns true if there are at least one row changed.
@@ -667,20 +680,20 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Array} - A list of all rows
      */
     getRowList: function() {
-        return this.core.getRowList();
+        return this.core.dataModel.getRowList();
     },
     /**
      * Sorts all rows by the specified column.
      * @param {string} columnName - The name of the column to be used to compare the rows
      */
     sort: function(columnName) {
-        this.core.sort(columnName);
+        this.core.dataModel.sortByField(columnName);
     },
     /**
      * Unsorts all rows. (Sorts by rowKey).
      */
     unSort: function() {
-        this.core.sort('rowKey');
+        this.sort('rowKey');
     },
     /**
      * Adds the specified css class to cell element identified by the rowKey and className
@@ -689,7 +702,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} className - The css class name to add
      */
     addCellClassName: function(rowKey, columnName, className) {
-        this.core.addCellClassName(rowKey, columnName, className);
+        this.core.dataModel.get(rowKey).addCellClassName(columnName, className);
     },
     /**
      * Adds the specified css class to all cell elements in the row identified by the rowKey
@@ -697,7 +710,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} className - The css class name to add
      */
     addRowClassName: function(rowKey, className) {
-        this.core.addRowClassName(rowKey, className);
+        this.core.dataModel.get(rowKey).addClassName(className);
     },
     /**
      * Removes the specified css class from the cell element indentified by the rowKey and columnName.
@@ -706,7 +719,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} className - The css class name to be removed
      */
     removeCellClassName: function(rowKey, columnName, className) {
-        this.core.removeCellClassName(rowKey, columnName, className);
+        this.core.dataModel.get(rowKey).removeCellClassName(columnName, className);
     },
     /**
      * Removes the specified css class from all cell elements in the row identified by the rowKey.
@@ -714,7 +727,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} className - The css class name to be removed
      */
     removeRowClassName: function(rowKey, className) {
-        this.core.removeRowClassName(rowKey, className);
+        this.core.dataModel.get(rowKey).removeClassName(className);
     },
     /**
      * Returns the rowspan data of the cell identified by the rowKey and columnName.

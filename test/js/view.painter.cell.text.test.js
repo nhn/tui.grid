@@ -24,7 +24,6 @@ describe('view.painter.cell.text', function() {
             },
             focusIn: function() {},
             selection: {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData(),
             getElement: function(rowKey, columnName) {
@@ -209,16 +208,16 @@ describe('view.painter.cell.text', function() {
             });
 
             it('_isEdited === true 일 때 setValue 를 호출하는지 확인한다.', function() {
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
                 cellPainter._onBlur({target: $input.get(0)});
 
                 expect(cellPainter._isEdited($input)).toEqual(false);
-                expect(grid.setValue.calls.count()).toBe(0);
+                expect(grid.dataModel.setValue.calls.count()).toBe(0);
 
                 $input.val('changed');
                 cellPainter._onBlur({target: $input.get(0)});
                 expect(cellPainter._isEdited($input)).toEqual(true);
-                expect(grid.setValue.calls.count()).toBe(1);
+                expect(grid.dataModel.setValue.calls.count()).toBe(1);
             });
         });
     });

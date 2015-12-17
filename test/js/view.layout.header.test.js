@@ -191,11 +191,11 @@ describe('Header', function() {
                 eventMock = {
                     target: $btn[0]
                 };
-            spyOn(grid, 'sort');
+            grid.dataModel.sortByField = jasmine.createSpy('sortByField');
 
             // click the button
             header._onClick(eventMock);
-            expect(grid.sort).toHaveBeenCalled();
+            expect(grid.dataModel.sortByField).toHaveBeenCalled();
         });
 
         it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {

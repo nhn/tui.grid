@@ -25,7 +25,6 @@ describe('view.painter.cell.base', function() {
             },
             focusIn: function() {},
             selection: {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
@@ -182,10 +181,10 @@ describe('view.painter.cell.base', function() {
                 var changeEvent = {
                       target: $select.get(0)
                 };
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
                 cellPainter._onChange(changeEvent);
 
-                expect(grid.setValue).toHaveBeenCalledWith('0', 'c1', '0');
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', 'c1', '0');
             });
         });
 
@@ -340,7 +339,7 @@ describe('view.painter.cell.base', function() {
 
             beforeEach(function() {
                 changeEvent = {};
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
             });
 
             it('checkbox 일때 grid 의 setValue 메서드를 정확한 값으로 호출하는지 확인한다.', function() {
@@ -352,7 +351,7 @@ describe('view.painter.cell.base', function() {
 
                 cellPainter._onChange(changeEvent);
 
-                expect(grid.setValue).toHaveBeenCalledWith('0', 'c1', '1');
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', 'c1', '1');
             });
 
             it('radio 일때 grid 의 setValue 메서드를 정확한 값으로 호출하는지 확인한다.', function() {
@@ -364,7 +363,7 @@ describe('view.painter.cell.base', function() {
 
                 cellPainter._onChange(changeEvent);
 
-                expect(grid.setValue).toHaveBeenCalledWith('0', 'c2', '1');
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', 'c2', '1');
             });
         });
 

@@ -6,6 +6,7 @@ var Model = require('../../src/js/base/model');
 var Collection = require('../../src/js/base/collection');
 var ColumnModelData = require('../../src/js/data/columnModel');
 var Dimension = require('../../src/js/model/dimension');
+var DomState = require('../../src/js/domState');
 var Renderer = require('../../src/js/model/renderer');
 var Selection = require('../../src/js/model/selection');
 var CellFactory = require('../../src/js/view/cellFactory');
@@ -17,14 +18,14 @@ describe('view.layout.body', function() {
     var grid, body;
 
     function createGridMock() {
+        var $el = setFixtures('<div />');
         var mock = {
-            $el: setFixtures('<div></div>'),
+            $el: $el,
             options: {},
             option: function(name) {
                 return this.options[name];
             },
             focusClipboard: function() {},
-            showGridLayer: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData({
                 columnModelList: [
@@ -41,7 +42,7 @@ describe('view.layout.body', function() {
                 ]
             }),
             focusModel: new Model(),
-            updateLayoutData: function() {},
+            domState: new DomState($el),
             focusAt: function() {}
         };
         mock.dataModel.isRowSpanEnable = function() {
@@ -373,7 +374,7 @@ describe('view.layout.body', function() {
 
             grid.dimensionModel.set({
                 scrollX: false,
-                scrollY: false    
+                scrollY: false
             });
             body.whichSide = 'L';
             body.render();

@@ -251,7 +251,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
             cellAddress = this._getCellAddress($target);
-        this.grid.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
+        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
     }
 });
 

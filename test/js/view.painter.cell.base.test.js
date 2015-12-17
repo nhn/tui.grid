@@ -30,7 +30,6 @@ describe('view.painter.cell.base', function() {
                 return this.options[name];
             },
             focusIn: function() {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
