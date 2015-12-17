@@ -8,7 +8,7 @@ var Model = require('../base/model'),
     util = require('../common/util');
 
 /**
- * Row Model
+ * Toolbar Model
  * @module model/row
  */
 var Toolbar = Model.extend(/**@lends module:model/row.prototype */{

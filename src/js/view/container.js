@@ -1,5 +1,5 @@
 /**
- * @fileoverview View class that conaints a top element of the DOM structure for the grid.
+ * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
  */
  'use strict';

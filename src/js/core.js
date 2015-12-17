@@ -2,7 +2,7 @@
  * @fileoverview Grid Core 파일
  * @author NHN Ent. FE Development Team
  */
- 'use strict';
+'use strict';
 
 var Model = require('./base/model');
 

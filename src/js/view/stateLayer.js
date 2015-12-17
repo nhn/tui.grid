@@ -1,5 +1,5 @@
 /**
- * @fileoverview Base class for layers
+ * @fileoverview Layer class that represents the state of rendering phase 
  * @author NHN Ent. FE Development Team
  */
 'use strict';

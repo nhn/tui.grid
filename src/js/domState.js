@@ -1,5 +1,13 @@
+/**
+ * @fileoverview This class offers methods that can be used to get the current state of DOM element.
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
+/**
+ * Class for offering methods that can be used to get the current state of DOM element.
+ * @module domState
+ */
 var DomState = tui.util.defineClass({
     /**
      * @constructs
