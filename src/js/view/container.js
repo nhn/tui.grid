@@ -30,7 +30,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this._createChildViews();
 
-        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._setHeight);
+        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._refreshHeight);
         this.listenTo(this.grid.dimensionModel, 'setSize', this._onSetSize);
         $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
@@ -195,12 +195,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @return {boolean} 셀이면 true, 아니면 false
      */
     _isCellElement: function($target, isIncludeChild) {
-        var $td = isIncludeChild ? $target.closest('td') : $target;
+        var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        if (!$td.is('td')) {
-            return false;
-        }
-        return !!($td.parent().attr('key') && $td.attr('columnname'));
+        return !!($cell.is('td') && $cell.attr('columnname') && $cell.parent().attr('key'));
     },
 
     /**
@@ -244,7 +241,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * grid 의 전체 너비를 설정한다.
      * @private
      */
-    _setHeight: function() {
+    _refreshHeight: function() {
         this.$el.height(this.grid.dimensionModel.getHeight());
     },
 
@@ -252,20 +249,23 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Render
      */
     render: function() {
-        var leftLine = $('<div>').addClass('left_line'),
-            rightLine = $('<div>').addClass('right_line');
+        var children = this.children,
+            elements;
 
+        elements = [
+            $('<div>').addClass('left_line'),
+            $('<div>').addClass('right_line'),
+            children.stateLayer.render().el,
+            children.lside.render().el,
+            children.rside.render().el,
+            children.toolbar.render().el,
+            children.clipboard.render().el
+        ];
         this.$el.addClass('grid_wrapper uio_grid')
             .attr('instanceId', this.grid.id)
-            .append(this.children.stateLayer.render().el)
-            .append(this.children.lside.render().el)
-            .append(this.children.rside.render().el)
-            .append(this.children.toolbar.render().el)
-            .append(this.children.clipboard.render().el)
-            .append(leftLine)
-            .append(rightLine);
+            .append(elements);
 
-        this._setHeight();
+        this._refreshHeight();
         this.grid.trigger('rendered');
     },
 

@@ -245,10 +245,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Set state value based on the DataModel.length
      */
     _refreshState: function() {
-        if (!this.grid.dataModel.length) {
-            this.set('state', renderStateMap.EMPTY);
-        } else {
+        if (this.grid.dataModel.length) {
             this.set('state', renderStateMap.DONE);
+        } else {
+            this.set('state', renderStateMap.EMPTY);
         }
     },
 
