@@ -332,21 +332,6 @@ describe('View.RowList', function() {
             });
         });
 
-        describe('_showLayer', function() {
-            it('row의 length가 0일 경우 grid.showGridLayer를 호출한다.', function() {
-                grid.showGridLayer = jasmine.createSpy('showGridLayer');
-                grid.dataModel.set([], {parse: true});
-                rowListView._showLayer();
-                expect(grid.showGridLayer).toHaveBeenCalledWith('empty');
-            });
-
-            it('row의 length가 0이 아닐경우 grid.hideGridLayer를 호출한다.', function() {
-                grid.hideGridLayer = jasmine.createSpy('hideGridLayer');
-                rowListView._showLayer();
-                expect(grid.hideGridLayer).toHaveBeenCalled();
-            });
-        });
-
         describe('render', function() {
             it('dataModel의 rowList가 변경될 경우, 데이터 내용에 맞게 rendering 한다.', function() {
                 var trList = rowListView.$el.find('tr'),

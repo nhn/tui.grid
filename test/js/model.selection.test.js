@@ -1,13 +1,17 @@
 'use strict';
 
 var Core = require('../../src/js/core');
+var DomState = require('../../src/js/domState');
 
 describe('model/selection', function() {
     var grid, selection;
 
     beforeEach(function() {
+        var $el = setFixtures('<div />'),
+            domState = new DomState($el);
+
         grid = new Core({
-            el: setFixtures('<div />'),
+            el: $el,
             columnModelList: [
                 {
                     title: 'c1',
@@ -48,7 +52,7 @@ describe('model/selection', function() {
                     }
                 }
             ]
-        });
+        }, domState);
         grid.setRowList([
             {
                 c1: '0-1',

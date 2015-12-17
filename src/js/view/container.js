@@ -14,9 +14,9 @@ var StateLayer = require('./stateLayer');
 
 /**
  * Container View
- * @module container
+ * @module view/container
  */
-var Container = View.extend(/**@lends module:container.prototype */{
+var Container = View.extend(/**@lends module:view/container.prototype */{
     /**
      * @constructs
      * @extends module:base/view

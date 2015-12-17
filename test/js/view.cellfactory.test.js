@@ -3,14 +3,9 @@
 var CellFactory = require('../../src/js/view/cellFactory');
 
 describe('view.cellfactory', function() {
-    var cellFactory,
-        $empty;
+    var cellFactory;
 
     beforeEach(function() {
-        jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/empty.html');
-        $empty = $('#empty');
-
         cellFactory = new CellFactory({
             grid: {}
         });
