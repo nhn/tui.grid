@@ -9,7 +9,7 @@ var Model = require('../base/model'),
 
 /**
  * Toolbar Model
- * @module model/row
+ * @module model/toolbar
  */
 var Toolbar = Model.extend(/**@lends module:model/row.prototype */{
     /**
