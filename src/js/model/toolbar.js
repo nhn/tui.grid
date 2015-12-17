@@ -11,7 +11,7 @@ var Model = require('../base/model'),
  * Toolbar Model
  * @module model/toolbar
  */
-var Toolbar = Model.extend(/**@lends module:model/row.prototype */{
+var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
     /**
      * @constructs
      * @extends module:base/model
@@ -22,6 +22,7 @@ var Toolbar = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     defaults: {
+        // set by user
         hasControlPanel: false,
         hasPagination: false,
         hasResizeHandler: false,
