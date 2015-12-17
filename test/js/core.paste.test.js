@@ -1,6 +1,7 @@
 'use strict';
 
 var Core = require('../../src/js/core');
+var DomState = require('../../src/js/domState');
 
 function createColumnModelList(names) {
     var models = [];
@@ -17,10 +18,14 @@ function createColumnModelList(names) {
 }
 
 function createGrid(columnModelList) {
-    return new Core({
-        el: $('<div />'),
-        columnModelList: columnModelList
-    });
+    var $el = $('<div />'),
+        options = {
+            el: $el,
+            columnModelList: columnModelList
+        },
+        domState = new DomState($el);
+
+    return new Core(options, domState);
 }
 
 describe('grid.core.paste()', function() {
@@ -238,8 +243,8 @@ describe('grid.core.paste()', function() {
             ['New1-1', 'New1-2']
         ]);
         expect(grid.getValue(0, 'c1')).toBe('New0-1');
-        // expect(grid.getValue(0, 'c2')).toBe('New0-2');
+        expect(grid.getValue(0, 'c2')).toBe('New0-2');
         expect(grid.getValue(1, 'c1')).toBe('New1-1');
-        // expect(grid.getValue(1, 'c2')).toBe('New1-2');
+        expect(grid.getValue(1, 'c2')).toBe('New1-2');
     });
 });

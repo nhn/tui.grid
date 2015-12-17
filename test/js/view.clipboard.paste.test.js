@@ -1,12 +1,17 @@
 'use strict';
 
 var Clipboard = require('../../src/js/view/clipboard');
+var Model = require('../../src/js/base/model');
 
 describe('grid paste test', function() {
     var clipboard;
 
     beforeEach(function() {
-        clipboard = new Clipboard();
+        clipboard = new Clipboard({
+            grid: {
+                focusModel: new Model()
+            }
+        });
     });
 
     it('define', function() {
@@ -87,6 +92,7 @@ describe('grid paste test', function() {
     describe('keyup event fire flow', function() {
         var result,
             txt;
+
         beforeEach(function() {
             clipboard.pasting = false;
             clipboard.grid = {

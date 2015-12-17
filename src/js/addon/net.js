@@ -9,6 +9,8 @@ var Router = require('./net-router');
 var util = require('../common/util');
 var formUtil = require('../common/formUtil');
 
+var renderStateMap = require('../common/constMap').renderState;
+
 /**
  * Net Addon
  * @module addon/net
@@ -112,7 +114,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             enableAjaxHistory: true
         };
         options = $.extend(true, defaultOptions, attributes); // deep extend
-        pagination = this.grid.getPaginationInstance();
+        pagination = this.grid.toolbarModel.get('pagination');
 
         this.setOwnProperties({
             curPage: 1,
@@ -181,18 +183,18 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
      */
     _showToolbarExcelBtns: function() {
-        var controlPanel = this.grid.view.toolbar.controlPanel,
+        var toolbarModel = this.grid.toolbarModel,
             api = this.options.api;
 
-        if (!controlPanel) {
+        if (!toolbarModel) {
             return;
         }
 
         if (api.downloadExcel) {
-            controlPanel.$btnExcel.show();
+            toolbarModel.set('isExcelButtonVisible', true);
         }
         if (api.downloadExcelAll) {
-            controlPanel.$btnExcelAll.show();
+            toolbarModel.set('isExcelAllButtonVisible', true);
         }
     },
 
@@ -259,7 +261,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _lock: function() {
-        this.grid.showGridLayer('loading');
+        this.grid.renderModel.set('state', renderStateMap.LOADING);
         this.isLocked = true;
     },
 
@@ -707,7 +709,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             requestParameter: options.data,
             responseData: null
         });
-        this.grid.hideGridLayer();
+        this.grid.renderModel.set('state', renderStateMap.DONE);
 
         this.grid.trigger('response', eventData);
         if (eventData.isStopped()) {

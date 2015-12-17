@@ -16,11 +16,16 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @extends module:base/view
      */
     initialize: function() {
+        var toolbarModel;
+
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             $btnExcel: null,
             $btnExcelAll: null
         });
+
+        this.listenTo(this.grid.toolbarModel,
+            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render)
     },
 
     events: {
@@ -63,20 +68,22 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @return {View.Layout.Toolbar.ControlPanel} - this object
      */
     render: function() {
-        this.$btnExcelAll = $(this.templateExcelBtn({
-            className: 'excel_all',
-            text: '전체엑셀다운로드'
-        }));
-        this.$btnExcel = $(this.templateExcelBtn({
-            className: 'excel_page',
-            text: '엑셀 다운로드'
-        }));
+        var toolbarModel = this.grid.toolbarModel;
 
-        this.$el.append(
-            this.$btnExcelAll.hide(),
-            this.$btnExcel.hide()
-        );
+        this.$el.empty();
 
+        if (toolbarModel.get('isExcelButtonVisible')) {
+            this.$el.append(this.templateExcelBtn({
+                className: 'excel_page',
+                text: '엑셀 다운로드'
+            }));
+        }
+        if (toolbarModel.get('isExcelAllButtonVisible')) {
+            this.$el.append(this.templateExcelBtn({
+                className: 'excel_all',
+                text: '전체 엑셀 다운로드'
+            }));
+        }
         return this;
     }
 });

@@ -6,6 +6,7 @@
 
 var Model = require('../base/model');
 var RowList = require('./rowList');
+var renderStateMap = require('../common/constMap').renderState;
 
 /**
  * View 에서 Rendering 시 사용할 객체
@@ -55,7 +56,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         endIndex: 0,
         startNumber: 1,
         lside: null,
-        rside: null
+        rside: null,
+
+        // text that will be shown if no data to render (custom value set by user)
+        emptyMessage: null,
+
+        // constMap.renderState
+        state: renderStateMap.EMPTY
     },
 
     /**
@@ -230,7 +237,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         } else {
             this.trigger('rowListChanged', isDataModelChanged);
         }
+        this._refreshState();
         this.trigger('refresh');
+    },
+
+    /**
+     * Set state value based on the DataModel.length
+     */
+    _refreshState: function() {
+        if (this.grid.dataModel.length) {
+            this.set('state', renderStateMap.DONE);
+        } else {
+            this.set('state', renderStateMap.EMPTY);
+        }
     },
 
     /**

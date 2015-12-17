@@ -4,6 +4,7 @@ var Collection = require('../../src/js/base/collection');
 var ColumnModelData = require('../../src/js/data/columnModel');
 var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
+var ToolbarModel = require('../../src/js/model/toolbar');
 var LayoutToolbar = require('../../src/js/view/layout/toolbar');
 var ResizeHandler = require('../../src/js/view/layout/toolbar/resizeHandler');
 var Pagination = require('../../src/js/view/layout/toolbar/pagination');
@@ -13,16 +14,11 @@ describe('view.frame.toolbar', function() {
 
     function createGridMock() {
         var mock = {
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
             updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
+        mock.toolbarModel = new ToolbarModel();
         mock.dimensionModel = new Dimension({
             grid: mock
         });
@@ -69,17 +65,13 @@ describe('view.frame.toolbar', function() {
 
             describe('hasControlPanel', function() {
                 it('hasControlPanel = false 일 때', function() {
-                    grid.dimensionModel.set('toolbarOptions', {
-                        hasControlPanel: false
-                    });
+                    grid.toolbarModel.set('hasControlPanel', false);
                     toolbar.render();
                     expect(toolbar.$el.find('.btn_setup')).not.toExist();
                 });
 
                 it('hasControlPanel = true 일 때', function() {
-                    grid.dimensionModel.set('toolbarOptions', {
-                        hasControlPanel: true
-                    });
+                    grid.toolbarModel.set('hasControlPanel', true);
                     toolbar.render();
                     expect(toolbar.$el.find('.btn_setup')).toExist();
                 });
@@ -87,16 +79,12 @@ describe('view.frame.toolbar', function() {
 
             describe('hasResizeHandler', function() {
                 it('hasResizeHandler = false 일 때', function() {
-                    grid.dimensionModel.set('toolbarOptions', {
-                        hasResizeHandler: false
-                    });
+                    grid.toolbarModel.set('hasResizeHandler', false);
                     toolbar.render();
                     expect(toolbar.$el.find('.height_resize_bar')).not.toExist();
                 });
                 it('hasResizeHandler = true 일 때', function() {
-                    grid.dimensionModel.set('toolbarOptions', {
-                        hasResizeHandler: true
-                    });
+                    grid.toolbarModel.set('hasResizeHandler', true);
                     toolbar.render();
                     expect(toolbar.$el.find('.height_resize_bar')).toExist();
                 });
@@ -104,16 +92,12 @@ describe('view.frame.toolbar', function() {
 
             describe('hasPagination', function() {
                 it('hasPagination = false 일 때', function() {
-                    grid.dimensionModel.set('toolbarOptions', {
-                        hasPagination: false
-                    });
+                    grid.toolbarModel.set('hasPagination', false);
                     toolbar.render();
-                    expect(toolbar.$el.find('.pagination')).not.toExist();
+                    expect(toolbar.$el.find('.grid_pagination')).not.toExist();
                 });
                 it('hasPagination = true 일 때', function() {
-                    grid.dimensionModel.set('toolbarOptions', {
-                        hasPagination: true
-                    });
+                    grid.toolbarModel.set('hasPagination', true);
                     toolbar.render();
                     expect(toolbar.$el.find('.grid_pagination')).toExist();
                 });
@@ -223,7 +207,7 @@ describe('view.frame.toolbar', function() {
         });
 
         it('Pagination Instance를 잘 생성하는지 확인한다.', function() {
-            expect(pagination.instance instanceof tui.component.Pagination).toBe(true);
+            expect(grid.toolbarModel.get('pagination') instanceof tui.component.Pagination).toBe(true);
         });
 
         it('이미 pagination instance가 존재하면 instance를 다시 생성하지 않는다', function() {

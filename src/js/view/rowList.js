@@ -239,7 +239,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         this.renderedRowKeys = rowKeys;
         this._focusClipboardDebounced();
-        this._showLayer();
 
         return this;
     },
@@ -267,18 +266,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
         this.rowPainter.onModelChange(model, $tr);
-    },
-
-    /**
-     * 데이터가 있다면 Layer 를 노출하고, 없는 경우 데이터 없음 레이어를 노출한다.
-     * @private
-     */
-    _showLayer: function() {
-        if (this.grid.dataModel.length) {
-            this.grid.hideGridLayer();
-        } else {
-            this.grid.showGridLayer('empty');
-        }
     }
 },
 {

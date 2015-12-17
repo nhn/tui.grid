@@ -2,37 +2,24 @@
  * @fileoverview Grid Core 파일
  * @author NHN Ent. FE Development Team
  */
- 'use strict';
+'use strict';
 
-var View = require('./base/view');
+var Model = require('./base/model');
 
-// data models
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
-
-// models
+var ToolbarModel = require('./model/toolbar');
 var DimensionModel = require('./model/dimension');
 var FocusModel = require('./model/focus');
 var RenderModel = require('./model/renderer');
 var SmartRenderModel = require('./model/renderer-smart');
 var SelectionModel = require('./model/selection');
-
-// views
 var CellFactory = require('./view/cellFactory');
-var Clipboard = require('./view/clipboard');
-
-// layouts
-var LsideFrame = require('./view/layout/frame-lside');
-var RsideFrame = require('./view/layout/frame-rside');
-var ToolbarLayout = require('./view/layout/toolbar');
-
-// layers
-var ReadyLayer = require('./view/layer/ready');
-var EmptyLayer = require('./view/layer/empty');
-var LoadingLayer = require('./view/layer/loading');
 
 var Net = require('./addon/net');
 var util = require('./common/util');
+
+var renderStateMap = require('./common/constMap').renderState;
 
 var addOn = {
     Net: Net
@@ -65,87 +52,37 @@ var defaultOptions = {
  * Grid Core
  * @module core
  */
-var Core = View.extend(/**@lends module:core.prototype */{
+var Core = Model.extend(/**@lends module:core.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @extends module:base/model
      * @param {Object} options Grid.js 의 생성자 option 과 동일값.
      */
-    initialize: function(options) {
-        var id = util.getUniqueKey();
-
+    initialize: function(options, domState, publicInstance) {
         options = $.extend(true, {}, defaultOptions, options);
-        View.prototype.initialize.apply(this, arguments);
 
-        this.publicInstance = options.publicInstance;
-        this.singleClickEdit = options.singleClickEdit;
-        this.emptyMessage = options.emptyMessage;
+        this.domState = domState;
+        this.publicInstance = publicInstance;
+        this.id = util.getUniqueKey();
 
-        this.__instance[id] = this;
-        this.id = id;
+        this.addOn = {};
+        this.timeoutIdForSetRowList = 0;
 
-        this._initializeProperties();
         this._initializeModel(options);
         this._initializeListener();
-        this._initializeView();
 
-        this._attachExtraEvent();
-
-        this.render();
-
-        this.updateLayoutData();
-    },
-
-    events: {
-        'click': '_onClick',
-        'dblclick': '_onDblClick',
-        'mousedown': '_onMouseDown',
-        'selectstart': '_preventDrag',
-        'dragstart': '_preventDrag',
-        'mouseover': '_onMouseOver',
-        'mouseout': '_onMouseOut'
-    },
-
-    /**
-     * 내부 properties 를 초기화한다.
-     * @private
-     */
-    _initializeProperties: function() {
-        this.setOwnProperties({
-            'cellFactory': null,
-            'selectionModel': null,
-            'columnModel': null,
-            'dataModel': null,
-            'renderModel': null,
-            'layoutModel': null,
-            'focusModel': null,
-            'addOn': {},
-            'view': {
-                'lside': null,
-                'rside': null,
-                'toolbar': null,
-                'clipboard': null,
-                'layer': {
-                    ready: null,
-                    loading: null,
-                    empty: null
-                }
-            },
-            'timeoutIdForBlur': 0,
-            'timeoutIdForResize': 0,
-            'timeoutIdForSetRowList': 0,
-            '__$el': this.$el.clone()
+        this.cellFactory = new CellFactory({
+            grid: this
         });
     },
 
     /**
-     * 내부에서 사용할 모델 instance를 초기화한다.
-     *
-     * Initialize data model instances
+     * Initialize model instances
      * @private
      */
     _initializeModel: function(options) {
-        var offset = this.$el.offset();
+        var offset = this.domState.getOffset(),
+            renderOptions;
 
         this.columnModel = new ColumnModelData({
             grid: this,
@@ -167,7 +104,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this,
             offsetTop: offset.top,
             offsetLeft: offset.left,
-            width: this.$el.width(),
+            width: this.domState.getWidth(),
             headerHeight: options.headerHeight,
             rowHeight: options.rowHeight,
 
@@ -176,9 +113,13 @@ var Core = View.extend(/**@lends module:core.prototype */{
             scrollBarSize: this.scrollBarSize,
 
             minimumColumnWidth: options.minimumColumnWidth,
-            displayRowCount: options.displayRowCount,
-            toolbarOptions: options.toolbar
+            displayRowCount: options.displayRowCount
         });
+
+        this.toolbarModel = new ToolbarModel(options.toolbar);
+        if (!this.toolbarModel.isVisible()) {
+            this.dimensionModel.set('toolbarHeight', 0);
+        }
 
         this.focusModel = new FocusModel({
             grid: this,
@@ -191,53 +132,15 @@ var Core = View.extend(/**@lends module:core.prototype */{
             grid: this
         });
 
+        renderOptions = {
+            grid: this,
+            emptyMessage: options.emptyMessage
+        };
         if (options.notUseSmartRendering) {
-            this.renderModel = new RenderModel({
-                grid: this
-            });
+            this.renderModel = new RenderModel(renderOptions);
         } else {
-            this.renderModel = new SmartRenderModel({
-                grid: this
-            });
+            this.renderModel = new SmartRenderModel(renderOptions);
         }
-    },
-
-    /**
-     * 내부에서 사용할 view 인스턴스들을 초기화한다.
-     * @private
-     */
-    _initializeView: function() {
-        this.cellFactory = this.createView(CellFactory, {
-            grid: this
-        });
-
-        this.view.lside = this.createView(LsideFrame, {
-            grid: this
-        });
-
-        this.view.rside = this.createView(RsideFrame, {
-            grid: this
-        });
-
-        this.view.toolbar = this.createView(ToolbarLayout, {
-            grid: this
-        });
-
-        this.view.layer.ready = this.createView(ReadyLayer, {
-            grid: this
-        });
-
-        this.view.layer.empty = this.createView(EmptyLayer, {
-            grid: this
-        });
-
-        this.view.layer.loading = this.createView(LoadingLayer, {
-            grid: this
-        });
-
-        this.view.clipboard = this.createView(Clipboard, {
-            grid: this
-        });
     },
 
     /**
@@ -245,174 +148,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @private
      */
     _initializeListener: function() {
-        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._setHeight)
-            .listenTo(this.focusModel, 'select', this._onRowSelectChanged);
-    },
-
-    /**
-     * event 속성에 정의되지 않은 이벤트 attach 한다.
-     * @private
-     */
-    _attachExtraEvent: function() {
-        $(window).on('resize', $.proxy(this._onWindowResize, this));
-    },
-
-    /**
-     * drag 이벤트 발생시 이벤트 핸들러
-     * @returns {boolean} false
-     * @private
-     */
-    _preventDrag: function() {
-        return false;
-    },
-
-    /**
-     * window resize  이벤트 핸들러
-     * @private
-     */
-    _onWindowResize: function() {
-        if (this.$el) {
-            this.dimensionModel.set('width', this.$el.width());
-        }
-    },
-
-    /**
-     * click 이벤트 핸들러
-     * @param {MouseEvent} mouseEvent 이벤트 객체
-     * @private
-     */
-    _onClick: function(mouseEvent) {
-        var eventData = this.createEventData(mouseEvent),
-            $target = $(mouseEvent.target),
-            cellInfo;
-
-        this.trigger('click', eventData);
-        if (eventData.isStopped()) {
-            return;
-        }
-        if (this._isCellElement($target, true)) {
-            cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (this.singleClickEdit && !$target.is('input')) {
-                this.focusIn(cellInfo.rowKey, cellInfo.columnName);
-            }
-            this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
-        }
-    },
-
-    /**
-     * doubleClick 이벤트 핸들러
-     * @param {MouseEvent} mouseEvent 이벤트 객체
-     * @private
-     */
-    _onDblClick: function(mouseEvent) {
-        var eventData = this.createEventData(mouseEvent),
-            $target = $(mouseEvent.target);
-
-        this.trigger('dblclick', eventData);
-        if (eventData.isStopped()) {
-            return;
-        }
-        if (this._isCellElement($target, true)) {
-            this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
-        }
-    },
-
-    /**
-     * mouseover 이벤트 발생시 실행될 핸들러
-     * @private
-     * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
-     */
-    _onMouseOver: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            eventData;
-
-        if (this._isCellElement($target)) {
-            eventData = this.createEventData(mouseEvent);
-            this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
-        }
-    },
-
-    /**
-     * mouseout 이벤트 발생시 실행될 핸들러
-     * @private
-     * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
-     */
-    _onMouseOut: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            eventData;
-
-        if (this._isCellElement($target)) {
-            eventData = this.createEventData(mouseEvent);
-            this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
-        }
-    },
-
-    /**
-     * 셀과 관련된 커스텀 마우스 이벤트를 발생시킨다.
-     * @private
-     * @param {string} eventName 이벤트명
-     * @param {MouseEvent} eventData 커스터마이징 된 마우스 이벤트 객체
-     * @param {(jQuery|object)} cell 이벤트가 발생한 cell (jquery 객체이거나 rowKey, columnName, rowData를 갖는 plain 객체)
-     */
-    _triggerCellMouseEvent: function(eventName, eventData, cell) {
-        var cellInfo = cell;
-        if (cell instanceof $) {
-            cellInfo = this._getCellInfoFromElement(cell);
-        }
-        _.extend(eventData, cellInfo);
-        this.trigger(eventName, eventData);
-    },
-
-    /**
-     * 해당 HTML요소가 셀인지 여부를 반환한다.
-     * @private
-     * @param {jQuery} $target 검사할 HTML요소의 jQuery 객체
-     * @param {boolean} isIncludeChild true이면 셀의 자식요소까지 포함한다.
-     * @return {boolean} 셀이면 true, 아니면 false
-     */
-    _isCellElement: function($target, isIncludeChild) {
-        var $td = isIncludeChild ? $target.closest('td') : $target;
-
-        if (!$td.is('td')) {
-            return false;
-        }
-        return !!($td.parent().attr('key') && $td.attr('columnname'));
-    },
-
-    /**
-     * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
-     * @private
-     * @param {jQuery} $cell TD요소의 jquery 객체
-     * @return {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
-     */
-    _getCellInfoFromElement: function($cell) {
-        var rowKey = $cell.parent().attr('key'),
-            columnName = $cell.attr('columnname');
-
-        return {
-            rowKey: rowKey,
-            columnName: columnName,
-            rowData: this.getRow(rowKey)
-        };
-    },
-
-    /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 이벤트 객체
-     * @private
-     */
-    _onMouseDown: function(mouseDownEvent) {
-        var $target = $(mouseDownEvent.target),
-            eventData = this.createEventData(mouseDownEvent);
-
-        this.trigger('mousedown', eventData);
-        if (eventData.isStopped()) {
-            return;
-        }
-        if (!$target.is('input, a, button, select')) {
-            mouseDownEvent.preventDefault();
-            this.focusClipboard();
-        }
+        this.listenTo(this.focusModel, 'select', this._onRowSelectChanged);
     },
 
     /**
@@ -433,28 +169,13 @@ var Core = View.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     * @private
-     */
-    updateLayoutData: function() {
-        var offset = this.$el.offset();
-
-        this.dimensionModel.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: this.$el.width(),
-            toolbarHeight: this.view.toolbar.$el.height()
-        });
-    },
-
-    /**
      * If the grid has focused element, make sure that focusModel has a valid data,
      * Otherwise call focusModel.blur().
      */
     refreshFocusState: function() {
         var focusModel = this.focusModel;
 
-        if (!this.$el.find(':focus').length) {
+        if (!this.domState.hasFocusedElement()) {
             focusModel.blur();
         } else if (!focusModel.has() && !focusModel.restore()) {
             this.focusAt(0, 0);
@@ -465,53 +186,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * clipboard 에 focus 한다.
      */
     focusClipboard: function() {
-        if (tui.util.isExisty(tui.util.pick(this, 'view', 'clipboard'))) {
-            this.view.clipboard.focus();
-        }
-    },
-
-    /**
-     * 랜더링한다.
-     *
-     * Rendering grid view
-     */
-    render: function() {
-        var leftLine = $('<div>').addClass('left_line'),
-            rightLine = $('<div>').addClass('right_line');
-
-        this.$el.addClass('grid_wrapper')
-            .addClass('uio_grid')
-            .attr('instanceId', this.id)
-            .append(this.view.layer.empty.render().el)
-            .append(this.view.layer.loading.render().el)
-            .append(this.view.layer.ready.render().el);
-
-        this.view.layer.loading.show('초기화 중입니다.');
-
-        this.$el.append(this.view.lside.render().el)
-            .append(this.view.rside.render().el)
-            .append(this.view.toolbar.render().el)
-            .append(leftLine)
-            .append(rightLine)
-            .append(this.view.clipboard.render().el);
-        this._setHeight();
-        this.trigger('rendered');
-    },
-
-    /**
-     * rendering 이후, 또는 bodyHeight 가 변경되었을 때, header, toolbar 의 높이를 포함하여
-     * grid 의 전체 너비를 설정한다.
-     * @private
-     */
-    _setHeight: function() {
-        var bodyHeight = this.dimensionModel.get('bodyHeight'),
-            headerHeight = this.dimensionModel.get('headerHeight'),
-            toolbarHeight = this.view.toolbar.$el.height(),
-            height = toolbarHeight + headerHeight + bodyHeight;
-        this.$el.css('height', height + 'px');
-        this.dimensionModel.set({
-            toolbarHeight: toolbarHeight
-        });
+        this.focusModel.trigger('focusClipboard');
     },
 
     /**
@@ -585,9 +260,9 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @return {jQuery} 해당 jQuery Element
      */
     getElement: function(rowKey, columnName) {
-        var $frame = this.columnModel.isLside(columnName) ? this.view.lside.$el : this.view.rside.$el;
-        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-        return $frame.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
+        var rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
+        return this.domState.getElement(rowKey, columnName);
     },
 
     /**
@@ -682,7 +357,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
                 parse: isParse
             });
         }, this);
-        this.showGridLayer('loading');
+        this.renderModel.set('state', renderStateMap.LOADING);
         isParse = isParse === undefined ? true : isParse;
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
@@ -709,7 +384,7 @@ var Core = View.extend(/**@lends module:core.prototype */{
                 callback();
             }
         }, this);
-        this.showGridLayer('loading');
+        this.renderModel.set('state', renderStateMap.LOADING);
         isParse = isParse === undefined ? true : isParse;
         //데이터 파싱에 시간이 많이 걸릴 수 있으므로, loading layer 를 먼저 보여주기 위해 timeout 을 사용한다.
         if (rowList && rowList.length > 500) {
@@ -988,37 +663,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * Grid Layer 를 모두 감춘다.
-     */
-    hideGridLayer: function() {
-        _.each(this.view.layer, function(view) {
-            view.hide();
-        }, this);
-    },
-
-    /**
-     * name 에 해당하는 Grid Layer를 보여준다.
-     * @param {String} name ready|empty|loading 중 하나를 설정한다.
-     */
-    showGridLayer: function(name) {
-        this.hideGridLayer();
-        if (this.view.layer[name]) {
-            this.view.layer[name].show();
-        }
-    },
-
-    /**
-     * pagination instance 를 반환한다.
-     * @return {instance} pagination 인스턴스
-     */
-    getPaginationInstance: function() {
-        var paginationView = this.view.toolbar.pagination;
-        if (paginationView) {
-            return paginationView.instance;
-        }
-    },
-
-    /**
      * addon 을 활성화한다.
      * @param {string} name addon 이름
      * @param {object} options addon 에 넘길 파라미터
@@ -1156,7 +800,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
             startIdx = this._getStartIndexToPaste(),
             endIdx = this._getEndIndexToPaste(startIdx, data, columnModelList);
 
-        // console.log('startIdx', startIdx, 'endIdx', endIdx);
         _.each(data, function(row, index) {
             this._setValueForPaste(row, startIdx.row + index, startIdx.column, endIdx.column);
         }, this);
@@ -1211,7 +854,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
         if (!row) {
             row = this.dataModel.append({})[0];
         }
-        // console.log('columnModel', this.columnModel.get('dataColumnModelList'));
         for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
             columnName = this.columnModel.at(columnIdx, true).columnName;
             cellState = row.getCellState(columnName);
@@ -1221,7 +863,6 @@ var Core = View.extend(/**@lends module:core.prototype */{
                 attributes[columnName] = rowData[columnIdx - columnStartIdx];
             }
         }
-        // console.log('attributes', attributes);
         row.set(attributes);
     },
 
@@ -1299,54 +940,36 @@ var Core = View.extend(/**@lends module:core.prototype */{
      * @param {(number|null)} height - Height
      */
     setSize: function(width, height) {
-        if (width > 0) {
-            this.$el.width(width);
-        }
-        if (height > 0) {
-            this.dimensionModel.setHeight(height);
-        }
-        this.updateLayoutData();
+        this.dimensionModel.setSize(width, height);
+    },
+
+    /**
+     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
+     */
+    updateLayoutData: function() {
+        var offset = this.domState.getOffset();
+
+        this.dimensionModel.set({
+            offsetTop: offset.top,
+            offsetLeft: offset.left,
+            width: this.domState.getWidth()
+        });
     },
 
     /**
      * 소멸자
      */
     destroy: function() {
-        this.stopListening();
-        this.destroyChildren();
         _.each(this, function(value, property) {
-            if (property !== 'publicInstance') {
-                if (value instanceof View) {
-                    if (value && tui.util.isFunction(value.destroy)) {
-                        value.destroy();
-                    }
-                }
-                if (property === 'view') {
-                    _.each(value, function(instance) {
-                        if (instance && tui.util.isFunction(instance.destroy)) {
-                            instance.destroy();
-                        }
-                    }, this);
-                }
-            }
-
             if (value && tui.util.isFunction(value._destroy)) {
                 value._destroy();
             }
-
             if (value && tui.util.isFunction(value.stopListening)) {
                 value.stopListening();
             }
-
-            if (property !== '$el' && property !== '__$el') {
-                this[property] = null;
-            }
+            this[property] = null;
         }, this);
-        this.$el.replaceWith(this.__$el);
-        this.$el = this.__$el = null;
     }
 });
-
-Core.prototype.__instance = Core.prototype.__instance || {};
 
 module.exports = Core;

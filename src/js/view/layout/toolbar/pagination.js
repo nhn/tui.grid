@@ -57,9 +57,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
                 itemPerPage: 1
             }, this.$el);
         }
-        this.setOwnProperties({
-            instance: pagination
-        });
+        this.grid.toolbarModel.set('pagination', pagination);
     }
 });
 

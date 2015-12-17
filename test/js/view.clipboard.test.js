@@ -1,12 +1,12 @@
 'use strict';
 
 var Core = require('../../src/js/core');
-var keyCodeMap = require('../../src/js/common/keyConst').keyCode;
+var DomState = require('../../src/js/domState');
+var Clipboard = require('../../src/js/view/clipboard');
+var keyCodeMap = require('../../src/js/common/constMap').keyCode;
 
 describe('view.clipboard', function() {
-    var grid,
-        $empty,
-        timeoutDelay = 0;
+    var grid, timeoutDelay = 0;
 
     function getKeyEvent(keyName, $target) {
         $target = $target || $('<div>');
@@ -18,13 +18,12 @@ describe('view.clipboard', function() {
         };
     }
 
-    jasmine.getFixtures().fixturesPath = 'base/';
-    loadFixtures('test/fixtures/empty.html');
-    $empty = $('#empty');
-
     beforeEach(function() {
+        var $el = setFixtures('<div />'),
+            domState = new DomState($el);
+
         grid = new Core({
-            el: $empty,
+            el: $el,
             columnModelList: [
                 {
                     title: 'c1',
@@ -44,7 +43,7 @@ describe('view.clipboard', function() {
                 }
             ],
             selectType: 'checkbox'
-        });
+        }, domState);
         grid.setRowList([
             {
                 c1: '0-1',
@@ -71,9 +70,13 @@ describe('view.clipboard', function() {
 
     describe('clipboard test', function() {
         var clipboard;
+
         beforeEach(function() {
-            clipboard = grid.view.clipboard;
+            clipboard = new Clipboard({
+                grid: grid
+            });
         });
+
         describe('_onKeyDown', function() {
             var keyEvent;
             beforeEach(function() {
@@ -514,19 +517,19 @@ describe('view.clipboard', function() {
             });
         });
 
-        describe('focus', function() {
-            it('Focus on the $el and call grid.refreshFocusState()', function() {
-                var focused = false;
-
-                spyOn(grid, 'refreshFocusState');
-                clipboard.$el.focus(function() {
-                    focused = true;
-                });
-
-                clipboard.focus();
-                expect(grid.refreshFocusState).toHaveBeenCalled();
-                expect(focused).toBe(true);
-            });
-        });
+        // describe('focus', function() {
+        //     it('Focus on the $el and call grid.refreshFocusState()', function() {
+        //         var focused = false;
+        //
+        //         spyOn(grid, 'refreshFocusState');
+        //         clipboard.$el.focus(function() {
+        //             focused = true;
+        //         });
+        //
+        //         clipboard.focus();
+        //         expect(grid.refreshFocusState).toHaveBeenCalled();
+        //         expect(focused).toBe(true);
+        //     });
+        // });
     });
 });

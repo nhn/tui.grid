@@ -6,7 +6,7 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
-var keyCodeMap = require('../common/keyConst').keyCode;
+var keyCodeMap = require('../common/constMap').keyCode;
 
 /**
  * Clipboard view class
@@ -23,6 +23,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
+        this.listenTo(this.grid.focusModel, 'focusClipboard', this._onFocus);
     },
 
     tagName: 'textarea',
@@ -47,9 +48,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
-     * Focus on the clipboard element and restore the focusModel.
+     * Event handler for focus event
+     * @private
      */
-    focus: function() {
+    _onFocus: function() {
         if (!this.$el.is(':focus')) {
             this.$el.focus();
             this.grid.refreshFocusState();

@@ -22,7 +22,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @extends module:base/model
      * @constructs
      */
-    initialize: function() {
+    initialize: function(options) {
         Model.prototype.initialize.apply(this, arguments);
 
         /**
@@ -47,7 +47,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.on('change:displayRowCount', this._setBodyHeight, this);
 
         this._initColumnWidthVariables();
-        this._initToolbarHeight();
         this._setBodyHeight();
     },
 
@@ -76,9 +75,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         displayRowCount: 1,
         scrollBarSize: 17,
         scrollX: true,
-        scrollY: true,
-
-        toolbarOptions: null
+        scrollY: true
     },
 
     /**
@@ -125,16 +122,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             totalBorderWidth = rowCount + 1;
 
         this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
-    },
-
-    /**
-     * Sets the toolbar height to 0 if the toolbar option has no value.
-     */
-    _initToolbarHeight: function() {
-        var option = this.get('toolbarOptions');
-        if (!option || (!option.hasPagination && !option.hasControlPanel && !option.hasResizeHandler)) {
-            this.set('toolbarHeight', 0);
-        }
     },
 
     /**
@@ -805,9 +792,32 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * (Resets the bodyHeight and displayRowCount relative to the dimension height)
      * @param  {number} height - The height of the dimension
      */
-    setHeight: function(height) {
+    _setHeight: function(height) {
         this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
         this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
+    },
+
+    /**
+     * Sets the width and height of the dimension.
+     * @param {(Number|Null)} width - Width
+     * @param {(Number|Null)} height - Height
+     */
+    setSize: function(width, height) {
+        if (width > 0) {
+            this.set('width', width);
+        }
+        if (height > 0) {
+            this._setHeight(height);
+        }
+        this.trigger('setSize');
+    },
+
+    /**
+     * Returns the height of the dimension.
+     * @return {Number} Height
+     */
+    getHeight: function() {
+        return this.get('bodyHeight') + this.get('headerHeight') + this.get('toolbarHeight');
     },
 
     /**

@@ -1,14 +1,12 @@
 'use strict';
 
 var Core = require('../../src/js/core');
+var DomState = require('../../src/js/domState');
 
 describe('grid.normal.test', function() {
     var grid,
-        $empty,
+        $el = setFixtures('<div />'),
         timeoutDelay = 0;
-
-    jasmine.getFixtures().fixturesPath = 'base/';
-    loadFixtures('test/fixtures/empty.html');
 
     afterEach(function() {
         grid.destroy();
@@ -20,8 +18,11 @@ describe('grid.normal.test', function() {
     });
 
     function createCore() {
+        var $el = setFixtures('<div />'),
+            domState = new DomState($el);
+            
         var core = new Core({
-            el: setFixtures('<div />'),
+            el: $el,
             columnModelList: [
                 {
                     title: 'c1',
@@ -41,7 +42,7 @@ describe('grid.normal.test', function() {
                 }
             ],
             selectType: 'checkbox'
-        });
+        }, domState);
         core.setRowList([
             {
                 c1: '0-1',
@@ -153,20 +154,21 @@ describe('grid.normal.test', function() {
         });
     });
 
-    describe('getElement()', function() {
-        beforeEach(function(done) {
-            setTimeout(function() {
-                done();
-            }, timeoutDelay);
-        });
-
-        it('rowKey 와 columnName 에 해당하는 element 를 반환한다.', function() {
-            var $el;
-            $el = grid.getElement(0, 'c1');
-            expect($el.closest('td').attr('columnname')).toBe('c1');
-            expect($el.closest('tr').attr('key')).toBe('0');
-        });
-    });
+    // todo: core 에서 제거해야 할 듯
+    // describe('getelement()', function() {
+    //     beforeeach(function(done) {
+    //         settimeout(function() {
+    //             done();
+    //         }, timeoutdelay);
+    //     });
+    //
+    //     it('rowkey 와 columnname 에 해당하는 element 를 반환한다.', function() {
+    //         var $el;
+    //         $el = grid.getelement(0, 'c1');
+    //         expect($el.closest('td').attr('columnname')).tobe('c1');
+    //         expect($el.closest('tr').attr('key')).tobe('0');
+    //     });
+    // });
 
     describe('focusModel 위임 함수', function() {
         it('select()', function() {
@@ -579,48 +581,6 @@ describe('grid.normal.test', function() {
             grid.del(1, 'c2');
             expect(grid.getValue(1, 'c1')).toBe('1-1');
             expect(grid.getValue(1, 'c2')).toBe('1-2');
-        });
-    });
-
-    describe('click handler', function() {
-        it('cell에서 click이벤트가 발생하면 clickCell 이벤트를 발생시킨다.', function(done) {
-            // 클로저상의 grid 변수를 사용하면 timeout으로 인한 호출타이밍 때문에 destroy된 변수를 참조하게 되어 로컬에서 다시 생성해서 사용
-            var core = createCore(),
-                spy = jasmine.createSpy('clickCellSpy');
-
-            setTimeout(function() {
-                var $cell = core.getElement(0, 'c1');
-                core.on('clickCell', spy);
-                $cell.click();
-                expect(spy).toHaveBeenCalled();
-                done();
-            })
-        });
-
-        it('singleClickEdit 옵션이 true이고 text-convertible 셀인 경우 편집모드로 전환한다.', function(done) {
-            var core = new Core({
-                el: setFixtures('<div />'),
-                columnModelList: [
-                    {
-                        title: 'c1',
-                        columnName: 'c1',
-                        editOption: {
-                            type: 'text-convertible'
-                        }
-                    }
-                ]
-            });
-            core.singleClickEdit = true;
-            core.setRowList([{
-                c1: '0-1'
-            }]);
-
-            setTimeout(function() {
-                var $cell = core.getElement(0, 'c1');
-                $cell.click();
-                expect($cell.find('input').length).toBe(1);
-                done();
-            })
         });
     });
 });

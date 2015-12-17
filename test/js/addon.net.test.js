@@ -3,6 +3,7 @@
 var util = require('../../src/js/common/util');
 var Model = require('../../src/js/base/model');
 var formUtil = require('../../src/js/common/formUtil');
+var renderStateMap = require('../../src/js/common/constMap').renderState;
 
 describe('addon.net', function() {
     var columnModelList = [{
@@ -99,40 +100,30 @@ describe('addon.net', function() {
         });
 
         describe('_showToolbarExcelBtns', function() {
-            var controlPanel;
+            var toolbarModel;
 
             beforeEach(function() {
-                controlPanel = grid.core.view.toolbar.controlPanel;
+                toolbarModel = grid.core.toolbarModel;
             });
 
-            it('downloadExcel, downloadExcelAll API가 모두 없으면 버튼이 보여지지 않는다.', function() {
-                createNet({
-                    api: {readData: '/api/read'}
-                });
-                expect(controlPanel.$btnExcel).not.toBeVisible();
-                expect(controlPanel.$btnExcelAll).not.toBeVisible();
-            });
-
-            it('downloadExcel API가 있으면 엑셀다운로드 버튼이 보여진다.', function() {
+            it('If downloadExcel exist, toolbarModel.isExcelButtonVisible should be true', function() {
                 createNet({
                     api: {
                         readData: '/api/read',
                         downloadExcel: '/'
                     }
                 });
-                expect(controlPanel.$btnExcel).toBeVisible();
-                expect(controlPanel.$btnExcelAll).not.toBeVisible();
+                expect(toolbarModel.get('isExcelButtonVisible')).toBe(true);
             });
 
-            it('downloadExcelAll API가 있으면 전체엑셀다운로드 버튼이 보여진다.', function() {
+            it('If downloadExcelAll exist exsits, toolbarModel.isExcelAllButtonVisible should be true', function() {
                 createNet({
                     api: {
                         readData: '/api/read',
                         downloadExcelAll: '/'
                     }
                 });
-                expect(controlPanel.$btnExcel).not.toBeVisible();
-                expect(controlPanel.$btnExcelAll).toBeVisible();
+                expect(toolbarModel.get('isExcelAllButtonVisible')).toBe(true);
             });
         });
     });
@@ -269,10 +260,8 @@ describe('addon.net', function() {
     describe('lock', function() {
         it('loading layer 를 보여주고, isLocked 를 true로 설정한다.', function() {
             createNet();
-
-            grid.core.showGridLayer = jasmine.createSpy('showGridLayer');
             net._lock();
-            expect(grid.core.showGridLayer).toHaveBeenCalledWith('loading');
+            expect(grid.core.renderModel.get('state')).toBe(renderStateMap.LOADING);
             expect(net.isLocked).toBe(true);
         });
     });

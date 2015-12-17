@@ -5,10 +5,7 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 
 describe('model.dimension', function() {
-    var grid = {
-            option: function() {}
-        },
-        defaultConfig;
+    var grid = {}, defaultConfig;
 
     beforeEach(function() {
         grid.columnModel = new ColumnModelData();

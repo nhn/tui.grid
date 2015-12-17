@@ -255,6 +255,10 @@
 
 var View = require('./base/view');
 var Core = require('./core');
+var ContainerView = require('./view/container');
+var DomState = require('./domState');
+
+var instanceMap = {};
 
  /**
   * Toast UI
@@ -265,14 +269,52 @@ tui = window.tui = tui || {};
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Initializes the instance.
-     * @param {Object} options - Options for the constructor
+     * @param {Object} options - Options set by user
      */
     initialize: function(options) {
-        //grid 에서 public instance 를 참조할 수 있도록 자신의 참조 추가
-        options.publicInstance = this;
-        this.core = new Core(options);
-        this.listenTo(this.core, 'all', this._relayEvent, this);
+        var core, container, domState;
+
+        core = this._createCore(options);
+        container = this._createContainerView(options, core);
+
+        this.listenTo(core, 'all', this._relayEvent, this);
+        container.render();
+        core.updateLayoutData();
+
+        this.core = core;
+        this.container = container;
+        instanceMap[core.id] = core;
     },
+
+    /**
+     * Creates core model and returns it.
+     * @param {Object} options - Options set by user
+     * @return {Core} - New core object
+     */
+    _createCore: function(options) {
+        var coreOptions = _.assign({}, options),
+            domState = new DomState(this.$el);
+
+        _.omit(coreOptions, 'el', 'singleClickEdit');
+
+        return new Core(coreOptions, domState, this);
+    },
+
+    /**
+     * Creates container view and returns it.
+     * @param {Core} core - Core object
+     * @param {Object} options - Options set by user
+     * @return {ContainerView} - New container view
+     */
+    _createContainerView: function(options, core) {
+        var containerOptions = {
+            el: this.$el,
+            singleClickEdit: options.singleClickEdit
+        };
+
+        return new ContainerView(containerOptions, core);
+    },
+
     /**
      * Relay the internal events to the external.
      * @private
@@ -730,10 +772,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     destroy: function() {
         this.core.destroy();
-        this.core = null;
+        this.container.destroy();
+        this.core = this.container = null;
     }
 });
 
 tui.Grid.getInstanceById = function(id) {
-    return Core.prototype.__instance[id];
+    return instanceMap[id];
 };
