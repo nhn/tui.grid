@@ -164,7 +164,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         }
         this.trigger('selectRow', {
             rowKey: rowKey,
-            rowData: this.getRow(rowKey)
+            rowData: this.dataModel.getRowData(rowKey)
         });
     },
 
@@ -221,38 +221,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     },
 
     /**
-     * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
-     * @param {(Number|String)} rowKey  행 데이터의 고유 키
-     * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Object} 행 데이터
-     */
-    getRow: function(rowKey, isJsonString) {
-        var row = this.dataModel.get(rowKey);
-        row = row && row.toJSON();
-        return isJsonString ? $.toJSON(row) : row;
-    },
-
-    /**
-     * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
-     * @param {Number} index 행의 인덱스
-     * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Object} 행 데이터
-     */
-    getRowAt: function(index, isJsonString) {
-        var row = this.dataModel.at(index).toJSON();
-        row = isJsonString ? $.toJSON(row) : row;
-        return row;
-    },
-
-    /**
-     * 현재 그리드에 설정된 전체 데이터의 개수를 리턴한다.
-     * @return {Number} 데이터 개수
-     */
-    getRowCount: function() {
-        return this.dataModel.length;
-    },
-
-    /**
      * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
      * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
@@ -261,7 +229,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      */
     getElement: function(rowKey, columnName) {
         var rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-
         return this.domState.getElement(rowKey, columnName);
     },
 
@@ -941,19 +908,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      */
     setSize: function(width, height) {
         this.dimensionModel.setSize(width, height);
-    },
-
-    /**
-     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
-     */
-    updateLayoutData: function() {
-        var offset = this.domState.getOffset();
-
-        this.dimensionModel.set({
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: this.domState.getWidth()
-        });
     },
 
     /**

@@ -821,6 +821,20 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
+     * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
+     */
+    refreshLayout: function() {
+        var domState = this.grid.domState,
+            offset = domState.getOffset();
+
+        this.set({
+            offsetTop: offset.top,
+            offsetLeft: offset.left,
+            width: domState.getWidth()
+        });
+    },
+
+    /**
      * 초기 너비로 돌린다.
      * @param {Number} index    너비를 변경할 컬럼의 인덱스
      */

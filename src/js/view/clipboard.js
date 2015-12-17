@@ -278,7 +278,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         columnModel = columnModelList[index.column];
-        isValid = !!(columnModel && grid.getRow(index.row));
+        isValid = !!(columnModel && grid.dataModel.getRowData(index.row));
 
         if (isSelection && isValid) {
             this._updateSelectionByKeyIn(index.row, index.column);

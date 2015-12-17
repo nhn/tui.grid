@@ -274,15 +274,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
         var core, container, domState;
 
-        core = this._createCore(options);
-        container = this._createContainerView(options, core);
+        this.core = core = this._createCore(options);
+        this.container = container = this._createContainerView(options, core);
 
         this.listenTo(core, 'all', this._relayEvent, this);
-        container.render();
-        core.updateLayoutData();
 
-        this.core = core;
-        this.container = container;
+        container.render();
+        this.refreshLayout();
+
         instanceMap[core.id] = core;
     },
 
@@ -355,6 +354,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getColumnValues: function(columnName, isJsonString) {
         return this.core.getColumnValues(columnName, isJsonString);
     },
+
     /**
      * Returns the object that contains all values in the specified row.
      * @param {(number|string)} rowKey - The unique key of the target row
@@ -362,8 +362,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRow: function(rowKey, isJsonString) {
-        return this.core.getRow(rowKey, isJsonString);
+        return this.core.dataModel.getRowData(rowKey, isJsonString);
     },
+
     /**
      * Returns the object that contains all values in the row at specified index.
      * @param {number} index - The index of the row
@@ -371,14 +372,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRowAt: function(index, isJsonString) {
-        return this.core.getRowAt(index, isJsonString);
+        return this.core.dataModel.getRowData(index, isJsonString);
     },
+
     /**
      * Returns the total number of the rows.
      * @return {number} - The total number of the rows
      */
     getRowCount: function() {
-        return this.core.getRowCount();
+        return this.core.dataModel.length;
     },
     /**
      * Returns the rowKey of the currently selected row.
@@ -749,7 +751,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Refresh the layout view. Use this method when the view was rendered while hidden.
      */
     refreshLayout: function() {
-        this.core.updateLayoutData();
+        this.core.dimensionModel.refreshLayout();
     },
     /**
      * Show columns

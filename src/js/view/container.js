@@ -81,7 +81,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Event handler for resize event on window.
      */
     _onResizeWindow: function() {
-        this.grid.updateLayoutData();
+        this.grid.dimensionModel.refreshLayout();
     },
 
     /**
@@ -213,7 +213,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         return {
             rowKey: rowKey,
             columnName: columnName,
-            rowData: this.grid.getRow(rowKey)
+            rowData: this.grid.dataModel.getRowData(rowKey)
         };
     },
 

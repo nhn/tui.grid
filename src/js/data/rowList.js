@@ -499,6 +499,32 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     },
 
     /**
+     * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
+     * @param {(Number|String)} rowKey  행 데이터의 고유 키
+     * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+     * @return {Object} 행 데이터
+     */
+    getRowData: function(rowKey, isJsonString) {
+        var row = this.get(rowKey),
+            rowData = row ? row.toJSON() : null;
+
+        return isJsonString ? $.toJSON(rowData) : rowData;
+    },
+
+    /**
+     * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
+     * @param {Number} index 행의 인덱스
+     * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+     * @return {Object} 행 데이터
+     */
+    getRowDataAt: function(index, isJsonString) {
+        var row = this.at(index),
+            rowData = row ? row.toJSON() : null;
+
+        return isJsonString ? $.toJSON(row) : rowData;
+    },
+
+    /**
      * 주어진 데이터로 모델 목록을 생성하여 반환한다.
      * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
      * @return {Row[]} 생성된 모델 목록
