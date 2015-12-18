@@ -1,7 +1,10 @@
 'use strict';
 
-var Core = require('../../src/js/core');
 var DomState = require('../../src/js/domState');
+var FocusModel = require('../../src/js/model/focus');
+var SelectionModel = require('../../src/js/model/selection');
+var ColumnModelData = require('../../src/js/data/columnModel');
+var RowListData = require('../../src/js/data/rowList');
 
 function createColumnModelList(names) {
     var models = [];
@@ -17,33 +20,36 @@ function createColumnModelList(names) {
     return models;
 }
 
-function createGrid(columnModelList) {
-    var $el = $('<div />'),
-        options = {
-            el: $el,
-            columnModelList: columnModelList
-        },
-        domState = new DomState($el);
+function createRowList(columnModelList) {
+    var grid = {};
 
-    return new Core(options, domState);
+    grid.columnModel = new ColumnModelData({
+        grid: grid
+    });
+    grid.columnModel.set('columnModelList', columnModelList);
+    grid.dataModel = new RowListData([], {
+        grid: grid
+    });
+    grid.focusModel = new FocusModel({
+        grid: grid
+    });
+    grid.selectionModel = new SelectionModel({
+        grid: grid
+    });
+
+    return grid.dataModel;
 }
 
 describe('grid.core.paste()', function() {
-    var grid;
-
-    afterEach(function() {
-        if (grid.$el) {
-            grid.destroy();
-        }
-    });
+    var rowList;
 
     describe('텍스트 컬럼 (text, text-convertible)', function() {
         beforeEach(function() {
             var columnModelList = createColumnModelList(['c1', 'c2', 'c3']);
             columnModelList[1].editOption.type = 'text-convertible';
 
-            grid = createGrid(columnModelList);
-            grid.setRowList([
+            rowList = createRowList(columnModelList);
+            rowList.setRowList([
                 {
                     c1: '0-1',
                     c2: '0-2',
@@ -61,50 +67,50 @@ describe('grid.core.paste()', function() {
         });
 
         it('단일 데이터 붙여넣기', function() {
-            grid.focus(2, 'c2');
-            grid.paste([['New2-2']]);
-            expect(grid.dataModel.getValue(2, 'c2')).toBe('New2-2');
+            rowList.grid.focusModel.focus(2, 'c2');
+            rowList.paste([['New2-2']]);
+            expect(rowList.getValue(2, 'c2')).toBe('New2-2');
         });
 
         it('2 x 2 배열 붙여넣기', function() {
-            grid.focus(1, 'c1');
-            grid.paste([
+            rowList.grid.focusModel.focus(1, 'c1');
+            rowList.paste([
                 ['New1-1', 'New1-2'],
                 ['New2-1', 'New2-2']
             ]);
-            expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
-            expect(grid.dataModel.getValue(1, 'c2')).toBe('New1-2');
-            expect(grid.dataModel.getValue(2, 'c1')).toBe('New2-1');
-            expect(grid.dataModel.getValue(2, 'c2')).toBe('New2-2');
+            expect(rowList.getValue(1, 'c1')).toBe('New1-1');
+            expect(rowList.getValue(1, 'c2')).toBe('New1-2');
+            expect(rowList.getValue(2, 'c1')).toBe('New2-1');
+            expect(rowList.getValue(2, 'c2')).toBe('New2-2');
         });
 
         it('컬럼 범위를 넘어가는 값은 무시한다.', function() {
-            grid.focus(2, 'c3');
-            grid.paste([['New2-3', 'New2-4', 'New2-5']]);
-            expect(grid.dataModel.getValue(2, 'c3')).toBe('New2-3');
+            rowList.grid.focusModel.focus(2, 'c3');
+            rowList.paste([['New2-3', 'New2-4', 'New2-5']]);
+            expect(rowList.getValue(2, 'c3')).toBe('New2-3');
         });
 
         it('행 범위를 넘어가는 값이 있으면 행을 추가해준다.', function() {
-            grid.focus(2, 'c2');
-            grid.paste([
+            rowList.grid.focusModel.focus(2, 'c2');
+            rowList.paste([
                 ['New2-2', 'New2-3'],
                 ['New3-2', 'New3-3']
             ]);
-            expect(grid.dataModel.getValue(2, 'c2')).toBe('New2-2');
-            expect(grid.dataModel.getValue(2, 'c3')).toBe('New2-3');
-            expect(grid.dataModel.getValue(3, 'c2')).toBe('New3-2');
-            expect(grid.dataModel.getValue(3, 'c3')).toBe('New3-3');
+            expect(rowList.getValue(2, 'c2')).toBe('New2-2');
+            expect(rowList.getValue(2, 'c3')).toBe('New2-3');
+            expect(rowList.getValue(3, 'c2')).toBe('New3-2');
+            expect(rowList.getValue(3, 'c3')).toBe('New3-3');
         });
 
         it('붙여넣기가 끝나면 변경된 범위만큼 셀렉션을 만들어준다.', function() {
             var startIdx, endIdx;
-            grid.focus(0, 'c1');
-            grid.paste([
+            rowList.grid.focusModel.focus(0, 'c1');
+            rowList.paste([
                 ['New1-1', 'New1-2'],
                 ['New2-1', 'New2-2']
             ]);
-            startIdx = grid.selectionModel.getStartIndex();
-            endIdx = grid.selectionModel.getEndIndex();
+            startIdx = rowList.grid.selectionModel.getStartIndex();
+            endIdx = rowList.grid.selectionModel.getEndIndex();
 
             expect(startIdx.row).toBe(0);
             expect(startIdx.column).toBe(0);
@@ -117,8 +123,8 @@ describe('grid.core.paste()', function() {
         it(': editOption이 없는 열', function() {
             var columnModelList = createColumnModelList(['c1', 'c2']);
             columnModelList[1].editOption = null;
-            grid = createGrid(columnModelList);
-            grid.setRowList([{
+            rowList = createRowList(columnModelList);
+            rowList.setRowList([{
                     c1: '0-1',
                     c2: '0-2'
                 }, {
@@ -126,20 +132,20 @@ describe('grid.core.paste()', function() {
                     c2: '1-2'
                 }
             ]);
-            grid.focus(0, 'c1');
-            grid.paste([
+            rowList.grid.focusModel.focus(0, 'c1');
+            rowList.paste([
                 ['New0-1', 'New0-2'],
                 ['New1-1', 'New1-2']
             ]);
-            expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
-            expect(grid.dataModel.getValue(0, 'c2')).toBe('0-2');
-            expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
-            expect(grid.dataModel.getValue(1, 'c2')).toBe('1-2');
+            expect(rowList.getValue(0, 'c1')).toBe('New0-1');
+            expect(rowList.getValue(0, 'c2')).toBe('0-2');
+            expect(rowList.getValue(1, 'c1')).toBe('New1-1');
+            expect(rowList.getValue(1, 'c2')).toBe('1-2');
         });
 
         it(': disabled', function() {
-            grid = createGrid(createColumnModelList(['c1', 'c2']));
-            grid.setRowList([
+            rowList = createRowList(createColumnModelList(['c1', 'c2']));
+            rowList.setRowList([
                 {
                     _extraData: {
                         rowState: 'DISABLED'
@@ -151,23 +157,23 @@ describe('grid.core.paste()', function() {
                     c2: '1-2'
                 }
             ]);
-            grid.focus(0, 'c1');
-            grid.paste([
+            rowList.grid.focusModel.focus(0, 'c1');
+            rowList.paste([
                 ['New0-1', 'New0-2'],
                 ['New1-1', 'New1-2']
             ]);
-            expect(grid.dataModel.getValue(0, 'c1')).toBe('0-1');
-            expect(grid.dataModel.getValue(0, 'c2')).toBe('0-2');
-            expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
-            expect(grid.dataModel.getValue(1, 'c2')).toBe('New1-2');
+            expect(rowList.getValue(0, 'c1')).toBe('0-1');
+            expect(rowList.getValue(0, 'c2')).toBe('0-2');
+            expect(rowList.getValue(1, 'c1')).toBe('New1-1');
+            expect(rowList.getValue(1, 'c2')).toBe('New1-2');
         });
     });
 
     it('숨겨진 컬럼은 제외하고 처리한다.', function() {
         var columnModelList = createColumnModelList(['c1', 'c2', 'c3']);
         columnModelList[1].isHidden = true;
-        grid = createGrid(columnModelList);
-        grid.setRowList([
+        rowList = createRowList(columnModelList);
+        rowList.setRowList([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -178,22 +184,22 @@ describe('grid.core.paste()', function() {
                 c3: '1-3'
             }
         ]);
-        grid.focus(0, 'c1');
-        grid.paste([
+        rowList.grid.focusModel.focus(0, 'c1');
+        rowList.paste([
             ['New0-1', 'New0-3'],
             ['New1-1', 'New1-3']
         ]);
-        expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
-        expect(grid.dataModel.getValue(0, 'c2')).toBe('0-2');
-        expect(grid.dataModel.getValue(0, 'c3')).toBe('New0-3');
-        expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
-        expect(grid.dataModel.getValue(1, 'c2')).toBe('1-2');
-        expect(grid.dataModel.getValue(1, 'c3')).toBe('New1-3');
+        expect(rowList.getValue(0, 'c1')).toBe('New0-1');
+        expect(rowList.getValue(0, 'c2')).toBe('0-2');
+        expect(rowList.getValue(0, 'c3')).toBe('New0-3');
+        expect(rowList.getValue(1, 'c1')).toBe('New1-1');
+        expect(rowList.getValue(1, 'c2')).toBe('1-2');
+        expect(rowList.getValue(1, 'c3')).toBe('New1-3');
     });
 
     it('RowSpan이 적용된 컬럼일 경우 MainRow의 값만 변경한다', function() {
-        grid = createGrid(createColumnModelList(['c1', 'c2']));
-        grid.setRowList([
+        rowList = createRowList(createColumnModelList(['c1', 'c2']))
+        rowList.setRowList([
             {
                 _extraData: {
                     rowSpan: {
@@ -207,20 +213,20 @@ describe('grid.core.paste()', function() {
                 c2: '1-2'
             }
         ]);
-        grid.focus(0, 'c1');
-        grid.paste([
+        rowList.grid.focusModel.focus(0, 'c1');
+        rowList.paste([
             ['New0-1', 'New0-2'],
             ['New1-1', 'New1-2']
         ]);
-        expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
-        expect(grid.dataModel.getValue(0, 'c2')).toBe('New0-2');
-        expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
-        expect(grid.dataModel.getValue(1, 'c2')).toBe('New0-2');
+        expect(rowList.getValue(0, 'c1')).toBe('New0-1');
+        expect(rowList.getValue(0, 'c2')).toBe('New0-2');
+        expect(rowList.getValue(1, 'c1')).toBe('New1-1');
+        expect(rowList.getValue(1, 'c2')).toBe('New0-2');
     });
 
     it('셀렉션이 존재하는 경우 포커스된 셀이 아닌 셀렉션의 왼쪽 상단 셀을 기준으로 붙여넣기 한다', function() {
-        grid = createGrid(createColumnModelList(['c1', 'c2', 'c3']));
-        grid.setRowList([
+        rowList = createRowList(createColumnModelList(['c1', 'c2', 'c3']));
+        rowList.setRowList([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -235,16 +241,16 @@ describe('grid.core.paste()', function() {
                 c3: '2-3'
             }
         ]);
-        grid.selectionModel.start(0, 0);
-        grid.selectionModel.update(1, 1);
-        grid.focus(1, 'c2');
-        grid.paste([
+        rowList.grid.selectionModel.start(0, 0);
+        rowList.grid.selectionModel.update(1, 1);
+        rowList.grid.focusModel.focus(1, 'c2');
+        rowList.paste([
             ['New0-1', 'New0-2'],
             ['New1-1', 'New1-2']
         ]);
-        expect(grid.dataModel.getValue(0, 'c1')).toBe('New0-1');
-        expect(grid.dataModel.getValue(0, 'c2')).toBe('New0-2');
-        expect(grid.dataModel.getValue(1, 'c1')).toBe('New1-1');
-        expect(grid.dataModel.getValue(1, 'c2')).toBe('New1-2');
+        expect(rowList.getValue(0, 'c1')).toBe('New0-1');
+        expect(rowList.getValue(0, 'c2')).toBe('New0-2');
+        expect(rowList.getValue(1, 'c1')).toBe('New1-1');
+        expect(rowList.getValue(1, 'c2')).toBe('New1-2');
     });
 });

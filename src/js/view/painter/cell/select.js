@@ -77,7 +77,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
     focusIn: function($td) {
         /* istanbul ignore next */
         if ($td.find('select').prop('disabled')) {
-            this.grid.focusClipboard();
+            this.grid.focusModel.focusClipboard();
         } else {
             $td.find('select').eq(0).focus();
         }

@@ -21,11 +21,6 @@ describe('view.layout.body', function() {
         var $el = setFixtures('<div />');
         var mock = {
             $el: $el,
-            options: {},
-            option: function(name) {
-                return this.options[name];
-            },
-            focusClipboard: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData({
                 columnModelList: [
@@ -42,8 +37,7 @@ describe('view.layout.body', function() {
                 ]
             }),
             focusModel: new Model(),
-            domState: new DomState($el),
-            focusAt: function() {}
+            domState: new DomState($el)
         };
         mock.dataModel.isRowSpanEnable = function() {
             return true;
@@ -129,11 +123,12 @@ describe('view.layout.body', function() {
 
         it('if the grid has a selectType-radio option, check the row', function() {
             grid.columnModel.set('selectType', 'radio');
-            grid.check = jasmine.createSpy('check');
+            grid.dataModel.check = jasmine.createSpy('check');
+            grid.focusModel.focusAt = jasmine.createSpy('focusAt');
 
             body._onMouseDown(eventMock);
 
-            expect(grid.check).toHaveBeenCalledWith(2);
+            expect(grid.dataModel.check).toHaveBeenCalledWith(2);
         });
 
         it('if click the meta("_number") column, adjust indexes', function() {
@@ -208,11 +203,11 @@ describe('view.layout.body', function() {
                     columnName: 'c2'
                 };
                 spyOn(selectionModel, 'end');
-                spyOn(grid, 'focusAt');
+                grid.focusModel.focusAt = jasmine.createSpy('focusAt');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
-                expect(grid.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(grid.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 
@@ -228,11 +223,11 @@ describe('view.layout.body', function() {
                     columnName: 'c2'
                 };
                 spyOn(selectionModel, 'end');
-                spyOn(grid, 'focusAt');
+                grid.focusModel.focusAt = jasmine.createSpy('focusAt');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
-                expect(grid.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(grid.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 

@@ -126,9 +126,7 @@ describe('model.renderer', function() {
     var columnModelInstance,
         dataModelInstance,
         renderModelInstance,
-        grid = {
-            option: function() {}
-        },
+        grid = {},
         rowList;
 
     beforeEach(function() {

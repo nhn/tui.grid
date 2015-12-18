@@ -44,7 +44,7 @@ describe('view.clipboard', function() {
             ],
             selectType: 'checkbox'
         }, domState);
-        grid.setRowList([
+        grid.dataModel.setRowList([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -129,9 +129,9 @@ describe('view.clipboard', function() {
             var keyEvent;
 
             beforeEach(function() {
-                grid.focus(0, 'c1');
-                grid.focus = jasmine.createSpy('focus');
-                grid.focusIn = jasmine.createSpy('focusIn');
+                grid.focusModel.focus(0, 'c1');
+                grid.focusModel.focus = jasmine.createSpy('focus');
+                grid.focusModel.focusIn = jasmine.createSpy('focusIn');
                 clipboard._onEnterSpace = jasmine.createSpy('_onEnterSpace');
                 clipboard._del = jasmine.createSpy('_del');
             });
@@ -140,7 +140,7 @@ describe('view.clipboard', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('TAB');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focusIn.calls.count()).toBe(1);
+                expect(grid.focusModel.focusIn.calls.count()).toBe(1);
             });
 
             it('_del 를 호출하는 키는 _del 호출하는지 확인한다.', function() {
@@ -166,42 +166,42 @@ describe('view.clipboard', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('UP_ARROW');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(1);
+                expect(grid.focusModel.focus.calls.count()).toBe(1);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('DOWN_ARROW');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(2);
+                expect(grid.focusModel.focus.calls.count()).toBe(2);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('LEFT_ARROW');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(3);
+                expect(grid.focusModel.focus.calls.count()).toBe(3);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('RIGHT_ARROW');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(4);
+                expect(grid.focusModel.focus.calls.count()).toBe(4);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('PAGE_DOWN');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(5);
+                expect(grid.focusModel.focus.calls.count()).toBe(5);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('PAGE_UP');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(6);
+                expect(grid.focusModel.focus.calls.count()).toBe(6);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('HOME');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(7);
+                expect(grid.focusModel.focus.calls.count()).toBe(7);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('END');
                 clipboard._keyIn(keyEvent);
-                expect(grid.focus.calls.count()).toBe(8);
+                expect(grid.focusModel.focus.calls.count()).toBe(8);
             });
         });
 
@@ -209,7 +209,7 @@ describe('view.clipboard', function() {
             it('In defect of selection range, It will return focused index', function() {
                 var index;
 
-                grid.focusAt(0, 0);
+                grid.focusModel.focusAt(0, 0);
                 index = clipboard._getIndexBeforeMove();
                 expect(index).toEqual({
                     row: 0,
@@ -219,7 +219,7 @@ describe('view.clipboard', function() {
 
             it('In selection range, It will return selection index', function() {
                 var index;
-                grid.focusAt(0, 0);
+                grid.focusModel.focusAt(0, 0);
                 grid.selectionModel.update(1, 1, 'cell');
                 index = clipboard._getIndexBeforeMove();
 
@@ -234,8 +234,8 @@ describe('view.clipboard', function() {
             var keyEvent;
 
             beforeEach(function() {
-                grid.focusAt(1, 1);
-                grid.focusIn = jasmine.createSpy('focusIn');
+                grid.focusModel.focusAt(1, 1);
+                grid.focusModel.focusIn = jasmine.createSpy('focusIn');
                 clipboard._updateSelectionByKeyIn = jasmine.createSpy('_updateSelectionByKeyIn');
             });
 
@@ -243,75 +243,75 @@ describe('view.clipboard', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('TAB');
                 clipboard._keyInWithShift(keyEvent);
-                expect(grid.focusIn.calls.count()).toBe(1);
+                expect(grid.focusModel.focusIn.calls.count()).toBe(1);
             });
 
             describe('_updateSelectionByKeyIn 를 호출하는 키는 _updateSelectionByKeyIn를 올바르게 호출하는지 확인한다.', function() {
                 it('ARROW keys', function() {
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('UP_ARROW');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(0, 1);
 
                     clipboard._updateSelectionByKeyIn.calls.reset();
 
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(2, 1);
 
                     clipboard._updateSelectionByKeyIn.calls.reset();
 
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('LEFT_ARROW');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 0);
 
                     clipboard._updateSelectionByKeyIn.calls.reset();
 
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('RIGHT_ARROW');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 2);
                 });
 
                 it('PAGE-UP/DOWN', function() {
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('PAGE_DOWN');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(2, 1);
 
                     clipboard._updateSelectionByKeyIn.calls.reset();
 
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('PAGE_UP');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(0, 1);
                 });
 
                 it('HOME/END', function() {
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('HOME');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 0);
 
                     clipboard._updateSelectionByKeyIn.calls.reset();
 
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('END');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).toHaveBeenCalledWith(1, 2);
                 });
 
                 it('ENTER', function() {
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('ENTER');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).not.toHaveBeenCalled();
                 });
 
                 it('unknown keys', function() {
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('unknown');
                     clipboard._keyInWithShift(keyEvent);
                     expect(clipboard._updateSelectionByKeyIn).not.toHaveBeenCalled();
@@ -337,7 +337,7 @@ describe('view.clipboard', function() {
                             return actual && actual.scrollLeft && !actual.scrollTop
                         }
                     };
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     grid.selectionModel.setState('column');
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
@@ -351,7 +351,7 @@ describe('view.clipboard', function() {
                             return actual && actual.scrollTop && !actual.scrollLeft
                         }
                     };
-                    grid.focusAt(1, 1);
+                    grid.focusModel.focusAt(1, 1);
                     grid.selectionModel.setState('row');
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
@@ -365,8 +365,8 @@ describe('view.clipboard', function() {
             var keyEvent;
 
             beforeEach(function() {
-                grid.focus(0, 'columnName1');
-                grid.focus = jasmine.createSpy('focus');
+                grid.focusModel.focus(0, 'columnName1');
+                grid.focusModel.focus = jasmine.createSpy('focus');
                 grid.selectionModel.selectAll = jasmine.createSpy('selectAll');
                 clipboard._copyToClipboard = jasmine.createSpy('_copyToClipboard');
             });
@@ -389,12 +389,12 @@ describe('view.clipboard', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('HOME');
                 clipboard._keyInWithCtrl(keyEvent);
-                expect(grid.focus.calls.count()).toBe(1);
+                expect(grid.focusModel.focus.calls.count()).toBe(1);
 
                 clipboard._unlock();
                 keyEvent = getKeyEvent('END');
                 clipboard._keyInWithCtrl(keyEvent);
-                expect(grid.focus.calls.count()).toBe(2);
+                expect(grid.focusModel.focus.calls.count()).toBe(2);
             });
         });
 
@@ -402,7 +402,7 @@ describe('view.clipboard', function() {
             var keyEvent;
 
             beforeEach(function() {
-                grid.focus(0, 'columnName1');
+                grid.focusModel.focus(0, 'columnName1');
                 clipboard._updateSelectionByKeyIn = jasmine.createSpy('_updateSelectionByKeyIn');
             });
 
@@ -421,8 +421,8 @@ describe('view.clipboard', function() {
 
         describe('_del', function() {
             beforeEach(function() {
-                grid.focus(0, 'columnName1');
-                grid.del = jasmine.createSpy('del');
+                grid.focusModel.focus(0, 'columnName1');
+                grid.dataModel.del = jasmine.createSpy('del');
             });
 
             it('selection 이 선택되어 있다면 grid의 del 을 선택된 만큼 삭제하는지 확인한다.', function() {
@@ -430,19 +430,19 @@ describe('view.clipboard', function() {
                 grid.selectionModel.update(2, 2);
 
                 clipboard._del();
-                expect(grid.del.calls.count()).toEqual(9);
+                expect(grid.dataModel.del.calls.count()).toEqual(9);
             });
 
             it('아니라면 한번 호출한 것을 확인한다.', function() {
                 clipboard._del();
-                expect(grid.del.calls.count()).toEqual(1);
+                expect(grid.dataModel.del.calls.count()).toEqual(1);
             });
         });
 
         describe('_updateSelectionByKeyIn', function() {
             beforeEach(function() {
-                grid.focus(0, 'c1');
-                grid.del = jasmine.createSpy('del');
+                grid.focusModel.focus(0, 'c1');
+                grid.dataModel.del = jasmine.createSpy('del');
             });
 
             it('Check focused index is remaining during selection', function() {
@@ -471,7 +471,7 @@ describe('view.clipboard', function() {
 
         describe('_getClipboardString', function() {
             beforeEach(function() {
-                grid.focus(0, 'c1');
+                grid.focusModel.focus(0, 'c1');
             });
 
             it('selection 이 선택되어 있다면 grid.selection.getValuesToString 을 호출한다', function() {
@@ -496,9 +496,9 @@ describe('view.clipboard', function() {
             });
 
             it('아니라면 focusIn 을 호출한다..', function() {
-                grid.focusIn = jasmine.createSpy('focusIn');
+                grid.focusModel.focusIn = jasmine.createSpy('focusIn');
                 clipboard._onEnterSpace(0, 'c1');
-                expect(grid.focusIn).toHaveBeenCalled();
+                expect(grid.focusModel.focusIn).toHaveBeenCalled();
             });
         });
 
@@ -506,30 +506,24 @@ describe('view.clipboard', function() {
             it('Call deffered function of the grid.refreshFocusState()', function() {
                 jasmine.clock().install();
 
-                spyOn(grid, 'refreshFocusState')
+                spyOn(grid.focusModel, 'refreshState')
                 clipboard._onBlur();
 
-                expect(grid.refreshFocusState).not.toHaveBeenCalled();
+                expect(grid.focusModel.refreshState).not.toHaveBeenCalled();
                 jasmine.clock().tick(1);
-                expect(grid.refreshFocusState).toHaveBeenCalled();
+                expect(grid.focusModel.refreshState).toHaveBeenCalled();
 
                 jasmine.clock().uninstall();
             });
         });
 
-        // describe('focus', function() {
-        //     it('Focus on the $el and call grid.refreshFocusState()', function() {
-        //         var focused = false;
-        //
-        //         spyOn(grid, 'refreshFocusState');
-        //         clipboard.$el.focus(function() {
-        //             focused = true;
-        //         });
-        //
-        //         clipboard.focus();
-        //         expect(grid.refreshFocusState).toHaveBeenCalled();
-        //         expect(focused).toBe(true);
-        //     });
-        // });
+        describe('_onFocus', function() {
+            it('Focus on the $el and call grid.refreshFocusState()', function() {
+                spyOn(grid.focusModel, 'refreshState');
+
+                clipboard._onFocus();
+                expect(grid.focusModel.refreshState).toHaveBeenCalled();
+            });
+        });
     });
 });

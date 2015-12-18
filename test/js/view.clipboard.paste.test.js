@@ -46,8 +46,10 @@ describe('grid paste test', function() {
             txt;
         beforeEach(function() {
             clipboard.grid = {
-                paste: function(r) {
-                    result = r;
+                dataModel: {
+                    paste: function(r) {
+                        result = r;
+                    }
                 }
             };
             txt = 'aaa\tbbb\tccc\nddd\teee\tfff';
@@ -96,8 +98,10 @@ describe('grid paste test', function() {
         beforeEach(function() {
             clipboard.pasting = false;
             clipboard.grid = {
-                paste: function(r) {
-                    result = r;
+                dataModel: {
+                    paste: function(r) {
+                        result = r;
+                    }
                 }
             };
         });

@@ -10,22 +10,17 @@ var Focus = require('../../src/js/model/focus');
 var CellFactory = require('../../src/js/view/cellFactory');
 var RowListModel = require('../../src/js/model/rowList');
 var RowListView = require('../../src/js/view/rowList');
+var DomState = require('../../src/js/domState');
 
 describe('View.RowList', function() {
     var grid, rowListView, $tableContainer;
 
     function createGridMock() {
         var mock = {
-            option: function() {},
             $el: setFixtures('<div />'),
-            hideGridLayer: function() {},
-            focusClipboard: function() {},
-            columnModel: new ColumnModelData(),
-            getElement: function(rowKey, columnName) {
-                rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-                return this.$el.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
-            }
+            columnModel: new ColumnModelData()
         };
+        mock.domState = new DomState(mock.$el);
         mock.dataModel = new RowListData([], {
             grid: mock
         });

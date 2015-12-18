@@ -9,21 +9,13 @@ var Focus = require('../../src/js/model/focus');
 var NormalPainter = require('../../src/js/view/painter/cell/normal');
 var MainButtonPainter = require('../../src/js/view/painter/cell/mainButton');
 var NumberPainter = require('../../src/js/view/painter/cell/number');
+var keyCodeMap = require('../../src/js/common/constMap').keyCode;
 
 describe('view.painter.cell.normal', function() {
     var grid, cellPainter;
 
     function createGridMock() {
         var mock = {
-            keyMap: {
-                ENTER: 13,
-                LEFT_ARROW: 37
-            },
-            keyName: {
-                13: 'ENTER',
-                37: 'LEFT_ARROW'
-            },
-            focusIn: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
@@ -124,9 +116,9 @@ describe('view.painter.cell.normal', function() {
 
         describe('focusIn', function() {
             it('Grid 의 focusClipboard 메서드가 호출되는지 확인한다.', function() {
-                grid.focusClipboard = jasmine.createSpy('focusClipboard');
+                grid.focusModel.focusClipboard = jasmine.createSpy('focusClipboard');
                 cellPainter.focusIn();
-                expect(grid.focusClipboard).toHaveBeenCalled();
+                expect(grid.focusModel.focusClipboard).toHaveBeenCalled();
             });
         });
     });
@@ -318,8 +310,8 @@ describe('view.painter.cell.normal', function() {
 
             function getKeyEvent(keyName) {
                 return {
-                    keyCode: grid.keyMap[keyName],
-                    which: grid.keyMap[keyName],
+                    keyCode: keyCodeMap[keyName],
+                    which: keyCodeMap[keyName],
                     target: $target.get(0)
                 };
             }

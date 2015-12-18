@@ -61,6 +61,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     select: function(rowKey) {
         this.unselect().set('rowKey', rowKey);
+        this.grid.dataModel.check(rowKey);
+
         this.trigger('select', rowKey);
         return this;
     },
@@ -105,6 +107,73 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             this.scrollToFocus();
         }
         return this;
+    },
+
+    /**
+     * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
+     * @param {(Number|String)} rowIndex 행 index
+     * @param {String} columnIndex 열 index
+     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     */
+    focusAt: function(rowIndex, columnIndex, isScrollable) {
+        var row = this.grid.dataModel.at(rowIndex),
+            column = this.grid.columnModel.at(columnIndex, true);
+        if (row && column) {
+            this.focus(row.get('rowKey'), column['columnName'], isScrollable);
+        }
+    },
+
+    /**
+     * 셀을 편집모드로 전환한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {String} columnName   컬럼 이름
+     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     */
+    focusIn: function(rowKey, columnName, isScrollable) {
+        var grid = this.grid,
+            cellPainter;
+
+        this.focus(rowKey, columnName, isScrollable);
+        rowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
+        if (grid.dataModel.get(rowKey).isEditable(columnName)) {
+            cellPainter = grid.cellFactory.getInstance(grid.columnModel.getEditType(columnName));
+            cellPainter.focusIn(grid.dataModel.getElement(rowKey, columnName));
+        } else {
+            this.focusClipboard();
+        }
+    },
+
+    /**
+     * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
+     * @param {(Number|String)} rowIndex 행 index
+     * @param {String} columnIndex 열 index
+     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     */
+    focusInAt: function(rowIndex, columnIndex, isScrollable) {
+        var row = this.grid.dataModel.at(rowIndex),
+            column = this.grid.columnModel.at(columnIndex, true);
+        if (row && column) {
+            this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
+        }
+    },
+
+    /**
+     * clipboard 에 focus 한다.
+     */
+    focusClipboard: function() {
+        this.trigger('focusClipboard');
+    },
+
+    /**
+     * If the grid has focused element, make sure that focusModel has a valid data,
+     * Otherwise call focusModel.blur().
+     */
+    refreshState: function() {
+        if (!this.grid.domState.hasFocusedElement()) {
+            this.blur();
+        } else if (!this.has() && !this.restore()) {
+            this.focusAt(0, 0);
+        }
     },
 
     /**

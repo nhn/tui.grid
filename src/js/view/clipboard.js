@@ -40,10 +40,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _onBlur: function() {
-        var grid = this.grid;
+        var focusModel = this.grid.focusModel;
 
         _.defer(function() {
-            grid.refreshFocusState();
+            focusModel.refreshState();
         });
     },
 
@@ -54,7 +54,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     _onFocus: function() {
         if (!this.$el.is(':focus')) {
             this.$el.focus();
-            this.grid.refreshFocusState();
+            this.grid.focusModel.refreshState();
         }
     },
 
@@ -130,28 +130,28 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
         switch (keyCode) {
             case keyCodeMap['UP_ARROW']:
-                grid.focus(focusModel.prevRowKey(), columnName, true);
+                focusModel.focus(focusModel.prevRowKey(), columnName, true);
                 break;
             case keyCodeMap['DOWN_ARROW']:
-                grid.focus(focusModel.nextRowKey(), columnName, true);
+                focusModel.focus(focusModel.nextRowKey(), columnName, true);
                 break;
             case keyCodeMap['LEFT_ARROW']:
-                grid.focus(rowKey, focusModel.prevColumnName(), true);
+                focusModel.focus(rowKey, focusModel.prevColumnName(), true);
                 break;
             case keyCodeMap['RIGHT_ARROW']:
-                grid.focus(rowKey, focusModel.nextColumnName(), true);
+                focusModel.focus(rowKey, focusModel.nextColumnName(), true);
                 break;
             case keyCodeMap['PAGE_UP']:
-                grid.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
+                focusModel.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
                 break;
             case keyCodeMap['PAGE_DOWN']:
-                grid.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
+                focusModel.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
                 break;
             case keyCodeMap['HOME']:
-                grid.focus(rowKey, focusModel.firstColumnName(), true);
+                focusModel.focus(rowKey, focusModel.firstColumnName(), true);
                 break;
             case keyCodeMap['END']:
-                grid.focus(rowKey, focusModel.lastColumnName(), true);
+                focusModel.focus(rowKey, focusModel.lastColumnName(), true);
                 break;
             //space 와 enter 는 동일동작
             case keyCodeMap['SPACE']:
@@ -162,7 +162,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 this._del(rowKey, columnName);
                 break;
             case keyCodeMap['TAB']:
-                grid.focusIn(rowKey, focusModel.nextColumnName(), true);
+                focusModel.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
             default:
                 isKeyIdentified = false;
@@ -186,9 +186,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             editType = this.grid.columnModel.getEditType(columnName);
         if (editType === '_button') {
             cellInstance = this.grid.cellFactory.getInstance(editType);
-            cellInstance.toggle(grid.getElement(rowKey, columnName));
+            cellInstance.toggle(grid.dataModel.getElement(rowKey, columnName));
         } else {
-            grid.focusIn(rowKey, columnName);
+            grid.focusModel.focusIn(rowKey, columnName);
         }
     },
 
@@ -269,7 +269,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 break;
             case keyCodeMap['TAB']:
                 isSelection = false;
-                grid.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
+                focusModel.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
             default:
                 isSelection = false;
@@ -317,10 +317,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 this._copyToClipboard();
                 break;
             case keyCodeMap['HOME']:
-                grid.focus(focusModel.firstRowKey(), focusModel.firstColumnName(), true);
+                focusModel.focus(focusModel.firstRowKey(), focusModel.firstColumnName(), true);
                 break;
             case keyCodeMap['END']:
-                grid.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
+                focusModel.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                 break;
             case keyCodeMap['CHAR_V']:
                 this._paste();
@@ -373,7 +373,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     _pasteToGrid: function() {
         var result = this._getProcessClipBoardData();
         this.$el.off('keyup');
-        this.grid.paste(result);
+        this.grid.dataModel.paste(result);
     },
 
     /**
@@ -443,12 +443,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 rowKey = dataModel.at(i).get('rowKey');
                 for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
                     columnName = columnModelList[j]['columnName'];
-                    grid.del(rowKey, columnName, true);
+                    dataModel.del(rowKey, columnName, true);
                 }
             }
             grid.renderModel.refresh(true);
         } else {
-            grid.del(rowKey, columnName);
+            dataModel.del(rowKey, columnName);
         }
     },
 

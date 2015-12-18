@@ -252,13 +252,16 @@
      </script>
  *
  */
-
 var View = require('./base/view');
 var Core = require('./core');
 var ContainerView = require('./view/container');
 var DomState = require('./domState');
+var Net = require('./addon/net');
 
 var instanceMap = {};
+var addOn = {
+    Net: Net
+};
 
  /**
   * Toast UI
@@ -276,12 +279,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
         this.core = core = this._createCore(options);
         this.container = container = this._createContainerView(options, core);
-
         this.listenTo(core, 'all', this._relayEvent, this);
 
         container.render();
         this.refreshLayout();
 
+        this.addOn = {};
         instanceMap[core.id] = core;
     },
 
@@ -321,6 +324,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     _relayEvent: function() {
         this.trigger.apply(this, arguments);
     },
+
     /**
      * Disables the row identified by the rowkey.
      * @param {(number|string)} rowKey - The unique key of the target row
@@ -396,7 +400,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {jQuery} - The jquery object of the cell element
      */
     getElement: function(rowKey, columnName) {
-        return this.core.getElement(rowKey, columnName);
+        return this.core.dataModel.getElement(rowKey, columnName);
     },
     /**
      * Sets the value of the cell identified by the specified rowKey and columnName.
@@ -414,14 +418,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
      */
     setColumnValues: function(columnName, columnValue, isCheckCellState) {
-        this.core.setColumnValues(columnName, columnValue, isCheckCellState);
+        this.core.dataModel.setColumnValues(columnName, columnValue, isCheckCellState);
     },
     /**
      * Replace all rows with the specified list. This will not change the original data.
      * @param {Array} rowList - A list of new rows
      */
     replaceRowList: function(rowList) {
-        this.core.replaceRowList(rowList);
+        this.core.dataModel.replaceRowList(rowList);
     },
     /**
      * Replace all rows with the specified list. This will change the original data.
@@ -429,7 +433,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {function} callback - The function that will be called when done.
      */
     setRowList: function(rowList, callback) {
-        this.core.setRowList(rowList, true, callback);
+        this.core.dataModel.setRowList(rowList, true, callback);
     },
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
@@ -438,8 +442,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
     focus: function(rowKey, columnName, isScrollable) {
-        this.core.focusClipboard();
-        this.core.focus(rowKey, columnName, isScrollable);
+        this.core.focusModel.focusClipboard();
+        this.core.focusModel.focus(rowKey, columnName, isScrollable);
     },
     /**
      * Sets focus on the cell at the specified index of row and column.
@@ -448,7 +452,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
     focusAt: function(rowIndex, columnIndex, isScrollable) {
-        this.core.focusAt(rowIndex, columnIndex, isScrollable);
+        this.core.focusModel.focusAt(rowIndex, columnIndex, isScrollable);
     },
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
@@ -457,7 +461,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        this.core.focusIn(rowKey, columnName, isScrollable);
+        this.core.focusModel.focusIn(rowKey, columnName, isScrollable);
     },
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
@@ -465,19 +469,19 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} columnIndex - The index of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.     */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
-        this.core.focusInAt(rowIndex, columnIndex, isScrollable);
+        this.core.focusModel.focusInAt(rowIndex, columnIndex, isScrollable);
     },
     /**
      * Makes view ready to get keyboard input.
      */
     readyForKeyControl: function() {
-        this.core.focusClipboard();
+        this.core.focusModel.focusClipboard();
     },
     /**
      * Removes focus from the focused cell.
      */
     blur: function() {
-        this.core.blur();
+        this.core.focusModel.blur();
     },
     /**
      * Checks all rows.
@@ -509,7 +513,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Removes all rows.
      */
     clear: function() {
-        this.core.clear();
+        this.core.dataModel.setRowList([]);
     },
     /**
      * Removes the row identified by the specified rowKey.
@@ -584,7 +588,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Array} - A list of the column model.
      */
     getColumnModelList: function() {
-        return this.core.getColumnModelList();
+        return this.core.columnModel.get('dataColumnModelList');
     },
     /**
      * Returns the object that contains the lists of changed data compared to the original data.
@@ -597,7 +601,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
      */
     getModifiedRowList: function(options) {
-        return this.core.getModifiedRowList(options);
+        return this.core.dataModel.getModifiedRowList(options);
     },
     /**
      * Insert the new row with specified data to the end of table.
@@ -621,7 +625,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
-        return this.core.isChanged();
+        return this.core.dataModel.isChanged();
     },
     /**
      * Returns the instance of specified AddOn.
@@ -629,41 +633,41 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {instance} addOn - The instance of the AddOn
      */
     getAddOn: function(name) {
-        return name ? this.core.addOn[name] : this.core.addOn;
+        return name ? this.addOn[name] : this.addOn;
     },
     /**
      * Restores the data to the original data.
      * (Original data is set by {@link tui.Grid#setRowList|setRowList}
      */
     restore: function() {
-        this.core.restore();
+        this.core.dataModel.restore();
     },
     /**
      * Selects the row identified by the rowKey.
      * @param {(number|string)} rowKey - The unique key of the row
      */
     select: function(rowKey) {
-        this.core.select(rowKey);
+        this.core.focusModel.select(rowKey);
     },
     /**
      * Unselects selected rows.
      */
     unselect: function() {
-        this.core.unselect();
+        this.core.focusModel.unselect(true);
     },
     /**
-     * Sets the index of fixed column.
-     * @param {number} index - The index of column to be fixed
+     * Sets the count of fixed column.
+     * @param {number} count - The count of column to be fixed
      */
-    setColumnFixCount: function(index) {
-        this.core.setColumnFixCount(index);
+    setColumnFixCount: function(count) {
+        this.core.columnModel.set('columnFixCount', count);
     },
     /**
      * Sets the list of column model.
      * @param {Array} columnModelList - A new list of column model
      */
     setColumnModelList: function(columnModelList) {
-        this.core.setColumnModelList(columnModelList);
+        this.core.columnModel.set('columnModelList', columnModelList);
     },
     /**
      * Create an specified AddOn and use it on this instance.
@@ -672,7 +676,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {tui.Grid} - This instance.
      */
     use: function(name, options) {
-        this.core.use(name, options);
+        var Constructor = addOn[name];
+        options = $.extend({grid: this.core}, options);
+        if (Constructor) {
+            this.addOn[name] = new Constructor(options);
+        }
         return this;
     },
     /**
@@ -735,7 +743,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} columnName - The name of the column
      */
     getRowSpanData: function(rowKey, columnName) {
-        this.core.getRowSpanData(rowKey, columnName);
+        this.core.dataModel.getRowSpanData(rowKey, columnName);
     },
     /**
      * Returns the index of the row indentified by the rowKey.
@@ -743,14 +751,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {number} - The index of the row
      */
     getIndexOfRow: function(rowKey) {
-        return this.core.getIndexOfRow(rowKey);
+        return this.core.dataModel.indexOfRowKey(rowKey);
     },
     /**
      * Sets the number of rows to be shown in the table area.
      * @param {number} count - The number of rows
      */
     setDisplayRowCount: function(count) {
-        this.core.setDisplayRowCount(count);
+        this.core.dimensionModel.set('displayRowCount', count);
     },
      /**
       * Sets the width and height of the dimension.
@@ -758,7 +766,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
       * @param  {(number|null)} height - The height of the dimension
       */
     setSize: function(width, height) {
-        this.core.setSize(width, height);
+        this.core.dimensionModel.setSize(width, height);
     },
     /**
      * Refresh the layout view. Use this method when the view was rendered while hidden.

@@ -37,6 +37,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange)
             .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange)
+            .listenTo(this.grid.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._onValueChange)
             .listenTo(rside, 'valueChange', this._onValueChange)
             .listenTo(this.grid.dimensionModel, 'change:width', this._updateMaxScrollLeft)
@@ -92,6 +93,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
+    },
+
+    /**
+     * Event handler for 'beforeReset' event on dataModel
+     * @return {[type]} [description]
+     */
+    _onBeforeResetData: function() {
+        this.set('state', renderStateMap.LOADING);
     },
 
     /**

@@ -13,10 +13,6 @@ describe('Header', function() {
 
     function createGridMock() {
         var mock = {
-            options: {},
-            option: function(name) {
-                return this.options[name];
-            },
             sort: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData({
@@ -32,8 +28,7 @@ describe('Header', function() {
                         width: 40
                     }
                 ]
-            }),
-            focusAt: function() {}
+            })
         };
         mock.dimensionModel = new Dimension({
             grid: mock
@@ -415,23 +410,23 @@ describe('Header', function() {
 
             $input = lHeader._getHeaderMainCheckbox();
             clickEvent = {target: $input.get(0)};
-            grid.checkAll = jasmine.createSpy('checkAll');
-            grid.uncheckAll = jasmine.createSpy('uncheckAll');
+            grid.dataModel.checkAll = jasmine.createSpy('checkAll');
+            grid.dataModel.uncheckAll = jasmine.createSpy('uncheckAll');
         });
 
         describe('selectType 이 checkbox 일 때', function() {
             it('체크한 상태라면 전체 행을 check 하기 위해 checkAll 을 호출한다.', function() {
                 $input.prop('checked', true);
                 lHeader._onClick(clickEvent);
-                expect(grid.checkAll).toHaveBeenCalled();
-                expect(grid.uncheckAll).not.toHaveBeenCalled();
+                expect(grid.dataModel.checkAll).toHaveBeenCalled();
+                expect(grid.dataModel.uncheckAll).not.toHaveBeenCalled();
             });
 
             it('체크 해제된 상태라면 전체 행을 check 하기 위해 uncheckAll 을 호출한다.', function() {
                 $input.prop('checked', false);
                 lHeader._onClick(clickEvent);
-                expect(grid.checkAll).not.toHaveBeenCalled();
-                expect(grid.uncheckAll).toHaveBeenCalled();
+                expect(grid.dataModel.checkAll).not.toHaveBeenCalled();
+                expect(grid.dataModel.uncheckAll).toHaveBeenCalled();
             });
         });
     });

@@ -17,13 +17,6 @@ describe('view.painter.cell.base', function() {
 
     function createGridMock() {
         var mock = {
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
-            focusIn: function() {},
             selection: {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
@@ -488,14 +481,14 @@ describe('view.painter.cell.base', function() {
 
             describe('TAB', function() {
                 beforeEach(function() {
-                    cellPainter.grid.focusIn = jasmine.createSpy('focusIn');
+                    grid.focusModel.focusIn = jasmine.createSpy('focusIn');
                     grid.focusModel.focus(0, 'c1');
                 });
 
                 it('입력시 _focusNextInput의 결과값이 false 이면 grid.focusIn을 다음 columnName 파라미터와 함께 호출하는지 확인한다.', function() {
                     cellPainter._focusNextInput = function() {return false; };
                     cellPainter._executeKeyDownSwitch(getKeyEvent('TAB', $target));
-                    expect(cellPainter.grid.focusIn).toHaveBeenCalledWith(0, 'c2', true);
+                    expect(grid.focusModel.focusIn).toHaveBeenCalledWith(0, 'c2', true);
                 });
 
                 it('shift와 함께 입력시 _focusPrevInput의 결과값이 false 이면 grid.focusIn을 이전 columnName 파라미터와 함께 호출하는지 확인한다.', function() {
@@ -505,7 +498,7 @@ describe('view.painter.cell.base', function() {
 
                     grid.focusModel.focus(0, 'c2');
                     cellPainter._executeKeyDownSwitch(keyEvent);
-                    expect(cellPainter.grid.focusIn).toHaveBeenCalledWith(0, 'c1', true);
+                    expect(grid.focusModel.focusIn).toHaveBeenCalledWith(0, 'c1', true);
                 });
             });
         });

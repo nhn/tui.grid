@@ -12,10 +12,6 @@ describe('ResizeHandler', function() {
 
     function createGridMock() {
         var mock = {
-            options: {},
-            option: function(name) {
-                return this.options[name];
-            },
             dataModel: new Collection(),
             columnModel: new ColumnModelData(),
             domState: new DomState()
