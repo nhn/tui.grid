@@ -61,8 +61,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     select: function(rowKey) {
         this.unselect().set('rowKey', rowKey);
-        this.grid.dataModel.check(rowKey);
-
+        if (this.grid.columnModel.get('selectType') === 'radio') {
+            this.grid.dataModel.check(rowKey);
+        }
         this.trigger('select', rowKey);
         return this;
     },
