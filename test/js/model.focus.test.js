@@ -14,15 +14,6 @@ describe('model.renderer', function() {
 
     function createGridMock() {
         var mock = {
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
-            focusIn: function() {},
-            selection: {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };

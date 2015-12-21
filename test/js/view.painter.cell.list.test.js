@@ -17,15 +17,7 @@ describe('view.painter.cell.base', function() {
 
     function createGridMock() {
         var mock = {
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
-            focusIn: function() {},
             selection: {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
@@ -182,10 +174,10 @@ describe('view.painter.cell.base', function() {
                 var changeEvent = {
                       target: $select.get(0)
                 };
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
                 cellPainter._onChange(changeEvent);
 
-                expect(grid.setValue).toHaveBeenCalledWith('0', 'c1', '0');
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', 'c1', '0');
             });
         });
 
@@ -340,7 +332,7 @@ describe('view.painter.cell.base', function() {
 
             beforeEach(function() {
                 changeEvent = {};
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
             });
 
             it('checkbox 일때 grid 의 setValue 메서드를 정확한 값으로 호출하는지 확인한다.', function() {
@@ -352,7 +344,7 @@ describe('view.painter.cell.base', function() {
 
                 cellPainter._onChange(changeEvent);
 
-                expect(grid.setValue).toHaveBeenCalledWith('0', 'c1', '1');
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', 'c1', '1');
             });
 
             it('radio 일때 grid 의 setValue 메서드를 정확한 값으로 호출하는지 확인한다.', function() {
@@ -364,7 +356,7 @@ describe('view.painter.cell.base', function() {
 
                 cellPainter._onChange(changeEvent);
 
-                expect(grid.setValue).toHaveBeenCalledWith('0', 'c2', '1');
+                expect(grid.dataModel.setValue).toHaveBeenCalledWith('0', 'c2', '1');
             });
         });
 
@@ -489,14 +481,14 @@ describe('view.painter.cell.base', function() {
 
             describe('TAB', function() {
                 beforeEach(function() {
-                    cellPainter.grid.focusIn = jasmine.createSpy('focusIn');
+                    grid.focusModel.focusIn = jasmine.createSpy('focusIn');
                     grid.focusModel.focus(0, 'c1');
                 });
 
                 it('입력시 _focusNextInput의 결과값이 false 이면 grid.focusIn을 다음 columnName 파라미터와 함께 호출하는지 확인한다.', function() {
                     cellPainter._focusNextInput = function() {return false; };
                     cellPainter._executeKeyDownSwitch(getKeyEvent('TAB', $target));
-                    expect(cellPainter.grid.focusIn).toHaveBeenCalledWith(0, 'c2', true);
+                    expect(grid.focusModel.focusIn).toHaveBeenCalledWith(0, 'c2', true);
                 });
 
                 it('shift와 함께 입력시 _focusPrevInput의 결과값이 false 이면 grid.focusIn을 이전 columnName 파라미터와 함께 호출하는지 확인한다.', function() {
@@ -506,7 +498,7 @@ describe('view.painter.cell.base', function() {
 
                     grid.focusModel.focus(0, 'c2');
                     cellPainter._executeKeyDownSwitch(keyEvent);
-                    expect(cellPainter.grid.focusIn).toHaveBeenCalledWith(0, 'c1', true);
+                    expect(grid.focusModel.focusIn).toHaveBeenCalledWith(0, 'c1', true);
                 });
             });
         });

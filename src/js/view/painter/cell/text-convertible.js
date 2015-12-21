@@ -82,7 +82,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * - 필요에 따라 override 한다.
      */
     focusOut: function() {
-        this.grid.focusClipboard();
+        this.grid.focusModel.focusClipboard();
     },
 
     /**
@@ -235,7 +235,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
             $td;
 
         if (!tui.util.isNull(rowKey) && !tui.util.isNull(columnName)) {
-            $td = this.grid.getElement(rowKey, columnName);
+            $td = this.grid.dataModel.getElement(rowKey, columnName);
             $td.find('input')[0].blur();
         }
     },

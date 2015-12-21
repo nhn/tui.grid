@@ -23,11 +23,6 @@ describe('Frame', function() {
     function createGridMock() {
         var mock = {
             $el: setFixtures('<div></div>'),
-            options: {},
-            option: function(name) {
-                return this.options[name];
-            },
-            showGridLayer: function() {},
             columnModel: new ColumnModelData(),
             dataModel: new Collection(),
             focusModel: new Model()

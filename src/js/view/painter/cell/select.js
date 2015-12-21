@@ -77,7 +77,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
     focusIn: function($td) {
         /* istanbul ignore next */
         if ($td.find('select').prop('disabled')) {
-            this.grid.focusClipboard();
+            this.grid.focusModel.focusClipboard();
         } else {
             $td.find('select').eq(0).focus();
         }
@@ -190,7 +190,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
         var $target = $(changeEvent.target),
             cellAddr = this._getCellAddress($target),
             grid = this.grid;
-        grid.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
+        grid.dataModel.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
     }
 });
 

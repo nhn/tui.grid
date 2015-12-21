@@ -81,7 +81,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Event handler for resize event on window.
      */
     _onResizeWindow: function() {
-        this.grid.updateLayoutData();
+        this.grid.dimensionModel.refreshLayout();
     },
 
     /**
@@ -117,7 +117,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
             if (this.singleClickEdit && !$target.is('input')) {
-                this.grid.focusIn(cellInfo.rowKey, cellInfo.columnName);
+                this.grid.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
@@ -213,7 +213,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         return {
             rowKey: rowKey,
             columnName: columnName,
-            rowData: this.grid.getRow(rowKey)
+            rowData: this.grid.dataModel.getRowData(rowKey)
         };
     },
 
@@ -232,7 +232,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
-            this.grid.focusClipboard();
+            this.grid.focusModel.focusClipboard();
         }
     },
 

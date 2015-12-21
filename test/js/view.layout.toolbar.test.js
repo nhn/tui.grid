@@ -8,15 +8,16 @@ var ToolbarModel = require('../../src/js/model/toolbar');
 var LayoutToolbar = require('../../src/js/view/layout/toolbar');
 var ResizeHandler = require('../../src/js/view/layout/toolbar/resizeHandler');
 var Pagination = require('../../src/js/view/layout/toolbar/pagination');
+var DomState = require('../../src/js/domState');
 
 describe('view.frame.toolbar', function() {
     var grid;
 
     function createGridMock() {
         var mock = {
-            updateLayoutData: function() {},
             dataModel: new Collection(),
-            columnModel: new ColumnModelData()
+            columnModel: new ColumnModelData(),
+            domState: new DomState($('<div />'))
         };
         mock.toolbarModel = new ToolbarModel();
         mock.dimensionModel = new Dimension({
@@ -129,13 +130,13 @@ describe('view.frame.toolbar', function() {
         describe('_onMouseDown', function() {
             beforeEach(function() {
                 spyOn(resize, '_attachMouseEvent');
-                spyOn(grid, 'updateLayoutData');
+                spyOn(grid.dimensionModel, 'refreshLayout');
                 resize._onMouseDown(mouseEvent);
             });
 
-            it('mouseDown 이벤트가 발생하면 updateLayoutData 와 _attachMouseEvent 를 수행한다.', function() {
+            it('mouseDown 이벤트가 발생하면 dimensionModel.refreshLayout과 _attachMouseEvent 를 수행한다.', function() {
                 expect(resize._attachMouseEvent).toHaveBeenCalled();
-                expect(grid.updateLayoutData).toHaveBeenCalled();
+                expect(grid.dimensionModel.refreshLayout).toHaveBeenCalled();
             });
 
             it('body 엘리먼트의 커서 css 스타일을 row-resize 로 변경한다..', function() {

@@ -58,7 +58,7 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      */
     focusIn: function() {
-        this.grid.focusClipboard();
+        this.grid.focusModel.focusClipboard();
     },
 
     /**

@@ -137,7 +137,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
             rowKey = this.getRowKey($target);
-        this.grid.setValue(rowKey, '_button', $target.prop('checked'));
+        this.grid.dataModel.setValue(rowKey, '_button', $target.prop('checked'));
     },
 
     /**

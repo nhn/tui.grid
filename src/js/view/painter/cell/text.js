@@ -89,7 +89,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
     focusIn: function($td) {
         var $input = $td.find('input');
         if ($input.prop('disabled')) {
-            this.grid.focusClipboard();
+            this.grid.focusModel.focusClipboard();
         } else {
             formUtil.setCursorToEnd($input.get(0));
             $input.select();
@@ -101,7 +101,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * - 필요에 따라 override 한다.
      */
     focusOut: function() {
-        this.grid.focusClipboard();
+        this.grid.focusModel.focusClipboard();
     },
 
     /**
@@ -222,7 +222,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
         this._executeInputEventHandler(blurEvent, 'blur');
         if (this._isEdited($target)) {
-            this.grid.setValue(rowKey, columnName, $target.val());
+            this.grid.dataModel.setValue(rowKey, columnName, $target.val());
         }
         this.grid.selectionModel.enable();
     },

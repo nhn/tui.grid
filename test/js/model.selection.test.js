@@ -53,7 +53,7 @@ describe('model/selection', function() {
                 }
             ]
         }, domState);
-        grid.setRowList([
+        grid.dataModel.setRowList([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -188,7 +188,7 @@ describe('model/selection', function() {
 
         describe('_getRowSpannedIndex', function() {
             beforeEach(function() {
-                grid.setRowList([
+                grid.dataModel.setRowList([
                     {
                         _extraData: {
                             rowSpan: {

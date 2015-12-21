@@ -39,11 +39,11 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
                 if (keyDownEvent.shiftKey) {
                     //이전 cell 로 focus 이동
                     if (!this._focusPrevInput(param.$target)) {
-                        this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                        this.grid.focusModel.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
                     }
                 //이후 cell 로 focus 이동
                 } else if (!this._focusNextInput(param.$target)) {
-                    this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                    this.grid.focusModel.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
                 }
             }
         });
@@ -98,7 +98,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     focusIn: function($td) {
         /* istanbul ignore next: focus 확인 불가 */
         if ($td.find('input').eq(0).prop('disabled')) {
-            this.grid.focusClipboard();
+            this.grid.focusModel.focusClipboard();
         } else {
             $td.find('input').eq(0).focus();
         }
@@ -251,7 +251,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
             cellAddress = this._getCellAddress($target);
-        this.grid.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
+        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
     }
 });
 

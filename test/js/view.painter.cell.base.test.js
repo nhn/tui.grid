@@ -7,33 +7,18 @@ var Dimension = require('../../src/js/model/dimension');
 var Renderer = require('../../src/js/model/renderer');
 var Focus = require('../../src/js/model/focus');
 var CellPainter = require('../../src/js/view/painter/cell');
+var keyCodeMap = require('../../src/js/common/constMap').keyCode;
 
 describe('view.painter.cell.base', function() {
     var grid, cellPainter;
 
     function createGridMock() {
         var mock = {
-            keyMap: {
-                BACKSPACE: 8,
-                TAB: 9,
-                F5: 116
-            },
-            keyName: {
-                8: 'BACKSPACE',
-                9: 'TAB',
-                116: 'F5'
-            },
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
-            focusIn: function() {},
-            updateLayoutData: function() {},
-            dataModel: new Collection(),
             columnModel: new ColumnModelData()
         };
+        mock.dataModel = new RowListData([], {
+            grid: mock
+        });
         mock.dimensionModel = new Dimension({
             grid: mock
         });
@@ -41,9 +26,6 @@ describe('view.painter.cell.base', function() {
             grid: mock
         });
         mock.focusModel = new Focus({
-            grid: mock
-        });
-        mock.dataModel = new RowListData([], {
             grid: mock
         });
         return mock;
@@ -60,6 +42,12 @@ describe('view.painter.cell.base', function() {
                 title: 'c2',
                 columnName: 'c2',
                 width: 40
+            }
+        ]);
+        grid.dataModel.setRowList([
+            {
+                c1: '0-1',
+                c2: '0-2'
             }
         ]);
         cellPainter = new CellPainter({
@@ -332,8 +320,8 @@ describe('view.painter.cell.base', function() {
         it('정의되어 있는 keyDownSwitch 를 수행한다.', function() {
             var callback = jasmine.createSpy('callback'),
                 keyDownEvent = {
-                    keyCode: grid.keyMap.F5,
-                    which: grid.keyMap.F5,
+                    keyCode: keyCodeMap.F5,
+                    which: keyCodeMap.F5,
                     target: '<div>'
                 },
                 result;
@@ -347,8 +335,8 @@ describe('view.painter.cell.base', function() {
         it('정의되어있지 않은 keyDownSwitch 를 수행할 경우 defaultAction 을 호출한다.', function() {
             var callback = jasmine.createSpy('callback'),
                 keyDownEvent = {
-                    keyCode: grid.keyMap.BACKSPACE,
-                    which: grid.keyMap.BACKSPACE,
+                    keyCode: keyCodeMap.BACKSPACE,
+                    which: keyCodeMap.BACKSPACE,
                     target: '<div>'
                 },
                 result;
@@ -367,8 +355,8 @@ describe('view.painter.cell.base', function() {
         beforeEach(function() {
             callback = jasmine.createSpy('callback');
             keyDownEvent = {
-                keyCode: grid.keyMap.TAB,
-                which: grid.keyMap.TAB,
+                keyCode: keyCodeMap.TAB,
+                which: keyCodeMap.TAB,
                 target: '<div>',
                 preventDefault: jasmine.createSpy('callback')
             };
@@ -382,7 +370,7 @@ describe('view.painter.cell.base', function() {
         });
 
         it('정의되지 않은 keyDownSwitch 를 수행한다면 keyDownEvent.preventDefault() 를 호출하지 않는다.', function() {
-            keyDownEvent.keyCode = keyDownEvent.which = grid.keyMap.F5;
+            keyDownEvent.keyCode = keyDownEvent.which = keyCodeMap.F5;
             cellPainter._onKeyDown(keyDownEvent);
             expect(keyDownEvent.preventDefault).not.toHaveBeenCalled();
         });
@@ -390,9 +378,9 @@ describe('view.painter.cell.base', function() {
 
     describe('focusOut()', function() {
        it('this.grid.focusClipboard 를 수행하는지 확인한다.', function() {
-           grid.focusClipboard = jasmine.createSpy('focusClipboard');
+           grid.focusModel.focusClipboard = jasmine.createSpy('focusClipboard');
            cellPainter.focusOut();
-           expect(grid.focusClipboard).toHaveBeenCalled();
+           expect(grid.focusModel.focusClipboard).toHaveBeenCalled();
        });
     });
 

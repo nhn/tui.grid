@@ -124,7 +124,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             list;
 
         if (grid.columnModel.get('selectType') === 'radio') {
-            grid.check(rowIndex);
+            grid.dataModel.check(rowIndex);
         }
 
         if (!columnName || tui.util.isFalsy(rowIndex)) {
@@ -167,7 +167,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                this.grid.focusAt(rowIndex, columnIndex);
+                this.grid.focusModel.focusAt(rowIndex, columnIndex);
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
@@ -191,7 +191,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             mouseDownX: pageX,
             mouseDownY: pageY
         });
-        this.grid.updateLayoutData();
+        this.grid.dimensionModel.refreshLayout();
         $(document)
             .on('mousemove', $.proxy(this._onMouseMove, this))
             .on('mouseup', $.proxy(this._detachDragEvents, this))

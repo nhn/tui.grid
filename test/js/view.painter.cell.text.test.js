@@ -16,20 +16,9 @@ describe('view.painter.cell.text', function() {
     function createGridMock() {
         var mock = {
             $el: $('<div />'),
-            options: {
-                toolbar: {}
-            },
-            option: function(name) {
-                return this.options[name];
-            },
-            focusIn: function() {},
             selection: {},
-            updateLayoutData: function() {},
             dataModel: new Collection(),
-            columnModel: new ColumnModelData(),
-            getElement: function(rowKey, columnName) {
-                return this.$el.find('tr[key=' + rowKey + '] > td[columnname="' + columnName + ']');
-            }
+            columnModel: new ColumnModelData()
         };
         mock.dimensionModel = new Dimension({
             grid: mock
@@ -88,9 +77,9 @@ describe('view.painter.cell.text', function() {
 
         describe('focusOut', function() {
             it('Grid 의 focusClipboard 메서드가 호출되는지 확인한다.', function() {
-                grid.focusClipboard = jasmine.createSpy('focusClipboard');
+                grid.focusModel.focusClipboard = jasmine.createSpy('focusClipboard');
                 cellPainter.focusOut();
-                expect(grid.focusClipboard).toHaveBeenCalled();
+                expect(grid.focusModel.focusClipboard).toHaveBeenCalled();
             });
         });
 
@@ -209,16 +198,16 @@ describe('view.painter.cell.text', function() {
             });
 
             it('_isEdited === true 일 때 setValue 를 호출하는지 확인한다.', function() {
-                grid.setValue = jasmine.createSpy('setValue');
+                grid.dataModel.setValue = jasmine.createSpy('setValue');
                 cellPainter._onBlur({target: $input.get(0)});
 
                 expect(cellPainter._isEdited($input)).toEqual(false);
-                expect(grid.setValue.calls.count()).toBe(0);
+                expect(grid.dataModel.setValue.calls.count()).toBe(0);
 
                 $input.val('changed');
                 cellPainter._onBlur({target: $input.get(0)});
                 expect(cellPainter._isEdited($input)).toEqual(true);
-                expect(grid.setValue.calls.count()).toBe(1);
+                expect(grid.dataModel.setValue.calls.count()).toBe(1);
             });
         });
     });
@@ -265,9 +254,9 @@ describe('view.painter.cell.text', function() {
 
         describe('focusOut', function() {
             it('_endEdit 메서드가 호출되는지 확인한다.', function() {
-                grid.focusClipboard = jasmine.createSpy('focusClipboard');
+                grid.focusModel.focusClipboard = jasmine.createSpy('focusClipboard');
                 cellPainter.focusOut();
-                expect(grid.focusClipboard).toHaveBeenCalled();
+                expect(grid.focusModel.focusClipboard).toHaveBeenCalled();
             });
         });
 
@@ -429,7 +418,6 @@ describe('view.painter.cell.text', function() {
             }
 
             beforeEach(function() {
-                grid.focusClipboard = function() {};
                 grid.keyMap = {
                     'ENTER': 13,
                     'ESC': 27,

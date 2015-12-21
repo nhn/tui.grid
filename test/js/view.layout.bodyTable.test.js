@@ -18,11 +18,6 @@ describe('view.layout.body', function() {
     function createGridMock() {
         var mock = {
             $el: setFixtures('<div></div>'),
-            options: {},
-            option: function(name) {
-                return this.options[name];
-            },
-            showGridLayer: function() {},
             dataModel: new Collection(),
             columnModel: new ColumnModelData({
                 columnModelList: [

@@ -245,7 +245,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (this._isEnabled) {
             grid = this.grid;
 
-            grid.focusAt(rowIndex, 0);
+            grid.focusModel.focusAt(rowIndex, 0);
             this.start(rowIndex, 0, SELECTION_STATE.row);
             this.update(rowIndex, grid.columnModel.getVisibleColumnModelList().length - 1);
         }
@@ -260,7 +260,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (this._isEnabled) {
             grid = this.grid;
 
-            grid.focusAt(0, columnIdx);
+            grid.focusModel.focusAt(0, columnIdx);
             this.start(0, columnIdx, SELECTION_STATE.column);
             this.update(grid.dataModel.length - 1, columnIdx);
         }

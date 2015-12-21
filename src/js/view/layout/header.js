@@ -339,12 +339,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
             if ($target.prop('checked')) {
-                this.grid.checkAll();
+                this.grid.dataModel.checkAll();
             } else {
-                this.grid.uncheckAll();
+                this.grid.dataModel.uncheckAll();
             }
         } else if ($target.is('a.btn_sorting')) {
-            this.grid.sort(columnName);
+            this.grid.dataModel.sortByField(columnName);
         }
     },
 

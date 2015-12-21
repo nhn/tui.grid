@@ -95,7 +95,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     /**
      * 새로운 rowKey를 생성해서 반환한다.
      * @return {number} 생성된 rowKey
-     */
+    //  */
     _createRowKey: function() {
         this.lastRowKey += 1;
         return this.lastRowKey;
@@ -499,6 +499,214 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     },
 
     /**
+     * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
+     * @param {(Number|String)} rowKey  행 데이터의 고유 키
+     * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+     * @return {Object} 행 데이터
+     */
+    getRowData: function(rowKey, isJsonString) {
+        var row = this.get(rowKey),
+            rowData = row ? row.toJSON() : null;
+
+        return isJsonString ? $.toJSON(rowData) : rowData;
+    },
+
+    /**
+     * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
+     * @param {Number} index 행의 인덱스
+     * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+     * @return {Object} 행 데이터
+     */
+    getRowDataAt: function(index, isJsonString) {
+        var row = this.at(index),
+            rowData = row ? row.toJSON() : null;
+
+        return isJsonString ? $.toJSON(row) : rowData;
+    },
+
+    /**
+     * rowKey 와 columnName 에 해당하는 값을 반환한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {String} columnName   컬럼 이름
+     * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
+     * @return {(Number|String|undefined)}    조회한 셀의 값.
+     */
+    getValue: function(rowKey, columnName, isOriginal) {
+        var value, row;
+
+        if (isOriginal) {
+            value = this.getOriginal(rowKey, columnName);
+        } else {
+            row = this.get(rowKey);
+            value = row && row.get(columnName);
+        }
+        return value;
+    },
+
+    /**
+     * Sets the vlaue of the cell identified by the specified rowKey and columnName.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {String} columnName   컬럼 이름
+     * @param {(Number|String)} columnValue 할당될 값
+     * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+     * @returns {Boolean} True if affected row is exist
+     */
+    setValue: function(rowKey, columnName, columnValue, silent) {
+        var row = this.get(rowKey),
+            obj = {},
+            result;
+
+        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
+        if (row) {
+            obj[columnName] = columnValue;
+            row.set(obj, {
+                silent: silent
+            });
+            result = true;
+        } else {
+            result = false;
+        }
+
+        return result;
+    },
+
+    /**
+     * columnName에 해당하는 column data list를 리턴한다.
+     * @param {String} columnName   컬럼명
+     * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
+     * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
+     */
+    getColumnValues: function(columnName, isJsonString) {
+        var valueList = this.pluck(columnName);
+        return isJsonString ? $.toJSON(valueList) : valueList;
+    },
+
+    /**
+     * columnName 에 해당하는 값을 전부 변경한다.
+     * @param {String} columnName 컬럼명
+     * @param {(Number|String)} columnValue 변경할 컬럼 값
+     * @param {Boolean} [isCheckCellState=true] 셀의 편집 가능 여부 와 disabled 상태를 체크할지 여부
+     * @param {Boolean} [silent=false] change 이벤트 trigger 할지 여부.
+     */
+    setColumnValues: function(columnName, columnValue, isCheckCellState, silent) {
+        var obj = {},
+            cellState = {
+                isDisabled: false,
+                isEditable: true
+            };
+
+        obj[columnName] = columnValue;
+        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+
+        this.forEach(function(row) {
+            if (isCheckCellState) {
+                cellState = row.getCellState(columnName);
+            }
+            if (!cellState.isDisabled && cellState.isEditable) {
+                row.set(obj, {
+                    silent: silent
+                });
+            }
+        }, this);
+    },
+
+    /**
+     * rowKey 와 columnName 에 해당하는 Cell 의 rowSpanData 를 반환한다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
+     * @param {String} columnName 컬럼 이름
+     * @returns {object} rowSpanData
+     */
+    getRowSpanData: function() {
+        var row = this.get(rowKey);
+        return row ? row.getRowSpanData(columnName) : null;
+    },
+
+    /**
+     * Returns true if there are at least one row changed.
+     * @return {boolean} - True if there are at least one row changed.
+     */
+    isChanged: function() {
+        var modifiedRowsArr = _.values(this.getModifiedRowList());
+
+        return _.some(modifiedRowsArr, function(modifiedRows) {
+            return modifiedRows.length > 0;
+        });
+    },
+
+    /**
+     * rowKey에 해당하는 행을 활성화시킨다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     */
+    enableRow: function(rowKey) {
+        this.get(rowKey).setRowState('');
+    },
+
+    /**
+     * rowKey에 해당하는 행을 비활성화 시킨다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     */
+    disableRow: function(rowKey) {
+        this.get(rowKey).setRowState('DISABLED');
+    },
+
+    /**
+     * rowKey에 해당하는 행의 메인 체크박스를 체크할 수 있도록 활성화 시킨다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     */
+    enableCheck: function(rowKey) {
+        this.get(rowKey).setRowState('');
+    },
+
+    /**
+     * rowKey에 해당하는 행의 메인 체크박스를 체크하지 못하도록 비활성화 시킨다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     */
+    disableCheck: function(rowKey) {
+        this.get(rowKey).setRowState('DISABLED_CHECK');
+    },
+
+    /**
+     * rowKey에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {Boolean} [silent] 이벤트 발생 여부
+     */
+    check: function(rowKey, silent) {
+        var isDisabledCheck = this.get(rowKey).getRowState().isDisabledCheck,
+            selectType = this.grid.columnModel.get('selectType');
+
+        if (!isDisabledCheck && selectType) {
+            if (selectType === 'radio') {
+                this.uncheckAll();
+            }
+            this.setValue(rowKey, '_button', true, silent);
+        }
+    },
+
+    /**
+     * rowKey 에 해당하는 행의 체크박스 및 라디오박스를 선택한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {Boolean} [silent] 이벤트 발생 여부
+     */
+    uncheck: function(rowKey, silent) {
+        this.setValue(rowKey, '_button', false, silent);
+    },
+
+    /**
+     * 전체 행을 선택한다.
+     * TODO: disableCheck 행 처리
+     */
+    checkAll: function() {
+        this.setColumnValues('_button', true);
+    },
+
+    /**
+     * 모든 행을 선택 해제 한다.
+     */
+    uncheckAll: function() {
+        this.setColumnValues('_button', false);
+    },
+
+    /**
      * 주어진 데이터로 모델 목록을 생성하여 반환한다.
      * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
      * @return {Row[]} 생성된 모델 목록
@@ -659,6 +867,175 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
             }
         }, this);
         return result;
+    },
+
+    _resetData: function(rowList, isParse, callback) {
+        this.lastRowKey = -1;
+        this.reset(rowList, {
+            parse: isParse
+        });
+        if (_.isFunction(callback)) {
+            callback();
+        }
+    },
+
+    /**
+     * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
+     * @param {Array} rowList 설정할 데이터 배열 값
+     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     */
+    replaceRowList: function(rowList, isParse, callback) {
+        if (_.isUndefined(isParse)) {
+            isParse = true;
+        }
+        this.trigger('beforeReset');
+
+        if (rowList && rowList.length > 500) {
+            _.defer(_.bind(this._resetData, this, rowList, isParse, callback));
+        } else {
+            this._resetData(rowList, isParse, callback);
+        }
+    },
+
+    /**
+     * rowList 를 설정하고, setOriginalRowList 를 호출하여 원본데이터를 갱신한다.
+     * @param {Array} rowList 설정할 데이터 배열 값
+     * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * @param {function} [callback] 완료시 호출될 함수
+     */
+    setRowList: function(rowList, isParse, callback) {
+        var wrappedCallback = _.bind(function() {
+            this.setOriginalRowList();
+            if (_.isFunction(callback)) {
+                callback();
+            }
+        }, this);
+
+        this.replaceRowList(rowList, isParse, wrappedCallback);
+    },
+
+    /**
+     * setRowList()를 통해 그리드에 설정된 초기 데이터 상태로 복원한다.
+     * 그리드에서 수정되었던 내용을 초기화하는 용도로 사용한다.
+     */
+    restore: function() {
+        var originalRowList = this.getOriginalRowList();
+        this.replaceRowList(originalRowList, true);
+    },
+
+    /**
+     * rowKey 와 columnName 에 해당하는 text 형태의 셀의 값을 삭제한다.
+     * @param {(Number|String)} rowKey 행 데이터의 고유 키
+     * @param {String} columnName 컬럼 이름
+     * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
+     */
+    del: function(rowKey, columnName, silent) {
+        var mainRowKey = this.getMainRowKey(rowKey, columnName),
+            cellState = this.get(mainRowKey).getCellState(columnName),
+            editType = this.grid.columnModel.getEditType(columnName),
+            isDeletableType = _.contains(['text', 'text-convertible', 'text-password'], editType);
+
+        if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
+            this.setValue(mainRowKey, columnName, '', silent);
+            //silent 의 경우 데이터 모델의 change 이벤트가 발생하지 않기 때문에, 강제로 checkbox 를 세팅한다.
+            if (silent) {
+                this.check(mainRowKey, silent);
+            }
+        }
+    },
+
+    /**
+     * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
+     * 이동하며 셀의 값을 변경한다. 완료한 후 적용된 셀 범위에 Selection을 지정한다.
+     * @param {Array[]} data - 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.
+     */
+    paste: function(data) {
+        var selectionModel = this.grid.selectionModel,
+            startIdx = this._getStartIndexToPaste(),
+            endIdx = this._getEndIndexToPaste(startIdx, data);
+
+        _.each(data, function(row, index) {
+            this._setValueForPaste(row, startIdx.row + index, startIdx.column, endIdx.column);
+        }, this);
+
+        selectionModel.start(startIdx.row, startIdx.column);
+        selectionModel.update(endIdx.row, endIdx.column);
+    },
+
+    /**
+     * 붙여넣기를 실행할때 시작점이 될 셀의 인덱스를 반환한다.
+     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
+     */
+    _getStartIndexToPaste: function() {
+        var selectionModel = this.grid.selectionModel,
+            focusModel = this.grid.focusModel,
+            startIdx;
+
+        if (selectionModel.hasSelection()) {
+            startIdx = selectionModel.getStartIndex();
+        } else {
+            startIdx = focusModel.indexOf();
+        }
+        return startIdx;
+    },
+
+    /**
+     * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
+     * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
+     * @param  {Array[]} data - 붙여넣기할 데이터
+     * @param  {Array} columnModelList - 현재 화면에 보여지는 컬럼모델의 목록
+     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
+     */
+    _getEndIndexToPaste: function(startIdx, data) {
+        var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
+            rowIdx = data.length + startIdx.row - 1,
+            columnIdx = Math.min(data[0].length + startIdx.column, columnModelList.length) - 1;
+
+        return {
+            row: rowIdx,
+            column: columnIdx
+        }
+    },
+
+    /**
+     * 주어진 행 데이터를 지정된 인덱스의 컬럼에 반영한다.
+     * 셀이 수정 가능한 상태일 때만 값을 변경하며, RowSpan이 적용된 셀인 경우 MainRow인 경우에만 값을 변경한다.
+     * @param  {rowData} rowData - 붙여넣을 행 데이터
+     * @param  {number} rowIdx - 행 인덱스
+     * @param  {number} columnStartIdx - 열 시작 인덱스
+     * @param  {number} columnEndIdx - 열 종료 인덱스
+     */
+    _setValueForPaste: function(rowData, rowIdx, columnStartIdx, columnEndIdx) {
+        var row = this.at(rowIdx),
+            columnModel = this.grid.columnModel,
+            attributes = {},
+            columnIdx, columnName, cellState, rowSpanData;
+
+        if (!row) {
+            row = this.append({})[0];
+        }
+        for (columnIdx = columnStartIdx; columnIdx <= columnEndIdx; columnIdx += 1) {
+            columnName = columnModel.at(columnIdx, true).columnName;
+            cellState = row.getCellState(columnName);
+            rowSpanData = row.getRowSpanData(columnName);
+
+            if (cellState.isEditable && !cellState.isDisabled && (!rowSpanData || rowSpanData.count >= 0)) {
+                attributes[columnName] = rowData[columnIdx - columnStartIdx];
+            }
+        }
+        row.set(attributes);
+    },
+
+    /**
+     * rowKey 와 columnName 에 해당하는 td element 를 반환한다.
+     * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
+     * @param {(Number|String)} rowKey    행 데이터의 고유 키
+     * @param {String} columnName   컬럼 이름
+     * @return {jQuery} 해당 jQuery Element
+     */
+    getElement: function(rowKey, columnName) {
+        var rowKey = this.getMainRowKey(rowKey, columnName);
+        return this.grid.domState.getElement(rowKey, columnName);
     }
 });
 

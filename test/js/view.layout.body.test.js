@@ -6,6 +6,7 @@ var Model = require('../../src/js/base/model');
 var Collection = require('../../src/js/base/collection');
 var ColumnModelData = require('../../src/js/data/columnModel');
 var Dimension = require('../../src/js/model/dimension');
+var DomState = require('../../src/js/domState');
 var Renderer = require('../../src/js/model/renderer');
 var Selection = require('../../src/js/model/selection');
 var CellFactory = require('../../src/js/view/cellFactory');
@@ -17,14 +18,9 @@ describe('view.layout.body', function() {
     var grid, body;
 
     function createGridMock() {
+        var $el = setFixtures('<div />');
         var mock = {
-            $el: setFixtures('<div></div>'),
-            options: {},
-            option: function(name) {
-                return this.options[name];
-            },
-            focusClipboard: function() {},
-            showGridLayer: function() {},
+            $el: $el,
             dataModel: new Collection(),
             columnModel: new ColumnModelData({
                 columnModelList: [
@@ -41,8 +37,7 @@ describe('view.layout.body', function() {
                 ]
             }),
             focusModel: new Model(),
-            updateLayoutData: function() {},
-            focusAt: function() {}
+            domState: new DomState($el)
         };
         mock.dataModel.isRowSpanEnable = function() {
             return true;
@@ -128,11 +123,12 @@ describe('view.layout.body', function() {
 
         it('if the grid has a selectType-radio option, check the row', function() {
             grid.columnModel.set('selectType', 'radio');
-            grid.check = jasmine.createSpy('check');
+            grid.dataModel.check = jasmine.createSpy('check');
+            grid.focusModel.focusAt = jasmine.createSpy('focusAt');
 
             body._onMouseDown(eventMock);
 
-            expect(grid.check).toHaveBeenCalledWith(2);
+            expect(grid.dataModel.check).toHaveBeenCalledWith(2);
         });
 
         it('if click the meta("_number") column, adjust indexes', function() {
@@ -207,11 +203,11 @@ describe('view.layout.body', function() {
                     columnName: 'c2'
                 };
                 spyOn(selectionModel, 'end');
-                spyOn(grid, 'focusAt');
+                grid.focusModel.focusAt = jasmine.createSpy('focusAt');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
-                expect(grid.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(grid.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 
@@ -227,11 +223,11 @@ describe('view.layout.body', function() {
                     columnName: 'c2'
                 };
                 spyOn(selectionModel, 'end');
-                spyOn(grid, 'focusAt');
+                grid.focusModel.focusAt = jasmine.createSpy('focusAt');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
-                expect(grid.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(grid.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 
@@ -373,7 +369,7 @@ describe('view.layout.body', function() {
 
             grid.dimensionModel.set({
                 scrollX: false,
-                scrollY: false    
+                scrollY: false
             });
             body.whichSide = 'L';
             body.render();

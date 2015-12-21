@@ -125,7 +125,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _focusClipboard: function() {
         try {
-            this.grid.focusClipboard();
+            this.grid.focusModel.focusClipboard();
         } catch (e) {
             // prevent Error from running test cases (caused by setTimeout in _.debounce())
         }
@@ -193,7 +193,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onBlur: function(rowKey, columnName) {
-        var $td = this.grid.getElement(rowKey, columnName);
+        var $td = this.grid.dataModel.getElement(rowKey, columnName);
         if ($td.length) {
             $td.removeClass('focused');
         }
@@ -206,7 +206,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onFocus: function(rowKey, columnName) {
-        var $td = this.grid.getElement(rowKey, columnName);
+        var $td = this.grid.dataModel.getElement(rowKey, columnName);
         if ($td.length) {
             $td.addClass('focused');
         }

@@ -60,9 +60,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         },
         'TAB': function(keyDownEvent, param) {
             if (keyDownEvent.shiftKey) {
-                this.grid.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                this.grid.focusModel.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
             } else {
-                this.grid.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                this.grid.focusModel.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
             }
         },
         'defaultAction': function() {}
@@ -410,7 +410,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * - 필요에 따라 override 한다.
      */
     focusOut: function() {
-        this.grid.focusClipboard();
+        this.grid.focusModel.focusClipboard();
     },
 
     /**

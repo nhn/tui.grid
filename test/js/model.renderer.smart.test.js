@@ -28,9 +28,7 @@ describe('model.renderer', function() {
         dataModel,
         renderer,
         dimensionModel,
-        grid = {
-            option: function() {}
-        };
+        grid = {};
 
     (function setSampleRows() {
         var i;
