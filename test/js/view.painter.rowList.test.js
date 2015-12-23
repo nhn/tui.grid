@@ -313,14 +313,18 @@ describe('View.RowList', function() {
             });
 
             it('_onSelect 호출시 _setCssSelect 를 true 로 호출한다.', function() {
-                rowListView._onSelect(0);
+                rowListView._onSelect({
+                    rowKey: 0
+                });
                 $firstRowCells.each(function() {
                     expect(this).toHaveClass('selected');
                 });
             });
 
             it('_onUnselect 호출시 _setCssSelect 를 false 로 호출한다.', function() {
-                rowListView._onUnselect(0);
+                rowListView._onUnselect({
+                    rowKey: 0
+                });
                 $firstRowCells.each(function() {
                     expect(this).not.toHaveClass('selected');
                 });

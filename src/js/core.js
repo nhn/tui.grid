@@ -59,8 +59,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.id = util.getUniqueKey();
 
         this._initializeModel(options);
-
-        this.listenTo(this.focusModel, 'select', this._onSelectRow);
     },
 
     /**
@@ -131,13 +129,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
 
         this.cellFactory = new CellFactory({
             grid: this
-        });
-    },
-
-    _onSelectRow: function(rowKey) {
-        this.trigger('selectRow', {
-            rowKey: rowKey,
-            rowData: this.dataModel.getRowData(rowKey)
         });
     },
 

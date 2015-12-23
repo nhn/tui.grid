@@ -110,7 +110,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             $target = $(mouseEvent.target),
             cellInfo;
 
-        this.grid.trigger('click', eventData);
+        this.trigger('click', eventData);
         if (eventData.isStopped()) {
             return;
         }
@@ -132,7 +132,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var eventData = this.createEventData(mouseEvent),
             $target = $(mouseEvent.target);
 
-        this.grid.trigger('dblclick', eventData);
+        this.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
             return;
         }
@@ -184,7 +184,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             cellInfo = this._getCellInfoFromElement(cell);
         }
         _.extend(eventData, cellInfo);
-        this.grid.trigger(eventName, eventData);
+        this.trigger(eventName, eventData);
     },
 
     /**
@@ -226,7 +226,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var $target = $(mouseDownEvent.target),
             eventData = this.createEventData(mouseDownEvent);
 
-        this.grid.trigger('mousedown', eventData);
+        this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {
             return;
         }
@@ -266,7 +266,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .append(elements);
 
         this._refreshHeight();
-        this.grid.trigger('rendered');
+        this.trigger('rendered');
     },
 
     /**

@@ -620,7 +620,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         var eventData = this.createEventData(options.data),
             params;
 
-        this.grid.trigger('beforeRequest', eventData);
+        this.trigger('beforeRequest', eventData);
         if (eventData.isStopped()) {
             return;
         }
@@ -669,12 +669,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 responseData: responseData
             });
 
-        this.grid.trigger('response', eventData);
+        this.trigger('response', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (responseData && responseData['result']) {
-            this.grid.trigger('successResponse', eventData);
+            this.trigger('successResponse', eventData);
             if (eventData.isStopped()) {
                 return;
             }
@@ -683,7 +683,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
         } else {
             // TODO: 오류 처리 - invalid 셀에 마크하기 등. 스펙아웃 할 수도 있음
-            this.grid.trigger('failResponse', eventData);
+            this.trigger('failResponse', eventData);
             if (eventData.isStopped()) {
                 return;
             }
@@ -711,12 +711,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         });
         this.grid.renderModel.set('state', renderStateMap.DONE);
 
-        this.grid.trigger('response', eventData);
+        this.trigger('response', eventData);
         if (eventData.isStopped()) {
             return;
         }
 
-        this.grid.trigger('errorResponse', eventData);
+        this.trigger('errorResponse', eventData);
         if (eventData.isStopped()) {
             return;
         }

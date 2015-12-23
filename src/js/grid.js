@@ -256,6 +256,7 @@ var View = require('./base/view');
 var Core = require('./core');
 var ContainerView = require('./view/container');
 var DomState = require('./domState');
+var PublicEventEmitter = require('./publicEventEmitter');
 var Net = require('./addon/net');
 
 var instanceMap = {};
@@ -275,11 +276,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options set by user
      */
     initialize: function(options) {
-        var core, container, domState;
+        var core, container;
 
         this.core = core = this._createCore(options);
         this.container = container = this._createContainerView(options, core);
-        this.listenTo(core, 'all', this._relayEvent, this);
+        this.publicEventEmitter = this._createPublicEventEmitter();
 
         container.render();
         this.refreshLayout();
@@ -318,11 +319,16 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Relay the internal events to the external.
-     * @private
+     * Creates public event emitter and returns it.
+     * @return {module:publicEventEmitter} - New public event emitter
      */
-    _relayEvent: function() {
-        this.trigger.apply(this, arguments);
+    _createPublicEventEmitter: function() {
+        var emitter = new PublicEventEmitter(this);
+
+        emitter.listenToFocusModel(this.core.focusModel);
+        emitter.listenToContainerView(this.container);
+
+        return emitter;
     },
 
     /**
@@ -680,6 +686,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         options = $.extend({grid: this.core}, options);
         if (Constructor) {
             this.addOn[name] = new Constructor(options);
+            if (name === 'Net') {
+                this.publicEventEmitter.listenToNetAddon(this.addOn[name]);
+            }
         }
         return this;
     },

@@ -146,8 +146,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @param {(Number|String)} rowKey 대상의 키값
      * @private
      */
-    _onSelect: function(rowKey) {
-        this._setCssSelect(rowKey, true);
+    _onSelect: function(eventData) {
+        this._setCssSelect(eventData.rowKey, true);
     },
 
     /**
