@@ -22,7 +22,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @extends module:base/model
      * @constructs
      */
-    initialize: function(options) {
+    initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
 
         /**
@@ -38,10 +38,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
          * @type {number[]}
          */
         this._minColumnWidthList = null;
-        this.columnModel = this.grid.columnModel;
+
+        this.columnModel = options.columnModel;
+        this.dataModel = options.dataModel;
+        this.domState = options.domState;
 
         this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
-        this.listenTo(this.grid.dataModel, 'add remove reset', this._resetTotalRowHeight);
+        this.listenTo(this.dataModel, 'add remove reset', this._resetTotalRowHeight);
 
         this.on('change:width', this._onWidthChange, this);
         this.on('change:displayRowCount', this._setBodyHeight, this);
@@ -118,7 +121,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _resetTotalRowHeight: function() {
         var rowHeight = this.get('rowHeight'),
-            rowCount = this.grid.dataModel.length,
+            rowCount = this.dataModel.length,
             totalBorderWidth = rowCount + 1;
 
         this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
@@ -410,8 +413,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
-        var dataModel = this.grid.dataModel,
-            columnModel = this.grid.columnModel,
+        var dataModel = this.dataModel,
+            columnModel = this.columnModel,
             rowHeight = this.get('rowHeight'),
             row = dataModel.get(rowKey),
             metaColumnCount = columnModel.getVisibleMetaColumnCount(),
@@ -464,7 +467,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
-        var isRsideColumn = !this.grid.columnModel.isLside(columnName),
+        var isRsideColumn = !this.columnModel.isLside(columnName),
             targetPosition = this.getCellPosition(rowKey, columnName),
             bodySize = this._getBodySize(),
             scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
@@ -498,7 +501,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
-        var renderModel = this.grid.renderModel,
+        var renderModel = this.renderModel,
             currentTop = renderModel.get('scrollTop'),
             currentLeft = renderModel.get('scrollLeft'),
             isUp, isDown, isLeft, isRight;
@@ -613,11 +616,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcRowIndexFromPositionY: function(containerY) {
-        var grid = this.grid,
-            cellY = containerY + grid.renderModel.get('scrollTop'),
+        var cellY = containerY + this.renderModel.get('scrollTop'),
             tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH)),
             min = 0,
-            max = Math.max(min, grid.dataModel.length - 1);
+            max = Math.max(min, this.dataModel.length - 1);
 
         return util.clamp(tempIndex, min, max);
     },
@@ -630,16 +632,15 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcColumnIndexFromPositionX: function(containerX, withMeta) {
-        var grid = this.grid,
-            columnWidthList = this.getColumnWidthList(),
+        var columnWidthList = this.getColumnWidthList(),
             totalColumnWidth = this.getFrameWidth(),
             cellX = containerX,
             isRsidePosition = containerX >= this.get('lsideWidth'),
-            adjustableIndex = (withMeta) ? 0 : grid.columnModel.getVisibleMetaColumnCount(),
+            adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount(),
             columnIndex = 0;
 
         if (isRsidePosition) {
-            cellX += grid.renderModel.get('scrollLeft');
+            cellX += this.renderModel.get('scrollLeft');
         }
         if (cellX >= totalColumnWidth) {
             columnIndex = columnWidthList.length - 1;
@@ -824,7 +825,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      */
     refreshLayout: function() {
-        var domState = this.grid.domState,
+        var domState = this.domState,
             offset = domState.getOffset();
 
         this.set({

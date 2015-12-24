@@ -20,7 +20,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
     initialize: function() {
         Renderer.prototype.initialize.apply(this, arguments);
         this.on('change:scrollTop', this._onChange, this);
-        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onChange, this);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onChange, this);
 
         this.setOwnProperties({
             hiddenRowCount: 10,
@@ -43,8 +43,8 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @private
      */
     _setRenderingRange: function(scrollTop) {
-        var dimensionModel = this.grid.dimensionModel,
-            dataModel = this.grid.dataModel,
+        var dimensionModel = this.dimensionModel,
+            dataModel = this.dataModel,
             rowHeight = dimensionModel.get('rowHeight'),
             displayRowCount = dimensionModel.getDisplayRowCount(),
             startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
@@ -71,7 +71,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @private
      */
     _getStartRowSpanMinCount: function(startIndex) {
-        var firstRow = this.grid.dataModel.at(startIndex),
+        var firstRow = this.dataModel.at(startIndex),
             result = 0,
             counts;
 
@@ -90,7 +90,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @private
      */
     _getEndRowSpanMaxCount: function(endIndex) {
-        var lastRow = this.grid.dataModel.at(endIndex),
+        var lastRow = this.dataModel.at(endIndex),
             result = 0,
             counts;
 
@@ -108,9 +108,8 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @private
      */
     _isRenderable: function(scrollTop) {
-        var grid = this.grid,
-            dimensionModel = grid.dimensionModel,
-            dataModel = grid.dataModel,
+        var dimensionModel = this.dimensionModel,
+            dataModel = this.dataModel,
             rowHeight = dimensionModel.get('rowHeight'),
             bodyHeight = dimensionModel.get('bodyHeight'),
             rowCount = dataModel.length,

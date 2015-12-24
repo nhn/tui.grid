@@ -49,87 +49,152 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     /**
      * @constructs
      * @extends module:base/model
-     * @param {Object} options Grid.js 의 생성자 option 과 동일값.
+     * @param {Object} options - Options to create models
      */
-    initialize: function(options, domState, publicInstance) {
+    initialize: function(options, domState) {
         options = $.extend(true, {}, defaultOptions, options);
 
-        this.domState = domState;
-        this.publicInstance = publicInstance;
-        this.id = util.getUniqueKey();
+        // todo: remove cellFactory
+        this.cellFactory = new CellFactory({
+            grid: this
+        });
 
-        this._initializeModel(options);
+        this.columnModel = this._createColumnModel(options);
+        this.dataModel = this._createDataModel(options, domState);
+        this.toolbarModel = this._createToolbarModel(options);
+        this.dimensionModel = this._createDimensionModel(options, domState);
+        this.renderModel = this._createRenderModel(options);
+        this.focusModel = this._createFocusModel(domState);
+        this.selectionModel = this._createSelectionModel();
+
+        // todo: remove dependency
+        this.dataModel.selectionModel = this.selectionModel;
+        this.dataModel.focusModel = this.focusModel;
+        this.dimensionModel.renderModel = this.renderModel;
     },
 
     /**
-     * Initialize model instances
+     * Creates an instance of column model and returns it.
+     * @param  {Object} options - Options
+     * @return {module:data/columnModel} A new instance
      * @private
      */
-    _initializeModel: function(options) {
-        var offset = this.domState.getOffset(),
-            renderOptions;
-
-        this.columnModel = new ColumnModelData({
-            grid: this,
+    _createColumnModel: function(options) {
+        return new ColumnModelData({
             hasNumberColumn: options.autoNumbering,
             keyColumnName: options.keyColumnName,
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
-            columnMerge: options.columnMerge
+            columnMerge: options.columnMerge,
+            columnModelList: options.columnModelList
         });
-        this.columnModel.set('columnModelList', options.columnModelList);
+    },
 
-        this.dataModel = new RowListData([], {
-            grid: this,
+    /**
+     * Creates an instance of data model and returns it.
+     * @param  {Object} options - Options
+     * @param  {module:domState} domState - domState
+     * @return {module:data/rowList} - A new instance
+     * @private
+     */
+    _createDataModel: function(options, domState) {
+        return new RowListData([], {
+            gridId: options.gridId,
+            domState: domState,
+            columnModel: this.columnModel,
             useClientSort: options.useClientSort
         });
-        this.dataModel.reset([]);
+    },
 
-        this.dimensionModel = new DimensionModel({
-            grid: this,
-            offsetTop: offset.top,
-            offsetLeft: offset.left,
-            width: this.domState.getWidth(),
+    /**
+     * Creates an instance of dimension model and returns it.
+     * @param  {Object} options - Options
+     * @param  {module:domState} domState - domState
+     * @return {module:model/dimension} - A new instance
+     * @private
+     */
+    _createDimensionModel: function(options, domState) {
+        var atrributes = {
             headerHeight: options.headerHeight,
             rowHeight: options.rowHeight,
-
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            scrollBarSize: this.scrollBarSize,
-
             minimumColumnWidth: options.minimumColumnWidth,
             displayRowCount: options.displayRowCount
-        });
-
-        this.toolbarModel = new ToolbarModel(options.toolbar);
+        };
         if (!this.toolbarModel.isVisible()) {
-            this.dimensionModel.set('toolbarHeight', 0);
+            atrributes.toolbarHeight = 0;
         }
 
-        this.focusModel = new FocusModel({
-            grid: this,
-            scrollX: !!options.scrollX,
-            scrollY: !!options.scrollY,
-            scrollBarSize: this.scrollBarSize
+        return new DimensionModel(atrributes, {
+            columnModel: this.columnModel,
+            dataModel: this.dataModel,
+            domState: domState
         });
+    },
 
-        this.selectionModel = new SelectionModel({
-            grid: this
+    /**
+     * Creates an instance of toolbar model and returns it.
+     * @param  {Object} options - Options
+     * @return {module:model/toolbar} - A new instance
+     * @private
+     */
+    _createToolbarModel: function(options) {
+        return new ToolbarModel(options.toolbar);
+    },
+
+    /**
+     * Creates an instance of focus model and returns it.
+     * @param  {module:domState} domState - DomState instance
+     * @return {module:model/focus} - A new instance
+     * @private
+     */
+    _createFocusModel: function(domState) {
+        return new FocusModel(null, {
+            columnModel: this.columnModel,
+            dataModel: this.dataModel,
+            dimensionModel: this.dimensionModel,
+            renderModel: this.renderModel,
+            cellFactory: this.cellFactory,
+            domState: domState
         });
+    },
 
-        renderOptions = {
-            grid: this,
+    /**
+     * Creates an instance of seleciton model and returns it.
+     * @return {module:model/selection} - A new instance
+     * @private
+     */
+    _createSelectionModel: function() {
+        return new SelectionModel(null, {
+            columnModel: this.columnModel,
+            dataModel: this.dataModel,
+            dimensionModel: this.dimensionModel,
+            renderModel: this.renderModel,
+            focusModel: this.focusModel
+        });
+    },
+
+    /**
+     * Creates an instance of render model and returns it.
+     * @param  {Object} options - Options
+     * @return {module:model/render} - A new instance
+     * @private
+     */
+    _createRenderModel: function(options) {
+        var attrs, renderOptions, Constructor;
+
+        attrs = {
             emptyMessage: options.emptyMessage
         };
-        if (options.notUseSmartRendering) {
-            this.renderModel = new RenderModel(renderOptions);
-        } else {
-            this.renderModel = new SmartRenderModel(renderOptions);
-        }
+        renderOptions = {
+            columnModel: this.columnModel,
+            dataModel: this.dataModel,
+            dimensionModel: this.dimensionModel
+        };
+        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel
 
-        this.cellFactory = new CellFactory({
-            grid: this
-        });
+        return new Constructor(attrs, renderOptions);
     },
 
     /**

@@ -14,11 +14,14 @@ var Row = require('./row');
 var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     model: Row,
     /**
-     * @constructs 
+     * @constructs
      * @extends module:base/collection
      */
-    initialize: function() {
-        Collection.prototype.initialize.apply(this, arguments);
+    initialize: function(rawData, options) {
+        this.setOwnProperties({
+            dataModel: options.dataModel,
+            columnModel: options.columnModel    
+        });
     }
 });
 

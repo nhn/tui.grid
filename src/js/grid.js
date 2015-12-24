@@ -258,6 +258,7 @@ var ContainerView = require('./view/container');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var Net = require('./addon/net');
+var util = require('./common/util');
 
 var instanceMap = {};
 var addOn = {
@@ -278,6 +279,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
         var core, container;
 
+        this.id = util.getUniqueKey();
         this.core = core = this._createCore(options);
         this.container = container = this._createContainerView(options, core);
         this.publicEventEmitter = this._createPublicEventEmitter();
@@ -286,7 +288,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.refreshLayout();
 
         this.addOn = {};
-        instanceMap[core.id] = core;
+        instanceMap[this.id] = this;
     },
 
     /**
@@ -295,12 +297,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Core} - New core object
      */
     _createCore: function(options) {
-        var coreOptions = _.assign({}, options),
-            domState = new DomState(this.$el);
+        var domState = new DomState(this.$el),
+            coreOptions = _.assign({}, options, {
+                gridId: this.id
+            });
 
         _.omit(coreOptions, 'el', 'singleClickEdit');
 
-        return new Core(coreOptions, domState, this);
+        return new Core(coreOptions, domState);
     },
 
     /**

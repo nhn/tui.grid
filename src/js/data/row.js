@@ -28,6 +28,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
         Model.prototype.initialize.apply(this, arguments);
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
 
+        this.columnModel = this.collection.columnModel;
         this.on('change', this._onChange, this);
     },
 
@@ -67,7 +68,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
             return;
         }
         _.each(publicChanged, function(value, columnName) {
-            var columnModel = this.grid.columnModel.getColumnModel(columnName);
+            var columnModel = this.columnModel.getColumnModel(columnName);
             if (!columnModel) {
                 return;
             }
@@ -94,7 +95,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
             rowKey: this.get('rowKey'),
             columnName: columnName,
             value: this.get(columnName),
-            instance: this.grid.publicInstance
+            instance: tui.Grid.getInstanceById(this.collection.gridId)
         };
     },
 
@@ -108,7 +109,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @private
      */
     _executeChangeBeforeCallback: function(columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
+        var columnModel = this.columnModel.getColumnModel(columnName),
             changeEvent, obj;
 
         if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
@@ -136,7 +137,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @private
      */
     _executeChangeAfterCallback: function(columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
+        var columnModel = this.columnModel.getColumnModel(columnName),
             changeEvent;
 
         if (columnModel.editOption && columnModel.editOption.changeAfterCallback) {
@@ -168,7 +169,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {Array} css 클래스 이름의 배열
      */
     getClassNameList: function(columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
+        var columnModel = this.columnModel.getColumnModel(columnName),
             classNameList = this.extraDataManager.getClassNameList(columnName);
 
         if (columnModel.className) {
@@ -197,7 +198,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
-            columnModel = this.grid.columnModel,
+            columnModel = this.columnModel,
             isDisabled = false,
             isEditable = true,
             editType = columnModel.getEditType(columnName),
@@ -233,7 +234,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     isEditable: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
-            editType = this.grid.columnModel.getEditType(columnName),
+            editType = this.columnModel.getEditType(columnName),
             result = false;
 
         if ($.inArray(editType, notEditableTypeList) === -1) {
@@ -336,8 +337,8 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {String} 인코딩된 결과값
      */
     getHTMLEncodedString: function(columnName) {
-        var columnModel = this.grid.columnModel.getColumnModel(columnName),
-            isTextType = this.grid.columnModel.isTextType(columnName),
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            isTextType = this.columnModel.isTextType(columnName),
             value = this.get(columnName),
             notUseHtmlEntity = columnModel.notUseHtmlEntity;
         if (!notUseHtmlEntity && isTextType && tui.util.hasEncodableString(value)) {
@@ -357,7 +358,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     _getListTypeVisibleText: function(columnName) {
         var value = this.get(columnName),
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
+            columnModel = this.columnModel.getColumnModel(columnName),
             resultOptionList, editOptionList, typeExpected, valueList;
 
         if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
@@ -406,7 +407,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      * @return {String} 화면에 보여지는 데이터로 가공된 문자열
      */
     getVisibleText: function(columnName) {
-        var columnModel = this.grid.columnModel,
+        var columnModel = this.columnModel,
             value = this.get(columnName),
             editType, model,
             listTypeMap = {
@@ -442,7 +443,7 @@ var Row = Model.extend(/**@lends module:data/row.prototype */{
      */
     getRelationResult: function(callbackNameList) {
         var rowData = this.attributes,
-            relationListMap = this.grid.columnModel.get('relationListMap'),
+            relationListMap = this.columnModel.get('relationListMap'),
             relationResult = {},
             rowState = this.getRowState(),
             callback, attribute, targetColumnList, value;

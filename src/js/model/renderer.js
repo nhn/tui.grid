@@ -17,31 +17,35 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @extends module:base/model
      * @constructs
      */
-    initialize: function() {
-        var lside, rside;
-
-        Model.prototype.initialize.apply(this, arguments);
+    initialize: function(attrs, options) {
+        var lside, rside, rowListOptions;
 
         this.setOwnProperties({
-            timeoutIdForRowListChange: 0,
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
+            dimensionModel: options.dimensionModel,
             timeoutIdForRefresh: 0,
             isColumnModelChanged: false
         });
+        rowListOptions = {
+            dataModel: this.dataModel,
+            columnModel: this.columnModel
+        };
 
-        lside = new RowList([], {grid: this.grid});
-        rside = new RowList([], {grid: this.grid});
+        lside = new RowList([], rowListOptions);
+        rside = new RowList([], rowListOptions);
         this.set({
             lside: lside,
             rside: rside
         });
 
-        this.listenTo(this.grid.columnModel, 'all', this._onColumnModelChange)
-            .listenTo(this.grid.dataModel, 'add remove sort reset', this._onRowListChange)
-            .listenTo(this.grid.dataModel, 'beforeReset', this._onBeforeResetData)
+        this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
+            .listenTo(this.dataModel, 'add remove sort reset', this._onRowListChange)
+            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._onValueChange)
             .listenTo(rside, 'valueChange', this._onValueChange)
-            .listenTo(this.grid.dimensionModel, 'change:width', this._updateMaxScrollLeft)
-            .listenTo(this.grid.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
+            .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
+            .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
 
         this._updateMaxScrollLeft();
@@ -80,7 +84,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollLeft: function() {
-        var dimension = this.grid.dimensionModel;
+        var dimension = this.dimensionModel;
         this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
     },
 
@@ -89,7 +93,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollTop: function() {
-        var dimension = this.grid.dimensionModel,
+        var dimension = this.dimensionModel,
             maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
@@ -160,7 +164,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _setRenderingRange: function() {
         this.set({
             startIndex: 0,
-            endIndex: this.grid.dataModel.length - 1
+            endIndex: this.dataModel.length - 1
         });
     },
 
@@ -173,8 +177,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         //TODO : rendering 해야할 데이터만 가져온다.
         //TODO : eslint 에러 수정
-        var columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(true), // eslint-disable-line
-            columnList = this.grid.columnModel.getVisibleColumnModelList(null, true),
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true), // eslint-disable-line
+            columnList = this.columnModel.getVisibleColumnModelList(null, true),
             columnNameList = _.pluck(columnList, 'columnName'),
 
             lsideColumnList = columnNameList.slice(0, columnFixCount),
@@ -193,7 +197,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rowKey;
 
         for (i = startIndex; i < endIndex + 1; i += 1) {
-            rowModel = this.grid.dataModel.at(i);
+            rowModel = this.dataModel.at(i);
             if (rowModel) {
                 rowKey = rowModel.get('rowKey');
 
@@ -254,7 +258,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Set state value based on the DataModel.length
      */
     _refreshState: function() {
-        if (this.grid.dataModel.length) {
+        if (this.dataModel.length) {
             this.set('state', renderStateMap.DONE);
         } else {
             this.set('state', renderStateMap.EMPTY);
@@ -313,7 +317,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @param {Number} rowIndex row 의 index 값
      */
     executeRelation: function(rowIndex) {
-        var row = this.grid.dataModel.at(rowIndex),
+        var row = this.dataModel.at(rowIndex),
             renderIdx = rowIndex - this.get('startIndex'),
             rowModel, relationResult;
         relationResult = row.getRelationResult();

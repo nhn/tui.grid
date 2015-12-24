@@ -17,8 +17,14 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @extends module:base/model
      * @constructs
      */
-    initialize: function() {
+    initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
+
+        this.dataModel = options.dataModel;
+        this.columnModel = options.columnModel;
+        this.dimensionModel = options.dimensionModel;
+        this.cellFactory = options.cellFactory;
+        this.domState = options.domState;
     },
 
     defaults: {
@@ -61,12 +67,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     select: function(rowKey) {
         this.unselect().set('rowKey', rowKey);
-        if (this.grid.columnModel.get('selectType') === 'radio') {
-            this.grid.dataModel.check(rowKey);
+        if (this.columnModel.get('selectType') === 'radio') {
+            this.dataModel.check(rowKey);
         }
         this.trigger('select', {
             rowKey: rowKey,
-            rowData: this.grid.dataModel.getRowData(rowKey)
+            rowData: this.dataModel.getRowData(rowKey)
         });
         return this;
     },
@@ -97,7 +103,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     focus: function(rowKey, columnName, isScrollable) {
         if (util.isBlank(rowKey) ||
             util.isBlank(columnName) ||
-            this.grid.columnModel.isMetaColumn(columnName) ||
+            this.columnModel.isMetaColumn(columnName) ||
             (this.get('rowKey') === rowKey && this.get('columnName') === columnName)) {
             return this;
         }
@@ -120,8 +126,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
      */
     focusAt: function(rowIndex, columnIndex, isScrollable) {
-        var row = this.grid.dataModel.at(rowIndex),
-            column = this.grid.columnModel.at(columnIndex, true);
+        var row = this.dataModel.at(rowIndex),
+            column = this.columnModel.at(columnIndex, true);
         if (row && column) {
             this.focus(row.get('rowKey'), column['columnName'], isScrollable);
         }
@@ -134,14 +140,13 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        var grid = this.grid,
-            cellPainter;
+        var cellPainter;
 
         this.focus(rowKey, columnName, isScrollable);
-        rowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
-        if (grid.dataModel.get(rowKey).isEditable(columnName)) {
-            cellPainter = grid.cellFactory.getInstance(grid.columnModel.getEditType(columnName));
-            cellPainter.focusIn(grid.dataModel.getElement(rowKey, columnName));
+        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        if (this.dataModel.get(rowKey).isEditable(columnName)) {
+            cellPainter = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
+            cellPainter.focusIn(this.dataModel.getElement(rowKey, columnName));
         } else {
             this.focusClipboard();
         }
@@ -154,8 +159,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
      */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
-        var row = this.grid.dataModel.at(rowIndex),
-            column = this.grid.columnModel.at(columnIndex, true);
+        var row = this.dataModel.at(rowIndex),
+            column = this.columnModel.at(columnIndex, true);
         if (row && column) {
             this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
         }
@@ -173,7 +178,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * Otherwise call focusModel.blur().
      */
     refreshState: function() {
-        if (!this.grid.domState.hasFocusedElement()) {
+        if (!this.domState.hasFocusedElement()) {
             this.blur();
         } else if (!this.has() && !this.restore()) {
             this.focusAt(0, 0);
@@ -184,13 +189,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * Scroll to focus
      */
     scrollToFocus: function() {
-        var grid = this.grid,
-            rowKey = this.get('rowKey'),
+        var rowKey = this.get('rowKey'),
             columnName = this.get('columnName'),
-            scrollPosition = grid.dimensionModel.getScrollPosition(rowKey, columnName);
+            scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
 
         if (!tui.util.isEmpty(scrollPosition)) {
-            grid.renderModel.set(scrollPosition);
+            this.renderModel.set(scrollPosition);
         }
     },
 
@@ -226,13 +230,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
-        var grid = this.grid,
-            rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
+        var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
             columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
 
         return {
-            row: grid.dataModel.indexOfRowKey(rowKey),
-            column: grid.columnModel.indexOfColumnName(columnName, true)
+            row: this.dataModel.indexOfRowKey(rowKey),
+            column: this.columnModel.indexOfColumnName(columnName, true)
         };
     },
 
@@ -265,8 +268,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {boolean} True if exist
      */
     _isValidCell: function(rowKey, columnName) {
-        var isValidRowKey = !util.isBlank(rowKey) && !!this.grid.dataModel.get(rowKey),
-            isValidColumnName = !util.isBlank(columnName) && !!this.grid.columnModel.getColumnModel(columnName);
+        var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),
+            isValidColumnName = !util.isBlank(columnName) && !!this.columnModel.getColumnModel(columnName);
 
         return isValidRowKey && isValidColumnName;
     },
@@ -279,9 +282,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     _findRowKey: function(offset) {
         var index, row,
-            dataModel = this.grid.dataModel;
+            dataModel = this.dataModel;
         if (this.has()) {
-            index = Math.max(Math.min(dataModel.indexOfRowKey(this.get('rowKey')) + offset, this.grid.dataModel.length - 1), 0);
+            index = Math.max(Math.min(dataModel.indexOfRowKey(this.get('rowKey')) + offset, this.dataModel.length - 1), 0);
             row = dataModel.at(index);
             return row && row.get('rowKey');
         }
@@ -295,7 +298,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     _findColumnName: function(offset) {
         var index,
-            columnModel = this.grid.columnModel,
+            columnModel = this.columnModel,
             columnModelList = columnModel.getVisibleColumnModelList(),
             columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
 
@@ -313,7 +316,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _getRowSpanData: function(rowKey, columnName) {
-        return this.grid.dataModel.get(rowKey).getRowSpanData(columnName);
+        return this.dataModel.get(rowKey).getRowSpanData(columnName);
     },
 
     /**
@@ -323,7 +326,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     nextRowIndex: function(offset) {
         var rowKey = this.nextRowKey(offset);
-        return this.grid.dataModel.indexOfRowKey(rowKey);
+        return this.dataModel.indexOfRowKey(rowKey);
     },
 
     /**
@@ -333,7 +336,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     prevRowIndex: function(offset) {
         var rowKey = this.prevRowKey(offset);
-        return this.grid.dataModel.indexOfRowKey(rowKey);
+        return this.dataModel.indexOfRowKey(rowKey);
     },
 
     /**
@@ -342,7 +345,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     nextColumnIndex: function() {
         var columnName = this.nextColumnName();
-        return this.grid.columnModel.indexOfColumnName(columnName, true);
+        return this.columnModel.indexOfColumnName(columnName, true);
     },
 
     /**
@@ -351,7 +354,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     prevColumnIndex: function() {
         var columnName = this.prevColumnName();
-        return this.grid.columnModel.indexOfColumnName(columnName, true);
+        return this.columnModel.indexOfColumnName(columnName, true);
     },
 
     /**
@@ -438,7 +441,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {(string|number)} 첫번째 row 의 키값
      */
     firstRowKey: function() {
-        return this.grid.dataModel.at(0).get('rowKey');
+        return this.dataModel.at(0).get('rowKey');
     },
 
     /**
@@ -446,7 +449,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {(string|number)} 마지막 row 의 키값
      */
     lastRowKey: function() {
-        return this.grid.dataModel.at(this.grid.dataModel.length - 1).get('rowKey');
+        return this.dataModel.at(this.dataModel.length - 1).get('rowKey');
     },
 
     /**
@@ -454,7 +457,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {string} 첫번째 컬럼명
      */
     firstColumnName: function() {
-        var columnModelList = this.grid.columnModel.getVisibleColumnModelList();
+        var columnModelList = this.columnModel.getVisibleColumnModelList();
         return columnModelList[0]['columnName'];
     },
 
@@ -463,7 +466,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @return {string} 마지막 컬럼명
      */
     lastColumnName: function() {
-        var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
+        var columnModelList = this.columnModel.getVisibleColumnModelList(),
             lastIndex = columnModelList.length - 1;
         return columnModelList[lastIndex]['columnName'];
     }

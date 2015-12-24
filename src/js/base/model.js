@@ -16,12 +16,7 @@ var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{
      * @mixes module:base/common
      * @param {Object} attributes Attributes
      */
-    initialize: function(attributes) {
-        var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
-        this.setOwnProperties({
-            grid: grid
-        });
-    }
+    initialize: function(attributes) {}
 });
 
 _.assign(Model.prototype, common);

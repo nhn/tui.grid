@@ -23,6 +23,9 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     initialize: function(models, options) {
         Collection.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            columnModel: options.columnModel,
+            domState: options.domState,
+            gridId: options.gridId,
             lastRowKey: -1,
             originalRowList: [],
             originalRowMap: {},
@@ -83,7 +86,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
                 rowSpanData: null,
                 rowState: null
             },
-            keyColumnName = this.grid.columnModel.get('keyColumnName'),
+            keyColumnName = this.columnModel.get('keyColumnName'),
             rowKey = (keyColumnName === null) ? this._createRowKey() : row[keyColumnName];
 
         row._extraData = $.extend(defaultExtraData, row._extraData);
@@ -454,7 +457,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @private
      */
     _createDummyRow: function() {
-        var columnModelList = this.grid.columnModel.get('dataColumnModelList'),
+        var columnModelList = this.columnModel.get('dataColumnModelList'),
             data = {};
 
         _.each(columnModelList, function(columnModel) {
@@ -672,7 +675,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      */
     check: function(rowKey, silent) {
         var isDisabledCheck = this.get(rowKey).getRowState().isDisabledCheck,
-            selectType = this.grid.columnModel.get('selectType');
+            selectType = this.columnModel.get('selectType');
 
         if (!isDisabledCheck && selectType) {
             if (selectType === 'radio') {
@@ -843,7 +846,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
 
         original = _.indexBy(original, 'rowKey');
         current = _.indexBy(current, 'rowKey');
-        filteringColumnList = _.union(filteringColumnList, this.grid.columnModel.getIgnoredColumnNameList());
+        filteringColumnList = _.union(filteringColumnList, this.columnModel.getIgnoredColumnNameList());
 
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
@@ -932,7 +935,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
     del: function(rowKey, columnName, silent) {
         var mainRowKey = this.getMainRowKey(rowKey, columnName),
             cellState = this.get(mainRowKey).getCellState(columnName),
-            editType = this.grid.columnModel.getEditType(columnName),
+            editType = this.columnModel.getEditType(columnName),
             isDeletableType = _.contains(['text', 'text-convertible', 'text-password'], editType);
 
         if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
@@ -950,7 +953,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @param {Array[]} data - 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.
      */
     paste: function(data) {
-        var selectionModel = this.grid.selectionModel,
+        var selectionModel = this.selectionModel,
             startIdx = this._getStartIndexToPaste(),
             endIdx = this._getEndIndexToPaste(startIdx, data);
 
@@ -967,8 +970,8 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getStartIndexToPaste: function() {
-        var selectionModel = this.grid.selectionModel,
-            focusModel = this.grid.focusModel,
+        var selectionModel = this.selectionModel,
+            focusModel = this.focusModel,
             startIdx;
 
         if (selectionModel.hasSelection()) {
@@ -987,7 +990,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getEndIndexToPaste: function(startIdx, data) {
-        var columnModelList = this.grid.columnModel.getVisibleColumnModelList(),
+        var columnModelList = this.columnModel.getVisibleColumnModelList(),
             rowIdx = data.length + startIdx.row - 1,
             columnIdx = Math.min(data[0].length + startIdx.column, columnModelList.length) - 1;
 
@@ -1007,7 +1010,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      */
     _setValueForPaste: function(rowData, rowIdx, columnStartIdx, columnEndIdx) {
         var row = this.at(rowIdx),
-            columnModel = this.grid.columnModel,
+            columnModel = this.columnModel,
             attributes = {},
             columnIdx, columnName, cellState, rowSpanData;
 
@@ -1035,7 +1038,7 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      */
     getElement: function(rowKey, columnName) {
         var rowKey = this.getMainRowKey(rowKey, columnName);
-        return this.grid.domState.getElement(rowKey, columnName);
+        return this.domState.getElement(rowKey, columnName);
     }
 });
 

@@ -19,19 +19,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} options - Options
      */
     initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
-        var dataModel, rowKey, rowData;
+        var rowKey, rowData;
 
-        Model.prototype.initialize.apply(this, arguments);
-
-        dataModel = this.grid.dataModel;
         rowKey = attributes && attributes['rowKey'];
-        rowData = dataModel.get(rowKey);
-
-        this.setOwnProperties({
-            dataModel: dataModel,
-            columnModel: this.grid.columnModel,
-            renderModel: this.grid.renderModel
-        });
+        rowData = this.collection.dataModel.get(rowKey);
 
         if (rowData) {
             this.listenTo(rowData, 'change restore', this._onDataModelChange);
@@ -59,7 +50,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
-        var dataModel = this.dataModel,
+        var dataModel = this.collection.dataModel,
             row = dataModel.get(this.get('rowKey')),
             columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
             rowState = row.getRowState(),
@@ -98,8 +89,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param {Array} data  원본 데이터
      * @return {Array}  형식에 맞게 가공된 데이터
      */
-    parse: function(data) {
-        return this._formatData(data);
+    parse: function(data, options) {
+        return this._formatData(data, options.collection.dataModel);
     },
 
     /**
@@ -108,10 +99,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @return {Array}  가공된 데이터
      * @private
      */
-    _formatData: function(data) {
-        var grid = this.grid || this.collection.grid,
-            dataModel = grid.dataModel,
-            rowKey = data['rowKey'],
+    _formatData: function(data, dataModel) {
+        var rowKey = data['rowKey'],
             row = dataModel.get(rowKey),
             rowState = row.getRowState(),
             isDisabled = rowState.isDisabled;
@@ -186,7 +175,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             this.set(columnName, data);
             if (isValueChanged) {
                 //value 가 변경되었을 경우 relation 을 수행한다.
-                rowIndex = this.dataModel.indexOfRowKey(rowKey);
+                rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
         }

@@ -28,10 +28,16 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
+    initialize: function(attr, options) {
         Model.prototype.initialize.apply(this, arguments);
 
         this.setOwnProperties({
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
+            dimensionModel: options.dimensionModel,
+            focusModel: options.focusModel,
+            renderModel: options.renderModel,
+
             inputRange: null,
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
@@ -39,7 +45,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             _selectionState: SELECTION_STATE.cell
         });
 
-        this.listenTo(this.grid.dataModel, 'add remove sort reset', this.end);
+        this.listenTo(this.dataModel, 'add remove sort reset', this.end);
     },
 
     defaults: {
@@ -115,7 +121,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} state - Selection state
      */
     startByMousePosition: function(pageX, pageY, state) {
-        var index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
         this.start(index.row, index.column, state);
     },
 
@@ -126,15 +132,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} [state] - Selection state
      */
     update: function(rowIndex, columnIndex, state) {
-        var grid = this.grid,
-            focusedIndex;
+        var focusedIndex;
 
         if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
             return;
         }
 
         if (!this.hasSelection()) {
-            focusedIndex = grid.focusModel.indexOf();
+            focusedIndex = this.focusModel.indexOf();
             this.start(focusedIndex.row, focusedIndex.column, state);
         } else {
             this.setState(state);
@@ -165,7 +170,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this._minimumColumnRange,
-            index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY),
+            index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY),
             range = {
                 row: [0, 0],
                 column: []
@@ -194,7 +199,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _setScrolling: function(pageX, pageY) {
-        var overflow = this.grid.dimensionModel.getOverflowFromMousePosition(pageX, pageY);
+        var overflow = this.dimensionModel.getOverflowFromMousePosition(pageX, pageY);
 
         this.stopAutoScroll();
         if (this._isAutoScrollable(overflow.x, overflow.y)) {
@@ -211,7 +216,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} [state] - Selection state
      */
     updateByMousePosition: function(pageX, pageY, state) {
-        var index = this.grid.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
 
         this._setScrolling(pageX, pageY);
         this.update(index.row, index.column, state);
@@ -240,14 +245,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Select all data in a row
      */
     selectRow: function(rowIndex) {
-        var grid;
-
         if (this._isEnabled) {
-            grid = this.grid;
-
-            grid.focusModel.focusAt(rowIndex, 0);
+            this.focusModel.focusAt(rowIndex, 0);
             this.start(rowIndex, 0, SELECTION_STATE.row);
-            this.update(rowIndex, grid.columnModel.getVisibleColumnModelList().length - 1);
+            this.update(rowIndex, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
 
@@ -255,14 +256,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Select all data in a column
      */
     selectColumn: function(columnIdx) {
-        var grid;
-
         if (this._isEnabled) {
-            grid = this.grid;
-
-            grid.focusModel.focusAt(0, columnIdx);
+            this.focusModel.focusAt(0, columnIdx);
             this.start(0, columnIdx, SELECTION_STATE.column);
-            this.update(grid.dataModel.length - 1, columnIdx);
+            this.update(this.dataModel.length - 1, columnIdx);
         }
     },
 
@@ -270,13 +267,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Selects all data range.
      */
     selectAll: function() {
-        var grid;
-
         if (this._isEnabled) {
-            grid = this.grid;
-
             this.start(0, 0, SELECTION_STATE.cell);
-            this.update(grid.dataModel.length - 1, grid.columnModel.getVisibleColumnModelList().length - 1);
+            this.update(this.dataModel.length - 1, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
 
@@ -317,12 +310,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @return {String} string of values
      */
     getValuesToString: function() {
-        var grid = this.grid,
-            range = this.get('range'),
+        var range = this.get('range'),
             columnModelList, rowList, columnNameList, rowValues;
 
-        columnModelList = grid.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-        rowList = grid.dataModel.slice(range.row[0], range.row[1] + 1);
+        columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
+        rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
 
         columnNameList = _.pluck(columnModelList, 'columnName');
         rowValues = _.map(rowList, function(row) {
@@ -353,7 +345,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _adjustScroll: function(overflowX, overflowY) {
-        var renderModel = this.grid.renderModel;
+        var renderModel = this.renderModel;
 
         if (overflowX) {
             this._adjustScrollLeft(overflowX, renderModel.get('scrollLeft'), renderModel.get('maxScrollLeft'));
@@ -379,7 +371,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         } else if (overflowX > 0) {
             adjusted = Math.min(maxScrollLeft, scrollLeft + pixelScale);
         }
-        this.grid.renderModel.set('scrollLeft', adjusted);
+        this.renderModel.set('scrollLeft', adjusted);
     },
 
     /**
@@ -398,7 +390,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         } else if (overflowY > 0) {
             adjusted = Math.min(maxScrollTop, scrollTop + pixelScale);
         }
-        this.grid.renderModel.set('scrollTop', adjusted);
+        this.renderModel.set('scrollTop', adjusted);
     },
 
     /**
@@ -407,8 +399,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _resetRangeAttribute: function(inputRange) {
-        var grid = this.grid,
-            dataModel = grid.dataModel,
+        var dataModel = this.dataModel,
             hasSpannedRange, spannedRange, tmpRowRange;
 
         inputRange = inputRange || this.inputRange;
@@ -440,7 +431,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
                 spannedRange.row = [0, dataModel.length - 1];
                 break;
             case SELECTION_STATE.row:
-                spannedRange.column = [0, grid.columnModel.getVisibleColumnModelList().length - 1];
+                spannedRange.column = [0, this.columnModel.getVisibleColumnModelList().length - 1];
                 break;
             case SELECTION_STATE.cell:
             default:
@@ -472,16 +463,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _setRangeMinMax: function(rowRange, columnRange) {
-        var grid = this.grid;
-
         if (rowRange) {
             rowRange[0] = Math.max(0, rowRange[0]);
-            rowRange[1] = Math.min(grid.dataModel.length - 1, rowRange[1]);
+            rowRange[1] = Math.min(this.dataModel.length - 1, rowRange[1]);
         }
 
         if (columnRange) {
             columnRange[0] = Math.max(0, columnRange[0]);
-            columnRange[1] = Math.min(grid.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
+            columnRange[1] = Math.min(this.columnModel.getVisibleColumnModelList().length - 1, columnRange[1]);
         }
     },
 
@@ -551,9 +540,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _getRowSpannedIndex: function(spannedRange) {
-        var columnModelList = this.grid.columnModel.getVisibleColumnModelList()
+        var columnModelList = this.columnModel.getVisibleColumnModelList()
                 .slice(spannedRange.column[0], spannedRange.column[1] + 1),
-            dataModel = this.grid.dataModel,
+            dataModel = this.dataModel,
             startIndexList = [spannedRange.row[0]],
             endIndexList = [spannedRange.row[1]],
             startRow = dataModel.at(spannedRange.row[0]),
