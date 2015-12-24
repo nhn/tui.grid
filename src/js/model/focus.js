@@ -23,6 +23,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
+        this.renderModel = options.renderModel;
         this.cellFactory = options.cellFactory;
         this.domState = options.domState;
     },
