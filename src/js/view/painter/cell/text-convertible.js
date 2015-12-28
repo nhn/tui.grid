@@ -256,7 +256,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
     /**
      * mousedown 이벤트 핸들러.
-     * Core의 onMouseDown에서 focusClipboard를 호출하여 input에서 의도하지 않은 blur 이벤트가 발생하는 것을
+     * containerView의 onMouseDown에서 focusClipboard를 호출하여 input에서 의도하지 않은 blur 이벤트가 발생하는 것을
      * 방지하기 위해 이벤트 버블링을 멈춘다.
      * @param {MouseEvent} event 마우스 이벤트 객체
      * @private

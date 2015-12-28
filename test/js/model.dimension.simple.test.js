@@ -5,14 +5,14 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 
 describe('model.dimension', function() {
-    var defaultParam, columnModel, dataModel;
+    var defaultAttrs, columnModel, dataModel;
 
     beforeEach(function() {
         columnModel = new ColumnModelData();
         dataModel = new RowListData([], {
             columnModel: columnModel
         });
-        defaultParam = {
+        defaultAttrs = {
             width: 500,
             height: 500,
             headerHeight: 100,
@@ -56,11 +56,11 @@ describe('model.dimension', function() {
         var dimension;
 
         beforeEach(function() {
-            var param = _.extend(defaultParam, {
+            var attrs = _.extend(defaultAttrs, {
                 width: 506, // total 500
                 minimumColumnWidth: 50
             });
-            dimension = new Dimension(param, {
+            dimension = new Dimension(attrs, {
                 columnModel: columnModel,
                 dataModel: dataModel
             });
@@ -86,11 +86,11 @@ describe('model.dimension', function() {
 
         describe('available:500, minWidth:50', function() {
             beforeEach(function() {
-                var param = _.extend(defaultParam, {
+                var attrs = _.extend(defaultAttrs, {
                     width: 506,
                     minimumColumnWidth: 50
                 });
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -115,11 +115,11 @@ describe('model.dimension', function() {
 
         describe('available:300, minWidth:50 (fitToReducedTotal:true)', function() {
             beforeEach(function() {
-                var param = _.extend(defaultParam, {
+                var attrs = _.extend(defaultAttrs, {
                     width: 306,
                     minimumColumnWidth: 50
                 });
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -160,11 +160,11 @@ describe('model.dimension', function() {
     });
 
     describe('_initColumnWidthVariables()', function() {
-        var dimension, param;
+        var dimension, attrs;
 
         describe('totalWidth:500, minWidth:50', function() {
             beforeEach(function() {
-                param = _.extend(defaultParam, {
+                attrs = _.extend(defaultAttrs, {
                     width: 506,
                     minimumColumnWidth: 50
                 });
@@ -179,7 +179,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -195,7 +195,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -210,7 +210,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -225,7 +225,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -240,7 +240,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 50, isFixedWidth: true},
                     {columnName: 'c5', width: 50, isFixedWidth: true}
                 ]);
-                dimension = new Dimension(param, {
+                dimension = new Dimension(attrs, {
                     columnModel: columnModel,
                     dataModel: dataModel
                 });
@@ -250,11 +250,11 @@ describe('model.dimension', function() {
     });
 
     describe('setWidth()', function() {
-        var dimension, param;
+        var dimension, attrs;
 
         describe('totalWidth:500, minWidth:50, ', function() {
             beforeEach(function() {
-                param = _.extend(defaultParam, {
+                attrs = _.extend(defaultAttrs, {
                     width: 506,
                     minimumColumnWidth: 50
                 });
@@ -270,7 +270,7 @@ describe('model.dimension', function() {
                         {columnName: 'c4'},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Dimension(param, {
+                    dimension = new Dimension(attrs, {
                         columnModel: columnModel,
                         dataModel: dataModel
                     });
@@ -301,7 +301,7 @@ describe('model.dimension', function() {
                         {columnName: 'c4', width: 100},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Dimension(param, {
+                    dimension = new Dimension(attrs, {
                         columnModel: columnModel,
                         dataModel: dataModel
                     });

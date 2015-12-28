@@ -1,5 +1,5 @@
 /**
- * @fileoverview Grid Core 파일
+ * @fileoverview Model Manager
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -42,10 +42,10 @@ var defaultOptions = {
 };
 
 /**
- * Grid Core
- * @module core
+ * Model Manager
+ * @module modelManager
  */
-var Core = Model.extend(/**@lends module:core.prototype */{
+var ModelManager = Model.extend(/**@lends module:modelManager.prototype */{
     /**
      * @constructs
      * @extends module:base/model
@@ -68,8 +68,6 @@ var Core = Model.extend(/**@lends module:core.prototype */{
         this.selectionModel = this._createSelectionModel();
 
         // todo: remove dependency
-        this.dataModel.selectionModel = this.selectionModel;
-        this.dataModel.focusModel = this.focusModel;
         this.dimensionModel.renderModel = this.renderModel;
     },
 
@@ -107,6 +105,16 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     },
 
     /**
+     * Creates an instance of toolbar model and returns it.
+     * @param  {Object} options - Options
+     * @return {module:model/toolbar} - A new instance
+     * @private
+     */
+    _createToolbarModel: function(options) {
+        return new ToolbarModel(options.toolbar);
+    },
+
+    /**
      * Creates an instance of dimension model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
@@ -114,7 +122,7 @@ var Core = Model.extend(/**@lends module:core.prototype */{
      * @private
      */
     _createDimensionModel: function(options, domState) {
-        var atrributes = {
+        var attrs = {
             headerHeight: options.headerHeight,
             rowHeight: options.rowHeight,
             scrollX: !!options.scrollX,
@@ -123,24 +131,14 @@ var Core = Model.extend(/**@lends module:core.prototype */{
             displayRowCount: options.displayRowCount
         };
         if (!this.toolbarModel.isVisible()) {
-            atrributes.toolbarHeight = 0;
+            attrs.toolbarHeight = 0;
         }
 
-        return new DimensionModel(atrributes, {
+        return new DimensionModel(attrs, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             domState: domState
         });
-    },
-
-    /**
-     * Creates an instance of toolbar model and returns it.
-     * @param  {Object} options - Options
-     * @return {module:model/toolbar} - A new instance
-     * @private
-     */
-    _createToolbarModel: function(options) {
-        return new ToolbarModel(options.toolbar);
     },
 
     /**
@@ -213,4 +211,4 @@ var Core = Model.extend(/**@lends module:core.prototype */{
     }
 });
 
-module.exports = Core;
+module.exports = ModelManager;
