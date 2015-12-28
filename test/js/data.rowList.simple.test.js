@@ -22,12 +22,10 @@ describe('Data.RowList - simple', function() {
     var rowList, columnModel;
 
     beforeEach(function() {
-        var grid = {};
-
-        columnModel = grid.columnModel = new ColumnModelData();
+        columnModel = new ColumnModelData();
         columnModel.set('columnModelList', columnModelList);
         rowList = new RowListData([], {
-            grid: grid
+            columnModel: columnModel
         });
         rowList.setRowList([
             {

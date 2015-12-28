@@ -52,7 +52,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
             row = dataModel.get(this.get('rowKey')),
-            columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
+            columnModelList = this.collection.columnModel.getVisibleColumnModelList(null, true),
             rowState = row.getRowState(),
             param;
 

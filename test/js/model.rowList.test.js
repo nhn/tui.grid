@@ -34,24 +34,21 @@ describe('model.rowList', function() {
         }
     ];
 
-    var columnModelInstance,
-        dataModelInstance,
-        rowListModelInstance,
-        grid = {};
+    var columnModel, dataModel, rowListModel;
 
     beforeEach(function() {
-        columnModelInstance = grid.columnModel = new ColumnModelData({
-            selectType: 'checkbox'
+        columnModel = new ColumnModelData({
+            selectType: 'checkbox',
+            columnModelList: columnModelList
         });
-        columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = grid.dataModel = new RowListData([], {
-            grid: grid
+        dataModel = new RowListData([], {
+            columnModel: columnModel
         });
     });
 
     describe('_formatData()', function() {
         beforeEach(function() {
-            columnModelInstance.set({
+            columnModel.set({
                 hasNumberColumn: true,
                 selectType: 'checkbox'
             });
@@ -73,15 +70,18 @@ describe('model.rowList', function() {
                         columnName1: '2'
                     }
                 ];
-                dataModelInstance.set(rowList, {parse: true});
-                model = new RowModel({
-                    grid: grid
+                dataModel.set(rowList, {parse: true});
+                model = new RowModel(null, {
+                    collection: {
+                        columnModel: columnModel,
+                        dataModel: dataModel
+                    }
                 });
             });
 
             it('sorting 되어있지 않은 경우에는 rowSpan 정보를 잘 저장한다.', function() {
-                var dataList = dataModelInstance.toJSON(),
-                    formatted = model._formatData(dataList[0]);
+                var dataList = dataModel.toJSON(),
+                    formatted = model._formatData(dataList[0], dataModel);
 
                 expect(formatted.columnName1).toEqual({
                     rowKey: 0,
@@ -96,7 +96,7 @@ describe('model.rowList', function() {
                     className: '',
                     changed: []
                 });
-                formatted = model._formatData(dataList[1]);
+                formatted = model._formatData(dataList[1], dataModel);
                 expect(formatted.columnName1).toEqual({
                     rowKey: 1,
                     columnName: 'columnName1',
@@ -113,9 +113,9 @@ describe('model.rowList', function() {
             });
 
             it('sorting된 경우 rowSpan 정보를 저장하지 않는다.', function() {
-                var dataList = dataModelInstance.toJSON(),
-                    formatted = model._formatData(dataList[0]);
-                dataModelInstance.sortByField('columnName1');
+                var dataList = dataModel.toJSON(),
+                    formatted = model._formatData(dataList[0], dataModel);
+                dataModel.sortByField('columnName1');
                 expect(formatted.columnName1).toEqual({
                     rowKey: 0,
                     columnName: 'columnName1',
@@ -129,7 +129,7 @@ describe('model.rowList', function() {
                     className: '',
                     changed: []
                 });
-                formatted = model._formatData(dataList[1]);
+                formatted = model._formatData(dataList[1], dataModel);
                 expect(formatted.columnName1).toEqual({
                     rowKey: 1,
                     columnName: 'columnName1',
@@ -155,16 +155,19 @@ describe('model.rowList', function() {
                             columnName3: 'columnName3'
                         }
                     ],
-                    model = new RowModel({
-                        grid: grid
+                    model = new RowModel(null, {
+                        collection: {
+                            columnModel: columnModel,
+                            dataModel: dataModel
+                        }
                     }),
                     dataList,
                     formatted;
 
-                dataModelInstance.set(rowList, {parse: true});
+                dataModel.set(rowList, {parse: true});
 
-                dataList = dataModelInstance.toJSON();
-                formatted = model._formatData(dataList[0]);
+                dataList = dataModel.toJSON();
+                formatted = model._formatData(dataList[0], dataModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -235,12 +238,15 @@ describe('model.rowList', function() {
                     dataList,
                     formatted;
 
-                dataModelInstance.set(rowList, {parse: true});
-                model = new RowModel({
-                    grid: grid
+                dataModel.set(rowList, {parse: true});
+                model = new RowModel(null, {
+                    collection: {
+                        columnModel: columnModel,
+                        dataModel: dataModel
+                    }
                 });
-                dataList = dataModelInstance.toJSON();
-                formatted = model._formatData(dataList[0]);
+                dataList = dataModel.toJSON();
+                formatted = model._formatData(dataList[0], dataModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -311,12 +317,15 @@ describe('model.rowList', function() {
                     dataList,
                     formatted;
 
-                dataModelInstance.set(rowList, {parse: true});
-                model = new RowModel({
-                    grid: grid
+                dataModel.set(rowList, {parse: true});
+                model = new RowModel(null, {
+                    collection: {
+                        columnModel: columnModel,
+                        dataModel: dataModel
+                    }
                 });
-                dataList = dataModelInstance.toJSON();
-                formatted = model._formatData(dataList[0]);
+                dataList = dataModel.toJSON();
+                formatted = model._formatData(dataList[0], dataModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -387,12 +396,15 @@ describe('model.rowList', function() {
                     dataList,
                     formatted;
 
-                dataModelInstance.set(rowList, {parse: true});
-                model = new RowModel({
-                    grid: grid
+                dataModel.set(rowList, {parse: true});
+                model = new RowModel(null, {
+                    collection: {
+                        columnModel: columnModel,
+                        dataModel: dataModel
+                    }
                 });
-                dataList = dataModelInstance.toJSON();
-                formatted = model._formatData(dataList[0]);
+                dataList = dataModel.toJSON();
+                formatted = model._formatData(dataList[0], dataModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -454,7 +466,7 @@ describe('model.rowList', function() {
         var rowList;
 
         beforeEach(function() {
-            columnModelInstance.set({
+            columnModel.set({
                 selectType: 'checkbox'
             });
             rowList = [
@@ -488,10 +500,11 @@ describe('model.rowList', function() {
                     columnName3: 3
                 }
             ];
-            dataModelInstance.set(rowList, {parse: true});
+            dataModel.set(rowList, {parse: true});
 
-            rowListModelInstance = new RowListModel(dataModelInstance.toJSON(), {
-                grid: grid,
+            rowListModel = new RowListModel(dataModel.toJSON(), {
+                dataModel: dataModel,
+                columnModel: columnModel,
                 parse: true
             });
         });
@@ -500,18 +513,18 @@ describe('model.rowList', function() {
             it('rowSpan 된 경우, mainRow 가 아닌 row 의 extraData 를 변경하면 main row 의 extraData가 변경된다.', function() {
                 var mainRow;
 
-                dataModelInstance.get(3).setRowState('DISABLED');
+                dataModel.get(3).setRowState('DISABLED');
 
-                mainRow = rowListModelInstance.get(1);
+                mainRow = rowListModel.get(1);
                 expect(mainRow.get('columnName1').isDisabled).toEqual(true);
                 expect(mainRow.get('columnName1').className).toEqual('');
             });
 
             it('상태 변경 없을 때 기본값 검사', function() {
-                var cell0 = rowListModelInstance.get(0).get('_button'),
-                    cell1 = rowListModelInstance.get(0).get('columnName1'),
-                    cell2 = rowListModelInstance.get(0).get('columnName2'),
-                    cell3 = rowListModelInstance.get(0).get('columnName3');
+                var cell0 = rowListModel.get(0).get('_button'),
+                    cell1 = rowListModel.get(0).get('columnName1'),
+                    cell2 = rowListModel.get(0).get('columnName2'),
+                    cell3 = rowListModel.get(0).get('columnName3');
 
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
@@ -537,12 +550,12 @@ describe('model.rowList', function() {
             it('DISABLED 로 변경 시', function() {
                 var cell0, cell1, cell2, cell3;
 
-                dataModelInstance.get(0).setRowState('DISABLED');
+                dataModel.get(0).setRowState('DISABLED');
 
-                cell0 = rowListModelInstance.get(0).get('_button');
-                cell1 = rowListModelInstance.get(0).get('columnName1');
-                cell2 = rowListModelInstance.get(0).get('columnName2');
-                cell3 = rowListModelInstance.get(0).get('columnName3');
+                cell0 = rowListModel.get(0).get('_button');
+                cell1 = rowListModel.get(0).get('columnName1');
+                cell2 = rowListModel.get(0).get('columnName2');
+                cell3 = rowListModel.get(0).get('columnName3');
 
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
@@ -568,8 +581,8 @@ describe('model.rowList', function() {
             it('DISABLED_CHECK 로 변경 시', function() {
                 var cell0, cell1, cell2, cell3, rowModel;
 
-                rowModel = rowListModelInstance.get(0);
-                dataModelInstance.get(0).setRowState('DISABLED_CHECK');
+                rowModel = rowListModel.get(0);
+                dataModel.get(0).setRowState('DISABLED_CHECK');
 
                 cell0 = rowModel.get('_button');
                 cell1 = rowModel.get('columnName1');
@@ -599,7 +612,7 @@ describe('model.rowList', function() {
 
             it('className 변경 시', function() {
                 var cell0, cell1, cell2, cell3, rowModel,
-                    rowData = dataModelInstance.get(0),
+                    rowData = dataModel.get(0),
                     extraData = rowData.get('_extraData');
 
                 extraData.className = {
@@ -611,7 +624,7 @@ describe('model.rowList', function() {
                 };
                 rowData._triggerExtraDataChangeEvent();
 
-                rowModel = rowListModelInstance.get(0);
+                rowModel = rowListModel.get(0);
                 cell0 = rowModel.get('_button');
                 cell1 = rowModel.get('columnName1');
                 cell2 = rowModel.get('columnName2');
@@ -641,8 +654,8 @@ describe('model.rowList', function() {
 
         describe('dataModel 의 값이 변경되었을 때 해당 컬럼의 값이 변경되는지 확인한다.', function() {
             it('값이 변경되는지 확인한다', function() {
-                dataModelInstance.get(0).set({columnName1: 'changed'});
-                expect(rowListModelInstance.get(0).get('columnName1').value).toEqual('changed');
+                dataModel.get(0).set({columnName1: 'changed'});
+                expect(rowListModel.get(0).get('columnName1').value).toEqual('changed');
             });
         });
     });
@@ -658,16 +671,17 @@ describe('model.rowList', function() {
                     columnName3: 'columnName3'
                 }
             ];
-            dataModelInstance.set(rowList, {parse: true});
+            dataModel.set(rowList, {parse: true});
 
-            rowListModelInstance = new RowListModel(dataModelInstance.toJSON(), {
-                grid: grid,
+            rowListModel = new RowListModel(dataModel.toJSON(), {
+                columnModel: columnModel,
+                dataModel: dataModel,
                 parse: true
             });
         });
 
         it('데이터가 변경되는지 확인한다.', function() {
-            rowListModelInstance.get(0).setCell('columnName1', {
+            rowListModel.get(0).setCell('columnName1', {
                 rowKey: 'changed',
                 columnName: 'changed',
                 rowSpan: 'changed',
@@ -679,15 +693,15 @@ describe('model.rowList', function() {
                 className: 'changed'
             });
 
-            expect(rowListModelInstance.get(0).get('columnName1').rowKey).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').columnName).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').rowSpan).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').isMainRow).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').mainRowKey).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').isEditable).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').isDisabled).toEqual('changed');
-            expect(rowListModelInstance.get(0).get('columnName1').optionList).toEqual(['changed']);
-            expect(rowListModelInstance.get(0).get('columnName1').className).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').rowKey).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').columnName).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').rowSpan).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').isMainRow).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').mainRowKey).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').isEditable).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').isDisabled).toEqual('changed');
+            expect(rowListModel.get(0).get('columnName1').optionList).toEqual(['changed']);
+            expect(rowListModel.get(0).get('columnName1').className).toEqual('changed');
         });
 
         it('변경된 목록들이 changed 프로퍼티에 잘 들어가는지 확인한다.', function() {
@@ -703,25 +717,25 @@ describe('model.rowList', function() {
                 className: 'changed'
             };
 
-            rowListModelInstance.get(0).setCell('columnName1', expectResult);
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('rowKey');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('columnName');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('rowSpan');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('isMainRow');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('mainRowKey');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('isEditable');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('isDisabled');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('optionList');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).toContain('className');
-            expect(rowListModelInstance.get(0).get('columnName1').changed).not.toContain('value');
+            rowListModel.get(0).setCell('columnName1', expectResult);
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('rowKey');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('columnName');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('rowSpan');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('isMainRow');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('mainRowKey');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('isEditable');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('isDisabled');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('optionList');
+            expect(rowListModel.get(0).get('columnName1').changed).toContain('className');
+            expect(rowListModel.get(0).get('columnName1').changed).not.toContain('value');
         });
 
         it('변경시 change 이벤트를 발생하는지 확인한다.', function() {
             var callback = jasmine.createSpy('callback'),
                 listenModel = new Model();
 
-            listenModel.listenTo(rowListModelInstance.get(0), 'change', callback);
-            rowListModelInstance.get(0).setCell('columnName1', {
+            listenModel.listenTo(rowListModel.get(0), 'change', callback);
+            rowListModel.get(0).setCell('columnName1', {
                 rowKey: 'changed',
                 columnName: 'changed',
                 rowSpan: 'changed',
@@ -739,8 +753,8 @@ describe('model.rowList', function() {
             var callback = jasmine.createSpy('callback'),
                 listenModel = new Model();
 
-            listenModel.listenTo(rowListModelInstance.get(0), 'valueChange', callback);
-            rowListModelInstance.get(0).setCell('columnName1', {
+            listenModel.listenTo(rowListModel.get(0), 'valueChange', callback);
+            rowListModel.get(0).setCell('columnName1', {
                 rowKey: 'changed',
                 columnName: 'changed',
                 rowSpan: 'changed',
@@ -752,7 +766,7 @@ describe('model.rowList', function() {
                 className: 'abd'
             });
             expect(callback).not.toHaveBeenCalled();
-            rowListModelInstance.get(0).setCell('columnName1', {
+            rowListModel.get(0).setCell('columnName1', {
                value: 10
             });
             expect(callback).toHaveBeenCalled();

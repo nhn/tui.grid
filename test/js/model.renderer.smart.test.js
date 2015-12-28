@@ -38,13 +38,12 @@ describe('model.renderer', function() {
     })();
 
     beforeEach(function() {
-        columnModel = grid.columnModel = new ColumnModelData({});
+        columnModel = new ColumnModelData();
         columnModel.set('columnModelList', columnModelList);
-        dataModel = grid.dataModel = new RowListData([], {
-            grid: grid
+        dataModel = new RowListData([], {
+            columnModel: columnModel
         });
-        dimensionModel = grid.dimensionModel = new Dimension({
-            grid: grid,
+        dimensionModel = new Dimension({
             offsetLeft: 100,
             offsetTop: 200,
             width: 500,
@@ -55,10 +54,15 @@ describe('model.renderer', function() {
             scrollX: true,
             scrollBarSize: 17,
             minimumColumnWidth: 20
+        }, {
+            dataModel: dataModel,
+            columnModel: columnModel
         });
         dataModel.reset(rowList, {parse: true});
-        renderer = new SmartRenderer({
-            grid: grid
+        renderer = new SmartRenderer(null, {
+            dataModel: dataModel,
+            columnModel: columnModel,
+            dimensionModel: dimensionModel
         });
         renderer.refresh();
     });

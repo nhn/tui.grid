@@ -5,15 +5,14 @@ var RowListData = require('../../src/js/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 
 describe('model.dimension', function() {
-    var grid = {}, defaultConfig;
+    var defaultParam, columnModel, dataModel;
 
     beforeEach(function() {
-        grid.columnModel = new ColumnModelData();
-        grid.dataModel = new RowListData([], {
-            grid: grid
+        columnModel = new ColumnModelData();
+        dataModel = new RowListData([], {
+            columnModel: columnModel
         });
-        defaultConfig = {
-            grid: grid,
+        defaultParam = {
             width: 500,
             height: 500,
             headerHeight: 100,
@@ -57,11 +56,14 @@ describe('model.dimension', function() {
         var dimension;
 
         beforeEach(function() {
-            var config = _.extend(defaultConfig, {
+            var param = _.extend(defaultParam, {
                 width: 506, // total 500
                 minimumColumnWidth: 50
             });
-            dimension = new Dimension(config);
+            dimension = new Dimension(param, {
+                columnModel: columnModel,
+                dataModel: dataModel
+            });
         });
 
         it('[100, 100, 0, 0, 0]', function() {
@@ -84,11 +86,14 @@ describe('model.dimension', function() {
 
         describe('available:500, minWidth:50', function() {
             beforeEach(function() {
-                var config = _.extend(defaultConfig, {
+                var param = _.extend(defaultParam, {
                     width: 506,
                     minimumColumnWidth: 50
                 });
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
             });
 
             it('50(fixed), 50(fixed), 100, 100, 100', function() {
@@ -110,11 +115,14 @@ describe('model.dimension', function() {
 
         describe('available:300, minWidth:50 (fitToReducedTotal:true)', function() {
             beforeEach(function() {
-                var config = _.extend(defaultConfig, {
+                var param = _.extend(defaultParam, {
                     width: 306,
                     minimumColumnWidth: 50
                 });
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
                 dimension._minColumnWidthList = [50, 50, 50, 50, 50];
                 dimension._columnWidthFixedFlags = [false, false, false, false, false];
             });
@@ -152,102 +160,120 @@ describe('model.dimension', function() {
     });
 
     describe('_initColumnWidthVariables()', function() {
-        var dimension, config;
+        var dimension, param;
 
         describe('totalWidth:500, minWidth:50', function() {
             beforeEach(function() {
-                config = _.extend(defaultConfig, {
+                param = _.extend(defaultParam, {
                     width: 506,
                     minimumColumnWidth: 50
                 });
-                grid.columnModel.set('hasNumberColumn', false);
+                columnModel.set('hasNumberColumn', false);
             });
 
             it('100, 100, 100, 0, 0', function() {
-                grid.columnModel.set('columnModelList', [
+                columnModel.set('columnModelList', [
                     {columnName: 'c1', width: 100},
                     {columnName: 'c2', width: 100},
                     {columnName: 'c3', width: 100},
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
                 expect(dimension.get('columnWidthList')).toEqual([100, 100, 100, 100, 100]);
             });
 
             // total minimum width of empty column is bigger than remain width.
             it('150, 150, 150, 0, 0', function() {
-                grid.columnModel.set('columnModelList', [
+                columnModel.set('columnModelList', [
                     {columnName: 'c1', width: 150},
                     {columnName: 'c2', width: 150},
                     {columnName: 'c3', width: 150},
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
                 expect(dimension.get('columnWidthList')).toEqual([150, 150, 150, 50, 50]);
             });
 
             it('30, 30, 30, 100, 100', function() {
-                grid.columnModel.set('columnModelList', [
+                columnModel.set('columnModelList', [
                     {columnName: 'c1', width: 30},
                     {columnName: 'c2', width: 30},
                     {columnName: 'c3', width: 30},
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
                 expect(dimension.get('columnWidthList')).toEqual([80, 80, 80, 130, 130]);
             });
 
             it('50(fixed), 50(fixed), 50(fixed), 100, 100', function() {
-                grid.columnModel.set('columnModelList', [
+                columnModel.set('columnModelList', [
                     {columnName: 'c1', width: 50, isFixedWidth: true},
                     {columnName: 'c2', width: 50, isFixedWidth: true},
                     {columnName: 'c3', width: 50, isFixedWidth: true},
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
                 expect(dimension.get('columnWidthList')).toEqual([50, 50, 50, 175, 175]);
             });
 
             it('50(fixed), 50(fixed), 50(fixed), 50(fixed), 50(fixed)', function() {
-                grid.columnModel.set('columnModelList', [
+                columnModel.set('columnModelList', [
                     {columnName: 'c1', width: 50, isFixedWidth: true},
                     {columnName: 'c2', width: 50, isFixedWidth: true},
                     {columnName: 'c3', width: 50, isFixedWidth: true},
                     {columnName: 'c4', width: 50, isFixedWidth: true},
                     {columnName: 'c5', width: 50, isFixedWidth: true}
                 ]);
-                dimension = new Dimension(config);
+                dimension = new Dimension(param, {
+                    columnModel: columnModel,
+                    dataModel: dataModel
+                });
                 expect(dimension.get('columnWidthList')).toEqual([50, 50, 50, 50, 300]);
             });
         });
     });
 
     describe('setWidth()', function() {
-        var dimension, config;
+        var dimension, param;
 
         describe('totalWidth:500, minWidth:50, ', function() {
             beforeEach(function() {
-                config = _.extend(defaultConfig, {
+                param = _.extend(defaultParam, {
                     width: 506,
                     minimumColumnWidth: 50
                 });
-                grid.columnModel.set('hasNumberColumn', false);
+                columnModel.set('hasNumberColumn', false);
             });
 
             describe('100(auto), 100(auto), 100(auto), 100(auto), 100(auto)', function() {
                 beforeEach(function() {
-                    grid.columnModel.set('columnModelList', [
+                    columnModel.set('columnModelList', [
                         {columnName: 'c1'},
                         {columnName: 'c2'},
                         {columnName: 'c3'},
                         {columnName: 'c4'},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Dimension(config);
+                    dimension = new Dimension(param, {
+                        columnModel: columnModel,
+                        dataModel: dataModel
+                    });
                 });
 
                 it('set first width to 150', function() {
@@ -268,14 +294,17 @@ describe('model.dimension', function() {
 
             describe('100(fixed), 100(fixed), 100, 100(auto) 100(auto)', function() {
                 beforeEach(function() {
-                    grid.columnModel.set('columnModelList', [
+                    columnModel.set('columnModelList', [
                         {columnName: 'c1', width: 100, isFixedWidth: true},
                         {columnName: 'c2', width: 100, isFixedWidth: true},
                         {columnName: 'c3', width: 100},
                         {columnName: 'c4', width: 100},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Dimension(config);
+                    dimension = new Dimension(param, {
+                        columnModel: columnModel,
+                        dataModel: dataModel
+                    });
                 });
 
                 it('set first width(fixed) to 150', function() {

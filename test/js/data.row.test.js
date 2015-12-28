@@ -11,7 +11,12 @@ describe('RowData', function() {
             row = new RowData({
                 c1: '0-1',
                 c2: '0-2'
-            }, {parse: true});
+            }, {
+                parse: true,
+                collection: {
+                    columnModel: new ColumnModel()
+                }
+            });
             jasmine.clock().install();
         });
 
@@ -38,7 +43,12 @@ describe('RowData', function() {
         beforeEach(function() {
             row = new RowData({
                 text: 'hello'
-            }, {parse: true});
+            }, {
+                parse: true,
+                collection: {
+                    columnModel: new ColumnModel()
+                }
+            });
         });
 
         it('default', function() {
@@ -85,16 +95,13 @@ describe('RowData', function() {
     });
 
     describe('_executeChangeBeforeCallback()', function() {
-        var row, callbackSpy;
+        var row, callbackSpy, gridInstance = {};
 
         beforeEach(function() {
-            var grid = {
-                columnModel: new ColumnModel(),
-                publicInstance: 'public'
-            };
+            var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
-
-            grid.columnModel.set('columnModelList', [
+            spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
+            columnModel.set('columnModelList', [
                 {
                     columnName: 'c1'
                 },
@@ -122,17 +129,18 @@ describe('RowData', function() {
                 }
             ]);
             row = new RowData({
-                grid: grid,
                 rowKey: 1,
                 c1: 'value1',
                 c2: 'value2',
                 c3: 'value3',
                 c4: 'value4'
-            }, {parse: true});
-
-            row.collection = {
-                syncRowSpannedData: function() {}
-            };
+            }, {
+                parse: true,
+                collection: {
+                    columnModel: columnModel,
+                    syncRowSpannedData: function() {}
+                }
+            });
         });
 
         it('changeBeforeCallback이 정의되지 않았을 경우 true 를 리턴한다.', function() {
@@ -146,7 +154,7 @@ describe('RowData', function() {
                 rowKey: 1,
                 columnName: 'c2',
                 value: 'value2',
-                instance: 'public'
+                instance: gridInstance
             });
         });
 
@@ -170,29 +178,28 @@ describe('RowData', function() {
     });
 
     describe('_executeChangeAfterCallback()', function() {
-        var callbackSpy, row;
+        var callbackSpy, row, gridInstance = {};
 
         beforeEach(function() {
-            var grid = {
-                columnModel: new ColumnModel(),
-                publicInstance: 'public'
-            };
+            var columnModel = new ColumnModel();
             callbackSpy = jasmine.createSpy('callback');
-            grid.columnModel.set('columnModelList', [{
+            spyOn(tui.Grid, 'getInstanceById').and.returnValue(gridInstance);
+            columnModel.set('columnModelList', [{
                 columnName: 'c1',
                 editOption: {
                     changeAfterCallback: callbackSpy
                 }
             }]);
             row = new RowData({
-                grid: grid,
                 rowKey: 1,
                 c1: 'value1'
-            }, {parse: true});
-
-            row.collection = {
-                syncRowSpannedData: function() {}
-            };
+            }, {
+                parse: true,
+                collection: {
+                    columnModel: columnModel,
+                    syncRowSpannedData: function() {}
+                }
+            });
         });
 
         it('데이터 변경이 완료된 이후 changeAfterCallback 을 수행한다.', function() {
@@ -201,7 +208,7 @@ describe('RowData', function() {
                 rowKey: 1,
                 columnName: 'c1',
                 value: 'value1 new',
-                instance: 'public'
+                instance: gridInstance
             });
         });
     });

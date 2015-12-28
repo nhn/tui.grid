@@ -2,6 +2,7 @@
 
 var ColumnModelData = require('../../src/js/data/columnModel');
 var RowListData = require('../../src/js/data/rowList');
+var Model = require('../../src/js/base/model');
 var Dimension = require('../../src/js/model/dimension');
 
 describe('Dimension', function() {
@@ -280,25 +281,16 @@ describe('Dimension', function() {
         dataModelInstance,
         columnModelInstance,
         dimensionModel,
-        grid = {
-            option: function() {},
-            renderModel: {
-                get: function() {
-                    return 0;
-                }
-            }
-        },
         defaultConfig;
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
-        columnModelInstance = grid.columnModel = new ColumnModelData();
+        columnModelInstance = new ColumnModelData();
         columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = grid.dataModel = new RowListData([], {
-            grid: grid
+        dataModelInstance = new RowListData([], {
+            columnModel: columnModelInstance
         });
         defaultConfig = {
-            grid: grid,
             offsetLeft: 100,
             offsetTop: 200,
             width: 500,
@@ -312,7 +304,14 @@ describe('Dimension', function() {
             minimumColumnWidth: 20,
             displayRowCount: 20
         };
-        dimensionModel = new Dimension(defaultConfig);
+        dimensionModel = new Dimension(defaultConfig, {
+            columnModel: columnModelInstance,
+            dataModel: dataModelInstance
+        });
+        dimensionModel.renderModel = new Model({
+            scrollLeft: 0,
+            scrollTop: 0
+        });
     });
 
     describe('getColumnWidthList()', function() {
@@ -376,8 +375,10 @@ describe('Dimension', function() {
                 columnFixCount: 3
             });
             dimensionModel = new Dimension({
-                grid: grid,
                 minimumColumnWidth: 20
+            }, {
+                dataModel: dataModelInstance,
+                columnModel: columnModelInstance
             });
             expect(dimensionModel._getMinLeftSideWidth()).toEqual(85);
             columnModelInstance.set({
@@ -393,9 +394,11 @@ describe('Dimension', function() {
                 columnFixCount: 3
             });
             dimensionModel = new Dimension({
-                grid: grid,
                 width: 100,
                 minimumColumnWidth: 20
+            }, {
+                dataModel: dataModelInstance,
+                columnModel: columnModelInstance
             });
             expect(dimensionModel._getMaxLeftSideWidth()).toEqual(90);
             dimensionModel.set({
@@ -816,13 +819,12 @@ describe('Dimension', function() {
                         isLeft: false,
                         isRight: false
                     };
-                spyOn(grid.renderModel, 'get').and.callFake(function(key) {
+                spyOn(dimensionModel.renderModel, 'get').and.callFake(function(key) {
                     if (key === 'scrollTop') {
                         return 200;
                     }
                     return 0;
                 });
-
                 actual = dimensionModel._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
                 expect(actual).toEqual(expectedDirection);
             });
@@ -850,7 +852,7 @@ describe('Dimension', function() {
                         isRight: false
                     };
                 isRsideColumn = true;
-                spyOn(grid.renderModel, 'get').and.callFake(function(key) {
+                spyOn(dimensionModel.renderModel, 'get').and.callFake(function(key) {
                     if (key === 'scrollLeft') {
                         return 200;
                     }
@@ -1056,7 +1058,7 @@ describe('Dimension', function() {
 
     describe('_calcRowIndexFromPositionY', function() {
         beforeEach(function() {
-            spyOn(grid.renderModel, 'get').and.returnValue(0);
+            spyOn(dimensionModel.renderModel, 'get').and.returnValue(0);
         });
 
         it('should return 0 when the Y-position is in first row', function() {
@@ -1098,7 +1100,7 @@ describe('Dimension', function() {
                 expectedIndex = 5,
                 actual;
 
-            grid.dataModel.length = rowCount;
+            dimensionModel.dataModel.length = rowCount;
             spyOn(dimensionModel, 'get').and.callFake(function(key) {
                 if (key === 'rowHeight') {
                     return rowHeight;
@@ -1118,7 +1120,7 @@ describe('Dimension', function() {
                 expectedIndex = rowCount - 1,
                 actual;
 
-            grid.dataModel.length = rowCount;
+            dimensionModel.dataModel.length = rowCount;
             spyOn(dimensionModel, 'get').and.callFake(function(key) {
                 if (key === 'rowHeight') {
                     return 100;
@@ -1139,7 +1141,7 @@ describe('Dimension', function() {
             /*********
              * Given
              *********/
-            spyOn(grid.columnModel, 'getVisibleMetaColumnCount')
+            spyOn(dimensionModel.columnModel, 'getVisibleMetaColumnCount')
                 .and
                 .returnValue(1);
             spyOn(dimensionModel, 'getColumnWidthList')

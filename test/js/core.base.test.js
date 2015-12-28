@@ -42,14 +42,6 @@ describe('core.base', function() {
     });
 
     describe('Model.Base', function() {
-        it('Model 생성 시 인자에 grid 프로퍼티를 넘기면 내부 프로퍼티로 저장한다.', function() {
-            var model = new Class.Model({
-                grid: grid
-            });
-            expect(model.hasOwnProperty('grid')).toBe(true);
-            expect(model.grid).toBe(grid);
-        });
-
         it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
             var model = new Class.Model();
             testForSetOwnProperties(model);
@@ -64,14 +56,6 @@ describe('core.base', function() {
                 grid: grid
             });
             expect(collection.length).toBe(0);
-        });
-
-        it('Collection 생성 시 두번째 인자에 grid 프로퍼티를 넘기면 프라퍼티로 저장한다.', function() {
-            collection = new Class.Collection([], {
-                grid: grid
-            });
-            expect(collection.hasOwnProperty('grid')).toBe(true);
-            expect(collection.grid).toBe(grid);
         });
 
         it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {

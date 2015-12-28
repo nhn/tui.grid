@@ -371,9 +371,20 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _pasteToGrid: function() {
-        var result = this._getProcessClipBoardData();
+        var selectionModel = this.grid.selectionModel,
+            focusModel = this.grid.focusModel,
+            dataModel = this.grid.dataModel,
+            startIdx, data;
+
+        if (selectionModel.hasSelection()) {
+            startIdx = selectionModel.getStartIndex();
+        } else {
+            startIdx = focusModel.indexOf();
+        }
+        data = this._getProcessClipBoardData();
+
         this.$el.off('keyup');
-        this.grid.dataModel.paste(result);
+        dataModel.paste(data, startIdx);
     },
 
     /**

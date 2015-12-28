@@ -123,52 +123,51 @@ describe('model.renderer', function() {
         }
     ];
 
-    var columnModelInstance,
-        dataModelInstance,
-        renderModelInstance,
-        grid = {},
-        rowList;
+    var columnModel, dataModel, renderModel, dimensionModel, rowList;
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalRowList);
-        columnModelInstance = grid.columnModel = new ColumnModelData({
+        columnModel = new ColumnModelData({
             hasNumberColumn: true,
             selectType: 'checkbox',
-            columnFixCount: 2
+            columnFixCount: 2,
+            columnModelList: columnModelList
         });
-        columnModelInstance.set('columnModelList', columnModelList);
-        dataModelInstance = grid.dataModel = new RowListData([], {
-            grid: grid
+        dataModel = new RowListData([], {
+            columnModel: columnModel
         });
-        grid.dimensionModel = new Dimension({
-            grid: grid
+        dimensionModel = new Dimension(null, {
+            dataModel: dataModel,
+            columnModel: columnModel
         });
-        renderModelInstance = new Renderer({
-            grid: grid
+        renderModel = new Renderer(null, {
+            columnModel: columnModel,
+            dataModel: dataModel,
+            dimensionModel: dimensionModel
         });
     });
 
     describe('initializeVariables()', function() {
         it('값들이 초기화 되는지 확인한다.', function() {
-            renderModelInstance.initializeVariables();
-            expect(renderModelInstance.get('top')).toEqual(0);
-            expect(renderModelInstance.get('scrollTop')).toEqual(0);
-            expect(renderModelInstance.get('$scrollTarget')).toBeNull();
-            expect(renderModelInstance.get('scrollLeft')).toEqual(0);
-            expect(renderModelInstance.get('startIndex')).toEqual(0);
-            expect(renderModelInstance.get('endIndex')).toEqual(0);
-            expect(renderModelInstance.get('startNumber')).toEqual(1);
+            renderModel.initializeVariables();
+            expect(renderModel.get('top')).toEqual(0);
+            expect(renderModel.get('scrollTop')).toEqual(0);
+            expect(renderModel.get('$scrollTarget')).toBeNull();
+            expect(renderModel.get('scrollLeft')).toEqual(0);
+            expect(renderModel.get('startIndex')).toEqual(0);
+            expect(renderModel.get('endIndex')).toEqual(0);
+            expect(renderModel.get('startNumber')).toEqual(1);
         });
     });
 
     describe('getCollection()', function() {
         it('인자가 없다면 rside 콜렉션을 반환한다.', function() {
-            expect(renderModelInstance.getCollection()).toEqual(renderModelInstance.get('rside'));
+            expect(renderModel.getCollection()).toEqual(renderModel.get('rside'));
         });
 
         it('인자가 있다면 L R 중 하나의 콜렉션을 반환한다.', function() {
-            expect(renderModelInstance.getCollection('R')).toEqual(renderModelInstance.get('rside'));
-            expect(renderModelInstance.getCollection('L')).toEqual(renderModelInstance.get('lside'));
+            expect(renderModel.getCollection('R')).toEqual(renderModel.get('rside'));
+            expect(renderModel.getCollection('L')).toEqual(renderModel.get('lside'));
         });
     });
 
@@ -176,19 +175,19 @@ describe('model.renderer', function() {
         it('columnName 을 인자로 받아 해당 columnName 이 속한 collection 을 반환한다.', function() {
             var lside, rside;
 
-            columnModelInstance.set('columnFixCount', 3);
-            dataModelInstance.set(rowList, {parse: true});
-            renderModelInstance.refresh();
-            lside = renderModelInstance.get('lside');
-            rside = renderModelInstance.get('rside');
-            expect(renderModelInstance._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName2').toJSON()).toEqual(lside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName3').toJSON()).toEqual(lside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName4').toJSON()).toEqual(rside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName5').toJSON()).toEqual(rside.toJSON());
-            expect(renderModelInstance._getCollectionByColumnName('columnName6').toJSON()).toEqual(rside.toJSON());
+            columnModel.set('columnFixCount', 3);
+            dataModel.set(rowList, {parse: true});
+            renderModel.refresh();
+            lside = renderModel.get('lside');
+            rside = renderModel.get('rside');
+            expect(renderModel._getCollectionByColumnName('_number').toJSON()).toEqual(lside.toJSON());
+            expect(renderModel._getCollectionByColumnName('_button').toJSON()).toEqual(lside.toJSON());
+            expect(renderModel._getCollectionByColumnName('columnName1').toJSON()).toEqual(lside.toJSON());
+            expect(renderModel._getCollectionByColumnName('columnName2').toJSON()).toEqual(lside.toJSON());
+            expect(renderModel._getCollectionByColumnName('columnName3').toJSON()).toEqual(lside.toJSON());
+            expect(renderModel._getCollectionByColumnName('columnName4').toJSON()).toEqual(rside.toJSON());
+            expect(renderModel._getCollectionByColumnName('columnName5').toJSON()).toEqual(rside.toJSON());
+            expect(renderModel._getCollectionByColumnName('columnName6').toJSON()).toEqual(rside.toJSON());
         });
     });
 
@@ -223,25 +222,25 @@ describe('model.renderer', function() {
                     'columnName7': 'hidden'
                 }
             ];
-            columnModelInstance.set('columnFixCount', 3);
-            dataModelInstance.set(rowList, {parse: true});
-            renderModelInstance.refresh();
+            columnModel.set('columnFixCount', 3);
+            dataModel.set(rowList, {parse: true});
+            renderModel.refresh();
 
-            expect(renderModelInstance.getCellData(0, '_number').value).toEqual(1);
-            expect(renderModelInstance.getCellData(0, '_button').value).toEqual(false);
-            expect(renderModelInstance.getCellData(0, 'columnName1').value).toEqual('1 normal');
-            expect(renderModelInstance.getCellData(0, 'columnName2').value).toEqual('1 text');
-            expect(renderModelInstance.getCellData(0, 'columnName3').value).toEqual(1);
-            expect(renderModelInstance.getCellData(0, 'columnName4').value).toEqual(1);
-            expect(renderModelInstance.getCellData(0, 'columnName5').value).toEqual(1);
-            expect(renderModelInstance.getCellData(0, 'columnName6').value).toEqual(true);
+            expect(renderModel.getCellData(0, '_number').value).toEqual(1);
+            expect(renderModel.getCellData(0, '_button').value).toEqual(false);
+            expect(renderModel.getCellData(0, 'columnName1').value).toEqual('1 normal');
+            expect(renderModel.getCellData(0, 'columnName2').value).toEqual('1 text');
+            expect(renderModel.getCellData(0, 'columnName3').value).toEqual(1);
+            expect(renderModel.getCellData(0, 'columnName4').value).toEqual(1);
+            expect(renderModel.getCellData(0, 'columnName5').value).toEqual(1);
+            expect(renderModel.getCellData(0, 'columnName6').value).toEqual(true);
         });
     });
 
     describe('refresh()', function() {
         beforeEach(function() {
-            columnModelInstance.set('columnFixCount', 3);
-            dataModelInstance.set(rowList, {parse: true});
+            columnModel.set('columnFixCount', 3);
+            dataModel.set(rowList, {parse: true});
         });
 
         describe('lside 와 rside 에 해당하는 데이터가 할당되었는지 확인한다.', function() {
@@ -249,9 +248,9 @@ describe('model.renderer', function() {
                 rsideResult;
 
             beforeEach(function() {
-                renderModelInstance.refresh();
-                lsideResult = renderModelInstance.get('lside').at(0).toJSON();
-                rsideResult = renderModelInstance.get('rside').at(0).toJSON();
+                renderModel.refresh();
+                lsideResult = renderModel.get('lside').at(0).toJSON();
+                rsideResult = renderModel.get('rside').at(0).toJSON();
             });
 
             it('rowKey와 extraData가 할당되어 있어야 한다.', function() {
@@ -299,8 +298,8 @@ describe('model.renderer', function() {
             });
 
             it('refresh 이벤트를 발생하는지 확인한다.', function() {
-                listenModel.listenTo(renderModelInstance, 'refresh', callback);
-                renderModelInstance.refresh();
+                listenModel.listenTo(renderModel, 'refresh', callback);
+                renderModel.refresh();
                 expect(callback).toHaveBeenCalled();
             });
         });
@@ -315,11 +314,13 @@ describe('model.renderer', function() {
             it('데이터가 변경되었을 경우 rowListChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
-                renderModelInstance = new Renderer({
-                    grid: grid
+                renderModel = new Renderer(null, {
+                    dataModel: dataModel,
+                    columnModel: columnModel,
+                    dimensionModel: dimensionModel
                 });
-                listenModel.listenTo(renderModelInstance, 'rowListChanged', callback);
-                dataModelInstance.set([], {parse: true});
+                listenModel.listenTo(renderModel, 'rowListChanged', callback);
+                dataModel.set([], {parse: true});
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();
                     done();
@@ -329,11 +330,13 @@ describe('model.renderer', function() {
             it('컬럼 모델이 변경되었을 경우 isColumnModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
-                renderModelInstance = new Renderer({
-                    grid: grid
+                renderModel = new Renderer(null, {
+                    dataModel: dataModel,
+                    columnModel: columnModel,
+                    dimensionModel: dimensionModel
                 });
-                listenModel.listenTo(renderModelInstance, 'columnModelChanged', callback);
-                columnModelInstance.set({
+                listenModel.listenTo(renderModel, 'columnModelChanged', callback);
+                columnModel.set({
                     columnFixCount: 4
                 });
                 setTimeout(function() {

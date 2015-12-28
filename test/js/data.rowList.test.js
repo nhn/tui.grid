@@ -286,19 +286,14 @@ describe('data.rowList', function() {
         }
     ];
 
-    var rowList,
-        dataModelInstance,
-        columnModelInstance,
-        grid = {
-            publicInstance: 'publicInstance'
-        };
+    var rowList, dataModelInstance, columnModelInstance;
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalData);
-        columnModelInstance = grid.columnModel = new ColumnModelData();
+        columnModelInstance = new ColumnModelData();
         columnModelInstance.set('columnModelList', columnModelList);
         dataModelInstance = new RowListData([], {
-            grid: grid
+            columnModel: columnModelInstance
         });
     });
 

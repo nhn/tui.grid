@@ -951,45 +951,28 @@ var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
      * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
      * 이동하며 셀의 값을 변경한다. 완료한 후 적용된 셀 범위에 Selection을 지정한다.
      * @param {Array[]} data - 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.
+     * @param {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
      */
-    paste: function(data) {
-        var selectionModel = this.selectionModel,
-            startIdx = this._getStartIndexToPaste(),
-            endIdx = this._getEndIndexToPaste(startIdx, data);
+    paste: function(data, startIdx) {
+        var endIdx = this._getEndIndexToPaste(data, startIdx);
 
         _.each(data, function(row, index) {
             this._setValueForPaste(row, startIdx.row + index, startIdx.column, endIdx.column);
         }, this);
 
-        selectionModel.start(startIdx.row, startIdx.column);
-        selectionModel.update(endIdx.row, endIdx.column);
-    },
-
-    /**
-     * 붙여넣기를 실행할때 시작점이 될 셀의 인덱스를 반환한다.
-     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
-     */
-    _getStartIndexToPaste: function() {
-        var selectionModel = this.selectionModel,
-            focusModel = this.focusModel,
-            startIdx;
-
-        if (selectionModel.hasSelection()) {
-            startIdx = selectionModel.getStartIndex();
-        } else {
-            startIdx = focusModel.indexOf();
-        }
-        return startIdx;
+        this.trigger('paste', {
+            startIdx: startIdx,
+            endIdx: endIdx
+        });
     },
 
     /**
      * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
-     * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
      * @param  {Array[]} data - 붙여넣기할 데이터
-     * @param  {Array} columnModelList - 현재 화면에 보여지는 컬럼모델의 목록
+     * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
      * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
-    _getEndIndexToPaste: function(startIdx, data) {
+    _getEndIndexToPaste: function(data, startIdx) {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
             rowIdx = data.length + startIdx.row - 1,
             columnIdx = Math.min(data[0].length + startIdx.column, columnModelList.length) - 1;

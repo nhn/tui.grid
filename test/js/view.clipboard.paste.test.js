@@ -7,10 +7,14 @@ describe('grid paste test', function() {
     var clipboard;
 
     beforeEach(function() {
+        var grid = {
+            focusModel: new Model(),
+            selectionModel: new Model()
+        };
+        grid.focusModel.indexOf = function() {};
+        grid.selectionModel.hasSelection = function() {return false};
         clipboard = new Clipboard({
-            grid: {
-                focusModel: new Model()
-            }
+            grid: grid
         });
     });
 
@@ -45,11 +49,9 @@ describe('grid paste test', function() {
         var result,
             txt;
         beforeEach(function() {
-            clipboard.grid = {
-                dataModel: {
-                    paste: function(r) {
-                        result = r;
-                    }
+            clipboard.grid.dataModel = {
+                paste: function(r) {
+                    result = r;
                 }
             };
             txt = 'aaa\tbbb\tccc\nddd\teee\tfff';
@@ -69,6 +71,8 @@ describe('grid paste test', function() {
             clipboard._pasteToGrid();
             expect(result).toEqual(res);
         });
+
+        // todo: focus, selection model test
     });
 
     describe('_paste', function() {
@@ -97,11 +101,9 @@ describe('grid paste test', function() {
 
         beforeEach(function() {
             clipboard.pasting = false;
-            clipboard.grid = {
-                dataModel: {
-                    paste: function(r) {
-                        result = r;
-                    }
+            clipboard.grid.dataModel = {
+                paste: function(r) {
+                    result = r;
                 }
             };
         });

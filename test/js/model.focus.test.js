@@ -10,50 +10,35 @@ var Collection = require('../../src/js/base/collection');
 var Model = require('../../src/js/base/model');
 
 describe('model.renderer', function() {
-    var grid, focusModel;
-
-    function createGridMock() {
-        var mock = {
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData()
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new RenderModel({
-            grid: mock
-        });
-        mock.focusModel = new FocusModel({
-            grid: mock
-        });
-        mock.selection = new Selection({
-            grid: mock
-        });
-        mock.dataModel = new RowListData([], {
-            grid: mock
-        });
-        return mock;
-    }
+    var focusModel;
 
     beforeEach(function() {
-        grid = createGridMock();
-        grid.columnModel.set('columnModelList', [{
-            columnName: 'c1',
-            editOption: {
-                type: 'text'
-            }
-        }, {
-            columnName: 'c2',
-            editOption: {
-                type: 'text'
-            }
-        }, {
-            columnName: 'c3',
-            editOption: {
-                type: 'text'
-            }
-        }]);
-        grid.dataModel.set([{
+        var columnModel, dataModel;
+
+        columnModel = new ColumnModelData({
+            columnModelList: [
+                {
+                    columnName: 'c1',
+                    editOption: {
+                        type: 'text'
+                    }
+                }, {
+                    columnName: 'c2',
+                    editOption: {
+                        type: 'text'
+                    }
+                }, {
+                    columnName: 'c3',
+                    editOption: {
+                        type: 'text'
+                    }
+                }
+            ]
+        });
+        dataModel = new RowListData([], {
+            columnModel: columnModel
+        });
+        dataModel.set([{
             c1: '0-1',
             c2: '0-2',
             c3: '0-3'
@@ -71,7 +56,10 @@ describe('model.renderer', function() {
             c3: '3-3'
         }], {parse: true});
 
-        focusModel = grid.focusModel;
+        focusModel = new FocusModel(null, {
+            columnModel: columnModel,
+            dataModel: dataModel
+        });
     });
 
     describe('select()', function() {
@@ -146,24 +134,28 @@ describe('model.renderer', function() {
 
     describe('scrollToFocus()', function() {
         beforeEach(function() {
-            spyOn(grid.renderModel, 'set');
+            focusModel.renderModel = new Model();
+            focusModel.dimensionModel = new Model();
+            focusModel.dimensionModel.getScrollPosition = function() {};
+
+            spyOn(focusModel.renderModel, 'set');
         });
 
         it('should scroll to focused index', function() {
-            spyOn(grid.dimensionModel, 'getScrollPosition').and.returnValue({
+            spyOn(focusModel.dimensionModel, 'getScrollPosition').and.returnValue({
                 scrollTop: 1,
                 scrollLeft: 1
             });
             focusModel.scrollToFocus();
 
-            expect(grid.renderModel.set).toHaveBeenCalled();
+            expect(focusModel.renderModel.set).toHaveBeenCalled();
         });
 
         it('should not scroll if index is invalid', function() {
             focusModel.set('rowKey', undefined);
             focusModel.scrollToFocus();
 
-            expect(grid.renderModel.set).not.toHaveBeenCalled();
+            expect(focusModel.renderModel.set).not.toHaveBeenCalled();
         });
     });
 
@@ -358,8 +350,8 @@ describe('model.renderer', function() {
 
     describe('with rowSpan Data', function() {
         beforeEach(function() {
-            grid.dataModel.lastRowKey = -1;
-            grid.dataModel.reset(
+            focusModel.dataModel.lastRowKey = -1;
+            focusModel.dataModel.reset(
                 [
                     {
                         c1: '0-1',

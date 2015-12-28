@@ -46,6 +46,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
+        this.listenTo(this.dataModel, 'paste', this._onPasteData);
     },
 
     defaults: {
@@ -55,6 +56,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
          * @type {{row: array, column: array}}
          */
         range: null
+    },
+
+    /**
+     * Event handler for 'paste' event on DataModel
+     * @param {Object} range - Range
+     */
+    _onPasteData: function(range) {
+        this.start(range.startIdx.row, range.startIdx.column);
+        this.update(range.endIdx.row, range.endIdx.column);
     },
 
     /**

@@ -4,32 +4,29 @@ var ColumnModelData = require('../../src/js/data/columnModel');
 var RowListData = require('../../src/js/data/rowList');
 
 describe('Data.RowList - rowSpan', function() {
-    var columnModelList = [
-        {
-            columnName: 'c1',
-            title: 'c1',
-            editOption: {
-                type: 'text'
-            }
-        }, {
-            columnName: 'c2',
-            title: 'c2',
-            editOption: {
-                type: 'text'
-            }
-        }
-    ];
-    var rowList,
-        columnModel,
-        grid = {
-            publicInstance: 'publicInstance'
-        };
+    var rowList, columnModel;
 
     beforeEach(function() {
-        columnModel = grid.columnModel = new ColumnModelData();
-        columnModel.set('columnModelList', columnModelList);
+        columnModel = new ColumnModelData({
+            columnModelList:  [
+                {
+                    columnName: 'c1',
+                    title: 'c1',
+                    editOption: {
+                        type: 'text'
+                    }
+                },
+                {
+                    columnName: 'c2',
+                    title: 'c2',
+                    editOption: {
+                        type: 'text'
+                    }
+                }
+            ]
+        });
         rowList = new RowListData([], {
-            grid: grid
+            columnModel: columnModel
         });
         rowList.set([
         {

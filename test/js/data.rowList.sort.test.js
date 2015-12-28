@@ -4,32 +4,29 @@ var ColumnModelData = require('../../src/js/data/columnModel');
 var RowListData = require('../../src/js/data/rowList');
 
 describe('data.rowList', function() {
-    var columnModelList = [
-        {
-            columnName: 'c1',
-            title: 'c1',
-            editOption: {
-                type: 'text'
-            }
-        }, {
-            columnName: 'c2',
-            title: 'c2',
-            editOption: {
-                type: 'text'
-            }
-        }
-    ];
-    var dataModel,
-        columnModel,
-        grid = {
-            publicInstance: 'publicInstance'
-        };
+    var dataModel, columnModel;
 
     beforeEach(function() {
-        columnModel = grid.columnModel = new ColumnModelData();
-        columnModel.set('columnModelList', columnModelList);
+        columnModel = new ColumnModelData({
+            columnModelList: [
+                {
+                    columnName: 'c1',
+                    title: 'c1',
+                    editOption: {
+                        type: 'text'
+                    }
+                }, {
+                    columnName: 'c2',
+                    title: 'c2',
+                    editOption: {
+                        type: 'text'
+                    }
+                }
+            ]
+        });
+
         dataModel = new RowListData([], {
-            grid: grid
+            columnModel: columnModel
         });
     });
 
@@ -40,7 +37,7 @@ describe('data.rowList', function() {
 
         it('생성시 useClientSort 값을 넘기면 값이 설정된다.', function() {
             dataModel = new RowListData([], {
-                grid: grid,
+                columnModel: columnModel,
                 useClientSort: false
             });
             expect(dataModel.sortOptions.useClient).toBe(false);
@@ -48,7 +45,7 @@ describe('data.rowList', function() {
 
         it('false 이면 comparator를 rowKey로 지정한다.', function() {
             dataModel = new RowListData([], {
-                grid: grid,
+                columnModel: columnModel,
                 useClientSort: false
             });
             expect(dataModel.comparator).toBeNull();
