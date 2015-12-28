@@ -4,14 +4,14 @@
  */
 'use strict';
 
-var Model = require('../base/model');
-var util = require('../common/util');
+var Model = require('../../base/model');
+var util = require('../../common/util');
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
  */
-var ExtraDataManager = tui.util.defineClass(/**@lends module:data/extraData.prototype */{
+var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraData.prototype */{
     /**
      * @constructs
      * @extends module:base/model

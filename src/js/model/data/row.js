@@ -4,9 +4,9 @@
  */
 'use strict';
 
-var Model = require('../base/model');
+var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
-var util = require('../common/util');
+var util = require('../../common/util');
 
 // Propertie names that indicate meta data
 var PRIVATE_PROPERTIES = [
@@ -17,9 +17,9 @@ var PRIVATE_PROPERTIES = [
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
- * @module data/row
+ * @module model/data/row
  */
-var Row = Model.extend(/**@lends module:data/row.prototype */{
+var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * @constructs
      * @extends module:base/model

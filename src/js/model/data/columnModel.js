@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var Model = require('../base/model');
+var Model = require('../../base/model');
 
 /**
  * @ignore
@@ -17,9 +17,9 @@ var META_COLUMN_LIST = ['_button', '_number'];
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
- * @module data/columnModel
+ * @module model/data/columnModel
  */
-var ColumnModel = Model.extend(/**@lends module:data/columnModel.prototype */{
+var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
     /**
      * @constructs
      * @extends module:base/model

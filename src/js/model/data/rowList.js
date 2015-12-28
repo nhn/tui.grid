@@ -4,15 +4,15 @@
  */
 'use strict';
 
-var Collection = require('../base/collection');
+var Collection = require('../../base/collection');
 var Row = require('./row');
 
 /**
  * Raw 데이터 RowList 콜렉션. (DataSource)
  * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
- * @module data/rowList
+ * @module model/data/rowList
  */
-var RowList = Collection.extend(/**@lends module:data/rowList.prototype */{
+var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
     model: Row,
     /**
      * @param {Array} models    콜랙션에 추가할 model 리스트

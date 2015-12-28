@@ -253,7 +253,7 @@
  *
  */
 var View = require('./base/view');
-var ModelManager = require('./modelManager');
+var ModelManager = require('./model/manager');
 var ContainerView = require('./view/container');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');

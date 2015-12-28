@@ -4,19 +4,19 @@
  */
 'use strict';
 
-var Model = require('./base/model');
+var Model = require('../base/model');
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
-var ToolbarModel = require('./model/toolbar');
-var DimensionModel = require('./model/dimension');
-var FocusModel = require('./model/focus');
-var RenderModel = require('./model/renderer');
-var SmartRenderModel = require('./model/renderer-smart');
-var SelectionModel = require('./model/selection');
-var CellFactory = require('./view/cellFactory');
+var ToolbarModel = require('./toolbar');
+var DimensionModel = require('./dimension');
+var FocusModel = require('./focus');
+var RenderModel = require('./renderer');
+var SmartRenderModel = require('./renderer-smart');
+var SelectionModel = require('./selection');
+var CellFactory = require('../view/cellFactory');
 
-var util = require('./common/util');
-var renderStateMap = require('./common/constMap').renderState;
+var util = require('../common/util');
+var renderStateMap = require('../common/constMap').renderState;
 
 var defaultOptions = {
     columnFixCount: 0,
