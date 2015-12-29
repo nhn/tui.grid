@@ -20,16 +20,19 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
-        var focusModel, renderModel, whichSide;
+        var focusModel = options.focusModel,
+            renderModel = options.renderModel,
+            whichSide = options.whichSide || 'R';
 
-        View.prototype.initialize.apply(this, arguments);
-
-        whichSide = (options && options.whichSide) || 'R';
         this.setOwnProperties({
             whichSide: whichSide,
             bodyTableView: options.bodyTableView,
-            columnModelList: this.grid.columnModel.getVisibleColumnModelList(whichSide, true),
-            collection: this.grid.renderModel.getCollection(whichSide),
+            focusModel: focusModel,
+            renderModel: renderModel,
+            dataModel: options.dataModel,
+            grid: options.grid,
+            columnModelList: options.columnModelList,
+            collection: renderModel.getCollection(whichSide),
             sortOptions: null,
             renderedRowKeys: null,
             rowPainter: null
@@ -38,8 +41,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this._delegateTableEventsFromBody();
         this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
-        focusModel = this.grid.focusModel;
-        renderModel = this.grid.renderModel;
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(focusModel, 'select', this._onSelect)
             .listenTo(focusModel, 'unselect', this._onUnselect)
@@ -125,7 +126,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _focusClipboard: function() {
         try {
-            this.grid.focusModel.focusClipboard();
+            this.focusModel.focusClipboard();
         } catch (e) {
             // prevent Error from running test cases (caused by setTimeout in _.debounce())
         }
@@ -166,8 +167,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _setCssSelect: function(rowKey, isSelected) {
-        var grid = this.grid,
-            columnModelList = this.columnModelList,
+        var columnModelList = this.columnModelList,
             columnName,
             $trCache = {},
             $tr, $td,
@@ -175,7 +175,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         _.each(columnModelList, function(columnModel) {
             columnName = columnModel['columnName'];
-            mainRowKey = grid.dataModel.getMainRowKey(rowKey, columnName);
+            mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
             $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
             $tr = $trCache[mainRowKey];
@@ -193,7 +193,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onBlur: function(rowKey, columnName) {
-        var $td = this.grid.dataModel.getElement(rowKey, columnName);
+        var $td = this.dataModel.getElement(rowKey, columnName);
         if ($td.length) {
             $td.removeClass('focused');
         }

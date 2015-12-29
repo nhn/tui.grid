@@ -20,7 +20,10 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     initialize: function(options) {
         View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            dimensionModel: options.dimensionModel,
+            columnModel: options.columnModel,
             whichSide: options.whichSide || 'R',
+            
             isResizing: false,     //현재 resize 발생 상황인지
             $target: null,         //이벤트가 발생한 target resize handler
             differenceLeft: 0,
@@ -28,11 +31,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             initialOffsetLeft: 0,
             initialLeft: 0
         });
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._refreshHandlerPosition, this);
-        if (this.grid instanceof View) {
-            this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this));
-            this.listenTo(this.grid.dimensionModel, 'change:width', $.proxy(this._refreshHandlerPosition, this));
-        }
+        this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
+        // this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this));
     },
 
     tagName: 'div',
@@ -61,8 +61,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.grid.columnModel,
-            dimensionModel = this.grid.dimensionModel,
+        var columnModel = this.columnModel,
+            dimensionModel = this.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
             columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
         return {
@@ -79,7 +79,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _getResizeHandlerMarkup: function() {
         var columnData = this._getColumnData(),
             columnModelList = columnData.modelList,
-            headerHeight = this.grid.dimensionModel.get('headerHeight'),
+            headerHeight = this.dimensionModel.get('headerHeight'),
             length = columnModelList.length,
             resizeHandleMarkupList;
 
@@ -99,7 +99,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @return {View.Layout.Header.ResizeHandler} This object
      */
     render: function() {
-        var headerHeight = this.grid.dimensionModel.get('headerHeight');
+        var headerHeight = this.dimensionModel.get('headerHeight');
         this.$el.empty();
         this.$el
             .show()
@@ -173,7 +173,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             isClicked = $target.data('isClicked');
 
         if (isClicked) {
-            this.grid.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+            this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
             this._clearClickedFlag($target);
             this._refreshHandlerPosition();
         } else {
@@ -225,7 +225,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             index = parseInt(this.$target.attr('columnindex'), 10);
 
             this.$target.css('left', left + 'px');
-            this.grid.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
+            this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             this._refreshHandlerPosition();
         }
     },
@@ -248,7 +248,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return (this.whichSide === 'R') ? (index + this.grid.columnModel.getVisibleColumnFixCount(true)) : index;
+        return (this.whichSide === 'R') ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
     },
 
     /**

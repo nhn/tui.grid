@@ -20,15 +20,19 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
      */
     initialize: function(options) {
-        View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            renderModel: options.renderModel,
+            dimensionModel: options.dimensionModel,
+            columnModel: options.columnModel,
+            dataModel: options.dataModel,
+            viewFactory: options.viewFactory,
             timeoutForAllChecked: 0,
-            whichSide: options && options.whichSide || 'R'
+            whichSide: options.whichSide || 'R'
         });
-        this.listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-            .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-            .listenTo(this.grid.dataModel, 'change:_button', this._onCheckCountChange, this)
-            .listenTo(this.grid.dataModel, 'sortChanged', this._updateBtnSortState, this);
+        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
+            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange, this)
+            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState, this);
     },
 
     tagName: 'div',
@@ -104,15 +108,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onMouseDown: function(event) {
-        var grid = this.grid,
-            columnName, columnNames;
+        var columnName, columnNames;
 
-        if (!grid.selectionModel.isEnabled() || $(event.target).is('a.btn_sorting')) {
+        if (!this.selectionModel.isEnabled() || $(event.target).is('a.btn_sorting')) {
             return;
         }
 
         columnName = $(event.target).closest('th').attr('columnName');
-        columnNames = grid.columnModel.getUnitColumnNamesIfMerged(columnName);
+        columnNames = this.columnModel.getUnitColumnNamesIfMerged(columnName);
 
         if (!this._hasMetaColumn(columnNames)) {
             this._controlStartAction(columnNames, event.pageX, event.pageY, event.shiftKey);
@@ -128,7 +131,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _controlStartAction: function(columnNames, pageX, pageY, shiftKey) {
-        var columnModel = this.grid.columnModel,
+        var columnModel = this.columnModel,
             columnIndexes = _.map(columnNames, function(name) {
                 return columnModel.indexOfColumnName(name, true);
             });
@@ -149,7 +152,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
-        var selectionModel = this.grid.selectionModel,
+        var selectionModel = this.selectionModel,
             max = Math.max.apply(null, columnIndexes);
 
         selectionModel.update(0, max, 'column');
@@ -162,7 +165,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _startColumnSelectionWithoutShiftKey: function(columnIndexes) {
-        var selectionModel = this.grid.selectionModel,
+        var selectionModel = this.selectionModel,
             minMax = util.getMinMax(columnIndexes),
             min = minMax.min,
             max = minMax.max;
@@ -188,7 +191,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _detachDragEvents: function() {
-        this.grid.selectionModel.stopAutoScroll();
+        this.selectionModel.stopAutoScroll();
         $(document)
             .off('mousemove', this._onMouseMove)
             .off('mouseup', this._detachDragEvents)
@@ -201,8 +204,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onMouseMove: function(event) {
-        var grid = this.grid,
-            columnModel = grid.columnModel,
+        var columnModel = this.columnModel,
             isExtending = true,
             columnName = $(event.target).closest('th').attr('columnName'),
             columnNames, columnIndexes;
@@ -217,7 +219,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }
 
         if (isExtending) {
-            grid.selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
+            this.selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
         }
     },
 
@@ -229,7 +231,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _hasMetaColumn: function(columnNames) {
         var result = false,
-            columnModel = this.grid.columnModel;
+            columnModel = this.columnModel;
 
         tui.util.forEach(columnNames, function(name) {
             if (columnModel.isMetaColumn(name)) {
@@ -257,7 +259,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onCheckCountChange: function() {
-        if (this.grid.columnModel.get('selectType') === 'checkbox') {
+        if (this.columnModel.get('selectType') === 'checkbox') {
             clearTimeout(this.timeoutForAllChecked);
             this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
         }
@@ -279,8 +281,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _syncCheckState: function() {
         var $input, enableCount, checkedCount;
 
-
-        if (!this.grid.columnModel || this.grid.columnModel.get('selectType') !== 'checkbox') {
+        if (!this.columnModel || this.columnModel.get('selectType') !== 'checkbox') {
             return;
         }
 
@@ -290,8 +291,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }
 
         enableCount = 0;
-        checkedCount = this.grid.dataModel.getRowList(true).length;
-        this.grid.dataModel.forEach(function(row) {
+        checkedCount = this.dataModel.getRowList(true).length;
+        this.dataModel.forEach(function(row) {
             var cellState = row.getCellState('_button');
             if (!cellState.isDisabled && cellState.isEditable) {
                 enableCount += 1;
@@ -339,12 +340,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
             if ($target.prop('checked')) {
-                this.grid.dataModel.checkAll();
+                this.dataModel.checkAll();
             } else {
-                this.grid.dataModel.uncheckAll();
+                this.dataModel.uncheckAll();
             }
         } else if ($target.is('a.btn_sorting')) {
-            this.grid.dataModel.sortByField(columnName);
+            this.dataModel.sortByField(columnName);
         }
     },
 
@@ -372,20 +373,17 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         this.destroyChildren();
 
-        resizeHandler = this.createView(ResizeHandler, {
-            whichSide: this.whichSide,
-            grid: this.grid
-        });
-        if (!this.grid.dimensionModel.get('scrollX')) {
+        resizeHandler = this.viewFactory.createHeaderResizeHandler(this.whichSide);
+        if (!this.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
 
-        if (!this.grid.dimensionModel.get('scrollY')) {
+        if (!this.dimensionModel.get('scrollY')) {
             this.$el.css('overflow-y', 'hidden');
         }
 
         this.$el.css({
-            height: this.grid.dimensionModel.get('headerHeight')
+            height: this.dimensionModel.get('headerHeight')
         }).html(this.template({
             colGroup: this._getColGroupMarkup(),
             tBody: this._getTableBodyMarkup()
@@ -401,8 +399,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.grid.columnModel,
-            dimensionModel = this.grid.dimensionModel,
+        var columnModel = this.columnModel,
+            dimensionModel = this.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
             columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
 
@@ -421,7 +419,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var hierarchyList = this._getColumnHierarchyList(),
             maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
         // 가공한 컬럼 모델 리스트 정보를 바탕으로 컬럼 엘리먼트들에 대한 마크업을 구성한다.
-        var headerHeight = this.grid.dimensionModel.get('headerHeight'),
+        var headerHeight = this.dimensionModel.get('headerHeight'),
             rowMarkupList = new Array(maxRowCount),
             columnNameList = new Array(maxRowCount),
             colSpanList = [],
@@ -508,7 +506,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnHierarchy: function(columnModel, resultList) {
-        var columnMergeList = this.grid.columnModel.get('columnMerge');
+        var columnMergeList = this.columnModel.get('columnMerge');
         resultList = resultList || [];
         /* istanbul ignore else */
         if (columnModel) {

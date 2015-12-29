@@ -21,15 +21,16 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      *      @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
      */
     initialize: function(options) {
-        View.prototype.initialize.apply(this, arguments);
-
         this.setOwnProperties({
-            whichSide: options.whichSide || 'R'
+            whichSide: options.whichSide || 'R',
+            dimensionModel: options.dimensionModel,
+            columnModel: options.columnModel,
+            selectionModel: options.selectionModel
         });
         this._updateColumnWidthList();
 
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onChangeColumnWidth);
-        this.listenTo(this.grid.selectionModel, 'change:range', this.render);
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onChangeColumnWidth);
+        this.listenTo(this.selectionModel, 'change:range', this.render);
     },
 
     tagName: 'div',
@@ -41,7 +42,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @private
      */
     _updateColumnWidthList: function() {
-        this.columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide);
+        this.columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
     },
 
     /**
@@ -60,7 +61,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @return {array} - Relative column range indexes. [start, end]
      */
     _getOwnSideColumnRange: function(columnRange) {
-        var columnFixCount = this.grid.columnModel.getVisibleColumnFixCount(),
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(),
             ownColumnRange = null;
 
         if (this.whichSide === 'L') {
@@ -87,7 +88,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @return {{top: string, height: string}} - css values
      */
     _getVerticalStyles: function(rowRange) {
-        var rowHeight = this.grid.dimensionModel.get('rowHeight'),
+        var rowHeight = this.dimensionModel.get('rowHeight'),
             top = util.getHeight(rowRange[0], rowHeight) - CELL_BORDER_WIDTH,
             height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - (CELL_BORDER_WIDTH * 2);
 
@@ -105,7 +106,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      */
     _getHorizontalStyles: function(columnRange) {
         var columnWidthList = this.columnWidthList,
-            metaColumnCount = this.grid.columnModel.getVisibleMetaColumnCount(),
+            metaColumnCount = this.columnModel.getVisibleMetaColumnCount(),
             startIndex = columnRange[0],
             endIndex = columnRange[1],
             left = 0,
@@ -138,7 +139,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @return {SelectionLayer} this object
      */
     render: function() {
-        var range = this.grid.selectionModel.get('range'),
+        var range = this.selectionModel.get('range'),
             styles, columnRange;
 
         if (range) {

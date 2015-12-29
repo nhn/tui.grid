@@ -21,7 +21,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             whichSide: 'R',
             $scrollBorder: null
         });
-        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight change:headerHeight',
+        this.listenTo(this.dimensionModel, 'change:bodyHeight change:headerHeight',
             this._resetScrollBorderHeight);
     },
 
@@ -33,7 +33,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @override
      */
     _onColumnWidthChanged: function() {
-        var dimensionModel = this.grid.dimensionModel,
+        var dimensionModel = this.dimensionModel,
             marginLeft = dimensionModel.get('lsideWidth'),
             width = dimensionModel.get('rsideWidth');
 
@@ -47,7 +47,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * Resets the height of a vertical scroll-bar border
      */
     _resetScrollBorderHeight: function() {
-        var dimensionModel = this.grid.dimensionModel,
+        var dimensionModel = this.dimensionModel,
             height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
 
         this.$scrollBorder.height(height);
@@ -57,7 +57,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * To be called before rendering.
      */
     beforeRender: function() {
-        var dimensionModel = this.grid.dimensionModel,
+        var dimensionModel = this.dimensionModel,
             marginLeft = dimensionModel.get('lsideWidth'),
             width = dimensionModel.get('rsideWidth');
 
@@ -72,11 +72,11 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * To be called after rendering.
      */
     afterRender: function() {
-        var dimensionModel = this.grid.dimensionModel,
+        var dimensionModel = this.dimensionModel,
             $space, $scrollBorder, $scrollCorner,
             headerHeight, bodyHeight;
 
-        if (!this.grid.dimensionModel.get('scrollY')) {
+        if (!this.dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');

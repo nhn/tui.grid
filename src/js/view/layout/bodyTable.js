@@ -5,9 +5,7 @@
 'use strict';
 
 var View = require('../../base/view');
-var RowListView = require('../rowList');
 var util = require('../../common/util');
-
 
 /**
  * Class for the table layout in the body(data) area
@@ -21,13 +19,15 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      *      @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
-        View.prototype.initialize.apply(this, arguments);
-
         this.setOwnProperties({
-            whichSide: options && options.whichSide || 'R'
+            dimensionModel: options.dimensionModel,
+            renderModel: options.renderModel,
+            columnModel: options.columnModel,
+            viewFactory: options.viewFactory,
+            whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
     },
 
     tagName: 'div',
@@ -45,7 +45,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnWidthList = this.grid.dimensionModel.getColumnWidthList(this.whichSide),
+        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide),
             $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(width, index) {
@@ -58,7 +58,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @param {number} top  조정할 top 위치 값
      */
     resetTablePosition: function() {
-        this.$el.css('top', this.grid.renderModel.get('top'));
+        this.$el.css('top', this.renderModel.get('top'));
     },
 
     /**
@@ -69,14 +69,12 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         var rowList;
 
         this.destroyChildren();
-
         this.$el.html(this.template({
             colGroup: this._getColGroupMarkup(),
             tbody: ''
         }));
 
-        rowList = this.createView(RowListView, {
-            grid: this.grid,
+        rowList = this.viewFactory.createRowList({
             bodyTableView: this,
             el: this.$el.find('tbody'),
             whichSide: this.whichSide
@@ -118,11 +116,9 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _getColGroupMarkup: function() {
-        var grid = this.grid,
-            whichSide = this.whichSide,
-            dimensionModel = grid.dimensionModel,
-            columnWidthList = dimensionModel.getColumnWidthList(whichSide),
-            columnModelList = grid.columnModel.getVisibleColumnModelList(whichSide, true),
+        var whichSide = this.whichSide,
+            columnWidthList = this.dimensionModel.getColumnWidthList(whichSide),
+            columnModelList = this.columnModel.getVisibleColumnModelList(whichSide, true),
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {

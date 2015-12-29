@@ -5,8 +5,6 @@
 'use strict';
 
 var View = require('../../base/view');
-var Header = require('./header');
-var Body = require('./body');
 
 /**
  * frame Base 클래스
@@ -20,15 +18,18 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
      *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
      */
     initialize: function(options) {
-        View.prototype.initialize.apply(this, arguments);
-        this.listenTo(this.grid.renderModel, 'columnModelChanged', this.render, this)
-            .listenTo(this.grid.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
-
         this.setOwnProperties({
             header: null,
             body: null,
+            grid: options.grid,
+            viewFactory: options.viewFactory,
+            renderModel: options.renderModel,
+            dimensionModel: options.dimensionModel,
             whichSide: options && options.whichSide || 'R'
         });
+
+        this.listenTo(this.renderModel, 'columnModelChanged', this.render, this)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
     },
 
     tagName: 'div',
@@ -40,19 +41,13 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
      * @return {View.Layout.Frame} This object
      */
     render: function() {
-        var header,
-            body;
+        var header, body;
+
         this.destroyChildren();
         this.beforeRender();
 
-        header = this.header = this.createView(Header, {
-            grid: this.grid,
-            whichSide: this.whichSide
-        });
-        body = this.body = this.createView(Body, {
-            grid: this.grid,
-            whichSide: this.whichSide
-        });
+        header = this.viewFactory.createHeader(this.whichSide);
+        body = this.viewFactory.createBody(this.whichSide);
 
         this.$el
             .append(header.render().el)

@@ -22,17 +22,25 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      *      @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
-        View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
+            dimensionModel: options.dimensionModel,
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
+            renderModel: options.renderModel,
+            selectionModel: options.selectionModel,
+            focusModel: options.focusModel,
+            viewFactory: options.viewFactory,
+            grid: options.grid,
+
             // DIV for setting rendering position of entire child-nodes of $el.
             $container: null,
             whichSide: options && options.whichSide || 'R'
         });
 
-        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
-            .listenTo(this.grid.dataModel, 'add remove reset', this._resetContainerHeight)
-            .listenTo(this.grid.renderModel, 'change:scrollTop', this._onScrollTopChange)
-            .listenTo(this.grid.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
+            .listenTo(this.dataModel, 'add remove reset', this._resetContainerHeight)
+            .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
+            .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
     tagName: 'div',
@@ -59,7 +67,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _resetContainerHeight: function() {
         this.$container.css({
-            height: this.grid.dimensionModel.get('totalRowHeight')
+            height: this.dimensionModel.get('totalRowHeight')
         });
     },
 
@@ -76,7 +84,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         if (this.whichSide === 'R') {
             attrs.scrollLeft = scrollEvent.target.scrollLeft;
         }
-        this.grid.renderModel.set(attrs);
+        this.renderModel.set(attrs);
     },
 
     /**
@@ -107,15 +115,14 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onMouseDown: function(event) {
-        var grid = this.grid,
-            columnModel = grid.columnModel,
+        var columnModel = this.columnModel,
             $target = $(event.target),
             isInput = $target.is('input'),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
             rowKey = $tr.attr('key'),
-            rowIndex = grid.dataModel.indexOfRowKey(rowKey),
+            rowIndex = this.dataModel.indexOfRowKey(rowKey),
             indexObj = {
                 columnName: columnName,
                 column: columnModel.indexOfColumnName(columnName, true),
@@ -123,12 +130,12 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             },
             list;
 
-        if (grid.columnModel.get('selectType') === 'radio') {
-            grid.dataModel.check(rowIndex);
+        if (this.columnModel.get('selectType') === 'radio') {
+            this.dataModel.check(rowIndex);
         }
 
         if (!columnName || tui.util.isFalsy(rowIndex)) {
-            _.extend(indexObj, grid.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
+            _.extend(indexObj, this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
             list = columnModel.getVisibleColumnModelList(null, true);
 
             // columnName과 columnIndex 재조정
@@ -151,8 +158,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _controlStartAction: function(pageX, pageY, shiftKey, indexObj, isInput) {
-        var columnModel = this.grid.columnModel,
-            selectionModel = this.grid.selectionModel,
+        var columnModel = this.columnModel,
+            selectionModel = this.selectionModel,
             columnName = indexObj.columnName,
             columnIndex = indexObj.column,
             rowIndex = indexObj.row;
@@ -167,7 +174,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                this.grid.focusModel.focusAt(rowIndex, columnIndex);
+                this.focusModel.focusAt(rowIndex, columnIndex);
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
@@ -191,7 +198,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             mouseDownX: pageX,
             mouseDownY: pageY
         });
-        this.grid.dimensionModel.refreshLayout();
+        this.dimensionModel.refreshLayout();
         $(document)
             .on('mousemove', $.proxy(this._onMouseMove, this))
             .on('mouseup', $.proxy(this._detachDragEvents, this))
@@ -202,7 +209,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
      */
     _detachDragEvents: function() {
-        this.grid.selectionModel.stopAutoScroll();
+        this.selectionModel.stopAutoScroll();
         $(document)
             .off('mousemove', this._onMouseMove)
             .off('mouseup', this._detachDragEvents)
@@ -214,7 +221,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @param {jQuery.Event} event - MouseEvent object
      */
     _onMouseMove: function(event) {
-        var selectionModel = this.grid.selectionModel,
+        var selectionModel = this.selectionModel,
             pageX = event.pageX,
             pageY = event.pageY,
             isMoved = this._getMouseMoveDistance(pageX, pageY) > 10;
@@ -254,32 +261,25 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @return {View.Layout.Body}   자기 자신
      */
     render: function() {
-        var grid = this.grid,
-            whichSide = this.whichSide,
+        var whichSide = this.whichSide,
             selectionLayer, bodyTableView;
 
         this.destroyChildren();
 
-        if (!this.grid.dimensionModel.get('scrollX')) {
+        if (!this.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
-        if (!this.grid.dimensionModel.get('scrollY') && whichSide === 'R') {
+        if (!this.dimensionModel.get('scrollY') && whichSide === 'R') {
             this.$el.css('overflow-y', 'hidden');
         }
-        this.$el.css('height', grid.dimensionModel.get('bodyHeight'));
+        this.$el.css('height', this.dimensionModel.get('bodyHeight'));
 
         this.$container = $(HTML_CONTAINER);
         this.$el.append(this.$container);
 
-        bodyTableView = this.createView(BodyTableView, {
-            grid: grid,
-            whichSide: whichSide
-        });
-        selectionLayer = this.createView(SelectionLayer, {
-            grid: grid,
-            whichSide: whichSide
-        });
-
+        bodyTableView = this.viewFactory.createBodyTable(whichSide);
+        selectionLayer = this.viewFactory.createSelectionLayer(whichSide);
+        
         this.$container.append(
             bodyTableView.render().el,
             selectionLayer.render().el

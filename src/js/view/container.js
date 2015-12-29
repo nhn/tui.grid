@@ -6,12 +6,6 @@
 
 var View = require('../base/view');
 
-var Clipboard = require('./clipboard');
-var LsideFrame = require('./layout/frame-lside');
-var RsideFrame = require('./layout/frame-rside');
-var ToolbarLayout = require('./layout/toolbar');
-var StateLayer = require('./stateLayer');
-
 /**
  * Container View
  * @module view/container
@@ -59,12 +53,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _createChildViews: function() {
         this.children = {};
 
-        this.children.lside = this.createView(LsideFrame, {
-            grid: this.grid
-        });
-        this.children.rside = this.createView(RsideFrame, {
-            grid: this.grid
-        });
+        this.children.lside = this.viewFactory.createFrame('L');
+        this.children.rside = this.viewFactory.createFrame('R');
         this.children.toolbar = this.viewFactory.createToolbar();
         this.children.stateLayer = this.viewFactory.createStateLayer();
         this.children.clipboard = this.viewFactory.createClipboard();

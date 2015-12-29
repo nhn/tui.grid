@@ -29,7 +29,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
      * @private
      */
     _onColumnWidthChanged: function() {
-        var width = this.grid.dimensionModel.get('lsideWidth');
+        var width = this.dimensionModel.get('lsideWidth');
         this.$el.css({
             width: width + 'px'
         });
@@ -38,7 +38,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
      * 랜더링하기 전 수행되는 메서드
      */
     beforeRender: function() {
-        var width = this.grid.dimensionModel.get('lsideWidth');
+        var width = this.dimensionModel.get('lsideWidth');
         this.$el.css({
             display: 'block',
             width: width + 'px'
