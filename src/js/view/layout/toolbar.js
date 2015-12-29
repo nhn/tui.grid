@@ -5,9 +5,6 @@
 'use strict';
 
 var View = require('../../base/view');
-var ControlPanel = require('./toolbar/controlPanel');
-var Pagination = require('./toolbar/pagination');
-var ResizeHandler = require('./toolbar/resizeHandler');
 
 /**
  *  툴바 영역

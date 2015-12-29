@@ -57,6 +57,7 @@ var ModelManager = tui.util.defineClass({
         this.cellFactory = new CellFactory({
             grid: this
         });
+        this.gridId = options.gridId;
 
         this.columnModel = this._createColumnModel(options);
         this.dataModel = this._createDataModel(options, domState);
@@ -96,7 +97,7 @@ var ModelManager = tui.util.defineClass({
      */
     _createDataModel: function(options, domState) {
         return new RowListData([], {
-            gridId: options.gridId,
+            gridId: this.gridId,
             domState: domState,
             columnModel: this.columnModel,
             useClientSort: options.useClientSort

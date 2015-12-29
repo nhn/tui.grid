@@ -23,17 +23,17 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     /**
      * @constructs
      * @mixes module:base/common
-     * @param {object} attributes
-     *      @param {jquery} attributes.el   form 엘리먼트
-     *      @param {boolean} [attributes.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-     *      @param {object} [attributes.api]   사용할 API URL 리스트
-     *          @param {string} [attributes.api.readData]  데이터 조회 API 주소
-     *          @param {string} [attributes.api.createData] 데이터 생성 API 주소
-     *          @param {string} [attributes.api.updateData] 데이터 업데이트 API 주소
-     *          @param {string} [attributes.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-     *          @param {string} [attributes.api.deleteData] 데이터 삭제 API 주소
-     *      @param {number} [attributes.perPage=500]  한 페이지당 보여줄 item 개수
-     *      @param {boolean} [attributes.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
+     * @param {object} options
+     *      @param {jquery} options.el   form 엘리먼트
+     *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+     *      @param {object} [options.api]   사용할 API URL 리스트
+     *          @param {string} [options.api.readData]  데이터 조회 API 주소
+     *          @param {string} [options.api.createData] 데이터 생성 API 주소
+     *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
+     *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+     *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
+     *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
+     *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
      * @example
      *   <form id="data_form">
      *   <input type="text" name="query"/>
@@ -94,10 +94,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      net.request('modifyData');
      *   </script>
      */
-    initialize: function(attributes) {
+    initialize: function(options) {
         var defaultOptions, options, pagination;
-
-        View.prototype.initialize.apply(this, arguments);
 
         defaultOptions = {
             initialRequest: true,
@@ -113,25 +111,36 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             perPage: 500,
             enableAjaxHistory: true
         };
-        options = $.extend(true, defaultOptions, attributes); // deep extend
-        pagination = this.grid.toolbarModel.get('pagination');
+        options = $.extend(true, defaultOptions, options); // deep extend
 
         this.setOwnProperties({
-            curPage: 1,
-            perPage: options.perPage,
-            options: options,
+            // models
+            dataModel: options.dataModel,
+            toolbarModel: options.toolbarModel,
+            renderModel: options.renderModel,
+
+            // extra objects
             router: null,
-            pagination: pagination,
+            pagination: options.toolbarModel.get('pagination'),
+
+            // configs
+            api: options.api,
+            enableAjaxHistory: options.enableAjaxHistory,
+            perPage: options.perPage,
+
+            // state data
+            curPage: 1,
             requestedFormData: null,
             isLocked: false,
             lastRequestedReadData: null
         });
+
         this._initializeDataModelNetwork();
         this._initializeRouter();
         this._initializePagination();
         this._showToolbarExcelBtns();
 
-        this.listenTo(this.grid.dataModel, 'sortChanged', this._onSortChanged, this);
+        this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged, this);
 
         if (options.initialRequest) {
             if (!this.lastRequestedReadData) {
@@ -158,8 +167,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _initializeDataModelNetwork: function() {
-        this.grid.dataModel.url = this.options.api.readData;
-        this.grid.dataModel.sync = $.proxy(this._sync, this);
+        this.dataModel.url = this.api.readData;
+        this.dataModel.sync = $.proxy(this._sync, this);
     },
 
     /**
@@ -167,7 +176,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _initializeRouter: function() {
-        if (this.options.enableAjaxHistory) {
+        if (this.enableAjaxHistory) {
             //router 생성
             this.router = new Router({
                 grid: this.grid,
@@ -183,8 +192,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
      */
     _showToolbarExcelBtns: function() {
-        var toolbarModel = this.grid.toolbarModel,
-            api = this.options.api;
+        var toolbarModel = this.toolbarModel,
+            api = this.api;
 
         if (!toolbarModel) {
             return;
@@ -261,7 +270,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _lock: function() {
-        this.grid.renderModel.set('state', renderStateMap.LOADING);
+        this.renderModel.set('state', renderStateMap.LOADING);
         this.isLocked = true;
     },
 
@@ -328,22 +337,22 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @param {object} data 요청시 사용할 request 파라미터
      */
     readData: function(data) {
-        var startNumber = 1,
-            grid = this.grid;
+        var startNumber = 1;
+
         if (!this.isLocked) {
-            grid.renderModel.initializeVariables();
+            this.renderModel.initializeVariables();
             this._lock();
 
             this.requestedFormData = _.clone(data);
             this.curPage = data.page || this.curPage;
             startNumber = (this.curPage - 1) * this.perPage + 1;
-            grid.renderModel.set({
+            this.renderModel.set({
                 startNumber: startNumber
             });
 
             //마지막 요청한 reloadData에서 사용하기 위해 data 를 저장함.
             this.lastRequestedReadData = _.clone(data);
-            grid.dataModel.fetch({
+            this.dataModel.fetch({
                 requestType: 'readData',
                 data: data,
                 type: 'POST',
@@ -351,7 +360,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 error: $.proxy(this._onReadError, this),
                 reset: true
             });
-            grid.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
+            this.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
         }
     },
 
@@ -430,7 +439,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     request: function(requestType, options) {
         var defaultOptions = {
-                url: this.options.api[requestType],
+                url: this.api[requestType],
                 type: null,
                 hasDataParam: true,
                 isOnlyChecked: true,
@@ -453,7 +462,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     download: function(type) {
         var apiName = 'download' + util.toUpperCaseFirstLetter(type),
             data = this.requestedFormData,
-            url = this.options.api[apiName],
+            url = this.api[apiName],
             paramStr;
 
         if (type === 'excel') {
@@ -488,7 +497,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _getDataParam: function(requestType, options) {
-        var dataModel = this.grid.dataModel,
+        var dataModel = this.dataModel,
             checkMap = {
                 createData: ['createList'],
                 updateData: ['updateList'],
@@ -535,7 +544,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * requestType 에 따라 서버에 요청할 파라미터를 반환한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Object} [options] Options
-     *      @param {String} [options.url=this.options.api[requestType]] 요청할 url.
+     *      @param {String} [options.url=this.api[requestType]] 요청할 url.
      *      지정하지 않을 시 option 으로 넘긴 API 중 request Type 에 해당하는 url 로 지정됨
      *      @param {String} [options.type='POST'] request method 타입
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
@@ -546,7 +555,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getRequestParam: function(requestType, options) {
         var defaultOptions = {
-                url: this.options.api[requestType],
+                url: this.api[requestType],
                 type: null,
                 hasDataParam: true,
                 isOnlyModified: true,
@@ -709,7 +718,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             requestParameter: options.data,
             responseData: null
         });
-        this.grid.renderModel.set('state', renderStateMap.DONE);
+        this.renderModel.set('state', renderStateMap.DONE);
 
         this.trigger('response', eventData);
         if (eventData.isStopped()) {

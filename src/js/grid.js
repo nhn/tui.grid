@@ -257,13 +257,10 @@ var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
-var Net = require('./addon/net');
+var NetAddOn = require('./addon/net');
 var util = require('./common/util');
 
 var instanceMap = {};
-var addOn = {
-    Net: Net
-};
 
  /**
   * Toast UI
@@ -308,9 +305,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     _createContainerView: function(options) {
-        var factory = new ViewFactory(this.modelManager);
+        var viewFactory = new ViewFactory(this.modelManager);
 
-        return factory.createContainer({
+        return viewFactory.createContainer({
             el: this.$el,
             singleClickEdit: options.singleClickEdit
         });
@@ -680,13 +677,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {tui.Grid} - This instance.
      */
     use: function(name, options) {
-        var Constructor = addOn[name];
-        options = $.extend({modelManager: this.modelManager}, options);
-        if (Constructor) {
-            this.addOn[name] = new Constructor(options);
-            if (name === 'Net') {
-                this.publicEventEmitter.listenToNetAddon(this.addOn[name]);
-            }
+        if (name === 'Net') {
+            options = $.extend({
+                toolbarModel: this.modelManager.toolbarModel,
+                renderModel: this.modelManager.renderModel,
+                dataModel: this.modelManager.dataModel
+            }, options);
+            this.addOn.Net = new NetAddOn(options);
+            this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
         }
         return this;
     },

@@ -5,8 +5,7 @@
 'use strict';
 
 var View = require('../../base/view'),
-    util = require('../../common/util'),
-    ResizeHandler = require('./resizeHandler');
+    util = require('../../common/util');
 
 /**
  * Header 레이아웃 View
@@ -23,12 +22,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this.setOwnProperties({
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
+            selectionModel: options.selectionModel,
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
             timeoutForAllChecked: 0,
             whichSide: options.whichSide || 'R'
         });
+        
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange, this)

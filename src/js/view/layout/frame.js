@@ -19,13 +19,10 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
      */
     initialize: function(options) {
         this.setOwnProperties({
-            header: null,
-            body: null,
-            grid: options.grid,
             viewFactory: options.viewFactory,
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
-            whichSide: options && options.whichSide || 'R'
+            whichSide: options.whichSide || 'R'
         });
 
         this.listenTo(this.renderModel, 'columnModelChanged', this.render, this)

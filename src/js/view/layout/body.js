@@ -5,8 +5,6 @@
 'use strict';
 
 var View = require('../../base/view');
-var SelectionLayer = require('../selectionLayer');
-var BodyTableView = require('./bodyTable');
 
 var HTML_CONTAINER = '<div class="body_container"></div>';
 
@@ -30,7 +28,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             selectionModel: options.selectionModel,
             focusModel: options.focusModel,
             viewFactory: options.viewFactory,
-            grid: options.grid,
 
             // DIV for setting rendering position of entire child-nodes of $el.
             $container: null,
@@ -279,7 +276,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         bodyTableView = this.viewFactory.createBodyTable(whichSide);
         selectionLayer = this.viewFactory.createSelectionLayer(whichSide);
-        
+
         this.$container.append(
             bodyTableView.render().el,
             selectionLayer.render().el

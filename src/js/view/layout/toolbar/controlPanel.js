@@ -17,10 +17,11 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      */
     initialize: function(options) {
         this.setOwnProperties({
+            gridId: options.gridId,
+            toolbarModel: options.toolbarModel,
             $btnExcel: null,
             $btnExcelAll: null
         });
-        this.toolbarModel = options.toolbarModel;
 
         this.listenTo(this.toolbarModel,
             'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render)
@@ -45,11 +46,12 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @param  {MouseEvent} clickEvent - MouseEvent object
      */
     _onClickExcel: function(mouseEvent) {
-        var net = this.grid.addOn.Net,
+        var grid = tui.Grid.getInstanceById(this.gridId),
+            net = grid.getAddOn('Net'),
             $target;
 
         mouseEvent.preventDefault();
-
+        
         if (net) {
             $target = $(mouseEvent.target).closest('a');
 

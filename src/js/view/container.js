@@ -17,8 +17,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @param {Object} options
      */
     initialize: function(options) {
-        this.grid = options.grid;
-
         this.singleClickEdit = options.singleClickEdit;
         this.dimensionModel = options.dimensionModel;
         this.focusModel = options.focusModel;

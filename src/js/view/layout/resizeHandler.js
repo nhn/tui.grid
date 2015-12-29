@@ -15,15 +15,13 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @constructs
      * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R']  어느 영역의 handler 인지 여부.
      */
     initialize: function(options) {
-        View.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,
             columnModel: options.columnModel,
             whichSide: options.whichSide || 'R',
-            
+
             isResizing: false,     //현재 resize 발생 상황인지
             $target: null,         //이벤트가 발생한 target resize handler
             differenceLeft: 0,
@@ -65,6 +63,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             dimensionModel = this.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
             columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+            
         return {
             widthList: columnWidthList,
             modelList: columnModelList
@@ -99,15 +98,13 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @return {View.Layout.Header.ResizeHandler} This object
      */
     render: function() {
-        var headerHeight = this.dimensionModel.get('headerHeight');
-        this.$el.empty();
-        this.$el
-            .show()
-            .css({
-                'marginTop': -headerHeight + 'px',
-                'height': headerHeight + 'px'
-            })
-            .html(this._getResizeHandlerMarkup());
+        var headerHeight = this.dimensionModel.get('headerHeight'),
+            htmlStr = this._getResizeHandlerMarkup();
+
+        this.$el.empty().show().html(htmlStr).css({
+            marginTop: -headerHeight,
+            height: headerHeight
+        });
 
         //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
         this._refreshHandlerPosition();

@@ -19,8 +19,7 @@ var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype 
      */
     initialize: function(attributes) {
         this.setOwnProperties({
-            grid: attributes && attributes.grid || null,
-            net: attributes && attributes.net || null
+            net: attributes.net
         });
     },
 

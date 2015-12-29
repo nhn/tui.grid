@@ -34,6 +34,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
             width: width + 'px'
         });
     },
+    
     /**
      * 랜더링하기 전 수행되는 메서드
      */

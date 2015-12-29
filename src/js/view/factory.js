@@ -21,8 +21,8 @@ var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 
 /**
- * Model Manager
- * @module modelManager
+ * View Factory
+ * @module viewFactory
  */
 var ViewFactory = tui.util.defineClass({
     init: function(modelManager) {
@@ -37,11 +37,11 @@ var ViewFactory = tui.util.defineClass({
     createContainer: function(options) {
         return new ContainerView({
             el: options.el,
+            singleClickEdit: options.singleClickEdit,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
             gridId: this.modelManager.gridId,
-            grid: this.modelManager, // todo: remove this line!!
             viewFactory: this
         });
     },
@@ -56,6 +56,7 @@ var ViewFactory = tui.util.defineClass({
 
     createToolbarControlPanel: function() {
         return new ToolbarControlPanelView({
+            gridId: this.modelManager.gridId,
             toolbarModel: this.modelManager.toolbarModel
         });
     },
@@ -97,7 +98,6 @@ var ViewFactory = tui.util.defineClass({
         return new Constructor({
             dimensionModel: this.modelManager.dimensionModel,
             renderModel: this.modelManager.renderModel,
-            grid: this.modelManager,
             viewFactory: this
         });
     },
@@ -107,6 +107,7 @@ var ViewFactory = tui.util.defineClass({
             whichSide: whichSide,
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
+            selectionModel: this.modelManager.selectionModel,
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             viewFactory: this
@@ -130,7 +131,6 @@ var ViewFactory = tui.util.defineClass({
             columnModel: this.modelManager.columnModel,
             selectionModel: this.modelManager.selectionModel,
             focusModel: this.modelManager.focusModel,
-            grid: this.modelManager,
             viewFactory: this
         });
     },
