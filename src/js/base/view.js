@@ -17,11 +17,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
      * @param {Object} attributes Attributes
      */
     initialize: function(attributes) {
-        var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
-        this.setOwnProperties({
-            grid: grid,
-            _viewList: []
-        });
+        this._children = [];
     },
 
     /**
@@ -39,32 +35,30 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
-     * 자식 View 를 생성할 때 사용하는 메서드
-     * 스스로를 다시 rendering 하거나 소멸 될 때 내부에서 스스로 생성한 View instance 들도 메모리에서 제거하기 위함이다.
-     *
-     * @param {class} constructor   View 생성자
-     * @param {object} params   생성자에 넘길 옵션 파라미터
-     * @return {instance} instance    생성자를 통해 인스턴스화 한 객체
-     */
-    createView: function(constructor, params) {
-        var instance = new constructor(params);
-        this.addView(instance);
-        return instance;
-    },
-
-    /**
-     * destroy 시 함께 삭제할 View 를 내부 변수 _viewList 에 추가한다.
+     * destroy 시 함께 삭제할 View 를 내부 변수 _children 에 추가한다.
      * @param {instance} instance 인스턴스 객체
      * @return {instance} instance 인자로 전달받은 인스턴스 객체
      */
-    addView: function(instance) {
-        if (!this.hasOwnProperty('_viewList')) {
-            this.setOwnProperties({
-                _viewList: []
-            });
+    _addChildren: function(views) {
+        if (!_.isArray(views)) {
+            views = [views];
         }
-        this._viewList.push(instance);
-        return instance;
+        _.each(views, function(view) {
+            this._children.push(view);
+        }, this);
+    },
+
+    /**
+     * Render children and returns thier elements as array.
+     * @return {array.<HTMLElement>} An array of element of children
+     */
+    _renderChildren: function() {
+        var elements = [];
+
+        _.each(this._children, function(view) {
+            elements.push(view.render().el);
+        });
+        return elements;
     },
 
     /**
@@ -72,7 +66,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
      */
     destroy: function() {
         this.stopListening();
-        this.destroyChildren();
+        this._destroyChildren();
         this.remove();
     },
 
@@ -96,10 +90,10 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * 등록되어있는 자식 View 들을 제거한다.
      */
-    destroyChildren: function() {
-        if (this._viewList instanceof Array) {
-            while (this._viewList.length !== 0) {
-                this._viewList.pop().destroy();
+    _destroyChildren: function() {
+        if (_.isArray(this._children)) {
+            while (this._children.length > 0) {
+                this._children.pop().destroy();
             }
         }
     }

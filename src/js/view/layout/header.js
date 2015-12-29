@@ -19,6 +19,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
      */
     initialize: function(options) {
+        View.prototype.initialize.call(this);
+
         this.setOwnProperties({
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
@@ -29,7 +31,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             timeoutForAllChecked: 0,
             whichSide: options.whichSide || 'R'
         });
-        
+
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
             .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange, this)
@@ -370,11 +372,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @return {View.Layout.Header} this
      */
     render: function() {
-        var resizeHandler;
+        this._destroyChildren();
 
-        this.destroyChildren();
-
-        resizeHandler = this.viewFactory.createHeaderResizeHandler(this.whichSide);
         if (!this.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
@@ -390,7 +389,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             tBody: this._getTableBodyMarkup()
         }));
 
-        this.$el.append(resizeHandler.render().el);
+        this._addChildren(this.viewFactory.createHeaderResizeHandler(this.whichSide));
+        this.$el.append(this._renderChildren());
         return this;
     },
 

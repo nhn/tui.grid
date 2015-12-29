@@ -63,7 +63,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             dimensionModel = this.dimensionModel,
             columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
             columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
-            
+
         return {
             widthList: columnWidthList,
             modelList: columnModelList
@@ -302,7 +302,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     destroy: function() {
         this.stopListening();
         this._stopResizing();
-        this.destroyChildren();
         this.remove();
     }
 });

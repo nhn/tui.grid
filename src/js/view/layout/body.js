@@ -20,6 +20,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      *      @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
+        View.prototype.initialize.call(this);
+        
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,
             dataModel: options.dataModel,
@@ -261,7 +263,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var whichSide = this.whichSide,
             selectionLayer, bodyTableView;
 
-        this.destroyChildren();
+        this._destroyChildren();
 
         if (!this.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');

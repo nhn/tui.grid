@@ -55,14 +55,12 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * To be called before rendering.
      */
     beforeRender: function() {
-        var dimensionModel = this.dimensionModel,
-            marginLeft = dimensionModel.get('lsideWidth'),
-            width = dimensionModel.get('rsideWidth');
-
+        var dimensionModel = this.dimensionModel;
+            
         this.$el.css({
             display: 'block',
-            width: width + 'px',
-            marginLeft: marginLeft + 'px'
+            width: dimensionModel.get('rsideWidth'),
+            marginLeft: dimensionModel.get('lsideWidth')
         });
     },
 

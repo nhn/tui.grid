@@ -112,7 +112,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
      * @return {ResizeHandler} this object
      */
     render: function() {
-        this.destroyChildren();
+        this._destroyChildren();
         this.$el.html(this.template());
         return this;
     },
@@ -123,7 +123,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     destroy: function() {
         this.stopListening();
         this._onMouseUp();
-        this.destroyChildren();
+        this._destroyChildren();
         this.remove();
     }
 });

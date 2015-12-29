@@ -19,6 +19,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      *      @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
+        View.prototype.initialize.call(this);
+
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,
             renderModel: options.renderModel,
@@ -66,20 +68,19 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @return {View.Layout.Body}   자기 자신
      */
     render: function() {
-        var rowList;
+        this._destroyChildren();
 
-        this.destroyChildren();
         this.$el.html(this.template({
             colGroup: this._getColGroupMarkup(),
             tbody: ''
         }));
 
-        rowList = this.viewFactory.createRowList({
+        this._addChildren(this.viewFactory.createRowList({
             bodyTableView: this,
             el: this.$el.find('tbody'),
             whichSide: this.whichSide
-        });
-        rowList.render();
+        }));
+        this._renderChildren();
 
         return this;
     },

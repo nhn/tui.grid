@@ -17,6 +17,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @param {Object} options
      */
     initialize: function(options) {
+        View.prototype.initialize.call(this);
+
         this.singleClickEdit = options.singleClickEdit;
         this.dimensionModel = options.dimensionModel;
         this.focusModel = options.focusModel;
@@ -49,13 +51,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _createChildViews: function() {
-        this.children = {};
+        var factory = this.viewFactory;
 
-        this.children.lside = this.viewFactory.createFrame('L');
-        this.children.rside = this.viewFactory.createFrame('R');
-        this.children.toolbar = this.viewFactory.createToolbar();
-        this.children.stateLayer = this.viewFactory.createStateLayer();
-        this.children.clipboard = this.viewFactory.createClipboard();
+        this._addChildren([
+            factory.createFrame('L'),
+            factory.createFrame('R'),
+            factory.createToolbar(),
+            factory.createStateLayer(),
+            factory.createClipboard()
+        ]);
     },
 
     /**
@@ -230,21 +234,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Render
      */
     render: function() {
-        var children = this.children,
-            elements;
+        var childElements = this._renderChildren();
 
-        elements = [
+        childElements.concat([
             $('<div>').addClass('left_line'),
-            $('<div>').addClass('right_line'),
-            children.stateLayer.render().el,
-            children.lside.render().el,
-            children.rside.render().el,
-            children.toolbar.render().el,
-            children.clipboard.render().el
-        ];
+            $('<div>').addClass('right_line')
+        ]);
         this.$el.addClass('grid_wrapper uio_grid')
             .attr('instanceId', this.gridId)
-            .append(elements);
+            .append(childElements);
 
         this._refreshHeight();
         this.trigger('rendered');
@@ -256,7 +254,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     destroy: function() {
         this.stopListening();
         $(window).off('resize.grid');
-        this.destroyChildren();
+        this._destroyChildren();
 
         this.$el.replaceWith(this.__$el);
         this.$el = this.__$el = null;

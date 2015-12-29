@@ -29,20 +29,18 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
      * @private
      */
     _onColumnWidthChanged: function() {
-        var width = this.dimensionModel.get('lsideWidth');
         this.$el.css({
-            width: width + 'px'
+            width: this.dimensionModel.get('lsideWidth')
         });
     },
-    
+
     /**
      * 랜더링하기 전 수행되는 메서드
      */
     beforeRender: function() {
-        var width = this.dimensionModel.get('lsideWidth');
         this.$el.css({
             display: 'block',
-            width: width + 'px'
+            width: this.dimensionModel.get('lsideWidth')
         });
     }
 });

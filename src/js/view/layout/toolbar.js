@@ -16,6 +16,8 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * @extends module:base/view
      */
     initialize: function(options) {
+        View.prototype.initialize.call(this);
+
         this.toolbarModel = options.toolbarModel;
         this.dimensionModel = options.dimensionModel;
         this.viewFactory = options.viewFactory;
@@ -33,30 +35,23 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
         var toolbarModel = this.toolbarModel,
             resizeHandler, controlPanel, pagination;
 
-        this.destroyChildren();
-        this.$el.empty();
+        this._destroyChildren();
 
         if (toolbarModel.get('hasControlPanel')) {
-            controlPanel = this.viewFactory.createToolbarControlPanel();
-            this.$el.append(controlPanel.render().el);
+            this._addChildren(this.viewFactory.createToolbarControlPanel());
         }
 
         if (toolbarModel.get('hasResizeHandler')) {
-            resizeHandler = this.viewFactory.createToolbarResizeHandler();
-            this.$el.append(resizeHandler.render().el);
+            this._addChildren(this.viewFactory.createToolbarResizeHandler());
         }
 
         if (toolbarModel.get('hasPagination')) {
-            pagination = this.viewFactory.createToolbarPagination();
-            this.$el.append(pagination.render().el);
+            this._addChildren(this.viewFactory.createToolbarPagination());
         }
 
-        this._children = [
-            controlPanel,
-            resizeHandler,
-            pagination
-        ];
+        this.$el.empty().append(this._renderChildren());
         this._refreshHeight();
+        
         return this;
     },
 

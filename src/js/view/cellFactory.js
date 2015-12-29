@@ -24,8 +24,8 @@ var CellFactory = View.extend(/**@lends module:view/cellFactory.prototype */{
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
+    initialize: function(options) {
+        this.grid = options.grid;
         this._initializeInstances();
     },
 

@@ -18,6 +18,8 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
      *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
      */
     initialize: function(options) {
+        View.prototype.initialize.call(this);
+
         this.setOwnProperties({
             viewFactory: options.viewFactory,
             renderModel: options.renderModel,
@@ -38,17 +40,15 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
      * @return {View.Layout.Frame} This object
      */
     render: function() {
-        var header, body;
+        var factory = this.viewFactory;
 
-        this.destroyChildren();
+        this._destroyChildren();
         this.beforeRender();
-
-        header = this.viewFactory.createHeader(this.whichSide);
-        body = this.viewFactory.createBody(this.whichSide);
-
-        this.$el
-            .append(header.render().el)
-            .append(body.render().el);
+        this._addChildren([
+            factory.createHeader(this.whichSide),
+            factory.createBody(this.whichSide)
+        ]);
+        this.$el.append(this._renderChildren());
 
         this.afterRender();
         return this;

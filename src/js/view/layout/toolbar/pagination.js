@@ -35,7 +35,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @return {View.Layout.Toolbar.Pagination} This object
      */
     render: function() {
-        this.destroyChildren();
+        this._destroyChildren();
         this.$el.empty().html(this.template());
         this._setPaginationInstance();
         return this;
