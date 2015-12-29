@@ -1,5 +1,5 @@
 /**
- * @fileoverview Layer class that represents the state of rendering phase 
+ * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -16,11 +16,12 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
+    initialize: function(options) {
+        this.dimensionModel = options.dimensionModel;
+        this.renderModel = options.renderModel;
 
-        this.listenTo(this.grid.dimensionModel, 'change', this._refreshLayout);
-        this.listenTo(this.grid.renderModel, 'change:state', this.render);
+        this.listenTo(this.dimensionModel, 'change', this._refreshLayout);
+        this.listenTo(this.renderModel, 'change:state', this.render);
     },
 
     className: 'state_layer',
@@ -39,7 +40,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      * @return {object} This object
      */
     render: function() {
-        var renderState = this.grid.renderModel.get('state');
+        var renderState = this.renderModel.get('state');
 
         if (renderState === renderStateMap.DONE) {
             this.$el.hide();
@@ -63,7 +64,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
             case renderStateMap.LOADING:
                 return '요청을 처리 중입니다.';
             case renderStateMap.EMPTY:
-                return (this.grid.renderModel.get('emptyMessage') || '데이터가 존재하지 않습니다.');
+                return (this.renderModel.get('emptyMessage') || '데이터가 존재하지 않습니다.');
             default:
                 return null;
         }
@@ -74,7 +75,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      * @private
      */
     _refreshLayout: function() {
-        var dimensionModel = this.grid.dimensionModel;
+        var dimensionModel = this.dimensionModel;
 
         this.$el.css({
             marginTop: dimensionModel.get('headerHeight'),

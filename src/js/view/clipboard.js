@@ -17,13 +17,19 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
+    initialize: function(options) {
         this.setOwnProperties({
+            focusModel: options.focusModel,
+            selectionModel: options.selectionModel,
+            cellFactory: options.cellFactory,
+            dimensionModel: options.dimensionModel,
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
+            renderModel: options.renderModel,
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
-        this.listenTo(this.grid.focusModel, 'focusClipboard', this._onFocus);
+        this.listenTo(this.focusModel, 'focusClipboard', this._onFocus);
     },
 
     tagName: 'textarea',
@@ -40,7 +46,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _onBlur: function() {
-        var focusModel = this.grid.focusModel;
+        var focusModel = this.focusModel;
 
         _.defer(function() {
             focusModel.refreshState();
@@ -54,7 +60,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     _onFocus: function() {
         if (!this.$el.is(':focus')) {
             this.$el.focus();
-            this.grid.focusModel.refreshState();
+            this.focusModel.refreshState();
         }
     },
 
@@ -114,13 +120,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyIn: function(keyDownEvent) { // eslint-disable-line complexity
-        var grid = this.grid,
-            focusModel = grid.focusModel,
-            selectionModel = grid.selectionModel,
+        var focusModel = this.focusModel,
+            selectionModel = this.selectionModel,
             focused = focusModel.which(),
             rowKey = focused.rowKey,
             columnName = focused.columnName,
-            displayRowCount = grid.dimensionModel.getDisplayRowCount(),
+            displayRowCount = this.dimensionModel.getDisplayRowCount(),
             isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
@@ -182,13 +187,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _onEnterSpace: function(rowKey, columnName) {
         var cellInstance,
-            grid = this.grid,
-            editType = this.grid.columnModel.getEditType(columnName);
+            editType = this.columnModel.getEditType(columnName);
         if (editType === '_button') {
-            cellInstance = this.grid.cellFactory.getInstance(editType);
-            cellInstance.toggle(grid.dataModel.getElement(rowKey, columnName));
+            cellInstance = this.cellFactory.getInstance(editType);
+            cellInstance.toggle(this.dataModel.getElement(rowKey, columnName));
         } else {
-            grid.focusModel.focusIn(rowKey, columnName);
+            this.focusModel.focusIn(rowKey, columnName);
         }
     },
 
@@ -198,9 +202,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _getIndexBeforeMove: function() {
-        var grid  = this.grid,
-            focusedIndex = grid.focusModel.indexOf(),
-            selectionRange = grid.selectionModel.get('range'),
+        var focusedIndex = this.focusModel.indexOf(),
+            selectionRange = this.selectionModel.get('range'),
             index = _.extend({}, focusedIndex),
             selectionRowRange, selectionColumnRange;
 
@@ -227,10 +230,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
-        var grid = this.grid,
-            focusModel = grid.focusModel,
-            dimensionModel = grid.dimensionModel,
-            columnModelList = grid.columnModel.getVisibleColumnModelList(),
+        var focusModel = this.focusModel,
+            dimensionModel = this.dimensionModel,
+            columnModelList = this.columnModel.getVisibleColumnModelList(),
             focused = focusModel.which(),
             displayRowCount = dimensionModel.getDisplayRowCount(),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
@@ -278,19 +280,19 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         columnModel = columnModelList[index.column];
-        isValid = !!(columnModel && grid.dataModel.getRowData(index.row));
+        isValid = !!(columnModel && this.dataModel.getRowData(index.row));
 
         if (isSelection && isValid) {
             this._updateSelectionByKeyIn(index.row, index.column);
             scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
-                selectionState = grid.selectionModel.getState();
+                selectionState = this.selectionModel.getState();
                 if (selectionState === 'column') {
                     delete scrollPosition['scrollTop'];
                 } else if (selectionState === 'row') {
                     delete scrollPosition['scrollLeft'];
                 }
-                grid.renderModel.set(scrollPosition);
+                this.renderModel.set(scrollPosition);
             }
         }
 
@@ -305,13 +307,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyInWithCtrl: function(keyDownEvent) {
-        var grid = this.grid,
-            focusModel = grid.focusModel,
+        var focusModel = this.focusModel,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
             case keyCodeMap['CHAR_A']:
-                this.grid.selectionModel.selectAll();
+                this.selectionModel.selectAll();
                 break;
             case keyCodeMap['CHAR_C']:
                 this._copyToClipboard();
@@ -371,9 +372,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _pasteToGrid: function() {
-        var selectionModel = this.grid.selectionModel,
-            focusModel = this.grid.focusModel,
-            dataModel = this.grid.dataModel,
+        var selectionModel = this.selectionModel,
+            focusModel = this.focusModel,
+            dataModel = this.dataModel,
             startIdx, data;
 
         if (selectionModel.hasSelection()) {
@@ -410,9 +411,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyInWithShiftAndCtrl: function(keyDownEvent) {
-        var grid = this.grid,
-            isKeyIdentified = true,
-            columnModelList = grid.columnModel.getVisibleColumnModelList(),
+        var isKeyIdentified = true,
+            columnModelList = this.columnModel.getVisibleColumnModelList(),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
@@ -420,7 +420,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 this._updateSelectionByKeyIn(0, 0);
                 break;
             case keyCodeMap['END']:
-                this._updateSelectionByKeyIn(grid.dataModel.length - 1, columnModelList.length - 1);
+                this._updateSelectionByKeyIn(this.dataModel.length - 1, columnModelList.length - 1);
                 break;
             default:
                 isKeyIdentified = false;
@@ -438,11 +438,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _del: function() {
-        var grid = this.grid,
-            selectionModel = grid.selectionModel,
-            dataModel = grid.dataModel,
-            focused = grid.focusModel.which(),
-            columnModelList = grid.columnModel.getVisibleColumnModelList(),
+        var selectionModel = this.selectionModel,
+            dataModel = this.dataModel,
+            focused = this.focusModel.which(),
+            columnModelList = this.columnModel.getVisibleColumnModelList(),
             rowKey = focused.rowKey,
             columnName = focused.columnName,
             range, i, j;
@@ -457,7 +456,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                     dataModel.del(rowKey, columnName, true);
                 }
             }
-            grid.renderModel.refresh(true);
+            this.renderModel.refresh(true);
         } else {
             dataModel.del(rowKey, columnName);
         }
@@ -470,7 +469,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _updateSelectionByKeyIn: function(rowIndex, columnIndex) {
-        var selectionModel = this.grid.selectionModel;
+        var selectionModel = this.selectionModel;
 
         selectionModel.update(rowIndex, columnIndex);
     },
@@ -482,12 +481,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _getClipboardString: function() {
         var text,
-            selectionModel = this.grid.selectionModel,
-            focused = this.grid.focusModel.which();
+            selectionModel = this.selectionModel,
+            focused = this.focusModel.which();
         if (selectionModel.hasSelection()) {
-            text = this.grid.selectionModel.getValuesToString();
+            text = this.selectionModel.getValuesToString();
         } else {
-            text = this.grid.dataModel.get(focused.rowKey).getVisibleText(focused.columnName);
+            text = this.dataModel.get(focused.rowKey).getVisibleText(focused.columnName);
         }
         return text;
     },

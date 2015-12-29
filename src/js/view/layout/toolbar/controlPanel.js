@@ -15,16 +15,14 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
-        var toolbarModel;
-
-        View.prototype.initialize.apply(this, arguments);
+    initialize: function(options) {
         this.setOwnProperties({
             $btnExcel: null,
             $btnExcelAll: null
         });
+        this.toolbarModel = options.toolbarModel;
 
-        this.listenTo(this.grid.toolbarModel,
+        this.listenTo(this.toolbarModel,
             'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render)
     },
 
@@ -68,7 +66,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @return {View.Layout.Toolbar.ControlPanel} - this object
      */
     render: function() {
-        var toolbarModel = this.grid.toolbarModel;
+        var toolbarModel = this.toolbarModel;
 
         this.$el.empty();
 

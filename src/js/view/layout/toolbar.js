@@ -18,8 +18,10 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
+    initialize: function(options) {
+        this.toolbarModel = options.toolbarModel;
+        this.dimensionModel = options.dimensionModel;
+        this.viewFactory = options.viewFactory;
     },
 
     tagName: 'div',
@@ -31,33 +33,32 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * @return {View.Layout.Toolbar} this object
      */
     render: function() {
-        var toolbarModel = this.grid.toolbarModel,
+        var toolbarModel = this.toolbarModel,
             resizeHandler, controlPanel, pagination;
 
         this.destroyChildren();
         this.$el.empty();
 
         if (toolbarModel.get('hasControlPanel')) {
-            controlPanel = this.createView(ControlPanel, {
-                grid: this.grid
-            });
+            controlPanel = this.viewFactory.createToolbarControlPanel();
             this.$el.append(controlPanel.render().el);
         }
 
         if (toolbarModel.get('hasResizeHandler')) {
-            resizeHandler = this.createView(ResizeHandler, {
-                grid: this.grid
-            });
+            resizeHandler = this.viewFactory.createToolbarResizeHandler();
             this.$el.append(resizeHandler.render().el);
         }
 
         if (toolbarModel.get('hasPagination')) {
-            pagination = this.createView(Pagination, {
-                grid: this.grid
-            });
+            pagination = this.viewFactory.createToolbarPagination();
             this.$el.append(pagination.render().el);
         }
 
+        this._children = [
+            controlPanel,
+            resizeHandler,
+            pagination
+        ];
         this._refreshHeight();
         return this;
     },
@@ -66,7 +67,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * Reset toolbar-height based on the model/dimension->toolbarHeight.
      */
     _refreshHeight: function() {
-        var height = this.grid.dimensionModel.get('toolbarHeight');
+        var height = this.dimensionModel.get('toolbarHeight');
 
         this.$el.height(height);
         this.$el.toggle(!!height);

@@ -254,7 +254,7 @@
  */
 var View = require('./base/view');
 var ModelManager = require('./model/manager');
-var ContainerView = require('./view/container');
+var ViewFactory = require('./view/factory');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var Net = require('./addon/net');
@@ -281,7 +281,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
         this.id = util.getUniqueKey();
         this.modelManager = modelManager = this._createModelManager(options);
-        this.container = container = this._createContainerView(options, modelManager);
+        this.container = container = this._createContainerView(options);
         this.publicEventEmitter = this._createPublicEventEmitter();
 
         container.render();
@@ -307,19 +307,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new ModelManager(modelOptions, domState);
     },
 
-    /**
-     * Creates container view and returns it.
-     * @param {Object} options - Options set by user
-     * @param {module:modelManager} core - Model manager object
-     * @return {ContainerView} - New container view
-     */
-    _createContainerView: function(options, core) {
-        var containerOptions = {
+    _createContainerView: function(options) {
+        var factory = new ViewFactory(this.modelManager);
+
+        return factory.createContainer({
             el: this.$el,
             singleClickEdit: options.singleClickEdit
-        };
-
-        return new ContainerView(containerOptions, core);
+        });
     },
 
     /**

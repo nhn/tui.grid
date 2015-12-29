@@ -15,11 +15,8 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
-        View.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
-            instance: null
-        });
+    initialize: function(options) {
+        this.toolbarModel = options.toolbarModel;
     },
 
     tagName: 'div',
@@ -57,7 +54,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
                 itemPerPage: 1
             }, this.$el);
         }
-        this.grid.toolbarModel.set('pagination', pagination);
+        this.toolbarModel.set('pagination', pagination);
     }
 });
 

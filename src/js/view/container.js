@@ -22,16 +22,19 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @extends module:base/view
      * @param {Object} options
      */
-    initialize: function(options, core) {
-        View.prototype.initialize.apply(this, arguments);
+    initialize: function(options) {
+        this.grid = options.grid;
 
-        this.grid = core;
         this.singleClickEdit = options.singleClickEdit;
+        this.dimensionModel = options.dimensionModel;
+        this.focusModel = options.focusModel;
+        this.dataModel = options.dataModel;
+        this.viewFactory = options.viewFactory;
 
         this._createChildViews();
 
-        this.listenTo(this.grid.dimensionModel, 'change:bodyHeight', this._refreshHeight);
-        this.listenTo(this.grid.dimensionModel, 'setSize', this._onSetSize);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._refreshHeight);
+        this.listenTo(this.dimensionModel, 'setSize', this._onSetSize);
         $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
         this.__$el = this.$el.clone();
@@ -59,29 +62,19 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         this.children.lside = this.createView(LsideFrame, {
             grid: this.grid
         });
-
         this.children.rside = this.createView(RsideFrame, {
             grid: this.grid
         });
-
-        this.children.toolbar = this.createView(ToolbarLayout, {
-            grid: this.grid
-        });
-
-        this.children.stateLayer = this.createView(StateLayer, {
-            grid: this.grid
-        });
-
-        this.children.clipboard = this.createView(Clipboard, {
-            grid: this.grid
-        });
+        this.children.toolbar = this.viewFactory.createToolbar();
+        this.children.stateLayer = this.viewFactory.createStateLayer();
+        this.children.clipboard = this.viewFactory.createClipboard();
     },
 
     /**
      * Event handler for resize event on window.
      */
     _onResizeWindow: function() {
-        this.grid.dimensionModel.refreshLayout();
+        this.dimensionModel.refreshLayout();
     },
 
     /**
@@ -97,7 +90,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Event handler for 'setSize' event on Dimension
      */
     _onSetSize: function() {
-        this.$el.width(this.grid.dimensionModel.get('width'));
+        this.$el.width(this.dimensionModel.get('width'));
     },
 
     /**
@@ -117,7 +110,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
             if (this.singleClickEdit && !$target.is('input')) {
-                this.grid.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
+                this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
@@ -213,7 +206,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         return {
             rowKey: rowKey,
             columnName: columnName,
-            rowData: this.grid.dataModel.getRowData(rowKey)
+            rowData: this.dataModel.getRowData(rowKey)
         };
     },
 
@@ -232,7 +225,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (!$target.is('input, a, button, select')) {
             mouseDownEvent.preventDefault();
-            this.grid.focusModel.focusClipboard();
+            this.focusModel.focusClipboard();
         }
     },
 
@@ -242,7 +235,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _refreshHeight: function() {
-        this.$el.height(this.grid.dimensionModel.getHeight());
+        this.$el.height(this.dimensionModel.getHeight());
     },
 
     /**
@@ -262,7 +255,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             children.clipboard.render().el
         ];
         this.$el.addClass('grid_wrapper uio_grid')
-            .attr('instanceId', this.grid.id)
+            .attr('instanceId', this.gridId)
             .append(elements);
 
         this._refreshHeight();

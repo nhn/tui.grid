@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var Model = require('../base/model');
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
 var ToolbarModel = require('./toolbar');
@@ -45,13 +44,13 @@ var defaultOptions = {
  * Model Manager
  * @module modelManager
  */
-var ModelManager = Model.extend(/**@lends module:modelManager.prototype */{
+var ModelManager = tui.util.defineClass({
     /**
      * @constructs
      * @extends module:base/model
      * @param {Object} options - Options to create models
      */
-    initialize: function(options, domState) {
+    init: function(options, domState) {
         options = $.extend(true, {}, defaultOptions, options);
 
         // todo: remove cellFactory

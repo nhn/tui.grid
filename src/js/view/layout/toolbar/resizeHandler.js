@@ -15,9 +15,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
      * @constructs
      * @extends module:base/view
      */
-    initialize: function() {
+    initialize: function(options) {
+        this.dimensionModel = options.dimensionModel;
         this.timeoutIdForResize = 0;
-        View.prototype.initialize.apply(this, arguments);
     },
 
     tagName: 'div',
@@ -58,7 +58,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     _onMouseDown: function(mouseDownEvent) {
         mouseDownEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
-        this.grid.dimensionModel.refreshLayout();
+        this.dimensionModel.refreshLayout();
         this._attachMouseEvent();
     },
 
@@ -68,7 +68,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
      * @private
      */
     _onMouseMove: function(mouseMoveEvent) {
-        var dimensionModel = this.grid.dimensionModel,
+        var dimensionModel = this.dimensionModel,
             offsetTop = dimensionModel.get('offsetTop'),
             headerHeight = dimensionModel.get('headerHeight'),
             rowHeight = dimensionModel.get('rowHeight'),
