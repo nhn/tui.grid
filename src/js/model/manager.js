@@ -12,7 +12,6 @@ var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
-var CellFactory = require('../view/cellFactory');
 
 var util = require('../common/util');
 var renderStateMap = require('../common/constMap').renderState;
@@ -53,10 +52,6 @@ var ModelManager = tui.util.defineClass({
     init: function(options, domState) {
         options = $.extend(true, {}, defaultOptions, options);
 
-        // todo: remove cellFactory
-        this.cellFactory = new CellFactory({
-            grid: this
-        });
         this.gridId = options.gridId;
 
         this.columnModel = this._createColumnModel(options);
@@ -153,7 +148,7 @@ var ModelManager = tui.util.defineClass({
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             renderModel: this.renderModel,
-            cellFactory: this.cellFactory,
+            // cellFactory: this.cellFactory,
             domState: domState
         });
     },

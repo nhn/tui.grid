@@ -257,6 +257,7 @@ var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
+var PainterManager = require('./painter/manager');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
 
@@ -274,14 +275,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options set by user
      */
     initialize: function(options) {
-        var modelManager, container;
-
         this.id = util.getUniqueKey();
-        this.modelManager = modelManager = this._createModelManager(options);
-        this.container = container = this._createContainerView(options);
+        this.modelManager = this._createModelManager(options);
+        this.painterManager = this._createPainterManager();
+        this.container = this._createContainerView(options);
         this.publicEventEmitter = this._createPublicEventEmitter();
 
-        container.render();
+        this.container.render();
         this.refreshLayout();
 
         this.addOn = {};
@@ -304,8 +304,17 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new ModelManager(modelOptions, domState);
     },
 
+    _createPainterManager: function() {
+        return new PainterManager({
+            modelManager: this.modelManager
+        });
+    },
+
     _createContainerView: function(options) {
-        var viewFactory = new ViewFactory(this.modelManager);
+        var viewFactory = new ViewFactory({
+            modelManager: this.modelManager,
+            painterManager: this.painterManager
+        });
 
         return viewFactory.createContainer({
             el: this.$el,

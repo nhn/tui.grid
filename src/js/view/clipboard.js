@@ -21,7 +21,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         this.setOwnProperties({
             focusModel: options.focusModel,
             selectionModel: options.selectionModel,
-            cellFactory: options.cellFactory,
+            painterManager: options.painterManager,
             dimensionModel: options.dimensionModel,
             dataModel: options.dataModel,
             columnModel: options.columnModel,

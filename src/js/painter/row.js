@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var Painter = require('../../base/painter');
+var Painter = require('../base/painter');
 
 /**
  * Row Painter
@@ -22,9 +22,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     init: function(options) {
         Painter.apply(this, arguments);
 
-        this.setOwnProperties({
-            columnModelList: options.columnModelList
-        });
+        this.painterManager = options.painterManager;
     },
 
     template: _.template(
@@ -43,14 +41,13 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * @param {jQuery} $tr - jquery object for tr element
      */
     onModelChange: function(model, $tr) {
-        var editType,
-            cellInstance;
-
         _.each(model.changed, function(cellData, columnName) {
+            var editType, cellPainter;
+
             if (columnName !== '_extraData') {
                 editType = this._getEditType(columnName, cellData);
-                cellInstance = this.grid.cellFactory.getInstance(editType);
-                cellInstance.onModelChange(cellData, $tr);
+                cellPainter = this.painterManager.getCellPainter(editType);
+                cellPainter.onModelChange(cellData, $tr);
             }
         }, this);
     },
@@ -72,36 +69,26 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     },
 
     /**
-     * 등록된 Cell Painter들의 이름을 key로 갖고, instance를 value로 갖는 객체를 반환한다.
-     * @returns {object} CellFactory
-     */
-    getCellPainters: function() {
-        return this.grid.cellFactory.instances;
-    },
-
-    /**
      * tr html 마크업을 반환한다.
      * @param {object} model 마크업을 생성할 모델 인스턴스
      * @return {string} tr 마크업 문자열
      */
-    getHtml: function(model) {
-        var columnModelList = this.columnModelList,
-            cellFactory = this.grid.cellFactory,
-            html = '',
-            columnName, cellData, editType, cellInstance;
+    getHtml: function(model, columnModelList) {
+        var html = '';
 
         if (tui.util.isUndefined(model.get('rowKey'))) {
            return html;
         }
 
         _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
-            cellData = model.get(columnName);
-            /* istanbul ignore else */
+            var columnName = columnModel['columnName'],
+                cellData = model.get(columnName),
+                editType, cellPainter;
+
             if (cellData && cellData['isMainRow']) {
                 editType = this._getEditType(columnName, cellData);
-                cellInstance = cellFactory.getInstance(editType);
-                html += cellInstance.getHtml(cellData);
+                cellPainter = this.painterManager.getCellPainter(editType);
+                html += cellPainter.getHtml(cellData);
             }
         }, this);
 

@@ -234,9 +234,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Render
      */
     render: function() {
-        var childElements = this._renderChildren();
-
-        childElements.concat([
+        var childElements = this._renderChildren().concat([
             $('<div>').addClass('left_line'),
             $('<div>').addClass('right_line')
         ]);

@@ -5,7 +5,7 @@
 'use strict';
 
 var ListCell = require('./list');
-var util = require('../../../common/util');
+var util = require('../../common/util');
 
 /**
  * Painter class for the select cell

@@ -5,7 +5,6 @@
 'use strict';
 
 var View = require('../base/view');
-var RowPainter = require('./painter/row');
 
 /**
  * RowList View
@@ -30,15 +29,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             focusModel: focusModel,
             renderModel: renderModel,
             dataModel: options.dataModel,
-            grid: options.grid,
-            columnModelList: options.columnModelList,
+            columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
+            painterManager: options.painterManager,
             sortOptions: null,
-            renderedRowKeys: null,
-            rowPainter: null
+            renderedRowKeys: null
         });
-        this._createRowPainter();
-        this._delegateTableEventsFromBody();
         this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
         this.listenTo(this.collection, 'change', this._onModelChange)
@@ -46,18 +42,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'unselect', this._onUnselect)
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
+            .listenTo(focusModel, 'focusIn', this._onFocusIn)
             .listenTo(renderModel, 'rowListChanged', this.render);
     },
 
-    /**
-     * Rendering 에 사용할 RowPainter Instance 를 생성한다.
-     * @private
-     */
-    _createRowPainter: function() {
-        this.rowPainter = new RowPainter({
-            grid: this.grid,
-            columnModelList: this.columnModelList
-        });
+    _getColumnModelList: function() {
+        return this.columnModel.getVisibleColumnModelList(this.whichSide, true);
     },
 
     /**
@@ -118,7 +108,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @return {string} 생성된 HTML 문자열
      */
     _getRowsHtml: function(rows) {
-        return _.map(rows, this.rowPainter.getHtml, this.rowPainter).join('');
+        var rowPainter = this.painterManager.getRowPainter(),
+            columnModelList = this._getColumnModelList();
+
+        return _.map(rows, function(row) {
+            return rowPainter.getHtml(row, columnModelList);
+        }).join('');
     },
 
     /**
@@ -167,18 +162,16 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _setCssSelect: function(rowKey, isSelected) {
-        var columnModelList = this.columnModelList,
-            columnName,
-            $trCache = {},
-            $tr, $td,
-            mainRowKey;
+        var columnModelList = this._getColumnModelList(),
+            trCache = {},
+            columnName, mainRowKey, $tr, $td;
 
         _.each(columnModelList, function(columnModel) {
             columnName = columnModel['columnName'];
             mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
-            $trCache[mainRowKey] = $trCache[mainRowKey] || this._getRowElement(mainRowKey);
-            $tr = $trCache[mainRowKey];
+            trCache[mainRowKey] = trCache[mainRowKey] || this._getRowElement(mainRowKey);
+            $tr = trCache[mainRowKey];
             $td = $tr.find('td[columnname="' + columnName + '"]');
             if ($td.length) {
                 $td.toggleClass('selected', isSelected);
@@ -206,9 +199,22 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onFocus: function(rowKey, columnName) {
-        var $td = this.grid.dataModel.getElement(rowKey, columnName);
+        var $td = this.dataModel.getElement(rowKey, columnName);
         if ($td.length) {
             $td.addClass('focused');
+        }
+    },
+
+    _onFocusIn: function(rowKey, columnName) {
+        var whichSide = this.columnModel.isLside(columnName) ? 'L' : 'R',
+            $td, editType, cellPainter;
+
+        if (whichSide === this.whichSide) {
+            $td = this.dataModel.getElement(rowKey, columnName);
+            editType = this.columnModel.getEditType(columnName);
+            cellPainter = this.painterManager.getCellPainter(editType);
+
+            cellPainter.focusIn($td);
         }
     },
 
@@ -244,28 +250,13 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * 테이블 내부(TR,TD)에서 발생하는 이벤트를 View.Layout.Body에게 넘겨 해당 요소들에게 위임하도록 설정한다.
-     * @private
-     */
-    _delegateTableEventsFromBody: function() {
-        this.bodyTableView.attachTableEventHandler('tr', this.rowPainter.getEventHandlerInfo());
-
-        _.each(this.rowPainter.getCellPainters(), function(painter, editType) {
-            var selector = 'td[edit-type=' + editType + ']',
-                handlerInfo = painter.getEventHandlerInfo();
-
-            this.bodyTableView.attachTableEventHandler(selector, handlerInfo);
-        }, this);
-    },
-
-    /**
      * modelChange 이벤트 발생시 실행되는 핸들러 함수.
      * @param {Model.Row} model Row 모델 객체
      * @private
      */
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
-        this.rowPainter.onModelChange(model, $tr);
+        this.painterManager.getRowPainter().onModelChange(model, $tr);
     }
 },
 {

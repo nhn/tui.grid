@@ -146,8 +146,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.focus(rowKey, columnName, isScrollable);
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
         if (this.dataModel.get(rowKey).isEditable(columnName)) {
-            cellPainter = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
-            cellPainter.focusIn(this.dataModel.getElement(rowKey, columnName));
+            this.trigger('focusIn', rowKey, columnName);
+            // cellPainter = this.cellFactory.getInstance(this.columnModel.getEditType(columnName));
+            // cellPainter.focusIn(this.dataModel.getElement(rowKey, columnName));
         } else {
             this.focusClipboard();
         }

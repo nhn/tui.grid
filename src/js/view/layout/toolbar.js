@@ -32,8 +32,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
      * @return {View.Layout.Toolbar} this object
      */
     render: function() {
-        var toolbarModel = this.toolbarModel,
-            resizeHandler, controlPanel, pagination;
+        var toolbarModel = this.toolbarModel;
 
         this._destroyChildren();
 
@@ -51,7 +50,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
         this.$el.empty().append(this._renderChildren());
         this._refreshHeight();
-        
+
         return this;
     },
 

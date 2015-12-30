@@ -26,10 +26,12 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             renderModel: options.renderModel,
             columnModel: options.columnModel,
             viewFactory: options.viewFactory,
+            painterManager: options.painterManager,
             whichSide: options.whichSide || 'R'
         });
 
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this._attachAllTableEventHandlers();
     },
 
     tagName: 'div',
@@ -90,9 +92,27 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @param {string} selector - 선택자
      * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
      */
-    attachTableEventHandler: function(selector, handlerInfos) {
+    _attachTableEventHandler: function(selector, handlerInfos) {
         _.each(handlerInfos, function(obj, eventName) {
             this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
+        }, this);
+    },
+
+    /**
+     * 테이블 내부(TR,TD)에서 발생하는 이벤트를 this.el로 넘겨 해당 요소들에게 위임하도록 설정한다.
+     * @private
+     */
+    _attachAllTableEventHandlers: function() {
+        var rowPainter = this.painterManager.getRowPainter(),
+            cellPainters = this.painterManager.getCellPainters();
+
+        this._attachTableEventHandler('tr', rowPainter.getEventHandlerInfo());
+
+        _.each(cellPainters, function(painter, editType) {
+            var selector = 'td[edit-type=' + editType + ']',
+                handlerInfo = painter.getEventHandlerInfo();
+
+            this._attachTableEventHandler(selector, handlerInfo);
         }, this);
     },
 

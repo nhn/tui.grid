@@ -25,8 +25,9 @@ var SelectionLayerView = require('./selectionLayer');
  * @module viewFactory
  */
 var ViewFactory = tui.util.defineClass({
-    init: function(modelManager) {
-        this.modelManager = modelManager;
+    init: function(options) {
+        this.modelManager = options.modelManager;
+        this.painterManager = options.painterManager;
     },
 
     /**
@@ -88,7 +89,7 @@ var ViewFactory = tui.util.defineClass({
             selectionModel: this.modelManager.selectionModel,
             focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
-            cellFactory: this.modelManager.cellFactory
+            painterManager: this.modelManager.painterManager
         });
     },
 
@@ -141,24 +142,22 @@ var ViewFactory = tui.util.defineClass({
             dimensionModel: this.modelManager.dimensionModel,
             renderModel: this.modelManager.renderModel,
             columnModel: this.modelManager.columnModel,
+            painterManager: this.painterManager,
             viewFactory: this
         });
     },
 
     createRowList: function(options) {
-        var whichSide = options.whichSide,
-            columnModelList = this.modelManager.columnModel.getVisibleColumnModelList(whichSide, true);
-
         return new RowListView({
             el: options.el,
-            whichSide: whichSide,
-            columnModelList: columnModelList,
+            whichSide: options.whichSide,
             bodyTableView: options.bodyTableView,
             dataModel: this.modelManager.dataModel,
+            columnModel: this.modelManager.columnModel,
             dimensionModel: this.modelManager.dimensionModel,
             renderModel: this.modelManager.renderModel,
             focusModel: this.modelManager.focusModel,
-            grid: this.modelManager
+            painterManager: this.painterManager
         });
     },
 
