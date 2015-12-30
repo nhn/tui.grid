@@ -58,3 +58,4 @@ bin
 # Atom
 tags
 .ctags
+.tern-project
