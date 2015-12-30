@@ -1,7 +1,7 @@
 'use strict';
 
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
+var ColumnModelData = require('../../src/js/model/data/columnModel');
+var RowListData = require('../../src/js/model/data/rowList');
 var Dimension = require('../../src/js/model/dimension');
 var FocusModel = require('../../src/js/model/focus');
 var RenderModel = require('../../src/js/model/renderer');
@@ -9,7 +9,7 @@ var Selection = require('../../src/js/model/dimension');
 var Collection = require('../../src/js/base/collection');
 var Model = require('../../src/js/base/model');
 
-describe('model.renderer', function() {
+describe('model/focus', function() {
     var focusModel;
 
     beforeEach(function() {

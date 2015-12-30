@@ -291,7 +291,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
-     * @return {module:modelManager} - New model manager object
+     * @return {module:model/manager} - New model manager object
      */
     _createModelManager: function(options) {
         var domState = new DomState(this.$el),
@@ -304,12 +304,21 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new ModelManager(modelOptions, domState);
     },
 
+    /**
+     * Creates painter manager and returns it
+     * @return {module:painter/manager} - New painter manager object
+     */
     _createPainterManager: function() {
         return new PainterManager({
             modelManager: this.modelManager
         });
     },
 
+    /**
+     * Creates container view and returns it
+     * @param  {Object} options - Options set by user
+     * @return {module:view/container} - New container view object
+     */
     _createContainerView: function(options) {
         var viewFactory = new ViewFactory({
             modelManager: this.modelManager,

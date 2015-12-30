@@ -70,8 +70,8 @@ describe('addon.net', function() {
             });
 
             it('dataModel 의 network 설정을 확인한다.', function() {
-                expect(grid.core.dataModel.url).toBe('/api/read');
-                expect(typeof grid.core.dataModel.sync).toBe('function');
+                expect(net.dataModel.url).toBe('/api/read');
+                expect(typeof net.dataModel.sync).toBe('function');
             });
         });
 
@@ -100,12 +100,6 @@ describe('addon.net', function() {
         });
 
         describe('_showToolbarExcelBtns', function() {
-            var toolbarModel;
-
-            beforeEach(function() {
-                toolbarModel = grid.core.toolbarModel;
-            });
-
             it('If downloadExcel exist, toolbarModel.isExcelButtonVisible should be true', function() {
                 createNet({
                     api: {
@@ -113,7 +107,7 @@ describe('addon.net', function() {
                         downloadExcel: '/'
                     }
                 });
-                expect(toolbarModel.get('isExcelButtonVisible')).toBe(true);
+                expect(net.toolbarModel.get('isExcelButtonVisible')).toBe(true);
             });
 
             it('If downloadExcelAll exist exsits, toolbarModel.isExcelAllButtonVisible should be true', function() {
@@ -123,7 +117,7 @@ describe('addon.net', function() {
                         downloadExcelAll: '/'
                     }
                 });
-                expect(toolbarModel.get('isExcelAllButtonVisible')).toBe(true);
+                expect(net.toolbarModel.get('isExcelAllButtonVisible')).toBe(true);
             });
         });
     });
@@ -261,7 +255,7 @@ describe('addon.net', function() {
         it('loading layer 를 보여주고, isLocked 를 true로 설정한다.', function() {
             createNet();
             net._lock();
-            expect(grid.core.renderModel.get('state')).toBe(renderStateMap.LOADING);
+            expect(net.renderModel.get('state')).toBe(renderStateMap.LOADING);
             expect(net.isLocked).toBe(true);
         });
     });

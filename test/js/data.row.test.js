@@ -1,7 +1,7 @@
 'use strict';
 
-var RowData = require('../../src/js/data/row');
-var ColumnModel = require('../../src/js/data/columnModel');
+var RowData = require('../../src/js/model/data/row');
+var ColumnModel = require('../../src/js/model/data/columnModel');
 
 describe('RowData', function() {
     describe('isDuplicatedPublicChanged()', function() {

@@ -1,6 +1,6 @@
 'use strict';
 
-var ColumnModelData = require('../../src/js/data/columnModel');
+var ColumnModelData = require('../../src/js/model/data/columnModel');
 
 describe('data.columnModel', function() {
     var columnModelInstance,

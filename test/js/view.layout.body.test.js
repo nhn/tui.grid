@@ -2,70 +2,42 @@
 
 'use strict';
 
-var Model = require('../../src/js/base/model');
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var Dimension = require('../../src/js/model/dimension');
 var DomState = require('../../src/js/domState');
-var Renderer = require('../../src/js/model/renderer');
-var Selection = require('../../src/js/model/selection');
-var CellFactory = require('../../src/js/view/cellFactory');
-var LayoutBody = require('../../src/js/view/layout/body');
-var LayoutBodyTable = require('../../src/js/view/layout/bodyTable');
-var SelectionLayer = require('../../src/js/view/selectionLayer');
+var ModelManager = require('../../src/js/model/manager');
+var PainterManager = require('../../src/js/painter/manager');
+var ViewFactory = require('../../src/js/view/factory');
+var SelectionLayerView = require('../../src/js/view/selectionLayer');
+var BodyTableView = require('../../src/js/view/layout/bodyTable');
 
 describe('view.layout.body', function() {
-    var grid, body;
-
-    function createGridMock() {
-        var $el = setFixtures('<div />');
-        var mock = {
-            $el: $el,
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData({
-                columnModelList: [
-                    {
-                        title: 'c1',
-                        columnName: 'c1',
-                        width: 30
-                    },
-                    {
-                        title: 'c2',
-                        columnName: 'c2',
-                        width: 40
-                    }
-                ]
-            }),
-            focusModel: new Model(),
-            domState: new DomState($el)
-        };
-        mock.dataModel.isRowSpanEnable = function() {
-            return true;
-        };
-        mock.dataModel.indexOfRowKey= function() {
-            return -1;
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.selectionModel = new Selection({
-            grid: mock
-        });
-        mock.cellFactory = new CellFactory({
-            grid: grid
-        });
-
-        return mock;
-    }
+    var modelManager, body;
 
     beforeEach(function() {
-        grid = createGridMock();
-        body = new LayoutBody({
-            grid: grid
+        var domState = new DomState($('<div />')),
+            painterManager, viewFactory;
+
+        modelManager = new ModelManager({
+            columnModelList: [
+                {
+                    title: 'c1',
+                    columnName: 'c1',
+                    width: 30
+                },
+                {
+                    title: 'c2',
+                    columnName: 'c2',
+                    width: 40
+                }
+            ]
+        }, domState);
+        painterManager = new PainterManager({
+            modelManager: modelManager
         });
+        viewFactory = new ViewFactory({
+            modelManager: modelManager,
+            painterManager: painterManager
+        });
+        body = viewFactory.createBody();
     });
 
     afterEach(function() {
@@ -106,7 +78,7 @@ describe('view.layout.body', function() {
                 shiftKey: false,
                 target: $tr.find('td')[1]
             };
-            spyOn(grid.dataModel, 'indexOfRowKey').and.returnValue(2);
+            spyOn(modelManager.dataModel, 'indexOfRowKey').and.returnValue(2);
         });
 
         it('should call "_controlStartAction" with expected params', function() {
@@ -122,22 +94,22 @@ describe('view.layout.body', function() {
         });
 
         it('if the grid has a selectType-radio option, check the row', function() {
-            grid.columnModel.set('selectType', 'radio');
-            grid.dataModel.check = jasmine.createSpy('check');
-            grid.focusModel.focusAt = jasmine.createSpy('focusAt');
+            modelManager.columnModel.set('selectType', 'radio');
+            modelManager.dataModel.check = jasmine.createSpy('check');
+            modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
             body._onMouseDown(eventMock);
 
-            expect(grid.dataModel.check).toHaveBeenCalledWith(2);
+            expect(modelManager.dataModel.check).toHaveBeenCalledWith(2);
         });
 
         it('if click the meta("_number") column, adjust indexes', function() {
             eventMock.target = null;
-            spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+            spyOn(modelManager.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                 column: 0,
                 row: 2
             });
-            spyOn(grid.columnModel, 'getVisibleColumnModelList').and.callFake(function(whichSide, withMeta) {
+            spyOn(modelManager.columnModel, 'getVisibleColumnModelList').and.callFake(function(whichSide, withMeta) {
                 var returnValue = [
                     {
                         columnName: 'c1'
@@ -171,7 +143,7 @@ describe('view.layout.body', function() {
             isInput, indexObj;
 
         it('if selectionModel is disabled, should interrupt action', function() {
-            selectionModel = grid.selectionModel;
+            selectionModel = modelManager.selectionModel;
             pageX = 0;
             pageY = 0;
             shiftKey = false;
@@ -192,7 +164,7 @@ describe('view.layout.body', function() {
 
         describe('when target is not meta column', function() {
             it('without shiftKey, it should focus the target cell and end the selection', function() {
-                selectionModel = grid.selectionModel;
+                selectionModel = modelManager.selectionModel;
                 pageX = 0;
                 pageY = 0;
                 shiftKey = false;
@@ -203,16 +175,16 @@ describe('view.layout.body', function() {
                     columnName: 'c2'
                 };
                 spyOn(selectionModel, 'end');
-                grid.focusModel.focusAt = jasmine.createSpy('focusAt');
+                modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
-                expect(grid.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(modelManager.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 
             it('with shiftKey and target is an input element, it should focus the target cell and end the selection', function() {
-                selectionModel = grid.selectionModel;
+                selectionModel = modelManager.selectionModel;
                 pageX = 0;
                 pageY = 0;
                 shiftKey = true;
@@ -223,11 +195,11 @@ describe('view.layout.body', function() {
                     columnName: 'c2'
                 };
                 spyOn(selectionModel, 'end');
-                grid.focusModel.focusAt = jasmine.createSpy('focusAt');
+                modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
                 body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
 
-                expect(grid.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
+                expect(modelManager.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 
@@ -235,7 +207,7 @@ describe('view.layout.body', function() {
                 var rowIndex = 2,
                     columnIndex = 1;
 
-                selectionModel = grid.selectionModel;
+                selectionModel = modelManager.selectionModel;
                 pageX = 0;
                 pageY = 0;
                 shiftKey = true;
@@ -255,7 +227,7 @@ describe('view.layout.body', function() {
 
         describe('target is the "_number" column', function() {
             it('without shiftKey, it should select a row', function() {
-                selectionModel = grid.selectionModel;
+                selectionModel = modelManager.selectionModel;
                 pageX = 0;
                 pageY = 0;
                 shiftKey = false;
@@ -272,7 +244,7 @@ describe('view.layout.body', function() {
             });
 
             it('with shiftKey, it should update selection with row state', function() {
-                selectionModel = grid.selectionModel;
+                selectionModel = modelManager.selectionModel;
                 pageX = 0;
                 pageY = 0;
                 shiftKey = true;
@@ -310,13 +282,13 @@ describe('view.layout.body', function() {
         beforeEach(function() {
             body.mouseDownX = 10;
             body.mouseDownY = 10;
-            spyOn(grid.selectionModel, '_isAutoScrollable').and.returnValue(false);
-            spyOn(grid.selectionModel, '_setScrolling').and.stub();
+            spyOn(modelManager.selectionModel, '_isAutoScrollable').and.returnValue(false);
+            spyOn(modelManager.selectionModel, '_setScrolling').and.stub();
         });
 
         describe('selection이 없을경우', function() {
             it('움직인 거리가 10보다 클 경우 selection 을 시작한다.', function() {
-                grid.focusModel.indexOf = jasmine.createSpy().and.returnValue({
+                modelManager.focusModel.indexOf = jasmine.createSpy().and.returnValue({
                     row: 0,
                     column: 0
                 });
@@ -324,7 +296,7 @@ describe('view.layout.body', function() {
                     pageX: 20,
                     pageY: 20
                 });
-                expect(grid.selectionModel.hasSelection()).toBe(true);
+                expect(modelManager.selectionModel.hasSelection()).toBe(true);
             });
 
             it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다.', function() {
@@ -332,34 +304,34 @@ describe('view.layout.body', function() {
                     pageX: 15,
                     pageY: 15
                 });
-                expect(grid.selectionModel.hasSelection()).toBe(false);
+                expect(modelManager.selectionModel.hasSelection()).toBe(false);
             });
         });
 
         describe('selection이 있는 경우', function() {
             beforeEach(function() {
-                grid.selectionModel.start(0, 0);
+                modelManager.selectionModel.start(0, 0);
             });
 
             it('기존의 셀렉션을 확장한다', function() {
-                spyOn(grid.selectionModel, 'updateByMousePosition');
+                spyOn(modelManager.selectionModel, 'updateByMousePosition');
                 body._onMouseMove({
                     pageX: 15,
                     pageY: 15
                 });
 
-                expect(grid.selectionModel.updateByMousePosition).toHaveBeenCalledWith(15, 15);
+                expect(modelManager.selectionModel.updateByMousePosition).toHaveBeenCalledWith(15, 15);
             });
         });
     });
 
     describe('render()', function() {
-        it('whichSide값과 grid.dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
+        it('whichSide값과 modelManager.dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
             body.$el.css({
                 'overflow-x': 'visible',
                 'overflow-y': 'visible'
             });
-            grid.dimensionModel.set({
+            modelManager.dimensionModel.set({
                 scrollX: true,
                 scrollY: true
             });
@@ -367,7 +339,7 @@ describe('view.layout.body', function() {
             expect(body.$el.css('overflow-x')).toBe('visible');
             expect(body.$el.css('overflow-y')).toBe('visible');
 
-            grid.dimensionModel.set({
+            modelManager.dimensionModel.set({
                 scrollX: false,
                 scrollY: false
             });
@@ -382,7 +354,7 @@ describe('view.layout.body', function() {
         });
 
         it('dimensionModel의 bodyHeight값에 따라 height를 설정한다.', function() {
-            grid.dimensionModel.set('bodyHeight', 200);
+            modelManager.dimensionModel.set('bodyHeight', 200);
             body.render();
             expect($(body.el).height()).toBe(200);
         });
@@ -390,20 +362,20 @@ describe('view.layout.body', function() {
         it('selectionLayer와 bodyTable이 생성되었는지 확인한다.', function() {
             body.render();
 
-            expect(body._viewList.length).toBe(2);
-            _.each(body._viewList, function(childView) {
-                expect(childView instanceof SelectionLayer || childView instanceof LayoutBodyTable).toBe(true);
+            expect(body._children.length).toBe(2);
+            _.each(body._children, function(childView) {
+                expect(childView instanceof SelectionLayerView || childView instanceof BodyTableView).toBe(true);
                 expect(body.$container).toContainElement(childView.el);
             });
         });
     });
 
-    describe('grid.dimensionModel의 change:bodyHeight 이벤트 발생시', function() {
+    describe('modelManager.dimensionModel의 change:bodyHeight 이벤트 발생시', function() {
         it('el의 height를 dimensionModel의 bodyHeight 값으로 설정한다.', function() {
-            grid.dimensionModel.set('bodyHeight', 70);
+            modelManager.dimensionModel.set('bodyHeight', 70);
             expect(body.$el.height()).toBe(70);
 
-            grid.dimensionModel.set('bodyHeight', 80);
+            modelManager.dimensionModel.set('bodyHeight', 80);
             expect(body.$el.height()).toBe(80);
         });
     });

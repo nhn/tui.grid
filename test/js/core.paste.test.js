@@ -3,8 +3,8 @@
 var DomState = require('../../src/js/domState');
 var FocusModel = require('../../src/js/model/focus');
 var SelectionModel = require('../../src/js/model/selection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
+var ColumnModelData = require('../../src/js/model/data/columnModel');
+var RowListData = require('../../src/js/model/data/rowList');
 
 function createColumnModelList(names) {
     var models = [];

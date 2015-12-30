@@ -1,7 +1,7 @@
 'use strict';
 
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
+var ColumnModelData = require('../../src/js/model/data/columnModel');
+var RowListData = require('../../src/js/model/data/rowList');
 var RowListModel = require('../../src/js/model/rowList');
 var RowModel = require('../../src/js/model/row');
 var Model = require('../../src/js/base/model');

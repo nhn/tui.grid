@@ -1,6 +1,6 @@
 'use strict';
 
-var Core = require('../../src/js/core');
+var Core = require('../../src/js/model/manager');
 var DomState = require('../../src/js/domState');
 
 describe('grid.normal.test', function() {

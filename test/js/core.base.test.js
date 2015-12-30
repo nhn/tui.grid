@@ -5,9 +5,7 @@ var Collection = require('../../src/js/base/collection');
 var View = require('../../src/js/base/view');
 
 describe('core.base', function() {
-    var grid,
-        $empty,
-        Class;
+    var Class;
 
     function testForSetOwnProperties(object) {
         object.setOwnProperties({
@@ -26,20 +24,12 @@ describe('core.base', function() {
         expect(object.hasOwnProperty('value4')).toBe(false);
     }
 
-    jasmine.getFixtures().fixturesPath = 'base/';
-    loadFixtures('test/fixtures/empty.html');
-    $empty = $('#empty');
     Class = {};
     Class.Model = Model.extend({});
     Class.Collection = Collection.extend({
         model: Class.Model
     });
     Class.View = View.extend({});
-
-    beforeEach(function() {
-        $empty.empty();
-        grid = {};
-    });
 
     describe('Model.Base', function() {
         it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
@@ -52,9 +42,7 @@ describe('core.base', function() {
         var collection;
 
         it('Collection 생성하면 length는 0이다.', function() {
-            collection = new Class.Collection([], {
-                grid: grid
-            });
+            collection = new Class.Collection([], {});
             expect(collection.length).toBe(0);
         });
 
@@ -78,55 +66,37 @@ describe('core.base', function() {
     describe('View.Base', function() {
         var view;
         beforeEach(function() {
-            view = new Class.View({
-                grid: grid
-            });
-        });
-
-        it('View 생성 시 주어진 grid를 프라퍼티로 저장한다.', function() {
-            expect(view.hasOwnProperty('grid')).toBe(true);
-            expect(view.grid).toBe(grid);
+            view = new Class.View();
         });
 
         it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
             testForSetOwnProperties(view);
         });
 
-        it('createView()는 자식 view를 생성하고 _viewList 에 저장한다.', function() {
-            var childView1 = view.createView(Class.View, {grid: grid}),
-                childView2 = view.createView(Class.View, {grid: grid});
+        it('_addChildren()는 자식 view _children에 저장한다.', function() {
+            var childView1 = new Class.View(),
+                childView2 = new Class.View();
 
-            expect(view._viewList[0]).toEqual(childView1);
-            expect(view._viewList[1]).toEqual(childView2);
-            expect(view._viewList.length).toBe(2);
+            view._addChildren([childView1, childView2]);
+            expect(view._children[0]).toEqual(childView1);
+            expect(view._children[1]).toEqual(childView2);
+            expect(view._children.length).toBe(2);
         });
 
-        it('addView()는 자식 view를 등록한다.', function() {
-            var childView1 = new Class.View({grid: grid}),
-                childView2 = new Class.View({grid: grid});
+        it('_destroyChildren()는 등록된 자식 view들을 제거한다.', function() {
+            var childView1 = new Class.View(),
+                childView2 = new Class.View(),
+                grandChildView1 = new Class.View(),
+                grandChildView2 = new Class.View(),
+                grandChildView3 = new Class.View();
 
-            view.addView(childView1);
-            view.addView(childView2);
+            view._addChildren([childView1, childView2]);
+            childView1._addChildren([grandChildView1, grandChildView2, grandChildView3]);
 
-            expect(view._viewList[0]).toBe(childView1);
-            expect(view._viewList[1]).toBe(childView2);
-            expect(view._viewList.length).toBe(2);
-        });
-
-        it('destroyChildren()는 등록된 자식 view들을 제거한다.', function() {
-            var childView1 = view.createView(Class.View, {grid: grid}),
-                childView2 = view.createView(Class.View, {grid: grid}),
-                grandChildView1 = childView1.createView(Class.View, {grid: grid}),
-                grandChildView2 = childView1.createView(Class.View, {grid: grid}),
-                grandChildView3 = childView1.createView(Class.View, {grid: grid});
-
-            view.destroyChildren();
-            expect(view._viewList.length).toBe(0);
-            expect(childView1._viewList.length).toBe(0);
-            expect(childView2._viewList.length).toBe(0);
-            expect(grandChildView1._viewList.length).toBe(0);
-            expect(grandChildView2._viewList.length).toBe(0);
-            expect(grandChildView3._viewList.length).toBe(0);
+            view._destroyChildren();
+            expect(view._children.length).toBe(0);
+            expect(childView1._children.length).toBe(0);
+            expect(childView2._children.length).toBe(0);
         });
 
         it('createEventData()는 EventData 객체를 생성해서 반환한다.', function() {

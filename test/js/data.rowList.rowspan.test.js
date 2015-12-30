@@ -1,7 +1,7 @@
 'use strict';
 
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
+var ColumnModelData = require('../../src/js/model/data/columnModel');
+var RowListData = require('../../src/js/model/data/rowList');
 
 describe('Data.RowList - rowSpan', function() {
     var rowList, columnModel;

@@ -21,7 +21,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
-        
+
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,
             dataModel: options.dataModel,
@@ -260,8 +260,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @return {View.Layout.Body}   자기 자신
      */
     render: function() {
-        var whichSide = this.whichSide,
-            selectionLayer, bodyTableView;
+        var whichSide = this.whichSide;
 
         this._destroyChildren();
 
@@ -276,13 +275,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         this.$container = $(HTML_CONTAINER);
         this.$el.append(this.$container);
 
-        bodyTableView = this.viewFactory.createBodyTable(whichSide);
-        selectionLayer = this.viewFactory.createSelectionLayer(whichSide);
-
-        this.$container.append(
-            bodyTableView.render().el,
-            selectionLayer.render().el
-        );
+        this._addChildren([
+            this.viewFactory.createBodyTable(whichSide),
+            this.viewFactory.createSelectionLayer(whichSide)
+        ]);
+        this.$container.append(this._renderChildren());
         return this;
     }
 });

@@ -7,14 +7,14 @@ describe('grid paste test', function() {
     var clipboard;
 
     beforeEach(function() {
-        var grid = {
-            focusModel: new Model(),
-            selectionModel: new Model()
-        };
-        grid.focusModel.indexOf = function() {};
-        grid.selectionModel.hasSelection = function() {return false};
+        var focusModel = new Model(),
+            selectionModel = new Model();
+
+        focusModel.indexOf = function() {};
+        selectionModel.hasSelection = function() {return false};
         clipboard = new Clipboard({
-            grid: grid
+            focusModel: focusModel,
+            selectionModel: selectionModel
         });
     });
 
@@ -49,7 +49,7 @@ describe('grid paste test', function() {
         var result,
             txt;
         beforeEach(function() {
-            clipboard.grid.dataModel = {
+            clipboard.dataModel = {
                 paste: function(r) {
                     result = r;
                 }
@@ -101,7 +101,7 @@ describe('grid paste test', function() {
 
         beforeEach(function() {
             clipboard.pasting = false;
-            clipboard.grid.dataModel = {
+            clipboard.dataModel = {
                 paste: function(r) {
                     result = r;
                 }

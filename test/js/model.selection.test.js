@@ -1,17 +1,16 @@
 'use strict';
 
-var Core = require('../../src/js/core');
+var ModelManager = require('../../src/js/model/manager');
 var DomState = require('../../src/js/domState');
 
 describe('model/selection', function() {
-    var grid, selection;
+    var modelManager, selection;
 
     beforeEach(function() {
         var $el = setFixtures('<div />'),
             domState = new DomState($el);
 
-        grid = new Core({
-            el: $el,
+        modelManager = new ModelManager({
             columnModelList: [
                 {
                     title: 'c1',
@@ -53,7 +52,8 @@ describe('model/selection', function() {
                 }
             ]
         }, domState);
-        grid.dataModel.setRowList([
+
+        modelManager.dataModel.setRowList([
             {
                 c1: '0-1',
                 c2: '0-2',
@@ -74,11 +74,11 @@ describe('model/selection', function() {
             }
         ]);
 
-        selection = grid.selectionModel;
+        selection = modelManager.selectionModel;
     });
 
     afterEach(function() {
-        grid.destroy();
+        modelManager.destroy();
     });
 
     describe('selection test', function() {
@@ -146,7 +146,7 @@ describe('model/selection', function() {
 
         describe('_adjustScroll', function() {
             beforeEach(function() {
-                grid.renderModel.set({
+                selection.renderModel.set({
                     maxScrollLeft: 20,
                     maxScrollTop: 20
                 });
@@ -155,40 +155,40 @@ describe('model/selection', function() {
 
             it('첫번째 파라미터가 음수/양수이냐에 따라 scrollLeft 값을 scrollPixelScale 값만큼 증가/감소시킨다.', function() {
                 selection._adjustScroll(1, 0);
-                expect(grid.renderModel.get('scrollLeft')).toEqual(10);
+                expect(selection.renderModel.get('scrollLeft')).toEqual(10);
 
                 selection._adjustScroll(-1, 0);
-                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
+                expect(selection.renderModel.get('scrollLeft')).toEqual(0);
             });
 
             it('두번째 파라미터가 음수/양수이냐에 따라 scrollTop 값을 scrollPixelScale 값만큼 증가/감소시킨다.', function() {
                 selection._adjustScroll(0, 1);
-                expect(grid.renderModel.get('scrollTop')).toEqual(10);
+                expect(selection.renderModel.get('scrollTop')).toEqual(10);
 
                 selection._adjustScroll(0, -1);
-                expect(grid.renderModel.get('scrollTop')).toEqual(0);
+                expect(selection.renderModel.get('scrollTop')).toEqual(0);
             });
 
             it('변경된 값은 0보다 커야 한다.', function() {
                 selection._adjustScroll(-1, -1);
-                expect(grid.renderModel.get('scrollLeft')).toEqual(0);
-                expect(grid.renderModel.get('scrollTop')).toEqual(0);
+                expect(selection.renderModel.get('scrollLeft')).toEqual(0);
+                expect(selection.renderModel.get('scrollTop')).toEqual(0);
             });
 
             it('변경된 값은 maxScrollTop, maxScrollLeft 보다 작아야 한다.', function() {
-                grid.renderModel.set({
+                selection.renderModel.set({
                     maxScrollLeft: 5,
                     maxScrollTop: 5
                 });
                 selection._adjustScroll(1, 1);
-                expect(grid.renderModel.get('scrollLeft')).toEqual(5);
-                expect(grid.renderModel.get('scrollTop')).toEqual(5);
+                expect(selection.renderModel.get('scrollLeft')).toEqual(5);
+                expect(selection.renderModel.get('scrollTop')).toEqual(5);
             });
         });
 
         describe('_getRowSpannedIndex', function() {
             beforeEach(function() {
-                grid.dataModel.setRowList([
+                selection.dataModel.setRowList([
                     {
                         _extraData: {
                             rowSpan: {
@@ -253,11 +253,11 @@ describe('model/selection', function() {
 
         describe('updateByMousePosition()', function() {
             beforeEach(function() {
-                spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                     row: 2,
                     column: 2
                 });
-                spyOn(grid.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
+                spyOn(selection.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
                     x: 0,
                     y: 0
                 });
@@ -285,7 +285,7 @@ describe('model/selection', function() {
             beforeEach(function() {
                 selection.selectColumn(2);
                 selection.update(0, 3);
-                spyOn(grid.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
+                spyOn(selection.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
                     x: 0,
                     y: 0
                 });
@@ -293,7 +293,7 @@ describe('model/selection', function() {
 
             describe('when called with columnIndexes[0, 1]', function() {
                 beforeEach(function() {
-                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.stub();
+                    spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.stub();
                 });
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
@@ -321,7 +321,7 @@ describe('model/selection', function() {
             describe('when called without columnIndexes(=null or undefined) and with cell index', function() {
                 it('with minimumColumnRange, should extend column selection to [1, 3]', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                    spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
                         column: 1
                     });
@@ -336,7 +336,7 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2]', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(grid.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                    spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
                         column: 1
                     });
@@ -353,13 +353,13 @@ describe('model/selection', function() {
 
         describe('start selection', function() {
             it('selectRow(rowKey)', function() {
-                var columnModel = grid.columnModel,
+                var columnModel = selection.columnModel,
                     focused,
                     range;
 
                 selection.selectRow(0);
                 range = selection.get('range');
-                focused = grid.focusModel.indexOf();
+                focused = selection.focusModel.indexOf();
 
                 expect(range).toEqual({
                     row: [0, 0],
@@ -372,13 +372,13 @@ describe('model/selection', function() {
             });
 
             it('selectColumn(columnIdx)', function() {
-                var dataModel = grid.dataModel,
+                var dataModel = selection.dataModel,
                     focused,
                     range;
 
                 selection.selectColumn(2);
                 range = selection.get('range');
-                focused = grid.focusModel.indexOf();
+                focused = selection.focusModel.indexOf();
 
                 expect(range).toEqual({
                     row: [0, dataModel.length - 1],
@@ -391,8 +391,8 @@ describe('model/selection', function() {
             });
 
             it('selectAll()', function() {
-                var dataModel = grid.dataModel,
-                    columnModel = grid.columnModel,
+                var dataModel = selection.dataModel,
+                    columnModel = selection.columnModel,
                     range;
 
                 selection.selectAll();
