@@ -1,52 +1,71 @@
 'use strict';
 
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var LayoutHeader = require('../../src/js/view/layout/header');
-var Selection = require('../../src/js/model/selection');
+var ColumnModel = require('../../src/js/model/data/columnModel');
+var DataModel = require('../../src/js/model/data/rowList');
+var DimensionModel = require('../../src/js/model/dimension');
+var RenderModel = require('../../src/js/model/renderer');
+var HeaderView = require('../../src/js/view/layout/header');
+var SelectionModel = require('../../src/js/model/selection');
 
 describe('Header', function() {
-    var grid, header;
+    var dataModel, columnModel, dimensionModel, selectionModel, renderModel, viewFactoryMock, header;
 
-    function createGridMock() {
-        var mock = {
-            sort: function() {},
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData({
-                columnModelList: [
-                    {
-                        title: 'c1',
-                        columnName: 'c1',
-                        width: 30
-                    },
-                    {
-                        title: 'c2',
-                        columnName: 'c2',
-                        width: 40
-                    }
-                ]
-            })
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
+    function initialize() {
+        columnModel = new ColumnModel({
+            columnModelList: [
+                {
+                    title: 'c1',
+                    columnName: 'c1',
+                    width: 30
+                },
+                {
+                    title: 'c2',
+                    columnName: 'c2',
+                    width: 40
+                }
+            ]
         });
-        mock.renderModel = new Renderer({
-            grid: mock
+        dataModel = new DataModel(null, {
+            columnModel: columnModel
         });
-        mock.selectionModel = new Selection({
-            grid: mock
+        dimensionModel = new DimensionModel(null, {
+            dataModel: dataModel,
+            columnModel: columnModel
         });
-        return mock;
+        selectionModel = new SelectionModel(null, {
+            dataModel: dataModel
+        });
+        renderModel = new RenderModel(null, {
+            dataModel: dataModel,
+            columnModel: columnModel,
+            dimensionModel: dimensionModel
+        });
+        viewFactoryMock = {
+            createHeaderResizeHandler: function() {
+                return {
+                    el: $('<div />'),
+                    render: function() {return this;},
+                    destroy: function() {}
+                }
+            }
+        }
+    }
+
+    function createHeaderView(whichSide) {
+        return new HeaderView({
+            whichSide: whichSide,
+            dataModel: dataModel,
+            columnModel: columnModel,
+            dimensionModel: dimensionModel,
+            selectionModel: selectionModel,
+            renderModel: renderModel,
+            viewFactory: viewFactoryMock
+        });
     }
 
     beforeEach(function() {
-        grid = createGridMock();
-        header = new LayoutHeader({
-            grid: grid
-        });
+        initialize();
+        header = createHeaderView();
     });
 
     describe('render', function() {
@@ -60,18 +79,18 @@ describe('Header', function() {
         });
 
         it('el의 높이를 dimensionModel의 headerHeight값으로 설정한다.', function() {
-            grid.dimensionModel.set('headerHeight', 20);
+            dimensionModel.set('headerHeight', 20);
             header.render();
 
             expect(header.$el.height()).toEqual(20);
         });
 
-        it('grid.dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
+        it('dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
             header.$el.css({
                 'overflow-x': 'visible',
                 'overflow-y': 'visible'
             });
-            grid.dimensionModel.set({
+            dimensionModel.set({
                 scrollX: true,
                 scrollY: true
             });
@@ -79,7 +98,7 @@ describe('Header', function() {
             expect(header.$el.css('overflow-x')).toBe('visible');
             expect(header.$el.css('overflow-y')).toBe('visible');
 
-            grid.dimensionModel.set({
+            dimensionModel.set({
                 scrollX: false,
                 scrollY: false
             });
@@ -121,20 +140,17 @@ describe('Header', function() {
         describe('_getHeaderMainCheckbox', function() {
             var lHeader;
             beforeEach(function() {
-                lHeader = new LayoutHeader({
-                    grid: grid,
-                    whichSide: 'L'
-                });
+                lHeader = createHeaderView('L');
             });
 
             it('header에 checkbox가 랜더링 되었을 때, checkbox를 잘 가져오는지 확인한다.', function() {
-                grid.columnModel.set('selectType', 'checkbox');
+                columnModel.set('selectType', 'checkbox');
                 lHeader.render();
                 expect(lHeader._getHeaderMainCheckbox().length).toBe(1);
             });
 
             it('header에 checkbox 가 랜더링 되지 않았을 때', function() {
-                grid.columnModel.set('selectType', 'radio');
+                columnModel.set('selectType', 'radio');
                 lHeader.render();
                 expect(lHeader._getHeaderMainCheckbox().length).toBe(0);
             });
@@ -151,7 +167,7 @@ describe('Header', function() {
 
     describe('isSortable 관련 테스트', function() {
         beforeEach(function() {
-            grid.columnModel.set('columnModelList', [
+            columnModel.set('columnModelList', [
                 {
                     title: 'c1',
                     columnName: 'c1',
@@ -167,9 +183,7 @@ describe('Header', function() {
                     columnName: 'c3'
                 }
             ]);
-            header = new LayoutHeader({
-                grid: grid
-            });
+            header = createHeaderView();
             header.render();
         });
 
@@ -181,16 +195,16 @@ describe('Header', function() {
             expect($btns.eq(1).parent().attr('columnname')).toBe('c2');
         });
 
-        it('버튼을 클릭하면 grid.sort()를 실행한다.', function() {
+        it('버튼을 클릭하면 dataModel.sort()를 실행한다.', function() {
             var $btn = header.$el.find('a.btn_sorting'),
                 eventMock = {
                     target: $btn[0]
                 };
-            grid.dataModel.sortByField = jasmine.createSpy('sortByField');
+            dataModel.sortByField = jasmine.createSpy('sortByField');
 
             // click the button
             header._onClick(eventMock);
-            expect(grid.dataModel.sortByField).toHaveBeenCalled();
+            expect(dataModel.sortByField).toHaveBeenCalled();
         });
 
         it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {
@@ -200,16 +214,16 @@ describe('Header', function() {
                     isAscending: true
                 };
 
-            grid.dataModel.trigger('sortChanged', eventData);
+            dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(0)).toHaveClass('sorting_up');
 
             eventData.columnName = 'c2';
-            grid.dataModel.trigger('sortChanged', eventData);
+            dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(0)).not.toHaveClass('sorting_up');
             expect($btns.eq(1)).toHaveClass('sorting_up');
 
             eventData.isAscending = false;
-            grid.dataModel.trigger('sortChanged', eventData);
+            dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(1)).not.toHaveClass('sorting_up');
             expect($btns.eq(1)).toHaveClass('sorting_down');
         });
@@ -258,7 +272,7 @@ describe('Header', function() {
             ];
 
         beforeEach(function() {
-            grid.columnModel.set({
+            columnModel.set({
                 columnModelList: columnModelList,
                 columnMerge: columnMergeList
             });
@@ -290,7 +304,7 @@ describe('Header', function() {
                     maxRow = header._getHierarchyMaxRowCount(hierarchyList);
 
                 expect(maxRow).toEqual(4);
-                grid.columnModel.set('columnMerge', [
+                columnModel.set('columnMerge', [
                     {
                         columnName: 'merge1',
                         title: 'c1-c2',
@@ -306,28 +320,20 @@ describe('Header', function() {
 
     describe('_syncCheckState()', function() {
         var lHeader;
+
         beforeEach(function() {
-            lHeader = new LayoutHeader({
-                grid: grid,
-                whichSide: 'L'
-            });
-            grid.columnModel.set('selectType', 'checkbox');
-            grid.dataModel = new RowListData(
-                [
-                    {
-                        c1: '0-1',
-                        c2: '0-2'
-                    },
-                    {
-                        c1: '1-1',
-                        c2: '1-2'
-                    }
-                ],
+            lHeader = createHeaderView('L');
+            columnModel.set('selectType', 'checkbox');
+            dataModel.reset([
                 {
-                    grid: grid,
-                    parse: true
+                    c1: '0-1',
+                    c2: '0-2'
+                },
+                {
+                    c1: '1-1',
+                    c2: '1-2'
                 }
-            );
+            ], {parse: true});
             lHeader.render();
         });
 
@@ -337,7 +343,7 @@ describe('Header', function() {
             lHeader._syncCheckState();
             expect($input.prop('checked')).toBe(false);
 
-            grid.dataModel.forEach(function(row) {
+            dataModel.forEach(function(row) {
                 row.set('_button', true);
             });
             lHeader._syncCheckState();
@@ -347,7 +353,7 @@ describe('Header', function() {
         it('각 행의 button이 disable 되어 있다면, disable 상태를 고려하여 checkbox 상태를 갱신한다.', function() {
             var $input = lHeader._getHeaderMainCheckbox();
 
-            grid.dataModel.forEach(function(row) {
+            dataModel.forEach(function(row) {
                 row.setRowState('DISABLED');
             });
             lHeader._syncCheckState();
@@ -357,12 +363,9 @@ describe('Header', function() {
 
     describe('_onCheckCountChange()', function() {
         var lHeader;
-        beforeEach(function() {
-            lHeader = new LayoutHeader({
-                grid: grid,
-                whichSide: 'L'
-            });
 
+        beforeEach(function() {
+            lHeader = createHeaderView('L');
             jasmine.clock().install();
         });
 
@@ -371,7 +374,7 @@ describe('Header', function() {
         });
 
         it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function() {
-            grid.columnModel.set('selectType', 'checkbox');
+            columnModel.set('selectType', 'checkbox');
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
             lHeader._onCheckCountChange();
@@ -387,7 +390,7 @@ describe('Header', function() {
         });
 
         it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function() {
-            grid.columnModel.set('selectType', 'radio');
+            columnModel.set('selectType', 'radio');
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
 
@@ -401,32 +404,29 @@ describe('Header', function() {
         var $input, clickEvent, lHeader;
 
         beforeEach(function() {
-            lHeader = new LayoutHeader({
-                grid: grid,
-                whichSide: 'L'
-            });
-            grid.columnModel.set('selectType', 'checkbox');
+            lHeader = createHeaderView('L');
+            columnModel.set('selectType', 'checkbox');
             lHeader.render();
 
             $input = lHeader._getHeaderMainCheckbox();
             clickEvent = {target: $input.get(0)};
-            grid.dataModel.checkAll = jasmine.createSpy('checkAll');
-            grid.dataModel.uncheckAll = jasmine.createSpy('uncheckAll');
+            dataModel.checkAll = jasmine.createSpy('checkAll');
+            dataModel.uncheckAll = jasmine.createSpy('uncheckAll');
         });
 
         describe('selectType 이 checkbox 일 때', function() {
             it('체크한 상태라면 전체 행을 check 하기 위해 checkAll 을 호출한다.', function() {
                 $input.prop('checked', true);
                 lHeader._onClick(clickEvent);
-                expect(grid.dataModel.checkAll).toHaveBeenCalled();
-                expect(grid.dataModel.uncheckAll).not.toHaveBeenCalled();
+                expect(dataModel.checkAll).toHaveBeenCalled();
+                expect(dataModel.uncheckAll).not.toHaveBeenCalled();
             });
 
             it('체크 해제된 상태라면 전체 행을 check 하기 위해 uncheckAll 을 호출한다.', function() {
                 $input.prop('checked', false);
                 lHeader._onClick(clickEvent);
-                expect(grid.dataModel.checkAll).not.toHaveBeenCalled();
-                expect(grid.dataModel.uncheckAll).toHaveBeenCalled();
+                expect(dataModel.checkAll).not.toHaveBeenCalled();
+                expect(dataModel.uncheckAll).toHaveBeenCalled();
             });
         });
     });
@@ -460,12 +460,12 @@ describe('Header', function() {
                 shiftKey: shiftKey,
                 target: tableHeader
             };
-            spyOn(grid.columnModel, 'getUnitColumnNamesIfMerged').and.returnValue(columnNames);
+            spyOn(columnModel, 'getUnitColumnNamesIfMerged').and.returnValue(columnNames);
             spyOn(header, '_controlStartAction');
         });
 
         it('if selectionModel is disabled, should be interrupted', function() {
-            grid.selectionModel.disable();
+            selectionModel.disable();
             spyOn(header, '_hasMetaColumn').and.returnValue(false);
 
             header._onMouseDown(eventMock);
@@ -474,7 +474,7 @@ describe('Header', function() {
 
         it('if meta column selected, should be interrupted', function() {
             // new spy
-            grid.columnModel.getUnitColumnNamesIfMerged = jasmine.createSpy().and.returnValue([
+            columnModel.getUnitColumnNamesIfMerged = jasmine.createSpy().and.returnValue([
                 '_number'
             ]);
 
@@ -489,12 +489,9 @@ describe('Header', function() {
     });
 
     describe('_controlStartAction', function() {
-        var selectionModel,
-            columns, columnNames,
-            pageX, pageY, shiftKey;
+        var columns, columnNames, pageX, pageY, shiftKey;
 
         beforeEach(function() {
-            selectionModel = grid.selectionModel;
             columns = {
                 'c1': 1,
                 'c2': 2,
@@ -506,7 +503,7 @@ describe('Header', function() {
             shiftKey = false;
             spyOn(selectionModel, 'selectColumn');
             spyOn(selectionModel, 'update');
-            spyOn(grid.columnModel, 'indexOfColumnName').and.callFake(function(name) {
+            spyOn(columnModel, 'indexOfColumnName').and.callFake(function(name) {
                 return columns[name] || -1;
             });
             spyOn(header, '_attachDragEvents');

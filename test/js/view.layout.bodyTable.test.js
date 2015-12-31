@@ -1,56 +1,34 @@
-/* global setFixtures */
-
 'use strict';
 
-var Model = require('../../src/js/base/model');
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var Selection = require('../../src/js/model/selection');
-var CellFactory = require('../../src/js/view/cellFactory');
-var LayoutBodyTable = require('../../src/js/view/layout/bodyTable');
+var DomState = require('../../src/js/domState');
+var ModelManager = require('../../src/js/model/manager');
+var PainterManager = require('../../src/js/painter/manager');
+var ViewFactory = require('../../src/js/view/factory');
 var RowListView = require('../../src/js/view/rowList');
+var BodyTableView = require('../../src/js/view/layout/bodyTable');
 
 describe('view.layout.body', function() {
-    var grid, bodyTable;
-
-    function createGridMock() {
-        var mock = {
-            $el: setFixtures('<div></div>'),
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData({
-                columnModelList: [
-                    {
-                        title: 'c1',
-                        columnName: 'c1',
-                        width: 30
-                    }, {
-                        title: 'c2',
-                        columnName: 'c2',
-                        width: 40
-                    }
-                ]
-            }),
-            focusModel: new Model()
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.cellFactory = new CellFactory({
-            grid: grid
-        });
-        return mock;
-    }
+    var modelManager, painterManager, bodyTable;
 
     beforeEach(function() {
-        grid = createGridMock();
-        bodyTable = new LayoutBodyTable({
-            grid: grid
+        var domState = new DomState($('<div />')),
+            viewFactory;
+
+        modelManager = new ModelManager({
+            columnModelList: [
+                {columnName: 'c1'},
+                {columnName: 'c2'}
+            ]
+        }, domState);
+        spyOn(modelManager.dimensionModel, 'getColumnWidthList').and.returnValue([30, 40]);
+        painterManager = new PainterManager({
+            modelManager: modelManager
         });
+        viewFactory = new ViewFactory({
+            modelManager: modelManager,
+            painterManager: painterManager
+        });
+        bodyTable = viewFactory.createBodyTable();
     });
 
     afterEach(function() {
@@ -70,7 +48,7 @@ describe('view.layout.body', function() {
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
-            var extraWidth = LayoutBodyTable.EXTRA_WIDTH,
+            var extraWidth = BodyTableView.EXTRA_WIDTH,
                 $colgroup, $cols;
 
             bodyTable.render();
@@ -93,16 +71,16 @@ describe('view.layout.body', function() {
             spyOn(RowListView.prototype, 'render').and.callThrough();
             bodyTable.render();
 
-            rowListView = bodyTable._viewList[0];
+            rowListView = bodyTable._children[0];
             expect(rowListView instanceof RowListView).toBe(true);
             expect(RowListView.prototype.render).toHaveBeenCalled();
             expect(bodyTable.$el).toContainElement(rowListView.el);
         });
     });
 
-    describe('grid.dimensionModel의 columnWidthChanged 이벤트 발생시', function() {
+    describe('dimensionModel의 columnWidthChanged 이벤트 발생시', function() {
         it('각 col요소의 넓이를 재설정한다.', function() {
-            var extraWidth = LayoutBodyTable.EXTRA_WIDTH,
+            var extraWidth = BodyTableView.EXTRA_WIDTH,
                 $cols;
 
             bodyTable.render();
@@ -111,7 +89,7 @@ describe('view.layout.body', function() {
             $cols.eq(0).width(10);
             expect($cols.eq(0).width()).toBe(10);
 
-            grid.dimensionModel.trigger('columnWidthChanged');
+            modelManager.dimensionModel.trigger('columnWidthChanged');
             expect($cols.eq(0).width()).toBe(30 - extraWidth);
         });
     });
@@ -142,51 +120,49 @@ describe('view.layout.body', function() {
         });
     });
 
-    describe('attachTableEventHandler()', function() {
-        var $cell1, $cell2, clickSpy, focusSpy;
-
+    describe('_attachAllTableEventHandlers()', function() {
         beforeEach(function() {
-            $cell1 = $('<td edit-type="type1"><input /></td>');
-            $cell2 = $('<td edit-type="type2" />');
-            clickSpy = jasmine.createSpy('onClick');
-            focusSpy = jasmine.createSpy('onFocus');
-            bodyTable.render();
-            grid.$el.append(bodyTable.$el);
-            bodyTable.$el.off();
-
-            bodyTable.$el.find('tbody')
-                .append($('<tr />').append($cell1))
-                .append($('<tr />').append($cell2));
-
-            bodyTable.attachTableEventHandler('td[edit-type=type1]', {
-                click: {
-                    selector: 'input',
-                    handler: clickSpy
-                },
-                focus: {
-                    selector: '',
-                    handler: focusSpy
+            painterManager.rowPainter = {
+                getEventHandlerInfo: function() {
+                    return {
+                        focus: {
+                            selector: 'input',
+                            handler: 'focusHandler'
+                        }
+                    }
                 }
-            });
+            };
+            painterManager.cellPainters = {
+                text: {
+                    getEventHandlerInfo: function() {
+                        return {
+                            blur: {
+                                selector: 'span',
+                                handler: 'blurHandler'
+                            }
+                        }
+                    }
+                },
+                normal: {
+                    getEventHandlerInfo: function() {
+                        return {
+                            change: {
+                                selector: 'textarea',
+                                handler: 'changeHandler'
+                            }
+                        }
+                    }
+                }
+            }
+            spyOn(bodyTable.$el, 'on');
         });
 
-        it('selector로 지정한 셀에서의 이벤트만 Delegation 한다.', function() {
-            $cell1.trigger('click');
-            expect(clickSpy).not.toHaveBeenCalled();
-
-            $cell2.trigger('click');
-            expect(clickSpy).not.toHaveBeenCalled();
-
-            $cell1.find('input').trigger('click');
-            expect(clickSpy).toHaveBeenCalled();
-        });
-
-        it('지정된 이벤트만 Delegation 한다.', function() {
-            $cell1.find('input').trigger('click');
-            expect(focusSpy).not.toHaveBeenCalled();
-
-            $cell1.trigger('focus');
-            expect(focusSpy).toHaveBeenCalled();
+        it('Attach all event handlers in the rowPainter and cellPainters', function() {
+            bodyTable._attachAllTableEventHandlers();
+            expect(bodyTable.$el.on.calls.count()).toBe(3);
+            expect(bodyTable.$el.on).toHaveBeenCalledWith('focus', 'tr input', 'focusHandler');
+            expect(bodyTable.$el.on).toHaveBeenCalledWith('blur', 'td[edit-type=text] span', 'blurHandler');
+            expect(bodyTable.$el.on).toHaveBeenCalledWith('change', 'td[edit-type=normal] textarea', 'changeHandler');
         });
     });
 });

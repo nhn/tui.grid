@@ -1,48 +1,40 @@
 'use strict';
 
 var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
+var ColumnModel = require('../../src/js/model/data/columnModel');
+var DimensionModel = require('../../src/js/model/dimension');
 var ResizeHandler = require('../../src/js/view/layout/resizeHandler');
 var DomState = require('../../src/js/domState');
 
 describe('ResizeHandler', function() {
-    var grid, handler, $handles;
+    var columnModel, dimensionModel, handler, $handles;
 
-    function createGridMock() {
-        var mock = {
+    function initialize() {
+        columnModel = new ColumnModel({
+            columnModelList: [
+                {
+                    title: 'c1',
+                    columnName: 'c1',
+                    width: 30
+                }, {
+                    title: 'c2',
+                    columnName: 'c2',
+                    width: 40
+                }
+            ]
+        });
+        dimensionModel = new DimensionModel({}, {
+            columnModel: columnModel,
             dataModel: new Collection(),
-            columnModel: new ColumnModelData(),
             domState: new DomState()
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
         });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        return mock;
     }
 
-    beforeAll(function() {
-        grid = createGridMock();
-        grid.columnModel.set('columnModelList', [
-            {
-                title: 'c1',
-                columnName: 'c1',
-                width: 30
-            }, {
-                title: 'c2',
-                columnName: 'c2',
-                width: 40
-            }
-        ]);
-    });
-
     beforeEach(function() {
+        initialize();
         handler = new ResizeHandler({
-            grid: grid,
+            columnModel: columnModel,
+            dimensionModel: dimensionModel,
             whichSide: 'R'
         });
     });
@@ -69,7 +61,7 @@ describe('ResizeHandler', function() {
         });
 
         it('height와 margin을 headerHeight값으로 설정한다.', function() {
-            grid.dimensionModel.set('headerHeight', 50);
+            dimensionModel.set('headerHeight', 50);
             handler.render();
             expect(handler.$el.css('marginTop')).toBe('-50px');
             expect(handler.$el.height()).toBe(50);
@@ -78,11 +70,11 @@ describe('ResizeHandler', function() {
 
     describe('_getHandlerColumnIndex', function() {
         beforeEach(function() {
-            grid.columnModel.set('columnFixCount', 4);
+            columnModel.set('columnFixCount', 4);
         });
 
         afterEach(function() {
-            grid.columnModel.set('columnFixCount', 0);
+            columnModel.set('columnFixCount', 0);
         });
 
         it('R side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
@@ -162,7 +154,7 @@ describe('ResizeHandler', function() {
                 handler._onMouseDown(mouseEvent);
                 handler._onMouseMove(mouseEvent);
                 expect($target.css('left')).toBe('300px');
-                expect(grid.dimensionModel.get('columnWidthList')[1]).toBe(302);
+                expect(dimensionModel.get('columnWidthList')[1]).toBe(302);
             });
         });
 
