@@ -171,10 +171,15 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      */
     _onBlurConvertible: function(blurEvent) {
         var $target = $(blurEvent.target),
-            $td = $target.closest('td');
+            $td = $target.closest('td'),
+            focusModel = this.grid.focusModel;
 
         this._onBlur(blurEvent);
         this._endEdit($td);
+
+        _.defer(function() {
+            focusModel.refreshState();
+        });
     },
 
     /**

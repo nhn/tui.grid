@@ -47,7 +47,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _onBlur: function() {
         var focusModel = this.focusModel;
-
         _.defer(function() {
             focusModel.refreshState();
         });
