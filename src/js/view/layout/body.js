@@ -129,11 +129,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             },
             list;
 
-        if (this.columnModel.get('selectType') === 'radio') {
-            this.dataModel.check(rowIndex);
-        }
-
-        if (!columnName || tui.util.isFalsy(rowIndex)) {
+        if (!columnName || rowIndex < 0) {
             _.extend(indexObj, this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
             list = columnModel.getVisibleColumnModelList(null, true);
 
@@ -142,6 +138,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
             indexObj.columnName = columnName;
             indexObj.column = columnModel.indexOfColumnName(columnName, true);
+        } else if (this.columnModel.get('selectType') === 'radio') {
+            this.dataModel.check(rowIndex);
         }
 
         this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, isInput);
@@ -167,7 +165,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             return;
         }
 
-        this._attachDragEvents(pageX, pageY);
+        if (!isInput) {
+            this._attachDragEvents(pageX, pageY);
+        }
         if (!columnModel.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
             if (shiftKey && !isInput) {
@@ -280,6 +280,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             this.viewFactory.createSelectionLayer(whichSide)
         ]);
         this.$container.append(this._renderChildren());
+        this._resetContainerHeight();
         return this;
     }
 });
