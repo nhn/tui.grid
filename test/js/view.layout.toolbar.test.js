@@ -1,114 +1,119 @@
 'use strict';
 
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
+var ColumnModel = require('../../src/js/model/data/columnModel');
+var DataModel = require('../../src/js/model/data/rowList');
+var DimensionModel = require('../../src/js/model/dimension');
 var ToolbarModel = require('../../src/js/model/toolbar');
-var LayoutToolbar = require('../../src/js/view/layout/toolbar');
-var ResizeHandler = require('../../src/js/view/layout/toolbar/resizeHandler');
-var Pagination = require('../../src/js/view/layout/toolbar/pagination');
+var ToolbarView = require('../../src/js/view/layout/toolbar');
+var ResizeHandlerView = require('../../src/js/view/layout/toolbar/resizeHandler');
+var PaginationView = require('../../src/js/view/layout/toolbar/pagination');
 var DomState = require('../../src/js/domState');
 
 describe('view.frame.toolbar', function() {
-    var grid;
+    var dataModel, columnModel, toolbarModel, dimensionModel, viewFactoryMock;
 
-    function createGridMock() {
-        var mock = {
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData(),
-            domState: new DomState($('<div />'))
+    function initialize() {
+        var factoryMethodMock = function() {
+            return {
+                el: $('<div />'),
+                render: function() {return this},
+                destroy: function() {}
+            }
         };
-        mock.toolbarModel = new ToolbarModel();
-        mock.dimensionModel = new Dimension({
-            grid: mock
+
+        columnModel = new ColumnModel();
+        dataModel = new DataModel(null, {
+            columnModel: columnModel
         });
-        mock.renderModel = new Renderer({
-            grid: mock
+        toolbarModel = new ToolbarModel();
+        dimensionModel = new DimensionModel(null, {
+            domState: new DomState($('<div />')),
+            columnModel: columnModel,
+            dataModel: dataModel
         });
-        return mock;
+        viewFactoryMock = {
+            createToolbarControlPanel: factoryMethodMock,
+            createToolbarPagination: factoryMethodMock,
+            createToolbarResizeHandler: factoryMethodMock
+        };
     }
 
     beforeEach(function() {
-        grid = createGridMock();
-        grid.columnModel.set('columnModelList', [
-            {
-                title: 'c1',
-                columnName: 'c1',
-                width: 30
-            }, {
-                title: 'c2',
-                columnName: 'c2',
-                width: 40
-            }
-        ]);
+        initialize();
     });
 
     describe('Toolbar instance 를 테스트한다.', function() {
-        var toolbar;
+        var toolbarView;
 
         beforeEach(function() {
-            toolbar = new LayoutToolbar({
-                grid: grid
+            toolbarView = new ToolbarView({
+                toolbarModel: toolbarModel,
+                dimensionModel: dimensionModel,
+                viewFactory: viewFactoryMock
             });
         });
 
         afterEach(function() {
-            toolbar.destroy();
+            toolbarView.destroy();
         });
 
         describe('render 옵션에 따라 랜더링을 잘 하는지 확인한다.', function() {
-            var options;
-
-            beforeEach(function() {
-                options = grid.dimensionModel.get('toolbarOptions') || {};
-            });
-
             describe('hasControlPanel', function() {
+                beforeEach(function() {
+                    spyOn(viewFactoryMock, 'createToolbarControlPanel').and.callThrough();
+                });
+
                 it('hasControlPanel = false 일 때', function() {
-                    grid.toolbarModel.set('hasControlPanel', false);
-                    toolbar.render();
-                    expect(toolbar.$el.find('.btn_setup')).not.toExist();
+                    toolbarModel.set('hasControlPanel', false);
+                    toolbarView.render();
+                    expect(viewFactoryMock.createToolbarControlPanel).not.toHaveBeenCalled();
                 });
 
                 it('hasControlPanel = true 일 때', function() {
-                    grid.toolbarModel.set('hasControlPanel', true);
-                    toolbar.render();
-                    expect(toolbar.$el.find('.btn_setup')).toExist();
+                    toolbarModel.set('hasControlPanel', true);
+                    toolbarView.render();
+                    expect(viewFactoryMock.createToolbarControlPanel).toHaveBeenCalled();
                 });
             });
 
             describe('hasResizeHandler', function() {
+                beforeEach(function() {
+                    spyOn(viewFactoryMock, 'createToolbarResizeHandler').and.callThrough();
+                });
+
                 it('hasResizeHandler = false 일 때', function() {
-                    grid.toolbarModel.set('hasResizeHandler', false);
-                    toolbar.render();
-                    expect(toolbar.$el.find('.height_resize_bar')).not.toExist();
+                    toolbarModel.set('hasResizeHandler', false);
+                    toolbarView.render();
+                    expect(viewFactoryMock.createToolbarResizeHandler).not.toHaveBeenCalled();
                 });
                 it('hasResizeHandler = true 일 때', function() {
-                    grid.toolbarModel.set('hasResizeHandler', true);
-                    toolbar.render();
-                    expect(toolbar.$el.find('.height_resize_bar')).toExist();
+                    toolbarModel.set('hasResizeHandler', true);
+                    toolbarView.render();
+                    expect(viewFactoryMock.createToolbarResizeHandler).toHaveBeenCalled();
                 });
             });
 
             describe('hasPagination', function() {
+                beforeEach(function() {
+                    spyOn(viewFactoryMock, 'createToolbarPagination').and.callThrough();
+                });
+
                 it('hasPagination = false 일 때', function() {
-                    grid.toolbarModel.set('hasPagination', false);
-                    toolbar.render();
-                    expect(toolbar.$el.find('.grid_pagination')).not.toExist();
+                    toolbarModel.set('hasPagination', false);
+                    toolbarView.render();
+                    expect(viewFactoryMock.createToolbarPagination).not.toHaveBeenCalled();
                 });
                 it('hasPagination = true 일 때', function() {
-                    grid.toolbarModel.set('hasPagination', true);
-                    toolbar.render();
-                    expect(toolbar.$el.find('.grid_pagination')).toExist();
+                    toolbarModel.set('hasPagination', true);
+                    toolbarView.render();
+                    expect(viewFactoryMock.createToolbarPagination).toHaveBeenCalled();
                 });
             });
         });
     });
 
     describe('LayoutToolbar.ResizeHandler', function() {
-        var resize,
-            mouseEvent;
+        var resize, mouseEvent;
 
         beforeEach(function() {
             mouseEvent = {
@@ -117,8 +122,8 @@ describe('view.frame.toolbar', function() {
                 target: $('<div>'),
                 preventDefault: function() {}
             };
-            resize = new ResizeHandler({
-                grid: grid
+            resize = new ResizeHandlerView({
+                dimensionModel: dimensionModel
             });
         });
 
@@ -130,13 +135,13 @@ describe('view.frame.toolbar', function() {
         describe('_onMouseDown', function() {
             beforeEach(function() {
                 spyOn(resize, '_attachMouseEvent');
-                spyOn(grid.dimensionModel, 'refreshLayout');
+                spyOn(dimensionModel, 'refreshLayout');
                 resize._onMouseDown(mouseEvent);
             });
 
             it('mouseDown 이벤트가 발생하면 dimensionModel.refreshLayout과 _attachMouseEvent 를 수행한다.', function() {
                 expect(resize._attachMouseEvent).toHaveBeenCalled();
-                expect(grid.dimensionModel.refreshLayout).toHaveBeenCalled();
+                expect(dimensionModel.refreshLayout).toHaveBeenCalled();
             });
 
             it('body 엘리먼트의 커서 css 스타일을 row-resize 로 변경한다..', function() {
@@ -163,7 +168,7 @@ describe('view.frame.toolbar', function() {
 
         describe('_onMouseMove', function() {
             beforeEach(function() {
-                grid.dimensionModel.set({
+                dimensionModel.set({
                     height: 500,
                     headerHeight: 50,
                     rowHeight: 10,
@@ -177,7 +182,7 @@ describe('view.frame.toolbar', function() {
                 mouseEvent.pageY = 300;
                 resize._onMouseMove(mouseEvent);
                 setTimeout(function() {
-                    expect(grid.dimensionModel.get('bodyHeight')).toBe(200);
+                    expect(dimensionModel.get('bodyHeight')).toBe(200);
                     done();
                 }, 10);
             });
@@ -186,7 +191,7 @@ describe('view.frame.toolbar', function() {
                 mouseEvent.pageY = 100;
                 resize._onMouseMove(mouseEvent);
                 setTimeout(function() {
-                    expect(grid.dimensionModel.get('bodyHeight')).toBe(30);
+                    expect(dimensionModel.get('bodyHeight')).toBe(30);
                     done();
                 }, 10);
             });
@@ -197,8 +202,8 @@ describe('view.frame.toolbar', function() {
         var pagination;
 
         beforeEach(function() {
-            pagination = new Pagination({
-                grid: grid
+            pagination = new PaginationView({
+                toolbarModel: toolbarModel
             });
             pagination.render();
         });
@@ -208,7 +213,7 @@ describe('view.frame.toolbar', function() {
         });
 
         it('Pagination Instance를 잘 생성하는지 확인한다.', function() {
-            expect(grid.toolbarModel.get('pagination') instanceof tui.component.Pagination).toBe(true);
+            expect(toolbarModel.get('pagination') instanceof tui.component.Pagination).toBe(true);
         });
 
         it('이미 pagination instance가 존재하면 instance를 다시 생성하지 않는다', function() {

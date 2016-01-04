@@ -1,43 +1,13 @@
 'use strict';
 
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var Focus = require('../../src/js/model/focus');
-var Selection = require('../../src/js/model/selection');
-var ListPainter = require('../../src/js/view/painter/cell/list');
-var SelectPainter = require('../../src/js/view/painter/cell/select');
-var ButtonPainter = require('../../src/js/view/painter/cell/button');
-
+var ModelManager = require('../../src/js/model/manager');
+var CellPainter = require('../../src/js/painter/cell');
+var ButtonPainter = require('../../src/js/painter/cell/button');
+var SelectPainter = require('../../src/js/painter/cell/select');
+var ListPainter = require('../../src/js/painter/cell/list');
 
 describe('view.painter.cell.base', function() {
     var grid, cellPainter;
-
-    function createGridMock() {
-        var mock = {
-            selection: {},
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData()
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.focusModel = new Focus({
-            grid: mock
-        });
-        mock.selectionModel = new Selection({
-            grid: mock
-        });
-        mock.dataModel = new RowListData([], {
-            grid: mock
-        });
-        return mock;
-    }
 
     function getKeyEvent(keyName, $target) {
         return {
@@ -48,7 +18,7 @@ describe('view.painter.cell.base', function() {
     }
 
     beforeEach(function() {
-        grid = createGridMock();
+        grid = grid = new ModelManager();
     });
 
     describe('Cell.List Base 클래스 테스트', function() {

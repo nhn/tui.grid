@@ -1,41 +1,16 @@
 'use strict';
 
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var Focus = require('../../src/js/model/focus');
-var NormalPainter = require('../../src/js/view/painter/cell/normal');
-var MainButtonPainter = require('../../src/js/view/painter/cell/mainButton');
-var NumberPainter = require('../../src/js/view/painter/cell/number');
+var ModelManager = require('../../src/js/model/manager');
+var NormalPainter = require('../../src/js/painter/cell/normal');
+var MainButtonPainter = require('../../src/js/painter/cell/mainButton');
+var NumberPainter = require('../../src/js/painter/cell/number');
 var keyCodeMap = require('../../src/js/common/constMap').keyCode;
 
 describe('view.painter.cell.normal', function() {
     var grid, cellPainter;
 
-    function createGridMock() {
-        var mock = {
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData()
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.focusModel = new Focus({
-            grid: mock
-        });
-        mock.dataModel = new RowListData([], {
-            grid: mock
-        });
-        return mock;
-    }
-
     beforeEach(function() {
-        grid = createGridMock();
+        grid = new ModelManager();
         grid.columnModel.set('columnModelList', [
             {
                 title: 'c1',

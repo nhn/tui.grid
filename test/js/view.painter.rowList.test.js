@@ -2,42 +2,15 @@
 
 'use strict';
 
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var Focus = require('../../src/js/model/focus');
-var CellFactory = require('../../src/js/view/cellFactory');
+var ModelManager = require('../../src/js/model/manager');
 var RowListModel = require('../../src/js/model/rowList');
 var RowListView = require('../../src/js/view/rowList');
+var PainterManager = require('../../src/js/painter/manager');
 var DomState = require('../../src/js/domState');
+var SmartRenderModel = require('../../src/js/model/renderer-smart');
 
 describe('View.RowList', function() {
-    var grid, rowListView, $tableContainer;
-
-    function createGridMock() {
-        var mock = {
-            $el: setFixtures('<div />'),
-            columnModel: new ColumnModelData()
-        };
-        mock.domState = new DomState(mock.$el);
-        mock.dataModel = new RowListData([], {
-            grid: mock
-        });
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.focusModel = new Focus({
-            grid: mock
-        });
-        mock.cellFactory = new CellFactory({
-            grid: mock
-        });
-        return mock;
-    }
+    var grid, rowListView, $container, $tableContainer;
 
     function redrawTable(html) {
         $tableContainer[0].innerHTML = '<table><tbody>' + html + '</tbody></table>';
@@ -45,7 +18,8 @@ describe('View.RowList', function() {
     }
 
     beforeEach(function() {
-        grid = createGridMock();
+        $container = setFixtures('<div />');
+        grid = new ModelManager(null, new DomState($container));
         grid.columnModel.set('columnModelList', [{
             columnName: 'c1',
             editOption: {
@@ -80,14 +54,19 @@ describe('View.RowList', function() {
         ], {parse: true});
 
         grid.renderModel.refresh();
-        $tableContainer = $('<div />').appendTo(grid.$el);
+        $tableContainer = $('<div/>').appendTo($container);
         redrawTable('');
 
         rowListView = new RowListView({
             whichSide: 'R',
-            grid: grid,
             el: setFixtures('<table><tbody></tbody></table>').find('tbody'),
-            collection: grid.renderModel.getCollection('R'),
+            renderModel: grid.renderModel,
+            focusModel: grid.focusModel,
+            dataModel: grid.dataModel,
+            columnModel: grid.columnModel,
+            painterManager: new PainterManager({
+                modelManager: grid
+            }),
             bodyTableView: {
                 resetTablePosition: function() {},
                 attachTableEventHandler: function() {},
@@ -101,7 +80,7 @@ describe('View.RowList', function() {
         var rowPainter;
 
         beforeEach(function() {
-            rowPainter = rowListView.rowPainter;
+            rowPainter = rowListView.painterManager.getRowPainter();
         });
 
         describe('_getEditType', function() {
@@ -128,8 +107,10 @@ describe('View.RowList', function() {
         var smartRenderer, $trs;
 
         function init(sampleData) {
-            smartRenderer = new Renderer({
-                grid: grid
+            grid.renderModel = new SmartRenderModel(null, {
+                columnModel: grid.columnModel,
+                dataModel: grid.dataModel,
+                dimensionModel: grid.dimensionModel
             });
             grid.dataModel.lastRowKey = -1;
             grid.dataModel.reset(sampleData, {parse: true});
@@ -138,9 +119,12 @@ describe('View.RowList', function() {
         function setCollectionRange(from, to) {
             var collection;
 
-            smartRenderer.refresh();
-            collection = smartRenderer.getCollection('R');
-            rowListView.collection = new RowListModel(collection.slice(from, to), {grid: grid});
+            grid.renderModel.refresh();
+            collection = grid.renderModel.getCollection('R');
+            rowListView.collection = new RowListModel(collection.slice(from, to), {
+                dataModel: grid.dataModel,
+                columnModel: grid.columnModel
+            });
             rowListView.render();
             $trs = rowListView.$el.children('tr');
         }
@@ -291,7 +275,7 @@ describe('View.RowList', function() {
 
         describe('_onFocus, _onBlur', function() {
             beforeEach(function() {
-                grid.$el.append(rowListView.$el);
+                $tableContainer.append(rowListView.$el);
             });
 
             it('rendering 된 엘리먼트 중 해당하는 엘리먼트에 focus, blur 디자인 클래스를 적용한다.', function() {
@@ -338,19 +322,6 @@ describe('View.RowList', function() {
 
                 expect(trList.length).toBe(2);
                 expect(tdList.length).toBe(6);
-            });
-        });
-
-        describe('_createRowPainter', function() {
-            beforeEach(function() {
-                rowListView.destroyChildren();
-                rowListView.rowPainter = null;
-            });
-
-            it('rowPainter 인스턴스를 생성한다..', function() {
-                expect(rowListView.rowPainter).toBeNull();
-                rowListView._createRowPainter();
-                expect(rowListView.rowPainter).not.toBeNull();
             });
         });
     });

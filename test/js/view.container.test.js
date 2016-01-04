@@ -1,6 +1,6 @@
 'use strict';
 
-var Core = require('../../src/js/core');
+// var Core = require('../../src/js/core');
 
 describe('view.container', function() {
     // describe('click handler', function() {

@@ -1,38 +1,14 @@
 'use strict';
 
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var Focus = require('../../src/js/model/focus');
-var CellPainter = require('../../src/js/view/painter/cell');
+var ModelManager = require('../../src/js/model/manager');
+var CellPainter = require('../../src/js/painter/cell');
 var keyCodeMap = require('../../src/js/common/constMap').keyCode;
 
 describe('view.painter.cell.base', function() {
     var grid, cellPainter;
 
-    function createGridMock() {
-        var mock = {
-            columnModel: new ColumnModelData()
-        };
-        mock.dataModel = new RowListData([], {
-            grid: mock
-        });
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.focusModel = new Focus({
-            grid: mock
-        });
-        return mock;
-    }
-
     beforeEach(function() {
-        grid = createGridMock();
+        grid = new ModelManager();
         grid.columnModel.set('columnModelList', [
             {
                 title: 'c1',

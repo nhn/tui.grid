@@ -1,47 +1,16 @@
 'use strict';
 
-var Collection = require('../../src/js/base/collection');
-var ColumnModelData = require('../../src/js/data/columnModel');
-var RowListData = require('../../src/js/data/rowList');
-var Dimension = require('../../src/js/model/dimension');
-var Renderer = require('../../src/js/model/renderer');
-var Focus = require('../../src/js/model/focus');
-var Selection = require('../../src/js/model/selection');
-var TextPainter = require('../../src/js/view/painter/cell/text');
-var ConvertiblePainter = require('../../src/js/view/painter/cell/text-convertible');
+var ModelManager = require('../../src/js/model/manager');
+var TextPainter = require('../../src/js/painter/cell/text');
+var ConvertiblePainter = require('../../src/js/painter/cell/text-convertible');
+var keyCodeMap = require('../../src/js/common/constMap').keyCode;
 
 describe('view.painter.cell.text', function() {
-    var grid, cellPainter;
-
-    function createGridMock() {
-        var mock = {
-            $el: $('<div />'),
-            selection: {},
-            dataModel: new Collection(),
-            columnModel: new ColumnModelData()
-        };
-        mock.dimensionModel = new Dimension({
-            grid: mock
-        });
-        mock.renderModel = new Renderer({
-            grid: mock
-        });
-        mock.focusModel = new Focus({
-            grid: mock
-        });
-        mock.selectionModel = new Selection({
-            grid: mock
-        });
-        mock.dataModel = new RowListData([], {
-            grid: mock
-        });
-        return mock;
-    }
+    var grid, cellPainter, $container;
 
     beforeEach(function() {
-        grid = createGridMock();
+        grid = new ModelManager();
     });
-
 
     describe('View.Painter.Cell.Text 클래스 테스트', function() {
         var options;
@@ -302,7 +271,6 @@ describe('view.painter.cell.text', function() {
                 $table = $('<table><tr key="0"></tr></table>');
                 $td = $('<td />').attr('columnname', 'c1');
                 $table.find('tr').append($td);
-                grid.$el.append($table);
             });
 
             afterEach(function() {
@@ -374,8 +342,7 @@ describe('view.painter.cell.text', function() {
                 options.isDisabled = true;
                 $table = $('<table><tr key="0"><td></td></tr></table>');
                 $td = $table.find('td').attr('columnname', 'c1');
-                grid.$el.append($table);
-                $wrapper.append(grid.$el);
+                $wrapper.append($table);
                 cellPainter._startEdit($td);
                 $input = $td.find('input');
             });
@@ -411,30 +378,11 @@ describe('view.painter.cell.text', function() {
 
             function getKeyEvent(keyName, $eventTarget) {
                 return {
-                    keyCode: grid.keyMap[keyName],
-                    which: grid.keyMap[keyName],
+                    keyCode: keyCodeMap[keyName],
+                    which: keyCodeMap[keyName],
                     target: $eventTarget.get(0)
                 };
             }
-
-            beforeEach(function() {
-                grid.keyMap = {
-                    'ENTER': 13,
-                    'ESC': 27,
-                    'UP_ARROW': 38,
-                    'DOWN_ARROW': 40,
-                    'PAGE_UP': 33,
-                    'PAGE_DOWN': 34
-                };
-                grid.keyName = {
-                    13: 'ENTER',
-                    27: 'ESC',
-                    38: 'UP_ARROW',
-                    40: 'DOWN_ARROW',
-                    33: 'PAGE_UP',
-                    34: 'PAGE_DOWN'
-                };
-            });
 
             it('정의된 키 액션은 true 를 반환하는지 확인한다.', function() {
                 expect(cellPainter._executeKeyDownSwitch(getKeyEvent('UP_ARROW', $target))).toBe(true);
