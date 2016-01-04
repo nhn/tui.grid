@@ -27,7 +27,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     className: 'state_layer',
 
     template: _.template(
-        '<div>' +
+        '<div class="layer_content">' +
         '    <%= text %>' +
         '    <% if (isLoading) { %>' +
         '    <div class="loading_img"></div>' +
@@ -79,7 +79,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
 
         this.$el.css({
             marginTop: dimensionModel.get('headerHeight'),
-            height: dimensionModel.get('bodyHeight')
+            height: dimensionModel.get('bodyHeight') + dimensionModel.get('toolbarHeight')
         });
     }
 });
