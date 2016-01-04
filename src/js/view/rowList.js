@@ -205,6 +205,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         }
     },
 
+    /**
+     * Event handler for 'focusIn' event on module:model/focus
+     * @param  {(Number|String)} rowKey - RowKey of the target cell
+     * @param  {String} columnName columnName - ColumnName of the target cell
+     * @private
+     */
     _onFocusIn: function(rowKey, columnName) {
         var whichSide = this.columnModel.isLside(columnName) ? 'L' : 'R',
             $td, editType, cellPainter;

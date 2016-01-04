@@ -148,7 +148,6 @@ var ModelManager = tui.util.defineClass({
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             renderModel: this.renderModel,
-            // cellFactory: this.cellFactory,
             domState: domState
         });
     },
@@ -191,7 +190,7 @@ var ModelManager = tui.util.defineClass({
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         _.each(this, function(value, property) {

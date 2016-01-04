@@ -52,6 +52,10 @@ var PainterManager = tui.util.defineClass({
         return cellPainters;
     },
 
+    /**
+     * Creates row painter and returns it.
+     * @return {module:painter/row} New row painter instance
+     */
     _createRowPainter: function() {
         return new RowPainter({
             grid: this.modelManager,
@@ -79,10 +83,18 @@ var PainterManager = tui.util.defineClass({
         return instance;
     },
 
+    /**
+     * Returns all cell painters
+     * @return {Object} Object that has edit-type as a key and cell painter as a value
+     */
     getCellPainters: function() {
         return this.cellPainters;
     },
 
+    /**
+     * Returns a row painter
+     * @return {module:painter/row} Row painter
+     */
     getRowPainter: function() {
         return this.rowPainter;
     }

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Model Manager
+ * @fileoverview View factory
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -33,7 +33,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates container view and returns it.
      * @param {Object} options - Options set by user
-     * @return {ContainerView} - New container view
+     * @return {module:view/container} - New container view instance
      */
     createContainer: function(options) {
         return new ContainerView({
@@ -47,6 +47,10 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates toolbar view and returns it.
+     * @return {module:view/toolbar} - New toolbar view instance
+     */
     createToolbar: function() {
         return new ToolbarView({
             toolbarModel: this.modelManager.toolbarModel,
@@ -55,6 +59,10 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates toolbar control panel view and returns it.
+     * @return {module:view/toolbar/controlPanel} - New control panel vew insatnce
+     */
     createToolbarControlPanel: function() {
         return new ToolbarControlPanelView({
             gridId: this.modelManager.gridId,
@@ -62,18 +70,30 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates toolbar pagination view and returns it.
+     * @return {module:view/toolbar/pagination} - New pagination view instance
+     */
     createToolbarPagination: function() {
         return new ToolbarPaginationView({
             toolbarModel: this.modelManager.toolbarModel
         });
     },
 
+    /**
+     * Creates toolbar resize handler view and returns it.
+     * @return {module:view/toolbar/resizeHandler} - New resize hander view instance
+     */
     createToolbarResizeHandler: function() {
         return new ToolbarResizeHandlerView({
             dimensionModel: this.modelManager.dimensionModel
         });
     },
 
+    /**
+     * Creates state layer view and returns it.
+     * @return {module:view/stateLayer} - New state layer view instance
+     */
     createStateLayer: function() {
         return new StateLayerView({
             dimensionModel: this.modelManager.dimensionModel,
@@ -81,6 +101,10 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates clipboard view and returns it.
+     * @return {module:view/clipboard} - New clipboard view instance
+     */
     createClipboard: function() {
         return new ClipboardView({
             columnModel: this.modelManager.columnModel,
@@ -93,6 +117,11 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates frame view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @return {module:view/layout/frame} New frame view instance
+     */
     createFrame: function(whichSide) {
         var Constructor = whichSide === 'L' ? LsideFrameView : RsideFrameView;
 
@@ -103,6 +132,11 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates header view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @return {module:view/layout/header} New header view instance
+     */
     createHeader: function(whichSide) {
         return new HeaderView({
             whichSide: whichSide,
@@ -115,6 +149,11 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates resize handler of header view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @return {module:view/layout/header} New resize handler view instance
+     */
     createHeaderResizeHandler: function(whichSide) {
         return new HeaderResizeHandlerView({
             whichSide: whichSide,
@@ -123,6 +162,11 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates body view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @return {module:view/layout/body} New body view instance
+     */
     createBody: function(whichSide) {
         return new BodyView({
             whichSide: whichSide,
@@ -136,6 +180,11 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates body-table view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @return {module:view/layout/bodyTable} New body-table view instance
+     */
     createBodyTable: function(whichSide) {
         return new BodyTableView({
             whichSide: whichSide,
@@ -147,6 +196,14 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates row list view and returns it.
+     * @param  {Object} options - Options
+     * @param  {jQuery} options.el - jquery object wrapping tbody html element
+     * @param  {String} options.whichSide - 'L'(left) or 'R'(right)
+     * @param  {module:view/layout/bodyTable} options.bodyTableView - body table view
+     * @return {module:view/rowList} New row list view instance
+     */
     createRowList: function(options) {
         return new RowListView({
             el: options.el,
@@ -161,6 +218,11 @@ var ViewFactory = tui.util.defineClass({
         });
     },
 
+    /**
+     * Creates selection view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @return {module:view/selection} New selection view instance
+     */
     createSelectionLayer: function(whichSide) {
         return new SelectionLayerView({
             whichSide: whichSide,
