@@ -75,12 +75,12 @@ gulp.task('deploy-js', function() {
     return browserify('src/js/grid.js')
         .bundle()
         .pipe(source(FNAME_JS))
-        .pipe(header(banner, pkg))
+        .pipe(streamify(header(banner, pkg)))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'js'))
         .pipe(streamify(uglify()))
         .pipe(rename({extname: '.min.js'}))
-        .pipe(header(banner, pkg))
+        .pipe(streamify(header(banner, pkg)))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'js'));
 });
@@ -90,12 +90,12 @@ gulp.task('deploy-css', function() {
         .pipe(stylus())
         .pipe(sourcemaps.write())
         .pipe(rename({basename: 'grid'}))
-        .pipe(header(banner, pkg))
+        .pipe(streamify(header(banner, pkg)))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'css'))
         .pipe(minifycss())
         .pipe(rename({extname: '.min.css'}))
-        .pipe(header(banner, pkg))
+        .pipe(streamify(header(banner, pkg)))
         .pipe(gulp.dest(PATH_DIST))
         .pipe(gulp.dest(PATH_SAMPLE + 'css'));
 });
