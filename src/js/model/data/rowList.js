@@ -59,7 +59,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @private
      */
     _formatData: function(data) {
-        var rowList = data;
+        var rowList = _.filter(data, _.isObject);
 
         _.each(rowList, function(row, i) {
             rowList[i] = this._baseFormat(rowList[i]);
