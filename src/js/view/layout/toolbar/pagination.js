@@ -47,7 +47,8 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      */
     _setPaginationInstance: function() {
         var PaginationClass = tui && tui.component && tui.component.Pagination,
-            pagination = this.instance;
+            pagination = this.toolbarModel.get('pagination');
+
         if (!pagination && PaginationClass) {
             pagination = new PaginationClass({
                 itemCount: 1,
