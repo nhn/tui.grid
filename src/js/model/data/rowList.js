@@ -792,7 +792,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         for (offset = startOffset; offset < spanCount; offset += 1) {
             row = this.at(mainRowIdx + offset);
-            row.set(columnName, '', {
+            row.set(columnName, mainRow.get(columnName), {
                 silent: true
             });
             row.setRowSpanData(columnName, {
