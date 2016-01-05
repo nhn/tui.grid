@@ -24,7 +24,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
     className: 'height_resize_bar',
 
-    template: _.template('<a href="#" class="height_resize_handle">높이 조절</a>'),
+    template: _.template('<a href="#" class="height_resize_handle"><span></span></a>'),
 
     events: {
         'mousedown': '_onMouseDown'

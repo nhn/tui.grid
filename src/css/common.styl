@@ -19,8 +19,10 @@ strong, em
 
     span
         display inline-block
+        position relative
         font-size 11px
         color #333
+        padding-left 17px
         letter-spacing -1px
         line-height 23px
         white-space nowrap
@@ -31,15 +33,20 @@ strong, em
     $btn-common =
         display inline-block
         padding-left 17px
+
+    em
+        position absolute
+        left 0
+        top 5px
+        width 17px
+        height 12px
         background url(../images/icons.gif) no-repeat
 
-    .excel
-        {$btn-common}
-        background-position 0 5px
+        &.excel
+            background-position -30px -60px
 
-    .grid
-        {$btn-common}
-        background-position 0 -21px
+        &.grid
+            background-position -30px -60px
 
 $line-common =
     position absolute

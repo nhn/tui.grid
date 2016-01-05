@@ -8,7 +8,7 @@
     a, strong
         display inline-block
         position relative
-        padding 3px 8px 4px
+        padding 4px 8px 4px
         color #333
         font-size 12px
         font-weight bold
@@ -17,38 +17,64 @@
         vertical-align middle
 
     strong
-        padding 3px 6px 4px
+        padding 4px 6px 4px
         color #ff1313
         border 1px solid #d4d4d4
         background #e7e7e7
 
-    .next,
-    .next_end,
+    .pre_end,
+    .pre_end_off,
     .pre,
-    .pre_end
+    .pre_off,
+    .next,
+    .next_off,
+    .next_end,
+    .next_end_off
         overflow hidden
-        width 33px
-        height 11px
+        width 25px
+        height 24px
         padding 0
+        border 0
         background url(../images/icons.gif) no-repeat
         font-size 0
-        line-height 999px
+        line-height 999
+        overflow hidden
         white-space nowrap
 
-    .next
-        margin-left 10px
-        background-position 0 -50px
+    .pre_end,
+    .pre_end_off,
+    .next_end,
+    .next_end_off
+        width 24px
 
-    .next_end
-        width 40px
-        margin-left 11px
-        background-position 0 -75px
+    .pre,
+    .pre_off
+        margin-right 15px
 
-    .pre
-        margin-right 10px
-        background-position 0 -100px
+    .next,
+    .next_off
+        margin-left 15px
 
     .pre_end
-        width 40px
-        margin-right 8px
-        background-position 0 -125px
+        background-position 0 0
+
+    .pre_end_off
+        background-position 0 -30px
+
+    .pre
+        background-position -24px 0
+
+    .pre_off
+        background-position -24px -30px
+
+    .next
+        background-position -50px 0
+
+    .next_off
+        background-position -50px -30px
+
+    .next_end
+        background-position -75px 0
+
+    .next_end_off
+        background-position -75px -30px

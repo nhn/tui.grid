@@ -37,7 +37,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
     templateExcelBtn: _.template(
         '<a href="#" class="excel_download_button btn_text <%=className%>">' +
-        '<span><em class="excel"><%=text%></em></span>' +
+        '<span><em class="excel"></em><%=text%></span>' +
         '</a>'
     ),
 
@@ -51,7 +51,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
             $target;
 
         mouseEvent.preventDefault();
-        
+
         if (net) {
             $target = $(mouseEvent.target).closest('a');
 

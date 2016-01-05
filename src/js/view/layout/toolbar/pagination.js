@@ -25,9 +25,13 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     template: _.template('' +
         '<a href="#" class="pre_end">맨앞</a>' +
+        '<strong href="#" class="pre_end_off">맨앞</strong>' +
         '<a href="#" class="pre">이전</a> ' +
+        '<strong href="#" class="pre_off">이전</strong>' +
         '<a href="#" class="next">다음</a>' +
-        '<a href="#" class="next_end">맨뒤</a>'
+        '<strong href="#" class="next_off">다음</strong>' +
+        '<a href="#" class="next_end">맨뒤</a>' +
+        '<strong href="#" class="next_end_off">맨뒤</strong>'
     ),
 
     /**
@@ -52,7 +56,14 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
         if (!pagination && PaginationClass) {
             pagination = new PaginationClass({
                 itemCount: 1,
-                itemPerPage: 1
+                itemPerPage: 1,
+                pagePerPageList: 5,
+                isCenterAlign: true,
+                moveUnit: 'page',
+                $preOff: this.$el.find('.pre_off'),
+                $pre_endOff: this.$el.find('.pre_end_off'),
+                $nextOff: this.$el.find('.next_off'),
+                $lastOff: this.$el.find('.next_end_off')
             }, this.$el);
         }
         this.toolbarModel.set('pagination', pagination);
