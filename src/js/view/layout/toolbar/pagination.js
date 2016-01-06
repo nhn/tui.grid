@@ -25,13 +25,13 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     template: _.template('' +
         '<a href="#" class="pre_end">맨앞</a>' +
-        '<strong href="#" class="pre_end_off">맨앞</strong>' +
+        '<span href="#" class="pre_end_off">맨앞</span>' +
         '<a href="#" class="pre">이전</a> ' +
-        '<strong href="#" class="pre_off">이전</strong>' +
+        '<span href="#" class="pre_off">이전</span>' +
         '<a href="#" class="next">다음</a>' +
-        '<strong href="#" class="next_off">다음</strong>' +
+        '<span href="#" class="next_off">다음</span>' +
         '<a href="#" class="next_end">맨뒤</a>' +
-        '<strong href="#" class="next_end_off">맨뒤</strong>'
+        '<span href="#" class="next_end_off">맨뒤</span>'
     ),
 
     /**
