@@ -43,11 +43,11 @@ var defaultOptions = {
  * Model Manager
  * @module modelManager
  */
-var ModelManager = tui.util.defineClass({
+var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      * @param {Object} options - Options to create models
+     * @param {module/domState} domState - DomState instance
      */
     init: function(options, domState) {
         options = $.extend(true, {}, defaultOptions, options);

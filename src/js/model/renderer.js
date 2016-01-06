@@ -101,7 +101,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'beforeReset' event on dataModel
-     * @return {[type]} [description]
      */
     _onBeforeResetData: function() {
         this.set('state', renderStateMap.LOADING);

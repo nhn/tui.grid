@@ -8,7 +8,7 @@
  * Class for offering methods that can be used to get the current state of DOM element.
  * @module domState
  */
-var DomState = tui.util.defineClass({
+var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
     /**
      * @constructs
      * @param {jQuery} $el - jQuery object of the container element.

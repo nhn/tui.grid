@@ -464,7 +464,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Return scroll position from the received index
      * @param {Number|String} rowKey - Row-key of target cell
      * @param {String} columnName - Column name of target cell
-     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
+     * @return {{?scrollLeft: number, ?scrollTop: number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
         var isRsideColumn = !this.columnModel.isLside(columnName),
@@ -528,7 +528,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-     * @return {{[scrollLeft]: number, [scrollTop]: number}} Position to scroll
+     * @return {{?scrollLeft: number, ?scrollTop: number}} Position to scroll
      * @private
      */
     _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {

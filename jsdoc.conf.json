@@ -37,7 +37,7 @@
     },
     "opts": {
         "recurse": true,
-        "private": true,
+        "name": "Grid",
         "destination": "api",
         "tutorials": "samples"
     }

@@ -14,10 +14,13 @@ var TextConvertibleCell = require('./cell/text-convertible');
 var TextPasswordCell = require('./cell/text-password');
 var RowPainter = require('./row');
 
-var PainterManager = tui.util.defineClass({
+/**
+ * Painter manager
+ * @module painter/manager
+ */
+var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      */
     init: function(options) {
         this.modelManager = options.modelManager;
