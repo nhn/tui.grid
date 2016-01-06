@@ -24,14 +24,14 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
     className: 'grid_pagination',
 
     template: _.template('' +
-        '<a href="#" class="pre_end">맨앞</a>' +
-        '<span href="#" class="pre_end_off">맨앞</span>' +
-        '<a href="#" class="pre">이전</a> ' +
-        '<span href="#" class="pre_off">이전</span>' +
-        '<a href="#" class="next">다음</a>' +
-        '<span href="#" class="next_off">다음</span>' +
-        '<a href="#" class="next_end">맨뒤</a>' +
-        '<span href="#" class="next_end_off">맨뒤</span>'
+        '<a href="#" class="pre_end" title="First page">First</a>' +
+        '<a href="#" class="pre" title="Previous page">Prev</a> ' +
+        '<a href="#" class="next" title="Next page">Next</a>' +
+        '<a href="#" class="next_end" title="Last page">Last</a>' +
+        '<span class="pre_end_off">First Off</span>' +
+        '<span class="pre_off">Prev Off</span>' +
+        '<span class="next_off">Next Off</span>' +
+        '<span class="next_end_off">Last Off</span>'
     ),
 
     /**
