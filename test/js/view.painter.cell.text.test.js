@@ -358,6 +358,11 @@ describe('view.painter.cell.text', function() {
             beforeEach(function() {
                 $input = $(cellPainter.getContentHtml(options));
                 cellPainter._onFocus({target: $input.get(0)});
+                jasmine.clock().install();
+            });
+
+            afterEach(function() {
+                jasmine.clock().uninstall();
             });
 
             it('grid.selection.enable 를 호출하는지 확인한다.', function() {
@@ -370,6 +375,13 @@ describe('view.painter.cell.text', function() {
                 cellPainter._endEdit = jasmine.createSpy('_endEdit');
                 cellPainter._onBlurConvertible({target: $input.get(0)});
                 expect(cellPainter._endEdit).toHaveBeenCalled();
+            });
+
+            it('_focusModel.refreshState를 호출한다', function() {
+                grid.focusModel.refreshState = jasmine.createSpy('refreshState');
+                cellPainter._onBlurConvertible({target: $input.get(0)});
+                jasmine.clock().tick(1);
+                expect(grid.focusModel.refreshState).toHaveBeenCalled();
             });
         });
 

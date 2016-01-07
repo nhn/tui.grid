@@ -176,7 +176,7 @@ describe('addon.net', function() {
         });
     });
 
-    describe('setFormData', function() {
+    describe('_setFormData', function() {
         it('this.$el의 내부 인풋 요소들에 주어진 데이터를 설정한다.', function() {
             var $form = $('<form />'),
                 inputData, actualData;
@@ -191,14 +191,14 @@ describe('addon.net', function() {
                 input1: 'data1',
                 input2: 'data2'
             };
-            net.setFormData(inputData);
+            net._setFormData(inputData);
             actualData = formUtil.getFormData($form);
             expect(actualData).toEqual(inputData);
         });
 
         it('this.$el의 폼과 형식이 다른 경우 데이터가 설정되지 않는다.', function() {
             createNet(); //form을 따로 지정하지 않으면 내부적으로 빈 form이 생성됨
-            net.setFormData({
+            net._setFormData({
                 input: 'data1'
             });
             expect(formUtil.getFormData(net.$el)).toEqual({});
@@ -239,7 +239,7 @@ describe('addon.net', function() {
             beforeRequesteData = $.extend(true, {}, request.data());
 
             //request 요청 후 form data 를 변경한다.
-            net.setFormData({
+            net._setFormData({
                 input1: 'data1',
                 input2: 'data2'
             });
@@ -680,15 +680,10 @@ describe('addon.net', function() {
     describe('AddOn.Net.Router', function() {
         it('read시 쿼리스트링을 잘 파싱해서 폼 설정 후 readData를 호출하는지 확인한다.', function() {
             createNet();
-            net.setFormData = jasmine.createSpy('setFormData');
-            net.readData = jasmine.createSpy('readData');
-            net.router.read('a=10&b=20');
+            net._requestReadData = jasmine.createSpy('_requestReadData');
+            net.router.trigger('route:read', 'a=10&b=20');
 
-            expect(net.setFormData).toHaveBeenCalledWith({
-                a: 10,
-                b: 20
-            });
-            expect(net.readData).toHaveBeenCalledWith({
+            expect(net._requestReadData).toHaveBeenCalledWith({
                 a: 10,
                 b: 20
             });

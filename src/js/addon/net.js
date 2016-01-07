@@ -141,11 +141,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._showToolbarExcelBtns();
 
         this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged, this);
-        this.listenTo(this.router, 'route:read', this._onRouterRead);
 
-        if (!Backbone.History.started) {
-            Backbone.history.start();
-        }
         if (options.initialRequest) {
             if (!this.lastRequestedReadData) {
                 this._readDataAt(1, false);
@@ -194,6 +190,11 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this.router = new Router({
                 net: this
             });
+            this.listenTo(this.router, 'route:read', this._onRouterRead);
+
+            if (!Backbone.History.started) {
+                Backbone.history.start();
+            }
         }
     },
 
