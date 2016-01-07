@@ -619,7 +619,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {String} columnName 컬럼 이름
      * @returns {object} rowSpanData
      */
-    getRowSpanData: function() {
+    getRowSpanData: function(rowKey, columnName) {
         var row = this.get(rowKey);
         return row ? row.getRowSpanData(columnName) : null;
     },

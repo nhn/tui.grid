@@ -191,7 +191,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
-        var classNameData = this.className;
+        var classNameData = this.data.className;
 
         if (classNameData && classNameData.row) {
             classNameData.row = this._removeClassNameFromArray(classNameData.row, className);

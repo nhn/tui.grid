@@ -816,7 +816,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} columnName - The name of the column
      */
     getRowSpanData: function(rowKey, columnName) {
-        this.modelManager.dataModel.getRowSpanData(rowKey, columnName);
+        return this.modelManager.dataModel.getRowSpanData(rowKey, columnName);
     },
     /**
      * Returns the index of the row indentified by the rowKey.

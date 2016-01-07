@@ -37,6 +37,29 @@ describe('RowData', function() {
         });
     });
 
+    describe('addClassName', function() {
+        it('해당 row의 모든 셀에 주어진 className를 지정한다.', function() {
+            var row = new RowData({
+                c1: 'c1',
+                c2: 'c2'
+            }, {
+                parse: true,
+                collection: {
+                    columnModel: new ColumnModel({
+                        columnModelList: [
+                            {columnName: 'c1'},
+                            {columnName: 'c2'}
+                        ]
+                    })
+                }
+            });
+            row.addClassName('myClass');
+
+            expect(row.getClassNameList('c1')).toEqual(['myClass']);
+            expect(row.getClassNameList('c2')).toEqual(['myClass']);
+        });
+    });
+
     describe('setRowState(), getRowState()', function() {
         var row;
 

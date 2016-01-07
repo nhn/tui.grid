@@ -300,12 +300,12 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowKey 에 해당하는 행 전체에 CSS className 을 설정한다.
+     * rowKey에 해당하는 행 전체에 CSS className 을 설정한다.
      * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     addClassName: function(className) {
-        this.extraDataManager.addClassName(columnName, className);
+        this.extraDataManager.addClassName(className);
         this._triggerExtraDataChangeEvent();
     },
 

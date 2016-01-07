@@ -51,6 +51,14 @@ describe('Data.RowList - rowSpan', function() {
     });
 
     describe('getRowSpanData()', function() {
+        it('rowList.getRowSpanData()는 해당 row의 getRowSpanData()를 호출한다.', function() {
+            var row = rowList.get(0);
+            spyOn(row, 'getRowSpanData');
+            rowList.getRowSpanData(0, 'c1');
+
+            expect(row.getRowSpanData).toHaveBeenCalledWith('c1');
+        });
+
         it('columnName 인자가 존재할 경우 항상 같은 형태의 데이터를 리턴한다.', function() {
             var row = rowList.get(0);
 
