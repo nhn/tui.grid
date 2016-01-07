@@ -36,6 +36,7 @@ https://github.com/nhnent/tui.grid/wiki
 ## History
 | Version | Description | Date | Developer |
 | ---- | ---- | ---- | ---- |
+| <a href="https://nhnent.github.io/tui.grid/1.1.1">1.1.1</a> | [정기배포](https://github.com/nhnent/tui.grid/releases/tag/1.1.1) | 2016.01 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/tui.grid/1.1.0">1.1.0</a> | [정기배포](https://github.com/nhnent/tui.grid/releases/tag/1.1.0) | 2015.11 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/tui.grid/1.0.4c">1.0.4c</a> | 수시배포 | 2015.10 | FE개발팀 <dl_javascript@nhnent.com> |
 | <a href="https://nhnent.github.io/tui.grid/1.0.4b">1.0.4b</a> | 수시배포 | 2015.10 | FE개발팀 <dl_javascript@nhnent.com> |

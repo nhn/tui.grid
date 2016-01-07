@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.1.0
+ * @version 1.1.1
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -62,8 +62,10 @@
 }
 .uio_grid .btn_text span {
   display: inline-block;
+  position: relative;
   font-size: 11px;
   color: #333;
+  padding-left: 17px;
   letter-spacing: -1px;
   line-height: 23px;
   white-space: nowrap;
@@ -71,17 +73,19 @@
   margin-left: 8px;
   padding-right: 7px;
 }
-.uio_grid .btn_text .excel {
-  display: inline-block;
-  padding-left: 17px;
+.uio_grid .btn_text em {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 17px;
+  height: 12px;
   background: url("../images/icons.gif") no-repeat;
-  background-position: 0 5px;
 }
-.uio_grid .btn_text .grid {
-  display: inline-block;
-  padding-left: 17px;
-  background: url("../images/icons.gif") no-repeat;
-  background-position: 0 -21px;
+.uio_grid .btn_text em.excel {
+  background-position: -30px -60px;
+}
+.uio_grid .btn_text em.grid {
+  background-position: -30px -60px;
 }
 .uio_grid .left_line {
   position: absolute;
@@ -108,57 +112,22 @@
   width: 100px;
   height: 100px;
 }
-.uio_grid .initializing_layer {
-  width: 100%;
-  height: 100%;
-  font-weight: bold;
-  text-align: center;
-  border-top: solid 1px #ccc;
-  border-bottom: solid 1px #ccc;
-  position: absolute;
-  background: #fff;
-}
-.uio_grid .initializing_layer div {
-  margin-top: 50px;
-}
-.uio_grid .initializing_layer img {
-  display: block;
-  margin: 10px auto 0;
-}
-.uio_grid .no_row_layer {
-  display: none;
+.uio_grid .state_layer {
   position: absolute;
   box-sizing: content-box;
   top: 0;
   left: 0;
   width: 100%;
-  padding-top: 50px;
-  border-top: solid 1px #ccc;
   border-bottom: solid 1px #ccc;
   background: #fff;
   font-weight: bold;
   text-align: center;
+  z-index: 10;
 }
-.uio_grid .loading_layer {
-  display: none;
-  position: absolute;
-  box-sizing: content-box;
-  top: 0;
-  left: 0;
-  width: 100%;
+.uio_grid .state_layer .layer_content {
   padding-top: 50px;
-  border-top: solid 1px #ccc;
-  border-bottom: solid 1px #ccc;
-  background: #fff;
-  font-weight: bold;
-  text-align: center;
-  z-index: 9;
 }
-.uio_grid .loading_layer img {
-  display: block;
-  margin: 10px auto 0;
-}
-.uio_grid .loading_layer .loading_img {
+.uio_grid .state_layer .layer_content .loading_img {
   display: block;
   margin: 10px auto 0;
   background: url("../images/ani_loading.gif");
@@ -320,23 +289,17 @@
   display: inline-block;
   overflow: hidden;
   margin-left: 6px;
-  height: 16px;
-  width: 10px;
-  background: url("../images/icons.gif") -30px -150px no-repeat;
-  font-size: 0;
-  line-height: 999px;
+  height: 15px;
+  width: 8px;
+  background: url("../images/icons.gif") -20px -60px no-repeat;
   vertical-align: middle;
   cursor: pointer;
 }
 .uio_grid table th .sorting_down {
-  height: 16px;
-  width: 10px;
-  background-position: 0 -150px;
+  background-position: 0 -60px;
 }
 .uio_grid table th .sorting_up {
-  height: 16px;
-  width: 10px;
-  background-position: -15px -150px;
+  background-position: -10px -60px;
 }
 .uio_grid table tr.selected {
   background-color: #f8f8f8;
@@ -476,13 +439,16 @@
   bottom: 0px;
   height: 15px;
   width: 100%;
-  align: center;
   border: 0;
-  background: url("../images/icons.gif") no-repeat 50% -170px;
   font-size: 0;
-  line-height: 999px;
-  font-size: 9px;
   text-align: center;
+}
+.uio_grid .toolbar .height_resize_bar span {
+  background: url("../images/icons.gif") no-repeat -70px -60px;
+  display: inline-block;
+  width: 17px;
+  height: 6px;
+  margin-top: 5px;
 }
 .uio_grid .toolbar .height_resize_handle {
   display: block;
@@ -498,10 +464,12 @@
   text-align: center;
 }
 .uio_grid .grid_pagination a,
-.uio_grid .grid_pagination strong {
+.uio_grid .grid_pagination strong,
+.uio_grid .grid_pagination span {
   display: inline-block;
   position: relative;
-  padding: 3px 8px 4px;
+  padding: 4px 8px 4px;
+  min-width: 13px;
   color: #333;
   font-size: 12px;
   font-weight: bold;
@@ -510,39 +478,65 @@
   vertical-align: middle;
 }
 .uio_grid .grid_pagination strong {
-  padding: 3px 6px 4px;
+  padding: 4px 6px 4px;
   color: #ff1313;
   border: 1px solid #d4d4d4;
   background: #e7e7e7;
 }
-.uio_grid .grid_pagination .next,
-.uio_grid .grid_pagination .next_end,
+.uio_grid .grid_pagination .pre_end,
+.uio_grid .grid_pagination .pre_end_off,
 .uio_grid .grid_pagination .pre,
-.uio_grid .grid_pagination .pre_end {
+.uio_grid .grid_pagination .pre_off,
+.uio_grid .grid_pagination .next,
+.uio_grid .grid_pagination .next_off,
+.uio_grid .grid_pagination .next_end,
+.uio_grid .grid_pagination .next_end_off {
   overflow: hidden;
-  width: 33px;
-  height: 11px;
+  width: 25px;
+  height: 24px;
   padding: 0;
+  border: 0;
   background: url("../images/icons.gif") no-repeat;
   font-size: 0;
-  line-height: 999px;
+  line-height: 999;
+  overflow: hidden;
   white-space: nowrap;
 }
-.uio_grid .grid_pagination .next {
-  margin-left: 10px;
-  background-position: 0 -50px;
+.uio_grid .grid_pagination .pre_end,
+.uio_grid .grid_pagination .pre_end_off,
+.uio_grid .grid_pagination .next_end,
+.uio_grid .grid_pagination .next_end_off {
+  width: 24px;
 }
-.uio_grid .grid_pagination .next_end {
-  width: 40px;
-  margin-left: 11px;
-  background-position: 0 -75px;
+.uio_grid .grid_pagination .pre,
+.uio_grid .grid_pagination .pre_off {
+  margin-right: 12px;
 }
-.uio_grid .grid_pagination .pre {
-  margin-right: 10px;
-  background-position: 0 -100px;
+.uio_grid .grid_pagination .next,
+.uio_grid .grid_pagination .next_off {
+  margin-left: 12px;
 }
 .uio_grid .grid_pagination .pre_end {
-  width: 40px;
-  margin-right: 8px;
-  background-position: 0 -125px;
+  background-position: 0 0;
+}
+.uio_grid .grid_pagination .pre_end_off {
+  background-position: 0 -30px;
+}
+.uio_grid .grid_pagination .pre {
+  background-position: -24px 0;
+}
+.uio_grid .grid_pagination .pre_off {
+  background-position: -24px -30px;
+}
+.uio_grid .grid_pagination .next {
+  background-position: -50px 0;
+}
+.uio_grid .grid_pagination .next_off {
+  background-position: -50px -30px;
+}
+.uio_grid .grid_pagination .next_end {
+  background-position: -75px 0;
+}
+.uio_grid .grid_pagination .next_end_off {
+  background-position: -75px -30px;
 }
