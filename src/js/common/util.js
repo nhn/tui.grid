@@ -183,7 +183,9 @@ var util = {
                 value = $.toJSON(value);
             }
             value = encodeURIComponent(value);
-            queryList.push(name + '=' + value);
+            if (value) {
+                queryList.push(name + '=' + value);
+            }
         });
 
         return queryList.join('&');
@@ -209,7 +211,9 @@ var util = {
                 value = $.parseJSON(value);
             } catch(e) {} // eslint-disable-line
 
-            obj[key] = value;
+            if (!_.isNull(value)) {
+                obj[key] = value;
+            }
         });
 
         return obj;

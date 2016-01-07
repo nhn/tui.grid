@@ -141,7 +141,11 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._showToolbarExcelBtns();
 
         this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged, this);
+        this.listenTo(this.router, 'route:read', this._onRouterRead);
 
+        if (!Backbone.History.started) {
+            Backbone.history.start();
+        }
         if (options.initialRequest) {
             if (!this.lastRequestedReadData) {
                 this._readDataAt(1, false);
@@ -163,6 +167,16 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     },
 
     /**
+     * Event listener for 'route:read' event on Router
+     * @param  {String} queryStr - Query string
+     * @private
+     */
+    _onRouterRead: function(queryStr) {
+        var data = util.toQueryObject(queryStr);
+        this._requestReadData(data);
+    },
+
+    /**
      * dataModel 이 network 통신을 할 수 있도록 설정한다.
      * @private
      */
@@ -177,19 +191,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _initializeRouter: function() {
         if (this.enableAjaxHistory) {
-            //router 생성
             this.router = new Router({
-                grid: this.grid,
                 net: this
             });
-            if (!Backbone.History.started) {
-                Backbone.history.start();
-            }
         }
     },
 
     /**
      * Shows the excel-buttons in a toolbar (control-panel) area if the matching api exist.
+     * @private
      */
     _showToolbarExcelBtns: function() {
         var toolbarModel = this.toolbarModel,
@@ -226,21 +236,21 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _onSubmit: function(submitEvent) {
         submitEvent.preventDefault();
-        /*
-        page 이동시 form input 을 수정하더라도,
-        formData 를 유지하기 위해 데이터를 기록한다.
-         */
         this._readDataAt(1, false);
     },
 
     /**
      * 폼 데이터를 설정한다.
-     * 내부에서 사용하는 메서드이므로 외부에서 사용하지 않기를 권장한다.
-     * @param {Object} formData 폼 데이터 정보
+     * @param {Object} data - 폼 데이터 정보
+     * @private
      */
-    setFormData: function(formData) {
-        //form data 를 실제 form 에 반영한다.
-        /* istanbul ignore next */
+    _setFormData: function(data) {
+        var formData = _.clone(data);
+        _.each(this.lastRequestedReadData, function(value, key) {
+            if ((_.isUndefined(formData[key]) || _.isNull(formData[key])) && value) {
+                formData[key] = '';
+            }
+        });
         formUtil.setFormData(this.$el, formData);
     },
 
@@ -325,19 +335,43 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _onReadError: function(dataModel, responseData, options) {}, // eslint-disable-line
 
     /**
-     * 가장 마지막에 조회 요청한 request 파라미터로 다시 요청한다.
+     * Requests 'readData' with last requested data.
+     * @api
      */
     reloadData: function() {
-        this.readData(this.lastRequestedReadData);
+        this._requestReadData(this.lastRequestedReadData);
+    },
+
+    /**
+     * Requests 'readData' to the server. The last requested data will be extended with new data.
+     * @api
+     * @param {Number} page - Page number
+     * @param {Object} data - Data(parameters) to send to the server
+     * @param {Boolean} resetData - If set to true, last requested data will be ignored.
+     */
+    readData: function(page, data, resetData) {
+        if (resetData) {
+            if (!data) {
+                data = {};
+            }
+            data.perPage = this.perPage;
+            this._changeSortOptions(data, this.dataModel.sortOptions);
+        } else {
+            data = _.assign({}, this.lastRequestedReadData, data);
+        }
+        data.page = page;
+        this._requestReadData(data);
     },
 
     /**
      * 데이터 조회 요청.
-     * 내부적으로 사용하는 메서드이므로 외부에서 호출하지 않기를 권장함.
      * @param {object} data 요청시 사용할 request 파라미터
+     * @private
      */
-    readData: function(data) {
+    _requestReadData: function(data) {
         var startNumber = 1;
+
+        this._setFormData(data);
 
         if (!this.isLocked) {
             this.renderModel.initializeVariables();
@@ -361,6 +395,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 reset: true
             });
             this.dataModel.setSortOptionValues(data.sortColumn, data.sortAscending);
+        }
+
+        if (this.router) {
+            this.router.navigate('read/' + util.toQueryString(data), {
+                trigger: false
+            });
         }
     },
 
@@ -414,19 +454,13 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
         data.page = page;
         data.perPage = this.perPage;
-
         this._changeSortOptions(data, sortOptions);
-
-        if (this.router) {
-            this.router.navigate('read/' + util.toQueryString(data), {
-                trigger: false
-            });
-        }
-        this.readData(data);
+        this._requestReadData(data);
     },
 
     /**
      * 서버로 API request 한다.
+     * @api
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {object} options Options
      *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
@@ -456,6 +490,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * Change window.location to registered url for downloading data
+     * @api
      * @param {string} type - Download type. 'excel' or 'excelAll'.
      *        Will be matched with API 'downloadExcel', 'downloadExcelAll'.
      */
@@ -478,6 +513,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * Set number of rows per page and reload current page
+     * @api
      * @param {number} perPage - Number of rows per page
      */
     setPerPage: function(perPage) {

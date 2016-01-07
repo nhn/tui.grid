@@ -14,13 +14,10 @@ var util = require('../common/util');
 var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype */{
     /**
      * @constructs
-     * @mixes module:base/common
      * @param  {object} attributes - Attributes
      */
     initialize: function(attributes) {
-        this.setOwnProperties({
-            net: attributes.net
-        });
+        this.net = attributes.net;
     },
 
     routes: {
@@ -28,18 +25,10 @@ var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype 
     },
 
     /**
-     * Backbone Router 에서 url 정보를 통해 서버로 read 요청을 한다.
-     * @param {String} queryStr 쿼리 문자열
+     * Read
+     * @param {String} queryStr - query string
      */
-    read: function(queryStr) {
-        var data = util.toQueryObject(queryStr);
-        //formData 를 설정한다.
-        this.net.setFormData(data);
-        //그 이후 read
-        this.net.readData(data);
-    }
+    read: function(queryStr) {}
 });
-
-_.assign(Router.prototype, common);
 
 module.exports = Router;
