@@ -19,6 +19,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
+        this.gridId = options.gridId;
         this.singleClickEdit = options.singleClickEdit;
         this.dimensionModel = options.dimensionModel;
         this.focusModel = options.focusModel;
@@ -239,7 +240,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             $('<div>').addClass('right_line')
         ]);
         this.$el.addClass('grid_wrapper uio_grid')
-            .attr('instanceId', this.gridId)
+            .attr('data-grid-id', this.gridId)
             .append(childElements);
 
         this._refreshHeight();
