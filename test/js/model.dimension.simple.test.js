@@ -249,6 +249,46 @@ describe('model.dimension', function() {
         });
     });
 
+    describe('refreshLayout', function() {
+        var OFFSET_TOP = 10,
+            OFFSET_LEFT = 11,
+            WIDTH = 20,
+            PARENT_HEIGHT = 30;
+            
+        var dimension;
+
+        beforeEach(function() {
+            dimension = new Dimension(null, {
+                columnModel: columnModel,
+                dataModel: dataModel,
+                domState: {
+                    getOffset: _.constant({
+                        top: OFFSET_TOP,
+                        left: OFFSET_LEFT
+                    }),
+                    getWidth: _.constant(WIDTH),
+                    getParentHeight: _.constant(PARENT_HEIGHT)
+                }
+            });
+        });
+
+        it('reset values with current dom state', function() {
+            dimension.refreshLayout();
+
+            dimension.get('width', WIDTH);
+            dimension.get('offsetTop', OFFSET_TOP);
+            dimension.get('offsetLeft', OFFSET_LEFT);
+        });
+
+        it('fit to parent height if fitToParentHeight options is true', function() {
+            dimension.set('fitToParentHeight', true);
+            spyOn(dimension, '_setHeight');
+            dimension.refreshLayout();
+
+            expect(dimension._setHeight).toHaveBeenCalledWith(PARENT_HEIGHT);
+        });
+    });
+
     describe('setWidth()', function() {
         var dimension, attrs;
 

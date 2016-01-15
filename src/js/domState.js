@@ -45,7 +45,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
 
     /**
      * Returns the height of the parent of container element.
-     * @return {[type]} [description]
+     * @return {Number} Height of the parent of container element
      */
     getParentHeight: function() {
         return this.$el.parent().height();
