@@ -209,7 +209,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             mouseDownX: pageX,
             mouseDownY: pageY
         });
-        this.dimensionModel.refreshLayout();
         $(document)
             .on('mousemove', $.proxy(this._onMouseMove, this))
             .on('mouseup', $.proxy(this._detachDragEvents, this))

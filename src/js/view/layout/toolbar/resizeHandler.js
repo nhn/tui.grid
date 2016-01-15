@@ -58,7 +58,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     _onMouseDown: function(mouseDownEvent) {
         mouseDownEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
-        this.dimensionModel.refreshLayout();
         this._attachMouseEvent();
     },
 

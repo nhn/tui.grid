@@ -44,6 +44,14 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
     },
 
     /**
+     * Returns the height of the parent of container element.
+     * @return {[type]} [description]
+     */
+    getParentHeight: function() {
+        return this.$el.parent().height();
+    },
+
+    /**
      * Returns whether there's child element having focus.
      * @returns {boolean} True if there's child element having focus
      */

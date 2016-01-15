@@ -24,6 +24,7 @@ var defaultOptions = {
     autoNumbering: true,
     headerHeight: 35,
     rowHeight: 27,
+    fitToParentHeight: false,
     displayRowCount: 10,
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
@@ -120,6 +121,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         var attrs = {
             headerHeight: options.headerHeight,
             rowHeight: options.rowHeight,
+            fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
             minimumColumnWidth: options.minimumColumnWidth,

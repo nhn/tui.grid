@@ -78,7 +78,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         displayRowCount: 1,
         scrollBarSize: 17,
         scrollX: true,
-        scrollY: true
+        scrollY: true,
+        fitToParentHeight: false
     },
 
     /**
@@ -833,6 +834,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             offsetLeft: offset.left,
             width: domState.getWidth()
         });
+        
+        if (this.get('fitToParentHeight')) {
+            this._setHeight(domState.getParentHeight());
+        }
     },
 
     /**
