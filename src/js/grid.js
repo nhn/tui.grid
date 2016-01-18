@@ -344,12 +344,20 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return emitter;
     },
 
+    /**
+     * Disables all rows.
+     * @api
+     */
     disable: function() {
-        this.modelManager.dataModel.disable();
+        this.modelManager.dataModel.setDisabled(true);
     },
 
+    /**
+     * Enables all rows.
+     * @api
+     */
     enable: function() {
-        this.modelManager.dataModel.enable();    
+        this.modelManager.dataModel.setDisabled(false);
     },
 
     /**

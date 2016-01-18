@@ -37,17 +37,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             },
 
             /**
-             * Temporary array to store previously disabled rows when calling `disable()`
-             * @type {Array}
-             */
-            // prevDisabledRows: null,
-
-            /**
-             * Whether 'disable()` method have been called before calling 'enable()' method.
+             * Whether the all rows are disabled.
+             * This is not related to individual state of each rows.
              * @type {Boolean}
              */
             isDisabled: false
-
         });
         if (!this.sortOptions.useClient) {
             this.comparator = null;
@@ -650,26 +644,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * Enables all rows.
-     * The rows disabled individually prior to calling `disable()` will remain disabled.
+     * Enable or Disable all rows.
+     * @param  {Boolean} isDisabled - True if disabled.
      */
-    enable: function() {
-        // this.each(function(row) {
-        //     row.setRowState('');
-        // });
-        this.isDisabled = false;
-        this.trigger('disableChanged');
-    },
-
-    /**
-     * Disables all rows.
-     */
-    disable: function() {
-        // this.each(function(row) {
-        //     row.setRowState('DISABLED');
-        // });
-        this.isDisabled = true;
-        this.trigger('disableChanged');
+    setDisabled: function(isDisabled) {
+        if (this.isDisabled !== isDisabled) {
+            this.isDisabled = isDisabled;
+            this.trigger('disableChanged');
+        }
     },
 
     /**

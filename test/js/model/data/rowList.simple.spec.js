@@ -89,33 +89,37 @@ describe('Data.RowList - simple', function() {
         });
     });
 
-    describe('disable()', function() {
-        it('Disable all rows', function() {
-            rowList.disable();
-            rowList.each(function(row) {
-                expect(row.getRowState().isDisabled).toBe(true);
-            });
-        });
-    });
+    describe('setDisabled()', function() {
+        var triggered;
 
-    describe('enable()', function() {
-        it('Enable all rows', function() {
-            rowList.disable();
-            rowList.enable();
-
-            rowList.each(function(row) {
-                expect(row.getRowState().isDisabled).toBe(false);
+        beforeEach(function() {
+            triggered = false;
+            rowList.on('disableChanged', function() {
+                triggered = true;
             });
         });
 
-        it('Dosen\'t effect to individually disbled row', function() {
-            rowList.disableRow(0);
-            rowList.enable();
+        it('sets isDisabled', function() {
+            rowList.isDisabled = false;
+            rowList.setDisabled(true);
+            expect(rowList.isDisabled).toBe(true);
 
-            expect(rowList.get(0).getRowState().isDisabled).toBe(true);
+            rowList.setDisabled(false);
+            expect(rowList.isDisabled).toBe(false);
+        });
+
+        it('if isDisabled is changed, trigger disableChanged event', function() {
+            rowList.isDisabled = false;
+            rowList.setDisabled(true);
+            expect(triggered).toBe(true);
+        });
+
+        it('if isDisabled is not changed, does not trigger disableChanged event', function() {
+            rowList.isDisabled = true;
+            rowList.setDisabled(true);
+            expect(triggered).toBe(false);
         });
     });
-
 
     describe('checkAll()', function() {
         it('disabled 상태를 제외한 모든 행의 _button컬럼을 true로 설정한다.', function() {
