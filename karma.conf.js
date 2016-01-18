@@ -41,7 +41,7 @@ module.exports = function(config) {
             {pattern: 'images/*', included: false},
 
             'src/js/**/*.js',
-            'test/**/*.test.js'
+            'test/**/*.spec.js'
         ],
 
         // list of files to exclude
@@ -51,10 +51,11 @@ module.exports = function(config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'src/js/**/*.js': ['browserify'],
-            'test/**/*.test.js': ['browserify']
+            'test/**/*.spec.js': ['browserify']
         },
 
         browserify: {
+            paths: ['src/js/'],
             debug: true,
             transform: [istanbul({
                 ignore: ['test/**/*'],
