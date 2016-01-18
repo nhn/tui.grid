@@ -34,7 +34,20 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                 columnName: 'rowKey',
                 isAscending: true,
                 useClient: (_.isBoolean(options.useClientSort) ? options.useClientSort : true)
-            }
+            },
+
+            /**
+             * Temporary array to store previously disabled rows when calling `disable()`
+             * @type {Array}
+             */
+            // prevDisabledRows: null,
+
+            /**
+             * Whether 'disable()` method have been called before calling 'enable()' method.
+             * @type {Boolean}
+             */
+            isDisabled: false
+
         });
         if (!this.sortOptions.useClient) {
             this.comparator = null;
@@ -634,6 +647,29 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return _.some(modifiedRowsArr, function(modifiedRows) {
             return modifiedRows.length > 0;
         });
+    },
+
+    /**
+     * Enables all rows.
+     * The rows disabled individually prior to calling `disable()` will remain disabled.
+     */
+    enable: function() {
+        // this.each(function(row) {
+        //     row.setRowState('');
+        // });
+        this.isDisabled = false;
+        this.trigger('disableChanged');
+    },
+
+    /**
+     * Disables all rows.
+     */
+    disable: function() {
+        // this.each(function(row) {
+        //     row.setRowState('DISABLED');
+        // });
+        this.isDisabled = true;
+        this.trigger('disableChanged');
     },
 
     /**

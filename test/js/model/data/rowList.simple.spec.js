@@ -74,7 +74,7 @@ describe('Data.RowList - simple', function() {
             expect(rowList.getValue(0, 'c1')).toBe('New0-1');
             expect(rowList.getValue(0, 'c1', true)).toBe('0-1');
         });
-    })
+    });
 
     describe('disableRow(), enableRow()', function() {
         it('rowState의 isDisabled 속성을 변경한다.', function() {
@@ -88,6 +88,34 @@ describe('Data.RowList - simple', function() {
             expect(row.getRowState().isDisabled).toBe(false);
         });
     });
+
+    describe('disable()', function() {
+        it('Disable all rows', function() {
+            rowList.disable();
+            rowList.each(function(row) {
+                expect(row.getRowState().isDisabled).toBe(true);
+            });
+        });
+    });
+
+    describe('enable()', function() {
+        it('Enable all rows', function() {
+            rowList.disable();
+            rowList.enable();
+
+            rowList.each(function(row) {
+                expect(row.getRowState().isDisabled).toBe(false);
+            });
+        });
+
+        it('Dosen\'t effect to individually disbled row', function() {
+            rowList.disableRow(0);
+            rowList.enable();
+
+            expect(rowList.get(0).getRowState().isDisabled).toBe(true);
+        });
+    });
+
 
     describe('checkAll()', function() {
         it('disabled 상태를 제외한 모든 행의 _button컬럼을 true로 설정한다.', function() {

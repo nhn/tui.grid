@@ -18,15 +18,17 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
-        var rowKey, rowData;
-
-        rowKey = attributes && attributes['rowKey'];
-        rowData = this.collection.dataModel.get(rowKey);
+    initialize: function(attributes, options) {
+        var rowKey = attributes && attributes['rowKey'],
+            rowListData = this.collection.dataModel,
+            rowData = rowListData.get(rowKey);
 
         if (rowData) {
             this.listenTo(rowData, 'change restore', this._onDataModelChange);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
+            this.listenTo(rowListData, 'disableChanged', this._onRowListDisabledChanged);
+
+            this.rowData = rowData;
         }
     },
 
@@ -46,29 +48,66 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
+     *
+     * @return {} [description]
+     */
+    _getColumnNameList: function() {
+        var columnModels = this.collection.columnModel.getVisibleColumnModelList(null, true);
+        return _.pluck(columnModels, 'columnName');
+    },
+
+    /**
+     * isDisabled
+     * @param  {[type]} columnName [description]
+     * @param  {[type]} rowState   [description]
+     * @return {[type]}            [description]
+     */
+    _isDisabled: function(columnName, rowState) {
+        var isDisabled = this.collection.dataModel.isDisabled;
+
+        if (!isDisabled) {
+            isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
+        }
+        return isDisabled;
+    },
+
+    /**
+     * [function description]
+     * @return {[type]} [description]
+     */
+    _onRowListDisabledChanged: function() {
+        var columnNames = this._getColumnNameList(),
+            rowState = this.rowData.getRowState();
+
+        _.each(columnNames, function(columnName) {
+            this.setCell(columnName, {
+                isDisabled: this._isDisabled(columnName, rowState)
+            });
+        }, this);
+    },
+
+    /**
      * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
      * @private
      */
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
-            row = dataModel.get(this.get('rowKey')),
-            columnModelList = this.collection.columnModel.getVisibleColumnModelList(null, true),
-            rowState = row.getRowState(),
+            columnNames = this._getColumnNameList(),
+            rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {
             return;
         }
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel['columnName'],
-                cellData = this.get(columnName),
+        _.each(columnNames, function(columnName) {
+            var cellData = this.get(columnName),
                 rowModel = this,
                 isEditable, isDisabled;
 
             if (!tui.util.isUndefined(cellData)) {
-                isEditable = row.isEditable(columnName);
-                isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
+                isEditable = this.rowData.isEditable(columnName);
+                isDisabled = this._isDisabled(columnName, rowState);
                 if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
                     rowModel = this.collection.get(cellData['mainRowKey']);
                 }
@@ -76,7 +115,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     param = {
                         isDisabled: isDisabled,
                         isEditable: isEditable,
-                        className: row.getClassNameList(columnName).join(' ')
+                        className: this.rowData.getClassNameList(columnName).join(' ')
                     };
                     rowModel.setCell(columnName, param);
                 }
@@ -85,8 +124,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 형식에 맞게 가공한다.
+     * Backbone 이 model 생성 시 내부적으로 parse 를 호출하여 데이터를 형식에 맞게 가공한다.
      * @param {Array} data  원본 데이터
+     * @override
      * @return {Array}  형식에 맞게 가공된 데이터
      */
     parse: function(data, options) {
@@ -102,12 +142,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _formatData: function(data, dataModel) {
         var rowKey = data['rowKey'],
             row = dataModel.get(rowKey),
-            rowState = row.getRowState(),
-            isDisabled = rowState.isDisabled;
+            rowState = row.getRowState();
 
         _.each(data, function(value, columnName) {
-            var rowSpanData,
-                isEditable = row.isEditable(columnName);
+            var rowSpanData;
 
             if (columnName !== 'rowKey' && columnName !== '_extraData') {
                 if (dataModel.isRowSpanEnable() &&
@@ -121,8 +159,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                         isMainRow: true
                     };
                 }
-                isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : isDisabled;
-
                 data[columnName] = {
                     rowKey: rowKey,
                     columnName: columnName,
@@ -132,8 +168,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     isMainRow: rowSpanData.isMainRow,
                     mainRowKey: rowSpanData.mainRowKey,
                     //Change attribute properties
-                    isEditable: isEditable,
-                    isDisabled: isDisabled,
+                    isEditable: row.isEditable(columnName),
+                    isDisabled: this._isDisabled(columnName, rowState),
                     optionList: [],
                     className: row.getClassNameList(columnName).join(' '),
 

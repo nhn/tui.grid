@@ -344,6 +344,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return emitter;
     },
 
+    disable: function() {
+        this.modelManager.dataModel.disable();
+    },
+
+    enable: function() {
+        this.modelManager.dataModel.enable();    
+    },
+
     /**
      * Disables the row identified by the rowkey.
      * @api
