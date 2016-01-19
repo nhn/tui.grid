@@ -26,7 +26,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         if (rowData) {
             this.listenTo(rowData, 'change restore', this._onDataModelChange);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
-            this.listenTo(rowListData, 'disableChanged', this._onRowListDisabledChanged);
+            this.listenTo(rowListData, 'disabledChanged', this._onRowListDisabledChanged);
 
             this.rowData = rowData;
         }
@@ -48,8 +48,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     *
-     * @return {} [description]
+     * Returns an array of visible column names.
+     * @return {Array.<String>} Visible column names
+     * @private
      */
     _getColumnNameList: function() {
         var columnModels = this.collection.columnModel.getVisibleColumnModelList(null, true);
@@ -57,10 +58,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * isDisabled
-     * @param  {[type]} columnName [description]
-     * @param  {[type]} rowState   [description]
-     * @return {[type]}            [description]
+     * Returns whether the state of specified column is disabled.
+     * @param  {String} columnName - Column name
+     * @param  {{isEditable: boolean, isDisabled: boolean}} rowState - Row state
+     * @return {Boolean} - True if disabled
+     * @private
      */
     _isDisabled: function(columnName, rowState) {
         var isDisabled = this.collection.dataModel.isDisabled;
@@ -72,8 +74,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * [function description]
-     * @return {[type]} [description]
+     * Event handler for 'disabledChanged' event on model/data/rowList
      */
     _onRowListDisabledChanged: function() {
         var columnNames = this._getColumnNameList(),

@@ -650,7 +650,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     setDisabled: function(isDisabled) {
         if (this.isDisabled !== isDisabled) {
             this.isDisabled = isDisabled;
-            this.trigger('disableChanged');
+            this.trigger('disabledChanged');
         }
     },
 

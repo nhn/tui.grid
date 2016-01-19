@@ -300,6 +300,14 @@ describe('view.painter.cell.text', function() {
 
                 expect($input.length).toBe(0);
             });
+
+            it('if dataModel.isDisabled is true, does not start edit mode', function() {
+                grid.dataModel.isDisabled = true;
+                cellPainter._startEdit($td);
+                $input = $td.find('input');
+
+                expect($input.length).toBe(0);
+            });
         });
 
         describe('_endEdit', function() {

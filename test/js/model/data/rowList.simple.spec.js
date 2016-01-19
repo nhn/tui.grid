@@ -94,7 +94,7 @@ describe('Data.RowList - simple', function() {
 
         beforeEach(function() {
             triggered = false;
-            rowList.on('disableChanged', function() {
+            rowList.on('disabledChanged', function() {
                 triggered = true;
             });
         });
@@ -108,13 +108,13 @@ describe('Data.RowList - simple', function() {
             expect(rowList.isDisabled).toBe(false);
         });
 
-        it('if isDisabled is changed, trigger disableChanged event', function() {
+        it('if isDisabled is changed, trigger disabledChanged event', function() {
             rowList.isDisabled = false;
             rowList.setDisabled(true);
             expect(triggered).toBe(true);
         });
 
-        it('if isDisabled is not changed, does not trigger disableChanged event', function() {
+        it('if isDisabled is not changed, does not trigger disabledChanged event', function() {
             rowList.isDisabled = true;
             rowList.setDisabled(true);
             expect(triggered).toBe(false);
