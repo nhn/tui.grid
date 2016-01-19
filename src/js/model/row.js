@@ -26,7 +26,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         if (rowData) {
             this.listenTo(rowData, 'change restore', this._onDataModelChange);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
-            this.listenTo(rowListData, 'disabledChanged', this._onRowListDisabledChanged);
+            this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
 
             this.rowData = rowData;
         }
@@ -74,9 +74,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Event handler for 'disabledChanged' event on model/data/rowList
+     * Event handler for 'disabledChanged' event on dataModel
      */
-    _onRowListDisabledChanged: function() {
+    _onDataModelDisabledChanged: function() {
         var columnNames = this._getColumnNameList(),
             rowState = this.rowData.getRowState();
 

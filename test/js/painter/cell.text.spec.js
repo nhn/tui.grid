@@ -301,7 +301,7 @@ describe('view.painter.cell.text', function() {
                 expect($input.length).toBe(0);
             });
 
-            it('if dataModel.isDisabled is true, does not start edit mode', function() {
+            it('do nothing if dataModel.isDisabled is true', function() {
                 grid.dataModel.isDisabled = true;
                 cellPainter._startEdit($td);
                 $input = $td.find('input');

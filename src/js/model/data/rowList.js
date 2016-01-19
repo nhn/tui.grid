@@ -38,7 +38,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
             /**
              * Whether the all rows are disabled.
-             * This is not related to individual state of each rows.
+             * This state is not related to individual state of each rows.
              * @type {Boolean}
              */
             isDisabled: false
@@ -644,8 +644,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * Enable or Disable all rows.
-     * @param  {Boolean} isDisabled - True if disabled.
+     * Enables or Disables all rows.
+     * @param  {Boolean} isDisabled - Whether disabled or not
      */
     setDisabled: function(isDisabled) {
         if (this.isDisabled !== isDisabled) {
