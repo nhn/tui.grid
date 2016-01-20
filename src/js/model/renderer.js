@@ -42,8 +42,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
             .listenTo(this.dataModel, 'add remove sort reset', this._onRowListChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
-            .listenTo(lside, 'valueChange', this._onValueChange)
-            .listenTo(rside, 'valueChange', this._onValueChange)
+            .listenTo(lside, 'valueChange', this._executeRelation)
+            .listenTo(rside, 'valueChange', this._executeRelation)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -68,15 +68,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         // constMap.renderState
         state: renderStateMap.EMPTY
-    },
-
-    /**
-     * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
-     * @param {number} rowIndex row 의 index 값
-     * @private
-     */
-    _onValueChange: function(rowIndex) {
-        this.executeRelation(rowIndex);
     },
 
     /**
@@ -107,13 +98,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * 내부 변수를 초기화 한다.
+     * Initializes own properties.
+     * (called by module:addon/net)
      */
     initializeVariables: function() {
         this.set({
             top: 0,
             scrollTop: 0,
-            $scrollTarget: null,
             scrollLeft: 0,
             startIndex: 0,
             endIndex: 0,
@@ -168,79 +159,92 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * rendering 할 데이터를 생성한다.
+     * Returns the new data object for rendering based on rowDataModel and specified column names.
+     * @param  {Object} rowDataModel - Instance of module:model/data/row
+     * @param  {Array.<String>} columnNames - Column names
+     * @param  {Number} rowNum - Row number
+     * @return {Object} - view data object
+     */
+    _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
+        var viewData = {
+            rowKey: rowDataModel.get('rowKey'),
+            _extraData: rowDataModel.get('_extraData')
+        };
+
+        _.each(columnNames, function(columnName) {
+            var value = rowDataModel.get(columnName);
+            if (columnName === '_number') {
+                value = rowNum;
+            }
+            viewData[columnName] = value;
+        });
+
+        return viewData;
+    },
+
+    /**
+     * Returns the object that contains two array of column names splitted by columnFixCount.
+     * @return {{lside: Array, rside: Array}} - Column names map
+     */
+    _getColumnNamesOfEachSide: function() {
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
+            columnModels = this.columnModel.getVisibleColumnModelList(null, true),
+            columnNames = _.pluck(columnModels, 'columnName');
+
+        return {
+            lside: columnNames.slice(0, columnFixCount),
+            rside: columnNames.slice(columnFixCount)
+        }
+    },
+
+    /**
+     * Resets specified view model list.
+     * @param  {String} attrName - 'lside' or 'rside'
+     * @param  {Object} viewData - Converted data for rendering view
+     */
+    _resetViewModelList: function(attrName, viewData) {
+        this.get(attrName).clear().reset(viewData, {
+            parse: true
+        });
+    },
+
+    /**
+     * Resets both sides(lside, rside) of view model list with given range of data model list.
+     * @param  {Number} startIndex - Start index
+     * @param  {Number} endIndex - End index
+     */
+    _resetAllViewModelListWithRange: function(startIndex, endIndex) {
+        var columnNamesMap = this._getColumnNamesOfEachSide(),
+            rowNum = this.get('startNumber') + startIndex,
+            lsideData = [],
+            rsideData = [],
+            rowDataModel, i, len;
+
+        for (i = startIndex; i <= endIndex; i += 1) {
+            rowDataModel = this.dataModel.at(i);
+            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, rowNum));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside));
+            rowNum += 1;
+        }
+        this._resetViewModelList('lside', lsideData);
+        this._resetViewModelList('rside', rsideData);
+    },
+
+    /**
+     * Refreshes the rendering range and the list of view models, and triggers events.
      * @param {boolean} isDataModelChanged - The boolean value whether dataModel has changed
      */
     refresh: function(isDataModelChanged) {
+        var startIndex, endIndex, i;
+
         this._setRenderingRange(this.get('scrollTop'));
+        startIndex = this.get('startIndex');
+        endIndex = this.get('endIndex');
 
-        //TODO : rendering 해야할 데이터만 가져온다.
-        //TODO : eslint 에러 수정
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true), // eslint-disable-line
-            columnList = this.columnModel.getVisibleColumnModelList(null, true),
-            columnNameList = _.pluck(columnList, 'columnName'),
+        this._resetAllViewModelListWithRange(startIndex, endIndex);
 
-            lsideColumnList = columnNameList.slice(0, columnFixCount),
-            rsideColumnList = columnNameList.slice(columnFixCount),
-
-            lsideRowList = [],
-            rsideRowList = [],
-            lsideRow = [],
-            rsideRow = [],
-            startIndex = this.get('startIndex'),
-            endIndex = this.get('endIndex'),
-            num = this.get('startNumber') + startIndex,
-            len,
-            i,
-            rowModel,
-            rowKey;
-
-        for (i = startIndex; i < endIndex + 1; i += 1) {
-            rowModel = this.dataModel.at(i);
-            if (rowModel) {
-                rowKey = rowModel.get('rowKey');
-
-                //데이터 초기화
-                lsideRow = {
-                    '_extraData': rowModel.get('_extraData'),
-                    'rowKey': rowKey
-                };
-                rsideRow = {
-                    '_extraData': rowModel.get('_extraData'),
-                    'rowKey': rowKey
-                };
-
-                //lside 데이터 먼저 채운다.
-                _.each(lsideColumnList, function (columnName) { // eslint-disable-line
-                    if (columnName === '_number') {
-                        lsideRow[columnName] = num++; // eslint-disable-line
-                    } else {
-                        lsideRow[columnName] = rowModel.get(columnName);
-                    }
-                });
-
-                _.each(rsideColumnList, function (columnName) { // eslint-disable-line
-                    if (columnName === '_number') {
-                        rsideRow[columnName] = num++; // eslint-disable-line
-                    } else {
-                        rsideRow[columnName] = rowModel.get(columnName);
-                    }
-                });
-                lsideRowList.push(lsideRow);
-                rsideRowList.push(rsideRow);
-            }
-        }
-
-        this.get('lside').clear().reset(lsideRowList, {
-            parse: true
-        });
-        this.get('rside').clear().reset(rsideRowList, {
-            parse: true
-        });
-
-        len = rsideRowList.length + startIndex;
-        for (i = startIndex; i < len; i += 1) {
-            this.executeRelation(i);
+        for (i = startIndex; i < endIndex; i += 1) {
+            this._executeRelation(i);
         }
 
         if (this.isColumnModelChanged) {
@@ -312,13 +316,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * rowIndex 에 해당하는 relation 을 수행한다.
-     * @param {Number} rowIndex row 의 index 값
+     * Executes the relation of the row identified with rowIndex
+     * @param {Number} rowIndex - Row index
+     * @private
      */
-    executeRelation: function(rowIndex) {
+    _executeRelation: function(rowIndex) {
         var row = this.dataModel.at(rowIndex),
             renderIdx = rowIndex - this.get('startIndex'),
             rowModel, relationResult;
+
         relationResult = row.getRelationResult();
 
         _.each(relationResult, function(changes, columnName) {
