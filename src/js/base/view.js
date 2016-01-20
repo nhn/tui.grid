@@ -43,9 +43,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         if (!_.isArray(views)) {
             views = [views];
         }
-        _.each(views, function(view) {
-            this._children.push(view);
-        }, this);
+        [].push.apply(this._children, views);
     },
 
     /**
@@ -53,10 +51,8 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
      * @return {array.<HTMLElement>} An array of element of children
      */
     _renderChildren: function() {
-        var elements = [];
-
-        _.each(this._children, function(view) {
-            elements.push(view.render().el);
+        var elements = _.map(this._children, function(view) {
+            return view.render().el;
         });
         return elements;
     },
@@ -91,7 +87,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
      * 등록되어있는 자식 View 들을 제거한다.
      */
     _destroyChildren: function() {
-        if (_.isArray(this._children)) {
+        if (this._children) {
             while (this._children.length > 0) {
                 this._children.pop().destroy();
             }

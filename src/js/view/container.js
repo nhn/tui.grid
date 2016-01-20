@@ -245,6 +245,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this._refreshHeight();
         this.trigger('rendered');
+        return this;
     },
 
     /**
