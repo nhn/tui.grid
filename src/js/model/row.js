@@ -1,5 +1,5 @@
 /**
- * @fileoverview RowList 클래스파일
+ * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -35,8 +35,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     idAttribute: 'rowKey',
 
     /**
-     * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
-     * @param {Object} model    변경이 발생한 row 모델
+     * Event handler for 'change restore' event on rowData model
+     * @param {Object} model - RowData model on which event occurred
      * @private
      */
     _onDataModelChange: function(model) {
@@ -54,19 +54,20 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _getColumnNameList: function() {
         var columnModels = this.collection.columnModel.getVisibleColumnModelList(null, true);
+
         return _.pluck(columnModels, 'columnName');
     },
 
     /**
      * Returns whether the state of specified column is disabled.
      * @param  {String} columnName - Column name
-     * @param  {{isEditable: boolean, isDisabled: boolean}} rowState - Row state
+     * @param  {{isDisabledCheck: Boolean, isDisabled: Boolean, isChecked: Boolean}} rowState - Row state
      * @return {Boolean} - True if disabled
      * @private
      */
     _isDisabled: function(columnName, rowState) {
         var isDisabled = this.collection.dataModel.isDisabled;
-
+        
         if (!isDisabled) {
             isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
         }
@@ -88,7 +89,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
+     * Sets the 'isDisabled', 'isEditable', 'className' property of each cell data.
      * @private
      */
     _setRowExtraData: function() {
@@ -125,19 +126,20 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Backbone 이 model 생성 시 내부적으로 parse 를 호출하여 데이터를 형식에 맞게 가공한다.
-     * @param {Array} data  원본 데이터
+     * Overrides Backbone.Model.parse
+     * (this method is called before initialize method)
+     * @param {Array} data - Original data
+     * @return {Array} - Converted data.
      * @override
-     * @return {Array}  형식에 맞게 가공된 데이터
      */
     parse: function(data, options) {
         return this._formatData(data, options.collection.dataModel);
     },
 
     /**
-     * 데이터를 View 에서 사용할 수 있도록 가공한다.
-     * @param {Array} data  원본 데이터
-     * @return {Array}  가공된 데이터
+     * Convert the original data to rendering data.
+     * @param {Array} data - Original data
+     * @return {Array} - Converted data
      * @private
      */
     _formatData: function(data, dataModel) {
@@ -164,17 +166,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     rowKey: rowKey,
                     columnName: columnName,
                     value: value,
-                    //Rendering properties
                     rowSpan: rowSpanData.count,
                     isMainRow: rowSpanData.isMainRow,
                     mainRowKey: rowSpanData.mainRowKey,
-                    //Change attribute properties
                     isEditable: row.isEditable(columnName),
                     isDisabled: this._isDisabled(columnName, rowState),
-                    optionList: [],
                     className: row.getClassNameList(columnName).join(' '),
-
-                    changed: []    //변경된 프로퍼티 목록들
+                    optionList: [], // for list type column (select, checkbox, radio)
+                    changed: [] //changed property names
                 };
             }
         }, this);
@@ -182,10 +181,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Cell 의 값을 변경한다.
-     * - 참조형 데이터 타입이기 때문에 change 이벤트 발생을 위해 이 method 를 사용하여 값 변경을 수행한다.
-     * @param {String} columnName   컬럼명
-     * @param {{key: value}} param  key:value 로 이루어진 셀에서 변경할 프로퍼티 목록
+     * Sets the cell data.
+     * (Each cell data is reference type, so do not change the cell data directly and
+     *  use this method to trigger change event)
+     * @param {String} columnName - Column name
+     * @param {Object} param - Key-Value pair of the data to change
      */
     setCell: function(columnName, param) {
         var isValueChanged = false,
