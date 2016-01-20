@@ -25,7 +25,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param {String[]} eventNames - An array of the event names
      * @private
      */
-    _listenAndPass: function(target, eventNames) {
+    _listenForThrough: function(target, eventNames) {
         _.each(eventNames, function(eventName) {
             this.listenTo(target, eventName, _.bind(this._triggerOnPublic, this, eventName));
         }, this);
@@ -38,7 +38,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {String} publicEventName - New event name for public use
      * @private
      */
-    _listenAndRename: function(target, eventName, publicEventName) {
+    _listenForRename: function(target, eventName, publicEventName) {
         this.listenTo(target, eventName, _.bind(this._triggerOnPublic, this, publicEventName));
     },
 
@@ -57,7 +57,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param {module:addon/net} - Net addon object
      */
     listenToNetAddon: function(net) {
-        this._listenAndPass(net, [
+        this._listenForThrough(net, [
             'beforeRequest',
             'response',
             'successResponse',
@@ -71,7 +71,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {module:view/container} container - Container view object
      */
     listenToContainerView: function(container) {
-        this._listenAndPass(container, [
+        this._listenForThrough(container, [
             'click',
             'dblclick',
             'mousedown',
@@ -88,7 +88,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {module:model/focus} focusModel - Focus model
      */
     listenToFocusModel: function(focusModel) {
-        this._listenAndRename(focusModel, 'select', 'selectRow');
+        this._listenForRename(focusModel, 'select', 'selectRow');
     }
 });
 
