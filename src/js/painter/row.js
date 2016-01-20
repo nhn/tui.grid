@@ -77,7 +77,16 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
         var html = '';
 
         if (tui.util.isUndefined(model.get('rowKey'))) {
-           return html;
+            // _.times(columnModelList.length, function() {
+            //     html += '<td></td>'
+            // });
+            // return this.template({
+            //     key: '',
+            //     height: 27,
+            //     contents: html,
+            //     className: ''
+            // });
+            return '';
         }
 
         _.each(columnModelList, function(columnModel) {

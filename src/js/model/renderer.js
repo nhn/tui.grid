@@ -226,13 +226,18 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside));
             rowNum += 1;
         }
+
+        // _.times(5, function() {
+        //     lsideData.push({});
+        //     rsideData.push({});
+        // });
         this._resetViewModelList('lside', lsideData);
         this._resetViewModelList('rside', rsideData);
     },
 
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
-     * @param {boolean} isDataModelChanged - The boolean value whether dataModel has changed
+     * @param {Boolean} isDataModelChanged - The boolean value whether dataModel has changed
      */
     refresh: function(isDataModelChanged) {
         var startIndex, endIndex, i;
