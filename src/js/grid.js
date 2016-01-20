@@ -345,6 +345,22 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Disables all rows.
+     * @api
+     */
+    disable: function() {
+        this.modelManager.dataModel.setDisabled(true);
+    },
+
+    /**
+     * Enables all rows.
+     * @api
+     */
+    enable: function() {
+        this.modelManager.dataModel.setDisabled(false);
+    },
+
+    /**
      * Disables the row identified by the rowkey.
      * @api
      * @param {(number|string)} rowKey - The unique key of the target row

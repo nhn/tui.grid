@@ -74,7 +74,7 @@ describe('Data.RowList - simple', function() {
             expect(rowList.getValue(0, 'c1')).toBe('New0-1');
             expect(rowList.getValue(0, 'c1', true)).toBe('0-1');
         });
-    })
+    });
 
     describe('disableRow(), enableRow()', function() {
         it('rowState의 isDisabled 속성을 변경한다.', function() {
@@ -86,6 +86,38 @@ describe('Data.RowList - simple', function() {
 
             rowList.enableRow(0);
             expect(row.getRowState().isDisabled).toBe(false);
+        });
+    });
+
+    describe('setDisabled()', function() {
+        var triggered;
+
+        beforeEach(function() {
+            triggered = false;
+            rowList.on('disabledChanged', function() {
+                triggered = true;
+            });
+        });
+
+        it('sets isDisabled', function() {
+            rowList.isDisabled = false;
+            rowList.setDisabled(true);
+            expect(rowList.isDisabled).toBe(true);
+
+            rowList.setDisabled(false);
+            expect(rowList.isDisabled).toBe(false);
+        });
+
+        it('if isDisabled is changed, trigger disabledChanged event', function() {
+            rowList.isDisabled = false;
+            rowList.setDisabled(true);
+            expect(triggered).toBe(true);
+        });
+
+        it('if isDisabled is not changed, does not trigger disabledChanged event', function() {
+            rowList.isDisabled = true;
+            rowList.setDisabled(true);
+            expect(triggered).toBe(false);
         });
     });
 

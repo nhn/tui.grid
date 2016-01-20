@@ -34,7 +34,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                 columnName: 'rowKey',
                 isAscending: true,
                 useClient: (_.isBoolean(options.useClientSort) ? options.useClientSort : true)
-            }
+            },
+
+            /**
+             * Whether the all rows are disabled.
+             * This state is not related to individual state of each rows.
+             * @type {Boolean}
+             */
+            isDisabled: false
         });
         if (!this.sortOptions.useClient) {
             this.comparator = null;
@@ -634,6 +641,17 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return _.some(modifiedRowsArr, function(modifiedRows) {
             return modifiedRows.length > 0;
         });
+    },
+
+    /**
+     * Enables or Disables all rows.
+     * @param  {Boolean} isDisabled - Whether disabled or not
+     */
+    setDisabled: function(isDisabled) {
+        if (this.isDisabled !== isDisabled) {
+            this.isDisabled = isDisabled;
+            this.trigger('disabledChanged');
+        }
     },
 
     /**

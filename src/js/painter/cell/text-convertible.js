@@ -188,15 +188,16 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * @private
      */
     _startEdit: function($td) {
-        var $input, rowKey, columnName, cellState;
+        var dataModel = this.grid.dataModel,
+            $input, rowKey, columnName, cellState;
 
         this._blurEditingCell();
 
         rowKey = this.getRowKey($td);
         columnName = this.getColumnName($td);
-        cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
+        cellState = dataModel.get(rowKey).getCellState(columnName);
 
-        if (cellState.isEditable && !cellState.isDisabled) {
+        if (cellState.isEditable && !dataModel.isDisabled && !cellState.isDisabled) {
             this.editingCell = {
                 rowKey: rowKey,
                 columnName: columnName

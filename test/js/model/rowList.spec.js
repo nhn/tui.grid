@@ -462,6 +462,68 @@ describe('model.rowList', function() {
         });
     });
 
+    describe('onRowListDisabledChanged()', function() {
+        beforeEach(function() {
+            var rowList = [
+                {
+                    columnName1: '0-1',
+                    columnName2: '0-2',
+                    columnName3: '0-3'
+                },
+                {
+                    columnName1: '0-1',
+                    columnName2: '0-2',
+                    columnName3: '0-3'
+                },
+                {
+                    columnName1: '0-1',
+                    columnName2: '0-2',
+                    columnName3: '0-3'
+                }
+            ];
+            dataModel.reset(rowList, {parse: true});
+
+            rowListModel = new RowListModel(dataModel.toJSON(), {
+                dataModel: dataModel,
+                columnModel: columnModel,
+                parse: true
+            });
+        });
+
+        function checkAllDataIsDisabled(row, expectedValue) {
+            var columnNames = _.pluck(columnModel.getVisibleColumnModelList(null, true), 'columnName');
+
+            _.each(columnNames, function(columnName) {
+                var data = row.get(columnName);
+                if (data) {
+                    expect(data.isDisabled).toBe(expectedValue);
+                }
+            });
+        }
+
+        it('if dataModel changed to disabled, set isDisabled of all row to true', function() {
+            dataModel.setDisabled(true);
+            checkAllDataIsDisabled(rowListModel.at(0), true);
+            checkAllDataIsDisabled(rowListModel.at(1), true);
+            checkAllDataIsDisabled(rowListModel.at(2), true);
+        });
+
+        it('if dataModel changed to enabled, set isDisabled of all row to false', function() {
+            dataModel.setDisabled(true);
+            dataModel.setDisabled(false);
+            checkAllDataIsDisabled(rowListModel.at(0), false);
+            checkAllDataIsDisabled(rowListModel.at(1), false);
+            checkAllDataIsDisabled(rowListModel.at(2), false);
+        });
+
+        it('isDisabled of dataModel has higher priority than individual disbled state', function() {
+            dataModel.setDisabled(true);
+            dataModel.enableRow(0);
+
+            checkAllDataIsDisabled(rowListModel.at(0), true);
+        });
+    });
+
     describe('onDataModelChange()', function() {
         var rowList;
 
