@@ -74,35 +74,29 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * @return {string} tr 마크업 문자열
      */
     getHtml: function(model, columnModelList) {
-        var html = '';
+        var rowKey = model.get('rowKey'),
+            html = '';
 
-        if (tui.util.isUndefined(model.get('rowKey'))) {
-            // _.times(columnModelList.length, function() {
-            //     html += '<td></td>'
-            // });
-            // return this.template({
-            //     key: '',
-            //     height: 27,
-            //     contents: html,
-            //     className: ''
-            // });
-            return '';
+        if (_.isUndefined(rowKey)) {
+            _.times(columnModelList.length, function() {
+                html += '<td></td>';
+            });
+        } else {
+            _.each(columnModelList, function(columnModel) {
+                var columnName = columnModel.columnName,
+                    cellData = model.get(columnName),
+                    editType, cellPainter;
+
+                if (cellData && cellData.isMainRow) {
+                    editType = this._getEditType(columnName, cellData);
+                    cellPainter = this.painterManager.getCellPainter(editType);
+                    html += cellPainter.getHtml(cellData);
+                }
+            }, this);
         }
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel['columnName'],
-                cellData = model.get(columnName),
-                editType, cellPainter;
-
-            if (cellData && cellData['isMainRow']) {
-                editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
-                html += cellPainter.getHtml(cellData);
-            }
-        }, this);
-
         return this.template({
-            key: model.get('rowKey'),
+            key: rowKey,
             height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
             contents: html,
             className: ''

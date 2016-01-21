@@ -7,6 +7,7 @@
 var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
+var util = require('../common/util');
 
 /**
  * View 에서 Rendering 시 사용할 객체
@@ -44,6 +45,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
+            .listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -88,6 +90,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
+    },
+
+    _resetDummyRows: function() {
+        console.log('reset dummy');
     },
 
     /**
@@ -227,12 +233,23 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rowNum += 1;
         }
 
-        // _.times(5, function() {
-        //     lsideData.push({});
-        //     rsideData.push({});
-        // });
         this._resetViewModelList('lside', lsideData);
         this._resetViewModelList('rside', rsideData);
+    },
+
+    _fillDummyRows: function() {
+        var displayCount = this.dimensionModel.get('displayRowCount'),
+            dataCount = this.dataModel.length,
+            dummyCount = displayCount - dataCount,
+            tempArray = [];
+
+        if (dummyCount > 0) {
+            _.times(dummyCount, function() {
+                tempArray.push({});
+            });
+            this.get('lside').push(tempArray);
+            this.get('rside').push(tempArray);
+        }
     },
 
     /**
@@ -247,6 +264,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         endIndex = this.get('endIndex');
 
         this._resetAllViewModelListWithRange(startIndex, endIndex);
+        this._fillDummyRows();
 
         for (i = startIndex; i < endIndex; i += 1) {
             this._executeRelation(i);

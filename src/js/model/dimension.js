@@ -834,7 +834,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             offsetLeft: offset.left,
             width: domState.getWidth()
         });
-        
+
         if (this.get('fitToParentHeight')) {
             this._setHeight(domState.getParentHeight());
         }
