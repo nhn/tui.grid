@@ -193,7 +193,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @return {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = $cell.parent().attr('key'),
+        var rowKey = Number($cell.parent().attr('key')),
             columnName = $cell.attr('columnname');
 
         return {

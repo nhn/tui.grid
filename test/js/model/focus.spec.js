@@ -75,6 +75,20 @@ describe('model/focus', function() {
             focusModel.select(1);
             expect(callback).toHaveBeenCalled();
         });
+
+        it('If given row is already selected, do nothing (do not trigger select event)', function() {
+            var callback = jasmine.createSpy('callback'),
+                listenModel = new Model();
+
+            focusModel.select(1);
+            listenModel.listenToOnce(focusModel, 'select', callback);
+            spyOn(focusModel, 'unselect');
+
+            focusModel.select(1);
+
+            expect(focusModel.unselect).not.toHaveBeenCalled();
+            expect(callback).not.toHaveBeenCalled();
+        });
     });
 
     describe('unselect()', function() {

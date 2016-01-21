@@ -62,11 +62,36 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * 행을 select 한다.
-     * @param {Number|String} rowKey - select 할 행의 키값
-     * @returns {Model.Focus} This object
+     * Returns whether given rowKey is equal to current value
+     * @param  {(Number|String)} rowKey - Row key
+     * @return {Boolean} - True if equal
+     */
+    _isCurrentRow: function(rowKey) {
+        // compare with == operator to avoid strict comparision
+        // (rowkey can be a number or a string)
+        return this.get('rowKey') == rowKey;
+    },
+
+    /**
+     * Returns whether given rowKey and columnName is equal to current value
+     * @param  {(Number|String)} rowKey - Row key
+     * @param  {String} columnName - Column name
+     * @return {Boolean} - True if equal
+     */
+    _isCurrentCell: function(rowKey, columnName) {
+        return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
+    },
+
+    /**
+     * Selects the given row
+     * @param {Number|String} rowKey - Rowkey of the target row
+     * @returns {Object} This object
      */
     select: function(rowKey) {
+        if (this._isCurrentRow(rowKey)) {
+            return this;
+        }
+
         this.unselect().set('rowKey', rowKey);
         if (this.columnModel.get('selectType') === 'radio') {
             this.dataModel.check(rowKey);
@@ -105,7 +130,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (util.isBlank(rowKey) ||
             util.isBlank(columnName) ||
             this.columnModel.isMetaColumn(columnName) ||
-            (this.get('rowKey') === rowKey && this.get('columnName') === columnName)) {
+            this._isCurrentCell(rowKey, columnName)) {
             return this;
         }
 
