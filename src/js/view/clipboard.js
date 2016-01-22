@@ -124,7 +124,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             focused = focusModel.which(),
             rowKey = focused.rowKey,
             columnName = focused.columnName,
-            displayRowCount = this.dimensionModel.getDisplayRowCount(),
+            displayRowCount = this.dimensionModel.get('displayRowCount'),
             isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
@@ -233,7 +233,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             dimensionModel = this.dimensionModel,
             columnModelList = this.columnModel.getVisibleColumnModelList(),
             focused = focusModel.which(),
-            displayRowCount = dimensionModel.getDisplayRowCount(),
+            displayRowCount = dimensionModel.get('displayRowCount'),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
             index = this._getIndexBeforeMove(),
             isKeyIdentified = true,

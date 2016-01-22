@@ -47,10 +47,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.listenTo(this.dataModel, 'add remove reset', this._resetTotalRowHeight);
 
         this.on('change:width', this._onWidthChange, this);
-        this.on('change:displayRowCount', this._setBodyHeight, this);
+        this.on('change:bodyHeight', this._resetDisplayRowCount, this);
+        this.on('change:displayRowCount', this._resetBodyHeight, this);
 
         this._initColumnWidthVariables();
-        this._setBodyHeight();
+        this._resetBodyHeight();
     },
 
     models: null,
@@ -126,6 +127,18 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             totalBorderWidth = rowCount + 1;
 
         this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
+    },
+
+    _resetDisplayRowCount: function() {
+        var actualBodyHeight, displayRowCount;
+
+        if (_.has(this.changed, 'displayRowCount')) {
+            return;
+        }
+        actualBodyHeight = this.get('bodyHeight') - this.getScrollXHeight();
+        displayRowCount = util.getDisplayRowCount(actualBodyHeight, this.get('rowHeight'));
+
+        this.set('displayRowCount', displayRowCount);
     },
 
     /**
@@ -706,19 +719,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * 그리드의 body height 를 계산하여 할당한다.
      * @private
      */
-    _setBodyHeight: function() {
-        var height = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
+    _resetBodyHeight: function() {
+        var rowListHeight;
 
-        height += this.getScrollXHeight();
-        this.set('bodyHeight', height);
-    },
-
-    /**
-     * 현재 화면에 보이는 row 개수를 반환
-     * @return {number} 화면에 보이는 행 개수
-     */
-    getDisplayRowCount: function() {
-        return util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
+        if (_.has(this.changed, 'bodyHeight')) {
+            return;
+        }
+        rowListHeight = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
+        this.set('bodyHeight', rowListHeight + this.getScrollXHeight());
     },
 
     /**
@@ -796,7 +804,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _setHeight: function(height) {
         this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
     },
 
     /**

@@ -45,7 +45,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
-            .listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows)
+            .listenTo(this.dimensionModel, 'change:displayRowCount', this._onDisplayRowCountChange)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -90,10 +90,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
-    },
-
-    _resetDummyRows: function() {
-        console.log('reset dummy');
     },
 
     /**
@@ -150,6 +146,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onRowListChange: function() {
         clearTimeout(this.timeoutIdForRefresh);
         this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this, true), 0);
+    },
+
+    /**
+     * Event handler for 'change:displayRowCount' event on dimensionModel
+     */
+    _onDisplayRowCountChange: function() {
+        this._clearDummyRows();
+        this._fillDummyRows();
+        this.trigger('rowListChanged');
     },
 
     /**
@@ -237,19 +242,40 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this._resetViewModelList('rside', rsideData);
     },
 
-    _fillDummyRows: function() {
-        var displayCount = this.dimensionModel.get('displayRowCount'),
-            dataCount = this.dataModel.length,
-            dummyCount = displayCount - dataCount,
-            tempArray = [];
+    /**
+     * Returns the count of rows (except dummy rows) in view model list
+     * @return {Number} Count of rows
+     */
+    _getActualRowCount: function() {
+        return this.get('endIndex') - this.get('startIndex') + 1;
+    },
 
-        if (dummyCount > 0) {
-            _.times(dummyCount, function() {
-                tempArray.push({});
-            });
-            this.get('lside').push(tempArray);
-            this.get('rside').push(tempArray);
-        }
+    /**
+     * Removes all dummy rows in the view model list.
+     */
+    _clearDummyRows: function() {
+        var dataRowCount = this.get('endIndex') - this.get('startIndex') + 1;
+
+        _.each(['lside', 'rside'], function(attrName) {
+            var rowList = this.get(attrName);
+            while (rowList.length > dataRowCount) {
+                rowList.pop();
+            }
+        }, this);
+    },
+
+    /**
+     * fills the empty area with dummy rows.
+     */
+    _fillDummyRows: function() {
+        var displayRowCount = this.dimensionModel.get('displayRowCount'),
+            actualRowCount = this._getActualRowCount(),
+            dummyCount = displayRowCount - actualRowCount;
+
+        _.times(dummyCount, function() {
+            this.get('lside').add({});
+            this.get('rside').add({});
+        }, this);
     },
 
     /**

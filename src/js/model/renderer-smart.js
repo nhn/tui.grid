@@ -46,7 +46,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         var dimensionModel = this.dimensionModel,
             dataModel = this.dataModel,
             rowHeight = dimensionModel.get('rowHeight'),
-            displayRowCount = dimensionModel.getDisplayRowCount(),
+            displayRowCount = dimensionModel.get('displayRowCount'),
             startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
             endIndex = Math.min(dataModel.length - 1, startIndex + displayRowCount + (this.hiddenRowCount * 2)),
             top;
