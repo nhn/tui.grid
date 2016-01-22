@@ -289,6 +289,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     getHtml: function(cellData) {
         var attributeString = util.getAttributesString(this.getAttributes(cellData)),
+            contentHtml = this._getContentHtml(cellData),
             html;
 
         html = this.template({
@@ -297,7 +298,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             className: this._getClassNameList(cellData).join(' '),
             editType: this.getEditType(),
             attributeString: attributeString,
-            contentHtml: this._getContentHtml(cellData)
+            // '&nbsp' for height issue with empty cell in IE7
+            contentHtml: contentHtml || '&nbsp'
         });
         return html;
     },

@@ -138,9 +138,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         if (!$td.length) { // selection layer
             indexObj = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
             columnName = this._getColumnNameByVisibleIndex(indexObj.column);
-        } else if (!rowKey && !columnName) { // dummy cell
-            startAction = false;
-        } else { // valid cell
+        } else if (rowKey && columnName) { // valid cell
             indexObj = {
                 column: columnModel.indexOfColumnName(columnName, true),
                 row: this.dataModel.indexOfRowKey(rowKey)
@@ -148,6 +146,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (this.columnModel.get('selectType') === 'radio') {
                 this.dataModel.check(indexObj.row);
             }
+        } else { // dummy cell
+            startAction = false;
         }
 
         if (startAction) {

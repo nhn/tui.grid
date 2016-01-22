@@ -12,6 +12,7 @@ var SelectCell = require('./cell/select');
 var TextCell = require('./cell/text');
 var TextConvertibleCell = require('./cell/text-convertible');
 var TextPasswordCell = require('./cell/text-password');
+var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
 
 /**
@@ -46,7 +47,8 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
                 new SelectCell(args),
                 new TextCell(args),
                 new TextPasswordCell(args),
-                new TextConvertibleCell(args)
+                new TextConvertibleCell(args),
+                new DummyCell(args)
             ];
 
         _.each(instanceList, function(instance) {

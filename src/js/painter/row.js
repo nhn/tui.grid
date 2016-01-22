@@ -75,17 +75,19 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      */
     getHtml: function(model, columnModelList) {
         var rowKey = model.get('rowKey'),
-            html = '';
+            html = '',
+            cellPainter;
 
-        if (_.isUndefined(rowKey)) {
+        if (_.isUndefined(rowKey)) { // dummy row
+            cellPainter = this.painterManager.getCellPainter('dummy');
             _.times(columnModelList.length, function() {
-                html += '<td></td>';
+                html += cellPainter.getHtml();
             });
         } else {
             _.each(columnModelList, function(columnModel) {
                 var columnName = columnModel.columnName,
                     cellData = model.get(columnName),
-                    editType, cellPainter;
+                    editType;
 
                 if (cellData && cellData.isMainRow) {
                     editType = this._getEditType(columnName, cellData);
