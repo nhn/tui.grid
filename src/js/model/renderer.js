@@ -45,10 +45,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
-            .listenTo(this.dimensionModel, 'change:displayRowCount', this._onDisplayRowCountChange)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
+
+        if (this.get('showDummyRows')) {
+            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows)
+        }
 
         this._updateMaxScrollLeft();
     },
@@ -64,6 +67,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         startNumber: 1,
         lside: null,
         rside: null,
+        showDummyRows: false,
 
         // text that will be shown if no data to render (custom value set by user)
         emptyMessage: null,
@@ -151,7 +155,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * Event handler for 'change:displayRowCount' event on dimensionModel
      */
-    _onDisplayRowCountChange: function() {
+    _resetDummyRows: function() {
         this._clearDummyRows();
         this._fillDummyRows();
         this.trigger('rowListChanged');
@@ -290,7 +294,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         endIndex = this.get('endIndex');
 
         this._resetAllViewModelListWithRange(startIndex, endIndex);
-        this._fillDummyRows();
+        if (this.get('showDummyRows')) {
+            this._fillDummyRows();
+        }
 
         for (i = startIndex; i < endIndex; i += 1) {
             this._executeRelation(i);

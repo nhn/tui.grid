@@ -25,6 +25,7 @@ var defaultOptions = {
     headerHeight: 35,
     rowHeight: 27,
     fitToParentHeight: false,
+    showDummyRows: false,
     displayRowCount: 10,
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
@@ -179,7 +180,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         var attrs, renderOptions, Constructor;
 
         attrs = {
-            emptyMessage: options.emptyMessage
+            emptyMessage: options.emptyMessage,
+            showDummyRows: options.showDummyRows
         };
         renderOptions = {
             columnModel: this.columnModel,
