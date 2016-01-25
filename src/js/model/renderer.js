@@ -154,7 +154,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for 'change:displayRowCount' event on dimensionModel
+     * Resets dummy rows and trigger 'rowListChanged' event.
      */
     _resetDummyRows: function() {
         this._clearDummyRows();
@@ -275,13 +275,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _fillDummyRows: function() {
         var displayRowCount = this.dimensionModel.get('displayRowCount'),
             actualRowCount = this._getActualRowCount(),
-            dummyRowCount = displayRowCount - actualRowCount;
+            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
 
         _.times(dummyRowCount, function() {
             this.get('lside').add({});
             this.get('rside').add({});
         }, this);
-        console.log('dummyRowCount', dummyRowCount);
         this.set('dummyRowCount', dummyRowCount);
     },
 

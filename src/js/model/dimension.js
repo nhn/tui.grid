@@ -119,7 +119,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Reset 'totalRowHeight' property.
+     * Resets the 'totalRowHeight' attribute.
      */
     _resetTotalRowHeight: function() {
         var rowHeight = this.get('rowHeight'),
@@ -129,9 +129,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
     },
 
+    /**
+     * Resets the 'displayRowCount' attribute.
+     */
     _resetDisplayRowCount: function() {
         var actualBodyHeight, displayRowCount;
 
+        // To prevent recursive call with _resetBodyHeight (called by change:displayRowCount event)
         if (_.has(this.changed, 'displayRowCount')) {
             return;
         }
@@ -716,12 +720,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * 그리드의 body height 를 계산하여 할당한다.
+     * Resets the 'bodyHeight' attribute.
      * @private
      */
     _resetBodyHeight: function() {
         var rowListHeight;
 
+        // To prevent recursive call with _resetDisplayRowCount (called by change:bodyHeight event)
         if (_.has(this.changed, 'bodyHeight')) {
             return;
         }

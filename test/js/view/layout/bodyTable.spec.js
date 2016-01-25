@@ -94,6 +94,41 @@ describe('view.layout.body', function() {
         });
     });
 
+    describe('when dummyRowCount (in renderModel) changed', function() {
+        it('to greater than 0, set overflow to hidden and height to body height without scrollbarX height', function() {
+            var expectedHeight = bodyTable.dimensionModel.get('bodyHeight') -
+                bodyTable.dimensionModel.getScrollXHeight();
+
+            bodyTable.renderModel.set('dummyRowCount', 5);
+            expect(bodyTable.$el.css('overflow')).toBe('hidden');
+            expect(bodyTable.$el.height()).toBe(expectedHeight);
+        });
+
+        it('to 0, remove overflow and height value of css', function() {
+            bodyTable.renderModel.set('dummyRowCount', 0);
+            expect(bodyTable.$el.css('overflow')).toBe('');
+            expect(bodyTable.$el.height()).toBe(0);
+        });
+    });
+
+    describe('when bodyHeight (in dimensionModel) changed', function() {
+        it('set overflow and height if dummyRowCount (in renderModel) is greater than 0', function() {
+            bodyTable.renderModel.set('dummyRowCount', 5, {silent: true});
+            bodyTable.dimensionModel.set('bodyHeight', 100);
+
+            expect(bodyTable.$el.css('overflow')).toBe('hidden');
+            expect(bodyTable.$el.height()).toBe(100 - bodyTable.dimensionModel.getScrollXHeight());
+        });
+
+        it('remove overflow and height value of css', function() {
+            bodyTable.renderModel.set('dummyRowCount', 0, {silent: true});
+            bodyTable.dimensionModel.set('bodyHeight', 100);
+
+            expect(bodyTable.$el.css('overflow')).toBe('');
+            expect(bodyTable.$el.height()).toBe(0);
+        });
+    });
+
     describe('redrawTable()', function() {
         var tbodyHtml = '<tr><td>1-1</td><td>1-2</td></tr>',
             expectedHtml;

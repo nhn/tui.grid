@@ -35,7 +35,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         // this._resetHeightOverflow sholud be called for both events below:
         // change:dummyRowCount - for the case that the data rows changed (add/remove)
         // change:bodyHeight - for the case that bodyHeight changed without changing dummyRowCount
-        this.listenTo(this.dimensionModel, 'change:dummyRowCount', this._resetHeightOverflow);
+        this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetHeightOverflow);
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeightOverflow);
         this._attachAllTableEventHandlers();
     },
@@ -79,8 +79,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             });
         } else {
             this.$el.css({
-                height: 'auto',
-                overflow: 'auto'
+                height: '',
+                overflow: ''
             });
         }
     },

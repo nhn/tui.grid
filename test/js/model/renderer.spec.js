@@ -303,7 +303,7 @@ describe('model.renderer', function() {
             });
         });
 
-        describe('데이터 append, remove, reset 혹은 columnModel 의 변경으로 인해 호출되는 이벤트 핸들러', function() {
+        describe('데이터 append, remove, reset 혹은 columnModel의 변경으로 인해 호출되는 이벤트 핸들러', function() {
             var listenModel;
 
             beforeEach(function() {
