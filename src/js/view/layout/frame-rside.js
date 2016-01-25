@@ -56,7 +56,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      */
     beforeRender: function() {
         var dimensionModel = this.dimensionModel;
-            
+
         this.$el.css({
             display: 'block',
             width: dimensionModel.get('rsideWidth'),

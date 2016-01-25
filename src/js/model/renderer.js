@@ -68,6 +68,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         lside: null,
         rside: null,
         showDummyRows: false,
+        dummyRowCount: 0,
 
         // text that will be shown if no data to render (custom value set by user)
         emptyMessage: null,
@@ -274,12 +275,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _fillDummyRows: function() {
         var displayRowCount = this.dimensionModel.get('displayRowCount'),
             actualRowCount = this._getActualRowCount(),
-            dummyCount = displayRowCount - actualRowCount;
+            dummyRowCount = displayRowCount - actualRowCount;
 
-        _.times(dummyCount, function() {
+        _.times(dummyRowCount, function() {
             this.get('lside').add({});
             this.get('rside').add({});
         }, this);
+        console.log('dummyRowCount', dummyRowCount);
+        this.set('dummyRowCount', dummyRowCount);
     },
 
     /**

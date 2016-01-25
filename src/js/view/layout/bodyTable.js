@@ -31,6 +31,12 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         });
 
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+
+        // this._resetHeightOverflow sholud be called for both events below:
+        // change:dummyRowCount - for the case that the data rows changed (add/remove)
+        // change:bodyHeight - for the case that bodyHeight changed without changing dummyRowCount
+        this.listenTo(this.dimensionModel, 'change:dummyRowCount', this._resetHeightOverflow);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeightOverflow);
         this._attachAllTableEventHandlers();
     },
 
@@ -58,6 +64,28 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     },
 
     /**
+     * Resets the overflow(Y) of element based on the dummyRowCount or renderModel.
+     * (To prevent appearing vertical scrollbar when dummy rows exists)
+     */
+    _resetHeightOverflow: function() {
+        if (this.whichSide === 'L') {
+            return;
+        }
+
+        if (this.renderModel.get('dummyRowCount') > 0) {
+            this.$el.css({
+                height: this.dimensionModel.get('bodyHeight') - this.dimensionModel.getScrollXHeight(),
+                overflow: 'hidden'
+            });
+        } else {
+            this.$el.css({
+                height: 'auto',
+                overflow: 'auto'
+            });
+        }
+    },
+
+    /**
      * Reset position of a table container
      * @param {number} top  조정할 top 위치 값
      */
@@ -66,8 +94,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     },
 
     /**
-     * rendering 한다.
-     * @return {View.Layout.Body}   자기 자신
+     * Renders elements
+     * @return {View.Layout.Body} This object
      */
     render: function() {
         this._destroyChildren();
@@ -83,6 +111,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             whichSide: this.whichSide
         }));
         this._renderChildren();
+        this._resetHeightOverflow();
 
         return this;
     },
