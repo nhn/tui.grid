@@ -497,7 +497,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         this.add(modelList, addOptions);
         this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
         this.trigger('add', modelList, options);
-        
+
         return modelList;
     },
 

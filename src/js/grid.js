@@ -424,7 +424,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRowAt: function(index, isJsonString) {
-        return this.modelManager.dataModel.getRowData(index, isJsonString);
+        return this.modelManager.dataModel.getRowDataAt(index, isJsonString);
     },
 
     /**
@@ -623,7 +623,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {boolean} - True if there's at least one row removed.
      */
     removeCheckedRows: function(isConfirm) {
-        var rowKeyList = this.modelManager.getCheckedRowKeyList(),
+        var rowKeyList = this.getCheckedRowKeyList(),
             message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
         if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
