@@ -475,11 +475,13 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * 현재 rowList 중 at 에 해당하는 인덱스에 데이터를 append 한다.
-     * @param {object|array} rowData - 행 추가할 데이터. Array일 경우 여러행를 동시에 추가한다.
-     * @param {object} [options] - 옵션 객체
-     * @param {number} [options.at] - 데이터를 append 할 index
-     * @param {boolean} [options.extendPrevRowSpan] - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
+     * Insert the new row with specified data to the end of table.
+     * @param {(Array|Object)} [row] - The data for the new row
+     * @param {Object} [options] - Options
+     * @param {Number} [options.at] - The index at which new row will be inserted
+     * @param {Boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
+     *        has a rowspan data, the new row will extend the existing rowspan data.
+     * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
     append: function(rowData, options) {
         var modelList = this._createModelList(rowData),
@@ -494,7 +496,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         this.add(modelList, addOptions);
         this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
-        this.trigger('add', modelList, addOptions);
+        this.trigger('add', modelList, options);
+        
         return modelList;
     },
 
