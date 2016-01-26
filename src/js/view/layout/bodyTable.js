@@ -32,11 +32,12 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
-        // this._resetHeightOverflow sholud be called for both events below:
-        // change:dummyRowCount - for the case that the data rows changed (add/remove)
-        // change:bodyHeight - for the case that bodyHeight changed without changing dummyRowCount
-        this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetHeightOverflow);
-        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeightOverflow);
+        // To prevent appearing vertical scrollbar when dummy rows exists
+        // IE7 has a width bug with overflow:hidden, so cannnot solve this issue in IE7
+        if (this.whichSide === 'R' && !util.isBrowserIE7()) {
+            this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
+            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
+        }
         this._attachAllTableEventHandlers();
     },
 
@@ -64,24 +65,30 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     },
 
     /**
-     * Resets the overflow(Y) of element based on the dummyRowCount or renderModel.
+     * Resets the overflow of element based on the dummyRowCount in renderModel.
      * (To prevent appearing vertical scrollbar when dummy rows exists)
      */
-    _resetHeightOverflow: function() {
-        if (this.whichSide === 'L') {
-            return;
-        }
+    _resetOverflow: function() {
+        var overflow = '';
 
         if (this.renderModel.get('dummyRowCount') > 0) {
-            this.$el.css({
-                height: this.dimensionModel.get('bodyHeight') - this.dimensionModel.getScrollXHeight(),
-                overflow: 'hidden'
-            });
+            overflow = 'hidden';
+        }
+        this.$el.css('overflow', overflow);
+        this.$el.css('zoom', '1');
+    },
+
+    /**
+     * Resets the height of element based on the dummyRowCount in renderModel
+     * (To prevent appearing vertical scrollbar when dummy rows exists)
+     */
+    _resetHeight: function() {
+        var dimensionModel = this.dimensionModel;
+
+        if (this.renderModel.get('dummyRowCount') > 0) {
+            this.$el.height(dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight());
         } else {
-            this.$el.css({
-                height: '',
-                overflow: ''
-            });
+            this.$el.css('height', '');
         }
     },
 
@@ -111,8 +118,13 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             whichSide: this.whichSide
         }));
         this._renderChildren();
-        this._resetHeightOverflow();
 
+        // To prevent appearing vertical scrollbar when dummy rows exists
+        // IE7 has a width bug with overflow:hidden, so cannnot solve this issue in IE7
+        if (this.whichSide === 'R' && !util.isBrowserIE7()) {
+            this._resetHeight();
+            this._resetOverflow();
+        }
         return this;
     },
 
