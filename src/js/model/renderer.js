@@ -99,6 +99,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'beforeReset' event on dataModel
+     * @private
      */
     _onBeforeResetData: function() {
         this.set('state', renderStateMap.LOADING);
@@ -155,6 +156,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Resets dummy rows and trigger 'rowListChanged' event.
+     * @private
      */
     _resetDummyRows: function() {
         this._clearDummyRows();
@@ -180,6 +182,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @param  {Array.<String>} columnNames - Column names
      * @param  {Number} rowNum - Row number
      * @return {Object} - view data object
+     * @private
      */
     _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
         var viewData = {
@@ -201,6 +204,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * Returns the object that contains two array of column names splitted by columnFixCount.
      * @return {{lside: Array, rside: Array}} - Column names map
+     * @private
      */
     _getColumnNamesOfEachSide: function() {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
@@ -217,6 +221,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Resets specified view model list.
      * @param  {String} attrName - 'lside' or 'rside'
      * @param  {Object} viewData - Converted data for rendering view
+     * @private
      */
     _resetViewModelList: function(attrName, viewData) {
         this.get(attrName).clear().reset(viewData, {
@@ -228,6 +233,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Resets both sides(lside, rside) of view model list with given range of data model list.
      * @param  {Number} startIndex - Start index
      * @param  {Number} endIndex - End index
+     * @private
      */
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
         var columnNamesMap = this._getColumnNamesOfEachSide(),
@@ -250,6 +256,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * Returns the count of rows (except dummy rows) in view model list
      * @return {Number} Count of rows
+     * @private
      */
     _getActualRowCount: function() {
         return this.get('endIndex') - this.get('startIndex') + 1;
@@ -257,6 +264,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Removes all dummy rows in the view model list.
+     * @private
      */
     _clearDummyRows: function() {
         var dataRowCount = this.get('endIndex') - this.get('startIndex') + 1;
@@ -271,6 +279,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * fills the empty area with dummy rows.
+     * @private
      */
     _fillDummyRows: function() {
         var displayRowCount = this.dimensionModel.get('displayRowCount'),
@@ -316,6 +325,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Set state value based on the DataModel.length
+     * @private
      */
     _refreshState: function() {
         if (this.dataModel.length) {

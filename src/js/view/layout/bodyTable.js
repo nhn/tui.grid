@@ -32,8 +32,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
-        // To prevent appearing vertical scrollbar when dummy rows exists
-        // IE7 has a width bug with overflow:hidden, so cannnot solve this issue in IE7
+        // To prevent issue of appearing vertical scrollbar when dummy rows exists
+        // (but IE7 has a width bug with overflow:hidden, so cannot be solved in IE7)
         if (this.whichSide === 'R' && !util.isBrowserIE7()) {
             this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
             this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
@@ -66,7 +66,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     /**
      * Resets the overflow of element based on the dummyRowCount in renderModel.
-     * (To prevent appearing vertical scrollbar when dummy rows exists)
+     * @private
      */
     _resetOverflow: function() {
         var overflow = '';
@@ -75,12 +75,11 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             overflow = 'hidden';
         }
         this.$el.css('overflow', overflow);
-        this.$el.css('zoom', '1');
     },
 
     /**
      * Resets the height of element based on the dummyRowCount in renderModel
-     * (To prevent appearing vertical scrollbar when dummy rows exists)
+     * @private
      */
     _resetHeight: function() {
         var dimensionModel = this.dimensionModel;
@@ -119,8 +118,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         }));
         this._renderChildren();
 
-        // To prevent appearing vertical scrollbar when dummy rows exists
-        // IE7 has a width bug with overflow:hidden, so cannnot solve this issue in IE7
+        // To prevent issue of appearing vertical scrollbar when dummy rows exists
+        // (but IE7 has a width bug with overflow:hidden, so cannot be solved in IE7)
         if (this.whichSide === 'R' && !util.isBrowserIE7()) {
             this._resetHeight();
             this._resetOverflow();
@@ -132,6 +131,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
      * @param {string} selector - 선택자
      * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
+     * @private
      */
     _attachTableEventHandler: function(selector, handlerInfos) {
         _.each(handlerInfos, function(obj, eventName) {

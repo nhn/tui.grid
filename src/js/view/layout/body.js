@@ -113,6 +113,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Returns the name of the visible data columns at given index
      * @param  {Number} columnIndex - Column index
      * @return {String} - Column name
+     * @private
      */
     _getColumnNameByVisibleIndex: function(columnIndex) {
         var columns = this.columnModel.getVisibleColumnModelList(null, false);
