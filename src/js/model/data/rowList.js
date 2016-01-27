@@ -505,11 +505,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 현재 rowList 에 최상단에 데이터를 append 한다.
      * @param {Object} rowData  prepend 할 행 데이터
+     * @param {object} [options] - Options
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
-    prepend: function(rowData) {
-        return this.append(rowData, {
-            at: 0
-        });
+    prepend: function(rowData, options) {
+        options = options || {};
+        options.at = 0;
+
+        return this.append(rowData, options);
     },
 
     /**

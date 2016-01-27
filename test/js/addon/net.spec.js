@@ -286,6 +286,7 @@ describe('addon.net', function() {
             grid.setRowList(rowList);
 
             messUp();
+            grid.checkAll();
             param = net._getDataParam('createData');
             createList = $.parseJSON(param.data.createList);
 
@@ -347,6 +348,7 @@ describe('addon.net', function() {
             grid.setRowList(rowList);
 
             messUp();
+            grid.checkAll();
             param = net._getDataParam('updateData');
             expect(param.count).toBe(3);
             expect($.parseJSON(param.data.updateList).length).toBe(3);
@@ -401,6 +403,7 @@ describe('addon.net', function() {
             grid.setRowList(rowList);
 
             messUp();
+            grid.checkAll();
             param = net._getDataParam('modifyData');
             expect(param.count).toBe(6);
             expect($.parseJSON(param.data.createList).length).toBe(2);

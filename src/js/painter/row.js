@@ -5,6 +5,7 @@
 'use strict';
 
 var Painter = require('../base/painter');
+var util = require('../common/util');
 
 /**
  * Row Painter
@@ -21,7 +22,6 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      */
     init: function(options) {
         Painter.apply(this, arguments);
-
         this.painterManager = options.painterManager;
     },
 
@@ -69,32 +69,59 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     },
 
     /**
-     * tr html 마크업을 반환한다.
-     * @param {object} model 마크업을 생성할 모델 인스턴스
-     * @return {string} tr 마크업 문자열
+     * Returns the HTML string of all cells in Dummy row.
+     * @param  {Number} columnLength - Length of column model list
+     * @return {String} HTLM string
+     * @private
+     */
+    _getHtmlForDummyRow: function(columnLength) {
+        var cellPainter = this.painterManager.getCellPainter('dummy'),
+            html = '';
+
+        _.times(columnLength, function() {
+            html += cellPainter.getHtml();
+        });
+        return html;
+    },
+
+    /**
+     * Returns the HTML string of all cells in Actual row.
+     * @param  {module:model/row} model - View model instance
+     * @param  {Array.<Object>} columnModelList - Column model list
+     * @return {String} HTLM string
+     * @private
+     */
+    _getHtmlForActualRow: function(model, columnModelList) {
+        var html = '';
+
+        _.each(columnModelList, function(columnModel) {
+            var columnName = columnModel.columnName,
+                cellData = model.get(columnName),
+                editType, cellPainter;
+
+            if (cellData && cellData.isMainRow) {
+                editType = this._getEditType(columnName, cellData);
+                cellPainter = this.painterManager.getCellPainter(editType);
+                html += cellPainter.getHtml(cellData);
+            }
+        }, this);
+        return html;
+    },
+
+    /**
+     * Returns the HTML string of all cells in the given model (row).
+     * @param  {module:model/row} model - View model instance
+     * @param  {Array.<Object>} columnModelList - Column model list
+     * @return {String} HTLM string
      */
     getHtml: function(model, columnModelList) {
         var rowKey = model.get('rowKey'),
-            html = '',
-            cellPainter;
+            html;
 
-        if (_.isUndefined(rowKey)) { // dummy row
-            cellPainter = this.painterManager.getCellPainter('dummy');
-            _.times(columnModelList.length, function() {
-                html += cellPainter.getHtml();
-            });
+        if (_.isUndefined(rowKey)) {
+            html = this._getHtmlForDummyRow(columnModelList.length);
         } else {
-            _.each(columnModelList, function(columnModel) {
-                var columnName = columnModel.columnName,
-                    cellData = model.get(columnName),
-                    editType;
-
-                if (cellData && cellData.isMainRow) {
-                    editType = this._getEditType(columnName, cellData);
-                    cellPainter = this.painterManager.getCellPainter(editType);
-                    html += cellPainter.getHtml(cellData);
-                }
-            }, this);
+            html = this._getHtmlForActualRow(model, columnModelList);
         }
 
         return this.template({
@@ -113,7 +140,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
          */
         _extraHeight: (function() {
             var value = 0;
-            if (tui.util.browser.msie && tui.util.browser.version === 7) {
+            if (util.isBrowserIE7()) {
                 // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
                 value = -2;
             }

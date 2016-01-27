@@ -720,9 +720,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Insert the new row with specified data to the beginning of table.
      * @api
      * @param {object} [row] - The data for the new row
+     * @param {object} [options] - Options
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
-    prependRow: function(row) {
-        this.modelManager.dataModel.prepend(row);
+    prependRow: function(row, options) {
+        this.modelManager.dataModel.prepend(row, options);
     },
 
     /**

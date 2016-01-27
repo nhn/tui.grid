@@ -102,7 +102,7 @@ describe('view.layout.body', function() {
 
         it('to 0, remove overflow and height value of css', function() {
             bodyTable.renderModel.set('dummyRowCount', 0);
-            expect(bodyTable.$el.css('overflow')).toBe('');
+            expect(bodyTable.$el.css('overflow')).toMatch(/(^$|^visible$)/);
         });
     });
 

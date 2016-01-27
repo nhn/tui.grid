@@ -1268,100 +1268,6 @@ describe('data.rowList', function() {
                     });
                 });
             });
-
-            describe('_onChange() 콜백 테스트', function() {
-                describe('값이 변화하면 _button 값도 함께 변경되어야 한다.', function() {
-                    var testRowList;
-
-                    beforeEach(function() {
-                        testRowList = [
-                            {
-                                'changeCallback': null
-                            }, {
-                                '_extraData': {
-                                    'rowSpan': {
-                                        'changeCallback': 3
-                                    }
-                                },
-                                'changeCallback': null
-                            }, {
-                                'changeCallback': null
-                            }, {
-                                'changeCallback': null
-                            }, {
-                                'changeCallback': null
-                            }, {
-                                'changeCallback': null
-                            }
-                        ];
-                        dataModelInstance.set(testRowList, {parse: true});
-                    });
-
-                    describe('changeBeforeCallback 수행 결과값이 true 일 경우 변경된 _button 값을 true 로 설정한다.', function() {
-                        it('rowSpan 되어 있지 않은 경우', function() {
-                            var row = dataModelInstance.at(0);
-                            //false 설정되어 있는지 확인한다.
-                            expect(row.get('_button')).toBe(false);
-
-                            row.set('changeCallback', true);
-
-                            expect(dataModelInstance.at(0).get('_button')).toBe(true);
-                            expect(dataModelInstance.at(1).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(2).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(3).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
-                        });
-
-                        it('rowSpan 되어 있는 경우', function() {
-                            var row = dataModelInstance.at(2);
-                            //false 설정되어 있는지 확인한다.
-                            expect(row.get('_button')).toBe(false);
-
-                            row.set('changeCallback', true);
-
-                            expect(dataModelInstance.at(0).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(1).get('_button')).toBe(true);
-                            expect(dataModelInstance.at(2).get('_button')).toBe(true);
-                            expect(dataModelInstance.at(3).get('_button')).toBe(true);
-                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
-                        });
-                    });
-
-                    describe('changeBeforeCallback 수행 결과값이 이 false 를 반환한 경우 _button 값을 true 로 설정하지 않는다.', function() {
-                        it('rowSpan 되어 있지 않은 경우', function() {
-                            var row = dataModelInstance.at(0);
-                            //false 설정되어 있는지 확인한다.
-                            expect(row.get('_button')).toBe(false);
-
-                            row.set('changeCallback', false);
-
-                            expect(dataModelInstance.at(0).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(1).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(2).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(3).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
-                        });
-
-                        it('rowSpan 되어 있는 경우', function() {
-                            var row = dataModelInstance.at(2);
-                            //false 설정되어 있는지 확인한다.
-                            expect(row.get('_button')).toBe(false);
-
-                            row.set('changeCallback', false);
-
-                            expect(dataModelInstance.at(0).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(1).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(2).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(3).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(4).get('_button')).toBe(false);
-                            expect(dataModelInstance.at(5).get('_button')).toBe(false);
-                        });
-                    });
-                });
-            });
         });
 
         describe('_removePrivateProp() 테스트', function() {
@@ -1480,15 +1386,6 @@ describe('data.rowList', function() {
                 expect(dataModelInstance.at(4).get('text')).toEqual('5');
                 expect(dataModelInstance.at(5).get('text')).toEqual('6');
                 expect(dataModelInstance.at(6).get('text')).toEqual('7');
-            });
-
-            it('append 한 행은 _button 값이 true 이다.', function() {
-                setDefaultRowList();
-                dataModelInstance.append({text: '6'});
-                dataModelInstance.append({text: '7'});
-                expect(dataModelInstance.at(4).get('_button')).toEqual(false);
-                expect(dataModelInstance.at(5).get('_button')).toEqual(true);
-                expect(dataModelInstance.at(6).get('_button')).toEqual(true);
             });
 
             it('at 옵션이 있을 경우 해당 위치에 추가된다.', function() {
