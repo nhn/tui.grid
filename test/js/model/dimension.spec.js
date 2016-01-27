@@ -559,7 +559,7 @@ describe('Dimension', function() {
         });
     });
 
-    describe('_setBodyHeight()', function() {
+    describe('_resetBodyHeight()', function() {
         describe('displayRowHeight 와 rowHeight 값을 기반으로 bodyHeight 값을 계산한다.', function() {
             it('scrollX 옵션이 false 일 경우', function() {
                 dimensionModel.set({
@@ -567,7 +567,7 @@ describe('Dimension', function() {
                     rowHeight: 20,
                     scrollX: false
                 });
-                dimensionModel._setBodyHeight();
+                dimensionModel._resetBodyHeight();
                 expect(dimensionModel.get('bodyHeight')).toEqual(211);
             });
 
@@ -577,20 +577,9 @@ describe('Dimension', function() {
                     rowHeight: 20,
                     scrollX: true
                 });
-                dimensionModel._setBodyHeight();
+                dimensionModel._resetBodyHeight();
                 expect(dimensionModel.get('bodyHeight')).toEqual(228);
             });
-        });
-    });
-
-    describe('getDisplayRowCount()', function() {
-        it('bodyHeight 값에서 toolbar 영역을 제외한 컨텐트 영역에 보여지는 행의 개수를 구한다.', function() {
-            dimensionModel.set({
-                bodyHeight: 150,
-                toolbarHeight: 50,
-                rowHeight: 9
-            });
-            expect(dimensionModel.getDisplayRowCount()).toEqual(14);
         });
     });
 

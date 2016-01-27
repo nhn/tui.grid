@@ -119,7 +119,7 @@ describe('view.painter.cell.base', function() {
                     isDisabled: true
                 }),
                 $actualDOM = $(html),
-                $expectedDom = $('<td columnname="c1" class="editable disabled" align="left" edit-type="normal"></td>');
+                $expectedDom = $('<td columnname="c1" class="editable disabled" align="left" edit-type="normal">&nbsp;</td>');
 
             expect($actualDOM.html()).toEqual($expectedDom.html());
         });

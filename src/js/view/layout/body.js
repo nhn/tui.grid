@@ -110,6 +110,17 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
+     * Returns the name of the visible data columns at given index
+     * @param  {Number} columnIndex - Column index
+     * @return {String} - Column name
+     * @private
+     */
+    _getColumnNameByVisibleIndex: function(columnIndex) {
+        var columns = this.columnModel.getVisibleColumnModelList(null, false);
+        return columns[columnIndex].columnName;
+    },
+
+    /**
      * Mousedown event handler
      * @param {jQuery.Event} event
      * @private
@@ -122,28 +133,27 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
             rowKey = $tr.attr('key'),
-            rowIndex = this.dataModel.indexOfRowKey(rowKey),
+            startAction = true,
+            indexObj;
+
+        if (!$td.length) { // selection layer
+            indexObj = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
+            columnName = this._getColumnNameByVisibleIndex(indexObj.column);
+        } else if (rowKey && columnName) { // valid cell
             indexObj = {
-                columnName: columnName,
                 column: columnModel.indexOfColumnName(columnName, true),
-                row: rowIndex
-            },
-            list;
-
-        if (!columnName || rowIndex < 0) {
-            _.extend(indexObj, this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
-            list = columnModel.getVisibleColumnModelList(null, true);
-
-            // columnName과 columnIndex 재조정
-            columnName = list[indexObj.column].columnName;
-
-            indexObj.columnName = columnName;
-            indexObj.column = columnModel.indexOfColumnName(columnName, true);
-        } else if (this.columnModel.get('selectType') === 'radio') {
-            this.dataModel.check(rowIndex);
+                row: this.dataModel.indexOfRowKey(rowKey)
+            };
+            if (this.columnModel.get('selectType') === 'radio') {
+                this.dataModel.check(indexObj.row);
+            }
+        } else { // dummy cell
+            startAction = false;
         }
 
-        this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, isInput);
+        if (startAction) {
+            this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, columnName, isInput);
+        }
     },
 
     /**
@@ -166,10 +176,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @param {boolean} isInput - Whether the target is input element.
      * @private
      */
-    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, isInput) {
+    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, columnName, isInput) {
         var columnModel = this.columnModel,
             selectionModel = this.selectionModel,
-            columnName = indexObj.columnName,
             columnIndex = indexObj.column,
             rowIndex = indexObj.row;
 

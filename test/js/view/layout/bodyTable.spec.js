@@ -94,6 +94,34 @@ describe('view.layout.body', function() {
         });
     });
 
+    describe('when dummyRowCount (in renderModel) changed', function() {
+        it('to greater than 0, set overflow to hidden ', function() {
+            bodyTable.renderModel.set('dummyRowCount', 5);
+            expect(bodyTable.$el.css('overflow')).toBe('hidden');
+        });
+
+        it('to 0, remove overflow and height value of css', function() {
+            bodyTable.renderModel.set('dummyRowCount', 0);
+            expect(bodyTable.$el.css('overflow')).toBe('');
+        });
+    });
+
+    describe('when bodyHeight (in dimensionModel) changed', function() {
+        it('if dummyRowCount is greater than 0, set bodyHeight based on dimension state', function() {
+            bodyTable.renderModel.set('dummyRowCount', 5, {silent: true});
+            bodyTable.dimensionModel.set('bodyHeight', 100);
+
+            expect(bodyTable.$el.height()).toBe(100 - bodyTable.dimensionModel.getScrollXHeight());
+        });
+
+        it('if dummyRowCount is 0, remove height value of css', function() {
+            bodyTable.renderModel.set('dummyRowCount', 0, {silent: true});
+            bodyTable.dimensionModel.set('bodyHeight', 100);
+
+            expect(bodyTable.$el.height()).toBe(0);
+        });
+    });
+
     describe('redrawTable()', function() {
         var tbodyHtml = '<tr><td>1-1</td><td>1-2</td></tr>',
             expectedHtml;

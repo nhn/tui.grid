@@ -67,7 +67,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _isDisabled: function(columnName, rowState) {
         var isDisabled = this.collection.dataModel.isDisabled;
-        
+
         if (!isDisabled) {
             isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
         }
@@ -143,9 +143,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _formatData: function(data, dataModel) {
-        var rowKey = data['rowKey'],
-            row = dataModel.get(rowKey),
-            rowState = row.getRowState();
+        var rowKey = data.rowKey,
+            row, rowState;
+
+        if (_.isUndefined(rowKey)) {
+            return data;
+        }
+        row = dataModel.get(rowKey),
+        rowState = row.getRowState();
 
         _.each(data, function(value, columnName) {
             var rowSpanData;

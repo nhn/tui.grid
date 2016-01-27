@@ -4,6 +4,7 @@ var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ColumnModel = require('model/data/columnModel');
 var DataModel = require('model/data/rowList');
+var DimensionModel = require('model/dimension');
 
 describe('model/manager', function() {
     var domState = new DomState($('<div>'));
@@ -53,6 +54,31 @@ describe('model/manager', function() {
             expect(dimension.columnModel instanceof ColumnModel).toBe(true);
             expect(dimension.dataModel instanceof DataModel).toBe(true);
             expect(dimension.domState).toBe(domState);
+        });
+    });
+
+    describe('creates renderer model', function() {
+        it('with options', function() {
+            var manager, renderModel, options;
+            options = {
+                emptyMessage: 'No Data',
+                showDummyRows: true
+            }
+            manager = new ModelManager(options);
+            renderModel = manager.renderModel;
+
+            expect(renderModel.get('emptyMessage', options.emptyMessage));
+            expect(renderModel.get('showDummyRows', options.showDummyRows));
+        });
+
+        it('with required models', function() {
+            var manager, renderModel;
+            manager = new ModelManager();
+            renderModel = manager.renderModel;
+
+            expect(renderModel.columnModel instanceof ColumnModel).toBe(true);
+            expect(renderModel.dataModel instanceof DataModel).toBe(true);
+            expect(renderModel.dimensionModel instanceof DimensionModel).toBe(true);
         });
     });
 });

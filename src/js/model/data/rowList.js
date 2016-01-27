@@ -105,7 +105,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 새로운 rowKey를 생성해서 반환한다.
      * @return {number} 생성된 rowKey
-    //  */
+     */
     _createRowKey: function() {
         this.lastRowKey += 1;
         return this.lastRowKey;

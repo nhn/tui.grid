@@ -12,6 +12,7 @@ var SelectCell = require('./cell/select');
 var TextCell = require('./cell/text');
 var TextConvertibleCell = require('./cell/text-convertible');
 var TextPasswordCell = require('./cell/text-password');
+var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
 
 /**
@@ -30,7 +31,9 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     },
 
     /**
-     * 종류별 Cell Painter Instance 를 를 생성한다.
+     * Creates instances of cell painters and returns the map object that stores them
+     * using 'editType' as a key.
+     * @return {Object} Key-value object
      * @private
      */
     _createCellPainters: function() {
@@ -46,7 +49,8 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
                 new SelectCell(args),
                 new TextCell(args),
                 new TextPasswordCell(args),
-                new TextConvertibleCell(args)
+                new TextConvertibleCell(args),
+                new DummyCell(args)
             ];
 
         _.each(instanceList, function(instance) {
@@ -67,19 +71,17 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     },
 
     /**
-     * 인자로 받은 editType 에 해당하는 Cell Painter Instance 를 반환한다.
-     * @param {String} editType editType 정보
-     * @return {Object} editType 에 해당하는 페인터 인스턴스
+     * Returns an instance of cell painter which has given editType
+     * @param {String} editType - Edit type
+     * @return {Object} - Cell painter instance
      */
     getCellPainter: function(editType) {
         var instance = this.cellPainters[editType];
 
         if (!instance) {
-            //checkbox, radio 의 경우, instance 의 이름이 전달받는 editType 과 다르기 때문에 예외처리 한다.
             if (editType === 'radio' || editType === 'checkbox') {
                 instance = this.cellPainters['button'];
             } else {
-                //그 외의 경우 모두 normal 로 처리한다.
                 instance = this.cellPainters['normal'];
             }
         }

@@ -74,26 +74,31 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * @return {string} tr 마크업 문자열
      */
     getHtml: function(model, columnModelList) {
-        var html = '';
+        var rowKey = model.get('rowKey'),
+            html = '',
+            cellPainter;
 
-        if (tui.util.isUndefined(model.get('rowKey'))) {
-           return html;
+        if (_.isUndefined(rowKey)) { // dummy row
+            cellPainter = this.painterManager.getCellPainter('dummy');
+            _.times(columnModelList.length, function() {
+                html += cellPainter.getHtml();
+            });
+        } else {
+            _.each(columnModelList, function(columnModel) {
+                var columnName = columnModel.columnName,
+                    cellData = model.get(columnName),
+                    editType;
+
+                if (cellData && cellData.isMainRow) {
+                    editType = this._getEditType(columnName, cellData);
+                    cellPainter = this.painterManager.getCellPainter(editType);
+                    html += cellPainter.getHtml(cellData);
+                }
+            }, this);
         }
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel['columnName'],
-                cellData = model.get(columnName),
-                editType, cellPainter;
-
-            if (cellData && cellData['isMainRow']) {
-                editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
-                html += cellPainter.getHtml(cellData);
-            }
-        }, this);
-
         return this.template({
-            key: model.get('rowKey'),
+            key: rowKey,
             height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
             contents: html,
             className: ''

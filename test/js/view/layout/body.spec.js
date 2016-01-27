@@ -87,10 +87,9 @@ describe('view.layout.body', function() {
             body._onMouseDown(eventMock);
 
             expect(body._controlStartAction).toHaveBeenCalledWith(0, 0, false, {
-                columnName: 'c2',
                 column: 1,
                 row: 2
-            }, false)
+            }, 'c2', false)
         });
 
         it('if the grid has a selectType-radio option, check the row', function() {
@@ -102,45 +101,12 @@ describe('view.layout.body', function() {
 
             expect(modelManager.dataModel.check).toHaveBeenCalledWith(2);
         });
-
-        it('if click the meta("_number") column, adjust indexes', function() {
-            eventMock.target = null;
-            spyOn(modelManager.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
-                column: 0,
-                row: 2
-            });
-            spyOn(modelManager.columnModel, 'getVisibleColumnModelList').and.callFake(function(whichSide, withMeta) {
-                var returnValue = [
-                    {
-                        columnName: 'c1'
-                    },
-                    {
-                        columnName: 'c2'
-                    }
-                ];
-                if (withMeta) {
-                    returnValue.unshift({
-                        columnName: '_number'
-                    });
-                }
-                return returnValue;
-            });
-            spyOn(body, '_controlStartAction');
-
-            body._onMouseDown(eventMock);
-
-            expect(body._controlStartAction).toHaveBeenCalledWith(0, 0, false, {
-                columnName: '_number',
-                column: -1,
-                row: 2
-            }, false)
-        });
     });
 
     describe('_controlStartAction', function() {
         var selectionModel,
             pageX, pageY, shiftKey,
-            isInput, indexObj;
+            isInput, indexObj, columnName;
 
         it('if selectionModel is disabled, should interrupt action', function() {
             selectionModel = modelManager.selectionModel;
@@ -148,15 +114,15 @@ describe('view.layout.body', function() {
             pageY = 0;
             shiftKey = false;
             isInput = false;
+            columnName = 'c2';
             indexObj = {
                 row: 2,
-                column: 1,
-                columnName: 'c2'
+                column: 1
             };
             spyOn(body, '_attachDragEvents');
             selectionModel.disable();
 
-            body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+            body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
 
             expect(body._attachDragEvents).not.toHaveBeenCalled();
             selectionModel.enable();
@@ -169,15 +135,15 @@ describe('view.layout.body', function() {
                 pageY = 0;
                 shiftKey = false;
                 isInput = false;
+                columnName = 'c2'
                 indexObj = {
                     row: 2,
-                    column: 1,
-                    columnName: 'c2'
+                    column: 1
                 };
                 spyOn(selectionModel, 'end');
                 modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
 
                 expect(modelManager.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
@@ -189,15 +155,15 @@ describe('view.layout.body', function() {
                 pageY = 0;
                 shiftKey = true;
                 isInput = true;
+                columnName = 'c2';
                 indexObj = {
                     row: 2,
-                    column: 1,
-                    columnName: 'c2'
+                    column: 1
                 };
                 spyOn(selectionModel, 'end');
                 modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
 
                 expect(modelManager.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
@@ -212,14 +178,14 @@ describe('view.layout.body', function() {
                 pageY = 0;
                 shiftKey = true;
                 isInput = false;
+                columnName = 'c2';
                 indexObj = {
                     row: rowIndex,
-                    column: columnIndex,
-                    columnName: 'c2'
+                    column: columnIndex
                 };
                 spyOn(selectionModel, 'update');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
 
                 expect(selectionModel.update).toHaveBeenCalledWith(rowIndex, columnIndex);
             });
@@ -232,14 +198,14 @@ describe('view.layout.body', function() {
                 pageY = 0;
                 shiftKey = false;
                 isInput = false;
+                columnName = '_number';
                 indexObj = {
                     row: 2,
-                    column: 1,
-                    columnName: '_number'
+                    column: 1
                 };
                 spyOn(selectionModel, 'selectRow');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
                 expect(selectionModel.selectRow).toHaveBeenCalledWith(indexObj.row);
             });
 
@@ -249,14 +215,14 @@ describe('view.layout.body', function() {
                 pageY = 0;
                 shiftKey = true;
                 isInput = false;
+                columnName = '_number';
                 indexObj = {
                     row: 2,
-                    column: 1,
-                    columnName: '_number'
+                    column: 1
                 };
                 spyOn(selectionModel, 'update');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
                 expect(selectionModel.update).toHaveBeenCalledWith(indexObj.row, 0, 'row');
             });
         });
@@ -266,14 +232,14 @@ describe('view.layout.body', function() {
             pageY = 0;
             shiftKey = false;
             isInput = false;
+            columnName = '_button';
             indexObj = {
                 row: 2,
-                column: 1,
-                columnName: '_button'
+                column: 1
             };
             spyOn(body, '_detachDragEvents');
 
-            body._controlStartAction(pageX, pageY, shiftKey, indexObj, isInput);
+            body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
             expect(body._detachDragEvents).toHaveBeenCalled();
         });
     });
