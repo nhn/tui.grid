@@ -26,6 +26,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.renderModel = options.renderModel;
         this.cellFactory = options.cellFactory;
         this.domState = options.domState;
+
+        this.listenTo(this.dataModel, 'add', this._onAddData);
     },
 
     defaults: {
@@ -33,6 +35,17 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         columnName: '',
         prevRowKey: null,
         prevColumnName: ''
+    },
+
+    /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {Array.<module:model/data/row>} - New appended row model
+     * @param  {Object} options - Options. See {@link module:model/data/row#append}
+     */
+    _onAddData: function(rows, options) {
+        if (options.focus) {
+            this.focusAt(options.at, 0);
+        }
     },
 
     /**

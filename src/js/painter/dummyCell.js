@@ -41,7 +41,9 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @private
      */
     _onDblClick: function() {
-        this.grid.dataModel.append();
+        this.grid.dataModel.append({}, {
+            focus: true
+        });
     },
 
     /**
@@ -51,7 +53,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      */
     getHtml: function() {
         // '&nbsp' for height issue with empty cell in IE7
-        return '<td edit-type="dummy">&nbsp;</td>';
+        return '<td edit-type="dummy" class="dummy">&nbsp;</td>';
     }
 });
 

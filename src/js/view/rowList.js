@@ -35,7 +35,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             sortOptions: null,
             renderedRowKeys: null
         });
-        this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(focusModel, 'select', this._onSelect)
@@ -46,6 +45,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(renderModel, 'rowListChanged', this.render);
     },
 
+    /**
+     * Returns the list of column models in it's own side
+     * @return {Array} - Column model list
+     */
     _getColumnModelList: function() {
         return this.columnModel.getVisibleColumnModelList(this.whichSide, true);
     },
@@ -114,17 +117,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         return _.map(rows, function(row) {
             return rowPainter.getHtml(row, columnModelList);
         }).join('');
-    },
-
-    /**
-     * timeout을 사용해 일정 시간이 지난 후 포커스를 Clipboard로 옮긴다.
-     */
-    _focusClipboard: function() {
-        try {
-            this.focusModel.focusClipboard();
-        } catch (e) {
-            // prevent Error from running test cases (caused by setTimeout in _.debounce())
-        }
     },
 
     /**
@@ -250,7 +242,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         }
 
         this.renderedRowKeys = rowKeys;
-        this._focusClipboardDebounced();
+        this.focusModel.focusClipboard();
 
         return this;
     },

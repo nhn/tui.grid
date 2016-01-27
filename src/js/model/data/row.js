@@ -77,9 +77,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
             this.collection.syncRowSpannedData(this, columnName, value);
             this._executeChangeAfterCallback(columnName);
-            if (!this.getRowState().isDisabledCheck && !columnModel.isIgnore) {
-                this.set('_button', true);
-            }
         }, this);
     },
 

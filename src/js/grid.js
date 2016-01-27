@@ -292,6 +292,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
      * @return {module:model/manager} - New model manager object
+     * @private
      */
     _createModelManager: function(options) {
         var domState = new DomState(this.$el),
@@ -307,6 +308,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates painter manager and returns it
      * @return {module:painter/manager} - New painter manager object
+     * @private
      */
     _createPainterManager: function() {
         return new PainterManager({
@@ -318,6 +320,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Creates container view and returns it
      * @param  {Object} options - Options set by user
      * @return {module:view/container} - New container view object
+     * @private
      */
     _createContainerView: function(options) {
         var viewFactory = new ViewFactory({
@@ -334,6 +337,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates public event emitter and returns it.
      * @return {module:publicEventEmitter} - New public event emitter
+     * @private
      */
     _createPublicEventEmitter: function() {
         var emitter = new PublicEventEmitter(this);
@@ -368,6 +372,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     disableRow: function(rowKey) {
         this.modelManager.dataModel.disableRow(rowKey);
     },
+
     /**
      * Enables the row identified by the rowKey.
      * @api
@@ -376,6 +381,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     enableRow: function(rowKey) {
         this.modelManager.dataModel.enableRow(rowKey);
     },
+
     /**
      * Returns the value of the cell identified by the rowKey and columnName.
      * @api
@@ -387,6 +393,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getValue: function(rowKey, columnName, isOriginal) {
         return this.modelManager.dataModel.getValue(rowKey, columnName, isOriginal);
     },
+
     /**
      * Returns a list of all values in the specified column.
      * @api
@@ -417,7 +424,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRowAt: function(index, isJsonString) {
-        return this.modelManager.dataModel.getRowData(index, isJsonString);
+        return this.modelManager.dataModel.getRowDataAt(index, isJsonString);
     },
 
     /**
@@ -428,6 +435,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getRowCount: function() {
         return this.modelManager.dataModel.length;
     },
+
     /**
      * Returns the rowKey of the currently selected row.
      * @api
@@ -436,6 +444,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getSelectedRowKey: function() {
         return this.modelManager.focusModel.which().rowKey;
     },
+
     /**
      * Returns the jquery object of the cell identified by the rowKey and columnName.
      * @api
@@ -446,6 +455,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getElement: function(rowKey, columnName) {
         return this.modelManager.dataModel.getElement(rowKey, columnName);
     },
+
     /**
      * Sets the value of the cell identified by the specified rowKey and columnName.
      * @api
@@ -456,6 +466,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setValue: function(rowKey, columnName, columnValue) {
         this.modelManager.dataModel.setValue(rowKey, columnName, columnValue);
     },
+
     /**
      * Sets the all values in the specified column.
      * @api
@@ -466,6 +477,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setColumnValues: function(columnName, columnValue, isCheckCellState) {
         this.modelManager.dataModel.setColumnValues(columnName, columnValue, isCheckCellState);
     },
+
     /**
      * Replace all rows with the specified list. This will not change the original data.
      * @api
@@ -474,6 +486,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     replaceRowList: function(rowList) {
         this.modelManager.dataModel.replaceRowList(rowList);
     },
+
     /**
      * Replace all rows with the specified list. This will change the original data.
      * @api
@@ -483,6 +496,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setRowList: function(rowList, callback) {
         this.modelManager.dataModel.setRowList(rowList, true, callback);
     },
+
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
      * @api
@@ -494,6 +508,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.modelManager.focusModel.focusClipboard();
         this.modelManager.focusModel.focus(rowKey, columnName, isScrollable);
     },
+
     /**
      * Sets focus on the cell at the specified index of row and column.
      * @api
@@ -504,6 +519,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     focusAt: function(rowIndex, columnIndex, isScrollable) {
         this.modelManager.focusModel.focusAt(rowIndex, columnIndex, isScrollable);
     },
+
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
      * @api
@@ -514,6 +530,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     focusIn: function(rowKey, columnName, isScrollable) {
         this.modelManager.focusModel.focusIn(rowKey, columnName, isScrollable);
     },
+
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
      * @api
@@ -523,6 +540,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
         this.modelManager.focusModel.focusInAt(rowIndex, columnIndex, isScrollable);
     },
+
     /**
      * Makes view ready to get keyboard input.
      * @api
@@ -530,6 +548,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     readyForKeyControl: function() {
         this.modelManager.focusModel.focusClipboard();
     },
+
     /**
      * Removes focus from the focused cell.
      * @api
@@ -537,6 +556,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     blur: function() {
         this.modelManager.focusModel.blur();
     },
+
     /**
      * Checks all rows.
      * @api
@@ -544,6 +564,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     checkAll: function() {
         this.modelManager.dataModel.checkAll();
     },
+
     /**
      * Checks the row identified by the specified rowKey.
      * @api
@@ -552,6 +573,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     check: function(rowKey) {
         this.modelManager.dataModel.check(rowKey);
     },
+
     /**
      * Unchecks all rows.
      * @api
@@ -559,6 +581,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     uncheckAll: function() {
         this.modelManager.dataModel.uncheckAll();
     },
+
     /**
      * Unchecks the row identified by the specified rowKey.
      * @api
@@ -567,6 +590,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     uncheck: function(rowKey) {
         this.modelManager.dataModel.uncheck(rowKey);
     },
+
     /**
      * Removes all rows.
      * @api
@@ -574,6 +598,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     clear: function() {
         this.modelManager.dataModel.setRowList([]);
     },
+
     /**
      * Removes the row identified by the specified rowKey.
      * @api
@@ -590,6 +615,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
         this.modelManager.dataModel.removeRow(rowKey, options);
     },
+
     /**
      * Removes all checked rows.
      * @api
@@ -597,7 +623,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @return {boolean} - True if there's at least one row removed.
      */
     removeCheckedRows: function(isConfirm) {
-        var rowKeyList = this.modelManager.getCheckedRowKeyList(),
+        var rowKeyList = this.getCheckedRowKeyList(),
             message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
         if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
@@ -608,6 +634,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
         return false;
     },
+
     /**
      * Enables the row identified by the rowKey to be able to check.
      * @api
@@ -616,6 +643,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     enableCheck: function(rowKey) {
         this.modelManager.dataModel.enableCheck(rowKey);
     },
+
     /**
      * Disables the row identified by the spcified rowKey to not be abled to check.
      * @api
@@ -624,6 +652,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     disableCheck: function(rowKey) {
         this.modelManager.dataModel.disableCheck(rowKey);
     },
+
     /**
      * Returns a list of the rowKey of checked rows.
      * @api
@@ -636,6 +665,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
         return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
     },
+
     /**
      * Returns a list of the checked rows.
      * @api
@@ -656,6 +686,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getColumnModelList: function() {
         return this.modelManager.columnModel.get('dataColumnModelList');
     },
+
     /**
      * Returns the object that contains the lists of changed data compared to the original data.
      * The object has properties 'createList', 'updateList', 'deleteList'.
@@ -670,17 +701,21 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getModifiedRowList: function(options) {
         return this.modelManager.dataModel.getModifiedRowList(options);
     },
+
     /**
      * Insert the new row with specified data to the end of table.
      * @api
      * @param {object} [row] - The data for the new row
      * @param {object} [options] - Options
      * @param {number} [options.at] - The index at which new row will be inserted
-     * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index has a rowspan data, the new row will extend the existing rowspan data.
+     * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
+     *        has a rowspan data, the new row will extend the existing rowspan data.
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
     appendRow: function(row, options) {
         this.modelManager.dataModel.append(row, options);
     },
+
     /**
      * Insert the new row with specified data to the beginning of table.
      * @api
@@ -689,6 +724,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     prependRow: function(row) {
         this.modelManager.dataModel.prepend(row);
     },
+
     /**
      * Returns true if there are at least one row changed.
      * @api
@@ -697,6 +733,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     isChanged: function() {
         return this.modelManager.dataModel.isChanged();
     },
+
     /**
      * Returns the instance of specified AddOn.
      * @api
@@ -706,6 +743,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getAddOn: function(name) {
         return name ? this.addOn[name] : this.addOn;
     },
+
     /**
      * Restores the data to the original data.
      * (Original data is set by {@link tui.Grid#setRowList|setRowList}
@@ -714,6 +752,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     restore: function() {
         this.modelManager.dataModel.restore();
     },
+
     /**
      * Selects the row identified by the rowKey.
      * @api
@@ -722,6 +761,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     select: function(rowKey) {
         this.modelManager.focusModel.select(rowKey);
     },
+
     /**
      * Unselects selected rows.
      * @api
@@ -729,6 +769,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     unselect: function() {
         this.modelManager.focusModel.unselect(true);
     },
+
     /**
      * Sets the count of fixed column.
      * @api
@@ -737,6 +778,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setColumnFixCount: function(count) {
         this.modelManager.columnModel.set('columnFixCount', count);
     },
+
     /**
      * Sets the list of column model.
      * @api
@@ -745,6 +787,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setColumnModelList: function(columnModelList) {
         this.modelManager.columnModel.set('columnModelList', columnModelList);
     },
+
     /**
      * Create an specified AddOn and use it on this instance.
      * @api
@@ -764,6 +807,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
         return this;
     },
+
     /**
      * Returns a list of all rows.
      * @api
@@ -772,6 +816,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getRowList: function() {
         return this.modelManager.dataModel.getRowList();
     },
+
     /**
      * Sorts all rows by the specified column.
      * @api
@@ -780,6 +825,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     sort: function(columnName) {
         this.modelManager.dataModel.sortByField(columnName);
     },
+
     /**
      * Unsorts all rows. (Sorts by rowKey).
      * @api
@@ -787,6 +833,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     unSort: function() {
         this.sort('rowKey');
     },
+
     /**
      * Adds the specified css class to cell element identified by the rowKey and className
      * @api
@@ -797,6 +844,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     addCellClassName: function(rowKey, columnName, className) {
         this.modelManager.dataModel.get(rowKey).addCellClassName(columnName, className);
     },
+
     /**
      * Adds the specified css class to all cell elements in the row identified by the rowKey
      * @api
@@ -806,6 +854,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     addRowClassName: function(rowKey, className) {
         this.modelManager.dataModel.get(rowKey).addClassName(className);
     },
+
     /**
      * Removes the specified css class from the cell element indentified by the rowKey and columnName.
      * @api
@@ -816,6 +865,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     removeCellClassName: function(rowKey, columnName, className) {
         this.modelManager.dataModel.get(rowKey).removeCellClassName(columnName, className);
     },
+
     /**
      * Removes the specified css class from all cell elements in the row identified by the rowKey.
      * @api
@@ -825,6 +875,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     removeRowClassName: function(rowKey, className) {
         this.modelManager.dataModel.get(rowKey).removeClassName(className);
     },
+
     /**
      * Returns the rowspan data of the cell identified by the rowKey and columnName.
      * @api
@@ -834,6 +885,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getRowSpanData: function(rowKey, columnName) {
         return this.modelManager.dataModel.getRowSpanData(rowKey, columnName);
     },
+
     /**
      * Returns the index of the row indentified by the rowKey.
      * @api
@@ -843,6 +895,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getIndexOfRow: function(rowKey) {
         return this.modelManager.dataModel.indexOfRowKey(rowKey);
     },
+
     /**
      * Sets the number of rows to be shown in the table area.
      * @api
@@ -851,6 +904,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setDisplayRowCount: function(count) {
         this.modelManager.dimensionModel.set('displayRowCount', count);
     },
+
     /**
      * Sets the width and height of the dimension.
      * @api
@@ -860,6 +914,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setSize: function(width, height) {
         this.modelManager.dimensionModel.setSize(width, height);
     },
+
     /**
      * Refresh the layout view. Use this method when the view was rendered while hidden.
      * @api
@@ -867,6 +922,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     refreshLayout: function() {
         this.modelManager.dimensionModel.refreshLayout();
     },
+
     /**
      * Show columns
      * @api
@@ -876,6 +932,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var args = tui.util.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, false);
     },
+
     /**
      * Hide columns
      * @api
@@ -885,6 +942,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var args = tui.util.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, true);
     },
+
     /**
      * Destroys the instance.
      * @api
