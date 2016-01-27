@@ -38,7 +38,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
     /**
      * Event handler for 'dblclick' event
-     * @return {[type]} [description]
+     * @private
      */
     _onDblClick: function() {
         this.grid.dataModel.append();

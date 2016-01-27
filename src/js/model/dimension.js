@@ -120,6 +120,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Resets the 'totalRowHeight' attribute.
+     * @private
      */
     _resetTotalRowHeight: function() {
         var rowHeight = this.get('rowHeight'),
@@ -131,6 +132,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Resets the 'displayRowCount' attribute.
+     * @private
      */
     _resetDisplayRowCount: function() {
         var actualBodyHeight, displayRowCount;
