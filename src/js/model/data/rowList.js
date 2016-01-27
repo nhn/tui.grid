@@ -105,6 +105,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 새로운 rowKey를 생성해서 반환한다.
      * @return {number} 생성된 rowKey
+     * @private
      */
     _createRowKey: function() {
         this.lastRowKey += 1;
@@ -748,7 +749,6 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         _.each(rowList, function(row) {
             var rowData;
 
-            row._button = true;
             rowData = new Row(row, {
                 collection: this,
                 parse: true
@@ -893,6 +893,13 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return result;
     },
 
+    /**
+     * Resets data.
+     * @param  {Array} rowList - New data
+     * @param  {Boolean} isParse - parse option of Backbone.Collection.reset
+     * @param  {Function} callback - Callback function
+     * @private
+     */
     _resetData: function(rowList, isParse, callback) {
         this.lastRowKey = -1;
         this.reset(rowList, {
@@ -961,10 +968,6 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
             this.setValue(mainRowKey, columnName, '', silent);
-            //silent 의 경우 데이터 모델의 change 이벤트가 발생하지 않기 때문에, 강제로 checkbox 를 세팅한다.
-            if (silent) {
-                this.check(mainRowKey, silent);
-            }
         }
     },
 
