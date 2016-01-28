@@ -53,13 +53,19 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
-     * Event handler for focus event
+     * Event handler for 'focusClipboard' event on focusModel
      * @private
      */
     _onFocus: function() {
-        if (!this.$el.is(':focus')) {
-            this.$el.focus();
-            this.focusModel.refreshState();
+        try {
+            if (!this.$el.is(':focus')) {
+                this.$el.focus();
+                this.focusModel.refreshState();
+            }
+        } catch (e) {
+            // Do nothing.
+            // This try/catch block is just for preventing 'Unspecified error'
+            // in IE9(and under) when running test using karma.
         }
     },
 
