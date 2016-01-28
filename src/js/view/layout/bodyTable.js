@@ -6,6 +6,9 @@
 
 var View = require('../../base/view');
 var util = require('../../common/util');
+var dimensionConstMap = require('../../common/constMap').dimension;
+
+var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 /**
  * Class for the table layout in the body(data) area
@@ -33,8 +36,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
         // To prevent issue of appearing vertical scrollbar when dummy rows exists
-        // (but IE7 has a width bug with overflow:hidden, so cannot be solved in IE7)
-        if (this.whichSide === 'R' && !util.isBrowserIE7()) {
+        if (this.whichSide === 'R') {
             this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
             this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
         }
@@ -57,11 +59,17 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      */
     _onColumnWidthChanged: function() {
         var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide),
-            $colList = this.$el.find('col');
+            $colList = this.$el.find('col'),
+            totalWidth = 0;
 
         _.each(columnWidthList, function(width, index) {
             $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH);
+            totalWidth += width + CELL_BORDER_WIDTH;
         }, this);
+
+        if (this.whichSide === 'R' && util.isBrowserIE7()) {
+            this.$el.width(totalWidth + CELL_BORDER_WIDTH); // addition for last cell
+        }
     },
 
     /**
@@ -69,7 +77,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _resetOverflow: function() {
-        var overflow = '';
+        var overflow = 'visible';
 
         if (this.renderModel.get('dummyRowCount') > 0) {
             overflow = 'hidden';
@@ -119,8 +127,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this._renderChildren();
 
         // To prevent issue of appearing vertical scrollbar when dummy rows exists
-        // (but IE7 has a width bug with overflow:hidden, so cannot be solved in IE7)
-        if (this.whichSide === 'R' && !util.isBrowserIE7()) {
+        if (this.whichSide === 'R') {
             this._resetHeight();
             this._resetOverflow();
         }

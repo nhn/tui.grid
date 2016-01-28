@@ -37,5 +37,9 @@ module.exports = {
         LOADING: 'LOADING',
         DONE: 'DONE',
         EMPTY: 'EMPTY'
+    },
+    dimension: {
+        CELL_BORDER_WIDTH: 1,
+        TABLE_BORDER_WIDTH: 1
     }
 }

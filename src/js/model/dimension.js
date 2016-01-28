@@ -6,12 +6,10 @@
 
 var Model = require('../base/model');
 var util = require('../common/util');
+var dimensionConstMap = require('../../common/constMap').dimension;
 
-// The width of the border of the dimension.
-var BORDER_WIDTH = 1;
-
-// The width of the border of table cell.
-var CELL_BORDER_WIDTH = 1;
+var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
+var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 /**
  * 크기 관련 데이터 저장
@@ -563,7 +561,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (scrollDirection.isLeft) {
             pos.scrollLeft = targetPosition.left;
         } else if (scrollDirection.isRight) {
-            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + BORDER_WIDTH;
+            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + TABLE_BORDER_WIDTH;
         }
 
         return pos;
@@ -792,7 +790,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcRealBodyHeight: function(height) {
-        return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
+        return height - this.get('headerHeight') - this.get('toolbarHeight') - TABLE_BORDER_WIDTH;
     },
 
     /**
