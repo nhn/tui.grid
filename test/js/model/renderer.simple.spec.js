@@ -28,6 +28,25 @@ describe('model.renderer', function() {
         });
     });
 
+    describe('refresh', function() {
+         beforeEach(function() {
+            dataModel.reset([
+                {}, {}, {}
+            ], {parse: true});
+            renderModel = createRenderModel();
+         });
+
+         it('executes all relation', function() {
+            spyOn(renderModel, '_executeRelation');
+            renderModel.refresh();
+
+            expect(renderModel._executeRelation.calls.count()).toBe(3);
+            expect(renderModel._executeRelation).toHaveBeenCalledWith(0);
+            expect(renderModel._executeRelation).toHaveBeenCalledWith(1);
+            expect(renderModel._executeRelation).toHaveBeenCalledWith(2);
+         });
+    });
+
     describe('if showDummyRows:true', function() {
         beforeEach(function() {
             columnModel.set('columnModelList', [

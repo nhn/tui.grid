@@ -309,7 +309,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this._fillDummyRows();
         }
 
-        for (i = startIndex; i < endIndex; i += 1) {
+        for (i = startIndex; i <= endIndex; i += 1) {
             this._executeRelation(i);
         }
 
@@ -383,7 +383,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Executes the relation of the row identified with rowIndex
+     * Executes the relation of the row identified by rowIndex
      * @param {Number} rowIndex - Row index
      * @private
      */
