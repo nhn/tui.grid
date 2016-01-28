@@ -30,7 +30,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             initialLeft: 0
         });
         this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
-        // this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this));
     },
 
     tagName: 'div',

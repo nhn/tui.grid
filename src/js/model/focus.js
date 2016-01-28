@@ -28,6 +28,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.domState = options.domState;
 
         this.listenTo(this.dataModel, 'add', this._onAddData);
+        this.listenTo(this.dataModel, 'reset', this._onResetData);
     },
 
     defaults: {
@@ -41,11 +42,20 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * Event handler for 'add' event on dataModel.
      * @param  {Array.<module:model/data/row>} - New appended row model
      * @param  {Object} options - Options. See {@link module:model/data/row#append}
+     * @private
      */
     _onAddData: function(rows, options) {
         if (options.focus) {
             this.focusAt(options.at, 0);
         }
+    },
+
+    /**
+     * Event handler for 'reset' event on dataModel.
+     * @private
+     */
+    _onResetData: function() {
+        this.unselect(true);
     },
 
     /**

@@ -6,7 +6,7 @@
 
 var Model = require('../base/model');
 var util = require('../common/util');
-var dimensionConstMap = require('../../common/constMap').dimension;
+var dimensionConstMap = require('../common/constMap').dimension;
 
 var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
