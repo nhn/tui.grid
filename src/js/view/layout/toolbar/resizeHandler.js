@@ -9,11 +9,12 @@ var View = require('../../../base/view');
 /**
  * Class for the resize handler of the toolbar
  * @module view/layout/toolbar/resizeHandler
+ * @extends module:base/view
  */
 var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandler.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
@@ -98,7 +99,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     /**
      * selection start 이벤트 핸들러
      * @param {Event} event - Event object
-     * @return {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
+     * @returns {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
      * @private
      */
     _onSelectStart: function(event) {
@@ -108,7 +109,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
     /**
      * 랜더링한다.
-     * @return {ResizeHandler} this object
+     * @returns {ResizeHandler} this object
      */
     render: function() {
         this._destroyChildren();

@@ -9,11 +9,11 @@ var View = require('../../base/view');
 /**
  * Reside Handler class
  * @module view/layout/resizeHandler
+ * @extends module:base/view
  */
 var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options - Options
      */
     initialize: function(options) {
@@ -54,7 +54,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * columnWidthList 와 columnModelList 를 함께 반환한다.
-     * @return {{widthList: (Array|*), modelList: (Array|*)}} Column Data
+     * @returns {{widthList: (Array|*), modelList: (Array|*)}} Column Data
      * @private
      */
     _getColumnData: function() {
@@ -71,7 +71,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * resize handler 마크업을 구성한다.
-     * @return {String} resize handler 의 html 마크업 스트링
+     * @returns {String} resize handler 의 html 마크업 스트링
      * @private
      */
     _getResizeHandlerMarkup: function() {
@@ -94,7 +94,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * 랜더링 한다.
-     * @return {View.Layout.Header.ResizeHandler} This object
+     * @returns {View.Layout.Header.ResizeHandler} This object
      */
     render: function() {
         var headerHeight = this.dimensionModel.get('headerHeight'),
@@ -142,7 +142,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * 현재 mouse move resizing 중인지 상태 flag 반환
-     * @return {boolean}    현재 resize 중인지 여부
+     * @returns {boolean}    현재 resize 중인지 여부
      * @private
      */
     _isResizing: function() {
@@ -229,7 +229,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     /**
      * 너비를 계산한다.
      * @param {number} pageX    마우스의 x 좌표
-     * @return {number} x좌표를 기준으로 계산한 width 값
+     * @returns {number} x좌표를 기준으로 계산한 width 값
      * @private
      */
     _calculateWidth: function(pageX) {
@@ -240,7 +240,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     /**
      * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
      * @param {number} index 핸들러의 index 값
-     * @return {number} 컬럼 index 값
+     * @returns {number} 컬럼 index 값
      * @private
      */
     _getHandlerColumnIndex: function(index) {

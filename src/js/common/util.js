@@ -14,7 +14,7 @@ var util = {
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
      * @memberof module:util
      * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
-     * @return {string} html 마크업에 포함될 문자열
+     * @returns {string} html 마크업에 포함될 문자열
      * @example
      var str = util.getAttributesString({
             'class': 'focused disabled',
@@ -37,7 +37,7 @@ var util = {
      * 배열의 합을 반환한다.
      * @memberof module:util
      * @param {number[]} list   총 합을 구할 number 타입 배열
-     * @return {number} 합산한 결과값
+     * @returns {number} 합산한 결과값
      */
     sum: function(list) {
         return _.reduce(list, function(memo, value) {
@@ -48,8 +48,8 @@ var util = {
 
     /**
      * Return min and max value in array
-     * @param {Array} arr
-     * @returns {{min: number, max: number}}
+     * @param {Array} arr - Target array
+     * @returns {{min: number, max: number}} Min and Max
      * @see {@link http://jsperf.com/getminmax}
      */
     getMinMax: function(arr) {
@@ -64,7 +64,7 @@ var util = {
      * @memberof module:util
      * @param {number} rowCount  행 개수
      * @param {number} rowHeight    한 행당 높이
-     * @return {number} 계산된 높이
+     * @returns {number} 계산된 높이
      */
     getHeight: function(rowCount, rowHeight) {
         return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
@@ -75,7 +75,7 @@ var util = {
      * @memberof module:util
      * @param {number} height 테이블 body 높이
      * @param {number} rowHeight    한 행당 높이
-     * @return {number} 테이블 body 당 보여지는 행 개수
+     * @returns {number} 테이블 body 당 보여지는 행 개수
      */
     getDisplayRowCount: function(height, rowHeight) {
         return Math.ceil((height - 1) / (rowHeight + 1));
@@ -86,7 +86,7 @@ var util = {
      * @memberof module:util
      * @param {number} rowCount  행 개수
      * @param {number} height   테이블 body 높이
-     * @return {number} 한 행당 높이값
+     * @returns {number} 한 행당 높이값
      */
     getRowHeight: function(rowCount, height) {
         return rowCount === 0 ? 0 : Math.floor(((height - 1) / rowCount)) - 1;
@@ -98,7 +98,7 @@ var util = {
      * @memberof module:util
      * @param {*} target    동등 비교할 target
      * @param {*} dist      동등 비교할 dist
-     * @return {boolean}    동일한지 여부
+     * @returns {boolean}    동일한지 여부
      */
     isEqual: function(target, dist) {
         var isDiff,
@@ -129,7 +129,7 @@ var util = {
      * Returns whether the string blank.
      * @memberof module:util
      * @param {*} target - target object
-     * @return {boolean} True if target is undefined or null or ''
+     * @returns {boolean} True if target is undefined or null or ''
      */
     isBlank: function(target) {
         if (_.isString(target)) {
@@ -142,7 +142,7 @@ var util = {
      * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
      * @memberof module:util
      * @param {string} htmlString   html 마크업 문자열
-     * @return {String} HTML tag 에 해당하는 부분을 제거한 문자열
+     * @returns {String} HTML tag 에 해당하는 부분을 제거한 문자열
      */
     stripTags: function(htmlString) {
         var matchResult;
@@ -154,7 +154,9 @@ var util = {
             } else {
                 htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
             }
-            htmlString = $.trim(tui.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')));
+            htmlString = $.trim(tui.util.decodeHTMLEntity(
+                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')
+            ));
         }
         return htmlString;
     },
@@ -162,7 +164,7 @@ var util = {
     /**
      * Create unique key
      * @memberof module:util
-     * @return {number} unique key 를 반환한다.
+     * @returns {number} unique key 를 반환한다.
      */
     getUniqueKey: function() {
         this.uniqueId += 1;
@@ -173,7 +175,7 @@ var util = {
      * object 를 query string 으로 변경한다.
      * @memberof module:util
      * @param {object} dataObj  쿼리 문자열으로 반환할 객체
-     * @return {string} 변환된 쿼리 문자열
+     * @returns {string} 변환된 쿼리 문자열
      */
     toQueryString: function(dataObj) {
         var queryList = [];
@@ -195,7 +197,7 @@ var util = {
      * queryString 을 object 형태로 변형한다.
      * @memberof module:util
      * @param {String} queryString 쿼리 문자열
-     * @return {Object} 변환한 Object
+     * @returns {Object} 변환한 Object
      */
     toQueryObject: function(queryString) {
         var queryList = queryString.split('&'),
@@ -226,7 +228,7 @@ var util = {
      * @memberof module:util
      * @param {*} value 컨버팅할 value
      * @param {String} type 컨버팅 될 타입
-     * @return {*}  타입 컨버팅된 value
+     * @returns {*}  타입 컨버팅된 value
      */
     convertValueType: function(value, type) {
         if (type === 'string') {
@@ -240,7 +242,7 @@ var util = {
     /**
      * Capitalize first character of the target string.
      * @param  {string} string Target string
-     * @return {string} Converted new string
+     * @returns {string} Converted new string
      */
     toUpperCaseFirstLetter: function(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -268,7 +270,7 @@ var util = {
 
     /**
      * Returns whether the browser is IE7
-     * @return {boolean} True if the browser is IE7
+     * @returns {boolean} True if the browser is IE7
      */
     isBrowserIE7: function() {
         var browser = tui.util.browser;

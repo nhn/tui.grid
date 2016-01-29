@@ -11,11 +11,11 @@ var util = require('../common/util');
  * Row Painter
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
  * @module painter/row
+ * @extends module:base/painter
  */
 var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
     /**
      * @constructs
-     * @extends module:base/painter
      * @param {object} options - Options
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체
@@ -57,7 +57,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
      * @param {string} columnName 컬럼명
      * @param {Object} cellData 셀 데이터
-     * @return {string} cellFactory 에서 사용될 editType
+     * @returns {string} cellFactory 에서 사용될 editType
      * @private
      */
     _getEditType: function(columnName, cellData) {
@@ -71,7 +71,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     /**
      * Returns the HTML string of all cells in Dummy row.
      * @param  {Number} columnLength - Length of column model list
-     * @return {String} HTLM string
+     * @returns {String} HTLM string
      * @private
      */
     _getHtmlForDummyRow: function(columnLength) {
@@ -88,7 +88,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * Returns the HTML string of all cells in Actual row.
      * @param  {module:model/row} model - View model instance
      * @param  {Array.<Object>} columnModelList - Column model list
-     * @return {String} HTLM string
+     * @returns {String} HTLM string
      * @private
      */
     _getHtmlForActualRow: function(model, columnModelList) {
@@ -112,7 +112,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * Returns the HTML string of all cells in the given model (row).
      * @param  {module:model/row} model - View model instance
      * @param  {Array.<Object>} columnModelList - Column model list
-     * @return {String} HTLM string
+     * @returns {String} HTLM string
      */
     getHtml: function(model, columnModelList) {
         var rowKey = model.get('rowKey'),

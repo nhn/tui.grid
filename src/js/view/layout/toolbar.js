@@ -7,13 +7,14 @@
 var View = require('../../base/view');
 
 /**
- *  툴바 영역
- *  @module view/layout/toolbar
+ * 툴바 영역
+ * @module view/layout/toolbar
+ * @extends module:base/view
  */
 var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -29,7 +30,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
     /**
      * 랜더링한다.
-     * @return {View.Layout.Toolbar} this object
+     * @returns {View.Layout.Toolbar} this object
      */
     render: function() {
         var toolbarModel = this.toolbarModel;

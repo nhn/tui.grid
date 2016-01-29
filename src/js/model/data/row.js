@@ -18,11 +18,11 @@ var PRIVATE_PROPERTIES = [
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module model/data/row
+ * @extends module:base/model
  */
 var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
@@ -38,7 +38,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * Overrides Backbone's parse method for extraData not to be null.
      * @override
      * @param  {object} data - initial data
-     * @return {object} - parsed data
+     * @returns {object} - parsed data
      */
     parse: function(data) {
         if (!data._extraData) {
@@ -82,9 +82,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
-     * @param {object} row row 모델
      * @param {String} columnName 컬럼명
-     * @return {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}} changeCallback 에 전달될 이벤트 객체
+     * @returns {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}}
+     *          changeCallback 에 전달될 이벤트 객체
      * @private
      */
     _createChangeCallbackEvent: function(columnName) {
@@ -99,10 +99,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
      * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
-     *
-     * @param {object} row row 모델
      * @param {String} columnName   컬럼명
-     * @return {boolean} changeBeforeCallback 수행 결과값
+     * @returns {boolean} changeBeforeCallback 수행 결과값
      * @private
      */
     _executeChangeBeforeCallback: function(columnName) {
@@ -128,9 +126,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * columnModel 에 정의된 changeAfterCallback 을 수행한다.
-     * @param {object} row - row 모델
      * @param {String} columnName - 컬럼명
-     * @return {boolean} changeAfterCallback 수행 결과값
+     * @returns {boolean} changeAfterCallback 수행 결과값
      * @private
      */
     _executeChangeAfterCallback: function(columnName) {
@@ -146,7 +143,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the Array of private property names
-     * @return {array} An array of private property names
+     * @returns {array} An array of private property names
      */
     getPrivateProperties: function() {
         return PRIVATE_PROPERTIES;
@@ -154,7 +151,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the object that contains rowState info.
-     * @return {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
      */
     getRowState: function() {
         return this.extraDataManager.getRowState();
@@ -163,7 +160,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * row의 extraData에 설정된 classNameList 를 반환한다.
      * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-     * @return {Array} css 클래스 이름의 배열
+     * @returns {Array} css 클래스 이름의 배열
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
@@ -181,7 +178,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * Returns a new array, which splits all comma-separated strings in the targetList and removes duplicated item.
      * @param  {Array} targetArray - Target array
-     * @return {Array} - New array
+     * @returns {Array} - New array
      */
     _makeUniqueStringArray: function(targetArray) {
         var singleStringArray = _.uniq(targetArray.join(' ').split(' '));
@@ -191,7 +188,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
+     * @returns {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -227,7 +224,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Boolean}    편집 가능한지 여부
+     * @returns {Boolean}    편집 가능한지 여부
      */
     isEditable: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -243,7 +240,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Boolean}    disabled 처리를 할지 여부
+     * @returns {Boolean}    disabled 처리를 할지 여부
      */
     isDisabled: function(columnName) {
         var cellState;
@@ -255,7 +252,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * getRowSpanData
      * rowSpan 설정값을 반환한다.
      * @param {String} [columnName] 인자가 존재하지 않을 경우, 행 전체의 rowSpanData 를 맵 형태로 반환한다.
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
      */
     getRowSpanData: function(columnName) {
         var isRowSpanEnable = this.collection.isRowSpanEnable(),
@@ -298,7 +295,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * rowKey에 해당하는 행 전체에 CSS className 을 설정한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     addClassName: function(className) {
@@ -318,7 +314,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
@@ -331,7 +326,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
      *
      * @param {String} columnName   컬럼명
-     * @return {String} 인코딩된 결과값
+     * @returns {String} 인코딩된 결과값
      */
     getHTMLEncodedString: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
@@ -350,7 +345,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.
      *
      * @param {String} columnName   컬럼명
-     * @return {String} text 형태로 가공된 문자열
+     * @returns {String} text 형태로 가공된 문자열
      * @private
      */
     _getListTypeVisibleText: function(columnName) {
@@ -383,7 +378,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
      * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
      * @param {object} publicChanged 비교할 객체
-     * @return {boolean} 중복이면 true, 아니면 false
+     * @returns {boolean} 중복이면 true, 아니면 false
      */
     isDuplicatedPublicChanged: function(publicChanged) {
         if (this._timeoutIdForChanged && _.isEqual(this._lastPublicChanged, publicChanged)) {
@@ -401,7 +396,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {String} 화면에 보여지는 데이터로 가공된 문자열
+     * @returns {String} 화면에 보여지는 데이터로 가공된 문자열
      */
     getVisibleText: function(columnName) {
         var columnModel = this.columnModel,
@@ -434,9 +429,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
-     *
-     * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisabled', 'isEditable'])
-     * @return {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
+     * @param {Array} callbackNameList 반환값의 결과를 확인할 대상 callbackList.
+     *        (default : ['optionListChange', 'isDisabled', 'isEditable'])
+     * @returns {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
      */
     getRelationResult: function(callbackNameList) {
         var rowData = this.attributes,

@@ -12,11 +12,11 @@ var formUtil = require('../../common/formUtil');
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @module painter/cell/text-convertible
+ * @extends module:painter/cell/text
  */
 var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-convertible.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/text
      */
     init: function() {
         TextCell.apply(this, arguments);
@@ -46,7 +46,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<span class="input">' +
@@ -63,7 +63,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'text-convertible';
@@ -89,7 +89,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -128,7 +128,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
      * (상태에 따라 Text나 Base의 함수를 선택해서 사용해야 하기 때문에, 추가로 override 해서 prototype을 이용해 실행)
      * @param {object} cellData Model의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      * @override
      */
@@ -147,12 +147,13 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
     /**
      * 현재 편집중인 셀인지 여부를 반환한다.
      * @param {object} cellData Model의 셀 데이터
-     * @return {boolean} - 편집중이면 true, 아니면 false
+     * @returns {boolean} - 편집중이면 true, 아니면 false
      * @private
      */
     _isEditingCell: function(cellData) {
         var editingCell = this.editingCell;
-        return !!(editingCell.rowKey === cellData.rowKey.toString() && editingCell.columnName === cellData.columnName.toString());
+        return (editingCell.rowKey === cellData.rowKey.toString() &&
+            editingCell.columnName === cellData.columnName.toString());
     },
 
     /**

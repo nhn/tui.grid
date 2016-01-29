@@ -11,11 +11,12 @@ var keyCodeMap = require('../common/constMap').keyCode;
 /**
  * Clipboard view class
  * @module view/clipboard
+ * @extends module:base/view
  */
 var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.setOwnProperties({
@@ -71,7 +72,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * 랜더링 한다.
-     * @return {View.Clipboard} this object
+     * @returns {View.Clipboard} this object
      */
     render: function() {
         return this;
@@ -98,7 +99,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * keyDown 이벤트 핸들러
      * @param {Event} keyDownEvent 이벤트 객체
-     * @return {boolean} False if locked
+     * @returns {boolean} False if locked
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
@@ -396,7 +397,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * process data for paste to grid
      * @private
-     * @return {Array.<Array.<string>>} result
+     * @returns {Array.<Array.<string>>} result
      */
     _getProcessClipBoardData: function() {
         var text = this.$el.val(),
@@ -481,7 +482,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * clipboard 에 설정될 문자열 반환한다.
-     * @return {String} 데이터를 text 형태로 변환한 문자열
+     * @returns {String} 데이터를 text 형태로 변환한 문자열
      * @private
      */
     _getClipboardString: function() {

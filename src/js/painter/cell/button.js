@@ -10,11 +10,11 @@ var util = require('../../common/util');
 /**
  * Painter class for the button cell
  * @module painter/cell/button
+ * @extends module:painter/cell/list
  */
 var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/list
      */
     init: function() {
         ListCell.apply(this, arguments);
@@ -56,7 +56,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'button';
@@ -64,7 +64,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
 
     /**
      * Contents markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<input' +
@@ -80,7 +80,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * Label markup template
      * It will be added to content
-     * @return {string} html
+     * @returns {string} html
      */
     labelTemplate: _.template(
         '<label' +
@@ -108,7 +108,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -176,7 +176,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * 다음 input 에 focus 한다
      * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
+     * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
      * @private
      */
     _focusNextInput: function($currentInput) {
@@ -186,7 +186,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * 이전 input 에 focus 한다.
      * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
+     * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
      * @private
      */
     _focusPrevInput: function($currentInput) {
@@ -197,7 +197,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
      * 이전 혹은 다음 input 에 focus 한다.
      * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
      * @param {string} direction 방향 'next|prev'
-     * @return {boolean} 해당 엘리먼트에 focus 되었는지 여부
+     * @returns {boolean} 해당 엘리먼트에 focus 되었는지 여부
      * @private
      */
     _focusTargetInput: function($currentInput, direction) {
@@ -229,7 +229,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * check 된 button 의 값들을 가져온다. onChange 이벤트 핸들러에서 호출한다.
      * @param {jQuery} $target 이벤트가 발생한 targetElement
-     * @return {Array}  check 된 값들의 결과 배열
+     * @returns {Array}  check 된 값들의 결과 배열
      * @private
      */
     _getCheckedValueList: function($target) {
@@ -251,7 +251,8 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
             cellAddress = this._getCellAddress($target);
-        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
+        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName,
+            this._getCheckedValueList($target).join(','));
     }
 });
 

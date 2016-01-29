@@ -71,7 +71,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of column model and returns it.
      * @param  {Object} options - Options
-     * @return {module:data/columnModel} A new instance
+     * @returns {module:data/columnModel} A new instance
      * @private
      */
     _createColumnModel: function(options) {
@@ -89,7 +89,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of data model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
-     * @return {module:data/rowList} - A new instance
+     * @returns {module:data/rowList} - A new instance
      * @private
      */
     _createDataModel: function(options, domState) {
@@ -104,7 +104,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of toolbar model and returns it.
      * @param  {Object} options - Options
-     * @return {module:model/toolbar} - A new instance
+     * @returns {module:model/toolbar} - A new instance
      * @private
      */
     _createToolbarModel: function(options) {
@@ -115,7 +115,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of dimension model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
-     * @return {module:model/dimension} - A new instance
+     * @returns {module:model/dimension} - A new instance
      * @private
      */
     _createDimensionModel: function(options, domState) {
@@ -142,7 +142,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of focus model and returns it.
      * @param  {module:domState} domState - DomState instance
-     * @return {module:model/focus} - A new instance
+     * @returns {module:model/focus} - A new instance
      * @private
      */
     _createFocusModel: function(domState) {
@@ -157,7 +157,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of seleciton model and returns it.
-     * @return {module:model/selection} - A new instance
+     * @returns {module:model/selection} - A new instance
      * @private
      */
     _createSelectionModel: function() {
@@ -173,7 +173,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of render model and returns it.
      * @param  {Object} options - Options
-     * @return {module:model/render} - A new instance
+     * @returns {module:model/render} - A new instance
      * @private
      */
     _createRenderModel: function(options) {

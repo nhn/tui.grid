@@ -9,11 +9,11 @@ var View = require('../../base/view');
 /**
  * frame Base 클래스
  * @module view/layout/frame
+ * @extends module:base/view
  */
 var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options Options
      *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
      */
@@ -37,7 +37,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
     /**
      * 랜더링 메서드
-     * @return {View.Layout.Frame} This object
+     * @returns {View.Layout.Frame} This object
      */
     render: function() {
         var factory = this.viewFactory;

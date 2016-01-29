@@ -12,13 +12,13 @@ var CELL_BORDER_WIDTH = 1;
 /**
  * Class for the selection layer
  * @module view/selectionLayer
+ * @extends module:base/view
  */
 var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {object} options Options
-     *      @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
+     * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
      */
     initialize: function(options) {
         this.setOwnProperties({
@@ -58,7 +58,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * Returns relative column range based on 'this.whichSide'
      * @private
      * @param {array} columnRange - Column range indexes. [start, end]
-     * @return {array} - Relative column range indexes. [start, end]
+     * @returns {array} - Relative column range indexes. [start, end]
      */
     _getOwnSideColumnRange: function(columnRange) {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(),
@@ -85,7 +85,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * Returns the object containing 'top' and 'height' css value.
      * @private
      * @param  {array} rowRange - Row range indexes. [start, end]
-     * @return {{top: string, height: string}} - css values
+     * @returns {{top: string, height: string}} - css values
      */
     _getVerticalStyles: function(rowRange) {
         var rowHeight = this.dimensionModel.get('rowHeight'),
@@ -102,7 +102,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * Returns the object containing 'left' and 'width' css value.
      * @private
      * @param  {array} columnRange - Column range indexes. [start, end]
-     * @return {{left: string, width: string}} - css values
+     * @returns {{left: string, width: string}} - css values
      */
     _getHorizontalStyles: function(columnRange) {
         var columnWidthList = this.columnWidthList,
@@ -136,7 +136,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
     /**
      * Render.
-     * @return {SelectionLayer} this object
+     * @returns {SelectionLayer} this object
      */
     render: function() {
         var range = this.selectionModel.get('range'),

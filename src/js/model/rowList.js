@@ -10,17 +10,19 @@ var Row = require('./row');
 /**
   * View Model rowList collection
   * @module model/rowList
+  * @extends module:base/collection
   */
 var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     model: Row,
     /**
      * @constructs
-     * @extends module:base/collection
+     * @param {Object} rawData - Raw data
+     * @param {Object} options - Options
      */
     initialize: function(rawData, options) {
         this.setOwnProperties({
             dataModel: options.dataModel,
-            columnModel: options.columnModel    
+            columnModel: options.columnModel
         });
     }
 });

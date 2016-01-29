@@ -18,11 +18,11 @@ var META_COLUMN_LIST = ['_button', '_number'];
 /**
  * 컬럼 모델 데이터를 다루는 객체
  * @module model/data/columnModel
+ * @extends module:base/model
  */
 var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
@@ -52,7 +52,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 메타컬럼모델들을 초기화한다.
      * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
-     * @return {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
+     * @returns {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
      * @private
      */
     _initializeMetaColumns: function(source) {
@@ -78,7 +78,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 number column 을 추가한다.
-     * @param {Array} metaColumnModelList
+     * @param {Array} metaColumnModelList - Meta column model list
      * @private
      */
     _initializeNumberColumn: function(metaColumnModelList) {
@@ -99,7 +99,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 button column 을 추가한다.
-     * @param {Array} metaColumnModelList
+     * @param {Array} metaColumnModelList - Meta column model listt
      * @private
      */
     _initializeButtonColumn: function(metaColumnModelList) {
@@ -150,7 +150,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * index 에 해당하는 columnModel 을 반환한다.
      * @param {Number} index    조회할 컬럼모델의 인덱스 값
      * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 찾을것인지 여부.
-     * @return {object} 조회한 컬럼 모델
+     * @returns {object} 조회한 컬럼 모델
      */
     at: function(index, isVisible) {
         var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('dataColumnModelList');
@@ -161,7 +161,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * columnName 에 해당하는 index를 반환한다.
      * @param {string} columnName   컬럼명
      * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 반환할 것인지 여부.
-     * @return {number} index   컬럼명에 해당하는 인덱스 값
+     * @returns {number} index   컬럼명에 해당하는 인덱스 값
      */
     indexOfColumnName: function(columnName, isVisible) {
         var columnModelList;
@@ -177,7 +177,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * columnName 이 열고정 영역에 있는 column 인지 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
+     * @returns {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
      */
     isLside: function(columnName) {
         var index = this.indexOfColumnName(columnName, true);
@@ -189,7 +189,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
      * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList를 반환한다.
      * @param {boolean} [withMeta=false] 메타컬럼 포함 여부. 지정하지 않으면 데이터컬럼리스트 기준으로 반환한다.
-     * @return {Array}  조회한 컬럼모델 배열
+     * @returns {Array}  조회한 컬럼모델 배열
      */
     getVisibleColumnModelList: function(whichSide, withMeta) {
         var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount(),
@@ -226,7 +226,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
      * @param {boolean} [withMeta=false] 현재 보여지고 있는 메타컬럼의 count를 합칠지 여부
-     * @returns {number}
+     * @returns {number} Visible columnFix count
      */
     getVisibleColumnFixCount: function(withMeta) {
         var realColumnFixCount = this.get('columnFixCount'),
@@ -248,7 +248,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Object} 컬럼명에 해당하는 컬럼모델
+     * @returns {Object} 컬럼명에 해당하는 컬럼모델
      */
     getColumnModel: function(columnName) {
         return this.get('columnModelMap')[columnName];
@@ -258,7 +258,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
      * 랜더링시 html 태그 문자열을 제거할때 사용됨.
      * @param {String} columnName 컬럼명
-     * @return {boolean} text 타입인지 여부
+     * @returns {boolean} text 타입인지 여부
      */
     isTextType: function(columnName) {
         return !!this.textType[this.getEditType(columnName)];
@@ -267,7 +267,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 컬럼 모델로부터 editType 을 반환한다.
      * @param {string} columnName The name of the target column
-     * @return {string} 해당하는 columnName 의 editType 을 반환한다.
+     * @returns {string} 해당하는 columnName 의 editType 을 반환한다.
      */
     getEditType: function(columnName) {
         var columnModel = this.getColumnModel(columnName),
@@ -282,9 +282,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
-     * @param {Array} dataColumnModelList 데이터 컬럼 모델 리스트
      * @param {Array} metaColumnModelList 메타 컬럼 모델 리스트
-     * @return {Array}  isHidden 이 설정되지 않은 전체 컬럼 모델 리스트
+     * @param {Array} dataColumnModelList 데이터 컬럼 모델 리스트
+     * @returns {Array}  isHidden 이 설정되지 않은 전체 컬럼 모델 리스트
      * @private
      */
     _makeVisibleColumnModelList: function(metaColumnModelList, dataColumnModelList) {
@@ -299,7 +299,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
      * @param {Array} columnModelList - Column Model List
-     * @return {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
+     * @returns {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
      * @private
      */
     _getRelationListMap: function(columnModelList) {
@@ -317,7 +317,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
-     * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
+     * @returns {Array} isIgnore 가 true 로 설정된 columnName 배열.
      */
     getIgnoredColumnNameList: function() {
         var columnModelLsit = this.get('dataColumnModelList'),

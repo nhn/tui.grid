@@ -54,7 +54,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
 
     /**
      * Listen to Net addon.
-     * @param {module:addon/net} - Net addon object
+     * @param {module:addon/net} net - Net addon object
      */
     listenToNetAddon: function(net) {
         this._listenForThrough(net, [

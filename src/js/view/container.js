@@ -9,12 +9,12 @@ var View = require('../base/view');
 /**
  * Container View
  * @module view/container
+ * @extends module:base/view
  */
 var Container = View.extend(/**@lends module:view/container.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
-     * @param {Object} options
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -178,7 +178,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      * @param {jQuery} $target 검사할 HTML요소의 jQuery 객체
      * @param {boolean} isIncludeChild true이면 셀의 자식요소까지 포함한다.
-     * @return {boolean} 셀이면 true, 아니면 false
+     * @returns {boolean} 셀이면 true, 아니면 false
      */
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
@@ -190,7 +190,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
      * @private
      * @param {jQuery} $cell TD요소의 jquery 객체
-     * @return {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
+     * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
         var rowKey = Number($cell.parent().attr('key')),
@@ -233,6 +233,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Render
+     * @returns {module:view/container} this object
      */
     render: function() {
         var childElements = this._renderChildren().concat([

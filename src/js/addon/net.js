@@ -14,15 +14,11 @@ var renderStateMap = require('../common/constMap').renderState;
 /**
  * Net Addon
  * @module addon/net
+ * @mixes module:base/common
  */
 var Net = View.extend(/**@lends module:addon/net.prototype */{
-    tagName: 'form',
-    events: {
-        submit: '_onSubmit'
-    },
     /**
      * @constructs
-     * @mixes module:base/common
      * @param {object} options
      *      @param {jquery} options.el   form 엘리먼트
      *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
@@ -94,6 +90,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      net.request('modifyData');
      *   </script>
      */
+
     initialize: function(options) {
         var defaultOptions, options, pagination;
 
@@ -147,6 +144,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 this._readDataAt(1, false);
             }
         }
+    },
+
+    tagName: 'form',
+
+    events: {
+        submit: '_onSubmit'
     },
 
     /**
@@ -296,7 +299,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * form 으로 지정된 엘리먼트의 Data 를 반환한다.
-     * @return {object} formData 데이터 오브젝트
+     * @returns {object} formData 데이터 오브젝트
      * @private
      */
     _getFormData: function() {
@@ -529,8 +532,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
      *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
      *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-     * @return {{count: number, data: {requestType: string, url: string, data: object, type: string, dataType: string}}}
-     * 옵션 조건에 해당하는 그리드 데이터 정보
+     * @returns {{count: number, data: {requestType: string, url: string, data: object,
+     *      type: string, dataType: string}}} 옵션 조건에 해당하는 그리드 데이터 정보
      * @private
      */
     _getDataParam: function(requestType, options) {
@@ -587,7 +590,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
      *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
      *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-     * @return {{requestType: string, url: string, data: object, type: string, dataType: string}} ajax 호출시 사용될 option 파라미터
+     * @returns {{requestType: string, url: string, data: object, type: string, dataType: string}}
+     *      ajax 호출시 사용될 option 파라미터
      * @private
      */
     _getRequestParam: function(requestType, options) {
@@ -617,7 +621,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * requestType 에 따른 컨펌 메세지를 노출한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Number} count   전송될 데이터 개수
-     * @return {boolean}    계속 진행할지 여부를 반환한다.
+     * @returns {boolean}    계속 진행할지 여부를 반환한다.
      * @private
      */
     _isConfirmed: function(requestType, count) {
@@ -636,7 +640,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * confirm message 를 반환한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Number} count 전송될 데이터 개수
-     * @return {string} 생성된 confirm 메세지
+     * @returns {string} 생성된 confirm 메세지
      * @private
      */
     _getConfirmMessage: function(requestType, count) {

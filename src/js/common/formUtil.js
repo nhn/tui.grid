@@ -16,11 +16,9 @@ var formUtil = {
     setInput: {
         /**
          * 배열의 값들을 전부 String 타입으로 변환한다.
-         * @memberof module:util
-         * @private
-         * @alias form.setInput['_changeToStringInArray']
+         * @ignore
          * @param {Array}  arr 변환할 배열
-         * @return {Array} 변환된 배열 결과 값
+         * @returns {Array} 변환된 배열 결과 값
          */
         '_changeToStringInArray': function(arr) {
             _.each(arr, function(value, i) {
@@ -31,8 +29,7 @@ var formUtil = {
 
         /**
          * radio type 의 input 요소의 값을 설정한다.
-         * @memberof module:util
-         * @alias form.setInput['radio']
+         * @ignore
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -42,8 +39,8 @@ var formUtil = {
 
         /**
          * radio type 의 input 요소의 값을 설정한다.
+         * @ignore
          * @memberof module:util
-         * @alias form.setInput.checkbox
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -57,8 +54,7 @@ var formUtil = {
 
         /**
          * select-one type 의 input 요소의 값을 설정한다.
-         * @memberof module:util
-         * @alias form.setInput['select-one']
+         * @ignore
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -75,8 +71,7 @@ var formUtil = {
 
         /**
          * select-multiple type 의 input 요소의 값을 설정한다.
-         * @memberof module:util
-         * @alias form.setinput['select-multiple']
+         * @ignore
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -97,7 +92,6 @@ var formUtil = {
         /**
          * input 요소의 값을 설정하는 default 로직
          * @memberof module:util
-         * @alias form.setinput['defaultAction']
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -111,7 +105,7 @@ var formUtil = {
      * @memberof module:util
      * @alias form.getFormData
      * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
-     * @return {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
+     * @returns {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
      **/
     getFormData: function($form) {
         var result = {},
@@ -138,7 +132,7 @@ var formUtil = {
      * @alias form.getFormElement
      * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
      * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
-     * @return {jQuery} jQuery 로 감싼 엘리먼트를 반환한다.
+     * @returns {jQuery} jQuery 로 감싼 엘리먼트를 반환한다.
      */
     getFormElement: function($form, elementName) {
         var formElement;
@@ -225,4 +219,3 @@ var formUtil = {
 };
 
 module.exports = formUtil;
-

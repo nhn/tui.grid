@@ -9,11 +9,13 @@ var common = require('./common');
 /**
  * Base class for Collection
  * @module base/collection
+ * @mixes module:base/common
  */
 var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
     /**
-     * @mixes module:base/common
      * @constructs
+     * @param {Array.<Object>} models - Models
+     * @param {Object} options - Options
      */
     initialize: function(models, options) {},
 

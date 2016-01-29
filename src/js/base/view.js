@@ -9,11 +9,11 @@ var common = require('./common');
 /**
  * Base class for Views
  * @module base/view
+ * @mixes module:base/common
  */
 var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * @constructs
-     * @mixes module:base/common
      * @param {Object} attributes Attributes
      */
     initialize: function(attributes) {
@@ -23,7 +23,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * 에러 객체를 반환한다.
      * @param {String} message - Error message
-     * @return {error} 에러객체
+     * @returns {error} 에러객체
      */
     error: function(message) {
         var GridError = function() {
@@ -35,9 +35,9 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
-     * destroy 시 함께 삭제할 View 를 내부 변수 _children 에 추가한다.
-     * @param {instance} instance 인스턴스 객체
-     * @return {instance} instance 인자로 전달받은 인스턴스 객체
+     * Add children views
+     * @param {(Object|Array)} views - View instance of Array of view instances
+     * @private
      */
     _addChildren: function(views) {
         if (!_.isArray(views)) {
@@ -48,7 +48,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
 
     /**
      * Render children and returns thier elements as array.
-     * @return {array.<HTMLElement>} An array of element of children
+     * @returns {array.<HTMLElement>} An array of element of children
      */
     _renderChildren: function() {
         var elements = _.map(this._children, function(view) {
@@ -69,7 +69,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * customEvent 에서 사용할 이벤트 객체를 포멧에 맞게 생성하여 반환한다.
      * @param {Object} data 이벤트 핸들러에 넘길 데이터
-     * @return {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
+     * @returns {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
      */
     createEventData: function(data) {
         var eventData = $.extend({}, data);

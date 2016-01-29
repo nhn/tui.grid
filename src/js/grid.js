@@ -8,53 +8,93 @@
  * Grid public API
  *
  * @param {Object} options
- *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount} can be used for setting this value dynamically.
- *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used. If not specified, the button column will not be shown.
- *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number to each rows when rendering time.
- *      @param {number} [options.headerHeight=35] - The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.
+ *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
+ *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
+ *          can be used for setting this value dynamically.
+ *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
+ *          The string value 'checkbox' or 'radiobox' can be used.
+ *          If not specified, the button column will not be shown.
+ *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
+ *          to each rows when rendering time.
+ *      @param {number} [options.headerHeight=35] - The height of header area.
+ *          When rows in header are multiple (merged column), this value must be the total height of rows.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area. Total height of grid will be set based on this value.
+ *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area.
+ *          Total height of grid will be set based on this value.
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
- *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself without server.
- *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to edit-mode with a single click.
+ *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
+ *          without server.
+ *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to
+ *          edit-mode with a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
- *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.
+ *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
+ *          If not specified, unique value for each rows will be created internally.
  *      @param {Object} [options.toolbar] - The object for configuring toolbar UI.
  *          @param {boolean} [options.toolbar.hasResizeHandler=true] - Specifies whether to use the resize hendler.
  *          @param {boolean} [options.toolbar.hasControlPanel=true] - Specifies whether to use the control panel.
  *          @param {boolean} [options.toolbar.hasPagination=true] - Specifies whether to use the pagination.
  *      @param {array} options.columnModelList - The configuration of the grid columns.
  *          @param {string} options.columnModelList.columnName - The name of the column.
- *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used for overflowing content.
- *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content. Available values are 'left', 'center', 'right'.
- *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of the column.
+ *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used
+ *              for overflowing content.
+ *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content.
+ *              Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
+ *              the column.
  *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
  *          @param {number} [options.columnModelList.width] - The width of the column. The unit is pixel.
  *          @param {boolean} [options.columnModelList.isHidden] - If set to true, the column will not be shown.
- *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column will not be changed.
- *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column doesn't have a value.
- *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell. The retrurn value of the function will be shown as the value of the cell.
- *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell will not be encoded as HTML entities.
- *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be ignored when setting up the list of modified rows.
- *          @param {boolean} [options.columnModelList.isSortable=false] - If set to true, sort button will be shown on the right side of the column header, which executes the sort action when clicked.
+ *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column
+ *              will not be changed.
+ *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column
+ *              doesn't have a value.
+ *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell.
+ *              The retrurn value of the function will be shown as the value of the cell.
+ *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell
+ *              will not be encoded as HTML entities.
+ *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be
+ *               ignored when setting up the list of modified rows.
+ *          @param {boolean} [options.columnModelList.isSortable=false] - If set to true, sort button will be shown on
+ *              the right side of the column header, which executes the sort action when clicked.
  *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
- *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies the type of the editing UI. Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
- *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the 'select', 'radio', 'checkbox' type. The item of the array must contain properties named 'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be called after changing the value of the cell.
- *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>. (replaced with {@link beforeContent})
- *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be shown left to the value. If it's a function, the return value will be used.
- *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>. (replaced with {@link afterContent})
- *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be shown right to the value. If it's a function, the return value will be used.
- *              @param {function} [options.columnModelList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
- *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name as a key and event handler as a value for events on input element.
+ *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies
+ *                  the type of the editing UI.
+ *                  Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
+ *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the
+ *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
+ *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
+ *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be
+ *                   called before changing the value of the cell. If returns false, the changing will be canceled.
+ *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
+ *                  called after changing the value of the cell.
+ *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>.
+ *                  (replaced with {@link beforeContent})
+ *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
+ *                  shown left to the value. If it's a function, the return value will be used.
+ *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>.
+ *                  (replaced with {@link afterContent})
+ *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be
+ *                  shown right to the value. If it's a function, the return value will be used.
+ *              @param {function} [options.columnModelList.editOption.converter] - The function whose
+ *                  return value (HTML) represents the UI of the cell. If the return value is
+ *                  falsy(null|undefined|false), default UI will be shown.
+ *                  This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
+ *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
+ *                  as a key and event handler as a value for events on input element.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
- *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns will be disabled.
- *              @param {function} [options.columnModelList.relationList.isEditable] - If returns true, target columns will be editable.
- *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return value specifies the option list for the 'select', 'radio', 'checkbox' type. The options list of target columns will be replaced with the return value of this function.
- *      @param {array} options.columnMerge - The array that specifies the merged column. This options does not merge the cells of multiple columns into a single cell. This options only effects to the headers of the multiple columns, creates a new parent header that includes the headers of spcified columns, and sets up the hierarchy.
+ *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns
+ *                  will be disabled.
+ *              @param {function} [options.columnModelList.relationList.isEditable] - If returns true, target columns
+ *                  will be editable.
+ *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return
+ *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
+ *                  The options list of target columns will be replaced with the return value of this function.
+ *      @param {array} options.columnMerge - The array that specifies the merged column.
+ *          This options does not merge the cells of multiple columns into a single cell.
+ *          This options only effects to the headers of the multiple columns, creates a new parent header
+ *          that includes the headers of spcified columns, and sets up the hierarchy.
  * @constructor tui.Grid
  * @example
      <div id='grid'></div>
@@ -291,7 +331,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
-     * @return {module:model/manager} - New model manager object
+     * @returns {module:model/manager} - New model manager object
      * @private
      */
     _createModelManager: function(options) {
@@ -307,7 +347,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates painter manager and returns it
-     * @return {module:painter/manager} - New painter manager object
+     * @returns {module:painter/manager} - New painter manager object
      * @private
      */
     _createPainterManager: function() {
@@ -319,7 +359,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates container view and returns it
      * @param  {Object} options - Options set by user
-     * @return {module:view/container} - New container view object
+     * @returns {module:view/container} - New container view object
      * @private
      */
     _createContainerView: function(options) {
@@ -336,7 +376,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates public event emitter and returns it.
-     * @return {module:publicEventEmitter} - New public event emitter
+     * @returns {module:publicEventEmitter} - New public event emitter
      * @private
      */
     _createPublicEventEmitter: function() {
@@ -388,7 +428,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {(number|string)} rowKey - The unique key of the target row.
      * @param {string} columnName - The name of the column
      * @param {boolean} [isOriginal] - It set to true, the original value will be return.
-     * @return {(number|string)} - The value of the cell
+     * @returns {(number|string)} - The value of the cell
      */
     getValue: function(rowKey, columnName, isOriginal) {
         return this.modelManager.dataModel.getValue(rowKey, columnName, isOriginal);
@@ -399,7 +439,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {string} columnName - The name of the column
      * @param {boolean} [isJsonString=false] - It set to true, return value will be converted to JSON string.
-     * @return {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
+     * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
      */
     getColumnValues: function(columnName, isJsonString) {
         return this.modelManager.dataModel.getColumnValues(columnName, isJsonString);
@@ -410,7 +450,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {(number|string)} rowKey - The unique key of the target row
      * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
+     * @returns {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRow: function(rowKey, isJsonString) {
         return this.modelManager.dataModel.getRowData(rowKey, isJsonString);
@@ -421,7 +461,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {number} index - The index of the row
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Object|string} - The object that contains all values in the row. (or JSON string of the object)
+     * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRowAt: function(index, isJsonString) {
         return this.modelManager.dataModel.getRowDataAt(index, isJsonString);
@@ -430,7 +470,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns the total number of the rows.
      * @api
-     * @return {number} - The total number of the rows
+     * @returns {number} - The total number of the rows
      */
     getRowCount: function() {
         return this.modelManager.dataModel.length;
@@ -439,7 +479,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns the rowKey of the currently selected row.
      * @api
-     * @return {(number|string)} - The rowKey of the row
+     * @returns {(number|string)} - The rowKey of the row
      */
     getSelectedRowKey: function() {
         return this.modelManager.focusModel.which().rowKey;
@@ -450,7 +490,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
-     * @return {jQuery} - The jquery object of the cell element
+     * @returns {jQuery} - The jquery object of the cell element
      */
     getElement: function(rowKey, columnName) {
         return this.modelManager.dataModel.getElement(rowKey, columnName);
@@ -603,9 +643,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Removes the row identified by the specified rowKey.
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
-     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to  options.removeOriginalData.
+     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to
+     *     options.removeOriginalData.
      * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
-     * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be removed although the target is first cell of them.
+     * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
+     *     removed although the target is first cell of them.
      */
     removeRow: function(rowKey, options) {
         if (tui.util.isBoolean(options) && options) {
@@ -620,7 +662,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Removes all checked rows.
      * @api
      * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
-     * @return {boolean} - True if there's at least one row removed.
+     * @returns {boolean} - True if there's at least one row removed.
      */
     removeCheckedRows: function(isConfirm) {
         var rowKeyList = this.getCheckedRowKeyList(),
@@ -657,7 +699,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns a list of the rowKey of checked rows.
      * @api
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Array|string} - A list of the rowKey. (or JSON string of the list)
+     * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
         var checkedRowList = this.modelManager.dataModel.getRowList(true),
@@ -670,7 +712,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns a list of the checked rows.
      * @api
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Array|string} - A list of the checked rows. (or JSON string of the list)
+     * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
     getCheckedRowList: function(isJsonString) {
         var checkedRowList = this.modelManager.dataModel.getRowList(true);
@@ -681,7 +723,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns a list of the column model.
      * @api
-     * @return {Array} - A list of the column model.
+     * @returns {Array} - A list of the column model.
      */
     getColumnModelList: function() {
         return this.modelManager.columnModel.get('dataColumnModelList');
@@ -693,10 +735,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {Object} [options] Options
      *      @param {boolean} [options.isOnlyChecked=false] - If set to true, only checked rows will be considered.
-     *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains the row data for internal use.
-     *      @param {boolean} [options.isOnlyRowKeyList=false] - If set to true, only keys of the changed rows will be returned.
+     *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains
+     *          the row data for internal use.
+     *      @param {boolean} [options.isOnlyRowKeyList=false] - If set to true, only keys of the changed
+     *          rows will be returned.
      *      @param {Array} [options.filteringColumnList] - A list of column name to be excluded.
-     * @return {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
+     * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
      */
     getModifiedRowList: function(options) {
         return this.modelManager.dataModel.getModifiedRowList(options);
@@ -730,7 +774,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns true if there are at least one row changed.
      * @api
-     * @return {boolean} - True if there are at least one row changed.
+     * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
         return this.modelManager.dataModel.isChanged();
@@ -740,7 +784,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns the instance of specified AddOn.
      * @api
      * @param {string} name - The name of the AddOn
-     * @return {instance} addOn - The instance of the AddOn
+     * @returns {instance} addOn - The instance of the AddOn
      */
     getAddOn: function(name) {
         return name ? this.addOn[name] : this.addOn;
@@ -795,7 +839,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {string} name - The name of the AddOn to use.
      * @param {object} options - The option objects for configuring the AddON.
-     * @return {tui.Grid} - This instance.
+     * @returns {tui.Grid} - This instance.
      */
     use: function(name, options) {
         if (name === 'Net') {
@@ -813,7 +857,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns a list of all rows.
      * @api
-     * @return {Array} - A list of all rows
+     * @returns {Array} - A list of all rows
      */
     getRowList: function() {
         return this.modelManager.dataModel.getRowList();
@@ -883,6 +927,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
+     * @returns {Object} - Row span data
      */
     getRowSpanData: function(rowKey, columnName) {
         return this.modelManager.dataModel.getRowSpanData(rowKey, columnName);
@@ -892,7 +937,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Returns the index of the row indentified by the rowKey.
      * @api
      * @param {number|string} rowKey - The unique key of the row
-     * @return {number} - The index of the row
+     * @returns {number} - The index of the row
      */
     getIndexOfRow: function(rowKey) {
         return this.modelManager.dataModel.indexOfRowKey(rowKey);
@@ -961,7 +1006,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
  * @api
  * @static
  * @param  {number} id - ID of the target grid
- * @return {tui.Grid} - Grid instance
+ * @returns {tui.Grid} - Grid instance
  */
 tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];

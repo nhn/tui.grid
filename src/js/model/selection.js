@@ -12,21 +12,24 @@ var Model = require('../base/model'),
  * @const
  * @type {{cell: string, row: string, column: string}}
  * @desc
- *  Selection states
+ * Selection states
  */
 var SELECTION_STATE = {
     cell: 'cell',
     row: 'row',
     column: 'column'
 };
+
 /**
- *  Selection Model class
- *  @module model/selection
+ * Selection Model class
+ * @module model/selection
+ * @extends module:base/view
  */
 var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} attr - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attr, options) {
         Model.prototype.initialize.apply(this, arguments);
@@ -100,7 +103,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns whether the selection is enabled.
-     * @return {boolean} True if the selection is enabled.
+     * @returns {boolean} True if the selection is enabled.
      */
     isEnabled: function() {
         return this._isEnabled;
@@ -253,6 +256,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Select all data in a row
+     * @param {Number} rowIndex - Row idnex
      */
     selectRow: function(rowIndex) {
         if (this._isEnabled) {
@@ -264,6 +268,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Select all data in a column
+     * @param {Number} columnIdx - Column index
      */
     selectColumn: function(columnIdx) {
         if (this._isEnabled) {
@@ -285,7 +290,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the row and column indexes of the starting position.
-     * @return {{row: number, column: number}} Objects containing indexes
+     * @returns {{row: number, column: number}} Objects containing indexes
      */
     getStartIndex: function() {
         var range = this.get('range');
@@ -297,7 +302,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the row and column indexes of the ending position.
-     * @return {{row: number, column: number}} Objects containing indexes
+     * @returns {{row: number, column: number}} Objects containing indexes
      */
     getEndIndex: function() {
         var range = this.get('range');
@@ -309,7 +314,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * selection 데이터가 존재하는지 확인한다.
-     * @return {boolean} selection 데이터 존재여부
+     * @returns {boolean} selection 데이터 존재여부
      */
     hasSelection: function() {
         return !!this.get('range');
@@ -317,7 +322,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the string value of all cells in the selection range as a single string.
-     * @return {String} string of values
+     * @returns {String} string of values
      */
     getValuesToString: function() {
         var range = this.get('range'),
@@ -341,7 +346,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환한다.
      * @param {Number} overflowX    가로축 기준 영역 overflow 값
      * @param {Number} overflowY    세로축 기준 영역 overflow 값
-     * @return {boolean} overflow 되었는지 여부
+     * @returns {boolean} overflow 되었는지 여부
      * @private
      */
     _isAutoScrollable: function(overflowX, overflowY) {
@@ -405,7 +410,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Expands the 'this.inputRange' if rowspan data exists, and resets the 'range' attributes to the value.
-     * @param {{column: number[], row: number[]}} [inputRange = this.inputRange] - Input range
+     * @param {{column: number[], row: number[]}} [inputRange] - Input range. Default is this.inputRange
      * @private
      */
     _resetRangeAttribute: function(inputRange) {

@@ -9,14 +9,14 @@ var View = require('../base/view');
 /**
  * RowList View
  * @module view/rowList
+ * @extends module:baes/view
  */
 var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 초기화 함수
      * @constructs
-     * @extends module:baes/view
      * @param {object} options 옵션 객체
-     *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
+     * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
         var focusModel = options.focusModel,
@@ -47,7 +47,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
     /**
      * Returns the list of column models in it's own side
-     * @return {Array} - Column model list
+     * @returns {Array} - Column model list
      */
     _getColumnModelList: function() {
         return this.columnModel.getVisibleColumnModelList(this.whichSide, true);
@@ -108,7 +108,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 행데이터 목록을 받아, HTML 문자열을 생성해서 반환한다.
      * @param {Model.Row[]} rows - 행데이터 목록
-     * @return {string} 생성된 HTML 문자열
+     * @returns {string} 생성된 HTML 문자열
      */
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter(),
@@ -122,7 +122,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * tr 엘리먼트를 찾아서 반환한다.
      * @param {(string|number)} rowKey rowKey 대상의 키값
-     * @return {jquery} 조회한 tr jquery 엘리먼트
+     * @returns {jquery} 조회한 tr jquery 엘리먼트
      * @private
      */
     _getRowElement: function(rowKey) {
@@ -131,7 +131,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
     /**
      * focusModel 의 select 이벤트 발생시 이벤트 핸들러
-     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {Object} eventData 대상의 키값
      * @private
      */
     _onSelect: function(eventData) {
@@ -219,7 +219,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 랜더링한다.
      * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
-     * @return {View.RowList} this 객체
+     * @returns {View.RowList} this 객체
      */
     render: function(isModelChanged) {
         var rowKeys = this.collection.pluck('rowKey'),

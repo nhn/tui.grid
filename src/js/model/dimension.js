@@ -14,11 +14,13 @@ var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 /**
  * 크기 관련 데이터 저장
  * @module model/dimension
+ * @extends module:base/model
  */
 var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
-     * @extends module:base/model
      * @constructs
+     * @param {Object} attrs - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
@@ -84,7 +86,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
      * @param {number} columnLength - 컬럼의 개수
-     * @return {number} 사용가능한 전체 셀의 넓이
+     * @returns {number} 사용가능한 전체 셀의 넓이
      * @private
      */
     _getAvailableTotalWidth: function(columnLength) {
@@ -100,7 +102,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Makes all width of columns not less than minimumColumnWidth.
      * @param {number[]} columnWidthList - 컬럼 넓이값 배열
-     * @return {number[]} - 수정된 새로운 넓이값 배열
+     * @returns {number[]} - 수정된 새로운 넓이값 배열
      * @private
      */
     _applyMinimumColumnWidth: function(columnWidthList) {
@@ -148,7 +150,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
      * @param {number[]} columnWidthList - An array of column widths
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _fillEmptyColumnWidth: function(columnWidthList) {
@@ -168,7 +170,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Adds extra widths of the column equally.
      * @param {number[]} columnWidthList - An array of column widths
      * @param {number} totalExtraWidth - Total extra width
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
@@ -187,7 +189,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Reduces excess widths of the column equally.
      * @param {number[]} columnWidthList - An array of column widths
      * @param {number} totalExcessWidth - Total excess width (negative number)
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
@@ -213,7 +215,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number} totalRemainWidth - Remaining excess width (negative number)
      * @param {object[]} availableList - An array of infos about available column.
      *                                 Each item of the array has {index:number, width:number}.
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
@@ -243,7 +245,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number[]} columnWidthList - An array of column width
      * @param {number} extraWidth - Extra width
      * @param {number[]} columnIndexes - An array of indexes of target columns
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
@@ -265,7 +267,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number[]} columnWidthList - An array of column width
      * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
      *                                    the column widths will be reduced.
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
@@ -329,7 +331,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
      * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
-     * @return {Number} 해당 frame 의 너비
+     * @returns {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
@@ -345,7 +347,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
      * @param {Array} widthList 너비 리스트 배열
-     * @return {Number} 계산된 frame 너비값
+     * @returns {Number} 계산된 frame 너비값
      * @private
      */
     _getFrameWidth: function(widthList) {
@@ -393,7 +395,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * 열 고정 영역의 minimum width 값을 구한다.
-     * @return {number} 열고정 영역의 최소 너비값.
+     * @returns {number} 열고정 영역의 최소 너비값.
      * @private
      */
     _getMinLeftSideWidth: function() {
@@ -411,7 +413,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * 열 고정 영역의 maximum width 값을 구한다.
-     * @return {number} 열고정 영역의 최대 너비값.
+     * @returns {number} 열고정 영역의 최대 너비값.
      * @private
      */
     _getMaxLeftSideWidth: function() {
@@ -427,7 +429,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * 계산한 cell 의 위치를 리턴한다.
      * @param {Number|String} rowKey - 데이터의 키값
      * @param {String} columnName - 칼럼명
-     * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
+     * @returns {{top: number, left: number, right: number, bottom: number}} - cell의 위치
      * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
@@ -482,7 +484,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Return scroll position from the received index
      * @param {Number|String} rowKey - Row-key of target cell
      * @param {String} columnName - Column name of target cell
-     * @return {{?scrollLeft: number, ?scrollTop: number}} Position to scroll
+     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
         var isRsideColumn = !this.columnModel.isLside(columnName),
@@ -546,7 +548,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-     * @return {{?scrollLeft: number, ?scrollTop: number}} Position to scroll
+     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
      * @private
      */
     _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
@@ -616,7 +618,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number} pageX - Mouse X-position based on page
      * @param {Number} pageY - Mouse Y-position based on page
      * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
-     * @return {{row: number, column: number}} Cell index
+     * @returns {{row: number, column: number}} Cell index
      */
     getIndexFromMousePosition: function(pageX, pageY, withMeta) {
         var containerPos = this._rebasePositionToContainer(pageX, pageY);
@@ -664,11 +666,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnIndex = columnWidthList.length - 1;
         } else {
             tui.util.forEachArray(columnWidthList, function(width, index) {
-                if (cellX <= width) {
+                if (cellX > width) {
+                    cellX -= width;
+                } else {
                     columnIndex = index;
                     return false;
-                } else {
-                    cellX -= width;
                 }
             });
         }
@@ -680,7 +682,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
      * @param {Number} pageX    마우스 x 좌표
      * @param {Number} pageY    마우스 y 좌표
-     * @return {{x: number, y: number}} 그리드 container 기준의 x, y 값
+     * @returns {{x: number, y: number}} 그리드 container 기준의 x, y 값
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
@@ -697,7 +699,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
      * @param {Number} totalWidth   grid 전체 너비
-     * @return {Array} 열고정 영역의 너비 리스트
+     * @returns {Array} 열고정 영역의 너비 리스트
      * @private
      */
     _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
@@ -737,7 +739,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Return height of X-scrollBar.
      *  If no X-scrollBar, return 0
-     * @return {number} Height of X-scrollBar
+     * @returns {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
         return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
@@ -786,7 +788,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Returns the height of table body.
      * @param  {number} height - The height of the dimension
-     * @return {number} The height of the table body
+     * @returns {number} The height of the table body
      * @private
      */
     _calcRealBodyHeight: function(height) {
@@ -795,7 +797,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Returns the minimum height of table body.
-     * @return {number} The minimum height of table body
+     * @returns {number} The minimum height of table body
      * @private
      */
     _getMinBodyHeight: function() {
@@ -828,7 +830,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Returns the height of the dimension.
-     * @return {Number} Height
+     * @returns {Number} Height
      */
     getHeight: function() {
         return this.get('bodyHeight') + this.get('headerHeight') + this.get('toolbarHeight');
@@ -864,7 +866,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * L side 와 R side 에 따른 columnWidthList 를 반환한다.
      * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
-     * @return {Array}  조회한 영역의 columnWidthList
+     * @returns {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),

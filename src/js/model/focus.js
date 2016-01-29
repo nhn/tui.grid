@@ -11,11 +11,13 @@ var Model = require('../base/model'),
  * Focus model
  * RowList collection 이 focus class 를 listen 한다.
  * @module model/focus
+ * @extends module:base/model
  */
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
-     * @extends module:base/model
      * @constructs
+     * @param {Object} attrs - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
@@ -40,7 +42,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Event handler for 'add' event on dataModel.
-     * @param  {Array.<module:model/data/row>} - New appended row model
+     * @param  {Array.<module:model/data/row>} rows - New appended row model
      * @param  {Object} options - Options. See {@link module:model/data/row#append}
      * @private
      */
@@ -61,7 +63,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 이전 focus 정보를 저장한다.
      * @private
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     _savePrevious: function() {
         if (this.get('rowKey') !== null) {
@@ -87,7 +89,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * Returns whether given rowKey is equal to current value
      * @param  {(Number|String)} rowKey - Row key
-     * @return {Boolean} - True if equal
+     * @returns {Boolean} - True if equal
      */
     _isCurrentRow: function(rowKey) {
         // compare with == operator to avoid strict comparision
@@ -99,7 +101,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * Returns whether given rowKey and columnName is equal to current value
      * @param  {(Number|String)} rowKey - Row key
      * @param  {String} columnName - Column name
-     * @return {Boolean} - True if equal
+     * @returns {Boolean} - True if equal
      */
     _isCurrentCell: function(rowKey, columnName) {
         return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
@@ -129,7 +131,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 행을 unselect 한다.
      * @param {boolean} blur - The boolean value whether to invoke blur
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     unselect: function(blur) {
         if (blur) {
@@ -147,7 +149,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
      * @param {String} columnName focus 처리할 셀의 컬럼명
      * @param {Boolean} isScrollable focus 처리한 영역으로 scroll 위치를 이동할지 여부
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     focus: function(rowKey, columnName, isScrollable) {
         if (util.isBlank(rowKey) ||
@@ -248,7 +250,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 디자인 blur 처리한다.
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     blur: function() {
         if (this.has()) {
@@ -263,7 +265,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 현재 focus 정보를 반환한다.
-     * @return {{rowKey: (number|string), columnName: string}} 현재 focus 정보에 해당하는 rowKey, columnName
+     * @returns {{rowKey: (number|string), columnName: string}} 현재 focus 정보에 해당하는 rowKey, columnName
      */
     which: function() {
         return {
@@ -275,7 +277,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 정보를 index 기준으로 반환한다.
      * @param {boolean} isPrevious 이전 focus 정보를 반환할지 여부
-     * @return {{row: number, column: number}} The object that contains index info
+     * @returns {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
         var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
@@ -289,7 +291,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Returns whether has focus.
-     * @return {boolean} True if has focus.
+     * @returns {boolean} True if has focus.
      */
     has: function() {
         return this._isValidCell(this.get('rowKey'), this.get('columnName'));
@@ -297,7 +299,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Restore previous focus data.
-     * @return {boolean} True if restored
+     * @returns {boolean} True if restored
      */
     restore: function() {
         var prevRowKey = this.get('prevRowKey'),
@@ -313,7 +315,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Returns whether the specified cell is exist
-     * @return {boolean} True if exist
+     * @param {String|Number} rowKey - Rowkey
+     * @param {String} columnName - ColumnName
+     * @returns {boolean} True if exist
      */
     _isValidCell: function(rowKey, columnName) {
         var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),
@@ -325,14 +329,19 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
      * @param {Number} offset   이동할 offset
-     * @return {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
+     * @returns {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
      * @private
      */
     _findRowKey: function(offset) {
         var index, row,
             dataModel = this.dataModel;
         if (this.has()) {
-            index = Math.max(Math.min(dataModel.indexOfRowKey(this.get('rowKey')) + offset, this.dataModel.length - 1), 0);
+            index = Math.max(
+                Math.min(
+                    dataModel.indexOfRowKey(this.get('rowKey')) + offset,
+                    this.dataModel.length - 1
+                ), 0
+            );
             row = dataModel.at(index);
             return row && row.get('rowKey');
         }
@@ -341,7 +350,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 된 column 기준으로 offset 만큼 이동한 columnName 을 반환한다.
      * @param {Number} offset   이동할 offset
-     * @return {String} columnName  offset 만큼 이동한 위치의 columnName
+     * @returns {String} columnName  offset 만큼 이동한 위치의 columnName
      * @private
      */
     _findColumnName: function(offset) {
@@ -360,7 +369,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * rowSpanData 를 반환한다.
      * @param {Number|String} rowKey    조회할 데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
      * @private
      */
     _getRowSpanData: function(rowKey, columnName) {
@@ -370,7 +379,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * offset 만큼 뒤로 이동한 row 의 index 를 반환한다.
      * @param {number} offset   이동할 offset
-     * @return {Number} 이동한 위치의 row index
+     * @returns {Number} 이동한 위치의 row index
      */
     nextRowIndex: function(offset) {
         var rowKey = this.nextRowKey(offset);
@@ -380,7 +389,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * offset 만큼 앞으로 이동한 row의 index를 반환한다.
      * @param {number} offset 이동할 offset
-     * @return {Number} 이동한 위치의 row index
+     * @returns {Number} 이동한 위치의 row index
      */
     prevRowIndex: function(offset) {
         var rowKey = this.prevRowKey(offset);
@@ -389,7 +398,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 다음 컬럼의 인덱스를 반환한다.
-     * @return {Number} 다음 컬럼의 index
+     * @returns {Number} 다음 컬럼의 index
      */
     nextColumnIndex: function() {
         var columnName = this.nextColumnName();
@@ -398,7 +407,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 이전 컬럼의 인덱스를 반환한다.
-     * @return {Number} 이전 컬럼의 인덱스
+     * @returns {Number} 이전 컬럼의 인덱스
      */
     prevColumnIndex: function() {
         var columnName = this.prevColumnName();
@@ -409,7 +418,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * keyEvent 발생 시 호출될 메서드로,
      * rowSpan 정보 까지 계산된 다음 rowKey 를 반환한다.
      * @param {number}  offset 이동할 offset
-     * @return {Number|String} offset 만큼 이동한 위치의 rowKey
+     * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     nextRowKey: function(offset) {
         var focused = this.which(),
@@ -442,7 +451,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * keyEvent 발생 시 호출될 메서드로,
      * rowSpan 정보 까지 계산된 이전 rowKey 를 반환한다.
      * @param {number}  offset 이동할 offset
-     * @return {Number|String} offset 만큼 이동한 위치의 rowKey
+     * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     prevRowKey: function(offset) {
         var focused = this.which(),
@@ -470,7 +479,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * keyEvent 발생 시 호출될 메서드로, 다음 columnName 을 반환한다.
-     * @return {String} 다음 컬럼명
+     * @returns {String} 다음 컬럼명
      */
     nextColumnName: function() {
         return this._findColumnName(1);
@@ -478,7 +487,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * keyEvent 발생 시 호출될 메서드로, 이전 columnName 을 반환한다.
-     * @return {String} 이전 컬럼명
+     * @returns {String} 이전 컬럼명
      */
     prevColumnName: function() {
         return this._findColumnName(-1);
@@ -486,7 +495,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 첫번째 row 의 key 를 반환한다.
-     * @return {(string|number)} 첫번째 row 의 키값
+     * @returns {(string|number)} 첫번째 row 의 키값
      */
     firstRowKey: function() {
         return this.dataModel.at(0).get('rowKey');
@@ -494,7 +503,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 마지막 row의 key 를 반환한다.
-     * @return {(string|number)} 마지막 row 의 키값
+     * @returns {(string|number)} 마지막 row 의 키값
      */
     lastRowKey: function() {
         return this.dataModel.at(this.dataModel.length - 1).get('rowKey');
@@ -502,7 +511,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 첫번째 columnName 을 반환한다.
-     * @return {string} 첫번째 컬럼명
+     * @returns {string} 첫번째 컬럼명
      */
     firstColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList();
@@ -511,7 +520,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 마지막 columnName 을 반환한다.
-     * @return {string} 마지막 컬럼명
+     * @returns {string} 마지막 컬럼명
      */
     lastColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),

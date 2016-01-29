@@ -11,11 +11,11 @@ var formUtil = require('../../common/formUtil');
 /**
  * Painter class for the text cell
  * @module painter/cell/text
+ * @extends module:painter/cell
  */
 var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
@@ -51,7 +51,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<input' +
@@ -66,7 +66,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
     /**
      * input type 을 반환한다.
-     * @return {string} input 타입
+     * @returns {string} input 타입
      * @private
      */
     _getInputType: function() {
@@ -75,7 +75,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'text';
@@ -108,7 +108,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -160,7 +160,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
     /**
      * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
      * @param {jQuery} $input   인풋 jquery 엘리먼트
-     * @return {Boolean}    값의 변경여부
+     * @returns {Boolean}    값의 변경여부
      * @private
      */
     _isEdited: function($input) {
@@ -182,7 +182,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
      * Painter.Cell로부터 override 해서 구현함)
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      * @override
      */
@@ -253,7 +253,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
     /**
      * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
      * @param  {jQuery} $input - 인풋 요소의 jquery 객체
-     * @return {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
+     * @returns {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
      * @private
      */
     _getCellInfoFromInput: function($input) {
@@ -271,7 +271,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * 해당 이벤트 핸들러를 호출해준다.
      * @param {Event} event - 이벤트 객체
      * @param {string} eventName - 이벤트명
-     * @return {boolean} Return value of the event handler. Null if there's no event handler.
+     * @returns {boolean} Return value of the event handler. Null if there's no event handler.
      * @private
      */
     _executeInputEventHandler: function(event, eventName) {

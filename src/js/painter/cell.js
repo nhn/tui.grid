@@ -11,11 +11,11 @@ var keyNameMap = require('../common/constMap').keyName;
 /**
  * Cell Painter Base
  * @module painter/cell
+ * @extends module:base/painter
  */
 var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
-     * @extends module:base/painter
      */
     init: function() {
         Painter.apply(this, arguments);
@@ -33,7 +33,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Markup template
      * If use '<%=class%>' key word, an error occurs.
      * So use '<%=className%>' instead of '<%=class%>'
-     * @return {string} template
+     * @returns {string} template
      */
     template: _.template(
         '<td' +
@@ -113,8 +113,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
      * @param {Event} keyDownEvent  이벤트 객체
-     * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
-     * _keyDownSwitch 에서 사용될 공통 파라미터 객체
+     * @returns {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*),
+     *          rowKey: *, columnName: *, keyName: *}} _keyDownSwitch 에서 사용될 공통 파라미터 객체
      * @private
      */
     _getParamForKeyDownSwitch: function(keyDownEvent) {
@@ -136,7 +136,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * keyDownSwitch 를 수행한다.
      * @param {Event} keyDownEvent 이벤트 객체
-     * @return {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
+     * @returns {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
      * @private
      */
     _executeKeyDownSwitch: function(keyDownEvent) {
@@ -175,7 +175,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
      * @param {Object} cellData Model 의 셀 데이터
-     * @return {Array} 생성된 css 디자인 클래스 배열
+     * @returns {Array} 생성된 css 디자인 클래스 배열
      * @private
      */
     _getClassNameList: function(cellData) {
@@ -223,7 +223,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
      * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      */
     _getContentHtml: function(cellData) {
@@ -249,7 +249,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * 값이 function인 경우 function을 실행해 결과값을 반환한다.
      * @param {(string|function)} content - 내용
      * @param {object} cellData - 셀 데이터
-     * @return {string} - 내용
+     * @returns {string} - 내용
      * @private
      */
     _getExtraContent: function(content, cellData) {
@@ -271,7 +271,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
      * @param {string} content - 감싸질 문자열
      * @param {string} className - span 태그의 클래스명
-     * @return {string} span 태그로 감싼 HTML 코드
+     * @returns {string} span 태그로 감싼 HTML 코드
      * @private
      */
     _getSpanWrapContent: function(content, className) {
@@ -285,7 +285,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
      * td 단위의 html 문자열을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} td 마크업 문자열
+     * @returns {string} td 마크업 문자열
      */
     getHtml: function(cellData) {
         var attributeString = util.getAttributesString(this.getAttributes(cellData)),
@@ -325,7 +325,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 의 cellData 를 반환한다.
      * @param {jQuery} $target  조회할 엘리먼트
-     * @return {Object} 조회한 cellData 정보
+     * @returns {Object} 조회한 cellData 정보
      * @private
      */
     _getCellData: function($target) {
@@ -336,7 +336,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
+     * @returns {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
      * @private
      */
     _getCellAddress: function($target) {
@@ -351,7 +351,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * converter 함수를 적용한 결과값을 반환한다.
      * @param {string} value - 셀의 실제값
      * @param {object} cellData - 모델의 셀 데이터
-     * @return {(string|null)} HTML문자열. 혹은 null
+     * @returns {(string|null)} HTML문자열. 혹은 null
      * @private
      */
     _getConvertedHtml: function(value, cellData) {
@@ -371,7 +371,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 로 부터 columnName 을 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {string} 컬럼명
+     * @returns {string} 컬럼명
      */
     getColumnName: function($target) {
         return $target.closest('td').attr('columnName');
@@ -380,7 +380,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 로 부터 rowKey 를 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {string} 행의 키값
+     * @returns {string} 행의 키값
      */
     getRowKey: function($target) {
         return $target.closest('tr').attr('key');
@@ -389,7 +389,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * columnModel 을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
-     * @return {*|Object} 컬럼모델
+     * @returns {*|Object} 컬럼모델
      */
     getColumnModel: function(cellData) {
         return this.grid.columnModel.getColumnModel(cellData.columnName);
@@ -398,7 +398,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
      * @param {Object} cellData Model 의 셀 데이터
-     * @return {Object} td 에 지정할 attribute 데이터
+     * @returns {Object} td 에 지정할 attribute 데이터
      */
     getAttributes: function(cellData) {
         var columnModel = this.getColumnModel(cellData);
@@ -418,7 +418,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
      * - 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'normal';
@@ -436,7 +436,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>

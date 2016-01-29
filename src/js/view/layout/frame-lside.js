@@ -9,11 +9,11 @@ var Frame = require('./frame');
 /**
  * left side 프레임 클래스
  * @module view/layout/frame-lside
+ * @extends module:view/layout/frame
  */
 var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
     /**
      * @constructs
-     * @extends module:view/layout/frame
      */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);

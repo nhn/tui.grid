@@ -9,11 +9,12 @@ var View = require('../../../base/view');
 /**
  * Class for the pagination in the toolbar
  * @module view/layout/toolbar/pagination
+ * @extends module:base/view
  */
 var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.toolbarModel = options.toolbarModel;
@@ -36,7 +37,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     /**
      * pagination 을 rendering 한다.
-     * @return {View.Layout.Toolbar.Pagination} This object
+     * @returns {View.Layout.Toolbar.Pagination} This object
      */
     render: function() {
         this._destroyChildren();

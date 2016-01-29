@@ -10,13 +10,13 @@ var View = require('../../base/view'),
 /**
  * Header 레이아웃 View
  * @module view/layout/header
+ * @extends module:base/view
  */
 var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options 옵션
-     *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+     * @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -87,7 +87,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * col group 마크업을 생성한다.
-     * @return {string} <colgroup>에 들어갈 html 마크업 스트링
+     * @returns {string} <colgroup>에 들어갈 html 마크업 스트링
      * @private
      */
     _getColGroupMarkup: function() {
@@ -107,7 +107,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event} event - MouseDown event
      * @private
      */
     _onMouseDown: function(event) {
@@ -127,7 +127,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Control selection action when started
-     * @param {Array} columnNames
+     * @param {Array} columnNames - An array of column names
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse position Y
      * @param {boolean} shiftKey - Whether the shift-key is pressed.
@@ -203,7 +203,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousemove event handler
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event} event - MouseMove event
      * @private
      */
     _onMouseMove: function(event) {
@@ -228,7 +228,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Whether this columnNames array has a meta column name.
-     * @param {Array} columnNames
+     * @param {Array} columnNames - An array of column names
      * @returns {boolean} Has a meta column name or not.
      * @private
      */
@@ -248,7 +248,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Selectstart event handler
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event} event - Mouse event
      * @returns {boolean} false for preventDefault
      * @private
      */
@@ -270,7 +270,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
-     * @return {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
+     * @returns {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
      * @private
      */
     _getHeaderMainCheckbox: function() {
@@ -369,7 +369,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * 랜더링
-     * @return {View.Layout.Header} this
+     * @returns {View.Layout.Header} this
      */
     render: function() {
         this._destroyChildren();
@@ -396,7 +396,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * 컬럼 정보를 반환한다.
-     * @return {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
+     * @returns {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
      * @private
      */
     _getColumnData: function() {
@@ -413,7 +413,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Header 의 body markup 을 생성한다.
-     * @return {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
+     * @returns {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
      * @private
      */
     _getTableBodyMarkup: function() {
@@ -471,7 +471,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
      * @param {Array} hierarchyList 헤더 마크업 생성시 사용될 계층구조 데이터
-     * @return {number} 헤더 영역의 row 최대값
+     * @returns {number} 헤더 영역의 row 최대값
      * @private
      */
     _getHierarchyMaxRowCount: function(hierarchyList) {
@@ -484,7 +484,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * column merge 가 설정되어 있을 때 헤더의 계층구조 리스트를 가져온다.
-     * @return {Array}  계층구조 리스트
+     * @returns {Array}  계층구조 리스트
      * @private
      */
     _getColumnHierarchyList: function() {
@@ -503,7 +503,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      *
      * @param {Object} columnModel 컬럼모델
      * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
-     * @return {Array} 계층구조 결과값
+     * @returns {Array} 계층구조 결과값
      * @private
      */
     _getColumnHierarchy: function(columnModel, resultList) {

@@ -13,13 +13,13 @@ var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 /**
  * Class for the table layout in the body(data) area
  * @module view/layout/bodyTable
+ * @extends module:base/view
  */
 var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R'] L or R (which side)
+     * @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -111,7 +111,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     /**
      * Renders elements
-     * @return {View.Layout.Body} This object
+     * @returns {View.Layout.Body} This object
      */
     render: function() {
         this._destroyChildren();
@@ -170,7 +170,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * table 요소를 새로 생성한다.
      * (IE7-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
      * @param {string} tbodyHtml - tbody의 innerHTML 문자열
-     * @return {jquery} - 새로 생성된 table의 tbody 요소
+     * @returns {jquery} - 새로 생성된 table의 tbody 요소
      */
     redrawTable: function(tbodyHtml) {
         this.$el[0].innerHTML = this.template({
@@ -183,7 +183,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     /**
      * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
-     * @return {string} <colgroup> 안에 들어갈 마크업 문자열
+     * @returns {string} <colgroup> 안에 들어갈 마크업 문자열
      * @private
      */
     _getColGroupMarkup: function() {

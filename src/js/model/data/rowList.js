@@ -11,13 +11,12 @@ var Row = require('./row');
  * Raw 데이터 RowList 콜렉션. (DataSource)
  * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
  * @module model/data/rowList
+ * @extends module:base/collection
  */
 var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
-    model: Row,
     /**
      * @param {Array} models    콜랙션에 추가할 model 리스트
      * @param {Object} options   생성자의 option 객체
-     * @extends module:base/collection
      * @constructs
      */
     initialize: function(models, options) {
@@ -48,10 +47,12 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         }
     },
 
+    model: Row,
+
     /**
      * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
      * @param {Array} data  원본 데이터
-     * @return {Array}  파싱하여 가공된 데이터
+     * @returns {Array}  파싱하여 가공된 데이터
      */
     parse: function(data) {
         data = data && data['contents'] || data;
@@ -62,7 +63,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 데이터의 _extraData 를 분석하여, Model 에서 사용할 수 있도록 가공한다.
      * _extraData 필드에 rowSpanData 를 추가한다.
      * @param {Array} data  가공할 데이터
-     * @return {Array} 가공된 데이터
+     * @returns {Array} 가공된 데이터
      * @private
      */
     _formatData: function(data) {
@@ -84,7 +85,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *
      * @param {object} row  대상 row 데이터
      * @param {number} index    해당 row 의 인덱스 정보. rowKey 를 자동 생성할 경우 사용된다.
-     * @return {object} 가공된 row 데이터
+     * @returns {object} 가공된 row 데이터
      * @private
      */
     _baseFormat: function(row) {
@@ -104,7 +105,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * 새로운 rowKey를 생성해서 반환한다.
-     * @return {number} 생성된 rowKey
+     * @returns {number} 생성된 rowKey
      * @private
      */
     _createRowKey: function() {
@@ -116,7 +117,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
      * @param {Array} rowList - 전체 rowList 배열. rowSpan 된 경우 자식 row 의 데이터도 가공해야 하기 때문에 전체 list 를 인자로 넘긴다.
      * @param {number} index - 해당 배열에서 extraData 를 설정할 배열
-     * @return {Array} rowList - 가공된 rowList
+     * @returns {Array} rowList - 가공된 rowList
      * @private
      */
     _setExtraRowSpanData: function(rowList, index) {
@@ -166,7 +167,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * originalRowList 와 originalRowMap 을 생성한다.
      * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
-     * @return {Array} format 을 거친 데이터 리스트.
+     * @returns {Array} format 을 거친 데이터 리스트.
      */
     setOriginalRowList: function(rowList) {
         this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
@@ -177,7 +178,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 원본 데이터 리스트를 반환한다.
      * @param {boolean} [isClone=true]  데이터 복제 여부.
-     * @return {Array}  원본 데이터 리스트 배열.
+     * @returns {Array}  원본 데이터 리스트 배열.
      */
     getOriginalRowList: function(isClone) {
         isClone = isClone === undefined ? true : isClone;
@@ -187,7 +188,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 원본 row 데이터를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
-     * @return {Object} 해당 행의 원본 데이터값
+     * @returns {Object} 해당 행의 원본 데이터값
      */
     getOriginalRow: function(rowKey) {
         return _.clone(this.originalRowMap[rowKey]);
@@ -197,7 +198,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowKey 와 columnName 에 해당하는 원본 데이터를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 원본 데이터값
+     * @returns {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 원본 데이터값
      */
     getOriginal: function(rowKey, columnName) {
         return _.clone(this.originalRowMap[rowKey][columnName]);
@@ -207,7 +208,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * mainRowKey 를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 main row 키값
+     * @returns {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 main row 키값
      */
     getMainRowKey: function(rowKey, columnName) {
         var row = this.get(rowKey),
@@ -222,7 +223,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * rowKey 에 해당하는 index를 반환한다.
      * @param {(Number|String)} rowKey 데이터의 키값
-     * @return {Number} 키값에 해당하는 row의 인덱스
+     * @returns {Number} 키값에 해당하는 row의 인덱스
      */
     indexOfRowKey: function(rowKey) {
         return this.indexOf(this.get(rowKey));
@@ -232,7 +233,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowSpan 이 적용되어야 하는지 여부를 반환한다.
      * 랜더링시 사용된다.
      * - sorted, 혹은 filterd 된 경우 false 를 리턴한다.
-     * @return {boolean}    랜더링 시 rowSpan 을 해야하는지 여부
+     * @returns {boolean}    랜더링 시 rowSpan 을 해야하는지 여부
      */
     isRowSpanEnable: function() {
         return !this.isSortedByField();
@@ -240,7 +241,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * 현재 RowKey가 아닌 다른 컬럼에 의해 정렬된 상태인지 여부를 반환한다.
-     * @return {Boolean}    정렬된 상태인지 여부
+     * @returns {Boolean}    정렬된 상태인지 여부
      */
     isSortedByField: function() {
         return this.sortOptions.columnName !== 'rowKey';
@@ -348,7 +349,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * Backbone 에서 sort() 실행시 내부적으로 사용되는 메소드.
      * @param {Row} a 비교할 앞의 모델
      * @param {Row} b 비교할 뒤의 모델
-     * @return {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
+     * @returns {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
      */
     comparator: function(a, b) {
         var columnName = this.sortOptions.columnName,
@@ -372,7 +373,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
      * @param {Array} rowList   내부에 설정된 rowList 배열
-     * @return {Array}  private 프로퍼티를 제거한 결과값
+     * @returns {Array}  private 프로퍼티를 제거한 결과값
      * @private
      */
     _removePrivateProp: function(rowList) {
@@ -461,7 +462,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * append, prepend 시 사용할 dummy row를 생성한다.
-     * @return {Object} 값이 비어있는 더미 row 데이터
+     * @returns {Object} 값이 비어있는 더미 row 데이터
      * @private
      */
     _createDummyRow: function() {
@@ -477,12 +478,13 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * Insert the new row with specified data to the end of table.
-     * @param {(Array|Object)} [row] - The data for the new row
+     * @param {(Array|Object)} [rowData] - The data for the new row
      * @param {Object} [options] - Options
      * @param {Number} [options.at] - The index at which new row will be inserted
      * @param {Boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
      *        has a rowspan data, the new row will extend the existing rowspan data.
      * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @returns {Array.<module:model/data/row>} Row model list
      */
     append: function(rowData, options) {
         var modelList = this._createModelList(rowData),
@@ -507,6 +509,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Object} rowData  prepend 할 행 데이터
      * @param {object} [options] - Options
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @returns {Array.<module:model/data/row>} Row model list
      */
     prepend: function(rowData, options) {
         options = options || {};
@@ -519,7 +522,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
      * @param {(Number|String)} rowKey  행 데이터의 고유 키
      * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Object} 행 데이터
+     * @returns {Object} 행 데이터
      */
     getRowData: function(rowKey, isJsonString) {
         var row = this.get(rowKey),
@@ -532,7 +535,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
      * @param {Number} index 행의 인덱스
      * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Object} 행 데이터
+     * @returns {Object} 행 데이터
      */
     getRowDataAt: function(index, isJsonString) {
         var row = this.at(index),
@@ -546,7 +549,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
      * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-     * @return {(Number|String|undefined)}    조회한 셀의 값.
+     * @returns {(Number|String|undefined)}    조회한 셀의 값.
      */
     getValue: function(rowKey, columnName, isOriginal) {
         var value, row;
@@ -591,7 +594,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * columnName에 해당하는 column data list를 리턴한다.
      * @param {String} columnName   컬럼명
      * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
+     * @returns {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
      */
     getColumnValues: function(columnName, isJsonString) {
         var valueList = this.pluck(columnName);
@@ -640,7 +643,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * Returns true if there are at least one row changed.
-     * @return {boolean} - True if there are at least one row changed.
+     * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
         var modifiedRowsArr = _.values(this.getModifiedRowList());
@@ -737,7 +740,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 주어진 데이터로 모델 목록을 생성하여 반환한다.
      * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
-     * @return {Row[]} 생성된 모델 목록
+     * @returns {Row[]} 생성된 모델 목록
      */
     _createModelList: function(rowData) {
         var modelList = [],
@@ -832,7 +835,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Object} row - row 데이터
      * @param {Object} originalRow - 원본 row 데이터
      * @param {Array} filteringColumnList - 비교에서 제외할 컬럼명
-     * @return {boolean} - 수정여부
+     * @returns {boolean} - 수정여부
      */
     _isModifiedRow: function(row, originalRow, filteringColumnList) {
         var filtered = _.omit(row, filteringColumnList);
@@ -853,7 +856,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
      *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-     * @return {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
+     * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
      */
     getModifiedRowList: function(options) {
         var isRaw = options && options.isRaw,
@@ -917,6 +920,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
      * @param {Array} rowList 설정할 데이터 배열 값
      * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * @param {Function} [callback] callback function
      */
     replaceRowList: function(rowList, isParse, callback) {
         if (_.isUndefined(isParse)) {
@@ -997,7 +1001,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
      * @param  {Array[]} data - 붙여넣기할 데이터
      * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
-     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
+     * @returns {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getEndIndexToPaste: function(data, startIdx) {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
@@ -1044,7 +1048,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
-     * @return {jQuery} 해당 jQuery Element
+     * @returns {jQuery} 해당 jQuery Element
      */
     getElement: function(rowKey, columnName) {
         var rowKey = this.getMainRowKey(rowKey, columnName);

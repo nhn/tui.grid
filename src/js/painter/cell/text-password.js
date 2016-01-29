@@ -10,11 +10,11 @@ var TextCell = require('./text');
 /**
  * Password 타입의 cell renderer
  * @module painter/cell/text-password
+ * @extends module:painter/cell/text
  */
 var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-password.prototype */{
     /**
      * @construct
-     * @extends module:painter/cell/text
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
@@ -24,7 +24,7 @@ var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/t
 
     /**
      * input type 을 반환한다.
-     * @return {string} input 타입
+     * @returns {string} input 타입
      * @private
      */
     _getInputType: function() {
@@ -33,7 +33,7 @@ var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/t
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'text-password';

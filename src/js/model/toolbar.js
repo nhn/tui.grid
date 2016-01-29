@@ -10,11 +10,11 @@ var Model = require('../base/model'),
 /**
  * Toolbar Model
  * @module model/toolbar
+ * @extends module:base/model
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      * @param  {object} options - Options
      */
     initialize: function(options) {
@@ -37,7 +37,7 @@ var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
 
     /**
      * Returns whether the toolbar is visible
-     * @return {Boolean} True if the toolbar is visible
+     * @returns {Boolean} True if the toolbar is visible
      */
     isVisible: function() {
         return this.get('hasControlPanel') || this.get('hasPagination') || this.get('hasResizeHandler');

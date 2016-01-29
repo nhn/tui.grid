@@ -10,11 +10,11 @@ var util = require('../../common/util');
 /**
  * Painter class for the select cell
  * @module painter/cell/select
+ * @extends module:painter/cell/list
  */
 var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/select.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/list
      */
     init: function() {
         ListCell.apply(this, arguments);
@@ -36,7 +36,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<select' +
@@ -50,8 +50,9 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
     /**
      * Options markup template
      * It will be added to content
-     * :: The value of option is a type of stirng, and use '==' operator for comparison regardless of some types of value in cellData
-     * @return {string} html
+     * :: The value of option is a type of stirng, and use '==' operator for
+     *    comparison regardless of some types of value in cellData
+     * @returns {string} html
      */
     optionTemplate: _.template(
         '<option' +
@@ -64,7 +65,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'select';
@@ -87,7 +88,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -127,7 +128,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
      * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
      * View.Base.Painter.Cell로부터 override 해서 구현함)
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      * @override
      */

@@ -10,11 +10,11 @@ var util = require('../common/util');
 /**
  * Dummy Cell Painter
  * @module painter/dummyCell
+ * @extends module:base/painter
  */
 var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
     /**
      * @constructs
-     * @extends module:base/painter
      */
     init: function() {
         Painter.apply(this, arguments);
@@ -30,7 +30,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     /**
      * Returns the edit type of the cell.
      * (To implement interface of module:painter/cell)
-     * @return {String} Edit type
+     * @returns {String} Edit type
      */
     getEditType: function() {
         return 'dummy';
@@ -49,7 +49,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     /**
      * Returns the HTML string (TD) of the cell
      * @override
-     * @return {string} HTML string
+     * @returns {string} HTML string
      */
     getHtml: function() {
         // '&nbsp' for height issue with empty cell in IE7

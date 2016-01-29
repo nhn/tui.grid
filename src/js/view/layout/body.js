@@ -11,13 +11,13 @@ var HTML_CONTAINER = '<div class="body_container"></div>';
 /**
  * Class for the body layout
  * @module view/layout/body
+ * @extends module:base/view
  */
 var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R'] L or R (which side)
+     * @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -112,7 +112,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     /**
      * Returns the name of the visible data columns at given index
      * @param  {Number} columnIndex - Column index
-     * @return {String} - Column name
+     * @returns {String} - Column name
      * @private
      */
     _getColumnNameByVisibleIndex: function(columnIndex) {
@@ -122,7 +122,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {jQuery.Event} event
+     * @param {MouseEvent} event - Mousedown event
      * @private
      */
     _onMouseDown: function(event) {
@@ -158,6 +158,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Event handler for blur event on input element.
+     * @param {MouseEvent} event - Mousedown event
      * @private
      */
     _onBlurInput: function(event) {
@@ -172,7 +173,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse position Y
      * @param {boolean} shiftKey - Whether the shift-key is pressed.
-     * @param {{columnName:string, column:number, row:number}} indexObj
+     * @param {{column:number, row:number}} indexObj - Index map object
+     * @param {String} columnName - column name
      * @param {boolean} isInput - Whether the target is input element.
      * @private
      */
@@ -254,7 +256,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Returns the distance between 'mousedown' position and specified position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
-     * @return {number} Distance
+     * @returns {number} Distance
      * @private
      */
     _getMouseMoveDistance: function(pageX, pageY) {
@@ -277,7 +279,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * rendering 한다.
-     * @return {View.Layout.Body}   자기 자신
+     * @returns {View.Layout.Body}   자기 자신
      */
     render: function() {
         var whichSide = this.whichSide;

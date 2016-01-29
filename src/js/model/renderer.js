@@ -12,11 +12,13 @@ var util = require('../common/util');
 /**
  * View 에서 Rendering 시 사용할 객체
  * @module model/renderer
+ * @extends module:base/model
  */
 var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
-     * @extends module:base/model
      * @constructs
+     * @param {Object} attrs - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attrs, options) {
         var lside, rside, rowListOptions;
@@ -92,7 +94,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _updateMaxScrollTop: function() {
         var dimension = this.dimensionModel,
-            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
+            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
+                dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
     },
@@ -123,7 +126,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
      * @param {String} [whichSide='R']    어느 영역인지 여부. 'L|R' 중에 하나의 값을 넘긴다.
-     * @return {Object} collection  해당 영역의 랜더 데이터 콜랙션
+     * @returns {Object} collection  해당 영역의 랜더 데이터 콜랙션
      */
     getCollection: function(whichSide) {
         return this.get(tui.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
@@ -181,7 +184,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @param  {Object} rowDataModel - Instance of module:model/data/row
      * @param  {Array.<String>} columnNames - Column names
      * @param  {Number} rowNum - Row number
-     * @return {Object} - view data object
+     * @returns {Object} - view data object
      * @private
      */
     _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
@@ -203,7 +206,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Returns the object that contains two array of column names splitted by columnFixCount.
-     * @return {{lside: Array, rside: Array}} - Column names map
+     * @returns {{lside: Array, rside: Array}} - Column names map
      * @private
      */
     _getColumnNamesOfEachSide: function() {
@@ -255,7 +258,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Returns the count of rows (except dummy rows) in view model list
-     * @return {Number} Count of rows
+     * @returns {Number} Count of rows
      * @private
      */
     _getActualRowCount: function() {
@@ -338,7 +341,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Collection} 컬럼명에 해당하는 영역의 콜랙션
+     * @returns {Collection} 컬럼명에 해당하는 영역의 콜랙션
      * @private
      */
     _getCollectionByColumnName: function(columnName) {
@@ -357,7 +360,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * 셀 데이터를 반환한다.
      * @param {number} rowKey   데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {object} cellData 셀 데이터
+     * @returns {object} cellData 셀 데이터
      * @example
      =>
      {

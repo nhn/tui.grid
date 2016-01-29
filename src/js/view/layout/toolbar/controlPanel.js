@@ -9,11 +9,12 @@ var View = require('../../../base/view');
 /**
  * Class for the control panel in the toolbar
  * @module view/layout/toolbar/controlPanel
+ * @extends module:base/view
  */
 var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.setOwnProperties({
@@ -43,7 +44,8 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
     /**
      * Click event handler for excel download buttons
-     * @param  {MouseEvent} clickEvent - MouseEvent object
+     * @param  {MouseEvent} mouseEvent - MouseEvent object
+     * @private
      */
     _onClickExcel: function(mouseEvent) {
         var grid = tui.Grid.getInstanceById(this.gridId),
@@ -64,8 +66,8 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
     },
 
     /**
-     * 랜더링한다.
-     * @return {View.Layout.Toolbar.ControlPanel} - this object
+     * Renders.
+     * @returns {View.Layout.Toolbar.ControlPanel} - this object
      */
     render: function() {
         var toolbarModel = this.toolbarModel;

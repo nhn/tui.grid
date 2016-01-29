@@ -22,6 +22,7 @@ var RowPainter = require('./row');
 var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.prototype */{
     /**
      * @constructs
+     * @param {Object} options - Options
      */
     init: function(options) {
         this.modelManager = options.modelManager;
@@ -33,7 +34,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     /**
      * Creates instances of cell painters and returns the map object that stores them
      * using 'editType' as a key.
-     * @return {Object} Key-value object
+     * @returns {Object} Key-value object
      * @private
      */
     _createCellPainters: function() {
@@ -61,7 +62,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Creates row painter and returns it.
-     * @return {module:painter/row} New row painter instance
+     * @returns {module:painter/row} New row painter instance
      */
     _createRowPainter: function() {
         return new RowPainter({
@@ -73,7 +74,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     /**
      * Returns an instance of cell painter which has given editType
      * @param {String} editType - Edit type
-     * @return {Object} - Cell painter instance
+     * @returns {Object} - Cell painter instance
      */
     getCellPainter: function(editType) {
         var instance = this.cellPainters[editType];
@@ -90,7 +91,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Returns all cell painters
-     * @return {Object} Object that has edit-type as a key and cell painter as a value
+     * @returns {Object} Object that has edit-type as a key and cell painter as a value
      */
     getCellPainters: function() {
         return this.cellPainters;
@@ -98,7 +99,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Returns a row painter
-     * @return {module:painter/row} Row painter
+     * @returns {module:painter/row} Row painter
      */
     getRowPainter: function() {
         return this.rowPainter;

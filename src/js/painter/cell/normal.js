@@ -9,11 +9,11 @@ var Cell = require('../cell');
 /**
  * editOption 이 적용되지 않은 cell 의 Painter
  * @module painter/cell/normal
+ * @extends module:painter/cell
  */
 var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -21,7 +21,7 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {string} editType 'normal|select|button|text|text-convertible'
+     * @returns {string} editType 'normal|select|button|text|text-convertible'
      */
     getEditType: function() {
         return 'normal';
@@ -31,7 +31,7 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>

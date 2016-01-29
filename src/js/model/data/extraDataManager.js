@@ -10,11 +10,12 @@ var util = require('../../common/util');
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
+ * @extends module:base/model
  */
 var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraData.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
+     * @param {Object} data - Data object
      */
     init: function(data) {
         this.data = data;
@@ -25,7 +26,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
      * @param  {string} columnName - column name
      * @param  {(number|string)} rowKey - rowKey
      * @param  {boolean} isRowSpanEnable - Boolean value whether row span is enable.
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}} rowSpan data
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}} rowSpan data
      */
     getRowSpanData: function(columnName, rowKey, isRowSpanEnable) {
         var rowSpanData = null;
@@ -49,7 +50,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
 
     /**
      * Returns the object that contains rowState info.
-     * @return {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
      */
     getRowState: function() {
         var result = {
@@ -140,7 +141,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
     /**
      * Returns the list of className.
      * @param {String} [columnName] - If specified, the result will only conatins class names of cell.
-     * @return {Array} - The array of class names.
+     * @returns {Array} - The array of class names.
      */
     getClassNameList: function(columnName) {
         var classNameData = this.data.className,
@@ -162,7 +163,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
      * className 이 담긴 배열로부터 특정 className 을 제거하여 반환한다.
      * @param {Array} classNameList 디자인 클래스명 리스트
      * @param {String} className    제거할 클래스명
-     * @return {Array}  제거된 디자인 클래스명 리스트
+     * @returns {Array}  제거된 디자인 클래스명 리스트
      * @private
      */
     _removeClassNameFromArray: function(classNameList, className) {
@@ -180,14 +181,14 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
         var classNameData = this.data.className;
 
         if (tui.util.pick(classNameData, 'column', columnName)) {
-            classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
+            classNameData.column[columnName] =
+                this._removeClassNameFromArray(classNameData.column[columnName], className);
             this.data.className = classNameData;
         }
     },
 
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {

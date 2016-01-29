@@ -10,11 +10,11 @@ var util = require('../common/util');
 /**
  * Row Model
  * @module model/row
+ * @extends module:base/model
  */
 var Row = Model.extend(/**@lends module:model/row.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
@@ -49,7 +49,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
     /**
      * Returns an array of visible column names.
-     * @return {Array.<String>} Visible column names
+     * @returns {Array.<String>} Visible column names
      * @private
      */
     _getColumnNameList: function() {
@@ -62,7 +62,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * Returns whether the state of specified column is disabled.
      * @param  {String} columnName - Column name
      * @param  {{isDisabledCheck: Boolean, isDisabled: Boolean, isChecked: Boolean}} rowState - Row state
-     * @return {Boolean} - True if disabled
+     * @returns {Boolean} - True if disabled
      * @private
      */
     _isDisabled: function(columnName, rowState) {
@@ -129,7 +129,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * Overrides Backbone.Model.parse
      * (this method is called before initialize method)
      * @param {Array} data - Original data
-     * @return {Array} - Converted data.
+     * @param {Object} options - Options
+     * @returns {Array} - Converted data.
      * @override
      */
     parse: function(data, options) {
@@ -139,7 +140,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     /**
      * Convert the original data to rendering data.
      * @param {Array} data - Original data
-     * @return {Array} - Converted data
+     * @param {module:model/data/rowList} dataModel - Data model
+     * @returns {Array} - Converted data
      * @private
      */
     _formatData: function(data, dataModel) {

@@ -9,11 +9,11 @@ var Cell = require('../cell');
 /**
  * editOption 에 list 를 가지고 있는 형태의 Base 클래스
  * @module painter/cell/list
+ * @extends module:painter/cell
  */
 var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -26,7 +26,7 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
     /* eslint-disable */
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {},
 
@@ -40,7 +40,7 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -71,7 +71,7 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
      * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
      * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
      * @param {Object} cellData 모델의 셀 데이터
-     * @return {Array} 옵션 리스트
+     * @returns {Array} 옵션 리스트
      */
     getOptionList: function(cellData) {
         var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
