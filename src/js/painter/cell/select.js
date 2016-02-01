@@ -31,7 +31,8 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
     eventHandler: {
         'change select': '_onChange',
-        'keydown select': '_onKeyDown'
+        'keydown select': '_onKeyDown',
+        'blur select': '_onBlurSelect'
     },
 
     /**
@@ -62,6 +63,15 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
         '<%=text%>' +
         '</option>'
     ),
+
+    /**
+     * Event handler for 'blur' event on select element
+     * @param {Event} ev - Event object
+     */
+    _onBlurSelect: function(ev) {
+        var cellAddr = this._getCellAddress($(ev.target));
+        this._validateData(cellAddr.rowKey, cellAddr.columnName);
+    },
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.

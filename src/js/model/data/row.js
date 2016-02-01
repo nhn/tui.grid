@@ -56,9 +56,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowData 변경 이벤트 핸들러.
-     * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
-     * @param {object} row  데이터의 키값
+     * Event handler for 'change' event.
+     * Executes callback functions, sync rowspan data, and validate data.
      * @private
      */
     _onChange: function() {
@@ -78,6 +77,32 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             this.collection.syncRowSpannedData(this, columnName, value);
             this._executeChangeAfterCallback(columnName);
         }, this);
+    },
+
+    /**
+     * Returns whether the data of given columnName is valid.
+     * @param  {Object} columnName - Column name
+     * @returns {Boolean} - True if valid
+     * @private
+     */
+    _isCellDataValid: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            value = this.get(columnName);
+
+        return (!columnModel.required || !util.isBlank(value));
+    },
+
+    /**
+     * Validate a cell of given columnName.
+     * If the data is invalid, add 'invalid' class name to the cell.
+     * @param  {String} columnName - Target column name
+     */
+    validateCell: function(columnName) {
+        if (this._isCellDataValid(columnName)) {
+            this.removeCellClassName(columnName, 'invalid');
+        } else {
+            this.addCellClassName(columnName, 'invalid');
+        }
     },
 
     /**

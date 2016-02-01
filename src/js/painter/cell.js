@@ -347,6 +347,17 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
+     * Validates the cell data identified by given rowKey and columnName.
+     * @param {String} rowKey - Row key
+     * @param {String} columnName - Column name
+     * @private
+     */
+    _validateData: function(rowKey, columnName) {
+        var row = this.grid.dataModel.get(rowKey);
+        row.validateCell(columnName);
+    },
+
+    /**
      * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
      * converter 함수를 적용한 결과값을 반환한다.
      * @param {string} value - 셀의 실제값

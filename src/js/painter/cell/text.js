@@ -225,6 +225,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
             this.grid.dataModel.setValue(rowKey, columnName, $target.val());
         }
         this.grid.selectionModel.enable();
+        this._validateData(rowKey, columnName);
     },
 
     /**

@@ -177,6 +177,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
         this._onBlur(blurEvent);
         this._endEdit($td);
+        this._validateData(this.getRowKey($td), this.getColumnName($td));
 
         _.defer(function() {
             focusModel.refreshState();

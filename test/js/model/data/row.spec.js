@@ -109,6 +109,28 @@ describe('RowData', function() {
         });
     });
 
+    describe('validateCell', function() {
+        var rowList, row, columnModel;
+
+        beforeEach(function() {
+            columnModel = new ColumnModel({
+                columnModelList: [
+                    {columnName: 'c1', required: true}
+                ]
+            });
+            rowList = new RowListData(null, {
+                columnModel: columnModel
+            });
+        });
+
+        it('if required:true and data is empty, add \'invalid\' className to the cell', function() {
+            var row = rowList.append({c1: ''})[0];
+
+            row.validateCell('c1');
+            expect(row.getClassNameList('c1')).toContain('invalid');
+        });
+    });
+
     describe('setRowState(), getRowState()', function() {
         var row;
 

@@ -39,8 +39,6 @@ table
             background-color #f8f8f8
         &.disabled
             color #b0b0b0
-        &.invalidated
-            background-color #ffe1e1
 
     col
         background #fff
@@ -62,24 +60,20 @@ table
         &.selected
             background-color #f8f8f8
             font-weight bold
-            
+
         &.required
             background-color #ffe1e1
 
         &.disabled
             color #b0b0b0
 
-        &.invalidated_row
-            background #ffe1e1
-
-        &.invalidated_column,
-        &.invalidated_column input,
-        &.invalidated_column select
-            color #ff0202
-
         &.focused
             padding 0 9px
             border dotted 1px #190000
+
+        &.invalid
+            padding 0 9px
+            border solid 1px #ff3333
 
         &.ellipsis
             -o-text-overflow ellipsis /*Opera 9*/
