@@ -158,9 +158,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * row의 extraData에 설정된 classNameList 를 반환한다.
-     * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-     * @returns {Array} css 클래스 이름의 배열
+     * Returns an array of all className, related with given columnName.
+     * @param {String} columnName - Column name
+     * @returns {Array.<String>} - An array of classNames
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
@@ -171,6 +171,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         }
         if (columnModel.isEllipsis) {
             classNameList.push('ellipsis');
+        }
+        if (columnModel.required) {
+            classNameList.push('required');
         }
         return this._makeUniqueStringArray(classNameList);
     },

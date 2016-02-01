@@ -1,6 +1,7 @@
 'use strict';
 
 var RowData = require('model/data/row');
+var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
 
 describe('RowData', function() {
@@ -14,7 +15,12 @@ describe('RowData', function() {
             }, {
                 parse: true,
                 collection: {
-                    columnModel: new ColumnModel()
+                    columnModel: new ColumnModel({
+                        columnModelList: [
+                            {columnName: 'c1'},
+                            {columnName: 'c2'}
+                        ]
+                    })
                 }
             });
             jasmine.clock().install();
@@ -57,6 +63,49 @@ describe('RowData', function() {
 
             expect(row.getClassNameList('c1')).toEqual(['myClass']);
             expect(row.getClassNameList('c2')).toEqual(['myClass']);
+        });
+    });
+
+    describe('getClassNameList', function() {
+        var rowList, row, columnModel;
+
+        beforeEach(function() {
+            columnModel = new ColumnModel();
+            rowList = new RowListData(null, {
+                columnModel: columnModel
+            });
+            row = rowList.append({})[0];
+        });
+
+        describe('Returns array of className', function() {
+            it('containing className of columnModel', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1', className: 'c1-class'}
+                ]);
+                expect(row.getClassNameList('c1')).toContain('c1-class');
+            });
+
+            it('containing \'ellipsis\' if columnModel.isEllipsis is true', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1', isEllipsis: true}
+                ]);
+                expect(row.getClassNameList('c1')).toContain('ellipsis');
+            });
+
+            it('containing \'required\' if columnModel.required is true', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1', required: true}
+                ]);
+                expect(row.getClassNameList('c1')).toContain('required');
+            });
+
+            it('containing row-added className', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1'}
+                ]);
+                row.addClassName('row-class');
+                expect(row.getClassNameList('c1')).toContain('row-class');
+            });
         });
     });
 
