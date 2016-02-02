@@ -1,7 +1,7 @@
 table
     border 0
     table-layout fixed
-    background-color #ccc
+    background-color #c0c0c0
     border-collapse separate
     border-spacing 1px
     margin 0
@@ -35,8 +35,8 @@ table
             background-position -10px -60px
 
     tr
-        &.selected
-            background-color #f8f8f8
+        // &.selected
+        //     background-color #e5e5e5
         &.disabled
             color #b0b0b0
 
@@ -44,7 +44,7 @@ table
         background #fff
 
         &.editable
-            background-color #ffffef
+            background-color #ffffff
 
     td
         overflow hidden
@@ -52,17 +52,22 @@ table
         *padding 1px 10px
         border 0
         white-space nowrap
+
+        background-color #fafafa
         *white-space pre
 
         &.editable
-            background-color #ffffef
+            background-color #fff
+
+        &.dummy
+            background-color #fff
 
         &.selected
-            background-color #f8f8f8
-            font-weight bold
+            // background-color #e5e5e5
+            // font-weight bold
 
         &.required
-            background-color #ffe1e1
+            background-color #fffdeb
 
         &.disabled
             color #b0b0b0
