@@ -112,7 +112,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         var errorCode;
 
         if (!isDataChanged && (columnName in this.validateMap)) {
-            return;
+            return this.validateMap[columnName];
         }
 
         errorCode = this._validateCellData(columnName);
