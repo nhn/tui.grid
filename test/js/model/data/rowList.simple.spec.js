@@ -273,4 +273,49 @@ describe('Data.RowList - simple', function() {
             expect(rowList.getValue(0, 'c2')).toBe('0-2');
         });
     });
+
+    describe('validate()', function() {
+        beforeEach(function() {
+            columnModel.getColumnModel('c1').required = true;
+            columnModel.getColumnModel('c2').required = true;
+            rowList.setRowList([
+                {
+                    c1: '0-1',
+                    c2: ''
+                },
+                {
+                    c1: '1-1',
+                    c2: '1-2'
+                },
+                {
+                    c1: '',
+                    c2: '2-2'
+                }
+            ]);
+        });
+
+        it('Returns an array which contains invalid rows', function() {
+            var expected = [{
+                    rowKey: 0,
+                    errors: [{
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }]
+                }, {
+                    rowKey: 2,
+                    errors: [{
+                        columnName: 'c1',
+                        errorCode: 'REQUIRED'
+                    }]
+                }];
+
+            expect(rowList.validate()).toEqual(expected);
+        });
+
+        it('Add \'invalid\' class to the invlaid cells', function() {
+            rowList.validate();
+            expect(rowList.at(0).getClassNameList('c2')).toContain('invalid');
+            expect(rowList.at(2).getClassNameList('c1')).toContain('invalid');
+        });
+    });
 });

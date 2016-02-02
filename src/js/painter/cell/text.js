@@ -252,22 +252,6 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
     },
 
     /**
-     * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
-     * @param  {jQuery} $input - 인풋 요소의 jquery 객체
-     * @returns {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
-     * @private
-     */
-    _getCellInfoFromInput: function($input) {
-        var $cell = $input.closest('td'),
-            $row = $cell.closest('tr');
-
-        return {
-            rowKey: $row.attr('key'),
-            columnName: $cell.attr('columnname')
-        };
-    },
-
-    /**
      * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
      * 해당 이벤트 핸들러를 호출해준다.
      * @param {Event} event - 이벤트 객체
@@ -277,7 +261,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      */
     _executeInputEventHandler: function(event, eventName) {
         var $input = $(event.target),
-            cellInfo = this._getCellInfoFromInput($input),
+            cellInfo = this._getCellAddress($input),
             columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
             eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
 

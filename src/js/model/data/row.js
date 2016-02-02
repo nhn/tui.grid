@@ -15,6 +15,9 @@ var PRIVATE_PROPERTIES = [
     '_extraData'
 ];
 
+// Error code for validtaion
+var VALID_ERR_REQUIRED = 'REQUIRED';
+
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module model/data/row
@@ -29,6 +32,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
 
         this.columnModel = this.collection.columnModel;
+        this.validateMap = {};
         this.on('change', this._onChange, this);
     },
 
@@ -76,33 +80,50 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
             this.collection.syncRowSpannedData(this, columnName, value);
             this._executeChangeAfterCallback(columnName);
+            this.validateCell(columnName, true);
         }, this);
     },
 
     /**
-     * Returns whether the data of given columnName is valid.
+     * Validate the cell data of given columnName and returns the error code.
      * @param  {Object} columnName - Column name
-     * @returns {Boolean} - True if valid
+     * @returns {String} Error code
      * @private
      */
-    _isCellDataValid: function(columnName) {
+    _validateCellData: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
-            value = this.get(columnName);
+            value = this.get(columnName),
+            errorCode = '';
 
-        return (!columnModel.required || !util.isBlank(value));
+        if (columnModel.required && util.isBlank(value)) {
+            errorCode = VALID_ERR_REQUIRED;
+        }
+        return errorCode;
     },
 
     /**
      * Validate a cell of given columnName.
      * If the data is invalid, add 'invalid' class name to the cell.
-     * @param  {String} columnName - Target column name
+     * @param {String} columnName - Target column name
+     * @param {Boolean} isDataChanged - True if data is changed (called by onChange handler)
+     * @returns {String} - Error code
      */
-    validateCell: function(columnName) {
-        if (this._isCellDataValid(columnName)) {
-            this.removeCellClassName(columnName, 'invalid');
-        } else {
-            this.addCellClassName(columnName, 'invalid');
+    validateCell: function(columnName, isDataChanged) {
+        var errorCode;
+
+        if (!isDataChanged && (columnName in this.validateMap)) {
+            return;
         }
+
+        errorCode = this._validateCellData(columnName);
+        if (errorCode) {
+            this.addCellClassName(columnName, 'invalid');
+        } else {
+            this.removeCellClassName(columnName, 'invalid');
+        }
+        this.validateMap[columnName] = errorCode;
+
+        return errorCode;
     },
 
     /**

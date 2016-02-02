@@ -109,8 +109,8 @@ describe('RowData', function() {
         });
     });
 
-    describe('validateCell', function() {
-        var rowList, row, columnModel;
+    describe('validateCell - when required:true', function() {
+        var row, rowList, columnModel;
 
         beforeEach(function() {
             columnModel = new ColumnModel({
@@ -123,11 +123,35 @@ describe('RowData', function() {
             });
         });
 
-        it('if required:true and data is empty, add \'invalid\' className to the cell', function() {
-            var row = rowList.append({c1: ''})[0];
+        describe('if data is empty', function() {
+            beforeEach(function() {
+                row = rowList.append({c1: ''})[0];
+            });
 
-            row.validateCell('c1');
-            expect(row.getClassNameList('c1')).toContain('invalid');
+            it('add \'invalid\' className to the cell', function() {
+                row.validateCell('c1');
+                expect(row.getClassNameList('c1')).toContain('invalid');
+            });
+
+            it('returns REQUIRED', function() {
+                expect(row.validateCell('c1')).toBe('REQUIRED');
+            });
+        });
+
+        describe('if data is not empty', function() {
+            beforeEach(function() {
+                row = rowList.append({c1: 'hello'})[0];
+            });
+
+            it('remove \'invalid\' className from the cell', function() {
+                row.addCellClassName('c1', 'invalid');
+                row.validateCell('c1');
+                expect(row.getClassNameList('c1')).not.toContain('invalid');
+            });
+
+            it('returns empty string', function() {
+                expect(row.validateCell('c1')).toBe('');
+            });
         });
     });
 
