@@ -1,7 +1,7 @@
 table
     border 0
     table-layout fixed
-    background-color #c0c0c0
+    background-color #ccc
     border-collapse separate
     border-spacing 1px
     margin 0
@@ -13,6 +13,7 @@ table
         text-align center
         padding 0
         border 0
+        background #E4EDF5
 
         .sort a
             color #555
@@ -35,16 +36,8 @@ table
             background-position -10px -60px
 
     tr
-        // &.selected
-        //     background-color #e5e5e5
         &.disabled
             color #b0b0b0
-
-    col
-        background #fff
-
-        &.editable
-            background-color #ffffff
 
     td
         overflow hidden
@@ -55,6 +48,14 @@ table
 
         background-color #fafafa
         *white-space pre
+
+        &.meta_column
+            background #E4EDF5
+            &.dummy
+                background #E4EDF5
+            &.selected
+                background #7798AF
+                color #f8f8f8
 
         &.editable
             background-color #fff
@@ -78,7 +79,7 @@ table
 
         &.invalid
             padding 0 9px
-            border solid 1px #ff3333
+            border solid 1px #FF8080
 
         &.ellipsis
             -o-text-overflow ellipsis /*Opera 9*/

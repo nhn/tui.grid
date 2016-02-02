@@ -4,8 +4,8 @@ $selection-layer =
     top 0
     width 0
     height 0
-    border dotted 1px red
-    background #4399fa
+    border solid 1px #004082
+    background #4DAAF9
     opacity 0.2
     filter unquote('alpha(opacity=10)')
 
@@ -30,12 +30,6 @@ $selection-layer =
 
         table
             *margin-right -17px
-
-            .meta_column
-                background #e8e8e8
-
-                &.selected
-                    background #eaf6ff
 
         .selection_layer
             {$selection-layer}
@@ -95,9 +89,6 @@ $selection-layer =
         background-color #f2f2f2
 
 .header
-    th
-        background #e5e5e5
-
     .resize_handle_container
         display none
         position relative
