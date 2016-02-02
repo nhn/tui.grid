@@ -41,7 +41,10 @@ module.exports = function(config) {
             {pattern: 'images/*', included: false},
 
             'src/js/**/*.js',
-            'test/**/*.spec.js'
+            // 'test/**/*.spec.js'
+            // // 'test/js/addon/net.spec.js'
+            // 'test/js/grid.spec.js'
+            'test/js/view/layout/bodyTable.spec.js'
         ],
 
         // list of files to exclude
@@ -115,7 +118,7 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE7',
+            // 'IE7',
             'IE8',
             'IE9',
             'IE10',

@@ -182,13 +182,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var focused = this.grid.focusModel.which(),
             columnName = cellData.columnName,
             focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
+            isMetaColumn = this.grid.columnModel.isMetaColumn(columnName),
             classNameList = [],
-            classNameMap = {},
-            privateColumnMap = {
-                '_button': true,
-                '_number': true
-            },
-            isPrivateColumnName = !!privateColumnMap[columnName];
+            classNameMap = {};
 
         if (focusedRowKey === cellData.rowKey) {
             classNameMap['selected'] = true;
@@ -200,7 +196,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameMap[cellData.className] = true;
         }
 
-        if (cellData.isEditable && !isPrivateColumnName) {
+        if (cellData.isEditable && !isMetaColumn) {
             classNameMap['editable'] = true;
         }
 
@@ -212,7 +208,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameList.push(className);
         });
 
-        if (isPrivateColumnName) {
+        if (isMetaColumn) {
             classNameList.push('meta_column');
         }
 

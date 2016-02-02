@@ -153,10 +153,11 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_onBlur', function() {
-            var $input;
+            var $table, $input;
 
             beforeEach(function() {
-                $input = $(cellPainter.getContentHtml(options));
+                $table = $('<table><tr key="0"><td columnname="c1"></td></tr></table>');
+                $input = $(cellPainter.getContentHtml(options)).appendTo($table.find('td'));
                 cellPainter._onFocus({target: $input.get(0)});
             });
 
@@ -361,10 +362,11 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_onBlurConvertible', function() {
-            var $input;
+            var $table, $input;
 
             beforeEach(function() {
-                $input = $(cellPainter.getContentHtml(options));
+                $table = $('<table><tr key="0"><td columnname="c1"></td></tr></table>');
+                $input = $(cellPainter.getContentHtml(options)).appendTo($table.find('td'));
                 cellPainter._onFocus({target: $input.get(0)});
                 jasmine.clock().install();
             });
@@ -375,19 +377,19 @@ describe('view.painter.cell.text', function() {
 
             it('grid.selection.enable 를 호출하는지 확인한다.', function() {
                 spyOn(grid.selectionModel, 'enable');
-                cellPainter._onBlurConvertible({target: $input.get(0)});
+                cellPainter._onBlurConvertible({target: $table.find('td')});
                 expect(grid.selectionModel.enable).toHaveBeenCalled();
             });
 
             it('_endEdit 를 호출하는지 확인한다.', function() {
                 cellPainter._endEdit = jasmine.createSpy('_endEdit');
-                cellPainter._onBlurConvertible({target: $input.get(0)});
+                cellPainter._onBlurConvertible({target: $table.find('td')});
                 expect(cellPainter._endEdit).toHaveBeenCalled();
             });
 
             it('_focusModel.refreshState를 호출한다', function() {
                 grid.focusModel.refreshState = jasmine.createSpy('refreshState');
-                cellPainter._onBlurConvertible({target: $input.get(0)});
+                cellPainter._onBlurConvertible({target: $table.find('td')});
                 jasmine.clock().tick(1);
                 expect(grid.focusModel.refreshState).toHaveBeenCalled();
             });
