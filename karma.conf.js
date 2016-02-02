@@ -41,10 +41,7 @@ module.exports = function(config) {
             {pattern: 'images/*', included: false},
 
             'src/js/**/*.js',
-            // 'test/**/*.spec.js'
-            // // 'test/js/addon/net.spec.js'
-            // 'test/js/grid.spec.js'
-            'test/js/view/layout/bodyTable.spec.js'
+            'test/**/*.spec.js'
         ],
 
         // list of files to exclude
@@ -107,7 +104,9 @@ module.exports = function(config) {
         colors: true,
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN ||
+        // config.LOG_INFO || config.LOG_DEBUG
+
         logLevel: config.LOG_INFO,
 
         // enable / disable watching file and executing tests whenever any file changes
@@ -118,7 +117,7 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            // 'IE7',
+            'IE7',
             'IE8',
             'IE9',
             'IE10',
