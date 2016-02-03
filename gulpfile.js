@@ -35,7 +35,10 @@ var banner = [
 // build
 gulp.task('build-js', function() {
     return browserify('src/js/grid.js', {debug: true})
-        .bundle()
+        .bundle().on('error', function(err) {
+            console.log(err.message); // eslint-disable-line
+            this.emit('end');
+        })
         .pipe(source(FNAME_JS))
         .pipe(gulp.dest(PATH_BUILD));
 });
