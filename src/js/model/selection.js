@@ -321,12 +321,27 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
+     * Returns whether given range is a single cell. (include merged cell)
+     * @param {Array.<String>} columnNameList - columnNameList
+     * @param {Array.<Object>} rowList - rowList
+     * @returns {Boolean}
+     */
+    _isSingleCell: function(columnNameList, rowList) {
+        var isSingleColumn = columnNameList.length === 1,
+            isSingleRow = rowList.length === 1,
+            isSingleMergedCell = isSingleColumn && !isSingleRow &&
+                (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
+
+        return (isSingleColumn && isSingleRow) || isSingleMergedCell;
+    },
+
+    /**
      * Returns the string value of all cells in the selection range as a single string.
      * @returns {String} string of values
      */
     getValuesToString: function() {
         var range = this.get('range'),
-            columnModelList, rowList, columnNameList, rowValues;
+            columnModelList, rowList, columnNameList, rowValues, result;
 
         columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
         rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
@@ -339,6 +354,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return tmpString.join('\t');
         });
 
+        if (this._isSingleCell(columnNameList, rowList)) {
+            return rowValues[0];
+        }
         return rowValues.join('\n');
     },
 
