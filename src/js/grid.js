@@ -998,7 +998,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         [
             {
                 rowKey: 1,
-                error: [
+                errors: [
                     {
                         columnName: 'c1',
                         errorCode: 'REQUIRED'
@@ -1011,7 +1011,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
             },
             {
                 rowKey: 3,
-                error: [
+                errors: [
                     {
                         columnName: 'c2',
                         errorCode: 'REQUIRED'

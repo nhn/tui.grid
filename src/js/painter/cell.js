@@ -231,7 +231,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             beforeContent, afterContent, content;
 
         if (!isExisty(cellData.value)) {
-            cellData.value = isExisty(defaultValue) ? defulatValue : '';
+            cellData.value = isExisty(defaultValue) ? defaultValue : '';
         }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
         afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
