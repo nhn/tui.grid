@@ -45,6 +45,7 @@
             "prefer": {
                 "return": "returns",
             },
+            "requireReturnDescription": false,
             "requireReturn": false
         }],
         "valid-typeof": 2,
