@@ -1,7 +1,7 @@
 table
     border 0
     table-layout fixed
-    background-color #ccc
+    background-color #ddd
     border-collapse separate
     border-spacing 1px
     margin 0
@@ -13,7 +13,11 @@ table
         text-align center
         padding 0
         border 0
-        background #e5e5e5
+        background #eee
+
+        &.selected
+            background #a0a0a0
+            color #f8f8f8
 
         .sort a
             color #555
@@ -45,13 +49,13 @@ table
         *padding 1px 10px
         border 0
         white-space nowrap
-        background-color #fafafa
+        background-color #fbfbfb
         *white-space pre
 
         &.meta_column
-            background #e5e5e5
+            background #eee
             &.dummy
-                background #e5e5e5
+                background #eee
             &.selected
                 background #a0a0a0
                 color #f8f8f8
