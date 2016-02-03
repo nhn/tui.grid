@@ -1005,7 +1005,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         [
             {
                 rowKey: 1,
-                error: [
+                errors: [
                     {
                         columnName: 'c1',
                         errorCode: 'REQUIRED'
@@ -1018,7 +1018,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             },
             {
                 rowKey: 3,
-                error: [
+                errors: [
                     {
                         columnName: 'c2',
                         errorCode: 'REQUIRED'
