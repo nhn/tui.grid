@@ -70,16 +70,16 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Number} columnLength - Length of column model list
+     * @param  {Array.<Object>} columnModelList- Column model list
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForDummyRow: function(columnLength) {
+    _getHtmlForDummyRow: function(columnModelList) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
-        _.times(columnLength, function() {
-            html += cellPainter.getHtml();
+        _.each(columnModelList, function(columnModel) {
+            html += cellPainter.getHtml(columnModel.columnName);
         });
         return html;
     },
@@ -119,7 +119,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
             html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._getHtmlForDummyRow(columnModelList.length);
+            html = this._getHtmlForDummyRow(columnModelList);
         } else {
             html = this._getHtmlForActualRow(model, columnModelList);
         }

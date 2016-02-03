@@ -1,6 +1,7 @@
 'use strict';
 
 var RowData = require('model/data/row');
+var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
 
 describe('RowData', function() {
@@ -14,7 +15,12 @@ describe('RowData', function() {
             }, {
                 parse: true,
                 collection: {
-                    columnModel: new ColumnModel()
+                    columnModel: new ColumnModel({
+                        columnModelList: [
+                            {columnName: 'c1'},
+                            {columnName: 'c2'}
+                        ]
+                    })
                 }
             });
             jasmine.clock().install();
@@ -57,6 +63,95 @@ describe('RowData', function() {
 
             expect(row.getClassNameList('c1')).toEqual(['myClass']);
             expect(row.getClassNameList('c2')).toEqual(['myClass']);
+        });
+    });
+
+    describe('getClassNameList', function() {
+        var rowList, row, columnModel;
+
+        beforeEach(function() {
+            columnModel = new ColumnModel();
+            rowList = new RowListData(null, {
+                columnModel: columnModel
+            });
+            row = rowList.append({})[0];
+        });
+
+        describe('Returns array of className', function() {
+            it('containing className of columnModel', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1', className: 'c1-class'}
+                ]);
+                expect(row.getClassNameList('c1')).toContain('c1-class');
+            });
+
+            it('containing \'ellipsis\' if columnModel.isEllipsis is true', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1', isEllipsis: true}
+                ]);
+                expect(row.getClassNameList('c1')).toContain('ellipsis');
+            });
+
+            it('containing \'required\' if columnModel.required is true', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1', required: true}
+                ]);
+                expect(row.getClassNameList('c1')).toContain('required');
+            });
+
+            it('containing row-added className', function() {
+                columnModel.set('columnModelList', [
+                    {columnName: 'c1'}
+                ]);
+                row.addClassName('row-class');
+                expect(row.getClassNameList('c1')).toContain('row-class');
+            });
+        });
+    });
+
+    describe('validateCell - when required:true', function() {
+        var row, rowList, columnModel;
+
+        beforeEach(function() {
+            columnModel = new ColumnModel({
+                columnModelList: [
+                    {columnName: 'c1', required: true}
+                ]
+            });
+            rowList = new RowListData(null, {
+                columnModel: columnModel
+            });
+        });
+
+        describe('if data is empty', function() {
+            beforeEach(function() {
+                row = rowList.append({c1: ''})[0];
+            });
+
+            it('add \'invalid\' className to the cell', function() {
+                row.validateCell('c1');
+                expect(row.getClassNameList('c1')).toContain('invalid');
+            });
+
+            it('returns REQUIRED', function() {
+                expect(row.validateCell('c1')).toBe('REQUIRED');
+            });
+        });
+
+        describe('if data is not empty', function() {
+            beforeEach(function() {
+                row = rowList.append({c1: 'hello'})[0];
+            });
+
+            it('remove \'invalid\' className from the cell', function() {
+                row.addCellClassName('c1', 'invalid');
+                row.validateCell('c1');
+                expect(row.getClassNameList('c1')).not.toContain('invalid');
+            });
+
+            it('returns empty string', function() {
+                expect(row.validateCell('c1')).toBe('');
+            });
         });
     });
 

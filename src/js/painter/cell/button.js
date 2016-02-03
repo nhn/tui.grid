@@ -51,7 +51,8 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
 
     eventHandler: {
         'change input': '_onChange',
-        'keydown input': '_onKeyDown'
+        'keydown input': '_onKeyDown',
+        'blur input': '_onBlur'
     },
 
     /**
@@ -253,6 +254,16 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
             cellAddress = this._getCellAddress($target);
         this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName,
             this._getCheckedValueList($target).join(','));
+    },
+
+    /**
+     * Event handler for 'blur' event on input element
+     * @param {Event} ev - Blur event
+     * @private
+     */
+    _onBlur: function(ev) {
+        var cellAddr = this._getCellAddress($(ev.target));
+        this._validateData(cellAddr.rowKey, cellAddr.columnName);
     }
 });
 

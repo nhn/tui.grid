@@ -13,6 +13,7 @@ table
         text-align center
         padding 0
         border 0
+        background #e5e5e5
 
         .sort a
             color #555
@@ -35,20 +36,8 @@ table
             background-position -10px -60px
 
     tr
-        &.selected
-            background-color #f8f8f8
-
         &.disabled
             color #b0b0b0
-
-        &.invalidated
-            background-color #ffe1e1
-
-    col
-        background #fff
-
-        &.editable
-            background-color #ffffef
 
     td
         overflow hidden
@@ -56,29 +45,36 @@ table
         *padding 1px 10px
         border 0
         white-space nowrap
+        background-color #fafafa
         *white-space pre
 
-        &.editable
-            background-color #ffffef
+        &.meta_column
+            background #e5e5e5
+            &.dummy
+                background #e5e5e5
+            &.selected
+                background #a0a0a0
+                color #f8f8f8
 
-        &.selected
-            background-color #f8f8f8
-            font-weight bold
+        &.editable
+            background-color #fff
+
+        &.dummy
+            background-color #fff
+
+        &.required
+            background-color #fffdeb
 
         &.disabled
             color #b0b0b0
 
-        &.invalidated_row
-            background #ffe1e1
-
-        &.invalidated_column,
-        &.invalidated_column input,
-        &.invalidated_column select
-            color #ff0202
-
         &.focused
             padding 0 9px
             border dotted 1px #190000
+
+        &.invalid
+            padding 0 9px
+            border solid 1px #FF8080
 
         &.ellipsis
             -o-text-overflow ellipsis /*Opera 9*/

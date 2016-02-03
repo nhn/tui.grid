@@ -998,6 +998,66 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
+     * Validates all data and returns the result.
+     * Return value is an array which contains only rows which have invalid cell data.
+     * @returns {Array.<Object>} An array of error object
+     * @example
+        [
+            {
+                rowKey: 1,
+                errors: [
+                    {
+                        columnName: 'c1',
+                        errorCode: 'REQUIRED'
+                    },
+                    {
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }
+                ]
+            },
+            {
+                rowKey: 3,
+                errors: [
+                    {
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }
+                ]
+            }
+        ]
+     */
+    validate: function() {
+        var errorRows = [],
+            requiredColumnNames = _.chain(this.columnModel.getVisibleColumnModelList())
+                .filter(function(columnModel) {
+                    return columnModel.required === true;
+                })
+                .pluck('columnName')
+                .value();
+
+        this.each(function(row) {
+            var errorCells = [];
+            _.each(requiredColumnNames, function(columnName) {
+                var errorCode = row.validateCell(columnName);
+                if (errorCode) {
+                    errorCells.push({
+                        columnName: columnName,
+                        errorCode: errorCode
+                    });
+                }
+            });
+            if (errorCells.length) {
+                errorRows.push({
+                    rowKey: row.get('rowKey'),
+                    errors: errorCells
+                });
+            }
+        });
+        return errorRows;
+    },
+
+    /**
      * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
      * @param  {Array[]} data - 붙여넣기할 데이터
      * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스

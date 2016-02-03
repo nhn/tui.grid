@@ -991,6 +991,40 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Validates all data and returns the result.
+     * Return value is an array which contains only rows which have invalid cell data.
+     * @returns {Array.<Object>} An array of error object
+     * @example
+        [
+            {
+                rowKey: 1,
+                errors: [
+                    {
+                        columnName: 'c1',
+                        errorCode: 'REQUIRED'
+                    },
+                    {
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }
+                ]
+            },
+            {
+                rowKey: 3,
+                errors: [
+                    {
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }
+                ]
+            }
+        ]
+     */
+    validate: function() {
+        return this.modelManager.dataModel.validate();
+    },
+
+    /**
      * Destroys the instance.
      * @api
      */

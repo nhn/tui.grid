@@ -15,6 +15,9 @@ var PRIVATE_PROPERTIES = [
     '_extraData'
 ];
 
+// Error code for validtaion
+var VALID_ERR_REQUIRED = 'REQUIRED';
+
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module model/data/row
@@ -29,6 +32,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
 
         this.columnModel = this.collection.columnModel;
+        this.validateMap = {};
         this.on('change', this._onChange, this);
     },
 
@@ -56,9 +60,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowData 변경 이벤트 핸들러.
-     * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
-     * @param {object} row  데이터의 키값
+     * Event handler for 'change' event.
+     * Executes callback functions, sync rowspan data, and validate data.
      * @private
      */
     _onChange: function() {
@@ -77,7 +80,50 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
             this.collection.syncRowSpannedData(this, columnName, value);
             this._executeChangeAfterCallback(columnName);
+            this.validateCell(columnName, true);
         }, this);
+    },
+
+    /**
+     * Validate the cell data of given columnName and returns the error code.
+     * @param  {Object} columnName - Column name
+     * @returns {String} Error code
+     * @private
+     */
+    _validateCellData: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            value = this.get(columnName),
+            errorCode = '';
+
+        if (columnModel.required && util.isBlank(value)) {
+            errorCode = VALID_ERR_REQUIRED;
+        }
+        return errorCode;
+    },
+
+    /**
+     * Validate a cell of given columnName.
+     * If the data is invalid, add 'invalid' class name to the cell.
+     * @param {String} columnName - Target column name
+     * @param {Boolean} isDataChanged - True if data is changed (called by onChange handler)
+     * @returns {String} - Error code
+     */
+    validateCell: function(columnName, isDataChanged) {
+        var errorCode;
+
+        if (!isDataChanged && (columnName in this.validateMap)) {
+            return this.validateMap[columnName];
+        }
+
+        errorCode = this._validateCellData(columnName);
+        if (errorCode) {
+            this.addCellClassName(columnName, 'invalid');
+        } else {
+            this.removeCellClassName(columnName, 'invalid');
+        }
+        this.validateMap[columnName] = errorCode;
+
+        return errorCode;
     },
 
     /**
@@ -158,9 +204,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * row의 extraData에 설정된 classNameList 를 반환한다.
-     * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-     * @returns {Array} css 클래스 이름의 배열
+     * Returns an array of all className, related with given columnName.
+     * @param {String} columnName - Column name
+     * @returns {Array.<String>} - An array of classNames
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
@@ -171,6 +217,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         }
         if (columnModel.isEllipsis) {
             classNameList.push('ellipsis');
+        }
+        if (columnModel.required) {
+            classNameList.push('required');
         }
         return this._makeUniqueStringArray(classNameList);
     },

@@ -460,6 +460,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
                     columnName = columnModelList[j]['columnName'];
                     dataModel.del(rowKey, columnName, true);
+                    dataModel.get(rowKey).validateCell(columnName);
                 }
             }
             this.renderModel.refresh(true);

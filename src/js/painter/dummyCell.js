@@ -28,6 +28,18 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     },
 
     /**
+     * Template
+     * @returns {String} String
+     */
+    template: _.template(
+        '<td columnname="<%=columnName%>" ' +
+            'class="<%=className%>"' +
+            'edit-type="dummy" ' +
+            '&nbsp;' + // '&nbsp' for height issue with empty cell in IE7
+        '</td>'
+    ),
+
+    /**
      * Returns the edit type of the cell.
      * (To implement interface of module:painter/cell)
      * @returns {String} Edit type
@@ -48,12 +60,15 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
     /**
      * Returns the HTML string (TD) of the cell
-     * @override
+     * @param {String} columnName - column name
      * @returns {string} HTML string
      */
-    getHtml: function() {
-        // '&nbsp' for height issue with empty cell in IE7
-        return '<td edit-type="dummy" class="dummy">&nbsp;</td>';
+    getHtml: function(columnName) {
+        var isMeta = this.grid.columnModel.isMetaColumn(columnName);
+        return this.template({
+            columnName: columnName,
+            className: (isMeta ? 'meta_column ' : '') + 'dummy'
+        });
     }
 });
 

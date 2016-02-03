@@ -182,13 +182,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var focused = this.grid.focusModel.which(),
             columnName = cellData.columnName,
             focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
+            isMetaColumn = this.grid.columnModel.isMetaColumn(columnName),
             classNameList = [],
-            classNameMap = {},
-            privateColumnMap = {
-                '_button': true,
-                '_number': true
-            },
-            isPrivateColumnName = !!privateColumnMap[columnName];
+            classNameMap = {};
 
         if (focusedRowKey === cellData.rowKey) {
             classNameMap['selected'] = true;
@@ -200,7 +196,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameMap[cellData.className] = true;
         }
 
-        if (cellData.isEditable && !isPrivateColumnName) {
+        if (cellData.isEditable && !isMetaColumn) {
             classNameMap['editable'] = true;
         }
 
@@ -212,7 +208,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameList.push(className);
         });
 
-        if (isPrivateColumnName) {
+        if (isMetaColumn) {
             classNameList.push('meta_column');
         }
 
@@ -235,7 +231,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             beforeContent, afterContent, content;
 
         if (!isExisty(cellData.value)) {
-            cellData.value = isExisty(defaultValue) ? defulatValue : '';
+            cellData.value = isExisty(defaultValue) ? defaultValue : '';
         }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
         afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
@@ -344,6 +340,17 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             rowKey: this.getRowKey($target),
             columnName: this.getColumnName($target)
         };
+    },
+
+    /**
+     * Validates the cell data identified by given rowKey and columnName.
+     * @param {String} rowKey - Row key
+     * @param {String} columnName - Column name
+     * @private
+     */
+    _validateData: function(rowKey, columnName) {
+        var row = this.grid.dataModel.get(rowKey);
+        row.validateCell(columnName);
     },
 
     /**
