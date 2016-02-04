@@ -28,6 +28,9 @@
  *          edit-mode with a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
+ *      @param {boolean} [options.fitToParentHeight=false] - If set to true, the height of the grid will expand to
+ *          fit the height of parent element.
+ *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
  *      @param {Object} [options.toolbar] - The object for configuring toolbar UI.
@@ -47,6 +50,8 @@
  *          @param {boolean} [options.columnModelList.isHidden] - If set to true, the column will not be shown.
  *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column
  *              will not be changed.
+ *          @param {boolean} [options.columnModelList.isRequired=false] - If set to true, the data of the column
+ *              will be checked to be not empty whenever data is changed or calling {@link tui.Grid#validate}.
  *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column
  *              doesn't have a value.
  *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell.
@@ -107,6 +112,8 @@
     headerHeight: 100, //(default=35)
     rowHeight: 27, // (default=27)
     displayRowCount: 10, //(default=10)
+    fitToParentHeight: true // (default=false)
+    showDummyRows: false // (default=false)
     minimumColumnWidth: 50, //(default=50)
     scrollX: true, //(default:true)
     scrollY: true, //(default:true)
@@ -184,6 +191,7 @@
             title: 'password input column',
             columnName: 'column5',
             width: 100,
+            isRequired: true,
             isFixedWidth: true,
             editOption: {
                 type: 'text-password',
@@ -994,31 +1002,33 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Validates all data and returns the result.
      * Return value is an array which contains only rows which have invalid cell data.
      * @returns {Array.<Object>} An array of error object
+     * @api
      * @example
-        [
-            {
-                rowKey: 1,
-                errors: [
-                    {
-                        columnName: 'c1',
-                        errorCode: 'REQUIRED'
-                    },
-                    {
-                        columnName: 'c2',
-                        errorCode: 'REQUIRED'
-                    }
-                ]
-            },
-            {
-                rowKey: 3,
-                errors: [
-                    {
-                        columnName: 'c2',
-                        errorCode: 'REQUIRED'
-                    }
-                ]
-            }
-        ]
+     // return value example
+    [
+        {
+            rowKey: 1,
+            errors: [
+                {
+                    columnName: 'c1',
+                    errorCode: 'REQUIRED'
+                },
+                {
+                    columnName: 'c2',
+                    errorCode: 'REQUIRED'
+                }
+            ]
+        },
+        {
+            rowKey: 3,
+            errors: [
+                {
+                    columnName: 'c2',
+                    errorCode: 'REQUIRED'
+                }
+            ]
+        }
+    ]
      */
     validate: function() {
         return this.modelManager.dataModel.validate();
