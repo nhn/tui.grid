@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.1.1
+ * @version 1.1.2
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -58,15 +58,11 @@ var renderStateMap = require('../common/constMap').renderState;
 /**
  * Net Addon
  * @module addon/net
+ * @mixes module:base/common
  */
 var Net = View.extend(/**@lends module:addon/net.prototype */{
-    tagName: 'form',
-    events: {
-        submit: '_onSubmit'
-    },
     /**
      * @constructs
-     * @mixes module:base/common
      * @param {object} options
      *      @param {jquery} options.el   form 엘리먼트
      *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
@@ -138,6 +134,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      net.request('modifyData');
      *   </script>
      */
+
     initialize: function(options) {
         var defaultOptions, options, pagination;
 
@@ -191,6 +188,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 this._readDataAt(1, false);
             }
         }
+    },
+
+    tagName: 'form',
+
+    events: {
+        submit: '_onSubmit'
     },
 
     /**
@@ -340,7 +343,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * form 으로 지정된 엘리먼트의 Data 를 반환한다.
-     * @return {object} formData 데이터 오브젝트
+     * @returns {object} formData 데이터 오브젝트
      * @private
      */
     _getFormData: function() {
@@ -573,8 +576,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
      *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
      *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-     * @return {{count: number, data: {requestType: string, url: string, data: object, type: string, dataType: string}}}
-     * 옵션 조건에 해당하는 그리드 데이터 정보
+     * @returns {{count: number, data: {requestType: string, url: string, data: object,
+     *      type: string, dataType: string}}} 옵션 조건에 해당하는 그리드 데이터 정보
      * @private
      */
     _getDataParam: function(requestType, options) {
@@ -631,7 +634,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      @param {boolean} [options.hasDataParam=true] request 데이터에 rowList 관련 데이터가 포함될 지 여부.
      *      @param {boolean} [options.isOnlyModified=true] rowList 관련 데이터 중 수정된 데이터만 포함할 지 여부
      *      @param {boolean} [options.isOnlyChecked=true] rowList 관련 데이터 중 checked 된 데이터만 포함할 지 여부
-     * @return {{requestType: string, url: string, data: object, type: string, dataType: string}} ajax 호출시 사용될 option 파라미터
+     * @returns {{requestType: string, url: string, data: object, type: string, dataType: string}}
+     *      ajax 호출시 사용될 option 파라미터
      * @private
      */
     _getRequestParam: function(requestType, options) {
@@ -661,7 +665,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * requestType 에 따른 컨펌 메세지를 노출한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Number} count   전송될 데이터 개수
-     * @return {boolean}    계속 진행할지 여부를 반환한다.
+     * @returns {boolean}    계속 진행할지 여부를 반환한다.
      * @private
      */
     _isConfirmed: function(requestType, count) {
@@ -680,7 +684,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * confirm message 를 반환한다.
      * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
      * @param {Number} count 전송될 데이터 개수
-     * @return {string} 생성된 confirm 메세지
+     * @returns {string} 생성된 confirm 메세지
      * @private
      */
     _getConfirmMessage: function(requestType, count) {
@@ -831,11 +835,13 @@ var common = require('./common');
 /**
  * Base class for Collection
  * @module base/collection
+ * @mixes module:base/common
  */
 var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
     /**
-     * @mixes module:base/common
      * @constructs
+     * @param {Array.<Object>} models - Models
+     * @param {Object} options - Options
      */
     initialize: function(models, options) {},
 
@@ -895,11 +901,11 @@ var common = require('./common');
 /**
  * Base class for Models
  * @module base/model
+ * @mixes module:base/common
  */
 var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{
     /**
      * @constructs
-     * @mixes module:base/common
      * @param {Object} attributes Attributes
      */
     initialize: function(attributes) {}
@@ -928,9 +934,10 @@ var common = require('./common');
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     /**
      * @constructs
+     * @param {Object} attrs - Attributes 
      */
-    init: function(attributes) {
-        var grid = attributes && attributes.grid || this.collection && this.collection.grid || null;
+    init: function(attrs) {
+        var grid = attrs && attrs.grid || this.collection && this.collection.grid || null;
         this.setOwnProperties({
             grid: grid
         });
@@ -989,11 +996,11 @@ var common = require('./common');
 /**
  * Base class for Views
  * @module base/view
+ * @mixes module:base/common
  */
 var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * @constructs
-     * @mixes module:base/common
      * @param {Object} attributes Attributes
      */
     initialize: function(attributes) {
@@ -1003,7 +1010,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * 에러 객체를 반환한다.
      * @param {String} message - Error message
-     * @return {error} 에러객체
+     * @returns {error} 에러객체
      */
     error: function(message) {
         var GridError = function() {
@@ -1015,28 +1022,24 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
-     * destroy 시 함께 삭제할 View 를 내부 변수 _children 에 추가한다.
-     * @param {instance} instance 인스턴스 객체
-     * @return {instance} instance 인자로 전달받은 인스턴스 객체
+     * Add children views
+     * @param {(Object|Array)} views - View instance of Array of view instances
+     * @private
      */
     _addChildren: function(views) {
         if (!_.isArray(views)) {
             views = [views];
         }
-        _.each(views, function(view) {
-            this._children.push(view);
-        }, this);
+        [].push.apply(this._children, views);
     },
 
     /**
      * Render children and returns thier elements as array.
-     * @return {array.<HTMLElement>} An array of element of children
+     * @returns {array.<HTMLElement>} An array of element of children
      */
     _renderChildren: function() {
-        var elements = [];
-
-        _.each(this._children, function(view) {
-            elements.push(view.render().el);
+        var elements = _.map(this._children, function(view) {
+            return view.render().el;
         });
         return elements;
     },
@@ -1053,7 +1056,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * customEvent 에서 사용할 이벤트 객체를 포멧에 맞게 생성하여 반환한다.
      * @param {Object} data 이벤트 핸들러에 넘길 데이터
-     * @return {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
+     * @returns {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
      */
     createEventData: function(data) {
         var eventData = $.extend({}, data);
@@ -1071,7 +1074,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
      * 등록되어있는 자식 View 들을 제거한다.
      */
     _destroyChildren: function() {
-        if (_.isArray(this._children)) {
+        if (this._children) {
             while (this._children.length > 0) {
                 this._children.pop().destroy();
             }
@@ -1123,6 +1126,10 @@ module.exports = {
         LOADING: 'LOADING',
         DONE: 'DONE',
         EMPTY: 'EMPTY'
+    },
+    dimension: {
+        CELL_BORDER_WIDTH: 1,
+        TABLE_BORDER_WIDTH: 1
     }
 }
 
@@ -1145,11 +1152,9 @@ var formUtil = {
     setInput: {
         /**
          * 배열의 값들을 전부 String 타입으로 변환한다.
-         * @memberof module:util
-         * @private
-         * @alias form.setInput['_changeToStringInArray']
+         * @ignore
          * @param {Array}  arr 변환할 배열
-         * @return {Array} 변환된 배열 결과 값
+         * @returns {Array} 변환된 배열 결과 값
          */
         '_changeToStringInArray': function(arr) {
             _.each(arr, function(value, i) {
@@ -1160,8 +1165,7 @@ var formUtil = {
 
         /**
          * radio type 의 input 요소의 값을 설정한다.
-         * @memberof module:util
-         * @alias form.setInput['radio']
+         * @ignore
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -1171,8 +1175,8 @@ var formUtil = {
 
         /**
          * radio type 의 input 요소의 값을 설정한다.
+         * @ignore
          * @memberof module:util
-         * @alias form.setInput.checkbox
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -1186,8 +1190,7 @@ var formUtil = {
 
         /**
          * select-one type 의 input 요소의 값을 설정한다.
-         * @memberof module:util
-         * @alias form.setInput['select-one']
+         * @ignore
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -1204,8 +1207,7 @@ var formUtil = {
 
         /**
          * select-multiple type 의 input 요소의 값을 설정한다.
-         * @memberof module:util
-         * @alias form.setinput['select-multiple']
+         * @ignore
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -1226,7 +1228,6 @@ var formUtil = {
         /**
          * input 요소의 값을 설정하는 default 로직
          * @memberof module:util
-         * @alias form.setinput['defaultAction']
          * @param {HTMLElement} targetElement - Target element
          * @param {String} formValue - Form value
          */
@@ -1240,7 +1241,7 @@ var formUtil = {
      * @memberof module:util
      * @alias form.getFormData
      * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
-     * @return {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
+     * @returns {object} form 내의 데이터들을 key:value 형태의 DataObject 로 반환한다.
      **/
     getFormData: function($form) {
         var result = {},
@@ -1267,7 +1268,7 @@ var formUtil = {
      * @alias form.getFormElement
      * @param {jQuery} $form jQuery()로 감싼 폼엘리먼트
      * @param {String} [elementName] 특정 이름의 인풋 엘리먼트만 가져오고 싶은 경우 전달하며, 생략할 경우 모든 인풋 엘리먼트를 배열 형태로 리턴한다.
-     * @return {jQuery} jQuery 로 감싼 엘리먼트를 반환한다.
+     * @returns {jQuery} jQuery 로 감싼 엘리먼트를 반환한다.
      */
     getFormElement: function($form, elementName) {
         var formElement;
@@ -1355,7 +1356,6 @@ var formUtil = {
 
 module.exports = formUtil;
 
-
 },{}],10:[function(require,module,exports){
 /**
 * @fileoverview 유틸리티 메서드 모음
@@ -1373,7 +1373,7 @@ var util = {
      * HTML Attribute 설정 시 필요한 문자열을 가공한다.
      * @memberof module:util
      * @param {{key:value}} attributes  문자열로 가공할 attribute 데이터
-     * @return {string} html 마크업에 포함될 문자열
+     * @returns {string} html 마크업에 포함될 문자열
      * @example
      var str = util.getAttributesString({
             'class': 'focused disabled',
@@ -1396,7 +1396,7 @@ var util = {
      * 배열의 합을 반환한다.
      * @memberof module:util
      * @param {number[]} list   총 합을 구할 number 타입 배열
-     * @return {number} 합산한 결과값
+     * @returns {number} 합산한 결과값
      */
     sum: function(list) {
         return _.reduce(list, function(memo, value) {
@@ -1407,8 +1407,8 @@ var util = {
 
     /**
      * Return min and max value in array
-     * @param {Array} arr
-     * @returns {{min: number, max: number}}
+     * @param {Array} arr - Target array
+     * @returns {{min: number, max: number}} Min and Max
      * @see {@link http://jsperf.com/getminmax}
      */
     getMinMax: function(arr) {
@@ -1423,7 +1423,7 @@ var util = {
      * @memberof module:util
      * @param {number} rowCount  행 개수
      * @param {number} rowHeight    한 행당 높이
-     * @return {number} 계산된 높이
+     * @returns {number} 계산된 높이
      */
     getHeight: function(rowCount, rowHeight) {
         return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
@@ -1434,7 +1434,7 @@ var util = {
      * @memberof module:util
      * @param {number} height 테이블 body 높이
      * @param {number} rowHeight    한 행당 높이
-     * @return {number} 테이블 body 당 보여지는 행 개수
+     * @returns {number} 테이블 body 당 보여지는 행 개수
      */
     getDisplayRowCount: function(height, rowHeight) {
         return Math.ceil((height - 1) / (rowHeight + 1));
@@ -1445,7 +1445,7 @@ var util = {
      * @memberof module:util
      * @param {number} rowCount  행 개수
      * @param {number} height   테이블 body 높이
-     * @return {number} 한 행당 높이값
+     * @returns {number} 한 행당 높이값
      */
     getRowHeight: function(rowCount, height) {
         return rowCount === 0 ? 0 : Math.floor(((height - 1) / rowCount)) - 1;
@@ -1457,7 +1457,7 @@ var util = {
      * @memberof module:util
      * @param {*} target    동등 비교할 target
      * @param {*} dist      동등 비교할 dist
-     * @return {boolean}    동일한지 여부
+     * @returns {boolean}    동일한지 여부
      */
     isEqual: function(target, dist) {
         var isDiff,
@@ -1488,7 +1488,7 @@ var util = {
      * Returns whether the string blank.
      * @memberof module:util
      * @param {*} target - target object
-     * @return {boolean} True if target is undefined or null or ''
+     * @returns {boolean} True if target is undefined or null or ''
      */
     isBlank: function(target) {
         if (_.isString(target)) {
@@ -1501,7 +1501,7 @@ var util = {
      * Grid 에서 필요한 형태로 HTML tag 를 제거한다.
      * @memberof module:util
      * @param {string} htmlString   html 마크업 문자열
-     * @return {String} HTML tag 에 해당하는 부분을 제거한 문자열
+     * @returns {String} HTML tag 에 해당하는 부분을 제거한 문자열
      */
     stripTags: function(htmlString) {
         var matchResult;
@@ -1513,7 +1513,9 @@ var util = {
             } else {
                 htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
             }
-            htmlString = $.trim(tui.util.decodeHTMLEntity(htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')));
+            htmlString = $.trim(tui.util.decodeHTMLEntity(
+                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')
+            ));
         }
         return htmlString;
     },
@@ -1521,7 +1523,7 @@ var util = {
     /**
      * Create unique key
      * @memberof module:util
-     * @return {number} unique key 를 반환한다.
+     * @returns {number} unique key 를 반환한다.
      */
     getUniqueKey: function() {
         this.uniqueId += 1;
@@ -1532,7 +1534,7 @@ var util = {
      * object 를 query string 으로 변경한다.
      * @memberof module:util
      * @param {object} dataObj  쿼리 문자열으로 반환할 객체
-     * @return {string} 변환된 쿼리 문자열
+     * @returns {string} 변환된 쿼리 문자열
      */
     toQueryString: function(dataObj) {
         var queryList = [];
@@ -1554,7 +1556,7 @@ var util = {
      * queryString 을 object 형태로 변형한다.
      * @memberof module:util
      * @param {String} queryString 쿼리 문자열
-     * @return {Object} 변환한 Object
+     * @returns {Object} 변환한 Object
      */
     toQueryObject: function(queryString) {
         var queryList = queryString.split('&'),
@@ -1585,7 +1587,7 @@ var util = {
      * @memberof module:util
      * @param {*} value 컨버팅할 value
      * @param {String} type 컨버팅 될 타입
-     * @return {*}  타입 컨버팅된 value
+     * @returns {*}  타입 컨버팅된 value
      */
     convertValueType: function(value, type) {
         if (type === 'string') {
@@ -1599,7 +1601,7 @@ var util = {
     /**
      * Capitalize first character of the target string.
      * @param  {string} string Target string
-     * @return {string} Converted new string
+     * @returns {string} Converted new string
      */
     toUpperCaseFirstLetter: function(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
@@ -1627,7 +1629,7 @@ var util = {
 
     /**
      * Returns whether the browser is IE7
-     * @return {boolean} True if the browser is IE7
+     * @returns {boolean} True if the browser is IE7
      */
     isBrowserIE7: function() {
         var browser = tui.util.browser;
@@ -1661,7 +1663,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      * Returns the element of the table-cell identified by rowKey and columnName
      * @param {(Number|String)} rowKey - Row key
      * @param {String} columnName - Column name
-     * @return {jQuery} Cell(TD) element
+     * @returns {jQuery} Cell(TD) element
      */
     getElement: function(rowKey, columnName) {
         return this.$el.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
@@ -1669,7 +1671,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
 
     /**
      * Returns the offset of the container element
-     * @return {{top: Number, left: Number} Offset object
+     * @returns {{top: Number, left: Number}} Offset object
      */
     getOffset: function() {
         return this.$el.offset();
@@ -1681,6 +1683,14 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      */
     getWidth: function() {
         return this.$el.width();
+    },
+
+    /**
+     * Returns the height of the parent of container element.
+     * @returns {Number} Height of the parent of container element
+     */
+    getParentHeight: function() {
+        return this.$el.parent().height();
     },
 
     /**
@@ -1705,53 +1715,98 @@ module.exports = DomState;
  * Grid public API
  *
  * @param {Object} options
- *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount} can be used for setting this value dynamically.
- *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column. The string value 'checkbox' or 'radiobox' can be used. If not specified, the button column will not be shown.
- *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number to each rows when rendering time.
- *      @param {number} [options.headerHeight=35] - The height of header area. When rows in header are multiple (merged column), this value must be the total height of rows.
+ *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
+ *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
+ *          can be used for setting this value dynamically.
+ *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
+ *          The string value 'checkbox' or 'radiobox' can be used.
+ *          If not specified, the button column will not be shown.
+ *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
+ *          to each rows when rendering time.
+ *      @param {number} [options.headerHeight=35] - The height of header area.
+ *          When rows in header are multiple (merged column), this value must be the total height of rows.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area. Total height of grid will be set based on this value.
+ *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area.
+ *          Total height of grid will be set based on this value.
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
- *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself without server.
- *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to edit-mode with a single click.
+ *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
+ *          without server.
+ *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to
+ *          edit-mode with a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
- *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows. If not specified, unique value for each rows will be created internally.
+ *      @param {boolean} [options.fitToParentHeight=false] - If set to true, the height of the grid will expand to
+ *          fit the height of parent element.
+ *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
+ *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
+ *          If not specified, unique value for each rows will be created internally.
  *      @param {Object} [options.toolbar] - The object for configuring toolbar UI.
  *          @param {boolean} [options.toolbar.hasResizeHandler=true] - Specifies whether to use the resize hendler.
  *          @param {boolean} [options.toolbar.hasControlPanel=true] - Specifies whether to use the control panel.
  *          @param {boolean} [options.toolbar.hasPagination=true] - Specifies whether to use the pagination.
  *      @param {array} options.columnModelList - The configuration of the grid columns.
  *          @param {string} options.columnModelList.columnName - The name of the column.
- *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used for overflowing content.
- *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content. Available values are 'left', 'center', 'right'.
- *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of the column.
+ *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used
+ *              for overflowing content.
+ *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content.
+ *              Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
+ *              the column.
  *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
  *          @param {number} [options.columnModelList.width] - The width of the column. The unit is pixel.
  *          @param {boolean} [options.columnModelList.isHidden] - If set to true, the column will not be shown.
- *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column will not be changed.
- *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column doesn't have a value.
- *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell. The retrurn value of the function will be shown as the value of the cell.
- *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell will not be encoded as HTML entities.
- *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be ignored when setting up the list of modified rows.
- *          @param {boolean} [options.columnModelList.isSortable=false] - If set to true, sort button will be shown on the right side of the column header, which executes the sort action when clicked.
+ *          @param {boolean} [options.columnModelList.isFixedWidth=false] - If set to true, the width of the column
+ *              will not be changed.
+ *          @param {boolean} [options.columnModelList.isRequired=false] - If set to true, the data of the column
+ *              will be checked to be not empty whenever data is changed or calling {@link tui.Grid#validate}.
+ *          @param {string} [options.columnModelList.defaultValue] - The default value to be shown when the column
+ *              doesn't have a value.
+ *          @param {function} [options.columnModelList.formatter] - The function that formats the value of the cell.
+ *              The retrurn value of the function will be shown as the value of the cell.
+ *          @param {boolean} [options.columnModelList.notUseHtmlEntity=false] - If set to true, the value of the cell
+ *              will not be encoded as HTML entities.
+ *          @param {boolean} [options.columnModelList.isIgnore=false] - If set to true, the value of the column will be
+ *               ignored when setting up the list of modified rows.
+ *          @param {boolean} [options.columnModelList.isSortable=false] - If set to true, sort button will be shown on
+ *              the right side of the column header, which executes the sort action when clicked.
  *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
- *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies the type of the editing UI. Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
- *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the 'select', 'radio', 'checkbox' type. The item of the array must contain properties named 'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
- *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be called before changing the value of the cell. If returns false, the changing will be canceled.
- *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be called after changing the value of the cell.
- *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>. (replaced with {@link beforeContent})
- *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be shown left to the value. If it's a function, the return value will be used.
- *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>. (replaced with {@link afterContent})
- *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be shown right to the value. If it's a function, the return value will be used.
- *              @param {function} [options.columnModelList.editOption.converter] - The function whose return value (HTML) represents the UI of the cell. If the return value is falsy(null|undefined|false), default UI will be shown. This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
- *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name as a key and event handler as a value for events on input element.
+ *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies
+ *                  the type of the editing UI.
+ *                  Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
+ *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the
+ *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
+ *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
+ *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be
+ *                   called before changing the value of the cell. If returns false, the changing will be canceled.
+ *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
+ *                  called after changing the value of the cell.
+ *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>.
+ *                  (replaced with {@link beforeContent})
+ *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
+ *                  shown left to the value. If it's a function, the return value will be used.
+ *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>.
+ *                  (replaced with {@link afterContent})
+ *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be
+ *                  shown right to the value. If it's a function, the return value will be used.
+ *              @param {function} [options.columnModelList.editOption.converter] - The function whose
+ *                  return value (HTML) represents the UI of the cell. If the return value is
+ *                  falsy(null|undefined|false), default UI will be shown.
+ *                  This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
+ *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
+ *                  as a key and event handler as a value for events on input element.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
- *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns will be disabled.
- *              @param {function} [options.columnModelList.relationList.isEditable] - If returns true, target columns will be editable.
- *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return value specifies the option list for the 'select', 'radio', 'checkbox' type. The options list of target columns will be replaced with the return value of this function.
- *      @param {array} options.columnMerge - The array that specifies the merged column. This options does not merge the cells of multiple columns into a single cell. This options only effects to the headers of the multiple columns, creates a new parent header that includes the headers of spcified columns, and sets up the hierarchy.
+ *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns
+ *                  will be disabled.
+ *              @param {function} [options.columnModelList.relationList.isEditable] - If returns true, target columns
+ *                  will be editable.
+ *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return
+ *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
+ *                  The options list of target columns will be replaced with the return value of this function.
+ *      @param {array} options.columnMerge - The array that specifies the merged column.
+ *          This options does not merge the cells of multiple columns into a single cell.
+ *          This options only effects to the headers of the multiple columns, creates a new parent header
+ *          that includes the headers of spcified columns, and sets up the hierarchy.
  * @constructor tui.Grid
  * @example
      <div id='grid'></div>
@@ -1764,6 +1819,8 @@ module.exports = DomState;
     headerHeight: 100, //(default=35)
     rowHeight: 27, // (default=27)
     displayRowCount: 10, //(default=10)
+    fitToParentHeight: true // (default=false)
+    showDummyRows: false // (default=false)
     minimumColumnWidth: 50, //(default=50)
     scrollX: true, //(default:true)
     scrollY: true, //(default:true)
@@ -1841,6 +1898,7 @@ module.exports = DomState;
             title: 'password input column',
             columnName: 'column5',
             width: 100,
+            isRequired: true,
             isFixedWidth: true,
             editOption: {
                 type: 'text-password',
@@ -1988,7 +2046,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
-     * @return {module:model/manager} - New model manager object
+     * @returns {module:model/manager} - New model manager object
+     * @private
      */
     _createModelManager: function(options) {
         var domState = new DomState(this.$el),
@@ -2003,7 +2062,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates painter manager and returns it
-     * @return {module:painter/manager} - New painter manager object
+     * @returns {module:painter/manager} - New painter manager object
+     * @private
      */
     _createPainterManager: function() {
         return new PainterManager({
@@ -2014,7 +2074,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates container view and returns it
      * @param  {Object} options - Options set by user
-     * @return {module:view/container} - New container view object
+     * @returns {module:view/container} - New container view object
+     * @private
      */
     _createContainerView: function(options) {
         var viewFactory = new ViewFactory({
@@ -2030,7 +2091,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates public event emitter and returns it.
-     * @return {module:publicEventEmitter} - New public event emitter
+     * @returns {module:publicEventEmitter} - New public event emitter
+     * @private
      */
     _createPublicEventEmitter: function() {
         var emitter = new PublicEventEmitter(this);
@@ -2042,6 +2104,22 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Disables all rows.
+     * @api
+     */
+    disable: function() {
+        this.modelManager.dataModel.setDisabled(true);
+    },
+
+    /**
+     * Enables all rows.
+     * @api
+     */
+    enable: function() {
+        this.modelManager.dataModel.setDisabled(false);
+    },
+
+    /**
      * Disables the row identified by the rowkey.
      * @api
      * @param {(number|string)} rowKey - The unique key of the target row
@@ -2049,6 +2127,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     disableRow: function(rowKey) {
         this.modelManager.dataModel.disableRow(rowKey);
     },
+
     /**
      * Enables the row identified by the rowKey.
      * @api
@@ -2057,23 +2136,25 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     enableRow: function(rowKey) {
         this.modelManager.dataModel.enableRow(rowKey);
     },
+
     /**
      * Returns the value of the cell identified by the rowKey and columnName.
      * @api
      * @param {(number|string)} rowKey - The unique key of the target row.
      * @param {string} columnName - The name of the column
      * @param {boolean} [isOriginal] - It set to true, the original value will be return.
-     * @return {(number|string)} - The value of the cell
+     * @returns {(number|string)} - The value of the cell
      */
     getValue: function(rowKey, columnName, isOriginal) {
         return this.modelManager.dataModel.getValue(rowKey, columnName, isOriginal);
     },
+
     /**
      * Returns a list of all values in the specified column.
      * @api
      * @param {string} columnName - The name of the column
      * @param {boolean} [isJsonString=false] - It set to true, return value will be converted to JSON string.
-     * @return {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
+     * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
      */
     getColumnValues: function(columnName, isJsonString) {
         return this.modelManager.dataModel.getColumnValues(columnName, isJsonString);
@@ -2084,7 +2165,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {(number|string)} rowKey - The unique key of the target row
      * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
+     * @returns {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRow: function(rowKey, isJsonString) {
         return this.modelManager.dataModel.getRowData(rowKey, isJsonString);
@@ -2095,38 +2176,41 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      * @param {number} index - The index of the row
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Object|string} - The object that contains all values in the row. (or JSON string of the object)
+     * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
      */
     getRowAt: function(index, isJsonString) {
-        return this.modelManager.dataModel.getRowData(index, isJsonString);
+        return this.modelManager.dataModel.getRowDataAt(index, isJsonString);
     },
 
     /**
      * Returns the total number of the rows.
      * @api
-     * @return {number} - The total number of the rows
+     * @returns {number} - The total number of the rows
      */
     getRowCount: function() {
         return this.modelManager.dataModel.length;
     },
+
     /**
      * Returns the rowKey of the currently selected row.
      * @api
-     * @return {(number|string)} - The rowKey of the row
+     * @returns {(number|string)} - The rowKey of the row
      */
     getSelectedRowKey: function() {
         return this.modelManager.focusModel.which().rowKey;
     },
+
     /**
      * Returns the jquery object of the cell identified by the rowKey and columnName.
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
-     * @return {jQuery} - The jquery object of the cell element
+     * @returns {jQuery} - The jquery object of the cell element
      */
     getElement: function(rowKey, columnName) {
         return this.modelManager.dataModel.getElement(rowKey, columnName);
     },
+
     /**
      * Sets the value of the cell identified by the specified rowKey and columnName.
      * @api
@@ -2137,6 +2221,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setValue: function(rowKey, columnName, columnValue) {
         this.modelManager.dataModel.setValue(rowKey, columnName, columnValue);
     },
+
     /**
      * Sets the all values in the specified column.
      * @api
@@ -2147,6 +2232,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setColumnValues: function(columnName, columnValue, isCheckCellState) {
         this.modelManager.dataModel.setColumnValues(columnName, columnValue, isCheckCellState);
     },
+
     /**
      * Replace all rows with the specified list. This will not change the original data.
      * @api
@@ -2155,6 +2241,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     replaceRowList: function(rowList) {
         this.modelManager.dataModel.replaceRowList(rowList);
     },
+
     /**
      * Replace all rows with the specified list. This will change the original data.
      * @api
@@ -2164,6 +2251,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setRowList: function(rowList, callback) {
         this.modelManager.dataModel.setRowList(rowList, true, callback);
     },
+
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
      * @api
@@ -2175,6 +2263,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.modelManager.focusModel.focusClipboard();
         this.modelManager.focusModel.focus(rowKey, columnName, isScrollable);
     },
+
     /**
      * Sets focus on the cell at the specified index of row and column.
      * @api
@@ -2185,6 +2274,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     focusAt: function(rowIndex, columnIndex, isScrollable) {
         this.modelManager.focusModel.focusAt(rowIndex, columnIndex, isScrollable);
     },
+
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
      * @api
@@ -2195,6 +2285,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     focusIn: function(rowKey, columnName, isScrollable) {
         this.modelManager.focusModel.focusIn(rowKey, columnName, isScrollable);
     },
+
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
      * @api
@@ -2204,6 +2295,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
         this.modelManager.focusModel.focusInAt(rowIndex, columnIndex, isScrollable);
     },
+
     /**
      * Makes view ready to get keyboard input.
      * @api
@@ -2211,6 +2303,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     readyForKeyControl: function() {
         this.modelManager.focusModel.focusClipboard();
     },
+
     /**
      * Removes focus from the focused cell.
      * @api
@@ -2218,6 +2311,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     blur: function() {
         this.modelManager.focusModel.blur();
     },
+
     /**
      * Checks all rows.
      * @api
@@ -2225,6 +2319,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     checkAll: function() {
         this.modelManager.dataModel.checkAll();
     },
+
     /**
      * Checks the row identified by the specified rowKey.
      * @api
@@ -2233,6 +2328,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     check: function(rowKey) {
         this.modelManager.dataModel.check(rowKey);
     },
+
     /**
      * Unchecks all rows.
      * @api
@@ -2240,6 +2336,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     uncheckAll: function() {
         this.modelManager.dataModel.uncheckAll();
     },
+
     /**
      * Unchecks the row identified by the specified rowKey.
      * @api
@@ -2248,6 +2345,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     uncheck: function(rowKey) {
         this.modelManager.dataModel.uncheck(rowKey);
     },
+
     /**
      * Removes all rows.
      * @api
@@ -2255,13 +2353,16 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     clear: function() {
         this.modelManager.dataModel.setRowList([]);
     },
+
     /**
      * Removes the row identified by the specified rowKey.
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
-     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to  options.removeOriginalData.
+     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to
+     *     options.removeOriginalData.
      * @param {boolean} [options.removeOriginalData] - If set to true, the original data will be removed.
-     * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be removed although the target is first cell of them.
+     * @param {boolean} [options.keepRowSpanData] - If set to true, the value of the merged cells will not be
+     *     removed although the target is first cell of them.
      */
     removeRow: function(rowKey, options) {
         if (tui.util.isBoolean(options) && options) {
@@ -2271,14 +2372,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
         this.modelManager.dataModel.removeRow(rowKey, options);
     },
+
     /**
      * Removes all checked rows.
      * @api
      * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
-     * @return {boolean} - True if there's at least one row removed.
+     * @returns {boolean} - True if there's at least one row removed.
      */
     removeCheckedRows: function(isConfirm) {
-        var rowKeyList = this.modelManager.getCheckedRowKeyList(),
+        var rowKeyList = this.getCheckedRowKeyList(),
             message = rowKeyList.length + '건의 데이터를 삭제하시겠습니까?';
 
         if (rowKeyList.length > 0 && (!isConfirm || confirm(message))) {
@@ -2289,6 +2391,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
         return false;
     },
+
     /**
      * Enables the row identified by the rowKey to be able to check.
      * @api
@@ -2297,6 +2400,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     enableCheck: function(rowKey) {
         this.modelManager.dataModel.enableCheck(rowKey);
     },
+
     /**
      * Disables the row identified by the spcified rowKey to not be abled to check.
      * @api
@@ -2305,11 +2409,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     disableCheck: function(rowKey) {
         this.modelManager.dataModel.disableCheck(rowKey);
     },
+
     /**
      * Returns a list of the rowKey of checked rows.
      * @api
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Array|string} - A list of the rowKey. (or JSON string of the list)
+     * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
         var checkedRowList = this.modelManager.dataModel.getRowList(true),
@@ -2317,11 +2422,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
         return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
     },
+
     /**
      * Returns a list of the checked rows.
      * @api
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
-     * @return {Array|string} - A list of the checked rows. (or JSON string of the list)
+     * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
     getCheckedRowList: function(isJsonString) {
         var checkedRowList = this.modelManager.dataModel.getRowList(true);
@@ -2332,61 +2438,73 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns a list of the column model.
      * @api
-     * @return {Array} - A list of the column model.
+     * @returns {Array} - A list of the column model.
      */
     getColumnModelList: function() {
         return this.modelManager.columnModel.get('dataColumnModelList');
     },
+
     /**
      * Returns the object that contains the lists of changed data compared to the original data.
      * The object has properties 'createList', 'updateList', 'deleteList'.
      * @api
      * @param {Object} [options] Options
      *      @param {boolean} [options.isOnlyChecked=false] - If set to true, only checked rows will be considered.
-     *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains the row data for internal use.
-     *      @param {boolean} [options.isOnlyRowKeyList=false] - If set to true, only keys of the changed rows will be returned.
+     *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains
+     *          the row data for internal use.
+     *      @param {boolean} [options.isOnlyRowKeyList=false] - If set to true, only keys of the changed
+     *          rows will be returned.
      *      @param {Array} [options.filteringColumnList] - A list of column name to be excluded.
-     * @return {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
+     * @returns {{createList: Array, updateList: Array, deleteList: Array}} - Object that contains the result list.
      */
     getModifiedRowList: function(options) {
         return this.modelManager.dataModel.getModifiedRowList(options);
     },
+
     /**
      * Insert the new row with specified data to the end of table.
      * @api
      * @param {object} [row] - The data for the new row
      * @param {object} [options] - Options
      * @param {number} [options.at] - The index at which new row will be inserted
-     * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index has a rowspan data, the new row will extend the existing rowspan data.
+     * @param {boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
+     *        has a rowspan data, the new row will extend the existing rowspan data.
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
     appendRow: function(row, options) {
         this.modelManager.dataModel.append(row, options);
     },
+
     /**
      * Insert the new row with specified data to the beginning of table.
      * @api
      * @param {object} [row] - The data for the new row
+     * @param {object} [options] - Options
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
      */
-    prependRow: function(row) {
-        this.modelManager.dataModel.prepend(row);
+    prependRow: function(row, options) {
+        this.modelManager.dataModel.prepend(row, options);
     },
+
     /**
      * Returns true if there are at least one row changed.
      * @api
-     * @return {boolean} - True if there are at least one row changed.
+     * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
         return this.modelManager.dataModel.isChanged();
     },
+
     /**
      * Returns the instance of specified AddOn.
      * @api
      * @param {string} name - The name of the AddOn
-     * @return {instance} addOn - The instance of the AddOn
+     * @returns {instance} addOn - The instance of the AddOn
      */
     getAddOn: function(name) {
         return name ? this.addOn[name] : this.addOn;
     },
+
     /**
      * Restores the data to the original data.
      * (Original data is set by {@link tui.Grid#setRowList|setRowList}
@@ -2395,6 +2513,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     restore: function() {
         this.modelManager.dataModel.restore();
     },
+
     /**
      * Selects the row identified by the rowKey.
      * @api
@@ -2403,6 +2522,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     select: function(rowKey) {
         this.modelManager.focusModel.select(rowKey);
     },
+
     /**
      * Unselects selected rows.
      * @api
@@ -2410,6 +2530,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     unselect: function() {
         this.modelManager.focusModel.unselect(true);
     },
+
     /**
      * Sets the count of fixed column.
      * @api
@@ -2418,6 +2539,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setColumnFixCount: function(count) {
         this.modelManager.columnModel.set('columnFixCount', count);
     },
+
     /**
      * Sets the list of column model.
      * @api
@@ -2426,12 +2548,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setColumnModelList: function(columnModelList) {
         this.modelManager.columnModel.set('columnModelList', columnModelList);
     },
+
     /**
      * Create an specified AddOn and use it on this instance.
      * @api
      * @param {string} name - The name of the AddOn to use.
      * @param {object} options - The option objects for configuring the AddON.
-     * @return {tui.Grid} - This instance.
+     * @returns {tui.Grid} - This instance.
      */
     use: function(name, options) {
         if (name === 'Net') {
@@ -2445,14 +2568,16 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         }
         return this;
     },
+
     /**
      * Returns a list of all rows.
      * @api
-     * @return {Array} - A list of all rows
+     * @returns {Array} - A list of all rows
      */
     getRowList: function() {
         return this.modelManager.dataModel.getRowList();
     },
+
     /**
      * Sorts all rows by the specified column.
      * @api
@@ -2461,6 +2586,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     sort: function(columnName) {
         this.modelManager.dataModel.sortByField(columnName);
     },
+
     /**
      * Unsorts all rows. (Sorts by rowKey).
      * @api
@@ -2468,6 +2594,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     unSort: function() {
         this.sort('rowKey');
     },
+
     /**
      * Adds the specified css class to cell element identified by the rowKey and className
      * @api
@@ -2478,6 +2605,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     addCellClassName: function(rowKey, columnName, className) {
         this.modelManager.dataModel.get(rowKey).addCellClassName(columnName, className);
     },
+
     /**
      * Adds the specified css class to all cell elements in the row identified by the rowKey
      * @api
@@ -2487,6 +2615,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     addRowClassName: function(rowKey, className) {
         this.modelManager.dataModel.get(rowKey).addClassName(className);
     },
+
     /**
      * Removes the specified css class from the cell element indentified by the rowKey and columnName.
      * @api
@@ -2497,6 +2626,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     removeCellClassName: function(rowKey, columnName, className) {
         this.modelManager.dataModel.get(rowKey).removeCellClassName(columnName, className);
     },
+
     /**
      * Removes the specified css class from all cell elements in the row identified by the rowKey.
      * @api
@@ -2506,24 +2636,28 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     removeRowClassName: function(rowKey, className) {
         this.modelManager.dataModel.get(rowKey).removeClassName(className);
     },
+
     /**
      * Returns the rowspan data of the cell identified by the rowKey and columnName.
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
+     * @returns {Object} - Row span data
      */
     getRowSpanData: function(rowKey, columnName) {
         return this.modelManager.dataModel.getRowSpanData(rowKey, columnName);
     },
+
     /**
      * Returns the index of the row indentified by the rowKey.
      * @api
      * @param {number|string} rowKey - The unique key of the row
-     * @return {number} - The index of the row
+     * @returns {number} - The index of the row
      */
     getIndexOfRow: function(rowKey) {
         return this.modelManager.dataModel.indexOfRowKey(rowKey);
     },
+
     /**
      * Sets the number of rows to be shown in the table area.
      * @api
@@ -2532,6 +2666,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setDisplayRowCount: function(count) {
         this.modelManager.dimensionModel.set('displayRowCount', count);
     },
+
     /**
      * Sets the width and height of the dimension.
      * @api
@@ -2541,6 +2676,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     setSize: function(width, height) {
         this.modelManager.dimensionModel.setSize(width, height);
     },
+
     /**
      * Refresh the layout view. Use this method when the view was rendered while hidden.
      * @api
@@ -2548,6 +2684,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     refreshLayout: function() {
         this.modelManager.dimensionModel.refreshLayout();
     },
+
     /**
      * Show columns
      * @api
@@ -2557,6 +2694,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var args = tui.util.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, false);
     },
+
     /**
      * Hide columns
      * @api
@@ -2566,6 +2704,43 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var args = tui.util.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, true);
     },
+
+    /**
+     * Validates all data and returns the result.
+     * Return value is an array which contains only rows which have invalid cell data.
+     * @returns {Array.<Object>} An array of error object
+     * @api
+     * @example
+     // return value example
+    [
+        {
+            rowKey: 1,
+            errors: [
+                {
+                    columnName: 'c1',
+                    errorCode: 'REQUIRED'
+                },
+                {
+                    columnName: 'c2',
+                    errorCode: 'REQUIRED'
+                }
+            ]
+        },
+        {
+            rowKey: 3,
+            errors: [
+                {
+                    columnName: 'c2',
+                    errorCode: 'REQUIRED'
+                }
+            ]
+        }
+    ]
+     */
+    validate: function() {
+        return this.modelManager.dataModel.validate();
+    },
+
     /**
      * Destroys the instance.
      * @api
@@ -2582,13 +2757,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
  * @api
  * @static
  * @param  {number} id - ID of the target grid
- * @return {tui.Grid} - Grid instance
+ * @returns {tui.Grid} - Grid instance
  */
 tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
 
-},{"./addon/net":2,"./base/view":7,"./common/util":10,"./domState":11,"./model/manager":19,"./painter/manager":36,"./publicEventEmitter":38,"./view/factory":41}],13:[function(require,module,exports){
+},{"./addon/net":2,"./base/view":7,"./common/util":10,"./domState":11,"./model/manager":19,"./painter/manager":37,"./publicEventEmitter":39,"./view/factory":42}],13:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
@@ -2609,11 +2784,11 @@ var META_COLUMN_LIST = ['_button', '_number'];
 /**
  * 컬럼 모델 데이터를 다루는 객체
  * @module model/data/columnModel
+ * @extends module:base/model
  */
 var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
@@ -2643,7 +2818,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 메타컬럼모델들을 초기화한다.
      * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
-     * @return {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
+     * @returns {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
      * @private
      */
     _initializeMetaColumns: function(source) {
@@ -2669,7 +2844,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 number column 을 추가한다.
-     * @param {Array} metaColumnModelList
+     * @param {Array} metaColumnModelList - Meta column model list
      * @private
      */
     _initializeNumberColumn: function(metaColumnModelList) {
@@ -2690,7 +2865,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 button column 을 추가한다.
-     * @param {Array} metaColumnModelList
+     * @param {Array} metaColumnModelList - Meta column model listt
      * @private
      */
     _initializeButtonColumn: function(metaColumnModelList) {
@@ -2741,7 +2916,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * index 에 해당하는 columnModel 을 반환한다.
      * @param {Number} index    조회할 컬럼모델의 인덱스 값
      * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 찾을것인지 여부.
-     * @return {object} 조회한 컬럼 모델
+     * @returns {object} 조회한 컬럼 모델
      */
     at: function(index, isVisible) {
         var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('dataColumnModelList');
@@ -2752,7 +2927,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * columnName 에 해당하는 index를 반환한다.
      * @param {string} columnName   컬럼명
      * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 반환할 것인지 여부.
-     * @return {number} index   컬럼명에 해당하는 인덱스 값
+     * @returns {number} index   컬럼명에 해당하는 인덱스 값
      */
     indexOfColumnName: function(columnName, isVisible) {
         var columnModelList;
@@ -2768,7 +2943,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * columnName 이 열고정 영역에 있는 column 인지 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
+     * @returns {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
      */
     isLside: function(columnName) {
         var index = this.indexOfColumnName(columnName, true);
@@ -2780,7 +2955,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
      * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList를 반환한다.
      * @param {boolean} [withMeta=false] 메타컬럼 포함 여부. 지정하지 않으면 데이터컬럼리스트 기준으로 반환한다.
-     * @return {Array}  조회한 컬럼모델 배열
+     * @returns {Array}  조회한 컬럼모델 배열
      */
     getVisibleColumnModelList: function(whichSide, withMeta) {
         var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount(),
@@ -2817,7 +2992,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
      * @param {boolean} [withMeta=false] 현재 보여지고 있는 메타컬럼의 count를 합칠지 여부
-     * @returns {number}
+     * @returns {number} Visible columnFix count
      */
     getVisibleColumnFixCount: function(withMeta) {
         var realColumnFixCount = this.get('columnFixCount'),
@@ -2839,7 +3014,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Object} 컬럼명에 해당하는 컬럼모델
+     * @returns {Object} 컬럼명에 해당하는 컬럼모델
      */
     getColumnModel: function(columnName) {
         return this.get('columnModelMap')[columnName];
@@ -2849,7 +3024,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
      * 랜더링시 html 태그 문자열을 제거할때 사용됨.
      * @param {String} columnName 컬럼명
-     * @return {boolean} text 타입인지 여부
+     * @returns {boolean} text 타입인지 여부
      */
     isTextType: function(columnName) {
         return !!this.textType[this.getEditType(columnName)];
@@ -2858,7 +3033,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 컬럼 모델로부터 editType 을 반환한다.
      * @param {string} columnName The name of the target column
-     * @return {string} 해당하는 columnName 의 editType 을 반환한다.
+     * @returns {string} 해당하는 columnName 의 editType 을 반환한다.
      */
     getEditType: function(columnName) {
         var columnModel = this.getColumnModel(columnName),
@@ -2873,9 +3048,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
-     * @param {Array} dataColumnModelList 데이터 컬럼 모델 리스트
      * @param {Array} metaColumnModelList 메타 컬럼 모델 리스트
-     * @return {Array}  isHidden 이 설정되지 않은 전체 컬럼 모델 리스트
+     * @param {Array} dataColumnModelList 데이터 컬럼 모델 리스트
+     * @returns {Array}  isHidden 이 설정되지 않은 전체 컬럼 모델 리스트
      * @private
      */
     _makeVisibleColumnModelList: function(metaColumnModelList, dataColumnModelList) {
@@ -2890,7 +3065,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
      * @param {Array} columnModelList - Column Model List
-     * @return {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
+     * @returns {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
      * @private
      */
     _getRelationListMap: function(columnModelList) {
@@ -2908,7 +3083,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
-     * @return {Array} isIgnore 가 true 로 설정된 columnName 배열.
+     * @returns {Array} isIgnore 가 true 로 설정된 columnName 배열.
      */
     getIgnoredColumnNameList: function() {
         var columnModelLsit = this.get('dataColumnModelList'),
@@ -3061,11 +3236,12 @@ var util = require('../../common/util');
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
+ * @extends module:base/model
  */
 var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraData.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
+     * @param {Object} data - Data object
      */
     init: function(data) {
         this.data = data;
@@ -3076,7 +3252,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
      * @param  {string} columnName - column name
      * @param  {(number|string)} rowKey - rowKey
      * @param  {boolean} isRowSpanEnable - Boolean value whether row span is enable.
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}} rowSpan data
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}} rowSpan data
      */
     getRowSpanData: function(columnName, rowKey, isRowSpanEnable) {
         var rowSpanData = null;
@@ -3100,7 +3276,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
 
     /**
      * Returns the object that contains rowState info.
-     * @return {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
      */
     getRowState: function() {
         var result = {
@@ -3191,7 +3367,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
     /**
      * Returns the list of className.
      * @param {String} [columnName] - If specified, the result will only conatins class names of cell.
-     * @return {Array} - The array of class names.
+     * @returns {Array} - The array of class names.
      */
     getClassNameList: function(columnName) {
         var classNameData = this.data.className,
@@ -3213,7 +3389,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
      * className 이 담긴 배열로부터 특정 className 을 제거하여 반환한다.
      * @param {Array} classNameList 디자인 클래스명 리스트
      * @param {String} className    제거할 클래스명
-     * @return {Array}  제거된 디자인 클래스명 리스트
+     * @returns {Array}  제거된 디자인 클래스명 리스트
      * @private
      */
     _removeClassNameFromArray: function(classNameList, className) {
@@ -3231,14 +3407,14 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
         var classNameData = this.data.className;
 
         if (tui.util.pick(classNameData, 'column', columnName)) {
-            classNameData.column[columnName] = this._removeClassNameFromArray(classNameData.column[columnName], className);
+            classNameData.column[columnName] =
+                this._removeClassNameFromArray(classNameData.column[columnName], className);
             this.data.className = classNameData;
         }
     },
 
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
@@ -3271,20 +3447,24 @@ var PRIVATE_PROPERTIES = [
     '_extraData'
 ];
 
+// Error code for validtaion
+var VALID_ERR_REQUIRED = 'REQUIRED';
+
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module model/data/row
+ * @extends module:base/model
  */
 var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
 
         this.columnModel = this.collection.columnModel;
+        this.validateMap = {};
         this.on('change', this._onChange, this);
     },
 
@@ -3294,7 +3474,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * Overrides Backbone's parse method for extraData not to be null.
      * @override
      * @param  {object} data - initial data
-     * @return {object} - parsed data
+     * @returns {object} - parsed data
      */
     parse: function(data) {
         if (!data._extraData) {
@@ -3312,9 +3492,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowData 변경 이벤트 핸들러.
-     * changeCallback 과 rowSpanData 에 대한 처리를 담당한다.
-     * @param {object} row  데이터의 키값
+     * Event handler for 'change' event.
+     * Executes callback functions, sync rowspan data, and validate data.
      * @private
      */
     _onChange: function() {
@@ -3333,17 +3512,57 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
             this.collection.syncRowSpannedData(this, columnName, value);
             this._executeChangeAfterCallback(columnName);
-            if (!this.getRowState().isDisabledCheck && !columnModel.isIgnore) {
-                this.set('_button', true);
-            }
+            this.validateCell(columnName, true);
         }, this);
     },
 
     /**
+     * Validate the cell data of given columnName and returns the error code.
+     * @param  {Object} columnName - Column name
+     * @returns {String} Error code
+     * @private
+     */
+    _validateCellData: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            value = this.get(columnName),
+            errorCode = '';
+
+        if (columnModel.isRequired && util.isBlank(value)) {
+            errorCode = VALID_ERR_REQUIRED;
+        }
+        return errorCode;
+    },
+
+    /**
+     * Validate a cell of given columnName.
+     * If the data is invalid, add 'invalid' class name to the cell.
+     * @param {String} columnName - Target column name
+     * @param {Boolean} isDataChanged - True if data is changed (called by onChange handler)
+     * @returns {String} - Error code
+     */
+    validateCell: function(columnName, isDataChanged) {
+        var errorCode;
+
+        if (!isDataChanged && (columnName in this.validateMap)) {
+            return this.validateMap[columnName];
+        }
+
+        errorCode = this._validateCellData(columnName);
+        if (errorCode) {
+            this.addCellClassName(columnName, 'invalid');
+        } else {
+            this.removeCellClassName(columnName, 'invalid');
+        }
+        this.validateMap[columnName] = errorCode;
+
+        return errorCode;
+    },
+
+    /**
      * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
-     * @param {object} row row 모델
      * @param {String} columnName 컬럼명
-     * @return {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}} changeCallback 에 전달될 이벤트 객체
+     * @returns {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}}
+     *          changeCallback 에 전달될 이벤트 객체
      * @private
      */
     _createChangeCallbackEvent: function(columnName) {
@@ -3358,10 +3577,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
      * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
-     *
-     * @param {object} row row 모델
      * @param {String} columnName   컬럼명
-     * @return {boolean} changeBeforeCallback 수행 결과값
+     * @returns {boolean} changeBeforeCallback 수행 결과값
      * @private
      */
     _executeChangeBeforeCallback: function(columnName) {
@@ -3387,9 +3604,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * columnModel 에 정의된 changeAfterCallback 을 수행한다.
-     * @param {object} row - row 모델
      * @param {String} columnName - 컬럼명
-     * @return {boolean} changeAfterCallback 수행 결과값
+     * @returns {boolean} changeAfterCallback 수행 결과값
      * @private
      */
     _executeChangeAfterCallback: function(columnName) {
@@ -3405,7 +3621,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the Array of private property names
-     * @return {array} An array of private property names
+     * @returns {array} An array of private property names
      */
     getPrivateProperties: function() {
         return PRIVATE_PROPERTIES;
@@ -3413,16 +3629,16 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the object that contains rowState info.
-     * @return {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
      */
     getRowState: function() {
         return this.extraDataManager.getRowState();
     },
 
     /**
-     * row의 extraData에 설정된 classNameList 를 반환한다.
-     * @param {String} [columnName] columnName 이 없을 경우 row 에 정의된 className 만 반환한다.
-     * @return {Array} css 클래스 이름의 배열
+     * Returns an array of all className, related with given columnName.
+     * @param {String} columnName - Column name
+     * @returns {Array.<String>} - An array of classNames
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
@@ -3434,13 +3650,16 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.isEllipsis) {
             classNameList.push('ellipsis');
         }
+        if (columnModel.isRequired) {
+            classNameList.push('required');
+        }
         return this._makeUniqueStringArray(classNameList);
     },
 
     /**
      * Returns a new array, which splits all comma-separated strings in the targetList and removes duplicated item.
      * @param  {Array} targetArray - Target array
-     * @return {Array} - New array
+     * @returns {Array} - New array
      */
     _makeUniqueStringArray: function(targetArray) {
         var singleStringArray = _.uniq(targetArray.join(' ').split(' '));
@@ -3450,7 +3669,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
+     * @returns {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -3486,7 +3705,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Boolean}    편집 가능한지 여부
+     * @returns {Boolean}    편집 가능한지 여부
      */
     isEditable: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -3502,7 +3721,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Boolean}    disabled 처리를 할지 여부
+     * @returns {Boolean}    disabled 처리를 할지 여부
      */
     isDisabled: function(columnName) {
         var cellState;
@@ -3514,7 +3733,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * getRowSpanData
      * rowSpan 설정값을 반환한다.
      * @param {String} [columnName] 인자가 존재하지 않을 경우, 행 전체의 rowSpanData 를 맵 형태로 반환한다.
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
      */
     getRowSpanData: function(columnName) {
         var isRowSpanEnable = this.collection.isRowSpanEnable(),
@@ -3557,7 +3776,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * rowKey에 해당하는 행 전체에 CSS className 을 설정한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     addClassName: function(className) {
@@ -3577,7 +3795,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
-     * @param {(Number|String)} rowKey 행 데이터의 고유 rowKey
      * @param {String} className 지정할 디자인 클래스명
      */
     removeClassName: function(className) {
@@ -3590,7 +3807,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
      *
      * @param {String} columnName   컬럼명
-     * @return {String} 인코딩된 결과값
+     * @returns {String} 인코딩된 결과값
      */
     getHTMLEncodedString: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
@@ -3609,7 +3826,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.
      *
      * @param {String} columnName   컬럼명
-     * @return {String} text 형태로 가공된 문자열
+     * @returns {String} text 형태로 가공된 문자열
      * @private
      */
     _getListTypeVisibleText: function(columnName) {
@@ -3642,7 +3859,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
      * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
      * @param {object} publicChanged 비교할 객체
-     * @return {boolean} 중복이면 true, 아니면 false
+     * @returns {boolean} 중복이면 true, 아니면 false
      */
     isDuplicatedPublicChanged: function(publicChanged) {
         if (this._timeoutIdForChanged && _.isEqual(this._lastPublicChanged, publicChanged)) {
@@ -3660,7 +3877,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {String} 화면에 보여지는 데이터로 가공된 문자열
+     * @returns {String} 화면에 보여지는 데이터로 가공된 문자열
      */
     getVisibleText: function(columnName) {
         var columnModel = this.columnModel,
@@ -3693,9 +3910,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
-     *
-     * @param {Array}   callbackNameList 반환값의 결과를 확인할 대상 callbackList. (default : ['optionListChange', 'isDisabled', 'isEditable'])
-     * @return {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
+     * @param {Array} callbackNameList 반환값의 결과를 확인할 대상 callbackList.
+     *        (default : ['optionListChange', 'isDisabled', 'isEditable'])
+     * @returns {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
      */
     getRelationResult: function(callbackNameList) {
         var rowData = this.attributes,
@@ -3763,13 +3980,12 @@ var Row = require('./row');
  * Raw 데이터 RowList 콜렉션. (DataSource)
  * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
  * @module model/data/rowList
+ * @extends module:base/collection
  */
 var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
-    model: Row,
     /**
      * @param {Array} models    콜랙션에 추가할 model 리스트
      * @param {Object} options   생성자의 option 객체
-     * @extends module:base/collection
      * @constructs
      */
     initialize: function(models, options) {
@@ -3786,17 +4002,26 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                 columnName: 'rowKey',
                 isAscending: true,
                 useClient: (_.isBoolean(options.useClientSort) ? options.useClientSort : true)
-            }
+            },
+
+            /**
+             * Whether the all rows are disabled.
+             * This state is not related to individual state of each rows.
+             * @type {Boolean}
+             */
+            isDisabled: false
         });
         if (!this.sortOptions.useClient) {
             this.comparator = null;
         }
     },
 
+    model: Row,
+
     /**
      * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 포멧에 맞게 파싱한다.
      * @param {Array} data  원본 데이터
-     * @return {Array}  파싱하여 가공된 데이터
+     * @returns {Array}  파싱하여 가공된 데이터
      */
     parse: function(data) {
         data = data && data['contents'] || data;
@@ -3807,7 +4032,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 데이터의 _extraData 를 분석하여, Model 에서 사용할 수 있도록 가공한다.
      * _extraData 필드에 rowSpanData 를 추가한다.
      * @param {Array} data  가공할 데이터
-     * @return {Array} 가공된 데이터
+     * @returns {Array} 가공된 데이터
      * @private
      */
     _formatData: function(data) {
@@ -3829,7 +4054,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *
      * @param {object} row  대상 row 데이터
      * @param {number} index    해당 row 의 인덱스 정보. rowKey 를 자동 생성할 경우 사용된다.
-     * @return {object} 가공된 row 데이터
+     * @returns {object} 가공된 row 데이터
      * @private
      */
     _baseFormat: function(row) {
@@ -3849,8 +4074,9 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * 새로운 rowKey를 생성해서 반환한다.
-     * @return {number} 생성된 rowKey
-    //  */
+     * @returns {number} 생성된 rowKey
+     * @private
+     */
     _createRowKey: function() {
         this.lastRowKey += 1;
         return this.lastRowKey;
@@ -3860,7 +4086,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 랜더링시 사용될 extraData 필드에 rowSpanData 값을 세팅한다.
      * @param {Array} rowList - 전체 rowList 배열. rowSpan 된 경우 자식 row 의 데이터도 가공해야 하기 때문에 전체 list 를 인자로 넘긴다.
      * @param {number} index - 해당 배열에서 extraData 를 설정할 배열
-     * @return {Array} rowList - 가공된 rowList
+     * @returns {Array} rowList - 가공된 rowList
      * @private
      */
     _setExtraRowSpanData: function(rowList, index) {
@@ -3910,7 +4136,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * originalRowList 와 originalRowMap 을 생성한다.
      * @param {Array} [rowList] rowList 가 없을 시 현재 collection 데이터를 originalRowList 로 저장한다.
-     * @return {Array} format 을 거친 데이터 리스트.
+     * @returns {Array} format 을 거친 데이터 리스트.
      */
     setOriginalRowList: function(rowList) {
         this.originalRowList = rowList ? this._formatData(rowList) : this.toJSON();
@@ -3921,7 +4147,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 원본 데이터 리스트를 반환한다.
      * @param {boolean} [isClone=true]  데이터 복제 여부.
-     * @return {Array}  원본 데이터 리스트 배열.
+     * @returns {Array}  원본 데이터 리스트 배열.
      */
     getOriginalRowList: function(isClone) {
         isClone = isClone === undefined ? true : isClone;
@@ -3931,7 +4157,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 원본 row 데이터를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
-     * @return {Object} 해당 행의 원본 데이터값
+     * @returns {Object} 해당 행의 원본 데이터값
      */
     getOriginalRow: function(rowKey) {
         return _.clone(this.originalRowMap[rowKey]);
@@ -3941,7 +4167,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowKey 와 columnName 에 해당하는 원본 데이터를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 원본 데이터값
+     * @returns {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 원본 데이터값
      */
     getOriginal: function(rowKey, columnName) {
         return _.clone(this.originalRowMap[rowKey][columnName]);
@@ -3951,7 +4177,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * mainRowKey 를 반환한다.
      * @param {(Number|String)} rowKey  데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 main row 키값
+     * @returns {(Number|String)}    rowKey 와 컬럼명에 해당하는 셀의 main row 키값
      */
     getMainRowKey: function(rowKey, columnName) {
         var row = this.get(rowKey),
@@ -3966,7 +4192,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * rowKey 에 해당하는 index를 반환한다.
      * @param {(Number|String)} rowKey 데이터의 키값
-     * @return {Number} 키값에 해당하는 row의 인덱스
+     * @returns {Number} 키값에 해당하는 row의 인덱스
      */
     indexOfRowKey: function(rowKey) {
         return this.indexOf(this.get(rowKey));
@@ -3976,7 +4202,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowSpan 이 적용되어야 하는지 여부를 반환한다.
      * 랜더링시 사용된다.
      * - sorted, 혹은 filterd 된 경우 false 를 리턴한다.
-     * @return {boolean}    랜더링 시 rowSpan 을 해야하는지 여부
+     * @returns {boolean}    랜더링 시 rowSpan 을 해야하는지 여부
      */
     isRowSpanEnable: function() {
         return !this.isSortedByField();
@@ -3984,7 +4210,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * 현재 RowKey가 아닌 다른 컬럼에 의해 정렬된 상태인지 여부를 반환한다.
-     * @return {Boolean}    정렬된 상태인지 여부
+     * @returns {Boolean}    정렬된 상태인지 여부
      */
     isSortedByField: function() {
         return this.sortOptions.columnName !== 'rowKey';
@@ -4092,7 +4318,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * Backbone 에서 sort() 실행시 내부적으로 사용되는 메소드.
      * @param {Row} a 비교할 앞의 모델
      * @param {Row} b 비교할 뒤의 모델
-     * @return {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
+     * @returns {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
      */
     comparator: function(a, b) {
         var columnName = this.sortOptions.columnName,
@@ -4116,7 +4342,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * rowList 에서 내부에서만 사용하는 property 를 제거하고 반환한다.
      * @param {Array} rowList   내부에 설정된 rowList 배열
-     * @return {Array}  private 프로퍼티를 제거한 결과값
+     * @returns {Array}  private 프로퍼티를 제거한 결과값
      * @private
      */
     _removePrivateProp: function(rowList) {
@@ -4205,7 +4431,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * append, prepend 시 사용할 dummy row를 생성한다.
-     * @return {Object} 값이 비어있는 더미 row 데이터
+     * @returns {Object} 값이 비어있는 더미 row 데이터
      * @private
      */
     _createDummyRow: function() {
@@ -4220,11 +4446,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * 현재 rowList 중 at 에 해당하는 인덱스에 데이터를 append 한다.
-     * @param {object|array} rowData - 행 추가할 데이터. Array일 경우 여러행를 동시에 추가한다.
-     * @param {object} [options] - 옵션 객체
-     * @param {number} [options.at] - 데이터를 append 할 index
-     * @param {boolean} [options.extendPrevRowSpan] - 이전 행의 rowSpan 데이터가 있는 경우 합칠지 여부
+     * Insert the new row with specified data to the end of table.
+     * @param {(Array|Object)} [rowData] - The data for the new row
+     * @param {Object} [options] - Options
+     * @param {Number} [options.at] - The index at which new row will be inserted
+     * @param {Boolean} [options.extendPrevRowSpan] - If set to true and the previous row at target index
+     *        has a rowspan data, the new row will extend the existing rowspan data.
+     * @param {Boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @returns {Array.<module:model/data/row>} Row model list
      */
     append: function(rowData, options) {
         var modelList = this._createModelList(rowData),
@@ -4239,25 +4468,30 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         this.add(modelList, addOptions);
         this._syncRowSpanDataForAppend(options.at, modelList.length, options.extendPrevRowSpan);
-        this.trigger('add', modelList, addOptions);
+        this.trigger('add', modelList, options);
+
         return modelList;
     },
 
     /**
      * 현재 rowList 에 최상단에 데이터를 append 한다.
      * @param {Object} rowData  prepend 할 행 데이터
+     * @param {object} [options] - Options
+     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
+     * @returns {Array.<module:model/data/row>} Row model list
      */
-    prepend: function(rowData) {
-        return this.append(rowData, {
-            at: 0
-        });
+    prepend: function(rowData, options) {
+        options = options || {};
+        options.at = 0;
+
+        return this.append(rowData, options);
     },
 
     /**
      * rowKey에 해당하는 행의 데이터를 리턴한다. isJsonString을 true로 설정하면 결과를 json객체로 변환하여 리턴한다.
      * @param {(Number|String)} rowKey  행 데이터의 고유 키
      * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Object} 행 데이터
+     * @returns {Object} 행 데이터
      */
     getRowData: function(rowKey, isJsonString) {
         var row = this.get(rowKey),
@@ -4270,7 +4504,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 그리드 전체 데이터 중에서 index에 해당하는 순서의 데이터 객체를 리턴한다.
      * @param {Number} index 행의 인덱스
      * @param {Boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Object} 행 데이터
+     * @returns {Object} 행 데이터
      */
     getRowDataAt: function(index, isJsonString) {
         var row = this.at(index),
@@ -4284,7 +4518,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
      * @param {boolean} [isOriginal]  원본 데이터 리턴 여부
-     * @return {(Number|String|undefined)}    조회한 셀의 값.
+     * @returns {(Number|String|undefined)}    조회한 셀의 값.
      */
     getValue: function(rowKey, columnName, isOriginal) {
         var value, row;
@@ -4329,7 +4563,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * columnName에 해당하는 column data list를 리턴한다.
      * @param {String} columnName   컬럼명
      * @param {boolean} [isJsonString=false]  true 일 경우 JSON String 으로 반환한다.
-     * @return {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
+     * @returns {Array} 컬럼명에 해당하는 셀들의 데이터 리스트
      */
     getColumnValues: function(columnName, isJsonString) {
         var valueList = this.pluck(columnName);
@@ -4378,7 +4612,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
     /**
      * Returns true if there are at least one row changed.
-     * @return {boolean} - True if there are at least one row changed.
+     * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
         var modifiedRowsArr = _.values(this.getModifiedRowList());
@@ -4386,6 +4620,17 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return _.some(modifiedRowsArr, function(modifiedRows) {
             return modifiedRows.length > 0;
         });
+    },
+
+    /**
+     * Enables or Disables all rows.
+     * @param  {Boolean} isDisabled - Whether disabled or not
+     */
+    setDisabled: function(isDisabled) {
+        if (this.isDisabled !== isDisabled) {
+            this.isDisabled = isDisabled;
+            this.trigger('disabledChanged');
+        }
     },
 
     /**
@@ -4464,7 +4709,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     /**
      * 주어진 데이터로 모델 목록을 생성하여 반환한다.
      * @param {object|array} rowData - 모델을 생성할 데이터. Array일 경우 여러개를 동시에 생성한다.
-     * @return {Row[]} 생성된 모델 목록
+     * @returns {Row[]} 생성된 모델 목록
      */
     _createModelList: function(rowData) {
         var modelList = [],
@@ -4479,7 +4724,6 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         _.each(rowList, function(row) {
             var rowData;
 
-            row._button = true;
             rowData = new Row(row, {
                 collection: this,
                 parse: true
@@ -4560,7 +4804,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Object} row - row 데이터
      * @param {Object} originalRow - 원본 row 데이터
      * @param {Array} filteringColumnList - 비교에서 제외할 컬럼명
-     * @return {boolean} - 수정여부
+     * @returns {boolean} - 수정여부
      */
     _isModifiedRow: function(row, originalRow, filteringColumnList) {
         var filtered = _.omit(row, filteringColumnList);
@@ -4581,7 +4825,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      *      @param {boolean} [options.isRaw=false] true 로 설정된 경우 내부 연산용 데이터 제거 필터링을 거치지 않는다.
      *      @param {boolean} [options.isOnlyRowKeyList=false] true 로 설정된 경우 키값만 저장하여 리턴한다.
      *      @param {Array} [options.filteringColumnList]   행 데이터 중에서 데이터 변경으로 간주하지 않을 컬럼 이름을 배열로 설정한다.
-     * @return {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
+     * @returns {{createList: Array, updateList: Array, deleteList: Array}} options 조건에 해당하는 수정된 rowList 정보
      */
     getModifiedRowList: function(options) {
         var isRaw = options && options.isRaw,
@@ -4624,6 +4868,13 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return result;
     },
 
+    /**
+     * Resets data.
+     * @param  {Array} rowList - New data
+     * @param  {Boolean} isParse - parse option of Backbone.Collection.reset
+     * @param  {Function} callback - Callback function
+     * @private
+     */
     _resetData: function(rowList, isParse, callback) {
         this.lastRowKey = -1;
         this.reset(rowList, {
@@ -4638,6 +4889,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
      * @param {Array} rowList 설정할 데이터 배열 값
      * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
+     * @param {Function} [callback] callback function
      */
     replaceRowList: function(rowList, isParse, callback) {
         if (_.isUndefined(isParse)) {
@@ -4692,10 +4944,6 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
             this.setValue(mainRowKey, columnName, '', silent);
-            //silent 의 경우 데이터 모델의 change 이벤트가 발생하지 않기 때문에, 강제로 checkbox 를 세팅한다.
-            if (silent) {
-                this.check(mainRowKey, silent);
-            }
         }
     },
 
@@ -4719,10 +4967,70 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
+     * Validates all data and returns the result.
+     * Return value is an array which contains only rows which have invalid cell data.
+     * @returns {Array.<Object>} An array of error object
+     * @example
+        [
+            {
+                rowKey: 1,
+                errors: [
+                    {
+                        columnName: 'c1',
+                        errorCode: 'REQUIRED'
+                    },
+                    {
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }
+                ]
+            },
+            {
+                rowKey: 3,
+                errors: [
+                    {
+                        columnName: 'c2',
+                        errorCode: 'REQUIRED'
+                    }
+                ]
+            }
+        ]
+     */
+    validate: function() {
+        var errorRows = [],
+            requiredColumnNames = _.chain(this.columnModel.getVisibleColumnModelList())
+                .filter(function(columnModel) {
+                    return columnModel.isRequired === true;
+                })
+                .pluck('columnName')
+                .value();
+
+        this.each(function(row) {
+            var errorCells = [];
+            _.each(requiredColumnNames, function(columnName) {
+                var errorCode = row.validateCell(columnName);
+                if (errorCode) {
+                    errorCells.push({
+                        columnName: columnName,
+                        errorCode: errorCode
+                    });
+                }
+            });
+            if (errorCells.length) {
+                errorRows.push({
+                    rowKey: row.get('rowKey'),
+                    errors: errorCells
+                });
+            }
+        });
+        return errorRows;
+    },
+
+    /**
      * 붙여넣기를 실행할 때 끝점이 될 셀의 인덱스를 반환한다.
      * @param  {Array[]} data - 붙여넣기할 데이터
      * @param  {{row: number, column: number}} startIdx - 시작점이 될 셀의 인덱스
-     * @return {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
+     * @returns {{row: number, column: number}} 행과 열의 인덱스 정보를 가진 객체
      */
     _getEndIndexToPaste: function(data, startIdx) {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
@@ -4769,7 +5077,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * 내부적으로 자동으로 mainRowKey 를 찾아 반환한다.
      * @param {(Number|String)} rowKey    행 데이터의 고유 키
      * @param {String} columnName   컬럼 이름
-     * @return {jQuery} 해당 jQuery Element
+     * @returns {jQuery} 해당 jQuery Element
      */
     getElement: function(rowKey, columnName) {
         var rowKey = this.getMainRowKey(rowKey, columnName);
@@ -4788,21 +5096,21 @@ module.exports = RowList;
 
 var Model = require('../base/model');
 var util = require('../common/util');
+var dimensionConstMap = require('../common/constMap').dimension;
 
-// The width of the border of the dimension.
-var BORDER_WIDTH = 1;
-
-// The width of the border of table cell.
-var CELL_BORDER_WIDTH = 1;
+var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
+var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 /**
  * 크기 관련 데이터 저장
  * @module model/dimension
+ * @extends module:base/model
  */
 var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
-     * @extends module:base/model
      * @constructs
+     * @param {Object} attrs - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
@@ -4829,10 +5137,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.listenTo(this.dataModel, 'add remove reset', this._resetTotalRowHeight);
 
         this.on('change:width', this._onWidthChange, this);
-        this.on('change:displayRowCount', this._setBodyHeight, this);
+        this.on('change:bodyHeight', this._resetDisplayRowCount, this);
+        this.on('change:displayRowCount', this._resetBodyHeight, this);
 
         this._initColumnWidthVariables();
-        this._setBodyHeight();
+        this._resetBodyHeight();
     },
 
     models: null,
@@ -4860,13 +5169,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         displayRowCount: 1,
         scrollBarSize: 17,
         scrollX: true,
-        scrollY: true
+        scrollY: true,
+        fitToParentHeight: false
     },
 
     /**
      * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
      * @param {number} columnLength - 컬럼의 개수
-     * @return {number} 사용가능한 전체 셀의 넓이
+     * @returns {number} 사용가능한 전체 셀의 넓이
      * @private
      */
     _getAvailableTotalWidth: function(columnLength) {
@@ -4882,7 +5192,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Makes all width of columns not less than minimumColumnWidth.
      * @param {number[]} columnWidthList - 컬럼 넓이값 배열
-     * @return {number[]} - 수정된 새로운 넓이값 배열
+     * @returns {number[]} - 수정된 새로운 넓이값 배열
      * @private
      */
     _applyMinimumColumnWidth: function(columnWidthList) {
@@ -4899,7 +5209,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Reset 'totalRowHeight' property.
+     * Resets the 'totalRowHeight' attribute.
+     * @private
      */
     _resetTotalRowHeight: function() {
         var rowHeight = this.get('rowHeight'),
@@ -4910,9 +5221,26 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
+     * Resets the 'displayRowCount' attribute.
+     * @private
+     */
+    _resetDisplayRowCount: function() {
+        var actualBodyHeight, displayRowCount;
+
+        // To prevent recursive call with _resetBodyHeight (called by change:displayRowCount event)
+        if (_.has(this.changed, 'displayRowCount')) {
+            return;
+        }
+        actualBodyHeight = this.get('bodyHeight') - this.getScrollXHeight();
+        displayRowCount = util.getDisplayRowCount(actualBodyHeight, this.get('rowHeight'));
+
+        this.set('displayRowCount', displayRowCount);
+    },
+
+    /**
      * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
      * @param {number[]} columnWidthList - An array of column widths
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _fillEmptyColumnWidth: function(columnWidthList) {
@@ -4932,7 +5260,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Adds extra widths of the column equally.
      * @param {number[]} columnWidthList - An array of column widths
      * @param {number} totalExtraWidth - Total extra width
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
@@ -4951,7 +5279,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Reduces excess widths of the column equally.
      * @param {number[]} columnWidthList - An array of column widths
      * @param {number} totalExcessWidth - Total excess width (negative number)
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
@@ -4977,7 +5305,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number} totalRemainWidth - Remaining excess width (negative number)
      * @param {object[]} availableList - An array of infos about available column.
      *                                 Each item of the array has {index:number, width:number}.
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
@@ -5007,7 +5335,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number[]} columnWidthList - An array of column width
      * @param {number} extraWidth - Extra width
      * @param {number[]} columnIndexes - An array of indexes of target columns
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
@@ -5029,7 +5357,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {number[]} columnWidthList - An array of column width
      * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
      *                                    the column widths will be reduced.
-     * @return {number[]} - A new array of column widths
+     * @returns {number[]} - A new array of column widths
      * @private
      */
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
@@ -5093,7 +5421,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
      * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
-     * @return {Number} 해당 frame 의 너비
+     * @returns {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
@@ -5109,7 +5437,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
      * @param {Array} widthList 너비 리스트 배열
-     * @return {Number} 계산된 frame 너비값
+     * @returns {Number} 계산된 frame 너비값
      * @private
      */
     _getFrameWidth: function(widthList) {
@@ -5157,7 +5485,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * 열 고정 영역의 minimum width 값을 구한다.
-     * @return {number} 열고정 영역의 최소 너비값.
+     * @returns {number} 열고정 영역의 최소 너비값.
      * @private
      */
     _getMinLeftSideWidth: function() {
@@ -5175,7 +5503,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * 열 고정 영역의 maximum width 값을 구한다.
-     * @return {number} 열고정 영역의 최대 너비값.
+     * @returns {number} 열고정 영역의 최대 너비값.
      * @private
      */
     _getMaxLeftSideWidth: function() {
@@ -5191,7 +5519,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * 계산한 cell 의 위치를 리턴한다.
      * @param {Number|String} rowKey - 데이터의 키값
      * @param {String} columnName - 칼럼명
-     * @return {{top: number, left: number, right: number, bottom: number}} - cell의 위치
+     * @returns {{top: number, left: number, right: number, bottom: number}} - cell의 위치
      * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
@@ -5246,7 +5574,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Return scroll position from the received index
      * @param {Number|String} rowKey - Row-key of target cell
      * @param {String} columnName - Column name of target cell
-     * @return {{?scrollLeft: number, ?scrollTop: number}} Position to scroll
+     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
         var isRsideColumn = !this.columnModel.isLside(columnName),
@@ -5310,7 +5638,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
      * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
      * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-     * @return {{?scrollLeft: number, ?scrollTop: number}} Position to scroll
+     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
      * @private
      */
     _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
@@ -5325,7 +5653,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (scrollDirection.isLeft) {
             pos.scrollLeft = targetPosition.left;
         } else if (scrollDirection.isRight) {
-            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + BORDER_WIDTH;
+            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + TABLE_BORDER_WIDTH;
         }
 
         return pos;
@@ -5380,7 +5708,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number} pageX - Mouse X-position based on page
      * @param {Number} pageY - Mouse Y-position based on page
      * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
-     * @return {{row: number, column: number}} Cell index
+     * @returns {{row: number, column: number}} Cell index
      */
     getIndexFromMousePosition: function(pageX, pageY, withMeta) {
         var containerPos = this._rebasePositionToContainer(pageX, pageY);
@@ -5428,11 +5756,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnIndex = columnWidthList.length - 1;
         } else {
             tui.util.forEachArray(columnWidthList, function(width, index) {
-                if (cellX <= width) {
+                if (cellX > width) {
+                    cellX -= width;
+                } else {
                     columnIndex = index;
                     return false;
-                } else {
-                    cellX -= width;
                 }
             });
         }
@@ -5444,7 +5772,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
      * @param {Number} pageX    마우스 x 좌표
      * @param {Number} pageY    마우스 y 좌표
-     * @return {{x: number, y: number}} 그리드 container 기준의 x, y 값
+     * @returns {{x: number, y: number}} 그리드 container 기준의 x, y 값
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
@@ -5461,7 +5789,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
      * @param {Number} totalWidth   grid 전체 너비
-     * @return {Array} 열고정 영역의 너비 리스트
+     * @returns {Array} 열고정 영역의 너비 리스트
      * @private
      */
     _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
@@ -5484,28 +5812,24 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * 그리드의 body height 를 계산하여 할당한다.
+     * Resets the 'bodyHeight' attribute.
      * @private
      */
-    _setBodyHeight: function() {
-        var height = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
+    _resetBodyHeight: function() {
+        var rowListHeight;
 
-        height += this.getScrollXHeight();
-        this.set('bodyHeight', height);
-    },
-
-    /**
-     * 현재 화면에 보이는 row 개수를 반환
-     * @return {number} 화면에 보이는 행 개수
-     */
-    getDisplayRowCount: function() {
-        return util.getDisplayRowCount(this.get('bodyHeight') - this.getScrollXHeight(), this.get('rowHeight'));
+        // To prevent recursive call with _resetDisplayRowCount (called by change:bodyHeight event)
+        if (_.has(this.changed, 'bodyHeight')) {
+            return;
+        }
+        rowListHeight = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
+        this.set('bodyHeight', rowListHeight + this.getScrollXHeight());
     },
 
     /**
      * Return height of X-scrollBar.
      *  If no X-scrollBar, return 0
-     * @return {number} Height of X-scrollBar
+     * @returns {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
         return (this.get('scrollX') ? this.get('scrollBarSize') : 0);
@@ -5554,16 +5878,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * Returns the height of table body.
      * @param  {number} height - The height of the dimension
-     * @return {number} The height of the table body
+     * @returns {number} The height of the table body
      * @private
      */
     _calcRealBodyHeight: function(height) {
-        return height - this.get('headerHeight') - this.get('toolbarHeight') - BORDER_WIDTH;
+        return height - this.get('headerHeight') - this.get('toolbarHeight') - TABLE_BORDER_WIDTH;
     },
 
     /**
      * Returns the minimum height of table body.
-     * @return {number} The minimum height of table body
+     * @returns {number} The minimum height of table body
      * @private
      */
     _getMinBodyHeight: function() {
@@ -5577,7 +5901,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _setHeight: function(height) {
         this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
-        this.set('displayRowCount', this.getDisplayRowCount(), {silent: true});
     },
 
     /**
@@ -5597,7 +5920,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Returns the height of the dimension.
-     * @return {Number} Height
+     * @returns {Number} Height
      */
     getHeight: function() {
         return this.get('bodyHeight') + this.get('headerHeight') + this.get('toolbarHeight');
@@ -5615,6 +5938,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             offsetLeft: offset.left,
             width: domState.getWidth()
         });
+
+        if (this.get('fitToParentHeight')) {
+            this._setHeight(domState.getParentHeight());
+        }
     },
 
     /**
@@ -5629,7 +5956,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     /**
      * L side 와 R side 에 따른 columnWidthList 를 반환한다.
      * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
-     * @return {Array}  조회한 영역의 columnWidthList
+     * @returns {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
@@ -5654,7 +5981,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
 module.exports = Dimension;
 
-},{"../base/model":5,"../common/util":10}],18:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":8,"../common/util":10}],18:[function(require,module,exports){
 /**
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
@@ -5668,11 +5995,13 @@ var Model = require('../base/model'),
  * Focus model
  * RowList collection 이 focus class 를 listen 한다.
  * @module model/focus
+ * @extends module:base/model
  */
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
-     * @extends module:base/model
      * @constructs
+     * @param {Object} attrs - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
@@ -5683,6 +6012,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.renderModel = options.renderModel;
         this.cellFactory = options.cellFactory;
         this.domState = options.domState;
+
+        this.listenTo(this.dataModel, 'add', this._onAddData);
+        this.listenTo(this.dataModel, 'reset', this._onResetData);
     },
 
     defaults: {
@@ -5693,9 +6025,29 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {Array.<module:model/data/row>} rows - New appended row model
+     * @param  {Object} options - Options. See {@link module:model/data/row#append}
+     * @private
+     */
+    _onAddData: function(rows, options) {
+        if (options.focus) {
+            this.focusAt(options.at, 0);
+        }
+    },
+
+    /**
+     * Event handler for 'reset' event on dataModel.
+     * @private
+     */
+    _onResetData: function() {
+        this.unselect(true);
+    },
+
+    /**
      * 이전 focus 정보를 저장한다.
      * @private
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     _savePrevious: function() {
         if (this.get('rowKey') !== null) {
@@ -5719,11 +6071,36 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * 행을 select 한다.
-     * @param {Number|String} rowKey - select 할 행의 키값
-     * @returns {Model.Focus} This object
+     * Returns whether given rowKey is equal to current value
+     * @param  {(Number|String)} rowKey - Row key
+     * @returns {Boolean} - True if equal
+     */
+    _isCurrentRow: function(rowKey) {
+        // compare with == operator to avoid strict comparision
+        // (rowkey can be a number or a string)
+        return this.get('rowKey') == rowKey;
+    },
+
+    /**
+     * Returns whether given rowKey and columnName is equal to current value
+     * @param  {(Number|String)} rowKey - Row key
+     * @param  {String} columnName - Column name
+     * @returns {Boolean} - True if equal
+     */
+    _isCurrentCell: function(rowKey, columnName) {
+        return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
+    },
+
+    /**
+     * Selects the given row
+     * @param {Number|String} rowKey - Rowkey of the target row
+     * @returns {Object} This object
      */
     select: function(rowKey) {
+        if (this._isCurrentRow(rowKey)) {
+            return this;
+        }
+
         this.unselect().set('rowKey', rowKey);
         if (this.columnModel.get('selectType') === 'radio') {
             this.dataModel.check(rowKey);
@@ -5738,7 +6115,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 행을 unselect 한다.
      * @param {boolean} blur - The boolean value whether to invoke blur
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     unselect: function(blur) {
         if (blur) {
@@ -5756,13 +6133,13 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
      * @param {String} columnName focus 처리할 셀의 컬럼명
      * @param {Boolean} isScrollable focus 처리한 영역으로 scroll 위치를 이동할지 여부
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     focus: function(rowKey, columnName, isScrollable) {
         if (util.isBlank(rowKey) ||
             util.isBlank(columnName) ||
             this.columnModel.isMetaColumn(columnName) ||
-            (this.get('rowKey') === rowKey && this.get('columnName') === columnName)) {
+            this._isCurrentCell(rowKey, columnName)) {
             return this;
         }
 
@@ -5857,7 +6234,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 디자인 blur 처리한다.
-     * @return {Model.Focus} This object
+     * @returns {Model.Focus} This object
      */
     blur: function() {
         if (this.has()) {
@@ -5872,7 +6249,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 현재 focus 정보를 반환한다.
-     * @return {{rowKey: (number|string), columnName: string}} 현재 focus 정보에 해당하는 rowKey, columnName
+     * @returns {{rowKey: (number|string), columnName: string}} 현재 focus 정보에 해당하는 rowKey, columnName
      */
     which: function() {
         return {
@@ -5884,7 +6261,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 정보를 index 기준으로 반환한다.
      * @param {boolean} isPrevious 이전 focus 정보를 반환할지 여부
-     * @return {{row: number, column: number}} The object that contains index info
+     * @returns {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
         var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
@@ -5898,7 +6275,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Returns whether has focus.
-     * @return {boolean} True if has focus.
+     * @returns {boolean} True if has focus.
      */
     has: function() {
         return this._isValidCell(this.get('rowKey'), this.get('columnName'));
@@ -5906,7 +6283,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Restore previous focus data.
-     * @return {boolean} True if restored
+     * @returns {boolean} True if restored
      */
     restore: function() {
         var prevRowKey = this.get('prevRowKey'),
@@ -5922,7 +6299,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Returns whether the specified cell is exist
-     * @return {boolean} True if exist
+     * @param {String|Number} rowKey - Rowkey
+     * @param {String} columnName - ColumnName
+     * @returns {boolean} True if exist
      */
     _isValidCell: function(rowKey, columnName) {
         var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),
@@ -5934,14 +6313,19 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
      * @param {Number} offset   이동할 offset
-     * @return {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
+     * @returns {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
      * @private
      */
     _findRowKey: function(offset) {
         var index, row,
             dataModel = this.dataModel;
         if (this.has()) {
-            index = Math.max(Math.min(dataModel.indexOfRowKey(this.get('rowKey')) + offset, this.dataModel.length - 1), 0);
+            index = Math.max(
+                Math.min(
+                    dataModel.indexOfRowKey(this.get('rowKey')) + offset,
+                    this.dataModel.length - 1
+                ), 0
+            );
             row = dataModel.at(index);
             return row && row.get('rowKey');
         }
@@ -5950,7 +6334,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 된 column 기준으로 offset 만큼 이동한 columnName 을 반환한다.
      * @param {Number} offset   이동할 offset
-     * @return {String} columnName  offset 만큼 이동한 위치의 columnName
+     * @returns {String} columnName  offset 만큼 이동한 위치의 columnName
      * @private
      */
     _findColumnName: function(offset) {
@@ -5969,7 +6353,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * rowSpanData 를 반환한다.
      * @param {Number|String} rowKey    조회할 데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}|*} rowSpanData 정보
      * @private
      */
     _getRowSpanData: function(rowKey, columnName) {
@@ -5979,7 +6363,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * offset 만큼 뒤로 이동한 row 의 index 를 반환한다.
      * @param {number} offset   이동할 offset
-     * @return {Number} 이동한 위치의 row index
+     * @returns {Number} 이동한 위치의 row index
      */
     nextRowIndex: function(offset) {
         var rowKey = this.nextRowKey(offset);
@@ -5989,7 +6373,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * offset 만큼 앞으로 이동한 row의 index를 반환한다.
      * @param {number} offset 이동할 offset
-     * @return {Number} 이동한 위치의 row index
+     * @returns {Number} 이동한 위치의 row index
      */
     prevRowIndex: function(offset) {
         var rowKey = this.prevRowKey(offset);
@@ -5998,7 +6382,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 다음 컬럼의 인덱스를 반환한다.
-     * @return {Number} 다음 컬럼의 index
+     * @returns {Number} 다음 컬럼의 index
      */
     nextColumnIndex: function() {
         var columnName = this.nextColumnName();
@@ -6007,7 +6391,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 이전 컬럼의 인덱스를 반환한다.
-     * @return {Number} 이전 컬럼의 인덱스
+     * @returns {Number} 이전 컬럼의 인덱스
      */
     prevColumnIndex: function() {
         var columnName = this.prevColumnName();
@@ -6018,7 +6402,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * keyEvent 발생 시 호출될 메서드로,
      * rowSpan 정보 까지 계산된 다음 rowKey 를 반환한다.
      * @param {number}  offset 이동할 offset
-     * @return {Number|String} offset 만큼 이동한 위치의 rowKey
+     * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     nextRowKey: function(offset) {
         var focused = this.which(),
@@ -6051,7 +6435,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * keyEvent 발생 시 호출될 메서드로,
      * rowSpan 정보 까지 계산된 이전 rowKey 를 반환한다.
      * @param {number}  offset 이동할 offset
-     * @return {Number|String} offset 만큼 이동한 위치의 rowKey
+     * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     prevRowKey: function(offset) {
         var focused = this.which(),
@@ -6079,7 +6463,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * keyEvent 발생 시 호출될 메서드로, 다음 columnName 을 반환한다.
-     * @return {String} 다음 컬럼명
+     * @returns {String} 다음 컬럼명
      */
     nextColumnName: function() {
         return this._findColumnName(1);
@@ -6087,7 +6471,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * keyEvent 발생 시 호출될 메서드로, 이전 columnName 을 반환한다.
-     * @return {String} 이전 컬럼명
+     * @returns {String} 이전 컬럼명
      */
     prevColumnName: function() {
         return this._findColumnName(-1);
@@ -6095,7 +6479,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 첫번째 row 의 key 를 반환한다.
-     * @return {(string|number)} 첫번째 row 의 키값
+     * @returns {(string|number)} 첫번째 row 의 키값
      */
     firstRowKey: function() {
         return this.dataModel.at(0).get('rowKey');
@@ -6103,7 +6487,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 마지막 row의 key 를 반환한다.
-     * @return {(string|number)} 마지막 row 의 키값
+     * @returns {(string|number)} 마지막 row 의 키값
      */
     lastRowKey: function() {
         return this.dataModel.at(this.dataModel.length - 1).get('rowKey');
@@ -6111,7 +6495,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 첫번째 columnName 을 반환한다.
-     * @return {string} 첫번째 컬럼명
+     * @returns {string} 첫번째 컬럼명
      */
     firstColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList();
@@ -6120,7 +6504,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * 마지막 columnName 을 반환한다.
-     * @return {string} 마지막 컬럼명
+     * @returns {string} 마지막 컬럼명
      */
     lastColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
@@ -6158,6 +6542,8 @@ var defaultOptions = {
     autoNumbering: true,
     headerHeight: 35,
     rowHeight: 27,
+    fitToParentHeight: false,
+    showDummyRows: false,
     displayRowCount: 10,
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
@@ -6203,7 +6589,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of column model and returns it.
      * @param  {Object} options - Options
-     * @return {module:data/columnModel} A new instance
+     * @returns {module:data/columnModel} A new instance
      * @private
      */
     _createColumnModel: function(options) {
@@ -6221,7 +6607,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of data model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
-     * @return {module:data/rowList} - A new instance
+     * @returns {module:data/rowList} - A new instance
      * @private
      */
     _createDataModel: function(options, domState) {
@@ -6236,7 +6622,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of toolbar model and returns it.
      * @param  {Object} options - Options
-     * @return {module:model/toolbar} - A new instance
+     * @returns {module:model/toolbar} - A new instance
      * @private
      */
     _createToolbarModel: function(options) {
@@ -6247,13 +6633,14 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of dimension model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
-     * @return {module:model/dimension} - A new instance
+     * @returns {module:model/dimension} - A new instance
      * @private
      */
     _createDimensionModel: function(options, domState) {
         var attrs = {
             headerHeight: options.headerHeight,
             rowHeight: options.rowHeight,
+            fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
             minimumColumnWidth: options.minimumColumnWidth,
@@ -6273,7 +6660,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of focus model and returns it.
      * @param  {module:domState} domState - DomState instance
-     * @return {module:model/focus} - A new instance
+     * @returns {module:model/focus} - A new instance
      * @private
      */
     _createFocusModel: function(domState) {
@@ -6288,7 +6675,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of seleciton model and returns it.
-     * @return {module:model/selection} - A new instance
+     * @returns {module:model/selection} - A new instance
      * @private
      */
     _createSelectionModel: function() {
@@ -6304,14 +6691,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     /**
      * Creates an instance of render model and returns it.
      * @param  {Object} options - Options
-     * @return {module:model/render} - A new instance
+     * @returns {module:model/render} - A new instance
      * @private
      */
     _createRenderModel: function(options) {
         var attrs, renderOptions, Constructor;
 
         attrs = {
-            emptyMessage: options.emptyMessage
+            emptyMessage: options.emptyMessage,
+            showDummyRows: options.showDummyRows
         };
         renderOptions = {
             columnModel: this.columnModel,
@@ -6355,10 +6743,10 @@ var util = require('../common/util');
  *  View 에서 Rendering 시 사용할 객체
  *  Smart Rendering 을 지원한다.
  *  @module model/renderer-smart
+ * @extends module:model/renderer
  */
 var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
     /**
-     * @extends module:model/renderer
      * @constructs
      */
     initialize: function() {
@@ -6390,7 +6778,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         var dimensionModel = this.dimensionModel,
             dataModel = this.dataModel,
             rowHeight = dimensionModel.get('rowHeight'),
-            displayRowCount = dimensionModel.getDisplayRowCount(),
+            displayRowCount = dimensionModel.get('displayRowCount'),
             startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
             endIndex = Math.min(dataModel.length - 1, startIndex + displayRowCount + (this.hiddenRowCount * 2)),
             top;
@@ -6411,7 +6799,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
     /**
      * 렌더링을 시작하는 행에 rowSpan 정보가 있으면, count 값이 가장 작은 행의 값을 반환한다.
      * @param {number} startIndex 시작하는 행의 Index
-     * @return {number} rowSpan의 count 값 (0 이하)
+     * @returns {number} rowSpan의 count 값 (0 이하)
      * @private
      */
     _getStartRowSpanMinCount: function(startIndex) {
@@ -6430,7 +6818,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
     /**
      * 렌더링할 마지막 행에 rowSpan 정보가 있으면, count 값이 가장 큰 행의 값을 반환한다.
      * @param {number} endIndex 마지막 행의 Index
-     * @return {number} rowSpan의 count 값 (0 이상)
+     * @returns {number} rowSpan의 count 값 (0 이상)
      * @private
      */
     _getEndRowSpanMaxCount: function(endIndex) {
@@ -6448,7 +6836,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
     /**
      * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
      * @param {Number} scrollTop 랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
-     * @return {boolean}    랜더링 해야할지 여부
+     * @returns {boolean}    랜더링 해야할지 여부
      * @private
      */
     _isRenderable: function(scrollTop) {
@@ -6490,15 +6878,18 @@ module.exports = SmartRenderer;
 var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
+var util = require('../common/util');
 
 /**
  * View 에서 Rendering 시 사용할 객체
  * @module model/renderer
+ * @extends module:base/model
  */
 var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
-     * @extends module:base/model
      * @constructs
+     * @param {Object} attrs - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attrs, options) {
         var lside, rside, rowListOptions;
@@ -6525,11 +6916,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
             .listenTo(this.dataModel, 'add remove sort reset', this._onRowListChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
-            .listenTo(lside, 'valueChange', this._onValueChange)
-            .listenTo(rside, 'valueChange', this._onValueChange)
+            .listenTo(lside, 'valueChange', this._executeRelation)
+            .listenTo(rside, 'valueChange', this._executeRelation)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
+
+        if (this.get('showDummyRows')) {
+            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows)
+        }
 
         this._updateMaxScrollLeft();
     },
@@ -6545,21 +6940,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         startNumber: 1,
         lside: null,
         rside: null,
+        showDummyRows: false,
+        dummyRowCount: 0,
 
         // text that will be shown if no data to render (custom value set by user)
         emptyMessage: null,
 
         // constMap.renderState
         state: renderStateMap.EMPTY
-    },
-
-    /**
-     * lside 와 rside collection 에서 value 값이 변경되었을 시 executeRelation 을 수행하기 위한 이벤트 핸들러
-     * @param {number} rowIndex row 의 index 값
-     * @private
-     */
-    _onValueChange: function(rowIndex) {
-        this.executeRelation(rowIndex);
     },
 
     /**
@@ -6577,26 +6965,28 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _updateMaxScrollTop: function() {
         var dimension = this.dimensionModel,
-            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') + dimension.get('scrollBarSize');
+            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
+                dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
     },
 
     /**
      * Event handler for 'beforeReset' event on dataModel
+     * @private
      */
     _onBeforeResetData: function() {
         this.set('state', renderStateMap.LOADING);
     },
 
     /**
-     * 내부 변수를 초기화 한다.
+     * Initializes own properties.
+     * (called by module:addon/net)
      */
     initializeVariables: function() {
         this.set({
             top: 0,
             scrollTop: 0,
-            $scrollTarget: null,
             scrollLeft: 0,
             startIndex: 0,
             endIndex: 0,
@@ -6607,7 +6997,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * 열고정 영역 또는 열고정이 아닌 영역에 대한 Render Collection 을 반환한다.
      * @param {String} [whichSide='R']    어느 영역인지 여부. 'L|R' 중에 하나의 값을 넘긴다.
-     * @return {Object} collection  해당 영역의 랜더 데이터 콜랙션
+     * @returns {Object} collection  해당 영역의 랜더 데이터 콜랙션
      */
     getCollection: function(whichSide) {
         return this.get(tui.util.isString(whichSide) ? whichSide.toLowerCase() + 'side' : 'rside');
@@ -6639,6 +7029,16 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Resets dummy rows and trigger 'rowListChanged' event.
+     * @private
+     */
+    _resetDummyRows: function() {
+        this._clearDummyRows();
+        this._fillDummyRows();
+        this.trigger('rowListChanged');
+    },
+
+    /**
      * rendering 할 index 범위를 결정한다.
      * Smart rendering 을 사용하지 않을 경우 전체 범위로 랜더링한다.
      * @private
@@ -6651,79 +7051,140 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * rendering 할 데이터를 생성한다.
-     * @param {boolean} isDataModelChanged - The boolean value whether dataModel has changed
+     * Returns the new data object for rendering based on rowDataModel and specified column names.
+     * @param  {Object} rowDataModel - Instance of module:model/data/row
+     * @param  {Array.<String>} columnNames - Column names
+     * @param  {Number} rowNum - Row number
+     * @returns {Object} - view data object
+     * @private
      */
-    refresh: function(isDataModelChanged) {
-        this._setRenderingRange(this.get('scrollTop'));
+    _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
+        var viewData = {
+            rowKey: rowDataModel.get('rowKey'),
+            _extraData: rowDataModel.get('_extraData')
+        };
 
-        //TODO : rendering 해야할 데이터만 가져온다.
-        //TODO : eslint 에러 수정
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true), // eslint-disable-line
-            columnList = this.columnModel.getVisibleColumnModelList(null, true),
-            columnNameList = _.pluck(columnList, 'columnName'),
-
-            lsideColumnList = columnNameList.slice(0, columnFixCount),
-            rsideColumnList = columnNameList.slice(columnFixCount),
-
-            lsideRowList = [],
-            rsideRowList = [],
-            lsideRow = [],
-            rsideRow = [],
-            startIndex = this.get('startIndex'),
-            endIndex = this.get('endIndex'),
-            num = this.get('startNumber') + startIndex,
-            len,
-            i,
-            rowModel,
-            rowKey;
-
-        for (i = startIndex; i < endIndex + 1; i += 1) {
-            rowModel = this.dataModel.at(i);
-            if (rowModel) {
-                rowKey = rowModel.get('rowKey');
-
-                //데이터 초기화
-                lsideRow = {
-                    '_extraData': rowModel.get('_extraData'),
-                    'rowKey': rowKey
-                };
-                rsideRow = {
-                    '_extraData': rowModel.get('_extraData'),
-                    'rowKey': rowKey
-                };
-
-                //lside 데이터 먼저 채운다.
-                _.each(lsideColumnList, function (columnName) { // eslint-disable-line
-                    if (columnName === '_number') {
-                        lsideRow[columnName] = num++; // eslint-disable-line
-                    } else {
-                        lsideRow[columnName] = rowModel.get(columnName);
-                    }
-                });
-
-                _.each(rsideColumnList, function (columnName) { // eslint-disable-line
-                    if (columnName === '_number') {
-                        rsideRow[columnName] = num++; // eslint-disable-line
-                    } else {
-                        rsideRow[columnName] = rowModel.get(columnName);
-                    }
-                });
-                lsideRowList.push(lsideRow);
-                rsideRowList.push(rsideRow);
+        _.each(columnNames, function(columnName) {
+            var value = rowDataModel.get(columnName);
+            if (columnName === '_number') {
+                value = rowNum;
             }
+            viewData[columnName] = value;
+        });
+
+        return viewData;
+    },
+
+    /**
+     * Returns the object that contains two array of column names splitted by columnFixCount.
+     * @returns {{lside: Array, rside: Array}} - Column names map
+     * @private
+     */
+    _getColumnNamesOfEachSide: function() {
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
+            columnModels = this.columnModel.getVisibleColumnModelList(null, true),
+            columnNames = _.pluck(columnModels, 'columnName');
+
+        return {
+            lside: columnNames.slice(0, columnFixCount),
+            rside: columnNames.slice(columnFixCount)
+        }
+    },
+
+    /**
+     * Resets specified view model list.
+     * @param  {String} attrName - 'lside' or 'rside'
+     * @param  {Object} viewData - Converted data for rendering view
+     * @private
+     */
+    _resetViewModelList: function(attrName, viewData) {
+        this.get(attrName).clear().reset(viewData, {
+            parse: true
+        });
+    },
+
+    /**
+     * Resets both sides(lside, rside) of view model list with given range of data model list.
+     * @param  {Number} startIndex - Start index
+     * @param  {Number} endIndex - End index
+     * @private
+     */
+    _resetAllViewModelListWithRange: function(startIndex, endIndex) {
+        var columnNamesMap = this._getColumnNamesOfEachSide(),
+            rowNum = this.get('startNumber') + startIndex,
+            lsideData = [],
+            rsideData = [],
+            rowDataModel, i, len;
+
+        for (i = startIndex; i <= endIndex; i += 1) {
+            rowDataModel = this.dataModel.at(i);
+            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, rowNum));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside));
+            rowNum += 1;
         }
 
-        this.get('lside').clear().reset(lsideRowList, {
-            parse: true
-        });
-        this.get('rside').clear().reset(rsideRowList, {
-            parse: true
-        });
+        this._resetViewModelList('lside', lsideData);
+        this._resetViewModelList('rside', rsideData);
+    },
 
-        len = rsideRowList.length + startIndex;
-        for (i = startIndex; i < len; i += 1) {
-            this.executeRelation(i);
+    /**
+     * Returns the count of rows (except dummy rows) in view model list
+     * @returns {Number} Count of rows
+     * @private
+     */
+    _getActualRowCount: function() {
+        return this.get('endIndex') - this.get('startIndex') + 1;
+    },
+
+    /**
+     * Removes all dummy rows in the view model list.
+     * @private
+     */
+    _clearDummyRows: function() {
+        var dataRowCount = this.get('endIndex') - this.get('startIndex') + 1;
+
+        _.each(['lside', 'rside'], function(attrName) {
+            var rowList = this.get(attrName);
+            while (rowList.length > dataRowCount) {
+                rowList.pop();
+            }
+        }, this);
+    },
+
+    /**
+     * fills the empty area with dummy rows.
+     * @private
+     */
+    _fillDummyRows: function() {
+        var displayRowCount = this.dimensionModel.get('displayRowCount'),
+            actualRowCount = this._getActualRowCount(),
+            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
+
+        _.times(dummyRowCount, function() {
+            this.get('lside').add({});
+            this.get('rside').add({});
+        }, this);
+        this.set('dummyRowCount', dummyRowCount);
+    },
+
+    /**
+     * Refreshes the rendering range and the list of view models, and triggers events.
+     * @param {Boolean} isDataModelChanged - The boolean value whether dataModel has changed
+     */
+    refresh: function(isDataModelChanged) {
+        var startIndex, endIndex, i;
+
+        this._setRenderingRange(this.get('scrollTop'));
+        startIndex = this.get('startIndex');
+        endIndex = this.get('endIndex');
+
+        this._resetAllViewModelListWithRange(startIndex, endIndex);
+        if (this.get('showDummyRows')) {
+            this._fillDummyRows();
+        }
+
+        for (i = startIndex; i <= endIndex; i += 1) {
+            this._executeRelation(i);
         }
 
         if (this.isColumnModelChanged) {
@@ -6738,6 +7199,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Set state value based on the DataModel.length
+     * @private
      */
     _refreshState: function() {
         if (this.dataModel.length) {
@@ -6750,7 +7212,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     /**
      * columnName 으로 lside 와 rside rendering collection 중 하나를 반환한다.
      * @param {String} columnName   컬럼명
-     * @return {Collection} 컬럼명에 해당하는 영역의 콜랙션
+     * @returns {Collection} 컬럼명에 해당하는 영역의 콜랙션
      * @private
      */
     _getCollectionByColumnName: function(columnName) {
@@ -6769,7 +7231,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * 셀 데이터를 반환한다.
      * @param {number} rowKey   데이터의 키값
      * @param {String} columnName   컬럼명
-     * @return {object} cellData 셀 데이터
+     * @returns {object} cellData 셀 데이터
      * @example
      =>
      {
@@ -6795,13 +7257,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * rowIndex 에 해당하는 relation 을 수행한다.
-     * @param {Number} rowIndex row 의 index 값
+     * Executes the relation of the row identified by rowIndex
+     * @param {Number} rowIndex - Row index
+     * @private
      */
-    executeRelation: function(rowIndex) {
+    _executeRelation: function(rowIndex) {
         var row = this.dataModel.at(rowIndex),
             renderIdx = rowIndex - this.get('startIndex'),
             rowModel, relationResult;
+
         relationResult = row.getRelationResult();
 
         _.each(relationResult, function(changes, columnName) {
@@ -6823,9 +7287,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
 module.exports = Renderer;
 
-},{"../base/model":5,"../common/constMap":8,"./rowList":23}],22:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":8,"../common/util":10,"./rowList":23}],22:[function(require,module,exports){
 /**
- * @fileoverview RowList 클래스파일
+ * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -6836,31 +7300,33 @@ var util = require('../common/util');
 /**
  * Row Model
  * @module model/row
+ * @extends module:base/model
  */
 var Row = Model.extend(/**@lends module:model/row.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
-        var rowKey, rowData;
-
-        rowKey = attributes && attributes['rowKey'];
-        rowData = this.collection.dataModel.get(rowKey);
+    initialize: function(attributes, options) {
+        var rowKey = attributes && attributes['rowKey'],
+            rowListData = this.collection.dataModel,
+            rowData = rowListData.get(rowKey);
 
         if (rowData) {
             this.listenTo(rowData, 'change restore', this._onDataModelChange);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
+            this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
+
+            this.rowData = rowData;
         }
     },
 
     idAttribute: 'rowKey',
 
     /**
-     * dataModel 이 변경시 model 데이터를 함께 업데이트 하는 핸들러
-     * @param {Object} model    변경이 발생한 row 모델
+     * Event handler for 'change restore' event on rowData model
+     * @param {Object} model - RowData model on which event occurred
      * @private
      */
     _onDataModelChange: function(model) {
@@ -6872,29 +7338,68 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * extra data 를 토대로 rowSpanned 된 render model 의 정보를 업데이트 한다.
+     * Returns an array of visible column names.
+     * @returns {Array.<String>} Visible column names
+     * @private
+     */
+    _getColumnNameList: function() {
+        var columnModels = this.collection.columnModel.getVisibleColumnModelList(null, true);
+
+        return _.pluck(columnModels, 'columnName');
+    },
+
+    /**
+     * Returns whether the state of specified column is disabled.
+     * @param  {String} columnName - Column name
+     * @param  {{isDisabledCheck: Boolean, isDisabled: Boolean, isChecked: Boolean}} rowState - Row state
+     * @returns {Boolean} - True if disabled
+     * @private
+     */
+    _isDisabled: function(columnName, rowState) {
+        var isDisabled = this.collection.dataModel.isDisabled;
+
+        if (!isDisabled) {
+            isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
+        }
+        return isDisabled;
+    },
+
+    /**
+     * Event handler for 'disabledChanged' event on dataModel
+     */
+    _onDataModelDisabledChanged: function() {
+        var columnNames = this._getColumnNameList(),
+            rowState = this.rowData.getRowState();
+
+        _.each(columnNames, function(columnName) {
+            this.setCell(columnName, {
+                isDisabled: this._isDisabled(columnName, rowState)
+            });
+        }, this);
+    },
+
+    /**
+     * Sets the 'isDisabled', 'isEditable', 'className' property of each cell data.
      * @private
      */
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
-            row = dataModel.get(this.get('rowKey')),
-            columnModelList = this.collection.columnModel.getVisibleColumnModelList(null, true),
-            rowState = row.getRowState(),
+            columnNames = this._getColumnNameList(),
+            rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {
             return;
         }
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel['columnName'],
-                cellData = this.get(columnName),
+        _.each(columnNames, function(columnName) {
+            var cellData = this.get(columnName),
                 rowModel = this,
                 isEditable, isDisabled;
 
             if (!tui.util.isUndefined(cellData)) {
-                isEditable = row.isEditable(columnName);
-                isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
+                isEditable = this.rowData.isEditable(columnName);
+                isDisabled = this._isDisabled(columnName, rowState);
                 if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
                     rowModel = this.collection.get(cellData['mainRowKey']);
                 }
@@ -6902,7 +7407,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     param = {
                         isDisabled: isDisabled,
                         isEditable: isEditable,
-                        className: row.getClassNameList(columnName).join(' ')
+                        className: this.rowData.getClassNameList(columnName).join(' ')
                     };
                     rowModel.setCell(columnName, param);
                 }
@@ -6911,29 +7416,36 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Backbone 이 collection 생성 시 내부적으로 parse 를 호출하여 데이터를 형식에 맞게 가공한다.
-     * @param {Array} data  원본 데이터
-     * @return {Array}  형식에 맞게 가공된 데이터
+     * Overrides Backbone.Model.parse
+     * (this method is called before initialize method)
+     * @param {Array} data - Original data
+     * @param {Object} options - Options
+     * @returns {Array} - Converted data.
+     * @override
      */
     parse: function(data, options) {
         return this._formatData(data, options.collection.dataModel);
     },
 
     /**
-     * 데이터를 View 에서 사용할 수 있도록 가공한다.
-     * @param {Array} data  원본 데이터
-     * @return {Array}  가공된 데이터
+     * Convert the original data to rendering data.
+     * @param {Array} data - Original data
+     * @param {module:model/data/rowList} dataModel - Data model
+     * @returns {Array} - Converted data
      * @private
      */
     _formatData: function(data, dataModel) {
-        var rowKey = data['rowKey'],
-            row = dataModel.get(rowKey),
-            rowState = row.getRowState(),
-            isDisabled = rowState.isDisabled;
+        var rowKey = data.rowKey,
+            row, rowState;
+
+        if (_.isUndefined(rowKey)) {
+            return data;
+        }
+        row = dataModel.get(rowKey),
+        rowState = row.getRowState();
 
         _.each(data, function(value, columnName) {
-            var rowSpanData,
-                isEditable = row.isEditable(columnName);
+            var rowSpanData;
 
             if (columnName !== 'rowKey' && columnName !== '_extraData') {
                 if (dataModel.isRowSpanEnable() &&
@@ -6947,23 +7459,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                         isMainRow: true
                     };
                 }
-                isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : isDisabled;
-
                 data[columnName] = {
                     rowKey: rowKey,
                     columnName: columnName,
                     value: value,
-                    //Rendering properties
                     rowSpan: rowSpanData.count,
                     isMainRow: rowSpanData.isMainRow,
                     mainRowKey: rowSpanData.mainRowKey,
-                    //Change attribute properties
-                    isEditable: isEditable,
-                    isDisabled: isDisabled,
-                    optionList: [],
+                    isEditable: row.isEditable(columnName),
+                    isDisabled: this._isDisabled(columnName, rowState),
                     className: row.getClassNameList(columnName).join(' '),
-
-                    changed: []    //변경된 프로퍼티 목록들
+                    optionList: [], // for list type column (select, checkbox, radio)
+                    changed: [] //changed property names
                 };
             }
         }, this);
@@ -6971,10 +7478,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Cell 의 값을 변경한다.
-     * - 참조형 데이터 타입이기 때문에 change 이벤트 발생을 위해 이 method 를 사용하여 값 변경을 수행한다.
-     * @param {String} columnName   컬럼명
-     * @param {{key: value}} param  key:value 로 이루어진 셀에서 변경할 프로퍼티 목록
+     * Sets the cell data.
+     * (Each cell data is reference type, so do not change the cell data directly and
+     *  use this method to trigger change event)
+     * @param {String} columnName - Column name
+     * @param {Object} param - Key-Value pair of the data to change
      */
     setCell: function(columnName, param) {
         var isValueChanged = false,
@@ -7023,17 +7531,19 @@ var Row = require('./row');
 /**
   * View Model rowList collection
   * @module model/rowList
+  * @extends module:base/collection
   */
 var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     model: Row,
     /**
      * @constructs
-     * @extends module:base/collection
+     * @param {Object} rawData - Raw data
+     * @param {Object} options - Options
      */
     initialize: function(rawData, options) {
         this.setOwnProperties({
             dataModel: options.dataModel,
-            columnModel: options.columnModel    
+            columnModel: options.columnModel
         });
     }
 });
@@ -7055,21 +7565,24 @@ var Model = require('../base/model'),
  * @const
  * @type {{cell: string, row: string, column: string}}
  * @desc
- *  Selection states
+ * Selection states
  */
 var SELECTION_STATE = {
     cell: 'cell',
     row: 'row',
     column: 'column'
 };
+
 /**
- *  Selection Model class
- *  @module model/selection
+ * Selection Model class
+ * @module model/selection
+ * @extends module:base/view
  */
 var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} attr - Attributes
+     * @param {Object} options - Options
      */
     initialize: function(attr, options) {
         Model.prototype.initialize.apply(this, arguments);
@@ -7143,7 +7656,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns whether the selection is enabled.
-     * @return {boolean} True if the selection is enabled.
+     * @returns {boolean} True if the selection is enabled.
      */
     isEnabled: function() {
         return this._isEnabled;
@@ -7296,6 +7809,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Select all data in a row
+     * @param {Number} rowIndex - Row idnex
      */
     selectRow: function(rowIndex) {
         if (this._isEnabled) {
@@ -7307,6 +7821,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Select all data in a column
+     * @param {Number} columnIdx - Column index
      */
     selectColumn: function(columnIdx) {
         if (this._isEnabled) {
@@ -7328,7 +7843,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the row and column indexes of the starting position.
-     * @return {{row: number, column: number}} Objects containing indexes
+     * @returns {{row: number, column: number}} Objects containing indexes
      */
     getStartIndex: function() {
         var range = this.get('range');
@@ -7340,7 +7855,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the row and column indexes of the ending position.
-     * @return {{row: number, column: number}} Objects containing indexes
+     * @returns {{row: number, column: number}} Objects containing indexes
      */
     getEndIndex: function() {
         var range = this.get('range');
@@ -7352,19 +7867,34 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * selection 데이터가 존재하는지 확인한다.
-     * @return {boolean} selection 데이터 존재여부
+     * @returns {boolean} selection 데이터 존재여부
      */
     hasSelection: function() {
         return !!this.get('range');
     },
 
     /**
+     * Returns whether given range is a single cell. (include merged cell)
+     * @param {Array.<String>} columnNameList - columnNameList
+     * @param {Array.<Object>} rowList - rowList
+     * @returns {Boolean}
+     */
+    _isSingleCell: function(columnNameList, rowList) {
+        var isSingleColumn = columnNameList.length === 1,
+            isSingleRow = rowList.length === 1,
+            isSingleMergedCell = isSingleColumn && !isSingleRow &&
+                (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
+
+        return (isSingleColumn && isSingleRow) || isSingleMergedCell;
+    },
+
+    /**
      * Returns the string value of all cells in the selection range as a single string.
-     * @return {String} string of values
+     * @returns {String} string of values
      */
     getValuesToString: function() {
         var range = this.get('range'),
-            columnModelList, rowList, columnNameList, rowValues;
+            columnModelList, rowList, columnNameList, rowValues, result;
 
         columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
         rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
@@ -7377,6 +7907,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return tmpString.join('\t');
         });
 
+        if (this._isSingleCell(columnNameList, rowList)) {
+            return rowValues[0];
+        }
         return rowValues.join('\n');
     },
 
@@ -7384,7 +7917,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * 마우스 드래그로 selection 선택 시 auto scroll 조건에 해당하는지 반환한다.
      * @param {Number} overflowX    가로축 기준 영역 overflow 값
      * @param {Number} overflowY    세로축 기준 영역 overflow 값
-     * @return {boolean} overflow 되었는지 여부
+     * @returns {boolean} overflow 되었는지 여부
      * @private
      */
     _isAutoScrollable: function(overflowX, overflowY) {
@@ -7448,7 +7981,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Expands the 'this.inputRange' if rowspan data exists, and resets the 'range' attributes to the value.
-     * @param {{column: number[], row: number[]}} [inputRange = this.inputRange] - Input range
+     * @param {{column: number[], row: number[]}} [inputRange] - Input range. Default is this.inputRange
      * @private
      */
     _resetRangeAttribute: function(inputRange) {
@@ -7647,11 +8180,11 @@ var Model = require('../base/model'),
 /**
  * Toolbar Model
  * @module model/toolbar
+ * @extends module:base/model
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
     /**
      * @constructs
-     * @extends module:base/model
      * @param  {object} options - Options
      */
     initialize: function(options) {
@@ -7674,7 +8207,7 @@ var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
 
     /**
      * Returns whether the toolbar is visible
-     * @return {Boolean} True if the toolbar is visible
+     * @returns {Boolean} True if the toolbar is visible
      */
     isVisible: function() {
         return this.get('hasControlPanel') || this.get('hasPagination') || this.get('hasResizeHandler');
@@ -7697,11 +8230,11 @@ var keyNameMap = require('../common/constMap').keyName;
 /**
  * Cell Painter Base
  * @module painter/cell
+ * @extends module:base/painter
  */
 var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
-     * @extends module:base/painter
      */
     init: function() {
         Painter.apply(this, arguments);
@@ -7719,7 +8252,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Markup template
      * If use '<%=class%>' key word, an error occurs.
      * So use '<%=className%>' instead of '<%=class%>'
-     * @return {string} template
+     * @returns {string} template
      */
     template: _.template(
         '<td' +
@@ -7799,8 +8332,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
      * @param {Event} keyDownEvent  이벤트 객체
-     * @return {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*), rowKey: *, columnName: *, keyName: *}}
-     * _keyDownSwitch 에서 사용될 공통 파라미터 객체
+     * @returns {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*),
+     *          rowKey: *, columnName: *, keyName: *}} _keyDownSwitch 에서 사용될 공통 파라미터 객체
      * @private
      */
     _getParamForKeyDownSwitch: function(keyDownEvent) {
@@ -7822,7 +8355,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * keyDownSwitch 를 수행한다.
      * @param {Event} keyDownEvent 이벤트 객체
-     * @return {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
+     * @returns {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
      * @private
      */
     _executeKeyDownSwitch: function(keyDownEvent) {
@@ -7861,20 +8394,16 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
      * @param {Object} cellData Model 의 셀 데이터
-     * @return {Array} 생성된 css 디자인 클래스 배열
+     * @returns {Array} 생성된 css 디자인 클래스 배열
      * @private
      */
     _getClassNameList: function(cellData) {
         var focused = this.grid.focusModel.which(),
             columnName = cellData.columnName,
             focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
+            isMetaColumn = this.grid.columnModel.isMetaColumn(columnName),
             classNameList = [],
-            classNameMap = {},
-            privateColumnMap = {
-                '_button': true,
-                '_number': true
-            },
-            isPrivateColumnName = !!privateColumnMap[columnName];
+            classNameMap = {};
 
         if (focusedRowKey === cellData.rowKey) {
             classNameMap['selected'] = true;
@@ -7886,7 +8415,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameMap[cellData.className] = true;
         }
 
-        if (cellData.isEditable && !isPrivateColumnName) {
+        if (cellData.isEditable && !isMetaColumn) {
             classNameMap['editable'] = true;
         }
 
@@ -7898,7 +8427,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameList.push(className);
         });
 
-        if (isPrivateColumnName) {
+        if (isMetaColumn) {
             classNameList.push('meta_column');
         }
 
@@ -7909,7 +8438,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
      * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      */
     _getContentHtml: function(cellData) {
@@ -7921,7 +8450,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             beforeContent, afterContent, content;
 
         if (!isExisty(cellData.value)) {
-            cellData.value = isExisty(defaultValue) ? defulatValue : '';
+            cellData.value = isExisty(defaultValue) ? defaultValue : '';
         }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
         afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
@@ -7935,7 +8464,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * 값이 function인 경우 function을 실행해 결과값을 반환한다.
      * @param {(string|function)} content - 내용
      * @param {object} cellData - 셀 데이터
-     * @return {string} - 내용
+     * @returns {string} - 내용
      * @private
      */
     _getExtraContent: function(content, cellData) {
@@ -7957,7 +8486,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * 주어진 문자열을 span 태그로 감싼 HTML 코드를 반환한다.
      * @param {string} content - 감싸질 문자열
      * @param {string} className - span 태그의 클래스명
-     * @return {string} span 태그로 감싼 HTML 코드
+     * @returns {string} span 태그로 감싼 HTML 코드
      * @private
      */
     _getSpanWrapContent: function(content, className) {
@@ -7971,10 +8500,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
      * td 단위의 html 문자열을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} td 마크업 문자열
+     * @returns {string} td 마크업 문자열
      */
     getHtml: function(cellData) {
         var attributeString = util.getAttributesString(this.getAttributes(cellData)),
+            contentHtml = this._getContentHtml(cellData),
             html;
 
         html = this.template({
@@ -7983,7 +8513,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             className: this._getClassNameList(cellData).join(' '),
             editType: this.getEditType(),
             attributeString: attributeString,
-            contentHtml: this._getContentHtml(cellData)
+            // '&nbsp' for height issue with empty cell in IE7
+            contentHtml: contentHtml || '&nbsp'
         });
         return html;
     },
@@ -8009,7 +8540,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 의 cellData 를 반환한다.
      * @param {jQuery} $target  조회할 엘리먼트
-     * @return {Object} 조회한 cellData 정보
+     * @returns {Object} 조회한 cellData 정보
      * @private
      */
     _getCellData: function($target) {
@@ -8020,7 +8551,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
+     * @returns {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
      * @private
      */
     _getCellAddress: function($target) {
@@ -8031,11 +8562,22 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
+     * Validates the cell data identified by given rowKey and columnName.
+     * @param {String} rowKey - Row key
+     * @param {String} columnName - Column name
+     * @private
+     */
+    _validateData: function(rowKey, columnName) {
+        var row = this.grid.dataModel.get(rowKey);
+        row.validateCell(columnName);
+    },
+
+    /**
      * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
      * converter 함수를 적용한 결과값을 반환한다.
      * @param {string} value - 셀의 실제값
      * @param {object} cellData - 모델의 셀 데이터
-     * @return {(string|null)} HTML문자열. 혹은 null
+     * @returns {(string|null)} HTML문자열. 혹은 null
      * @private
      */
     _getConvertedHtml: function(value, cellData) {
@@ -8055,7 +8597,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 로 부터 columnName 을 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {string} 컬럼명
+     * @returns {string} 컬럼명
      */
     getColumnName: function($target) {
         return $target.closest('td').attr('columnName');
@@ -8064,7 +8606,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * 인자로 받은 element 로 부터 rowKey 를 반환한다.
      * @param {jQuery} $target 조회할 엘리먼트
-     * @return {string} 행의 키값
+     * @returns {string} 행의 키값
      */
     getRowKey: function($target) {
         return $target.closest('tr').attr('key');
@@ -8073,7 +8615,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * columnModel 을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
-     * @return {*|Object} 컬럼모델
+     * @returns {*|Object} 컬럼모델
      */
     getColumnModel: function(cellData) {
         return this.grid.columnModel.getColumnModel(cellData.columnName);
@@ -8082,7 +8624,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
      * @param {Object} cellData Model 의 셀 데이터
-     * @return {Object} td 에 지정할 attribute 데이터
+     * @returns {Object} td 에 지정할 attribute 데이터
      */
     getAttributes: function(cellData) {
         var columnModel = this.getColumnModel(cellData);
@@ -8102,7 +8644,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
      * - 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'normal';
@@ -8120,7 +8662,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8159,11 +8701,11 @@ var util = require('../../common/util');
 /**
  * Painter class for the button cell
  * @module painter/cell/button
+ * @extends module:painter/cell/list
  */
 var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/list
      */
     init: function() {
         ListCell.apply(this, arguments);
@@ -8200,12 +8742,13 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
 
     eventHandler: {
         'change input': '_onChange',
-        'keydown input': '_onKeyDown'
+        'keydown input': '_onKeyDown',
+        'blur input': '_onBlur'
     },
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'button';
@@ -8213,7 +8756,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
 
     /**
      * Contents markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<input' +
@@ -8229,7 +8772,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * Label markup template
      * It will be added to content
-     * @return {string} html
+     * @returns {string} html
      */
     labelTemplate: _.template(
         '<label' +
@@ -8257,7 +8800,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8325,7 +8868,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * 다음 input 에 focus 한다
      * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
+     * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
      * @private
      */
     _focusNextInput: function($currentInput) {
@@ -8335,7 +8878,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * 이전 input 에 focus 한다.
      * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @return {boolean} 다음 엘리먼트에 focus 되었는지 여부
+     * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
      * @private
      */
     _focusPrevInput: function($currentInput) {
@@ -8346,7 +8889,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
      * 이전 혹은 다음 input 에 focus 한다.
      * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
      * @param {string} direction 방향 'next|prev'
-     * @return {boolean} 해당 엘리먼트에 focus 되었는지 여부
+     * @returns {boolean} 해당 엘리먼트에 focus 되었는지 여부
      * @private
      */
     _focusTargetInput: function($currentInput, direction) {
@@ -8378,7 +8921,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     /**
      * check 된 button 의 값들을 가져온다. onChange 이벤트 핸들러에서 호출한다.
      * @param {jQuery} $target 이벤트가 발생한 targetElement
-     * @return {Array}  check 된 값들의 결과 배열
+     * @returns {Array}  check 된 값들의 결과 배열
      * @private
      */
     _getCheckedValueList: function($target) {
@@ -8400,7 +8943,18 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
             cellAddress = this._getCellAddress($target);
-        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName, this._getCheckedValueList($target).join(','));
+        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName,
+            this._getCheckedValueList($target).join(','));
+    },
+
+    /**
+     * Event handler for 'blur' event on input element
+     * @param {Event} ev - Blur event
+     * @private
+     */
+    _onBlur: function(ev) {
+        var cellAddr = this._getCellAddress($(ev.target));
+        this._validateData(cellAddr.rowKey, cellAddr.columnName);
     }
 });
 
@@ -8418,11 +8972,11 @@ var Cell = require('../cell');
 /**
  * editOption 에 list 를 가지고 있는 형태의 Base 클래스
  * @module painter/cell/list
+ * @extends module:painter/cell
  */
 var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -8435,7 +8989,7 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
     /* eslint-disable */
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {},
 
@@ -8449,7 +9003,7 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8480,7 +9034,7 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
      * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
      * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
      * @param {Object} cellData 모델의 셀 데이터
-     * @return {Array} 옵션 리스트
+     * @returns {Array} 옵션 리스트
      */
     getOptionList: function(cellData) {
         var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
@@ -8502,11 +9056,11 @@ var Cell = require('../cell');
 /**
  * Painter class for the main button
  * @module painter/cell/mainButton
+ * @extends module:painter/cell
  */
 var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainButton.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -8535,7 +9089,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<input' +
@@ -8548,7 +9102,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return '_button';
@@ -8558,7 +9112,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8614,7 +9168,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
 
     /**
      * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-     * @return {Object} td 에 지정할 attribute 데이터
+     * @returns {Object} td 에 지정할 attribute 데이터
      */
     getAttributes: function() {
         return {
@@ -8660,11 +9214,11 @@ var Cell = require('../cell');
 /**
  * editOption 이 적용되지 않은 cell 의 Painter
  * @module painter/cell/normal
+ * @extends module:painter/cell
  */
 var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      */
     init: function() {
         Cell.apply(this, arguments);
@@ -8672,7 +9226,7 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {string} editType 'normal|select|button|text|text-convertible'
+     * @returns {string} editType 'normal|select|button|text|text-convertible'
      */
     getEditType: function() {
         return 'normal';
@@ -8682,7 +9236,7 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8737,11 +9291,11 @@ var NormalCell = require('./normal');
 /**
  * Number Cell 의 Painter
  * @module painter/cell/number
+ * @extends module:painter/cell/normal
  */
 var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/number.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/normal
      */
     init: function() {
         NormalCell.apply(this, arguments);
@@ -8751,7 +9305,7 @@ var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/n
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {string} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return '_number';
@@ -8761,7 +9315,7 @@ var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/n
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8790,11 +9344,11 @@ var util = require('../../common/util');
 /**
  * Painter class for the select cell
  * @module painter/cell/select
+ * @extends module:painter/cell/list
  */
 var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/select.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/list
      */
     init: function() {
         ListCell.apply(this, arguments);
@@ -8811,12 +9365,13 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
     eventHandler: {
         'change select': '_onChange',
-        'keydown select': '_onKeyDown'
+        'keydown select': '_onKeyDown',
+        'blur select': '_onBlurSelect'
     },
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<select' +
@@ -8830,8 +9385,9 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
     /**
      * Options markup template
      * It will be added to content
-     * :: The value of option is a type of stirng, and use '==' operator for comparison regardless of some types of value in cellData
-     * @return {string} html
+     * :: The value of option is a type of stirng, and use '==' operator for
+     *    comparison regardless of some types of value in cellData
+     * @returns {string} html
      */
     optionTemplate: _.template(
         '<option' +
@@ -8843,8 +9399,17 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
     ),
 
     /**
+     * Event handler for 'blur' event on select element
+     * @param {Event} ev - Event object
+     */
+    _onBlurSelect: function(ev) {
+        var cellAddr = this._getCellAddress($(ev.target));
+        this._validateData(cellAddr.rowKey, cellAddr.columnName);
+    },
+
+    /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'select';
@@ -8867,7 +9432,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -8907,7 +9472,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
      * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
      * View.Base.Painter.Cell로부터 override 해서 구현함)
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      * @override
      */
@@ -8991,11 +9556,11 @@ var formUtil = require('../../common/formUtil');
 /**
  * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
  * @module painter/cell/text-convertible
+ * @extends module:painter/cell/text
  */
 var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-convertible.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell/text
      */
     init: function() {
         TextCell.apply(this, arguments);
@@ -9025,7 +9590,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<span class="input">' +
@@ -9042,7 +9607,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'text-convertible';
@@ -9068,7 +9633,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -9107,7 +9672,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
      * (상태에 따라 Text나 Base의 함수를 선택해서 사용해야 하기 때문에, 추가로 override 해서 prototype을 이용해 실행)
      * @param {object} cellData Model의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      * @override
      */
@@ -9126,12 +9691,13 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
     /**
      * 현재 편집중인 셀인지 여부를 반환한다.
      * @param {object} cellData Model의 셀 데이터
-     * @return {boolean} - 편집중이면 true, 아니면 false
+     * @returns {boolean} - 편집중이면 true, 아니면 false
      * @private
      */
     _isEditingCell: function(cellData) {
         var editingCell = this.editingCell;
-        return !!(editingCell.rowKey === cellData.rowKey.toString() && editingCell.columnName === cellData.columnName.toString());
+        return (editingCell.rowKey === cellData.rowKey.toString() &&
+            editingCell.columnName === cellData.columnName.toString());
     },
 
     /**
@@ -9155,6 +9721,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
         this._onBlur(blurEvent);
         this._endEdit($td);
+        this._validateData(this.getRowKey($td), this.getColumnName($td));
 
         _.defer(function() {
             focusModel.refreshState();
@@ -9167,15 +9734,16 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * @private
      */
     _startEdit: function($td) {
-        var $input, rowKey, columnName, cellState;
+        var dataModel = this.grid.dataModel,
+            $input, rowKey, columnName, cellState;
 
         this._blurEditingCell();
 
         rowKey = this.getRowKey($td);
         columnName = this.getColumnName($td);
-        cellState = this.grid.dataModel.get(rowKey).getCellState(columnName);
+        cellState = dataModel.get(rowKey).getCellState(columnName);
 
-        if (cellState.isEditable && !cellState.isDisabled) {
+        if (cellState.isEditable && !dataModel.isDisabled && !cellState.isDisabled) {
             this.editingCell = {
                 rowKey: rowKey,
                 columnName: columnName
@@ -9267,11 +9835,11 @@ var TextCell = require('./text');
 /**
  * Password 타입의 cell renderer
  * @module painter/cell/text-password
+ * @extends module:painter/cell/text
  */
 var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-password.prototype */{
     /**
      * @construct
-     * @extends module:painter/cell/text
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
@@ -9281,7 +9849,7 @@ var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/t
 
     /**
      * input type 을 반환한다.
-     * @return {string} input 타입
+     * @returns {string} input 타입
      * @private
      */
     _getInputType: function() {
@@ -9290,7 +9858,7 @@ var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/t
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'text-password';
@@ -9313,11 +9881,11 @@ var formUtil = require('../../common/formUtil');
 /**
  * Painter class for the text cell
  * @module painter/cell/text
+ * @extends module:painter/cell
  */
 var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
-     * @extends module:painter/cell
      * @param {object} attributes Attributes
      * @param {object} options Options
      */
@@ -9353,7 +9921,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
     /**
      * Content markup template
-     * @return {string} html
+     * @returns {string} html
      */
     contentTemplate: _.template(
         '<input' +
@@ -9368,7 +9936,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
     /**
      * input type 을 반환한다.
-     * @return {string} input 타입
+     * @returns {string} input 타입
      * @private
      */
     _getInputType: function() {
@@ -9377,7 +9945,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
     /**
      * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @return {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
      */
     getEditType: function() {
         return 'text';
@@ -9410,7 +9978,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @return  {string} html 마크업 문자열
+     * @returns {string} html 마크업 문자열
      * @example
      * var html = this.getContentHtml();
      * <select>
@@ -9462,7 +10030,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
     /**
      * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
      * @param {jQuery} $input   인풋 jquery 엘리먼트
-     * @return {Boolean}    값의 변경여부
+     * @returns {Boolean}    값의 변경여부
      * @private
      */
     _isEdited: function($input) {
@@ -9484,7 +10052,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
      * Painter.Cell로부터 override 해서 구현함)
      * @param {object} cellData Model 의 셀 데이터
-     * @return {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
      * @private
      * @override
      */
@@ -9527,6 +10095,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
             this.grid.dataModel.setValue(rowKey, columnName, $target.val());
         }
         this.grid.selectionModel.enable();
+        this._validateData(rowKey, columnName);
     },
 
     /**
@@ -9553,32 +10122,16 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
     },
 
     /**
-     * 해당 input 요소가 포함된 셀을 찾아 rowKey와 columnName을 객체로 반환한다.
-     * @param  {jQuery} $input - 인풋 요소의 jquery 객체
-     * @return {{rowKey: number, columnName: number}} 셀의 rowKey, columnName 정보
-     * @private
-     */
-    _getCellInfoFromInput: function($input) {
-        var $cell = $input.closest('td'),
-            $row = $cell.closest('tr');
-
-        return {
-            rowKey: $row.attr('key'),
-            columnName: $cell.attr('columnname')
-        };
-    },
-
-    /**
      * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
      * 해당 이벤트 핸들러를 호출해준다.
      * @param {Event} event - 이벤트 객체
      * @param {string} eventName - 이벤트명
-     * @return {boolean} Return value of the event handler. Null if there's no event handler.
+     * @returns {boolean} Return value of the event handler. Null if there's no event handler.
      * @private
      */
     _executeInputEventHandler: function(event, eventName) {
         var $input = $(event.target),
-            cellInfo = this._getCellInfoFromInput($input),
+            cellInfo = this._getCellAddress($input),
             columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
             eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
 
@@ -9603,6 +10156,83 @@ module.exports = TextCell;
 
 },{"../../common/formUtil":9,"../../common/util":10,"../cell":26}],36:[function(require,module,exports){
 /**
+ * @fileoverview Dummy cell painter
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var Painter = require('../base/painter');
+var util = require('../common/util');
+
+/**
+ * Dummy Cell Painter
+ * @module painter/dummyCell
+ * @extends module:base/painter
+ */
+var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
+    /**
+     * @constructs
+     */
+    init: function() {
+        Painter.apply(this, arguments);
+    },
+
+    /**
+     * Event handlers
+     */
+    eventHandler: {
+        dblclick: '_onDblClick'
+    },
+
+    /**
+     * Template
+     * @returns {String} String
+     */
+    template: _.template(
+        '<td columnname="<%=columnName%>" ' +
+            'class="<%=className%>" ' +
+            'edit-type="dummy">' +
+            '&nbsp;' + // '&nbsp' for height issue with empty cell in IE7
+        '</td>'
+    ),
+
+    /**
+     * Returns the edit type of the cell.
+     * (To implement interface of module:painter/cell)
+     * @returns {String} Edit type
+     */
+    getEditType: function() {
+        return 'dummy';
+    },
+
+    /**
+     * Event handler for 'dblclick' event
+     * @private
+     */
+    _onDblClick: function() {
+        this.grid.dataModel.append({}, {
+            focus: true
+        });
+    },
+
+    /**
+     * Returns the HTML string (TD) of the cell
+     * @param {String} columnName - column name
+     * @returns {string} HTML string
+     */
+    getHtml: function(columnName) {
+        var isMeta = this.grid.columnModel.isMetaColumn(columnName);
+        return this.template({
+            columnName: columnName,
+            className: (isMeta ? 'meta_column ' : '') + 'dummy'
+        });
+    }
+});
+
+module.exports = DummyCell;
+
+},{"../base/painter":6,"../common/util":10}],37:[function(require,module,exports){
+/**
  * @fileoverview Painter Manager
  * @author NHN Ent. FE Development Team
  */
@@ -9616,6 +10246,7 @@ var SelectCell = require('./cell/select');
 var TextCell = require('./cell/text');
 var TextConvertibleCell = require('./cell/text-convertible');
 var TextPasswordCell = require('./cell/text-password');
+var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
 
 /**
@@ -9625,6 +10256,7 @@ var RowPainter = require('./row');
 var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.prototype */{
     /**
      * @constructs
+     * @param {Object} options - Options
      */
     init: function(options) {
         this.modelManager = options.modelManager;
@@ -9634,7 +10266,9 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     },
 
     /**
-     * 종류별 Cell Painter Instance 를 를 생성한다.
+     * Creates instances of cell painters and returns the map object that stores them
+     * using 'editType' as a key.
+     * @returns {Object} Key-value object
      * @private
      */
     _createCellPainters: function() {
@@ -9650,7 +10284,8 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
                 new SelectCell(args),
                 new TextCell(args),
                 new TextPasswordCell(args),
-                new TextConvertibleCell(args)
+                new TextConvertibleCell(args),
+                new DummyCell(args)
             ];
 
         _.each(instanceList, function(instance) {
@@ -9661,7 +10296,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Creates row painter and returns it.
-     * @return {module:painter/row} New row painter instance
+     * @returns {module:painter/row} New row painter instance
      */
     _createRowPainter: function() {
         return new RowPainter({
@@ -9671,19 +10306,17 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     },
 
     /**
-     * 인자로 받은 editType 에 해당하는 Cell Painter Instance 를 반환한다.
-     * @param {String} editType editType 정보
-     * @return {Object} editType 에 해당하는 페인터 인스턴스
+     * Returns an instance of cell painter which has given editType
+     * @param {String} editType - Edit type
+     * @returns {Object} - Cell painter instance
      */
     getCellPainter: function(editType) {
         var instance = this.cellPainters[editType];
 
         if (!instance) {
-            //checkbox, radio 의 경우, instance 의 이름이 전달받는 editType 과 다르기 때문에 예외처리 한다.
             if (editType === 'radio' || editType === 'checkbox') {
                 instance = this.cellPainters['button'];
             } else {
-                //그 외의 경우 모두 normal 로 처리한다.
                 instance = this.cellPainters['normal'];
             }
         }
@@ -9692,7 +10325,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Returns all cell painters
-     * @return {Object} Object that has edit-type as a key and cell painter as a value
+     * @returns {Object} Object that has edit-type as a key and cell painter as a value
      */
     getCellPainters: function() {
         return this.cellPainters;
@@ -9700,7 +10333,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Returns a row painter
-     * @return {module:painter/row} Row painter
+     * @returns {module:painter/row} Row painter
      */
     getRowPainter: function() {
         return this.rowPainter;
@@ -9709,7 +10342,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
 module.exports = PainterManager;
 
-},{"./cell/button":27,"./cell/mainButton":29,"./cell/normal":30,"./cell/number":31,"./cell/select":32,"./cell/text":35,"./cell/text-convertible":33,"./cell/text-password":34,"./row":37}],37:[function(require,module,exports){
+},{"./cell/button":27,"./cell/mainButton":29,"./cell/normal":30,"./cell/number":31,"./cell/select":32,"./cell/text":35,"./cell/text-convertible":33,"./cell/text-password":34,"./dummyCell":36,"./row":38}],38:[function(require,module,exports){
 /**
  * @fileoverview Row Painter 정의
  * @author NHN Ent. FE Development Team
@@ -9717,23 +10350,23 @@ module.exports = PainterManager;
 'use strict';
 
 var Painter = require('../base/painter');
+var util = require('../common/util');
 
 /**
  * Row Painter
  * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
  * @module painter/row
+ * @extends module:base/painter
  */
 var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
     /**
      * @constructs
-     * @extends module:base/painter
      * @param {object} options - Options
      *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
      *      @param {object} options.collection change 를 감지할 collection 객체
      */
     init: function(options) {
         Painter.apply(this, arguments);
-
         this.painterManager = options.painterManager;
     },
 
@@ -9769,7 +10402,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
      * @param {string} columnName 컬럼명
      * @param {Object} cellData 셀 데이터
-     * @return {string} cellFactory 에서 사용될 editType
+     * @returns {string} cellFactory 에서 사용될 editType
      * @private
      */
     _getEditType: function(columnName, cellData) {
@@ -9781,31 +10414,63 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     },
 
     /**
-     * tr html 마크업을 반환한다.
-     * @param {object} model 마크업을 생성할 모델 인스턴스
-     * @return {string} tr 마크업 문자열
+     * Returns the HTML string of all cells in Dummy row.
+     * @param  {Array.<Object>} columnModelList- Column model list
+     * @returns {String} HTLM string
+     * @private
      */
-    getHtml: function(model, columnModelList) {
-        var html = '';
-
-        if (tui.util.isUndefined(model.get('rowKey'))) {
-           return html;
-        }
+    _getHtmlForDummyRow: function(columnModelList) {
+        var cellPainter = this.painterManager.getCellPainter('dummy'),
+            html = '';
 
         _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel['columnName'],
+            html += cellPainter.getHtml(columnModel.columnName);
+        });
+        return html;
+    },
+
+    /**
+     * Returns the HTML string of all cells in Actual row.
+     * @param  {module:model/row} model - View model instance
+     * @param  {Array.<Object>} columnModelList - Column model list
+     * @returns {String} HTLM string
+     * @private
+     */
+    _getHtmlForActualRow: function(model, columnModelList) {
+        var html = '';
+
+        _.each(columnModelList, function(columnModel) {
+            var columnName = columnModel.columnName,
                 cellData = model.get(columnName),
                 editType, cellPainter;
 
-            if (cellData && cellData['isMainRow']) {
+            if (cellData && cellData.isMainRow) {
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 html += cellPainter.getHtml(cellData);
             }
         }, this);
+        return html;
+    },
+
+    /**
+     * Returns the HTML string of all cells in the given model (row).
+     * @param  {module:model/row} model - View model instance
+     * @param  {Array.<Object>} columnModelList - Column model list
+     * @returns {String} HTLM string
+     */
+    getHtml: function(model, columnModelList) {
+        var rowKey = model.get('rowKey'),
+            html;
+
+        if (_.isUndefined(rowKey)) {
+            html = this._getHtmlForDummyRow(columnModelList);
+        } else {
+            html = this._getHtmlForActualRow(model, columnModelList);
+        }
 
         return this.template({
-            key: model.get('rowKey'),
+            key: rowKey,
             height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
             contents: html,
             className: ''
@@ -9820,7 +10485,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
          */
         _extraHeight: (function() {
             var value = 0;
-            if (tui.util.browser.msie && tui.util.browser.version === 7) {
+            if (util.isBrowserIE7()) {
                 // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
                 value = -2;
             }
@@ -9831,7 +10496,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
 
 module.exports = RowPainter;
 
-},{"../base/painter":6}],38:[function(require,module,exports){
+},{"../base/painter":6,"../common/util":10}],39:[function(require,module,exports){
 /**
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
@@ -9859,7 +10524,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param {String[]} eventNames - An array of the event names
      * @private
      */
-    _listenAndPass: function(target, eventNames) {
+    _listenForThrough: function(target, eventNames) {
         _.each(eventNames, function(eventName) {
             this.listenTo(target, eventName, _.bind(this._triggerOnPublic, this, eventName));
         }, this);
@@ -9872,7 +10537,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {String} publicEventName - New event name for public use
      * @private
      */
-    _listenAndRename: function(target, eventName, publicEventName) {
+    _listenForRename: function(target, eventName, publicEventName) {
         this.listenTo(target, eventName, _.bind(this._triggerOnPublic, this, publicEventName));
     },
 
@@ -9888,10 +10553,10 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
 
     /**
      * Listen to Net addon.
-     * @param {module:addon/net} - Net addon object
+     * @param {module:addon/net} net - Net addon object
      */
     listenToNetAddon: function(net) {
-        this._listenAndPass(net, [
+        this._listenForThrough(net, [
             'beforeRequest',
             'response',
             'successResponse',
@@ -9905,7 +10570,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {module:view/container} container - Container view object
      */
     listenToContainerView: function(container) {
-        this._listenAndPass(container, [
+        this._listenForThrough(container, [
             'click',
             'dblclick',
             'mousedown',
@@ -9922,7 +10587,7 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
      * @param  {module:model/focus} focusModel - Focus model
      */
     listenToFocusModel: function(focusModel) {
-        this._listenAndRename(focusModel, 'select', 'selectRow');
+        this._listenForRename(focusModel, 'select', 'selectRow');
     }
 });
 
@@ -9930,7 +10595,7 @@ _.extend(PublicEventEmitter.prototype, Backbone.Events);
 
 module.exports = PublicEventEmitter;
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /**
  * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
  * @author NHN Ent. FE Development Team
@@ -9944,11 +10609,12 @@ var keyCodeMap = require('../common/constMap').keyCode;
 /**
  * Clipboard view class
  * @module view/clipboard
+ * @extends module:base/view
  */
 var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.setOwnProperties({
@@ -9986,19 +10652,25 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
-     * Event handler for focus event
+     * Event handler for 'focusClipboard' event on focusModel
      * @private
      */
     _onFocus: function() {
-        if (!this.$el.is(':focus')) {
-            this.$el.focus();
-            this.focusModel.refreshState();
+        try {
+            if (!this.$el.is(':focus')) {
+                this.$el.focus();
+                this.focusModel.refreshState();
+            }
+        } catch (e) {
+            // Do nothing.
+            // This try/catch block is just for preventing 'Unspecified error'
+            // in IE9(and under) when running test using karma.
         }
     },
 
     /**
      * 랜더링 한다.
-     * @return {View.Clipboard} this object
+     * @returns {View.Clipboard} this object
      */
     render: function() {
         return this;
@@ -10025,7 +10697,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * keyDown 이벤트 핸들러
      * @param {Event} keyDownEvent 이벤트 객체
-     * @return {boolean} False if locked
+     * @returns {boolean} False if locked
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
@@ -10057,7 +10729,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             focused = focusModel.which(),
             rowKey = focused.rowKey,
             columnName = focused.columnName,
-            displayRowCount = this.dimensionModel.getDisplayRowCount(),
+            displayRowCount = this.dimensionModel.get('displayRowCount'),
             isKeyIdentified = true,
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
@@ -10166,7 +10838,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             dimensionModel = this.dimensionModel,
             columnModelList = this.columnModel.getVisibleColumnModelList(),
             focused = focusModel.which(),
-            displayRowCount = dimensionModel.getDisplayRowCount(),
+            displayRowCount = dimensionModel.get('displayRowCount'),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
             index = this._getIndexBeforeMove(),
             isKeyIdentified = true,
@@ -10323,7 +10995,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * process data for paste to grid
      * @private
-     * @return {Array.<Array.<string>>} result
+     * @returns {Array.<Array.<string>>} result
      */
     _getProcessClipBoardData: function() {
         var text = this.$el.val(),
@@ -10386,6 +11058,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
                     columnName = columnModelList[j]['columnName'];
                     dataModel.del(rowKey, columnName, true);
+                    dataModel.get(rowKey).validateCell(columnName);
                 }
             }
             this.renderModel.refresh(true);
@@ -10408,7 +11081,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * clipboard 에 설정될 문자열 반환한다.
-     * @return {String} 데이터를 text 형태로 변환한 문자열
+     * @returns {String} 데이터를 text 형태로 변환한 문자열
      * @private
      */
     _getClipboardString: function() {
@@ -10440,7 +11113,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
 module.exports = Clipboard;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":10}],40:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/util":10}],41:[function(require,module,exports){
 /**
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
@@ -10452,16 +11125,17 @@ var View = require('../base/view');
 /**
  * Container View
  * @module view/container
+ * @extends module:base/view
  */
 var Container = View.extend(/**@lends module:view/container.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
-     * @param {Object} options
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
+        this.gridId = options.gridId;
         this.singleClickEdit = options.singleClickEdit;
         this.dimensionModel = options.dimensionModel;
         this.focusModel = options.focusModel;
@@ -10620,7 +11294,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      * @param {jQuery} $target 검사할 HTML요소의 jQuery 객체
      * @param {boolean} isIncludeChild true이면 셀의 자식요소까지 포함한다.
-     * @return {boolean} 셀이면 true, 아니면 false
+     * @returns {boolean} 셀이면 true, 아니면 false
      */
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
@@ -10632,10 +11306,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
      * @private
      * @param {jQuery} $cell TD요소의 jquery 객체
-     * @return {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
+     * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = $cell.parent().attr('key'),
+        var rowKey = Number($cell.parent().attr('key')),
             columnName = $cell.attr('columnname');
 
         return {
@@ -10675,6 +11349,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Render
+     * @returns {module:view/container} this object
      */
     render: function() {
         var childElements = this._renderChildren().concat([
@@ -10682,11 +11357,12 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             $('<div>').addClass('right_line')
         ]);
         this.$el.addClass('grid_wrapper uio_grid')
-            .attr('instanceId', this.gridId)
+            .attr('data-grid-id', this.gridId)
             .append(childElements);
 
         this._refreshHeight();
         this.trigger('rendered');
+        return this;
     },
 
     /**
@@ -10704,7 +11380,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
 module.exports = Container;
 
-},{"../base/view":7}],41:[function(require,module,exports){
+},{"../base/view":7}],42:[function(require,module,exports){
 /**
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
@@ -10740,7 +11416,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates container view and returns it.
      * @param {Object} options - Options set by user
-     * @return {module:view/container} - New container view instance
+     * @returns {module:view/container} - New container view instance
      */
     createContainer: function(options) {
         return new ContainerView({
@@ -10756,7 +11432,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar view and returns it.
-     * @return {module:view/toolbar} - New toolbar view instance
+     * @returns {module:view/toolbar} - New toolbar view instance
      */
     createToolbar: function() {
         return new ToolbarView({
@@ -10768,7 +11444,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar control panel view and returns it.
-     * @return {module:view/toolbar/controlPanel} - New control panel vew insatnce
+     * @returns {module:view/toolbar/controlPanel} - New control panel vew insatnce
      */
     createToolbarControlPanel: function() {
         return new ToolbarControlPanelView({
@@ -10779,7 +11455,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar pagination view and returns it.
-     * @return {module:view/toolbar/pagination} - New pagination view instance
+     * @returns {module:view/toolbar/pagination} - New pagination view instance
      */
     createToolbarPagination: function() {
         return new ToolbarPaginationView({
@@ -10789,7 +11465,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar resize handler view and returns it.
-     * @return {module:view/toolbar/resizeHandler} - New resize hander view instance
+     * @returns {module:view/toolbar/resizeHandler} - New resize hander view instance
      */
     createToolbarResizeHandler: function() {
         return new ToolbarResizeHandlerView({
@@ -10799,7 +11475,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates state layer view and returns it.
-     * @return {module:view/stateLayer} - New state layer view instance
+     * @returns {module:view/stateLayer} - New state layer view instance
      */
     createStateLayer: function() {
         return new StateLayerView({
@@ -10810,7 +11486,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates clipboard view and returns it.
-     * @return {module:view/clipboard} - New clipboard view instance
+     * @returns {module:view/clipboard} - New clipboard view instance
      */
     createClipboard: function() {
         return new ClipboardView({
@@ -10827,7 +11503,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates frame view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @return {module:view/layout/frame} New frame view instance
+     * @returns {module:view/layout/frame} New frame view instance
      */
     createFrame: function(whichSide) {
         var Constructor = whichSide === 'L' ? LsideFrameView : RsideFrameView;
@@ -10842,7 +11518,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates header view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @return {module:view/layout/header} New header view instance
+     * @returns {module:view/layout/header} New header view instance
      */
     createHeader: function(whichSide) {
         return new HeaderView({
@@ -10859,7 +11535,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates resize handler of header view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @return {module:view/layout/header} New resize handler view instance
+     * @returns {module:view/layout/header} New resize handler view instance
      */
     createHeaderResizeHandler: function(whichSide) {
         return new HeaderResizeHandlerView({
@@ -10872,7 +11548,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates body view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @return {module:view/layout/body} New body view instance
+     * @returns {module:view/layout/body} New body view instance
      */
     createBody: function(whichSide) {
         return new BodyView({
@@ -10890,7 +11566,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates body-table view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @return {module:view/layout/bodyTable} New body-table view instance
+     * @returns {module:view/layout/bodyTable} New body-table view instance
      */
     createBodyTable: function(whichSide) {
         return new BodyTableView({
@@ -10909,7 +11585,7 @@ var ViewFactory = tui.util.defineClass({
      * @param  {jQuery} options.el - jquery object wrapping tbody html element
      * @param  {String} options.whichSide - 'L'(left) or 'R'(right)
      * @param  {module:view/layout/bodyTable} options.bodyTableView - body table view
-     * @return {module:view/rowList} New row list view instance
+     * @returns {module:view/rowList} New row list view instance
      */
     createRowList: function(options) {
         return new RowListView({
@@ -10928,7 +11604,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates selection view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @return {module:view/selection} New selection view instance
+     * @returns {module:view/selection} New selection view instance
      */
     createSelectionLayer: function(whichSide) {
         return new SelectionLayerView({
@@ -10942,7 +11618,7 @@ var ViewFactory = tui.util.defineClass({
 
 module.exports = ViewFactory;
 
-},{"./clipboard":39,"./container":40,"./layout/body":42,"./layout/bodyTable":43,"./layout/frame-lside":44,"./layout/frame-rside":45,"./layout/header":47,"./layout/resizeHandler":48,"./layout/toolbar":49,"./layout/toolbar/controlPanel":50,"./layout/toolbar/pagination":51,"./layout/toolbar/resizeHandler":52,"./rowList":53,"./selectionLayer":54,"./stateLayer":55}],42:[function(require,module,exports){
+},{"./clipboard":40,"./container":41,"./layout/body":43,"./layout/bodyTable":44,"./layout/frame-lside":45,"./layout/frame-rside":46,"./layout/header":48,"./layout/resizeHandler":49,"./layout/toolbar":50,"./layout/toolbar/controlPanel":51,"./layout/toolbar/pagination":52,"./layout/toolbar/resizeHandler":53,"./rowList":54,"./selectionLayer":55,"./stateLayer":56}],43:[function(require,module,exports){
 /**
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
@@ -10956,13 +11632,13 @@ var HTML_CONTAINER = '<div class="body_container"></div>';
 /**
  * Class for the body layout
  * @module view/layout/body
+ * @extends module:base/view
  */
 var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R'] L or R (which side)
+     * @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -11055,8 +11731,19 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
+     * Returns the name of the visible data columns at given index
+     * @param  {Number} columnIndex - Column index
+     * @returns {String} - Column name
+     * @private
+     */
+    _getColumnNameByVisibleIndex: function(columnIndex) {
+        var columns = this.columnModel.getVisibleColumnModelList(null, false);
+        return columns[columnIndex].columnName;
+    },
+
+    /**
      * Mousedown event handler
-     * @param {jQuery.Event} event
+     * @param {MouseEvent} event - Mousedown event
      * @private
      */
     _onMouseDown: function(event) {
@@ -11067,32 +11754,32 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
             rowKey = $tr.attr('key'),
-            rowIndex = this.dataModel.indexOfRowKey(rowKey),
+            startAction = true,
+            indexObj;
+
+        if (!$td.length) { // selection layer
+            indexObj = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
+            columnName = this._getColumnNameByVisibleIndex(indexObj.column);
+        } else if (rowKey && columnName) { // valid cell
             indexObj = {
-                columnName: columnName,
                 column: columnModel.indexOfColumnName(columnName, true),
-                row: rowIndex
-            },
-            list;
-
-        if (!columnName || rowIndex < 0) {
-            _.extend(indexObj, this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY, true));
-            list = columnModel.getVisibleColumnModelList(null, true);
-
-            // columnName과 columnIndex 재조정
-            columnName = list[indexObj.column].columnName;
-
-            indexObj.columnName = columnName;
-            indexObj.column = columnModel.indexOfColumnName(columnName, true);
-        } else if (this.columnModel.get('selectType') === 'radio') {
-            this.dataModel.check(rowIndex);
+                row: this.dataModel.indexOfRowKey(rowKey)
+            };
+            if (this.columnModel.get('selectType') === 'radio') {
+                this.dataModel.check(indexObj.row);
+            }
+        } else { // dummy cell
+            startAction = false;
         }
 
-        this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, isInput);
+        if (startAction) {
+            this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, columnName, isInput);
+        }
     },
 
     /**
      * Event handler for blur event on input element.
+     * @param {MouseEvent} event - Mousedown event
      * @private
      */
     _onBlurInput: function(event) {
@@ -11107,14 +11794,14 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse position Y
      * @param {boolean} shiftKey - Whether the shift-key is pressed.
-     * @param {{columnName:string, column:number, row:number}} indexObj
+     * @param {{column:number, row:number}} indexObj - Index map object
+     * @param {String} columnName - column name
      * @param {boolean} isInput - Whether the target is input element.
      * @private
      */
-    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, isInput) {
+    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, columnName, isInput) {
         var columnModel = this.columnModel,
             selectionModel = this.selectionModel,
-            columnName = indexObj.columnName,
             columnIndex = indexObj.column,
             rowIndex = indexObj.row;
 
@@ -11154,7 +11841,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             mouseDownX: pageX,
             mouseDownY: pageY
         });
-        this.dimensionModel.refreshLayout();
         $(document)
             .on('mousemove', $.proxy(this._onMouseMove, this))
             .on('mouseup', $.proxy(this._detachDragEvents, this))
@@ -11191,7 +11877,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Returns the distance between 'mousedown' position and specified position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
-     * @return {number} Distance
+     * @returns {number} Distance
      * @private
      */
     _getMouseMoveDistance: function(pageX, pageY) {
@@ -11214,7 +11900,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * rendering 한다.
-     * @return {View.Layout.Body}   자기 자신
+     * @returns {View.Layout.Body}   자기 자신
      */
     render: function() {
         var whichSide = this.whichSide;
@@ -11244,7 +11930,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7}],43:[function(require,module,exports){
+},{"../../base/view":7}],44:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -11253,17 +11939,20 @@ module.exports = Body;
 
 var View = require('../../base/view');
 var util = require('../../common/util');
+var dimensionConstMap = require('../../common/constMap').dimension;
+
+var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 /**
  * Class for the table layout in the body(data) area
  * @module view/layout/bodyTable
+ * @extends module:base/view
  */
 var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options - Options
-     *      @param {String} [options.whichSide='R'] L or R (which side)
+     * @param {String} [options.whichSide='R'] L or R (which side)
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -11278,6 +11967,11 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         });
 
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+
+        // To prevent issue of appearing vertical scrollbar when dummy rows exists
+        this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
+
         this._attachAllTableEventHandlers();
     },
 
@@ -11297,11 +11991,46 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      */
     _onColumnWidthChanged: function() {
         var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide),
-            $colList = this.$el.find('col');
+            $colList = this.$el.find('col'),
+            totalWidth = 0;
 
         _.each(columnWidthList, function(width, index) {
             $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH);
+            totalWidth += width + CELL_BORDER_WIDTH;
         }, this);
+
+        // to solve the overflow issue in IE7
+        // (don't automatically expand to child's width when overflow:hidden)
+        if (util.isBrowserIE7()) {
+            this.$el.width(totalWidth + CELL_BORDER_WIDTH); // addition for last cell
+        }
+    },
+
+    /**
+     * Resets the overflow of element based on the dummyRowCount in renderModel.
+     * @private
+     */
+    _resetOverflow: function() {
+        var overflow = 'visible';
+
+        if (this.renderModel.get('dummyRowCount') > 0) {
+            overflow = 'hidden';
+        }
+        this.$el.css('overflow', overflow);
+    },
+
+    /**
+     * Resets the height of element based on the dummyRowCount in renderModel
+     * @private
+     */
+    _resetHeight: function() {
+        var dimensionModel = this.dimensionModel;
+
+        if (this.renderModel.get('dummyRowCount') > 0) {
+            this.$el.height(dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight());
+        } else {
+            this.$el.css('height', '');
+        }
     },
 
     /**
@@ -11313,8 +12042,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     },
 
     /**
-     * rendering 한다.
-     * @return {View.Layout.Body}   자기 자신
+     * Renders elements
+     * @returns {View.Layout.Body} This object
      */
     render: function() {
         this._destroyChildren();
@@ -11331,6 +12060,9 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         }));
         this._renderChildren();
 
+        // To prevent issue of appearing vertical scrollbar when dummy rows exists
+        this._resetHeight();
+        this._resetOverflow();
         return this;
     },
 
@@ -11338,6 +12070,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
      * @param {string} selector - 선택자
      * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
+     * @private
      */
     _attachTableEventHandler: function(selector, handlerInfos) {
         _.each(handlerInfos, function(obj, eventName) {
@@ -11367,7 +12100,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * table 요소를 새로 생성한다.
      * (IE7-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
      * @param {string} tbodyHtml - tbody의 innerHTML 문자열
-     * @return {jquery} - 새로 생성된 table의 tbody 요소
+     * @returns {jquery} - 새로 생성된 table의 tbody 요소
      */
     redrawTable: function(tbodyHtml) {
         this.$el[0].innerHTML = this.template({
@@ -11380,7 +12113,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     /**
      * Table 열 각각의 width 조정을 위한 columnGroup 마크업을 반환한다.
-     * @return {string} <colgroup> 안에 들어갈 마크업 문자열
+     * @returns {string} <colgroup> 안에 들어갈 마크업 문자열
      * @private
      */
     _getColGroupMarkup: function() {
@@ -11404,7 +12137,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
 module.exports = BodyTable;
 
-},{"../../base/view":7,"../../common/util":10}],44:[function(require,module,exports){
+},{"../../base/view":7,"../../common/constMap":8,"../../common/util":10}],45:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -11416,11 +12149,11 @@ var Frame = require('./frame');
 /**
  * left side 프레임 클래스
  * @module view/layout/frame-lside
+ * @extends module:view/layout/frame
  */
 var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
     /**
      * @constructs
-     * @extends module:view/layout/frame
      */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
@@ -11454,7 +12187,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
 
 module.exports = LsideFrame;
 
-},{"./frame":46}],45:[function(require,module,exports){
+},{"./frame":47}],46:[function(require,module,exports){
 /**
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
@@ -11466,11 +12199,11 @@ var Frame = require('./frame');
 /**
  * right side frame class
  * @module view/layout/frame-rside
+ * @extends module:view/layout/frame
  */
 var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
     /**
      * @constructs
-     * @extends module:view/layout/frame
      */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
@@ -11513,7 +12246,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      */
     beforeRender: function() {
         var dimensionModel = this.dimensionModel;
-            
+
         this.$el.css({
             display: 'block',
             width: dimensionModel.get('rsideWidth'),
@@ -11559,7 +12292,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
 module.exports = RsideFrame;
 
-},{"./frame":46}],46:[function(require,module,exports){
+},{"./frame":47}],47:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -11571,11 +12304,11 @@ var View = require('../../base/view');
 /**
  * frame Base 클래스
  * @module view/layout/frame
+ * @extends module:base/view
  */
 var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options Options
      *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
      */
@@ -11599,7 +12332,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
     /**
      * 랜더링 메서드
-     * @return {View.Layout.Frame} This object
+     * @returns {View.Layout.Frame} This object
      */
     render: function() {
         var factory = this.viewFactory;
@@ -11632,7 +12365,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
 module.exports = Frame;
 
-},{"../../base/view":7}],47:[function(require,module,exports){
+},{"../../base/view":7}],48:[function(require,module,exports){
 /**
  * @fileoverview Header 관련
  * @author NHN Ent. FE Development Team
@@ -11645,13 +12378,13 @@ var View = require('../../base/view'),
 /**
  * Header 레이아웃 View
  * @module view/layout/header
+ * @extends module:base/view
  */
 var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options 옵션
-     *      @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+     * @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -11722,7 +12455,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * col group 마크업을 생성한다.
-     * @return {string} <colgroup>에 들어갈 html 마크업 스트링
+     * @returns {string} <colgroup>에 들어갈 html 마크업 스트링
      * @private
      */
     _getColGroupMarkup: function() {
@@ -11742,7 +12475,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event} event - MouseDown event
      * @private
      */
     _onMouseDown: function(event) {
@@ -11762,7 +12495,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Control selection action when started
-     * @param {Array} columnNames
+     * @param {Array} columnNames - An array of column names
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse position Y
      * @param {boolean} shiftKey - Whether the shift-key is pressed.
@@ -11838,7 +12571,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousemove event handler
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event} event - MouseMove event
      * @private
      */
     _onMouseMove: function(event) {
@@ -11863,7 +12596,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Whether this columnNames array has a meta column name.
-     * @param {Array} columnNames
+     * @param {Array} columnNames - An array of column names
      * @returns {boolean} Has a meta column name or not.
      * @private
      */
@@ -11883,7 +12616,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Selectstart event handler
-     * @param {jQuery.Event} event
+     * @param {jQuery.Event} event - Mouse event
      * @returns {boolean} false for preventDefault
      * @private
      */
@@ -11905,7 +12638,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
-     * @return {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
+     * @returns {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
      * @private
      */
     _getHeaderMainCheckbox: function() {
@@ -12004,7 +12737,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * 랜더링
-     * @return {View.Layout.Header} this
+     * @returns {View.Layout.Header} this
      */
     render: function() {
         this._destroyChildren();
@@ -12031,7 +12764,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * 컬럼 정보를 반환한다.
-     * @return {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
+     * @returns {{widthList: (Array|*), modelList: (Array|*)}}   columnWidthList 와 columnModelList 를 함께 반환한다.
      * @private
      */
     _getColumnData: function() {
@@ -12048,7 +12781,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Header 의 body markup 을 생성한다.
-     * @return {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
+     * @returns {string} header 의 테이블 body 영역에 들어갈 html 마크업 스트링
      * @private
      */
     _getTableBodyMarkup: function() {
@@ -12106,7 +12839,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * column merge 가 설정되어 있을 때 헤더의 max row count 를 가져온다.
      * @param {Array} hierarchyList 헤더 마크업 생성시 사용될 계층구조 데이터
-     * @return {number} 헤더 영역의 row 최대값
+     * @returns {number} 헤더 영역의 row 최대값
      * @private
      */
     _getHierarchyMaxRowCount: function(hierarchyList) {
@@ -12119,7 +12852,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * column merge 가 설정되어 있을 때 헤더의 계층구조 리스트를 가져온다.
-     * @return {Array}  계층구조 리스트
+     * @returns {Array}  계층구조 리스트
      * @private
      */
     _getColumnHierarchyList: function() {
@@ -12138,7 +12871,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      *
      * @param {Object} columnModel 컬럼모델
      * @param {Array} [resultList]  결과로 메모이제이션을 이용하기 위한 인자값
-     * @return {Array} 계층구조 결과값
+     * @returns {Array} 계층구조 결과값
      * @private
      */
     _getColumnHierarchy: function(columnModel, resultList) {
@@ -12162,7 +12895,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/util":10}],48:[function(require,module,exports){
+},{"../../base/view":7,"../../common/util":10}],49:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -12174,11 +12907,11 @@ var View = require('../../base/view');
 /**
  * Reside Handler class
  * @module view/layout/resizeHandler
+ * @extends module:base/view
  */
 var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {Object} options - Options
      */
     initialize: function(options) {
@@ -12195,7 +12928,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             initialLeft: 0
         });
         this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
-        // this.listenTo(this.grid, 'rendered', $.proxy(this._refreshHandlerPosition, this));
     },
 
     tagName: 'div',
@@ -12220,7 +12952,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * columnWidthList 와 columnModelList 를 함께 반환한다.
-     * @return {{widthList: (Array|*), modelList: (Array|*)}} Column Data
+     * @returns {{widthList: (Array|*), modelList: (Array|*)}} Column Data
      * @private
      */
     _getColumnData: function() {
@@ -12237,7 +12969,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * resize handler 마크업을 구성한다.
-     * @return {String} resize handler 의 html 마크업 스트링
+     * @returns {String} resize handler 의 html 마크업 스트링
      * @private
      */
     _getResizeHandlerMarkup: function() {
@@ -12260,7 +12992,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * 랜더링 한다.
-     * @return {View.Layout.Header.ResizeHandler} This object
+     * @returns {View.Layout.Header.ResizeHandler} This object
      */
     render: function() {
         var headerHeight = this.dimensionModel.get('headerHeight'),
@@ -12308,7 +13040,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * 현재 mouse move resizing 중인지 상태 flag 반환
-     * @return {boolean}    현재 resize 중인지 여부
+     * @returns {boolean}    현재 resize 중인지 여부
      * @private
      */
     _isResizing: function() {
@@ -12395,7 +13127,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     /**
      * 너비를 계산한다.
      * @param {number} pageX    마우스의 x 좌표
-     * @return {number} x좌표를 기준으로 계산한 width 값
+     * @returns {number} x좌표를 기준으로 계산한 width 값
      * @private
      */
     _calculateWidth: function(pageX) {
@@ -12406,7 +13138,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     /**
      * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
      * @param {number} index 핸들러의 index 값
-     * @return {number} 컬럼 index 값
+     * @returns {number} 컬럼 index 값
      * @private
      */
     _getHandlerColumnIndex: function(index) {
@@ -12473,7 +13205,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7}],49:[function(require,module,exports){
+},{"../../base/view":7}],50:[function(require,module,exports){
 /**
  * @fileoverview 툴바영역 클래스
  * @author NHN Ent. FE Development Team
@@ -12483,13 +13215,14 @@ module.exports = ResizeHandler;
 var View = require('../../base/view');
 
 /**
- *  툴바 영역
- *  @module view/layout/toolbar
+ * 툴바 영역
+ * @module view/layout/toolbar
+ * @extends module:base/view
  */
 var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -12505,7 +13238,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
     /**
      * 랜더링한다.
-     * @return {View.Layout.Toolbar} this object
+     * @returns {View.Layout.Toolbar} this object
      */
     render: function() {
         var toolbarModel = this.toolbarModel;
@@ -12543,7 +13276,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../../base/view":7}],50:[function(require,module,exports){
+},{"../../base/view":7}],51:[function(require,module,exports){
 /**
  * @fileoverview Class for the control panel in the toolbar
  * @author NHN Ent. FE Development Team
@@ -12555,11 +13288,12 @@ var View = require('../../../base/view');
 /**
  * Class for the control panel in the toolbar
  * @module view/layout/toolbar/controlPanel
+ * @extends module:base/view
  */
 var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.setOwnProperties({
@@ -12589,7 +13323,8 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
     /**
      * Click event handler for excel download buttons
-     * @param  {MouseEvent} clickEvent - MouseEvent object
+     * @param  {MouseEvent} mouseEvent - MouseEvent object
+     * @private
      */
     _onClickExcel: function(mouseEvent) {
         var grid = tui.Grid.getInstanceById(this.gridId),
@@ -12610,8 +13345,8 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
     },
 
     /**
-     * 랜더링한다.
-     * @return {View.Layout.Toolbar.ControlPanel} - this object
+     * Renders.
+     * @returns {View.Layout.Toolbar.ControlPanel} - this object
      */
     render: function() {
         var toolbarModel = this.toolbarModel;
@@ -12636,7 +13371,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
 module.exports = ControlPanel;
 
-},{"../../../base/view":7}],51:[function(require,module,exports){
+},{"../../../base/view":7}],52:[function(require,module,exports){
 /**
  * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
@@ -12648,11 +13383,12 @@ var View = require('../../../base/view');
 /**
  * Class for the pagination in the toolbar
  * @module view/layout/toolbar/pagination
+ * @extends module:base/view
  */
 var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.toolbarModel = options.toolbarModel;
@@ -12675,7 +13411,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     /**
      * pagination 을 rendering 한다.
-     * @return {View.Layout.Toolbar.Pagination} This object
+     * @returns {View.Layout.Toolbar.Pagination} This object
      */
     render: function() {
         this._destroyChildren();
@@ -12711,7 +13447,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
 module.exports = Pagination;
 
-},{"../../../base/view":7}],52:[function(require,module,exports){
+},{"../../../base/view":7}],53:[function(require,module,exports){
 /**
  * @fileoverview Class for the resize handler of the toolbar
  * @author NHN Ent. FE Development Team
@@ -12723,11 +13459,12 @@ var View = require('../../../base/view');
 /**
  * Class for the resize handler of the toolbar
  * @module view/layout/toolbar/resizeHandler
+ * @extends module:base/view
  */
 var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandler.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
@@ -12772,7 +13509,6 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     _onMouseDown: function(mouseDownEvent) {
         mouseDownEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
-        this.dimensionModel.refreshLayout();
         this._attachMouseEvent();
     },
 
@@ -12813,7 +13549,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     /**
      * selection start 이벤트 핸들러
      * @param {Event} event - Event object
-     * @return {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
+     * @returns {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
      * @private
      */
     _onSelectStart: function(event) {
@@ -12823,7 +13559,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
     /**
      * 랜더링한다.
-     * @return {ResizeHandler} this object
+     * @returns {ResizeHandler} this object
      */
     render: function() {
         this._destroyChildren();
@@ -12844,7 +13580,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
 module.exports = ResizeHandler;
 
-},{"../../../base/view":7}],53:[function(require,module,exports){
+},{"../../../base/view":7}],54:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
@@ -12856,14 +13592,14 @@ var View = require('../base/view');
 /**
  * RowList View
  * @module view/rowList
+ * @extends module:baes/view
  */
 var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 초기화 함수
      * @constructs
-     * @extends module:baes/view
      * @param {object} options 옵션 객체
-     *      @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
+     * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
         var focusModel = options.focusModel,
@@ -12882,7 +13618,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             sortOptions: null,
             renderedRowKeys: null
         });
-        this._focusClipboardDebounced = _.debounce(this._focusClipboard, 10);
 
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(focusModel, 'select', this._onSelect)
@@ -12893,6 +13628,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(renderModel, 'rowListChanged', this.render);
     },
 
+    /**
+     * Returns the list of column models in it's own side
+     * @returns {Array} - Column model list
+     */
     _getColumnModelList: function() {
         return this.columnModel.getVisibleColumnModelList(this.whichSide, true);
     },
@@ -12952,7 +13691,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 행데이터 목록을 받아, HTML 문자열을 생성해서 반환한다.
      * @param {Model.Row[]} rows - 행데이터 목록
-     * @return {string} 생성된 HTML 문자열
+     * @returns {string} 생성된 HTML 문자열
      */
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter(),
@@ -12964,20 +13703,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * timeout을 사용해 일정 시간이 지난 후 포커스를 Clipboard로 옮긴다.
-     */
-    _focusClipboard: function() {
-        try {
-            this.focusModel.focusClipboard();
-        } catch (e) {
-            // prevent Error from running test cases (caused by setTimeout in _.debounce())
-        }
-    },
-
-    /**
      * tr 엘리먼트를 찾아서 반환한다.
      * @param {(string|number)} rowKey rowKey 대상의 키값
-     * @return {jquery} 조회한 tr jquery 엘리먼트
+     * @returns {jquery} 조회한 tr jquery 엘리먼트
      * @private
      */
     _getRowElement: function(rowKey) {
@@ -12986,7 +13714,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
     /**
      * focusModel 의 select 이벤트 발생시 이벤트 핸들러
-     * @param {(Number|String)} rowKey 대상의 키값
+     * @param {Object} eventData 대상의 키값
      * @private
      */
     _onSelect: function(eventData) {
@@ -13074,7 +13802,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
      * 랜더링한다.
      * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
-     * @return {View.RowList} this 객체
+     * @returns {View.RowList} this 객체
      */
     render: function(isModelChanged) {
         var rowKeys = this.collection.pluck('rowKey'),
@@ -13097,7 +13825,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         }
 
         this.renderedRowKeys = rowKeys;
-        this._focusClipboardDebounced();
+        this.focusModel.focusClipboard();
 
         return this;
     },
@@ -13123,7 +13851,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7}],54:[function(require,module,exports){
+},{"../base/view":7}],55:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
@@ -13138,13 +13866,13 @@ var CELL_BORDER_WIDTH = 1;
 /**
  * Class for the selection layer
  * @module view/selectionLayer
+ * @extends module:base/view
  */
 var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
      * @param {object} options Options
-     *      @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
+     * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
      */
     initialize: function(options) {
         this.setOwnProperties({
@@ -13184,7 +13912,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * Returns relative column range based on 'this.whichSide'
      * @private
      * @param {array} columnRange - Column range indexes. [start, end]
-     * @return {array} - Relative column range indexes. [start, end]
+     * @returns {array} - Relative column range indexes. [start, end]
      */
     _getOwnSideColumnRange: function(columnRange) {
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(),
@@ -13211,7 +13939,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * Returns the object containing 'top' and 'height' css value.
      * @private
      * @param  {array} rowRange - Row range indexes. [start, end]
-     * @return {{top: string, height: string}} - css values
+     * @returns {{top: string, height: string}} - css values
      */
     _getVerticalStyles: function(rowRange) {
         var rowHeight = this.dimensionModel.get('rowHeight'),
@@ -13228,7 +13956,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * Returns the object containing 'left' and 'width' css value.
      * @private
      * @param  {array} columnRange - Column range indexes. [start, end]
-     * @return {{left: string, width: string}} - css values
+     * @returns {{left: string, width: string}} - css values
      */
     _getHorizontalStyles: function(columnRange) {
         var columnWidthList = this.columnWidthList,
@@ -13262,7 +13990,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
     /**
      * Render.
-     * @return {SelectionLayer} this object
+     * @returns {SelectionLayer} this object
      */
     render: function() {
         var range = this.selectionModel.get('range'),
@@ -13287,7 +14015,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
 module.exports = SelectionLayer;
 
-},{"../base/view":7,"../common/util":10}],55:[function(require,module,exports){
+},{"../base/view":7,"../common/util":10}],56:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -13300,11 +14028,12 @@ var renderStateMap = require('../common/constMap').renderState;
 /**
  * Layer class that represents the state of rendering phase.
  * @module view/stateLayer
+ * @extends module:base/view
  */
 var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     /**
      * @constructs
-     * @extends module:base/view
+     * @param {Object} options - Options
      */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
@@ -13327,7 +14056,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
 
     /**
      * Render
-     * @return {object} This object
+     * @returns {object} This object
      */
     render: function() {
         var renderState = this.renderModel.get('state');
@@ -13347,7 +14076,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     /**
      * Returns the message based on the renderState value
      * @param  {string} renderState - Renderer.state value
-     * @return {string} - Message
+     * @returns {string} - Message
      */
     _getMessage: function(renderState) {
         switch (renderState) {
