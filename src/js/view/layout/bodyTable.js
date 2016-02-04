@@ -36,10 +36,9 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
         // To prevent issue of appearing vertical scrollbar when dummy rows exists
-        if (this.whichSide === 'R') {
-            this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
-            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
-        }
+        this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
+
         this._attachAllTableEventHandlers();
     },
 
@@ -69,7 +68,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
         // to solve the overflow issue in IE7
         // (don't automatically expand to child's width when overflow:hidden)
-        if (this.whichSide === 'R' && util.isBrowserIE7()) {
+        if (util.isBrowserIE7()) {
             this.$el.width(totalWidth + CELL_BORDER_WIDTH); // addition for last cell
         }
     },
@@ -129,10 +128,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this._renderChildren();
 
         // To prevent issue of appearing vertical scrollbar when dummy rows exists
-        if (this.whichSide === 'R') {
-            this._resetHeight();
-            this._resetOverflow();
-        }
+        this._resetHeight();
+        this._resetOverflow();
         return this;
     },
 
