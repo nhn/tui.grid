@@ -94,7 +94,7 @@ describe('RowData', function() {
 
             it('containing \'required\' if columnModel.required is true', function() {
                 columnModel.set('columnModelList', [
-                    {columnName: 'c1', required: true}
+                    {columnName: 'c1', isRequired: true}
                 ]);
                 expect(row.getClassNameList('c1')).toContain('required');
             });
@@ -115,7 +115,7 @@ describe('RowData', function() {
         beforeEach(function() {
             columnModel = new ColumnModel({
                 columnModelList: [
-                    {columnName: 'c1', required: true}
+                    {columnName: 'c1', isRequired: true}
                 ]
             });
             rowList = new RowListData(null, {

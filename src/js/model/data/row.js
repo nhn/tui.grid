@@ -95,7 +95,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             value = this.get(columnName),
             errorCode = '';
 
-        if (columnModel.required && util.isBlank(value)) {
+        if (columnModel.isRequired && util.isBlank(value)) {
             errorCode = VALID_ERR_REQUIRED;
         }
         return errorCode;
@@ -218,7 +218,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.isEllipsis) {
             classNameList.push('ellipsis');
         }
-        if (columnModel.required) {
+        if (columnModel.isRequired) {
             classNameList.push('required');
         }
         return this._makeUniqueStringArray(classNameList);

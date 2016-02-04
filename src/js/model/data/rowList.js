@@ -1031,7 +1031,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var errorRows = [],
             requiredColumnNames = _.chain(this.columnModel.getVisibleColumnModelList())
                 .filter(function(columnModel) {
-                    return columnModel.required === true;
+                    return columnModel.isRequired === true;
                 })
                 .pluck('columnName')
                 .value();
