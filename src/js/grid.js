@@ -875,9 +875,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Sorts all rows by the specified column.
      * @api
      * @param {string} columnName - The name of the column to be used to compare the rows
+     * @param {boolean} [isAscending] - Whether the sort order is ascending.
+     *        If not specified, use the negative value of the current order.
      */
-    sort: function(columnName) {
-        this.modelManager.dataModel.sortByField(columnName);
+    sort: function(columnName, isAscending) {
+        this.modelManager.dataModel.sortByField(columnName, isAscending);
     },
 
     /**
