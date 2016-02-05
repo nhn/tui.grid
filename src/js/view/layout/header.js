@@ -50,35 +50,39 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * 전체 template
      */
-    template: _.template('' +
-    '    <table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
-    '        <colgroup><%=colGroup%></colgroup>' +
-    '        <tbody><%=tBody%></tbody>' +
-    '    </table>'),
+    template: _.template(
+        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+            '<colgroup><%=colGroup%></colgroup>' +
+            '<tbody><%=tBody%></tbody>' +
+        '</table>'
+    ),
 
     /**
      * <th> 템플릿
      */
-    templateHeader: _.template('' +
-    '<th columnname="<%=columnName%>" ' +
-    'height="<%=height%>" ' +
-    '<%if(colspan > 0) {%>' +
-    'colspan=<%=colspan%> ' +
-    '<%}%>' +
-    '<%if(rowspan > 0) {%>' +
-    'rowspan=<%=rowspan%> ' +
-    '<%}%>' +
-    '><%=title%><%=btnSort%></th>' +
-    ''),
+    templateHeader: _.template(
+        '<th columnname="<%=columnName%>" ' +
+            'class="<%=className%>" ' +
+            'height="<%=height%>" ' +
+            '<%if(colspan > 0) {%>' +
+               'colspan=<%=colspan%> ' +
+            '<%}%>' +
+            '<%if(rowspan > 0) {%>' +
+                'rowspan=<%=rowspan%> ' +
+            '<%}%>' +
+        '>' +
+        '<%=title%><%=btnSort%>' +
+        '</th>'
+    ),
 
     /**
      * <col> 템플릿
      */
-    templateCol: _.template('' +
-    '<col ' +
-    'columnname="<%=columnName%>" ' +
-    'style="width:<%=width%>px">' +
-    ''),
+    templateCol: _.template(
+        '<col ' +
+            'columnname="<%=columnName%>" ' +
+            'style="width:<%=width%>px">'
+    ),
 
     /**
      * 정렬 버튼을 위한 HTML 마크업
@@ -453,6 +457,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 rowMarkupList[j] = rowMarkupList[j] || [];
                 rowMarkupList[j].push(this.templateHeader({
                     columnName: columnName,
+                    className: columnModel.isRequired ? 'required' : '',
                     height: height,
                     colspan: colSpanList[j],
                     rowspan: rowSpan,
