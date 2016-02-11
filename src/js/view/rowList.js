@@ -37,6 +37,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         });
 
         this.listenTo(this.collection, 'change', this._onModelChange)
+            .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'select', this._onSelect)
             .listenTo(focusModel, 'unselect', this._onUnselect)
             .listenTo(focusModel, 'focus', this._onFocus)
@@ -254,7 +255,19 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
-        this.painterManager.getRowPainter().onModelChange(model, $tr);
+        this.painterManager.getRowPainter().onModelChange(model.changed, $tr);
+    },
+
+    /**
+     * Event handler for 'restore' event on module:model/row
+     * @param {Object} cellData - CellData
+     * @private
+     */
+    _onModelRestore: function(cellData) {
+        var $td = this.dataModel.getElement(cellData.rowKey, cellData.columnName),
+            editType = this.columnModel.getEditType(cellData.columnName);
+
+        this.painterManager.getCellPainter(editType).redraw(cellData, $td);
     }
 }, {
     /**

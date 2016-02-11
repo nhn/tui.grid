@@ -156,14 +156,11 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
             changeEvent = this._createChangeCallbackEvent(columnName);
 
-            //beforeChangeCallback 의 결과값이 false 라면 restore 후 false 를 반환한다.
             if (columnModel.editOption.changeBeforeCallback(changeEvent) === false) {
                 obj = {};
                 obj[columnName] = this.previous(columnName);
                 this.set(obj);
-                this.trigger('restore', {
-                    changed: obj
-                });
+                this.trigger('restore', columnName);
                 return false;
             }
         }

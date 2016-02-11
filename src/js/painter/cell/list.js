@@ -76,6 +76,15 @@ var ListCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/list.pro
     getOptionList: function(cellData) {
         var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
         return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
+    },
+
+    /**
+     * Redraw cell (TD) element
+     * @override
+     */
+    redraw: function() {
+        Cell.prototype.redraw.apply(this, arguments);
+        this.grid.focusModel.focusClipboard();
     }
 });
 

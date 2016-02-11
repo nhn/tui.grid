@@ -36,11 +36,11 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
     /**
      * model 변경 시 이벤트 핸들러
-     * @param {object} model - 변화가 일어난 모델 인스턴스
+     * @param {object} changed - 변화가 일어난 모델 인스턴스
      * @param {jQuery} $tr - jquery object for tr element
      */
-    onModelChange: function(model, $tr) {
-        _.each(model.changed, function(cellData, columnName) {
+    onModelChange: function(changed, $tr) {
+        _.each(changed, function(cellData, columnName) {
             var editType, cellPainter;
 
             if (columnName !== '_extraData') {

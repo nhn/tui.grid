@@ -24,7 +24,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             rowData = rowListData.get(rowKey);
 
         if (rowData) {
-            this.listenTo(rowData, 'change restore', this._onDataModelChange);
+            this.listenTo(rowData, 'change', this._onDataModelChange);
+            this.listenTo(rowData, 'restore', this._onDataModelRestore);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
             this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
 
@@ -35,7 +36,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     idAttribute: 'rowKey',
 
     /**
-     * Event handler for 'change restore' event on rowData model
+     * Event handler for 'change' event on module:data/row
      * @param {Object} model - RowData model on which event occurred
      * @private
      */
@@ -45,6 +46,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 value: value
             });
         }, this);
+    },
+
+    /**
+     * Event handler for 'restore' event on module:data/row
+     * @param {String} columnName - columnName
+     * @private
+     */
+    _onDataModelRestore: function(columnName) {
+        var cellData = this.get(columnName);
+        if (cellData) {
+            this.trigger('restore', cellData);
+        }
     },
 
     /**
@@ -217,10 +230,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }, this);
 
         if (changed.length) {
-            data['changed'] = changed;
+            data.changed = changed;
             this.set(columnName, data);
             if (isValueChanged) {
-                //value 가 변경되었을 경우 relation 을 수행한다.
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
