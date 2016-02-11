@@ -11,7 +11,7 @@ var Cell = require('../cell');
  * @module painter/cell/list
  * @extends module:painter/cell
  */
-var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
+var ListCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/list.prototype */{
     /**
      * @constructs
      */

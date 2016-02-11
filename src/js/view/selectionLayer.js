@@ -93,9 +93,9 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - (CELL_BORDER_WIDTH * 2);
 
         return {
-            top : top + 'px',
+            top: top + 'px',
             height: height + 'px'
-        }
+        };
     },
 
     /**
@@ -131,7 +131,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         return {
             left: left + 'px',
             width: width + 'px'
-        }
+        };
     },
 
     /**

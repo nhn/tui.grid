@@ -4,9 +4,6 @@
  */
 'use strict';
 
-var Model = require('../../base/model');
-var util = require('../../common/util');
-
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
@@ -63,12 +60,12 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
             case 'DISABLED':
                 result.isDisabled = true;
                 // intentional no break
-            case 'DISABLED_CHECK':
+            case 'DISABLED_CHECK': // eslint-disable-line no-fallthrough
                 result.isDisabledCheck = true;
                 break;
             case 'CHECKED':
                 result.isChecked = true;
-            default: // do nothing
+            default: // eslint-disable-line no-fallthrough
         }
         return result;
     },

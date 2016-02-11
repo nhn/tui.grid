@@ -2,7 +2,7 @@
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
  */
- 'use strict';
+'use strict';
 
 var View = require('../base/view');
 

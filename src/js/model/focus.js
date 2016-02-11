@@ -94,7 +94,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     _isCurrentRow: function(rowKey) {
         // compare with == operator to avoid strict comparision
         // (rowkey can be a number or a string)
-        return this.get('rowKey') == rowKey;
+        return this.get('rowKey') == rowKey; // eslint-disable-line eqeqeq
     },
 
     /**
@@ -191,8 +191,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        var cellPainter;
-
         this.focus(rowKey, columnName, isScrollable);
         rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
         if (this.dataModel.get(rowKey).isEditable(columnName)) {

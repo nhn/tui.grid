@@ -46,7 +46,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     className: 'table_container',
 
-    template: _.template('' +
+    template: _.template(
         '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
         '   <colgroup><%=colGroup%></colgroup>' +
         '   <tbody><%=tbody%></tbody>' +

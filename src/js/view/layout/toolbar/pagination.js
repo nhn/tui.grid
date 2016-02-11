@@ -24,7 +24,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     className: 'grid_pagination',
 
-    template: _.template('' +
+    template: _.template(
         '<a href="#" class="pre_end" title="First page">First</a>' +
         '<a href="#" class="pre" title="Previous page">Prev</a> ' +
         '<a href="#" class="next" title="Next page">Next</a>' +
@@ -62,7 +62,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
                 isCenterAlign: true,
                 moveUnit: 'page',
                 $preOff: this.$el.find('.pre_off'),
-                $pre_endOff: this.$el.find('.pre_end_off'),
+                $pre_endOff: this.$el.find('.pre_end_off'), // eslint-disable-line camelcase
                 $nextOff: this.$el.find('.next_off'),
                 $lastOff: this.$el.find('.next_end_off')
             }, this.$el);

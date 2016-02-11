@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var Model = require('../base/model'),
-    util = require('../common/util');
+var Model = require('../base/model');
+
 
 /**
  * Toolbar Model
@@ -13,14 +13,6 @@ var Model = require('../base/model'),
  * @extends module:base/model
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
-    /**
-     * @constructs
-     * @param  {object} options - Options
-     */
-    initialize: function(options) {
-        Model.prototype.initialize.apply(this, arguments);
-    },
-
     defaults: {
         // set by user
         hasControlPanel: false,

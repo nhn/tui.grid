@@ -18,7 +18,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
-    initialize: function(attributes, options) {
+    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
         var rowKey = attributes && attributes['rowKey'],
             rowListData = this.collection.dataModel,
             rowData = rowListData.get(rowKey);
@@ -103,6 +103,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }
 
         _.each(columnNames, function(columnName) {
+            /*eslint-disable consistent-this */
             var cellData = this.get(columnName),
                 rowModel = this,
                 isEditable, isDisabled;
@@ -122,6 +123,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     rowModel.setCell(columnName, param);
                 }
             }
+            /*eslint-enable consistent-this */
         }, this);
     },
 
@@ -151,7 +153,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         if (_.isUndefined(rowKey)) {
             return data;
         }
-        row = dataModel.get(rowKey),
+        row = dataModel.get(rowKey);
         rowState = row.getRowState();
 
         _.each(data, function(value, columnName) {

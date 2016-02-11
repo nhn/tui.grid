@@ -13,9 +13,6 @@ var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
 
-var util = require('../common/util');
-var renderStateMap = require('../common/constMap').renderState;
-
 var defaultOptions = {
     columnFixCount: 0,
     columnModelList: [],
@@ -188,7 +185,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel
         };
-        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel
+        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
         return new Constructor(attrs, renderOptions);
     },

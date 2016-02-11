@@ -11,13 +11,7 @@ var common = require('./common');
  * @module base/model
  * @mixes module:base/common
  */
-var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{
-    /**
-     * @constructs
-     * @param {Object} attributes Attributes
-     */
-    initialize: function(attributes) {}
-});
+var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{});
 
 _.assign(Model.prototype, common);
 

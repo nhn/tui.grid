@@ -92,7 +92,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
 
     initialize: function(options) {
-        var defaultOptions, options, pagination;
+        var defaultOptions;
 
         defaultOptions = {
             initialRequest: true,
@@ -275,7 +275,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
             this._ajax(params);
         } else {
-            Backbone.sync.call(Backbone, method, model, options);
+            Backbone.sync(Backbone, method, model, options);
         }
     },
 
@@ -454,7 +454,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _readDataAt: function(page, isUsingRequestedData, sortOptions) {
         var data;
 
-        isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
+        isUsingRequestedData = _.isUndefined(isUsingRequestedData) ? true : isUsingRequestedData;
         data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
         data.page = page;
         data.perPage = this.perPage;
@@ -512,7 +512,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         }
 
         paramStr = $.param(data);
-        window.location = url + '?'+ paramStr;
+        window.location = url + '?' + paramStr;
     },
 
     /**

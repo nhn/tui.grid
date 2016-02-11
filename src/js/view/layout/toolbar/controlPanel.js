@@ -25,7 +25,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         });
 
         this.listenTo(this.toolbarModel,
-            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render)
+            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
     },
 
     events: {

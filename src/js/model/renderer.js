@@ -7,7 +7,6 @@
 var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
-var util = require('../common/util');
 
 /**
  * View 에서 Rendering 시 사용할 객체
@@ -52,7 +51,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 this._updateMaxScrollTop);
 
         if (this.get('showDummyRows')) {
-            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows)
+            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
         }
 
         this._updateMaxScrollLeft();
@@ -217,7 +216,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         return {
             lside: columnNames.slice(0, columnFixCount),
             rside: columnNames.slice(columnFixCount)
-        }
+        };
     },
 
     /**
@@ -243,7 +242,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rowNum = this.get('startNumber') + startIndex,
             lsideData = [],
             rsideData = [],
-            rowDataModel, i, len;
+            rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
@@ -381,7 +380,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var collection = this._getCollectionByColumnName(columnName),
             row = collection.get(rowKey);
         if (row) {
-           return row.get(columnName);
+            return row.get(columnName);
         }
     },
 

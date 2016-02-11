@@ -12,7 +12,7 @@ var util = require('../../common/util');
  * @module painter/cell/button
  * @extends module:painter/cell/list
  */
-var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/button.prototype */{
+var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
      */
@@ -122,7 +122,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
         var list = this.getOptionList(cellData),
             columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
             value = cellData.value,
-            checkedList = ('' + value).split(','),
+            checkedList = String(value).split(','),
             checkedMap = {},
             html = this._getConvertedHtml(value, cellData),
             name = util.getUniqueKey(),
@@ -165,7 +165,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
      */
     setElementAttribute: function(cellData, $td) {
         var value = cellData.value,
-            checkedList = ('' + value).split(',');
+            checkedList = String(value).split(',');
 
         $td.find('input:checked').prop('checked', false);
 

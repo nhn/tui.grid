@@ -11,7 +11,7 @@ var NormalCell = require('./normal');
  * @module painter/cell/number
  * @extends module:painter/cell/normal
  */
-var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/number.prototype */{
+var NumberCell = tui.util.defineClass(NormalCell, /**@lends module:painter/cell/number.prototype */{
     /**
      * @constructs
      */

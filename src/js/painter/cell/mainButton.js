@@ -11,7 +11,7 @@ var Cell = require('../cell');
  * @module painter/cell/mainButton
  * @extends module:painter/cell
  */
-var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainButton.prototype */{
+var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/mainButton.prototype */{
     /**
      * @constructs
      */

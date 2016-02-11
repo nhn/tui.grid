@@ -12,7 +12,7 @@ var TextCell = require('./text');
  * @module painter/cell/text-password
  * @extends module:painter/cell/text
  */
-var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-password.prototype */{
+var PasswordCell = tui.util.defineClass(TextCell, /**@lends module:painter/cell/text-password.prototype */{
     /**
      * @construct
      * @param {object} attributes Attributes

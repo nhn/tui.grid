@@ -14,7 +14,7 @@ var formUtil = require('../../common/formUtil');
  * @module painter/cell/text-convertible
  * @extends module:painter/cell/text
  */
-var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-convertible.prototype */{
+var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/cell/text-convertible.prototype */{
     /**
      * @constructs
      */

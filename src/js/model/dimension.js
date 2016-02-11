@@ -3,7 +3,6 @@
  * @author NHN Ent. FE Development Team
  */
 'use strict';
-
 var Model = require('../base/model');
 var util = require('../common/util');
 var dimensionConstMap = require('../common/constMap').dimension;
@@ -610,7 +609,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         return {
             x: overflowX,
             y: overflowY
-        }
+        };
     },
 
     /**

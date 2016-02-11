@@ -13,13 +13,6 @@ var common = require('./common');
  */
 var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
     /**
-     * @constructs
-     * @param {Array.<Object>} models - Models
-     * @param {Object} options - Options
-     */
-    initialize: function(models, options) {},
-
-    /**
      * collection 내 model 들의 event listener 를 제거하고 메모리에서 해제한다.
      * @returns {object} this object
      */

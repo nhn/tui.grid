@@ -41,7 +41,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         'click .resize_handle': '_onClick'
     },
 
-    template: _.template('' +
+    template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
         'columnname="<%=columnName%>" ' +
         'class="resize_handle' +

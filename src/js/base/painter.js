@@ -16,7 +16,7 @@ var common = require('./common');
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     /**
      * @constructs
-     * @param {Object} attrs - Attributes 
+     * @param {Object} attrs - Attributes
      */
     init: function(attrs) {
         var grid = attrs && attrs.grid || this.collection && this.collection.grid || null;

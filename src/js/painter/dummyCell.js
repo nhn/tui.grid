@@ -5,7 +5,6 @@
 'use strict';
 
 var Painter = require('../base/painter');
-var util = require('../common/util');
 
 /**
  * Dummy Cell Painter

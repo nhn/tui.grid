@@ -95,9 +95,9 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             counts;
 
         if (lastRow) {
-             counts = _.pluck(lastRow.getRowSpanData(), 'count');
-             counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
-             result = _.max(counts);
+            counts = _.pluck(lastRow.getRowSpanData(), 'count');
+            counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
+            result = _.max(counts);
         }
         return result;
     },

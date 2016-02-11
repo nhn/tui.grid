@@ -256,8 +256,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var $tr = this._getRowElement(model.get('rowKey'));
         this.painterManager.getRowPainter().onModelChange(model, $tr);
     }
-},
-{
+}, {
     /**
      * tbody 요소의 innerHTML이 읽기전용인지 여부
      * @memberof RowList

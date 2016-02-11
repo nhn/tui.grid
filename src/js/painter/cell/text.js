@@ -13,7 +13,7 @@ var formUtil = require('../../common/formUtil');
  * @module painter/cell/text
  * @extends module:painter/cell
  */
-var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
+var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
      * @param {object} attributes Attributes

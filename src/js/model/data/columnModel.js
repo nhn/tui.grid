@@ -94,7 +94,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             numberColumn.isHidden = true;
         }
 
-       this._extendColumnList(numberColumn, metaColumnModelList);
+        this._extendColumnList(numberColumn, metaColumnModelList);
     },
 
     /**

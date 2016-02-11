@@ -135,7 +135,7 @@ var util = {
         if (_.isString(target)) {
             return !target.length;
         }
-        return target === undefined || target === null;
+        return _.isUndefined(target) || _.isNull(target);
     },
 
     /**
@@ -234,7 +234,7 @@ var util = {
         if (type === 'string') {
             return value.toString();
         } else if (type === 'number') {
-            return +value;
+            return Number(value);
         }
         return value;
     },

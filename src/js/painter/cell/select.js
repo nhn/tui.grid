@@ -12,7 +12,7 @@ var util = require('../../common/util');
  * @module painter/cell/select
  * @extends module:painter/cell/list
  */
-var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/select.prototype */{
+var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/select.prototype */{
     /**
      * @constructs
      */
@@ -115,19 +115,19 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
         //@todo html !== null인경우 tc부족
         if (tui.util.isNull(html)) {
-           _.each(list, function(item) {
-               optionsHtml += this.optionTemplate({
-                   value: item.value,
-                   cellDataValue: cellData.value,
-                   text: item.text
-               });
-           }, this);
+            _.each(list, function(item) {
+                optionsHtml += this.optionTemplate({
+                    value: item.value,
+                    cellDataValue: cellData.value,
+                    text: item.text
+                });
+            }, this);
 
-           html = this.contentTemplate({
-               name: util.getUniqueKey(),
-               isDisabled: isDisabled,
-               options: optionsHtml
-           });
+            html = this.contentTemplate({
+                name: util.getUniqueKey(),
+                isDisabled: isDisabled,
+                options: optionsHtml
+            });
         }
         return html;
     },

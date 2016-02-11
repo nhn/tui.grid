@@ -42,4 +42,4 @@ module.exports = {
         CELL_BORDER_WIDTH: 1,
         TABLE_BORDER_WIDTH: 1
     }
-}
+};

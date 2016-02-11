@@ -158,10 +158,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Event handler for blur event on input element.
-     * @param {MouseEvent} event - Mousedown event
      * @private
      */
-    _onBlurInput: function(event) {
+    _onBlurInput: function() {
         var focusModel = this.focusModel;
         _.defer(function() {
             focusModel.refreshState();

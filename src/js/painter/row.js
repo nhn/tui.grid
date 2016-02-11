@@ -13,7 +13,7 @@ var util = require('../common/util');
  * @module painter/row
  * @extends module:base/painter
  */
-var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
+var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prototype */{
     /**
      * @constructs
      * @param {object} options - Options
@@ -26,7 +26,6 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     },
 
     template: _.template(
-        '' +
         '<tr ' +
         'key="<%=key%>" ' +
         'class="<%=className%>" ' +
@@ -145,7 +144,7 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
                 value = -2;
             }
             return value;
-        }())
+        })()
     }
 });
 

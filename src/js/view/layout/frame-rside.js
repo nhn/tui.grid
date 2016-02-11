@@ -70,13 +70,12 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     afterRender: function() {
         var dimensionModel = this.dimensionModel,
             $space, $scrollBorder, $scrollCorner,
-            headerHeight, bodyHeight;
+            headerHeight;
 
         if (!this.dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');
-        bodyHeight = dimensionModel.get('bodyHeight');
 
         // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass('header_space');

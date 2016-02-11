@@ -14,9 +14,8 @@ var common = require('./common');
 var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * @constructs
-     * @param {Object} attributes Attributes
      */
-    initialize: function(attributes) {
+    initialize: function() {
         this._children = [];
     },
 

@@ -126,11 +126,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             rowKey = row && row['rowKey'],
             subCount, childRow, i;
 
-        function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow
+        function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow, require-jsdoc
             var extraData = row['_extraData'];
             return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
         }
-        function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow
+        function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow, require-jsdoc
             var extraData = row['_extraData'];
             extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
             extraData['rowSpanData'][columnName] = rowSpanData;
@@ -181,7 +181,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array}  원본 데이터 리스트 배열.
      */
     getOriginalRowList: function(isClone) {
-        isClone = isClone === undefined ? true : isClone;
+        isClone = _.isUndefined(isClone) ? true : isClone;
         return isClone ? _.clone(this.originalRowList) : this.originalRowList;
     },
 
@@ -616,7 +616,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             };
 
         obj[columnName] = columnValue;
-        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+        isCheckCellState = _.isUndefined(isCheckCellState) ? true : isCheckCellState;
 
         this.forEach(function(row) {
             if (isCheckCellState) {
@@ -753,13 +753,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         rowList = this._formatData(rowData);
 
         _.each(rowList, function(row) {
-            var rowData;
-
-            rowData = new Row(row, {
+            var model = new Row(row, {
                 collection: this,
                 parse: true
             });
-            modelList.push(rowData);
+            modelList.push(model);
         }, this);
 
         return modelList;
@@ -1071,7 +1069,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return {
             row: rowIdx,
             column: columnIdx
-        }
+        };
     },
 
     /**
@@ -1111,8 +1109,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {jQuery} 해당 jQuery Element
      */
     getElement: function(rowKey, columnName) {
-        var rowKey = this.getMainRowKey(rowKey, columnName);
-        return this.domState.getElement(rowKey, columnName);
+        var mainRowKey = this.getMainRowKey(rowKey, columnName);
+        return this.domState.getElement(mainRowKey, columnName);
     }
 });
 

@@ -191,7 +191,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             minMax;
 
         if (!columnIndexes || !columnIndexes.length) {
-            columnIndexes = [index.column]
+            columnIndexes = [index.column];
         }
 
         this._setScrolling(pageX, pageY);
@@ -341,7 +341,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     getValuesToString: function() {
         var range = this.get('range'),
-            columnModelList, rowList, columnNameList, rowValues, result;
+            columnModelList, rowList, columnNameList, rowValues;
 
         columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
         rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);

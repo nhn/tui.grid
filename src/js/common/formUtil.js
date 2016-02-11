@@ -138,7 +138,7 @@ var formUtil = {
         var formElement;
         if ($form && $form.length) {
             if (elementName) {
-                formElement = $form.prop('elements')[elementName + ''];
+                formElement = $form.prop('elements')[String(elementName)];
             } else {
                 formElement = $form.prop('elements');
             }
