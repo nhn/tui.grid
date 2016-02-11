@@ -179,9 +179,9 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
         this._endEdit($td);
         this._validateData(this.getRowKey($td), this.getColumnName($td));
 
-        _.defer(function() {
+        setTimeout(function() {
             focusModel.refreshState();
-        });
+        }, 0);
     },
 
     /**

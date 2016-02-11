@@ -48,9 +48,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _onBlur: function() {
         var focusModel = this.focusModel;
-        _.defer(function() {
+        setTimeout(function() {
             focusModel.refreshState();
-        });
+        }, 0);
     },
 
     /**

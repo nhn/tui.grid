@@ -301,8 +301,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             commonMinWidth = this.get('minimumColumnWidth'),
             widthList = [],
             fixedFlags = [],
-            minWidthList = [],
-            calculate;
+            minWidthList = [];
 
         _.each(columnModelList, function(columnModel) {
             var width = columnModel.width > 0 ? columnModel.width : 0,
@@ -318,13 +317,21 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this._columnWidthFixedFlags = fixedFlags;
         this._minColumnWidthList = minWidthList;
 
-        // note that the calling order of functions is bottom-to-top.
-        calculate = _.compose(
-            this._adjustColumnWidthList,
-            this._applyMinimumColumnWidth,
-            this._fillEmptyColumnWidth
-        );
-        this._setColumnWidthVariables(calculate.call(this, widthList), true);
+        this._setColumnWidthVariables(this._calculateColumnWidth(widthList), true);
+    },
+
+    /**
+     * calculate column width list
+     * @param {Array.<Number>} widthList - widthList
+     * @returns {Array.<Number>}
+     * @private
+     */
+    _calculateColumnWidth: function(widthList) {
+        widthList = this._fillEmptyColumnWidth(widthList);
+        widthList = this._applyMinimumColumnWidth(widthList);
+        widthList = this._adjustColumnWidthList(widthList);
+
+        return widthList;
     },
 
     /**
