@@ -199,7 +199,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     }
 }, {
     // IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
-    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0
+    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0 // eslint-disable-line no-magic-numbers
 });
 
 module.exports = BodyTable;

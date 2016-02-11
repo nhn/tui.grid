@@ -244,7 +244,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var selectionModel = this.selectionModel,
             pageX = event.pageX,
             pageY = event.pageY,
-            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10;
+            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10; // eslint-disable-line no-magic-numbers
 
         if (selectionModel.hasSelection() || isMoved) {
             selectionModel.updateByMousePosition(pageX, pageY);

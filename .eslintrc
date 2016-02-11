@@ -78,7 +78,7 @@
         "no-labels": 2,
         "no-lone-blocks": 2,
         "no-loop-func": 2,
-        "no-magic-numbers": 1,
+        "no-magic-numbers": [1, {"ignore": [-1, 0, 1, 2]}],
         "no-multi-spaces": 2,
         "no-multi-str": 2,
         "no-native-reassign": 2,
@@ -200,7 +200,6 @@
         "wrap-regex": 0,
 
         //only for this project
-        "no-magic-numbers": 0,
         "no-invalid-this": 0,
         "callback-return": 0,
         "dot-notation": 0

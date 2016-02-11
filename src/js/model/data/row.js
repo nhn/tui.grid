@@ -436,7 +436,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         clearTimeout(this._timeoutIdForChanged);
         this._timeoutIdForChanged = setTimeout(_.bind(function() {
             this._timeoutIdForChanged = null;
-        }, this), 10);
+        }, this), 10); // eslint-disable-line no-magic-numbers
         this._lastPublicChanged = publicChanged;
 
         return false;

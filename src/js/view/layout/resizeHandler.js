@@ -184,7 +184,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      */
     _setClickedFlag: function($target) {
         $target.data('isClicked', true);
-        setTimeout($.proxy(this._clearClickedFlag, this, $target), 500);
+
+        // TODO: dblclick 이벤트 사용
+        setTimeout($.proxy(this._clearClickedFlag, this, $target), 500); // eslint-disable-line no-magic-numbers
     },
 
     /**

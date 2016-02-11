@@ -732,7 +732,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 callback(responseData['data'] || {}, status, jqXHR);
             }
         } else {
-            // TODO: 오류 처리 - invalid 셀에 마크하기 등. 스펙아웃 할 수도 있음
             this.trigger('failResponse', eventData);
             if (eventData.isStopped()) {
                 return;

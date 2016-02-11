@@ -921,12 +921,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Function} [callback] callback function
      */
     replaceRowList: function(rowList, isParse, callback) {
+        var MIN_LEN_FOR_WAITING_LAYER = 500;
         if (_.isUndefined(isParse)) {
             isParse = true;
         }
         this.trigger('beforeReset');
 
-        if (rowList && rowList.length > 500) {
+        if (rowList && rowList.length > MIN_LEN_FOR_WAITING_LAYER) { // eslint-disable-line no-magic-numbers
+            // defer to show a waiting-layer if dataset is large
             _.defer(_.bind(this._resetData, this, rowList, isParse, callback));
         } else {
             this._resetData(rowList, isParse, callback);

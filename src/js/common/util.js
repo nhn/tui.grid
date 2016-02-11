@@ -274,7 +274,7 @@ var util = {
      */
     isBrowserIE7: function() {
         var browser = tui.util.browser;
-        return browser.msie && browser.version === 7;
+        return browser.msie && browser.version === 7; // eslint-disable-line no-magic-numbers
     }
 };
 

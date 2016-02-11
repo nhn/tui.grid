@@ -85,7 +85,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     _lock: function() {
         clearTimeout(this.timeoutIdForKeyIn);
         this.isLocked = true;
-        this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10);
+        this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10); // eslint-disable-line no-magic-numbers
     },
 
     /**
