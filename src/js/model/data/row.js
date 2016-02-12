@@ -239,21 +239,22 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
             columnModel = this.columnModel,
-            isDisabled = false,
+            isDisabled = this.collection.isDisabled,
             isEditable = true,
             editType = columnModel.getEditType(columnName),
             rowState, relationResult;
 
-
         relationResult = this.getRelationResult(['isDisabled', 'isEditable'])[columnName];
         rowState = this.getRowState();
 
-        if (columnName === '_button') {
-            isDisabled = rowState.isDisabledCheck;
-        } else {
-            isDisabled = rowState.isDisabled;
+        if (!isDisabled) {
+            if (columnName === '_button') {
+                isDisabled = rowState.isDisabledCheck;
+            } else {
+                isDisabled = rowState.isDisabled;
+            }
+            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
         }
-        isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
 
         if ($.inArray(editType, notEditableTypeList) !== -1) {
             isEditable = false;

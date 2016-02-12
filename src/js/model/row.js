@@ -91,12 +91,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * Event handler for 'disabledChanged' event on dataModel
      */
     _onDataModelDisabledChanged: function() {
-        var columnNames = this._getColumnNameList(),
-            rowState = this.rowData.getRowState();
+        var columnNames = this._getColumnNameList();
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this._isDisabled(columnName, rowState)
+                isDisabled: this.rowData.isDisabled(columnName)
             });
         }, this);
     },
@@ -108,7 +107,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
             columnNames = this._getColumnNameList(),
-            rowState = this.rowData.getRowState(),
+            // rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {
@@ -119,18 +118,17 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             /*eslint-disable consistent-this */
             var cellData = this.get(columnName),
                 rowModel = this,
-                isEditable, isDisabled;
+                cellState;
 
             if (!tui.util.isUndefined(cellData)) {
-                isEditable = this.rowData.isEditable(columnName);
-                isDisabled = this._isDisabled(columnName, rowState);
+                cellState = this.rowData.getCellState(columnName);
                 if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
                     rowModel = this.collection.get(cellData['mainRowKey']);
                 }
                 if (rowModel) {
                     param = {
-                        isDisabled: isDisabled,
-                        isEditable: isEditable,
+                        isDisabled: cellState.isDisabled,
+                        isEditable: cellState.isEditable,
                         className: this.rowData.getClassNameList(columnName).join(' ')
                     };
                     rowModel.setCell(columnName, param);
@@ -162,16 +160,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _formatData: function(data, dataModel, columnModel) {
         var rowKey = data.rowKey,
-            row, rowState;
+            row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
         row = dataModel.get(rowKey);
-        rowState = row.getRowState();
 
         _.each(data, function(value, columnName) {
-            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable());
+            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
+                cellState = row.getCellState(columnName);
 
             if (columnName !== 'rowKey' && columnName !== '_extraData') {
                 data[columnName] = {
@@ -181,8 +179,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     rowSpan: rowSpanData.count,
                     isMainRow: rowSpanData.isMainRow,
                     mainRowKey: rowSpanData.mainRowKey,
-                    isEditable: row.isEditable(columnName),
-                    isDisabled: this._isDisabled(columnName, rowState),
+                    isEditable: cellState.isEditable,
+                    isDisabled: cellState.isDisabled,
                     className: row.getClassNameList(columnName).join(' '),
                     optionList: [], // for list type column (select, checkbox, radio)
                     changed: [] //changed property names
