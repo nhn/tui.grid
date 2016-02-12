@@ -306,13 +306,19 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         _.each(columnModelList, function(columnModel) {
             var width = columnModel.width > 0 ? columnModel.width : 0,
                 minWidth = Math.max(width, commonMinWidth);
+
+            // meta columns are not affected by common 'minimumColumnWidth' value
+            if (this.columnModel.isMetaColumn(columnModel.columnName)) {
+                minWidth = width;
+            }
+
             // If the width is not assigned (not positive number), set it to zero (not applying minimum width)
             // so that #_fillEmptyColumnWidth() can detect which one is empty.
             // After then, minimum width will be applied by #_applyMinimumColumnWidth().
             widthList.push(width ? minWidth : 0);
             minWidthList.push(minWidth);
             fixedFlags.push(!!columnModel.isFixedWidth);
-        });
+        }, this);
 
         this._columnWidthFixedFlags = fixedFlags;
         this._minColumnWidthList = minWidthList;
