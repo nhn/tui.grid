@@ -118,16 +118,10 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
      * </select>
      */
     getContentHtml: function(cellData) {
-        //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
         var columnModel = this.getColumnModel(cellData),
             editOption = columnModel.editOption,
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-            html;
-
-        if (tui.util.isUndefined(value)) {
-            value = '';
-        }
-        html = this._getConvertedHtml(value, cellData);
+            value = cellData.value,
+            html = this._getConvertedHtml(value, cellData);
 
         if (tui.util.isNull(html)) {
             html = this.contentTemplate({

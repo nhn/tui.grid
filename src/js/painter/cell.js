@@ -226,13 +226,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             editOption = columnModel.editOption || {},
-            defaultValue = columnModel.defaultValue,
-            isExisty = tui.util.isExisty,
             beforeContent, afterContent, content;
 
-        if (!isExisty(cellData.value)) {
-            cellData.value = isExisty(defaultValue) ? defaultValue : '';
-        }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
         afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
 

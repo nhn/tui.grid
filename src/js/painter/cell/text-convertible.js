@@ -99,13 +99,8 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * </select>
      */
     getContentHtml: function(cellData) {
-        // FIXME: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
         var columnModel = this.getColumnModel(cellData),
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
-
-        if (tui.util.isUndefined(value)) {
-            value = '';
-        }
+            value = cellData.value;
 
         if (!this._isEditingCell(cellData)) {
             if (tui.util.isFunction(columnModel.formatter)) {

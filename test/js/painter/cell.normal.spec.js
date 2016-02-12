@@ -53,7 +53,8 @@ describe('view.painter.cell.normal', function() {
 
                 html = cellPainter.getContentHtml({
                     rowKey: 0,
-                    columnName: 'c2'
+                    columnName: 'c2',
+                    value: '0-2'
                 });
                 expect(html).toBe('0-2');
             });
@@ -67,7 +68,8 @@ describe('view.painter.cell.normal', function() {
                     rowJSON = grid.dataModel.get(0).toJSON();
                     cellPainter.getContentHtml({
                         rowKey: 0,
-                        columnName: 'c2'
+                        columnName: 'c2',
+                        value: '0-2'
                     });
                     expect(columnModel.formatter).toHaveBeenCalled();
                     expect(columnModel.formatter).toHaveBeenCalledWith('0-2', rowJSON, columnModel);
@@ -82,7 +84,8 @@ describe('view.painter.cell.normal', function() {
                     };
                     html = cellPainter.getContentHtml({
                         rowKey: 0,
-                        columnName: 'c2'
+                        columnName: 'c2',
+                        value: '0-2'
                     });
                     expect(html).toBe('<strong>0-2</strong>');
                 });

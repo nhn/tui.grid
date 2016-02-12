@@ -149,17 +149,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @override
      */
     parse: function(data, options) {
-        return this._formatData(data, options.collection.dataModel);
+        return this._formatData(data, options.collection.dataModel, options.collection.columnModel);
     },
 
     /**
      * Convert the original data to rendering data.
      * @param {Array} data - Original data
      * @param {module:model/data/rowList} dataModel - Data model
+     * @param {module:model/data/columnModel} columnModel - Column model
      * @returns {Array} - Converted data
      * @private
      */
-    _formatData: function(data, dataModel) {
+    _formatData: function(data, dataModel, columnModel) {
         var rowKey = data.rowKey,
             row, rowState;
 
@@ -170,24 +171,13 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         rowState = row.getRowState();
 
         _.each(data, function(value, columnName) {
-            var rowSpanData;
+            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable());
 
             if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                if (dataModel.isRowSpanEnable() &&
-                    data['_extraData'] && data['_extraData']['rowSpanData'] &&
-                    data['_extraData']['rowSpanData'][columnName]) {
-                    rowSpanData = data['_extraData']['rowSpanData'][columnName];
-                } else {
-                    rowSpanData = {
-                        mainRowKey: rowKey,
-                        count: 0,
-                        isMainRow: true
-                    };
-                }
                 data[columnName] = {
                     rowKey: rowKey,
                     columnName: columnName,
-                    value: value,
+                    value: this._getValueToDisplay(columnModel, columnName, value),
                     rowSpan: rowSpanData.count,
                     isMainRow: rowSpanData.isMainRow,
                     mainRowKey: rowSpanData.mainRowKey,
@@ -200,6 +190,53 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             }
         }, this);
         return data;
+    },
+
+    /**
+     * Returns the value to display
+     * @param {module:model/data/columnModel} columnModel - column model
+     * @param {String} columnName - column name
+     * @param {String|Number} value - value
+     * @returns {String}
+     * @private
+     */
+    _getValueToDisplay: function(columnModel, columnName, value) {
+        var isExisty = tui.util.isExisty,
+            isTextType = columnModel.isTextType(columnName),
+            cellColumnModel = columnModel.getColumnModel(columnName),
+            notUseHtmlEntity = cellColumnModel.notUseHtmlEntity,
+            defaultValue = cellColumnModel.defaultValue;
+
+        if (!isExisty(value)) {
+            value = isExisty(defaultValue) ? defaultValue : '';
+        }
+
+        if (isTextType && !notUseHtmlEntity && tui.util.hasEncodableString(value)) {
+            value = tui.util.encodeHTMLEntity(value);
+        }
+
+        return value;
+    },
+
+    /**
+     * Returns the rowspan data.
+     * @param {String} columnName - column name
+     * @param {Object} data - data
+     * @param {Boolean} isRowSpanEnable - Whether the rowspan enable
+     * @returns {Object} rowSpanData
+     * @private
+     */
+    _getRowSpanData: function(columnName, data, isRowSpanEnable) {
+        var rowSpanData = tui.util.pick(data, '_extraData', 'rowSpanData', columnName);
+
+        if (!isRowSpanEnable || !rowSpanData) {
+            rowSpanData = {
+                mainRowKey: data.rowKey,
+                count: 0,
+                isMainRow: true
+            };
+        }
+        return rowSpanData;
     },
 
     /**

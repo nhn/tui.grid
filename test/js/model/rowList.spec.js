@@ -46,6 +46,7 @@ describe('model.rowList', function() {
         });
     });
 
+    /* eslint-disable max-nested-callbacks */
     describe('_formatData()', function() {
         beforeEach(function() {
             columnModel.set({
@@ -81,7 +82,7 @@ describe('model.rowList', function() {
 
             it('sorting 되어있지 않은 경우에는 rowSpan 정보를 잘 저장한다.', function() {
                 var dataList = dataModel.toJSON(),
-                    formatted = model._formatData(dataList[0], dataModel);
+                    formatted = model._formatData(dataList[0], dataModel, columnModel);
 
                 expect(formatted.columnName1).toEqual({
                     rowKey: 0,
@@ -96,7 +97,7 @@ describe('model.rowList', function() {
                     className: '',
                     changed: []
                 });
-                formatted = model._formatData(dataList[1], dataModel);
+                formatted = model._formatData(dataList[1], dataModel, columnModel);
                 expect(formatted.columnName1).toEqual({
                     rowKey: 1,
                     columnName: 'columnName1',
@@ -114,7 +115,7 @@ describe('model.rowList', function() {
 
             it('sorting된 경우 rowSpan 정보를 저장하지 않는다.', function() {
                 var dataList = dataModel.toJSON(),
-                    formatted = model._formatData(dataList[0], dataModel);
+                    formatted = model._formatData(dataList[0], dataModel, columnModel);
                 dataModel.sortByField('columnName1');
                 expect(formatted.columnName1).toEqual({
                     rowKey: 0,
@@ -129,7 +130,7 @@ describe('model.rowList', function() {
                     className: '',
                     changed: []
                 });
-                formatted = model._formatData(dataList[1], dataModel);
+                formatted = model._formatData(dataList[1], dataModel, columnModel);
                 expect(formatted.columnName1).toEqual({
                     rowKey: 1,
                     columnName: 'columnName1',
@@ -149,11 +150,11 @@ describe('model.rowList', function() {
         describe('rowState 에 따른 동작을 확인한다.', function() {
             it('rowState 가 존재하지 않을 때', function() {
                 var rowList = [
-                        {
-                            columnName1: 'columnName1',
-                            columnName2: 'columnName2',
-                            columnName3: 'columnName3'
-                        }
+                    {
+                        columnName1: 'columnName1',
+                        columnName2: 'columnName2',
+                        columnName3: 'columnName3'
+                    }
                     ],
                     model = new RowModel(null, {
                         collection: {
@@ -167,7 +168,7 @@ describe('model.rowList', function() {
                 dataModel.set(rowList, {parse: true});
 
                 dataList = dataModel.toJSON();
-                formatted = model._formatData(dataList[0], dataModel);
+                formatted = model._formatData(dataList[0], dataModel, columnModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -225,14 +226,14 @@ describe('model.rowList', function() {
 
             it('rowState 가 CHECKED 일 때', function() {
                 var rowList = [
-                        {
-                            _extraData: {
-                                rowState: 'CHECKED'
-                            },
-                            columnName1: 'columnName1',
-                            columnName2: 'columnName2',
-                            columnName3: 'columnName3'
-                        }
+                    {
+                        _extraData: {
+                            rowState: 'CHECKED'
+                        },
+                        columnName1: 'columnName1',
+                        columnName2: 'columnName2',
+                        columnName3: 'columnName3'
+                    }
                     ],
                     model,
                     dataList,
@@ -246,7 +247,7 @@ describe('model.rowList', function() {
                     }
                 });
                 dataList = dataModel.toJSON();
-                formatted = model._formatData(dataList[0], dataModel);
+                formatted = model._formatData(dataList[0], dataModel, columnModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -304,14 +305,14 @@ describe('model.rowList', function() {
 
             it('rowState가 DISABLED 일 때', function() {
                 var rowList = [
-                        {
-                            _extraData: {
-                                rowState: 'DISABLED'
-                            },
-                            columnName1: 'columnName1',
-                            columnName2: 'columnName2',
-                            columnName3: 'columnName3'
-                        }
+                    {
+                        _extraData: {
+                            rowState: 'DISABLED'
+                        },
+                        columnName1: 'columnName1',
+                        columnName2: 'columnName2',
+                        columnName3: 'columnName3'
+                    }
                     ],
                     model,
                     dataList,
@@ -325,7 +326,7 @@ describe('model.rowList', function() {
                     }
                 });
                 dataList = dataModel.toJSON();
-                formatted = model._formatData(dataList[0], dataModel);
+                formatted = model._formatData(dataList[0], dataModel, columnModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,
@@ -383,14 +384,14 @@ describe('model.rowList', function() {
 
             it('rowState 가 DISABLED_CHECK 일 때', function() {
                 var rowList = [
-                        {
-                            _extraData: {
-                                rowState: 'DISABLED_CHECK'
-                            },
-                            columnName1: 'columnName1',
-                            columnName2: 'columnName2',
-                            columnName3: 'columnName3'
-                        }
+                    {
+                        _extraData: {
+                            rowState: 'DISABLED_CHECK'
+                        },
+                        columnName1: 'columnName1',
+                        columnName2: 'columnName2',
+                        columnName3: 'columnName3'
+                    }
                     ],
                     model,
                     dataList,
@@ -404,7 +405,7 @@ describe('model.rowList', function() {
                     }
                 });
                 dataList = dataModel.toJSON();
-                formatted = model._formatData(dataList[0], dataModel);
+                formatted = model._formatData(dataList[0], dataModel, columnModel);
 
                 expect(formatted._button).toEqual({
                     rowKey: 0,

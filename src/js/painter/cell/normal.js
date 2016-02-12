@@ -43,13 +43,11 @@ var NormalCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/normal
     getContentHtml: function(cellData) {
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
-            rowKey = cellData.rowKey;
+            rowKey = cellData.rowKey,
+            value = cellData.value;
+
         if (tui.util.isFunction(columnModel.formatter)) {
             value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
-        }
-        if (!tui.util.isExisty(value)) {
-            value = '';
         }
         return value;
     },

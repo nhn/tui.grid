@@ -30,7 +30,8 @@ describe('view.painter.cell.text', function() {
 
             options = {
                 rowKey: 0,
-                columnName: 'c1'
+                columnName: 'c1',
+                value: '0-1'
             };
 
             cellPainter = new TextPainter({
@@ -200,7 +201,8 @@ describe('view.painter.cell.text', function() {
 
             options = {
                 rowKey: 0,
-                columnName: 'c1'
+                columnName: 'c1',
+                value: '0-1'
             };
             cellPainter = new ConvertiblePainter({
                 grid: grid
