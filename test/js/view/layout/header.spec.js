@@ -85,26 +85,13 @@ describe('Header', function() {
             expect(header.$el.height()).toEqual(20);
         });
 
-        it('dimensionModel의 scrollX, scrollY값에 따라 el의 overflow 속성을 설정한다.', function() {
-            header.$el.css({
-                'overflow-x': 'visible',
-                'overflow-y': 'visible'
-            });
+        it('if whichSide is \'R\' and scrollY is false, add \'no_scroll\' class to element', function() {
+            header.whichSide = 'R';
             dimensionModel.set({
-                scrollX: true,
-                scrollY: true
-            });
-            header.render();
-            expect(header.$el.css('overflow-x')).toBe('visible');
-            expect(header.$el.css('overflow-y')).toBe('visible');
-
-            dimensionModel.set({
-                scrollX: false,
                 scrollY: false
             });
             header.render();
-            expect(header.$el.css('overflow-x')).toBe('hidden');
-            expect(header.$el.css('overflow-y')).toBe('hidden');
+            expect(header.$el).toHaveClass('no_scroll');
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
