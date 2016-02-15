@@ -7,7 +7,7 @@
 var Frame = require('./frame');
 
 /**
- * left side 프레임 클래스
+ * Left Side Frame
  * @module view/layout/frame-lside
  * @extends module:view/layout/frame
  */
@@ -25,7 +25,8 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     className: 'lside_area',
 
     /**
-     * columnWidth 변경시 호출될 이벤트 핸들러
+     * Event handler for 'changeColumnWidth' event on module:model/dimension
+     * @override
      * @private
      */
     _onColumnWidthChanged: function() {
@@ -35,13 +36,32 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     },
 
     /**
-     * 랜더링하기 전 수행되는 메서드
+     * To be called at the beginning of the 'render' method.
+     * @override
      */
     beforeRender: function() {
         this.$el.css({
             display: 'block',
             width: this.dimensionModel.get('lsideWidth')
         });
+    },
+
+    /**
+     * To be called at the end of the 'render' method.
+     * @override
+     */
+    afterRender: function() {
+        var dimensionModel = this.dimensionModel,
+            $scrollOverlay;  // overlay DIV to hide scrollbar UI
+
+        if (!dimensionModel.get('scrollY')) {
+            return;
+        }
+
+        $scrollOverlay = $('<div>')
+            .addClass('scrollbar_overlay')
+            .css('bottom', dimensionModel.get('toolbarHeight'));
+        this.$el.append($scrollOverlay);
     }
 });
 

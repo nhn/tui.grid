@@ -378,12 +378,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     render: function() {
         this._destroyChildren();
 
-        if (!this.dimensionModel.get('scrollX')) {
-            this.$el.css('overflow-x', 'hidden');
-        }
-
-        if (!this.dimensionModel.get('scrollY')) {
-            this.$el.css('overflow-y', 'hidden');
+        if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
+            this.$el.addClass('no_scroll');
         }
 
         this.$el.css({

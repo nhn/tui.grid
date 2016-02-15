@@ -43,6 +43,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
     /**
      * Resets the height of a vertical scroll-bar border
+     * @private
      */
     _resetScrollBorderHeight: function() {
         var dimensionModel = this.dimensionModel,
@@ -52,7 +53,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     },
 
     /**
-     * To be called before rendering.
+     * To be called at the beginning of the 'render' method.
+     * @override
      */
     beforeRender: function() {
         var dimensionModel = this.dimensionModel;
@@ -65,14 +67,15 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     },
 
     /**
-     * To be called after rendering.
+     * To be called at the end of the 'render' method.
+     * @override
      */
     afterRender: function() {
         var dimensionModel = this.dimensionModel,
             $space, $scrollBorder, $scrollCorner,
             headerHeight;
 
-        if (!this.dimensionModel.get('scrollY')) {
+        if (!dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');

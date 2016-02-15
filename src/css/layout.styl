@@ -24,14 +24,18 @@ $selection-layer =
         overflow scroll
         position relative
         margin-right -17px
-        *padding-right 17px
-
-        table
-            *margin-right -17px
 
         .selection_layer
             {$selection-layer}
             left 1px
+
+    .scrollbar_overlay
+        position absolute
+        bottom 0
+        left 0
+        right 0
+        height 16px
+        background-color #f5f5f5
 
 .rside_area
     display none
@@ -42,6 +46,8 @@ $selection-layer =
         position relative
         margin-right 17px
         overflow hidden
+        &.no_scroll
+            margin-right 0
 
     .data
         position relative
