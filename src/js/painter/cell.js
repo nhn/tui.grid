@@ -302,7 +302,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     redraw: function(cellData, $td) {
         var attributes = {
-            class: this._getClassNameList(cellData).join(' ')
+            'class': this._getClassNameList(cellData).join(' ') // 'class' instead of class for IE7
         };
         if (cellData.rowSpan) {
             attributes['rowSpan'] = cellData.rowSpan;
