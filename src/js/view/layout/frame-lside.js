@@ -54,7 +54,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         var dimensionModel = this.dimensionModel,
             $scrollOverlay;  // overlay DIV to hide scrollbar UI
 
-        if (!dimensionModel.get('scrollY')) {
+        if (!dimensionModel.get('scrollX')) {
             return;
         }
 
