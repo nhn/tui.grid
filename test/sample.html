@@ -27,28 +27,46 @@
 var grid = new tui.Grid({
     el: $('#grid'),
 	selectType: 'checkbox',
+	columnFixCount: 1,
+	headerHeight: 30,
 	displayRowCount: 10,
+	minimumColumnWidth: 100,
     columnModelList: [
+		{
+			columnName: '_button',
+			width: 30
+		},
 		{
 			title: 'c1',
             columnName: 'c1',
+			isRequired: true,
             editOption: {
-                type: 'text-convertible'
+				type: 'text-convertible'
 			}
         },
 		{
 			title: 'c2',
 			isSortable: true,
+			defaultValue: 2,
             columnName: 'c2',
             editOption: {
-                type: 'text'
+                type: 'select',
+				list: [
+					{text:1, value:1},
+					{text:2, value:2}
+				]
 			}
         },
 		{
 			title: 'c3',
             columnName: 'c3',
+			defaultValue: 2,
             editOption: {
-				type: 'text'
+                type: 'checkbox',
+				list: [
+					{text:1, value:1},
+					{text:2, value:2}
+				]
 			}
         }
 	]
@@ -56,35 +74,28 @@ var grid = new tui.Grid({
 
 var rowList = [];
 
+(function() {
+	_.times(5, function(number) {
+	    rowList.push({
+			c1: 1
+		});
+	})
+})();
 
-// (function() {
-// 	_.times(5, function(number) {
-// 	    rowList.push({
-// 			c1: number + '0',
-// 			c2: number + '1',
-// 			c3: number + '2',
-// 			c4: number + '3'
-// 		});
-// 	})
-// })();
-//
-// rowList[4]._extraData = {
-// 	rowSpan: {c1: 1, c2: 1}
-// }
-// grid.setRowList(rowList);
-grid.use('Net', {
-	perPage: 10,
-	api: {
-		readData: '/sample',
-		downloadExcel: '/download/excel',
-		downloadExcelAll: '/download/excelAll',
-		// updateData: '/update'
-	}
-});
-var net = grid.getAddOn('Net');
+grid.setRowList(rowList);
+// grid.use('Net', {
+// 	perPage: 10,
+// 	api: {
+// 		readData: '/sample',
+// 		downloadExcel: '/download/excel',
+// 		downloadExcelAll: '/download/excelAll'
+// 		// updateData: '/update'
+// 	}
+// });
+// var net = grid.getAddOn('Net');
 
-$('#btn-update').click(function() {
-	net.request('updateData');
-});
+// $('#btn-update').click(function() {
+// 	net.request('updateData');
+// });
 </script>
 </html>
