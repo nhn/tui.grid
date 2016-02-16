@@ -89,16 +89,21 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass('scrollbar_border');
 
-        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
-        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
-        //  casues to be stuck in the same position in Chrome)
-        $scrollCorner = $('<div />').addClass('scrollbar_corner');
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
-        $scrollCorner.css('bottom', dimensionModel.get('toolbarHeight'));
 
-        this.$el.append($space, $scrollBorder, $scrollCorner);
+        this.$el.append($space, $scrollBorder);
+
+        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
+        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
+        //  casues to be stuck in the same position in Chrome)
+        if (dimensionModel.get('scrollX')) {
+            $scrollCorner = $('<div />')
+                .addClass('scrollbar_corner')
+                .css('bottom', dimensionModel.get('toolbarHeight'));
+            this.$el.append($scrollCorner);
+        }
 
         this.$scrollBorder = $scrollBorder;
         this._resetScrollBorderHeight();
