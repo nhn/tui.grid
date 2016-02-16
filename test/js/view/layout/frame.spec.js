@@ -139,8 +139,8 @@ describe('Frame', function() {
                 frame.beforeRender();
 
                 expect(frame.$el.css('display')).toBe('block');
-                expect(frame.$el.css('marginLeft')).toBe('100px');
-                expect(frame.$el.width()).toBe(200);
+                expect(frame.$el.css('marginLeft')).toBe('99px');
+                expect(frame.$el.width()).toBe(201);
             });
         });
 

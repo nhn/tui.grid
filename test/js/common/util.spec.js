@@ -20,8 +20,8 @@ describe('core.util', function() {
         it('getHeight()는 Row count 개수에 대응하는 table height를 반환한다.', function() {
             var rowHeight = 100;
             expect(util.getHeight(0, rowHeight)).toBe(0);
-            expect(util.getHeight(1, rowHeight)).toBe(102);
-            expect(util.getHeight(100, rowHeight)).toBe(10101);
+            expect(util.getHeight(1, rowHeight)).toBe(101);
+            expect(util.getHeight(100, rowHeight)).toBe(10100);
         });
 
         it('getDisplayRowCount()는 화면상에 표시되는 Row 개수를 반환한다.', function() {

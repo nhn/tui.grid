@@ -5,6 +5,7 @@
 'use strict';
 
 var Frame = require('./frame');
+var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * right side frame class
@@ -33,11 +34,27 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @override
      */
     _onColumnWidthChanged: function() {
-        var dimensionModel = this.dimensionModel;
+        this._refreshLayout();
+    },
+
+    /**
+     * Refresh layout
+     * @private
+     */
+    _refreshLayout: function() {
+        var dimensionModel = this.dimensionModel,
+            width = dimensionModel.get('rsideWidth'),
+            marginLeft = dimensionModel.get('lsideWidth');
+
+        // If left side exists, let left side overlap right side to hide left border of the right side.
+        if (marginLeft > 0) {
+            width += CELL_BORDER_WIDTH;
+            marginLeft -= CELL_BORDER_WIDTH;
+        }
 
         this.$el.css({
-            width: dimensionModel.get('rsideWidth'),
-            marginLeft: dimensionModel.get('lsideWidth')
+            width: width,
+            marginLeft: marginLeft
         });
     },
 
@@ -60,13 +77,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @override
      */
     beforeRender: function() {
-        var dimensionModel = this.dimensionModel;
-
-        this.$el.css({
-            display: 'block',
-            width: dimensionModel.get('rsideWidth'),
-            marginLeft: dimensionModel.get('lsideWidth')
-        });
+        this.$el.css('display', 'block');
+        this._refreshLayout();
     },
 
     /**

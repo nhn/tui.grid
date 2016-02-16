@@ -67,7 +67,7 @@ var util = {
      * @returns {number} 계산된 높이
      */
     getHeight: function(rowCount, rowHeight) {
-        return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
+        return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1);
     },
 
     /**

@@ -98,14 +98,14 @@ describe('model.dimension', function() {
 
         it('[100, 100, 0, 0, 0]', function() {
             var input = [100, 100, 0, 0, 0],
-                output = [100, 100, 100, 100, 99];
+                output = [100, 100, 100, 100, 100];
 
             expect(dimension._fillEmptyColumnWidth(input)).toEqual(output);
         });
 
         it('[200, 200, 0, 0, 0]', function() {
             var input = [200, 200, 0, 0, 0],
-                output = [200, 200, 33, 33, 33];
+                output = [200, 200, 33, 33, 34];
 
             expect(dimension._fillEmptyColumnWidth(input)).toEqual(output);
         });
@@ -128,7 +128,7 @@ describe('model.dimension', function() {
 
             it('50(fixed), 50(fixed), 100, 100, 100', function() {
                 var input = [50, 50, 100, 100, 100],
-                    output = [50, 50, 133, 133, 133];
+                    output = [50, 50, 133, 133, 134];
 
                 dimension._columnWidthFixedFlags = [true, true, false, false, false];
                 expect(dimension._adjustColumnWidthList(input)).toEqual(output);
@@ -136,7 +136,7 @@ describe('model.dimension', function() {
 
             it('50, 50, 50, 50, 50 (fixed all)', function() {
                 var input = [50, 50, 50, 50, 50],
-                    output = [50, 50, 50, 50, 299];
+                    output = [50, 50, 50, 50, 300];
 
                 dimension._columnWidthFixedFlags = [true, true, true, true, true];
                 expect(dimension._adjustColumnWidthList(input)).toEqual(output);
@@ -159,14 +159,14 @@ describe('model.dimension', function() {
 
             it('100, 100, 100, 50, 50', function() {
                 var input = [100, 100, 100, 100, 100],
-                    output = [60, 60, 60, 60, 59];
+                    output = [60, 60, 60, 60, 60];
 
                 expect(dimension._adjustColumnWidthList(input, true)).toEqual(output);
             });
 
             it('100, 100, 70, 70, 70', function() {
                 var input = [100, 100, 70, 70, 70],
-                    output = [75, 74, 50, 50, 50];
+                    output = [75, 75, 50, 50, 50];
 
                 expect(dimension._adjustColumnWidthList(input, true)).toEqual(output);
             });

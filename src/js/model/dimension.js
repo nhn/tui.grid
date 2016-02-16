@@ -90,11 +90,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getAvailableTotalWidth: function(columnLength) {
         var totalWidth = this.get('width'),
-            availableTotalWidth = totalWidth - this.getScrollYWidth() - columnLength - 1;
+            availableTotalWidth = totalWidth - this.getScrollYWidth() - columnLength - CELL_BORDER_WIDTH;
 
-        if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
-            availableTotalWidth -= CELL_BORDER_WIDTH;
-        }
         return availableTotalWidth;
     },
 
@@ -123,10 +120,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _resetTotalRowHeight: function() {
         var rowHeight = this.get('rowHeight'),
-            rowCount = this.dataModel.length,
-            totalBorderWidth = rowCount + 1;
+            rowCount = this.dataModel.length;
 
-        this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
+        this.set('totalRowHeight', util.getHeight(rowCount, rowHeight));
     },
 
     /**

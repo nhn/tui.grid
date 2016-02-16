@@ -69,7 +69,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         // to solve the overflow issue in IE7
         // (don't automatically expand to child's width when overflow:hidden)
         if (util.isBrowserIE7()) {
-            this.$el.width(totalWidth + CELL_BORDER_WIDTH); // addition for last cell
+            this.$el.width(totalWidth);
         }
     },
 

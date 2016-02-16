@@ -55,7 +55,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             startIndex += this._getStartRowSpanMinCount(startIndex);
             endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
-        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight) - 1;
+        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight);
 
         this.set({
             top: top,

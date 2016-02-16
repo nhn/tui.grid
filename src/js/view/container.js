@@ -244,9 +244,21 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .attr('data-grid-id', this.gridId)
             .append(childElements);
 
+        this._appendBottomLine();
         this._refreshHeight();
         this.trigger('rendered');
         return this;
+    },
+
+    /**
+     * Appends botton line of data
+     * @private
+     */
+    _appendBottomLine: function() {
+        var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
+        if (bottomPos) {
+            this.$el.append($('<div>').addClass('data_bottom_line').css('bottom', bottomPos));
+        }
     },
 
     /**

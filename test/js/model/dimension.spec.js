@@ -568,7 +568,7 @@ describe('Dimension', function() {
                     scrollX: false
                 });
                 dimensionModel._resetBodyHeight();
-                expect(dimensionModel.get('bodyHeight')).toEqual(211);
+                expect(dimensionModel.get('bodyHeight')).toEqual(210);
             });
 
             it('scrollX 옵션이 true 일 경우', function() {
@@ -578,7 +578,7 @@ describe('Dimension', function() {
                     scrollX: true
                 });
                 dimensionModel._resetBodyHeight();
-                expect(dimensionModel.get('bodyHeight')).toEqual(228);
+                expect(dimensionModel.get('bodyHeight')).toEqual(227);
             });
         });
     });
@@ -632,70 +632,70 @@ describe('Dimension', function() {
                 'top': 0,
                 'left': 0,
                 'right': 40,
-                'bottom': 101
+                'bottom': 100
             });
             expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual({
                 'top': 0,
                 'left': 40,
                 'right': 80,
-                'bottom': 101
+                'bottom': 100
             });
             expect(dimensionModel.getCellPosition(0, 'none')).toEqual({
                 top: 0,
                 left: 0,
                 right: 40,
-                bottom: 101
+                bottom: 100
             });
             expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual({
                 top: 0,
                 left: 40,
                 right: 80,
-                bottom: 101
+                bottom: 100
             });
             expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual({
                 top: 0,
                 left: 80,
                 right: 120,
-                bottom: 101
+                bottom: 100
             });
             expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual({
                 top: 0,
                 left: 120,
                 right: 160,
-                bottom: 101
+                bottom: 100
             });
             expect(dimensionModel.getCellPosition(0, 'text')).toEqual({
                 top: 0,
                 left: 160,
                 right: 200,
-                bottom: 101
+                bottom: 100
             });
             expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual({
                 top: 0,
                 left: 200,
                 right: 240,
-                bottom: 101
+                bottom: 100
             });
             expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual({
-                top: 102,
+                top: 101,
                 left: 0,
                 right: 40,
-                bottom: 203
+                bottom: 201
             });
             expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual({
-                top: 102,
+                top: 101,
                 left: 40,
                 right: 80,
-                bottom: 203
+                bottom: 201
             });
         });
 
         it('rowSpan 이 있는 경우 main row 가 아닌 row 라도 정상적으로 반환한다.', function() {
             var expectedPosition = {
-                top: 102,
+                top: 101,
                 left: 0,
                 right: 40,
-                bottom: 304
+                bottom: 302
             };
             expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectedPosition);
             expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectedPosition);
@@ -703,10 +703,10 @@ describe('Dimension', function() {
 
         it('rowSpan 이 3인 경우', function() {
             var expectedPosition = {
-                top: 102,
+                top: 101,
                 left: 160,
                 right: 200,
-                bottom: 405
+                bottom: 403
             };
             expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectedPosition);
             expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectedPosition);
@@ -1191,7 +1191,7 @@ describe('Dimension', function() {
     describe('change:displayRowCount', function() {
         it('이벤트 발생시 bodyHeight를 재설정한다.', function() {
             dimensionModel.set('displayRowCount', 10);
-            expect(dimensionModel.get('bodyHeight')).toBe(1028);
+            expect(dimensionModel.get('bodyHeight')).toBe(1027);
         });
     });
 });

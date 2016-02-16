@@ -1,3 +1,29 @@
+$line-common =
+    position absolute
+    background #ccc
+    z-index 12
+
+.left_line
+    {$line-common}
+    top 0
+    bottom 0
+    left 0
+    width 1px
+
+.right_line
+    {$line-common}
+    top 0
+    bottom 0
+    right 0
+    width 1px
+
+.data_bottom_line
+    {$line-common}
+    bottom 0
+    left 0
+    right 17px
+    height 1px
+
 $selection-layer =
     display none
     position absolute
@@ -16,6 +42,7 @@ $selection-layer =
     top 0
     left 0
     overflow hidden
+    z-index 10
 
     .header
         overflow hidden
@@ -34,7 +61,7 @@ $selection-layer =
         bottom 0
         left 0
         right 0
-        height 16px
+        height 17px
         background-color #f5f5f5
 
 .rside_area
@@ -55,7 +82,6 @@ $selection-layer =
 
         .selection_layer
             {$selection-layer}
-            left -1px
 
     .header_space
         display block
@@ -80,7 +106,7 @@ $selection-layer =
         right 0
         width 17px
         height 17px
-        background-color #f2f2f2
+        background-color #f5f5f5
 
 .header
     .resize_handle_container
@@ -105,6 +131,7 @@ $selection-layer =
 
 .body_container
     position relative
+    margin-top -1px
 
     .table_container
         position absolute

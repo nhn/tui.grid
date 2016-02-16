@@ -6,8 +6,7 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
-
-var CELL_BORDER_WIDTH = 1;
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * Class for the selection layer
@@ -89,8 +88,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      */
     _getVerticalStyles: function(rowRange) {
         var rowHeight = this.dimensionModel.get('rowHeight'),
-            top = util.getHeight(rowRange[0], rowHeight) - CELL_BORDER_WIDTH,
-            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - (CELL_BORDER_WIDTH * 2);
+            top = util.getHeight(rowRange[0], rowHeight),
+            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
 
         return {
             top: top + 'px',
