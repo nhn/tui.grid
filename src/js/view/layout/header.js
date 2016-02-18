@@ -25,6 +25,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
+            focusModel: options.focusModel,
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
@@ -32,10 +33,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange, this)
-            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState, this);
+        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.focusModel, 'change:columnName', this._onFocusedColumnChange)
+            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
+            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
     tagName: 'div',
@@ -108,6 +110,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }, this);
         return htmlList.join('');
     },
+
+    _onFocusedColumnChange: function() {
+        var columnName = this.focusModel.get('columnName');
+        this.$el.find('th').removeClass('selected');
+        this.$el.find('th[columnname=' + columnName + ']').addClass('selected');
+        console.log(columnName);
+    },
+
 
     /**
      * Mousedown event handler
