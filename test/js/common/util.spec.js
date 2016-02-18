@@ -27,14 +27,14 @@ describe('core.util', function() {
         it('getDisplayRowCount()는 화면상에 표시되는 Row 개수를 반환한다.', function() {
             var rowHeight = 100;
             expect(util.getDisplayRowCount(0, rowHeight)).toBe(0);
-            expect(util.getDisplayRowCount(102, rowHeight)).toBe(1);
-            expect(util.getDisplayRowCount(10101, rowHeight)).toBe(100);
+            expect(util.getDisplayRowCount(101, rowHeight)).toBe(1);
+            expect(util.getDisplayRowCount(10100, rowHeight)).toBe(100);
         });
 
         it('getRowHeight()는 테이블 높이를 행 개수로 나눈 값이다.', function() {
             expect(util.getRowHeight(0, 0)).toBe(0);
-            expect(util.getRowHeight(1, 102)).toBe(100);
-            expect(util.getRowHeight(100, 10101)).toBe(100);
+            expect(util.getRowHeight(1, 101)).toBe(100);
+            expect(util.getRowHeight(100, 10100)).toBe(100);
         });
     });
 

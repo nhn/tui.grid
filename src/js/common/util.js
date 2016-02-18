@@ -4,6 +4,8 @@
 */
 'use strict';
 
+var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
+
 /**
 * util 모듈
 * @module util
@@ -47,7 +49,7 @@ var util = {
     },
 
     /**
-     * Return min and max value in array
+     * Returns the minimum value and the maximum value of the values in array.
      * @param {Array} arr - Target array
      * @returns {{min: number, max: number}} Min and Max
      * @see {@link http://jsperf.com/getminmax}
@@ -60,36 +62,36 @@ var util = {
     },
 
     /**
-     * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
+     * Returns the table height including height of rows and borders.
      * @memberof module:util
-     * @param {number} rowCount  행 개수
-     * @param {number} rowHeight    한 행당 높이
-     * @returns {number} 계산된 높이
+     * @param {number} rowCount - row count
+     * @param {number} rowHeight - row height
+     * @returns {number}
      */
     getHeight: function(rowCount, rowHeight) {
-        return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1);
+        return rowCount === 0 ? rowCount : rowCount * (rowHeight + CELL_BORDER_WIDTH);
     },
 
     /**
-     *Table 의 높이와 행당 높이를 인자로 받아, table 에서 보여줄 수 있는 행 개수를 반환한다.
+     * Returns the count of rows based on table height and row height.
      * @memberof module:util
-     * @param {number} height 테이블 body 높이
-     * @param {number} rowHeight    한 행당 높이
-     * @returns {number} 테이블 body 당 보여지는 행 개수
+     * @param {number} tableHeight - table height
+     * @param {number} rowHeight - individual row height
+     * @returns {number}
      */
-    getDisplayRowCount: function(height, rowHeight) {
-        return Math.ceil((height - 1) / (rowHeight + 1));
+    getDisplayRowCount: function(tableHeight, rowHeight) {
+        return Math.ceil(tableHeight / (rowHeight + CELL_BORDER_WIDTH));
     },
 
     /**
-     * Table 의 height 와 행 개수를 인자로 받아, 한 행당 높이를 구한다.
+     * Returns the individual height of a row bsaed on the count of rows and table height.
      * @memberof module:util
-     * @param {number} rowCount  행 개수
-     * @param {number} height   테이블 body 높이
+     * @param {number} rowCount - row count
+     * @param {number} tableHeight - table height
      * @returns {number} 한 행당 높이값
      */
-    getRowHeight: function(rowCount, height) {
-        return rowCount === 0 ? 0 : Math.floor(((height - 1) / rowCount)) - 1;
+    getRowHeight: function(rowCount, tableHeight) {
+        return rowCount === 0 ? 0 : Math.floor(((tableHeight - CELL_BORDER_WIDTH) / rowCount));
     },
 
     /**

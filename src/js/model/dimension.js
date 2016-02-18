@@ -90,7 +90,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getAvailableTotalWidth: function(columnLength) {
         var totalWidth = this.get('width'),
-            availableTotalWidth = totalWidth - this.getScrollYWidth() - columnLength - CELL_BORDER_WIDTH;
+            borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0),
+            totalBorderWidth = borderCount * CELL_BORDER_WIDTH,
+            availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
         return availableTotalWidth;
     },
@@ -303,12 +305,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             var width = columnModel.width > 0 ? columnModel.width : 0,
                 minWidth = Math.max(width, commonMinWidth);
 
-            // meta columns are not affected by common 'minimumColumnWidth' value
+            // Meta columns are not affected by common 'minimumColumnWidth' value
             if (this.columnModel.isMetaColumn(columnModel.columnName)) {
                 minWidth = width;
             }
 
-            // If the width is not assigned (not positive number), set it to zero (not applying minimum width)
+            // If the width is not assigned (in other words, the width is not positive number),
+            // set it to zero (no need to worry about minimum width at this point)
             // so that #_fillEmptyColumnWidth() can detect which one is empty.
             // After then, minimum width will be applied by #_applyMinimumColumnWidth().
             widthList.push(width ? minWidth : 0);
@@ -334,6 +337,15 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         widthList = this._adjustColumnWidthList(widthList);
 
         return widthList;
+    },
+
+    /**
+     * Returns whether division border (between meta column and data column) is doubled or not.
+     * Division border should be doubled only if visible fixed data column exists.
+     * @returns {Boolean}
+     */
+    isDivisionBorderDoubled: function() {
+        return this.columnModel.getVisibleColumnFixCount() > 0;
     },
 
     /**
@@ -746,7 +758,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Return height of X-scrollBar.
-     *  If no X-scrollBar, return 0
+     * If no X-scrollBar, return 0
      * @returns {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
@@ -755,7 +767,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Return width of Y-scrollBar.
-     *  If no Y-scrollBar, return 0
+     * If no Y-scrollBar, return 0
      * @returns {number} Width of Y-scrollBar
      */
     getScrollYWidth: function() {

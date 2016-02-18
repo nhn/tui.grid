@@ -7,7 +7,7 @@
 var View = require('../../base/view');
 
 /**
- * frame Base 클래스
+ * Base class for frame view.
  * @module view/layout/frame
  * @extends module:base/view
  */
@@ -15,7 +15,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     /**
      * @constructs
      * @param {Object} options Options
-     *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
+     *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -36,34 +36,42 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     className: 'lside_area',
 
     /**
-     * 랜더링 메서드
-     * @returns {View.Layout.Frame} This object
+     * Render
+     * @returns {module:view/layout/frame} This object
      */
     render: function() {
         var factory = this.viewFactory;
 
+        this.$el.empty();
         this._destroyChildren();
+
         this.beforeRender();
         this._addChildren([
             factory.createHeader(this.whichSide),
             factory.createBody(this.whichSide)
         ]);
         this.$el.append(this._renderChildren());
-
         this.afterRender();
+
         return this;
     },
+
     /**
-     * columnModel change 시 수행되는 핸들러 스켈레톤
+     * Event handler for 'columnWidthChanged' event on module:module/dimension
+     * @abstract
      * @private
      */
     _onColumnWidthChanged: function() {},
+
     /**
-     * 랜더링 하기전에 수행하는 함수 스켈레톤
+     * To be called at the beginning of the 'render' method.
+     * @abstract
      */
     beforeRender: function() {},
+
     /**
-     * 랜더링 이후 수행하는 함수 스켈레톤
+     * To be called at the end of the 'render' method.
+     * @abstract
      */
     afterRender: function() {}
 });
