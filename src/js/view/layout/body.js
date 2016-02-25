@@ -195,7 +195,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                this.focusModel.focusAt(rowIndex, columnIndex);
+                if (!this.focusModel.focusAt(rowIndex, columnIndex)) {
+                    this._detachDragEvents();
+                }
                 selectionModel.end();
             }
         } else if (columnName === '_number') {

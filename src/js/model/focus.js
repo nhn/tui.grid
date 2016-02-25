@@ -5,7 +5,8 @@
 'use strict';
 
 var Model = require('../base/model'),
-    util = require('../common/util');
+    util = require('../common/util'),
+    GridEvent = require('../common/GridEvent');
 
 /**
  * Focus model
@@ -61,9 +62,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * 이전 focus 정보를 저장한다.
+     * Saves previous data.
      * @private
-     * @returns {Model.Focus} This object
      */
     _savePrevious: function() {
         if (this.get('rowKey') !== null) {
@@ -72,11 +72,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (this.get('columnName')) {
             this.set('prevColumnName', this.get('columnName'));
         }
-        return this;
     },
 
     /**
-     * 이전 focus 정보를 제거한다.
+     * Clear previous data.
      * @private
      */
     _clearPrevious: function() {
@@ -110,108 +109,137 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * Selects the given row
      * @param {Number|String} rowKey - Rowkey of the target row
-     * @returns {Object} This object
+     * @returns {Boolean} True is success
      */
     select: function(rowKey) {
+        var eventData = new GridEvent(),
+            currentRowKey = this.get('rowKey');
+
         if (this._isCurrentRow(rowKey)) {
-            return this;
+            return true;
         }
 
-        this.unselect().set('rowKey', rowKey);
+        eventData.setData({
+            rowKey: rowKey,
+            prevRowKey: currentRowKey,
+            rowData: this.dataModel.getRowData(rowKey)
+        });
+        this.trigger('select', eventData);
+        if (eventData.isStopped()) {
+            this._cancelSelect();
+            return false;
+        }
+
+        this.set('rowKey', rowKey);
         if (this.columnModel.get('selectType') === 'radio') {
             this.dataModel.check(rowKey);
         }
-        this.trigger('select', {
-            rowKey: rowKey,
-            rowData: this.dataModel.getRowData(rowKey)
-        });
-        return this;
+        return true;
+    },
+
+    /**
+     * Cancel select
+     * @private
+     */
+    _cancelSelect: function() {
+        var prevColumnName = this.get('prevColumnName');
+        this.set('columnName', prevColumnName);
+        this.trigger('focus', this.get('rowKey'), prevColumnName);
     },
 
     /**
      * 행을 unselect 한다.
      * @param {boolean} blur - The boolean value whether to invoke blur
-     * @returns {Model.Focus} This object
      */
     unselect: function(blur) {
         if (blur) {
             this.blur();
         }
-        this.trigger('unselect', this.get('rowKey'));
         this.set({
-            'rowKey': null
+            rowKey: null
         });
-        return this;
     },
 
     /**
-     * focus 처리한다.
-     * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
-     * @param {String} columnName focus 처리할 셀의 컬럼명
-     * @param {Boolean} isScrollable focus 처리한 영역으로 scroll 위치를 이동할지 여부
-     * @returns {Model.Focus} This object
+     * Focus to the cell identified by given rowKey and columnName.
+     * @param {Number|String} rowKey - rowKey
+     * @param {String} columnName - columnName
+     * @param {Boolean} isScrollable - if set to true, move scroll position to focused position
+     * @returns {Boolean} true if focused cell is changed
      */
     focus: function(rowKey, columnName, isScrollable) {
-        if (util.isBlank(rowKey) ||
-            util.isBlank(columnName) ||
+        if (!this._isValidCell(rowKey, columnName) ||
             this.columnModel.isMetaColumn(columnName) ||
             this._isCurrentCell(rowKey, columnName)) {
-            return this;
+            return true;
         }
 
-        this.blur()
-            .select(rowKey)
-            .set('columnName', columnName)
-            .trigger('focus', rowKey, columnName);
+        this.blur();
+        if (!this.select(rowKey)) {
+            return false;
+        }
 
+        this.set('columnName', columnName);
+        this.trigger('focus', rowKey, columnName);
         if (isScrollable) {
             this.scrollToFocus();
         }
-        return this;
+        return true;
     },
 
     /**
-     * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
-     * @param {(Number|String)} rowIndex 행 index
-     * @param {String} columnIndex 열 index
-     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     * Focus to the cell identified by given rowIndex and columnIndex.
+     * @param {(Number|String)} rowIndex - rowIndex
+     * @param {String} columnIndex - columnIndex
+     * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
+     * @returns {Boolean} true if success
      */
     focusAt: function(rowIndex, columnIndex, isScrollable) {
         var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true);
+            column = this.columnModel.at(columnIndex, true),
+            result = false;
         if (row && column) {
-            this.focus(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focus(row.get('rowKey'), column['columnName'], isScrollable);
         }
+        return result;
     },
 
     /**
-     * 셀을 편집모드로 전환한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {String} columnName   컬럼 이름
-     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     * Focus to the cell identified by given rowKey and columnName and change it to edit-mode if editable.
+     * @param {(Number|String)} rowKey - rowKey
+     * @param {String} columnName - columnName
+     * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
+     * @returns {Boolean} true if success
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        this.focus(rowKey, columnName, isScrollable);
-        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-        if (this.dataModel.get(rowKey).isEditable(columnName)) {
-            this.trigger('focusIn', rowKey, columnName);
-        } else {
-            this.focusClipboard();
+        var result = this.focus(rowKey, columnName, isScrollable);
+        if (result) {
+            rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+            if (this.dataModel.get(rowKey).isEditable(columnName)) {
+                this.trigger('focusIn', rowKey, columnName);
+            } else {
+                this.focusClipboard();
+            }
         }
+        return result;
     },
 
     /**
-     * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
-     * @param {(Number|String)} rowIndex 행 index
-     * @param {String} columnIndex 열 index
-     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     * Focus to the cell identified by given rowIndex and columnIndex and change it to edit-mode if editable.
+     * @param {(Number|String)} rowIndex - rowIndex
+     * @param {String} columnIndex - columnIndex
+     * @param {Boolean} [isScrollable=false] - if set to true, scroll to focused cell
+     * @returns {Boolean} true if success
      */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
         var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true);
+            column = this.columnModel.at(columnIndex, true),
+            result = false;
+
         if (row && column) {
-            this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
         }
+        return result;
     },
 
     /**

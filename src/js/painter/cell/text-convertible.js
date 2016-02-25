@@ -250,9 +250,12 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
     _onDblClick: function(mouseEvent) {
         var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
-            address = this._getCellAddress($td);
+            targetAddr = this._getCellAddress($td),
+            focusedAddr = this.grid.focusModel.which();
 
-        if (!this._isEditingCell(address)) {
+        if (!this._isEditingCell(targetAddr) &&
+            targetAddr.rowKey === String(focusedAddr.rowKey) &&
+            targetAddr.columnName === focusedAddr.columnName) {
             this._startEdit($td);
         }
     },

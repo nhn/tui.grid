@@ -39,7 +39,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'select', this._onSelect)
-            .listenTo(focusModel, 'unselect', this._onUnselect)
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(focusModel, 'focusIn', this._onFocusIn)
@@ -136,16 +135,14 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onSelect: function(eventData) {
-        this._setCssSelect(eventData.rowKey, true);
-    },
+        if (eventData.isStopped()) {
+            return;
+        }
 
-    /**
-     * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @private
-     */
-    _onUnselect: function(rowKey) {
-        this._setCssSelect(rowKey, false);
+        if (!_.isNull(eventData.prevRowKey)) {
+            this._setCssSelect(eventData.prevRowKey, false);
+        }
+        this._setCssSelect(eventData.rowKey, true);
     },
 
     /**
