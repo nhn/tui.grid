@@ -6,7 +6,7 @@
 
 var Model = require('../base/model'),
     util = require('../common/util'),
-    GridEvent = require('../common/GridEvent');
+    GridEvent = require('../common/gridEvent');
 
 /**
  * Focus model
