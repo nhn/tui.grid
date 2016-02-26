@@ -35,7 +35,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
-            .listenTo(this.focusModel, 'change:columnName', this._onFocusedColumnChange)
+            .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
             .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
@@ -111,13 +111,20 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return htmlList.join('');
     },
 
-    _onFocusedColumnChange: function() {
-        var columnName = this.focusModel.get('columnName');
-        this.$el.find('th').removeClass('selected');
-        this.$el.find('th[columnname=' + columnName + ']').addClass('selected');
-        console.log(columnName);
-    },
+    _refreshSelectedHeaders: function() {
+        var $ths = this.$el.find('th').removeClass('selected'),
+            columnNames = [];
 
+        if (this.selectionModel.hasSelection()) {
+                
+        } else {
+            columnNames.push(this.focusModel.get('columnName'));
+        }
+
+        _.each(columnNames, function(columnName) {
+            $ths.filter('[columnname=' + columnName + ']').addClass('selected');
+        });
+    },
 
     /**
      * Mousedown event handler
