@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "karma start karma.conf.js",
+    "test-local": "karma start karma.conf.local.js"
   },
   "repository": {
     "type": "git",

@@ -8,6 +8,7 @@ var RowListView = require('view/rowList');
 var PainterManager = require('painter/manager');
 var DomState = require('domState');
 var SmartRenderModel = require('model/renderer-smart');
+var GridEvent = require('common/gridEvent');
 
 describe('View.RowList', function() {
     var grid, rowListView, $container, $tableContainer;
@@ -289,29 +290,24 @@ describe('View.RowList', function() {
             });
         });
 
-        describe('_onSelect, _onUnselect', function() {
-            var $firstRowCells;
+        describe('when select event triggered,', function() {
+            var $firstRowCells, $secondRowCells;
 
             beforeEach(function() {
-                $firstRowCells = rowListView.$el.find('tr:first').find('td');
+                $firstRowCells = rowListView.$el.find('tr:first > td');
+                $secondRowCells = rowListView.$el.find('tr:nth-of-type(2) > td').addClass('selected');
+                rowListView._onSelect(new GridEvent({
+                    prevRowKey: 1,
+                    rowKey: 0
+                }));
             });
 
-            it('_onSelect 호출시 _setCssSelect 를 true 로 호출한다.', function() {
-                rowListView._onSelect({
-                    rowKey: 0
-                });
-                $firstRowCells.each(function() {
-                    expect(this).toHaveClass('selected');
-                });
+            it('add "selectedd" class to cells in target row', function() {
+                expect($firstRowCells).toHaveClass('selected');
             });
 
-            it('_onUnselect 호출시 _setCssSelect 를 false 로 호출한다.', function() {
-                rowListView._onUnselect({
-                    rowKey: 0
-                });
-                $firstRowCells.each(function() {
-                    expect(this).not.toHaveClass('selected');
-                });
+            it('remove selected class from cells in previous selected row', function() {
+                expect($secondRowCells).not.toHaveClass('selected');
             });
         });
 

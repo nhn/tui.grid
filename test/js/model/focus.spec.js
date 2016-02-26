@@ -96,13 +96,6 @@ describe('model/focus', function() {
             focusModel.unselect();
             expect(focusModel.get('rowKey')).toBeNull();
         });
-        it('unselect 시 unselect 이벤트를 발생하는지 확인한다.', function() {
-            var callback = jasmine.createSpy('callback'),
-                listenModel = new Model();
-            listenModel.listenToOnce(focusModel, 'unselect', callback);
-            focusModel.unselect();
-            expect(callback).toHaveBeenCalled();
-        });
     });
 
     describe('when new data appended with focus:true option', function() {
