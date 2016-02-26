@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var View = require('../base/view');
+var View = require('../base/view'),
+    GridEvent = require('../common/gridEvent');
 
 /**
  * Container View
@@ -92,7 +93,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onClick: function(mouseEvent) {
-        var eventData = this.createEventData(mouseEvent),
+        var eventData = new GridEvent(mouseEvent),
             $target = $(mouseEvent.target),
             cellInfo;
 
@@ -115,7 +116,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onDblClick: function(mouseEvent) {
-        var eventData = this.createEventData(mouseEvent),
+        var eventData = new GridEvent(mouseEvent),
             $target = $(mouseEvent.target);
 
         this.trigger('dblclick', eventData);
@@ -137,7 +138,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             eventData;
 
         if (this._isCellElement($target)) {
-            eventData = this.createEventData(mouseEvent);
+            eventData = new GridEvent(mouseEvent);
             this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
         }
     },
@@ -152,7 +153,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             eventData;
 
         if (this._isCellElement($target)) {
-            eventData = this.createEventData(mouseEvent);
+            eventData = new GridEvent(mouseEvent);
             this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
         }
     },
@@ -205,19 +206,19 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 이벤트 객체
+     * @param {event} mouseEvent 이벤트 객체
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        var $target = $(mouseDownEvent.target),
-            eventData = this.createEventData(mouseDownEvent);
+    _onMouseDown: function(mouseEvent) {
+        var $target = $(mouseEvent.target),
+            eventData = new GridEvent(mouseEvent);
 
         this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (!$target.is('input, a, button, select')) {
-            mouseDownEvent.preventDefault();
+            mouseEvent.preventDefault();
             this.focusModel.focusClipboard();
         }
     },

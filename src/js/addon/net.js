@@ -4,10 +4,11 @@
  */
 'use strict';
 
-var View = require('../base/view');
-var Router = require('./net-router');
-var util = require('../common/util');
-var formUtil = require('../common/formUtil');
+var View = require('../base/view'),
+    Router = require('./net-router'),
+    util = require('../common/util'),
+    formUtil = require('../common/formUtil'),
+    GridEvent = require('../common/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
 
@@ -667,7 +668,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _ajax: function(options) {
-        var eventData = this.createEventData(options.data),
+        var eventData = new GridEvent(options.data),
             params;
 
         this.trigger('beforeRequest', eventData);
@@ -712,7 +713,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
         var message = responseData && responseData['message'],
-            eventData = this.createEventData({
+            eventData = new GridEvent({
                 httpStatus: status,
                 requestType: options.requestType,
                 requestParameter: options.data,
@@ -752,7 +753,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onError: function(callback, options, jqXHR, status) {
-        var eventData = this.createEventData({
+        var eventData = new GridEvent({
             httpStatus: status,
             requestType: options.requestType,
             requestParameter: options.data,

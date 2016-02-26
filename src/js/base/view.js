@@ -66,23 +66,6 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
-     * customEvent 에서 사용할 이벤트 객체를 포멧에 맞게 생성하여 반환한다.
-     * @param {Object} data 이벤트 핸들러에 넘길 데이터
-     * @returns {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
-     */
-    createEventData: function(data) {
-        var eventData = $.extend({}, data);
-        eventData.stop = function() {
-            this._isStopped = true;
-        };
-        eventData.isStopped = function() {
-            return this._isStopped;
-        };
-        eventData._isStopped = eventData._isStopped || false;
-        return eventData;
-    },
-
-    /**
      * 등록되어있는 자식 View 들을 제거한다.
      */
     _destroyChildren: function() {

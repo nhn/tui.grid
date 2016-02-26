@@ -99,21 +99,6 @@ describe('core.base', function() {
             expect(childView2._children.length).toBe(0);
         });
 
-        it('createEventData()는 EventData 객체를 생성해서 반환한다.', function() {
-            var sampleData = {
-                prop1: 1,
-                prop2: 2
-            }, eventData;
-
-            eventData = view.createEventData(sampleData);
-            expect(eventData.prop1).toBe(sampleData.prop1);
-            expect(eventData.prop2).toBe(sampleData.prop2);
-
-            expect(eventData.isStopped()).toBe(false);
-            eventData.stop();
-            expect(eventData.isStopped()).toBe(true);
-        });
-
         it('error()는 에러 객체를 생성한다.', function() {
             var message = 'error message',
                 error = view.error(message);
