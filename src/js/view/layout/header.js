@@ -35,6 +35,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
             .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
             .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
@@ -111,14 +112,31 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return htmlList.join('');
     },
 
+    /**
+     * Returns an array of names of columns in selection range.
+     * @private
+     * @returns {Array.<String>}
+     */
+    _getSelectedColumnNames: function() {
+        var columnRange = this.selectionModel.get('range').column,
+            visibleColumns = this.columnModel.getVisibleColumnModelList(),
+            selectedColumns = visibleColumns.slice(columnRange[0], columnRange[1] + 1);
+
+        return _.pluck(selectedColumns, 'columnName');
+    },
+
+    /**
+     * Refresh selected headers (which has a 'selected' className)
+     * @private
+     */
     _refreshSelectedHeaders: function() {
         var $ths = this.$el.find('th').removeClass('selected'),
-            columnNames = [];
+            columnNames;
 
         if (this.selectionModel.hasSelection()) {
-                
+            columnNames = this._getSelectedColumnNames();
         } else {
-            columnNames.push(this.focusModel.get('columnName'));
+            columnNames = [this.focusModel.get('columnName')];
         }
 
         _.each(columnNames, function(columnName) {
