@@ -482,9 +482,83 @@ describe('Header', function() {
                 expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3, 'column');
                 expect(modelManager.selectionModel.extendColumnSelection).toHaveBeenCalledWith([1, 2, 3], pageX, pageY);
             });
+        });
+    });
 
-            // For more detailed test,
-            //  it requires the real grid core and real models.
+    describe('[selected]', function() {
+        function isHeaderSelected(columnName) {
+            return header.$el.find('th[columnname=' + columnName + ']').is('.selected');
+        }
+
+        beforeEach(function() {
+            modelManager.columnModel.set('columnModelList', [
+                { columnName: 'c1' },
+                { columnName: 'c2' },
+                { columnName: 'c3' }
+            ]);
+            header.render();
+        });
+
+        describe('if focused column has changed', function() {
+            it('add selected class to the matching header', function() {
+                modelManager.focusModel.set('columnName', 'c1');
+
+                expect(isHeaderSelected('c1')).toBe(true);
+            });
+
+            it('remove selected class from the previously focused header', function() {
+                modelManager.focusModel.set('columnName', 'c1');
+                modelManager.focusModel.set('columnName', 'c2');
+
+                expect(isHeaderSelected('c1')).toBe(false);
+            });
+        });
+
+        describe('if column range of the selection has changed', function() {
+            it('add selected class to the matching header', function() {
+                modelManager.selectionModel.set('range', {
+                    row: [0, 0],
+                    column: [0, 1]
+                });
+                expect(isHeaderSelected('c1')).toBe(true);
+                expect(isHeaderSelected('c2')).toBe(true);
+                expect(isHeaderSelected('c3')).toBe(false);
+            });
+
+            it('remove selected class from the header in the previous range', function() {
+                modelManager.selectionModel.set('range', {
+                    row: [0, 0],
+                    column: [0, 1]
+                });
+                modelManager.selectionModel.set('range', {
+                    row: [0, 0],
+                    column: [1, 2]
+                });
+                expect(isHeaderSelected('c1')).toBe(false);
+                expect(isHeaderSelected('c2')).toBe(true);
+                expect(isHeaderSelected('c2')).toBe(true);
+            });
+
+            it('add selected class to the merged header which contains selected headers', function() {
+                modelManager.columnModel.set('columnMerge', [
+                    {
+                        columnName: 'c1-c2',
+                        columnNameList: ['c1', 'c2']
+                    },
+                    {
+                        columnName: 'c1-c2-c3',
+                        columnNameList: ['c1-c2', 'c3']
+                    }
+                ]);
+                header.render();
+                modelManager.selectionModel.set('range', {
+                    row: [0, 0],
+                    column: [0, 2]
+                });
+
+                expect(isHeaderSelected('c1-c2')).toBe(true);
+                expect(isHeaderSelected('c1-c2-c3')).toBe(true);
+            });
         });
     });
 });
