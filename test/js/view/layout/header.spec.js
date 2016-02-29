@@ -1,71 +1,29 @@
 'use strict';
 
-var ColumnModel = require('model/data/columnModel');
-var DataModel = require('model/data/rowList');
-var DimensionModel = require('model/dimension');
-var RenderModel = require('model/renderer');
+var ModelManager = require('model/manager');
+var DomState = require('domState');
+var ViewFactory = require('view/factory');
 var HeaderView = require('view/layout/header');
-var SelectionModel = require('model/selection');
 
 describe('Header', function() {
-    var dataModel, columnModel, dimensionModel, selectionModel, renderModel, viewFactoryMock, header;
-
-    function initialize() {
-        columnModel = new ColumnModel({
-            columnModelList: [
-                {
-                    title: 'c1',
-                    columnName: 'c1',
-                    width: 30
-                },
-                {
-                    title: 'c2',
-                    columnName: 'c2',
-                    width: 40
-                }
-            ]
-        });
-        dataModel = new DataModel(null, {
-            columnModel: columnModel
-        });
-        dimensionModel = new DimensionModel(null, {
-            dataModel: dataModel,
-            columnModel: columnModel
-        });
-        selectionModel = new SelectionModel(null, {
-            dataModel: dataModel
-        });
-        renderModel = new RenderModel(null, {
-            dataModel: dataModel,
-            columnModel: columnModel,
-            dimensionModel: dimensionModel
-        });
-        viewFactoryMock = {
-            createHeaderResizeHandler: function() {
-                return {
-                    el: $('<div />'),
-                    render: function() {return this;},
-                    destroy: function() {}
-                }
-            }
-        }
-    }
-
-    function createHeaderView(whichSide) {
-        return new HeaderView({
-            whichSide: whichSide,
-            dataModel: dataModel,
-            columnModel: columnModel,
-            dimensionModel: dimensionModel,
-            selectionModel: selectionModel,
-            renderModel: renderModel,
-            viewFactory: viewFactoryMock
-        });
-    }
+    var modelManager, viewFactory, header;
 
     beforeEach(function() {
-        initialize();
-        header = createHeaderView();
+        modelManager = new ModelManager(null, new DomState($('<div>')));
+        viewFactory = new ViewFactory({
+            modelManager: modelManager
+        });
+        modelManager.columnModel.set('columnModelList', [
+            {
+                columnName: 'c1',
+                width: 50
+            },
+            {
+                columnName: 'c2',
+                width: 60
+            }
+        ]);
+        header = viewFactory.createHeader('R');
     });
 
     describe('render', function() {
@@ -79,7 +37,7 @@ describe('Header', function() {
         });
 
         it('el의 높이를 dimensionModel의 headerHeight값으로 설정한다.', function() {
-            dimensionModel.set('headerHeight', 20);
+            modelManager.dimensionModel.set('headerHeight', 20);
             header.render();
 
             expect(header.$el.height()).toEqual(20);
@@ -87,7 +45,7 @@ describe('Header', function() {
 
         it('if whichSide is \'R\' and scrollY is false, add \'no_scroll\' class to element', function() {
             header.whichSide = 'R';
-            dimensionModel.set({
+            modelManager.dimensionModel.set({
                 scrollY: false
             });
             header.render();
@@ -104,40 +62,26 @@ describe('Header', function() {
 
             expect($colgroup.length).toBe(1);
             expect($cols.length).toBe(2);
-            expect($cols.eq(0).width()).toBe(30);
+            expect($cols.eq(0).width()).toBe(50);
             expect($cols.eq(0).attr('columnname')).toBe('c1');
-            expect($cols.eq(1).width()).toBe(40);
+            expect($cols.eq(1).width()).toBe(60);
             expect($cols.eq(1).attr('columnname')).toBe('c2');
         });
-
-        // TODO: TC 구현
-        // it('resize 핸들러를 랜더링 하는지 확인한다.', function() {
-        //     var resizeHandlerEl = $('<div />')[0];
-        //     spyOn(LayoutHeader, 'ResizeHandler').and.callFake(function() {
-        //         this.render = function() {
-        //             this.el = resizeHandlerEl;
-        //             return this;
-        //         };
-        //     });
-        //
-        //     header.render();
-        //     expect($(resizeHandlerEl).parent().is(header.$el)).toBe(true);
-        // });
 
         describe('_getHeaderMainCheckbox', function() {
             var lHeader;
             beforeEach(function() {
-                lHeader = createHeaderView('L');
+                lHeader = viewFactory.createHeader('L');
             });
 
             it('header에 checkbox가 랜더링 되었을 때, checkbox를 잘 가져오는지 확인한다.', function() {
-                columnModel.set('selectType', 'checkbox');
+                lHeader.columnModel.set('selectType', 'checkbox');
                 lHeader.render();
                 expect(lHeader._getHeaderMainCheckbox().length).toBe(1);
             });
 
             it('header에 checkbox 가 랜더링 되지 않았을 때', function() {
-                columnModel.set('selectType', 'radio');
+                lHeader.columnModel.set('selectType', 'radio');
                 lHeader.render();
                 expect(lHeader._getHeaderMainCheckbox().length).toBe(0);
             });
@@ -154,7 +98,7 @@ describe('Header', function() {
 
     describe('isSortable 관련 테스트', function() {
         beforeEach(function() {
-            columnModel.set('columnModelList', [
+            modelManager.columnModel.set('columnModelList', [
                 {
                     title: 'c1',
                     columnName: 'c1',
@@ -170,7 +114,7 @@ describe('Header', function() {
                     columnName: 'c3'
                 }
             ]);
-            header = createHeaderView();
+            header = viewFactory.createHeader();
             header.render();
         });
 
@@ -187,11 +131,11 @@ describe('Header', function() {
                 eventMock = {
                     target: $btn[0]
                 };
-            dataModel.sortByField = jasmine.createSpy('sortByField');
+            modelManager.dataModel.sortByField = jasmine.createSpy('sortByField');
 
             // click the button
             header._onClick(eventMock);
-            expect(dataModel.sortByField).toHaveBeenCalled();
+            expect(modelManager.dataModel.sortByField).toHaveBeenCalled();
         });
 
         it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {
@@ -201,16 +145,16 @@ describe('Header', function() {
                     isAscending: true
                 };
 
-            dataModel.trigger('sortChanged', eventData);
+            modelManager.dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(0)).toHaveClass('sorting_up');
 
             eventData.columnName = 'c2';
-            dataModel.trigger('sortChanged', eventData);
+            modelManager.dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(0)).not.toHaveClass('sorting_up');
             expect($btns.eq(1)).toHaveClass('sorting_up');
 
             eventData.isAscending = false;
-            dataModel.trigger('sortChanged', eventData);
+            modelManager.dataModel.trigger('sortChanged', eventData);
             expect($btns.eq(1)).not.toHaveClass('sorting_up');
             expect($btns.eq(1)).toHaveClass('sorting_down');
         });
@@ -259,7 +203,7 @@ describe('Header', function() {
             ];
 
         beforeEach(function() {
-            columnModel.set({
+            modelManager.columnModel.set({
                 columnModelList: columnModelList,
                 columnMerge: columnMergeList
             });
@@ -291,7 +235,7 @@ describe('Header', function() {
                     maxRow = header._getHierarchyMaxRowCount(hierarchyList);
 
                 expect(maxRow).toEqual(4);
-                columnModel.set('columnMerge', [
+                modelManager.columnModel.set('columnMerge', [
                     {
                         columnName: 'merge1',
                         title: 'c1-c2',
@@ -309,9 +253,9 @@ describe('Header', function() {
         var lHeader;
 
         beforeEach(function() {
-            lHeader = createHeaderView('L');
-            columnModel.set('selectType', 'checkbox');
-            dataModel.reset([
+            lHeader = viewFactory.createHeader('L');
+            modelManager.columnModel.set('selectType', 'checkbox');
+            modelManager.dataModel.reset([
                 {
                     c1: '0-1',
                     c2: '0-2'
@@ -330,7 +274,7 @@ describe('Header', function() {
             lHeader._syncCheckState();
             expect($input.prop('checked')).toBe(false);
 
-            dataModel.forEach(function(row) {
+            modelManager.dataModel.forEach(function(row) {
                 row.set('_button', true);
             });
             lHeader._syncCheckState();
@@ -340,7 +284,7 @@ describe('Header', function() {
         it('각 행의 button이 disable 되어 있다면, disable 상태를 고려하여 checkbox 상태를 갱신한다.', function() {
             var $input = lHeader._getHeaderMainCheckbox();
 
-            dataModel.forEach(function(row) {
+            modelManager.dataModel.forEach(function(row) {
                 row.setRowState('DISABLED');
             });
             lHeader._syncCheckState();
@@ -352,7 +296,7 @@ describe('Header', function() {
         var lHeader;
 
         beforeEach(function() {
-            lHeader = createHeaderView('L');
+            lHeader = viewFactory.createHeader('L');
             jasmine.clock().install();
         });
 
@@ -361,7 +305,7 @@ describe('Header', function() {
         });
 
         it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function() {
-            columnModel.set('selectType', 'checkbox');
+            modelManager.columnModel.set('selectType', 'checkbox');
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
             lHeader._onCheckCountChange();
@@ -377,7 +321,7 @@ describe('Header', function() {
         });
 
         it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function() {
-            columnModel.set('selectType', 'radio');
+            modelManager.columnModel.set('selectType', 'radio');
             lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
             lHeader._onCheckCountChange();
 
@@ -391,29 +335,29 @@ describe('Header', function() {
         var $input, clickEvent, lHeader;
 
         beforeEach(function() {
-            lHeader = createHeaderView('L');
-            columnModel.set('selectType', 'checkbox');
+            lHeader = viewFactory.createHeader('L');
+            modelManager.columnModel.set('selectType', 'checkbox');
             lHeader.render();
 
             $input = lHeader._getHeaderMainCheckbox();
             clickEvent = {target: $input.get(0)};
-            dataModel.checkAll = jasmine.createSpy('checkAll');
-            dataModel.uncheckAll = jasmine.createSpy('uncheckAll');
+            modelManager.dataModel.checkAll = jasmine.createSpy('checkAll');
+            modelManager.dataModel.uncheckAll = jasmine.createSpy('uncheckAll');
         });
 
         describe('selectType 이 checkbox 일 때', function() {
             it('체크한 상태라면 전체 행을 check 하기 위해 checkAll 을 호출한다.', function() {
                 $input.prop('checked', true);
                 lHeader._onClick(clickEvent);
-                expect(dataModel.checkAll).toHaveBeenCalled();
-                expect(dataModel.uncheckAll).not.toHaveBeenCalled();
+                expect(modelManager.dataModel.checkAll).toHaveBeenCalled();
+                expect(modelManager.dataModel.uncheckAll).not.toHaveBeenCalled();
             });
 
             it('체크 해제된 상태라면 전체 행을 check 하기 위해 uncheckAll 을 호출한다.', function() {
                 $input.prop('checked', false);
                 lHeader._onClick(clickEvent);
-                expect(dataModel.checkAll).not.toHaveBeenCalled();
-                expect(dataModel.uncheckAll).toHaveBeenCalled();
+                expect(modelManager.dataModel.checkAll).not.toHaveBeenCalled();
+                expect(modelManager.dataModel.uncheckAll).toHaveBeenCalled();
             });
         });
     });
@@ -447,12 +391,12 @@ describe('Header', function() {
                 shiftKey: shiftKey,
                 target: tableHeader
             };
-            spyOn(columnModel, 'getUnitColumnNamesIfMerged').and.returnValue(columnNames);
+            spyOn(modelManager.columnModel, 'getUnitColumnNamesIfMerged').and.returnValue(columnNames);
             spyOn(header, '_controlStartAction');
         });
 
         it('if selectionModel is disabled, should be interrupted', function() {
-            selectionModel.disable();
+            modelManager.selectionModel.disable();
             spyOn(header, '_hasMetaColumn').and.returnValue(false);
 
             header._onMouseDown(eventMock);
@@ -460,8 +404,7 @@ describe('Header', function() {
         });
 
         it('if meta column selected, should be interrupted', function() {
-            // new spy
-            columnModel.getUnitColumnNamesIfMerged = jasmine.createSpy().and.returnValue([
+            modelManager.columnModel.getUnitColumnNamesIfMerged = jasmine.createSpy().and.returnValue([
                 '_number'
             ]);
 
@@ -488,9 +431,9 @@ describe('Header', function() {
             pageX = 0;
             pageY = 0;
             shiftKey = false;
-            spyOn(selectionModel, 'selectColumn');
-            spyOn(selectionModel, 'update');
-            spyOn(columnModel, 'indexOfColumnName').and.callFake(function(name) {
+            spyOn(modelManager.selectionModel, 'selectColumn');
+            spyOn(modelManager.selectionModel, 'update');
+            spyOn(modelManager.columnModel, 'indexOfColumnName').and.callFake(function(name) {
                 return columns[name] || -1;
             });
             spyOn(header, '_attachDragEvents');
@@ -504,26 +447,26 @@ describe('Header', function() {
 
         describe('without shiftKey', function() {
             it('should set a minimum range of selection from column names', function() {
-                spyOn(selectionModel, 'setMinimumColumnRange').and.callThrough();
+                spyOn(modelManager.selectionModel, 'setMinimumColumnRange').and.callThrough();
                 columnNames.push('c1', 'c3');
                 header._controlStartAction(columnNames, pageX, pageY, shiftKey);
 
-                expect(selectionModel.setMinimumColumnRange).toHaveBeenCalledWith([1, 3]);
+                expect(modelManager.selectionModel.setMinimumColumnRange).toHaveBeenCalledWith([1, 3]);
             });
 
             it('should select a column - 1', function() {
                 header._controlStartAction(columnNames, pageX, pageY, shiftKey);
 
-                expect(selectionModel.selectColumn).toHaveBeenCalledWith(2);
-                expect(selectionModel.update).toHaveBeenCalledWith(0, 2);
+                expect(modelManager.selectionModel.selectColumn).toHaveBeenCalledWith(2);
+                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 2);
             });
 
             it('should select columns - 2', function() {
                 columnNames.push('c1', 'c3');
                 header._controlStartAction(columnNames, pageX, pageY, shiftKey);
 
-                expect(selectionModel.selectColumn).toHaveBeenCalledWith(1);
-                expect(selectionModel.update).toHaveBeenCalledWith(0, 3);
+                expect(modelManager.selectionModel.selectColumn).toHaveBeenCalledWith(1);
+                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3);
             });
         });
 
@@ -531,13 +474,13 @@ describe('Header', function() {
             beforeEach(function() {
                 columnNames = ['c1', 'c2', 'c3'];
                 shiftKey = true;
-                spyOn(selectionModel, 'extendColumnSelection');
+                spyOn(modelManager.selectionModel, 'extendColumnSelection');
             });
 
             it('should start(update) column selection with extending', function() {
                 header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-                expect(selectionModel.update).toHaveBeenCalledWith(0, 3, 'column');
-                expect(selectionModel.extendColumnSelection).toHaveBeenCalledWith([1, 2, 3], pageX, pageY);
+                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3, 'column');
+                expect(modelManager.selectionModel.extendColumnSelection).toHaveBeenCalledWith([1, 2, 3], pageX, pageY);
             });
 
             // For more detailed test,

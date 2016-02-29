@@ -18,6 +18,26 @@ describe('View.RowList', function() {
         return $tableContainer.find('tbody');
     }
 
+    function createRowListView(whichSide) {
+        return new RowListView({
+            whichSide: whichSide,
+            el: setFixtures('<table><tbody></tbody></table>').find('tbody'),
+            renderModel: grid.renderModel,
+            focusModel: grid.focusModel,
+            dataModel: grid.dataModel,
+            columnModel: grid.columnModel,
+            selectionModel: grid.selectionModel,
+            painterManager: new PainterManager({
+                modelManager: grid
+            }),
+            bodyTableView: {
+                resetTablePosition: function() {},
+                attachTableEventHandler: function() {},
+                redrawTable: redrawTable
+            }
+        });
+    }
+
     beforeEach(function() {
         $container = setFixtures('<div />');
         grid = new ModelManager(null, new DomState($container));
@@ -58,22 +78,7 @@ describe('View.RowList', function() {
         $tableContainer = $('<div/>').appendTo($container);
         redrawTable('');
 
-        rowListView = new RowListView({
-            whichSide: 'R',
-            el: setFixtures('<table><tbody></tbody></table>').find('tbody'),
-            renderModel: grid.renderModel,
-            focusModel: grid.focusModel,
-            dataModel: grid.dataModel,
-            columnModel: grid.columnModel,
-            painterManager: new PainterManager({
-                modelManager: grid
-            }),
-            bodyTableView: {
-                resetTablePosition: function() {},
-                attachTableEventHandler: function() {},
-                redrawTable: redrawTable
-            }
-        });
+        rowListView = createRowListView('R');
         rowListView.render();
     });
 
@@ -290,27 +295,6 @@ describe('View.RowList', function() {
             });
         });
 
-        describe('when select event triggered,', function() {
-            var $firstRowCells, $secondRowCells;
-
-            beforeEach(function() {
-                $firstRowCells = rowListView.$el.find('tr:first > td');
-                $secondRowCells = rowListView.$el.find('tr:nth-of-type(2) > td').addClass('selected');
-                rowListView._onSelect(new GridEvent({
-                    prevRowKey: 1,
-                    rowKey: 0
-                }));
-            });
-
-            it('add "selectedd" class to cells in target row', function() {
-                expect($firstRowCells).toHaveClass('selected');
-            });
-
-            it('remove selected class from cells in previous selected row', function() {
-                expect($secondRowCells).not.toHaveClass('selected');
-            });
-        });
-
         describe('render', function() {
             it('dataModel의 rowList가 변경될 경우, 데이터 내용에 맞게 rendering 한다.', function() {
                 var trList = rowListView.$el.find('tr'),
@@ -318,6 +302,72 @@ describe('View.RowList', function() {
 
                 expect(trList.length).toBe(2);
                 expect(tdList.length).toBe(6);
+            });
+        });
+
+        describe('if the instance is left-side', function() {
+            var $trs;
+
+            function isMetaCellsSelected(rowKey) {
+                var $metaCells = $trs.filter('[key=' + rowKey + ']').find('td.meta_column');
+                return $metaCells.not('.selected').length === 0;
+            }
+
+            beforeEach(function() {
+                rowListView = createRowListView('L');
+                rowListView.render();
+                $trs = rowListView.$el.find('tr');
+            });
+
+            describe('and focused row is set', function() {
+                it('add "selected" class to the meta cells of focused row', function() {
+                    rowListView.focusModel.set('rowKey', 0);
+
+                    expect(isMetaCellsSelected(0)).toBe(true);
+                });
+            });
+
+            describe('and focused row has changed', function() {
+                it('reset "selected" class to the meta cells of focused row', function() {
+                    rowListView.focusModel.set('rowKey', 0, {silent: true});
+                    rowListView.focusModel.set('rowKey', 1);
+
+                    expect(isMetaCellsSelected(0)).toBe(false);
+                    expect(isMetaCellsSelected(1)).toBe(true);
+                });
+            });
+
+            describe('and the row-range of selection has changed', function() {
+                it('add "selected" class to the meta cells in the range', function() {
+                    rowListView.selectionModel.set('range', {
+                        row: [0, 1],
+                        column: [0, 0]
+                    });
+
+                    expect(isMetaCellsSelected(0)).toBe(true);
+                    expect(isMetaCellsSelected(1)).toBe(true);
+                });
+
+                it('remove "selected" class from the meta cells in the privious range', function() {
+                    rowListView.selectionModel.set('range', {
+                        row: [0, 1],
+                        column: [0, 0]
+                    });
+                    rowListView.selectionModel.set('range', {
+                        row: [1, 1],
+                        column: [0, 0]
+                    });
+                    expect(isMetaCellsSelected(0)).toBe(false);
+                });
+
+                it('refresh "selected" class from the meta cells ', function() {
+                    rowListView.focusModel.set('rowKey', 1);
+                    rowListView.selectionModel.set('range', {
+                        row: [0, 0],
+                        column: [0, 0]
+                    });
+                    expect(isMetaCellsSelected(1)).toBe(false);
+                });
             });
         });
     });

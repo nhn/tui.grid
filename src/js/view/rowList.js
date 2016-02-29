@@ -7,7 +7,7 @@
 var View = require('../base/view'),
     util = require('../common/util');
 
-var CLASS_NAME_SELECTED = 'selected';
+var CLASSNAME_SELECTED = 'selected';
 
 /**
  * RowList View
@@ -100,7 +100,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
             // IE7에서 레이아웃이 틀어지는 현상 방지
-            if (util.isBrowserIE7()) { // eslint-disable-line no-magic-numbers
+            if (util.isBrowserIE7()) {
                 $tbody.width($tbody.width());
             }
         } else {
@@ -153,8 +153,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        $rows.find(metaCellSelector).removeClass(CLASS_NAME_SELECTED);
-        $filteredRows.find(metaCellSelector).addClass(CLASS_NAME_SELECTED);
+        $rows.find(metaCellSelector).removeClass(CLASSNAME_SELECTED);
+        $filteredRows.find(metaCellSelector).addClass(CLASSNAME_SELECTED);
     },
 
     /**
