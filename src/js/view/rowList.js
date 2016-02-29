@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var View = require('../base/view');
+var View = require('../base/view'),
+    util = require('../common/util');
 
 var CLASS_NAME_SELECTED = 'selected';
 
@@ -99,7 +100,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
             // IE7에서 레이아웃이 틀어지는 현상 방지
-            if (tui.util.browser.msie && tui.util.browser.version <= 7) { // eslint-disable-line no-magic-numbers
+            if (util.isBrowserIE7()) { // eslint-disable-line no-magic-numbers
                 $tbody.width($tbody.width());
             }
         } else {

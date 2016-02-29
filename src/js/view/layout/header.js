@@ -7,6 +7,9 @@
 var View = require('../../base/view'),
     util = require('../../common/util');
 
+var CLASSNAME_SELECTED = 'selected',
+    DELAY_SYNC_CHECK = 10;
+
 /**
  * Header 레이아웃 View
  * @module view/layout/header
@@ -126,21 +129,40 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     * Refresh selected headers (which has a 'selected' className)
+     * Returns an array of names of merged-column which contains every column name in the given array.
+     * @param {Array.<String>} columnNames - an array of column names to test
+     * @returns {Array.<String>}
+     * @private
+     */
+    _getContainingMergedColumnNames: function(columnNames) {
+        var columnModel = this.columnModel,
+            mergedColumnNames = _.pluck(columnModel.get('columnMerge'), 'columnName');
+
+        return _.filter(mergedColumnNames, function(mergedColumnName) {
+            var unitColumnNames = columnModel.getUnitColumnNamesIfMerged(mergedColumnName);
+            return _.every(unitColumnNames, function(name) {
+                return _.contains(columnNames, name);
+            });
+        });
+    },
+
+    /**
+     * Refreshes selected class of every header element (th)
      * @private
      */
     _refreshSelectedHeaders: function() {
-        var $ths = this.$el.find('th').removeClass('selected'),
-            columnNames;
+        var $ths = this.$el.find('th').removeClass(CLASSNAME_SELECTED),
+            columnNames, mergedColumnNames;
 
         if (this.selectionModel.hasSelection()) {
             columnNames = this._getSelectedColumnNames();
         } else {
             columnNames = [this.focusModel.get('columnName')];
         }
+        mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
 
-        _.each(columnNames, function(columnName) {
-            $ths.filter('[columnname=' + columnName + ']').addClass('selected');
+        _.each(columnNames.concat(mergedColumnNames), function(columnName) {
+            $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
         });
     },
 
@@ -303,7 +325,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onCheckCountChange: function() {
         if (this.columnModel.get('selectType') === 'checkbox') {
             clearTimeout(this.timeoutForAllChecked);
-            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
+            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), DELAY_SYNC_CHECK);
         }
     },
 
