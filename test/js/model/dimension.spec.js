@@ -1127,9 +1127,6 @@ describe('Dimension', function() {
         var columnWidthList = [10, 20, 30, 40];
 
         beforeEach(function() {
-            /*********
-             * Given
-             *********/
             spyOn(dimensionModel.columnModel, 'getVisibleMetaColumnCount')
                 .and
                 .returnValue(1);
@@ -1157,7 +1154,7 @@ describe('Dimension', function() {
         it('should return normal index considered meta columns ' +
             'when the X-position is in container', function() {
             var withMeta = true,
-                containerX = columnWidthList[0] + columnWidthList[1] + columnWidthList[1],
+                containerX = columnWidthList[0] + columnWidthList[1] + columnWidthList[2],
                 expectedIndex = 2,
                 actual;
 

@@ -83,8 +83,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollLeft: function() {
-        var dimension = this.dimensionModel;
-        this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
+        var dimension = this.dimensionModel,
+            maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
+                dimension.getScrollYWidth();
+
+        this.set('maxScrollLeft', maxScrollLeft);
     },
 
     /**

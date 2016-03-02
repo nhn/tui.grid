@@ -357,9 +357,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = this.getColumnWidthList(whichSide),
             frameWidth = this._getFrameWidth(columnWidthList);
-        if (tui.util.isUndefined(whichSide) && columnFixCount > 0) {
-            //columnFixCount 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
-            frameWidth += 1;
+
+        if (_.isUndefined(whichSide) && columnFixCount > 0) {
+            frameWidth += CELL_BORDER_WIDTH;
         }
         return frameWidth;
     },
@@ -437,7 +437,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9);
+        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
 
         if (maxWidth) {
             maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
@@ -686,10 +686,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnIndex = columnWidthList.length - 1;
         } else {
             tui.util.forEachArray(columnWidthList, function(width, index) {
+                width += CELL_BORDER_WIDTH;
+                columnIndex = index;
+
                 if (cellX > width) {
                     cellX -= width;
                 } else {
-                    columnIndex = index;
                     return false;
                 }
             });
