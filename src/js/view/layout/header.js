@@ -7,6 +7,9 @@
 var View = require('../../base/view'),
     util = require('../../common/util');
 
+var CLASSNAME_SELECTED = 'selected',
+    DELAY_SYNC_CHECK = 10;
+
 /**
  * Header 레이아웃 View
  * @module view/layout/header
@@ -25,6 +28,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
+            focusModel: options.focusModel,
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
@@ -32,10 +36,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange, this)
-            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState, this);
+        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
+            .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
+            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
+            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
     tagName: 'div',
@@ -107,6 +113,58 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             }));
         }, this);
         return htmlList.join('');
+    },
+
+    /**
+     * Returns an array of names of columns in selection range.
+     * @private
+     * @returns {Array.<String>}
+     */
+    _getSelectedColumnNames: function() {
+        var columnRange = this.selectionModel.get('range').column,
+            visibleColumns = this.columnModel.getVisibleColumnModelList(),
+            selectedColumns = visibleColumns.slice(columnRange[0], columnRange[1] + 1);
+
+        return _.pluck(selectedColumns, 'columnName');
+    },
+
+    /**
+     * Returns an array of names of merged-column which contains every column name in the given array.
+     * @param {Array.<String>} columnNames - an array of column names to test
+     * @returns {Array.<String>}
+     * @private
+     */
+    _getContainingMergedColumnNames: function(columnNames) {
+        var columnModel = this.columnModel,
+            mergedColumnNames = _.pluck(columnModel.get('columnMerge'), 'columnName');
+
+        return _.filter(mergedColumnNames, function(mergedColumnName) {
+            var unitColumnNames = columnModel.getUnitColumnNamesIfMerged(mergedColumnName);
+            return _.every(unitColumnNames, function(name) {
+                return _.contains(columnNames, name);
+            });
+        });
+    },
+
+    /**
+     * Refreshes selected class of every header element (th)
+     * @private
+     */
+    _refreshSelectedHeaders: function() {
+        var $ths = this.$el.find('th'),
+            columnNames, mergedColumnNames;
+
+        if (this.selectionModel.hasSelection()) {
+            columnNames = this._getSelectedColumnNames();
+        } else {
+            columnNames = [this.focusModel.get('columnName')];
+        }
+        mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
+
+        $ths.removeClass(CLASSNAME_SELECTED);
+        _.each(columnNames.concat(mergedColumnNames), function(columnName) {
+            $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+        });
     },
 
     /**
@@ -268,7 +326,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onCheckCountChange: function() {
         if (this.columnModel.get('selectType') === 'checkbox') {
             clearTimeout(this.timeoutForAllChecked);
-            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
+            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), DELAY_SYNC_CHECK);
         }
     },
 

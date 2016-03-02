@@ -142,6 +142,7 @@ var ViewFactory = tui.util.defineClass({
             whichSide: whichSide,
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
+            focusModel: this.modelManager.focusModel,
             selectionModel: this.modelManager.selectionModel,
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
@@ -212,6 +213,7 @@ var ViewFactory = tui.util.defineClass({
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             dimensionModel: this.modelManager.dimensionModel,
+            selectionModel: this.modelManager.selectionModel,
             renderModel: this.modelManager.renderModel,
             focusModel: this.modelManager.focusModel,
             painterManager: this.painterManager

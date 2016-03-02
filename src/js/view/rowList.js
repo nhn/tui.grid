@@ -4,7 +4,11 @@
  */
 'use strict';
 
-var View = require('../base/view');
+var View = require('../base/view'),
+    util = require('../common/util');
+
+var CLASSNAME_SELECTED = 'selected',
+    CLASSNAME_META_COLUMN = 'td.meta_column';
 
 /**
  * RowList View
@@ -13,14 +17,14 @@ var View = require('../base/view');
  */
 var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
-     * 초기화 함수
      * @constructs
-     * @param {object} options 옵션 객체
+     * @param {object} options - Options
      * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
         var focusModel = options.focusModel,
             renderModel = options.renderModel,
+            selectionModel = options.selectionModel,
             whichSide = options.whichSide || 'R';
 
         this.setOwnProperties({
@@ -28,6 +32,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             bodyTableView: options.bodyTableView,
             focusModel: focusModel,
             renderModel: renderModel,
+            selectionModel: selectionModel,
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
@@ -38,11 +43,16 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
-            .listenTo(focusModel, 'select', this._onSelect)
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(focusModel, 'focusIn', this._onFocusIn)
             .listenTo(renderModel, 'rowListChanged', this.render);
+
+        if (this.whichSide === 'L') {
+            this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
+                .listenTo(selectionModel, 'change:range', this._refreshSelectedMetaColumns)
+                .listenTo(renderModel, 'rowListChanged', this._refreshSelectedMetaColumns);
+        }
     },
 
     /**
@@ -91,7 +101,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
             // IE7에서 레이아웃이 틀어지는 현상 방지
-            if (tui.util.browser.msie && tui.util.browser.version <= 7) { // eslint-disable-line no-magic-numbers
+            if (util.isBrowserIE7()) {
                 $tbody.width($tbody.width());
             }
         } else {
@@ -120,9 +130,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * tr 엘리먼트를 찾아서 반환한다.
-     * @param {(string|number)} rowKey rowKey 대상의 키값
-     * @returns {jquery} 조회한 tr jquery 엘리먼트
+     * Returns a TR element of given rowKey
+     * @param {(string|number)} rowKey - rowKey
+     * @returns {jquery}
      * @private
      */
     _getRowElement: function(rowKey) {
@@ -130,43 +140,59 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * focusModel 의 select 이벤트 발생시 이벤트 핸들러
-     * @param {Object} eventData 대상의 키값
+     * Refreshes 'selected' class of meta columns.
      * @private
      */
-    _onSelect: function(eventData) {
-        if (eventData.isStopped()) {
-            return;
+    _refreshSelectedMetaColumns: function() {
+        var $rows = this.$el.find('tr'),
+            $filteredRows;
+
+        if (this.selectionModel.hasSelection()) {
+            $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
+        } else {
+            $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        if (!_.isNull(eventData.prevRowKey)) {
-            this._setCssSelect(eventData.prevRowKey, false);
-        }
-        this._setCssSelect(eventData.rowKey, true);
+        $rows.find(CLASSNAME_META_COLUMN).removeClass(CLASSNAME_SELECTED);
+        $filteredRows.find(CLASSNAME_META_COLUMN).addClass(CLASSNAME_SELECTED);
     },
 
     /**
-     * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
+     * Filters the rows by given range(index) and returns them.
+     * @param {jQuery} $rows - rows (tr elements)
+     * @param {Array.<Number>} rowRange - [startIndex, endIndex]
+     * @returns {jQuery}
      * @private
      */
-    _setCssSelect: function(rowKey, isSelected) {
-        var columnModelList = this._getColumnModelList(),
-            trCache = {},
-            columnName, mainRowKey, $tr, $td;
+    _filterRowsByIndexRange: function($rows, rowRange) {
+        var renderModel = this.renderModel,
+            renderStartIndex = renderModel.get('startIndex'),
+            startIndex, endIndex;
 
-        _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
-            mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
+        endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
 
-            trCache[mainRowKey] = trCache[mainRowKey] || this._getRowElement(mainRowKey);
-            $tr = trCache[mainRowKey];
-            $td = $tr.find('td[columnname="' + columnName + '"]');
-            if ($td.length) {
-                $td.toggleClass('selected', isSelected);
-            }
-        }, this);
+        if (!startIndex && !endIndex) {
+            return $();
+        }
+        return $rows.slice(startIndex, endIndex);
+    },
+
+    /**
+     * Filters the row by given rowKey
+     * @param {jQuery} $rows - rows (tr elements)
+     * @param {Number} rowKey - rowKey
+     * @returns {jQuery}
+     * @private
+     */
+    _filterRowByKey: function($rows, rowKey) {
+        var rowIndex = this.dataModel.indexOfRowKey(rowKey),
+            renderStartIndex = this.renderModel.get('startIndex');
+
+        if (renderStartIndex > rowIndex) {
+            return $();
+        }
+        return $rows.eq(rowIndex - renderStartIndex);
     },
 
     /**
@@ -215,7 +241,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * 랜더링한다.
+     * Renders.
      * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
      * @returns {View.RowList} this 객체
      */
@@ -268,7 +294,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     }
 }, {
     /**
-     * tbody 요소의 innerHTML이 읽기전용인지 여부
+     * Whether the innerHTML property of a tbody element is readonly.
      * @memberof RowList
      * @static
      */
