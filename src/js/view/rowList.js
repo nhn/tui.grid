@@ -7,7 +7,8 @@
 var View = require('../base/view'),
     util = require('../common/util');
 
-var CLASSNAME_SELECTED = 'selected';
+var CLASSNAME_SELECTED = 'selected',
+    CLASSNAME_META_COLUMN = 'td.meta_column';
 
 /**
  * RowList View
@@ -144,7 +145,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _refreshSelectedMetaColumns: function() {
         var $rows = this.$el.find('tr'),
-            metaCellSelector = 'td.meta_column',
             $filteredRows;
 
         if (this.selectionModel.hasSelection()) {
@@ -153,8 +153,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        $rows.find(metaCellSelector).removeClass(CLASSNAME_SELECTED);
-        $filteredRows.find(metaCellSelector).addClass(CLASSNAME_SELECTED);
+        $rows.find(CLASSNAME_META_COLUMN).removeClass(CLASSNAME_SELECTED);
+        $filteredRows.find(CLASSNAME_META_COLUMN).addClass(CLASSNAME_SELECTED);
     },
 
     /**
@@ -170,12 +170,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             startIndex, endIndex;
 
         startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
-        endIndex = Math.max(rowRange[1] - renderStartIndex, 0);
+        endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
 
         if (!startIndex && !endIndex) {
             return $();
         }
-        return $rows.slice(startIndex, endIndex + 1);
+        return $rows.slice(startIndex, endIndex);
     },
 
     /**

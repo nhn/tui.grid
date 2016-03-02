@@ -151,7 +151,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _refreshSelectedHeaders: function() {
-        var $ths = this.$el.find('th').removeClass(CLASSNAME_SELECTED),
+        var $ths = this.$el.find('th'),
             columnNames, mergedColumnNames;
 
         if (this.selectionModel.hasSelection()) {
@@ -161,6 +161,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }
         mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
 
+        $ths.removeClass(CLASSNAME_SELECTED);
         _.each(columnNames.concat(mergedColumnNames), function(columnName) {
             $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
         });
