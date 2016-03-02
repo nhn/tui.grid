@@ -22,8 +22,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             columnModel: options.columnModel,
             whichSide: options.whichSide || 'R',
 
-            isResizing: false,     //현재 resize 발생 상황인지
-            $target: null,         //이벤트가 발생한 target resize handler
+            isResizing: false,
+            $target: null,
             differenceLeft: 0,
             initialWidth: 0,
             initialOffsetLeft: 0,
@@ -38,7 +38,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     events: {
         'mousedown .resize_handle': '_onMouseDown',
-        'click .resize_handle': '_onClick'
+        'dblclick .resize_handle': '_onDblClick'
     },
 
     template: _.template(
@@ -53,7 +53,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         '</div>'),
 
     /**
-     * columnWidthList 와 columnModelList 를 함께 반환한다.
+     * Return an object that contains an array of column width and an array of column model.
      * @returns {{widthList: (Array|*), modelList: (Array|*)}} Column Data
      * @private
      */
@@ -70,8 +70,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * resize handler 마크업을 구성한다.
-     * @returns {String} resize handler 의 html 마크업 스트링
+     * Returns the HTML string of all handler.
+     * @returns {String}
      * @private
      */
     _getResizeHandlerMarkup: function() {
@@ -93,8 +93,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 랜더링 한다.
-     * @returns {View.Layout.Header.ResizeHandler} This object
+     * Render
+     * @returns {module:view/layout/resizeHandler} This object
      */
     render: function() {
         var headerHeight = this.dimensionModel.get('headerHeight'),
@@ -104,14 +104,13 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             marginTop: -headerHeight,
             height: headerHeight
         });
-
-        //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
         this._refreshHandlerPosition();
+
         return this;
     },
 
     /**
-     * 생성된 핸들러의 위치를 설정한다.
+     * Refresh the position of every handler.
      * @private
      */
     _refreshHandlerPosition: function() {
@@ -123,7 +122,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             $handler,
             columnName,
             curPos = 0,
-            border = 1,
+            BORDER_WIDTH = 1,
+            HANDLER_WIDTH_HALF = 3,
             width;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
@@ -135,14 +135,14 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             } else {
                 width = columnWidthList[index];
             }
-            curPos += width + border;
-            $handler.css('left', (curPos - 3) + 'px');
+            curPos += width + BORDER_WIDTH;
+            $handler.css('left', curPos - HANDLER_WIDTH_HALF);
         });
     },
 
     /**
-     * 현재 mouse move resizing 중인지 상태 flag 반환
-     * @returns {boolean}    현재 resize 중인지 여부
+     * Returns whether resizing is in progress or not.
+     * @returns {boolean}
      * @private
      */
     _isResizing: function() {
@@ -150,56 +150,29 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent    마우스 이벤트 객체
+     * Event handler for the 'mousedown' event
+     * @param {MouseEvent} mouseEvent - mouse event
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        this._startResizing(mouseDownEvent);
+    _onMouseDown: function(mouseEvent) {
+        this._startResizing(mouseEvent);
     },
 
     /**
-     * click 이벤트 핸들러
-     * @param {Event} clickEvent 마우스 이벤트 객체
+     * Event handler for the 'dblclick' event
+     * @param {MouseEvent} mouseEvent - mouse event
      * @private
      */
-    _onClick: function(clickEvent) {
-        var $target = $(clickEvent.target),
-            index = parseInt($target.attr('columnindex'), 10),
-            isClicked = $target.data('isClicked');
+    _onDblClick: function(mouseEvent) {
+        var $target = $(mouseEvent.target),
+            index = parseInt($target.attr('columnindex'), 10);
 
-        if (isClicked) {
-            this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
-            this._clearClickedFlag($target);
-            this._refreshHandlerPosition();
-        } else {
-            this._setClickedFlag($target);
-        }
+        this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+        this._refreshHandlerPosition();
     },
 
     /**
-     * 더블클릭을 확인하기 위한 isClicked 플래그를 설정한다.
-     * @param {jQuery} $target 설정할 타겟 엘리먼트
-     * @private
-     */
-    _setClickedFlag: function($target) {
-        $target.data('isClicked', true);
-
-        // TODO: dblclick 이벤트 사용
-        setTimeout($.proxy(this._clearClickedFlag, this, $target), 500); // eslint-disable-line no-magic-numbers
-    },
-
-    /**
-     * 더블클릭을 확인하기 위한 isClicked 를 제거한다.
-     * @param {jQuery} $target 설정할 타겟 엘리먼트
-     * @private
-     */
-    _clearClickedFlag: function($target) {
-        $target.data('isClicked', false);
-    },
-
-    /**
-     * mouseup 이벤트 핸들러
+     * Event handler for the 'mouseup' event
      * @private
      */
     _onMouseUp: function() {
@@ -207,19 +180,19 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * mousemove 이벤트 핸들러
-     * @param {event} mouseMoveEvent    마우스 이벤트 객체
+     * Event handler for the 'mousemove' event
+     * @param {MouseEvent} mouseEvent - mouse event
      * @private
      */
-    _onMouseMove: function(mouseMoveEvent) {
+    _onMouseMove: function(mouseEvent) {
         var left, width, index;
 
         /* istanbul ignore else */
         if (this._isResizing()) {
-            mouseMoveEvent.preventDefault();
+            mouseEvent.preventDefault();
 
-            left = mouseMoveEvent.pageX - this.initialOffsetLeft;
-            width = this._calculateWidth(mouseMoveEvent.pageX);
+            left = mouseEvent.pageX - this.initialOffsetLeft;
+            width = this._calculateWidth(mouseEvent.pageX);
             index = parseInt(this.$target.attr('columnindex'), 10);
 
             this.$target.css('left', left + 'px');
@@ -229,9 +202,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 너비를 계산한다.
-     * @param {number} pageX    마우스의 x 좌표
-     * @returns {number} x좌표를 기준으로 계산한 width 값
+     * Returns the width of the column based on given mouse position and the initial offset.
+     * @param {number} pageX - mouse x position
+     * @returns {number}
      * @private
      */
     _calculateWidth: function(pageX) {
@@ -240,9 +213,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
-     * @param {number} index 핸들러의 index 값
-     * @returns {number} 컬럼 index 값
+     * Find the real index (based on visibility) of the column using index value of the handler and returns it.
+     * @param {number} index - index value of the handler
+     * @returns {number}
      * @private
      */
     _getHandlerColumnIndex: function(index) {
@@ -250,8 +223,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * resize start 세팅
-     * @param {event} mouseDownEvent 마우스 이벤트
+     * Start resizing
+     * @param {event} mouseDownEvent - mouse event
      * @private
      */
     _startResizing: function(mouseDownEvent) {
@@ -276,7 +249,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * resize stop 세팅
+     * Stop resizing
      * @private
      */
     _stopResizing: function() {
@@ -298,7 +271,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         this.stopListening();

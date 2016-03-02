@@ -927,7 +927,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         }
         this.trigger('beforeReset');
 
-        if (rowList && rowList.length > MIN_LEN_FOR_WAITING_LAYER) { // eslint-disable-line no-magic-numbers
+        if (rowList && rowList.length > MIN_LEN_FOR_WAITING_LAYER) {
             // defer to show a waiting-layer if dataset is large
             _.defer(_.bind(this._resetData, this, rowList, isParse, callback));
         } else {
