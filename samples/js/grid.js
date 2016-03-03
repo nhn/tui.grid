@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.1.2
+ * @version 1.1.3
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -11,9 +11,6 @@
  * @author NHN Ent. FE Development Team
  */
 'use strict';
-
-var common = require('../base/common');
-var util = require('../common/util');
 
 /**
  * Router for Addon.Net
@@ -30,28 +27,23 @@ var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype 
 
     routes: {
         'read/:queryStr': 'read'
-    },
-
-    /**
-     * Read
-     * @param {String} queryStr - query string
-     */
-    read: function(queryStr) {}
+    }
 });
 
 module.exports = Router;
 
-},{"../base/common":4,"../common/util":10}],2:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * @fileoverview Network 모듈 addon
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var View = require('../base/view');
-var Router = require('./net-router');
-var util = require('../common/util');
-var formUtil = require('../common/formUtil');
+var View = require('../base/view'),
+    Router = require('./net-router'),
+    util = require('../common/util'),
+    formUtil = require('../common/formUtil'),
+    GridEvent = require('../common/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
 
@@ -136,7 +128,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
 
     initialize: function(options) {
-        var defaultOptions, options, pagination;
+        var defaultOptions;
 
         defaultOptions = {
             initialRequest: true,
@@ -319,7 +311,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             }
             this._ajax(params);
         } else {
-            Backbone.sync.call(Backbone, method, model, options);
+            Backbone.sync(Backbone, method, model, options);
         }
     },
 
@@ -498,7 +490,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _readDataAt: function(page, isUsingRequestedData, sortOptions) {
         var data;
 
-        isUsingRequestedData = isUsingRequestedData === undefined ? true : isUsingRequestedData;
+        isUsingRequestedData = _.isUndefined(isUsingRequestedData) ? true : isUsingRequestedData;
         data = isUsingRequestedData ? this.requestedFormData : this._getFormData();
         data.page = page;
         data.perPage = this.perPage;
@@ -556,7 +548,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         }
 
         paramStr = $.param(data);
-        window.location = url + '?'+ paramStr;
+        window.location = url + '?' + paramStr;
     },
 
     /**
@@ -711,7 +703,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _ajax: function(options) {
-        var eventData = this.createEventData(options.data),
+        var eventData = new GridEvent(options.data),
             params;
 
         this.trigger('beforeRequest', eventData);
@@ -756,7 +748,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
         var message = responseData && responseData['message'],
-            eventData = this.createEventData({
+            eventData = new GridEvent({
                 httpStatus: status,
                 requestType: options.requestType,
                 requestParameter: options.data,
@@ -776,7 +768,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 callback(responseData['data'] || {}, status, jqXHR);
             }
         } else {
-            // TODO: 오류 처리 - invalid 셀에 마크하기 등. 스펙아웃 할 수도 있음
             this.trigger('failResponse', eventData);
             if (eventData.isStopped()) {
                 return;
@@ -797,7 +788,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onError: function(callback, options, jqXHR, status) {
-        var eventData = this.createEventData({
+        var eventData = new GridEvent({
             httpStatus: status,
             requestType: options.requestType,
             requestParameter: options.data,
@@ -823,7 +814,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
 module.exports = Net;
 
-},{"../base/view":7,"../common/constMap":8,"../common/formUtil":9,"../common/util":10,"./net-router":1}],3:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/formUtil":9,"../common/gridEvent":10,"../common/util":11,"./net-router":1}],3:[function(require,module,exports){
 /**
  * @fileoverview Base class for Collections
  * @author NHN Ent. FE Development Team
@@ -838,13 +829,6 @@ var common = require('./common');
  * @mixes module:base/common
  */
 var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
-    /**
-     * @constructs
-     * @param {Array.<Object>} models - Models
-     * @param {Object} options - Options
-     */
-    initialize: function(models, options) {},
-
     /**
      * collection 내 model 들의 event listener 를 제거하고 메모리에서 해제한다.
      * @returns {object} this object
@@ -903,13 +887,7 @@ var common = require('./common');
  * @module base/model
  * @mixes module:base/common
  */
-var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{
-    /**
-     * @constructs
-     * @param {Object} attributes Attributes
-     */
-    initialize: function(attributes) {}
-});
+var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{});
 
 _.assign(Model.prototype, common);
 
@@ -934,7 +912,7 @@ var common = require('./common');
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     /**
      * @constructs
-     * @param {Object} attrs - Attributes 
+     * @param {Object} attrs - Attributes
      */
     init: function(attrs) {
         var grid = attrs && attrs.grid || this.collection && this.collection.grid || null;
@@ -1001,9 +979,8 @@ var common = require('./common');
 var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     /**
      * @constructs
-     * @param {Object} attributes Attributes
      */
-    initialize: function(attributes) {
+    initialize: function() {
         this._children = [];
     },
 
@@ -1051,23 +1028,6 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         this.stopListening();
         this._destroyChildren();
         this.remove();
-    },
-
-    /**
-     * customEvent 에서 사용할 이벤트 객체를 포멧에 맞게 생성하여 반환한다.
-     * @param {Object} data 이벤트 핸들러에 넘길 데이터
-     * @returns {{_isStopped: boolean, stop: function, param1: param1, param2: param2}} 생성된 커스텀 이벤트 객체
-     */
-    createEventData: function(data) {
-        var eventData = $.extend({}, data);
-        eventData.stop = function() {
-            this._isStopped = true;
-        };
-        eventData.isStopped = function() {
-            return this._isStopped;
-        };
-        eventData._isStopped = eventData._isStopped || false;
-        return eventData;
     },
 
     /**
@@ -1131,7 +1091,7 @@ module.exports = {
         CELL_BORDER_WIDTH: 1,
         TABLE_BORDER_WIDTH: 1
     }
-}
+};
 
 },{}],9:[function(require,module,exports){
 /**
@@ -1274,7 +1234,7 @@ var formUtil = {
         var formElement;
         if ($form && $form.length) {
             if (elementName) {
-                formElement = $form.prop('elements')[elementName + ''];
+                formElement = $form.prop('elements')[String(elementName)];
             } else {
                 formElement = $form.prop('elements');
             }
@@ -1358,10 +1318,60 @@ module.exports = formUtil;
 
 },{}],10:[function(require,module,exports){
 /**
+ * @fileoverview Event class for public event of Grid
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+/**
+ * Event class for public event of Grid
+ * @module common/gridEvent
+ */
+var GridEvent = tui.util.defineClass(/**@lends module:common/gridEvent.prototype */{
+    /**
+     * @constructs
+     * @param {Object} data - Event data for handler
+     */
+    init: function(data) {
+        this._stopped = false;
+        this.setData(data);
+    },
+
+    /**
+     * Sets data
+     * @param {Object} data - data
+     */
+    setData: function(data) {
+        _.extend(this, data);
+    },
+
+    /**
+     * Stops propogation of this event.
+     * @api
+     */
+    stop: function() {
+        this._stopped = true;
+    },
+
+    /**
+     * Returns whether this event is stopped.
+     * @returns {Boolean}
+     */
+    isStopped: function() {
+        return this._stopped;
+    }
+});
+
+module.exports = GridEvent;
+
+},{}],11:[function(require,module,exports){
+/**
 * @fileoverview 유틸리티 메서드 모음
 * @author NHN Ent. FE Development Team
 */
 'use strict';
+
+var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
 * util 모듈
@@ -1406,7 +1416,7 @@ var util = {
     },
 
     /**
-     * Return min and max value in array
+     * Returns the minimum value and the maximum value of the values in array.
      * @param {Array} arr - Target array
      * @returns {{min: number, max: number}} Min and Max
      * @see {@link http://jsperf.com/getminmax}
@@ -1419,36 +1429,36 @@ var util = {
     },
 
     /**
-     * 행 개수와 한 행당 높이를 인자로 받아 테이블 body 의 전체 높이를 구한다.
+     * Returns the table height including height of rows and borders.
      * @memberof module:util
-     * @param {number} rowCount  행 개수
-     * @param {number} rowHeight    한 행당 높이
-     * @returns {number} 계산된 높이
+     * @param {number} rowCount - row count
+     * @param {number} rowHeight - row height
+     * @returns {number}
      */
     getHeight: function(rowCount, rowHeight) {
-        return rowCount === 0 ? rowCount : rowCount * (rowHeight + 1) + 1;
+        return rowCount === 0 ? rowCount : rowCount * (rowHeight + CELL_BORDER_WIDTH);
     },
 
     /**
-     *Table 의 높이와 행당 높이를 인자로 받아, table 에서 보여줄 수 있는 행 개수를 반환한다.
+     * Returns the count of rows based on table height and row height.
      * @memberof module:util
-     * @param {number} height 테이블 body 높이
-     * @param {number} rowHeight    한 행당 높이
-     * @returns {number} 테이블 body 당 보여지는 행 개수
+     * @param {number} tableHeight - table height
+     * @param {number} rowHeight - individual row height
+     * @returns {number}
      */
-    getDisplayRowCount: function(height, rowHeight) {
-        return Math.ceil((height - 1) / (rowHeight + 1));
+    getDisplayRowCount: function(tableHeight, rowHeight) {
+        return Math.ceil(tableHeight / (rowHeight + CELL_BORDER_WIDTH));
     },
 
     /**
-     * Table 의 height 와 행 개수를 인자로 받아, 한 행당 높이를 구한다.
+     * Returns the individual height of a row bsaed on the count of rows and table height.
      * @memberof module:util
-     * @param {number} rowCount  행 개수
-     * @param {number} height   테이블 body 높이
+     * @param {number} rowCount - row count
+     * @param {number} tableHeight - table height
      * @returns {number} 한 행당 높이값
      */
-    getRowHeight: function(rowCount, height) {
-        return rowCount === 0 ? 0 : Math.floor(((height - 1) / rowCount)) - 1;
+    getRowHeight: function(rowCount, tableHeight) {
+        return rowCount === 0 ? 0 : Math.floor(((tableHeight - CELL_BORDER_WIDTH) / rowCount));
     },
 
     /**
@@ -1494,7 +1504,7 @@ var util = {
         if (_.isString(target)) {
             return !target.length;
         }
-        return target === undefined || target === null;
+        return _.isUndefined(target) || _.isNull(target);
     },
 
     /**
@@ -1593,7 +1603,7 @@ var util = {
         if (type === 'string') {
             return value.toString();
         } else if (type === 'number') {
-            return +value;
+            return Number(value);
         }
         return value;
     },
@@ -1633,13 +1643,13 @@ var util = {
      */
     isBrowserIE7: function() {
         var browser = tui.util.browser;
-        return browser.msie && browser.version === 7;
+        return browser.msie && browser.version === 7; // eslint-disable-line no-magic-numbers
     }
 };
 
 module.exports = util;
 
-},{}],11:[function(require,module,exports){
+},{"./constMap":8}],12:[function(require,module,exports){
 /**
  * @fileoverview This class offers methods that can be used to get the current state of DOM element.
  * @author NHN Ent. FE Development Team
@@ -1704,7 +1714,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
 
 module.exports = DomState;
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
@@ -2582,9 +2592,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Sorts all rows by the specified column.
      * @api
      * @param {string} columnName - The name of the column to be used to compare the rows
+     * @param {boolean} [isAscending] - Whether the sort order is ascending.
+     *        If not specified, use the negative value of the current order.
      */
-    sort: function(columnName) {
-        this.modelManager.dataModel.sortByField(columnName);
+    sort: function(columnName, isAscending) {
+        this.modelManager.dataModel.sortByField(columnName, isAscending);
     },
 
     /**
@@ -2763,7 +2775,7 @@ tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
 
-},{"./addon/net":2,"./base/view":7,"./common/util":10,"./domState":11,"./model/manager":19,"./painter/manager":37,"./publicEventEmitter":39,"./view/factory":42}],13:[function(require,module,exports){
+},{"./addon/net":2,"./base/view":7,"./common/util":11,"./domState":12,"./model/manager":20,"./painter/manager":38,"./publicEventEmitter":40,"./view/factory":43}],14:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
@@ -2860,7 +2872,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             numberColumn.isHidden = true;
         }
 
-       this._extendColumnList(numberColumn, metaColumnModelList);
+        this._extendColumnList(numberColumn, metaColumnModelList);
     },
 
     /**
@@ -3223,15 +3235,12 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
 module.exports = ColumnModel;
 
-},{"../../base/model":5}],14:[function(require,module,exports){
+},{"../../base/model":5}],15:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
  */
 'use strict';
-
-var Model = require('../../base/model');
-var util = require('../../common/util');
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
@@ -3289,12 +3298,12 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
             case 'DISABLED':
                 result.isDisabled = true;
                 // intentional no break
-            case 'DISABLED_CHECK':
+            case 'DISABLED_CHECK': // eslint-disable-line no-fallthrough
                 result.isDisabledCheck = true;
                 break;
             case 'CHECKED':
                 result.isChecked = true;
-            default: // do nothing
+            default: // eslint-disable-line no-fallthrough
         }
         return result;
     },
@@ -3429,7 +3438,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
 
 module.exports = ExtraDataManager;
 
-},{"../../base/model":5,"../../common/util":10}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
@@ -3588,14 +3597,11 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.editOption && columnModel.editOption.changeBeforeCallback) {
             changeEvent = this._createChangeCallbackEvent(columnName);
 
-            //beforeChangeCallback 의 결과값이 false 라면 restore 후 false 를 반환한다.
             if (columnModel.editOption.changeBeforeCallback(changeEvent) === false) {
                 obj = {};
                 obj[columnName] = this.previous(columnName);
                 this.set(obj);
-                this.trigger('restore', {
-                    changed: obj
-                });
+                this.trigger('restore', columnName);
                 return false;
             }
         }
@@ -3674,21 +3680,22 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
             columnModel = this.columnModel,
-            isDisabled = false,
+            isDisabled = this.collection.isDisabled,
             isEditable = true,
             editType = columnModel.getEditType(columnName),
             rowState, relationResult;
 
-
         relationResult = this.getRelationResult(['isDisabled', 'isEditable'])[columnName];
         rowState = this.getRowState();
 
-        if (columnName === '_button') {
-            isDisabled = rowState.isDisabledCheck;
-        } else {
-            isDisabled = rowState.isDisabled;
+        if (!isDisabled) {
+            if (columnName === '_button') {
+                isDisabled = rowState.isDisabledCheck;
+            } else {
+                isDisabled = rowState.isDisabled;
+            }
+            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
         }
-        isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
 
         if ($.inArray(editType, notEditableTypeList) !== -1) {
             isEditable = false;
@@ -3868,7 +3875,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         clearTimeout(this._timeoutIdForChanged);
         this._timeoutIdForChanged = setTimeout(_.bind(function() {
             this._timeoutIdForChanged = null;
-        }, this), 10);
+        }, this), 10); // eslint-disable-line no-magic-numbers
         this._lastPublicChanged = publicChanged;
 
         return false;
@@ -3966,7 +3973,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
 module.exports = Row;
 
-},{"../../base/model":5,"../../common/util":10,"./extraDataManager":14}],16:[function(require,module,exports){
+},{"../../base/model":5,"../../common/util":11,"./extraDataManager":15}],17:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
  * @author NHN Ent. FE Development Team
@@ -4095,11 +4102,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             rowKey = row && row['rowKey'],
             subCount, childRow, i;
 
-        function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow
+        function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow, require-jsdoc
             var extraData = row['_extraData'];
             return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
         }
-        function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow
+        function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow, require-jsdoc
             var extraData = row['_extraData'];
             extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
             extraData['rowSpanData'][columnName] = rowSpanData;
@@ -4150,7 +4157,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array}  원본 데이터 리스트 배열.
      */
     getOriginalRowList: function(isClone) {
-        isClone = isClone === undefined ? true : isClone;
+        isClone = _.isUndefined(isClone) ? true : isClone;
         return isClone ? _.clone(this.originalRowList) : this.originalRowList;
     },
 
@@ -4585,7 +4592,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             };
 
         obj[columnName] = columnValue;
-        isCheckCellState = isCheckCellState === undefined ? true : isCheckCellState;
+        isCheckCellState = _.isUndefined(isCheckCellState) ? true : isCheckCellState;
 
         this.forEach(function(row) {
             if (isCheckCellState) {
@@ -4722,13 +4729,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         rowList = this._formatData(rowData);
 
         _.each(rowList, function(row) {
-            var rowData;
-
-            rowData = new Row(row, {
+            var model = new Row(row, {
                 collection: this,
                 parse: true
             });
-            modelList.push(rowData);
+            modelList.push(model);
         }, this);
 
         return modelList;
@@ -4892,12 +4897,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Function} [callback] callback function
      */
     replaceRowList: function(rowList, isParse, callback) {
+        var MIN_LEN_FOR_WAITING_LAYER = 500;
         if (_.isUndefined(isParse)) {
             isParse = true;
         }
         this.trigger('beforeReset');
 
-        if (rowList && rowList.length > 500) {
+        if (rowList && rowList.length > MIN_LEN_FOR_WAITING_LAYER) {
+            // defer to show a waiting-layer if dataset is large
             _.defer(_.bind(this._resetData, this, rowList, isParse, callback));
         } else {
             this._resetData(rowList, isParse, callback);
@@ -5040,7 +5047,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return {
             row: rowIdx,
             column: columnIdx
-        }
+        };
     },
 
     /**
@@ -5080,20 +5087,19 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {jQuery} 해당 jQuery Element
      */
     getElement: function(rowKey, columnName) {
-        var rowKey = this.getMainRowKey(rowKey, columnName);
-        return this.domState.getElement(rowKey, columnName);
+        var mainRowKey = this.getMainRowKey(rowKey, columnName);
+        return this.domState.getElement(mainRowKey, columnName);
     }
 });
 
 module.exports = RowList;
 
-},{"../../base/collection":3,"./row":15}],17:[function(require,module,exports){
+},{"../../base/collection":3,"./row":16}],18:[function(require,module,exports){
 /**
  * @fileoverview 크기에 관련된 데이터를 다루는 모델
  * @author NHN Ent. FE Development Team
  */
 'use strict';
-
 var Model = require('../base/model');
 var util = require('../common/util');
 var dimensionConstMap = require('../common/constMap').dimension;
@@ -5181,11 +5187,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getAvailableTotalWidth: function(columnLength) {
         var totalWidth = this.get('width'),
-            availableTotalWidth = totalWidth - this.getScrollYWidth() - columnLength - 1;
+            borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0),
+            totalBorderWidth = borderCount * CELL_BORDER_WIDTH,
+            availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
-        if (this.columnModel.getVisibleColumnFixCount(true) > 0) {
-            availableTotalWidth -= CELL_BORDER_WIDTH;
-        }
         return availableTotalWidth;
     },
 
@@ -5214,10 +5219,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _resetTotalRowHeight: function() {
         var rowHeight = this.get('rowHeight'),
-            rowCount = this.dataModel.length,
-            totalBorderWidth = rowCount + 1;
+            rowCount = this.dataModel.length;
 
-        this.set('totalRowHeight', (rowHeight * rowCount) + totalBorderWidth);
+        this.set('totalRowHeight', util.getHeight(rowCount, rowHeight));
     },
 
     /**
@@ -5392,30 +5396,53 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             commonMinWidth = this.get('minimumColumnWidth'),
             widthList = [],
             fixedFlags = [],
-            minWidthList = [],
-            calculate;
+            minWidthList = [];
 
         _.each(columnModelList, function(columnModel) {
             var width = columnModel.width > 0 ? columnModel.width : 0,
                 minWidth = Math.max(width, commonMinWidth);
-            // If the width is not assigned (not positive number), set it to zero (not applying minimum width)
+
+            // Meta columns are not affected by common 'minimumColumnWidth' value
+            if (this.columnModel.isMetaColumn(columnModel.columnName)) {
+                minWidth = width;
+            }
+
+            // If the width is not assigned (in other words, the width is not positive number),
+            // set it to zero (no need to worry about minimum width at this point)
             // so that #_fillEmptyColumnWidth() can detect which one is empty.
             // After then, minimum width will be applied by #_applyMinimumColumnWidth().
             widthList.push(width ? minWidth : 0);
             minWidthList.push(minWidth);
             fixedFlags.push(!!columnModel.isFixedWidth);
-        });
+        }, this);
 
         this._columnWidthFixedFlags = fixedFlags;
         this._minColumnWidthList = minWidthList;
 
-        // note that the calling order of functions is bottom-to-top.
-        calculate = _.compose(
-            this._adjustColumnWidthList,
-            this._applyMinimumColumnWidth,
-            this._fillEmptyColumnWidth
-        );
-        this._setColumnWidthVariables(calculate.call(this, widthList), true);
+        this._setColumnWidthVariables(this._calculateColumnWidth(widthList), true);
+    },
+
+    /**
+     * calculate column width list
+     * @param {Array.<Number>} widthList - widthList
+     * @returns {Array.<Number>}
+     * @private
+     */
+    _calculateColumnWidth: function(widthList) {
+        widthList = this._fillEmptyColumnWidth(widthList);
+        widthList = this._applyMinimumColumnWidth(widthList);
+        widthList = this._adjustColumnWidthList(widthList);
+
+        return widthList;
+    },
+
+    /**
+     * Returns whether division border (between meta column and data column) is doubled or not.
+     * Division border should be doubled only if visible fixed data column exists.
+     * @returns {Boolean}
+     */
+    isDivisionBorderDoubled: function() {
+        return this.columnModel.getVisibleColumnFixCount() > 0;
     },
 
     /**
@@ -5427,9 +5454,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
             columnWidthList = this.getColumnWidthList(whichSide),
             frameWidth = this._getFrameWidth(columnWidthList);
-        if (tui.util.isUndefined(whichSide) && columnFixCount > 0) {
-            //columnFixCount 가 0보다 클 경우, 열고정 되어있기 때문에, 경계영역에 대한 1px도 함께 더한다.
-            frameWidth += 1;
+
+        if (_.isUndefined(whichSide) && columnFixCount > 0) {
+            frameWidth += CELL_BORDER_WIDTH;
         }
         return frameWidth;
     },
@@ -5507,7 +5534,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.get('width') * 0.9);
+        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
 
         if (maxWidth) {
             maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
@@ -5700,7 +5727,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         return {
             x: overflowX,
             y: overflowY
-        }
+        };
     },
 
     /**
@@ -5756,10 +5783,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             columnIndex = columnWidthList.length - 1;
         } else {
             tui.util.forEachArray(columnWidthList, function(width, index) {
+                width += CELL_BORDER_WIDTH;
+                columnIndex = index;
+
                 if (cellX > width) {
                     cellX -= width;
                 } else {
-                    columnIndex = index;
                     return false;
                 }
             });
@@ -5828,7 +5857,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Return height of X-scrollBar.
-     *  If no X-scrollBar, return 0
+     * If no X-scrollBar, return 0
      * @returns {number} Height of X-scrollBar
      */
     getScrollXHeight: function() {
@@ -5837,7 +5866,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Return width of Y-scrollBar.
-     *  If no Y-scrollBar, return 0
+     * If no Y-scrollBar, return 0
      * @returns {number} Width of Y-scrollBar
      */
     getScrollYWidth: function() {
@@ -5981,7 +6010,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
 module.exports = Dimension;
 
-},{"../base/model":5,"../common/constMap":8,"../common/util":10}],18:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":8,"../common/util":11}],19:[function(require,module,exports){
 /**
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
@@ -5989,7 +6018,8 @@ module.exports = Dimension;
 'use strict';
 
 var Model = require('../base/model'),
-    util = require('../common/util');
+    util = require('../common/util'),
+    GridEvent = require('../common/gridEvent');
 
 /**
  * Focus model
@@ -6045,9 +6075,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * 이전 focus 정보를 저장한다.
+     * Saves previous data.
      * @private
-     * @returns {Model.Focus} This object
      */
     _savePrevious: function() {
         if (this.get('rowKey') !== null) {
@@ -6056,11 +6085,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (this.get('columnName')) {
             this.set('prevColumnName', this.get('columnName'));
         }
-        return this;
     },
 
     /**
-     * 이전 focus 정보를 제거한다.
+     * Clear previous data.
      * @private
      */
     _clearPrevious: function() {
@@ -6078,7 +6106,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     _isCurrentRow: function(rowKey) {
         // compare with == operator to avoid strict comparision
         // (rowkey can be a number or a string)
-        return this.get('rowKey') == rowKey;
+        return this.get('rowKey') == rowKey; // eslint-disable-line eqeqeq
     },
 
     /**
@@ -6094,110 +6122,137 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * Selects the given row
      * @param {Number|String} rowKey - Rowkey of the target row
-     * @returns {Object} This object
+     * @returns {Boolean} True is success
      */
     select: function(rowKey) {
+        var eventData = new GridEvent(),
+            currentRowKey = this.get('rowKey');
+
         if (this._isCurrentRow(rowKey)) {
-            return this;
+            return true;
         }
 
-        this.unselect().set('rowKey', rowKey);
+        eventData.setData({
+            rowKey: rowKey,
+            prevRowKey: currentRowKey,
+            rowData: this.dataModel.getRowData(rowKey)
+        });
+        this.trigger('select', eventData);
+        if (eventData.isStopped()) {
+            this._cancelSelect();
+            return false;
+        }
+
+        this.set('rowKey', rowKey);
         if (this.columnModel.get('selectType') === 'radio') {
             this.dataModel.check(rowKey);
         }
-        this.trigger('select', {
-            rowKey: rowKey,
-            rowData: this.dataModel.getRowData(rowKey)
-        });
-        return this;
+        return true;
+    },
+
+    /**
+     * Cancel select
+     * @private
+     */
+    _cancelSelect: function() {
+        var prevColumnName = this.get('prevColumnName');
+        this.set('columnName', prevColumnName);
+        this.trigger('focus', this.get('rowKey'), prevColumnName);
     },
 
     /**
      * 행을 unselect 한다.
      * @param {boolean} blur - The boolean value whether to invoke blur
-     * @returns {Model.Focus} This object
      */
     unselect: function(blur) {
         if (blur) {
             this.blur();
         }
-        this.trigger('unselect', this.get('rowKey'));
         this.set({
-            'rowKey': null
+            rowKey: null
         });
-        return this;
     },
 
     /**
-     * focus 처리한다.
-     * @param {Number|String} rowKey focus 처리할 셀의 rowKey 값
-     * @param {String} columnName focus 처리할 셀의 컬럼명
-     * @param {Boolean} isScrollable focus 처리한 영역으로 scroll 위치를 이동할지 여부
-     * @returns {Model.Focus} This object
+     * Focus to the cell identified by given rowKey and columnName.
+     * @param {Number|String} rowKey - rowKey
+     * @param {String} columnName - columnName
+     * @param {Boolean} isScrollable - if set to true, move scroll position to focused position
+     * @returns {Boolean} true if focused cell is changed
      */
     focus: function(rowKey, columnName, isScrollable) {
-        if (util.isBlank(rowKey) ||
-            util.isBlank(columnName) ||
+        if (!this._isValidCell(rowKey, columnName) ||
             this.columnModel.isMetaColumn(columnName) ||
             this._isCurrentCell(rowKey, columnName)) {
-            return this;
+            return true;
         }
 
-        this.blur()
-            .select(rowKey)
-            .set('columnName', columnName)
-            .trigger('focus', rowKey, columnName);
+        this.blur();
+        if (!this.select(rowKey)) {
+            return false;
+        }
 
+        this.set('columnName', columnName);
+        this.trigger('focus', rowKey, columnName);
         if (isScrollable) {
             this.scrollToFocus();
         }
-        return this;
+        return true;
     },
 
     /**
-     * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱한다.
-     * @param {(Number|String)} rowIndex 행 index
-     * @param {String} columnIndex 열 index
-     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     * Focus to the cell identified by given rowIndex and columnIndex.
+     * @param {(Number|String)} rowIndex - rowIndex
+     * @param {String} columnIndex - columnIndex
+     * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
+     * @returns {Boolean} true if success
      */
     focusAt: function(rowIndex, columnIndex, isScrollable) {
         var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true);
+            column = this.columnModel.at(columnIndex, true),
+            result = false;
         if (row && column) {
-            this.focus(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focus(row.get('rowKey'), column['columnName'], isScrollable);
         }
+        return result;
     },
 
     /**
-     * 셀을 편집모드로 전환한다.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {String} columnName   컬럼 이름
-     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     * Focus to the cell identified by given rowKey and columnName and change it to edit-mode if editable.
+     * @param {(Number|String)} rowKey - rowKey
+     * @param {String} columnName - columnName
+     * @param {boolean} [isScrollable=false] - if set to true, scroll to focused cell
+     * @returns {Boolean} true if success
      */
     focusIn: function(rowKey, columnName, isScrollable) {
-        var cellPainter;
-
-        this.focus(rowKey, columnName, isScrollable);
-        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-        if (this.dataModel.get(rowKey).isEditable(columnName)) {
-            this.trigger('focusIn', rowKey, columnName);
-        } else {
-            this.focusClipboard();
+        var result = this.focus(rowKey, columnName, isScrollable);
+        if (result) {
+            rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+            if (this.dataModel.get(rowKey).isEditable(columnName)) {
+                this.trigger('focusIn', rowKey, columnName);
+            } else {
+                this.focusClipboard();
+            }
         }
+        return result;
     },
 
     /**
-     * rowIndex, columnIndex 에 해당하는 컬럼에 포커싱 후 편진모드로 전환 한다.
-     * @param {(Number|String)} rowIndex 행 index
-     * @param {String} columnIndex 열 index
-     * @param {boolean} [isScrollable=false] 그리드에서 해당 영역으로 scroll 할지 여부
+     * Focus to the cell identified by given rowIndex and columnIndex and change it to edit-mode if editable.
+     * @param {(Number|String)} rowIndex - rowIndex
+     * @param {String} columnIndex - columnIndex
+     * @param {Boolean} [isScrollable=false] - if set to true, scroll to focused cell
+     * @returns {Boolean} true if success
      */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
         var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true);
+            column = this.columnModel.at(columnIndex, true),
+            result = false;
+
         if (row && column) {
-            this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
         }
+        return result;
     },
 
     /**
@@ -6515,7 +6570,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
 module.exports = Focus;
 
-},{"../base/model":5,"../common/util":10}],19:[function(require,module,exports){
+},{"../base/model":5,"../common/gridEvent":10,"../common/util":11}],20:[function(require,module,exports){
 /**
  * @fileoverview Model Manager
  * @author NHN Ent. FE Development Team
@@ -6530,9 +6585,6 @@ var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
-
-var util = require('../common/util');
-var renderStateMap = require('../common/constMap').renderState;
 
 var defaultOptions = {
     columnFixCount: 0,
@@ -6706,7 +6758,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel
         };
-        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel
+        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
         return new Constructor(attrs, renderOptions);
     },
@@ -6729,7 +6781,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
 module.exports = ModelManager;
 
-},{"../common/constMap":8,"../common/util":10,"./data/columnModel":13,"./data/rowList":16,"./dimension":17,"./focus":18,"./renderer":21,"./renderer-smart":20,"./selection":24,"./toolbar":25}],20:[function(require,module,exports){
+},{"./data/columnModel":14,"./data/rowList":17,"./dimension":18,"./focus":19,"./renderer":22,"./renderer-smart":21,"./selection":25,"./toolbar":26}],21:[function(require,module,exports){
 /**
  * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
  * @author NHN Ent. FE Development Team
@@ -6787,7 +6839,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             startIndex += this._getStartRowSpanMinCount(startIndex);
             endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
-        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight) - 1;
+        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight);
 
         this.set({
             top: top,
@@ -6827,9 +6879,9 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             counts;
 
         if (lastRow) {
-             counts = _.pluck(lastRow.getRowSpanData(), 'count');
-             counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
-             result = _.max(counts);
+            counts = _.pluck(lastRow.getRowSpanData(), 'count');
+            counts.push(0); // count가 양수인 경우(mainRow인 경우)에만 최대값을 구함. 없으면 0
+            result = _.max(counts);
         }
         return result;
     },
@@ -6868,7 +6920,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
 
 module.exports = SmartRenderer;
 
-},{"../common/util":10,"./renderer":21}],21:[function(require,module,exports){
+},{"../common/util":11,"./renderer":22}],22:[function(require,module,exports){
 /**
  * @fileoverview Rendering 모델
  * @author NHN Ent. FE Development Team
@@ -6878,7 +6930,6 @@ module.exports = SmartRenderer;
 var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
-var util = require('../common/util');
 
 /**
  * View 에서 Rendering 시 사용할 객체
@@ -6923,7 +6974,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 this._updateMaxScrollTop);
 
         if (this.get('showDummyRows')) {
-            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows)
+            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
         }
 
         this._updateMaxScrollLeft();
@@ -6955,8 +7006,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollLeft: function() {
-        var dimension = this.dimensionModel;
-        this.set('maxScrollLeft', dimension.getFrameWidth('R') - dimension.get('rsideWidth'));
+        var dimension = this.dimensionModel,
+            maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
+                dimension.getScrollYWidth();
+
+        this.set('maxScrollLeft', maxScrollLeft);
     },
 
     /**
@@ -7088,7 +7142,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         return {
             lside: columnNames.slice(0, columnFixCount),
             rside: columnNames.slice(columnFixCount)
-        }
+        };
     },
 
     /**
@@ -7114,7 +7168,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rowNum = this.get('startNumber') + startIndex,
             lsideData = [],
             rsideData = [],
-            rowDataModel, i, len;
+            rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
@@ -7252,7 +7306,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var collection = this._getCollectionByColumnName(columnName),
             row = collection.get(rowKey);
         if (row) {
-           return row.get(columnName);
+            return row.get(columnName);
         }
     },
 
@@ -7287,7 +7341,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
 module.exports = Renderer;
 
-},{"../base/model":5,"../common/constMap":8,"../common/util":10,"./rowList":23}],22:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":8,"./rowList":24}],23:[function(require,module,exports){
 /**
  * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
@@ -7308,13 +7362,14 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
-    initialize: function(attributes, options) {
+    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
         var rowKey = attributes && attributes['rowKey'],
             rowListData = this.collection.dataModel,
             rowData = rowListData.get(rowKey);
 
         if (rowData) {
-            this.listenTo(rowData, 'change restore', this._onDataModelChange);
+            this.listenTo(rowData, 'change', this._onDataModelChange);
+            this.listenTo(rowData, 'restore', this._onDataModelRestore);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
             this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
 
@@ -7325,7 +7380,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     idAttribute: 'rowKey',
 
     /**
-     * Event handler for 'change restore' event on rowData model
+     * Event handler for 'change' event on module:data/row
      * @param {Object} model - RowData model on which event occurred
      * @private
      */
@@ -7335,6 +7390,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 value: value
             });
         }, this);
+    },
+
+    /**
+     * Event handler for 'restore' event on module:data/row
+     * @param {String} columnName - columnName
+     * @private
+     */
+    _onDataModelRestore: function(columnName) {
+        var cellData = this.get(columnName);
+        if (cellData) {
+            this.trigger('restore', cellData);
+        }
     },
 
     /**
@@ -7368,12 +7435,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * Event handler for 'disabledChanged' event on dataModel
      */
     _onDataModelDisabledChanged: function() {
-        var columnNames = this._getColumnNameList(),
-            rowState = this.rowData.getRowState();
+        var columnNames = this._getColumnNameList();
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this._isDisabled(columnName, rowState)
+                isDisabled: this.rowData.isDisabled(columnName)
             });
         }, this);
     },
@@ -7385,7 +7451,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
             columnNames = this._getColumnNameList(),
-            rowState = this.rowData.getRowState(),
+            // rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {
@@ -7393,25 +7459,26 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }
 
         _.each(columnNames, function(columnName) {
+            /*eslint-disable consistent-this */
             var cellData = this.get(columnName),
                 rowModel = this,
-                isEditable, isDisabled;
+                cellState;
 
             if (!tui.util.isUndefined(cellData)) {
-                isEditable = this.rowData.isEditable(columnName);
-                isDisabled = this._isDisabled(columnName, rowState);
+                cellState = this.rowData.getCellState(columnName);
                 if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
                     rowModel = this.collection.get(cellData['mainRowKey']);
                 }
                 if (rowModel) {
                     param = {
-                        isDisabled: isDisabled,
-                        isEditable: isEditable,
+                        isDisabled: cellState.isDisabled,
+                        isEditable: cellState.isEditable,
                         className: this.rowData.getClassNameList(columnName).join(' ')
                     };
                     rowModel.setCell(columnName, param);
                 }
             }
+            /*eslint-enable consistent-this */
         }, this);
     },
 
@@ -7424,50 +7491,40 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @override
      */
     parse: function(data, options) {
-        return this._formatData(data, options.collection.dataModel);
+        return this._formatData(data, options.collection.dataModel, options.collection.columnModel);
     },
 
     /**
      * Convert the original data to rendering data.
      * @param {Array} data - Original data
      * @param {module:model/data/rowList} dataModel - Data model
+     * @param {module:model/data/columnModel} columnModel - Column model
      * @returns {Array} - Converted data
      * @private
      */
-    _formatData: function(data, dataModel) {
+    _formatData: function(data, dataModel, columnModel) {
         var rowKey = data.rowKey,
-            row, rowState;
+            row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
-        row = dataModel.get(rowKey),
-        rowState = row.getRowState();
+        row = dataModel.get(rowKey);
 
         _.each(data, function(value, columnName) {
-            var rowSpanData;
+            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
+                cellState = row.getCellState(columnName);
 
             if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                if (dataModel.isRowSpanEnable() &&
-                    data['_extraData'] && data['_extraData']['rowSpanData'] &&
-                    data['_extraData']['rowSpanData'][columnName]) {
-                    rowSpanData = data['_extraData']['rowSpanData'][columnName];
-                } else {
-                    rowSpanData = {
-                        mainRowKey: rowKey,
-                        count: 0,
-                        isMainRow: true
-                    };
-                }
                 data[columnName] = {
                     rowKey: rowKey,
                     columnName: columnName,
-                    value: value,
+                    value: this._getValueToDisplay(columnModel, columnName, value),
                     rowSpan: rowSpanData.count,
                     isMainRow: rowSpanData.isMainRow,
                     mainRowKey: rowSpanData.mainRowKey,
-                    isEditable: row.isEditable(columnName),
-                    isDisabled: this._isDisabled(columnName, rowState),
+                    isEditable: cellState.isEditable,
+                    isDisabled: cellState.isDisabled,
                     className: row.getClassNameList(columnName).join(' '),
                     optionList: [], // for list type column (select, checkbox, radio)
                     changed: [] //changed property names
@@ -7475,6 +7532,53 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             }
         }, this);
         return data;
+    },
+
+    /**
+     * Returns the value to display
+     * @param {module:model/data/columnModel} columnModel - column model
+     * @param {String} columnName - column name
+     * @param {String|Number} value - value
+     * @returns {String}
+     * @private
+     */
+    _getValueToDisplay: function(columnModel, columnName, value) {
+        var isExisty = tui.util.isExisty,
+            isTextType = columnModel.isTextType(columnName),
+            cellColumnModel = columnModel.getColumnModel(columnName),
+            notUseHtmlEntity = cellColumnModel.notUseHtmlEntity,
+            defaultValue = cellColumnModel.defaultValue;
+
+        if (!isExisty(value)) {
+            value = isExisty(defaultValue) ? defaultValue : '';
+        }
+
+        if (isTextType && !notUseHtmlEntity && tui.util.hasEncodableString(value)) {
+            value = tui.util.encodeHTMLEntity(value);
+        }
+
+        return value;
+    },
+
+    /**
+     * Returns the rowspan data.
+     * @param {String} columnName - column name
+     * @param {Object} data - data
+     * @param {Boolean} isRowSpanEnable - Whether the rowspan enable
+     * @returns {Object} rowSpanData
+     * @private
+     */
+    _getRowSpanData: function(columnName, data, isRowSpanEnable) {
+        var rowSpanData = tui.util.pick(data, '_extraData', 'rowSpanData', columnName);
+
+        if (!isRowSpanEnable || !rowSpanData) {
+            rowSpanData = {
+                mainRowKey: data.rowKey,
+                count: 0,
+                isMainRow: true
+            };
+        }
+        return rowSpanData;
     },
 
     /**
@@ -7505,10 +7609,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }, this);
 
         if (changed.length) {
-            data['changed'] = changed;
+            data.changed = changed;
             this.set(columnName, data);
             if (isValueChanged) {
-                //value 가 변경되었을 경우 relation 을 수행한다.
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
@@ -7518,7 +7621,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
 module.exports = Row;
 
-},{"../base/model":5,"../common/util":10}],23:[function(require,module,exports){
+},{"../base/model":5,"../common/util":11}],24:[function(require,module,exports){
 /**
  * @fileoverview RowList 클래스파일
  * @author NHN Ent. FE Development Team
@@ -7550,7 +7653,7 @@ var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/collection":3,"./row":22}],24:[function(require,module,exports){
+},{"../base/collection":3,"./row":23}],25:[function(require,module,exports){
 /**
  * @fileoverview Selection Model class
  * @author NHN Ent. FE Development Team
@@ -7744,7 +7847,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             minMax;
 
         if (!columnIndexes || !columnIndexes.length) {
-            columnIndexes = [index.column]
+            columnIndexes = [index.column];
         }
 
         this._setScrolling(pageX, pageY);
@@ -7894,7 +7997,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     getValuesToString: function() {
         var range = this.get('range'),
-            columnModelList, rowList, columnNameList, rowValues, result;
+            columnModelList, rowList, columnNameList, rowValues;
 
         columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
         rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
@@ -8167,15 +8270,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
 module.exports = Selection;
 
-},{"../base/model":5,"../common/util":10}],25:[function(require,module,exports){
+},{"../base/model":5,"../common/util":11}],26:[function(require,module,exports){
 /**
  * @fileoverview Toolbar model class
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var Model = require('../base/model'),
-    util = require('../common/util');
+var Model = require('../base/model');
+
 
 /**
  * Toolbar Model
@@ -8183,14 +8286,6 @@ var Model = require('../base/model'),
  * @extends module:base/model
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
-    /**
-     * @constructs
-     * @param  {object} options - Options
-     */
-    initialize: function(options) {
-        Model.prototype.initialize.apply(this, arguments);
-    },
-
     defaults: {
         // set by user
         hasControlPanel: false,
@@ -8216,7 +8311,7 @@ var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../base/model":5,"../common/util":10}],26:[function(require,module,exports){
+},{"../base/model":5}],27:[function(require,module,exports){
 /**
  * @fileoverview CellPainter 의 기초 클래스
  * @author NHN Ent. FE Development Team
@@ -8445,13 +8540,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
             editOption = columnModel.editOption || {},
-            defaultValue = columnModel.defaultValue,
-            isExisty = tui.util.isExisty,
             beforeContent, afterContent, content;
 
-        if (!isExisty(cellData.value)) {
-            cellData.value = isExisty(defaultValue) ? defaultValue : '';
-        }
         beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
         afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
 
@@ -8526,7 +8616,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     redraw: function(cellData, $td) {
         var attributes = {
-            'class': this._getClassNameList(cellData).join(' ')
+            'class': this._getClassNameList(cellData).join(' ') // 'class' instead of class for IE7
         };
         if (cellData.rowSpan) {
             attributes['rowSpan'] = cellData.rowSpan;
@@ -8688,7 +8778,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
 module.exports = Cell;
 
-},{"../base/painter":6,"../common/constMap":8,"../common/util":10}],27:[function(require,module,exports){
+},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],28:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the button cell
  * @author NHN Ent. FE Development Team
@@ -8703,7 +8793,7 @@ var util = require('../../common/util');
  * @module painter/cell/button
  * @extends module:painter/cell/list
  */
-var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/button.prototype */{
+var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/button.prototype */{
     /**
      * @constructs
      */
@@ -8813,7 +8903,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
         var list = this.getOptionList(cellData),
             columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
             value = cellData.value,
-            checkedList = ('' + value).split(','),
+            checkedList = String(value).split(','),
             checkedMap = {},
             html = this._getConvertedHtml(value, cellData),
             name = util.getUniqueKey(),
@@ -8856,7 +8946,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
      */
     setElementAttribute: function(cellData, $td) {
         var value = cellData.value,
-            checkedList = ('' + value).split(',');
+            checkedList = String(value).split(',');
 
         $td.find('input:checked').prop('checked', false);
 
@@ -8960,7 +9050,7 @@ var ButtonCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/but
 
 module.exports = ButtonCell;
 
-},{"../../common/util":10,"./list":28}],28:[function(require,module,exports){
+},{"../../common/util":11,"./list":29}],29:[function(require,module,exports){
 /**
  * @fileoverview 리스트 형태의 Cell Painter을 위한 Base 클래스
  * @author NHN Ent. FE Development Team
@@ -8974,7 +9064,7 @@ var Cell = require('../cell');
  * @module painter/cell/list
  * @extends module:painter/cell
  */
-var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prototype */{
+var ListCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/list.prototype */{
     /**
      * @constructs
      */
@@ -9039,12 +9129,21 @@ var ListCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/list.prot
     getOptionList: function(cellData) {
         var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
         return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
+    },
+
+    /**
+     * Redraw cell (TD) element
+     * @override
+     */
+    redraw: function() {
+        Cell.prototype.redraw.apply(this, arguments);
+        this.grid.focusModel.focusClipboard();
     }
 });
 
 module.exports = ListCell;
 
-},{"../cell":26}],29:[function(require,module,exports){
+},{"../cell":27}],30:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the main button
  * @author NHN Ent. FE Development Team
@@ -9058,7 +9157,7 @@ var Cell = require('../cell');
  * @module painter/cell/mainButton
  * @extends module:painter/cell
  */
-var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mainButton.prototype */{
+var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/mainButton.prototype */{
     /**
      * @constructs
      */
@@ -9202,7 +9301,7 @@ var MainButtonCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/mai
 
 module.exports = MainButtonCell;
 
-},{"../cell":26}],30:[function(require,module,exports){
+},{"../cell":27}],31:[function(require,module,exports){
 /**
  * @fileoverview 기본 Cell (일반, 숫자, 메인 Checkbox) 관련 Painter 정의
  * @author NHN Ent. FE Development Team
@@ -9216,7 +9315,7 @@ var Cell = require('../cell');
  * @module painter/cell/normal
  * @extends module:painter/cell
  */
-var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.prototype */{
+var NormalCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/normal.prototype */{
     /**
      * @constructs
      */
@@ -9248,13 +9347,11 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
     getContentHtml: function(cellData) {
         var columnName = cellData.columnName,
             columnModel = this.grid.columnModel.getColumnModel(columnName),
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(columnName),
-            rowKey = cellData.rowKey;
+            rowKey = cellData.rowKey,
+            value = cellData.value;
+
         if (tui.util.isFunction(columnModel.formatter)) {
             value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
-        }
-        if (!tui.util.isExisty(value)) {
-            value = '';
         }
         return value;
     },
@@ -9279,7 +9376,7 @@ var NormalCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/normal.
 
 module.exports = NormalCell;
 
-},{"../cell":26}],31:[function(require,module,exports){
+},{"../cell":27}],32:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the number cell
  * @author NHN Ent. FE Development Team
@@ -9293,7 +9390,7 @@ var NormalCell = require('./normal');
  * @module painter/cell/number
  * @extends module:painter/cell/normal
  */
-var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/number.prototype */{
+var NumberCell = tui.util.defineClass(NormalCell, /**@lends module:painter/cell/number.prototype */{
     /**
      * @constructs
      */
@@ -9331,7 +9428,7 @@ var NumberCell = tui.util.defineClass(NormalCell,/**@lends module:painter/cell/n
 
 module.exports = NumberCell;
 
-},{"./normal":30}],32:[function(require,module,exports){
+},{"./normal":31}],33:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the select cell
  * @author NHN Ent. FE Development Team
@@ -9346,7 +9443,7 @@ var util = require('../../common/util');
  * @module painter/cell/select
  * @extends module:painter/cell/list
  */
-var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/select.prototype */{
+var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/select.prototype */{
     /**
      * @constructs
      */
@@ -9449,19 +9546,19 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
         //@todo html !== null인경우 tc부족
         if (tui.util.isNull(html)) {
-           _.each(list, function(item) {
-               optionsHtml += this.optionTemplate({
-                   value: item.value,
-                   cellDataValue: cellData.value,
-                   text: item.text
-               });
-           }, this);
+            _.each(list, function(item) {
+                optionsHtml += this.optionTemplate({
+                    value: item.value,
+                    cellDataValue: cellData.value,
+                    text: item.text
+                });
+            }, this);
 
-           html = this.contentTemplate({
-               name: util.getUniqueKey(),
-               isDisabled: isDisabled,
-               options: optionsHtml
-           });
+            html = this.contentTemplate({
+                name: util.getUniqueKey(),
+                isDisabled: isDisabled,
+                options: optionsHtml
+            });
         }
         return html;
     },
@@ -9541,7 +9638,7 @@ var SelectCell = tui.util.defineClass(ListCell,/**@lends module:painter/cell/sel
 
 module.exports = SelectCell;
 
-},{"../../common/util":10,"./list":28}],33:[function(require,module,exports){
+},{"../../common/util":11,"./list":29}],34:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the text-convertible cell
  * @author NHN Ent. FE Development Team
@@ -9558,7 +9655,7 @@ var formUtil = require('../../common/formUtil');
  * @module painter/cell/text-convertible
  * @extends module:painter/cell/text
  */
-var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-convertible.prototype */{
+var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/cell/text-convertible.prototype */{
     /**
      * @constructs
      */
@@ -9643,13 +9740,8 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
      * </select>
      */
     getContentHtml: function(cellData) {
-        // FIXME: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
         var columnModel = this.getColumnModel(cellData),
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName);
-
-        if (tui.util.isUndefined(value)) {
-            value = '';
-        }
+            value = cellData.value;
 
         if (!this._isEditingCell(cellData)) {
             if (tui.util.isFunction(columnModel.formatter)) {
@@ -9723,9 +9815,9 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
         this._endEdit($td);
         this._validateData(this.getRowKey($td), this.getColumnName($td));
 
-        _.defer(function() {
+        setTimeout(function() {
             focusModel.refreshState();
-        });
+        }, 0);
     },
 
     /**
@@ -9799,9 +9891,12 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
     _onDblClick: function(mouseEvent) {
         var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
-            address = this._getCellAddress($td);
+            targetAddr = this._getCellAddress($td),
+            focusedAddr = this.grid.focusModel.which();
 
-        if (!this._isEditingCell(address)) {
+        if (!this._isEditingCell(targetAddr) &&
+            targetAddr.rowKey === String(focusedAddr.rowKey) &&
+            targetAddr.columnName === focusedAddr.columnName) {
             this._startEdit($td);
         }
     },
@@ -9822,7 +9917,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell,/**@lends module:painter/cel
 
 module.exports = ConvertibleCell;
 
-},{"../../common/formUtil":9,"../../common/util":10,"../cell":26,"./text":35}],34:[function(require,module,exports){
+},{"../../common/formUtil":9,"../../common/util":11,"../cell":27,"./text":36}],35:[function(require,module,exports){
 /**
  * @fileoverview Password 타입의 Input을 가진 Cell Painter
  * @author NHN Ent. FE Development Team
@@ -9837,7 +9932,7 @@ var TextCell = require('./text');
  * @module painter/cell/text-password
  * @extends module:painter/cell/text
  */
-var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/text-password.prototype */{
+var PasswordCell = tui.util.defineClass(TextCell, /**@lends module:painter/cell/text-password.prototype */{
     /**
      * @construct
      * @param {object} attributes Attributes
@@ -9867,7 +9962,7 @@ var PasswordCell = tui.util.defineClass(TextCell,/**@lends module:painter/cell/t
 
 module.exports = PasswordCell;
 
-},{"./text":35}],35:[function(require,module,exports){
+},{"./text":36}],36:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the text cell
  * @author NHN Ent. FE Development Team
@@ -9883,7 +9978,7 @@ var formUtil = require('../../common/formUtil');
  * @module painter/cell/text
  * @extends module:painter/cell
  */
-var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prototype */{
+var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.prototype */{
     /**
      * @constructs
      * @param {object} attributes Attributes
@@ -9988,16 +10083,10 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
      * </select>
      */
     getContentHtml: function(cellData) {
-        //@fixme: defaultValue 옵션값 처리 (cellData.value 를 참조하도록)
         var columnModel = this.getColumnModel(cellData),
             editOption = columnModel.editOption,
-            value = this.grid.dataModel.get(cellData.rowKey).getHTMLEncodedString(cellData.columnName),
-            html;
-
-        if (tui.util.isUndefined(value)) {
-            value = '';
-        }
-        html = this._getConvertedHtml(value, cellData);
+            value = cellData.value,
+            html = this._getConvertedHtml(value, cellData);
 
         if (tui.util.isNull(html)) {
             html = this.contentTemplate({
@@ -10154,7 +10243,7 @@ var TextCell = tui.util.defineClass(Cell,/**@lends module:painter/cell/text.prot
 
 module.exports = TextCell;
 
-},{"../../common/formUtil":9,"../../common/util":10,"../cell":26}],36:[function(require,module,exports){
+},{"../../common/formUtil":9,"../../common/util":11,"../cell":27}],37:[function(require,module,exports){
 /**
  * @fileoverview Dummy cell painter
  * @author NHN Ent. FE Development Team
@@ -10162,7 +10251,6 @@ module.exports = TextCell;
 'use strict';
 
 var Painter = require('../base/painter');
-var util = require('../common/util');
 
 /**
  * Dummy Cell Painter
@@ -10231,7 +10319,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
 module.exports = DummyCell;
 
-},{"../base/painter":6,"../common/util":10}],37:[function(require,module,exports){
+},{"../base/painter":6}],38:[function(require,module,exports){
 /**
  * @fileoverview Painter Manager
  * @author NHN Ent. FE Development Team
@@ -10342,7 +10430,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
 module.exports = PainterManager;
 
-},{"./cell/button":27,"./cell/mainButton":29,"./cell/normal":30,"./cell/number":31,"./cell/select":32,"./cell/text":35,"./cell/text-convertible":33,"./cell/text-password":34,"./dummyCell":36,"./row":38}],38:[function(require,module,exports){
+},{"./cell/button":28,"./cell/mainButton":30,"./cell/normal":31,"./cell/number":32,"./cell/select":33,"./cell/text":36,"./cell/text-convertible":34,"./cell/text-password":35,"./dummyCell":37,"./row":39}],39:[function(require,module,exports){
 /**
  * @fileoverview Row Painter 정의
  * @author NHN Ent. FE Development Team
@@ -10358,7 +10446,7 @@ var util = require('../common/util');
  * @module painter/row
  * @extends module:base/painter
  */
-var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.prototype */{
+var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prototype */{
     /**
      * @constructs
      * @param {object} options - Options
@@ -10371,7 +10459,6 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
     },
 
     template: _.template(
-        '' +
         '<tr ' +
         'key="<%=key%>" ' +
         'class="<%=className%>" ' +
@@ -10382,11 +10469,11 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
 
     /**
      * model 변경 시 이벤트 핸들러
-     * @param {object} model - 변화가 일어난 모델 인스턴스
+     * @param {object} changed - 변화가 일어난 모델 인스턴스
      * @param {jQuery} $tr - jquery object for tr element
      */
-    onModelChange: function(model, $tr) {
-        _.each(model.changed, function(cellData, columnName) {
+    onModelChange: function(changed, $tr) {
+        _.each(changed, function(cellData, columnName) {
             var editType, cellPainter;
 
             if (columnName !== '_extraData') {
@@ -10490,13 +10577,13 @@ var RowPainter = tui.util.defineClass(Painter,/**@lends module:painter/row.proto
                 value = -2;
             }
             return value;
-        }())
+        })()
     }
 });
 
 module.exports = RowPainter;
 
-},{"../base/painter":6,"../common/util":10}],39:[function(require,module,exports){
+},{"../base/painter":6,"../common/util":11}],40:[function(require,module,exports){
 /**
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
@@ -10595,7 +10682,7 @@ _.extend(PublicEventEmitter.prototype, Backbone.Events);
 
 module.exports = PublicEventEmitter;
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
  * @author NHN Ent. FE Development Team
@@ -10646,9 +10733,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _onBlur: function() {
         var focusModel = this.focusModel;
-        _.defer(function() {
+        setTimeout(function() {
             focusModel.refreshState();
-        });
+        }, 0);
     },
 
     /**
@@ -10683,7 +10770,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     _lock: function() {
         clearTimeout(this.timeoutIdForKeyIn);
         this.isLocked = true;
-        this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10);
+        this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10); // eslint-disable-line no-magic-numbers
     },
 
     /**
@@ -11113,14 +11200,15 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
 module.exports = Clipboard;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":10}],41:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/util":11}],42:[function(require,module,exports){
 /**
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
  */
- 'use strict';
+'use strict';
 
-var View = require('../base/view');
+var View = require('../base/view'),
+    GridEvent = require('../common/gridEvent');
 
 /**
  * Container View
@@ -11208,7 +11296,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onClick: function(mouseEvent) {
-        var eventData = this.createEventData(mouseEvent),
+        var eventData = new GridEvent(mouseEvent),
             $target = $(mouseEvent.target),
             cellInfo;
 
@@ -11231,7 +11319,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onDblClick: function(mouseEvent) {
-        var eventData = this.createEventData(mouseEvent),
+        var eventData = new GridEvent(mouseEvent),
             $target = $(mouseEvent.target);
 
         this.trigger('dblclick', eventData);
@@ -11253,7 +11341,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             eventData;
 
         if (this._isCellElement($target)) {
-            eventData = this.createEventData(mouseEvent);
+            eventData = new GridEvent(mouseEvent);
             this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
         }
     },
@@ -11268,7 +11356,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             eventData;
 
         if (this._isCellElement($target)) {
-            eventData = this.createEventData(mouseEvent);
+            eventData = new GridEvent(mouseEvent);
             this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
         }
     },
@@ -11321,19 +11409,19 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 이벤트 객체
+     * @param {event} mouseEvent 이벤트 객체
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        var $target = $(mouseDownEvent.target),
-            eventData = this.createEventData(mouseDownEvent);
+    _onMouseDown: function(mouseEvent) {
+        var $target = $(mouseEvent.target),
+            eventData = new GridEvent(mouseEvent);
 
         this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (!$target.is('input, a, button, select')) {
-            mouseDownEvent.preventDefault();
+            mouseEvent.preventDefault();
             this.focusModel.focusClipboard();
         }
     },
@@ -11360,9 +11448,21 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .attr('data-grid-id', this.gridId)
             .append(childElements);
 
+        this._appendBottomLine();
         this._refreshHeight();
         this.trigger('rendered');
         return this;
+    },
+
+    /**
+     * Appends botton line of data
+     * @private
+     */
+    _appendBottomLine: function() {
+        var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
+        if (bottomPos) {
+            this.$el.append($('<div>').addClass('data_bottom_line').css('bottom', bottomPos));
+        }
     },
 
     /**
@@ -11380,7 +11480,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
 module.exports = Container;
 
-},{"../base/view":7}],42:[function(require,module,exports){
+},{"../base/view":7,"../common/gridEvent":10}],43:[function(require,module,exports){
 /**
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
@@ -11525,6 +11625,7 @@ var ViewFactory = tui.util.defineClass({
             whichSide: whichSide,
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
+            focusModel: this.modelManager.focusModel,
             selectionModel: this.modelManager.selectionModel,
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
@@ -11595,6 +11696,7 @@ var ViewFactory = tui.util.defineClass({
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             dimensionModel: this.modelManager.dimensionModel,
+            selectionModel: this.modelManager.selectionModel,
             renderModel: this.modelManager.renderModel,
             focusModel: this.modelManager.focusModel,
             painterManager: this.painterManager
@@ -11618,7 +11720,7 @@ var ViewFactory = tui.util.defineClass({
 
 module.exports = ViewFactory;
 
-},{"./clipboard":40,"./container":41,"./layout/body":43,"./layout/bodyTable":44,"./layout/frame-lside":45,"./layout/frame-rside":46,"./layout/header":48,"./layout/resizeHandler":49,"./layout/toolbar":50,"./layout/toolbar/controlPanel":51,"./layout/toolbar/pagination":52,"./layout/toolbar/resizeHandler":53,"./rowList":54,"./selectionLayer":55,"./stateLayer":56}],43:[function(require,module,exports){
+},{"./clipboard":41,"./container":42,"./layout/body":44,"./layout/bodyTable":45,"./layout/frame-lside":46,"./layout/frame-rside":47,"./layout/header":49,"./layout/resizeHandler":50,"./layout/toolbar":51,"./layout/toolbar/controlPanel":52,"./layout/toolbar/pagination":53,"./layout/toolbar/resizeHandler":54,"./rowList":55,"./selectionLayer":56,"./stateLayer":57}],44:[function(require,module,exports){
 /**
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
@@ -11779,10 +11881,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Event handler for blur event on input element.
-     * @param {MouseEvent} event - Mousedown event
      * @private
      */
-    _onBlurInput: function(event) {
+    _onBlurInput: function() {
         var focusModel = this.focusModel;
         _.defer(function() {
             focusModel.refreshState();
@@ -11817,7 +11918,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             if (shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                this.focusModel.focusAt(rowIndex, columnIndex);
+                if (!this.focusModel.focusAt(rowIndex, columnIndex)) {
+                    this._detachDragEvents();
+                }
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
@@ -11866,7 +11969,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var selectionModel = this.selectionModel,
             pageX = event.pageX,
             pageY = event.pageY,
-            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10;
+            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10; // eslint-disable-line no-magic-numbers
 
         if (selectionModel.hasSelection() || isMoved) {
             selectionModel.updateByMousePosition(pageX, pageY);
@@ -11930,7 +12033,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7}],44:[function(require,module,exports){
+},{"../../base/view":7}],45:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -11979,7 +12082,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     className: 'table_container',
 
-    template: _.template('' +
+    template: _.template(
         '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
         '   <colgroup><%=colGroup%></colgroup>' +
         '   <tbody><%=tbody%></tbody>' +
@@ -12002,7 +12105,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         // to solve the overflow issue in IE7
         // (don't automatically expand to child's width when overflow:hidden)
         if (util.isBrowserIE7()) {
-            this.$el.width(totalWidth + CELL_BORDER_WIDTH); // addition for last cell
+            this.$el.width(totalWidth);
         }
     },
 
@@ -12132,12 +12235,12 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     }
 }, {
     // IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
-    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0
+    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0 // eslint-disable-line no-magic-numbers
 });
 
 module.exports = BodyTable;
 
-},{"../../base/view":7,"../../common/constMap":8,"../../common/util":10}],45:[function(require,module,exports){
+},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],46:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -12147,7 +12250,7 @@ module.exports = BodyTable;
 var Frame = require('./frame');
 
 /**
- * left side 프레임 클래스
+ * Left Side Frame
  * @module view/layout/frame-lside
  * @extends module:view/layout/frame
  */
@@ -12165,7 +12268,8 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     className: 'lside_area',
 
     /**
-     * columnWidth 변경시 호출될 이벤트 핸들러
+     * Event handler for 'changeColumnWidth' event on module:model/dimension
+     * @override
      * @private
      */
     _onColumnWidthChanged: function() {
@@ -12175,19 +12279,38 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     },
 
     /**
-     * 랜더링하기 전 수행되는 메서드
+     * To be called at the beginning of the 'render' method.
+     * @override
      */
     beforeRender: function() {
         this.$el.css({
             display: 'block',
             width: this.dimensionModel.get('lsideWidth')
         });
+    },
+
+    /**
+     * To be called at the end of the 'render' method.
+     * @override
+     */
+    afterRender: function() {
+        var dimensionModel = this.dimensionModel,
+            $scrollOverlay;  // overlay DIV to hide scrollbar UI
+
+        if (!dimensionModel.get('scrollX')) {
+            return;
+        }
+
+        $scrollOverlay = $('<div>')
+            .addClass('scrollbar_overlay')
+            .css('bottom', dimensionModel.get('toolbarHeight'));
+        this.$el.append($scrollOverlay);
     }
 });
 
 module.exports = LsideFrame;
 
-},{"./frame":47}],46:[function(require,module,exports){
+},{"./frame":48}],47:[function(require,module,exports){
 /**
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
@@ -12195,6 +12318,7 @@ module.exports = LsideFrame;
 'use strict';
 
 var Frame = require('./frame');
+var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * right side frame class
@@ -12223,50 +12347,67 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @override
      */
     _onColumnWidthChanged: function() {
-        var dimensionModel = this.dimensionModel;
+        this._refreshLayout();
+    },
+
+    /**
+     * Refresh layout
+     * @private
+     */
+    _refreshLayout: function() {
+        var dimensionModel = this.dimensionModel,
+            width = dimensionModel.get('rsideWidth'),
+            marginLeft = dimensionModel.get('lsideWidth');
+
+        // If left side exists and the division border should not be doubled,
+        // right side should be covered border-width by left side to hide left border of the right side.
+        if (marginLeft > 0 && !dimensionModel.isDivisionBorderDoubled()) {
+            width += CELL_BORDER_WIDTH;
+            marginLeft -= CELL_BORDER_WIDTH;
+        }
 
         this.$el.css({
-            width: dimensionModel.get('rsideWidth'),
-            marginLeft: dimensionModel.get('lsideWidth')
+            width: width,
+            marginLeft: marginLeft
         });
     },
 
     /**
      * Resets the height of a vertical scroll-bar border
+     * @private
      */
     _resetScrollBorderHeight: function() {
-        var dimensionModel = this.dimensionModel,
-            height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+        var dimensionModel, height;
 
-        this.$scrollBorder.height(height);
+        if (this.$scrollBorder) {
+            dimensionModel = this.dimensionModel;
+            height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+            this.$scrollBorder.height(height);
+        }
     },
 
     /**
-     * To be called before rendering.
+     * To be called at the beginning of the 'render' method.
+     * @override
      */
     beforeRender: function() {
-        var dimensionModel = this.dimensionModel;
-
-        this.$el.css({
-            display: 'block',
-            width: dimensionModel.get('rsideWidth'),
-            marginLeft: dimensionModel.get('lsideWidth')
-        });
+        this.$el.css('display', 'block');
+        this._refreshLayout();
     },
 
     /**
-     * To be called after rendering.
+     * To be called at the end of the 'render' method.
+     * @override
      */
     afterRender: function() {
         var dimensionModel = this.dimensionModel,
             $space, $scrollBorder, $scrollCorner,
-            headerHeight, bodyHeight;
+            headerHeight;
 
-        if (!this.dimensionModel.get('scrollY')) {
+        if (!dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');
-        bodyHeight = dimensionModel.get('bodyHeight');
 
         // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass('header_space');
@@ -12274,16 +12415,21 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass('scrollbar_border');
 
-        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
-        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
-        //  casues to be stuck in the same position in Chrome)
-        $scrollCorner = $('<div />').addClass('scrollbar_corner');
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
-        $scrollCorner.css('bottom', dimensionModel.get('toolbarHeight'));
 
-        this.$el.append($space, $scrollBorder, $scrollCorner);
+        this.$el.append($space, $scrollBorder);
+
+        // Empty DIV for filling gray color in the right-bottom corner of the scrollbar.
+        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
+        //  casues to be stuck in the same position in Chrome)
+        if (dimensionModel.get('scrollX')) {
+            $scrollCorner = $('<div />')
+                .addClass('scrollbar_corner')
+                .css('bottom', dimensionModel.get('toolbarHeight'));
+            this.$el.append($scrollCorner);
+        }
 
         this.$scrollBorder = $scrollBorder;
         this._resetScrollBorderHeight();
@@ -12292,7 +12438,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
 module.exports = RsideFrame;
 
-},{"./frame":47}],47:[function(require,module,exports){
+},{"../../common/constMap":8,"./frame":48}],48:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -12302,7 +12448,7 @@ module.exports = RsideFrame;
 var View = require('../../base/view');
 
 /**
- * frame Base 클래스
+ * Base class for frame view.
  * @module view/layout/frame
  * @extends module:base/view
  */
@@ -12310,7 +12456,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     /**
      * @constructs
      * @param {Object} options Options
-     *      @param {String} [options.whichSide='R']  어느 영역의 frame 인지 여부.
+     *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -12331,41 +12477,49 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     className: 'lside_area',
 
     /**
-     * 랜더링 메서드
-     * @returns {View.Layout.Frame} This object
+     * Render
+     * @returns {module:view/layout/frame} This object
      */
     render: function() {
         var factory = this.viewFactory;
 
+        this.$el.empty();
         this._destroyChildren();
+
         this.beforeRender();
         this._addChildren([
             factory.createHeader(this.whichSide),
             factory.createBody(this.whichSide)
         ]);
         this.$el.append(this._renderChildren());
-
         this.afterRender();
+
         return this;
     },
+
     /**
-     * columnModel change 시 수행되는 핸들러 스켈레톤
+     * Event handler for 'columnWidthChanged' event on module:module/dimension
+     * @abstract
      * @private
      */
     _onColumnWidthChanged: function() {},
+
     /**
-     * 랜더링 하기전에 수행하는 함수 스켈레톤
+     * To be called at the beginning of the 'render' method.
+     * @abstract
      */
     beforeRender: function() {},
+
     /**
-     * 랜더링 이후 수행하는 함수 스켈레톤
+     * To be called at the end of the 'render' method.
+     * @abstract
      */
     afterRender: function() {}
 });
 
 module.exports = Frame;
 
-},{"../../base/view":7}],48:[function(require,module,exports){
+},{"../../base/view":7}],49:[function(require,module,exports){
 /**
  * @fileoverview Header 관련
  * @author NHN Ent. FE Development Team
@@ -12374,6 +12528,9 @@ module.exports = Frame;
 
 var View = require('../../base/view'),
     util = require('../../common/util');
+
+var CLASSNAME_SELECTED = 'selected',
+    DELAY_SYNC_CHECK = 10;
 
 /**
  * Header 레이아웃 View
@@ -12393,6 +12550,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
+            focusModel: options.focusModel,
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
@@ -12400,10 +12558,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange, this)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this)
-            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange, this)
-            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState, this);
+        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
+            .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
+            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
+            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
     tagName: 'div',
@@ -12418,35 +12578,39 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * 전체 template
      */
-    template: _.template('' +
-    '    <table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
-    '        <colgroup><%=colGroup%></colgroup>' +
-    '        <tbody><%=tBody%></tbody>' +
-    '    </table>'),
+    template: _.template(
+        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+            '<colgroup><%=colGroup%></colgroup>' +
+            '<tbody><%=tBody%></tbody>' +
+        '</table>'
+    ),
 
     /**
      * <th> 템플릿
      */
-    templateHeader: _.template('' +
-    '<th columnname="<%=columnName%>" ' +
-    'height="<%=height%>" ' +
-    '<%if(colspan > 0) {%>' +
-    'colspan=<%=colspan%> ' +
-    '<%}%>' +
-    '<%if(rowspan > 0) {%>' +
-    'rowspan=<%=rowspan%> ' +
-    '<%}%>' +
-    '><%=title%><%=btnSort%></th>' +
-    ''),
+    templateHeader: _.template(
+        '<th columnname="<%=columnName%>" ' +
+            'class="<%=className%>" ' +
+            'height="<%=height%>" ' +
+            '<%if(colspan > 0) {%>' +
+               'colspan=<%=colspan%> ' +
+            '<%}%>' +
+            '<%if(rowspan > 0) {%>' +
+                'rowspan=<%=rowspan%> ' +
+            '<%}%>' +
+        '>' +
+        '<%=title%><%=btnSort%>' +
+        '</th>'
+    ),
 
     /**
      * <col> 템플릿
      */
-    templateCol: _.template('' +
-    '<col ' +
-    'columnname="<%=columnName%>" ' +
-    'style="width:<%=width%>px">' +
-    ''),
+    templateCol: _.template(
+        '<col ' +
+            'columnname="<%=columnName%>" ' +
+            'style="width:<%=width%>px">'
+    ),
 
     /**
      * 정렬 버튼을 위한 HTML 마크업
@@ -12471,6 +12635,58 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             }));
         }, this);
         return htmlList.join('');
+    },
+
+    /**
+     * Returns an array of names of columns in selection range.
+     * @private
+     * @returns {Array.<String>}
+     */
+    _getSelectedColumnNames: function() {
+        var columnRange = this.selectionModel.get('range').column,
+            visibleColumns = this.columnModel.getVisibleColumnModelList(),
+            selectedColumns = visibleColumns.slice(columnRange[0], columnRange[1] + 1);
+
+        return _.pluck(selectedColumns, 'columnName');
+    },
+
+    /**
+     * Returns an array of names of merged-column which contains every column name in the given array.
+     * @param {Array.<String>} columnNames - an array of column names to test
+     * @returns {Array.<String>}
+     * @private
+     */
+    _getContainingMergedColumnNames: function(columnNames) {
+        var columnModel = this.columnModel,
+            mergedColumnNames = _.pluck(columnModel.get('columnMerge'), 'columnName');
+
+        return _.filter(mergedColumnNames, function(mergedColumnName) {
+            var unitColumnNames = columnModel.getUnitColumnNamesIfMerged(mergedColumnName);
+            return _.every(unitColumnNames, function(name) {
+                return _.contains(columnNames, name);
+            });
+        });
+    },
+
+    /**
+     * Refreshes selected class of every header element (th)
+     * @private
+     */
+    _refreshSelectedHeaders: function() {
+        var $ths = this.$el.find('th'),
+            columnNames, mergedColumnNames;
+
+        if (this.selectionModel.hasSelection()) {
+            columnNames = this._getSelectedColumnNames();
+        } else {
+            columnNames = [this.focusModel.get('columnName')];
+        }
+        mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
+
+        $ths.removeClass(CLASSNAME_SELECTED);
+        _.each(columnNames.concat(mergedColumnNames), function(columnName) {
+            $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+        });
     },
 
     /**
@@ -12632,7 +12848,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onCheckCountChange: function() {
         if (this.columnModel.get('selectType') === 'checkbox') {
             clearTimeout(this.timeoutForAllChecked);
-            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), 10);
+            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), DELAY_SYNC_CHECK);
         }
     },
 
@@ -12742,12 +12958,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     render: function() {
         this._destroyChildren();
 
-        if (!this.dimensionModel.get('scrollX')) {
-            this.$el.css('overflow-x', 'hidden');
-        }
-
-        if (!this.dimensionModel.get('scrollY')) {
-            this.$el.css('overflow-y', 'hidden');
+        if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
+            this.$el.addClass('no_scroll');
         }
 
         this.$el.css({
@@ -12821,6 +13033,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 rowMarkupList[j] = rowMarkupList[j] || [];
                 rowMarkupList[j].push(this.templateHeader({
                     columnName: columnName,
+                    className: columnModel.isRequired ? 'required' : '',
                     height: height,
                     colspan: colSpanList[j],
                     rowspan: rowSpan,
@@ -12895,7 +13108,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/util":10}],49:[function(require,module,exports){
+},{"../../base/view":7,"../../common/util":11}],50:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -12920,8 +13133,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             columnModel: options.columnModel,
             whichSide: options.whichSide || 'R',
 
-            isResizing: false,     //현재 resize 발생 상황인지
-            $target: null,         //이벤트가 발생한 target resize handler
+            isResizing: false,
+            $target: null,
             differenceLeft: 0,
             initialWidth: 0,
             initialOffsetLeft: 0,
@@ -12936,10 +13149,10 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     events: {
         'mousedown .resize_handle': '_onMouseDown',
-        'click .resize_handle': '_onClick'
+        'dblclick .resize_handle': '_onDblClick'
     },
 
-    template: _.template('' +
+    template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
         'columnname="<%=columnName%>" ' +
         'class="resize_handle' +
@@ -12951,7 +13164,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         '</div>'),
 
     /**
-     * columnWidthList 와 columnModelList 를 함께 반환한다.
+     * Return an object that contains an array of column width and an array of column model.
      * @returns {{widthList: (Array|*), modelList: (Array|*)}} Column Data
      * @private
      */
@@ -12968,8 +13181,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * resize handler 마크업을 구성한다.
-     * @returns {String} resize handler 의 html 마크업 스트링
+     * Returns the HTML string of all handler.
+     * @returns {String}
      * @private
      */
     _getResizeHandlerMarkup: function() {
@@ -12991,8 +13204,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 랜더링 한다.
-     * @returns {View.Layout.Header.ResizeHandler} This object
+     * Render
+     * @returns {module:view/layout/resizeHandler} This object
      */
     render: function() {
         var headerHeight = this.dimensionModel.get('headerHeight'),
@@ -13002,14 +13215,13 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             marginTop: -headerHeight,
             height: headerHeight
         });
-
-        //header 가 랜더링 된 이후 widthList 를 보정 하기위해 setTimeout 을 사용한다.
         this._refreshHandlerPosition();
+
         return this;
     },
 
     /**
-     * 생성된 핸들러의 위치를 설정한다.
+     * Refresh the position of every handler.
      * @private
      */
     _refreshHandlerPosition: function() {
@@ -13021,7 +13233,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             $handler,
             columnName,
             curPos = 0,
-            border = 1,
+            BORDER_WIDTH = 1,
+            HANDLER_WIDTH_HALF = 3,
             width;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
@@ -13033,14 +13246,14 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             } else {
                 width = columnWidthList[index];
             }
-            curPos += width + border;
-            $handler.css('left', (curPos - 3) + 'px');
+            curPos += width + BORDER_WIDTH;
+            $handler.css('left', curPos - HANDLER_WIDTH_HALF);
         });
     },
 
     /**
-     * 현재 mouse move resizing 중인지 상태 flag 반환
-     * @returns {boolean}    현재 resize 중인지 여부
+     * Returns whether resizing is in progress or not.
+     * @returns {boolean}
      * @private
      */
     _isResizing: function() {
@@ -13048,54 +13261,29 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent    마우스 이벤트 객체
+     * Event handler for the 'mousedown' event
+     * @param {MouseEvent} mouseEvent - mouse event
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        this._startResizing(mouseDownEvent);
+    _onMouseDown: function(mouseEvent) {
+        this._startResizing(mouseEvent);
     },
 
     /**
-     * click 이벤트 핸들러
-     * @param {Event} clickEvent 마우스 이벤트 객체
+     * Event handler for the 'dblclick' event
+     * @param {MouseEvent} mouseEvent - mouse event
      * @private
      */
-    _onClick: function(clickEvent) {
-        var $target = $(clickEvent.target),
-            index = parseInt($target.attr('columnindex'), 10),
-            isClicked = $target.data('isClicked');
+    _onDblClick: function(mouseEvent) {
+        var $target = $(mouseEvent.target),
+            index = parseInt($target.attr('columnindex'), 10);
 
-        if (isClicked) {
-            this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
-            this._clearClickedFlag($target);
-            this._refreshHandlerPosition();
-        } else {
-            this._setClickedFlag($target);
-        }
+        this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+        this._refreshHandlerPosition();
     },
 
     /**
-     * 더블클릭을 확인하기 위한 isClicked 플래그를 설정한다.
-     * @param {jQuery} $target 설정할 타겟 엘리먼트
-     * @private
-     */
-    _setClickedFlag: function($target) {
-        $target.data('isClicked', true);
-        setTimeout($.proxy(this._clearClickedFlag, this, $target), 500);
-    },
-
-    /**
-     * 더블클릭을 확인하기 위한 isClicked 를 제거한다.
-     * @param {jQuery} $target 설정할 타겟 엘리먼트
-     * @private
-     */
-    _clearClickedFlag: function($target) {
-        $target.data('isClicked', false);
-    },
-
-    /**
-     * mouseup 이벤트 핸들러
+     * Event handler for the 'mouseup' event
      * @private
      */
     _onMouseUp: function() {
@@ -13103,19 +13291,19 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * mousemove 이벤트 핸들러
-     * @param {event} mouseMoveEvent    마우스 이벤트 객체
+     * Event handler for the 'mousemove' event
+     * @param {MouseEvent} mouseEvent - mouse event
      * @private
      */
-    _onMouseMove: function(mouseMoveEvent) {
+    _onMouseMove: function(mouseEvent) {
         var left, width, index;
 
         /* istanbul ignore else */
         if (this._isResizing()) {
-            mouseMoveEvent.preventDefault();
+            mouseEvent.preventDefault();
 
-            left = mouseMoveEvent.pageX - this.initialOffsetLeft;
-            width = this._calculateWidth(mouseMoveEvent.pageX);
+            left = mouseEvent.pageX - this.initialOffsetLeft;
+            width = this._calculateWidth(mouseEvent.pageX);
             index = parseInt(this.$target.attr('columnindex'), 10);
 
             this.$target.css('left', left + 'px');
@@ -13125,9 +13313,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 너비를 계산한다.
-     * @param {number} pageX    마우스의 x 좌표
-     * @returns {number} x좌표를 기준으로 계산한 width 값
+     * Returns the width of the column based on given mouse position and the initial offset.
+     * @param {number} pageX - mouse x position
+     * @returns {number}
      * @private
      */
     _calculateWidth: function(pageX) {
@@ -13136,9 +13324,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 핸들러의 index 로부터 컬럼의 index 를 반환한다.
-     * @param {number} index 핸들러의 index 값
-     * @returns {number} 컬럼 index 값
+     * Find the real index (based on visibility) of the column using index value of the handler and returns it.
+     * @param {number} index - index value of the handler
+     * @returns {number}
      * @private
      */
     _getHandlerColumnIndex: function(index) {
@@ -13146,8 +13334,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * resize start 세팅
-     * @param {event} mouseDownEvent 마우스 이벤트
+     * Start resizing
+     * @param {event} mouseDownEvent - mouse event
      * @private
      */
     _startResizing: function(mouseDownEvent) {
@@ -13172,7 +13360,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * resize stop 세팅
+     * Stop resizing
      * @private
      */
     _stopResizing: function() {
@@ -13194,7 +13382,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         this.stopListening();
@@ -13205,7 +13393,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7}],50:[function(require,module,exports){
+},{"../../base/view":7}],51:[function(require,module,exports){
 /**
  * @fileoverview 툴바영역 클래스
  * @author NHN Ent. FE Development Team
@@ -13276,7 +13464,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../../base/view":7}],51:[function(require,module,exports){
+},{"../../base/view":7}],52:[function(require,module,exports){
 /**
  * @fileoverview Class for the control panel in the toolbar
  * @author NHN Ent. FE Development Team
@@ -13304,7 +13492,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         });
 
         this.listenTo(this.toolbarModel,
-            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render)
+            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
     },
 
     events: {
@@ -13371,7 +13559,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
 module.exports = ControlPanel;
 
-},{"../../../base/view":7}],52:[function(require,module,exports){
+},{"../../../base/view":7}],53:[function(require,module,exports){
 /**
  * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
@@ -13398,7 +13586,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     className: 'grid_pagination',
 
-    template: _.template('' +
+    template: _.template(
         '<a href="#" class="pre_end" title="First page">First</a>' +
         '<a href="#" class="pre" title="Previous page">Prev</a> ' +
         '<a href="#" class="next" title="Next page">Next</a>' +
@@ -13436,7 +13624,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
                 isCenterAlign: true,
                 moveUnit: 'page',
                 $preOff: this.$el.find('.pre_off'),
-                $pre_endOff: this.$el.find('.pre_end_off'),
+                $pre_endOff: this.$el.find('.pre_end_off'), // eslint-disable-line camelcase
                 $nextOff: this.$el.find('.next_off'),
                 $lastOff: this.$el.find('.next_end_off')
             }, this.$el);
@@ -13447,7 +13635,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
 module.exports = Pagination;
 
-},{"../../../base/view":7}],53:[function(require,module,exports){
+},{"../../../base/view":7}],54:[function(require,module,exports){
 /**
  * @fileoverview Class for the resize handler of the toolbar
  * @author NHN Ent. FE Development Team
@@ -13580,14 +13768,18 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
 module.exports = ResizeHandler;
 
-},{"../../../base/view":7}],54:[function(require,module,exports){
+},{"../../../base/view":7}],55:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var View = require('../base/view');
+var View = require('../base/view'),
+    util = require('../common/util');
+
+var CLASSNAME_SELECTED = 'selected',
+    CLASSNAME_META_COLUMN = 'td.meta_column';
 
 /**
  * RowList View
@@ -13596,14 +13788,14 @@ var View = require('../base/view');
  */
 var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     /**
-     * 초기화 함수
      * @constructs
-     * @param {object} options 옵션 객체
+     * @param {object} options - Options
      * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
         var focusModel = options.focusModel,
             renderModel = options.renderModel,
+            selectionModel = options.selectionModel,
             whichSide = options.whichSide || 'R';
 
         this.setOwnProperties({
@@ -13611,6 +13803,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             bodyTableView: options.bodyTableView,
             focusModel: focusModel,
             renderModel: renderModel,
+            selectionModel: selectionModel,
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
@@ -13620,12 +13813,17 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         });
 
         this.listenTo(this.collection, 'change', this._onModelChange)
-            .listenTo(focusModel, 'select', this._onSelect)
-            .listenTo(focusModel, 'unselect', this._onUnselect)
+            .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(focusModel, 'focusIn', this._onFocusIn)
             .listenTo(renderModel, 'rowListChanged', this.render);
+
+        if (this.whichSide === 'L') {
+            this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
+                .listenTo(selectionModel, 'change:range', this._refreshSelectedMetaColumns)
+                .listenTo(renderModel, 'rowListChanged', this._refreshSelectedMetaColumns);
+        }
     },
 
     /**
@@ -13674,7 +13872,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
             // IE7에서 레이아웃이 틀어지는 현상 방지
-            if (tui.util.browser.msie && tui.util.browser.version <= 7) {
+            if (util.isBrowserIE7()) {
                 $tbody.width($tbody.width());
             }
         } else {
@@ -13703,9 +13901,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * tr 엘리먼트를 찾아서 반환한다.
-     * @param {(string|number)} rowKey rowKey 대상의 키값
-     * @returns {jquery} 조회한 tr jquery 엘리먼트
+     * Returns a TR element of given rowKey
+     * @param {(string|number)} rowKey - rowKey
+     * @returns {jquery}
      * @private
      */
     _getRowElement: function(rowKey) {
@@ -13713,45 +13911,59 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * focusModel 의 select 이벤트 발생시 이벤트 핸들러
-     * @param {Object} eventData 대상의 키값
+     * Refreshes 'selected' class of meta columns.
      * @private
      */
-    _onSelect: function(eventData) {
-        this._setCssSelect(eventData.rowKey, true);
+    _refreshSelectedMetaColumns: function() {
+        var $rows = this.$el.find('tr'),
+            $filteredRows;
+
+        if (this.selectionModel.hasSelection()) {
+            $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
+        } else {
+            $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
+        }
+
+        $rows.find(CLASSNAME_META_COLUMN).removeClass(CLASSNAME_SELECTED);
+        $filteredRows.find(CLASSNAME_META_COLUMN).addClass(CLASSNAME_SELECTED);
     },
 
     /**
-     * focusModel 의 unselect 이벤트 발생시 이벤트 핸들러
-     * @param {(Number|String)} rowKey 대상의 키값
+     * Filters the rows by given range(index) and returns them.
+     * @param {jQuery} $rows - rows (tr elements)
+     * @param {Array.<Number>} rowRange - [startIndex, endIndex]
+     * @returns {jQuery}
      * @private
      */
-    _onUnselect: function(rowKey) {
-        this._setCssSelect(rowKey, false);
+    _filterRowsByIndexRange: function($rows, rowRange) {
+        var renderModel = this.renderModel,
+            renderStartIndex = renderModel.get('startIndex'),
+            startIndex, endIndex;
+
+        startIndex = Math.max(rowRange[0] - renderStartIndex, 0);
+        endIndex = Math.max(rowRange[1] - renderStartIndex + 1, 0); // add 1 for exclusive value
+
+        if (!startIndex && !endIndex) {
+            return $();
+        }
+        return $rows.slice(startIndex, endIndex);
     },
 
     /**
-     * 인자로 넘어온 rowKey 에 해당하는 행(각 TD)에 Select 디자인 클래스를 적용한다.
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @param {Boolean} isSelected  css select 를 수행할지 unselect 를 수행할지 여부
+     * Filters the row by given rowKey
+     * @param {jQuery} $rows - rows (tr elements)
+     * @param {Number} rowKey - rowKey
+     * @returns {jQuery}
      * @private
      */
-    _setCssSelect: function(rowKey, isSelected) {
-        var columnModelList = this._getColumnModelList(),
-            trCache = {},
-            columnName, mainRowKey, $tr, $td;
+    _filterRowByKey: function($rows, rowKey) {
+        var rowIndex = this.dataModel.indexOfRowKey(rowKey),
+            renderStartIndex = this.renderModel.get('startIndex');
 
-        _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
-            mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-
-            trCache[mainRowKey] = trCache[mainRowKey] || this._getRowElement(mainRowKey);
-            $tr = trCache[mainRowKey];
-            $td = $tr.find('td[columnname="' + columnName + '"]');
-            if ($td.length) {
-                $td.toggleClass('selected', isSelected);
-            }
-        }, this);
+        if (renderStartIndex > rowIndex) {
+            return $();
+        }
+        return $rows.eq(rowIndex - renderStartIndex);
     },
 
     /**
@@ -13800,7 +14012,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * 랜더링한다.
+     * Renders.
      * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
      * @returns {View.RowList} this 객체
      */
@@ -13816,7 +14028,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
             if (_.isEmpty(rowKeys) || _.isEmpty(dupRowKeys) ||
                 // 중복된 데이터가 70% 미만일 경우에는 성능을 위해 innerHTML을 사용.
-                (dupRowKeys.length / rowKeys.length < 0.7)) {
+                (dupRowKeys.length / rowKeys.length < 0.7)) { // eslint-disable-line no-magic-numbers
                 this._resetRows();
             } else {
                 this._removeOldRows(dupRowKeys);
@@ -13837,21 +14049,33 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
-        this.painterManager.getRowPainter().onModelChange(model, $tr);
-    }
-},
-{
+        this.painterManager.getRowPainter().onModelChange(model.changed, $tr);
+    },
+
     /**
-     * tbody 요소의 innerHTML이 읽기전용인지 여부
+     * Event handler for 'restore' event on module:model/row
+     * @param {Object} cellData - CellData
+     * @private
+     */
+    _onModelRestore: function(cellData) {
+        var $td = this.dataModel.getElement(cellData.rowKey, cellData.columnName),
+            editType = this.columnModel.getEditType(cellData.columnName);
+
+        this.painterManager.getCellPainter(editType).redraw(cellData, $td);
+    }
+}, {
+    /**
+     * Whether the innerHTML property of a tbody element is readonly.
      * @memberof RowList
      * @static
      */
-    isInnerHtmlOfTbodyReadOnly: (tui.util.browser.msie && tui.util.browser.version <= 9)
+    isInnerHtmlOfTbodyReadOnly: (tui.util.browser.msie &&
+        tui.util.browser.version <= 9) // eslint-disable-line no-magic-numbers
 });
 
 module.exports = RowList;
 
-},{"../base/view":7}],55:[function(require,module,exports){
+},{"../base/view":7,"../common/util":11}],56:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
@@ -13860,8 +14084,7 @@ module.exports = RowList;
 
 var View = require('../base/view');
 var util = require('../common/util');
-
-var CELL_BORDER_WIDTH = 1;
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * Class for the selection layer
@@ -13943,13 +14166,13 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      */
     _getVerticalStyles: function(rowRange) {
         var rowHeight = this.dimensionModel.get('rowHeight'),
-            top = util.getHeight(rowRange[0], rowHeight) - CELL_BORDER_WIDTH,
-            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - (CELL_BORDER_WIDTH * 2);
+            top = util.getHeight(rowRange[0], rowHeight),
+            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
 
         return {
-            top : top + 'px',
+            top: top + 'px',
             height: height + 'px'
-        }
+        };
     },
 
     /**
@@ -13985,7 +14208,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         return {
             left: left + 'px',
             width: width + 'px'
-        }
+        };
     },
 
     /**
@@ -14015,7 +14238,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
 module.exports = SelectionLayer;
 
-},{"../base/view":7,"../common/util":10}],56:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/util":11}],57:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -14105,4 +14328,4 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
 
 module.exports = StateLayer;
 
-},{"../base/view":7,"../common/constMap":8}]},{},[12]);
+},{"../base/view":7,"../common/constMap":8}]},{},[13]);

@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.1.2
+ * @version 1.1.3
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -27,7 +27,6 @@
   width: 17px;
   height: 17px;
   background-color: #f5f5f5;
-  border-top: solid 1px #ccc;
 }
 .uio_grid ::-webkit-scrollbar-thumb {
   background-color: #d9d9d9;
@@ -87,24 +86,6 @@
 .uio_grid .btn_text em.grid {
   background-position: -30px -60px;
 }
-.uio_grid .left_line {
-  position: absolute;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: #ccc;
-  z-index: 10;
-  left: 0;
-}
-.uio_grid .right_line {
-  position: absolute;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  background: #ccc;
-  z-index: 10;
-  right: 0;
-}
 .uio_grid .clipboard {
   position: fixed;
   top: 0px;
@@ -122,7 +103,7 @@
   background: #fff;
   font-weight: bold;
   text-align: center;
-  z-index: 10;
+  z-index: 12;
 }
 .uio_grid .state_layer .layer_content {
   padding-top: 50px;
@@ -135,6 +116,33 @@
   width: 150px;
   height: 13px;
 }
+.uio_grid .left_line {
+  position: absolute;
+  background: #ccc;
+  z-index: 13;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+}
+.uio_grid .right_line {
+  position: absolute;
+  background: #ccc;
+  z-index: 13;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 1px;
+}
+.uio_grid .data_bottom_line {
+  position: absolute;
+  background: #ccc;
+  z-index: 13;
+  bottom: 0;
+  left: 0;
+  right: 17px;
+  height: 1px;
+}
 .uio_grid .lside_area {
   display: none;
   height: 100%;
@@ -142,20 +150,15 @@
   top: 0;
   left: 0;
   overflow: hidden;
+  z-index: 10;
 }
 .uio_grid .lside_area .header {
-  _width: 100%;
   overflow: hidden;
 }
 .uio_grid .lside_area .data {
-  _width: 100%;
   overflow: scroll;
   position: relative;
   margin-right: -17px;
-  *padding-right: 17px;
-}
-.uio_grid .lside_area .data table {
-  *margin-right: -17px;
 }
 .uio_grid .lside_area .data .selection_layer {
   display: none;
@@ -169,29 +172,30 @@
   filter: alpha(opacity=10);
   left: 1px;
 }
+.uio_grid .lside_area .scrollbar_overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 17px;
+  background-color: #f5f5f5;
+}
 .uio_grid .rside_area {
   display: none;
   height: 100%;
   overflow: hidden;
 }
 .uio_grid .rside_area .header {
-  _width: 100%;
   position: relative;
-  *padding-right: 17px;
-  overflow-x: hidden;
-  overflow-y: scroll;
+  margin-right: 17px;
+  overflow: hidden;
 }
-.uio_grid .rside_area .header table {
-  *margin-right: -17px;
+.uio_grid .rside_area .header.no_scroll {
+  margin-right: 0;
 }
 .uio_grid .rside_area .data {
-  _width: 100%;
   position: relative;
-  *padding-right: 17px;
   overflow: scroll;
-}
-.uio_grid .rside_area .data table {
-  *margin-right: -17px;
 }
 .uio_grid .rside_area .data .selection_layer {
   display: none;
@@ -203,7 +207,6 @@
   background: #4daaf9;
   opacity: 0.2;
   filter: alpha(opacity=10);
-  left: -1px;
 }
 .uio_grid .rside_area .header_space {
   display: block;
@@ -228,7 +231,7 @@
   right: 0;
   width: 17px;
   height: 17px;
-  background-color: #f2f2f2;
+  background-color: #f5f5f5;
 }
 .uio_grid .header .resize_handle_container {
   display: none;
@@ -252,6 +255,7 @@
 }
 .uio_grid .body_container {
   position: relative;
+  margin-top: -1px;
 }
 .uio_grid .body_container .table_container {
   position: absolute;
@@ -274,8 +278,7 @@
   background: #eee;
 }
 .uio_grid table th.selected {
-  background: #b0b0b0;
-  color: #f8f8f8;
+  background: #cdcdcd;
 }
 .uio_grid table th .sort a {
   color: #555;
@@ -316,8 +319,7 @@
   background: #eee;
 }
 .uio_grid table td.meta_column.selected {
-  background: #b0b0b0;
-  color: #f8f8f8;
+  background: #cdcdcd;
 }
 .uio_grid table td.editable {
   background-color: #fff;
@@ -412,6 +414,7 @@
   position: absolute;
   background: #fff;
   border-top: 1px solid #ccc;
+  z-index: 11;
 }
 .uio_grid .toolbar .total_count {
   position: absolute;

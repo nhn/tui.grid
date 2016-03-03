@@ -1,15 +1,14 @@
 /**
- * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
+ * @fileoverview Event class for public event of Grid
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 /**
- * GridEvent
- * @module model/renderer-smart
- * @extends module:model/renderer
+ * Event class for public event of Grid
+ * @module common/gridEvent
  */
-var GridEvent = tui.util.defineClass(/**@lends module:painter/cell.prototype */{
+var GridEvent = tui.util.defineClass(/**@lends module:common/gridEvent.prototype */{
     /**
      * @constructs
      * @param {Object} data - Event data for handler
@@ -28,7 +27,7 @@ var GridEvent = tui.util.defineClass(/**@lends module:painter/cell.prototype */{
     },
 
     /**
-     * Stops propagating this event.
+     * Stops propogation of this event.
      * @api
      */
     stop: function() {
