@@ -36,7 +36,7 @@
     "jasmine-core": "^2.3.4",
     "jasmine-jquery": "^2.0.5",
     "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
-    "karma": "^0.12.36",
+    "karma": "^0.13.21",
     "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-coverage": "^0.5.1",
