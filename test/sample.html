@@ -71,9 +71,7 @@ var grid = new tui.Grid({
         }
 	]
 });
-
 var rowList = [];
-
 (function() {
 	_.times(5, function(number) {
 	    rowList.push({
@@ -81,7 +79,6 @@ var rowList = [];
 		});
 	})
 })();
-
 grid.setRowList(rowList);
 // grid.use('Net', {
 // 	perPage: 10,
@@ -93,13 +90,6 @@ grid.setRowList(rowList);
 // 	}
 // });
 // var net = grid.getAddOn('Net');
-
-grid.on('selectRow', function(ev) {
-    var rowKey = ev.rowKey;
-
-    console.log('rowKey', rowKey);
-    // console.log('ev', ev);
-});
 // $('#btn-update').click(function() {
 // 	net.request('updateData');
 // });
