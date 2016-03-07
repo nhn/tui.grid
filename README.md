@@ -1,6 +1,6 @@
 ## ![toast ui grid](https://cloud.githubusercontent.com/assets/12269489/13489851/a5ca2490-e16c-11e5-8d80-3bf6fe3b940d.png)
 <br>
-The Toast UI Grid is a powerful widget which allows you to visualize and edit data via its table representation. It offers rich functionality, such as paging, sorting, editing, merging, virtual scrolling, etc.
+The Toast UI Grid is a powerful widget which allows you to visualize and edit data via its table representation.
 
 ## Features
 * Various input types *(checkbox, radio, select, password, etc)*
@@ -20,7 +20,9 @@ The Toast UI Grid is a powerful widget which allows you to visualize and edit da
 * Relation between each columns
 * Binding to remote data
 
-The video below shows the major features of Toast UI Grid briefly.
+<br>
+The video below shows the major features of Toast UI Grid briefly.<br>
+*(Click the image to play!)*
 
 [![screen shot 2016-03-07 at 5 25 01 pm](https://cloud.githubusercontent.com/assets/12269489/13564023/c0fe3bf0-e489-11e5-924b-265118c40c76.png)](https://www.youtube.com/watch?v=pyPlOFhexQk)
 
@@ -31,7 +33,7 @@ Check more detailed explanation on https://github.com/nhnent/tui.grid/wiki.
 * **Tutorial** : https://github.com/nhnent/tui.grid/wiki/설치-및-사용방법
 * **Sample** : https://nhnent.github.io/tui.grid/api/tutorial-sample1.html
 
-You can also see the older version of API page on the [Github release page](https://github.com/nhnent/tui.grid/releases).
+You can also see the older version of API page on the [Github releases page](https://github.com/nhnent/tui.grid/releases).
 
 ## Dependency
 * jquery ~1.8.3

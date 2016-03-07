@@ -94,6 +94,12 @@ grid.setRowList(rowList);
 // });
 // var net = grid.getAddOn('Net');
 
+grid.on('selectRow', function(ev) {
+    var rowKey = ev.rowKey;
+
+    console.log('rowKey', rowKey);
+    // console.log('ev', ev);
+});
 // $('#btn-update').click(function() {
 // 	net.request('updateData');
 // });

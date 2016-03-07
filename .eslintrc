@@ -73,12 +73,12 @@
         "no-floating-decimal": 2,
         "no-implicit-coercion": [2, {"boolean": false}],
         "no-implied-eval": 2,
-        "no-invalid-this": 2,
+        "no-invalid-this": 0,
         "no-iterator": 2,
         "no-labels": 2,
         "no-lone-blocks": 2,
         "no-loop-func": 2,
-        "no-magic-numbers": [1, {"ignore": [-1, 0, 1, 2]}],
+        "no-magic-numbers": 0,
         "no-multi-spaces": 2,
         "no-multi-str": 2,
         "no-native-reassign": 2,
@@ -124,7 +124,7 @@
         "no-use-before-define": [2, "nofunc"],
 
         // Node.js and CommonJS
-        "callback-return": 2,
+        "callback-return": 0,
         "global-require": 2,
         "handle-callback-err": 2,
         "no-mixed-requires": [2, true],
@@ -200,8 +200,6 @@
         "wrap-regex": 0,
 
         //only for this project
-        "no-invalid-this": 0,
-        "callback-return": 0,
         "dot-notation": 0
     }
 }
