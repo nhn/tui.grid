@@ -190,7 +190,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {
-            var name = columnModel['columnName'],
+            var name = columnModel.columnName,
                 width = columnWidthList[index] - BodyTable.EXTRA_WIDTH;
 
             html += '<col columnname="' + name + '" style="width:' + width + 'px">';

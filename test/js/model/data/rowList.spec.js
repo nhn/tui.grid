@@ -337,7 +337,7 @@ describe('data.rowList', function() {
                 expect(row._getListTypeVisibleText('select')).toBe('text1');
                 expect(row._getListTypeVisibleText('radio')).toBe('text2');
                 expect(row._getListTypeVisibleText('checkbox')).toBe('text1,text2,text3');
-                expect(row._getListTypeVisibleText('none')).not.toBeDefined();
+                expect(row._getListTypeVisibleText('none')).toBe('');
             });
 
             it('changeOptionList Relation 이 걸려있을 경우에도 정상 동작하는지 확인한다.', function() {
@@ -653,7 +653,7 @@ describe('data.rowList', function() {
 
             it('relation 수행 결과를 정확하게 반환한다.', function() {
                 row = dataModelInstance.at(0);
-                expect(row.getRelationResult()).toEqual({
+                expect(row.executeRelationCallbacksAll()).toEqual({
                     select: {
                         optionList: undefined
                     },
@@ -670,7 +670,7 @@ describe('data.rowList', function() {
                 });
 
                 row = dataModelInstance.at(1);
-                expect(row.getRelationResult()).toEqual({
+                expect(row.executeRelationCallbacksAll()).toEqual({
                     select: {
                         optionList: [
                             {text: '하나', value: 1},
@@ -704,7 +704,7 @@ describe('data.rowList', function() {
 
             it('원하는 callbackNameList에 맞게 relationResult 를 반환한다.', function() {
                 row = dataModelInstance.at(1);
-                expect(row.getRelationResult(['optionListChange'])).toEqual({
+                expect(row.executeRelationCallbacksAll(['optionListChange'])).toEqual({
                     select: {
                         optionList: [
                             {text: '하나', value: 1},
@@ -731,7 +731,7 @@ describe('data.rowList', function() {
                     }
                 });
 
-                expect(row.getRelationResult(['optionListChange', 'isEditable'])).toEqual({
+                expect(row.executeRelationCallbacksAll(['optionListChange', 'isEditable'])).toEqual({
                     select: {
                         optionList: [
                             {text: '하나', value: 1},
@@ -761,11 +761,11 @@ describe('data.rowList', function() {
                     }
                 });
 
-                expect(row.getRelationResult(['isEditable'])).toEqual({
+                expect(row.executeRelationCallbacksAll(['isEditable'])).toEqual({
                     text: {isEditable: true}
                 });
 
-                expect(row.getRelationResult(['isEditable', 'isDisabled'])).toEqual({
+                expect(row.executeRelationCallbacksAll(['isEditable', 'isDisabled'])).toEqual({
                     text: {isDisabled: false, isEditable: true}
                 });
             });

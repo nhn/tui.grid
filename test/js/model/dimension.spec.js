@@ -432,6 +432,21 @@ describe('Dimension', function() {
                 {
                     columnName: 'column5',
                     width: 50
+                },
+                {
+                    columnName: 'column6'
+                },
+                {
+                    columnName: 'column7'
+                },
+                {
+                    columnName: 'column8'
+                },
+                {
+                    columnName: 'column9'
+                },
+                {
+                    columnName: 'column10'
                 }
             ];
             columnModelInstance.set({

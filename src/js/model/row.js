@@ -19,7 +19,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} options - Options
      */
     initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
-        var rowKey = attributes && attributes['rowKey'],
+        var rowKey = attributes && attributes.rowKey,
             rowListData = this.collection.dataModel,
             rowData = rowListData.get(rowKey);
 
@@ -122,8 +122,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
             if (!tui.util.isUndefined(cellData)) {
                 cellState = this.rowData.getCellState(columnName);
-                if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
-                    rowModel = this.collection.get(cellData['mainRowKey']);
+                if (dataModel.isRowSpanEnable() && !cellData.isMainRow) {
+                    rowModel = this.collection.get(cellData.mainRowKey);
                 }
                 if (rowModel) {
                     param = {

@@ -108,7 +108,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         _.each(columnWidthList, function(width, index) {
             htmlList.push(this.templateCol({
-                columnName: columnModelList[index]['columnName'],
+                columnName: columnModelList[index].columnName,
                 width: width
             }));
         }, this);
@@ -295,17 +295,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _hasMetaColumn: function(columnNames) {
-        var result = false,
-            columnModel = this.columnModel;
+        var columnModel = this.columnModel;
 
-        tui.util.forEach(columnNames, function(name) {
-            if (columnModel.isMetaColumn(name)) {
-                result = true;
-                return false;
-            }
+        return _.some(columnNames, function(name) {
+            return columnModel.isMetaColumn(name);
         });
-
-        return result;
     },
 
     /**
@@ -491,7 +485,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             var length = hierarchyList[i].length,
                 curHeight = 0;
             _.each(hierarchy, function(columnModel, j) {
-                var columnName = columnModel['columnName'];
+                var columnName = columnModel.columnName;
 
                 rowSpan = (length - 1 === j && (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
                 height = rowHeight * rowSpan;
@@ -574,7 +568,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             /* istanbul ignore else */
             if (columnMergeList) {
                 _.each(columnMergeList, function(columnMerge) {
-                    if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
+                    if ($.inArray(columnModel.columnName, columnMerge.columnNameList) !== -1) {
                         this._getColumnHierarchy(columnMerge, resultList);
                     }
                 }, this);

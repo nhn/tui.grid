@@ -605,7 +605,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             },
             newOptions = $.extend(defaultOptions, options),
             dataParam = this._getDataParam(requestType, newOptions),
-            param;
+            param = null;
 
         if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
             param = {
@@ -614,8 +614,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 data: dataParam.data,
                 type: newOptions.type
             };
-            return param;
         }
+        return param;
     },
 
     /**
@@ -712,7 +712,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
-        var message = responseData && responseData['message'],
+        var message = responseData && responseData.message,
             eventData = new GridEvent({
                 httpStatus: status,
                 requestType: options.requestType,
@@ -724,13 +724,13 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (eventData.isStopped()) {
             return;
         }
-        if (responseData && responseData['result']) {
+        if (responseData && responseData.result) {
             this.trigger('successResponse', eventData);
             if (eventData.isStopped()) {
                 return;
             }
             if (_.isFunction(callback)) {
-                callback(responseData['data'] || {}, status, jqXHR);
+                callback(responseData.data || {}, status, jqXHR);
             }
         } else {
             this.trigger('failResponse', eventData);

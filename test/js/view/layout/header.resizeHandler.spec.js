@@ -70,7 +70,7 @@ describe('ResizeHandler', function() {
 
     describe('_getHandlerColumnIndex', function() {
         beforeEach(function() {
-            columnModel.set('columnFixCount', 4);
+            columnModel.set('columnFixCount', 2);
         });
 
         afterEach(function() {
@@ -79,9 +79,9 @@ describe('ResizeHandler', function() {
 
         it('R side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
             handler.whichSide = 'R';
-            expect(handler._getHandlerColumnIndex(0)).toBe(5);
-            expect(handler._getHandlerColumnIndex(1)).toBe(6);
-            expect(handler._getHandlerColumnIndex(2)).toBe(7);
+            expect(handler._getHandlerColumnIndex(0)).toBe(3);
+            expect(handler._getHandlerColumnIndex(1)).toBe(4);
+            expect(handler._getHandlerColumnIndex(2)).toBe(5);
         });
 
         it('L side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {

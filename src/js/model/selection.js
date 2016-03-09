@@ -525,11 +525,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return;
         }
 
-        if (!rowSpanData['isMainRow']) {
-            spannedIndex = startIndex + rowSpanData['count'];
+        if (!rowSpanData.isMainRow) {
+            spannedIndex = startIndex + rowSpanData.count;
             startIndexList.push(spannedIndex);
         } else {
-            spannedIndex = startIndex + rowSpanData['count'] - 1;
+            spannedIndex = startIndex + rowSpanData.count - 1;
             if (spannedIndex > endIndex) {
                 endIndexList.push(spannedIndex);
             }
@@ -553,15 +553,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return;
         }
 
-        if (!rowSpanData['isMainRow']) {
-            spannedIndex = endIndex + rowSpanData['count'];
+        if (!rowSpanData.isMainRow) {
+            spannedIndex = endIndex + rowSpanData.count;
             tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-            spannedIndex += tmpRowSpanData['count'] - 1;
+            spannedIndex += tmpRowSpanData.count - 1;
             if (spannedIndex > endIndex) {
                 endIndexList.push(spannedIndex);
             }
         } else {
-            spannedIndex = endIndex + rowSpanData['count'] - 1;
+            spannedIndex = endIndex + rowSpanData.count - 1;
             endIndexList.push(spannedIndex);
         }
     },
@@ -592,7 +592,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
         _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
+            columnName = columnModel.columnName;
             param = {
                 columnName: columnName,
                 startIndex: spannedRange.row[0],

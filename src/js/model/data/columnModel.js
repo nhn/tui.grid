@@ -229,20 +229,17 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {number} Visible columnFix count
      */
     getVisibleColumnFixCount: function(withMeta) {
-        var realColumnFixCount = this.get('columnFixCount'),
-            visibleColumnFixCount = realColumnFixCount;
+        var count = this.get('columnFixCount'),
+            fixedColumns = _.first(this.get('dataColumnModelList'), count),
+            visibleFixedColumns = _.filter(fixedColumns, function(column) {
+                return !column.isHidden;
+            }),
+            visibleCount = visibleFixedColumns.length;
 
-        tui.util.forEach(this.get('dataColumnModelList'), function(columnModel, index) {
-            if (index >= realColumnFixCount) {
-                return false;
-            }
-            if (columnModel.isHidden) {
-                visibleColumnFixCount -= 1;
-            }
-        });
-
-        return (withMeta) ? (visibleColumnFixCount + this.getVisibleMetaColumnCount())
-            : visibleColumnFixCount;
+        if (withMeta) {
+            visibleCount += this.getVisibleMetaColumnCount();
+        }
+        return visibleCount;
     },
 
     /**
@@ -274,8 +271,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             editType = 'normal';
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
-        } else if (columnModel && columnModel['editOption'] && columnModel['editOption']['type']) {
-            editType = columnModel['editOption']['type'];
+        } else if (columnModel && columnModel.editOption && columnModel.editOption.type) {
+            editType = columnModel.editOption.type;
         }
         return editType;
     },
@@ -292,7 +289,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         dataColumnModelList = dataColumnModelList || this.get('dataColumnModelList');
 
         return _.filter(metaColumnModelList.concat(dataColumnModelList), function(item) {
-            return !item['isHidden'];
+            return !item.isHidden;
         });
     },
 
@@ -307,7 +304,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             relationListMap = {};
 
         _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
+            columnName = columnModel.columnName;
             if (columnModel.relationList) {
                 relationListMap[columnName] = columnModel.relationList;
             }
@@ -324,7 +321,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             ignoreColumnNameList = [];
         _.each(columnModelLsit, function(columnModel) {
             if (columnModel.isIgnore) {
-                ignoreColumnNameList.push(columnModel['columnName']);
+                ignoreColumnNameList.push(columnModel.columnName);
             }
         });
         return ignoreColumnNameList;
@@ -376,8 +373,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     _onChange: function(model) {
         var changed = model.changed,
-            columnFixCount = changed['columnFixCount'],
-            columnModelList = changed['columnModelList'];
+            columnFixCount = changed.columnFixCount,
+            columnModelList = changed.columnModelList;
 
         if (!columnModelList) {
             columnModelList = this.get('dataColumnModelList');

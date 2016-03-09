@@ -1,5 +1,3 @@
-/* global setFixtures */
-
 'use strict';
 
 var DomState = require('domState');
@@ -86,10 +84,14 @@ describe('view.layout.body', function() {
 
             body._onMouseDown(eventMock);
 
-            expect(body._controlStartAction).toHaveBeenCalledWith(0, 0, false, {
+            expect(body._controlStartAction).toHaveBeenCalledWith({
+                pageX: 0,
+                pageY: 0,
+                shiftKey: false
+            }, {
                 column: 1,
                 row: 2
-            }, 'c2', false)
+            }, 'c2', false);
         });
 
         it('if the grid has a selectType-radio option, check the row', function() {
@@ -105,14 +107,16 @@ describe('view.layout.body', function() {
 
     describe('_controlStartAction', function() {
         var selectionModel,
-            pageX, pageY, shiftKey,
+            inputData,
             isInput, indexObj, columnName;
 
         it('if selectionModel is disabled, should interrupt action', function() {
             selectionModel = modelManager.selectionModel;
-            pageX = 0;
-            pageY = 0;
-            shiftKey = false;
+            inputData = {
+                pageX: 0,
+                pageY: 0,
+                shiftKey: false
+            };
             isInput = false;
             columnName = 'c2';
             indexObj = {
@@ -122,7 +126,7 @@ describe('view.layout.body', function() {
             spyOn(body, '_attachDragEvents');
             selectionModel.disable();
 
-            body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+            body._controlStartAction(inputData, indexObj, columnName, isInput);
 
             expect(body._attachDragEvents).not.toHaveBeenCalled();
             selectionModel.enable();
@@ -131,9 +135,11 @@ describe('view.layout.body', function() {
         describe('when target is not meta column', function() {
             it('without shiftKey, it should focus the target cell and end the selection', function() {
                 selectionModel = modelManager.selectionModel;
-                pageX = 0;
-                pageY = 0;
-                shiftKey = false;
+                inputData = {
+                    pageX: 0,
+                    pageY: 0,
+                    shiftKey: false
+                };
                 isInput = false;
                 columnName = 'c2'
                 indexObj = {
@@ -143,7 +149,7 @@ describe('view.layout.body', function() {
                 spyOn(selectionModel, 'end');
                 modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+                body._controlStartAction(inputData, indexObj, columnName, isInput);
 
                 expect(modelManager.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
@@ -151,9 +157,11 @@ describe('view.layout.body', function() {
 
             it('with shiftKey and target is an input element, it should focus the target cell and end the selection', function() {
                 selectionModel = modelManager.selectionModel;
-                pageX = 0;
-                pageY = 0;
-                shiftKey = true;
+                inputData = {
+                    pageX: 0,
+                    pageY: 0,
+                    shiftKey: false
+                };
                 isInput = true;
                 columnName = 'c2';
                 indexObj = {
@@ -163,7 +171,7 @@ describe('view.layout.body', function() {
                 spyOn(selectionModel, 'end');
                 modelManager.focusModel.focusAt = jasmine.createSpy('focusAt');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+                body._controlStartAction(inputData, indexObj, columnName, isInput);
 
                 expect(modelManager.focusModel.focusAt).toHaveBeenCalledWith(indexObj.row, indexObj.column);
                 expect(selectionModel.end).toHaveBeenCalled();
@@ -174,9 +182,11 @@ describe('view.layout.body', function() {
                     columnIndex = 1;
 
                 selectionModel = modelManager.selectionModel;
-                pageX = 0;
-                pageY = 0;
-                shiftKey = true;
+                inputData = {
+                    pageX: 0,
+                    pageY: 0,
+                    shiftKey: true
+                };
                 isInput = false;
                 columnName = 'c2';
                 indexObj = {
@@ -185,7 +195,7 @@ describe('view.layout.body', function() {
                 };
                 spyOn(selectionModel, 'update');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+                body._controlStartAction(inputData, indexObj, columnName, isInput);
 
                 expect(selectionModel.update).toHaveBeenCalledWith(rowIndex, columnIndex);
             });
@@ -194,9 +204,11 @@ describe('view.layout.body', function() {
         describe('target is the "_number" column', function() {
             it('without shiftKey, it should select a row', function() {
                 selectionModel = modelManager.selectionModel;
-                pageX = 0;
-                pageY = 0;
-                shiftKey = false;
+                inputData = {
+                    pageX: 0,
+                    pageY: 0,
+                    shiftKey: false
+                };
                 isInput = false;
                 columnName = '_number';
                 indexObj = {
@@ -205,15 +217,17 @@ describe('view.layout.body', function() {
                 };
                 spyOn(selectionModel, 'selectRow');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+                body._controlStartAction(inputData, indexObj, columnName, isInput);
                 expect(selectionModel.selectRow).toHaveBeenCalledWith(indexObj.row);
             });
 
             it('with shiftKey, it should update selection with row state', function() {
                 selectionModel = modelManager.selectionModel;
-                pageX = 0;
-                pageY = 0;
-                shiftKey = true;
+                inputData = {
+                    pageX: 0,
+                    pageY: 0,
+                    shiftKey: true
+                };
                 isInput = false;
                 columnName = '_number';
                 indexObj = {
@@ -222,15 +236,17 @@ describe('view.layout.body', function() {
                 };
                 spyOn(selectionModel, 'update');
 
-                body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+                body._controlStartAction(inputData, indexObj, columnName, isInput);
                 expect(selectionModel.update).toHaveBeenCalledWith(indexObj.row, 0, 'row');
             });
         });
 
         it('target is the meta column and not the "_number" column', function() {
-            pageX = 0;
-            pageY = 0;
-            shiftKey = false;
+            inputData = {
+                pageX: 0,
+                pageY: 0,
+                shiftKey: false
+            };
             isInput = false;
             columnName = '_button';
             indexObj = {
@@ -239,7 +255,7 @@ describe('view.layout.body', function() {
             };
             spyOn(body, '_detachDragEvents');
 
-            body._controlStartAction(pageX, pageY, shiftKey, indexObj, columnName, isInput);
+            body._controlStartAction(inputData, indexObj, columnName, isInput);
             expect(body._detachDragEvents).toHaveBeenCalled();
         });
     });

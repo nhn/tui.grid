@@ -134,25 +134,26 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             columnName = $td.attr('columnName'),
             rowKey = $tr.attr('key'),
             startAction = true,
-            indexObj;
+            inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
+            indexData;
 
         if (!$td.length) { // selection layer
-            indexObj = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
-            columnName = this._getColumnNameByVisibleIndex(indexObj.column);
+            indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
+            columnName = this._getColumnNameByVisibleIndex(indexData.column);
         } else if (rowKey && columnName) { // valid cell
-            indexObj = {
+            indexData = {
                 column: columnModel.indexOfColumnName(columnName, true),
                 row: this.dataModel.indexOfRowKey(rowKey)
             };
             if (this.columnModel.get('selectType') === 'radio') {
-                this.dataModel.check(indexObj.row);
+                this.dataModel.check(indexData.row);
             }
         } else { // dummy cell
             startAction = false;
         }
 
         if (startAction) {
-            this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, columnName, isInput);
+            this._controlStartAction(inputData, indexData, columnName, isInput);
         }
     },
 
@@ -169,30 +170,31 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Control selection action when started
-     * @param {number} pageX - Mouse position X
-     * @param {number} pageY - Mouse position Y
-     * @param {boolean} shiftKey - Whether the shift-key is pressed.
-     * @param {{column:number, row:number}} indexObj - Index map object
+     * @param {Object} inputData - Mouse position X
+     * @param   {number} inputData.pageY - Mouse position Y
+     * @param   {number} inputData.pageY - Mouse position Y
+     * @param   {boolean} inputData.shiftKey - Whether the shift-key is pressed.
+     * @param {{column:number, row:number}} indexData - Index map object
      * @param {String} columnName - column name
      * @param {boolean} isInput - Whether the target is input element.
      * @private
      */
-    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, columnName, isInput) {
+    _controlStartAction: function(inputData, indexData, columnName, isInput) {
         var columnModel = this.columnModel,
             selectionModel = this.selectionModel,
-            columnIndex = indexObj.column,
-            rowIndex = indexObj.row;
+            columnIndex = indexData.column,
+            rowIndex = indexData.row;
 
         if (!selectionModel.isEnabled()) {
             return;
         }
 
         if (!isInput) {
-            this._attachDragEvents(pageX, pageY);
+            this._attachDragEvents(inputData.pageX, inputData.pageY);
         }
         if (!columnModel.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
-            if (shiftKey && !isInput) {
+            if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
                 if (!this.focusModel.focusAt(rowIndex, columnIndex)) {
@@ -201,7 +203,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
-            if (shiftKey) {
+            if (inputData.shiftKey) {
                 selectionModel.update(rowIndex, 0, 'row');
             } else {
                 selectionModel.selectRow(rowIndex);

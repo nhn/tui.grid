@@ -61,11 +61,8 @@ var formUtil = {
         'select-one': function(targetElement, formValue) {
             var options = tui.util.toArray(targetElement.options);
 
-            tui.util.forEach(options, function(targetOption, index) {
-                if (targetOption.value === formValue || targetOption.text === formValue) {
-                    targetElement.selectedIndex = index;
-                    return false;
-                }
+            targetElement.selectedIndex = _.findIndex(options, function(option) {
+                return option.value === formValue || option.text === formValue;
             });
         },
 

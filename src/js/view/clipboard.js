@@ -99,13 +99,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * keyDown 이벤트 핸들러
      * @param {Event} keyDownEvent 이벤트 객체
-     * @returns {boolean} False if locked
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
         if (this.isLocked) {
             keyDownEvent.preventDefault();
-            return false;
+            return;
         }
 
         if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
@@ -140,39 +139,39 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         switch (keyCode) {
-            case keyCodeMap['UP_ARROW']:
+            case keyCodeMap.UP_ARROW:
                 focusModel.focus(focusModel.prevRowKey(), columnName, true);
                 break;
-            case keyCodeMap['DOWN_ARROW']:
+            case keyCodeMap.DOWN_ARROW:
                 focusModel.focus(focusModel.nextRowKey(), columnName, true);
                 break;
-            case keyCodeMap['LEFT_ARROW']:
+            case keyCodeMap.LEFT_ARROW:
                 focusModel.focus(rowKey, focusModel.prevColumnName(), true);
                 break;
-            case keyCodeMap['RIGHT_ARROW']:
+            case keyCodeMap.RIGHT_ARROW:
                 focusModel.focus(rowKey, focusModel.nextColumnName(), true);
                 break;
-            case keyCodeMap['PAGE_UP']:
+            case keyCodeMap.PAGE_UP:
                 focusModel.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
                 break;
-            case keyCodeMap['PAGE_DOWN']:
+            case keyCodeMap.PAGE_DOWN:
                 focusModel.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
                 break;
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 focusModel.focus(rowKey, focusModel.firstColumnName(), true);
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 focusModel.focus(rowKey, focusModel.lastColumnName(), true);
                 break;
             //space 와 enter 는 동일동작
-            case keyCodeMap['SPACE']:
-            case keyCodeMap['ENTER']:
+            case keyCodeMap.SPACE:
+            case keyCodeMap.ENTER:
                 this._onEnterSpace(rowKey, columnName);
                 break;
-            case keyCodeMap['DEL']:
+            case keyCodeMap.DEL:
                 this._del(rowKey, columnName);
                 break;
-            case keyCodeMap['TAB']:
+            case keyCodeMap.TAB:
                 focusModel.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
             default:
@@ -248,34 +247,34 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             columnModel, scrollPosition, isValid, selectionState;
 
         switch (keyCode) {
-            case keyCodeMap['UP_ARROW']:
+            case keyCodeMap.UP_ARROW:
                 index.row -= 1;
                 break;
-            case keyCodeMap['DOWN_ARROW']:
+            case keyCodeMap.DOWN_ARROW:
                 index.row += 1;
                 break;
-            case keyCodeMap['LEFT_ARROW']:
+            case keyCodeMap.LEFT_ARROW:
                 index.column -= 1;
                 break;
-            case keyCodeMap['RIGHT_ARROW']:
+            case keyCodeMap.RIGHT_ARROW:
                 index.column += 1;
                 break;
-            case keyCodeMap['PAGE_UP']:
+            case keyCodeMap.PAGE_UP:
                 index.row = focusModel.prevRowIndex(displayRowCount - 1);
                 break;
-            case keyCodeMap['PAGE_DOWN']:
+            case keyCodeMap.PAGE_DOWN:
                 index.row = focusModel.nextRowIndex(displayRowCount - 1);
                 break;
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 index.column = 0;
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 index.column = columnModelList.length - 1;
                 break;
-            case keyCodeMap['ENTER']:
+            case keyCodeMap.ENTER:
                 isSelection = false;
                 break;
-            case keyCodeMap['TAB']:
+            case keyCodeMap.TAB:
                 isSelection = false;
                 focusModel.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
@@ -294,9 +293,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             if (scrollPosition) {
                 selectionState = this.selectionModel.getState();
                 if (selectionState === 'column') {
-                    delete scrollPosition['scrollTop'];
+                    delete scrollPosition.scrollTop;
                 } else if (selectionState === 'row') {
-                    delete scrollPosition['scrollLeft'];
+                    delete scrollPosition.scrollLeft;
                 }
                 this.renderModel.set(scrollPosition);
             }
@@ -317,19 +316,19 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
-            case keyCodeMap['CHAR_A']:
+            case keyCodeMap.CHAR_A:
                 this.selectionModel.selectAll();
                 break;
-            case keyCodeMap['CHAR_C']:
+            case keyCodeMap.CHAR_C:
                 this._copyToClipboard();
                 break;
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 focusModel.focus(focusModel.firstRowKey(), focusModel.firstColumnName(), true);
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 focusModel.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                 break;
-            case keyCodeMap['CHAR_V']:
+            case keyCodeMap.CHAR_V:
                 this._paste();
                 break;
             default:
@@ -422,10 +421,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 this._updateSelectionByKeyIn(0, 0);
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 this._updateSelectionByKeyIn(this.dataModel.length - 1, columnModelList.length - 1);
                 break;
             default:
@@ -458,7 +457,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
                 rowKey = dataModel.at(i).get('rowKey');
                 for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
-                    columnName = columnModelList[j]['columnName'];
+                    columnName = columnModelList[j].columnName;
                     dataModel.del(rowKey, columnName, true);
                     dataModel.get(rowKey).validateCell(columnName);
                 }

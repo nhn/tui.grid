@@ -244,7 +244,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             editType = columnModel.getEditType(columnName),
             rowState, relationResult;
 
-        relationResult = this.getRelationResult(['isDisabled', 'isEditable'])[columnName];
+        relationResult = this.executeRelationCallbacksAll(['isDisabled', 'isEditable'])[columnName];
         rowState = this.getRowState();
 
         if (!isDisabled) {
@@ -253,13 +253,13 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             } else {
                 isDisabled = rowState.isDisabled;
             }
-            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
+            isDisabled = isDisabled || !!(relationResult && relationResult.isDisabled);
         }
 
         if ($.inArray(editType, notEditableTypeList) !== -1) {
             isEditable = false;
         } else {
-            isEditable = !(relationResult && relationResult['isEditable'] === false);
+            isEditable = !(relationResult && relationResult.isEditable === false);
         }
 
         return {
@@ -401,9 +401,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             resultOptionList, editOptionList, typeExpected, valueList;
 
         if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
-            resultOptionList = this.getRelationResult(['optionListChange'])[columnName];
-            editOptionList = resultOptionList && resultOptionList['optionList'] ?
-                    resultOptionList['optionList'] : columnModel.editOption.list;
+            resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];
+            editOptionList = resultOptionList && resultOptionList.optionList ?
+                    resultOptionList.optionList : columnModel.editOption.list;
 
             typeExpected = typeof editOptionList[0].value;
             valueList = value.toString().split(',');
@@ -419,6 +419,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
             return valueList.join(',');
         }
+        return '';
     },
 
     /**
@@ -480,51 +481,78 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      *        (default : ['optionListChange', 'isDisabled', 'isEditable'])
      * @returns {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
      */
-    getRelationResult: function(callbackNameList) {
+    executeRelationCallbacksAll: function(callbackNameList) {
         var rowData = this.attributes,
             relationListMap = this.columnModel.get('relationListMap'),
-            relationResult = {},
-            rowState = this.getRowState(),
-            callback, attribute, targetColumnList, value;
+            result = {};
 
-        callbackNameList = (callbackNameList && callbackNameList.length) ?
-            callbackNameList : ['optionListChange', 'isDisabled', 'isEditable'];
+        if (_.isEmpty(callbackNameList)) {
+            callbackNameList = ['optionListChange', 'isDisabled', 'isEditable'];
+        }
 
-        //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
-        // relationListMap 구조 {columnName : relationList}
         _.each(relationListMap, function(relationList, columnName) {
-            value = rowData[columnName];
-            //relationList 를 순회하며 수행한다.
-            _.each(relationList, function(relation) {
-                targetColumnList = relation.columnList;
+            var value = rowData[columnName];
 
-                //각 relation 에 걸려있는 콜백들을 수행한다.
-                _.each(callbackNameList, function(callbackName) {
-                    //isDisabled relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
-                    if (!(rowState.isDisabled && callbackName === 'isDisabled')) {
-                        callback = relation[callbackName];
-                        if (typeof callback === 'function') {
-                            attribute = '';
-                            if (callbackName === 'optionListChange') {
-                                attribute = 'optionList';
-                            } else if (callbackName === 'isDisabled') {
-                                attribute = 'isDisabled';
-                            } else if (callbackName === 'isEditable') {
-                                attribute = 'isEditable';
-                            }
-                            if (attribute) {
-                                //relation 에 걸려있는 컬럼들의 값을 변경한다.
-                                _.each(targetColumnList, function(targetColumnName) {
-                                    relationResult[targetColumnName] = relationResult[targetColumnName] || {};
-                                    relationResult[targetColumnName][attribute] = callback(value, rowData);
-                                }, this);
-                            }
-                        }
-                    }
-                }, this);
+            _.each(relationList, function(relation) {
+                this._executeRelationCallback(relation, callbackNameList, value, rowData, result);
             }, this);
         }, this);
-        return relationResult;
+
+        return result;
+    },
+
+    /**
+     * Returns a name of attribute matching given callbackName.
+     * @param {string} callbackName - callback name
+     * @private
+     * @returns {string}
+     */
+    _getRelationResultAttrName: function(callbackName) {
+        switch (callbackName) {
+            case 'optionListChange':
+                return 'optionList';
+            case 'isDisabled':
+                return 'isDisabled';
+            case 'isEditable':
+                return 'isEditable';
+            default:
+                return '';
+        }
+    },
+
+    /**
+     * Executes relation callback
+     * @param {object} relation - relation object
+     *   @param {array} relation.columnList - target column list
+     *   @param {function} [relation.isDisabled] - callback function for isDisabled attribute
+     *   @param {function} [relation.isEditable] - callback function for isDisabled attribute
+     *   @param {function} [relation.optionListChange] - callback function for changing option list
+     * @param {array} callbackNameList - an array of callback names
+     * @param {(string|number)} value - cell value
+     * @param {object} rowData - all value of the row
+     * @param {[type]} result - object to store the result of callback functions
+     * @private
+     */
+    _executeRelationCallback: function(relation, callbackNameList, value, rowData, result) {
+        var rowState = this.getRowState(),
+            targetColumnNames = relation.columnList;
+
+        _.each(callbackNameList, function(callbackName) {
+            var attrName, callback;
+
+            if (!rowState.isDisabled || callbackName !== 'isDisabled') {
+                callback = relation[callbackName];
+                if (typeof callback === 'function') {
+                    attrName = this._getRelationResultAttrName(callbackName);
+                    if (attrName) {
+                        _.each(targetColumnNames, function(targetColumnName) {
+                            result[targetColumnName] = result[targetColumnName] || {};
+                            result[targetColumnName][attrName] = callback(value, rowData);
+                        }, this);
+                    }
+                }
+            }
+        }, this);
     }
 }, {
     privateProperties: PRIVATE_PROPERTIES

@@ -682,10 +682,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (isRsidePosition) {
             cellX += this.renderModel.get('scrollLeft');
         }
+
         if (cellX >= totalColumnWidth) {
             columnIndex = columnWidthList.length - 1;
         } else {
-            tui.util.forEachArray(columnWidthList, function(width, index) {
+            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
                 width += CELL_BORDER_WIDTH;
                 columnIndex = index;
 

@@ -199,7 +199,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             column = this.columnModel.at(columnIndex, true),
             result = false;
         if (row && column) {
-            result = this.focus(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
         }
         return result;
     },
@@ -237,7 +237,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             result = false;
 
         if (row && column) {
-            result = this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focusIn(row.get('rowKey'), column.columnName, isScrollable);
         }
         return result;
     },
@@ -355,12 +355,14 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
      * @param {Number} offset   이동할 offset
-     * @returns {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
+     * @returns {?Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
      * @private
      */
     _findRowKey: function(offset) {
         var index, row,
-            dataModel = this.dataModel;
+            dataModel = this.dataModel,
+            rowKey = null;
+
         if (this.has()) {
             index = Math.max(
                 Math.min(
@@ -369,26 +371,31 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 ), 0
             );
             row = dataModel.at(index);
-            return row && row.get('rowKey');
+            if (row) {
+                rowKey = row.get('rowKey');
+            }
         }
+        return rowKey;
     },
 
     /**
      * 현재 focus 된 column 기준으로 offset 만큼 이동한 columnName 을 반환한다.
      * @param {Number} offset   이동할 offset
-     * @returns {String} columnName  offset 만큼 이동한 위치의 columnName
+     * @returns {?String} columnName  offset 만큼 이동한 위치의 columnName
      * @private
      */
     _findColumnName: function(offset) {
         var index,
             columnModel = this.columnModel,
             columnModelList = columnModel.getVisibleColumnModelList(),
-            columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
+            columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true),
+            columnName = null;
 
         if (this.has()) {
             index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
-            return columnModelList[index] && columnModelList[index]['columnName'];
+            columnName = columnModelList[index] && columnModelList[index].columnName;
         }
+        return columnName;
     },
 
     /**
@@ -541,7 +548,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     firstColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList();
-        return columnModelList[0]['columnName'];
+        return columnModelList[0].columnName;
     },
 
     /**
@@ -551,7 +558,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     lastColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
             lastIndex = columnModelList.length - 1;
-        return columnModelList[lastIndex]['columnName'];
+        return columnModelList[lastIndex].columnName;
     }
 });
 

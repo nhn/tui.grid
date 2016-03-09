@@ -55,7 +55,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array}  파싱하여 가공된 데이터
      */
     parse: function(data) {
-        data = data && data['contents'] || data;
+        data = data && data.contents || data;
         return this._formatData(data);
     },
 
@@ -122,18 +122,18 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     _setExtraRowSpanData: function(rowList, index) {
         var row = rowList[index],
-            rowSpan = row && row['_extraData'] && row['_extraData']['rowSpan'],
-            rowKey = row && row['rowKey'],
+            rowSpan = row && row._extraData && row._extraData.rowSpan,
+            rowKey = row && row.rowKey,
             subCount, childRow, i;
 
         function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow, require-jsdoc
-            var extraData = row['_extraData'];
-            return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
+            var extraData = row._extraData;
+            return !!(extraData.rowSpanData && extraData.rowSpanData[columnName]);
         }
         function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow, require-jsdoc
-            var extraData = row['_extraData'];
-            extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
-            extraData['rowSpanData'][columnName] = rowSpanData;
+            var extraData = row._extraData;
+            extraData.rowSpanData = extraData && extraData.rowSpanData || {};
+            extraData.rowSpanData[columnName] = rowSpanData;
             return extraData;
         }
 
@@ -150,7 +150,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                     for (i = index + 1; i < index + count; i += 1) {
                         childRow = rowList[i];
                         childRow[columnName] = row[columnName];
-                        childRow['_extraData'] = childRow['_extraData'] || {};
+                        childRow._extraData = childRow._extraData || {};
                         setRowSpanData(childRow, columnName, {
                             count: subCount,
                             isMainRow: false,
@@ -334,11 +334,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
         if (this.isRowSpanEnable()) {
             rowSpanData = row.getRowSpanData(columnName);
-            if (!rowSpanData['isMainRow']) {
-                this.get(rowSpanData['mainRowKey']).set(columnName, value);
+            if (!rowSpanData.isMainRow) {
+                this.get(rowSpanData.mainRowKey).set(columnName, value);
             } else {
                 index = this.indexOfRowKey(row.get('rowKey'));
-                for (i = 0; i < rowSpanData['count'] - 1; i += 1) {
+                for (i = 0; i < rowSpanData.count - 1; i += 1) {
                     this.at(i + 1 + index).set(columnName, value);
                 }
             }
@@ -470,7 +470,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             data = {};
 
         _.each(columnModelList, function(columnModel) {
-            data[columnModel['columnName']] = '';
+            data[columnModel.columnName] = '';
         }, this);
 
         return data;
@@ -876,7 +876,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
             var originalRow = original[rowKey],
-                item = isOnlyRowKeyList ? row['rowKey'] : row;
+                item = isOnlyRowKeyList ? row.rowKey : row;
 
             if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
@@ -889,7 +889,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            var item = isOnlyRowKeyList ? obj['rowKey'] : obj;
+            var item = isOnlyRowKeyList ? obj.rowKey : obj;
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }

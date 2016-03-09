@@ -80,27 +80,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     onModelChange: function(cellData, $tr) {
         var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
-            isRedraw = false,
-            hasFocusedElement;
+            hasFocusedElement, shouldRedraw;
 
-        tui.util.forEachArray(this.redrawAttributes, function(attribute) {
-            if ($.inArray(attribute, cellData.changed) !== -1) {
-                isRedraw = true;
-                return false;
-            }
-        }, this);
-
-        $td.attr('class', this._getClassNameList(cellData).join(' '));
+        // try/catch for 'unexpected error' in IE7, 8 during testing
         try {
-            /*
-             * IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
-             */
             hasFocusedElement = !!($td.find(':focus').length);
         } catch (e) {
             hasFocusedElement = false;
         }
+        shouldRedraw = _.some(this.redrawAttributes, function(attr) {
+            return _.contains(cellData.changed, attr);
+        });
 
-        if (isRedraw) {
+        $td.attr('class', this._getClassNameList(cellData).join(' '));
+        if (shouldRedraw) {
             this.redraw(cellData, $td, hasFocusedElement);
             if (hasFocusedElement) {
                 this.focusIn($td);
@@ -143,7 +136,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
             keyName = keyNameMap[keyCode],
             param = this._getParamForKeyDownSwitch(keyDownEvent);
-        (this._keyDownSwitch[keyName] || this._keyDownSwitch['defaultAction']).call(this, keyDownEvent, param);
+        (this._keyDownSwitch[keyName] || this._keyDownSwitch.defaultAction).call(this, keyDownEvent, param);
         return !!this._keyDownSwitch[keyName];
     },
 
@@ -187,9 +180,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameMap = {};
 
         if (focusedRowKey === cellData.rowKey) {
-            classNameMap['selected'] = true;
+            classNameMap.selected = true;
             if (focused.columnName === columnName) {
-                classNameMap['focused'] = true;
+                classNameMap.focused = true;
             }
         }
         if (cellData.className) {
@@ -197,11 +190,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         }
 
         if (cellData.isEditable && !isMetaColumn) {
-            classNameMap['editable'] = true;
+            classNameMap.editable = true;
         }
 
         if (cellData.isDisabled) {
-            classNameMap['disabled'] = true;
+            classNameMap.disabled = true;
         }
 
         tui.util.forEach(classNameMap, function(val, className) {
@@ -305,7 +298,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             'class': this._getClassNameList(cellData).join(' ') // 'class' instead of class for IE7
         };
         if (cellData.rowSpan) {
-            attributes['rowSpan'] = cellData.rowSpan;
+            attributes.rowSpan = cellData.rowSpan;
         }
         attributes['edit-type'] = this.getEditType();
         attributes = $.extend(attributes, this.getAttributes(cellData));

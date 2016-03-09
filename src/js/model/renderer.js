@@ -381,10 +381,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     getCellData: function(rowKey, columnName) {
         var collection = this._getCollectionByColumnName(columnName),
-            row = collection.get(rowKey);
+            row = collection.get(rowKey),
+            cellData = null;
+
         if (row) {
-            return row.get(columnName);
+            cellData = row.get(columnName);
         }
+        return cellData;
     },
 
     /**
@@ -397,7 +400,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             renderIdx = rowIndex - this.get('startIndex'),
             rowModel, relationResult;
 
-        relationResult = row.getRelationResult();
+        relationResult = row.executeRelationCallbacksAll();
 
         _.each(relationResult, function(changes, columnName) {
             rowModel = this._getCollectionByColumnName(columnName).at(renderIdx);
