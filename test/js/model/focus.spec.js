@@ -257,9 +257,9 @@ describe('model/focus', function() {
             expect(focusModel.has()).toBe(false);
         });
 
-        it('If focused cell is not valid, return false', function() {
+        it('If called with true and focused cell is not valid, return false', function() {
             focusModel.focus(0, 'c5');
-            expect(focusModel.has()).toBe(false);
+            expect(focusModel.has(true)).toBe(false);
         });
     });
 
@@ -361,7 +361,7 @@ describe('model/focus', function() {
             var result = focusModel.restore();
 
             expect(result).toBe(false);
-            expect(focusModel.has()).toBe(false);
+            expect(focusModel.has(true)).toBe(false);
         });
     });
 

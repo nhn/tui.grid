@@ -250,14 +250,19 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * If the grid has focused element, make sure that focusModel has a valid data,
+     * If the grid has an element which has a focus, make sure that focusModel has a valid data,
      * Otherwise call focusModel.blur().
      */
     refreshState: function() {
+        var restored;
+
         if (!this.domState.hasFocusedElement()) {
             this.blur();
-        } else if (!this.has() && !this.restore()) {
-            this.focusAt(0, 0);
+        } else if (this.has() && !this.has(true)) {
+            restored = this.restore();
+            if (!restored) {
+                this.focusAt(0, 0);
+            }
         }
     },
 
@@ -279,7 +284,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Model.Focus} This object
      */
     blur: function() {
-        if (this.has()) {
+        if (this.has(true)) {
             this._savePrevious();
             this.trigger('blur', this.get('rowKey'), this.get('columnName'));
             if (this.get('rowKey') !== null) {
@@ -317,10 +322,17 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Returns whether has focus.
+     * @param {boolean} checkValid - if set to true, check whether the current cell is valid.
      * @returns {boolean} True if has focus.
      */
-    has: function() {
-        return this._isValidCell(this.get('rowKey'), this.get('columnName'));
+    has: function(checkValid) {
+        var rowKey = this.get('rowKey'),
+            columnName = this.get('columnName');
+
+        if (checkValid) {
+            return this._isValidCell(rowKey, columnName);
+        }
+        return !util.isBlank(rowKey) && !util.isBlank(columnName);
     },
 
     /**
@@ -363,7 +375,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             dataModel = this.dataModel,
             rowKey = null;
 
-        if (this.has()) {
+        if (this.has(true)) {
             index = Math.max(
                 Math.min(
                     dataModel.indexOfRowKey(this.get('rowKey')) + offset,
@@ -391,7 +403,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true),
             columnName = null;
 
-        if (this.has()) {
+        if (this.has(true)) {
             index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
             columnName = columnModelList[index] && columnModelList[index].columnName;
         }
