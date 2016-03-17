@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var renderStateMap = require('../common/constMap').renderState;
+var DELAY_FOR_SHOWING_LAYER = 200;
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -20,6 +21,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.renderModel = options.renderModel;
+        this.timeoutIdForDelay = null;
 
         this.listenTo(this.dimensionModel, 'change', this._refreshLayout);
         this.listenTo(this.renderModel, 'change:state', this.render);
@@ -41,18 +43,46 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      * @returns {object} This object
      */
     render: function() {
-        var renderState = this.renderModel.get('state');
+        var renderState = this.renderModel.get('state'),
+            self = this;
 
-        if (renderState === renderStateMap.DONE) {
-            this.$el.hide();
-        } else {
-            this.$el.html(this.template({
-                text: this._getMessage(renderState),
-                isLoading: (renderState === renderStateMap.LOADING)
-            })).show();
-            this._refreshLayout();
+        if (this.timeoutIdForDelay !== null) {
+            clearTimeout(this.timeoutIdForDelay);
+            this.timeoutIdForDelay = null;
         }
+
+        switch (renderState) {
+            case renderStateMap.DONE:
+                this.$el.hide();
+                break;
+            case renderStateMap.EMPTY:
+                this._showLayer(renderState);
+                break;
+            case renderStateMap.LOADING:
+                this.timeoutIdForDelay = setTimeout(function() {
+                    self._showLayer(renderState);
+                }, DELAY_FOR_SHOWING_LAYER);
+                break;
+            default:
+                // do nothing
+        }
+
         return this;
+    },
+
+    /**
+     * Shows the state layer.
+     * @param {string} renderState - Render state {@link module:common/constMap#renderState}
+     * @private
+     */
+    _showLayer: function(renderState) {
+        var layerHtml = this.template({
+            text: this._getMessage(renderState),
+            isLoading: (renderState === renderStateMap.LOADING)
+        });
+
+        this.$el.html(layerHtml).show();
+        this._refreshLayout();
     },
 
     /**

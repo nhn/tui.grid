@@ -75,7 +75,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         emptyMessage: null,
 
         // constMap.renderState
-        state: renderStateMap.EMPTY
+        state: renderStateMap.DONE
     },
 
     /**
