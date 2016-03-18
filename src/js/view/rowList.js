@@ -264,9 +264,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 this._appendNewRows(rowKeys, dupRowKeys);
             }
         }
-
         this.renderedRowKeys = rowKeys;
-        this.focusModel.focusClipboard();
 
         return this;
     },

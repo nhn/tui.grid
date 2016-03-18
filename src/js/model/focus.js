@@ -258,7 +258,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         if (!this.domState.hasFocusedElement()) {
             this.blur();
-        } else if (this.has() && !this.has(true)) {
+        } else if (!this.has()) {
             restored = this.restore();
             if (!restored) {
                 this.focusAt(0, 0);
@@ -284,12 +284,17 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Model.Focus} This object
      */
     blur: function() {
+        if (!this.has()) {
+            return this;
+        }
+
         if (this.has(true)) {
             this._savePrevious();
-            this.trigger('blur', this.get('rowKey'), this.get('columnName'));
-            if (this.get('rowKey') !== null) {
-                this.set('columnName', '');
-            }
+        }
+        this.trigger('blur', this.get('rowKey'), this.get('columnName'));
+
+        if (this.get('rowKey') !== null) {
+            this.set('columnName', '');
         }
         return this;
     },

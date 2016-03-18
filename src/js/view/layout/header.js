@@ -156,15 +156,17 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         if (this.selectionModel.hasSelection()) {
             columnNames = this._getSelectedColumnNames();
-        } else {
+        } else if (this.focusModel.has(true)) {
             columnNames = [this.focusModel.get('columnName')];
         }
-        mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
 
         $ths.removeClass(CLASSNAME_SELECTED);
-        _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-            $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
-        });
+        if (columnNames) {
+            mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
+            _.each(columnNames.concat(mergedColumnNames), function(columnName) {
+                $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+            });
+        }
     },
 
     /**

@@ -3,7 +3,6 @@
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ViewFactory = require('view/factory');
-var HeaderView = require('view/layout/header');
 
 describe('Header', function() {
     var modelManager, viewFactory, header;
@@ -70,6 +69,7 @@ describe('Header', function() {
 
         describe('_getHeaderMainCheckbox', function() {
             var lHeader;
+
             beforeEach(function() {
                 lHeader = viewFactory.createHeader('L');
             });
@@ -492,10 +492,14 @@ describe('Header', function() {
 
         beforeEach(function() {
             modelManager.columnModel.set('columnModelList', [
-                { columnName: 'c1' },
-                { columnName: 'c2' },
-                { columnName: 'c3' }
+                {columnName: 'c1'},
+                {columnName: 'c2'},
+                {columnName: 'c3'}
             ]);
+            modelManager.dataModel.setRowList([
+                {c1: 1}
+            ]);
+            modelManager.focusModel.set('rowKey', 0);
             header.render();
         });
 
