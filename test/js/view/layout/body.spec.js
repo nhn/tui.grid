@@ -253,10 +253,10 @@ describe('view.layout.body', function() {
                 row: 2,
                 column: 1
             };
-            spyOn(body, '_detachDragEvents');
+            spyOn(body, '_attachDragEvents');
 
             body._controlStartAction(inputData, indexObj, columnName, isInput);
-            expect(body._detachDragEvents).toHaveBeenCalled();
+            expect(body._attachDragEvents).not.toHaveBeenCalled();
         });
     });
 

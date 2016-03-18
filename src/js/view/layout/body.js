@@ -6,7 +6,13 @@
 
 var View = require('../../base/view');
 
-var HTML_CONTAINER = '<div class="body_container"></div>';
+var HTML_CONTAINER = '<div class="body_container"></div>',
+
+    // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
+    MIN_INTERVAL_FOR_PAUSED = 200,
+
+    // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+    MIN_DISATNCE_FOR_DRAG = 10;
 
 /**
  * Class for the body layout
@@ -53,9 +59,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * DimensionModel 의 body Height 가 변경된 경우 element 의 height 를 조정한다.
-     * @param {Object} model 변경이 일어난 model 인스턴스
-     * @param {Number} value bodyHeight 값
+     * Event handler for 'change:bodyHeight' event on module:model/dimension
+     * @param {Object} model - changed model
+     * @param {Number} value - new height value
      * @private
      */
     _onBodyHeightChange: function(model, value) {
@@ -63,7 +69,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Resets the height of a container div.
+     * Resets the height of a container DIV
      */
     _resetContainerHeight: function() {
         this.$container.css({
@@ -72,25 +78,25 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * 스크롤 이벤트 핸들러
-     * @param {jQuery.Event} scrollEvent   스크롤 이벤트
+     * Event handler for 'scroll' event on DOM
+     * @param {UIEvent} event - event object
      * @private
      */
-    _onScroll: function(scrollEvent) {
+    _onScroll: function(event) {
         var attrs = {
-            scrollTop: scrollEvent.target.scrollTop
+            scrollTop: event.target.scrollTop
         };
 
         if (this.whichSide === 'R') {
-            attrs.scrollLeft = scrollEvent.target.scrollLeft;
+            attrs.scrollLeft = event.target.scrollLeft;
         }
         this.renderModel.set(attrs);
     },
 
     /**
-     * Render model 의 Scroll left 변경 이벤트 핸들러
-     * @param {object} model 변경이 일어난 모델 인스턴스
-     * @param {Number} value scrollLeft 값
+     * Event handler for 'change:scrollLeft' event on module:model/renderer
+     * @param {Object} model - changed model
+     * @param {Number} value - new scrollLeft value
      * @private
      */
     _onScrollLeftChange: function(model, value) {
@@ -100,9 +106,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Render model 의 Scroll top 변경 이벤트 핸들러
-     * @param {object} model 변경이 일어난 모델 인스턴스
-     * @param {Number} value scrollTop값
+     * Event handler for 'chage:scrollTop' event on module:model/renderer
+     * @param {Object} model - changed model instance
+     * @param {Number} value - new scrollTop value
      * @private
      */
     _onScrollTopChange: function(model, value) {
@@ -183,40 +189,69 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var columnModel = this.columnModel,
             selectionModel = this.selectionModel,
             columnIndex = indexData.column,
-            rowIndex = indexData.row;
+            rowIndex = indexData.row,
+            startDrag = true;
 
         if (!selectionModel.isEnabled()) {
             return;
         }
 
-        if (!isInput) {
-            this._attachDragEvents(inputData.pageX, inputData.pageY);
-        }
         if (!columnModel.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
             if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                if (!this.focusModel.focusAt(rowIndex, columnIndex)) {
-                    this._detachDragEvents();
-                }
+                startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
-            if (inputData.shiftKey) {
-                selectionModel.update(rowIndex, 0, 'row');
-            } else {
-                selectionModel.selectRow(rowIndex);
-            }
+            this._updateSelectionByRow(rowIndex, inputData.shiftKey);
         } else {
-            this._detachDragEvents();
+            startDrag = false;
+        }
+
+        if (!isInput && startDrag) {
+            this._attachDragEvents(inputData.pageX, inputData.pageY);
         }
     },
 
     /**
-     * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
-     * @param {Number} pageX    초기값으로 설정할 마우스 x좌표
-     * @param {Number} pageY    초기값으로 설정할 마우스 y 좌표
+     * Update selection model by row unit.
+     * @param {number} rowIndex - row index
+     * @param {boolean} shiftKey - true if the shift key is pressed
+     * @private
+     */
+    _updateSelectionByRow: function(rowIndex, shiftKey) {
+        if (shiftKey) {
+            this.selectionModel.update(rowIndex, 0, 'row');
+        } else {
+            this.selectionModel.selectRow(rowIndex);
+        }
+    },
+
+    /**
+     * Executes the `focusModel.focusAt()` and returns the boolean value which indicates whether to start drag.
+     * @param {number} rowIndex - row index
+     * @param {number} columnIndex - column index
+     * @returns {boolean}
+     * @private
+     */
+    _doFocusAtAndCheckDraggable: function(rowIndex, columnIndex) {
+        var startTime = (new Date()).getTime(),
+            focusSuccessed = this.focusModel.focusAt(rowIndex, columnIndex),
+            endTime = (new Date()).getTime(),
+            hasPaused = (endTime - startTime) > MIN_INTERVAL_FOR_PAUSED;
+
+        if (!focusSuccessed || hasPaused) {
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Attach event handlers for drag event.
+     * @param {Number} pageX - initial pageX value
+     * @param {Number} pageY - initial pageY value
      */
     _attachDragEvents: function(pageX, pageY) {
         this.setOwnProperties({
@@ -230,7 +265,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
+     * Detach all handlers which are used for drag event.
      */
     _detachDragEvents: function() {
         this.selectionModel.stopAutoScroll();
@@ -242,15 +277,16 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Event handler for 'mousemove' event during drag
-     * @param {jQuery.Event} event - MouseEvent object
+     * @param {MouseEvent} event - MouseEvent object
+     * @private
      */
     _onMouseMove: function(event) {
         var selectionModel = this.selectionModel,
             pageX = event.pageX,
             pageY = event.pageY,
-            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10; // eslint-disable-line no-magic-numbers
+            dragged = this._getMouseMoveDistance(pageX, pageY) > MIN_DISATNCE_FOR_DRAG;
 
-        if (selectionModel.hasSelection() || isMoved) {
+        if (selectionModel.hasSelection() || dragged) {
             selectionModel.updateByMousePosition(pageX, pageY);
         }
     },
@@ -270,8 +306,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * select start 이벤트를 방지한다.
-     * @param {jQuery.Event} event selectStart 이벤트 객체
+     * Event handler to prevent default action on `selectstart` event.
+     * @param {Event} event - event object
      * @returns {boolean} false
      * @private
      */
@@ -281,7 +317,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * rendering 한다.
+     * renders
      * @returns {View.Layout.Body}   자기 자신
      */
     render: function() {
