@@ -252,11 +252,18 @@ describe('addon.net', function() {
     });
 
     describe('lock', function() {
-        it('loading layer 를 보여주고, isLocked 를 true로 설정한다.', function() {
+        it('set isLocked to true', function() {
             createNet();
             net._lock();
-            expect(net.renderModel.get('state')).toBe(renderStateMap.LOADING);
             expect(net.isLocked).toBe(true);
+        });
+
+        it('set renderState to LOADING if time elapsed is more than 200ms', function() {
+            createNet();
+
+            net._lock();
+            jasmine.clock().tick(200);
+            expect(net.renderModel.get('state')).toBe(renderStateMap.LOADING);
         });
     });
 

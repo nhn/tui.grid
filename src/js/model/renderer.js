@@ -8,6 +8,8 @@ var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
 
+var DATA_LENGTH_FOR_LOADING = 1000;
+
 /**
  * View 에서 Rendering 시 사용할 객체
  * @module model/renderer
@@ -104,10 +106,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'beforeReset' event on dataModel
+     * @param {number} dataLength - the length of data
      * @private
      */
-    _onBeforeResetData: function() {
-        this.set('state', renderStateMap.LOADING);
+    _onBeforeResetData: function(dataLength) {
+        if (dataLength > DATA_LENGTH_FOR_LOADING) {
+            this.set('state', renderStateMap.LOADING);
+        }
     },
 
     /**

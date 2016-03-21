@@ -898,40 +898,27 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
-     * Resets data.
-     * @param  {Array} rowList - New data
-     * @param  {Boolean} isParse - parse option of Backbone.Collection.reset
-     * @param  {Function} callback - Callback function
-     * @private
-     */
-    _resetData: function(rowList, isParse, callback) {
-        this.lastRowKey = -1;
-        this.reset(rowList, {
-            parse: isParse
-        });
-        if (_.isFunction(callback)) {
-            callback();
-        }
-    },
-
-    /**
      * rowList 를 설정한다. setRowList 와 다르게 setOriginalRowList 를 호출하여 원본데이터를 갱신하지 않는다.
      * @param {Array} rowList 설정할 데이터 배열 값
      * @param {boolean} [isParse=true]  backbone 의 parse 로직을 수행할지 여부
      * @param {Function} [callback] callback function
      */
     replaceRowList: function(rowList, isParse, callback) {
-        var MIN_LEN_FOR_WAITING_LAYER = 500;
+        if (!rowList) {
+            rowList = [];
+        }
         if (_.isUndefined(isParse)) {
             isParse = true;
         }
-        this.trigger('beforeReset');
+        this.trigger('beforeReset', rowList.length);
 
-        if (rowList && rowList.length > MIN_LEN_FOR_WAITING_LAYER) {
-            // defer to show a waiting-layer if dataset is large
-            _.defer(_.bind(this._resetData, this, rowList, isParse, callback));
-        } else {
-            this._resetData(rowList, isParse, callback);
+        this.lastRowKey = -1;
+        this.reset(rowList, {
+            parse: isParse
+        });
+
+        if (_.isFunction(callback)) {
+            callback();
         }
     },
 

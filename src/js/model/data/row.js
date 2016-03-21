@@ -54,6 +54,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * Event handler for change event in _extraData.
      * Reset _extraData value with cloned object to trigger 'change:_extraData' event.
+     * @private
      */
     _triggerExtraDataChangeEvent: function() {
         this.trigger('extraDataChanged', this.get('_extraData'));
@@ -290,8 +291,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @returns {Boolean}    disabled 처리를 할지 여부
      */
     isDisabled: function(columnName) {
-        var cellState;
-        cellState = this.getCellState(columnName);
+        var cellState = this.getCellState(columnName);
+
         return cellState.isDisabled;
     },
 

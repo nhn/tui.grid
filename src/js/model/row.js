@@ -18,7 +18,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
+    initialize: function(attributes) {
         var rowKey = attributes && attributes.rowKey,
             rowListData = this.collection.dataModel,
             rowData = rowListData.get(rowKey);

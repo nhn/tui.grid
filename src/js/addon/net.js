@@ -11,6 +11,7 @@ var View = require('../base/view'),
     GridEvent = require('../common/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
+var DELAY_FOR_LOADING_STATE = 200;
 
 /**
  * Net Addon
@@ -128,6 +129,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             // state data
             curPage: 1,
+            timeoutIdForDelay: null,
             requestedFormData: null,
             isLocked: false,
             lastRequestedReadData: null
@@ -285,7 +287,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _lock: function() {
-        this.renderModel.set('state', renderStateMap.LOADING);
+        var renderModel = this.renderModel;
+
+        this.timeoutIdForDelay = setTimeout(function() {
+            renderModel.set('state', renderStateMap.LOADING);
+        }, DELAY_FOR_LOADING_STATE);
+
         this.isLocked = true;
     },
 
@@ -295,6 +302,11 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _unlock: function() {
+        if (this.timeoutIdForDelay !== null) {
+            clearTimeout(this.timeoutIdForDelay);
+            this.timeoutIdForDelay = null;
+        }
+
         this.isLocked = false;
     },
 
