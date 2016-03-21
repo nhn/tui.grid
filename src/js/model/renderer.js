@@ -27,10 +27,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.setOwnProperties({
             dataModel: options.dataModel,
             columnModel: options.columnModel,
-            dimensionModel: options.dimensionModel,
-            timeoutIdForRefresh: 0,
-            isColumnModelChanged: false
+            dimensionModel: options.dimensionModel
         });
+
         rowListOptions = {
             dataModel: this.dataModel,
             columnModel: this.columnModel
@@ -44,7 +43,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'add remove sort reset', this._onRowListChange)
+            .listenTo(this.dataModel, 'add remove sort reset', this._onDataModelChange)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
@@ -150,18 +149,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             startIndex: 0,
             endIndex: 0
         });
-        this.isColumnModelChanged = true;
-        clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
+        this.refresh(true);
     },
 
     /**
-     * Data.RowList 가 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
+     * Event handler for change
      * @private
      */
-    _onRowListChange: function() {
-        clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this, true), 0);
+    _onDataModelChange: function() {
+        this.refresh(false, true);
     },
 
     /**
@@ -305,9 +301,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
-     * @param {Boolean} isDataModelChanged - The boolean value whether dataModel has changed
+     * @param {Boolean} columnModelChanged - The boolean value whether columnModel has changed
+     * @param {Boolean} dataModelChanged - The boolean value whether dataModel has changed
      */
-    refresh: function(isDataModelChanged) {
+    refresh: function(columnModelChanged, dataModelChanged) {
         var startIndex, endIndex, i;
 
         this._setRenderingRange(this.get('scrollTop'));
@@ -323,14 +320,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this._executeRelation(i);
         }
 
-        if (this.isColumnModelChanged) {
+        if (columnModelChanged) {
             this.trigger('columnModelChanged');
-            this.isColumnModelChanged = false;
         } else {
-            this.trigger('rowListChanged', isDataModelChanged);
+            this.trigger('rowListChanged', dataModelChanged);
         }
         this._refreshState();
-        this.trigger('refresh');
     },
 
     /**
@@ -381,7 +376,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
          isDisabled: isDisabled,
          optionList: [],
          className: row.getClassNameList(columnName).join(' '),
-         changed: []    //변경된 프로퍼티 목록들
+         changed: []    //names of changed properties
      }
      */
     getCellData: function(rowKey, columnName) {
@@ -413,14 +408,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 rowModel.setCell(columnName, changes);
             }
         }, this);
-    },
-
-    /**
-     * Destroys itself
-     * @private
-     */
-    _destroy: function() {
-        clearTimeout(this.timeoutIdForRefresh);
     }
 });
 
