@@ -287,22 +287,6 @@ describe('model.renderer', function() {
             });
         });
 
-        describe('refresh 이벤트를 확인한다.', function() {
-            var callback,
-                listenModel;
-
-            beforeEach(function() {
-                callback = jasmine.createSpy('callback');
-                listenModel = new Model();
-            });
-
-            it('refresh 이벤트를 발생하는지 확인한다.', function() {
-                listenModel.listenTo(renderModel, 'refresh', callback);
-                renderModel.refresh();
-                expect(callback).toHaveBeenCalled();
-            });
-        });
-
         describe('데이터 append, remove, reset 혹은 columnModel의 변경으로 인해 호출되는 이벤트 핸들러', function() {
             var listenModel;
 

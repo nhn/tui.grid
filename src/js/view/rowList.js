@@ -8,7 +8,8 @@ var View = require('../base/view'),
     util = require('../common/util');
 
 var CLASSNAME_SELECTED = 'selected',
-    CLASSNAME_META_COLUMN = 'td.meta_column';
+    CLASSNAME_FOCSED_ROW = 'focused_row',
+    SELECTOR_META_CELL = 'td.meta_column';
 
 /**
  * RowList View
@@ -46,6 +47,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'focus', this._onFocus)
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(focusModel, 'focusIn', this._onFocusIn)
+            .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
             .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === 'L') {
@@ -90,7 +92,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * 전체 행목록을 갱신한다.
+     * Redraw all rows.
+     * @private
      */
     _resetRows: function() {
         var html = this._getRowsHtml(this.collection.models),
@@ -100,12 +103,13 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $tbody = this.bodyTableView.redrawTable(html);
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
-            // IE7에서 레이아웃이 틀어지는 현상 방지
+            // prevent layout from breaking in IE7
             if (util.isBrowserIE7()) {
                 $tbody.width($tbody.width());
             }
         } else {
-            // IE의 호환성 보기를 사용하면 브라우저 검출이 정확하지 않기 때문에, try/catch로 방어코드를 추가함.
+            // As using a compatibility mode in IE makes it hard to detect the actual version of the browser,
+            // use try/catch block to make in correct.
             try {
                 this.$el[0].innerHTML = html;
             } catch (e) {
@@ -153,8 +157,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        $rows.find(CLASSNAME_META_COLUMN).removeClass(CLASSNAME_SELECTED);
-        $filteredRows.find(CLASSNAME_META_COLUMN).addClass(CLASSNAME_SELECTED);
+        $rows.find(SELECTOR_META_CELL).removeClass(CLASSNAME_SELECTED);
+        $filteredRows.find(SELECTOR_META_CELL).addClass(CLASSNAME_SELECTED);
     },
 
     /**
@@ -203,9 +207,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _onBlur: function(rowKey, columnName) {
         var $td = this.dataModel.getElement(rowKey, columnName);
-        if ($td.length) {
-            $td.removeClass('focused');
-        }
+
+        $td.removeClass('focused');
     },
 
     /**
@@ -216,9 +219,43 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _onFocus: function(rowKey, columnName) {
         var $td = this.dataModel.getElement(rowKey, columnName);
-        if ($td.length) {
-            $td.addClass('focused');
-        }
+
+        $td.addClass('focused');
+    },
+
+    /**
+     * Removes the CLASSNAME_FOCSED_ROW class from the cells in the previously focused row and
+     * adds it to the cells in the currently focused row.
+     * @private
+     */
+    _refreshFocusedRow: function() {
+        var rowKey = this.focusModel.get('rowKey'),
+            prevRowKey = this.focusModel.get('prevRowKey');
+
+        this._setFocusedRowClass(prevRowKey, false);
+        this._setFocusedRowClass(rowKey, true);
+    },
+
+    /**
+     * Finds all cells in the row indentified by given rowKey and toggles the CLASSNAME_FOCSED_ROW on them.
+     * @param {Number|String} rowKey - rowKey
+     * @param {Boolean} focused - if set to true, the class will be added, otherwise be removed.
+     * @private
+     */
+    _setFocusedRowClass: function(rowKey, focused) {
+        var columnNames = _.pluck(this._getColumnModelList(), 'columnName'),
+            trMap = {};
+
+        _.each(columnNames, function(columnName) {
+            var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName),
+                $td;
+
+            if (!trMap[mainRowKey]) {
+                trMap[mainRowKey] = this._getRowElement(mainRowKey);
+            }
+            $td = trMap[mainRowKey].find('td[columnname=' + columnName + ']');
+            $td.toggleClass(CLASSNAME_FOCSED_ROW, focused);
+        }, this);
     },
 
     /**
