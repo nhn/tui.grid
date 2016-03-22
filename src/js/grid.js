@@ -813,7 +813,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {(number|string)} rowKey - The unique key of the row
      */
     select: function(rowKey) {
-        this.modelManager.focusModel.select(rowKey);
+        var firstColumn = this.modelManager.columnModel.at(0, true);
+
+        this.modelManager.focusModel.focus(rowKey, firstColumn.columnName);
     },
 
     /**
