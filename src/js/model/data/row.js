@@ -208,7 +208,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
-            classNameList = this.extraDataManager.getClassNameList(columnName);
+            isMetaColumn = this.columnModel.isMetaColumn(columnName),
+            classNameList = this.extraDataManager.getClassNameList(columnName),
+            cellState = this.getCellState(columnName);
 
         if (columnModel.className) {
             classNameList.push(columnModel.className);
@@ -219,6 +221,15 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.isRequired) {
             classNameList.push('required');
         }
+        if (isMetaColumn) {
+            classNameList.push('meta_column');
+        } else if (cellState.isEditable) {
+            classNameList.push('editable');
+        }
+        if (cellState.isDisabled) {
+            classNameList.push('disabled');
+        }
+
         return this._makeUniqueStringArray(classNameList);
     },
 

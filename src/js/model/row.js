@@ -107,7 +107,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
             columnNames = this._getColumnNameList(),
-            // rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {

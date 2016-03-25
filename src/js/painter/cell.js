@@ -88,7 +88,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             return _.contains(cellData.changed, attr);
         });
 
-        $td.attr('class', this._getClassNameList(cellData).join(' '));
+        $td.attr('class', cellData.className);
         if (shouldRedraw) {
             this.redraw(cellData, $td, hasFocusedElement);
             if (hasFocusedElement) {
@@ -163,49 +163,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
-     * @param {Object} cellData Model 의 셀 데이터
-     * @returns {Array} 생성된 css 디자인 클래스 배열
-     * @private
-     */
-    _getClassNameList: function(cellData) {
-        var focused = this.grid.focusModel.which(),
-            columnName = cellData.columnName,
-            focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
-            isMetaColumn = this.grid.columnModel.isMetaColumn(columnName),
-            classNameList = [],
-            classNameMap = {};
-
-        if (focusedRowKey === cellData.rowKey) {
-            classNameMap.selected = true;
-            if (focused.columnName === columnName) {
-                classNameMap.focused = true;
-            }
-        }
-        if (cellData.className) {
-            classNameMap[cellData.className] = true;
-        }
-
-        if (cellData.isEditable && !isMetaColumn) {
-            classNameMap.editable = true;
-        }
-
-        if (cellData.isDisabled) {
-            classNameMap.disabled = true;
-        }
-
-        tui.util.forEach(classNameMap, function(val, className) {
-            classNameList.push(className);
-        });
-
-        if (isMetaColumn) {
-            classNameList.push('meta_column');
-        }
-
-        return classNameList;
-    },
-
-    /**
      * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
      * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
      * @param {object} cellData Model 의 셀 데이터
@@ -276,7 +233,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         html = this.template({
             columnName: cellData.columnName,
             rowSpan: cellData.rowSpan,
-            className: this._getClassNameList(cellData).join(' '),
+            className: cellData.className,
             editType: this.getEditType(),
             attributeString: attributeString,
             // '&nbsp' for height issue with empty cell in IE7
@@ -292,7 +249,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     redraw: function(cellData, $td) {
         var attributes = {
-            'class': this._getClassNameList(cellData).join(' ') // 'class' instead of class for IE7
+            'class': cellData.className
         };
         if (cellData.rowSpan) {
             attributes.rowSpan = cellData.rowSpan;
