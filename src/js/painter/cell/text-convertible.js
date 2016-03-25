@@ -82,7 +82,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * - 필요에 따라 override 한다.
      */
     focusOut: function() {
-        this.grid.focusModel.focusClipboard();
+        this.controller.focusClipboard();
     },
 
     /**

@@ -190,8 +190,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @returns {Object} - view data object
      * @private
      */
-    _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
+    _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
         var viewData = {
+            height: height,
             rowKey: rowDataModel.get('rowKey'),
             _extraData: rowDataModel.get('_extraData')
         };
@@ -244,14 +245,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
         var columnNamesMap = this._getColumnNamesOfEachSide(),
             rowNum = this.get('startNumber') + startIndex,
+            height = this.dimensionModel.get('rowHeight'),
             lsideData = [],
             rsideData = [],
             rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
-            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, rowNum));
-            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside));
+            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height));
             rowNum += 1;
         }
 

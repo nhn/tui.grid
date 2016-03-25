@@ -146,7 +146,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @override
      */
     parse: function(data, options) {
-        return this._formatData(data, options.collection.dataModel, options.collection.columnModel);
+        var collection = options.collection;
+
+        return this._formatData(data, collection.dataModel, collection.columnModel);
     },
 
     /**
@@ -154,37 +156,37 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param {Array} data - Original data
      * @param {module:model/data/rowList} dataModel - Data model
      * @param {module:model/data/columnModel} columnModel - Column model
+     * @param {Number} rowHeight - The height of a row
      * @returns {Array} - Converted data
      * @private
      */
     _formatData: function(data, dataModel, columnModel) {
         var rowKey = data.rowKey,
-            row;
+            columnData, row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
         row = dataModel.get(rowKey);
+        columnData = _.omit(data, 'rowKey', '_extraData', 'height');
 
-        _.each(data, function(value, columnName) {
+        _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
                 cellState = row.getCellState(columnName);
 
-            if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                data[columnName] = {
-                    rowKey: rowKey,
-                    columnName: columnName,
-                    value: this._getValueToDisplay(columnModel, columnName, value),
-                    rowSpan: rowSpanData.count,
-                    isMainRow: rowSpanData.isMainRow,
-                    mainRowKey: rowSpanData.mainRowKey,
-                    isEditable: cellState.isEditable,
-                    isDisabled: cellState.isDisabled,
-                    className: row.getClassNameList(columnName).join(' '),
-                    optionList: [], // for list type column (select, checkbox, radio)
-                    changed: [] //changed property names
-                };
-            }
+            data[columnName] = {
+                rowKey: rowKey,
+                columnName: columnName,
+                value: this._getValueToDisplay(columnModel, columnName, value),
+                rowSpan: rowSpanData.count,
+                isMainRow: rowSpanData.isMainRow,
+                mainRowKey: rowSpanData.mainRowKey,
+                isEditable: cellState.isEditable,
+                isDisabled: cellState.isDisabled,
+                className: row.getClassNameList(columnName).join(' '),
+                optionList: [], // for list type column (select, checkbox, radio)
+                changed: [] //changed property names
+            };
         }, this);
         return data;
     },

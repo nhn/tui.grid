@@ -125,7 +125,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
         return this.template({
             key: rowKey,
-            height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
+            height: model.get('height') + RowPainter._extraHeight,
             contents: html,
             className: ''
         });
