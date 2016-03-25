@@ -53,17 +53,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     _defaultKeyDownSwitch: {
         'ESC': function(keyDownEvent, param) {
-            this.focusOut(param.$target);
+            this.controller.focusOut(param.$target);
         },
         'ENTER': function(keyDownEvent, param) {
-            this.focusOut(param.$target);
+            this.controller.focusOut(param.$target);
         },
-        'TAB': function(keyDownEvent, param) {
-            if (keyDownEvent.shiftKey) {
-                this.grid.focusModel.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
-            } else {
-                this.grid.focusModel.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
-            }
+        'TAB': function(keyDownEvent) {
+            this.controller.focusInNext(keyDownEvent.shiftKey);
         },
         'defaultAction': function() {}
     },
@@ -137,6 +133,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             keyName = keyNameMap[keyCode],
             param = this._getParamForKeyDownSwitch(keyDownEvent);
         (this._keyDownSwitch[keyName] || this._keyDownSwitch.defaultAction).call(this, keyDownEvent, param);
+
         return !!this._keyDownSwitch[keyName];
     },
 
@@ -331,17 +328,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Validates the cell data identified by given rowKey and columnName.
-     * @param {String} rowKey - Row key
-     * @param {String} columnName - Column name
-     * @private
-     */
-    _validateData: function(rowKey, columnName) {
-        var row = this.grid.dataModel.get(rowKey);
-        row.validateCell(columnName);
-    },
-
-    /**
      * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
      * converter 함수를 적용한 결과값을 반환한다.
      * @param {string} value - 셀의 실제값
@@ -407,7 +393,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * - 필요에 따라 override 한다.
      */
     focusOut: function() {
-        this.grid.focusModel.focusClipboard();
+        this.controller.focusOut();
     },
 
     /**

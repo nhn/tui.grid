@@ -20,11 +20,11 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
         ListCell.apply(this, arguments);
 
         this.setKeyDownSwitch({
-            'ESC': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
+            ESC: function(keyDownEvent, param) {
+                this.controller.focusOut(param.$target);
             },
-            'ENTER': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
+            ENTER: function(keyDownEvent, param) {
+                this.controller.focusOut(param.$target);
             }
         });
     },
@@ -70,7 +70,7 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
      */
     _onBlurSelect: function(ev) {
         var cellAddr = this._getCellAddress($(ev.target));
-        this._validateData(cellAddr.rowKey, cellAddr.columnName);
+        this.controller.validateCell(cellAddr.rowKey, cellAddr.columnName);
     },
 
     /**
@@ -86,9 +86,8 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
     focusIn: function($td) {
-        /* istanbul ignore next */
         if ($td.find('select').prop('disabled')) {
-            this.grid.focusModel.focusClipboard();
+            this.controller.focusOut();
         } else {
             $td.find('select').eq(0).focus();
         }
@@ -199,9 +198,9 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
      */
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
-            cellAddr = this._getCellAddress($target),
-            grid = this.grid;
-        grid.dataModel.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
+            cellAddr = this._getCellAddress($target);
+
+        this.contrller.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
     }
 });
 

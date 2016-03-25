@@ -52,9 +52,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @private
      */
     _onDblClick: function() {
-        this.grid.dataModel.append({}, {
-            focus: true
-        });
+        this.controller.appendEmptyRowAndFocus(true);
     },
 
     /**

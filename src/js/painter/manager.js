@@ -14,6 +14,7 @@ var TextConvertibleCell = require('./cell/text-convertible');
 var TextPasswordCell = require('./cell/text-password');
 var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
+var PainterController = require('../controller/painter');
 
 /**
  * Painter manager
@@ -25,9 +26,17 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @param {Object} options - Options
      */
     init: function(options) {
+        var controller;
+
         this.modelManager = options.modelManager;
 
-        this.cellPainters = this._createCellPainters();
+        controller = new PainterController({
+            focusModel: this.modelManager.focusModel,
+            dataModel: this.modelManager.dataModel,
+            columnModel: this.modelManager.columnModel,
+            selectionModel: this.modelManager.selectionModel
+        });
+        this.cellPainters = this._createCellPainters(controller);
         this.rowPainter = this._createRowPainter();
     },
 
@@ -37,10 +46,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @returns {Object} Key-value object
      * @private
      */
-    _createCellPainters: function() {
+    _createCellPainters: function(controller) {
         var cellPainters = {},
             args = {
-                grid: this.modelManager
+                grid: this.modelManager,
+                controller: controller
             },
             instanceList = [
                 new MainButtonCell(args),

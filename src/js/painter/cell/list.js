@@ -84,7 +84,7 @@ var ListCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/list.pro
      */
     redraw: function() {
         Cell.prototype.redraw.apply(this, arguments);
-        this.grid.focusModel.focusClipboard();
+        this.controller.focusOut();
     }
 });
 

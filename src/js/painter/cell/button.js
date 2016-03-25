@@ -33,17 +33,15 @@ var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/bu
                 this._focusNextInput(param.$target);
             },
             'ESC': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
+                this.controller.focusOut(param.$target);
             },
             'TAB': function(keyDownEvent, param) {
                 if (keyDownEvent.shiftKey) {
-                    //이전 cell 로 focus 이동
                     if (!this._focusPrevInput(param.$target)) {
-                        this.grid.focusModel.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
+                        this.controller.focusInNext(true);
                     }
-                //이후 cell 로 focus 이동
                 } else if (!this._focusNextInput(param.$target)) {
-                    this.grid.focusModel.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
+                    this.controller.focusInNext();
                 }
             }
         });
@@ -97,9 +95,8 @@ var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/bu
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
     focusIn: function($td) {
-        /* istanbul ignore next: focus 확인 불가 */
         if ($td.find('input').eq(0).prop('disabled')) {
-            this.grid.focusModel.focusClipboard();
+            this.controller.focusOut();
         } else {
             $td.find('input').eq(0).focus();
         }
@@ -251,9 +248,10 @@ var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/bu
      */
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
-            cellAddress = this._getCellAddress($target);
-        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName,
-            this._getCheckedValueList($target).join(','));
+            cellAddress = this._getCellAddress($target),
+            value = this._getCheckedValueList($target).join(',');
+
+        this.controller.setValue(cellAddress.rowKey, cellAddress.columnName, value);
     },
 
     /**
@@ -263,7 +261,7 @@ var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/bu
      */
     _onBlur: function(ev) {
         var cellAddr = this._getCellAddress($(ev.target));
-        this._validateData(cellAddr.rowKey, cellAddr.columnName);
+        this.controller.validateCell(cellAddr.rowKey, cellAddr.columnName);
     }
 });
 

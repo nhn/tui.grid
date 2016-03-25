@@ -21,7 +21,8 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     init: function(attrs) {
         var grid = attrs && attrs.grid || this.collection && this.collection.grid || null;
         this.setOwnProperties({
-            grid: grid
+            grid: grid,
+            controller: attrs.controller
         });
         this.initializeEventHandler();
     },
@@ -60,7 +61,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * 렌더러에서 반환할 HTML 스트링
      */
     getHtml: function() {
-        throw this.error('implement getHtml() method');
+        throw new Error('implement getHtml() method');
     }
 });
 _.assign(Painter.prototype, common);

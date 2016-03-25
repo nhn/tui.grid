@@ -26,16 +26,12 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
         });
 
         this.setKeyDownSwitch({
-            'UP_ARROW': function() {},
-            'DOWN_ARROW': function() {},
-            'PAGE_UP': function() {},
-            'PAGE_DOWN': function() {},
-            'ENTER': function(keyDownEvent, param) {
-                this.focusOut(param.$target.closest('td'));
+            'ENTER': function() {
+                this.controller.focusOut();
             },
             'ESC': function(keyDownEvent, param) {
                 this._restore(param.$target);
-                this.focusOut(param.$target.closest('td'));
+                this.controller.focusOut();
             }
         });
     },
@@ -85,11 +81,10 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
      * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
      * @param {jQuery} $td 해당 cell 엘리먼트
      */
-    /* istanbul ignore next: focus, select 를 검증할 수 없음 */
     focusIn: function($td) {
         var $input = $td.find('input');
         if ($input.prop('disabled')) {
-            this.grid.focusModel.focusClipboard();
+            this.controller.focusOut();
         } else {
             formUtil.setCursorToEnd($input.get(0));
             $input.select();
@@ -101,7 +96,7 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
      * - 필요에 따라 override 한다.
      */
     focusOut: function() {
-        this.grid.focusModel.focusClipboard();
+        this.controller.focusOut();
     },
 
     /**
@@ -216,10 +211,10 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
 
         this._executeInputEventHandler(blurEvent, 'blur');
         if (this._isEdited($target)) {
-            this.grid.dataModel.setValue(rowKey, columnName, $target.val());
+            this.controller.setValue(rowKey, columnName, $target.val());
         }
-        this.grid.selectionModel.enable();
-        this._validateData(rowKey, columnName);
+        this.controller.enableSelection();
+        this.controller.validateCell(rowKey, columnName);
     },
 
     /**
@@ -232,7 +227,7 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
 
         this.originalText = $input.val();
         this._executeInputEventHandler(focusEvent, 'focus');
-        this.grid.selectionModel.end();
+        this.controller.endSelection();
     },
 
     /**
@@ -249,20 +244,17 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
      * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
      * 해당 이벤트 핸들러를 호출해준다.
      * @param {Event} event - 이벤트 객체
-     * @param {string} eventName - 이벤트명
+     * @param {string} eventType - The type of the event.
+     *     This value is required to clarify the type because the `event.type` of the 'focus' event
+     *     can be 'focusin' and the 'blur' event can be 'focusout'
      * @returns {boolean} Return value of the event handler. Null if there's no event handler.
      * @private
      */
-    _executeInputEventHandler: function(event, eventName) {
+    _executeInputEventHandler: function(event) {
         var $input = $(event.target),
-            cellInfo = this._getCellAddress($input),
-            columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
-            eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
+            cellInfo = this._getCellAddress($input);
 
-        if (_.isFunction(eventHandler)) {
-            return eventHandler(event, cellInfo);
-        }
-        return null;
+        return this.controller.executeCustomInputEventHandler(event, cellInfo);
     },
 
     /**

@@ -21,7 +21,7 @@ var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/ma
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
             'ENTER': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
+                this.controller.focusOut(param.$target);
             },
             'LEFT_ARROW': function() {},
             'RIGHT_ARROW': function() {},
@@ -137,7 +137,8 @@ var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/ma
     _onChange: function(changeEvent) {
         var $target = $(changeEvent.target),
             rowKey = this.getRowKey($target);
-        this.grid.dataModel.setValue(rowKey, '_button', $target.prop('checked'));
+
+        this.controller.setValue(rowKey, '_button', $target.prop('checked'));
     },
 
     /**
