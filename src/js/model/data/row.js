@@ -208,7 +208,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
-            isMetaColumn = this.columnModel.isMetaColumn(columnName),
+            isMetaColumn = util.isMetaColumn(columnName),
             classNameList = this.extraDataManager.getClassNameList(columnName),
             cellState = this.getCellState(columnName);
 
@@ -471,7 +471,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel) {
             editType = columnModel.getEditType(columnName);
             model = columnModel.getColumnModel(columnName);
-            //list type 의 editType 이 존재하는 경우
+
             if (listTypeMap[editType]) {
                 if (tui.util.isExisty(tui.util.pick(model, 'editOption', 'list', 0, 'value'))) {
                     value = this._getListTypeVisibleText(columnName);
@@ -479,8 +479,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
                     throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
                 }
             } else if (_.isFunction(model.formatter)) {
-                //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
-                value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
+                value = util.stripTags(model.formatter(value, this.toJSON(), model));
             }
         }
         value = !tui.util.isUndefined(value) ? value.toString() : value;

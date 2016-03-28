@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var View = require('../../base/view');
+var View = require('../../base/view'),
+    util = require('../../common/util');
 
 var HTML_CONTAINER = '<div class="body_container"></div>',
 
@@ -186,8 +187,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _controlStartAction: function(inputData, indexData, columnName, isInput) {
-        var columnModel = this.columnModel,
-            selectionModel = this.selectionModel,
+        var selectionModel = this.selectionModel,
             columnIndex = indexData.column,
             rowIndex = indexData.row,
             startDrag = true;
@@ -196,7 +196,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             return;
         }
 
-        if (!columnModel.isMetaColumn(columnName)) {
+        if (!util.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
             if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);

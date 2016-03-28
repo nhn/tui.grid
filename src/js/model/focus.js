@@ -169,7 +169,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     focus: function(rowKey, columnName, isScrollable) {
         if (!this._isValidCell(rowKey, columnName) ||
-            this.columnModel.isMetaColumn(columnName) ||
+            util.isMetaColumn(columnName) ||
             this._isCurrentCell(rowKey, columnName)) {
             return true;
         }

@@ -109,7 +109,7 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
     getContentHtml: function(cellData) {
         var list = this.getOptionList(cellData),
             isDisabled = cellData.isDisabled,
-            html = this._getConvertedHtml(cellData.value, cellData),
+            html = cellData.convertedHTML,
             optionsHtml = '';
 
         //@todo html !== null인경우 tc부족
@@ -142,17 +142,15 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
      * @override
      */
     _getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption || {},
-            content = '',
-            beforeContent, afterContent;
+        var columnModel = cellData.columnModel,
+            beforeContent, afterContent,
+            content = '';
 
         if (!tui.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
-        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
-        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
+        beforeContent = cellData.beforeContent;
+        afterContent = cellData.afterContent;
 
         if (beforeContent) {
             content += this._getSpanWrapContent(beforeContent, 'before', cellData);
@@ -200,7 +198,7 @@ var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/se
         var $target = $(changeEvent.target),
             cellAddr = this._getCellAddress($target);
 
-        this.contrller.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
+        this.controller.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
     }
 });
 

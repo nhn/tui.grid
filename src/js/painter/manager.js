@@ -53,7 +53,10 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
                 controller: controller
             },
             instanceList = [
-                new MainButtonCell(args),
+                new MainButtonCell(_.assign({}, args, {
+                    selectType: this.modelManager.columnModel.get('selectType'),
+                    gridId: this.modelManager.id
+                })),
                 new NumberCell(args),
                 new NormalCell(args),
                 new ButtonListCell(args),

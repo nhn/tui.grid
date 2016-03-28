@@ -21,14 +21,9 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
     init: function() {
         TextCell.apply(this, arguments);
         this.setOwnProperties({
-            timeoutIdForClick: 0,
             editingCell: {
                 rowKey: null,
                 columnName: ''
-            },
-            clicked: {
-                rowKey: null,
-                columnName: null
             }
         });
     },
@@ -99,19 +94,15 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * </select>
      */
     getContentHtml: function(cellData) {
-        var columnModel = this.getColumnModel(cellData),
-            value = cellData.value;
+        var columnModel = cellData.columnModel;
 
         if (!this._isEditingCell(cellData)) {
-            if (tui.util.isFunction(columnModel.formatter)) {
-                value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
-            }
-            return value;
+            return cellData.formattedValue;
         }
 
         return this.contentTemplate({
             type: this._getInputType(),
-            value: value,
+            value: cellData.value,
             name: util.getUniqueKey(),
             isDisabled: cellData.isDisabled,
             maxLength: columnModel.editOption.maxLength
@@ -219,10 +210,6 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
             rowKey: null,
             columnName: null
         };
-        this.clicked = {
-            rowKey: null,
-            columnName: null
-        };
         if (cellData) {
             this.redraw(cellData, $td);
         }
@@ -250,12 +237,9 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
     _onDblClick: function(mouseEvent) {
         var $target = $(mouseEvent.target),
             $td = $target.closest('td'),
-            targetAddr = this._getCellAddress($td),
-            focusedAddr = this.grid.focusModel.which();
+            targetAddr = this._getCellAddress($td);
 
-        if (!this._isEditingCell(targetAddr) &&
-            targetAddr.rowKey === String(focusedAddr.rowKey) &&
-            targetAddr.columnName === focusedAddr.columnName) {
+        if (!this._isEditingCell(targetAddr)) {
             this._startEdit($td);
         }
     },

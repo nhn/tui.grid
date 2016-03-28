@@ -60,7 +60,9 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @private
      */
     _getEditType: function(columnName, cellData) {
-        var editType = this.grid.columnModel.getEditType(columnName);
+        var editOption = cellData.columnModel.editOption,
+            editType = editOption ? editOption.type : 'normal';
+
         if (!cellData.isEditable && columnName !== '_number') {
             editType = 'normal';
         }

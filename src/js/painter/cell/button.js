@@ -117,14 +117,13 @@ var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/bu
      */
     getContentHtml: function(cellData) {
         var list = this.getOptionList(cellData),
-            columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
             value = cellData.value,
             checkedList = String(value).split(','),
             checkedMap = {},
-            html = this._getConvertedHtml(value, cellData),
+            html = cellData.convertedHTML,
             name = util.getUniqueKey(),
             isDisabled = cellData.isDisabled,
-            type = columnModel.editOption.type,
+            type = cellData.columnModel.editOption.type,
             id;
 
         if (_.isNull(html)) {

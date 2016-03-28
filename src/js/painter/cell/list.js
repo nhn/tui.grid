@@ -66,16 +66,12 @@ var ListCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/list.pro
     /* eslint-enable */
 
     /**
-     * List Type 의 option list 를 반환하는 메서드
-     *
-     * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
-     * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
+     * columnModel의 optionList 를 반환한다.
      * @param {Object} cellData 모델의 셀 데이터
      * @returns {Array} 옵션 리스트
      */
     getOptionList: function(cellData) {
-        var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
-        return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
+        return cellData.columnModel.editOption.list;
     },
 
     /**

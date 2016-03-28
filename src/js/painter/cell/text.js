@@ -113,10 +113,9 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
      * </select>
      */
     getContentHtml: function(cellData) {
-        var columnModel = this.getColumnModel(cellData),
-            editOption = columnModel.editOption,
+        var editOption = cellData.columnModel.editOption,
             value = cellData.value,
-            html = this._getConvertedHtml(value, cellData);
+            html = cellData.convertedHTML;
 
         if (tui.util.isNull(html)) {
             html = this.contentTemplate({
@@ -176,17 +175,15 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
      * @override
      */
     _getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption || {},
+        var columnModel = cellData.columnModel,
             content = '',
             beforeContent, afterContent;
 
         if (!tui.util.isExisty(cellData.value)) {
             cellData.value = columnModel.defaultValue;
         }
-        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
-        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
+        beforeContent = cellData.beforeContent;
+        afterContent = cellData.afterContent;
 
         if (beforeContent) {
             content += this._getSpanWrapContent(beforeContent, 'before', cellData);

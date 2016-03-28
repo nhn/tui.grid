@@ -102,20 +102,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
      * @param {Event} keyDownEvent  이벤트 객체
-     * @returns {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*),
+     * @returns {{keyDownEvent: *, $target: (*|jQuery|HTMLElement),
      *          rowKey: *, columnName: *, keyName: *}} _keyDownSwitch 에서 사용될 공통 파라미터 객체
      * @private
      */
     _getParamForKeyDownSwitch: function(keyDownEvent) {
-        var grid = this.grid,
+        var $target = $(keyDownEvent.target),
+            cellAddress = this._getCellAddress($target),
             keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-            focused = grid.focusModel.which(),
-            rowKey = focused.rowKey,
-            columnName = focused.columnName;
+            rowKey = cellAddress.rowKey,
+            columnName = cellAddress.columnName;
+
         return {
             keyDownEvent: keyDownEvent,
-            $target: $(keyDownEvent.target),
-            focusModel: grid.focusModel,
+            $target: $target,
             rowKey: rowKey,
             columnName: columnName,
             keyName: keyNameMap[keyCode]
@@ -170,39 +170,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption || {},
-            beforeContent, afterContent, content;
-
-        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
-        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
-
-        content = beforeContent + this.getContentHtml(cellData) + afterContent;
-        return content;
-    },
-
-    /**
-     * beforeContent/afterContent의 내용을 반환하다.
-     * 값이 function인 경우 function을 실행해 결과값을 반환한다.
-     * @param {(string|function)} content - 내용
-     * @param {object} cellData - 셀 데이터
-     * @returns {string} - 내용
-     * @private
-     */
-    _getExtraContent: function(content, cellData) {
-        var contentValue = content,
-            row, cellValue;
-
-        if (tui.util.isFunction(content)) {
-            row = this.grid.dataModel.get(cellData.rowKey);
-            cellValue = row.getHTMLEncodedString(cellData.columnName);
-            contentValue = content(cellValue, row.attributes);
-        }
-        if (!tui.util.isExisty(contentValue)) {
-            contentValue = '';
-        }
-        return contentValue;
+        return cellData.beforeContent + this.getContentHtml(cellData) + cellData.afterContent;
     },
 
     /**
@@ -284,27 +252,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         };
     },
 
-    /**
-     * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
-     * converter 함수를 적용한 결과값을 반환한다.
-     * @param {string} value - 셀의 실제값
-     * @param {object} cellData - 모델의 셀 데이터
-     * @returns {(string|null)} HTML문자열. 혹은 null
-     * @private
-     */
-    _getConvertedHtml: function(value, cellData) {
-        var columnModel = this.getColumnModel(cellData),
-            editOption = columnModel.editOption,
-            html;
-
-        if (editOption && tui.util.isFunction(editOption.converter)) {
-            html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
-        }
-        if (tui.util.isFalsy(html)) {
-            html = null;
-        }
-        return html;
-    },
 
     /**
      * 인자로 받은 element 로 부터 columnName 을 반환한다.
@@ -325,23 +272,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * columnModel 을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {*|Object} 컬럼모델
-     */
-    getColumnModel: function(cellData) {
-        return this.grid.columnModel.getColumnModel(cellData.columnName);
-    },
-
-    /**
      * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
      * @param {Object} cellData Model 의 셀 데이터
      * @returns {Object} td 에 지정할 attribute 데이터
      */
     getAttributes: function(cellData) {
-        var columnModel = this.getColumnModel(cellData);
         return {
-            align: columnModel.align || 'left'
+            align: cellData.columnModel.align || 'left'
         };
     },
 

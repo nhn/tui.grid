@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var Painter = require('../base/painter');
+var Painter = require('../base/painter'),
+    util = require('../common/util');
 
 /**
  * Dummy Cell Painter
@@ -61,7 +62,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @returns {string} HTML string
      */
     getHtml: function(columnName) {
-        var isMeta = this.grid.columnModel.isMetaColumn(columnName);
+        var isMeta = util.isMetaColumn(columnName);
         return this.template({
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'

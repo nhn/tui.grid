@@ -172,23 +172,85 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
-                cellState = row.getCellState(columnName);
+                cellState = row.getCellState(columnName),
+                columnInfo = columnModel.getColumnModel(columnName),
+                beforeContent = tui.util.pick(columnInfo, 'editOption', 'beforeContent'),
+                afterContent = tui.util.pick(columnInfo, 'editOption', 'afterContent'),
+                converter = tui.util.pick(columnInfo, 'editOption', 'converter'),
+                rowAttrs = row.toJSON();
 
             data[columnName] = {
                 rowKey: rowKey,
                 columnName: columnName,
                 value: this._getValueToDisplay(columnModel, columnName, value),
+                formattedValue: this._getFormattedValue(value, rowAttrs, columnInfo),
+                beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
+                afterContent: this._getExtraContent(afterContent, value, rowAttrs),
+                convertedHTML: this._getConvertedHTML(converter, value, rowAttrs),
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,
                 mainRowKey: rowSpanData.mainRowKey,
                 isEditable: cellState.isEditable,
                 isDisabled: cellState.isDisabled,
                 className: row.getClassNameList(columnName).join(' '),
-                optionList: [], // for list type column (select, checkbox, radio)
+                columnModel: columnInfo,
                 changed: [] //changed property names
             };
         }, this);
         return data;
+    },
+
+    /**
+     * If the columnModel has a 'formatter' function, exeucute it and returns the result.
+     * @param {String} value - value to display
+     * @param {Object} rowAttrs - All attributes of the row
+     * @param {Object} columnInfo - Column info
+     * @returns {String}
+     * @private
+     */
+    _getFormattedValue: function(value, rowAttrs, columnInfo) {
+        if (_.isFunction(columnInfo.formatter)) {
+            return columnInfo.formatter(value, rowAttrs, columnInfo);
+        }
+        return value;
+    },
+
+    /**
+     * Returns the value of the 'beforeContent' or 'afterContent'.
+     * @param {(String|Function)} content - content
+     * @param {String} cellValue - cell value
+     * @param {Object} rowAttrs - All attributes of the row
+     * @returns {string}
+     * @private
+     */
+    _getExtraContent: function(content, cellValue, rowAttrs) {
+        if (_.isFunction(content)) {
+            return content(cellValue, rowAttrs);
+        }
+        if (tui.util.isExisty(content)) {
+            return content;
+        }
+        return '';
+    },
+
+    /**
+     * If the 'converter' function exist, execute it and returns the result.
+     * @param {Function} converter - converter
+     * @param {String} cellValue - cell value
+     * @param {Object} rowAttrs - All attributes of the row
+     * @returns {(String|Null)} - HTML string or Null
+     * @private
+     */
+    _getConvertedHTML: function(converter, cellValue, rowAttrs) {
+        var convertedHTML;
+
+        if (_.isFunction(converter)) {
+            convertedHTML = converter(cellValue, rowAttrs);
+        }
+        if (tui.util.isFalsy(convertedHTML)) {
+            convertedHTML = null;
+        }
+        return convertedHTML;
     },
 
     /**

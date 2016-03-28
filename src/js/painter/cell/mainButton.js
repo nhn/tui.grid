@@ -13,10 +13,15 @@ var Cell = require('../cell');
  */
 var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/mainButton.prototype */{
     /**
+     * @param {Object} options - options
      * @constructs
      */
-    init: function() {
+    init: function(options) {
         Cell.apply(this, arguments);
+
+        this.selectType = options.selectType;
+        this.gridId = options.gridId;
+
         this.setKeyDownSwitch({
             'UP_ARROW': function() {},
             'DOWN_ARROW': function() {},
@@ -78,8 +83,8 @@ var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/ma
         var isDisabled = cellData.isDisabled;
 
         return this.contentTemplate({
-            type: this.grid.columnModel.get('selectType'),
-            name: this.grid.id,
+            type: this.selectType,
+            name: this.gridId,
             isChecked: !!cellData.value,
             isDisabled: isDisabled
         });
@@ -114,7 +119,7 @@ var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/ma
      */
     toggle: function($td) {
         var $input = $td.find('input');
-        if (this.grid.columnModel.get('selectType') === 'checkbox') {
+        if (this.selectType === 'checkbox') {
             $input.prop('checked', !$input.prop('checked'));
         }
     },
