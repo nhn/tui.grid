@@ -8,7 +8,7 @@ var View = require('../base/view'),
     util = require('../common/util');
 
 var CLASSNAME_SELECTED = 'selected',
-    CLASSNAME_FOCSED_ROW = 'focused_row',
+    CLASSNAME_FOCUSED_ROW = 'focused_row',
     SELECTOR_META_CELL = 'td.meta_column';
 
 /**
@@ -48,6 +48,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'blur', this._onBlur)
             .listenTo(focusModel, 'focusIn', this._onFocusIn)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
+            .listenTo(focusModel, 'change:editing', this._onChangeEditing)
             .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === 'L') {
@@ -224,7 +225,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * Removes the CLASSNAME_FOCSED_ROW class from the cells in the previously focused row and
+     * Removes the CLASSNAME_FOCUSED_ROW class from the cells in the previously focused row and
      * adds it to the cells in the currently focused row.
      * @private
      */
@@ -237,7 +238,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * Finds all cells in the row indentified by given rowKey and toggles the CLASSNAME_FOCSED_ROW on them.
+     * Finds all cells in the row indentified by given rowKey and toggles the CLASSNAME_FOCUSED_ROW on them.
      * @param {Number|String} rowKey - rowKey
      * @param {Boolean} focused - if set to true, the class will be added, otherwise be removed.
      * @private
@@ -254,7 +255,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
             $td = trMap[mainRowKey].find('td[columnname=' + columnName + ']');
-            $td.toggleClass(CLASSNAME_FOCSED_ROW, focused);
+            $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
         }, this);
     },
 
@@ -313,6 +314,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
+
         this.painterManager.getRowPainter().onModelChange(model.changed, $tr);
     },
 

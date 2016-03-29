@@ -16,14 +16,10 @@ var common = require('./common');
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     /**
      * @constructs
-     * @param {Object} attrs - Attributes
+     * @param {Object} controller - Attributes
      */
-    init: function(attrs) {
-        var grid = attrs && attrs.grid || this.collection && this.collection.grid || null;
-        this.setOwnProperties({
-            grid: grid,
-            controller: attrs.controller
-        });
+    init: function(options) {
+        this.controller = options.controller;
         this.initializeEventHandler();
     },
 

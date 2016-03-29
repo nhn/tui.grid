@@ -207,9 +207,9 @@ var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.pro
             columnName = this.getColumnName($target);
 
         this._executeInputEventHandler(blurEvent, 'blur');
-        if (this._isEdited($target)) {
-            this.controller.setValue(rowKey, columnName, $target.val());
-        }
+        // if (this._isEdited($target)) {
+        this.controller.setValue(rowKey, columnName, $target.val());
+        // }
         this.controller.enableSelection();
         this.controller.validateCell(rowKey, columnName);
     },

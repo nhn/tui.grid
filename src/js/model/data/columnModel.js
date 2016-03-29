@@ -261,11 +261,13 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     getEditType: function(columnName) {
         var columnModel = this.getColumnModel(columnName),
             editType = 'normal';
+
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
         } else if (columnModel && columnModel.editOption && columnModel.editOption.type) {
             editType = columnModel.editOption.type;
         }
+
         return editType;
     },
 

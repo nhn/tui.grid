@@ -381,24 +381,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * html string 을 encoding 한다.
-     * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
-     *
-     * @param {String} columnName   컬럼명
-     * @returns {String} 인코딩된 결과값
-     */
-    getHTMLEncodedString: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            isTextType = this.columnModel.isTextType(columnName),
-            value = this.get(columnName),
-            notUseHtmlEntity = columnModel.notUseHtmlEntity;
-        if (!notUseHtmlEntity && isTextType && tui.util.hasEncodableString(value)) {
-            value = tui.util.encodeHTMLEntity(value);
-        }
-        return value;
-    },
-
-    /**
      * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
      * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.

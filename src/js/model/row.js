@@ -20,15 +20,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     initialize: function(attributes) {
         var rowKey = attributes && attributes.rowKey,
-            rowListData = this.collection.dataModel,
-            rowData = rowListData.get(rowKey);
+            dataModel = this.collection.dataModel,
+            rowData = dataModel.get(rowKey);
+
+        this.dataModel = dataModel;
+        this.columnModel = this.collection.columnModel;
+        this.focusModel = this.collection.focusModel;
 
         if (rowData) {
             this.listenTo(rowData, 'change', this._onDataModelChange);
             this.listenTo(rowData, 'restore', this._onDataModelRestore);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
-            this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
-
+            this.listenTo(dataModel, 'disabledChanged', this._onDataModelDisabledChanged);
             this.rowData = rowData;
         }
     },
@@ -37,14 +40,15 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
     /**
      * Event handler for 'change' event on module:data/row
-     * @param {Object} model - RowData model on which event occurred
+     * @param {Object} rowData - RowData model on which event occurred
      * @private
      */
-    _onDataModelChange: function(model) {
-        _.each(model.changed, function(value, columnName) {
-            this.setCell(columnName, {
-                value: value
-            });
+    _onDataModelChange: function(rowData) {
+        _.each(rowData.changed, function(value, columnName) {
+            var column = this.columnModel.getColumnModel(columnName),
+                isTextType = this.columnModel.isTextType(columnName);
+
+            this.setCell(columnName, this._getValueAttrs(value, rowData, column, isTextType));
         }, this);
     },
 
@@ -114,9 +118,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }
 
         _.each(columnNames, function(columnName) {
-            /*eslint-disable consistent-this */
             var cellData = this.get(columnName),
-                rowModel = this,
+                rowModel = this, // eslint-disable-line consistent-this
                 cellState;
 
             if (!tui.util.isUndefined(cellData)) {
@@ -133,7 +136,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     rowModel.setCell(columnName, param);
                 }
             }
-            /*eslint-enable consistent-this */
         }, this);
     },
 
@@ -148,69 +150,90 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     parse: function(data, options) {
         var collection = options.collection;
 
-        return this._formatData(data, collection.dataModel, collection.columnModel);
+        return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
     },
 
     /**
-     * Convert the original data to rendering data.
+     * Convert the original data to the rendering data.
      * @param {Array} data - Original data
      * @param {module:model/data/rowList} dataModel - Data model
      * @param {module:model/data/columnModel} columnModel - Column model
+     * @param {module:model/data/focusModel} focusModel - focus model
      * @param {Number} rowHeight - The height of a row
      * @returns {Array} - Converted data
      * @private
      */
-    _formatData: function(data, dataModel, columnModel) {
+    _formatData: function(data, dataModel, columnModel, focusModel) {
         var rowKey = data.rowKey,
             columnData, row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
+
         row = dataModel.get(rowKey);
         columnData = _.omit(data, 'rowKey', '_extraData', 'height');
 
         _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
                 cellState = row.getCellState(columnName),
-                columnInfo = columnModel.getColumnModel(columnName),
-                beforeContent = tui.util.pick(columnInfo, 'editOption', 'beforeContent'),
-                afterContent = tui.util.pick(columnInfo, 'editOption', 'afterContent'),
-                converter = tui.util.pick(columnInfo, 'editOption', 'converter'),
-                rowAttrs = row.toJSON();
+                isTextType = columnModel.isTextType(columnName),
+                column = columnModel.getColumnModel(columnName);
 
             data[columnName] = {
                 rowKey: rowKey,
                 columnName: columnName,
-                value: this._getValueToDisplay(columnModel, columnName, value),
-                formattedValue: this._getFormattedValue(value, rowAttrs, columnInfo),
-                beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
-                afterContent: this._getExtraContent(afterContent, value, rowAttrs),
-                convertedHTML: this._getConvertedHTML(converter, value, rowAttrs),
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,
                 mainRowKey: rowSpanData.mainRowKey,
                 isEditable: cellState.isEditable,
                 isDisabled: cellState.isDisabled,
+                isEditing: focusModel.isEditingCell(rowKey, columnName),
                 className: row.getClassNameList(columnName).join(' '),
-                columnModel: columnInfo,
+                columnModel: column,
                 changed: [] //changed property names
             };
+            _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
         }, this);
+
         return data;
     },
 
     /**
-     * If the columnModel has a 'formatter' function, exeucute it and returns the result.
+     * Returns the values of the attributes related to the cell value.
+     * @param {String|Number} value - Value
+     * @param {module:model/data/row} row - Row data model
+     * @param {Object} column - Column model object
+     * @param {Boolean} isTextType - True if the cell is the text-type
+     * @returns {Object}
+     * @private
+     */
+    _getValueAttrs: function(value, row, column, isTextType) {
+        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent'),
+            afterContent = tui.util.pick(column, 'editOption', 'afterContent'),
+            converter = tui.util.pick(column, 'editOption', 'converter'),
+            rowAttrs = row.toJSON();
+
+        return {
+            value: this._getValueToDisplay(value, column, isTextType),
+            formattedValue: this._getFormattedValue(value, rowAttrs, column),
+            beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
+            afterContent: this._getExtraContent(afterContent, value, rowAttrs),
+            convertedHTML: this._getConvertedHTML(converter, value, rowAttrs)
+        };
+    },
+
+    /**
+     * If the column has a 'formatter' function, exeucute it and returns the result.
      * @param {String} value - value to display
      * @param {Object} rowAttrs - All attributes of the row
-     * @param {Object} columnInfo - Column info
+     * @param {Object} column - Column info
      * @returns {String}
      * @private
      */
-    _getFormattedValue: function(value, rowAttrs, columnInfo) {
-        if (_.isFunction(columnInfo.formatter)) {
-            return columnInfo.formatter(value, rowAttrs, columnInfo);
+    _getFormattedValue: function(value, rowAttrs, column) {
+        if (_.isFunction(column.formatter)) {
+            return column.formatter(value, rowAttrs, column);
         }
         return value;
     },
@@ -255,18 +278,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
     /**
      * Returns the value to display
-     * @param {module:model/data/columnModel} columnModel - column model
-     * @param {String} columnName - column name
      * @param {String|Number} value - value
+     * @param {String} column - column name
+     * @param {Boolean} isTextType - True if the cell is the text-typee
      * @returns {String}
      * @private
      */
-    _getValueToDisplay: function(columnModel, columnName, value) {
+    _getValueToDisplay: function(value, column, isTextType) {
         var isExisty = tui.util.isExisty,
-            isTextType = columnModel.isTextType(columnName),
-            cellColumnModel = columnModel.getColumnModel(columnName),
-            notUseHtmlEntity = cellColumnModel.notUseHtmlEntity,
-            defaultValue = cellColumnModel.defaultValue;
+            notUseHtmlEntity = column.notUseHtmlEntity,
+            defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';

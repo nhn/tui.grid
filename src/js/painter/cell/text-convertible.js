@@ -20,15 +20,9 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      */
     init: function() {
         TextCell.apply(this, arguments);
-        this.setOwnProperties({
-            editingCell: {
-                rowKey: null,
-                columnName: ''
-            }
-        });
     },
 
-    redrawAttributes: ['isDisabled', 'isEditable', 'value'],
+    redrawAttributes: ['isDisabled', 'isEditable', 'value', 'isEditing'],
 
     eventHandler: {
         'dblclick': '_onDblClick',
@@ -96,12 +90,13 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
     getContentHtml: function(cellData) {
         var columnModel = cellData.columnModel;
 
-        if (!this._isEditingCell(cellData)) {
+        if (!cellData.isEditing) {
             return cellData.formattedValue;
         }
 
         return this.contentTemplate({
             type: this._getInputType(),
+            isEditing: cellData.isEditing,
             value: cellData.value,
             name: util.getUniqueKey(),
             isDisabled: cellData.isDisabled,
@@ -121,7 +116,7 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
     _getContentHtml: function(cellData) {
         var targetProto;
 
-        if (this._isEditingCell(cellData)) {
+        if (cellData.isEditing) {
             targetProto = TextCell.prototype;
         } else {
             targetProto = Cell.prototype;
@@ -130,16 +125,14 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
         return targetProto._getContentHtml.call(this, cellData);
     },
 
-    /**
-     * 현재 편집중인 셀인지 여부를 반환한다.
-     * @param {object} cellData Model의 셀 데이터
-     * @returns {boolean} - 편집중이면 true, 아니면 false
-     * @private
-     */
-    _isEditingCell: function(cellData) {
-        var editingCell = this.editingCell;
-        return (editingCell.rowKey === cellData.rowKey.toString() &&
-            editingCell.columnName === cellData.columnName.toString());
+    _afterRedraw: function(cellData, $td) {
+        var $input = $td.find('input');
+
+        if ($input.length) {
+            this.originalText = $input.val();
+            formUtil.setCursorToEnd($input.get(0));
+            $input.select();
+        }
     },
 
     /**
@@ -175,28 +168,8 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * @param {jQuery} $td 해당 cell 엘리먼트
      * @private
      */
-    _startEdit: function($td) {
-        var dataModel = this.grid.dataModel,
-            $input, rowKey, columnName, cellState;
-
-        this._blurEditingCell();
-
-        rowKey = this.getRowKey($td);
-        columnName = this.getColumnName($td);
-        cellState = dataModel.get(rowKey).getCellState(columnName);
-
-        if (cellState.isEditable && !dataModel.isDisabled && !cellState.isDisabled) {
-            this.editingCell = {
-                rowKey: rowKey,
-                columnName: columnName
-            };
-
-            this.redraw(this._getCellData($td), $td);
-            $input = $td.find('input');
-            this.originalText = $input.val();
-            formUtil.setCursorToEnd($input.get(0));
-            $input.select();
-        }
+    _startEdit: function() {
+        this.controller.startEdit();
     },
 
     /**
@@ -204,15 +177,8 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * @param {jQuery} $td 해당 cell 엘리먼트
      * @private
      */
-    _endEdit: function($td) {
-        var cellData = this._getCellData($td);
-        this.editingCell = {
-            rowKey: null,
-            columnName: null
-        };
-        if (cellData) {
-            this.redraw(cellData, $td);
-        }
+    _endEdit: function() {
+        this.controller.endEdit();
     },
 
     /**
@@ -220,14 +186,14 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * @private
      */
     _blurEditingCell: function() {
-        var rowKey = this.editingCell.rowKey,
-            columnName = this.editingCell.columnName,
-            $td;
-
-        if (!tui.util.isNull(rowKey) && !tui.util.isNull(columnName)) {
-            $td = this.grid.dataModel.getElement(rowKey, columnName);
-            $td.find('input')[0].blur();
-        }
+        // var rowKey = this.editingCell.rowKey,
+        //     columnName = this.editingCell.columnName,
+        //     $td;
+        //
+        // if (!tui.util.isNull(rowKey) && !tui.util.isNull(columnName)) {
+        //     $td = this.grid.dataModel.getElement(rowKey, columnName);
+        //     $td.find('input')[0].blur();
+        // }
     },
 
     /**
@@ -235,13 +201,14 @@ var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/ce
      * @param  {MouseEvent} mouseEvent - MouseEvent object
      */
     _onDblClick: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            $td = $target.closest('td'),
-            targetAddr = this._getCellAddress($td);
+        // var $target = $(mouseEvent.target),
+        //     $td = $target.closest('td');
+            // targetAddr = this._getCellAddress($td);
 
-        if (!this._isEditingCell(targetAddr)) {
-            this._startEdit($td);
-        }
+        // if (!this._isEditingCell(targetAddr)) {
+        // this._startEdit($td);
+        // }
+        this._startEdit();
     },
 
     /**

@@ -76,7 +76,17 @@ var PainterController = tui.util.defineClass({
     validateCell: function(rowKey, columnName) {
         var row = this.dataModel.get(rowKey);
         row.validateCell(columnName);
+    },
+
+    startEdit: function() {
+        // this._blurEditingCell();
+        this.focusModel.startEdit();
+    },
+
+    endEdit: function() {
+        this.focusModel.endEdit();
     }
 });
+
 
 module.exports = PainterController;

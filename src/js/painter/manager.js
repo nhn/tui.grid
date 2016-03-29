@@ -14,7 +14,6 @@ var TextConvertibleCell = require('./cell/text-convertible');
 var TextPasswordCell = require('./cell/text-password');
 var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
-var PainterController = require('../controller/painter');
 
 /**
  * Painter manager
@@ -26,17 +25,10 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @param {Object} options - Options
      */
     init: function(options) {
-        var controller;
+        this.gridId = options.gridId;
+        this.selectType = options.selectType;
 
-        this.modelManager = options.modelManager;
-
-        controller = new PainterController({
-            focusModel: this.modelManager.focusModel,
-            dataModel: this.modelManager.dataModel,
-            columnModel: this.modelManager.columnModel,
-            selectionModel: this.modelManager.selectionModel
-        });
-        this.cellPainters = this._createCellPainters(controller);
+        this.cellPainters = this._createCellPainters(options.controller);
         this.rowPainter = this._createRowPainter();
     },
 
@@ -48,28 +40,28 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      */
     _createCellPainters: function(controller) {
         var cellPainters = {},
-            args = {
-                grid: this.modelManager,
+            options = {
                 controller: controller
             },
             instanceList = [
-                new MainButtonCell(_.assign({}, args, {
-                    selectType: this.modelManager.columnModel.get('selectType'),
-                    gridId: this.modelManager.id
+                new MainButtonCell(_.assign({}, options, {
+                    gridId: this.gridId,
+                    selectType: this.selectType
                 })),
-                new NumberCell(args),
-                new NormalCell(args),
-                new ButtonListCell(args),
-                new SelectCell(args),
-                new TextCell(args),
-                new TextPasswordCell(args),
-                new TextConvertibleCell(args),
-                new DummyCell(args)
+                new NumberCell(options),
+                new NormalCell(options),
+                new ButtonListCell(options),
+                new SelectCell(options),
+                new TextCell(options),
+                new TextPasswordCell(options),
+                new TextConvertibleCell(options),
+                new DummyCell(options)
             ];
 
         _.each(instanceList, function(instance) {
             cellPainters[instance.getEditType()] = instance;
         });
+
         return cellPainters;
     },
 
@@ -79,7 +71,6 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      */
     _createRowPainter: function() {
         return new RowPainter({
-            grid: this.modelManager,
             painterManager: this
         });
     },

@@ -27,7 +27,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
      */
-    redrawAttributes: ['isEditable', 'optionList', 'value'],
+    redrawAttributes: ['isEditable', 'isEditing', 'optionList', 'value'],
 
     /*
      * Markup template
@@ -84,6 +84,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         } catch (e) {
             hasFocusedElement = false;
         }
+
         shouldRedraw = _.some(this.redrawAttributes, function(attr) {
             return _.contains(cellData.changed, attr);
         });
@@ -219,14 +220,22 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var attributes = {
             'class': cellData.className
         };
+
         if (cellData.rowSpan) {
             attributes.rowSpan = cellData.rowSpan;
         }
         attributes['edit-type'] = this.getEditType();
-        attributes = $.extend(attributes, this.getAttributes(cellData));
+        _.assign(attributes, this.getAttributes(cellData));
+
         $td.attr(attributes);
         $td.html(this._getContentHtml(cellData));
+
+        if (_.isFunction(this._afterRedraw)) {
+            this._afterRedraw(cellData, $td);
+        }
     },
+
+    _afterRedraw: function() {},
 
     /**
      * 인자로 받은 element 의 cellData 를 반환한다.
@@ -234,10 +243,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @returns {Object} 조회한 cellData 정보
      * @private
      */
-    _getCellData: function($target) {
-        var cellData = this._getCellAddress($target);
-        return this.grid.renderModel.getCellData(cellData.rowKey, cellData.columnName);
-    },
+    // _getCellData: function($target) {
+    //     var cellData = this._getCellAddress($target);
+    //     return this.grid.renderModel.getCellData(cellData.rowKey, cellData.columnName);
+    // },
 
     /**
      * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.

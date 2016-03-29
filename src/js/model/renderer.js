@@ -27,12 +27,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.setOwnProperties({
             dataModel: options.dataModel,
             columnModel: options.columnModel,
+            focusModel: options.focusModel,
             dimensionModel: options.dimensionModel
         });
 
         rowListOptions = {
             dataModel: this.dataModel,
-            columnModel: this.columnModel
+            columnModel: this.columnModel,
+            focusModel: this.focusModel
         };
 
         lside = new RowList([], rowListOptions);
@@ -47,6 +49,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
+            .listenTo(this.focusModel, 'startEdit', this._onStartEdit)
+            .listenTo(this.focusModel, 'endEdit', this._onEndEdit)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -111,6 +115,40 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onBeforeResetData: function(dataLength) {
         if (dataLength > DATA_LENGTH_FOR_LOADING) {
             this.set('state', renderStateMap.LOADING);
+        }
+    },
+
+    /**
+     * Event handler for 'change:editing' event on focusModel
+     * @param {{rowKey: Number, columnName: String}} address - cell address
+     * @private
+     */
+    _onStartEdit: function(address) {
+        this._updateEditingCell(address, true);
+    },
+
+    /**
+     * Event handler for 'change:editing' event on focusModel
+     * @param {{rowKey: Number, columnName: String}} address - cell address
+     * @private
+     */
+    _onEndEdit: function(address) {
+        this._updateEditingCell(address, false);
+    },
+
+    _updateEditingCell: function(address, isEditing) {
+        var rowModel;
+
+        if (!address) {
+            return;
+        }
+
+        rowModel = this._getRowModel(address.rowKey, address.columnName);
+
+        if (rowModel) {
+            rowModel.setCell(address.columnName, {
+                isEditing: isEditing
+            });
         }
     },
 
@@ -186,6 +224,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Returns the new data object for rendering based on rowDataModel and specified column names.
      * @param  {Object} rowDataModel - Instance of module:model/data/row
      * @param  {Array.<String>} columnNames - Column names
+     * @param  {Number} height - the height of the row
      * @param  {Number} rowNum - Row number
      * @returns {Object} - view data object
      * @private
@@ -199,6 +238,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         _.each(columnNames, function(columnName) {
             var value = rowDataModel.get(columnName);
+
             if (columnName === '_number') {
                 value = rowNum;
             }
@@ -298,6 +338,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this.get('lside').add({});
             this.get('rside').add({});
         }, this);
+
         this.set('dummyRowCount', dummyRowCount);
     },
 
@@ -361,6 +402,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Returns the specified row model.
+     * @param {(Number|String)} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {module:model/row}
+     * @private
+     */
+    _getRowModel: function(rowKey, columnName) {
+        var collection = this._getCollectionByColumnName(columnName);
+
+        return collection.get(rowKey);
+    },
+
+    /**
      * 셀 데이터를 반환한다.
      * @param {number} rowKey   데이터의 키값
      * @param {String} columnName   컬럼명
@@ -382,8 +436,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      }
      */
     getCellData: function(rowKey, columnName) {
-        var collection = this._getCollectionByColumnName(columnName),
-            row = collection.get(rowKey),
+        var row = this._getRowModel(rowKey, columnName),
             cellData = null;
 
         if (row) {
