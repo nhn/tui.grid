@@ -20,10 +20,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     init: function(options) {
         Painter.apply(this, arguments);
 
-        // this.attributes = options.attributes;
-        if (options) {
-            this.inputPainter = options.inputPainter;
-        }
+        this.editType = options.editType;
+        this.inputPainter = options.inputPainter;
     },
 
     /*
@@ -49,7 +47,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (this.inputPainter) {
             content = this.inputPainter.getHtml(cellData);
 
-            if (_.contains(['text', 'password'], this._getEditType())) {
+            if (_.contains(['text', 'password', 'select'], this.editType)) {
                 beforeContent = this._getSpanWrapContent(beforeContent, 'before');
                 afterContent = this._getSpanWrapContent(afterContent, 'after');
                 content = this._getSpanWrapContent(content, 'input');
@@ -82,7 +80,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     _getAttributes: function(cellData) {
         var attrs = {
             'class': cellData.className,
-            'edit-type': this._getEditType(),
+            'edit-type': this.editType,
             columnname: cellData.columnName,
             rowSpan: cellData.rowSpan || '',
             align: cellData.columnModel.align || 'left'
@@ -90,13 +88,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         // _.assign(attrs, this.attributes);
 
         return attrs;
-    },
-
-    _getEditType: function() {
-        if (this.inputPainter) {
-            return this.inputPainter.editType;
-        }
-        return 'normal';
     },
 
     /**
@@ -131,14 +122,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             if (cellData.isEditing && !hasFocusedInput) {
                 this.inputPainter.focus($td);
             } else if (!cellData.isEditing) {
-                $td.find('input').val(cellData.value);
+                this.inputPainter.setValue($td, cellData.value);
             }
-            return;
-        }
-        $td.attr(this._getAttributes(cellData));
-
-        if (isValueChanged) {
-            $td.html(this._getContentHtml(cellData));
+        } else {
+            $td.attr(this._getAttributes(cellData));
+            if (isValueChanged) {
+                $td.html(this._getContentHtml(cellData));
+            }
         }
     }
 });

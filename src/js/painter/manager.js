@@ -16,6 +16,7 @@
 var RowPainter = require('./row');
 var CellPainter = require('./cell');
 var TextPainter = require('./input/text');
+var SelectPainter = require('./input/select');
 
 /**
  * Painter manager
@@ -40,12 +41,16 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
         return {
             text: new TextPainter({
                 controller: controller,
-                editType: 'text'
+                inputType: 'text'
             }),
 
             password: new TextPainter({
                 controller: controller,
-                editType: 'password'
+                inputType: 'password'
+            }),
+
+            select: new SelectPainter({
+                controller: controller
             })
         };
     },
@@ -57,42 +62,26 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @private
      */
     _createCellPainters: function() {
-        var cellPainters = {};
-            // options = {
-            //     controller: controller
-            // };
-            // instanceList = [
-                // new MainButtonCell(_.assign({}, options, {
-                //     gridId: this.gridId,
-                //     selectType: this.selectType
-                // })),
-                // new CellPainter(_.assign({editType: 'normal', attributes: {align: 'center'}}, options)),
-                // new CellPainter(_.assign({editType: 'normal'}, options))
-                // new ButtonListCell(options),
-                // new SelectCell(options),
-                // new TextCell(options),
-                // new TextPasswordCell(options),
-                // new TextConvertibleCell(options),
-                // new DummyCell(options)
-            // ];
-
-        cellPainters = {
-            normal: new CellPainter(),
+        return {
+            normal: new CellPainter({
+                editType: 'normal'
+            }),
 
             text: new CellPainter({
+                editType: 'text',
                 inputPainter: this.inputPainters.text
             }),
 
             password: new CellPainter({
+                editType: 'password',
                 inputPainter: this.inputPainters.password
+            }),
+
+            select: new CellPainter({
+                editType: 'select',
+                inputPainter: this.inputPainters.select
             })
         };
-        //
-        // _.each(instanceList, function(instance) {
-        //     cellPainters[instance.editType] = instance;
-        // });
-        //
-        return cellPainters;
     },
 
     /**

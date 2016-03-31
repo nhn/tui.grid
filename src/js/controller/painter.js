@@ -8,6 +8,11 @@ var PainterController = tui.util.defineClass({
         this.selectionModel = options.selectionModel;
     },
 
+    startEdit: function(rowKey, columnName) {
+        this.selectionModel.end();
+        this.focusModel.startEdit(rowKey, columnName);
+    },
+
     endEdit: function(shouldBlur, value) {
         var focusModel = this.focusModel,
             address = focusModel.get('editingAddress');
@@ -33,11 +38,6 @@ var PainterController = tui.util.defineClass({
                 focusModel.refreshState();
             });
         }
-    },
-
-    startEdit: function(rowKey, columnName) {
-        this.selectionModel.end();
-        this.focusModel.startEdit(rowKey, columnName);
     },
 
     focusInNext: function(oppositeDirection) {
@@ -94,17 +94,17 @@ var PainterController = tui.util.defineClass({
         this.dataModel.append({}, {
             focus: true
         });
-    },
+    }
 
     /**
      * Validates the cell data identified by given rowKey and columnName.
      * @param {String} rowKey - Row key
      * @param {String} columnName - Column name
      */
-    validateCell: function(rowKey, columnName) {
-        var row = this.dataModel.get(rowKey);
-        row.validateCell(columnName);
-    }
+    // validateCell: function(rowKey, columnName) {
+    //     var row = this.dataModel.get(rowKey);
+    //     row.validateCell(columnName);
+    // }
 });
 
 

@@ -14,7 +14,7 @@ var formUtil = require('../../common/formUtil');
  * @module painter/cell
  * @extends module:base/painter
  */
-var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
+var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
      * @param {Object} options - options
@@ -23,7 +23,7 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
         Painter.apply(this, arguments);
 
         this.controller = options.controller;
-        this.editType = options.editType;
+        this.inputType = options.inputType;
     },
 
     /**
@@ -146,7 +146,7 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
         var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
 
         return this.template({
-            type: this.editType,
+            type: this.inputType,
             value: cellData.value,
             name: util.getUniqueKey(),
             isDisabled: cellData.isDisabled,
@@ -158,7 +158,11 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
         var $input = $td.find('input');
         formUtil.setCursorToEnd($input.get(0));
         $input.select();
+    },
+
+    setValue: function($td, value) {
+        $td.find('input').val(value);
     }
 });
 
-module.exports = TextInput;
+module.exports = TextPainter;
