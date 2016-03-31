@@ -9,7 +9,8 @@ var PainterController = tui.util.defineClass({
     },
 
     endEdit: function(shouldBlur, value) {
-        var address = this.focusModel.get('editingAddress');
+        var focusModel = this.focusModel,
+            address = focusModel.get('editingAddress');
 
         if (!address) {
             return;
@@ -23,10 +24,14 @@ var PainterController = tui.util.defineClass({
             this.dataModel.setValue(address.rowKey, address.columnName, value);
             this.dataModel.get(address.rowKey).validateCell(address.columnName);
         }
-        this.focusModel.endEdit();
+        focusModel.endEdit();
 
         if (shouldBlur) {
-            this.focusModel.focusClipboard();
+            focusModel.focusClipboard();
+        } else {
+            _.defer(function() {
+                focusModel.refreshState();
+            });
         }
     },
 

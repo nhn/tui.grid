@@ -20,8 +20,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     init: function(options) {
         Painter.apply(this, arguments);
 
-        this.attributes = options.attributes;
-        this.inputPainter = options.inputPainter;
+        // this.attributes = options.attributes;
+        if (options) {
+            this.inputPainter = options.inputPainter;
+        }
     },
 
     /*
@@ -47,7 +49,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (this.inputPainter) {
             content = this.inputPainter.getHtml(cellData);
 
-            if (_.contains(['text'], this._getEditType())) {
+            if (_.contains(['text', 'password'], this._getEditType())) {
                 beforeContent = this._getSpanWrapContent(beforeContent, 'before');
                 afterContent = this._getSpanWrapContent(afterContent, 'after');
                 content = this._getSpanWrapContent(content, 'input');
@@ -85,7 +87,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             rowSpan: cellData.rowSpan || '',
             align: cellData.columnModel.align || 'left'
         };
-        _.assign(attrs, this.attributes);
+        // _.assign(attrs, this.attributes);
 
         return attrs;
     },

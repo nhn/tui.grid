@@ -56,7 +56,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     events: {
         'scroll': '_onScroll',
         'mousedown .body_container': '_onMouseDown'
-        // 'blur input, select': '_onBlurInput'
     },
 
     /**
@@ -162,17 +161,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
         }
     },
-
-    /**
-     * Event handler for blur event on input element.
-     * @private
-     */
-    // _onBlurInput: function() {
-    //     var focusModel = this.focusModel;
-    //     _.defer(function() {
-    //         focusModel.refreshState();
-    //     });
-    // },
 
     /**
      * Control selection action when started

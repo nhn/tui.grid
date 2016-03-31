@@ -41,6 +41,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             text: new TextPainter({
                 controller: controller,
                 editType: 'text'
+            }),
+
+            password: new TextPainter({
+                controller: controller,
+                editType: 'password'
             })
         };
     },
@@ -51,7 +56,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @returns {Object} Key-value object
      * @private
      */
-    _createCellPainters: function(controller) {
+    _createCellPainters: function() {
         var cellPainters = {};
             // options = {
             //     controller: controller
@@ -72,20 +77,14 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             // ];
 
         cellPainters = {
-            number: new CellPainter({
-                controller: controller,
-                attributes: {
-                    align: 'center'
-                }
-            }),
-
-            normal: new CellPainter({
-                controller: controller
-            }),
+            normal: new CellPainter(),
 
             text: new CellPainter({
-                controller: controller,
                 inputPainter: this.inputPainters.text
+            }),
+
+            password: new CellPainter({
+                inputPainter: this.inputPainters.password
             })
         };
         //

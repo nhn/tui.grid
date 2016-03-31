@@ -19,7 +19,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * @param {Object} controller - Attributes
      */
     init: function(options) {
-        this.controller = options.controller;
+        // this.controller = options.controller;
         this.initializeEventHandler();
     },
 

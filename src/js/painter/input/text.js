@@ -21,6 +21,8 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
      */
     init: function(options) {
         Painter.apply(this, arguments);
+
+        this.controller = options.controller;
         this.editType = options.editType;
     },
 
@@ -144,7 +146,7 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
         var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
 
         return this.template({
-            type: 'text',
+            type: this.editType,
             value: cellData.value,
             name: util.getUniqueKey(),
             isDisabled: cellData.isDisabled,
