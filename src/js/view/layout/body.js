@@ -55,8 +55,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     events: {
         'scroll': '_onScroll',
-        'mousedown .body_container': '_onMouseDown',
-        'blur input, select': '_onBlurInput'
+        'mousedown .body_container': '_onMouseDown'
+        // 'blur input, select': '_onBlurInput'
     },
 
     /**
@@ -135,7 +135,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     _onMouseDown: function(event) {
         var columnModel = this.columnModel,
             $target = $(event.target),
-            isInput = $target.is('input'),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
@@ -160,7 +159,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (startAction) {
-            this._controlStartAction(inputData, indexData, columnName, isInput);
+            this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
         }
     },
 
@@ -168,12 +167,12 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Event handler for blur event on input element.
      * @private
      */
-    _onBlurInput: function() {
-        var focusModel = this.focusModel;
-        _.defer(function() {
-            focusModel.refreshState();
-        });
-    },
+    // _onBlurInput: function() {
+    //     var focusModel = this.focusModel;
+    //     _.defer(function() {
+    //         focusModel.refreshState();
+    //     });
+    // },
 
     /**
      * Control selection action when started
@@ -198,11 +197,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         if (!util.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
-            if (inputData.shiftKey && !isInput) {
-                selectionModel.update(rowIndex, columnIndex);
-            } else {
-                startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
-                selectionModel.end();
+            if (!isInput) {
+                if (inputData.shiftKey) {
+                    selectionModel.update(rowIndex, columnIndex);
+                } else {
+                    startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
+                    selectionModel.end();
+                }
             }
         } else if (columnName === '_number') {
             this._updateSelectionByRow(rowIndex, inputData.shiftKey);

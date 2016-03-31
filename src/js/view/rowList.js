@@ -44,11 +44,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
-            .listenTo(focusModel, 'focus', this._onFocus)
-            .listenTo(focusModel, 'blur', this._onBlur)
-            .listenTo(focusModel, 'focusIn', this._onFocusIn)
+            // .listenTo(focusModel, 'focusIn', this._onFocusIn)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(focusModel, 'change:editing', this._onChangeEditing)
             .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === 'L') {
@@ -201,30 +198,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @param {String} columnName 컬럼명
-     * @private
-     */
-    _onBlur: function(rowKey, columnName) {
-        var $td = this.dataModel.getElement(rowKey, columnName);
-
-        $td.removeClass('focused');
-    },
-
-    /**
-     * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @param {String} columnName 컬럼명
-     * @private
-     */
-    _onFocus: function(rowKey, columnName) {
-        var $td = this.dataModel.getElement(rowKey, columnName);
-
-        $td.addClass('focused');
-    },
-
-    /**
      * Removes the CLASSNAME_FOCUSED_ROW class from the cells in the previously focused row and
      * adds it to the cells in the currently focused row.
      * @private
@@ -315,7 +288,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
 
-        this.painterManager.getRowPainter().onModelChange(model.changed, $tr);
+        this.painterManager.getRowPainter().refresh(model.changed, $tr);
     },
 
     /**

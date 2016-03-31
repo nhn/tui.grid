@@ -131,7 +131,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     param = {
                         isDisabled: cellState.isDisabled,
                         isEditable: cellState.isEditable,
-                        className: this.rowData.getClassNameList(columnName).join(' ')
+                        className: this._getClassNameString(columnName)
                     };
                     rowModel.setCell(columnName, param);
                 }
@@ -189,7 +189,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isEditable: cellState.isEditable,
                 isDisabled: cellState.isDisabled,
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
-                className: row.getClassNameList(columnName).join(' '),
+                isFocused: focusModel.isCurrentCell(rowKey, columnName),
+                className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
                 changed: [] //changed property names
             };
@@ -197,6 +198,24 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }, this);
 
         return data;
+    },
+
+    _getClassNameString: function(columnName, row, focusModel) {
+        var classNames;
+
+        if (!row) {
+            row = this.dataModel.get(this.get('rowKey'));
+        }
+        if (!focusModel) {
+            focusModel = this.focusModel;
+        }
+        classNames = row.getClassNameList(columnName);
+
+        if (focusModel.isCurrentCell(row.get('rowKey'), columnName)) {
+            classNames.push('focused');
+        }
+
+        return classNames.join(' ');
     },
 
     /**
@@ -319,6 +338,12 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             };
         }
         return rowSpanData;
+    },
+
+    refreshClassName: function(columnName) {
+        this.setCell(columnName, {
+            className: this._getClassNameString(columnName)
+        });
     },
 
     /**

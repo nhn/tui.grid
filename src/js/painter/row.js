@@ -39,14 +39,15 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @param {object} changed - 변화가 일어난 모델 인스턴스
      * @param {jQuery} $tr - jquery object for tr element
      */
-    onModelChange: function(changed, $tr) {
+    refresh: function(changed, $tr) {
         _.each(changed, function(cellData, columnName) {
-            var editType, cellPainter;
+            var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
+                $td = $tr.find('td[columnname=' + columnName + ']');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
-                cellPainter.onModelChange(cellData, $tr);
+                cellPainter.refresh(cellData, $td);
             }
         }, this);
     },

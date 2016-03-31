@@ -12,6 +12,10 @@ var PainterController = tui.util.defineClass({
         this.focusModel.focusClipboard();
     },
 
+    focusIn: function(rowKey, columnName) {
+        this.focusModel.focusIn(rowKey, columnName);
+    },
+
     focusInNext: function(oppositeDirection) {
         var focusModel = this.focusModel,
             rowKey = focusModel.get('rowKey'),
@@ -80,11 +84,11 @@ var PainterController = tui.util.defineClass({
 
     startEdit: function() {
         // this._blurEditingCell();
-        this.focusModel.startEdit();
+        // this.focusModel.startEdit();
     },
 
     endEdit: function() {
-        this.focusModel.endEdit();
+        // this.focusModel.endEdit();
     }
 });
 

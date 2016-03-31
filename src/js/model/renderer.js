@@ -49,8 +49,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
-            .listenTo(this.focusModel, 'startEdit', this._onStartEdit)
-            .listenTo(this.focusModel, 'endEdit', this._onEndEdit)
+            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
+            .listenTo(this.focusModel, 'focus blur', this._onFocusOrBlur)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -119,36 +119,51 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for 'change:editing' event on focusModel
-     * @param {{rowKey: Number, columnName: String}} address - cell address
+     * Event handler for 'focus blur' event on focusModel
+     * @param {Number|String} rowKey - row key
+     * @param {String} columnName - column name
      * @private
      */
-    _onStartEdit: function(address) {
-        this._updateEditingCell(address, true);
+    _onFocusOrBlur: function(rowKey, columnName) {
+        this._getRowModel(rowKey, columnName).refreshClassName(columnName);
     },
 
     /**
      * Event handler for 'change:editing' event on focusModel
-     * @param {{rowKey: Number, columnName: String}} address - cell address
+     * @param {module:model/focus} focusModel - focus model
+     * @param {{rowKey: Number, columnName: String}} address - address
      * @private
      */
-    _onEndEdit: function(address) {
-        this._updateEditingCell(address, false);
-    },
-
-    _updateEditingCell: function(address, isEditing) {
-        var rowModel;
+    _onEditingAddressChange: function(focusModel, address) {
+        var target = address,
+            isEditing = true;
 
         if (!address) {
-            return;
+            target = focusModel.previous('editingAddress');
+            isEditing = false;
         }
+        this._updateCellData(target.rowKey, target.columnName, {
+            isEditing: isEditing
+        });
+    },
 
-        rowModel = this._getRowModel(address.rowKey, address.columnName);
+    /**
+     * Event handler for 'change:editing' event on focusModel
+     * @param {Number|String} rowKey - row key
+     * @param {String} columnName - column name
+     * @private
+     */
+    // _onEndEdit: function(rowKey, columnName) {
+    //     this._updateCellData(rowKey, columnName, {
+    //         isEditing: false
+    //     });
+    // },
+
+    _updateCellData: function(rowKey, columnName, cellData) {
+        var rowModel = this._getRowModel(rowKey, columnName);
 
         if (rowModel) {
-            rowModel.setCell(address.columnName, {
-                isEditing: isEditing
-            });
+            rowModel.setCell(columnName, cellData);
         }
     },
 

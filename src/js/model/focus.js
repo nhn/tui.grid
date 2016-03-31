@@ -102,7 +102,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param  {String} columnName - Column name
      * @returns {Boolean} - True if equal
      */
-    _isCurrentCell: function(rowKey, columnName) {
+    isCurrentCell: function(rowKey, columnName) {
         return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
     },
 
@@ -170,7 +170,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     focus: function(rowKey, columnName, isScrollable) {
         if (!this._isValidCell(rowKey, columnName) ||
             util.isMetaColumn(columnName) ||
-            this._isCurrentCell(rowKey, columnName)) {
+            this.isCurrentCell(rowKey, columnName)) {
             return true;
         }
 
@@ -181,6 +181,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.set('columnName', columnName);
         this.trigger('focus', rowKey, columnName);
+
         if (isScrollable) {
             this.scrollToFocus();
         }
@@ -198,9 +199,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var row = this.dataModel.at(rowIndex),
             column = this.columnModel.at(columnIndex, true),
             result = false;
+
         if (row && column) {
             result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
         }
+
         return result;
     },
 
@@ -216,7 +219,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         if (result) {
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
             if (this.dataModel.get(rowKey).isEditable(columnName)) {
+                this.set('editingAddress', {
+                    rowKey: rowKey,
+                    columnName: columnName
+                });
                 this.trigger('focusIn', rowKey, columnName);
             } else {
                 this.focusClipboard();
@@ -249,6 +257,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     focusClipboard: function() {
         this.trigger('focusClipboard');
+        this.set('editingAddress', null);
     },
 
     /**
@@ -286,6 +295,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Model.Focus} This object
      */
     blur: function() {
+        var columnName = this.get('columnName');
+
         if (!this.has()) {
             return this;
         }
@@ -293,11 +304,13 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (this.has(true)) {
             this._savePrevious();
         }
-        this.trigger('blur', this.get('rowKey'), this.get('columnName'));
 
         if (this.get('rowKey') !== null) {
             this.set('columnName', '');
         }
+        this.trigger('blur', this.get('rowKey'), columnName);
+        this.set('editingAddress', null);
+
         return this;
     },
 
@@ -368,30 +381,28 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         return this.get('editing') && this.isCurrentCell(rowKey, columnName);
     },
 
-    /**
-     * Returns whether the specified cell is focused now.
-     * @param {Number} rowKey - row key
-     * @param {String} columnName - column name
-     * @returns {Boolean}
-     */
-    isCurrentCell: function(rowKey, columnName) {
-        return (this.get('rowKey') === rowKey) && (this.get('columnName') === columnName);
-    },
+    // startEdit: function() {
+    //     var address = this.which(),
+    //         cellState = this.dataModel.get(address.rowKey).getCellState(address.columnName);
+    //
+    //     if (this.get('editingAddress')) {
+    //         this.endEdit();
+    //     }
+    //
+    //     if (!this.dataModel.isDisabled && cellState.isEditable && !cellState.isDisabled) {
+    //
+    //         this.trigger('startEdit', address.rowKey, address.columnName);
+    //     }
+    // },
 
-    startEdit: function() {
-        var address = this.which(),
-            cellState = this.dataModel.get(address.rowKey).getCellState(address.columnName);
-
-        if (!this.dataModel.isDisabled && cellState.isEditable && !cellState.isDisabled) {
-            this.set('editingAddress', address);
-            this.trigger('startEdit', address);
-        }
-    },
-
-    endEdit: function() {
-        this.trigger('endEdit', this.get('editingAddress'));
-        this.set('editingAddress', null);
-    },
+    // endEdit: function() {
+    //     var address = this.get('editingAddress');
+    //
+    //     if (address) {
+    //         this.trigger('endEdit', address.rowKey, address.columnName);
+    //         this.set('editingAddress', null);
+    //     }
+    // },
 
     /**
      * Returns whether the specified cell is exist

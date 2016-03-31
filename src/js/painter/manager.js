@@ -4,16 +4,18 @@
  */
 'use strict';
 
-var MainButtonCell = require('./cell/mainButton');
-var NumberCell = require('./cell/number');
-var NormalCell = require('./cell/normal');
-var ButtonListCell = require('./cell/button');
-var SelectCell = require('./cell/select');
-var TextCell = require('./cell/text');
-var TextConvertibleCell = require('./cell/text-convertible');
-var TextPasswordCell = require('./cell/text-password');
-var DummyCell = require('./dummyCell');
+// var MainButtonCell = require('./cell/mainButton');
+// var NumberCell = require('./cell/number');
+// var NormalCell = require('./cell/normal');
+// var ButtonListCell = require('./cell/button');
+// var SelectCell = require('./cell/select');
+// var TextCell = require('./cell/text');
+// var TextConvertibleCell = require('./cell/text-convertible');
+// var TextPasswordCell = require('./cell/text-password');
+// var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
+var CellPainter = require('./cell');
+var TextPainter = require('./input/text');
 
 /**
  * Painter manager
@@ -28,8 +30,19 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
         this.gridId = options.gridId;
         this.selectType = options.selectType;
 
+        this.inputPainters = this._createInputPainters(options.controller);
         this.cellPainters = this._createCellPainters(options.controller);
         this.rowPainter = this._createRowPainter();
+    },
+
+
+    _createInputPainters: function(controller) {
+        return {
+            text: new TextPainter({
+                controller: controller,
+                editType: 'text'
+            })
+        };
     },
 
     /**
@@ -39,29 +52,47 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @private
      */
     _createCellPainters: function(controller) {
-        var cellPainters = {},
-            options = {
+        var cellPainters = {};
+            // options = {
+            //     controller: controller
+            // };
+            // instanceList = [
+                // new MainButtonCell(_.assign({}, options, {
+                //     gridId: this.gridId,
+                //     selectType: this.selectType
+                // })),
+                // new CellPainter(_.assign({editType: 'normal', attributes: {align: 'center'}}, options)),
+                // new CellPainter(_.assign({editType: 'normal'}, options))
+                // new ButtonListCell(options),
+                // new SelectCell(options),
+                // new TextCell(options),
+                // new TextPasswordCell(options),
+                // new TextConvertibleCell(options),
+                // new DummyCell(options)
+            // ];
+
+        cellPainters = {
+            number: new CellPainter({
+                controller: controller,
+                attributes: {
+                    align: 'center'
+                }
+            }),
+
+            normal: new CellPainter({
                 controller: controller
-            },
-            instanceList = [
-                new MainButtonCell(_.assign({}, options, {
-                    gridId: this.gridId,
-                    selectType: this.selectType
-                })),
-                new NumberCell(options),
-                new NormalCell(options),
-                new ButtonListCell(options),
-                new SelectCell(options),
-                new TextCell(options),
-                new TextPasswordCell(options),
-                new TextConvertibleCell(options),
-                new DummyCell(options)
-            ];
+            }),
 
-        _.each(instanceList, function(instance) {
-            cellPainters[instance.getEditType()] = instance;
-        });
-
+            text: new CellPainter({
+                controller: controller,
+                inputPainter: this.inputPainters.text
+            })
+        };
+        //
+        // _.each(instanceList, function(instance) {
+        //     cellPainters[instance.editType] = instance;
+        // });
+        //
         return cellPainters;
     },
 
@@ -99,6 +130,10 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      */
     getCellPainters: function() {
         return this.cellPainters;
+    },
+
+    getInputPainters: function() {
+        return this.inputPainters;
     },
 
     /**
