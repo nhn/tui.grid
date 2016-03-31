@@ -36,12 +36,7 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
      * @returns {string} html
      */
     template: _.template(
-        '<select' +
-        ' name="<%=name%>"' +
-        ' <% if (isDisabled) print("disabled"); %>' +
-        '>' +
-        '<%=options%>' +
-        '</select>'
+        '<select name="<%=name%>" <%=disabled%>><%=options%></select>'
     ),
 
     /**
@@ -103,25 +98,24 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
      */
     getHtml: function(cellData) {
         var optionItems = cellData.columnModel.editOption.list,
-            isDisabled = cellData.isDisabled,
-            optionsHtml = '';
+            optionHtml;
 
         if (!_.isNull(cellData.convertedHTML)) {
             return cellData.convertedHTML;
         }
 
-        _.each(optionItems, function(item) {
-            optionsHtml += this.optionTemplate({
+        optionHtml = _.reduce(optionItems, function(html, item) {
+            return html + this.optionTemplate({
                 value: item.value,
                 text: item.text,
                 selected: (String(cellData.value) === String(item.value)) ? 'selected' : ''
             });
-        }, this);
+        }, '', this);
 
         return this.template({
             name: util.getUniqueKey(),
-            isDisabled: isDisabled,
-            options: optionsHtml
+            disabled: cellData.isDisabled ? 'disabled' : '',
+            options: optionHtml
         });
     },
 
@@ -142,7 +136,9 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
                 this.controller.endEdit(true, event.target.value);
                 break;
             case 'TAB':
+                this.controller.endEdit(true, event.target.value);
                 this.controller.focusInNext(event.shiftKey);
+                event.preventDefault();
                 break;
             default:
                 // do nothing

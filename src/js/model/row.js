@@ -99,7 +99,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this.rowData.isDisabled(columnName)
+                isDisabled: this.rowData.isDisabled(columnName),
+                className: this._getClassNameString(columnName)
             });
         }, this);
     },

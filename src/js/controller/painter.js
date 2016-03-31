@@ -50,7 +50,6 @@ var PainterController = tui.util.defineClass({
         } else {
             columnName = focusModel.nextColumnName();
         }
-
         focusModel.focusIn(rowKey, columnName, true);
     },
 

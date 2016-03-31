@@ -37,7 +37,7 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
         ' name="<%=name%>"' +
         ' align="center"' +
         ' maxLength="<%=maxLength%>"' +
-        ' <% if (isDisabled) print("disabled"); %>' +
+        ' <%=disabled%>' +
         '/>'
     ),
 
@@ -119,7 +119,9 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
                 this.controller.endEdit(true, event.target.value);
                 break;
             case 'TAB':
+                this.controller.endEdit(true, event.target.value);
                 this.controller.focusInNext(event.shiftKey);
+                event.preventDefault();
                 break;
             default:
                 // do nothing
@@ -149,7 +151,7 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
             type: this.inputType,
             value: cellData.value,
             name: util.getUniqueKey(),
-            isDisabled: cellData.isDisabled,
+            disabled: cellData.isDisabled ? 'disabled' : '',
             maxLength: maxLength
         });
     },
