@@ -123,9 +123,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             isEditingOnlyChanged = cellData.changed.length === 1 && cellData.changed[0] === 'isEditing',
             isValueChanged = _.contains(cellData.changed, 'value');
 
+        console.log('refresh', cellData.changed);
+
         if (isEditingOnlyChanged) {
             if (cellData.isEditing && !hasFocusedInput) {
                 this.inputPainter.focus($td);
+            } else if (!cellData.isEditing) {
+                $td.find('input').val(cellData.value);
             }
             return;
         }

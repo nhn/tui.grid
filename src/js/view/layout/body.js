@@ -197,13 +197,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         if (!util.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
-            if (!isInput) {
-                if (inputData.shiftKey) {
-                    selectionModel.update(rowIndex, columnIndex);
-                } else {
-                    startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
-                    selectionModel.end();
-                }
+            if (inputData.shiftKey && !isInput) {
+                selectionModel.update(rowIndex, columnIndex);
+            } else {
+                startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
+                selectionModel.end();
             }
         } else if (columnName === '_number') {
             this._updateSelectionByRow(rowIndex, inputData.shiftKey);

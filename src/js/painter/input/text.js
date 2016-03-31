@@ -85,8 +85,7 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
         var address = this._getCellAddress($(event.target));
 
         this._executeCustomEventHandler(event, 'focus');
-        this.controller.endSelection();
-        this.controller.focusIn(address.rowKey, address.columnName);
+        this.controller.startEdit(address.rowKey, address.columnName);
     },
 
     /**
@@ -95,13 +94,8 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
      * @private
      */
     _onBlur: function(blurEvent) {
-        var $target = $(blurEvent.target),
-            address = this._getCellAddress($target);
-
         this._executeCustomEventHandler(blurEvent, 'blur');
-        this.controller.setValue(address.rowKey, address.columnName, $target.val());
-        this.controller.enableSelection();
-        this.controller.validateCell(address.rowKey, address.columnName);
+        this.controller.endEdit(false, blurEvent.target.value);
     },
 
     /**
@@ -112,13 +106,15 @@ var TextInput = tui.util.defineClass(Painter, /**@lends module:painter/cell.prot
     _onKeyDown: function(event) {
         var keyCode = event.keyCode || event.which,
             keyName = keyNameMap[keyCode];
-            // $target = $(event.target);
 
         this._executeCustomEventHandler(event, 'keydown');
+
         switch (keyName) {
             case 'ESC':
+                this.controller.endEdit(true);
+                break;
             case 'ENTER':
-                this.controller.focusOut(true);
+                this.controller.endEdit(true, event.target.value);
                 break;
             case 'TAB':
                 this.controller.focusInNext(event.shiftKey);

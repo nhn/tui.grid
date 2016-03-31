@@ -8,12 +8,31 @@ var PainterController = tui.util.defineClass({
         this.selectionModel = options.selectionModel;
     },
 
-    focusOut: function() {
-        this.focusModel.focusClipboard();
+    endEdit: function(shouldBlur, value) {
+        var address = this.focusModel.get('editingAddress');
+
+        if (!address) {
+            return;
+        }
+
+        console.log('endEdit', shouldBlur, value);
+        this.selectionModel.enable();
+
+        if (!_.isUndefined(value)) {
+            console.log('setValue', value);
+            this.dataModel.setValue(address.rowKey, address.columnName, value);
+            this.dataModel.get(address.rowKey).validateCell(address.columnName);
+        }
+        this.focusModel.endEdit();
+
+        if (shouldBlur) {
+            this.focusModel.focusClipboard();
+        }
     },
 
-    focusIn: function(rowKey, columnName) {
-        this.focusModel.focusIn(rowKey, columnName);
+    startEdit: function(rowKey, columnName) {
+        this.selectionModel.end();
+        this.focusModel.startEdit(rowKey, columnName);
     },
 
     focusInNext: function(oppositeDirection) {
@@ -34,17 +53,17 @@ var PainterController = tui.util.defineClass({
         this.focusModel.refreshState();
     },
 
-    setValue: function(rowKey, columnName, value) {
-        this.dataModel.setValue(rowKey, columnName, value);
-    },
+    // setValue: function(rowKey, columnName, value) {
+    //     this.dataModel.setValue(rowKey, columnName, value);
+    // },
 
-    enableSelection: function() {
-        this.selectionModel.enable();
-    },
+    // enableSelection: function() {
+    //     this.selectionModel.enable();
+    // },
 
-    endSelection: function() {
-        this.selectionModel.end();
-    },
+    // endSelection: function() {
+    //     this.selectionModel.end();
+    // },
 
     executeCustomInputEventHandler: function(event, cellInfo) {
         var columnModel = this.columnModel.getColumnModel(cellInfo.columnName),
@@ -80,15 +99,6 @@ var PainterController = tui.util.defineClass({
     validateCell: function(rowKey, columnName) {
         var row = this.dataModel.get(rowKey);
         row.validateCell(columnName);
-    },
-
-    startEdit: function() {
-        // this._blurEditingCell();
-        // this.focusModel.startEdit();
-    },
-
-    endEdit: function() {
-        // this.focusModel.endEdit();
     }
 });
 
