@@ -191,14 +191,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _onEnterSpace: function(rowKey, columnName) {
-        var cellInstance,
-            editType = this.columnModel.getEditType(columnName);
-        if (editType === '_button') {
-            cellInstance = this.cellFactory.getInstance(editType);
-            cellInstance.toggle(this.dataModel.getElement(rowKey, columnName));
-        } else {
-            this.focusModel.focusIn(rowKey, columnName);
-        }
+        this.focusModel.focusIn(rowKey, columnName);
     },
 
     /**

@@ -64,11 +64,11 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         var editOption = cellData.columnModel.editOption,
             editType = editOption ? editOption.type : 'normal';
 
-        if (util.isMetaColumn(columnName)) {
-            editType = columnName;
-        } else if (!cellData.isEditable) {
-            editType = 'normal';
-        }
+        // if (util.isMetaColumn(columnName)) {
+        //     editType = columnName;
+        // } else if (!cellData.isEditable) {
+        //     editType = 'normal';
+        // }
         return editType;
     },
 

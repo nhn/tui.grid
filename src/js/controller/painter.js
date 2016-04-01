@@ -50,9 +50,12 @@ var PainterController = tui.util.defineClass({
     focusInNext: function(reverse) {
         var focusModel = this.focusModel,
             rowKey = focusModel.get('rowKey'),
-            columnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
+            columnName = focusModel.get('columnName'),
+            nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
 
-        focusModel.focusIn(rowKey, columnName, true);
+        if (columnName !== nextColumnName) {
+            focusModel.focusIn(rowKey, nextColumnName, true);
+        }
     },
 
     executeCustomInputEventHandler: function(event, cellInfo) {

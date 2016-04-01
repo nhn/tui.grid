@@ -91,7 +91,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             }),
 
             radio: new CellPainter({
-                editType: 'checkbox',
+                editType: 'radio',
                 inputPainter: this.inputPainters.radio
             })
         };
@@ -113,16 +113,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @returns {Object} - Cell painter instance
      */
     getCellPainter: function(editType) {
-        var instance = this.cellPainters[editType];
-
-        if (!instance) {
-            if (editType === 'radio' || editType === 'checkbox') {
-                instance = this.cellPainters.button;
-            } else {
-                instance = this.cellPainters.normal;
-            }
-        }
-        return instance;
+        return this.cellPainters[editType];
     },
 
     /**
