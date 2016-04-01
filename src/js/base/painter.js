@@ -4,8 +4,6 @@
  */
 'use strict';
 
-var common = require('./common');
-
 /**
  * Base class for Painters
  * - HTML Element 당 하나의 view 를 생성하면 성능이 좋지 않기 때문에 Drawer 라는 개념을 도입.
@@ -16,41 +14,22 @@ var common = require('./common');
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     /**
      * @constructs
-     * @param {Object} controller - Attributes
+     * @param {Object} options - options
      */
     init: function(options) {
-        // this.controller = options.controller;
-        this.initializeEventHandler();
+        this.controller = options.controller;
     },
 
-    eventHandler: {},
+    events: {},
 
-    /**
-     * eventHandler 를 미리 parsing 하여 들고있는다.
-     */
-    initializeEventHandler: function() {
-        var eventHandler = {};
-        _.each(this.eventHandler, function(methodName, eventName) {
-            var tmp = eventName.split(' '),
-                event = tmp[0],
-                selector = tmp[1] || '';
+    selector: '',
 
-            eventHandler[event] = {
-                selector: selector,
-                handler: $.proxy(this[methodName], this)
-            };
+    attachEventHandlers: function($target, rootSelector) {
+        _.each(this.events, function(methodName, eventName) {
+            var bindedHandler = _.bind(this[methodName], this);
+
+            $target.on(eventName, rootSelector + ' ' + this.selector, bindedHandler);
         }, this);
-        this.setOwnProperties({
-            _eventHandler: eventHandler
-        });
-    },
-
-    /**
-     * 이벤트 핸들러 정보를 반환한다.
-     * @returns {object} Event handlers
-     */
-    getEventHandlerInfo: function() {
-        return this._eventHandler;
     },
 
     /**
@@ -60,5 +39,5 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
         throw new Error('implement getHtml() method');
     }
 });
-_.assign(Painter.prototype, common);
+
 module.exports = Painter;

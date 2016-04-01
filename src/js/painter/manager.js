@@ -29,31 +29,26 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
         this.rowPainter = this._createRowPainter();
     },
 
-
     _createInputPainters: function(controller) {
         return {
             text: new TextPainter({
                 controller: controller,
                 inputType: 'text'
             }),
-
             password: new TextPainter({
                 controller: controller,
                 inputType: 'password'
             }),
-
-            select: new SelectPainter({
-                controller: controller
-            }),
-
             checkbox: new ButtonPainter({
                 controller: controller,
                 inputType: 'checkbox'
             }),
-
             radio: new ButtonPainter({
                 controller: controller,
                 inputType: 'radio'
+            }),
+            select: new SelectPainter({
+                controller: controller
             })
         };
     },
@@ -69,31 +64,25 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             dummy: new DummyCellPainter({
                 controller: controller
             }),
-
             normal: new CellPainter({
                 editType: 'normal'
             }),
-
             text: new CellPainter({
                 editType: 'text',
                 inputPainter: this.inputPainters.text
             }),
-
             password: new CellPainter({
                 editType: 'password',
                 inputPainter: this.inputPainters.password
             }),
-
             select: new CellPainter({
                 editType: 'select',
                 inputPainter: this.inputPainters.select
             }),
-
             checkbox: new CellPainter({
                 editType: 'checkbox',
                 inputPainter: this.inputPainters.checkbox
             }),
-
             radio: new CellPainter({
                 editType: 'radio',
                 inputPainter: this.inputPainters.radio
@@ -126,10 +115,6 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      */
     getCellPainters: function() {
         return this.cellPainters;
-    },
-
-    getInputPainters: function() {
-        return this.inputPainters;
     },
 
     /**

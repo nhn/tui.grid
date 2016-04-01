@@ -30,18 +30,20 @@ var rowList = [];
 	    rowList.push({
 			c1: '1',
             c2: '2',
-            c3: 2
+            c3: 2,
+            c4: 2
 		});
 	})
 })();
 
 var grid = new tui.Grid({
     el: $('#grid'),
-	// selectType: 'checkbox',
+	selectType: 'checkbox',
 	// columnFixCount: 1,
 	headerHeight: 30,
-	displayRowCount: 10,
+	displayRowCount: 15,
 	minimumColumnWidth: 100,
+    showDummyRows: true,
     columnModelList: [
 		// {
 		// 	columnName: '_button',
@@ -87,6 +89,34 @@ var grid = new tui.Grid({
                     {text: 3, value: 3}
                 ],
                 // afterContent: ' after'
+			}
+        },
+        {
+			title: 'c4',
+            columnName: 'c4',
+            editOption: {
+                beforeContent: 'before',
+				type: 'radio',
+                list: [
+                    {text: 1, value: 1},
+                    {text: 2, value: 2},
+                    {text: 3, value: 3}
+                ],
+                afterContent: ' after'
+			}
+        },
+        {
+			title: 'c5',
+            columnName: 'c5',
+            editOption: {
+                beforeContent: 'before',
+				type: 'select',
+                list: [
+                    {text: 1, value: 1},
+                    {text: 2, value: 2},
+                    {text: 3, value: 3}
+                ],
+                afterContent: ' after'
 			}
         },
 		// {

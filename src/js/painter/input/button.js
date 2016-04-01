@@ -4,31 +4,44 @@
  */
 'use strict';
 
-var Painter = require('../../base/painter');
+var InputPainter = require('./base');
 var util = require('../../common/util');
-var keyNameMap = require('../../common/constMap').keyName;
 
 /**
  * Cell Painter Base
  * @module painter/cell
  * @extends module:base/painter
  */
-var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
+var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
      * @param {Object} options - options
      */
     init: function(options) {
-        Painter.apply(this, arguments);
+        InputPainter.apply(this, arguments);
 
-        this.controller = options.controller;
         this.inputType = options.inputType;
-    },
 
-    eventHandler: {
-        'keydown input': '_onKeyDown',
-        'blur input': '_onBlur',
-        'focus input': '_onFocus'
+        this._extendKeydownActions({
+            TAB: function(param) {
+                if (!this._focusNextInput(param.$target, param.shiftKey)) {
+                    this.controller.endEdit(param.address, true, param.value);
+                    this.controller.focusInNext(param.shiftKey);
+                }
+            },
+            ENTER: function(param) {
+                var value = this._getCheckedValueString(param.$target);
+                this.controller.endEdit(param.address, true, value);
+            },
+            LEFT_ARROW: function(param) {
+                this._focusNextInput(param.$target, true);
+            },
+            RIGHT_ARROW: function(param) {
+                this._focusNextInput(param.$target);
+            },
+            UP_ARROW: function() {},
+            DOWN_ARROW: function() {}
+        });
     },
 
     /**
@@ -50,87 +63,23 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
     ),
 
     /**
-     * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
-     * @param {jQuery} $target 조회할 엘리먼트
-     * @returns {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
-     * @private
-     */
-    _getCellAddress: function($target) {
-        return {
-            rowKey: $target.closest('tr').attr('key'),
-            columnName: $target.closest('td').attr('columnName')
-        };
-    },
-
-    /**
-     * focus 이벤트 핸들러
-     * @param {Event} event 이벤트 객체
-     * @private
-     */
-    _onFocus: function(event) {
-        var address = this._getCellAddress($(event.target));
-
-        this.controller.startEdit(address);
-    },
-
-    /**
      * focus 이벤트 핸들러
      * @param {Event} event 이벤트 객체
      * @private
      */
     _onBlur: function(event) {
-        var address = this._getCellAddress($(event.target));
         var $target = $(event.target);
         var self = this;
 
         _.defer(function() {
+            var address, value;
+
             if (!$target.siblings('input:focus').length) {
-                self.controller.endEdit(address, false, self._getCheckedValueString($target));
+                address = self._getCellAddress($target);
+                value = self._getCheckedValueString($target);
+                self.controller.endEdit(address, false, value);
             }
         });
-    },
-
-    /**
-     * keydown 이벤트 핸들러
-     * @param  {KeyboardEvent} event 키보드 이벤트 객체
-     * @private
-     */
-    _onKeyDown: function(event) {
-        var keyCode = event.keyCode || event.which,
-            keyName = keyNameMap[keyCode],
-            $target = $(event.target),
-            address = this._getCellAddress($target),
-            value = this._getCheckedValueString($target);
-
-        switch (keyName) {
-            case 'ESC':
-                this.controller.endEdit(address, true);
-                break;
-            case 'ENTER':
-                this.controller.endEdit(address, true, value);
-                break;
-            case 'TAB':
-                if (!this._focusNextInput($target, event.shiftKey)) {
-                    this.controller.endEdit(address, true, value);
-                    this.controller.focusInNext(event.shiftKey);
-                }
-                event.preventDefault();
-                break;
-            case 'LEFT_ARROW':
-                this._focusNextInput($target, true);
-                event.preventDefault();
-                break;
-            case 'RIGHT_ARROW':
-                this._focusNextInput($target);
-                event.preventDefault();
-                break;
-            case 'UP_ARROW':
-            case 'DOWN_ARROW':
-                event.preventDefault();
-                break;
-            default:
-                // do nothing
-        }
     },
 
     _focusNextInput: function($target, reverse) {
@@ -210,10 +159,6 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
         }, this);
 
         return html;
-    },
-
-    focus: function($td) {
-        $td.find('input').eq(0).focus();
     }
 });
 

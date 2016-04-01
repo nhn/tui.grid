@@ -25,6 +25,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         this.painterManager = options.painterManager;
     },
 
+    selector: 'tr',
+
     template: _.template(
         '<tr ' +
         'key="<%=key%>" ' +
@@ -62,6 +64,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         _.each(columnModelList, function(columnModel) {
             html += cellPainter.getHtml(columnModel.columnName);
         });
+
         return html;
     },
 
@@ -86,6 +89,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
                 html += cellPainter.getHtml(cellData);
             }
         }, this);
+
         return html;
     },
 

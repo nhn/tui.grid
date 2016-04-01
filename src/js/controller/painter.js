@@ -41,6 +41,7 @@ var PainterController = tui.util.defineClass({
                 focusModel.refreshState();
             });
         }
+
         return true;
     },
 

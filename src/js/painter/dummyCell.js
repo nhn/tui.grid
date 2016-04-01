@@ -16,22 +16,22 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     /**
      * @constructs
      */
-    init: function(options) {
+    init: function() {
         Painter.apply(this, arguments);
-
-        this.controller = options.controller;
     },
+
+    selector: 'td[edit-type=dummy]',
 
     /**
      * Event handlers
      */
-    eventHandler: {
+    events: {
         dblclick: '_onDblClick'
     },
 
     /**
-     * Template
-     * @returns {String} String
+     * Template function
+     * @returns {String} HTML string
      */
     template: _.template(
         '<td columnname="<%=columnName%>" ' +

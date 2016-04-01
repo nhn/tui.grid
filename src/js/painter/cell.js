@@ -22,6 +22,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
+        this.selector = 'td[edit-type=' + this.editType + ']';
     },
 
     /*
@@ -47,15 +48,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (this.inputPainter) {
             content = this.inputPainter.getHtml(cellData);
 
-            if (_.contains(['text', 'password', 'select'], this.editType)) {
+            if (this._shouldWrapContent()) {
                 beforeContent = this._getSpanWrapContent(beforeContent, 'before');
                 afterContent = this._getSpanWrapContent(afterContent, 'after');
                 content = this._getSpanWrapContent(content, 'input');
+
+                return beforeContent + afterContent + content;
             }
-            return beforeContent + afterContent + content;
         }
 
         return beforeContent + content + afterContent;
+    },
+
+    _shouldWrapContent: function() {
+        return _.contains(['text', 'password', 'select'], this.editType);
     },
 
     /**
@@ -69,6 +75,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (tui.util.isFalsy(content)) {
             content = '';
         }
+
         return '<span class="' + className + '">' + content + '</span>';
     },
 
@@ -78,16 +85,21 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @returns {Object} td 에 지정할 attribute 데이터
      */
     _getAttributes: function(cellData) {
-        var attrs = {
+        return {
             'class': cellData.className,
             'edit-type': this.editType,
             columnname: cellData.columnName,
             rowSpan: cellData.rowSpan || '',
             align: cellData.columnModel.align || 'left'
         };
-        // _.assign(attrs, this.attributes);
+    },
 
-        return attrs;
+    attachEventHandlers: function($target, selector) {
+        selector += ' ' + this.selector;
+
+        if (this.inputPainter) {
+            this.inputPainter.attachEventHandlers($target, selector);
+        }
     },
 
     /**
@@ -112,22 +124,15 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {jQuery} $td - cell element
      */
     refresh: function(cellData, $td) {
-        var hasFocusedInput = !!($td.find(':focus').length),
-            isEditingChangedOnly = cellData.changed.length === 1 && cellData.changed[0] === 'isEditing',
-            isValueChanged = _.contains(cellData.changed, 'value'),
-            isDisabledChanged = _.contains(cellData.changed, 'isDisabled');
+        var contentProps = ['value', 'isEditing', 'isDisabled'],
+            shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
 
-        if (isEditingChangedOnly) {
-            if (cellData.isEditing && !hasFocusedInput) {
-                this.inputPainter.focus($td);
-            } else if (!cellData.isEditing) {
-                $td.html(this._getContentHtml(cellData));
-            }
-        } else {
-            $td.attr(this._getAttributes(cellData));
-            if (isValueChanged || isDisabledChanged) {
-                $td.html(this._getContentHtml(cellData));
-            }
+        $td.attr(this._getAttributes(cellData));
+
+        if (cellData.isEditing) {
+            this.inputPainter.focus($td);
+        } else if (shouldUpdateContent) {
+            $td.html(this._getContentHtml(cellData));
         }
     }
 });

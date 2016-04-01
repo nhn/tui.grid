@@ -134,32 +134,14 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     },
 
     /**
-     * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
-     * @param {string} selector - 선택자
-     * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
-     * @private
-     */
-    _attachTableEventHandler: function(selector, handlerInfos) {
-        _.each(handlerInfos, function(obj, eventName) {
-            this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
-        }, this);
-    },
-
-    /**
      * 테이블 내부(TR,TD)에서 발생하는 이벤트를 this.el로 넘겨 해당 요소들에게 위임하도록 설정한다.
      * @private
      */
     _attachAllTableEventHandlers: function() {
-        var dummyPainter = this.painterManager.getCellPainter('dummy'),
-            inputPainters = this.painterManager.getInputPainters();
+        var cellPainters = this.painterManager.getCellPainters();
 
-        this._attachTableEventHandler('td[edit-type=dummy]', dummyPainter.getEventHandlerInfo());
-
-        _.each(inputPainters, function(painter, editType) {
-            var selector = 'td[edit-type=' + editType + ']',
-                handlerInfo = painter.getEventHandlerInfo();
-
-            this._attachTableEventHandler(selector, handlerInfo);
+        _.each(cellPainters, function(painter) {
+            painter.attachEventHandlers(this.$el, '');
         }, this);
     },
 
