@@ -14,7 +14,6 @@ var PainterController = tui.util.defineClass({
         if (!result) {
             return false;
         }
-        console.log('start edit', address);
 
         this.selectionModel.end();
         return true;
@@ -27,11 +26,9 @@ var PainterController = tui.util.defineClass({
             return false;
         }
 
-        console.log('endEdit', shouldBlur, value);
         this.selectionModel.enable();
 
         if (!_.isUndefined(value)) {
-            console.log('endEdit - setValue', value);
             this.dataModel.setValue(address.rowKey, address.columnName, value);
             this.dataModel.get(address.rowKey).validateCell(address.columnName);
         }
@@ -83,16 +80,6 @@ var PainterController = tui.util.defineClass({
             focus: true
         });
     }
-
-    /**
-     * Validates the cell data identified by given rowKey and columnName.
-     * @param {String} rowKey - Row key
-     * @param {String} columnName - Column name
-     */
-    // validateCell: function(rowKey, columnName) {
-    //     var row = this.dataModel.get(rowKey);
-    //     row.validateCell(columnName);
-    // }
 });
 
 

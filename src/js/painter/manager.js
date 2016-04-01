@@ -4,9 +4,9 @@
  */
 'use strict';
 
-// var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
 var CellPainter = require('./cell');
+var DummyCellPainter = require('./dummyCell');
 var TextPainter = require('./input/text');
 var SelectPainter = require('./input/select');
 var ButtonPainter = require('./input/button');
@@ -64,8 +64,12 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @returns {Object} Key-value object
      * @private
      */
-    _createCellPainters: function() {
+    _createCellPainters: function(controller) {
         return {
+            dummy: new DummyCellPainter({
+                controller: controller
+            }),
+
             normal: new CellPainter({
                 editType: 'normal'
             }),

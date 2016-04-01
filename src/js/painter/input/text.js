@@ -166,10 +166,6 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
         var $input = $td.find('input');
         formUtil.setCursorToEnd($input.get(0));
         $input.select();
-    },
-
-    setValue: function($td, value) {
-        $td.find('input').val(value);
     }
 });
 

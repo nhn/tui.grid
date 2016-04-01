@@ -152,10 +152,6 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
 
     focus: function($td) {
         $td.find('select').eq(0).focus();
-    },
-
-    setValue: function($td, value) {
-        $td.find('select').val(value);
     }
 });
 

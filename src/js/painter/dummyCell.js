@@ -16,8 +16,10 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     /**
      * @constructs
      */
-    init: function() {
+    init: function(options) {
         Painter.apply(this, arguments);
+
+        this.controller = options.controller;
     },
 
     /**
@@ -40,15 +42,6 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     ),
 
     /**
-     * Returns the edit type of the cell.
-     * (To implement interface of module:painter/cell)
-     * @returns {String} Edit type
-     */
-    getEditType: function() {
-        return 'dummy';
-    },
-
-    /**
      * Event handler for 'dblclick' event
      * @private
      */
@@ -63,6 +56,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      */
     getHtml: function(columnName) {
         var isMeta = util.isMetaColumn(columnName);
+
         return this.template({
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'

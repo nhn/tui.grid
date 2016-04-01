@@ -150,10 +150,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _attachAllTableEventHandlers: function() {
-        var rowPainter = this.painterManager.getRowPainter(),
+        var dummyPainter = this.painterManager.getCellPainter('dummy'),
             inputPainters = this.painterManager.getInputPainters();
 
-        this._attachTableEventHandler('tr', rowPainter.getEventHandlerInfo());
+        this._attachTableEventHandler('td[edit-type=dummy]', dummyPainter.getEventHandlerInfo());
 
         _.each(inputPainters, function(painter, editType) {
             var selector = 'td[edit-type=' + editType + ']',

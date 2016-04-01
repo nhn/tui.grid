@@ -50,7 +50,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             if (this.has(columnName)) {
                 column = this.columnModel.getColumnModel(columnName);
                 isTextType = this.columnModel.isTextType(columnName);
-                console.log('setCell', value, columnName);
 
                 this.setCell(columnName, this._getValueAttrs(value, rowData, column, isTextType));
             }

@@ -157,7 +157,6 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
         $checkedInputs.each(function() {
             checkedValues.push(this.value);
         });
-        console.log('checked values', checkedValues);
 
         return checkedValues.join(',');
     },
@@ -215,10 +214,6 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
 
     focus: function($td) {
         $td.find('input').eq(0).focus();
-    },
-
-    setValue: function($td, value) {
-        $td.find('input').val(value);
     }
 });
 

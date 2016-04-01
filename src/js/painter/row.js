@@ -35,24 +35,6 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     ),
 
     /**
-     * model 변경 시 이벤트 핸들러
-     * @param {object} changed - 변화가 일어난 모델 인스턴스
-     * @param {jQuery} $tr - jquery object for tr element
-     */
-    refresh: function(changed, $tr) {
-        _.each(changed, function(cellData, columnName) {
-            var editType, cellPainter, $td;
-
-            if (columnName !== '_extraData') {
-                $td = $tr.find('td[columnname=' + columnName + ']');
-                editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
-                cellPainter.refresh(cellData, $td);
-            }
-        }, this);
-    },
-
-    /**
      * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
      * @param {string} columnName 컬럼명
@@ -64,11 +46,6 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         var editOption = cellData.columnModel.editOption,
             editType = editOption ? editOption.type : 'normal';
 
-        // if (util.isMetaColumn(columnName)) {
-        //     editType = columnName;
-        // } else if (!cellData.isEditable) {
-        //     editType = 'normal';
-        // }
         return editType;
     },
 
@@ -134,6 +111,24 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             contents: html,
             className: ''
         });
+    },
+
+    /**
+     * model 변경 시 이벤트 핸들러
+     * @param {object} changed - 변화가 일어난 모델 인스턴스
+     * @param {jQuery} $tr - jquery object for tr element
+     */
+    refresh: function(changed, $tr) {
+        _.each(changed, function(cellData, columnName) {
+            var editType, cellPainter, $td;
+
+            if (columnName !== '_extraData') {
+                $td = $tr.find('td[columnname=' + columnName + ']');
+                editType = this._getEditType(columnName, cellData);
+                cellPainter = this.painterManager.getCellPainter(editType);
+                cellPainter.refresh(cellData, $td);
+            }
+        }, this);
     },
 
     static: {

@@ -45,7 +45,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'add remove sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'remove sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'add', this._onAddDataModel)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
@@ -147,18 +148,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
     },
 
-    /**
-     * Event handler for 'change:editing' event on focusModel
-     * @param {Number|String} rowKey - row key
-     * @param {String} columnName - column name
-     * @private
-     */
-    // _onEndEdit: function(rowKey, columnName) {
-    //     this._updateCellData(rowKey, columnName, {
-    //         isEditing: false
-    //     });
-    // },
-
     _updateCellData: function(rowKey, columnName, cellData) {
         var rowModel = this._getRowModel(rowKey, columnName);
 
@@ -211,6 +200,20 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _onDataModelChange: function() {
         this.refresh(false, true);
+    },
+
+    /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {Array.<module:model/data/rowList>} dataModel - New appended row model
+     * @param  {Object} options - Options. See {@link module:model/data/rowList#append}
+     * @private
+     */
+    _onAddDataModel: function(dataModel, options) {
+        this.refresh(false, true);
+
+        if (options.focus) {
+            this.focusModel.focusAt(options.at, 0);
+        }
     },
 
     /**
@@ -347,11 +350,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _fillDummyRows: function() {
         var displayRowCount = this.dimensionModel.get('displayRowCount'),
             actualRowCount = this._getActualRowCount(),
-            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
+            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0),
+            rowHeight = this.dimensionModel.get('rowHeight');
 
         _.times(dummyRowCount, function() {
-            this.get('lside').add({});
-            this.get('rside').add({});
+            _.each(['lside', 'rside'], function(listName) {
+                this.get(listName).add({
+                    height: rowHeight
+                });
+            }, this);
         }, this);
 
         this.set('dummyRowCount', dummyRowCount);

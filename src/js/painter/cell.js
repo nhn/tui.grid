@@ -117,7 +117,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             isValueChanged = _.contains(cellData.changed, 'value'),
             isDisabledChanged = _.contains(cellData.changed, 'isDisabled');
 
-        console.log('refresh', cellData);
         if (isEditingChangedOnly) {
             if (cellData.isEditing && !hasFocusedInput) {
                 this.inputPainter.focus($td);
