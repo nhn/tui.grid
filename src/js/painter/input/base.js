@@ -103,10 +103,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onBlur: function(blurEvent) {
-        var address = this._getCellAddress($(event.target));
+        var $target = $(event.target),
+            address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(blurEvent);
-        this.controller.endEdit(address, false, blurEvent.target.value);
+        this.controller.endEdit(address, false, $target.val());
     },
 
     /**

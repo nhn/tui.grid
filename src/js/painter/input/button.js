@@ -45,8 +45,8 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
-     * markup template
-     * @returns {String} html
+     * Input markup template
+     * @returns {String}
      */
     template: _.template(
         '<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>"' +
@@ -55,16 +55,15 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
     /**
      * Label markup template
-     * It will be added to content
-     * @returns {String} html
+     * @returns {String}
      */
     labelTemplate: _.template(
         '<label for="<%=id%>" style="margin-right:10px;"><%=labelText%></label>'
     ),
 
     /**
-     * focus 이벤트 핸들러
-     * @param {Event} event 이벤트 객체
+     * Event handler for 'blur' event
+     * @param {Event} event - event object
      * @private
      */
     _onBlur: function(event) {
@@ -82,6 +81,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
         });
     },
 
+
     _focusNextInput: function($target, reverse) {
         var traverseFuncName = reverse ? 'prevAll' : 'nextAll',
             $nextInputs = $target[traverseFuncName]('input');
@@ -94,9 +94,9 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
-     * check 된 button 의 값들을 가져온다. onChange 이벤트 핸들러에서 호출한다.
-     * @param {jQuery} $target 이벤트가 발생한 targetElement
-     * @returns {Array}  check 된 값들의 결과 배열
+     * Returns the comma seperated value of all checked inputs
+     * @param {jQuery} $target - target element
+     * @returns {String}
      * @private
      */
     _getCheckedValueString: function($target) {
@@ -115,14 +115,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
      * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
      * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
+     * @returns {String} - HTML String
      */
     getHtml: function(cellData) {
         var value = cellData.value,
