@@ -8,24 +8,24 @@ var PainterController = tui.util.defineClass({
         this.selectionModel = options.selectionModel;
     },
 
-    startEdit: function(rowKey, columnName) {
+    startEdit: function(address) {
+        console.log('start edit');
         this.selectionModel.end();
-        this.focusModel.startEdit(rowKey, columnName);
+        this.focusModel.startEdit(address.rowKey, address.columnName);
     },
 
-    endEdit: function(shouldBlur, value) {
-        var focusModel = this.focusModel,
-            address = focusModel.get('editingAddress');
+    endEdit: function(address, shouldBlur, value) {
+        var focusModel = this.focusModel;
 
-        if (!address) {
-            return;
+        if (!focusModel.isEditingCell(address.rowKey, address.columnName)) {
+            return false;
         }
 
         console.log('endEdit', shouldBlur, value);
         this.selectionModel.enable();
 
         if (!_.isUndefined(value)) {
-            console.log('setValue', value);
+            console.log('endEdit - setValue', value);
             this.dataModel.setValue(address.rowKey, address.columnName, value);
             this.dataModel.get(address.rowKey).validateCell(address.columnName);
         }
@@ -38,36 +38,16 @@ var PainterController = tui.util.defineClass({
                 focusModel.refreshState();
             });
         }
+        return true;
     },
 
-    focusInNext: function(oppositeDirection) {
+    focusInNext: function(reverse) {
         var focusModel = this.focusModel,
             rowKey = focusModel.get('rowKey'),
-            columnName;
+            columnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
 
-        if (oppositeDirection) {
-            columnName = focusModel.prevColumnName();
-        } else {
-            columnName = focusModel.nextColumnName();
-        }
         focusModel.focusIn(rowKey, columnName, true);
     },
-
-    refreshFocusState: function() {
-        this.focusModel.refreshState();
-    },
-
-    // setValue: function(rowKey, columnName, value) {
-    //     this.dataModel.setValue(rowKey, columnName, value);
-    // },
-
-    // enableSelection: function() {
-    //     this.selectionModel.enable();
-    // },
-
-    // endSelection: function() {
-    //     this.selectionModel.end();
-    // },
 
     executeCustomInputEventHandler: function(event, cellInfo) {
         var columnModel = this.columnModel.getColumnModel(cellInfo.columnName),

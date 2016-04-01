@@ -375,7 +375,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     isEditingCell: function(rowKey, columnName) {
         var address = this.get('editingAddress');
 
-        return address && (address.rowKey === rowKey) && (address.columnNane === columnName);
+        return address &&
+            (String(address.rowKey) === String(rowKey)) &&
+            (address.columnName === columnName);
     },
 
     startEdit: function(rowKey, columnName) {

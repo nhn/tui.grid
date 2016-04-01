@@ -45,10 +45,15 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _onDataModelChange: function(rowData) {
         _.each(rowData.changed, function(value, columnName) {
-            var column = this.columnModel.getColumnModel(columnName),
-                isTextType = this.columnModel.isTextType(columnName);
+            var column, isTextType;
 
-            this.setCell(columnName, this._getValueAttrs(value, rowData, column, isTextType));
+            if (this.has(columnName)) {
+                column = this.columnModel.getColumnModel(columnName);
+                isTextType = this.columnModel.isTextType(columnName);
+                console.log('setCell', value, columnName);
+
+                this.setCell(columnName, this._getValueAttrs(value, rowData, column, isTextType));
+            }
         }, this);
     },
 
@@ -359,7 +364,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             changed = [],
             rowIndex, rowKey, data;
 
-        if (!this.get(columnName)) {
+        if (!this.has(columnName)) {
             return;
         }
 
@@ -376,8 +381,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         if (changed.length) {
             data.changed = changed;
-            this.set(columnName, data);
-            if (isValueChanged) {
+            this.set(columnName, data, {
+                silent: isValueChanged && data.isEditing
+            });
+            if (isValueChanged && !data.isEditing) {
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }

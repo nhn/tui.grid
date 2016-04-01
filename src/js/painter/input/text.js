@@ -87,7 +87,7 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
         var address = this._getCellAddress($(event.target));
 
         this._executeCustomEventHandler(event, 'focus');
-        this.controller.startEdit(address.rowKey, address.columnName);
+        this.controller.startEdit(address);
     },
 
     /**
@@ -96,8 +96,10 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
      * @private
      */
     _onBlur: function(blurEvent) {
+        var address = this._getCellAddress($(event.target));
+
         this._executeCustomEventHandler(blurEvent, 'blur');
-        this.controller.endEdit(false, blurEvent.target.value);
+        this.controller.endEdit(address, false, blurEvent.target.value);
     },
 
     /**
@@ -107,19 +109,23 @@ var TextPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.pr
      */
     _onKeyDown: function(event) {
         var keyCode = event.keyCode || event.which,
-            keyName = keyNameMap[keyCode];
+            keyName = keyNameMap[keyCode],
+            $target = $(event.target),
+            address = this._getCellAddress($target),
+            value = $target.val();
 
         this._executeCustomEventHandler(event, 'keydown');
 
         switch (keyName) {
             case 'ESC':
-                this.controller.endEdit(true);
+                this.controller.endEdit(address, true);
                 break;
             case 'ENTER':
-                this.controller.endEdit(true, event.target.value);
+                // debugger;
+                this.controller.endEdit(address, true, value);
                 break;
             case 'TAB':
-                this.controller.endEdit(true, event.target.value);
+                this.controller.endEdit(address, true, value);
                 this.controller.focusInNext(event.shiftKey);
                 event.preventDefault();
                 break;

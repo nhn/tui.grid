@@ -71,7 +71,7 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
     _onFocus: function(event) {
         var address = this._getCellAddress($(event.target));
 
-        this.controller.startEdit(address.rowKey, address.columnName);
+        this.controller.startEdit(address);
     },
 
     /**
@@ -80,7 +80,9 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
      * @private
      */
     _onBlur: function(blurEvent) {
-        this.controller.endEdit(false, blurEvent.target.value);
+        var address = this._getCellAddress($(event.target));
+
+        this.controller.endEdit(address, false, blurEvent.target.value);
     },
 
     /**
@@ -126,17 +128,20 @@ var SelectPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
      */
     _onKeyDown: function(event) {
         var keyCode = event.keyCode || event.which,
-            keyName = keyNameMap[keyCode];
+            keyName = keyNameMap[keyCode],
+            $target = $(event.target),
+            address = this._getCellAddress($target),
+            value = $target.val();
 
         switch (keyName) {
             case 'ESC':
-                this.controller.endEdit(true);
+                this.controller.endEdit(address, true);
                 break;
             case 'ENTER':
-                this.controller.endEdit(true, event.target.value);
+                this.controller.endEdit(address, true, value);
                 break;
             case 'TAB':
-                this.controller.endEdit(true, event.target.value);
+                this.controller.endEdit(address, true, value);
                 this.controller.focusInNext(event.shiftKey);
                 event.preventDefault();
                 break;

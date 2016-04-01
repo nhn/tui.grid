@@ -4,19 +4,12 @@
  */
 'use strict';
 
-// var MainButtonCell = require('./cell/mainButton');
-// var NumberCell = require('./cell/number');
-// var NormalCell = require('./cell/normal');
-// var ButtonListCell = require('./cell/button');
-// var SelectCell = require('./cell/select');
-// var TextCell = require('./cell/text');
-// var TextConvertibleCell = require('./cell/text-convertible');
-// var TextPasswordCell = require('./cell/text-password');
 // var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
 var CellPainter = require('./cell');
 var TextPainter = require('./input/text');
 var SelectPainter = require('./input/select');
+var ButtonPainter = require('./input/button');
 
 /**
  * Painter manager
@@ -51,6 +44,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
             select: new SelectPainter({
                 controller: controller
+            }),
+
+            checkbox: new ButtonPainter({
+                controller: controller,
+                inputType: 'checkbox'
             })
         };
     },
@@ -80,6 +78,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             select: new CellPainter({
                 editType: 'select',
                 inputPainter: this.inputPainters.select
+            }),
+
+            checkbox: new CellPainter({
+                editType: 'checkbox',
+                inputPainter: this.inputPainters.checkbox
             })
         };
     },

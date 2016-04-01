@@ -30,7 +30,7 @@ var rowList = [];
 	    rowList.push({
 			c1: '1',
             c2: '2',
-            c3: 3
+            c3: 2
 		});
 	})
 })();
@@ -79,13 +79,14 @@ var grid = new tui.Grid({
 			title: 'c3',
             columnName: 'c3',
             editOption: {
-                beforeContent: 'before',
-				type: 'select',
+                // beforeContent: 'before',
+				type: 'checkbox',
                 list: [
                     {text: 1, value: 1},
-                    {text: 2, value: 2}
+                    {text: 2, value: 2},
+                    {text: 3, value: 3}
                 ],
-                afterContent: ' after'
+                // afterContent: ' after'
 			}
         },
 		// {
