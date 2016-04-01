@@ -23,10 +23,7 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
 
         this.controller = options.controller;
         this.inputType = options.inputType;
-        this._blurBlocked = false;
     },
-
-    selector: 'input',
 
     eventHandler: {
         'keydown input': '_onKeyDown',
@@ -121,9 +118,15 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
                 break;
             case 'LEFT_ARROW':
                 this._focusNextInput($target, true);
+                event.preventDefault();
                 break;
             case 'RIGHT_ARROW':
                 this._focusNextInput($target);
+                event.preventDefault();
+                break;
+            case 'UP_ARROW':
+            case 'DOWN_ARROW':
+                event.preventDefault();
                 break;
             default:
                 // do nothing
@@ -154,6 +157,7 @@ var ButtonPainter = tui.util.defineClass(Painter, /**@lends module:painter/cell.
         $checkedInputs.each(function() {
             checkedValues.push(this.value);
         });
+        console.log('checked values', checkedValues);
 
         return checkedValues.join(',');
     },

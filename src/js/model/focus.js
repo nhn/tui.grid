@@ -381,23 +381,30 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     startEdit: function(rowKey, columnName) {
-        var cellState;
-
         if (this.get('editingAddress')) {
-            return;
+            return false;
         }
 
-        cellState = this.dataModel.get(rowKey).getCellState(columnName);
-        if (!this.dataModel.isDisabled && cellState.isEditable && !cellState.isDisabled) {
-            this.set('editingAddress', {
-                rowKey: rowKey,
-                columnName: columnName
-            });
+        if (!this.dataModel.get(rowKey).isEditable(columnName)) {
+            return false;
         }
+
+        this.set('editingAddress', {
+            rowKey: rowKey,
+            columnName: columnName
+        });
+
+        return true;
     },
 
     endEdit: function() {
+        if (!this.get('editingAddress')) {
+            return false;
+        }
+
         this.set('editingAddress', null);
+
+        return true;
     },
 
     /**

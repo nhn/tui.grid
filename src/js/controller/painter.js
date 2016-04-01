@@ -9,9 +9,15 @@ var PainterController = tui.util.defineClass({
     },
 
     startEdit: function(address) {
-        console.log('start edit');
+        var result = this.focusModel.startEdit(address.rowKey, address.columnName);
+
+        if (!result) {
+            return false;
+        }
+        console.log('start edit', address);
+
         this.selectionModel.end();
-        this.focusModel.startEdit(address.rowKey, address.columnName);
+        return true;
     },
 
     endEdit: function(address, shouldBlur, value) {

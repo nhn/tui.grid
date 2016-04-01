@@ -268,7 +268,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             isDisabled = isDisabled || !!(relationResult && relationResult.isDisabled);
         }
 
-        if ($.inArray(editType, notEditableTypeList) !== -1) {
+        if (_.contains(editType, notEditableTypeList)) {
             isEditable = false;
         } else {
             isEditable = !(relationResult && relationResult.isEditable === false);
@@ -286,14 +286,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @returns {Boolean}    편집 가능한지 여부
      */
     isEditable: function(columnName) {
-        var notEditableTypeList = ['_number', 'normal'],
-            editType = this.columnModel.getEditType(columnName),
-            result = false;
+        var cellState = this.getCellState(columnName);
 
-        if ($.inArray(editType, notEditableTypeList) === -1) {
-            result = this.getCellState(columnName).isEditable;
-        }
-        return result;
+        return !cellState.isDisabled && cellState.isEditable;
     },
 
     /**

@@ -49,6 +49,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             checkbox: new ButtonPainter({
                 controller: controller,
                 inputType: 'checkbox'
+            }),
+
+            radio: new ButtonPainter({
+                controller: controller,
+                inputType: 'radio'
             })
         };
     },
@@ -83,6 +88,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             checkbox: new CellPainter({
                 editType: 'checkbox',
                 inputPainter: this.inputPainters.checkbox
+            }),
+
+            radio: new CellPainter({
+                editType: 'checkbox',
+                inputPainter: this.inputPainters.radio
             })
         };
     },

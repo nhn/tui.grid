@@ -113,16 +113,16 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     refresh: function(cellData, $td) {
         var hasFocusedInput = !!($td.find(':focus').length),
-            isEditingOnlyChanged = cellData.changed.length === 1 && cellData.changed[0] === 'isEditing',
+            isEditingChangedOnly = cellData.changed.length === 1 && cellData.changed[0] === 'isEditing',
             isValueChanged = _.contains(cellData.changed, 'value'),
             isDisabledChanged = _.contains(cellData.changed, 'isDisabled');
 
         console.log('refresh', cellData);
-        if (isEditingOnlyChanged) {
+        if (isEditingChangedOnly) {
             if (cellData.isEditing && !hasFocusedInput) {
                 this.inputPainter.focus($td);
             } else if (!cellData.isEditing) {
-                this.inputPainter.setValue($td, cellData.value);
+                $td.html(this._getContentHtml(cellData));
             }
         } else {
             $td.attr(this._getAttributes(cellData));
