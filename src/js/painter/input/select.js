@@ -32,9 +32,6 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
     /**
      * Options markup template
-     * It will be added to content
-     * :: The value of option is a type of stirng, and use '==' operator for
-     *    comparison regardless of some types of value in cellData
      * @returns {string} html
      */
     optionTemplate: _.template(

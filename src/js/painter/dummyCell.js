@@ -34,7 +34,6 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      */
     selector: 'td[edit-type=dummy]',
 
-
     /**
      * Template function
      * @returns {String} HTML string

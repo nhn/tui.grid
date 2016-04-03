@@ -123,10 +123,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter(),
-            columnModelList = this._getColumnModelList();
+            columnNames = _.pluck(this._getColumnModelList(), 'columnName');
 
         return _.map(rows, function(row) {
-            return rowPainter.generateHtml(row, columnModelList);
+            return rowPainter.generateHtml(row, columnNames);
         }).join('');
     },
 

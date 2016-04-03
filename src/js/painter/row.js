@@ -58,16 +58,16 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Array.<Object>} columnModelList- Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _generateHtmlForDummyRow: function(columnModelList) {
+    _generateHtmlForDummyRow: function(columnNames) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
-        _.each(columnModelList, function(columnModel) {
-            html += cellPainter.generateHtml(columnModel.columnName);
+        _.each(columnNames, function(columnName) {
+            html += cellPainter.generateHtml(columnName);
         });
 
         return html;
@@ -76,16 +76,15 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     /**
      * Returns the HTML string of all cells in Actual row.
      * @param  {module:model/row} model - View model instance
-     * @param  {Array.<Object>} columnModelList - Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _generateHtmlForActualRow: function(model, columnModelList) {
+    _generateHtmlForActualRow: function(model, columnNames) {
         var html = '';
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel.columnName,
-                cellData = model.get(columnName),
+        _.each(columnNames, function(columnName) {
+            var cellData = model.get(columnName),
                 editType, cellPainter;
 
             if (cellData && cellData.isMainRow) {
@@ -101,17 +100,17 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     /**
      * Returns the HTML string of all cells in the given model (row).
      * @param  {module:model/row} model - View model instance
-     * @param  {Array.<Object>} columnModelList - Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      */
-    generateHtml: function(model, columnModelList) {
+    generateHtml: function(model, columnNames) {
         var rowKey = model.get('rowKey'),
             html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._generateHtmlForDummyRow(columnModelList);
+            html = this._generateHtmlForDummyRow(columnNames);
         } else {
-            html = this._generateHtmlForActualRow(model, columnModelList);
+            html = this._generateHtmlForActualRow(model, columnNames);
         }
 
         return this.template({
@@ -123,8 +122,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     },
 
     /**
-     * model 변경 시 이벤트 핸들러
-     * @param {object} changed - 변화가 일어난 모델 인스턴스
+     * Refreshes the row(TR) element.
+     * @param {object} changed - object that contains the changed data using columnName as keys
      * @param {jQuery} $tr - jquery object for tr element
      */
     refresh: function(changed, $tr) {
