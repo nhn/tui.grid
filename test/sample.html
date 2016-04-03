@@ -24,149 +24,61 @@
 <script src="../lib/tui-component-pagination/pagination.js"></script>
 <script src="../build/grid.js"></script>
 <script>
-var rowList = [];
-(function() {
-	_.times(10, function(number) {
-	    rowList.push({
-			c1: '1',
-            c2: '2',
-            c3: 2,
-            c4: 2
-		});
-	})
-})();
-
 var grid = new tui.Grid({
     el: $('#grid'),
 	selectType: 'checkbox',
-	// columnFixCount: 1,
+	columnFixCount: 1,
 	headerHeight: 30,
-	displayRowCount: 15,
+	displayRowCount: 10,
 	minimumColumnWidth: 100,
-    showDummyRows: true,
     columnModelList: [
-		// {
-		// 	columnName: '_button',
-		// 	width: 30
-		// },
+		{
+			columnName: '_button',
+			width: 30
+		},
 		{
 			title: 'c1',
             columnName: 'c1',
-            formatter: function(value, rowData, columnModel) {
-                return value + 'hi';
-            },
+			isRequired: true,
             editOption: {
-                // converter: function(value, rowData) {
-                //     if (rowData.rowKey % 2 === 0) {
-                //         return '<strong>' + value + '</strong>';
-                //     } else {
-                //         return false;
-                //     }
-                // },
-                beforeContent: 'hello ',
-				type: 'text',
-                afterContent: ' after'
+				type: 'text-convertible'
 			}
         },
-        {
+		{
 			title: 'c2',
+			isSortable: true,
+			defaultValue: 2,
             columnName: 'c2',
             editOption: {
-                beforeContent: 'before',
-				type: 'password',
-                afterContent: ' after'
+                type: 'select',
+				list: [
+					{text:1, value:1},
+					{text:2, value:2}
+				]
 			}
         },
-        {
+		{
 			title: 'c3',
             columnName: 'c3',
+			defaultValue: 2,
             editOption: {
-                // beforeContent: 'before',
-				type: 'checkbox',
-                list: [
-                    {text: 1, value: 1},
-                    {text: 2, value: 2},
-                    {text: 3, value: 3}
-                ],
-                // afterContent: ' after'
+                type: 'checkbox',
+				list: [
+					{text:1, value:1},
+					{text:2, value:2}
+				]
 			}
-        },
-        {
-			title: 'c4',
-            columnName: 'c4',
-            editOption: {
-                beforeContent: 'before',
-				type: 'radio',
-                list: [
-                    {text: 1, value: 1},
-                    {text: 2, value: 2},
-                    {text: 3, value: 3}
-                ],
-                afterContent: ' after'
-			}
-        },
-        {
-			title: 'c5',
-            columnName: 'c5',
-            editOption: {
-                beforeContent: 'before',
-				type: 'select',
-                list: [
-                    {text: 1, value: 1},
-                    {text: 2, value: 2},
-                    {text: 3, value: 3}
-                ],
-                afterContent: ' after'
-			}
-        },
-		// {
-		// 	title: 'c2',
-        //     columnName: 'c2',
-		// 	isRequired: true,
-        //     editOption: {
-		// 		type: 'text',
-        //         inputEvents: {
-        //             blur: function(e, cellInfo) {
-        //                 console.log('blur', e, cellInfo);
-        //             },
-        //             focus: function(e) {
-        //                 console.log('focus', e);
-        //
-        //             },
-        //             keydown: function(e) {
-        //                 console.log('keydown', e);
-        //             }
-        //         }
-		// 	}
-        // },
-		// {
-		// 	title: 'c3',
-		// 	isSortable: true,
-		// 	defaultValue: 2,
-        //     columnName: 'c3',
-        //     editOption: {
-        //         type: 'select',
-		// 		list: [
-		// 			{text:1, value:1},
-		// 			{text:2, value:2}
-		// 		]
-		// 	}
-        // },
-		// {
-		// 	title: 'c4',
-        //     columnName: 'c4',
-		// 	defaultValue: 2,
-        //     editOption: {
-        //         type: 'checkbox',
-		// 		list: [
-		// 			{text:1, value:1},
-		// 			{text:2, value:2}
-		// 		]
-		// 	}
-        // }
+        }
 	]
 });
-
+var rowList = [];
+(function() {
+	_.times(5, function(number) {
+	    rowList.push({
+			c1: 1
+		});
+	})
+})();
 grid.setRowList(rowList);
 // grid.use('Net', {
 // 	perPage: 10,
