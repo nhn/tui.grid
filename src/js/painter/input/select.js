@@ -1,5 +1,5 @@
 /**
- * @fileoverview CellPainter 의 기초 클래스
+ * @fileoverview Painter class for 'select' input.
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,7 +8,7 @@ var InputPainter = require('./base');
 var util = require('../../common/util');
 
 /**
- * Cell Painter Base
+ * Painter class for 'select' input.
  * @module painter/cell
  * @extends module:base/painter
  */
@@ -42,11 +42,11 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     ),
 
     /**
-     * Returns the html string
+     * Generates a HTML string from given data, and returns it.
      * @param {Object} cellData - cellData
      * @returns {String}
      */
-    getHtml: function(cellData) {
+    generateHtml: function(cellData) {
         var optionItems = cellData.columnModel.editOption.list,
             optionHtml;
 

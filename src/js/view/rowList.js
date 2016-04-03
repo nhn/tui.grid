@@ -44,7 +44,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
-            // .listenTo(focusModel, 'focusIn', this._onFocusIn)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
             .listenTo(renderModel, 'rowListChanged', this.render);
 
@@ -127,7 +126,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             columnModelList = this._getColumnModelList();
 
         return _.map(rows, function(row) {
-            return rowPainter.getHtml(row, columnModelList);
+            return rowPainter.generateHtml(row, columnModelList);
         }).join('');
     },
 
@@ -230,25 +229,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $td = trMap[mainRowKey].find('td[columnname=' + columnName + ']');
             $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
         }, this);
-    },
-
-    /**
-     * Event handler for 'focusIn' event on module:model/focus
-     * @param  {(Number|String)} rowKey - RowKey of the target cell
-     * @param  {String} columnName columnName - ColumnName of the target cell
-     * @private
-     */
-    _onFocusIn: function(rowKey, columnName) {
-        var whichSide = this.columnModel.isLside(columnName) ? 'L' : 'R',
-            $td, editType, cellPainter;
-
-        if (whichSide === this.whichSide) {
-            $td = this.dataModel.getElement(rowKey, columnName);
-            editType = this.columnModel.getEditType(columnName);
-            cellPainter = this.painterManager.getCellPainter(editType);
-
-            cellPainter.focusIn($td);
-        }
     },
 
     /**

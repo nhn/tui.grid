@@ -1,5 +1,5 @@
 /**
- * @fileoverview CellPainter 의 기초 클래스
+ * @fileoverview Painter class for cell(TD) views
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,7 +8,7 @@ var Painter = require('../base/painter');
 var util = require('../common/util');
 
 /**
- * Cell Painter Base
+ * Painter class for cell(TD) views
  * @module painter/cell
  * @extends module:base/painter
  */
@@ -34,10 +34,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     ),
 
     /**
-     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
-     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
+     * @param {Object} cellData - cell data
+     * @returns {String}
      * @private
      */
     _getContentHtml: function(cellData) {
@@ -46,9 +45,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             afterContent = cellData.afterContent;
 
         if (this.inputPainter) {
-            content = this.inputPainter.getHtml(cellData);
+            content = this.inputPainter.generateHtml(cellData);
 
-            if (this._shouldWrapContent()) {
+            if (this._shouldContentBeWrapped()) {
                 beforeContent = this._getSpanWrapContent(beforeContent, 'before');
                 afterContent = this._getSpanWrapContent(afterContent, 'after');
                 content = this._getSpanWrapContent(content, 'input');
@@ -60,7 +59,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         return beforeContent + content + afterContent;
     },
 
-    _shouldWrapContent: function() {
+    /**
+     * Returns whether the contents should be wrapped with span tags to display them correctly.
+     * @returns {Boolean}
+     */
+    _shouldContentBeWrapped: function() {
         return _.contains(['text', 'password', 'select'], this.editType);
     },
 
@@ -80,9 +83,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-     * @param {Object} cellData Model 의 셀 데이터
-     * @returns {Object} td 에 지정할 attribute 데이터
+     * Returns the object contains attributes of a TD element.
+     * @param {Object} cellData - cell data
+     * @returns {Object}
+     * @private
      */
     _getAttributes: function(cellData) {
         return {
@@ -94,8 +98,14 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         };
     },
 
-    attachEventHandlers: function($target, selector) {
-        selector += ' ' + this.selector;
+    /**
+     * Attaches all event handlers to the $target element.
+     * @param {jquery} $target - target element
+     * @param {String} parentSelector - selector of a parent element
+     * @override
+     */
+    attachEventHandlers: function($target, parentSelector) {
+        var selector = parentSelector + ' ' + this.selector;
 
         if (this.inputPainter) {
             this.inputPainter.attachEventHandlers($target, selector);
@@ -103,12 +113,12 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
-     * td 단위의 html 문자열을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} td 마크업 문자열
+     * Generates a HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @returns {string} HTML string of the cell (TD)
+     * @implements {module:base/painter}
      */
-    getHtml: function(cellData) {
+    generateHtml: function(cellData) {
         var attributeString = util.getAttributesString(this._getAttributes(cellData)),
             contentHtml = this._getContentHtml(cellData);
 
@@ -119,7 +129,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Refresh the cell(td) element.
+     * Refreshes the cell(td) element.
      * @param {object} cellData - cell data
      * @param {jQuery} $td - cell element
      */

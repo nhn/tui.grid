@@ -1,5 +1,5 @@
 /**
- * @fileoverview CellPainter 의 기초 클래스
+ * @fileoverview Base class for the Input Painter
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -21,31 +21,43 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         Painter.apply(this, arguments);
     },
 
+    /**
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
+     */
     events: {
         blur: '_onBlur',
         keydown: '_onKeyDown',
         focus: '_onFocus'
     },
 
+    /**
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
     selector: 'input',
 
+    /**
+     * keydown Actions
+     * @type {Object}
+     */
     keyDownActions: {
         ESC: function(param) {
-            this.controller.endEdit(param.address, true);
+            this.controller.finishEditing(param.address, true);
         },
         ENTER: function(param) {
-            this.controller.endEdit(param.address, true, param.value);
+            this.controller.finishEditing(param.address, true, param.value);
         },
         TAB: function(param) {
-            this.controller.endEdit(param.address, true, param.value);
-            this.controller.focusInNext(param.shiftKey);
+            this.controller.finishEditing(param.address, true, param.value);
+            this.controller.focusInToNextCell(param.shiftKey);
         }
     },
 
     /**
-     * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
-     * @param {jQuery} $target 조회할 엘리먼트
-     * @returns {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
+     * Returns the cell address of the target element.
+     * @param {jQuery} $target - target element
+     * @returns {{rowKey: String, columnName: String}}
      * @private
      */
     _getCellAddress: function($target) {
@@ -64,55 +76,54 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         this.keyDownActions = _.assign({}, this.keyDownActions, actions);
     },
 
+    /**
+     * Extends the default event object
+     * @param {Object} events - Object that contains the names of event handlers
+     */
     _extendEvents: function(events) {
         this.events = _.assign({}, this.events, events);
     },
 
     /**
-     * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
-     * 해당 이벤트 핸들러를 호출해준다.
-     * @param {Event} event - 이벤트 객체
-     * @param {string} eventType - The type of the event.
-     *     This value is required to clarify the type because the `event.type` of the 'focus' event
-     *     can be 'focusin' and the 'blur' event can be 'focusout'
-     * @returns {boolean} Return value of the event handler. Null if there's no event handler.
+     * Executes the custom handler (defined by user) of the input events.
+     * @param {Event} event - DOM event object
      * @private
      */
     _executeCustomEventHandler: function(event) {
         var $input = $(event.target),
-            cellInfo = this._getCellAddress($input);
+            address = this._getCellAddress($input);
 
-        return this.controller.executeCustomInputEventHandler(event, cellInfo);
+        this.controller.executeCustomInputEventHandler(event, address);
     },
 
     /**
-     * focus 이벤트 핸들러
-     * @param {Event} event 이벤트 객체
+     * Event handler for the 'focus' event.
+     * @param {Event} event - DOM event object
      * @private
      */
     _onFocus: function(event) {
         var address = this._getCellAddress($(event.target));
 
         this._executeCustomEventHandler(event);
-        this.controller.startEdit(address);
+        this.controller.startEditing(address);
     },
 
     /**
-     * blur 이벤트 핸들러
-     * @param {Event} blurEvent 이벤트 객체
+     * Event handler for the 'blur' event.
+     * @param {Event} event - DOM event object
      * @private
      */
-    _onBlur: function(blurEvent) {
+    _onBlur: function(event) {
         var $target = $(event.target),
             address = this._getCellAddress($target);
 
-        this._executeCustomEventHandler(blurEvent);
-        this.controller.endEdit(address, false, $target.val());
+        this._executeCustomEventHandler(event);
+        this.controller.finishEditing(address, false, $target.val());
     },
 
     /**
-     * keydown 이벤트 핸들러
-     * @param  {KeyboardEvent} event 키보드 이벤트 객체
+     * Event handler for the 'keydown' event.
+     * @param  {KeyboardEvent} event - KeyboardEvent object
      * @private
      */
     _onKeyDown: function(event) {
@@ -135,6 +146,10 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         }
     },
 
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     */
     focus: function($parent) {
         var $input = $parent.find(this.selector);
 

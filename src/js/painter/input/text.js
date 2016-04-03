@@ -1,5 +1,5 @@
 /**
- * @fileoverview CellPainter 의 기초 클래스
+ * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -9,7 +9,7 @@ var util = require('../../common/util');
 var formUtil = require('../../common/formUtil');
 
 /**
- * Cell Painter Base
+ * Painter class for the 'input[type=text]' and 'input[type=password]'
  * @module painter/cell
  * @extends module:base/painter
  */
@@ -43,9 +43,9 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     ),
 
     /**
-     * selectstart 이벤트 핸들러
-     * IE에서 selectstart 이벤트가 Input 요소에 까지 적용되어 값에 셀렉션 지정이 안되는 문제를 해결
-     * @param {Event} event 이벤트 객체
+     * Event handler for the'selectstart' event.
+     * (To prevent 'selectstart' event be prevented by module:view/layout/body in IE)
+     * @param {Event} event - DOM event object
      * @private
      */
     _onSelectStart: function(event) {
@@ -53,12 +53,11 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     },
 
     /**
-     * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
-     * td 단위의 html 문자열을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} td 마크업 문자열
+     * Generates a HTML string from given data, and returns it.
+     * @param {Object} cellData - cell data
+     * @returns {String}
      */
-    getHtml: function(cellData) {
+    generateHtml: function(cellData) {
         var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
 
         return this.template({
@@ -71,8 +70,9 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     },
 
     /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
      * @override
-     * @param {[type]} $parent [description]
      */
     focus: function($parent) {
         var $input = $parent.find(this.selector);

@@ -94,7 +94,11 @@ var util = {
         return rowCount === 0 ? 0 : Math.floor(((tableHeight - CELL_BORDER_WIDTH) / rowCount));
     },
 
-
+    /**
+     * Returns whether the column of a given name is meta-column.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
     isMetaColumn: function(columnName) {
         return _.contains(['_button', '_number'], columnName);
     },

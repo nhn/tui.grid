@@ -205,6 +205,13 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         return data;
     },
 
+    /**
+     * Returns the class name string of the a cell.
+     * @param {String} columnName - column name
+     * @param {module:model/data/row} [row] - data model of a row
+     * @param {module:model/focus} [focusModel] - focus model
+     * @returns {String}
+     */
     _getClassNameString: function(columnName, row, focusModel) {
         var classNames;
 
@@ -345,7 +352,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         return rowSpanData;
     },
 
-    refreshClassName: function(columnName) {
+    /**
+     * Updates the className attribute of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     */
+    updateClassName: function(columnName) {
         this.setCell(columnName, {
             className: this._getClassNameString(columnName)
         });

@@ -6,9 +6,9 @@
 
 /**
  * Base class for Painters
- * - HTML Element 당 하나의 view 를 생성하면 성능이 좋지 않기 때문에 Drawer 라는 개념을 도입.
- * - 마크업 문자열을 생성하고 이벤트 핸들러를 attach, detach 하는 역할.
- * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
+ * The Painter class is implentation of 'flyweight' pattern for the View class.
+ * This aims to act like a View class but doesn't create an instance of each view items
+ * to improve rendering performance.
  * @module base/painter
  */
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
@@ -20,24 +20,38 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
         this.controller = options.controller;
     },
 
+    /**
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
+     */
     events: {},
 
+    /**
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
     selector: '',
 
-    attachEventHandlers: function($target, rootSelector) {
+    /**
+     * Attaches all event handlers to the $target element.
+     * @param {jquery} $target - target element
+     * @param {String} parentSelector - selector of a parent element
+     */
+    attachEventHandlers: function($target, parentSelector) {
         _.each(this.events, function(methodName, eventName) {
             var bindedHandler = _.bind(this[methodName], this),
-                selector = rootSelector + ' ' + this.selector;
+                selector = parentSelector + ' ' + this.selector;
 
             $target.on(eventName, selector, bindedHandler);
         }, this);
     },
 
     /**
-     * 렌더러에서 반환할 HTML 스트링
+     * Generates a HTML string from given data, and returns it.
+     * @abstract
      */
-    getHtml: function() {
-        throw new Error('implement getHtml() method');
+    generateHtml: function() {
+        throw new Error('implement generateHtml() method');
     }
 });
 

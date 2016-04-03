@@ -1,6 +1,18 @@
+/**
+ * @fileoverview Controller class to handle actions from the painters
+ * @author NHN Ent. FE Development Team
+ */
 'use strict';
 
-var PainterController = tui.util.defineClass({
+/**
+ * Controller class to handle actions from the painters
+ * @module controller/painter
+ */
+var PainterController = tui.util.defineClass(/**@lends module:controller/painter.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - options
+     */
     init: function(options) {
         this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
@@ -8,8 +20,13 @@ var PainterController = tui.util.defineClass({
         this.selectionModel = options.selectionModel;
     },
 
-    startEdit: function(address) {
-        var result = this.focusModel.startEdit(address.rowKey, address.columnName);
+    /**
+     * Starts editing a cell identified by a given address, and returns the result.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @returns {Boolean} true if succeeded, false otherwise
+     */
+    startEditing: function(address) {
+        var result = this.focusModel.startEditing(address.rowKey, address.columnName);
 
         if (!result) {
             return false;
@@ -19,7 +36,14 @@ var PainterController = tui.util.defineClass({
         return true;
     },
 
-    endEdit: function(address, shouldBlur, value) {
+    /**
+     * Ends editing a cell identified by a given address, and returns the result.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {Boolean} shouldBlur - if set to true, make the current input lose focus.
+     * @param {String} [value] - if not undefined, set the value of the data model to this value.
+     * @returns {Boolean} - true if succeeded, false otherwise
+     */
+    finishEditing: function(address, shouldBlur, value) {
         var focusModel = this.focusModel;
 
         if (!focusModel.isEditingCell(address.rowKey, address.columnName)) {
@@ -32,7 +56,7 @@ var PainterController = tui.util.defineClass({
             this.dataModel.setValue(address.rowKey, address.columnName, value);
             this.dataModel.get(address.rowKey).validateCell(address.columnName);
         }
-        focusModel.endEdit();
+        focusModel.finishEditing();
 
         if (shouldBlur) {
             focusModel.focusClipboard();
@@ -45,7 +69,11 @@ var PainterController = tui.util.defineClass({
         return true;
     },
 
-    focusInNext: function(reverse) {
+    /**
+     * Moves focus to the next cell, and starts editing the cell.
+     * @param {Boolean} reverse - if set to true, find the previous cell instead of next cell
+     */
+    focusInToNextCell: function(reverse) {
         var focusModel = this.focusModel,
             rowKey = focusModel.get('rowKey'),
             columnName = focusModel.get('columnName'),
@@ -56,8 +84,13 @@ var PainterController = tui.util.defineClass({
         }
     },
 
-    executeCustomInputEventHandler: function(event, cellInfo) {
-        var columnModel = this.columnModel.getColumnModel(cellInfo.columnName),
+    /**
+     * Executes the custom handler (defined by user) of the input events.
+     * @param {Event} event - DOM Event object
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     */
+    executeCustomInputEventHandler: function(event, address) {
+        var columnModel = this.columnModel.getColumnModel(address.columnName),
             eventType = event.type,
             eventHandler;
 
@@ -70,18 +103,18 @@ var PainterController = tui.util.defineClass({
         eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventType);
 
         if (_.isFunction(eventHandler)) {
-            return eventHandler(event, cellInfo);
+            eventHandler.call(event.target, event, address);
         }
-
-        return null;
     },
 
+    /**
+     * Appends an empty row and moves focus to the first cell of the row.
+     */
     appendEmptyRowAndFocus: function() {
         this.dataModel.append({}, {
             focus: true
         });
     }
 });
-
 
 module.exports = PainterController;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview CellPainter 의 기초 클래스
+ * @fileoverview Painter class for 'checkbox' and 'radio button'.
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,8 +8,8 @@ var InputPainter = require('./base');
 var util = require('../../common/util');
 
 /**
- * Cell Painter Base
- * @module painter/cell
+ * Painter class for 'checkbox' and 'radio button'.
+ * @module painter/input/button
  * @extends module:base/painter
  */
 var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/cell.prototype */{
@@ -25,13 +25,13 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
         this._extendKeydownActions({
             TAB: function(param) {
                 if (!this._focusNextInput(param.$target, param.shiftKey)) {
-                    this.controller.endEdit(param.address, true, param.value);
-                    this.controller.focusInNext(param.shiftKey);
+                    this.controller.finishEditing(param.address, true, param.value);
+                    this.controller.focusInToNextCell(param.shiftKey);
                 }
             },
             ENTER: function(param) {
                 var value = this._getCheckedValueString(param.$target);
-                this.controller.endEdit(param.address, true, value);
+                this.controller.finishEditing(param.address, true, value);
             },
             LEFT_ARROW: function(param) {
                 this._focusNextInput(param.$target, true);
@@ -76,12 +76,17 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
             if (!$target.siblings('input:focus').length) {
                 address = self._getCellAddress($target);
                 value = self._getCheckedValueString($target);
-                self.controller.endEdit(address, false, value);
+                self.controller.finishEditing(address, false, value);
             }
         });
     },
 
-
+    /**
+     * Moves focus to the next input element.
+     * @param {jquery} $target - target element
+     * @param {Boolean} reverse - if set to true, find previous element instead of next element.
+     * @returns {Boolean} - false if no element exist, true otherwise.
+     */
     _focusNextInput: function($target, reverse) {
         var traverseFuncName = reverse ? 'prevAll' : 'nextAll',
             $nextInputs = $target[traverseFuncName]('input');
@@ -110,14 +115,13 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
         return checkedValues.join(',');
     },
 
-
     /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {String} - HTML String
+     * Generates a HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @returns {string} HTML string
+     * @implements {module:base/painter}
      */
-    getHtml: function(cellData) {
+    generateHtml: function(cellData) {
         var value = cellData.value,
             html = cellData.convertedHTML,
             name = util.getUniqueKey(),

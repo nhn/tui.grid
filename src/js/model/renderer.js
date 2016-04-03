@@ -120,13 +120,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for 'focus blur' event on focusModel
+     * Event handler for 'focus' and 'blur' events on focusModel
      * @param {Number|String} rowKey - row key
      * @param {String} columnName - column name
      * @private
      */
     _onFocusOrBlur: function(rowKey, columnName) {
-        this._getRowModel(rowKey, columnName).refreshClassName(columnName);
+        this._getRowModel(rowKey, columnName).updateClassName(columnName);
     },
 
     /**
@@ -148,6 +148,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
     },
 
+    /**
+     * Updates the view-data of the cell identified by given rowKey and columnName.
+     * @param {(String|Number)} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Object} cellData - cell data
+     * @private
+     */
     _updateCellData: function(rowKey, columnName, cellData) {
         var rowModel = this._getRowModel(rowKey, columnName);
 
@@ -204,8 +211,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'add' event on dataModel.
-     * @param  {Array.<module:model/data/rowList>} dataModel - New appended row model
-     * @param  {Object} options - Options. See {@link module:model/data/rowList#append}
+     * @param  {module:model/data/rowList} dataModel - data model
+     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
      * @private
      */
     _onAddDataModel: function(dataModel, options) {

@@ -33,10 +33,34 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     defaults: {
+        /**
+         * row key of the current cell
+         * @type {String|Number}
+         */
         rowKey: null,
+
+        /**
+         * column name of the current cell
+         * @type {String}
+         */
         columnName: '',
+
+        /**
+         * row key of the previously focused cell
+         * @type {String|Number}
+         */
         prevRowKey: null,
+
+        /**
+         * column name of the previously focused cell
+         * @type {String}
+         */
         prevColumnName: '',
+
+        /**
+         * address of the editing cell.
+         * @type {{rowKey:(String|Number), columnName:String}}
+         */
         editingAddress: null
     },
 
@@ -208,7 +232,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
             if (this.dataModel.get(rowKey).isEditable(columnName)) {
-                this.startEdit(rowKey, columnName);
+                this.startEditing(rowKey, columnName);
                 this.trigger('focusIn', rowKey, columnName);
             } else {
                 this.focusClipboard();
@@ -354,7 +378,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Returns whether the specified cell is editing now.
+     * Returns whether the cell identified by given rowKey and columnName is editing now.
      * @param {Number} rowKey - row key
      * @param {String} columnName - column name
      * @returns {Boolean}
@@ -367,7 +391,13 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             (address.columnName === columnName);
     },
 
-    startEdit: function(rowKey, columnName) {
+    /**
+     * Starts editing a cell identified by given rowKey and columnName, and returns the result.
+     * @param {(String|Number)} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Boolean} true if succeeded, false otherwise.
+     */
+    startEditing: function(rowKey, columnName) {
         if (this.get('editingAddress')) {
             return false;
         }
@@ -384,7 +414,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         return true;
     },
 
-    endEdit: function() {
+    /**
+     * Finishes editing the current cell, and returns the result.
+     * @returns {Boolean} - true if an editing cell exist, false otherwise.
+     */
+    finishEditing: function() {
         if (!this.get('editingAddress')) {
             return false;
         }

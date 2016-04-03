@@ -29,6 +29,13 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
         this.rowPainter = this._createRowPainter();
     },
 
+    /**
+     * Creates instances of input painters and returns the object that stores them
+     * using 'inputType' as keys.
+     * @param {module:painter/controller} controller - painter controller
+     * @returns {Object}
+     * @private
+     */
     _createInputPainters: function(controller) {
         return {
             text: new TextPainter({
@@ -54,8 +61,9 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     },
 
     /**
-     * Creates instances of cell painters and returns the map object that stores them
-     * using 'editType' as a key.
+     * Creates instances of cell painters and returns the object that stores them
+     * using 'editType' as keys.
+     * @param {module:painter/controller} controller - painter controller
      * @returns {Object} Key-value object
      * @private
      */

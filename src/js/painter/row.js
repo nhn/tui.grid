@@ -1,5 +1,5 @@
 /**
- * @fileoverview Row Painter 정의
+ * @fileoverview Painter class for the row(TR) views
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,8 +8,7 @@ var Painter = require('../base/painter');
 var util = require('../common/util');
 
 /**
- * Row Painter
- * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
+ * Painter class for the row(TR) views
  * @module painter/row
  * @extends module:base/painter
  */
@@ -17,16 +16,22 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     /**
      * @constructs
      * @param {object} options - Options
-     *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
-     *      @param {object} options.collection change 를 감지할 collection 객체
      */
     init: function(options) {
         Painter.apply(this, arguments);
         this.painterManager = options.painterManager;
     },
 
+    /**
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
     selector: 'tr',
 
+    /**
+     * markup template
+     * @returns {String} HTML string
+     */
     template: _.template(
         '<tr ' +
         'key="<%=key%>" ' +
@@ -57,12 +62,12 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForDummyRow: function(columnModelList) {
+    _generateHtmlForDummyRow: function(columnModelList) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
         _.each(columnModelList, function(columnModel) {
-            html += cellPainter.getHtml(columnModel.columnName);
+            html += cellPainter.generateHtml(columnModel.columnName);
         });
 
         return html;
@@ -75,7 +80,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForActualRow: function(model, columnModelList) {
+    _generateHtmlForActualRow: function(model, columnModelList) {
         var html = '';
 
         _.each(columnModelList, function(columnModel) {
@@ -86,7 +91,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             if (cellData && cellData.isMainRow) {
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
-                html += cellPainter.getHtml(cellData);
+                html += cellPainter.generateHtml(cellData);
             }
         }, this);
 
@@ -99,14 +104,14 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @param  {Array.<Object>} columnModelList - Column model list
      * @returns {String} HTLM string
      */
-    getHtml: function(model, columnModelList) {
+    generateHtml: function(model, columnModelList) {
         var rowKey = model.get('rowKey'),
             html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._getHtmlForDummyRow(columnModelList);
+            html = this._generateHtmlForDummyRow(columnModelList);
         } else {
-            html = this._getHtmlForActualRow(model, columnModelList);
+            html = this._generateHtmlForActualRow(model, columnModelList);
         }
 
         return this.template({

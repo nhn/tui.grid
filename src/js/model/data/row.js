@@ -244,9 +244,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
+     * Returns the state of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     * @returns {{isEditable: boolean, isDisabled: boolean}}
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -281,9 +281,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean}    편집 가능한지 여부
+     * Returns whether the cell identified by a given column name is editable.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
      */
     isEditable: function(columnName) {
         var cellState = this.getCellState(columnName);
@@ -292,9 +292,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean}    disabled 처리를 할지 여부
+     * Returns whether the cell identified by a given column name is disabled.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
      */
     isDisabled: function(columnName) {
         var cellState = this.getCellState(columnName);

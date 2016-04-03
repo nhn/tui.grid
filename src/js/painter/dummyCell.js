@@ -20,14 +20,20 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
         Painter.apply(this, arguments);
     },
 
-    selector: 'td[edit-type=dummy]',
-
     /**
-     * Event handlers
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
      */
     events: {
         dblclick: '_onDblClick'
     },
+
+    /**
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
+    selector: 'td[edit-type=dummy]',
+
 
     /**
      * Template function
@@ -50,11 +56,12 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     },
 
     /**
-     * Returns the HTML string (TD) of the cell
+     * Generates a HTML string from given data, and returns it.
      * @param {String} columnName - column name
      * @returns {string} HTML string
+     * @implements {module:base/painter}
      */
-    getHtml: function(columnName) {
+    generateHtml: function(columnName) {
         var isMeta = util.isMetaColumn(columnName);
 
         return this.template({
