@@ -6,9 +6,9 @@
 
 /**
  * Controller class to handle actions from the painters
- * @module controller/painter
+ * @module painter/controller
  */
-var PainterController = tui.util.defineClass(/**@lends module:controller/painter.prototype */{
+var PainterController = tui.util.defineClass(/**@lends module:painter/controller.prototype */{
     /**
      * @constructs
      * @param {Object} options - options

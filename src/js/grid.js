@@ -306,7 +306,7 @@ var ViewFactory = require('./view/factory');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
-var PainterController = require('./controller/painter');
+var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
 
