@@ -39,10 +39,10 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      */
     attachEventHandlers: function($target, parentSelector) {
         _.each(this.events, function(methodName, eventName) {
-            var bindedHandler = _.bind(this[methodName], this),
+            var boundHandler = _.bind(this[methodName], this),
                 selector = parentSelector + ' ' + this.selector;
 
-            $target.on(eventName, selector, bindedHandler);
+            $target.on(eventName, selector, boundHandler);
         }, this);
     },
 

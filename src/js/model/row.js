@@ -278,13 +278,15 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getExtraContent: function(content, cellValue, rowAttrs) {
+        var result = '';
+
         if (_.isFunction(content)) {
-            return content(cellValue, rowAttrs);
+            result = content(cellValue, rowAttrs);
+        } else if (tui.util.isExisty(content)) {
+            result = content;
         }
-        if (tui.util.isExisty(content)) {
-            return content;
-        }
-        return '';
+
+        return result;
     },
 
     /**
@@ -296,12 +298,12 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getConvertedHTML: function(converter, cellValue, rowAttrs) {
-        var convertedHTML;
+        var convertedHTML = null;
 
         if (_.isFunction(converter)) {
             convertedHTML = converter(cellValue, rowAttrs);
         }
-        if (tui.util.isFalsy(convertedHTML)) {
+        if (convertedHTML === false) {
             convertedHTML = null;
         }
         return convertedHTML;

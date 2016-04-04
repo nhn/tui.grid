@@ -28,12 +28,11 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     startEditing: function(address) {
         var result = this.focusModel.startEditing(address.rowKey, address.columnName);
 
-        if (!result) {
-            return false;
+        if (result) {
+            this.selectionModel.end();
         }
 
-        this.selectionModel.end();
-        return true;
+        return result;
     },
 
     /**

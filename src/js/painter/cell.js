@@ -105,10 +105,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @override
      */
     attachEventHandlers: function($target, parentSelector) {
-        var selector = parentSelector + ' ' + this.selector;
-
         if (this.inputPainter) {
-            this.inputPainter.attachEventHandlers($target, selector);
+            this.inputPainter.attachEventHandlers($target, parentSelector + ' ' + this.selector);
         }
     },
 

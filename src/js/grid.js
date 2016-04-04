@@ -356,7 +356,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates painter manager and returns it
-     * @param {Number} selectType - input type of the main button (checkbox or radio)
      * @returns {module:painter/manager}
      * @private
      */

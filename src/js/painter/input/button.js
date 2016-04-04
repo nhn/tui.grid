@@ -122,20 +122,21 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @implements {module:base/painter}
      */
     generateHtml: function(cellData) {
-        var value = cellData.value,
-            html = cellData.convertedHTML,
-            name = util.getUniqueKey(),
-            checkedMap = {};
+        var value, checkedMap, name, html;
 
-        if (!_.isNull(html)) {
-            return html;
+        if (!_.isNull(cellData.convertedHTML)) {
+            return cellData.convertedHTML;
         }
+
+        value = cellData.value;
+        checkedMap = {};
+        name = util.getUniqueKey();
+        html = '';
 
         _.each(String(value).split(','), function(itemValue) {
             checkedMap[itemValue] = true;
         });
 
-        html = '';
         _.each(cellData.columnModel.editOption.list, function(item) {
             var id = name + '_' + item.value;
 

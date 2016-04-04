@@ -130,7 +130,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for 'change:editing' event on focusModel
+     * Event handler for 'change:editingAddress' event on focusModel
      * @param {module:model/focus} focusModel - focus model
      * @param {{rowKey: Number, columnName: String}} address - address
      * @private
