@@ -419,6 +419,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             return false;
         }
 
+        console.log('finishEditing', this.get('editingAddress'));
+        console.trace();
         this.set('editingAddress', null);
 
         return true;

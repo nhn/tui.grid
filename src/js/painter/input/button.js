@@ -24,8 +24,10 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
         this._extendKeydownActions({
             TAB: function(param) {
+                var value;
                 if (!this._focusNextInput(param.$target, param.shiftKey)) {
-                    this.controller.finishEditing(param.address, true, param.value);
+                    value = this._getCheckedValueString(param.$target);
+                    this.controller.finishEditing(param.address, true, value);
                     this.controller.focusInToNextCell(param.shiftKey);
                 }
             },
@@ -64,6 +66,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     /**
      * Event handler for 'blur' event
      * @param {Event} event - event object
+     * @override
      * @private
      */
     _onBlur: function(event) {
