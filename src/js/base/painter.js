@@ -33,6 +33,19 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     selector: '',
 
     /**
+     * Returns the cell address of the target element.
+     * @param {jQuery} $target - target element
+     * @returns {{rowKey: String, columnName: String}}
+     * @private
+     */
+    _getCellAddress: function($target) {
+        return {
+            rowKey: $target.closest('tr').attr('key'),
+            columnName: $target.closest('td').attr('columnName')
+        };
+    },
+
+    /**
      * Attaches all event handlers to the $target element.
      * @param {jquery} $target - target element
      * @param {String} parentSelector - selector of a parent element

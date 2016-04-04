@@ -55,19 +55,6 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
-     * Returns the cell address of the target element.
-     * @param {jQuery} $target - target element
-     * @returns {{rowKey: String, columnName: String}}
-     * @private
-     */
-    _getCellAddress: function($target) {
-        return {
-            rowKey: $target.closest('tr').attr('key'),
-            columnName: $target.closest('td').attr('columnName')
-        };
-    },
-
-    /**
      * Extends the default keydown actions.
      * @param {Object} actions - Object that contains the action functions
      * @private

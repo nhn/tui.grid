@@ -68,34 +68,25 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @private
      */
     _createCellPainters: function(controller) {
-        return {
+        var cellPainters = {
             dummy: new DummyCellPainter({
                 controller: controller
             }),
             normal: new CellPainter({
+                controller: controller,
                 editType: 'normal'
-            }),
-            text: new CellPainter({
-                editType: 'text',
-                inputPainter: this.inputPainters.text
-            }),
-            password: new CellPainter({
-                editType: 'password',
-                inputPainter: this.inputPainters.password
-            }),
-            select: new CellPainter({
-                editType: 'select',
-                inputPainter: this.inputPainters.select
-            }),
-            checkbox: new CellPainter({
-                editType: 'checkbox',
-                inputPainter: this.inputPainters.checkbox
-            }),
-            radio: new CellPainter({
-                editType: 'radio',
-                inputPainter: this.inputPainters.radio
             })
         };
+
+        _.each(this.inputPainters, function(inputPainter, editType) {
+            cellPainters[editType] = new CellPainter({
+                editType: editType,
+                controller: controller,
+                inputPainter: inputPainter
+            });
+        }, this);
+
+        return cellPainters;
     },
 
     /**

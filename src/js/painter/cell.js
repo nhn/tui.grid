@@ -25,6 +25,14 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         this.selector = 'td[edit-type=' + this.editType + ']';
     },
 
+    /**
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
+     */
+    events: {
+        dblclick: '_onDblClick'
+    },
+
     /*
      * Markup template
      * @returns {string} template
@@ -32,6 +40,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     template: _.template(
         '<td <%=attributeString%>><%=contentHtml%></td>'
     ),
+
+    _onDblClick: function(event) {
+        var address = this._getCellAddress($(event.target));
+        this.controller.startEditing(address);
+    },
 
     /**
      * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
@@ -44,7 +57,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             beforeContent = cellData.beforeContent,
             afterContent = cellData.afterContent;
 
-        if (this.inputPainter) {
+        if (!this._isConvertible(cellData) && this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
 
             if (this._shouldContentBeWrapped()) {
@@ -57,6 +70,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         }
 
         return beforeContent + content + afterContent;
+    },
+
+    _isConvertible: function(cellData) {
+        return tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible');
     },
 
     /**
@@ -105,6 +122,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @override
      */
     attachEventHandlers: function($target, parentSelector) {
+        Painter.prototype.attachEventHandlers.call(this, $target, parentSelector);
+
         if (this.inputPainter) {
             this.inputPainter.attachEventHandlers($target, parentSelector + ' ' + this.selector);
         }
@@ -133,12 +152,22 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     refresh: function(cellData, $td) {
         var contentProps = ['value', 'isEditing', 'isDisabled'],
+            isEditingChanged = _.contains(cellData.changed, 'isEditing'),
             shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
 
         $td.attr(this._getAttributes(cellData));
 
-        if (cellData.isEditing) {
-            this.inputPainter.focus($td);
+        if (isEditingChanged) {
+            if (this._isConvertible(cellData)) {
+                if (cellData.isEditing) {
+                    $td.html(this.inputPainter.generateHtml(cellData));
+                    this.inputPainter.focus($td);
+                } else {
+                    $td.html(this._getContentHtml(cellData));
+                }
+            } else if (cellData.isEditing) {
+                this.inputPainter.focus($td);
+            }
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
         }
