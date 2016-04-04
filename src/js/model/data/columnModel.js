@@ -4,16 +4,8 @@
  */
 'use strict';
 
-var Model = require('../../base/model');
-
-/**
- * @ignore
- * @const
- * @type {string[]}
- * @desc
- *  Meta column names
- */
-var META_COLUMN_LIST = ['_button', '_number'];
+var Model = require('../../base/model'),
+    util = require('../../common/util');
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
@@ -106,11 +98,12 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         var selectType = this.get('selectType'),
             buttonColumn = {
                 columnName: '_button',
+                align: 'center',
                 isHidden: false,
                 editOption: {
                     type: selectType,
                     list: [{
-                        value: 'selected'
+                        value: true
                     }]
                 },
                 isFixedWidth: true,
@@ -269,11 +262,13 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     getEditType: function(columnName) {
         var columnModel = this.getColumnModel(columnName),
             editType = 'normal';
+
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
         } else if (columnModel && columnModel.editOption && columnModel.editOption.type) {
             editType = columnModel.editOption.type;
         }
+
         return editType;
     },
 
@@ -343,7 +338,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         }
 
         division = _.partition(columnModelList, function(model) {
-            return this.isMetaColumn(model.columnName);
+            return util.isMetaColumn(model.columnName);
         }, this);
         metaColumnModelList = this._initializeMetaColumns(division[0]);
         dataColumnModelList = division[1];
@@ -440,15 +435,6 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             }
         }
         return _.uniq(searchedNames);
-    },
-
-    /**
-     * Return whether the column is meta column
-     * @param {string} columnName - columnName
-     * @returns {boolean} Whether the column is meta column.
-     */
-    isMetaColumn: function(columnName) {
-        return _.indexOf(META_COLUMN_LIST, columnName) >= 0;
     }
 });
 

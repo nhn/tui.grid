@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var Painter = require('../base/painter');
+var Painter = require('../base/painter'),
+    util = require('../common/util');
 
 /**
  * Dummy Cell Painter
@@ -20,50 +21,48 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     },
 
     /**
-     * Event handlers
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
      */
-    eventHandler: {
+    events: {
         dblclick: '_onDblClick'
     },
 
     /**
-     * Template
-     * @returns {String} String
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
+    selector: 'td[edit-type=dummy]',
+
+    /**
+     * Template function
+     * @returns {String} HTML string
      */
     template: _.template(
         '<td columnname="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'edit-type="dummy">' +
-            '&nbsp;' + // '&nbsp' for height issue with empty cell in IE7
+            '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
-
-    /**
-     * Returns the edit type of the cell.
-     * (To implement interface of module:painter/cell)
-     * @returns {String} Edit type
-     */
-    getEditType: function() {
-        return 'dummy';
-    },
 
     /**
      * Event handler for 'dblclick' event
      * @private
      */
     _onDblClick: function() {
-        this.grid.dataModel.append({}, {
-            focus: true
-        });
+        this.controller.appendEmptyRowAndFocus(true);
     },
 
     /**
-     * Returns the HTML string (TD) of the cell
+     * Generates a HTML string from given data, and returns it.
      * @param {String} columnName - column name
      * @returns {string} HTML string
+     * @implements {module:base/painter}
      */
-    getHtml: function(columnName) {
-        var isMeta = this.grid.columnModel.isMetaColumn(columnName);
+    generateHtml: function(columnName) {
+        var isMeta = util.isMetaColumn(columnName);
+
         return this.template({
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'

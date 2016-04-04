@@ -20,15 +20,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     initialize: function(attributes) {
         var rowKey = attributes && attributes.rowKey,
-            rowListData = this.collection.dataModel,
-            rowData = rowListData.get(rowKey);
+            dataModel = this.collection.dataModel,
+            rowData = dataModel.get(rowKey);
+
+        this.dataModel = dataModel;
+        this.columnModel = this.collection.columnModel;
+        this.focusModel = this.collection.focusModel;
 
         if (rowData) {
             this.listenTo(rowData, 'change', this._onDataModelChange);
             this.listenTo(rowData, 'restore', this._onDataModelRestore);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
-            this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
-
+            this.listenTo(dataModel, 'disabledChanged', this._onDataModelDisabledChanged);
             this.rowData = rowData;
         }
     },
@@ -37,14 +40,19 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
     /**
      * Event handler for 'change' event on module:data/row
-     * @param {Object} model - RowData model on which event occurred
+     * @param {Object} rowData - RowData model on which event occurred
      * @private
      */
-    _onDataModelChange: function(model) {
-        _.each(model.changed, function(value, columnName) {
-            this.setCell(columnName, {
-                value: value
-            });
+    _onDataModelChange: function(rowData) {
+        _.each(rowData.changed, function(value, columnName) {
+            var column, isTextType;
+
+            if (this.has(columnName)) {
+                column = this.columnModel.getColumnModel(columnName);
+                isTextType = this.columnModel.isTextType(columnName);
+
+                this.setCell(columnName, this._getValueAttrs(value, rowData, column, isTextType));
+            }
         }, this);
     },
 
@@ -95,7 +103,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this.rowData.isDisabled(columnName)
+                isDisabled: this.rowData.isDisabled(columnName),
+                className: this._getClassNameString(columnName)
             });
         }, this);
     },
@@ -107,7 +116,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
             columnNames = this._getColumnNameList(),
-            // rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {
@@ -115,9 +123,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }
 
         _.each(columnNames, function(columnName) {
-            /*eslint-disable consistent-this */
             var cellData = this.get(columnName),
-                rowModel = this,
+                rowModel = this, // eslint-disable-line consistent-this
                 cellState;
 
             if (!tui.util.isUndefined(cellData)) {
@@ -129,12 +136,11 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                     param = {
                         isDisabled: cellState.isDisabled,
                         isEditable: cellState.isEditable,
-                        className: this.rowData.getClassNameList(columnName).join(' ')
+                        className: this._getClassNameString(columnName)
                     };
                     rowModel.setCell(columnName, param);
                 }
             }
-            /*eslint-enable consistent-this */
         }, this);
     },
 
@@ -147,63 +153,174 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @override
      */
     parse: function(data, options) {
-        return this._formatData(data, options.collection.dataModel, options.collection.columnModel);
+        var collection = options.collection;
+
+        return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
     },
 
     /**
-     * Convert the original data to rendering data.
+     * Convert the original data to the rendering data.
      * @param {Array} data - Original data
      * @param {module:model/data/rowList} dataModel - Data model
      * @param {module:model/data/columnModel} columnModel - Column model
+     * @param {module:model/data/focusModel} focusModel - focus model
+     * @param {Number} rowHeight - The height of a row
      * @returns {Array} - Converted data
      * @private
      */
-    _formatData: function(data, dataModel, columnModel) {
+    _formatData: function(data, dataModel, columnModel, focusModel) {
         var rowKey = data.rowKey,
-            row;
+            columnData, row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
+
         row = dataModel.get(rowKey);
+        columnData = _.omit(data, 'rowKey', '_extraData', 'height');
 
-        _.each(data, function(value, columnName) {
+        _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
-                cellState = row.getCellState(columnName);
+                cellState = row.getCellState(columnName),
+                isTextType = columnModel.isTextType(columnName),
+                column = columnModel.getColumnModel(columnName);
 
-            if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                data[columnName] = {
-                    rowKey: rowKey,
-                    columnName: columnName,
-                    value: this._getValueToDisplay(columnModel, columnName, value),
-                    rowSpan: rowSpanData.count,
-                    isMainRow: rowSpanData.isMainRow,
-                    mainRowKey: rowSpanData.mainRowKey,
-                    isEditable: cellState.isEditable,
-                    isDisabled: cellState.isDisabled,
-                    className: row.getClassNameList(columnName).join(' '),
-                    optionList: [], // for list type column (select, checkbox, radio)
-                    changed: [] //changed property names
-                };
-            }
+            data[columnName] = {
+                rowKey: rowKey,
+                columnName: columnName,
+                rowSpan: rowSpanData.count,
+                isMainRow: rowSpanData.isMainRow,
+                mainRowKey: rowSpanData.mainRowKey,
+                isEditable: cellState.isEditable,
+                isDisabled: cellState.isDisabled,
+                isEditing: focusModel.isEditingCell(rowKey, columnName),
+                isFocused: focusModel.isCurrentCell(rowKey, columnName),
+                className: this._getClassNameString(columnName, row, focusModel),
+                columnModel: column,
+                changed: [] //changed property names
+            };
+            _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
         }, this);
+
         return data;
     },
 
     /**
-     * Returns the value to display
-     * @param {module:model/data/columnModel} columnModel - column model
+     * Returns the class name string of the a cell.
      * @param {String} columnName - column name
-     * @param {String|Number} value - value
+     * @param {module:model/data/row} [row] - data model of a row
+     * @param {module:model/focus} [focusModel] - focus model
+     * @returns {String}
+     */
+    _getClassNameString: function(columnName, row, focusModel) {
+        var classNames;
+
+        if (!row) {
+            row = this.dataModel.get(this.get('rowKey'));
+        }
+        if (!focusModel) {
+            focusModel = this.focusModel;
+        }
+        classNames = row.getClassNameList(columnName);
+
+        if (focusModel.isCurrentCell(row.get('rowKey'), columnName)) {
+            classNames.push('focused');
+        }
+
+        return classNames.join(' ');
+    },
+
+    /**
+     * Returns the values of the attributes related to the cell value.
+     * @param {String|Number} value - Value
+     * @param {module:model/data/row} row - Row data model
+     * @param {Object} column - Column model object
+     * @param {Boolean} isTextType - True if the cell is the text-type
+     * @returns {Object}
+     * @private
+     */
+    _getValueAttrs: function(value, row, column, isTextType) {
+        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent'),
+            afterContent = tui.util.pick(column, 'editOption', 'afterContent'),
+            converter = tui.util.pick(column, 'editOption', 'converter'),
+            rowAttrs = row.toJSON();
+
+        return {
+            value: this._getValueToDisplay(value, column, isTextType),
+            formattedValue: this._getFormattedValue(value, rowAttrs, column),
+            beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
+            afterContent: this._getExtraContent(afterContent, value, rowAttrs),
+            convertedHTML: this._getConvertedHTML(converter, value, rowAttrs)
+        };
+    },
+
+    /**
+     * If the column has a 'formatter' function, exeucute it and returns the result.
+     * @param {String} value - value to display
+     * @param {Object} rowAttrs - All attributes of the row
+     * @param {Object} column - Column info
      * @returns {String}
      * @private
      */
-    _getValueToDisplay: function(columnModel, columnName, value) {
+    _getFormattedValue: function(value, rowAttrs, column) {
+        if (_.isFunction(column.formatter)) {
+            return column.formatter(value, rowAttrs, column);
+        }
+        return value;
+    },
+
+    /**
+     * Returns the value of the 'beforeContent' or 'afterContent'.
+     * @param {(String|Function)} content - content
+     * @param {String} cellValue - cell value
+     * @param {Object} rowAttrs - All attributes of the row
+     * @returns {string}
+     * @private
+     */
+    _getExtraContent: function(content, cellValue, rowAttrs) {
+        var result = '';
+
+        if (_.isFunction(content)) {
+            result = content(cellValue, rowAttrs);
+        } else if (tui.util.isExisty(content)) {
+            result = content;
+        }
+
+        return result;
+    },
+
+    /**
+     * If the 'converter' function exist, execute it and returns the result.
+     * @param {Function} converter - converter
+     * @param {String} cellValue - cell value
+     * @param {Object} rowAttrs - All attributes of the row
+     * @returns {(String|Null)} - HTML string or Null
+     * @private
+     */
+    _getConvertedHTML: function(converter, cellValue, rowAttrs) {
+        var convertedHTML = null;
+
+        if (_.isFunction(converter)) {
+            convertedHTML = converter(cellValue, rowAttrs);
+        }
+        if (convertedHTML === false) {
+            convertedHTML = null;
+        }
+        return convertedHTML;
+    },
+
+    /**
+     * Returns the value to display
+     * @param {String|Number} value - value
+     * @param {String} column - column name
+     * @param {Boolean} isTextType - True if the cell is the text-typee
+     * @returns {String}
+     * @private
+     */
+    _getValueToDisplay: function(value, column, isTextType) {
         var isExisty = tui.util.isExisty,
-            isTextType = columnModel.isTextType(columnName),
-            cellColumnModel = columnModel.getColumnModel(columnName),
-            notUseHtmlEntity = cellColumnModel.notUseHtmlEntity,
-            defaultValue = cellColumnModel.defaultValue;
+            notUseHtmlEntity = column.notUseHtmlEntity,
+            defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
@@ -238,6 +355,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
+     * Updates the className attribute of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     */
+    updateClassName: function(columnName) {
+        this.setCell(columnName, {
+            className: this._getClassNameString(columnName)
+        });
+    },
+
+    /**
      * Sets the cell data.
      * (Each cell data is reference type, so do not change the cell data directly and
      *  use this method to trigger change event)
@@ -249,7 +376,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             changed = [],
             rowIndex, rowKey, data;
 
-        if (!this.get(columnName)) {
+        if (!this.has(columnName)) {
             return;
         }
 
@@ -266,8 +393,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         if (changed.length) {
             data.changed = changed;
-            this.set(columnName, data);
-            if (isValueChanged) {
+            this.set(columnName, data, {
+                silent: isValueChanged && data.isEditing
+            });
+            if (isValueChanged && !data.isEditing) {
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }

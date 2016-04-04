@@ -4,16 +4,12 @@
  */
 'use strict';
 
-var MainButtonCell = require('./cell/mainButton');
-var NumberCell = require('./cell/number');
-var NormalCell = require('./cell/normal');
-var ButtonListCell = require('./cell/button');
-var SelectCell = require('./cell/select');
-var TextCell = require('./cell/text');
-var TextConvertibleCell = require('./cell/text-convertible');
-var TextPasswordCell = require('./cell/text-password');
-var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
+var CellPainter = require('./cell');
+var DummyCellPainter = require('./dummyCell');
+var TextPainter = require('./input/text');
+var SelectPainter = require('./input/select');
+var ButtonPainter = require('./input/button');
 
 /**
  * Painter manager
@@ -25,39 +21,81 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @param {Object} options - Options
      */
     init: function(options) {
-        this.modelManager = options.modelManager;
+        this.gridId = options.gridId;
+        this.selectType = options.selectType;
 
-        this.cellPainters = this._createCellPainters();
+        this.inputPainters = this._createInputPainters(options.controller);
+        this.cellPainters = this._createCellPainters(options.controller);
         this.rowPainter = this._createRowPainter();
     },
 
     /**
-     * Creates instances of cell painters and returns the map object that stores them
-     * using 'editType' as a key.
+     * Creates instances of input painters and returns the object that stores them
+     * using 'inputType' as keys.
+     * @param {module:painter/controller} controller - painter controller
+     * @returns {Object}
+     * @private
+     */
+    _createInputPainters: function(controller) {
+        return {
+            text: new TextPainter({
+                controller: controller,
+                inputType: 'text'
+            }),
+            password: new TextPainter({
+                controller: controller,
+                inputType: 'password'
+            }),
+            checkbox: new ButtonPainter({
+                controller: controller,
+                inputType: 'checkbox'
+            }),
+            radio: new ButtonPainter({
+                controller: controller,
+                inputType: 'radio'
+            }),
+            select: new SelectPainter({
+                controller: controller
+            })
+        };
+    },
+
+    /**
+     * Creates instances of cell painters and returns the object that stores them
+     * using 'editType' as keys.
+     * @param {module:painter/controller} controller - painter controller
      * @returns {Object} Key-value object
      * @private
      */
-    _createCellPainters: function() {
-        var cellPainters = {},
-            args = {
-                grid: this.modelManager
-            },
-            instanceList = [
-                new MainButtonCell(args),
-                new NumberCell(args),
-                new NormalCell(args),
-                new ButtonListCell(args),
-                new SelectCell(args),
-                new TextCell(args),
-                new TextPasswordCell(args),
-                new TextConvertibleCell(args),
-                new DummyCell(args)
-            ];
-
-        _.each(instanceList, function(instance) {
-            cellPainters[instance.getEditType()] = instance;
-        });
-        return cellPainters;
+    _createCellPainters: function(controller) {
+        return {
+            dummy: new DummyCellPainter({
+                controller: controller
+            }),
+            normal: new CellPainter({
+                editType: 'normal'
+            }),
+            text: new CellPainter({
+                editType: 'text',
+                inputPainter: this.inputPainters.text
+            }),
+            password: new CellPainter({
+                editType: 'password',
+                inputPainter: this.inputPainters.password
+            }),
+            select: new CellPainter({
+                editType: 'select',
+                inputPainter: this.inputPainters.select
+            }),
+            checkbox: new CellPainter({
+                editType: 'checkbox',
+                inputPainter: this.inputPainters.checkbox
+            }),
+            radio: new CellPainter({
+                editType: 'radio',
+                inputPainter: this.inputPainters.radio
+            })
+        };
     },
 
     /**
@@ -66,7 +104,6 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      */
     _createRowPainter: function() {
         return new RowPainter({
-            grid: this.modelManager,
             painterManager: this
         });
     },
@@ -77,16 +114,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @returns {Object} - Cell painter instance
      */
     getCellPainter: function(editType) {
-        var instance = this.cellPainters[editType];
-
-        if (!instance) {
-            if (editType === 'radio' || editType === 'checkbox') {
-                instance = this.cellPainters.button;
-            } else {
-                instance = this.cellPainters.normal;
-            }
-        }
-        return instance;
+        return this.cellPainters[editType];
     },
 
     /**

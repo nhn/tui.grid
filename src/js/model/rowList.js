@@ -13,7 +13,6 @@ var Row = require('./row');
   * @extends module:base/collection
   */
 var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
-    model: Row,
     /**
      * @constructs
      * @param {Object} rawData - Raw data
@@ -22,9 +21,12 @@ var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     initialize: function(rawData, options) {
         this.setOwnProperties({
             dataModel: options.dataModel,
-            columnModel: options.columnModel
+            columnModel: options.columnModel,
+            focusModel: options.focusModel
         });
-    }
+    },
+
+    model: Row
 });
 
 module.exports = RowList;

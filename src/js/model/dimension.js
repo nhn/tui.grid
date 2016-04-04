@@ -306,7 +306,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 minWidth = Math.max(width, commonMinWidth);
 
             // Meta columns are not affected by common 'minimumColumnWidth' value
-            if (this.columnModel.isMetaColumn(columnModel.columnName)) {
+            if (util.isMetaColumn(columnModel.columnName)) {
                 minWidth = width;
             }
 

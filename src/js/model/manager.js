@@ -57,11 +57,12 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
-        this.renderModel = this._createRenderModel(options);
         this.focusModel = this._createFocusModel(domState);
+        this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
 
         // todo: remove dependency
+        this.focusModel.renderModel = this.renderModel;
         this.dimensionModel.renderModel = this.renderModel;
     },
 
@@ -183,7 +184,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         renderOptions = {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
-            dimensionModel: this.dimensionModel
+            dimensionModel: this.dimensionModel,
+            focusModel: this.focusModel
         };
         Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 

@@ -26,31 +26,42 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
-        this.renderModel = options.renderModel;
         this.cellFactory = options.cellFactory;
         this.domState = options.domState;
 
-        this.listenTo(this.dataModel, 'add', this._onAddData);
         this.listenTo(this.dataModel, 'reset', this._onResetData);
     },
 
     defaults: {
+        /**
+         * row key of the current cell
+         * @type {String|Number}
+         */
         rowKey: null,
-        columnName: '',
-        prevRowKey: null,
-        prevColumnName: ''
-    },
 
-    /**
-     * Event handler for 'add' event on dataModel.
-     * @param  {Array.<module:model/data/row>} rows - New appended row model
-     * @param  {Object} options - Options. See {@link module:model/data/row#append}
-     * @private
-     */
-    _onAddData: function(rows, options) {
-        if (options.focus) {
-            this.focusAt(options.at, 0);
-        }
+        /**
+         * column name of the current cell
+         * @type {String}
+         */
+        columnName: '',
+
+        /**
+         * row key of the previously focused cell
+         * @type {String|Number}
+         */
+        prevRowKey: null,
+
+        /**
+         * column name of the previously focused cell
+         * @type {String}
+         */
+        prevColumnName: '',
+
+        /**
+         * address of the editing cell.
+         * @type {{rowKey:(String|Number), columnName:String}}
+         */
+        editingAddress: null
     },
 
     /**
@@ -102,7 +113,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param  {String} columnName - Column name
      * @returns {Boolean} - True if equal
      */
-    _isCurrentCell: function(rowKey, columnName) {
+    isCurrentCell: function(rowKey, columnName) {
         return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
     },
 
@@ -169,8 +180,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     focus: function(rowKey, columnName, isScrollable) {
         if (!this._isValidCell(rowKey, columnName) ||
-            this.columnModel.isMetaColumn(columnName) ||
-            this._isCurrentCell(rowKey, columnName)) {
+            util.isMetaColumn(columnName) ||
+            this.isCurrentCell(rowKey, columnName)) {
             return true;
         }
 
@@ -181,6 +192,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.set('columnName', columnName);
         this.trigger('focus', rowKey, columnName);
+
         if (isScrollable) {
             this.scrollToFocus();
         }
@@ -198,9 +210,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var row = this.dataModel.at(rowIndex),
             column = this.columnModel.at(columnIndex, true),
             result = false;
+
         if (row && column) {
             result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
         }
+
         return result;
     },
 
@@ -213,14 +227,18 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     focusIn: function(rowKey, columnName, isScrollable) {
         var result = this.focus(rowKey, columnName, isScrollable);
+
         if (result) {
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
             if (this.dataModel.get(rowKey).isEditable(columnName)) {
+                this.startEditing(rowKey, columnName);
                 this.trigger('focusIn', rowKey, columnName);
             } else {
                 this.focusClipboard();
             }
         }
+
         return result;
     },
 
@@ -284,6 +302,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Model.Focus} This object
      */
     blur: function() {
+        var columnName = this.get('columnName');
+
         if (!this.has()) {
             return this;
         }
@@ -291,11 +311,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         if (this.has(true)) {
             this._savePrevious();
         }
-        this.trigger('blur', this.get('rowKey'), this.get('columnName'));
 
         if (this.get('rowKey') !== null) {
             this.set('columnName', '');
         }
+        this.trigger('blur', this.get('rowKey'), columnName);
+
         return this;
     },
 
@@ -354,6 +375,53 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             restored = true;
         }
         return restored;
+    },
+
+    /**
+     * Returns whether the cell identified by given rowKey and columnName is editing now.
+     * @param {Number} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
+    isEditingCell: function(rowKey, columnName) {
+        var address = this.get('editingAddress');
+
+        return address &&
+            (String(address.rowKey) === String(rowKey)) &&
+            (address.columnName === columnName);
+    },
+
+    /**
+     * Starts editing a cell identified by given rowKey and columnName, and returns the result.
+     * @param {(String|Number)} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Boolean} true if succeeded, false otherwise.
+     */
+    startEditing: function(rowKey, columnName) {
+        if (this.get('editingAddress') || !this.dataModel.get(rowKey).isEditable(columnName)) {
+            return false;
+        }
+
+        this.set('editingAddress', {
+            rowKey: rowKey,
+            columnName: columnName
+        });
+
+        return true;
+    },
+
+    /**
+     * Finishes editing the current cell, and returns the result.
+     * @returns {Boolean} - true if an editing cell exist, false otherwise.
+     */
+    finishEditing: function() {
+        if (!this.get('editingAddress')) {
+            return false;
+        }
+
+        this.set('editingAddress', null);
+
+        return true;
     },
 
     /**

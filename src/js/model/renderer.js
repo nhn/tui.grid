@@ -27,12 +27,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.setOwnProperties({
             dataModel: options.dataModel,
             columnModel: options.columnModel,
+            focusModel: options.focusModel,
             dimensionModel: options.dimensionModel
         });
 
         rowListOptions = {
             dataModel: this.dataModel,
-            columnModel: this.columnModel
+            columnModel: this.columnModel,
+            focusModel: this.focusModel
         };
 
         lside = new RowList([], rowListOptions);
@@ -43,10 +45,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'add remove sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'remove sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'add', this._onAddDataModel)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
+            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
+            .listenTo(this.focusModel, 'focus blur', this._onFocusOrBlur)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -115,6 +120,50 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Event handler for 'focus' and 'blur' events on focusModel
+     * @param {Number|String} rowKey - row key
+     * @param {String} columnName - column name
+     * @private
+     */
+    _onFocusOrBlur: function(rowKey, columnName) {
+        this._getRowModel(rowKey, columnName).updateClassName(columnName);
+    },
+
+    /**
+     * Event handler for 'change:editingAddress' event on focusModel
+     * @param {module:model/focus} focusModel - focus model
+     * @param {{rowKey: Number, columnName: String}} address - address
+     * @private
+     */
+    _onEditingAddressChange: function(focusModel, address) {
+        var target = address,
+            isEditing = true;
+
+        if (!address) {
+            target = focusModel.previous('editingAddress');
+            isEditing = false;
+        }
+        this._updateCellData(target.rowKey, target.columnName, {
+            isEditing: isEditing
+        });
+    },
+
+    /**
+     * Updates the view-data of the cell identified by given rowKey and columnName.
+     * @param {(String|Number)} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Object} cellData - cell data
+     * @private
+     */
+    _updateCellData: function(rowKey, columnName, cellData) {
+        var rowModel = this._getRowModel(rowKey, columnName);
+
+        if (rowModel) {
+            rowModel.setCell(columnName, cellData);
+        }
+    },
+
+    /**
      * Initializes own properties.
      * (called by module:addon/net)
      */
@@ -161,6 +210,20 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {module:model/data/rowList} dataModel - data model
+     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
+     * @private
+     */
+    _onAddDataModel: function(dataModel, options) {
+        this.refresh(false, true);
+
+        if (options.focus) {
+            this.focusModel.focusAt(options.at, 0);
+        }
+    },
+
+    /**
      * Resets dummy rows and trigger 'rowListChanged' event.
      * @private
      */
@@ -186,18 +249,21 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Returns the new data object for rendering based on rowDataModel and specified column names.
      * @param  {Object} rowDataModel - Instance of module:model/data/row
      * @param  {Array.<String>} columnNames - Column names
+     * @param  {Number} height - the height of the row
      * @param  {Number} rowNum - Row number
      * @returns {Object} - view data object
      * @private
      */
-    _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
+    _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
         var viewData = {
+            height: height,
             rowKey: rowDataModel.get('rowKey'),
             _extraData: rowDataModel.get('_extraData')
         };
 
         _.each(columnNames, function(columnName) {
             var value = rowDataModel.get(columnName);
+
             if (columnName === '_number') {
                 value = rowNum;
             }
@@ -244,14 +310,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
         var columnNamesMap = this._getColumnNamesOfEachSide(),
             rowNum = this.get('startNumber') + startIndex,
+            height = this.dimensionModel.get('rowHeight'),
             lsideData = [],
             rsideData = [],
             rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
-            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, rowNum));
-            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside));
+            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height));
             rowNum += 1;
         }
 
@@ -290,12 +357,17 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _fillDummyRows: function() {
         var displayRowCount = this.dimensionModel.get('displayRowCount'),
             actualRowCount = this._getActualRowCount(),
-            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
+            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0),
+            rowHeight = this.dimensionModel.get('rowHeight');
 
         _.times(dummyRowCount, function() {
-            this.get('lside').add({});
-            this.get('rside').add({});
+            _.each(['lside', 'rside'], function(listName) {
+                this.get(listName).add({
+                    height: rowHeight
+                });
+            }, this);
         }, this);
+
         this.set('dummyRowCount', dummyRowCount);
     },
 
@@ -359,6 +431,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Returns the specified row model.
+     * @param {(Number|String)} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {module:model/row}
+     * @private
+     */
+    _getRowModel: function(rowKey, columnName) {
+        var collection = this._getCollectionByColumnName(columnName);
+
+        return collection.get(rowKey);
+    },
+
+    /**
      * 셀 데이터를 반환한다.
      * @param {number} rowKey   데이터의 키값
      * @param {String} columnName   컬럼명
@@ -380,8 +465,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      }
      */
     getCellData: function(rowKey, columnName) {
-        var collection = this._getCollectionByColumnName(columnName),
-            row = collection.get(rowKey),
+        var row = this._getRowModel(rowKey, columnName),
             cellData = null;
 
         if (row) {

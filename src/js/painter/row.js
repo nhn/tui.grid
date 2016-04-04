@@ -1,5 +1,5 @@
 /**
- * @fileoverview Row Painter 정의
+ * @fileoverview Painter class for the row(TR) views
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -8,8 +8,7 @@ var Painter = require('../base/painter');
 var util = require('../common/util');
 
 /**
- * Row Painter
- * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
+ * Painter class for the row(TR) views
  * @module painter/row
  * @extends module:base/painter
  */
@@ -17,14 +16,22 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     /**
      * @constructs
      * @param {object} options - Options
-     *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
-     *      @param {object} options.collection change 를 감지할 collection 객체
      */
     init: function(options) {
         Painter.apply(this, arguments);
         this.painterManager = options.painterManager;
     },
 
+    /**
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
+    selector: 'tr',
+
+    /**
+     * markup template
+     * @returns {String} HTML string
+     */
     template: _.template(
         '<tr ' +
         'key="<%=key%>" ' +
@@ -35,23 +42,6 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     ),
 
     /**
-     * model 변경 시 이벤트 핸들러
-     * @param {object} changed - 변화가 일어난 모델 인스턴스
-     * @param {jQuery} $tr - jquery object for tr element
-     */
-    onModelChange: function(changed, $tr) {
-        _.each(changed, function(cellData, columnName) {
-            var editType, cellPainter;
-
-            if (columnName !== '_extraData') {
-                editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
-                cellPainter.onModelChange(cellData, $tr);
-            }
-        }, this);
-    },
-
-    /**
      * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
      * @param {string} columnName 컬럼명
@@ -60,75 +50,93 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @private
      */
     _getEditType: function(columnName, cellData) {
-        var editType = this.grid.columnModel.getEditType(columnName);
-        if (!cellData.isEditable && columnName !== '_number') {
-            editType = 'normal';
-        }
+        var editOption = cellData.columnModel.editOption,
+            editType = editOption ? editOption.type : 'normal';
+
         return editType;
     },
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Array.<Object>} columnModelList- Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForDummyRow: function(columnModelList) {
+    _generateHtmlForDummyRow: function(columnNames) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
-        _.each(columnModelList, function(columnModel) {
-            html += cellPainter.getHtml(columnModel.columnName);
+        _.each(columnNames, function(columnName) {
+            html += cellPainter.generateHtml(columnName);
         });
+
         return html;
     },
 
     /**
      * Returns the HTML string of all cells in Actual row.
      * @param  {module:model/row} model - View model instance
-     * @param  {Array.<Object>} columnModelList - Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForActualRow: function(model, columnModelList) {
+    _generateHtmlForActualRow: function(model, columnNames) {
         var html = '';
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel.columnName,
-                cellData = model.get(columnName),
+        _.each(columnNames, function(columnName) {
+            var cellData = model.get(columnName),
                 editType, cellPainter;
 
             if (cellData && cellData.isMainRow) {
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
-                html += cellPainter.getHtml(cellData);
+                html += cellPainter.generateHtml(cellData);
             }
         }, this);
+
         return html;
     },
 
     /**
      * Returns the HTML string of all cells in the given model (row).
      * @param  {module:model/row} model - View model instance
-     * @param  {Array.<Object>} columnModelList - Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      */
-    getHtml: function(model, columnModelList) {
+    generateHtml: function(model, columnNames) {
         var rowKey = model.get('rowKey'),
             html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._getHtmlForDummyRow(columnModelList);
+            html = this._generateHtmlForDummyRow(columnNames);
         } else {
-            html = this._getHtmlForActualRow(model, columnModelList);
+            html = this._generateHtmlForActualRow(model, columnNames);
         }
 
         return this.template({
             key: rowKey,
-            height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
+            height: model.get('height') + RowPainter._extraHeight,
             contents: html,
             className: ''
         });
+    },
+
+    /**
+     * Refreshes the row(TR) element.
+     * @param {object} changed - object that contains the changed data using columnName as keys
+     * @param {jQuery} $tr - jquery object for tr element
+     */
+    refresh: function(changed, $tr) {
+        _.each(changed, function(cellData, columnName) {
+            var editType, cellPainter, $td;
+
+            if (columnName !== '_extraData') {
+                $td = $tr.find('td[columnname=' + columnName + ']');
+                editType = this._getEditType(columnName, cellData);
+                cellPainter = this.painterManager.getCellPainter(editType);
+                cellPainter.refresh(cellData, $td);
+            }
+        }, this);
     },
 
     static: {

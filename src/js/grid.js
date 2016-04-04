@@ -306,6 +306,7 @@ var ViewFactory = require('./view/factory');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
+var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
 
@@ -355,12 +356,21 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates painter manager and returns it
-     * @returns {module:painter/manager} - New painter manager object
+     * @returns {module:painter/manager}
      * @private
      */
     _createPainterManager: function() {
+        var controller = new PainterController({
+            focusModel: this.modelManager.focusModel,
+            dataModel: this.modelManager.dataModel,
+            columnModel: this.modelManager.columnModel,
+            selectionModel: this.modelManager.selectionModel
+        });
+
         return new PainterManager({
-            modelManager: this.modelManager
+            gridId: this.id,
+            selectType: this.modelManager.columnModel.get('selectType'),
+            controller: controller
         });
     },
 

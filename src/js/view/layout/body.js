@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var View = require('../../base/view');
+var View = require('../../base/view'),
+    util = require('../../common/util');
 
 var HTML_CONTAINER = '<div class="body_container"></div>',
 
@@ -54,8 +55,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     events: {
         'scroll': '_onScroll',
-        'mousedown .body_container': '_onMouseDown',
-        'blur input, select': '_onBlurInput'
+        'mousedown .body_container': '_onMouseDown'
     },
 
     /**
@@ -134,7 +134,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     _onMouseDown: function(event) {
         var columnModel = this.columnModel,
             $target = $(event.target),
-            isInput = $target.is('input'),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
             columnName = $td.attr('columnName'),
@@ -159,19 +158,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (startAction) {
-            this._controlStartAction(inputData, indexData, columnName, isInput);
+            this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
         }
-    },
-
-    /**
-     * Event handler for blur event on input element.
-     * @private
-     */
-    _onBlurInput: function() {
-        var focusModel = this.focusModel;
-        _.defer(function() {
-            focusModel.refreshState();
-        });
     },
 
     /**
@@ -186,8 +174,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _controlStartAction: function(inputData, indexData, columnName, isInput) {
-        var columnModel = this.columnModel,
-            selectionModel = this.selectionModel,
+        var selectionModel = this.selectionModel,
             columnIndex = indexData.column,
             rowIndex = indexData.row,
             startDrag = true;
@@ -196,7 +183,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             return;
         }
 
-        if (!columnModel.isMetaColumn(columnName)) {
+        if (!util.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
             if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);

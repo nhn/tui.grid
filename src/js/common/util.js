@@ -95,6 +95,15 @@ var util = {
     },
 
     /**
+     * Returns whether the column of a given name is meta-column.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
+    isMetaColumn: function(columnName) {
+        return _.contains(['_button', '_number'], columnName);
+    },
+
+    /**
      * target 과 dist 의 값을 비교하여 같은지 여부를 확인하는 메서드
      * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지만 지원함.
      * @memberof module:util

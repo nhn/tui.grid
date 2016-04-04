@@ -208,7 +208,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
-            classNameList = this.extraDataManager.getClassNameList(columnName);
+            isMetaColumn = util.isMetaColumn(columnName),
+            classNameList = this.extraDataManager.getClassNameList(columnName),
+            cellState = this.getCellState(columnName);
 
         if (columnModel.className) {
             classNameList.push(columnModel.className);
@@ -219,6 +221,15 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.isRequired) {
             classNameList.push('required');
         }
+        if (isMetaColumn) {
+            classNameList.push('meta_column');
+        } else if (cellState.isEditable) {
+            classNameList.push('editable');
+        }
+        if (cellState.isDisabled) {
+            classNameList.push('disabled');
+        }
+
         return this._makeUniqueStringArray(classNameList);
     },
 
@@ -233,9 +244,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
+     * Returns the state of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     * @returns {{isEditable: boolean, isDisabled: boolean}}
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -257,7 +268,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             isDisabled = isDisabled || !!(relationResult && relationResult.isDisabled);
         }
 
-        if ($.inArray(editType, notEditableTypeList) !== -1) {
+        if (_.contains(editType, notEditableTypeList)) {
             isEditable = false;
         } else {
             isEditable = !(relationResult && relationResult.isEditable === false);
@@ -270,25 +281,20 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean}    편집 가능한지 여부
+     * Returns whether the cell identified by a given column name is editable.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
      */
     isEditable: function(columnName) {
-        var notEditableTypeList = ['_number', 'normal'],
-            editType = this.columnModel.getEditType(columnName),
-            result = false;
+        var cellState = this.getCellState(columnName);
 
-        if ($.inArray(editType, notEditableTypeList) === -1) {
-            result = this.getCellState(columnName).isEditable;
-        }
-        return result;
+        return !cellState.isDisabled && cellState.isEditable;
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean}    disabled 처리를 할지 여부
+     * Returns whether the cell identified by a given column name is disabled.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
      */
     isDisabled: function(columnName) {
         var cellState = this.getCellState(columnName);
@@ -370,24 +376,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * html string 을 encoding 한다.
-     * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
-     *
-     * @param {String} columnName   컬럼명
-     * @returns {String} 인코딩된 결과값
-     */
-    getHTMLEncodedString: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            isTextType = this.columnModel.isTextType(columnName),
-            value = this.get(columnName),
-            notUseHtmlEntity = columnModel.notUseHtmlEntity;
-        if (!notUseHtmlEntity && isTextType && tui.util.hasEncodableString(value)) {
-            value = tui.util.encodeHTMLEntity(value);
-        }
-        return value;
-    },
-
-    /**
      * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
      * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.
@@ -460,7 +448,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel) {
             editType = columnModel.getEditType(columnName);
             model = columnModel.getColumnModel(columnName);
-            //list type 의 editType 이 존재하는 경우
+
             if (listTypeMap[editType]) {
                 if (tui.util.isExisty(tui.util.pick(model, 'editOption', 'list', 0, 'value'))) {
                     value = this._getListTypeVisibleText(columnName);
@@ -468,8 +456,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
                     throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
                 }
             } else if (_.isFunction(model.formatter)) {
-                //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
-                value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
+                value = util.stripTags(model.formatter(value, this.toJSON(), model));
             }
         }
         value = !tui.util.isUndefined(value) ? value.toString() : value;

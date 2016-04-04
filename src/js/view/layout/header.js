@@ -297,10 +297,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _hasMetaColumn: function(columnNames) {
-        var columnModel = this.columnModel;
-
         return _.some(columnNames, function(name) {
-            return columnModel.isMetaColumn(name);
+            return util.isMetaColumn(name);
         });
     },
 
