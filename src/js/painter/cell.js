@@ -122,7 +122,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         return this.template({
             attributeString: attributeString,
-            contentHtml: contentHtml || '&nbsp' // '&nbsp' for height issue with empty cell in IE7
+            contentHtml: contentHtml || '&#8203;' // '&#8203;' for height issue with empty cell in IE7
         });
     },
 
