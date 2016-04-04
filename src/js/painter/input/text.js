@@ -22,6 +22,13 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
         InputPainter.apply(this, arguments);
 
         this.inputType = options.inputType;
+
+        /**
+         * css selector to find its own element(s) from a parent element.
+         * @type {String}
+         */
+        this.selector = 'input[type=' + this.inputType + ']';
+
         this._extendEvents({
             selectstart: '_onSelectStart'
         });

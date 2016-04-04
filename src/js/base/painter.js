@@ -39,9 +39,11 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * @private
      */
     _getCellAddress: function($target) {
+        var $addressHolder = $target.closest('[data-row-key]');
+
         return {
-            rowKey: $target.closest('tr').attr('key'),
-            columnName: $target.closest('td').attr('columnName')
+            rowKey: $addressHolder.attr('data-row-key'),
+            columnName: $addressHolder.attr('data-column-name')
         };
     },
 
@@ -56,6 +58,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
                 selector = parentSelector + ' ' + this.selector;
 
             $target.on(eventName, selector, boundHandler);
+            // console.log('on', $target, eventName, selector, boundHandler);
         }, this);
     },
 

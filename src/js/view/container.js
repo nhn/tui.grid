@@ -60,6 +60,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             factory.createFrame('R'),
             factory.createToolbar(),
             factory.createStateLayer(),
+            factory.createEditingLayer(),
             factory.createClipboard()
         ]);
     },

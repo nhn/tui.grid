@@ -18,9 +18,13 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      */
     init: function() {
         InputPainter.apply(this, arguments);
-    },
 
-    selector: 'select',
+        /**
+         * css selector to find its own element(s) from a parent element.
+         * @type {String}
+         */
+        this.selector = 'select';
+    },
 
     /**
      * Content markup template

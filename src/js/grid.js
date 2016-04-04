@@ -324,10 +324,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options set by user
      */
     initialize: function(options) {
+        var domState = new DomState(this.$el);
+
         this.id = util.getUniqueKey();
-        this.modelManager = this._createModelManager(options);
+        this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
-        this.container = this._createContainerView(options);
+        this.container = this._createContainerView(options, domState);
         this.publicEventEmitter = this._createPublicEventEmitter();
 
         this.container.render();
@@ -343,11 +345,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {module:model/manager} - New model manager object
      * @private
      */
-    _createModelManager: function(options) {
-        var domState = new DomState(this.$el),
-            modelOptions = _.assign({}, options, {
-                gridId: this.id
-            });
+    _createModelManager: function(options, domState) {
+        var modelOptions = _.assign({}, options, {
+            gridId: this.id
+        });
 
         _.omit(modelOptions, 'el', 'singleClickEdit');
 
@@ -380,10 +381,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {module:view/container} - New container view object
      * @private
      */
-    _createContainerView: function(options) {
+    _createContainerView: function(options, domState) {
         var viewFactory = new ViewFactory({
             modelManager: this.modelManager,
-            painterManager: this.painterManager
+            painterManager: this.painterManager,
+            domState: domState
         });
 
         return viewFactory.createContainer({

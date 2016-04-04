@@ -263,12 +263,13 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getFormattedValue: function(value, rowAttrs, column) {
-        var result = value;
+        var result = value || '';
 
         if (_.isFunction(column.formatter)) {
-            result = column.formatter(value, rowAttrs, column);
+            result = column.formatter(result, rowAttrs, column);
         }
-        return result || '';
+
+        return result;
     },
 
     /**

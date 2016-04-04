@@ -22,6 +22,12 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
         this.inputType = options.inputType;
 
+        /**
+         * css selector to find its own element(s) from a parent element.
+         * @type {String}
+         */
+        this.selector = 'input[type=' + this.inputType + ']';
+
         this._extendKeydownActions({
             TAB: function(param) {
                 var value;

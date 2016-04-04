@@ -19,6 +19,7 @@ var BodyView = require('./layout/body');
 var BodyTableView = require('./layout/bodyTable');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
+var EditingLayerView = require('./editingLayer');
 
 /**
  * View Factory
@@ -26,6 +27,7 @@ var SelectionLayerView = require('./selectionLayer');
  */
 var ViewFactory = tui.util.defineClass({
     init: function(options) {
+        this.domState = options.domState;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
     },
@@ -223,7 +225,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates selection view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @returns {module:view/selection} New selection view instance
+     * @returns {module:view/selectionLayer} New selection layer view instance
      */
     createSelectionLayer: function(whichSide) {
         return new SelectionLayerView({
@@ -231,6 +233,19 @@ var ViewFactory = tui.util.defineClass({
             selectionModel: this.modelManager.selectionModel,
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel
+        });
+    },
+
+    /**
+     * Creates editing layer view and returns it.
+     * @returns {module:view/editingLayer}
+     */
+    createEditingLayer: function() {
+        return new EditingLayerView({
+            focusModel: this.modelManager.focusModel,
+            renderModel: this.modelManager.renderModel,
+            inputPainters: this.painterManager.getInputPainters(),
+            domState: this.domState
         });
     }
 });

@@ -31,10 +31,6 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         focus: '_onFocus'
     },
 
-    /**
-     * css selector to find its own element(s) from a parent element.
-     * @type {String}
-     */
     selector: 'input',
 
     /**

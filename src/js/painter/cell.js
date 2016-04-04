@@ -109,6 +109,8 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         return {
             'class': cellData.className,
             'edit-type': this.editType,
+            'data-row-key': cellData.rowKey,
+            'data-column-name': cellData.columnName,
             columnname: cellData.columnName,
             rowSpan: cellData.rowSpan || '',
             align: cellData.columnModel.align || 'left'
@@ -158,14 +160,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         $td.attr(this._getAttributes(cellData));
 
         if (isEditingChanged) {
-            if (this._isConvertible(cellData)) {
-                if (cellData.isEditing) {
-                    $td.html(this.inputPainter.generateHtml(cellData));
-                    this.inputPainter.focus($td);
-                } else {
-                    $td.html(this._getContentHtml(cellData));
-                }
-            } else if (cellData.isEditing) {
+            if (!cellData.isEditing) {
+                $td.html(this._getContentHtml(cellData));
+            } else if (!this._isConvertible(cellData)) {
                 this.inputPainter.focus($td);
             }
         } else if (shouldUpdateContent) {

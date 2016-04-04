@@ -117,6 +117,14 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     },
 
     /**
+     * Returns all input painters
+     * @returns {Object} Object that has edit-type as a key and input painter as a value
+     */
+    getInputPainters: function() {
+        return this.inputPainters;
+    },
+
+    /**
      * Returns a row painter
      * @returns {module:painter/row} Row painter
      */
