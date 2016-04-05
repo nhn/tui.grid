@@ -233,7 +233,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
             if (this.dataModel.get(rowKey).isEditable(columnName)) {
                 this.startEditing(rowKey, columnName);
-                this.trigger('focusIn', rowKey, columnName);
             } else {
                 this.focusClipboard();
             }

@@ -26,7 +26,11 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
          * css selector to find its own element(s) from a parent element.
          * @type {String}
          */
-        this.selector = 'input[type=' + this.inputType + ']';
+        this.selector = 'fieldset[data-type=' + this.inputType + ']';
+
+        this._extendEvents({
+            mousedown: '_onMouseDown'
+        });
 
         this._extendKeydownActions({
             TAB: function(param) {
@@ -53,10 +57,18 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
-     * Input markup template
+     * fieldset markup template
      * @returns {String}
      */
     template: _.template(
+        '<fieldset data-type="<%=type%>"><%=content%></fieldset>'
+    ),
+
+    /**
+     * Input markup template
+     * @returns {String}
+     */
+    inputTemplate: _.template(
         '<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>"' +
         ' <%=checked%> <%=disabled%> />'
     ),
@@ -75,7 +87,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @override
      * @private
      */
-    _onBlur: function(event) {
+    _onFocusOut: function(event) {
         var $target = $(event.target);
         var self = this;
 
@@ -88,6 +100,20 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
                 self.controller.finishEditing(address, false, value);
             }
         });
+    },
+
+    /**
+     * Event handler for 'mousedown' DOM event
+     * @param {MouseEvent} event - mouse event object
+     */
+    _onMouseDown: function(event) {
+        var $target = $(event.target);
+        var hasFocusedInput = $target.closest('fieldset').find('input:focus').length > 0;
+
+        if (!$target.is('input') && hasFocusedInput) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
     },
 
     /**
@@ -170,12 +196,12 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     _generateInputHtml: function(cellData) {
         var checkedSet = this._getCheckedValueSet(cellData.value);
         var name = util.getUniqueKey();
-        var html = '';
+        var contentHtml = '';
 
         _.each(cellData.columnModel.editOption.list, function(item) {
             var id = name + '_' + item.value;
 
-            html += this.template({
+            contentHtml += this.inputTemplate({
                 type: this.inputType,
                 id: id,
                 name: name,
@@ -184,14 +210,29 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
                 disabled: cellData.isDisabled ? 'disabled' : ''
             });
             if (item.text) {
-                html += this.labelTemplate({
+                contentHtml += this.labelTemplate({
                     id: id,
                     labelText: item.text
                 });
             }
         }, this);
 
-        return html;
+        return this.template({
+            type: this.inputType,
+            content: contentHtml
+        });
+    },
+
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     */
+    focus: function($parent) {
+        var $input = $parent.find('input');
+
+        if (!$input.is(':focus')) {
+            $input.eq(0).focus();
+        }
     }
 });
 

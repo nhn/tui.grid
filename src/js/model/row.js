@@ -397,13 +397,28 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         if (changed.length) {
             data.changed = changed;
             this.set(columnName, data, {
-                silent: isValueChanged && data.isEditing
+                silent: this._shouldSetSilently(data, isValueChanged)
             });
             if (isValueChanged && !data.isEditing) {
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
         }
+    },
+
+    /**
+     * Returns whether the 'set' method should be called silently.
+     * @param {Object} cellData - cell data
+     * @param {Boolean} valueChanged - true if value changed
+     * @returns {Boolean}
+     * @private
+     */
+    _shouldSetSilently: function(cellData, valueChanged) {
+        var valueChangedOnEditing = cellData.isEditing && valueChanged;
+        var convertible = cellData.columnModel.editOption.convertible;
+        var editingStarted = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+
+        return valueChangedOnEditing || (convertible && editingStarted);
     }
 });
 

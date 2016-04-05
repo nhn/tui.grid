@@ -26,12 +26,10 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @type {Object}
      */
     events: {
-        blur: '_onBlur',
         keydown: '_onKeyDown',
-        focus: '_onFocus'
+        focusin: '_onFocusIn',
+        focusout: '_onFocusOut'
     },
-
-    selector: 'input',
 
     /**
      * keydown Actions
@@ -84,7 +82,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @param {Event} event - DOM event object
      * @private
      */
-    _onFocus: function(event) {
+    _onFocusIn: function(event) {
         var address = this._getCellAddress($(event.target));
 
         this._executeCustomEventHandler(event);
@@ -96,7 +94,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @param {Event} event - DOM event object
      * @private
      */
-    _onBlur: function(event) {
+    _onFocusOut: function(event) {
         var $target = $(event.target),
             address = this._getCellAddress($target);
 
