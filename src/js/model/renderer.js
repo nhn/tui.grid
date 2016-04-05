@@ -59,7 +59,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         if (this.get('showDummyRows')) {
             this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
         }
-        // this.on('change:scrollTop change:scrollLeft', this._onScrollChange, this);
 
         this._updateMaxScrollLeft();
     },
@@ -129,15 +128,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onFocusOrBlur: function(rowKey, columnName) {
         this._getRowModel(rowKey, columnName).updateClassName(columnName);
     },
-
-    /**
-     * Event handler for 'change:scrollLeft', and 'change:scrollTop' events.
-     * @private
-     */
-    // _onScrollChange: function(model, value) {
-    //     console.log('value', value);
-    //     this.focusModel.finishEditing();
-    // },
 
     /**
      * Event handler for 'change:editingAddress' event on focusModel

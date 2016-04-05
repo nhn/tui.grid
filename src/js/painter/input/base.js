@@ -137,7 +137,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
-     * Generates a input HTML string from given data, and returns it.
+     * Generates an input HTML string from given data, and returns it.
      * @abstract
      * @protected
      */

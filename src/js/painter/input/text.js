@@ -86,7 +86,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     },
 
     /**
-     * Generates a input HTML string from given data, and returns it.
+     * Generates an input HTML string from given data, and returns it.
      * @param {object} cellData - cell data
      * @implements {module:painter/input/base}
      * @returns {string}

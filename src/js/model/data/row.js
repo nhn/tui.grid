@@ -411,7 +411,12 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         return '';
     },
 
-
+    /**
+     * Returns whether the given edit type is list type.
+     * @param {String} editType - edit type
+     * @returns {Boolean}
+     * @private
+     */
     _isListType: function(editType) {
         return _.contains(['select', 'radio', 'checkbox'], editType);
     },
