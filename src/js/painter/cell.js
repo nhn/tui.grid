@@ -107,7 +107,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     _getAttributes: function(cellData) {
         return {
-            'class': cellData.className,
+            'class': cellData.className + ' cell_content',
             'edit-type': this.editType,
             'data-row-key': cellData.rowKey,
             'data-column-name': cellData.columnName,

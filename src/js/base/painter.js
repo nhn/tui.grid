@@ -58,7 +58,6 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
                 selector = parentSelector + ' ' + this.selector;
 
             $target.on(eventName, selector, boundHandler);
-            // console.log('on', $target, eventName, selector, boundHandler);
         }, this);
     },
 

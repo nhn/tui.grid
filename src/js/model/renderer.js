@@ -136,8 +136,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onEditingAddressChange: function(focusModel, address) {
-        var target = address,
-            isEditing = true;
+        var target = address;
+        var isEditing = true;
 
         if (!address) {
             target = focusModel.previous('editingAddress');
@@ -146,6 +146,23 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this._updateCellData(target.rowKey, target.columnName, {
             isEditing: isEditing
         });
+
+        this._triggerEditingStateChanged(target.rowKey, target.columnName);
+    },
+
+    /**
+     * Triggers the 'editingStateChanged' event if the cell data identified by
+     * given row key and column name has the 'convertible' option.
+     * @param {String} rowKey - row key
+     * @param {String} columnName - column name
+     * @private
+     */
+    _triggerEditingStateChanged: function(rowKey, columnName) {
+        var cellData = this.getCellData(rowKey, columnName);
+
+        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible')) {
+            this.trigger('editingStateChanged', cellData);
+        }
     },
 
     /**

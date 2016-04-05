@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../base/view');
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -17,65 +18,89 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @param {Object} options - Options
      */
     initialize: function(options) {
-        this.focusModel = options.focusModel;
         this.renderModel = options.renderModel;
         this.domState = options.domState;
         this.inputPainters = options.inputPainters;
 
-
-        this.listenTo(this.focusModel, 'change:editingAddress', this._resetState);
+        this.listenTo(this.renderModel, 'editingStateChanged', this._onEditingStateChanged);
     },
 
-    className: 'editing_layer',
+    className: 'editing_layer cell_content',
 
     /**
+     * Starts editing the given cell.
+     * @param {Object} cellData - cell data
+     * @private
      */
-    _startEditing: function(rowKey, columnName) {
-        var cellData = this.renderModel.getCellData(rowKey, columnName),
-            convertible = tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible'),
-            editType, painter, layoutStyle;
+    _startEditing: function(cellData) {
+        var rowKey = cellData.rowKey;
+        var columnName = cellData.columnName;
+        var editType = tui.util.pick(cellData, 'columnModel', 'editOption', 'type');
+        var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
+        var painter = this.inputPainters[editType];
 
-        if (convertible === true) {
-            editType = tui.util.pick(cellData, 'columnModel', 'editOption', 'type');
-            painter = this.inputPainters[editType];
-            layoutStyle = this._calculateLayoutStyle(rowKey, columnName);
-            this.$el.css(layoutStyle).show();
-            this.$el.html(painter.generateHtml(cellData));
-            this.$el.attr({
-                'data-row-key': rowKey,
-                'data-column-name': columnName
-            });
-            painter.focus(this.$el);
-        }
+        this.$el.css(styleMap).show();
+        this.$el.attr({
+            'data-row-key': rowKey,
+            'data-column-name': columnName
+        });
+        this.$el.html(painter.generateHtml(cellData));
+
+        painter.focus(this.$el);
     },
 
-    _endEditing: function() {
+    /**
+     * Returns whether the width is expandable.
+     * @param {String} editType - edit type
+     * @returns {Boolean}
+     * @private
+     */
+    _isWidthExpandable: function(editType) {
+        return _.contains(['checkbox', 'radio'], editType);
+    },
+
+    /**
+     * Fisishes editing the current cell.
+     */
+    _finishEditing: function() {
         this.$el.removeAttr('data-row-key');
         this.$el.removeAttr('data-column-name');
         this.$el.empty().hide();
     },
 
-    _calculateLayoutStyle: function(rowKey, columnName) {
+    /**
+     * Calculates the position and the dimension of the layer and returns the object that contains css properties.
+     * @param {Stirng} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Boolean} expandable - true if the width of layer is expandable
+     * @returns {Object}
+     */
+    _calculateLayoutStyle: function(rowKey, columnName, expandable) {
         var wrapperOffset = this.domState.getOffset(),
             $cell = this.domState.getElement(rowKey, columnName),
             cellOffset = $cell.offset(),
-            cellHeight = $cell.outerHeight();
+            cellHeight = $cell.height(),
+            cellWidth = $cell.width() - (CELL_BORDER_WIDTH * 2);
 
         return {
-            top: cellOffset.top - wrapperOffset.top - 1,
-            left: cellOffset.left - wrapperOffset.left - 1,
+            top: cellOffset.top - wrapperOffset.top,
+            left: cellOffset.left - wrapperOffset.left,
             height: cellHeight,
+            minWidth: expandable ? cellWidth : '',
+            width: expandable ? '' : cellWidth,
             lineHeight: cellHeight + 'px'
         };
     },
 
-    _resetState: function() {
-        var address = this.focusModel.get('editingAddress');
-
-        if (address) {
-            this._startEditing(address.rowKey, address.columnName);
+    /**
+     * Event handler for 'editingStateChanged' event on the render model.
+     * @param {Object} cellData - cell data
+     */
+    _onEditingStateChanged: function(cellData) {
+        if (cellData.isEditing) {
+            this._startEditing(cellData);
         } else {
-            this._endEditing();
+            this._finishEditing();
         }
     },
 

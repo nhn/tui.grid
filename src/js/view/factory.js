@@ -242,7 +242,6 @@ var ViewFactory = tui.util.defineClass({
      */
     createEditingLayer: function() {
         return new EditingLayerView({
-            focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
             inputPainters: this.painterManager.getInputPainters(),
             domState: this.domState

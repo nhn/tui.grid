@@ -66,7 +66,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @returns {String}
      */
     labelTemplate: _.template(
-        '<label for="<%=id%>" style="margin-right:10px;"><%=labelText%></label>'
+        '<label for="<%=id%>"><%=labelText%></label>'
     ),
 
     /**

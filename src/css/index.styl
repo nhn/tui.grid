@@ -87,6 +87,27 @@
         width 100px
         height 100px
 
+    .cell_content
+        input
+            &[type=text],
+            &[type=password]
+                width 100%
+                padding 2px 0
+                border solid 1px #E2E3EA
+                border-top solid 1px #ABADB3
+                border-bottom solid 1px #E3E9EF
+            &.editing
+                border solid 1px #748eea
+
+        label + input
+            margin-left 10px
+
+        select
+            width 100%
+
+        a
+            color #002caf
+
     @import 'layer.styl'
     @import 'layout.styl'
     @import 'table.styl'
