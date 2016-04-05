@@ -45,6 +45,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
             'data-column-name': columnName
         });
         this.$el.html(painter.generateHtml(cellData));
+        this._adjustLeftPosition();
 
         painter.focus(this.$el);
     },
@@ -66,6 +67,20 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         this.$el.removeAttr('data-row-key');
         this.$el.removeAttr('data-column-name');
         this.$el.empty().hide();
+    },
+
+    /**
+     * Adjust the left position of the layer not to lay beyond the boundary of the grid.
+     * @private
+     */
+    _adjustLeftPosition: function() {
+        var gridWidth = this.domState.getWidth();
+        var layerWidth = this.$el.outerWidth();
+        var layerLeftPos = this.$el.position().left;
+
+        if (layerLeftPos + layerWidth > gridWidth) {
+            this.$el.css('left', gridWidth - layerWidth);
+        }
     },
 
     /**
