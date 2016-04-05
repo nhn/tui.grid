@@ -60,11 +60,39 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     },
 
     /**
-     * Generates a HTML string from given data, and returns it.
-     * @param {Object} cellData - cell data
+     * Convert each character in the given string to '*' and returns them as a string.
+     * @param {String} value - value string
      * @returns {String}
      */
-    generateHtml: function(cellData) {
+    _convertStringToStars: function(value) {
+        return Array(value.length + 1).join('*');
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var value = cellData.formattedValue;
+
+        if (this.inputType === 'password') {
+            value = this._convertStringToStars(cellData.value);
+        }
+
+        return value;
+    },
+
+    /**
+     * Generates a input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
         var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
 
         return this.template({

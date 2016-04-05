@@ -130,6 +130,41 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
+     * Returns the value string of given data to display in the cell.
+     * @abstract
+     * @protected
+     */
+    _getDisplayValue: function() {
+        throw new Error('implement _getDisplayValue() method');
+    },
+
+    /**
+     * Generates a input HTML string from given data, and returns it.
+     * @abstract
+     * @protected
+     */
+    _generateInputHtml: function() {
+        throw new Error('implement _generateInputHtml() method');
+    },
+
+    /**
+     * Generates a HTML string from given data, and returns it.
+     * @param {Object} cellData - cell data
+     * @returns {String}
+     * @implements {module:painter/input/base}
+     */
+    generateHtml: function(cellData) {
+        if (!_.isNull(cellData.convertedHTML)) {
+            return cellData.convertedHTML;
+        }
+
+        if (!cellData.columnModel.editOption.convertible || cellData.isEditing) {
+            return this._generateInputHtml(cellData);
+        }
+        return this._getDisplayValue(cellData);
+    },
+
+    /**
      * Finds an element from the given parent element with 'this.selector', and moves focus to it.
      * @param {jquery} $parent - parent element
      */

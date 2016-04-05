@@ -41,6 +41,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         '<td <%=attributeString%>><%=contentHtml%></td>'
     ),
 
+    /**
+     * Event handler for 'dblclick' DOM event.
+     * @param {MouseEvent} event - mouse event object
+     */
     _onDblClick: function(event) {
         var address = this._getCellAddress($(event.target));
         this.controller.startEditing(address);
@@ -57,10 +61,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             beforeContent = cellData.beforeContent,
             afterContent = cellData.afterContent;
 
-        if (!this._isConvertible(cellData) && this.inputPainter) {
+        if (this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
 
-            if (this._shouldContentBeWrapped()) {
+            if (this._shouldContentBeWrapped() && !this._isConvertible(cellData)) {
                 beforeContent = this._getSpanWrapContent(beforeContent, 'before');
                 afterContent = this._getSpanWrapContent(afterContent, 'after');
                 content = this._getSpanWrapContent(content, 'input');
@@ -72,6 +76,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         return beforeContent + content + afterContent;
     },
 
+    /**
+     * Returns whether the cell is convertible.
+     * @param {Object} cellData - cell data
+     * @returns {Boolean}
+     */
     _isConvertible: function(cellData) {
         return tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible');
     },
@@ -153,18 +162,14 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {jQuery} $td - cell element
      */
     refresh: function(cellData, $td) {
-        var contentProps = ['value', 'isEditing', 'isDisabled'],
-            isEditingChanged = _.contains(cellData.changed, 'isEditing'),
-            shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
+        var contentProps = ['value', 'isEditing', 'isDisabled'];
+        var isEditingChanged = _.contains(cellData.changed, 'isEditing');
+        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
 
         $td.attr(this._getAttributes(cellData));
 
-        if (isEditingChanged) {
-            if (!cellData.isEditing) {
-                $td.html(this._getContentHtml(cellData));
-            } else if (!this._isConvertible(cellData)) {
-                this.inputPainter.focus($td);
-            }
+        if (isEditingChanged && cellData.isEditing && !this._isConvertible(cellData)) {
+            this.inputPainter.focus($td);
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
         }

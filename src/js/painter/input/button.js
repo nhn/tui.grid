@@ -125,26 +125,52 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
-     * Generates a HTML string from given data, and returns it.
-     * @param {object} cellData - cell data
-     * @returns {string} HTML string
-     * @implements {module:base/painter}
+     * Returns the set object that contains the checked value.
+     * @param {String} value - value
+     * @returns {Object}
      */
-    generateHtml: function(cellData) {
-        var value, checkedMap, name, html;
-
-        if (!_.isNull(cellData.convertedHTML)) {
-            return cellData.convertedHTML;
-        }
-
-        value = cellData.value;
-        checkedMap = {};
-        name = util.getUniqueKey();
-        html = '';
+    _getCheckedValueSet: function(value) {
+        var checkedMap = {};
 
         _.each(String(value).split(','), function(itemValue) {
             checkedMap[itemValue] = true;
         });
+
+        return checkedMap;
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var optionItems = cellData.columnModel.editOption.list;
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var optionTexts = [];
+
+        _.each(optionItems, function(item) {
+            if (checkedSet[item.value]) {
+                optionTexts.push(item.text);
+            }
+        });
+
+        return optionTexts.join(',');
+    },
+
+    /**
+     * Generates a input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var name = util.getUniqueKey();
+        var html = '';
 
         _.each(cellData.columnModel.editOption.list, function(item) {
             var id = name + '_' + item.value;
@@ -154,7 +180,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
                 id: id,
                 name: name,
                 value: item.value,
-                checked: checkedMap[item.value] ? 'checked' : '',
+                checked: checkedSet[item.value] ? 'checked' : '',
                 disabled: cellData.isDisabled ? 'disabled' : ''
             });
             if (item.text) {
