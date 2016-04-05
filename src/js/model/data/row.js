@@ -403,12 +403,17 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
             _.each(valueList, function(val, index) {
                 var item = _.findWhere(editOptionList, {value: val});
-                valueList[index] = item && item.text || '';
+                valueList[index] = item && item.value || '';
             }, this);
 
             return valueList.join(',');
         }
         return '';
+    },
+
+
+    _isListType: function(editType) {
+        return _.contains(['select', 'radio', 'checkbox'], editType);
     },
 
     /**
@@ -431,35 +436,27 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {String} 화면에 보여지는 데이터로 가공된 문자열
+     * Returns the text string to be used when copying the cell value to clipboard.
+     * @param {String} columnName - column name
+     * @returns {String}
      */
-    getVisibleText: function(columnName) {
-        var columnModel = this.columnModel,
-            value = this.get(columnName),
-            editType, model,
-            listTypeMap = {
-                'select': true,
-                'radio': true,
-                'checkbox': true
-            };
+    getValueString: function(columnName) {
+        var editType = this.columnModel.getEditType(columnName);
+        var column = this.columnModel.getColumnModel(columnName);
+        var value = this.get(columnName);
 
-        if (columnModel) {
-            editType = columnModel.getEditType(columnName);
-            model = columnModel.getColumnModel(columnName);
-
-            if (listTypeMap[editType]) {
-                if (tui.util.isExisty(tui.util.pick(model, 'editOption', 'list', 0, 'value'))) {
-                    value = this._getListTypeVisibleText(columnName);
-                } else {
-                    throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
-                }
-            } else if (_.isFunction(model.formatter)) {
-                value = util.stripTags(model.formatter(value, this.toJSON(), model));
+        if (this._isListType(editType)) {
+            if (tui.util.isExisty(tui.util.pick(column, 'editOption', 'list', 0, 'value'))) {
+                value = this._getListTypeVisibleText(columnName);
+            } else {
+                throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
             }
+        } else if (editType === 'password') {
+            value = '';
         }
+
         value = !tui.util.isUndefined(value) ? value.toString() : value;
+
         return value;
     },
 

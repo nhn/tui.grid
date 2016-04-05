@@ -55,7 +55,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
             return String(item.value) === String(cellData.value);
         });
 
-        return selectedOption.text;
+        return selectedOption ? selectedOption.text : '';
     },
 
     /**

@@ -64,7 +64,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
      * @param {String} value - value string
      * @returns {String}
      */
-    _convertStringToStars: function(value) {
+    _convertStringToAsterisk: function(value) {
         return Array(value.length + 1).join('*');
     },
 
@@ -79,7 +79,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
         var value = cellData.formattedValue;
 
         if (this.inputType === 'password') {
-            value = this._convertStringToStars(cellData.value);
+            value = this._convertStringToAsterisk(cellData.value);
         }
 
         return value;
