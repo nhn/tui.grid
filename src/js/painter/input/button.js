@@ -23,7 +23,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
         this.inputType = options.inputType;
 
         /**
-         * css selector to find its own element(s) from a parent element.
+         * css selector to use delegated event handlers by '$.on()' method.
          * @type {String}
          */
         this.selector = 'fieldset[data-type=' + this.inputType + ']';
@@ -105,6 +105,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     /**
      * Event handler for 'mousedown' DOM event
      * @param {MouseEvent} event - mouse event object
+     * @private
      */
     _onMouseDown: function(event) {
         var $target = $(event.target);
@@ -121,6 +122,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @param {jquery} $target - target element
      * @param {Boolean} reverse - if set to true, find previous element instead of next element.
      * @returns {Boolean} - false if no element exist, true otherwise.
+     * @private
      */
     _focusNextInput: function($target, reverse) {
         var traverseFuncName = reverse ? 'prevAll' : 'nextAll',
@@ -154,6 +156,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * Returns the set object that contains the checked value.
      * @param {String} value - value
      * @returns {Object}
+     * @private
      */
     _getCheckedValueSet: function(value) {
         var checkedMap = {};
@@ -226,6 +229,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     /**
      * Finds an element from the given parent element with 'this.selector', and moves focus to it.
      * @param {jquery} $parent - parent element
+     * @override
      */
     focus: function($parent) {
         var $input = $parent.find('input');

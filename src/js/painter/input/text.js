@@ -24,7 +24,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
         this.inputType = options.inputType;
 
         /**
-         * css selector to find its own element(s) from a parent element.
+         * css selector to use delegated event handlers by '$.on()' method.
          * @type {String}
          */
         this.selector = 'input[type=' + this.inputType + ']';
@@ -63,8 +63,9 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
      * Convert each character in the given string to '*' and returns them as a string.
      * @param {String} value - value string
      * @returns {String}
+     * @private
      */
-    _convertStringToAsterisk: function(value) {
+    _convertStringToAsterisks: function(value) {
         return Array(value.length + 1).join('*');
     },
 
@@ -79,7 +80,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
         var value = cellData.formattedValue;
 
         if (this.inputType === 'password') {
-            value = this._convertStringToAsterisk(cellData.value);
+            value = this._convertStringToAsterisks(cellData.value);
         }
 
         return value;

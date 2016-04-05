@@ -27,7 +27,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     events: {},
 
     /**
-     * css selector to find its own element(s) from a parent element.
+     * css selector to use delegated event handlers by '$.on()' method.
      * @type {String}
      */
     selector: '',
