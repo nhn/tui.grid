@@ -46,8 +46,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {MouseEvent} event - mouse event object
      */
     _onDblClick: function(event) {
-        var address = this._getCellAddress($(event.target));
-        this.controller.startEditing(address);
+        var address;
+
+        if (this._isEditableType()) {
+            address = this._getCellAddress($(event.target));
+            this.controller.startEditing(address);
+        }
+    },
+
+    /**
+     * Returns whether the instance is editable type.
+     * @returns {Boolean}
+     */
+    _isEditableType: function() {
+        return !_.contains(['normal', 'mainButton'], this.editType);
     },
 
     /**

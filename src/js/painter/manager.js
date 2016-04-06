@@ -10,6 +10,7 @@ var DummyCellPainter = require('./dummyCell');
 var TextPainter = require('./input/text');
 var SelectPainter = require('./input/select');
 var ButtonPainter = require('./input/button');
+var MainButtonPainter = require('./input/mainButton');
 
 /**
  * Painter manager
@@ -56,6 +57,11 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
             }),
             select: new SelectPainter({
                 controller: controller
+            }),
+            mainButton: new MainButtonPainter({
+                controller: controller,
+                inputType: this.selectType,
+                gridId: this.gridId
             })
         };
     },
@@ -118,10 +124,16 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Returns all input painters
+     * @param {Boolean} convertibleOnly - if set to true, returns only convertible painters
      * @returns {Object} Object that has edit-type as a key and input painter as a value
      */
-    getInputPainters: function() {
-        return this.inputPainters;
+    getInputPainters: function(convertibleOnly) {
+        var result = this.inputPainters;
+        if (convertibleOnly) {
+            result = _.omit(result, 'mainButton');
+        }
+
+        return result;
     },
 
     /**

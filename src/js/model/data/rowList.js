@@ -304,8 +304,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array} Row List
      */
     getRowList: function(isOnlyChecked, isRaw) {
-        var rowList,
-            checkedRowList;
+        var rowList, checkedRowList;
+
         if (isOnlyChecked) {
             checkedRowList = this.where({
                 '_button': true

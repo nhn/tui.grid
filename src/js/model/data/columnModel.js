@@ -98,13 +98,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         var selectType = this.get('selectType'),
             buttonColumn = {
                 columnName: '_button',
-                align: 'center',
                 isHidden: false,
+                align: 'center',
                 editOption: {
-                    type: selectType,
-                    list: [{
-                        value: true
-                    }]
+                    type: 'mainButton'
                 },
                 isFixedWidth: true,
                 width: 40

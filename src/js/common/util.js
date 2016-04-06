@@ -243,9 +243,11 @@ var util = {
      */
     convertValueType: function(value, type) {
         if (type === 'string') {
-            return value.toString();
+            return String(value);
         } else if (type === 'number') {
             return Number(value);
+        } else if (type === 'boolean') {
+            return Boolean(value);
         }
         return value;
     },

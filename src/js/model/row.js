@@ -195,6 +195,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isDisabled: cellState.isDisabled,
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
                 isFocused: focusModel.isCurrentCell(rowKey, columnName),
+                optionList: tui.util.pick(column, 'editOption', 'list'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
                 changed: [] //changed property names

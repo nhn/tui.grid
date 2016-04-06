@@ -52,7 +52,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
         this.selectionModel.enable();
 
         if (!_.isUndefined(value)) {
-            this.dataModel.setValue(address.rowKey, address.columnName, value);
+            this.setValue(address, value);
             this.dataModel.get(address.rowKey).validateCell(address.columnName);
         }
         focusModel.finishEditing();
@@ -113,6 +113,15 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
         this.dataModel.append({}, {
             focus: true
         });
+    },
+
+    /**
+     * Sets the value of the given cell.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {(Number|String|Boolean)} value - value
+     */
+    setValue: function(address, value) {
+        this.dataModel.setValue(address.rowKey, address.columnName, value);
     }
 });
 
