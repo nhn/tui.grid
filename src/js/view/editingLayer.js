@@ -62,6 +62,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
 
     /**
      * Fisishes editing the current cell.
+     * @private
      */
     _finishEditing: function() {
         this.$el.removeAttr('data-row-key');
@@ -89,6 +90,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @param {String} columnName - column name
      * @param {Boolean} expandable - true if the width of layer is expandable
      * @returns {Object}
+     * @private
      */
     _calculateLayoutStyle: function(rowKey, columnName, expandable) {
         var wrapperOffset = this.domState.getOffset(),
@@ -110,6 +112,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     /**
      * Event handler for 'editingStateChanged' event on the render model.
      * @param {Object} cellData - cell data
+     * @private
      */
     _onEditingStateChanged: function(cellData) {
         if (cellData.isEditing) {

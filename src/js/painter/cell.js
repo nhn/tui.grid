@@ -33,7 +33,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         dblclick: '_onDblClick'
     },
 
-    /*
+    /**
      * Markup template
      * @returns {string} template
      */
@@ -80,6 +80,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * Returns whether the cell is convertible.
      * @param {Object} cellData - cell data
      * @returns {Boolean}
+     * @private
      */
     _isConvertible: function(cellData) {
         return tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible');
@@ -88,6 +89,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     /**
      * Returns whether the contents should be wrapped with span tags to display them correctly.
      * @returns {Boolean}
+     * @private
      */
     _shouldContentBeWrapped: function() {
         return _.contains(['text', 'password', 'select'], this.editType);

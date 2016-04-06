@@ -415,7 +415,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.isEditing && valueChanged;
-        var convertible = cellData.columnModel.editOption.convertible;
+        var convertible = tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible') === true;
         var editingStarted = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
 
         return valueChangedOnEditing || (convertible && editingStarted);

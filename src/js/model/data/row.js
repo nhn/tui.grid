@@ -460,7 +460,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             value = '';
         }
 
-        value = !tui.util.isUndefined(value) ? value.toString() : value;
+        if (!_.isUndefined(value)) {
+            value = String(value);
+        }
 
         return value;
     },

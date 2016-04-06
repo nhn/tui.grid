@@ -152,14 +152,17 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @implements {module:painter/input/base}
      */
     generateHtml: function(cellData) {
+        var result;
+
         if (!_.isNull(cellData.convertedHTML)) {
-            return cellData.convertedHTML;
+            result = cellData.convertedHTML;
+        } else if (!cellData.columnModel.editOption.convertible || cellData.isEditing) {
+            result = this._generateInputHtml(cellData);
+        } else {
+            result = this._getDisplayValue(cellData);
         }
 
-        if (!cellData.columnModel.editOption.convertible || cellData.isEditing) {
-            return this._generateInputHtml(cellData);
-        }
-        return this._getDisplayValue(cellData);
+        return result;
     },
 
     /**
