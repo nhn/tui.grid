@@ -43,7 +43,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
 
         return {
             rowKey: $addressHolder.attr('data-row-key'),
-            columnName: $addressHolder.data('column-name')
+            columnName: $addressHolder.attr('data-column-name')
         };
     },
 

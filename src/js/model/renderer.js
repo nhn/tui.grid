@@ -139,8 +139,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onFocusOrBlur: function(rowKey, columnName) {
-        console.log('focus or blur', rowKey, columnName);
-        this._getRowModel(rowKey, columnName).updateClassName(columnName);
+        var rowModel = this._getRowModel(rowKey, columnName);
+
+        if (rowModel) {
+            rowModel.updateClassName(columnName);
+        }
     },
 
     /**

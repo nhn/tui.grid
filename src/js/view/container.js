@@ -185,7 +185,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.data('column-name') && $cell.parent().attr('key'));
+        return !!($cell.is('td') && $cell.attr('data-column-name') && $cell.parent().attr('key'));
     },
 
     /**
@@ -196,7 +196,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     _getCellInfoFromElement: function($cell) {
         var rowKey = Number($cell.attr('data-row-key'));
-        var columnName = $cell.data('column-name');
+        var columnName = $cell.attr('data-column-name');
 
         return {
             rowKey: rowKey,

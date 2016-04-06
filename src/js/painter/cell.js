@@ -117,19 +117,14 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getAttributes: function(cellData) {
-        var attrs = {
+        return {
             'class': cellData.className + ' cell_content',
             'edit-type': this.editType,
             'data-row-key': cellData.rowKey,
             'data-column-name': cellData.columnName,
+            'rowspan': cellData.rowSpan || '',
             'align': cellData.columnModel.align || 'left'
         };
-
-        if (cellData.rowSpan) {
-            attrs.rowspan = cellData.rowSpan;
-        }
-
-        return attrs;
     },
 
     /**
@@ -171,8 +166,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var contentProps = ['value', 'isEditing', 'isDisabled'];
         var isEditingChanged = _.contains(cellData.changed, 'isEditing');
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
-        // console.log(this._getAttributes(cellData));
-        $td.attr(this._getAttributes(cellData));
+        var attrs = this._getAttributes(cellData);
+
+        delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
+        $td.attr(attrs);
 
         if (isEditingChanged && cellData.isEditing && !this._isConvertible(cellData)) {
             this.inputPainter.focus($td);

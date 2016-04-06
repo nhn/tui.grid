@@ -394,7 +394,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onClick: function(clickEvent) {
         var $target = $(clickEvent.target),
-            columnName = $target.closest('th').data('column-name');
+            columnName = $target.closest('th').attr('data-column-name');
 
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {

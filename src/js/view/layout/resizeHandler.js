@@ -128,7 +128,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             $handler = $resizeHandleList.eq(index);
-            columnName = $handler.data('column-name');
+            columnName = $handler.attr('data-column-name');
             width = $table.find('th[data-column-name=' + columnName + ']').width();
             if (tui.util.isExisty(width)) {
                 isChanged = isChanged || (width !== columnWidthList[index]);
