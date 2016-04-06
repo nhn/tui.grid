@@ -67,7 +67,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * <th> 템플릿
      */
     templateHeader: _.template(
-        '<th columnname="<%=columnName%>" ' +
+        '<th data-column-name="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'height="<%=height%>" ' +
             '<%if(colspan > 0) {%>' +
@@ -86,7 +86,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     templateCol: _.template(
         '<col ' +
-            'columnname="<%=columnName%>" ' +
+            'data-column-name="<%=columnName%>" ' +
             'style="width:<%=width%>px">'
     ),
 
@@ -164,7 +164,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+                $ths.filter('[data-column-name=' + columnName + ']').addClass(CLASSNAME_SELECTED);
             });
         }
     },
@@ -330,7 +330,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getHeaderMainCheckbox: function() {
-        return this.$el.find('th[columnname="_button"] input');
+        return this.$el.find('th[data-column-name="_button"] input');
     },
 
     /**
@@ -394,7 +394,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onClick: function(clickEvent) {
         var $target = $(clickEvent.target),
-            columnName = $target.closest('th').attr('columnname');
+            columnName = $target.closest('th').data('column-name');
 
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
@@ -419,7 +419,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (this._$currentSortBtn) {
             this._$currentSortBtn.removeClass('sorting_down sorting_up');
         }
-        this._$currentSortBtn = this.$el.find('th[columnname=' + sortOptions.columnName + '] a.btn_sorting');
+        this._$currentSortBtn = this.$el.find('th[data-column-name=' + sortOptions.columnName + '] a.btn_sorting');
         this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
     },
 

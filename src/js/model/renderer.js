@@ -60,10 +60,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
         }
 
-        this.on('change:scrollTop change:scrollLeft', function() {
-            console.log('render change scroll');
-            this.focusModel.finishEditing();
-        }, this);
+        this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
+
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing);
 
         this._updateMaxScrollLeft();
     },
@@ -87,6 +86,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         // constMap.renderState
         state: renderStateMap.DONE
+    },
+
+    /**
+     * Event handler for change:scrollTop and change:scrollLeft.
+     * @private
+     */
+    _onChangeLayout: function() {
+        this.focusModel.finishEditing();
+        this.focusModel.focusClipboard();
     },
 
     /**
@@ -131,6 +139,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onFocusOrBlur: function(rowKey, columnName) {
+        console.log('focus or blur', rowKey, columnName);
         this._getRowModel(rowKey, columnName).updateClassName(columnName);
     },
 
@@ -142,17 +151,43 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _onEditingAddressChange: function(focusModel, address) {
         var target = address;
-        var isEditing = true;
+        var editing = true;
+        var self = this;
 
         if (!address) {
             target = focusModel.previous('editingAddress');
-            isEditing = false;
+            editing = false;
         }
         this._updateCellData(target.rowKey, target.columnName, {
-            isEditing: isEditing
+            isEditing: editing
         });
 
         this._triggerEditingStateChanged(target.rowKey, target.columnName);
+
+        // defered call to prevent 'change:scrollLeft' or 'change:scrollTop' event
+        // triggered by module:view/layout/body._onScroll()
+        // when module:model/focus.scrollToFocus() method is called.
+        _.defer(function() {
+            self._toggleChangeLayoutEventHandlers(editing);
+        });
+    },
+
+    /**
+     * Toggle event handler for change:scrollTop and change:scrollLeft event.
+     * @param {Boolean} editing - whether currently editing
+     * @private
+     */
+    _toggleChangeLayoutEventHandlers: function(editing) {
+        var renderEventName = 'change:scrollTop change:scrollLeft';
+        var dimensionEventName = 'columnWidthChanged';
+
+        if (editing) {
+            this.listenToOnce(this.dimensionModel, dimensionEventName, this._onChangeLayoutBound);
+            this.once(renderEventName, this._onChangeLayoutBound);
+        } else {
+            this.stopListening(this.dimensionModel, dimensionEventName, this._onChangeLayoutBound);
+            this.off(renderEventName, this._onChangeLayoutBound);
+        }
     },
 
     /**

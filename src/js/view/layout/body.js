@@ -40,8 +40,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
             // DIV for setting rendering position of entire child-nodes of $el.
             $container: null,
-            whichSide: options && options.whichSide || 'R',
-            scrollBlocked: false
+            whichSide: options && options.whichSide || 'R'
         });
 
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
@@ -84,15 +83,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onScroll: function(event) {
-        var attrs;
-
-        if (this.scrollBlocked) {
-            return;
-        }
-
-        attrs = {
+        var attrs = {
             scrollTop: event.target.scrollTop
         };
+
         if (this.whichSide === 'R') {
             attrs.scrollLeft = event.target.scrollLeft;
         }
@@ -107,22 +101,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _onScrollLeftChange: function(model, value) {
         if (this.whichSide === 'R') {
-            this._blockScrollBriefly();
             this.el.scrollLeft = value;
         }
-    },
-
-    /**
-     * Set scrollBlocked property to true briefly to prevent triggering 'scroll' event repeatedly.
-     * @private
-     */
-    _blockScrollBriefly: function() {
-        var self = this;
-
-        self.scrollBlocked = true;
-        _.defer(function() {
-            self.scrollBlocked = false;
-        });
     },
 
     /**
@@ -156,7 +136,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $target = $(event.target),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
-            columnName = $td.attr('columnName'),
+            columnName = $td.data('column-name'),
             rowKey = $tr.attr('key'),
             startAction = true,
             inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),

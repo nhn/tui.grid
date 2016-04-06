@@ -185,7 +185,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr('columnname') && $cell.parent().attr('key'));
+        return !!($cell.is('td') && $cell.data('column-name') && $cell.parent().attr('key'));
     },
 
     /**
@@ -195,8 +195,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.parent().attr('key')),
-            columnName = $cell.attr('columnname');
+        var rowKey = Number($cell.attr('data-row-key'));
+        var columnName = $cell.data('column-name');
 
         return {
             rowKey: rowKey,

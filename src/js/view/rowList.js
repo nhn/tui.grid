@@ -226,7 +226,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             if (!trMap[mainRowKey]) {
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
-            $td = trMap[mainRowKey].find('td[columnname=' + columnName + ']');
+            $td = trMap[mainRowKey].find('td[data-column-name=' + columnName + ']');
             $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
         }, this);
     },
