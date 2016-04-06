@@ -26,6 +26,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @returns {Boolean} true if succeeded, false otherwise
      */
     startEditing: function(address) {
+        console.log('address', address);
         var result = this.focusModel.startEditing(address.rowKey, address.columnName);
 
         if (result) {

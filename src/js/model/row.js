@@ -224,7 +224,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }
         classNames = row.getClassNameList(columnName);
 
-        if (focusModel.isCurrentCell(row.get('rowKey'), columnName)) {
+        if (focusModel.isCurrentCell(row.get('rowKey'), columnName, true)) {
             classNames.push('focused');
         }
 
@@ -363,6 +363,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param {String} columnName - column name
      */
     updateClassName: function(columnName) {
+        console.log('updateClass', this.get('rowKey', columnName));
         this.setCell(columnName, {
             className: this._getClassNameString(columnName)
         });

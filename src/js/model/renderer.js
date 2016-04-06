@@ -139,7 +139,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onFocusOrBlur: function(rowKey, columnName) {
-        var rowModel = this._getRowModel(rowKey, columnName);
+        // console.log('focusBlur', rowKey, columnName);
+        var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        var rowModel = this._getRowModel(mainRowKey, columnName);
+
+        console.log('mainRowKey', mainRowKey, columnName);
 
         if (rowModel) {
             rowModel.updateClassName(columnName);

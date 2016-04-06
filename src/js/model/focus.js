@@ -97,24 +97,21 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Returns whether given rowKey is equal to current value
-     * @param  {(Number|String)} rowKey - Row key
-     * @returns {Boolean} - True if equal
-     */
-    _isCurrentRow: function(rowKey) {
-        // compare with == operator to avoid strict comparision
-        // (rowkey can be a number or a string)
-        return this.get('rowKey') == rowKey; // eslint-disable-line eqeqeq
-    },
-
-    /**
      * Returns whether given rowKey and columnName is equal to current value
-     * @param  {(Number|String)} rowKey - Row key
-     * @param  {String} columnName - Column name
+     * @param {(Number|String)} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Boolean} isMainRowKey - true if the target row key is main row
      * @returns {Boolean} - True if equal
      */
-    isCurrentCell: function(rowKey, columnName) {
-        return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
+    isCurrentCell: function(rowKey, columnName, isMainRowKey) {
+        var curColumnName = this.get('columnName');
+        var curRowKey = this.get('rowKey');
+
+        if (isMainRowKey) {
+            curRowKey = this.dataModel.getMainRowKey(curRowKey, curColumnName);
+        }
+
+        return String(curRowKey) === String(rowKey) && curColumnName === columnName;
     },
 
     /**
@@ -126,7 +123,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var eventData = new GridEvent(),
             currentRowKey = this.get('rowKey');
 
-        if (this._isCurrentRow(rowKey)) {
+        if (String(currentRowKey) === String(rowKey)) {
             return true;
         }
 
