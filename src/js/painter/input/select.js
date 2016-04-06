@@ -18,9 +18,13 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      */
     init: function() {
         InputPainter.apply(this, arguments);
-    },
 
-    selector: 'select',
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'select';
+    },
 
     /**
      * Content markup template
@@ -39,19 +43,31 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     ),
 
     /**
-     * Generates a HTML string from given data, and returns it.
-     * @param {Object} cellData - cellData
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
      * @returns {String}
+     * @protected
      */
-    generateHtml: function(cellData) {
-        var optionItems = cellData.columnModel.editOption.list,
-            optionHtml;
+    _getDisplayValue: function(cellData) {
+        var optionItems = cellData.columnModel.editOption.list;
+        var selectedOption = _.find(optionItems, function(item) {
+            return String(item.value) === String(cellData.value);
+        });
 
-        if (!_.isNull(cellData.convertedHTML)) {
-            return cellData.convertedHTML;
-        }
+        return selectedOption ? selectedOption.text : '';
+    },
 
-        optionHtml = _.reduce(optionItems, function(html, item) {
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var optionItems = cellData.columnModel.editOption.list;
+        var optionHtml = _.reduce(optionItems, function(html, item) {
             return html + this.optionTemplate({
                 value: item.value,
                 text: item.text,

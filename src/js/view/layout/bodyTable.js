@@ -175,7 +175,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             var name = columnModel.columnName,
                 width = columnWidthList[index] - BodyTable.EXTRA_WIDTH;
 
-            html += '<col columnname="' + name + '" style="width:' + width + 'px">';
+            html += '<col data-column-name="' + name + '" style="width:' + width + 'px">';
         });
         return html;
     }

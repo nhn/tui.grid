@@ -22,6 +22,13 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
         InputPainter.apply(this, arguments);
 
         this.inputType = options.inputType;
+
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'input[type=' + this.inputType + ']';
+
         this._extendEvents({
             selectstart: '_onSelectStart'
         });
@@ -53,11 +60,40 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     },
 
     /**
-     * Generates a HTML string from given data, and returns it.
-     * @param {Object} cellData - cell data
+     * Convert each character in the given string to '*' and returns them as a string.
+     * @param {String} value - value string
      * @returns {String}
+     * @private
      */
-    generateHtml: function(cellData) {
+    _convertStringToAsterisks: function(value) {
+        return Array(value.length + 1).join('*');
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var value = cellData.formattedValue;
+
+        if (this.inputType === 'password') {
+            value = this._convertStringToAsterisks(cellData.value);
+        }
+
+        return value;
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
         var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
 
         return this.template({

@@ -26,16 +26,10 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @type {Object}
      */
     events: {
-        blur: '_onBlur',
         keydown: '_onKeyDown',
-        focus: '_onFocus'
+        focusin: '_onFocusIn',
+        focusout: '_onFocusOut'
     },
-
-    /**
-     * css selector to find its own element(s) from a parent element.
-     * @type {String}
-     */
-    selector: 'input',
 
     /**
      * keydown Actions
@@ -52,19 +46,6 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
             this.controller.finishEditing(param.address, true, param.value);
             this.controller.focusInToNextCell(param.shiftKey);
         }
-    },
-
-    /**
-     * Returns the cell address of the target element.
-     * @param {jQuery} $target - target element
-     * @returns {{rowKey: String, columnName: String}}
-     * @private
-     */
-    _getCellAddress: function($target) {
-        return {
-            rowKey: $target.closest('tr').attr('key'),
-            columnName: $target.closest('td').attr('columnName')
-        };
     },
 
     /**
@@ -101,7 +82,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @param {Event} event - DOM event object
      * @private
      */
-    _onFocus: function(event) {
+    _onFocusIn: function(event) {
         var address = this._getCellAddress($(event.target));
 
         this._executeCustomEventHandler(event);
@@ -113,7 +94,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @param {Event} event - DOM event object
      * @private
      */
-    _onBlur: function(event) {
+    _onFocusOut: function(event) {
         var $target = $(event.target),
             address = this._getCellAddress($target);
 
@@ -144,6 +125,44 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
             action.call(this, param);
             event.preventDefault();
         }
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @abstract
+     * @protected
+     */
+    _getDisplayValue: function() {
+        throw new Error('implement _getDisplayValue() method');
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @abstract
+     * @protected
+     */
+    _generateInputHtml: function() {
+        throw new Error('implement _generateInputHtml() method');
+    },
+
+    /**
+     * Generates a HTML string from given data, and returns it.
+     * @param {Object} cellData - cell data
+     * @returns {String}
+     * @implements {module:painter/input/base}
+     */
+    generateHtml: function(cellData) {
+        var result;
+
+        if (!_.isNull(cellData.convertedHTML)) {
+            result = cellData.convertedHTML;
+        } else if (!cellData.columnModel.editOption.convertible || cellData.isEditing) {
+            result = this._generateInputHtml(cellData);
+        } else {
+            result = this._getDisplayValue(cellData);
+        }
+
+        return result;
     },
 
     /**

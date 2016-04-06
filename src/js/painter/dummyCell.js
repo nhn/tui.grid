@@ -39,7 +39,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @returns {String} HTML string
      */
     template: _.template(
-        '<td columnname="<%=columnName%>" ' +
+        '<td data-column-name="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'edit-type="dummy">' +
             '&#8203;' + // 'for height issue with empty cell in IE7

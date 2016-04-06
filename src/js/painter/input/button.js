@@ -22,6 +22,16 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
         this.inputType = options.inputType;
 
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'fieldset[data-type=' + this.inputType + ']';
+
+        this._extendEvents({
+            mousedown: '_onMouseDown'
+        });
+
         this._extendKeydownActions({
             TAB: function(param) {
                 var value;
@@ -47,10 +57,18 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
-     * Input markup template
+     * fieldset markup template
      * @returns {String}
      */
     template: _.template(
+        '<fieldset data-type="<%=type%>"><%=content%></fieldset>'
+    ),
+
+    /**
+     * Input markup template
+     * @returns {String}
+     */
+    inputTemplate: _.template(
         '<input type="<%=type%>" name="<%=name%>" id="<%=id%>" value="<%=value%>"' +
         ' <%=checked%> <%=disabled%> />'
     ),
@@ -60,7 +78,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @returns {String}
      */
     labelTemplate: _.template(
-        '<label for="<%=id%>" style="margin-right:10px;"><%=labelText%></label>'
+        '<label for="<%=id%>"><%=labelText%></label>'
     ),
 
     /**
@@ -69,7 +87,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
      * @override
      * @private
      */
-    _onBlur: function(event) {
+    _onFocusOut: function(event) {
         var $target = $(event.target);
         var self = this;
 
@@ -85,10 +103,26 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
+     * Event handler for 'mousedown' DOM event
+     * @param {MouseEvent} event - mouse event object
+     * @private
+     */
+    _onMouseDown: function(event) {
+        var $target = $(event.target);
+        var hasFocusedInput = $target.closest('fieldset').find('input:focus').length > 0;
+
+        if (!$target.is('input') && hasFocusedInput) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    },
+
+    /**
      * Moves focus to the next input element.
      * @param {jquery} $target - target element
      * @param {Boolean} reverse - if set to true, find previous element instead of next element.
      * @returns {Boolean} - false if no element exist, true otherwise.
+     * @private
      */
     _focusNextInput: function($target, reverse) {
         var traverseFuncName = reverse ? 'prevAll' : 'nextAll',
@@ -119,47 +153,90 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     },
 
     /**
-     * Generates a HTML string from given data, and returns it.
-     * @param {object} cellData - cell data
-     * @returns {string} HTML string
-     * @implements {module:base/painter}
+     * Returns the set object that contains the checked value.
+     * @param {String} value - value
+     * @returns {Object}
+     * @private
      */
-    generateHtml: function(cellData) {
-        var value, checkedMap, name, html;
-
-        if (!_.isNull(cellData.convertedHTML)) {
-            return cellData.convertedHTML;
-        }
-
-        value = cellData.value;
-        checkedMap = {};
-        name = util.getUniqueKey();
-        html = '';
+    _getCheckedValueSet: function(value) {
+        var checkedMap = {};
 
         _.each(String(value).split(','), function(itemValue) {
             checkedMap[itemValue] = true;
         });
 
+        return checkedMap;
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var optionItems = cellData.columnModel.editOption.list;
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var optionTexts = [];
+
+        _.each(optionItems, function(item) {
+            if (checkedSet[item.value]) {
+                optionTexts.push(item.text);
+            }
+        });
+
+        return optionTexts.join(',');
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var name = util.getUniqueKey();
+        var contentHtml = '';
+
         _.each(cellData.columnModel.editOption.list, function(item) {
             var id = name + '_' + item.value;
 
-            html += this.template({
+            contentHtml += this.inputTemplate({
                 type: this.inputType,
                 id: id,
                 name: name,
                 value: item.value,
-                checked: checkedMap[item.value] ? 'checked' : '',
+                checked: checkedSet[item.value] ? 'checked' : '',
                 disabled: cellData.isDisabled ? 'disabled' : ''
             });
             if (item.text) {
-                html += this.labelTemplate({
+                contentHtml += this.labelTemplate({
                     id: id,
                     labelText: item.text
                 });
             }
         }, this);
 
-        return html;
+        return this.template({
+            type: this.inputType,
+            content: contentHtml
+        });
+    },
+
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     * @override
+     */
+    focus: function($parent) {
+        var $input = $parent.find('input');
+
+        if (!$input.is(':focus')) {
+            $input.eq(0).focus();
+        }
     }
 });
 

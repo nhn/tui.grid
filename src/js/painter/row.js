@@ -131,7 +131,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
-                $td = $tr.find('td[columnname=' + columnName + ']');
+                $td = $tr.find('td[data-column-name=' + columnName + ']');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 cellPainter.refresh(cellData, $td);

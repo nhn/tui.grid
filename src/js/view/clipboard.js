@@ -485,7 +485,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         if (selectionModel.hasSelection()) {
             text = this.selectionModel.getValuesToString();
         } else {
-            text = this.dataModel.get(focused.rowKey).getVisibleText(focused.columnName);
+            text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
         return text;
     },

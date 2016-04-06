@@ -43,7 +43,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
-        'columnname="<%=columnName%>" ' +
+        'data-column-name="<%=columnName%>" ' +
         'class="resize_handle' +
         '<% if(isLast === true) ' +
         ' print(" resize_handle_last");%>' +
@@ -128,8 +128,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             $handler = $resizeHandleList.eq(index);
-            columnName = $handler.attr('columnname');
-            width = $table.find('th[columnname="' + columnName + '"]').width();
+            columnName = $handler.attr('data-column-name');
+            width = $table.find('th[data-column-name=' + columnName + ']').width();
             if (tui.util.isExisty(width)) {
                 isChanged = isChanged || (width !== columnWidthList[index]);
             } else {

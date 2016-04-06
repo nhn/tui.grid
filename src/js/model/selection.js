@@ -349,7 +349,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         columnNameList = _.pluck(columnModelList, 'columnName');
         rowValues = _.map(rowList, function(row) {
             var tmpString = _.map(columnNameList, function(columnName) {
-                return row.getVisibleText(columnName);
+                return row.getValueString(columnName);
             });
             return tmpString.join('\t');
         });

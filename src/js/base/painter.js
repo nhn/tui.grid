@@ -27,10 +27,25 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     events: {},
 
     /**
-     * css selector to find its own element(s) from a parent element.
+     * css selector to use delegated event handlers by '$.on()' method.
      * @type {String}
      */
     selector: '',
+
+    /**
+     * Returns the cell address of the target element.
+     * @param {jQuery} $target - target element
+     * @returns {{rowKey: String, columnName: String}}
+     * @private
+     */
+    _getCellAddress: function($target) {
+        var $addressHolder = $target.closest('[data-row-key]');
+
+        return {
+            rowKey: $addressHolder.attr('data-row-key'),
+            columnName: $addressHolder.attr('data-column-name')
+        };
+    },
 
     /**
      * Attaches all event handlers to the $target element.
