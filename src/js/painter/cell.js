@@ -174,6 +174,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             this.inputPainter.focus($td);
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
+            $td.scrollLeft(0);
         }
     }
 });

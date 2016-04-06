@@ -60,6 +60,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
         }
 
+        this.on('change:scrollTop change:scrollLeft', function() {
+            console.log('render change scroll');
+            this.focusModel.finishEditing();
+        }, this);
+
         this._updateMaxScrollLeft();
     },
 

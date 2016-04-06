@@ -30,6 +30,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.domState = options.domState;
 
         this.listenTo(this.dataModel, 'reset', this._onResetData);
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing);
     },
 
     defaults: {
