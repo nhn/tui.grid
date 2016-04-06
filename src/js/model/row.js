@@ -80,22 +80,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Returns whether the state of specified column is disabled.
-     * @param  {String} columnName - Column name
-     * @param  {{isDisabledCheck: Boolean, isDisabled: Boolean, isChecked: Boolean}} rowState - Row state
-     * @returns {Boolean} - True if disabled
-     * @private
-     */
-    _isDisabled: function(columnName, rowState) {
-        var isDisabled = this.collection.dataModel.isDisabled;
-
-        if (!isDisabled) {
-            isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
-        }
-        return isDisabled;
-    },
-
-    /**
      * Event handler for 'disabledChanged' event on dataModel
      */
     _onDataModelDisabledChanged: function() {
@@ -363,7 +347,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param {String} columnName - column name
      */
     updateClassName: function(columnName) {
-        console.log('updateClass', this.get('rowKey', columnName));
         this.setCell(columnName, {
             className: this._getClassNameString(columnName)
         });

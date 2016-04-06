@@ -113,8 +113,10 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     focus: function($parent) {
         var $input = $parent.find(this.selector);
 
-        formUtil.setCursorToEnd($input.get(0));
-        $input.select();
+        if ($input.length === 1) {
+            formUtil.setCursorToEnd($input.get(0));
+            $input.select();
+        }
     }
 });
 

@@ -23,11 +23,17 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     /**
      * Starts editing a cell identified by a given address, and returns the result.
      * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {Boolean} force - if set to true, finish current editing before start.
      * @returns {Boolean} true if succeeded, false otherwise
      */
-    startEditing: function(address) {
-        console.log('address', address);
-        var result = this.focusModel.startEditing(address.rowKey, address.columnName);
+    startEditing: function(address, force) {
+        var result;
+
+        if (force) {
+            this.focusModel.finishEditing();
+        }
+
+        result = this.focusModel.startEditing(address.rowKey, address.columnName);
 
         if (result) {
             this.selectionModel.end();

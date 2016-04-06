@@ -50,7 +50,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         if (this._isEditableType()) {
             address = this._getCellAddress($(event.target));
-            this.controller.startEditing(address);
+            this.controller.startEditing(address, true);
         }
     },
 

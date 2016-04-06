@@ -229,6 +229,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
 
             if (this.dataModel.get(rowKey).isEditable(columnName)) {
+                this.finishEditing();
                 this.startEditing(rowKey, columnName);
             } else {
                 this.focusClipboard();
