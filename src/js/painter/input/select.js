@@ -9,10 +9,10 @@ var util = require('../../common/util');
 
 /**
  * Painter class for 'select' input.
- * @module painter/cell
- * @extends module:base/painter
+ * @module painter/input/select
+ * @extends module:painter/input/base
  */
-var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/cell.prototype */{
+var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/select.prototype */{
     /**
      * @constructs
      */

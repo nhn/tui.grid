@@ -427,6 +427,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {String|Number} rowKey - Rowkey
      * @param {String} columnName - ColumnName
      * @returns {boolean} True if exist
+     * @private
      */
     _isValidCell: function(rowKey, columnName) {
         var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),

@@ -522,7 +522,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @param {array} callbackNameList - an array of callback names
      * @param {(string|number)} value - cell value
      * @param {object} rowData - all value of the row
-     * @param {[type]} result - object to store the result of callback functions
+     * @param {object} result - object to store the result of callback functions
      * @private
      */
     _executeRelationCallback: function(relation, callbackNameList, value, rowData, result) {

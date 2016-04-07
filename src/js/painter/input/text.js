@@ -9,10 +9,10 @@ var util = require('../../common/util');
 
 /**
  * Painter class for the 'input[type=text]' and 'input[type=password]'
- * @module painter/cell
- * @extends module:base/painter
+ * @module painter/input/text
+ * @extends module:painter/input/base
  */
-var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/cell.prototype */{
+var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
     /**
      * @constructs
      * @param {Object} options - options

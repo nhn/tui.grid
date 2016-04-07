@@ -98,6 +98,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
     /**
      * Creates row painter and returns it.
      * @returns {module:painter/row} New row painter instance
+     * @private
      */
     _createRowPainter: function() {
         return new RowPainter({

@@ -57,6 +57,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
     /**
      * Reset toolbar-height based on the model/dimension->toolbarHeight.
+     * @private
      */
     _refreshHeight: function() {
         var height = this.dimensionModel.get('toolbarHeight');

@@ -831,6 +831,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Sets the height of the dimension.
      * (Resets the bodyHeight and displayRowCount relative to the dimension height)
      * @param  {number} height - The height of the dimension
+     * @private
      */
     _setHeight: function(height) {
         this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));

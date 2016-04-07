@@ -67,6 +67,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Event handler for resize event on window.
+     * @private
      */
     _onResizeWindow: function() {
         this.dimensionModel.refreshLayout();
@@ -83,6 +84,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Event handler for 'setSize' event on Dimension
+     * @private
      */
     _onSetSize: function() {
         this.$el.width(this.dimensionModel.get('width'));

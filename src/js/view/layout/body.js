@@ -70,6 +70,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Resets the height of a container DIV
+     * @private
      */
     _resetContainerHeight: function() {
         this.$container.css({
@@ -239,6 +240,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * Attach event handlers for drag event.
      * @param {Number} pageX - initial pageX value
      * @param {Number} pageY - initial pageY value
+     * @private
      */
     _attachDragEvents: function(pageX, pageY) {
         this.setOwnProperties({
@@ -253,6 +255,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Detach all handlers which are used for drag event.
+     * @private
      */
     _detachDragEvents: function() {
         this.selectionModel.stopAutoScroll();
