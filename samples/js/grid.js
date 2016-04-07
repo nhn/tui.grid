@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.1.3
+ * @version 1.2.0
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -46,6 +46,7 @@ var View = require('../base/view'),
     GridEvent = require('../common/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
+var DELAY_FOR_LOADING_STATE = 200;
 
 /**
  * Net Addon
@@ -163,6 +164,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             // state data
             curPage: 1,
+            timeoutIdForDelay: null,
             requestedFormData: null,
             isLocked: false,
             lastRequestedReadData: null
@@ -320,7 +322,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _lock: function() {
-        this.renderModel.set('state', renderStateMap.LOADING);
+        var renderModel = this.renderModel;
+
+        this.timeoutIdForDelay = setTimeout(function() {
+            renderModel.set('state', renderStateMap.LOADING);
+        }, DELAY_FOR_LOADING_STATE);
+
         this.isLocked = true;
     },
 
@@ -330,6 +337,11 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _unlock: function() {
+        if (this.timeoutIdForDelay !== null) {
+            clearTimeout(this.timeoutIdForDelay);
+            this.timeoutIdForDelay = null;
+        }
+
         this.isLocked = false;
     },
 
@@ -640,7 +652,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             },
             newOptions = $.extend(defaultOptions, options),
             dataParam = this._getDataParam(requestType, newOptions),
-            param;
+            param = null;
 
         if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
             param = {
@@ -649,8 +661,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 data: dataParam.data,
                 type: newOptions.type
             };
-            return param;
         }
+        return param;
     },
 
     /**
@@ -747,7 +759,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
-        var message = responseData && responseData['message'],
+        var message = responseData && responseData.message,
             eventData = new GridEvent({
                 httpStatus: status,
                 requestType: options.requestType,
@@ -759,13 +771,13 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (eventData.isStopped()) {
             return;
         }
-        if (responseData && responseData['result']) {
+        if (responseData && responseData.result) {
             this.trigger('successResponse', eventData);
             if (eventData.isStopped()) {
                 return;
             }
             if (_.isFunction(callback)) {
-                callback(responseData['data'] || {}, status, jqXHR);
+                callback(responseData.data || {}, status, jqXHR);
             }
         } else {
             this.trigger('failResponse', eventData);
@@ -900,69 +912,75 @@ module.exports = Model;
  */
 'use strict';
 
-var common = require('./common');
-
 /**
  * Base class for Painters
- * - HTML Element 당 하나의 view 를 생성하면 성능이 좋지 않기 때문에 Drawer 라는 개념을 도입.
- * - 마크업 문자열을 생성하고 이벤트 핸들러를 attach, detach 하는 역할.
- * - backbone view 의 events 와 동일한 방식으로 evantHandler 라는 프로퍼티에 이벤트 핸들러를 정의한다.
+ * The Painter class is implentation of 'flyweight' pattern for the View class.
+ * This aims to act like a View class but doesn't create an instance of each view items
+ * to improve rendering performance.
  * @module base/painter
  */
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
     /**
      * @constructs
-     * @param {Object} attrs - Attributes
+     * @param {Object} options - options
      */
-    init: function(attrs) {
-        var grid = attrs && attrs.grid || this.collection && this.collection.grid || null;
-        this.setOwnProperties({
-            grid: grid
-        });
-        this.initializeEventHandler();
+    init: function(options) {
+        this.controller = options.controller;
     },
 
-    eventHandler: {},
+    /**
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
+     */
+    events: {},
 
     /**
-     * eventHandler 를 미리 parsing 하여 들고있는다.
+     * css selector to use delegated event handlers by '$.on()' method.
+     * @type {String}
      */
-    initializeEventHandler: function() {
-        var eventHandler = {};
-        _.each(this.eventHandler, function(methodName, eventName) {
-            var tmp = eventName.split(' '),
-                event = tmp[0],
-                selector = tmp[1] || '';
+    selector: '',
 
-            eventHandler[event] = {
-                selector: selector,
-                handler: $.proxy(this[methodName], this)
-            };
+    /**
+     * Returns the cell address of the target element.
+     * @param {jQuery} $target - target element
+     * @returns {{rowKey: String, columnName: String}}
+     * @private
+     */
+    _getCellAddress: function($target) {
+        var $addressHolder = $target.closest('[data-row-key]');
+
+        return {
+            rowKey: $addressHolder.attr('data-row-key'),
+            columnName: $addressHolder.attr('data-column-name')
+        };
+    },
+
+    /**
+     * Attaches all event handlers to the $target element.
+     * @param {jquery} $target - target element
+     * @param {String} parentSelector - selector of a parent element
+     */
+    attachEventHandlers: function($target, parentSelector) {
+        _.each(this.events, function(methodName, eventName) {
+            var boundHandler = _.bind(this[methodName], this),
+                selector = parentSelector + ' ' + this.selector;
+
+            $target.on(eventName, selector, boundHandler);
         }, this);
-        this.setOwnProperties({
-            _eventHandler: eventHandler
-        });
     },
 
     /**
-     * 이벤트 핸들러 정보를 반환한다.
-     * @returns {object} Event handlers
+     * Generates a HTML string from given data, and returns it.
+     * @abstract
      */
-    getEventHandlerInfo: function() {
-        return this._eventHandler;
-    },
-
-    /**
-     * 렌더러에서 반환할 HTML 스트링
-     */
-    getHtml: function() {
-        throw this.error('implement getHtml() method');
+    generateHtml: function() {
+        throw new Error('implement generateHtml() method');
     }
 });
-_.assign(Painter.prototype, common);
+
 module.exports = Painter;
 
-},{"./common":4}],7:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /**
  * @fileoverview Base class for Views
  * @author NHN Ent. FE Development Team
@@ -1157,11 +1175,8 @@ var formUtil = {
         'select-one': function(targetElement, formValue) {
             var options = tui.util.toArray(targetElement.options);
 
-            tui.util.forEach(options, function(targetOption, index) {
-                if (targetOption.value === formValue || targetOption.text === formValue) {
-                    targetElement.selectedIndex = index;
-                    return false;
-                }
+            targetElement.selectedIndex = _.findIndex(options, function(option) {
+                return option.value === formValue || option.text === formValue;
             });
         },
 
@@ -1462,6 +1477,15 @@ var util = {
     },
 
     /**
+     * Returns whether the column of a given name is meta-column.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
+    isMetaColumn: function(columnName) {
+        return _.contains(['_button', '_number'], columnName);
+    },
+
+    /**
      * target 과 dist 의 값을 비교하여 같은지 여부를 확인하는 메서드
      * === 비교 연산자를 사용하므로, object 의 경우 1depth 까지만 지원함.
      * @memberof module:util
@@ -1601,9 +1625,11 @@ var util = {
      */
     convertValueType: function(value, type) {
         if (type === 'string') {
-            return value.toString();
+            return String(value);
         } else if (type === 'number') {
             return Number(value);
+        } else if (type === 'boolean') {
+            return Boolean(value);
         }
         return value;
     },
@@ -1676,7 +1702,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      * @returns {jQuery} Cell(TD) element
      */
     getElement: function(rowKey, columnName) {
-        return this.$el.find('tr[key="' + rowKey + '"]').find('td[columnname="' + columnName + '"]');
+        return this.$el.find('tr[key="' + rowKey + '"]').find('td[data-column-name=' + columnName + ']');
     },
 
     /**
@@ -1741,8 +1767,8 @@ module.exports = DomState;
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
- *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to
- *          edit-mode with a single click.
+ *      @param {boolean} [options.singleClickEdit=false] - If set to true, editable cell in the view-mode will be
+ *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
  *      @param {boolean} [options.fitToParentHeight=false] - If set to true, the height of the grid will expand to
@@ -1782,7 +1808,11 @@ module.exports = DomState;
  *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
  *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies
  *                  the type of the editing UI.
- *                  Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
+ *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
+ *              @param {boolean} [options.columnModelList.editOption.useViewMode=true] - If set to true, default mode
+ *                  of the cell will be the 'view-mode'. The mode will be switched to 'edit-mode' only when user
+ *                  double click or press 'ENTER' key on the cell. If set to false, the cell will always show the
+ *                  input elements as a default.
  *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
@@ -1790,18 +1820,13 @@ module.exports = DomState;
  *                   called before changing the value of the cell. If returns false, the changing will be canceled.
  *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
  *                  called after changing the value of the cell.
- *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>.
- *                  (replaced with {@link beforeContent})
  *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
  *                  shown left to the value. If it's a function, the return value will be used.
- *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>.
- *                  (replaced with {@link afterContent})
  *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be
  *                  shown right to the value. If it's a function, the return value will be used.
  *              @param {function} [options.columnModelList.editOption.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
- *                  This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
  *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
  *                  as a key and event handler as a value for events on input element.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
@@ -1911,7 +1936,7 @@ module.exports = DomState;
             isRequired: true,
             isFixedWidth: true,
             editOption: {
-                type: 'text-password',
+                type: 'password',
                 beforeContent: 'password:'
             }
         },
@@ -1919,7 +1944,8 @@ module.exports = DomState;
             title: 'text input when editing mode',
             columnName: 'column6',
             editOption: {
-                type: 'text-convertible'
+                type: 'text',
+                useViewMode: fales
             },
             isIgnore: true
         },
@@ -2023,6 +2049,7 @@ var ViewFactory = require('./view/factory');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
+var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
 
@@ -2040,10 +2067,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {Object} options - Options set by user
      */
     initialize: function(options) {
+        var domState = new DomState(this.$el);
+
         this.id = util.getUniqueKey();
-        this.modelManager = this._createModelManager(options);
+        this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
-        this.container = this._createContainerView(options);
+        this.container = this._createContainerView(options, domState);
         this.publicEventEmitter = this._createPublicEventEmitter();
 
         this.container.render();
@@ -2059,11 +2088,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {module:model/manager} - New model manager object
      * @private
      */
-    _createModelManager: function(options) {
-        var domState = new DomState(this.$el),
-            modelOptions = _.assign({}, options, {
-                gridId: this.id
-            });
+    _createModelManager: function(options, domState) {
+        var modelOptions = _.assign({}, options, {
+            gridId: this.id
+        });
 
         _.omit(modelOptions, 'el', 'singleClickEdit');
 
@@ -2072,12 +2100,21 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates painter manager and returns it
-     * @returns {module:painter/manager} - New painter manager object
+     * @returns {module:painter/manager}
      * @private
      */
     _createPainterManager: function() {
+        var controller = new PainterController({
+            focusModel: this.modelManager.focusModel,
+            dataModel: this.modelManager.dataModel,
+            columnModel: this.modelManager.columnModel,
+            selectionModel: this.modelManager.selectionModel
+        });
+
         return new PainterManager({
-            modelManager: this.modelManager
+            gridId: this.id,
+            selectType: this.modelManager.columnModel.get('selectType'),
+            controller: controller
         });
     },
 
@@ -2087,10 +2124,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {module:view/container} - New container view object
      * @private
      */
-    _createContainerView: function(options) {
+    _createContainerView: function(options, domState) {
         var viewFactory = new ViewFactory({
             modelManager: this.modelManager,
-            painterManager: this.painterManager
+            painterManager: this.painterManager,
+            domState: domState
         });
 
         return viewFactory.createContainer({
@@ -2530,7 +2568,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {(number|string)} rowKey - The unique key of the row
      */
     select: function(rowKey) {
-        this.modelManager.focusModel.select(rowKey);
+        var firstColumn = this.modelManager.columnModel.at(0, true);
+
+        this.modelManager.focusModel.focus(rowKey, firstColumn.columnName);
     },
 
     /**
@@ -2775,23 +2815,15 @@ tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
 
-},{"./addon/net":2,"./base/view":7,"./common/util":11,"./domState":12,"./model/manager":20,"./painter/manager":38,"./publicEventEmitter":40,"./view/factory":43}],14:[function(require,module,exports){
+},{"./addon/net":2,"./base/view":7,"./common/util":11,"./domState":12,"./model/manager":20,"./painter/controller":28,"./painter/manager":35,"./publicEventEmitter":37,"./view/factory":41}],14:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var Model = require('../../base/model');
-
-/**
- * @ignore
- * @const
- * @type {string[]}
- * @desc
- *  Meta column names
- */
-var META_COLUMN_LIST = ['_button', '_number'];
+var Model = require('../../base/model'),
+    util = require('../../common/util');
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
@@ -2807,8 +2839,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         this.textType = {
             'normal': true,
             'text': true,
-            'text-password': true,
-            'text-convertible': true
+            'password': true
         };
         this._setColumnModelList(this.get('columnModelList'));
         this.on('change', this._onChange, this);
@@ -2885,11 +2916,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             buttonColumn = {
                 columnName: '_button',
                 isHidden: false,
+                align: 'center',
                 editOption: {
-                    type: selectType,
-                    list: [{
-                        value: 'selected'
-                    }]
+                    type: 'mainButton'
                 },
                 isFixedWidth: true,
                 width: 40
@@ -3007,20 +3036,17 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {number} Visible columnFix count
      */
     getVisibleColumnFixCount: function(withMeta) {
-        var realColumnFixCount = this.get('columnFixCount'),
-            visibleColumnFixCount = realColumnFixCount;
+        var count = this.get('columnFixCount'),
+            fixedColumns = _.first(this.get('dataColumnModelList'), count),
+            visibleFixedColumns = _.filter(fixedColumns, function(column) {
+                return !column.isHidden;
+            }),
+            visibleCount = visibleFixedColumns.length;
 
-        tui.util.forEach(this.get('dataColumnModelList'), function(columnModel, index) {
-            if (index >= realColumnFixCount) {
-                return false;
-            }
-            if (columnModel.isHidden) {
-                visibleColumnFixCount -= 1;
-            }
-        });
-
-        return (withMeta) ? (visibleColumnFixCount + this.getVisibleMetaColumnCount())
-            : visibleColumnFixCount;
+        if (withMeta) {
+            visibleCount += this.getVisibleMetaColumnCount();
+        }
+        return visibleCount;
     },
 
     /**
@@ -3050,11 +3076,13 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     getEditType: function(columnName) {
         var columnModel = this.getColumnModel(columnName),
             editType = 'normal';
+
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
-        } else if (columnModel && columnModel['editOption'] && columnModel['editOption']['type']) {
-            editType = columnModel['editOption']['type'];
+        } else if (columnModel && columnModel.editOption && columnModel.editOption.type) {
+            editType = columnModel.editOption.type;
         }
+
         return editType;
     },
 
@@ -3070,7 +3098,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         dataColumnModelList = dataColumnModelList || this.get('dataColumnModelList');
 
         return _.filter(metaColumnModelList.concat(dataColumnModelList), function(item) {
-            return !item['isHidden'];
+            return !item.isHidden;
         });
     },
 
@@ -3085,7 +3113,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             relationListMap = {};
 
         _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
+            columnName = columnModel.columnName;
             if (columnModel.relationList) {
                 relationListMap[columnName] = columnModel.relationList;
             }
@@ -3102,7 +3130,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             ignoreColumnNameList = [];
         _.each(columnModelLsit, function(columnModel) {
             if (columnModel.isIgnore) {
-                ignoreColumnNameList.push(columnModel['columnName']);
+                ignoreColumnNameList.push(columnModel.columnName);
             }
         });
         return ignoreColumnNameList;
@@ -3124,7 +3152,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         }
 
         division = _.partition(columnModelList, function(model) {
-            return this.isMetaColumn(model.columnName);
+            return util.isMetaColumn(model.columnName);
         }, this);
         metaColumnModelList = this._initializeMetaColumns(division[0]);
         dataColumnModelList = division[1];
@@ -3154,8 +3182,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     _onChange: function(model) {
         var changed = model.changed,
-            columnFixCount = changed['columnFixCount'],
-            columnModelList = changed['columnModelList'];
+            columnFixCount = changed.columnFixCount,
+            columnModelList = changed.columnModelList;
 
         if (!columnModelList) {
             columnModelList = this.get('dataColumnModelList');
@@ -3221,21 +3249,12 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             }
         }
         return _.uniq(searchedNames);
-    },
-
-    /**
-     * Return whether the column is meta column
-     * @param {string} columnName - columnName
-     * @returns {boolean} Whether the column is meta column.
-     */
-    isMetaColumn: function(columnName) {
-        return _.indexOf(META_COLUMN_LIST, columnName) >= 0;
     }
 });
 
 module.exports = ColumnModel;
 
-},{"../../base/model":5}],15:[function(require,module,exports){
+},{"../../base/model":5,"../../common/util":11}],15:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
@@ -3495,6 +3514,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     /**
      * Event handler for change event in _extraData.
      * Reset _extraData value with cloned object to trigger 'change:_extraData' event.
+     * @private
      */
     _triggerExtraDataChangeEvent: function() {
         this.trigger('extraDataChanged', this.get('_extraData'));
@@ -3648,7 +3668,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      */
     getClassNameList: function(columnName) {
         var columnModel = this.columnModel.getColumnModel(columnName),
-            classNameList = this.extraDataManager.getClassNameList(columnName);
+            isMetaColumn = util.isMetaColumn(columnName),
+            classNameList = this.extraDataManager.getClassNameList(columnName),
+            cellState = this.getCellState(columnName);
 
         if (columnModel.className) {
             classNameList.push(columnModel.className);
@@ -3659,6 +3681,15 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
         if (columnModel.isRequired) {
             classNameList.push('required');
         }
+        if (isMetaColumn) {
+            classNameList.push('meta_column');
+        } else if (cellState.isEditable) {
+            classNameList.push('editable');
+        }
+        if (cellState.isDisabled) {
+            classNameList.push('disabled');
+        }
+
         return this._makeUniqueStringArray(classNameList);
     },
 
@@ -3673,9 +3704,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * columnName 에 해당하는 셀의 편집 가능여부와 disabled 상태 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {{isEditable: boolean, isDisabled: boolean}} 편집 가능여부와 disabled 상태 정보
+     * Returns the state of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     * @returns {{isEditable: boolean, isDisabled: boolean}}
      */
     getCellState: function(columnName) {
         var notEditableTypeList = ['_number', 'normal'],
@@ -3685,7 +3716,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             editType = columnModel.getEditType(columnName),
             rowState, relationResult;
 
-        relationResult = this.getRelationResult(['isDisabled', 'isEditable'])[columnName];
+        relationResult = this.executeRelationCallbacksAll(['isDisabled', 'isEditable'])[columnName];
         rowState = this.getRowState();
 
         if (!isDisabled) {
@@ -3694,13 +3725,13 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             } else {
                 isDisabled = rowState.isDisabled;
             }
-            isDisabled = isDisabled || !!(relationResult && relationResult['isDisabled']);
+            isDisabled = isDisabled || !!(relationResult && relationResult.isDisabled);
         }
 
-        if ($.inArray(editType, notEditableTypeList) !== -1) {
+        if (_.contains(notEditableTypeList, editType)) {
             isEditable = false;
         } else {
-            isEditable = !(relationResult && relationResult['isEditable'] === false);
+            isEditable = !(relationResult && relationResult.isEditable === false);
         }
 
         return {
@@ -3710,29 +3741,24 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 셀이 편집 가능한지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean}    편집 가능한지 여부
+     * Returns whether the cell identified by a given column name is editable.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
      */
     isEditable: function(columnName) {
-        var notEditableTypeList = ['_number', 'normal'],
-            editType = this.columnModel.getEditType(columnName),
-            result = false;
+        var cellState = this.getCellState(columnName);
 
-        if ($.inArray(editType, notEditableTypeList) === -1) {
-            result = this.getCellState(columnName).isEditable;
-        }
-        return result;
+        return !cellState.isDisabled && cellState.isEditable;
     },
 
     /**
-     * rowKey 와 columnName 에 해당하는 셀이 disable 상태인지 여부를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {Boolean}    disabled 처리를 할지 여부
+     * Returns whether the cell identified by a given column name is disabled.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
      */
     isDisabled: function(columnName) {
-        var cellState;
-        cellState = this.getCellState(columnName);
+        var cellState = this.getCellState(columnName);
+
         return cellState.isDisabled;
     },
 
@@ -3810,24 +3836,6 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * html string 을 encoding 한다.
-     * columnModel 에 notUseHtmlEntity 가 설정된 경우는 동작하지 않는다.
-     *
-     * @param {String} columnName   컬럼명
-     * @returns {String} 인코딩된 결과값
-     */
-    getHTMLEncodedString: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            isTextType = this.columnModel.isTextType(columnName),
-            value = this.get(columnName),
-            notUseHtmlEntity = columnModel.notUseHtmlEntity;
-        if (!notUseHtmlEntity && isTextType && tui.util.hasEncodableString(value)) {
-            value = tui.util.encodeHTMLEntity(value);
-        }
-        return value;
-    },
-
-    /**
      * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
      * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
      * text 로 전환해서 반환할 때 처리를 하여 변환한다.
@@ -3842,9 +3850,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             resultOptionList, editOptionList, typeExpected, valueList;
 
         if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
-            resultOptionList = this.getRelationResult(['optionListChange'])[columnName];
-            editOptionList = resultOptionList && resultOptionList['optionList'] ?
-                    resultOptionList['optionList'] : columnModel.editOption.list;
+            resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];
+            editOptionList = resultOptionList && resultOptionList.optionList ?
+                    resultOptionList.optionList : columnModel.editOption.list;
 
             typeExpected = typeof editOptionList[0].value;
             valueList = value.toString().split(',');
@@ -3855,11 +3863,22 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             }
             _.each(valueList, function(val, index) {
                 var item = _.findWhere(editOptionList, {value: val});
-                valueList[index] = item && item.text || '';
+                valueList[index] = item && item.value || '';
             }, this);
 
             return valueList.join(',');
         }
+        return '';
+    },
+
+    /**
+     * Returns whether the given edit type is list type.
+     * @param {String} editType - edit type
+     * @returns {Boolean}
+     * @private
+     */
+    _isListType: function(editType) {
+        return _.contains(['select', 'radio', 'checkbox'], editType);
     },
 
     /**
@@ -3882,36 +3901,29 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
-     * 복사 기능을 사용할 때 화면에 보여지는 데이터를 반환한다.
-     * @param {String} columnName   컬럼명
-     * @returns {String} 화면에 보여지는 데이터로 가공된 문자열
+     * Returns the text string to be used when copying the cell value to clipboard.
+     * @param {String} columnName - column name
+     * @returns {String}
      */
-    getVisibleText: function(columnName) {
-        var columnModel = this.columnModel,
-            value = this.get(columnName),
-            editType, model,
-            listTypeMap = {
-                'select': true,
-                'radio': true,
-                'checkbox': true
-            };
+    getValueString: function(columnName) {
+        var editType = this.columnModel.getEditType(columnName);
+        var column = this.columnModel.getColumnModel(columnName);
+        var value = this.get(columnName);
 
-        if (columnModel) {
-            editType = columnModel.getEditType(columnName);
-            model = columnModel.getColumnModel(columnName);
-            //list type 의 editType 이 존재하는 경우
-            if (listTypeMap[editType]) {
-                if (tui.util.isExisty(tui.util.pick(model, 'editOption', 'list', 0, 'value'))) {
-                    value = this._getListTypeVisibleText(columnName);
-                } else {
-                    throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
-                }
-            } else if (_.isFunction(model.formatter)) {
-                //editType 이 없는 경우, formatter 가 있다면 formatter를 적용한다.
-                value = util.stripTags(model.formatter(this.getHTMLEncodedString(columnName), this.toJSON(), model));
+        if (this._isListType(editType)) {
+            if (tui.util.isExisty(tui.util.pick(column, 'editOption', 'list', 0, 'value'))) {
+                value = this._getListTypeVisibleText(columnName);
+            } else {
+                throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
             }
+        } else if (editType === 'password') {
+            value = '';
         }
-        value = !tui.util.isUndefined(value) ? value.toString() : value;
+
+        if (!_.isUndefined(value)) {
+            value = String(value);
+        }
+
         return value;
     },
 
@@ -3921,51 +3933,78 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      *        (default : ['optionListChange', 'isDisabled', 'isEditable'])
      * @returns {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
      */
-    getRelationResult: function(callbackNameList) {
+    executeRelationCallbacksAll: function(callbackNameList) {
         var rowData = this.attributes,
             relationListMap = this.columnModel.get('relationListMap'),
-            relationResult = {},
-            rowState = this.getRowState(),
-            callback, attribute, targetColumnList, value;
+            result = {};
 
-        callbackNameList = (callbackNameList && callbackNameList.length) ?
-            callbackNameList : ['optionListChange', 'isDisabled', 'isEditable'];
+        if (_.isEmpty(callbackNameList)) {
+            callbackNameList = ['optionListChange', 'isDisabled', 'isEditable'];
+        }
 
-        //columnModel 에 저장된 relationListMap 을 순회하며 데이터를 가져온다.
-        // relationListMap 구조 {columnName : relationList}
         _.each(relationListMap, function(relationList, columnName) {
-            value = rowData[columnName];
-            //relationList 를 순회하며 수행한다.
-            _.each(relationList, function(relation) {
-                targetColumnList = relation.columnList;
+            var value = rowData[columnName];
 
-                //각 relation 에 걸려있는 콜백들을 수행한다.
-                _.each(callbackNameList, function(callbackName) {
-                    //isDisabled relation 의 경우 rowState 설정 값을 우선적으로 선택한다.
-                    if (!(rowState.isDisabled && callbackName === 'isDisabled')) {
-                        callback = relation[callbackName];
-                        if (typeof callback === 'function') {
-                            attribute = '';
-                            if (callbackName === 'optionListChange') {
-                                attribute = 'optionList';
-                            } else if (callbackName === 'isDisabled') {
-                                attribute = 'isDisabled';
-                            } else if (callbackName === 'isEditable') {
-                                attribute = 'isEditable';
-                            }
-                            if (attribute) {
-                                //relation 에 걸려있는 컬럼들의 값을 변경한다.
-                                _.each(targetColumnList, function(targetColumnName) {
-                                    relationResult[targetColumnName] = relationResult[targetColumnName] || {};
-                                    relationResult[targetColumnName][attribute] = callback(value, rowData);
-                                }, this);
-                            }
-                        }
-                    }
-                }, this);
+            _.each(relationList, function(relation) {
+                this._executeRelationCallback(relation, callbackNameList, value, rowData, result);
             }, this);
         }, this);
-        return relationResult;
+
+        return result;
+    },
+
+    /**
+     * Returns a name of attribute matching given callbackName.
+     * @param {string} callbackName - callback name
+     * @private
+     * @returns {string}
+     */
+    _getRelationResultAttrName: function(callbackName) {
+        switch (callbackName) {
+            case 'optionListChange':
+                return 'optionList';
+            case 'isDisabled':
+                return 'isDisabled';
+            case 'isEditable':
+                return 'isEditable';
+            default:
+                return '';
+        }
+    },
+
+    /**
+     * Executes relation callback
+     * @param {object} relation - relation object
+     *   @param {array} relation.columnList - target column list
+     *   @param {function} [relation.isDisabled] - callback function for isDisabled attribute
+     *   @param {function} [relation.isEditable] - callback function for isDisabled attribute
+     *   @param {function} [relation.optionListChange] - callback function for changing option list
+     * @param {array} callbackNameList - an array of callback names
+     * @param {(string|number)} value - cell value
+     * @param {object} rowData - all value of the row
+     * @param {object} result - object to store the result of callback functions
+     * @private
+     */
+    _executeRelationCallback: function(relation, callbackNameList, value, rowData, result) {
+        var rowState = this.getRowState(),
+            targetColumnNames = relation.columnList;
+
+        _.each(callbackNameList, function(callbackName) {
+            var attrName, callback;
+
+            if (!rowState.isDisabled || callbackName !== 'isDisabled') {
+                callback = relation[callbackName];
+                if (typeof callback === 'function') {
+                    attrName = this._getRelationResultAttrName(callbackName);
+                    if (attrName) {
+                        _.each(targetColumnNames, function(targetColumnName) {
+                            result[targetColumnName] = result[targetColumnName] || {};
+                            result[targetColumnName][attrName] = callback(value, rowData);
+                        }, this);
+                    }
+                }
+            }
+        }, this);
     }
 }, {
     privateProperties: PRIVATE_PROPERTIES
@@ -4031,7 +4070,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array}  파싱하여 가공된 데이터
      */
     parse: function(data) {
-        data = data && data['contents'] || data;
+        data = data && data.contents || data;
         return this._formatData(data);
     },
 
@@ -4098,18 +4137,18 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     _setExtraRowSpanData: function(rowList, index) {
         var row = rowList[index],
-            rowSpan = row && row['_extraData'] && row['_extraData']['rowSpan'],
-            rowKey = row && row['rowKey'],
+            rowSpan = row && row._extraData && row._extraData.rowSpan,
+            rowKey = row && row.rowKey,
             subCount, childRow, i;
 
         function hasRowSpanData(row, columnName) { // eslint-disable-line no-shadow, require-jsdoc
-            var extraData = row['_extraData'];
-            return !!(extraData['rowSpanData'] && extraData['rowSpanData'][columnName]);
+            var extraData = row._extraData;
+            return !!(extraData.rowSpanData && extraData.rowSpanData[columnName]);
         }
         function setRowSpanData(row, columnName, rowSpanData) { // eslint-disable-line no-shadow, require-jsdoc
-            var extraData = row['_extraData'];
-            extraData['rowSpanData'] = extraData && extraData['rowSpanData'] || {};
-            extraData['rowSpanData'][columnName] = rowSpanData;
+            var extraData = row._extraData;
+            extraData.rowSpanData = extraData && extraData.rowSpanData || {};
+            extraData.rowSpanData[columnName] = rowSpanData;
             return extraData;
         }
 
@@ -4126,7 +4165,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
                     for (i = index + 1; i < index + count; i += 1) {
                         childRow = rowList[i];
                         childRow[columnName] = row[columnName];
-                        childRow['_extraData'] = childRow['_extraData'] || {};
+                        childRow._extraData = childRow._extraData || {};
                         setRowSpanData(childRow, columnName, {
                             count: subCount,
                             isMainRow: false,
@@ -4280,8 +4319,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {Array} Row List
      */
     getRowList: function(isOnlyChecked, isRaw) {
-        var rowList,
-            checkedRowList;
+        var rowList, checkedRowList;
+
         if (isOnlyChecked) {
             checkedRowList = this.where({
                 '_button': true
@@ -4310,11 +4349,11 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         //정렬 되지 않았을 때만 rowSpan 된 데이터들도 함께 update 한다.
         if (this.isRowSpanEnable()) {
             rowSpanData = row.getRowSpanData(columnName);
-            if (!rowSpanData['isMainRow']) {
-                this.get(rowSpanData['mainRowKey']).set(columnName, value);
+            if (!rowSpanData.isMainRow) {
+                this.get(rowSpanData.mainRowKey).set(columnName, value);
             } else {
                 index = this.indexOfRowKey(row.get('rowKey'));
-                for (i = 0; i < rowSpanData['count'] - 1; i += 1) {
+                for (i = 0; i < rowSpanData.count - 1; i += 1) {
                     this.at(i + 1 + index).set(columnName, value);
                 }
             }
@@ -4446,7 +4485,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
             data = {};
 
         _.each(columnModelList, function(columnModel) {
-            data[columnModel['columnName']] = '';
+            data[columnModel.columnName] = '';
         }, this);
 
         return data;
@@ -4852,7 +4891,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
             var originalRow = original[rowKey],
-                item = isOnlyRowKeyList ? row['rowKey'] : row;
+                item = isOnlyRowKeyList ? row.rowKey : row;
 
             if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
@@ -4865,29 +4904,12 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            var item = isOnlyRowKeyList ? obj['rowKey'] : obj;
+            var item = isOnlyRowKeyList ? obj.rowKey : obj;
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }
         }, this);
         return result;
-    },
-
-    /**
-     * Resets data.
-     * @param  {Array} rowList - New data
-     * @param  {Boolean} isParse - parse option of Backbone.Collection.reset
-     * @param  {Function} callback - Callback function
-     * @private
-     */
-    _resetData: function(rowList, isParse, callback) {
-        this.lastRowKey = -1;
-        this.reset(rowList, {
-            parse: isParse
-        });
-        if (_.isFunction(callback)) {
-            callback();
-        }
     },
 
     /**
@@ -4897,17 +4919,21 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Function} [callback] callback function
      */
     replaceRowList: function(rowList, isParse, callback) {
-        var MIN_LEN_FOR_WAITING_LAYER = 500;
+        if (!rowList) {
+            rowList = [];
+        }
         if (_.isUndefined(isParse)) {
             isParse = true;
         }
-        this.trigger('beforeReset');
+        this.trigger('beforeReset', rowList.length);
 
-        if (rowList && rowList.length > MIN_LEN_FOR_WAITING_LAYER) {
-            // defer to show a waiting-layer if dataset is large
-            _.defer(_.bind(this._resetData, this, rowList, isParse, callback));
-        } else {
-            this._resetData(rowList, isParse, callback);
+        this.lastRowKey = -1;
+        this.reset(rowList, {
+            parse: isParse
+        });
+
+        if (_.isFunction(callback)) {
+            callback();
         }
     },
 
@@ -4947,7 +4973,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var mainRowKey = this.getMainRowKey(rowKey, columnName),
             cellState = this.get(mainRowKey).getCellState(columnName),
             editType = this.columnModel.getEditType(columnName),
-            isDeletableType = _.contains(['text', 'text-convertible', 'text-password'], editType);
+            isDeletableType = _.contains(['text', 'password'], editType);
 
         if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
             this.setValue(mainRowKey, columnName, '', silent);
@@ -5403,7 +5429,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 minWidth = Math.max(width, commonMinWidth);
 
             // Meta columns are not affected by common 'minimumColumnWidth' value
-            if (this.columnModel.isMetaColumn(columnModel.columnName)) {
+            if (util.isMetaColumn(columnModel.columnName)) {
                 minWidth = width;
             }
 
@@ -5779,10 +5805,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (isRsidePosition) {
             cellX += this.renderModel.get('scrollLeft');
         }
+
         if (cellX >= totalColumnWidth) {
             columnIndex = columnWidthList.length - 1;
         } else {
-            tui.util.forEachArray(columnWidthList, function(width, index) {
+            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
                 width += CELL_BORDER_WIDTH;
                 columnIndex = index;
 
@@ -5927,6 +5954,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Sets the height of the dimension.
      * (Resets the bodyHeight and displayRowCount relative to the dimension height)
      * @param  {number} height - The height of the dimension
+     * @private
      */
     _setHeight: function(height) {
         this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
@@ -6039,31 +6067,41 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
-        this.renderModel = options.renderModel;
-        this.cellFactory = options.cellFactory;
         this.domState = options.domState;
 
-        this.listenTo(this.dataModel, 'add', this._onAddData);
         this.listenTo(this.dataModel, 'reset', this._onResetData);
     },
 
     defaults: {
+        /**
+         * row key of the current cell
+         * @type {String|Number}
+         */
         rowKey: null,
-        columnName: '',
-        prevRowKey: null,
-        prevColumnName: ''
-    },
 
-    /**
-     * Event handler for 'add' event on dataModel.
-     * @param  {Array.<module:model/data/row>} rows - New appended row model
-     * @param  {Object} options - Options. See {@link module:model/data/row#append}
-     * @private
-     */
-    _onAddData: function(rows, options) {
-        if (options.focus) {
-            this.focusAt(options.at, 0);
-        }
+        /**
+         * column name of the current cell
+         * @type {String}
+         */
+        columnName: '',
+
+        /**
+         * row key of the previously focused cell
+         * @type {String|Number}
+         */
+        prevRowKey: null,
+
+        /**
+         * column name of the previously focused cell
+         * @type {String}
+         */
+        prevColumnName: '',
+
+        /**
+         * address of the editing cell.
+         * @type {{rowKey:(String|Number), columnName:String}}
+         */
+        editingAddress: null
     },
 
     /**
@@ -6099,24 +6137,21 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Returns whether given rowKey is equal to current value
-     * @param  {(Number|String)} rowKey - Row key
-     * @returns {Boolean} - True if equal
-     */
-    _isCurrentRow: function(rowKey) {
-        // compare with == operator to avoid strict comparision
-        // (rowkey can be a number or a string)
-        return this.get('rowKey') == rowKey; // eslint-disable-line eqeqeq
-    },
-
-    /**
      * Returns whether given rowKey and columnName is equal to current value
-     * @param  {(Number|String)} rowKey - Row key
-     * @param  {String} columnName - Column name
+     * @param {(Number|String)} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Boolean} isMainRowKey - true if the target row key is main row
      * @returns {Boolean} - True if equal
      */
-    _isCurrentCell: function(rowKey, columnName) {
-        return this._isCurrentRow(rowKey) && this.get('columnName') === columnName;
+    isCurrentCell: function(rowKey, columnName, isMainRowKey) {
+        var curColumnName = this.get('columnName');
+        var curRowKey = this.get('rowKey');
+
+        if (isMainRowKey) {
+            curRowKey = this.dataModel.getMainRowKey(curRowKey, curColumnName);
+        }
+
+        return String(curRowKey) === String(rowKey) && curColumnName === columnName;
     },
 
     /**
@@ -6128,7 +6163,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var eventData = new GridEvent(),
             currentRowKey = this.get('rowKey');
 
-        if (this._isCurrentRow(rowKey)) {
+        if (String(currentRowKey) === String(rowKey)) {
             return true;
         }
 
@@ -6182,8 +6217,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     focus: function(rowKey, columnName, isScrollable) {
         if (!this._isValidCell(rowKey, columnName) ||
-            this.columnModel.isMetaColumn(columnName) ||
-            this._isCurrentCell(rowKey, columnName)) {
+            util.isMetaColumn(columnName) ||
+            this.isCurrentCell(rowKey, columnName)) {
             return true;
         }
 
@@ -6194,6 +6229,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.set('columnName', columnName);
         this.trigger('focus', rowKey, columnName);
+
         if (isScrollable) {
             this.scrollToFocus();
         }
@@ -6211,9 +6247,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var row = this.dataModel.at(rowIndex),
             column = this.columnModel.at(columnIndex, true),
             result = false;
+
         if (row && column) {
-            result = this.focus(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
         }
+
         return result;
     },
 
@@ -6226,14 +6264,18 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     focusIn: function(rowKey, columnName, isScrollable) {
         var result = this.focus(rowKey, columnName, isScrollable);
+
         if (result) {
             rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
             if (this.dataModel.get(rowKey).isEditable(columnName)) {
-                this.trigger('focusIn', rowKey, columnName);
+                this.finishEditing();
+                this.startEditing(rowKey, columnName);
             } else {
                 this.focusClipboard();
             }
         }
+
         return result;
     },
 
@@ -6250,7 +6292,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             result = false;
 
         if (row && column) {
-            result = this.focusIn(row.get('rowKey'), column['columnName'], isScrollable);
+            result = this.focusIn(row.get('rowKey'), column.columnName, isScrollable);
         }
         return result;
     },
@@ -6263,14 +6305,19 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * If the grid has focused element, make sure that focusModel has a valid data,
+     * If the grid has an element which has a focus, make sure that focusModel has a valid data,
      * Otherwise call focusModel.blur().
      */
     refreshState: function() {
+        var restored;
+
         if (!this.domState.hasFocusedElement()) {
             this.blur();
-        } else if (!this.has() && !this.restore()) {
-            this.focusAt(0, 0);
+        } else if (!this.has()) {
+            restored = this.restore();
+            if (!restored) {
+                this.focusAt(0, 0);
+            }
         }
     },
 
@@ -6292,13 +6339,21 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Model.Focus} This object
      */
     blur: function() {
-        if (this.has()) {
-            this._savePrevious();
-            this.trigger('blur', this.get('rowKey'), this.get('columnName'));
-            if (this.get('rowKey') !== null) {
-                this.set('columnName', '');
-            }
+        var columnName = this.get('columnName');
+
+        if (!this.has()) {
+            return this;
         }
+
+        if (this.has(true)) {
+            this._savePrevious();
+        }
+
+        if (this.get('rowKey') !== null) {
+            this.set('columnName', '');
+        }
+        this.trigger('blur', this.get('rowKey'), columnName);
+
         return this;
     },
 
@@ -6330,10 +6385,17 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Returns whether has focus.
+     * @param {boolean} checkValid - if set to true, check whether the current cell is valid.
      * @returns {boolean} True if has focus.
      */
-    has: function() {
-        return this._isValidCell(this.get('rowKey'), this.get('columnName'));
+    has: function(checkValid) {
+        var rowKey = this.get('rowKey'),
+            columnName = this.get('columnName');
+
+        if (checkValid) {
+            return this._isValidCell(rowKey, columnName);
+        }
+        return !util.isBlank(rowKey) && !util.isBlank(columnName);
     },
 
     /**
@@ -6353,10 +6415,60 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
+     * Returns whether the cell identified by given rowKey and columnName is editing now.
+     * @param {Number} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
+    isEditingCell: function(rowKey, columnName) {
+        var address = this.get('editingAddress');
+
+        return address &&
+            (String(address.rowKey) === String(rowKey)) &&
+            (address.columnName === columnName);
+    },
+
+    /**
+     * Starts editing a cell identified by given rowKey and columnName, and returns the result.
+     * @param {(String|Number)} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Boolean} true if succeeded, false otherwise.
+     */
+    startEditing: function(rowKey, columnName) {
+        if (this.get('editingAddress') ||
+            !this.isCurrentCell(rowKey, columnName, true) ||
+            !this.dataModel.get(rowKey).isEditable(columnName)) {
+            return false;
+        }
+
+        this.set('editingAddress', {
+            rowKey: rowKey,
+            columnName: columnName
+        });
+
+        return true;
+    },
+
+    /**
+     * Finishes editing the current cell, and returns the result.
+     * @returns {Boolean} - true if an editing cell exist, false otherwise.
+     */
+    finishEditing: function() {
+        if (!this.get('editingAddress')) {
+            return false;
+        }
+
+        this.set('editingAddress', null);
+
+        return true;
+    },
+
+    /**
      * Returns whether the specified cell is exist
      * @param {String|Number} rowKey - Rowkey
      * @param {String} columnName - ColumnName
      * @returns {boolean} True if exist
+     * @private
      */
     _isValidCell: function(rowKey, columnName) {
         var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),
@@ -6368,13 +6480,15 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * 현재 focus 된 row 기준으로 offset 만큼 이동한 rowKey 를 반환한다.
      * @param {Number} offset   이동할 offset
-     * @returns {Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
+     * @returns {?Number|String} rowKey   offset 만큼 이동한 위치의 rowKey
      * @private
      */
     _findRowKey: function(offset) {
         var index, row,
-            dataModel = this.dataModel;
-        if (this.has()) {
+            dataModel = this.dataModel,
+            rowKey = null;
+
+        if (this.has(true)) {
             index = Math.max(
                 Math.min(
                     dataModel.indexOfRowKey(this.get('rowKey')) + offset,
@@ -6382,26 +6496,31 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 ), 0
             );
             row = dataModel.at(index);
-            return row && row.get('rowKey');
+            if (row) {
+                rowKey = row.get('rowKey');
+            }
         }
+        return rowKey;
     },
 
     /**
      * 현재 focus 된 column 기준으로 offset 만큼 이동한 columnName 을 반환한다.
      * @param {Number} offset   이동할 offset
-     * @returns {String} columnName  offset 만큼 이동한 위치의 columnName
+     * @returns {?String} columnName  offset 만큼 이동한 위치의 columnName
      * @private
      */
     _findColumnName: function(offset) {
         var index,
             columnModel = this.columnModel,
             columnModelList = columnModel.getVisibleColumnModelList(),
-            columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
+            columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true),
+            columnName = null;
 
-        if (this.has()) {
+        if (this.has(true)) {
             index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
-            return columnModelList[index] && columnModelList[index]['columnName'];
+            columnName = columnModelList[index] && columnModelList[index].columnName;
         }
+        return columnName;
     },
 
     /**
@@ -6554,7 +6673,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     firstColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList();
-        return columnModelList[0]['columnName'];
+        return columnModelList[0].columnName;
     },
 
     /**
@@ -6564,7 +6683,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     lastColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList(),
             lastIndex = columnModelList.length - 1;
-        return columnModelList[lastIndex]['columnName'];
+        return columnModelList[lastIndex].columnName;
     }
 });
 
@@ -6630,11 +6749,12 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
-        this.renderModel = this._createRenderModel(options);
         this.focusModel = this._createFocusModel(domState);
+        this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
 
         // todo: remove dependency
+        this.focusModel.renderModel = this.renderModel;
         this.dimensionModel.renderModel = this.renderModel;
     },
 
@@ -6756,7 +6876,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         renderOptions = {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
-            dimensionModel: this.dimensionModel
+            dimensionModel: this.dimensionModel,
+            focusModel: this.focusModel
         };
         Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
@@ -6931,6 +7052,8 @@ var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
 
+var DATA_LENGTH_FOR_LOADING = 1000;
+
 /**
  * View 에서 Rendering 시 사용할 객체
  * @module model/renderer
@@ -6948,13 +7071,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.setOwnProperties({
             dataModel: options.dataModel,
             columnModel: options.columnModel,
-            dimensionModel: options.dimensionModel,
-            timeoutIdForRefresh: 0,
-            isColumnModelChanged: false
+            focusModel: options.focusModel,
+            dimensionModel: options.dimensionModel
         });
+
         rowListOptions = {
             dataModel: this.dataModel,
-            columnModel: this.columnModel
+            columnModel: this.columnModel,
+            focusModel: this.focusModel
         };
 
         lside = new RowList([], rowListOptions);
@@ -6965,10 +7089,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'add remove sort reset', this._onRowListChange)
+            .listenTo(this.dataModel, 'remove sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'add', this._onAddDataModel)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
+            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
+            .listenTo(this.focusModel, 'focus blur', this._onFocusOrBlur)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -6976,6 +7103,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         if (this.get('showDummyRows')) {
             this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
         }
+
+        this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
+
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing);
 
         this._updateMaxScrollLeft();
     },
@@ -6998,7 +7129,16 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         emptyMessage: null,
 
         // constMap.renderState
-        state: renderStateMap.EMPTY
+        state: renderStateMap.DONE
+    },
+
+    /**
+     * Event handler for change:scrollTop and change:scrollLeft.
+     * @private
+     */
+    _onChangeLayout: function() {
+        this.focusModel.finishEditing();
+        this.focusModel.focusClipboard();
     },
 
     /**
@@ -7027,10 +7167,105 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Event handler for 'beforeReset' event on dataModel
+     * @param {number} dataLength - the length of data
      * @private
      */
-    _onBeforeResetData: function() {
-        this.set('state', renderStateMap.LOADING);
+    _onBeforeResetData: function(dataLength) {
+        if (dataLength > DATA_LENGTH_FOR_LOADING) {
+            this.set('state', renderStateMap.LOADING);
+        }
+    },
+
+    /**
+     * Event handler for 'focus' and 'blur' events on focusModel
+     * @param {Number|String} rowKey - row key
+     * @param {String} columnName - column name
+     * @private
+     */
+    _onFocusOrBlur: function(rowKey, columnName) {
+        var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        var rowModel = this._getRowModel(mainRowKey, columnName);
+
+        if (rowModel) {
+            rowModel.updateClassName(columnName);
+        }
+    },
+
+    /**
+     * Event handler for 'change:editingAddress' event on focusModel
+     * @param {module:model/focus} focusModel - focus model
+     * @param {{rowKey: Number, columnName: String}} address - address
+     * @private
+     */
+    _onEditingAddressChange: function(focusModel, address) {
+        var target = address;
+        var editing = true;
+        var self = this;
+
+        if (!address) {
+            target = focusModel.previous('editingAddress');
+            editing = false;
+        }
+        this._updateCellData(target.rowKey, target.columnName, {
+            isEditing: editing
+        });
+
+        this._triggerEditingStateChanged(target.rowKey, target.columnName);
+
+        // defered call to prevent 'change:scrollLeft' or 'change:scrollTop' event
+        // triggered by module:view/layout/body._onScroll()
+        // when module:model/focus.scrollToFocus() method is called.
+        _.defer(function() {
+            self._toggleChangeLayoutEventHandlers(editing);
+        });
+    },
+
+    /**
+     * Toggle event handler for change:scrollTop and change:scrollLeft event.
+     * @param {Boolean} editing - whether currently editing
+     * @private
+     */
+    _toggleChangeLayoutEventHandlers: function(editing) {
+        var renderEventName = 'change:scrollTop change:scrollLeft';
+        var dimensionEventName = 'columnWidthChanged';
+
+        if (editing) {
+            this.listenToOnce(this.dimensionModel, dimensionEventName, this._onChangeLayoutBound);
+            this.once(renderEventName, this._onChangeLayoutBound);
+        } else {
+            this.stopListening(this.dimensionModel, dimensionEventName, this._onChangeLayoutBound);
+            this.off(renderEventName, this._onChangeLayoutBound);
+        }
+    },
+
+    /**
+     * Triggers the 'editingStateChanged' event if the cell data identified by
+     * given row key and column name has the useViewMode:true option.
+     * @param {String} rowKey - row key
+     * @param {String} columnName - column name
+     * @private
+     */
+    _triggerEditingStateChanged: function(rowKey, columnName) {
+        var cellData = this.getCellData(rowKey, columnName);
+
+        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false) {
+            this.trigger('editingStateChanged', cellData);
+        }
+    },
+
+    /**
+     * Updates the view-data of the cell identified by given rowKey and columnName.
+     * @param {(String|Number)} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Object} cellData - cell data
+     * @private
+     */
+    _updateCellData: function(rowKey, columnName, cellData) {
+        var rowModel = this._getRowModel(rowKey, columnName);
+
+        if (rowModel) {
+            rowModel.setCell(columnName, cellData);
+        }
     },
 
     /**
@@ -7068,18 +7303,29 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             startIndex: 0,
             endIndex: 0
         });
-        this.isColumnModelChanged = true;
-        clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this), 0);
+        this.refresh(true);
     },
 
     /**
-     * Data.RowList 가 변경되었을 때 열고정 영역 frame, 열고정 영역이 아닌 frame 의 list 를 재생성 하기 위한 이벤트 핸들러
+     * Event handler for change
      * @private
      */
-    _onRowListChange: function() {
-        clearTimeout(this.timeoutIdForRefresh);
-        this.timeoutIdForRefresh = setTimeout($.proxy(this.refresh, this, true), 0);
+    _onDataModelChange: function() {
+        this.refresh(false, true);
+    },
+
+    /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {module:model/data/rowList} dataModel - data model
+     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
+     * @private
+     */
+    _onAddDataModel: function(dataModel, options) {
+        this.refresh(false, true);
+
+        if (options.focus) {
+            this.focusModel.focusAt(options.at, 0);
+        }
     },
 
     /**
@@ -7108,18 +7354,21 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Returns the new data object for rendering based on rowDataModel and specified column names.
      * @param  {Object} rowDataModel - Instance of module:model/data/row
      * @param  {Array.<String>} columnNames - Column names
+     * @param  {Number} height - the height of the row
      * @param  {Number} rowNum - Row number
      * @returns {Object} - view data object
      * @private
      */
-    _createViewDataFromDataModel: function(rowDataModel, columnNames, rowNum) {
+    _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
         var viewData = {
+            height: height,
             rowKey: rowDataModel.get('rowKey'),
             _extraData: rowDataModel.get('_extraData')
         };
 
         _.each(columnNames, function(columnName) {
             var value = rowDataModel.get(columnName);
+
             if (columnName === '_number') {
                 value = rowNum;
             }
@@ -7166,14 +7415,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
         var columnNamesMap = this._getColumnNamesOfEachSide(),
             rowNum = this.get('startNumber') + startIndex,
+            height = this.dimensionModel.get('rowHeight'),
             lsideData = [],
             rsideData = [],
             rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
-            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, rowNum));
-            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside));
+            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height));
             rowNum += 1;
         }
 
@@ -7212,20 +7462,26 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _fillDummyRows: function() {
         var displayRowCount = this.dimensionModel.get('displayRowCount'),
             actualRowCount = this._getActualRowCount(),
-            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
+            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0),
+            rowHeight = this.dimensionModel.get('rowHeight');
 
         _.times(dummyRowCount, function() {
-            this.get('lside').add({});
-            this.get('rside').add({});
+            _.each(['lside', 'rside'], function(listName) {
+                this.get(listName).add({
+                    height: rowHeight
+                });
+            }, this);
         }, this);
+
         this.set('dummyRowCount', dummyRowCount);
     },
 
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
-     * @param {Boolean} isDataModelChanged - The boolean value whether dataModel has changed
+     * @param {Boolean} columnModelChanged - The boolean value whether columnModel has changed
+     * @param {Boolean} dataModelChanged - The boolean value whether dataModel has changed
      */
-    refresh: function(isDataModelChanged) {
+    refresh: function(columnModelChanged, dataModelChanged) {
         var startIndex, endIndex, i;
 
         this._setRenderingRange(this.get('scrollTop'));
@@ -7241,14 +7497,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this._executeRelation(i);
         }
 
-        if (this.isColumnModelChanged) {
+        if (columnModelChanged) {
             this.trigger('columnModelChanged');
-            this.isColumnModelChanged = false;
         } else {
-            this.trigger('rowListChanged', isDataModelChanged);
+            this.trigger('rowListChanged', dataModelChanged);
         }
         this._refreshState();
-        this.trigger('refresh');
     },
 
     /**
@@ -7282,6 +7536,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Returns the specified row model.
+     * @param {(Number|String)} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {module:model/row}
+     * @private
+     */
+    _getRowModel: function(rowKey, columnName) {
+        var collection = this._getCollectionByColumnName(columnName);
+
+        return collection.get(rowKey);
+    },
+
+    /**
      * 셀 데이터를 반환한다.
      * @param {number} rowKey   데이터의 키값
      * @param {String} columnName   컬럼명
@@ -7299,15 +7566,17 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
          isDisabled: isDisabled,
          optionList: [],
          className: row.getClassNameList(columnName).join(' '),
-         changed: []    //변경된 프로퍼티 목록들
+         changed: []    //names of changed properties
      }
      */
     getCellData: function(rowKey, columnName) {
-        var collection = this._getCollectionByColumnName(columnName),
-            row = collection.get(rowKey);
+        var row = this._getRowModel(rowKey, columnName),
+            cellData = null;
+
         if (row) {
-            return row.get(columnName);
+            cellData = row.get(columnName);
         }
+        return cellData;
     },
 
     /**
@@ -7320,7 +7589,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             renderIdx = rowIndex - this.get('startIndex'),
             rowModel, relationResult;
 
-        relationResult = row.getRelationResult();
+        relationResult = row.executeRelationCallbacksAll();
 
         _.each(relationResult, function(changes, columnName) {
             rowModel = this._getCollectionByColumnName(columnName).at(renderIdx);
@@ -7328,14 +7597,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 rowModel.setCell(columnName, changes);
             }
         }, this);
-    },
-
-    /**
-     * Destroys itself
-     * @private
-     */
-    _destroy: function() {
-        clearTimeout(this.timeoutIdForRefresh);
     }
 });
 
@@ -7362,17 +7623,20 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} attributes - Attributes
      * @param  {object} options - Options
      */
-    initialize: function(attributes, options) { // eslint-disable-line no-unused-vars
-        var rowKey = attributes && attributes['rowKey'],
-            rowListData = this.collection.dataModel,
-            rowData = rowListData.get(rowKey);
+    initialize: function(attributes) {
+        var rowKey = attributes && attributes.rowKey,
+            dataModel = this.collection.dataModel,
+            rowData = dataModel.get(rowKey);
+
+        this.dataModel = dataModel;
+        this.columnModel = this.collection.columnModel;
+        this.focusModel = this.collection.focusModel;
 
         if (rowData) {
             this.listenTo(rowData, 'change', this._onDataModelChange);
             this.listenTo(rowData, 'restore', this._onDataModelRestore);
             this.listenTo(rowData, 'extraDataChanged', this._setRowExtraData);
-            this.listenTo(rowListData, 'disabledChanged', this._onDataModelDisabledChanged);
-
+            this.listenTo(dataModel, 'disabledChanged', this._onDataModelDisabledChanged);
             this.rowData = rowData;
         }
     },
@@ -7381,14 +7645,19 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
     /**
      * Event handler for 'change' event on module:data/row
-     * @param {Object} model - RowData model on which event occurred
+     * @param {Object} rowData - RowData model on which event occurred
      * @private
      */
-    _onDataModelChange: function(model) {
-        _.each(model.changed, function(value, columnName) {
-            this.setCell(columnName, {
-                value: value
-            });
+    _onDataModelChange: function(rowData) {
+        _.each(rowData.changed, function(value, columnName) {
+            var column, isTextType;
+
+            if (this.has(columnName)) {
+                column = this.columnModel.getColumnModel(columnName);
+                isTextType = this.columnModel.isTextType(columnName);
+
+                this.setCell(columnName, this._getValueAttrs(value, rowData, column, isTextType));
+            }
         }, this);
     },
 
@@ -7416,22 +7685,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
-     * Returns whether the state of specified column is disabled.
-     * @param  {String} columnName - Column name
-     * @param  {{isDisabledCheck: Boolean, isDisabled: Boolean, isChecked: Boolean}} rowState - Row state
-     * @returns {Boolean} - True if disabled
-     * @private
-     */
-    _isDisabled: function(columnName, rowState) {
-        var isDisabled = this.collection.dataModel.isDisabled;
-
-        if (!isDisabled) {
-            isDisabled = (columnName === '_button') ? rowState.isDisabledCheck : rowState.isDisabled;
-        }
-        return isDisabled;
-    },
-
-    /**
      * Event handler for 'disabledChanged' event on dataModel
      */
     _onDataModelDisabledChanged: function() {
@@ -7439,7 +7692,8 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         _.each(columnNames, function(columnName) {
             this.setCell(columnName, {
-                isDisabled: this.rowData.isDisabled(columnName)
+                isDisabled: this.rowData.isDisabled(columnName),
+                className: this._getClassNameString(columnName)
             });
         }, this);
     },
@@ -7451,7 +7705,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _setRowExtraData: function() {
         var dataModel = this.collection.dataModel,
             columnNames = this._getColumnNameList(),
-            // rowState = this.rowData.getRowState(),
             param;
 
         if (tui.util.isUndefined(this.collection)) {
@@ -7459,26 +7712,24 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         }
 
         _.each(columnNames, function(columnName) {
-            /*eslint-disable consistent-this */
             var cellData = this.get(columnName),
-                rowModel = this,
+                rowModel = this, // eslint-disable-line consistent-this
                 cellState;
 
             if (!tui.util.isUndefined(cellData)) {
                 cellState = this.rowData.getCellState(columnName);
-                if (dataModel.isRowSpanEnable() && !cellData['isMainRow']) {
-                    rowModel = this.collection.get(cellData['mainRowKey']);
+                if (dataModel.isRowSpanEnable() && !cellData.isMainRow) {
+                    rowModel = this.collection.get(cellData.mainRowKey);
                 }
                 if (rowModel) {
                     param = {
                         isDisabled: cellState.isDisabled,
                         isEditable: cellState.isEditable,
-                        className: this.rowData.getClassNameList(columnName).join(' ')
+                        className: this._getClassNameString(columnName)
                     };
                     rowModel.setCell(columnName, param);
                 }
             }
-            /*eslint-enable consistent-this */
         }, this);
     },
 
@@ -7491,63 +7742,178 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @override
      */
     parse: function(data, options) {
-        return this._formatData(data, options.collection.dataModel, options.collection.columnModel);
+        var collection = options.collection;
+
+        return this._formatData(data, collection.dataModel, collection.columnModel, collection.focusModel);
     },
 
     /**
-     * Convert the original data to rendering data.
+     * Convert the original data to the rendering data.
      * @param {Array} data - Original data
      * @param {module:model/data/rowList} dataModel - Data model
      * @param {module:model/data/columnModel} columnModel - Column model
+     * @param {module:model/data/focusModel} focusModel - focus model
+     * @param {Number} rowHeight - The height of a row
      * @returns {Array} - Converted data
      * @private
      */
-    _formatData: function(data, dataModel, columnModel) {
+    _formatData: function(data, dataModel, columnModel, focusModel) {
         var rowKey = data.rowKey,
-            row;
+            columnData, row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
+
         row = dataModel.get(rowKey);
+        columnData = _.omit(data, 'rowKey', '_extraData', 'height');
 
-        _.each(data, function(value, columnName) {
+        _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
-                cellState = row.getCellState(columnName);
+                cellState = row.getCellState(columnName),
+                isTextType = columnModel.isTextType(columnName),
+                column = columnModel.getColumnModel(columnName);
 
-            if (columnName !== 'rowKey' && columnName !== '_extraData') {
-                data[columnName] = {
-                    rowKey: rowKey,
-                    columnName: columnName,
-                    value: this._getValueToDisplay(columnModel, columnName, value),
-                    rowSpan: rowSpanData.count,
-                    isMainRow: rowSpanData.isMainRow,
-                    mainRowKey: rowSpanData.mainRowKey,
-                    isEditable: cellState.isEditable,
-                    isDisabled: cellState.isDisabled,
-                    className: row.getClassNameList(columnName).join(' '),
-                    optionList: [], // for list type column (select, checkbox, radio)
-                    changed: [] //changed property names
-                };
-            }
+            data[columnName] = {
+                rowKey: rowKey,
+                columnName: columnName,
+                rowSpan: rowSpanData.count,
+                isMainRow: rowSpanData.isMainRow,
+                mainRowKey: rowSpanData.mainRowKey,
+                isEditable: cellState.isEditable,
+                isDisabled: cellState.isDisabled,
+                isEditing: focusModel.isEditingCell(rowKey, columnName),
+                isFocused: focusModel.isCurrentCell(rowKey, columnName),
+                optionList: tui.util.pick(column, 'editOption', 'list'),
+                className: this._getClassNameString(columnName, row, focusModel),
+                columnModel: column,
+                changed: [] //changed property names
+            };
+            _.assign(data[columnName], this._getValueAttrs(value, row, column, isTextType));
         }, this);
+
         return data;
     },
 
     /**
-     * Returns the value to display
-     * @param {module:model/data/columnModel} columnModel - column model
+     * Returns the class name string of the a cell.
      * @param {String} columnName - column name
-     * @param {String|Number} value - value
+     * @param {module:model/data/row} [row] - data model of a row
+     * @param {module:model/focus} [focusModel] - focus model
+     * @returns {String}
+     */
+    _getClassNameString: function(columnName, row, focusModel) {
+        var classNames;
+
+        if (!row) {
+            row = this.dataModel.get(this.get('rowKey'));
+        }
+        if (!focusModel) {
+            focusModel = this.focusModel;
+        }
+        classNames = row.getClassNameList(columnName);
+
+        if (focusModel.isCurrentCell(row.get('rowKey'), columnName, true)) {
+            classNames.push('focused');
+        }
+
+        return classNames.join(' ');
+    },
+
+    /**
+     * Returns the values of the attributes related to the cell value.
+     * @param {String|Number} value - Value
+     * @param {module:model/data/row} row - Row data model
+     * @param {Object} column - Column model object
+     * @param {Boolean} isTextType - True if the cell is the text-type
+     * @returns {Object}
+     * @private
+     */
+    _getValueAttrs: function(value, row, column, isTextType) {
+        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent'),
+            afterContent = tui.util.pick(column, 'editOption', 'afterContent'),
+            converter = tui.util.pick(column, 'editOption', 'converter'),
+            rowAttrs = row.toJSON();
+
+        return {
+            value: this._getValueToDisplay(value, column, isTextType),
+            formattedValue: this._getFormattedValue(value, rowAttrs, column),
+            beforeContent: this._getExtraContent(beforeContent, value, rowAttrs),
+            afterContent: this._getExtraContent(afterContent, value, rowAttrs),
+            convertedHTML: this._getConvertedHTML(converter, value, rowAttrs)
+        };
+    },
+
+    /**
+     * If the column has a 'formatter' function, exeucute it and returns the result.
+     * @param {String} value - value to display
+     * @param {Object} rowAttrs - All attributes of the row
+     * @param {Object} column - Column info
      * @returns {String}
      * @private
      */
-    _getValueToDisplay: function(columnModel, columnName, value) {
+    _getFormattedValue: function(value, rowAttrs, column) {
+        var result = value || '';
+
+        if (_.isFunction(column.formatter)) {
+            result = column.formatter(result, rowAttrs, column);
+        }
+
+        return result;
+    },
+
+    /**
+     * Returns the value of the 'beforeContent' or 'afterContent'.
+     * @param {(String|Function)} content - content
+     * @param {String} cellValue - cell value
+     * @param {Object} rowAttrs - All attributes of the row
+     * @returns {string}
+     * @private
+     */
+    _getExtraContent: function(content, cellValue, rowAttrs) {
+        var result = '';
+
+        if (_.isFunction(content)) {
+            result = content(cellValue, rowAttrs);
+        } else if (tui.util.isExisty(content)) {
+            result = content;
+        }
+
+        return result;
+    },
+
+    /**
+     * If the 'converter' function exist, execute it and returns the result.
+     * @param {Function} converter - converter
+     * @param {String} cellValue - cell value
+     * @param {Object} rowAttrs - All attributes of the row
+     * @returns {(String|Null)} - HTML string or Null
+     * @private
+     */
+    _getConvertedHTML: function(converter, cellValue, rowAttrs) {
+        var convertedHTML = null;
+
+        if (_.isFunction(converter)) {
+            convertedHTML = converter(cellValue, rowAttrs);
+        }
+        if (convertedHTML === false) {
+            convertedHTML = null;
+        }
+        return convertedHTML;
+    },
+
+    /**
+     * Returns the value to display
+     * @param {String|Number} value - value
+     * @param {String} column - column name
+     * @param {Boolean} isTextType - True if the cell is the text-typee
+     * @returns {String}
+     * @private
+     */
+    _getValueToDisplay: function(value, column, isTextType) {
         var isExisty = tui.util.isExisty,
-            isTextType = columnModel.isTextType(columnName),
-            cellColumnModel = columnModel.getColumnModel(columnName),
-            notUseHtmlEntity = cellColumnModel.notUseHtmlEntity,
-            defaultValue = cellColumnModel.defaultValue;
+            notUseHtmlEntity = column.notUseHtmlEntity,
+            defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
@@ -7582,6 +7948,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     },
 
     /**
+     * Updates the className attribute of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     */
+    updateClassName: function(columnName) {
+        this.setCell(columnName, {
+            className: this._getClassNameString(columnName)
+        });
+    },
+
+    /**
      * Sets the cell data.
      * (Each cell data is reference type, so do not change the cell data directly and
      *  use this method to trigger change event)
@@ -7593,7 +7969,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             changed = [],
             rowIndex, rowKey, data;
 
-        if (!this.get(columnName)) {
+        if (!this.has(columnName)) {
             return;
         }
 
@@ -7610,12 +7986,29 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         if (changed.length) {
             data.changed = changed;
-            this.set(columnName, data);
-            if (isValueChanged) {
+            this.set(columnName, data, {
+                silent: this._shouldSetSilently(data, isValueChanged)
+            });
+            if (isValueChanged && !data.isEditing) {
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
         }
+    },
+
+    /**
+     * Returns whether the 'set' method should be called silently.
+     * @param {Object} cellData - cell data
+     * @param {Boolean} valueChanged - true if value changed
+     * @returns {Boolean}
+     * @private
+     */
+    _shouldSetSilently: function(cellData, valueChanged) {
+        var valueChangedOnEditing = cellData.isEditing && valueChanged;
+        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+        var editingStarted = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+
+        return valueChangedOnEditing || (useViewMode && editingStarted);
     }
 });
 
@@ -7637,7 +8030,6 @@ var Row = require('./row');
   * @extends module:base/collection
   */
 var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
-    model: Row,
     /**
      * @constructs
      * @param {Object} rawData - Raw data
@@ -7646,9 +8038,12 @@ var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     initialize: function(rawData, options) {
         this.setOwnProperties({
             dataModel: options.dataModel,
-            columnModel: options.columnModel
+            columnModel: options.columnModel,
+            focusModel: options.focusModel
         });
-    }
+    },
+
+    model: Row
 });
 
 module.exports = RowList;
@@ -8005,7 +8400,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         columnNameList = _.pluck(columnModelList, 'columnName');
         rowValues = _.map(rowList, function(row) {
             var tmpString = _.map(columnNameList, function(columnName) {
-                return row.getVisibleText(columnName);
+                return row.getValueString(columnName);
             });
             return tmpString.join('\t');
         });
@@ -8181,11 +8576,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return;
         }
 
-        if (!rowSpanData['isMainRow']) {
-            spannedIndex = startIndex + rowSpanData['count'];
+        if (!rowSpanData.isMainRow) {
+            spannedIndex = startIndex + rowSpanData.count;
             startIndexList.push(spannedIndex);
         } else {
-            spannedIndex = startIndex + rowSpanData['count'] - 1;
+            spannedIndex = startIndex + rowSpanData.count - 1;
             if (spannedIndex > endIndex) {
                 endIndexList.push(spannedIndex);
             }
@@ -8209,15 +8604,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return;
         }
 
-        if (!rowSpanData['isMainRow']) {
-            spannedIndex = endIndex + rowSpanData['count'];
+        if (!rowSpanData.isMainRow) {
+            spannedIndex = endIndex + rowSpanData.count;
             tmpRowSpanData = dataModel.at(spannedIndex).getRowSpanData(columnName);
-            spannedIndex += tmpRowSpanData['count'] - 1;
+            spannedIndex += tmpRowSpanData.count - 1;
             if (spannedIndex > endIndex) {
                 endIndexList.push(spannedIndex);
             }
         } else {
-            spannedIndex = endIndex + rowSpanData['count'] - 1;
+            spannedIndex = endIndex + rowSpanData.count - 1;
             endIndexList.push(spannedIndex);
         }
     },
@@ -8248,7 +8643,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         //모든 열을 순회하며 각 열마다 설정된 rowSpan 정보에 따라 인덱스를 업데이트 한다.
         _.each(columnModelList, function(columnModel) {
-            columnName = columnModel['columnName'];
+            columnName = columnModel.columnName;
             param = {
                 columnName: columnName,
                 startIndex: spannedRange.row[0],
@@ -8313,263 +8708,112 @@ module.exports = Toolbar;
 
 },{"../base/model":5}],27:[function(require,module,exports){
 /**
- * @fileoverview CellPainter 의 기초 클래스
+ * @fileoverview Painter class for cell(TD) views
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var keyNameMap = require('../common/constMap').keyName;
 
 /**
- * Cell Painter Base
+ * Painter class for cell(TD) views
  * @module painter/cell
  * @extends module:base/painter
  */
 var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
     /**
      * @constructs
+     * @param {Object} options - options
      */
-    init: function() {
+    init: function(options) {
         Painter.apply(this, arguments);
-        this.setOwnProperties({
-            _keyDownSwitch: $.extend({}, this._defaultKeyDownSwitch)
-        });
+
+        this.editType = options.editType;
+        this.inputPainter = options.inputPainter;
+        this.selector = 'td[edit-type=' + this.editType + ']';
     },
 
     /**
-     * model 의 변화가 발생했을 때, td 를 다시 rendering 해야하는 대상 프로퍼티 목록. 필요에 따라 확장 시 재정의 한다.
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
      */
-    redrawAttributes: ['isEditable', 'optionList', 'value'],
+    events: {
+        dblclick: '_onDblClick'
+    },
 
-    /*
+    /**
      * Markup template
-     * If use '<%=class%>' key word, an error occurs.
-     * So use '<%=className%>' instead of '<%=class%>'
      * @returns {string} template
      */
     template: _.template(
-        '<td' +
-        ' columnname="<%=columnName%>"' +
-        ' class="<%=className%>"' +
-        ' edit-type="<%=editType%>"' +
-        ' <% if(rowSpan) print("rowSpan=" + rowSpan )%>' +
-        '<%=attributeString%>' +
-        '>' +
-        '<%=contentHtml%>' +
-        '</td>'
+        '<td <%=attributeString%>><%=contentHtml%></td>'
     ),
 
     /**
-     * keyDownEvent 발생시 기본 동작 switch
-     * @private
+     * Event handler for 'dblclick' DOM event.
+     * @param {MouseEvent} event - mouse event object
      */
-    _defaultKeyDownSwitch: {
-        'ESC': function(keyDownEvent, param) {
-            this.focusOut(param.$target);
-        },
-        'ENTER': function(keyDownEvent, param) {
-            this.focusOut(param.$target);
-        },
-        'TAB': function(keyDownEvent, param) {
-            if (keyDownEvent.shiftKey) {
-                this.grid.focusModel.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
-            } else {
-                this.grid.focusModel.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
-            }
-        },
-        'defaultAction': function() {}
-    },
+    _onDblClick: function(event) {
+        var address;
 
-    /**
-     * Event handlers
-     */
-    eventHandler: {},
-
-    /**
-     * RowPainter 에서 Render model 변경 감지 시 RowPainter 에서 호출하는 onChange 핸들러
-     * @param {object} cellData Model 의 셀 데이터
-     * @param {jQuery} $tr  tr 에 해당하는 jquery 로 감싼 html 엘리먼트
-     */
-    onModelChange: function(cellData, $tr) {
-        var $td = $tr.find('td[columnname="' + cellData.columnName + '"]'),
-            isRedraw = false,
-            hasFocusedElement;
-
-        tui.util.forEachArray(this.redrawAttributes, function(attribute) {
-            if ($.inArray(attribute, cellData.changed) !== -1) {
-                isRedraw = true;
-                return false;
-            }
-        }, this);
-
-        $td.attr('class', this._getClassNameList(cellData).join(' '));
-        try {
-            /*
-             * IE 7, 8 에서 $td.find(':focus') 호출시 unexpected error 발생하는 경우가 발생하여 try/catch 함.
-             */
-            hasFocusedElement = !!($td.find(':focus').length);
-        } catch (e) {
-            hasFocusedElement = false;
-        }
-
-        if (isRedraw) {
-            this.redraw(cellData, $td, hasFocusedElement);
-            if (hasFocusedElement) {
-                this.focusIn($td);
-            }
-        } else {
-            this.setElementAttribute(cellData, $td, hasFocusedElement);
+        if (this._isEditableType()) {
+            address = this._getCellAddress($(event.target));
+            this.controller.startEditing(address, true);
         }
     },
 
     /**
-     * keyDown 이 발생했을 때, switch object 에서 필요한 공통 파라미터를 생성한다.
-     * @param {Event} keyDownEvent  이벤트 객체
-     * @returns {{keyDownEvent: *, $target: (*|jQuery|HTMLElement), focusModel: (grid.focusModel|*),
-     *          rowKey: *, columnName: *, keyName: *}} _keyDownSwitch 에서 사용될 공통 파라미터 객체
-     * @private
+     * Returns whether the instance is editable type.
+     * @returns {Boolean}
      */
-    _getParamForKeyDownSwitch: function(keyDownEvent) {
-        var grid = this.grid,
-            keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-            focused = grid.focusModel.which(),
-            rowKey = focused.rowKey,
-            columnName = focused.columnName;
-        return {
-            keyDownEvent: keyDownEvent,
-            $target: $(keyDownEvent.target),
-            focusModel: grid.focusModel,
-            rowKey: rowKey,
-            columnName: columnName,
-            keyName: keyNameMap[keyCode]
-        };
+    _isEditableType: function() {
+        return !_.contains(['normal', 'mainButton'], this.editType);
     },
 
     /**
-     * keyDownSwitch 를 수행한다.
-     * @param {Event} keyDownEvent 이벤트 객체
-     * @returns {boolean} 정의된 keyDownSwitch 가 존재하는지 여부. Default 액션을 수행한 경우 false 를 반환한다.
-     * @private
-     */
-    _executeKeyDownSwitch: function(keyDownEvent) {
-        var keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-            keyName = keyNameMap[keyCode],
-            param = this._getParamForKeyDownSwitch(keyDownEvent);
-        (this._keyDownSwitch[keyName] || this._keyDownSwitch['defaultAction']).call(this, keyDownEvent, param);
-        return !!this._keyDownSwitch[keyName];
-    },
-
-    /**
-     * keyDownSwitch 에 정의된 액션을 override 한다.
-     *
-     * @param {(String|Object)} keyName  정의된 key 이름. Object 형태일 경우 기존 keyDownSwitch 를 확장한다.
-     * @param {function} [fn] keyDown 이 발생하였을 경우 수행할 액션
-     */
-    setKeyDownSwitch: function(keyName, fn) {
-        if (typeof keyName === 'object') {
-            this._keyDownSwitch = $.extend(this._keyDownSwitch, keyName);
-        } else {
-            this._keyDownSwitch[keyName] = fn;
-        }
-    },
-
-    /**
-     * keyDown 이벤트 핸들러
-     * @param {Event} keyDownEvent  이벤트 객체
-     * @private
-     */
-    _onKeyDown: function(keyDownEvent) {
-        if (this._executeKeyDownSwitch(keyDownEvent)) {
-            keyDownEvent.preventDefault();
-        }
-    },
-
-    /**
-     * cellData에 설정된 데이터를 기반으로 classNameList 를 생성하여 반환한다.
-     * @param {Object} cellData Model 의 셀 데이터
-     * @returns {Array} 생성된 css 디자인 클래스 배열
-     * @private
-     */
-    _getClassNameList: function(cellData) {
-        var focused = this.grid.focusModel.which(),
-            columnName = cellData.columnName,
-            focusedRowKey = this.grid.dataModel.getMainRowKey(focused.rowKey, columnName),
-            isMetaColumn = this.grid.columnModel.isMetaColumn(columnName),
-            classNameList = [],
-            classNameMap = {};
-
-        if (focusedRowKey === cellData.rowKey) {
-            classNameMap['selected'] = true;
-            if (focused.columnName === columnName) {
-                classNameMap['focused'] = true;
-            }
-        }
-        if (cellData.className) {
-            classNameMap[cellData.className] = true;
-        }
-
-        if (cellData.isEditable && !isMetaColumn) {
-            classNameMap['editable'] = true;
-        }
-
-        if (cellData.isDisabled) {
-            classNameMap['disabled'] = true;
-        }
-
-        tui.util.forEach(classNameMap, function(val, className) {
-            classNameList.push(className);
-        });
-
-        if (isMetaColumn) {
-            classNameList.push('meta_column');
-        }
-
-        return classNameList;
-    },
-
-    /**
-     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
-     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
+     * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
+     * @param {Object} cellData - cell data
+     * @returns {String}
      * @private
      */
     _getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption || {},
-            beforeContent, afterContent, content;
+        var content = cellData.formattedValue,
+            beforeContent = cellData.beforeContent,
+            afterContent = cellData.afterContent;
 
-        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
-        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
+        if (this.inputPainter) {
+            content = this.inputPainter.generateHtml(cellData);
 
-        content = beforeContent + this.getContentHtml(cellData) + afterContent;
-        return content;
+            if (this._shouldContentBeWrapped() && !this._isUsingViewMode(cellData)) {
+                beforeContent = this._getSpanWrapContent(beforeContent, 'before');
+                afterContent = this._getSpanWrapContent(afterContent, 'after');
+                content = this._getSpanWrapContent(content, 'input');
+
+                return beforeContent + afterContent + content;
+            }
+        }
+
+        return beforeContent + content + afterContent;
     },
 
     /**
-     * beforeContent/afterContent의 내용을 반환하다.
-     * 값이 function인 경우 function을 실행해 결과값을 반환한다.
-     * @param {(string|function)} content - 내용
-     * @param {object} cellData - 셀 데이터
-     * @returns {string} - 내용
+     * Returns whether the cell has view mode.
+     * @param {Object} cellData - cell data
+     * @returns {Boolean}
      * @private
      */
-    _getExtraContent: function(content, cellData) {
-        var contentValue = content,
-            row, cellValue;
+    _isUsingViewMode: function(cellData) {
+        return tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+    },
 
-        if (tui.util.isFunction(content)) {
-            row = this.grid.dataModel.get(cellData.rowKey);
-            cellValue = row.getHTMLEncodedString(cellData.columnName);
-            contentValue = content(cellValue, row.attributes);
-        }
-        if (!tui.util.isExisty(contentValue)) {
-            contentValue = '';
-        }
-        return contentValue;
+    /**
+     * Returns whether the contents should be wrapped with span tags to display them correctly.
+     * @returns {Boolean}
+     * @private
+     */
+    _shouldContentBeWrapped: function() {
+        return _.contains(['text', 'password', 'select'], this.editType);
     },
 
     /**
@@ -8583,1674 +8827,228 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (tui.util.isFalsy(content)) {
             content = '';
         }
+
         return '<span class="' + className + '">' + content + '</span>';
     },
 
     /**
-     * Row Painter 에서 한번에 table 을 랜더링 할 때 사용하기 위해
-     * td 단위의 html 문자열을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} td 마크업 문자열
+     * Returns the object contains attributes of a TD element.
+     * @param {Object} cellData - cell data
+     * @returns {Object}
+     * @private
      */
-    getHtml: function(cellData) {
-        var attributeString = util.getAttributesString(this.getAttributes(cellData)),
-            contentHtml = this._getContentHtml(cellData),
-            html;
+    _getAttributes: function(cellData) {
+        return {
+            'class': cellData.className + ' cell_content',
+            'edit-type': this.editType,
+            'data-row-key': cellData.rowKey,
+            'data-column-name': cellData.columnName,
+            'rowspan': cellData.rowSpan || '',
+            'align': cellData.columnModel.align || 'left'
+        };
+    },
 
-        html = this.template({
-            columnName: cellData.columnName,
-            rowSpan: cellData.rowSpan,
-            className: this._getClassNameList(cellData).join(' '),
-            editType: this.getEditType(),
+    /**
+     * Attaches all event handlers to the $target element.
+     * @param {jquery} $target - target element
+     * @param {String} parentSelector - selector of a parent element
+     * @override
+     */
+    attachEventHandlers: function($target, parentSelector) {
+        Painter.prototype.attachEventHandlers.call(this, $target, parentSelector);
+
+        if (this.inputPainter) {
+            this.inputPainter.attachEventHandlers($target, parentSelector + ' ' + this.selector);
+        }
+    },
+
+    /**
+     * Generates a HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @returns {string} HTML string of the cell (TD)
+     * @implements {module:base/painter}
+     */
+    generateHtml: function(cellData) {
+        var attributeString = util.getAttributesString(this._getAttributes(cellData)),
+            contentHtml = this._getContentHtml(cellData);
+
+        return this.template({
             attributeString: attributeString,
-            // '&nbsp' for height issue with empty cell in IE7
-            contentHtml: contentHtml || '&nbsp'
+            contentHtml: contentHtml || '&#8203;' // '&#8203;' for height issue with empty cell in IE7
         });
-        return html;
     },
 
     /**
-     * 이미 rendering 되어있는 TD 엘리먼트 전체를 다시 랜더링 한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @param {jQuery} $td  td 에 해당하는 jquery 로 감싼 html 엘리먼트
+     * Refreshes the cell(td) element.
+     * @param {object} cellData - cell data
+     * @param {jQuery} $td - cell element
      */
-    redraw: function(cellData, $td) {
-        var attributes = {
-            'class': this._getClassNameList(cellData).join(' ') // 'class' instead of class for IE7
-        };
-        if (cellData.rowSpan) {
-            attributes['rowSpan'] = cellData.rowSpan;
+    refresh: function(cellData, $td) {
+        var contentProps = ['value', 'isEditing', 'isDisabled'];
+        var isEditingChanged = _.contains(cellData.changed, 'isEditing');
+        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
+        var attrs = this._getAttributes(cellData);
+
+        delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
+        $td.attr(attrs);
+
+        if (isEditingChanged && cellData.isEditing && !this._isUsingViewMode(cellData)) {
+            this.inputPainter.focus($td);
+        } else if (shouldUpdateContent) {
+            $td.html(this._getContentHtml(cellData));
+            $td.scrollLeft(0);
         }
-        attributes['edit-type'] = this.getEditType();
-        attributes = $.extend(attributes, this.getAttributes(cellData));
-        $td.attr(attributes);
-        $td.html(this._getContentHtml(cellData));
-    },
-
-    /**
-     * 인자로 받은 element 의 cellData 를 반환한다.
-     * @param {jQuery} $target  조회할 엘리먼트
-     * @returns {Object} 조회한 cellData 정보
-     * @private
-     */
-    _getCellData: function($target) {
-        var cellData = this._getCellAddress($target);
-        return this.grid.renderModel.getCellData(cellData.rowKey, cellData.columnName);
-    },
-
-    /**
-     * 인자로 받은 element 로 부터 rowKey 와 columnName 을 반환한다.
-     * @param {jQuery} $target 조회할 엘리먼트
-     * @returns {{rowKey: String, columnName: String}} rowKey 와 columnName 정보
-     * @private
-     */
-    _getCellAddress: function($target) {
-        return {
-            rowKey: this.getRowKey($target),
-            columnName: this.getColumnName($target)
-        };
-    },
-
-    /**
-     * Validates the cell data identified by given rowKey and columnName.
-     * @param {String} rowKey - Row key
-     * @param {String} columnName - Column name
-     * @private
-     */
-    _validateData: function(rowKey, columnName) {
-        var row = this.grid.dataModel.get(rowKey);
-        row.validateCell(columnName);
-    },
-
-    /**
-     * cellData.columnName에 해당하는 editOption의 converter가 존재하는 경우
-     * converter 함수를 적용한 결과값을 반환한다.
-     * @param {string} value - 셀의 실제값
-     * @param {object} cellData - 모델의 셀 데이터
-     * @returns {(string|null)} HTML문자열. 혹은 null
-     * @private
-     */
-    _getConvertedHtml: function(value, cellData) {
-        var columnModel = this.getColumnModel(cellData),
-            editOption = columnModel.editOption,
-            html;
-
-        if (editOption && tui.util.isFunction(editOption.converter)) {
-            html = editOption.converter(value, this.grid.dataModel.get(cellData.rowKey).attributes);
-        }
-        if (tui.util.isFalsy(html)) {
-            html = null;
-        }
-        return html;
-    },
-
-    /**
-     * 인자로 받은 element 로 부터 columnName 을 반환한다.
-     * @param {jQuery} $target 조회할 엘리먼트
-     * @returns {string} 컬럼명
-     */
-    getColumnName: function($target) {
-        return $target.closest('td').attr('columnName');
-    },
-
-    /**
-     * 인자로 받은 element 로 부터 rowKey 를 반환한다.
-     * @param {jQuery} $target 조회할 엘리먼트
-     * @returns {string} 행의 키값
-     */
-    getRowKey: function($target) {
-        return $target.closest('tr').attr('key');
-    },
-
-    /**
-     * columnModel 을 반환한다.
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {*|Object} 컬럼모델
-     */
-    getColumnModel: function(cellData) {
-        return this.grid.columnModel.getColumnModel(cellData.columnName);
-    },
-
-    /**
-     * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-     * @param {Object} cellData Model 의 셀 데이터
-     * @returns {Object} td 에 지정할 attribute 데이터
-     */
-    getAttributes: function(cellData) {
-        var columnModel = this.getColumnModel(cellData);
-        return {
-            align: columnModel.align || 'left'
-        };
-    },
-
-    /**
-     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
-     * - 필요에 따라 override 한다.
-     */
-    focusOut: function() {
-        this.grid.focusModel.focusClipboard();
-    },
-
-    /**
-     * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
-     * - 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return 'normal';
-    },
-
-    /**
-     * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    focusIn: function($td) {}, // eslint-disable-line no-unused-vars
-
-    /**
-     * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) { // eslint-disable-line no-unused-vars
-        return '';
-    },
-
-    /**
-     * !상속받은 클래스는 이 메서드를 반드시 구현해야한다.
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focuse 된 엘리먼트가 존재하는지 여부
-     */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {} // eslint-disable-line no-unused-vars
+    }
 });
 
 module.exports = Cell;
 
-},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],28:[function(require,module,exports){
+},{"../base/painter":6,"../common/util":11}],28:[function(require,module,exports){
 /**
- * @fileoverview Painter class for the button cell
+ * @fileoverview Controller class to handle actions from the painters
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var ListCell = require('./list');
-var util = require('../../common/util');
-
 /**
- * Painter class for the button cell
- * @module painter/cell/button
- * @extends module:painter/cell/list
+ * Controller class to handle actions from the painters
+ * @module painter/controller
  */
-var ButtonCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/button.prototype */{
+var PainterController = tui.util.defineClass(/**@lends module:painter/controller.prototype */{
     /**
      * @constructs
+     * @param {Object} options - options
      */
-    init: function() {
-        ListCell.apply(this, arguments);
-        this.setKeyDownSwitch({
-            'UP_ARROW': function() {},
-            'DOWN_ARROW': function() {},
-            'PAGE_UP': function() {},
-            'PAGE_DOWN': function() {},
-            'ENTER': function(keyDownEvent, param) {
-                param.$target.trigger('click');
-            },
-            'LEFT_ARROW': function(keyDownEvent, param) {
-                this._focusPrevInput(param.$target);
-            },
-            'RIGHT_ARROW': function(keyDownEvent, param) {
-                this._focusNextInput(param.$target);
-            },
-            'ESC': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
-            },
-            'TAB': function(keyDownEvent, param) {
-                if (keyDownEvent.shiftKey) {
-                    //이전 cell 로 focus 이동
-                    if (!this._focusPrevInput(param.$target)) {
-                        this.grid.focusModel.focusIn(param.rowKey, param.focusModel.prevColumnName(), true);
-                    }
-                //이후 cell 로 focus 이동
-                } else if (!this._focusNextInput(param.$target)) {
-                    this.grid.focusModel.focusIn(param.rowKey, param.focusModel.nextColumnName(), true);
-                }
-            }
-        });
-    },
-
-    eventHandler: {
-        'change input': '_onChange',
-        'keydown input': '_onKeyDown',
-        'blur input': '_onBlur'
+    init: function(options) {
+        this.focusModel = options.focusModel;
+        this.dataModel = options.dataModel;
+        this.columnModel = options.columnModel;
+        this.selectionModel = options.selectionModel;
     },
 
     /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
+     * Starts editing a cell identified by a given address, and returns the result.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {Boolean} force - if set to true, finish current editing before start.
+     * @returns {Boolean} true if succeeded, false otherwise
      */
-    getEditType: function() {
-        return 'button';
-    },
+    startEditing: function(address, force) {
+        var result;
 
-    /**
-     * Contents markup template
-     * @returns {string} html
-     */
-    contentTemplate: _.template(
-        '<input' +
-        ' type="<%=type%>"' +
-        ' name="<%=name%>"' +
-        ' id="<%=id%>"' +
-        ' value="<%=value%>"' +
-        ' <% if (isChecked) print("checked"); %>' +
-        ' <% if (isDisabled) print("disabled"); %>' +
-        '/>'
-    ),
-
-    /**
-     * Label markup template
-     * It will be added to content
-     * @returns {string} html
-     */
-    labelTemplate: _.template(
-        '<label' +
-        ' for="<%=id%>"' +
-        ' style="margin-right:10px;"' +
-        '>' +
-        '<%=labelText%>' +
-        '</label>'
-    ),
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    focusIn: function($td) {
-        /* istanbul ignore next: focus 확인 불가 */
-        if ($td.find('input').eq(0).prop('disabled')) {
-            this.grid.focusModel.focusClipboard();
-        } else {
-            $td.find('input').eq(0).focus();
-        }
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        var list = this.getOptionList(cellData),
-            columnModel = this.grid.columnModel.getColumnModel(cellData.columnName),
-            value = cellData.value,
-            checkedList = String(value).split(','),
-            checkedMap = {},
-            html = this._getConvertedHtml(value, cellData),
-            name = util.getUniqueKey(),
-            isDisabled = cellData.isDisabled,
-            type = columnModel.editOption.type,
-            id;
-
-        if (_.isNull(html)) {
-            html = '';
-
-            _.each(checkedList, function(item) {
-                checkedMap[item] = true;
-            });
-            _.each(list, function(item) {
-                id = name + '_' + item.value;
-                html += this.contentTemplate({
-                    type: type,
-                    name: name,
-                    id: id,
-                    value: item.value,
-                    isChecked: !!checkedMap[item.value],
-                    isDisabled: isDisabled
-                });
-                if (item.text) {
-                    html += this.labelTemplate({
-                        id: id,
-                        labelText: item.text
-                    });
-                }
-            }, this);
-        }
-        return html;
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    setElementAttribute: function(cellData, $td) {
-        var value = cellData.value,
-            checkedList = String(value).split(',');
-
-        $td.find('input:checked').prop('checked', false);
-
-        tui.util.forEachArray(checkedList, function(item) {
-            $td.find('input[value="' + item + '"]').prop('checked', true);
-        });
-    },
-
-    /**
-     * 다음 input 에 focus 한다
-     * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
-     * @private
-     */
-    _focusNextInput: function($currentInput) {
-        return this._focusTargetInput($currentInput, 'next');
-    },
-
-    /**
-     * 이전 input 에 focus 한다.
-     * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @returns {boolean} 다음 엘리먼트에 focus 되었는지 여부
-     * @private
-     */
-    _focusPrevInput: function($currentInput) {
-        return this._focusTargetInput($currentInput, 'prev');
-    },
-
-    /**
-     * 이전 혹은 다음 input 에 focus 한다.
-     * @param {jQuery} $currentInput 현재 input jQuery 엘리먼트
-     * @param {string} direction 방향 'next|prev'
-     * @returns {boolean} 해당 엘리먼트에 focus 되었는지 여부
-     * @private
-     */
-    _focusTargetInput: function($currentInput, direction) {
-        var $target = $currentInput,
-            result = false,
-            find;
-
-        if (direction === 'next') {
-            find = function($el) {
-                return $el.next();
-            };
-        } else if (direction === 'prev') {
-            find = function($el) {
-                return $el.prev();
-            };
+        if (force) {
+            this.focusModel.finishEditing();
         }
 
-        do {
-            $target = find($target);
-        } while ($target.length && !$target.is('input'));
+        result = this.focusModel.startEditing(address.rowKey, address.columnName);
 
-        if ($target.length) {
-            $target.focus();
-            result = true;
+        if (result) {
+            this.selectionModel.end();
         }
+
         return result;
     },
 
     /**
-     * check 된 button 의 값들을 가져온다. onChange 이벤트 핸들러에서 호출한다.
-     * @param {jQuery} $target 이벤트가 발생한 targetElement
-     * @returns {Array}  check 된 값들의 결과 배열
-     * @private
+     * Ends editing a cell identified by a given address, and returns the result.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {Boolean} shouldBlur - if set to true, make the current input lose focus.
+     * @param {String} [value] - if not undefined, set the value of the data model to this value.
+     * @returns {Boolean} - true if succeeded, false otherwise
      */
-    _getCheckedValueList: function($target) {
-        var $checkedList = $target.closest('td').find('input:checked'),
-            checkedList = [];
+    finishEditing: function(address, shouldBlur, value) {
+        var focusModel = this.focusModel;
 
-        tui.util.forEachArray($checkedList, function($checked, index) {
-            checkedList.push($checkedList.eq(index).val());
-        });
-
-        return checkedList;
-    },
-
-    /**
-     * onChange 이벤트 핸들러
-     * @param {Event} changeEvent 이벤트 객체
-     * @private
-     */
-    _onChange: function(changeEvent) {
-        var $target = $(changeEvent.target),
-            cellAddress = this._getCellAddress($target);
-        this.grid.dataModel.setValue(cellAddress.rowKey, cellAddress.columnName,
-            this._getCheckedValueList($target).join(','));
-    },
-
-    /**
-     * Event handler for 'blur' event on input element
-     * @param {Event} ev - Blur event
-     * @private
-     */
-    _onBlur: function(ev) {
-        var cellAddr = this._getCellAddress($(ev.target));
-        this._validateData(cellAddr.rowKey, cellAddr.columnName);
-    }
-});
-
-module.exports = ButtonCell;
-
-},{"../../common/util":11,"./list":29}],29:[function(require,module,exports){
-/**
- * @fileoverview 리스트 형태의 Cell Painter을 위한 Base 클래스
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var Cell = require('../cell');
-
-/**
- * editOption 에 list 를 가지고 있는 형태의 Base 클래스
- * @module painter/cell/list
- * @extends module:painter/cell
- */
-var ListCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/list.prototype */{
-    /**
-     * @constructs
-     */
-    init: function() {
-        Cell.apply(this, arguments);
-    },
-
-    redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
-
-    eventHandler: {},
-
-    /* eslint-disable */
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {},
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    focusIn: function($td) {}, // eslint-disable-line no-unused-vars
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) { // eslint-disable-line no-unused-vars
-        throw this.error('Implement getContentHtml(cellData, $target) method. On re-rendering');
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     * @param {boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
-     */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) { // eslint-disable-line no-unused-vars
-        throw this.error('Implement setElementAttribute(cellData, $target) method. ');
-    },
-    /* eslint-enable */
-
-    /**
-     * List Type 의 option list 를 반환하는 메서드
-     *
-     * cellData 의 optionsList 가 존재한다면 cellData 의 옵션 List 를 반환하고,
-     * 그렇지 않다면 columnModel 의 optionList 를 반환한다.
-     * @param {Object} cellData 모델의 셀 데이터
-     * @returns {Array} 옵션 리스트
-     */
-    getOptionList: function(cellData) {
-        var columnModel = this.grid.columnModel.getColumnModel(cellData.columnName);
-        return cellData.optionList && cellData.optionList.length ? cellData.optionList : columnModel.editOption.list;
-    },
-
-    /**
-     * Redraw cell (TD) element
-     * @override
-     */
-    redraw: function() {
-        Cell.prototype.redraw.apply(this, arguments);
-        this.grid.focusModel.focusClipboard();
-    }
-});
-
-module.exports = ListCell;
-
-},{"../cell":27}],30:[function(require,module,exports){
-/**
- * @fileoverview Painter class for the main button
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var Cell = require('../cell');
-
-/**
- * Painter class for the main button
- * @module painter/cell/mainButton
- * @extends module:painter/cell
- */
-var MainButtonCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/mainButton.prototype */{
-    /**
-     * @constructs
-     */
-    init: function() {
-        Cell.apply(this, arguments);
-        this.setKeyDownSwitch({
-            'UP_ARROW': function() {},
-            'DOWN_ARROW': function() {},
-            'ENTER': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
-            },
-            'LEFT_ARROW': function() {},
-            'RIGHT_ARROW': function() {},
-            'ESC': function() {}
-        });
-    },
-
-    /**
-     * rendering 해야하는 cellData 의 변경 목록
-     */
-    redrawAttributes: ['isDisabled', 'isEditable', 'optionList'],
-
-    eventHandler: {
-        'mousedown': '_onMouseDown',
-        'change input': '_onChange',
-        'keydown input': '_onKeyDown'
-    },
-
-    /**
-     * Content markup template
-     * @returns {string} html
-     */
-    contentTemplate: _.template(
-        '<input' +
-        ' type="<%=type%>"' +
-        ' name="<%=name%>"' +
-        ' <% if (isChecked) print("checked") %>' +
-        ' <% if (isDisabled) print("disabled") %>' +
-        '/>'
-    ),
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return '_button';
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        var isDisabled = cellData.isDisabled;
-
-        return this.contentTemplate({
-            type: this.grid.columnModel.get('selectType'),
-            name: this.grid.id,
-            isChecked: !!cellData.value,
-            isDisabled: isDisabled
-        });
-    },
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    /* istanbul ignore next */
-    focusIn: function() {
-        //아무것도 안하도록 변경
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    setElementAttribute: function(cellData, $td) {
-        var $input = $td.find('input'),
-            isChecked = $input.prop('checked');
-        if (isChecked !== !!cellData.value) {
-            $input.prop('checked', cellData.value);
+        if (!focusModel.isEditingCell(address.rowKey, address.columnName)) {
+            return false;
         }
-    },
 
-    /**
-     * checked 를 toggle 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    toggle: function($td) {
-        var $input = $td.find('input');
-        if (this.grid.columnModel.get('selectType') === 'checkbox') {
-            $input.prop('checked', !$input.prop('checked'));
+        this.selectionModel.enable();
+
+        if (!_.isUndefined(value)) {
+            this.setValue(address, value);
+            this.dataModel.get(address.rowKey).validateCell(address.columnName);
         }
-    },
+        focusModel.finishEditing();
 
-    /**
-     * getHtml 으로 마크업 생성시 td에 포함될 attribute object 를 반환한다.
-     * @returns {Object} td 에 지정할 attribute 데이터
-     */
-    getAttributes: function() {
-        return {
-            align: 'center'
-        };
-    },
-
-    /**
-     * onChange 이벤트 핸들러
-     * @param {Event} changeEvent 이벤트 객체
-     * @private
-     */
-    _onChange: function(changeEvent) {
-        var $target = $(changeEvent.target),
-            rowKey = this.getRowKey($target);
-        this.grid.dataModel.setValue(rowKey, '_button', $target.prop('checked'));
-    },
-
-    /**
-     * TD 전체 mousedown 이벤트 발생시 checkbox 클릭 이벤트를 발생시킨다.
-     * @param {Event} mouseDownEvent 이벤트 객체
-     * @private
-     */
-    _onMouseDown: function(mouseDownEvent) {
-        var $target = $(mouseDownEvent.target);
-        if (!$target.is('input')) {
-            $target.find('input').trigger('click');
-        }
-    }
-});
-
-module.exports = MainButtonCell;
-
-},{"../cell":27}],31:[function(require,module,exports){
-/**
- * @fileoverview 기본 Cell (일반, 숫자, 메인 Checkbox) 관련 Painter 정의
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var Cell = require('../cell');
-
-/**
- * editOption 이 적용되지 않은 cell 의 Painter
- * @module painter/cell/normal
- * @extends module:painter/cell
- */
-var NormalCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/normal.prototype */{
-    /**
-     * @constructs
-     */
-    init: function() {
-        Cell.apply(this, arguments);
-    },
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {string} editType 'normal|select|button|text|text-convertible'
-     */
-    getEditType: function() {
-        return 'normal';
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            rowKey = cellData.rowKey,
-            value = cellData.value;
-
-        if (tui.util.isFunction(columnModel.formatter)) {
-            value = columnModel.formatter(value, this.grid.dataModel.get(rowKey).toJSON(), columnModel);
-        }
-        return value;
-    },
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     */
-    focusIn: function() {
-        this.grid.focusModel.focusClipboard();
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
-     */
-    /* istanbul ignore next */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {} // eslint-disable-line
-});
-
-module.exports = NormalCell;
-
-},{"../cell":27}],32:[function(require,module,exports){
-/**
- * @fileoverview Painter class for the number cell
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var NormalCell = require('./normal');
-
-/**
- * Number Cell 의 Painter
- * @module painter/cell/number
- * @extends module:painter/cell/normal
- */
-var NumberCell = tui.util.defineClass(NormalCell, /**@lends module:painter/cell/number.prototype */{
-    /**
-     * @constructs
-     */
-    init: function() {
-        NormalCell.apply(this, arguments);
-    },
-
-    redrawAttributes: [],
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {string} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return '_number';
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        return cellData.value;
-    }
-});
-
-module.exports = NumberCell;
-
-},{"./normal":31}],33:[function(require,module,exports){
-/**
- * @fileoverview Painter class for the select cell
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var ListCell = require('./list');
-var util = require('../../common/util');
-
-/**
- * Painter class for the select cell
- * @module painter/cell/select
- * @extends module:painter/cell/list
- */
-var SelectCell = tui.util.defineClass(ListCell, /**@lends module:painter/cell/select.prototype */{
-    /**
-     * @constructs
-     */
-    init: function() {
-        ListCell.apply(this, arguments);
-
-        this.setKeyDownSwitch({
-            'ESC': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
-            },
-            'ENTER': function(keyDownEvent, param) {
-                this.focusOut(param.$target);
-            }
-        });
-    },
-
-    eventHandler: {
-        'change select': '_onChange',
-        'keydown select': '_onKeyDown',
-        'blur select': '_onBlurSelect'
-    },
-
-    /**
-     * Content markup template
-     * @returns {string} html
-     */
-    contentTemplate: _.template(
-        '<select' +
-        ' name="<%=name%>"' +
-        ' <% if (isDisabled) print("disabled"); %>' +
-        '>' +
-        '<%=options%>' +
-        '</select>'
-    ),
-
-    /**
-     * Options markup template
-     * It will be added to content
-     * :: The value of option is a type of stirng, and use '==' operator for
-     *    comparison regardless of some types of value in cellData
-     * @returns {string} html
-     */
-    optionTemplate: _.template(
-        '<option' +
-        ' value="<%=value%>"' +
-        ' <% if (cellDataValue == value)  print("selected"); %>' +
-        '>' +
-        '<%=text%>' +
-        '</option>'
-    ),
-
-    /**
-     * Event handler for 'blur' event on select element
-     * @param {Event} ev - Event object
-     */
-    _onBlurSelect: function(ev) {
-        var cellAddr = this._getCellAddress($(ev.target));
-        this._validateData(cellAddr.rowKey, cellAddr.columnName);
-    },
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return 'select';
-    },
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    focusIn: function($td) {
-        /* istanbul ignore next */
-        if ($td.find('select').prop('disabled')) {
-            this.grid.focusModel.focusClipboard();
+        if (shouldBlur) {
+            focusModel.focusClipboard();
         } else {
-            $td.find('select').eq(0).focus();
-        }
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        var list = this.getOptionList(cellData),
-            isDisabled = cellData.isDisabled,
-            html = this._getConvertedHtml(cellData.value, cellData),
-            optionsHtml = '';
-
-        //@todo html !== null인경우 tc부족
-        if (tui.util.isNull(html)) {
-            _.each(list, function(item) {
-                optionsHtml += this.optionTemplate({
-                    value: item.value,
-                    cellDataValue: cellData.value,
-                    text: item.text
-                });
-            }, this);
-
-            html = this.contentTemplate({
-                name: util.getUniqueKey(),
-                isDisabled: isDisabled,
-                options: optionsHtml
+            _.defer(function() {
+                focusModel.refreshState();
             });
         }
-        return html;
+
+        return true;
     },
 
     /**
-     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
-     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
-     * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
-     * View.Base.Painter.Cell로부터 override 해서 구현함)
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
-     * @private
-     * @override
+     * Moves focus to the next cell, and starts editing the cell.
+     * @param {Boolean} reverse - if set to true, find the previous cell instead of next cell
      */
-    _getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption || {},
-            content = '',
-            beforeContent, afterContent;
+    focusInToNextCell: function(reverse) {
+        var focusModel = this.focusModel,
+            rowKey = focusModel.get('rowKey'),
+            columnName = focusModel.get('columnName'),
+            nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
 
-        if (!tui.util.isExisty(cellData.value)) {
-            cellData.value = columnModel.defaultValue;
-        }
-        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
-        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
-
-        if (beforeContent) {
-            content += this._getSpanWrapContent(beforeContent, 'before', cellData);
-        }
-        if (afterContent) {
-            content += this._getSpanWrapContent(afterContent, 'after', cellData);
-        }
-        content += this._getSpanWrapContent(this.getContentHtml(cellData), 'input');
-
-        return content;
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
-     */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {
-        var $select = $td.find('select');
-        /*
-        키보드 상하로 조작시 onChange 콜백에서 false 리턴시 이전 값으로
-        돌아가지 않는 현상때문에 blur focus 를 수행한다.
-         */
-
-        /* istanbul ignore next: blur 확인 불가 */
-        if (hasFocusedElement) {
-            $select.blur();
-        }
-        $select.val(cellData.value);
-
-        /* istanbul ignore next: focus 확인 불가 */
-        if (hasFocusedElement) {
-            $select.focus();
+        if (columnName !== nextColumnName) {
+            focusModel.focusIn(rowKey, nextColumnName, true);
         }
     },
 
     /**
-     * change 이벤트 핸들러
-     * @param {Event} changeEvent   이벤트 객체
-     * @private
+     * Executes the custom handler (defined by user) of the input events.
+     * @param {Event} event - DOM Event object
+     * @param {{rowKey:String, columnName:String}} address - cell address
      */
-    _onChange: function(changeEvent) {
-        var $target = $(changeEvent.target),
-            cellAddr = this._getCellAddress($target),
-            grid = this.grid;
-        grid.dataModel.setValue(cellAddr.rowKey, cellAddr.columnName, $target.val());
-    }
-});
+    executeCustomInputEventHandler: function(event, address) {
+        var columnModel = this.columnModel.getColumnModel(address.columnName),
+            eventType = event.type,
+            eventHandler;
 
-module.exports = SelectCell;
-
-},{"../../common/util":11,"./list":29}],34:[function(require,module,exports){
-/**
- * @fileoverview Painter class for the text-convertible cell
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var Cell = require('../cell');
-var TextCell = require('./text');
-var util = require('../../common/util');
-var formUtil = require('../../common/formUtil');
-
-/**
- * input 이 존재하지 않는 text 셀에서 편집시 input 이 존재하는 셀로 변환이 가능한 cell renderer
- * @module painter/cell/text-convertible
- * @extends module:painter/cell/text
- */
-var ConvertibleCell = tui.util.defineClass(TextCell, /**@lends module:painter/cell/text-convertible.prototype */{
-    /**
-     * @constructs
-     */
-    init: function() {
-        TextCell.apply(this, arguments);
-        this.setOwnProperties({
-            timeoutIdForClick: 0,
-            editingCell: {
-                rowKey: null,
-                columnName: ''
-            },
-            clicked: {
-                rowKey: null,
-                columnName: null
-            }
-        });
-    },
-
-    redrawAttributes: ['isDisabled', 'isEditable', 'value'],
-
-    eventHandler: {
-        'dblclick': '_onDblClick',
-        'mousedown': '_onMouseDown',
-        'blur input': '_onBlurConvertible',
-        'keydown input': '_onKeyDown',
-        'focus input': '_onFocus',
-        'selectstart input': '_onSelectStart'
-    },
-
-    /**
-     * Content markup template
-     * @returns {string} html
-     */
-    contentTemplate: _.template(
-        '<span class="input">' +
-        '<input' +
-        ' type="<%=type%>"' +
-        ' value="<%=value%>"' +
-        ' name="<%=name%>"' +
-        ' align="center"' +
-        ' maxLength="<%=maxLength%>"' +
-        ' <% if (isDisabled) print("disabled") %>' +
-        '/>' +
-        '</span>'
-    ),
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return 'text-convertible';
-    },
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    focusIn: function($td) {
-        this._startEdit($td);
-    },
-
-    /**
-     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
-     * - 필요에 따라 override 한다.
-     */
-    focusOut: function() {
-        this.grid.focusModel.focusClipboard();
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        var columnModel = this.getColumnModel(cellData),
-            value = cellData.value;
-
-        if (!this._isEditingCell(cellData)) {
-            if (tui.util.isFunction(columnModel.formatter)) {
-                value = columnModel.formatter(value, this.grid.dataModel.get(cellData.rowKey).attributes, columnModel);
-            }
-            return value;
+        if (eventType === 'focusin') {
+            eventType = 'focus';
+        } else if (eventType === 'focusout') {
+            eventType = 'blur';
         }
 
-        return this.contentTemplate({
-            type: this._getInputType(),
-            value: value,
-            name: util.getUniqueKey(),
-            isDisabled: cellData.isDisabled,
-            maxLength: columnModel.editOption.maxLength
-        });
-    },
-
-    /**
-     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
-     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
-     * (상태에 따라 Text나 Base의 함수를 선택해서 사용해야 하기 때문에, 추가로 override 해서 prototype을 이용해 실행)
-     * @param {object} cellData Model의 셀 데이터
-     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
-     * @private
-     * @override
-     */
-    _getContentHtml: function(cellData) {
-        var targetProto;
-
-        if (this._isEditingCell(cellData)) {
-            targetProto = TextCell.prototype;
-        } else {
-            targetProto = Cell.prototype;
-        }
-
-        return targetProto._getContentHtml.call(this, cellData);
-    },
-
-    /**
-     * 현재 편집중인 셀인지 여부를 반환한다.
-     * @param {object} cellData Model의 셀 데이터
-     * @returns {boolean} - 편집중이면 true, 아니면 false
-     * @private
-     */
-    _isEditingCell: function(cellData) {
-        var editingCell = this.editingCell;
-        return (editingCell.rowKey === cellData.rowKey.toString() &&
-            editingCell.columnName === cellData.columnName.toString());
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jquery} $td 해당 cell 엘리먼트
-     * @param {Boolean} hasFocusedElement 해당 셀에 실제 focus 된 엘리먼트가 존재하는지 여부
-     */
-    setElementAttribute: function(cellData, $td, hasFocusedElement) {}, // eslint-disable-line no-unused-vars
-
-    /**
-     * blur 이벤트 핸들러
-     * @param {event} blurEvent 이벤트 객체
-     * @private
-     */
-    _onBlurConvertible: function(blurEvent) {
-        var $target = $(blurEvent.target),
-            $td = $target.closest('td'),
-            focusModel = this.grid.focusModel;
-
-        this._onBlur(blurEvent);
-        this._endEdit($td);
-        this._validateData(this.getRowKey($td), this.getColumnName($td));
-
-        setTimeout(function() {
-            focusModel.refreshState();
-        }, 0);
-    },
-
-    /**
-     * text를 textbox 로 교체한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     * @private
-     */
-    _startEdit: function($td) {
-        var dataModel = this.grid.dataModel,
-            $input, rowKey, columnName, cellState;
-
-        this._blurEditingCell();
-
-        rowKey = this.getRowKey($td);
-        columnName = this.getColumnName($td);
-        cellState = dataModel.get(rowKey).getCellState(columnName);
-
-        if (cellState.isEditable && !dataModel.isDisabled && !cellState.isDisabled) {
-            this.editingCell = {
-                rowKey: rowKey,
-                columnName: columnName
-            };
-
-            this.redraw(this._getCellData($td), $td);
-            $input = $td.find('input');
-            this.originalText = $input.val();
-            formUtil.setCursorToEnd($input.get(0));
-            $input.select();
-        }
-    },
-
-    /**
-     * textbox를  text로 교체한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     * @private
-     */
-    _endEdit: function($td) {
-        var cellData = this._getCellData($td);
-        this.editingCell = {
-            rowKey: null,
-            columnName: null
-        };
-        this.clicked = {
-            rowKey: null,
-            columnName: null
-        };
-        if (cellData) {
-            this.redraw(cellData, $td);
-        }
-    },
-
-    /**
-     * Trigger blur event on editing cell if exist
-     * @private
-     */
-    _blurEditingCell: function() {
-        var rowKey = this.editingCell.rowKey,
-            columnName = this.editingCell.columnName,
-            $td;
-
-        if (!tui.util.isNull(rowKey) && !tui.util.isNull(columnName)) {
-            $td = this.grid.dataModel.getElement(rowKey, columnName);
-            $td.find('input')[0].blur();
-        }
-    },
-
-    /**
-     * Event Handler for double click event.
-     * @param  {MouseEvent} mouseEvent - MouseEvent object
-     */
-    _onDblClick: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            $td = $target.closest('td'),
-            targetAddr = this._getCellAddress($td),
-            focusedAddr = this.grid.focusModel.which();
-
-        if (!this._isEditingCell(targetAddr) &&
-            targetAddr.rowKey === String(focusedAddr.rowKey) &&
-            targetAddr.columnName === focusedAddr.columnName) {
-            this._startEdit($td);
-        }
-    },
-
-    /**
-     * mousedown 이벤트 핸들러.
-     * containerView의 onMouseDown에서 focusClipboard를 호출하여 input에서 의도하지 않은 blur 이벤트가 발생하는 것을
-     * 방지하기 위해 이벤트 버블링을 멈춘다.
-     * @param {MouseEvent} event 마우스 이벤트 객체
-     * @private
-     */
-    _onMouseDown: function(event) {
-        if ($(event.target).is('input')) {
-            event.stopPropagation();
-        }
-    }
-});
-
-module.exports = ConvertibleCell;
-
-},{"../../common/formUtil":9,"../../common/util":11,"../cell":27,"./text":36}],35:[function(require,module,exports){
-/**
- * @fileoverview Password 타입의 Input을 가진 Cell Painter
- * @author NHN Ent. FE Development Team
- * @module view/painter/cell/text-password
- */
-'use strict';
-
-var TextCell = require('./text');
-
-/**
- * Password 타입의 cell renderer
- * @module painter/cell/text-password
- * @extends module:painter/cell/text
- */
-var PasswordCell = tui.util.defineClass(TextCell, /**@lends module:painter/cell/text-password.prototype */{
-    /**
-     * @construct
-     * @param {object} attributes Attributes
-     * @param {object} options Options
-     */
-    init: function(attributes, options) { // eslint-disable-line
-        TextCell.apply(this, arguments);
-    },
-
-    /**
-     * input type 을 반환한다.
-     * @returns {string} input 타입
-     * @private
-     */
-    _getInputType: function() {
-        return 'password';
-    },
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return 'text-password';
-    }
-});
-
-module.exports = PasswordCell;
-
-},{"./text":36}],36:[function(require,module,exports){
-/**
- * @fileoverview Painter class for the text cell
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var Cell = require('../cell');
-var util = require('../../common/util');
-var formUtil = require('../../common/formUtil');
-
-/**
- * Painter class for the text cell
- * @module painter/cell/text
- * @extends module:painter/cell
- */
-var TextCell = tui.util.defineClass(Cell, /**@lends module:painter/cell/text.prototype */{
-    /**
-     * @constructs
-     * @param {object} attributes Attributes
-     * @param {object} options Options
-     */
-    init: function(attributes, options) { // eslint-disable-line
-        Cell.apply(this, arguments);
-        this.setOwnProperties({
-            originalText: ''
-        });
-
-        this.setKeyDownSwitch({
-            'UP_ARROW': function() {},
-            'DOWN_ARROW': function() {},
-            'PAGE_UP': function() {},
-            'PAGE_DOWN': function() {},
-            'ENTER': function(keyDownEvent, param) {
-                this.focusOut(param.$target.closest('td'));
-            },
-            'ESC': function(keyDownEvent, param) {
-                this._restore(param.$target);
-                this.focusOut(param.$target.closest('td'));
-            }
-        });
-    },
-
-    redrawAttributes: ['isEditable'],
-
-    eventHandler: {
-        'blur input': '_onBlur',
-        'keydown input': '_onKeyDown',
-        'focus input': '_onFocus',
-        'selectstart input': '_onSelectStart'
-    },
-
-    /**
-     * Content markup template
-     * @returns {string} html
-     */
-    contentTemplate: _.template(
-        '<input' +
-        ' type="<%=type%>"' +
-        ' value="<%=value%>"' +
-        ' name="<%=name%>"' +
-        ' align="center"' +
-        ' maxLength="<%=maxLength%>"' +
-        ' <% if (isDisabled) print("disabled"); %>' +
-        '/>'
-    ),
-
-    /**
-     * input type 을 반환한다.
-     * @returns {string} input 타입
-     * @private
-     */
-    _getInputType: function() {
-        return 'text';
-    },
-
-    /**
-     * 자기 자신의 인스턴스의 editType 을 반환한다.
-     * @returns {String} editType 'normal|button|select|button|text|text-password|text-convertible'
-     */
-    getEditType: function() {
-        return 'text';
-    },
-
-    /**
-     * cell 에서 키보드 enter 를 입력했을 때 편집모드로 전환. cell 내 input 에 focus 를 수행하는 로직. 필요에 따라 override 한다.
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    /* istanbul ignore next: focus, select 를 검증할 수 없음 */
-    focusIn: function($td) {
-        var $input = $td.find('input');
-        if ($input.prop('disabled')) {
-            this.grid.focusModel.focusClipboard();
-        } else {
-            formUtil.setCursorToEnd($input.get(0));
-            $input.select();
-        }
-    },
-
-    /**
-     * focus in 상태에서 키보드 esc 를 입력했을 때 편집모드를 벗어난다. cell 내 input 을 blur 시키고, 편집모드를 벗어나는 로직.
-     * - 필요에 따라 override 한다.
-     */
-    focusOut: function() {
-        this.grid.focusModel.focusClipboard();
-    },
-
-    /**
-     * Cell data 를 인자로 받아 <td> 안에 들아갈 html string 을 반환한다.
-     * redrawAttributes 에 해당하는 프로퍼티가 변경되었을 때 수행될 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @returns {string} html 마크업 문자열
-     * @example
-     * var html = this.getContentHtml();
-     * <select>
-     *     <option value='1'>option1</option>
-     *     <option value='2'>option1</option>
-     *     <option value='3'>option1</option>
-     * </select>
-     */
-    getContentHtml: function(cellData) {
-        var columnModel = this.getColumnModel(cellData),
-            editOption = columnModel.editOption,
-            value = cellData.value,
-            html = this._getConvertedHtml(value, cellData);
-
-        if (tui.util.isNull(html)) {
-            html = this.contentTemplate({
-                type: this._getInputType(),
-                value: value,
-                name: util.getUniqueKey(),
-                isDisabled: cellData.isDisabled,
-                maxLength: editOption.maxLength
-            });
-        }
-        return html;
-    },
-
-    /**
-     * model의 redrawAttributes 에 해당하지 않는 프로퍼티의 변화가 발생했을 때 수행할 메서드
-     * redrawAttributes 에 해당하지 않는 프로퍼티가 변경되었을 때 수행할 로직을 구현한다.
-     * @param {object} cellData 모델의 셀 데이터
-     * @param {jQuery} $td 해당 cell 엘리먼트
-     */
-    setElementAttribute: function(cellData, $td) {
-        var isValueChanged = $.inArray('value', cellData.changed) !== -1,
-            $input = $td.find('input');
-
-        if (isValueChanged) {
-            $input.val(cellData.value);
-        }
-        $input.prop('disabled', cellData.isDisabled);
-    },
-
-    /**
-     * 원래 text 와 비교하여 값이 변경 되었는지 여부를 판단한다.
-     * @param {jQuery} $input   인풋 jquery 엘리먼트
-     * @returns {Boolean}    값의 변경여부
-     * @private
-     */
-    _isEdited: function($input) {
-        return $input.val() !== this.originalText;
-    },
-
-    /**
-     * 원래 text로 값을 되돌린다.
-     * @param {jQuery} $input 인풋 jquery 엘리먼트
-     * @private
-     */
-    _restore: function($input) {
-        $input.val(this.originalText);
-    },
-
-    /**
-     * 각 셀 페인터 인스턴스마다 정의된 getContentHtml 을 이용하여
-     * 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링 을 반환한다.
-     * (Input의 width를 beforeText와 afterText의 유무에 관계없이 100%로 유지하기 위해 마크업이 달라져야 하기 때문에
-     * Painter.Cell로부터 override 해서 구현함)
-     * @param {object} cellData Model 의 셀 데이터
-     * @returns {string} 컬럼모델의 defaultValue, beforeText, afterText 를 적용한 content html 마크업 스트링
-     * @private
-     * @override
-     */
-    _getContentHtml: function(cellData) {
-        var columnName = cellData.columnName,
-            columnModel = this.grid.columnModel.getColumnModel(columnName),
-            editOption = columnModel.editOption || {},
-            content = '',
-            beforeContent, afterContent;
-
-        if (!tui.util.isExisty(cellData.value)) {
-            cellData.value = columnModel.defaultValue;
-        }
-        beforeContent = this._getExtraContent(editOption.beforeContent || editOption.beforeText, cellData);
-        afterContent = this._getExtraContent(editOption.afterContent || editOption.afterText, cellData);
-
-        if (beforeContent) {
-            content += this._getSpanWrapContent(beforeContent, 'before', cellData);
-        }
-        if (afterContent) {
-            content += this._getSpanWrapContent(afterContent, 'after', cellData);
-        }
-        content += this._getSpanWrapContent(this.getContentHtml(cellData), 'input');
-
-        return content;
-    },
-
-    /**
-     * blur 이벤트 핸들러
-     * @param {Event} blurEvent 이벤트 객체
-     * @private
-     */
-    _onBlur: function(blurEvent) {
-        var $target = $(blurEvent.target),
-            rowKey = this.getRowKey($target),
-            columnName = this.getColumnName($target);
-
-        this._executeInputEventHandler(blurEvent, 'blur');
-        if (this._isEdited($target)) {
-            this.grid.dataModel.setValue(rowKey, columnName, $target.val());
-        }
-        this.grid.selectionModel.enable();
-        this._validateData(rowKey, columnName);
-    },
-
-    /**
-     * focus 이벤트 핸들러
-     * @param {Event} focusEvent 이벤트 객체
-     * @private
-     */
-    _onFocus: function(focusEvent) {
-        var $input = $(focusEvent.target);
-
-        this.originalText = $input.val();
-        this._executeInputEventHandler(focusEvent, 'focus');
-        this.grid.selectionModel.end();
-    },
-
-    /**
-     * keydown 이벤트 핸들러
-     * @param  {KeyboardEvent} keyboardEvent 키보드 이벤트 객체
-     * @private
-     */
-    _onKeyDown: function(keyboardEvent) {
-        this._executeInputEventHandler(keyboardEvent, 'keydown');
-        Cell.prototype._onKeyDown.call(this, keyboardEvent);
-    },
-
-    /**
-     * event 객체가 발생한 셀을 찾아 editOption에 inputEvent 핸들러 정보가 설정되어 있으면
-     * 해당 이벤트 핸들러를 호출해준다.
-     * @param {Event} event - 이벤트 객체
-     * @param {string} eventName - 이벤트명
-     * @returns {boolean} Return value of the event handler. Null if there's no event handler.
-     * @private
-     */
-    _executeInputEventHandler: function(event, eventName) {
-        var $input = $(event.target),
-            cellInfo = this._getCellAddress($input),
-            columnModel = this.grid.columnModel.getColumnModel(cellInfo.columnName),
-            eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventName);
+        eventHandler = tui.util.pick(columnModel, 'editOption', 'inputEvents', eventType);
 
         if (_.isFunction(eventHandler)) {
-            return eventHandler(event, cellInfo);
+            eventHandler.call(event.target, event, address);
         }
-        return null;
     },
 
     /**
-     * selectstart 이벤트 핸들러
-     * IE에서 selectstart 이벤트가 Input 요소에 까지 적용되어 값에 셀렉션 지정이 안되는 문제를 해결
-     * @param {Event} event 이벤트 객체
-     * @private
+     * Appends an empty row and moves focus to the first cell of the row.
      */
-    _onSelectStart: function(event) {
-        event.stopPropagation();
+    appendEmptyRowAndFocus: function() {
+        this.dataModel.append({}, {
+            focus: true
+        });
+    },
+
+    /**
+     * Sets the value of the given cell.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {(Number|String|Boolean)} value - value
+     */
+    setValue: function(address, value) {
+        this.dataModel.setValue(address.rowKey, address.columnName, value);
     }
 });
 
-module.exports = TextCell;
+module.exports = PainterController;
 
-},{"../../common/formUtil":9,"../../common/util":11,"../cell":27}],37:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 /**
  * @fileoverview Dummy cell painter
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var Painter = require('../base/painter');
+var Painter = require('../base/painter'),
+    util = require('../common/util');
 
 /**
  * Dummy Cell Painter
@@ -10266,50 +9064,48 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     },
 
     /**
-     * Event handlers
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
      */
-    eventHandler: {
+    events: {
         dblclick: '_onDblClick'
     },
 
     /**
-     * Template
-     * @returns {String} String
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
      */
-    template: _.template(
-        '<td columnname="<%=columnName%>" ' +
-            'class="<%=className%>" ' +
-            'edit-type="dummy">' +
-            '&nbsp;' + // '&nbsp' for height issue with empty cell in IE7
-        '</td>'
-    ),
+    selector: 'td[edit-type=dummy]',
 
     /**
-     * Returns the edit type of the cell.
-     * (To implement interface of module:painter/cell)
-     * @returns {String} Edit type
+     * Template function
+     * @returns {String} HTML string
      */
-    getEditType: function() {
-        return 'dummy';
-    },
+    template: _.template(
+        '<td data-column-name="<%=columnName%>" ' +
+            'class="<%=className%>" ' +
+            'edit-type="dummy">' +
+            '&#8203;' + // 'for height issue with empty cell in IE7
+        '</td>'
+    ),
 
     /**
      * Event handler for 'dblclick' event
      * @private
      */
     _onDblClick: function() {
-        this.grid.dataModel.append({}, {
-            focus: true
-        });
+        this.controller.appendEmptyRowAndFocus(true);
     },
 
     /**
-     * Returns the HTML string (TD) of the cell
+     * Generates a HTML string from given data, and returns it.
      * @param {String} columnName - column name
      * @returns {string} HTML string
+     * @implements {module:base/painter}
      */
-    getHtml: function(columnName) {
-        var isMeta = this.grid.columnModel.isMetaColumn(columnName);
+    generateHtml: function(columnName) {
+        var isMeta = util.isMetaColumn(columnName);
+
         return this.template({
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'
@@ -10319,23 +9115,751 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
 module.exports = DummyCell;
 
-},{"../base/painter":6}],38:[function(require,module,exports){
+},{"../base/painter":6,"../common/util":11}],30:[function(require,module,exports){
+/**
+ * @fileoverview Base class for the Input Painter
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var Painter = require('../../base/painter');
+var keyNameMap = require('../../common/constMap').keyName;
+
+/**
+ * Input Painter Base
+ * @module painter/input/base
+ * @extends module:base/painter
+ */
+var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - options
+     */
+    init: function() {
+        Painter.apply(this, arguments);
+    },
+
+    /**
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
+     */
+    events: {
+        keydown: '_onKeyDown',
+        focusin: '_onFocusIn',
+        focusout: '_onFocusOut'
+    },
+
+    /**
+     * keydown Actions
+     * @type {Object}
+     */
+    keyDownActions: {
+        ESC: function(param) {
+            this.controller.finishEditing(param.address, true);
+        },
+        ENTER: function(param) {
+            this.controller.finishEditing(param.address, true, param.value);
+        },
+        TAB: function(param) {
+            this.controller.finishEditing(param.address, true, param.value);
+            this.controller.focusInToNextCell(param.shiftKey);
+        }
+    },
+
+    /**
+     * Extends the default keydown actions.
+     * @param {Object} actions - Object that contains the action functions
+     * @private
+     */
+    _extendKeydownActions: function(actions) {
+        this.keyDownActions = _.assign({}, this.keyDownActions, actions);
+    },
+
+    /**
+     * Extends the default event object
+     * @param {Object} events - Object that contains the names of event handlers
+     */
+    _extendEvents: function(events) {
+        this.events = _.assign({}, this.events, events);
+    },
+
+    /**
+     * Executes the custom handler (defined by user) of the input events.
+     * @param {Event} event - DOM event object
+     * @private
+     */
+    _executeCustomEventHandler: function(event) {
+        var $input = $(event.target),
+            address = this._getCellAddress($input);
+
+        this.controller.executeCustomInputEventHandler(event, address);
+    },
+
+    /**
+     * Event handler for the 'focus' event.
+     * @param {Event} event - DOM event object
+     * @private
+     */
+    _onFocusIn: function(event) {
+        var address = this._getCellAddress($(event.target));
+
+        this._executeCustomEventHandler(event);
+        this.controller.startEditing(address);
+    },
+
+    /**
+     * Event handler for the 'blur' event.
+     * @param {Event} event - DOM event object
+     * @private
+     */
+    _onFocusOut: function(event) {
+        var $target = $(event.target),
+            address = this._getCellAddress($target);
+
+        this._executeCustomEventHandler(event);
+        this.controller.finishEditing(address, false, $target.val());
+    },
+
+    /**
+     * Event handler for the 'keydown' event.
+     * @param  {KeyboardEvent} event - KeyboardEvent object
+     * @private
+     */
+    _onKeyDown: function(event) {
+        var keyCode = event.keyCode || event.which,
+            keyName = keyNameMap[keyCode],
+            action = this.keyDownActions[keyName],
+            $target = $(event.target),
+            param = {
+                $target: $target,
+                address: this._getCellAddress($target),
+                shiftKey: event.shiftKey,
+                value: $target.val()
+            };
+
+        this._executeCustomEventHandler(event);
+
+        if (action) {
+            action.call(this, param);
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @abstract
+     * @protected
+     */
+    _getDisplayValue: function() {
+        throw new Error('implement _getDisplayValue() method');
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @abstract
+     * @protected
+     */
+    _generateInputHtml: function() {
+        throw new Error('implement _generateInputHtml() method');
+    },
+
+    /**
+     * Returns whether the cell has view mode.
+     * @param {Object} cellData - cell data
+     * @returns {Boolean}
+     * @private
+     */
+    _isUsingViewMode: function(cellData) {
+        return tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+    },
+
+    /**
+     * Generates a HTML string from given data, and returns it.
+     * @param {Object} cellData - cell data
+     * @returns {String}
+     * @implements {module:painter/input/base}
+     */
+    generateHtml: function(cellData) {
+        var result;
+
+        if (!_.isNull(cellData.convertedHTML)) {
+            result = cellData.convertedHTML;
+        } else if (!this._isUsingViewMode(cellData) || cellData.isEditing) {
+            result = this._generateInputHtml(cellData);
+        } else {
+            result = this._getDisplayValue(cellData);
+        }
+
+        return result;
+    },
+
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     */
+    focus: function($parent) {
+        var $input = $parent.find(this.selector);
+
+        if (!$input.is(':focus')) {
+            $input.eq(0).focus();
+        }
+    }
+});
+
+module.exports = InputPainter;
+
+},{"../../base/painter":6,"../../common/constMap":8}],31:[function(require,module,exports){
+/**
+ * @fileoverview Painter class for 'checkbox' and 'radio button'.
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var InputPainter = require('./base');
+var util = require('../../common/util');
+
+/**
+ * Painter class for 'checkbox' and 'radio button'.
+ * @module painter/input/button
+ * @extends module:painter/input/base
+ */
+var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - options
+     */
+    init: function(options) {
+        InputPainter.apply(this, arguments);
+
+        this.inputType = options.inputType;
+
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'fieldset[data-type=' + this.inputType + ']';
+
+        this._extendEvents({
+            mousedown: '_onMouseDown'
+        });
+
+        this._extendKeydownActions({
+            TAB: function(param) {
+                var value;
+                if (!this._focusNextInput(param.$target, param.shiftKey)) {
+                    value = this._getCheckedValueString(param.$target);
+                    this.controller.finishEditing(param.address, true, value);
+                    this.controller.focusInToNextCell(param.shiftKey);
+                }
+            },
+            ENTER: function(param) {
+                var value = this._getCheckedValueString(param.$target);
+                this.controller.finishEditing(param.address, true, value);
+            },
+            LEFT_ARROW: function(param) {
+                this._focusNextInput(param.$target, true);
+            },
+            RIGHT_ARROW: function(param) {
+                this._focusNextInput(param.$target);
+            },
+            UP_ARROW: function() {},
+            DOWN_ARROW: function() {}
+        });
+    },
+
+    /**
+     * fieldset markup template
+     * @returns {String}
+     */
+    template: _.template(
+        '<fieldset data-type="<%=type%>"><%=content%></fieldset>'
+    ),
+
+    /**
+     * Input markup template
+     * @returns {String}
+     */
+    inputTemplate: _.template(
+        '<input type="<%=type%>" data-value-type="<%=valueType%>" name="<%=name%>" id="<%=id%>" value="<%=value%>"' +
+        ' <%=checked%> <%=disabled%> />'
+    ),
+
+    /**
+     * Label markup template
+     * @returns {String}
+     */
+    labelTemplate: _.template(
+        '<label for="<%=id%>"><%=labelText%></label>'
+    ),
+
+    /**
+     * Event handler for 'blur' event
+     * @param {Event} event - event object
+     * @override
+     * @private
+     */
+    _onFocusOut: function(event) {
+        var $target = $(event.target);
+        var self = this;
+
+        _.defer(function() {
+            var address, value;
+
+            if (!$target.siblings('input:focus').length) {
+                address = self._getCellAddress($target);
+                value = self._getCheckedValueString($target);
+                self.controller.finishEditing(address, false, value);
+            }
+        });
+    },
+
+    /**
+     * Event handler for 'mousedown' DOM event
+     * @param {MouseEvent} event - mouse event object
+     * @private
+     */
+    _onMouseDown: function(event) {
+        var $target = $(event.target);
+        var hasFocusedInput = $target.closest('fieldset').find('input:focus').length > 0;
+
+        if (!$target.is('input') && hasFocusedInput) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Moves focus to the next input element.
+     * @param {jquery} $target - target element
+     * @param {Boolean} reverse - if set to true, find previous element instead of next element.
+     * @returns {Boolean} - false if no element exist, true otherwise.
+     * @private
+     */
+    _focusNextInput: function($target, reverse) {
+        var traverseFuncName = reverse ? 'prevAll' : 'nextAll',
+            $nextInputs = $target[traverseFuncName]('input');
+
+        if ($nextInputs.length) {
+            $nextInputs.first().focus();
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * Returns the comma seperated value of all checked inputs
+     * @param {jQuery} $target - target element
+     * @returns {String}
+     * @private
+     */
+    _getCheckedValueString: function($target) {
+        var $checkedInputs = $target.parent().find('input:checked');
+        var checkedValues = [];
+        var result;
+
+        $checkedInputs.each(function() {
+            var $input = $(this);
+            var valueType = $input.attr('data-value-type');
+            var value = util.convertValueType($input.val(), valueType);
+
+            checkedValues.push(value);
+        });
+
+        if (checkedValues.length === 1) {
+            result = checkedValues[0];
+        } else {
+            result = checkedValues.join(',');
+        }
+
+        return result;
+    },
+
+    /**
+     * Returns the set object that contains the checked value.
+     * @param {String} value - value
+     * @returns {Object}
+     * @private
+     */
+    _getCheckedValueSet: function(value) {
+        var checkedMap = {};
+
+        _.each(String(value).split(','), function(itemValue) {
+            checkedMap[itemValue] = true;
+        });
+
+        return checkedMap;
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var optionTexts = [];
+
+        _.each(cellData.optionList, function(item) {
+            if (checkedSet[item.value]) {
+                optionTexts.push(item.text);
+            }
+        });
+
+        return optionTexts.join(',');
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var checkedSet = this._getCheckedValueSet(cellData.value);
+        var name = util.getUniqueKey();
+        var contentHtml = '';
+
+        _.each(cellData.optionList, function(item) {
+            var id = name + '_' + item.value;
+
+            contentHtml += this.inputTemplate({
+                type: this.inputType,
+                id: id,
+                name: name,
+                value: item.value,
+                valueType: typeof item.value,
+                checked: checkedSet[item.value] ? 'checked' : '',
+                disabled: cellData.isDisabled ? 'disabled' : ''
+            });
+            if (item.text) {
+                contentHtml += this.labelTemplate({
+                    id: id,
+                    labelText: item.text
+                });
+            }
+        }, this);
+
+        return this.template({
+            type: this.inputType,
+            content: contentHtml
+        });
+    },
+
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     * @override
+     */
+    focus: function($parent) {
+        var $input = $parent.find('input');
+
+        if (!$input.is(':focus')) {
+            $input.eq(0).focus();
+        }
+    }
+});
+
+module.exports = ButtonPainter;
+
+},{"../../common/util":11,"./base":30}],32:[function(require,module,exports){
+/**
+ * @fileoverview Main Button Painter
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var Painter = require('../../base/painter');
+
+/**
+ * Main Button Painter
+ * (This class does not extend from module:painter/input/base but from module:base/painter directly)
+ * @module painter/input/mainButton
+ * @extends module:base/painter
+ */
+var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/mainButton.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - options
+     */
+    init: function(options) {
+        Painter.apply(this, arguments);
+
+        this.selector = 'input.main_button';
+        this.inputType = options.inputType;
+        this.gridId = options.gridId;
+    },
+
+    /**
+     * key-value object contains event names as keys and handler names as values
+     * @type {Object}
+     */
+    events: {
+        change: '_onChange'
+    },
+
+    /**
+     * markup template
+     * @returns {String}
+     */
+    template: _.template(
+        '<input class="main_button" type="<%=type%>" name="<%=name%>" <%=checked%> />'
+    ),
+
+     /**
+     * Event handler for 'change' DOM event.
+     * @param {Event} event - DOM event object
+     * @private
+     */
+    _onChange: function(event) {
+        var $target = $(event.target);
+        var address = this._getCellAddress($target);
+
+        this.controller.setValue(address, $target.is(':checked'));
+    },
+
+    /**
+     * Generates a HTML string from given data, and returns it.
+     * @param {Object} cellData - cell data
+     * @returns {String}
+     * @implements {module:painter/input/base}
+     */
+    generateHtml: function(cellData) {
+        return this.template({
+            type: this.inputType,
+            name: this.gridId,
+            checked: cellData.value ? 'checked' : ''
+        });
+    }
+});
+
+module.exports = InputPainter;
+
+},{"../../base/painter":6}],33:[function(require,module,exports){
+/**
+ * @fileoverview Painter class for 'select' input.
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var InputPainter = require('./base');
+var util = require('../../common/util');
+
+/**
+ * Painter class for 'select' input.
+ * @module painter/input/select
+ * @extends module:painter/input/base
+ */
+var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/select.prototype */{
+    /**
+     * @constructs
+     */
+    init: function() {
+        InputPainter.apply(this, arguments);
+
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'select';
+    },
+
+    /**
+     * Content markup template
+     * @returns {string} html
+     */
+    template: _.template(
+        '<select name="<%=name%>" <%=disabled%>><%=options%></select>'
+    ),
+
+    /**
+     * Options markup template
+     * @returns {string} html
+     */
+    optionTemplate: _.template(
+        '<option value="<%=value%>" <%=selected%>><%=text%></option>'
+    ),
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var selectedOption = _.find(cellData.optionList, function(item) {
+            return String(item.value) === String(cellData.value);
+        });
+
+        return selectedOption ? selectedOption.text : '';
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var optionHtml = _.reduce(cellData.optionList, function(html, item) {
+            return html + this.optionTemplate({
+                value: item.value,
+                text: item.text,
+                selected: (String(cellData.value) === String(item.value)) ? 'selected' : ''
+            });
+        }, '', this);
+
+        return this.template({
+            name: util.getUniqueKey(),
+            disabled: cellData.isDisabled ? 'disabled' : '',
+            options: optionHtml
+        });
+    }
+});
+
+module.exports = SelectPainter;
+
+},{"../../common/util":11,"./base":30}],34:[function(require,module,exports){
+/**
+ * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var InputPainter = require('./base');
+var util = require('../../common/util');
+
+/**
+ * Painter class for the 'input[type=text]' and 'input[type=password]'
+ * @module painter/input/text
+ * @extends module:painter/input/base
+ */
+var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - options
+     */
+    init: function(options) {
+        InputPainter.apply(this, arguments);
+
+        this.inputType = options.inputType;
+
+        /**
+         * css selector to use delegated event handlers by '$.on()' method.
+         * @type {String}
+         */
+        this.selector = 'input[type=' + this.inputType + ']';
+
+        this._extendEvents({
+            selectstart: '_onSelectStart'
+        });
+    },
+
+    /**
+     * Markup template
+     * @returns {string} html
+     */
+    template: _.template(
+        '<input' +
+        ' type="<%=type%>"' +
+        ' value="<%=value%>"' +
+        ' name="<%=name%>"' +
+        ' align="center"' +
+        ' maxLength="<%=maxLength%>"' +
+        ' <%=disabled%>' +
+        '/>'
+    ),
+
+    /**
+     * Event handler for the'selectstart' event.
+     * (To prevent 'selectstart' event be prevented by module:view/layout/body in IE)
+     * @param {Event} event - DOM event object
+     * @private
+     */
+    _onSelectStart: function(event) {
+        event.stopPropagation();
+    },
+
+    /**
+     * Convert each character in the given string to '*' and returns them as a string.
+     * @param {String} value - value string
+     * @returns {String}
+     * @private
+     */
+    _convertStringToAsterisks: function(value) {
+        return Array(value.length + 1).join('*');
+    },
+
+    /**
+     * Returns the value string of given data to display in the cell.
+     * @param {Object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {String}
+     * @protected
+     */
+    _getDisplayValue: function(cellData) {
+        var value = cellData.formattedValue;
+
+        if (this.inputType === 'password') {
+            value = this._convertStringToAsterisks(cellData.value);
+        }
+
+        return value;
+    },
+
+    /**
+     * Generates an input HTML string from given data, and returns it.
+     * @param {object} cellData - cell data
+     * @implements {module:painter/input/base}
+     * @returns {string}
+     * @protected
+     */
+    _generateInputHtml: function(cellData) {
+        var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
+
+        return this.template({
+            type: this.inputType,
+            value: cellData.value,
+            name: util.getUniqueKey(),
+            disabled: cellData.isDisabled ? 'disabled' : '',
+            maxLength: maxLength
+        });
+    },
+
+    /**
+     * Finds an element from the given parent element with 'this.selector', and moves focus to it.
+     * @param {jquery} $parent - parent element
+     * @override
+     */
+    focus: function($parent) {
+        var $input = $parent.find(this.selector);
+
+        if ($input.length === 1 && !$input.is(':focus')) {
+            $input.select();
+        }
+    }
+});
+
+module.exports = TextPainter;
+
+},{"../../common/util":11,"./base":30}],35:[function(require,module,exports){
 /**
  * @fileoverview Painter Manager
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var MainButtonCell = require('./cell/mainButton');
-var NumberCell = require('./cell/number');
-var NormalCell = require('./cell/normal');
-var ButtonListCell = require('./cell/button');
-var SelectCell = require('./cell/select');
-var TextCell = require('./cell/text');
-var TextConvertibleCell = require('./cell/text-convertible');
-var TextPasswordCell = require('./cell/text-password');
-var DummyCell = require('./dummyCell');
 var RowPainter = require('./row');
+var CellPainter = require('./cell');
+var DummyCellPainter = require('./dummyCell');
+var TextPainter = require('./input/text');
+var SelectPainter = require('./input/select');
+var ButtonPainter = require('./input/button');
+var MainButtonPainter = require('./input/mainButton');
 
 /**
  * Painter manager
@@ -10347,48 +9871,86 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @param {Object} options - Options
      */
     init: function(options) {
-        this.modelManager = options.modelManager;
+        this.gridId = options.gridId;
+        this.selectType = options.selectType;
 
-        this.cellPainters = this._createCellPainters();
+        this.inputPainters = this._createInputPainters(options.controller);
+        this.cellPainters = this._createCellPainters(options.controller);
         this.rowPainter = this._createRowPainter();
     },
 
     /**
-     * Creates instances of cell painters and returns the map object that stores them
-     * using 'editType' as a key.
+     * Creates instances of input painters and returns the object that stores them
+     * using 'inputType' as keys.
+     * @param {module:painter/controller} controller - painter controller
+     * @returns {Object}
+     * @private
+     */
+    _createInputPainters: function(controller) {
+        return {
+            text: new TextPainter({
+                controller: controller,
+                inputType: 'text'
+            }),
+            password: new TextPainter({
+                controller: controller,
+                inputType: 'password'
+            }),
+            checkbox: new ButtonPainter({
+                controller: controller,
+                inputType: 'checkbox'
+            }),
+            radio: new ButtonPainter({
+                controller: controller,
+                inputType: 'radio'
+            }),
+            select: new SelectPainter({
+                controller: controller
+            }),
+            mainButton: new MainButtonPainter({
+                controller: controller,
+                inputType: this.selectType,
+                gridId: this.gridId
+            })
+        };
+    },
+
+    /**
+     * Creates instances of cell painters and returns the object that stores them
+     * using 'editType' as keys.
+     * @param {module:painter/controller} controller - painter controller
      * @returns {Object} Key-value object
      * @private
      */
-    _createCellPainters: function() {
-        var cellPainters = {},
-            args = {
-                grid: this.modelManager
-            },
-            instanceList = [
-                new MainButtonCell(args),
-                new NumberCell(args),
-                new NormalCell(args),
-                new ButtonListCell(args),
-                new SelectCell(args),
-                new TextCell(args),
-                new TextPasswordCell(args),
-                new TextConvertibleCell(args),
-                new DummyCell(args)
-            ];
+    _createCellPainters: function(controller) {
+        var cellPainters = {
+            dummy: new DummyCellPainter({
+                controller: controller
+            }),
+            normal: new CellPainter({
+                controller: controller,
+                editType: 'normal'
+            })
+        };
 
-        _.each(instanceList, function(instance) {
-            cellPainters[instance.getEditType()] = instance;
-        });
+        _.each(this.inputPainters, function(inputPainter, editType) {
+            cellPainters[editType] = new CellPainter({
+                editType: editType,
+                controller: controller,
+                inputPainter: inputPainter
+            });
+        }, this);
+
         return cellPainters;
     },
 
     /**
      * Creates row painter and returns it.
      * @returns {module:painter/row} New row painter instance
+     * @private
      */
     _createRowPainter: function() {
         return new RowPainter({
-            grid: this.modelManager,
             painterManager: this
         });
     },
@@ -10399,16 +9961,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * @returns {Object} - Cell painter instance
      */
     getCellPainter: function(editType) {
-        var instance = this.cellPainters[editType];
-
-        if (!instance) {
-            if (editType === 'radio' || editType === 'checkbox') {
-                instance = this.cellPainters['button'];
-            } else {
-                instance = this.cellPainters['normal'];
-            }
-        }
-        return instance;
+        return this.cellPainters[editType];
     },
 
     /**
@@ -10417,6 +9970,20 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      */
     getCellPainters: function() {
         return this.cellPainters;
+    },
+
+    /**
+     * Returns all input painters
+     * @param {Boolean} withoutMeta - if set to true, returns without meta cell painters
+     * @returns {Object} Object that has edit-type as a key and input painter as a value
+     */
+    getInputPainters: function(withoutMeta) {
+        var result = this.inputPainters;
+        if (withoutMeta) {
+            result = _.omit(result, 'mainButton');
+        }
+
+        return result;
     },
 
     /**
@@ -10430,9 +9997,9 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
 module.exports = PainterManager;
 
-},{"./cell/button":28,"./cell/mainButton":30,"./cell/normal":31,"./cell/number":32,"./cell/select":33,"./cell/text":36,"./cell/text-convertible":34,"./cell/text-password":35,"./dummyCell":37,"./row":39}],39:[function(require,module,exports){
+},{"./cell":27,"./dummyCell":29,"./input/button":31,"./input/mainButton":32,"./input/select":33,"./input/text":34,"./row":36}],36:[function(require,module,exports){
 /**
- * @fileoverview Row Painter 정의
+ * @fileoverview Painter class for the row(TR) views
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -10441,8 +10008,7 @@ var Painter = require('../base/painter');
 var util = require('../common/util');
 
 /**
- * Row Painter
- * 성능 향상을 위해 Row Painter 를 위한 클래스 생성
+ * Painter class for the row(TR) views
  * @module painter/row
  * @extends module:base/painter
  */
@@ -10450,14 +10016,22 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     /**
      * @constructs
      * @param {object} options - Options
-     *      @param {string} [options.whichSide='R']   어느 영역에 속하는 row 인지 여부. 'L|R' 중 하나를 지정한다.
-     *      @param {object} options.collection change 를 감지할 collection 객체
      */
     init: function(options) {
         Painter.apply(this, arguments);
         this.painterManager = options.painterManager;
     },
 
+    /**
+     * css selector to find its own element(s) from a parent element.
+     * @type {String}
+     */
+    selector: 'tr',
+
+    /**
+     * markup template
+     * @returns {String} HTML string
+     */
     template: _.template(
         '<tr ' +
         'key="<%=key%>" ' +
@@ -10468,23 +10042,6 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
     ),
 
     /**
-     * model 변경 시 이벤트 핸들러
-     * @param {object} changed - 변화가 일어난 모델 인스턴스
-     * @param {jQuery} $tr - jquery object for tr element
-     */
-    onModelChange: function(changed, $tr) {
-        _.each(changed, function(cellData, columnName) {
-            var editType, cellPainter;
-
-            if (columnName !== '_extraData') {
-                editType = this._getEditType(columnName, cellData);
-                cellPainter = this.painterManager.getCellPainter(editType);
-                cellPainter.onModelChange(cellData, $tr);
-            }
-        }, this);
-    },
-
-    /**
      * cellData 의 isEditable 프로퍼티에 따른 editType 을 반환한다.
      * editable 프로퍼티가 false 라면 normal type 으로 설정한다.
      * @param {string} columnName 컬럼명
@@ -10493,75 +10050,92 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @private
      */
     _getEditType: function(columnName, cellData) {
-        var editType = this.grid.columnModel.getEditType(columnName);
-        if (!cellData.isEditable && columnName !== '_number') {
-            editType = 'normal';
-        }
-        return editType;
+        var editType = tui.util.pick(cellData.columnModel, 'editOption', 'type');
+
+        return editType || 'normal';
     },
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Array.<Object>} columnModelList- Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForDummyRow: function(columnModelList) {
+    _generateHtmlForDummyRow: function(columnNames) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
-        _.each(columnModelList, function(columnModel) {
-            html += cellPainter.getHtml(columnModel.columnName);
+        _.each(columnNames, function(columnName) {
+            html += cellPainter.generateHtml(columnName);
         });
+
         return html;
     },
 
     /**
      * Returns the HTML string of all cells in Actual row.
      * @param  {module:model/row} model - View model instance
-     * @param  {Array.<Object>} columnModelList - Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _getHtmlForActualRow: function(model, columnModelList) {
+    _generateHtmlForActualRow: function(model, columnNames) {
         var html = '';
 
-        _.each(columnModelList, function(columnModel) {
-            var columnName = columnModel.columnName,
-                cellData = model.get(columnName),
+        _.each(columnNames, function(columnName) {
+            var cellData = model.get(columnName),
                 editType, cellPainter;
 
             if (cellData && cellData.isMainRow) {
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
-                html += cellPainter.getHtml(cellData);
+                html += cellPainter.generateHtml(cellData);
             }
         }, this);
+
         return html;
     },
 
     /**
      * Returns the HTML string of all cells in the given model (row).
      * @param  {module:model/row} model - View model instance
-     * @param  {Array.<Object>} columnModelList - Column model list
+     * @param  {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      */
-    getHtml: function(model, columnModelList) {
+    generateHtml: function(model, columnNames) {
         var rowKey = model.get('rowKey'),
             html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._getHtmlForDummyRow(columnModelList);
+            html = this._generateHtmlForDummyRow(columnNames);
         } else {
-            html = this._getHtmlForActualRow(model, columnModelList);
+            html = this._generateHtmlForActualRow(model, columnNames);
         }
 
         return this.template({
             key: rowKey,
-            height: this.grid.dimensionModel.get('rowHeight') + RowPainter._extraHeight,
+            height: model.get('height') + RowPainter._extraHeight,
             contents: html,
             className: ''
         });
+    },
+
+    /**
+     * Refreshes the row(TR) element.
+     * @param {object} changed - object that contains the changed data using columnName as keys
+     * @param {jQuery} $tr - jquery object for tr element
+     */
+    refresh: function(changed, $tr) {
+        _.each(changed, function(cellData, columnName) {
+            var editType, cellPainter, $td;
+
+            if (columnName !== '_extraData') {
+                $td = $tr.find('td[data-column-name=' + columnName + ']');
+                editType = this._getEditType(columnName, cellData);
+                cellPainter = this.painterManager.getCellPainter(editType);
+                cellPainter.refresh(cellData, $td);
+            }
+        }, this);
     },
 
     static: {
@@ -10583,7 +10157,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
 module.exports = RowPainter;
 
-},{"../base/painter":6,"../common/util":11}],40:[function(require,module,exports){
+},{"../base/painter":6,"../common/util":11}],37:[function(require,module,exports){
 /**
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
@@ -10682,7 +10256,7 @@ _.extend(PublicEventEmitter.prototype, Backbone.Events);
 
 module.exports = PublicEventEmitter;
 
-},{}],41:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
  * @author NHN Ent. FE Development Team
@@ -10784,13 +10358,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     /**
      * keyDown 이벤트 핸들러
      * @param {Event} keyDownEvent 이벤트 객체
-     * @returns {boolean} False if locked
      * @private
      */
     _onKeyDown: function(keyDownEvent) {
         if (this.isLocked) {
             keyDownEvent.preventDefault();
-            return false;
+            return;
         }
 
         if (keyDownEvent.shiftKey && (keyDownEvent.ctrlKey || keyDownEvent.metaKey)) {
@@ -10825,39 +10398,39 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         switch (keyCode) {
-            case keyCodeMap['UP_ARROW']:
+            case keyCodeMap.UP_ARROW:
                 focusModel.focus(focusModel.prevRowKey(), columnName, true);
                 break;
-            case keyCodeMap['DOWN_ARROW']:
+            case keyCodeMap.DOWN_ARROW:
                 focusModel.focus(focusModel.nextRowKey(), columnName, true);
                 break;
-            case keyCodeMap['LEFT_ARROW']:
+            case keyCodeMap.LEFT_ARROW:
                 focusModel.focus(rowKey, focusModel.prevColumnName(), true);
                 break;
-            case keyCodeMap['RIGHT_ARROW']:
+            case keyCodeMap.RIGHT_ARROW:
                 focusModel.focus(rowKey, focusModel.nextColumnName(), true);
                 break;
-            case keyCodeMap['PAGE_UP']:
+            case keyCodeMap.PAGE_UP:
                 focusModel.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
                 break;
-            case keyCodeMap['PAGE_DOWN']:
+            case keyCodeMap.PAGE_DOWN:
                 focusModel.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
                 break;
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 focusModel.focus(rowKey, focusModel.firstColumnName(), true);
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 focusModel.focus(rowKey, focusModel.lastColumnName(), true);
                 break;
             //space 와 enter 는 동일동작
-            case keyCodeMap['SPACE']:
-            case keyCodeMap['ENTER']:
+            case keyCodeMap.SPACE:
+            case keyCodeMap.ENTER:
                 this._onEnterSpace(rowKey, columnName);
                 break;
-            case keyCodeMap['DEL']:
+            case keyCodeMap.DEL:
                 this._del(rowKey, columnName);
                 break;
-            case keyCodeMap['TAB']:
+            case keyCodeMap.TAB:
                 focusModel.focusIn(rowKey, focusModel.nextColumnName(), true);
                 break;
             default:
@@ -10877,14 +10450,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _onEnterSpace: function(rowKey, columnName) {
-        var cellInstance,
-            editType = this.columnModel.getEditType(columnName);
-        if (editType === '_button') {
-            cellInstance = this.cellFactory.getInstance(editType);
-            cellInstance.toggle(this.dataModel.getElement(rowKey, columnName));
-        } else {
-            this.focusModel.focusIn(rowKey, columnName);
-        }
+        this.focusModel.focusIn(rowKey, columnName);
     },
 
     /**
@@ -10933,34 +10499,34 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             columnModel, scrollPosition, isValid, selectionState;
 
         switch (keyCode) {
-            case keyCodeMap['UP_ARROW']:
+            case keyCodeMap.UP_ARROW:
                 index.row -= 1;
                 break;
-            case keyCodeMap['DOWN_ARROW']:
+            case keyCodeMap.DOWN_ARROW:
                 index.row += 1;
                 break;
-            case keyCodeMap['LEFT_ARROW']:
+            case keyCodeMap.LEFT_ARROW:
                 index.column -= 1;
                 break;
-            case keyCodeMap['RIGHT_ARROW']:
+            case keyCodeMap.RIGHT_ARROW:
                 index.column += 1;
                 break;
-            case keyCodeMap['PAGE_UP']:
+            case keyCodeMap.PAGE_UP:
                 index.row = focusModel.prevRowIndex(displayRowCount - 1);
                 break;
-            case keyCodeMap['PAGE_DOWN']:
+            case keyCodeMap.PAGE_DOWN:
                 index.row = focusModel.nextRowIndex(displayRowCount - 1);
                 break;
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 index.column = 0;
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 index.column = columnModelList.length - 1;
                 break;
-            case keyCodeMap['ENTER']:
+            case keyCodeMap.ENTER:
                 isSelection = false;
                 break;
-            case keyCodeMap['TAB']:
+            case keyCodeMap.TAB:
                 isSelection = false;
                 focusModel.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
                 break;
@@ -10979,9 +10545,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             if (scrollPosition) {
                 selectionState = this.selectionModel.getState();
                 if (selectionState === 'column') {
-                    delete scrollPosition['scrollTop'];
+                    delete scrollPosition.scrollTop;
                 } else if (selectionState === 'row') {
-                    delete scrollPosition['scrollLeft'];
+                    delete scrollPosition.scrollLeft;
                 }
                 this.renderModel.set(scrollPosition);
             }
@@ -11002,19 +10568,19 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
-            case keyCodeMap['CHAR_A']:
+            case keyCodeMap.CHAR_A:
                 this.selectionModel.selectAll();
                 break;
-            case keyCodeMap['CHAR_C']:
+            case keyCodeMap.CHAR_C:
                 this._copyToClipboard();
                 break;
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 focusModel.focus(focusModel.firstRowKey(), focusModel.firstColumnName(), true);
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 focusModel.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                 break;
-            case keyCodeMap['CHAR_V']:
+            case keyCodeMap.CHAR_V:
                 this._paste();
                 break;
             default:
@@ -11107,10 +10673,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
-            case keyCodeMap['HOME']:
+            case keyCodeMap.HOME:
                 this._updateSelectionByKeyIn(0, 0);
                 break;
-            case keyCodeMap['END']:
+            case keyCodeMap.END:
                 this._updateSelectionByKeyIn(this.dataModel.length - 1, columnModelList.length - 1);
                 break;
             default:
@@ -11143,7 +10709,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
                 rowKey = dataModel.at(i).get('rowKey');
                 for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
-                    columnName = columnModelList[j]['columnName'];
+                    columnName = columnModelList[j].columnName;
                     dataModel.del(rowKey, columnName, true);
                     dataModel.get(rowKey).validateCell(columnName);
                 }
@@ -11178,7 +10744,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         if (selectionModel.hasSelection()) {
             text = this.selectionModel.getValuesToString();
         } else {
-            text = this.dataModel.get(focused.rowKey).getVisibleText(focused.columnName);
+            text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
         return text;
     },
@@ -11200,7 +10766,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
 module.exports = Clipboard;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":11}],42:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/util":11}],39:[function(require,module,exports){
 /**
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
@@ -11263,12 +10829,14 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             factory.createFrame('R'),
             factory.createToolbar(),
             factory.createStateLayer(),
+            factory.createEditingLayer(),
             factory.createClipboard()
         ]);
     },
 
     /**
      * Event handler for resize event on window.
+     * @private
      */
     _onResizeWindow: function() {
         this.dimensionModel.refreshLayout();
@@ -11285,6 +10853,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Event handler for 'setSize' event on Dimension
+     * @private
      */
     _onSetSize: function() {
         this.$el.width(this.dimensionModel.get('width'));
@@ -11387,7 +10956,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr('columnname') && $cell.parent().attr('key'));
+        return !!($cell.is('td') && $cell.attr('data-column-name') && $cell.parent().attr('key'));
     },
 
     /**
@@ -11397,8 +10966,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.parent().attr('key')),
-            columnName = $cell.attr('columnname');
+        var rowKey = Number($cell.attr('data-row-key'));
+        var columnName = $cell.attr('data-column-name');
 
         return {
             rowKey: rowKey,
@@ -11480,7 +11049,147 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
 module.exports = Container;
 
-},{"../base/view":7,"../common/gridEvent":10}],43:[function(require,module,exports){
+},{"../base/view":7,"../common/gridEvent":10}],40:[function(require,module,exports){
+/**
+ * @fileoverview Layer class that represents the state of rendering phase
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var View = require('../base/view');
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+
+/**
+ * Layer class that represents the state of rendering phase.
+ * @module view/editingLayer
+ * @extends module:base/view
+ */
+var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - Options
+     */
+    initialize: function(options) {
+        this.renderModel = options.renderModel;
+        this.domState = options.domState;
+        this.inputPainters = options.inputPainters;
+
+        this.listenTo(this.renderModel, 'editingStateChanged', this._onEditingStateChanged);
+    },
+
+    className: 'editing_layer cell_content',
+
+    /**
+     * Starts editing the given cell.
+     * @param {Object} cellData - cell data
+     * @private
+     */
+    _startEditing: function(cellData) {
+        var rowKey = cellData.rowKey;
+        var columnName = cellData.columnName;
+        var editType = tui.util.pick(cellData, 'columnModel', 'editOption', 'type');
+        var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
+        var painter = this.inputPainters[editType];
+
+        this.$el.css(styleMap).show();
+        this.$el.attr({
+            'data-row-key': rowKey,
+            'data-column-name': columnName
+        });
+        this.$el.html(painter.generateHtml(cellData));
+        this._adjustLeftPosition();
+
+        painter.focus(this.$el);
+    },
+
+    /**
+     * Returns whether the width is expandable.
+     * @param {String} editType - edit type
+     * @returns {Boolean}
+     * @private
+     */
+    _isWidthExpandable: function(editType) {
+        return _.contains(['checkbox', 'radio'], editType);
+    },
+
+    /**
+     * Fisishes editing the current cell.
+     * @private
+     */
+    _finishEditing: function() {
+        this.$el.removeAttr('data-row-key');
+        this.$el.removeAttr('data-column-name');
+        this.$el.empty().hide();
+    },
+
+    /**
+     * Adjust the left position of the layer not to lay beyond the boundary of the grid.
+     * @private
+     */
+    _adjustLeftPosition: function() {
+        var gridWidth = this.domState.getWidth();
+        var layerWidth = this.$el.outerWidth();
+        var layerLeftPos = this.$el.position().left;
+
+        if (layerLeftPos + layerWidth > gridWidth) {
+            this.$el.css('left', gridWidth - layerWidth);
+        }
+    },
+
+    /**
+     * Calculates the position and the dimension of the layer and returns the object that contains css properties.
+     * @param {Stirng} rowKey - row key
+     * @param {String} columnName - column name
+     * @param {Boolean} expandable - true if the width of layer is expandable
+     * @returns {Object}
+     * @private
+     */
+    _calculateLayoutStyle: function(rowKey, columnName, expandable) {
+        var wrapperOffset = this.domState.getOffset(),
+            $cell = this.domState.getElement(rowKey, columnName),
+            cellOffset = $cell.offset(),
+            cellHeight = $cell.height(),
+            cellWidth = $cell.width() - (CELL_BORDER_WIDTH * 2);
+
+        return {
+            top: cellOffset.top - wrapperOffset.top,
+            left: cellOffset.left - wrapperOffset.left,
+            height: cellHeight,
+            minWidth: expandable ? cellWidth : '',
+            width: expandable ? '' : cellWidth,
+            lineHeight: cellHeight + 'px'
+        };
+    },
+
+    /**
+     * Event handler for 'editingStateChanged' event on the render model.
+     * @param {Object} cellData - cell data
+     * @private
+     */
+    _onEditingStateChanged: function(cellData) {
+        if (cellData.isEditing) {
+            this._startEditing(cellData);
+        } else {
+            this._finishEditing();
+        }
+    },
+
+    /**
+     * Render
+     * @returns {Object} this instance
+     */
+    render: function() {
+        _.each(this.inputPainters, function(painter) {
+            painter.attachEventHandlers(this.$el, '');
+        }, this);
+
+        return this;
+    }
+});
+
+module.exports = EditingLayer;
+
+},{"../base/view":7,"../common/constMap":8}],41:[function(require,module,exports){
 /**
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
@@ -11502,6 +11211,7 @@ var BodyView = require('./layout/body');
 var BodyTableView = require('./layout/bodyTable');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
+var EditingLayerView = require('./editingLayer');
 
 /**
  * View Factory
@@ -11509,6 +11219,7 @@ var SelectionLayerView = require('./selectionLayer');
  */
 var ViewFactory = tui.util.defineClass({
     init: function(options) {
+        this.domState = options.domState;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
     },
@@ -11706,7 +11417,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates selection view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
-     * @returns {module:view/selection} New selection view instance
+     * @returns {module:view/selectionLayer} New selection layer view instance
      */
     createSelectionLayer: function(whichSide) {
         return new SelectionLayerView({
@@ -11715,21 +11426,40 @@ var ViewFactory = tui.util.defineClass({
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel
         });
+    },
+
+    /**
+     * Creates editing layer view and returns it.
+     * @returns {module:view/editingLayer}
+     */
+    createEditingLayer: function() {
+        return new EditingLayerView({
+            renderModel: this.modelManager.renderModel,
+            inputPainters: this.painterManager.getInputPainters(true),
+            domState: this.domState
+        });
     }
 });
 
 module.exports = ViewFactory;
 
-},{"./clipboard":41,"./container":42,"./layout/body":44,"./layout/bodyTable":45,"./layout/frame-lside":46,"./layout/frame-rside":47,"./layout/header":49,"./layout/resizeHandler":50,"./layout/toolbar":51,"./layout/toolbar/controlPanel":52,"./layout/toolbar/pagination":53,"./layout/toolbar/resizeHandler":54,"./rowList":55,"./selectionLayer":56,"./stateLayer":57}],44:[function(require,module,exports){
+},{"./clipboard":38,"./container":39,"./editingLayer":40,"./layout/body":42,"./layout/bodyTable":43,"./layout/frame-lside":44,"./layout/frame-rside":45,"./layout/header":47,"./layout/resizeHandler":48,"./layout/toolbar":49,"./layout/toolbar/controlPanel":50,"./layout/toolbar/pagination":51,"./layout/toolbar/resizeHandler":52,"./rowList":53,"./selectionLayer":54,"./stateLayer":55}],42:[function(require,module,exports){
 /**
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var View = require('../../base/view');
+var View = require('../../base/view'),
+    util = require('../../common/util');
 
-var HTML_CONTAINER = '<div class="body_container"></div>';
+var HTML_CONTAINER = '<div class="body_container"></div>',
+
+    // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
+    MIN_INTERVAL_FOR_PAUSED = 200,
+
+    // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+    MIN_DISATNCE_FOR_DRAG = 10;
 
 /**
  * Class for the body layout
@@ -11771,14 +11501,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     events: {
         'scroll': '_onScroll',
-        'mousedown .body_container': '_onMouseDown',
-        'blur input, select': '_onBlurInput'
+        'mousedown .body_container': '_onMouseDown'
     },
 
     /**
-     * DimensionModel 의 body Height 가 변경된 경우 element 의 height 를 조정한다.
-     * @param {Object} model 변경이 일어난 model 인스턴스
-     * @param {Number} value bodyHeight 값
+     * Event handler for 'change:bodyHeight' event on module:model/dimension
+     * @param {Object} model - changed model
+     * @param {Number} value - new height value
      * @private
      */
     _onBodyHeightChange: function(model, value) {
@@ -11786,7 +11515,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Resets the height of a container div.
+     * Resets the height of a container DIV
+     * @private
      */
     _resetContainerHeight: function() {
         this.$container.css({
@@ -11795,25 +11525,25 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * 스크롤 이벤트 핸들러
-     * @param {jQuery.Event} scrollEvent   스크롤 이벤트
+     * Event handler for 'scroll' event on DOM
+     * @param {UIEvent} event - event object
      * @private
      */
-    _onScroll: function(scrollEvent) {
+    _onScroll: function(event) {
         var attrs = {
-            scrollTop: scrollEvent.target.scrollTop
+            scrollTop: event.target.scrollTop
         };
 
         if (this.whichSide === 'R') {
-            attrs.scrollLeft = scrollEvent.target.scrollLeft;
+            attrs.scrollLeft = event.target.scrollLeft;
         }
         this.renderModel.set(attrs);
     },
 
     /**
-     * Render model 의 Scroll left 변경 이벤트 핸들러
-     * @param {object} model 변경이 일어난 모델 인스턴스
-     * @param {Number} value scrollLeft 값
+     * Event handler for 'change:scrollLeft' event on module:model/renderer
+     * @param {Object} model - changed model
+     * @param {Number} value - new scrollLeft value
      * @private
      */
     _onScrollLeftChange: function(model, value) {
@@ -11823,9 +11553,9 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Render model 의 Scroll top 변경 이벤트 핸들러
-     * @param {object} model 변경이 일어난 모델 인스턴스
-     * @param {Number} value scrollTop값
+     * Event handler for 'chage:scrollTop' event on module:model/renderer
+     * @param {Object} model - changed model instance
+     * @param {Number} value - new scrollTop value
      * @private
      */
     _onScrollTopChange: function(model, value) {
@@ -11851,93 +11581,112 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     _onMouseDown: function(event) {
         var columnModel = this.columnModel,
             $target = $(event.target),
-            isInput = $target.is('input'),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
-            columnName = $td.attr('columnName'),
+            columnName = $td.attr('data-column-name'),
             rowKey = $tr.attr('key'),
             startAction = true,
-            indexObj;
+            inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
+            indexData;
 
         if (!$td.length) { // selection layer
-            indexObj = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
-            columnName = this._getColumnNameByVisibleIndex(indexObj.column);
+            indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
+            columnName = this._getColumnNameByVisibleIndex(indexData.column);
         } else if (rowKey && columnName) { // valid cell
-            indexObj = {
+            indexData = {
                 column: columnModel.indexOfColumnName(columnName, true),
                 row: this.dataModel.indexOfRowKey(rowKey)
             };
             if (this.columnModel.get('selectType') === 'radio') {
-                this.dataModel.check(indexObj.row);
+                this.dataModel.check(indexData.row);
             }
         } else { // dummy cell
             startAction = false;
         }
 
         if (startAction) {
-            this._controlStartAction(event.pageX, event.pageY, event.shiftKey, indexObj, columnName, isInput);
+            this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
         }
     },
 
     /**
-     * Event handler for blur event on input element.
-     * @private
-     */
-    _onBlurInput: function() {
-        var focusModel = this.focusModel;
-        _.defer(function() {
-            focusModel.refreshState();
-        });
-    },
-
-    /**
      * Control selection action when started
-     * @param {number} pageX - Mouse position X
-     * @param {number} pageY - Mouse position Y
-     * @param {boolean} shiftKey - Whether the shift-key is pressed.
-     * @param {{column:number, row:number}} indexObj - Index map object
+     * @param {Object} inputData - Mouse position X
+     * @param   {number} inputData.pageY - Mouse position Y
+     * @param   {number} inputData.pageY - Mouse position Y
+     * @param   {boolean} inputData.shiftKey - Whether the shift-key is pressed.
+     * @param {{column:number, row:number}} indexData - Index map object
      * @param {String} columnName - column name
      * @param {boolean} isInput - Whether the target is input element.
      * @private
      */
-    _controlStartAction: function(pageX, pageY, shiftKey, indexObj, columnName, isInput) {
-        var columnModel = this.columnModel,
-            selectionModel = this.selectionModel,
-            columnIndex = indexObj.column,
-            rowIndex = indexObj.row;
+    _controlStartAction: function(inputData, indexData, columnName, isInput) {
+        var selectionModel = this.selectionModel,
+            columnIndex = indexData.column,
+            rowIndex = indexData.row,
+            startDrag = true;
 
         if (!selectionModel.isEnabled()) {
             return;
         }
 
-        if (!isInput) {
-            this._attachDragEvents(pageX, pageY);
-        }
-        if (!columnModel.isMetaColumn(columnName)) {
+        if (!util.isMetaColumn(columnName)) {
             selectionModel.setState('cell');
-            if (shiftKey && !isInput) {
+            if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
-                if (!this.focusModel.focusAt(rowIndex, columnIndex)) {
-                    this._detachDragEvents();
-                }
+                startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
                 selectionModel.end();
             }
         } else if (columnName === '_number') {
-            if (shiftKey) {
-                selectionModel.update(rowIndex, 0, 'row');
-            } else {
-                selectionModel.selectRow(rowIndex);
-            }
+            this._updateSelectionByRow(rowIndex, inputData.shiftKey);
         } else {
-            this._detachDragEvents();
+            startDrag = false;
+        }
+
+        if (!isInput && startDrag) {
+            this._attachDragEvents(inputData.pageX, inputData.pageY);
         }
     },
 
     /**
-     * 마우스 down 이벤트가 발생하여 selection 을 시작할 때, selection 영역을 계산하기 위해 document 에 이벤트 핸들러를 추가한다.
-     * @param {Number} pageX    초기값으로 설정할 마우스 x좌표
-     * @param {Number} pageY    초기값으로 설정할 마우스 y 좌표
+     * Update selection model by row unit.
+     * @param {number} rowIndex - row index
+     * @param {boolean} shiftKey - true if the shift key is pressed
+     * @private
+     */
+    _updateSelectionByRow: function(rowIndex, shiftKey) {
+        if (shiftKey) {
+            this.selectionModel.update(rowIndex, 0, 'row');
+        } else {
+            this.selectionModel.selectRow(rowIndex);
+        }
+    },
+
+    /**
+     * Executes the `focusModel.focusAt()` and returns the boolean value which indicates whether to start drag.
+     * @param {number} rowIndex - row index
+     * @param {number} columnIndex - column index
+     * @returns {boolean}
+     * @private
+     */
+    _doFocusAtAndCheckDraggable: function(rowIndex, columnIndex) {
+        var startTime = (new Date()).getTime(),
+            focusSuccessed = this.focusModel.focusAt(rowIndex, columnIndex),
+            endTime = (new Date()).getTime(),
+            hasPaused = (endTime - startTime) > MIN_INTERVAL_FOR_PAUSED;
+
+        if (!focusSuccessed || hasPaused) {
+            return false;
+        }
+        return true;
+    },
+
+    /**
+     * Attach event handlers for drag event.
+     * @param {Number} pageX - initial pageX value
+     * @param {Number} pageY - initial pageY value
+     * @private
      */
     _attachDragEvents: function(pageX, pageY) {
         this.setOwnProperties({
@@ -11951,7 +11700,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * 마우스 up 이벤트가 발생하여 selection 이 끝날 때, document 에 달린 이벤트 핸들러를 제거한다.
+     * Detach all handlers which are used for drag event.
+     * @private
      */
     _detachDragEvents: function() {
         this.selectionModel.stopAutoScroll();
@@ -11963,15 +11713,16 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * Event handler for 'mousemove' event during drag
-     * @param {jQuery.Event} event - MouseEvent object
+     * @param {MouseEvent} event - MouseEvent object
+     * @private
      */
     _onMouseMove: function(event) {
         var selectionModel = this.selectionModel,
             pageX = event.pageX,
             pageY = event.pageY,
-            isMoved = this._getMouseMoveDistance(pageX, pageY) > 10; // eslint-disable-line no-magic-numbers
+            dragged = this._getMouseMoveDistance(pageX, pageY) > MIN_DISATNCE_FOR_DRAG;
 
-        if (selectionModel.hasSelection() || isMoved) {
+        if (selectionModel.hasSelection() || dragged) {
             selectionModel.updateByMousePosition(pageX, pageY);
         }
     },
@@ -11991,8 +11742,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * select start 이벤트를 방지한다.
-     * @param {jQuery.Event} event selectStart 이벤트 객체
+     * Event handler to prevent default action on `selectstart` event.
+     * @param {Event} event - event object
      * @returns {boolean} false
      * @private
      */
@@ -12002,7 +11753,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * rendering 한다.
+     * renders
      * @returns {View.Layout.Body}   자기 자신
      */
     render: function() {
@@ -12033,7 +11784,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7}],45:[function(require,module,exports){
+},{"../../base/view":7,"../../common/util":11}],43:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -12170,32 +11921,14 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     },
 
     /**
-     * 하위요소의 이벤트들을 this.el 에서 받아서 해당 요소에게 위임하도록 핸들러를 설정한다.
-     * @param {string} selector - 선택자
-     * @param {object} handlerInfos - 이벤트 정보 객체. ex) {'blur': {selector:string, handler:function}, 'click':{...}...}
-     * @private
-     */
-    _attachTableEventHandler: function(selector, handlerInfos) {
-        _.each(handlerInfos, function(obj, eventName) {
-            this.$el.on(eventName, selector + ' ' + obj.selector, obj.handler);
-        }, this);
-    },
-
-    /**
      * 테이블 내부(TR,TD)에서 발생하는 이벤트를 this.el로 넘겨 해당 요소들에게 위임하도록 설정한다.
      * @private
      */
     _attachAllTableEventHandlers: function() {
-        var rowPainter = this.painterManager.getRowPainter(),
-            cellPainters = this.painterManager.getCellPainters();
+        var cellPainters = this.painterManager.getCellPainters();
 
-        this._attachTableEventHandler('tr', rowPainter.getEventHandlerInfo());
-
-        _.each(cellPainters, function(painter, editType) {
-            var selector = 'td[edit-type=' + editType + ']',
-                handlerInfo = painter.getEventHandlerInfo();
-
-            this._attachTableEventHandler(selector, handlerInfo);
+        _.each(cellPainters, function(painter) {
+            painter.attachEventHandlers(this.$el, '');
         }, this);
     },
 
@@ -12226,10 +11959,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {
-            var name = columnModel['columnName'],
+            var name = columnModel.columnName,
                 width = columnWidthList[index] - BodyTable.EXTRA_WIDTH;
 
-            html += '<col columnname="' + name + '" style="width:' + width + 'px">';
+            html += '<col data-column-name="' + name + '" style="width:' + width + 'px">';
         });
         return html;
     }
@@ -12240,7 +11973,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
 module.exports = BodyTable;
 
-},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],46:[function(require,module,exports){
+},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],44:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -12310,7 +12043,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
 
 module.exports = LsideFrame;
 
-},{"./frame":48}],47:[function(require,module,exports){
+},{"./frame":46}],45:[function(require,module,exports){
 /**
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
@@ -12438,7 +12171,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
 module.exports = RsideFrame;
 
-},{"../../common/constMap":8,"./frame":48}],48:[function(require,module,exports){
+},{"../../common/constMap":8,"./frame":46}],46:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -12519,7 +12252,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
 module.exports = Frame;
 
-},{"../../base/view":7}],49:[function(require,module,exports){
+},{"../../base/view":7}],47:[function(require,module,exports){
 /**
  * @fileoverview Header 관련
  * @author NHN Ent. FE Development Team
@@ -12589,7 +12322,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * <th> 템플릿
      */
     templateHeader: _.template(
-        '<th columnname="<%=columnName%>" ' +
+        '<th data-column-name="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'height="<%=height%>" ' +
             '<%if(colspan > 0) {%>' +
@@ -12608,7 +12341,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     templateCol: _.template(
         '<col ' +
-            'columnname="<%=columnName%>" ' +
+            'data-column-name="<%=columnName%>" ' +
             'style="width:<%=width%>px">'
     ),
 
@@ -12630,7 +12363,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         _.each(columnWidthList, function(width, index) {
             htmlList.push(this.templateCol({
-                columnName: columnModelList[index]['columnName'],
+                columnName: columnModelList[index].columnName,
                 width: width
             }));
         }, this);
@@ -12678,15 +12411,17 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         if (this.selectionModel.hasSelection()) {
             columnNames = this._getSelectedColumnNames();
-        } else {
+        } else if (this.focusModel.has(true)) {
             columnNames = [this.focusModel.get('columnName')];
         }
-        mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
 
         $ths.removeClass(CLASSNAME_SELECTED);
-        _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-            $ths.filter('[columnname=' + columnName + ']').addClass(CLASSNAME_SELECTED);
-        });
+        if (columnNames) {
+            mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
+            _.each(columnNames.concat(mergedColumnNames), function(columnName) {
+                $ths.filter('[data-column-name=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+            });
+        }
     },
 
     /**
@@ -12817,17 +12552,9 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _hasMetaColumn: function(columnNames) {
-        var result = false,
-            columnModel = this.columnModel;
-
-        tui.util.forEach(columnNames, function(name) {
-            if (columnModel.isMetaColumn(name)) {
-                result = true;
-                return false;
-            }
+        return _.some(columnNames, function(name) {
+            return util.isMetaColumn(name);
         });
-
-        return result;
     },
 
     /**
@@ -12858,7 +12585,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getHeaderMainCheckbox: function() {
-        return this.$el.find('th[columnname="_button"] input');
+        return this.$el.find('th[data-column-name="_button"] input');
     },
 
     /**
@@ -12922,7 +12649,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onClick: function(clickEvent) {
         var $target = $(clickEvent.target),
-            columnName = $target.closest('th').attr('columnname');
+            columnName = $target.closest('th').attr('data-column-name');
 
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
@@ -12947,7 +12674,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (this._$currentSortBtn) {
             this._$currentSortBtn.removeClass('sorting_down sorting_up');
         }
-        this._$currentSortBtn = this.$el.find('th[columnname=' + sortOptions.columnName + '] a.btn_sorting');
+        this._$currentSortBtn = this.$el.find('th[data-column-name=' + sortOptions.columnName + '] a.btn_sorting');
         this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
     },
 
@@ -13013,7 +12740,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             var length = hierarchyList[i].length,
                 curHeight = 0;
             _.each(hierarchy, function(columnModel, j) {
-                var columnName = columnModel['columnName'];
+                var columnName = columnModel.columnName;
 
                 rowSpan = (length - 1 === j && (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
                 height = rowHeight * rowSpan;
@@ -13096,7 +12823,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             /* istanbul ignore else */
             if (columnMergeList) {
                 _.each(columnMergeList, function(columnMerge) {
-                    if ($.inArray(columnModel['columnName'], columnMerge['columnNameList']) !== -1) {
+                    if ($.inArray(columnModel.columnName, columnMerge.columnNameList) !== -1) {
                         this._getColumnHierarchy(columnMerge, resultList);
                     }
                 }, this);
@@ -13108,7 +12835,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/util":11}],50:[function(require,module,exports){
+},{"../../base/view":7,"../../common/util":11}],48:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -13154,7 +12881,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
-        'columnname="<%=columnName%>" ' +
+        'data-column-name="<%=columnName%>" ' +
         'class="resize_handle' +
         '<% if(isLast === true) ' +
         ' print(" resize_handle_last");%>' +
@@ -13239,8 +12966,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             $handler = $resizeHandleList.eq(index);
-            columnName = $handler.attr('columnname');
-            width = $table.find('th[columnname="' + columnName + '"]').width();
+            columnName = $handler.attr('data-column-name');
+            width = $table.find('th[data-column-name=' + columnName + ']').width();
             if (tui.util.isExisty(width)) {
                 isChanged = isChanged || (width !== columnWidthList[index]);
             } else {
@@ -13393,7 +13120,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7}],51:[function(require,module,exports){
+},{"../../base/view":7}],49:[function(require,module,exports){
 /**
  * @fileoverview 툴바영역 클래스
  * @author NHN Ent. FE Development Team
@@ -13453,6 +13180,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
     /**
      * Reset toolbar-height based on the model/dimension->toolbarHeight.
+     * @private
      */
     _refreshHeight: function() {
         var height = this.dimensionModel.get('toolbarHeight');
@@ -13464,7 +13192,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../../base/view":7}],52:[function(require,module,exports){
+},{"../../base/view":7}],50:[function(require,module,exports){
 /**
  * @fileoverview Class for the control panel in the toolbar
  * @author NHN Ent. FE Development Team
@@ -13559,7 +13287,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
 module.exports = ControlPanel;
 
-},{"../../../base/view":7}],53:[function(require,module,exports){
+},{"../../../base/view":7}],51:[function(require,module,exports){
 /**
  * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
@@ -13635,7 +13363,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
 module.exports = Pagination;
 
-},{"../../../base/view":7}],54:[function(require,module,exports){
+},{"../../../base/view":7}],52:[function(require,module,exports){
 /**
  * @fileoverview Class for the resize handler of the toolbar
  * @author NHN Ent. FE Development Team
@@ -13768,7 +13496,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
 module.exports = ResizeHandler;
 
-},{"../../../base/view":7}],55:[function(require,module,exports){
+},{"../../../base/view":7}],53:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
@@ -13779,7 +13507,8 @@ var View = require('../base/view'),
     util = require('../common/util');
 
 var CLASSNAME_SELECTED = 'selected',
-    CLASSNAME_META_COLUMN = 'td.meta_column';
+    CLASSNAME_FOCUSED_ROW = 'focused_row',
+    SELECTOR_META_CELL = 'td.meta_column';
 
 /**
  * RowList View
@@ -13814,9 +13543,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
-            .listenTo(focusModel, 'focus', this._onFocus)
-            .listenTo(focusModel, 'blur', this._onBlur)
-            .listenTo(focusModel, 'focusIn', this._onFocusIn)
+            .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
             .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === 'L') {
@@ -13861,7 +13588,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * 전체 행목록을 갱신한다.
+     * Redraw all rows.
+     * @private
      */
     _resetRows: function() {
         var html = this._getRowsHtml(this.collection.models),
@@ -13871,12 +13599,13 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $tbody = this.bodyTableView.redrawTable(html);
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
 
-            // IE7에서 레이아웃이 틀어지는 현상 방지
+            // prevent layout from breaking in IE7
             if (util.isBrowserIE7()) {
                 $tbody.width($tbody.width());
             }
         } else {
-            // IE의 호환성 보기를 사용하면 브라우저 검출이 정확하지 않기 때문에, try/catch로 방어코드를 추가함.
+            // As using a compatibility mode in IE makes it hard to detect the actual version of the browser,
+            // use try/catch block to make in correct.
             try {
                 this.$el[0].innerHTML = html;
             } catch (e) {
@@ -13893,10 +13622,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _getRowsHtml: function(rows) {
         var rowPainter = this.painterManager.getRowPainter(),
-            columnModelList = this._getColumnModelList();
+            columnNames = _.pluck(this._getColumnModelList(), 'columnName');
 
         return _.map(rows, function(row) {
-            return rowPainter.getHtml(row, columnModelList);
+            return rowPainter.generateHtml(row, columnNames);
         }).join('');
     },
 
@@ -13924,8 +13653,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        $rows.find(CLASSNAME_META_COLUMN).removeClass(CLASSNAME_SELECTED);
-        $filteredRows.find(CLASSNAME_META_COLUMN).addClass(CLASSNAME_SELECTED);
+        $rows.find(SELECTOR_META_CELL).removeClass(CLASSNAME_SELECTED);
+        $filteredRows.find(SELECTOR_META_CELL).addClass(CLASSNAME_SELECTED);
     },
 
     /**
@@ -13967,48 +13696,38 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * focusModel 의 blur 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 제거한다.
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @param {String} columnName 컬럼명
+     * Removes the CLASSNAME_FOCUSED_ROW class from the cells in the previously focused row and
+     * adds it to the cells in the currently focused row.
      * @private
      */
-    _onBlur: function(rowKey, columnName) {
-        var $td = this.dataModel.getElement(rowKey, columnName);
-        if ($td.length) {
-            $td.removeClass('focused');
-        }
+    _refreshFocusedRow: function() {
+        var rowKey = this.focusModel.get('rowKey'),
+            prevRowKey = this.focusModel.get('prevRowKey');
+
+        this._setFocusedRowClass(prevRowKey, false);
+        this._setFocusedRowClass(rowKey, true);
     },
 
     /**
-     * focusModel 의 _onFocus 이벤트 발생시 해당 $td 를 찾고, focus 클래스를 추가한다.
-     * @param {(Number|String)} rowKey 대상의 키값
-     * @param {String} columnName 컬럼명
+     * Finds all cells in the row indentified by given rowKey and toggles the CLASSNAME_FOCUSED_ROW on them.
+     * @param {Number|String} rowKey - rowKey
+     * @param {Boolean} focused - if set to true, the class will be added, otherwise be removed.
      * @private
      */
-    _onFocus: function(rowKey, columnName) {
-        var $td = this.dataModel.getElement(rowKey, columnName);
-        if ($td.length) {
-            $td.addClass('focused');
-        }
-    },
+    _setFocusedRowClass: function(rowKey, focused) {
+        var columnNames = _.pluck(this._getColumnModelList(), 'columnName'),
+            trMap = {};
 
-    /**
-     * Event handler for 'focusIn' event on module:model/focus
-     * @param  {(Number|String)} rowKey - RowKey of the target cell
-     * @param  {String} columnName columnName - ColumnName of the target cell
-     * @private
-     */
-    _onFocusIn: function(rowKey, columnName) {
-        var whichSide = this.columnModel.isLside(columnName) ? 'L' : 'R',
-            $td, editType, cellPainter;
+        _.each(columnNames, function(columnName) {
+            var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName),
+                $td;
 
-        if (whichSide === this.whichSide) {
-            $td = this.dataModel.getElement(rowKey, columnName);
-            editType = this.columnModel.getEditType(columnName);
-            cellPainter = this.painterManager.getCellPainter(editType);
-
-            cellPainter.focusIn($td);
-        }
+            if (!trMap[mainRowKey]) {
+                trMap[mainRowKey] = this._getRowElement(mainRowKey);
+            }
+            $td = trMap[mainRowKey].find('td[data-column-name=' + columnName + ']');
+            $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
+        }, this);
     },
 
     /**
@@ -14035,9 +13754,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 this._appendNewRows(rowKeys, dupRowKeys);
             }
         }
-
         this.renderedRowKeys = rowKeys;
-        this.focusModel.focusClipboard();
 
         return this;
     },
@@ -14049,7 +13766,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _onModelChange: function(model) {
         var $tr = this._getRowElement(model.get('rowKey'));
-        this.painterManager.getRowPainter().onModelChange(model.changed, $tr);
+
+        this.painterManager.getRowPainter().refresh(model.changed, $tr);
     },
 
     /**
@@ -14075,7 +13793,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7,"../common/util":11}],56:[function(require,module,exports){
+},{"../base/view":7,"../common/util":11}],54:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
@@ -14238,7 +13956,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
 module.exports = SelectionLayer;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":11}],57:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/util":11}],55:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -14261,6 +13979,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.renderModel = options.renderModel;
+        this.timeoutIdForDelay = null;
 
         this.listenTo(this.dimensionModel, 'change', this._refreshLayout);
         this.listenTo(this.renderModel, 'change:state', this.render);
@@ -14287,13 +14006,25 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
         if (renderState === renderStateMap.DONE) {
             this.$el.hide();
         } else {
-            this.$el.html(this.template({
-                text: this._getMessage(renderState),
-                isLoading: (renderState === renderStateMap.LOADING)
-            })).show();
-            this._refreshLayout();
+            this._showLayer(renderState);
         }
+
         return this;
+    },
+
+    /**
+     * Shows the state layer.
+     * @param {string} renderState - Render state {@link module:common/constMap#renderState}
+     * @private
+     */
+    _showLayer: function(renderState) {
+        var layerHtml = this.template({
+            text: this._getMessage(renderState),
+            isLoading: (renderState === renderStateMap.LOADING)
+        });
+
+        this.$el.html(layerHtml).show();
+        this._refreshLayout();
     },
 
     /**

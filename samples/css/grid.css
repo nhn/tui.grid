@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.1.3
+ * @version 1.2.0
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -41,6 +41,13 @@
 .uio_grid input {
   margin: 0;
   padding: 0;
+}
+.uio_grid fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: inline;
+  white-space: nowrap;
 }
 .uio_grid input[type=text] {
   outline: none;
@@ -93,6 +100,26 @@
   width: 100px;
   height: 100px;
 }
+.uio_grid .cell_content input[type=text],
+.uio_grid .cell_content input[type=password] {
+  width: 100%;
+  padding: 2px 0;
+  border: solid 1px #e2e3ea;
+  border-top: solid 1px #abadb3;
+  border-bottom: solid 1px #e3e9ef;
+}
+.uio_grid .cell_content input.editing {
+  border: solid 1px #748eea;
+}
+.uio_grid .cell_content label + input {
+  margin-left: 10px;
+}
+.uio_grid .cell_content select {
+  width: 100%;
+}
+.uio_grid .cell_content a {
+  color: #002caf;
+}
 .uio_grid .state_layer {
   position: absolute;
   box-sizing: content-box;
@@ -115,6 +142,15 @@
   border: 0;
   width: 150px;
   height: 13px;
+}
+.uio_grid .editing_layer {
+  position: absolute;
+  display: none;
+  background: #fff;
+  z-index: 15;
+  padding: 0 10px;
+  border: dotted 1px #190000;
+  white-space: nowrap;
 }
 .uio_grid .left_line {
   position: absolute;
@@ -369,42 +405,6 @@
 }
 .uio_grid table td span.input input {
   box-sizing: border-box;
-}
-.uio_grid table td input[type=text],
-.uio_grid table td input[type=password] {
-  width: 100%;
-  padding: 2px 0;
-  border: solid 1px #e2e3ea;
-  border-top: solid 1px #abadb3;
-  border-bottom: solid 1px #e3e9ef;
-}
-.uio_grid table td input.editing {
-  border: solid 1px #748eea;
-}
-.uio_grid table td .search_bx {
-  position: relative;
-}
-.uio_grid table td .search {
-  display: block;
-  height: 20px;
-  padding: 0 33px 0 6px;
-  border: 1px solid #9c9c9c;
-  line-height: 20px;
-}
-.uio_grid table td .search input {
-  width: 100%;
-  background: transparent;
-  padding: 0;
-  padding-top: 4px;
-  border: 0;
-  color: #999;
-  -webkit-appearance: none;
-}
-.uio_grid table td select {
-  width: 100%;
-}
-.uio_grid table td a {
-  color: #002caf;
 }
 .uio_grid .toolbar {
   display: none;
