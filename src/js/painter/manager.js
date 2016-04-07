@@ -124,12 +124,12 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
     /**
      * Returns all input painters
-     * @param {Boolean} convertibleOnly - if set to true, returns only convertible painters
+     * @param {Boolean} withoutMeta - if set to true, returns without meta cell painters
      * @returns {Object} Object that has edit-type as a key and input painter as a value
      */
-    getInputPainters: function(convertibleOnly) {
+    getInputPainters: function(withoutMeta) {
         var result = this.inputPainters;
-        if (convertibleOnly) {
+        if (withoutMeta) {
             result = _.omit(result, 'mainButton');
         }
 

@@ -21,8 +21,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         this.textType = {
             'normal': true,
             'text': true,
-            'text-password': true,
-            'text-convertible': true
+            'password': true
         };
         this._setColumnModelList(this.get('columnModelList'));
         this.on('change', this._onChange, this);

@@ -196,7 +196,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Triggers the 'editingStateChanged' event if the cell data identified by
-     * given row key and column name has the 'convertible' option.
+     * given row key and column name has the useViewMode:true option.
      * @param {String} rowKey - row key
      * @param {String} columnName - column name
      * @private
@@ -204,7 +204,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _triggerEditingStateChanged: function(rowKey, columnName) {
         var cellData = this.getCellData(rowKey, columnName);
 
-        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible')) {
+        if (tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false) {
             this.trigger('editingStateChanged', cellData);
         }
     },

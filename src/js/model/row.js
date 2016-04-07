@@ -400,10 +400,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.isEditing && valueChanged;
-        var convertible = tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible') === true;
+        var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
         var editingStarted = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
 
-        return valueChangedOnEditing || (convertible && editingStarted);
+        return valueChangedOnEditing || (useViewMode && editingStarted);
     }
 });
 

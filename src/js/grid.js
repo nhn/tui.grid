@@ -24,8 +24,8 @@
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
- *      @param {boolean} [options.singleClickEdit=false] - If set to true, text-convertible cell will be changed to
- *          edit-mode with a single click.
+ *      @param {boolean} [options.singleClickEdit=false] - If set to true, editable cell in the view-mode will be
+ *          changed to edit-mode by a single click.
  *      @param {boolean} [options.scrollX=true] - Specifies whether to show horizontal scrollbar.
  *      @param {boolean} [options.scrollY=true] - Specifies whether to show vertical scrollbar.
  *      @param {boolean} [options.fitToParentHeight=false] - If set to true, the height of the grid will expand to
@@ -65,7 +65,11 @@
  *          @param {Array} [options.columnModelList.editOption] - The object for configuring editing UI.
  *              @param {string} [options.columnModelList.editOption.type='normal'] - The string value that specifies
  *                  the type of the editing UI.
- *                  Available values are 'text', 'text-password', 'text-convertible', 'select', 'radio', 'checkbox'.
+ *                  Available values are 'text', 'password', 'select', 'radio', 'checkbox'.
+ *              @param {boolean} [options.columnModelList.editOption.useViewMode=true] - If set to true, default mode
+ *                  of the cell will be the 'view-mode'. The mode will be switched to 'edit-mode' only when user
+ *                  double click or press 'ENTER' key on the cell. If set to false, the cell will always show the
+ *                  input elements as a default.
  *              @param {Array} [options.columnModelList.editOption.list] - Specifies the option list for the
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
@@ -73,18 +77,13 @@
  *                   called before changing the value of the cell. If returns false, the changing will be canceled.
  *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
  *                  called after changing the value of the cell.
- *              @param {string} [options.columnModelList.editOption.beforeText] <em>Deprecated</em>.
- *                  (replaced with {@link beforeContent})
  *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
  *                  shown left to the value. If it's a function, the return value will be used.
- *              @param {string} [options.columnModelList.editOption.afterText] <em>Deprecated</em>.
- *                  (replaced with {@link afterContent})
  *              @param {(string|function)} [options.columnModelList.editOption.afterContent] - The HTML string to be
  *                  shown right to the value. If it's a function, the return value will be used.
  *              @param {function} [options.columnModelList.editOption.converter] - The function whose
  *                  return value (HTML) represents the UI of the cell. If the return value is
  *                  falsy(null|undefined|false), default UI will be shown.
- *                  This option is available for the 'text', 'text-password', 'select', 'checkbox', 'radio' type.
  *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
  *                  as a key and event handler as a value for events on input element.
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
@@ -194,7 +193,7 @@
             isRequired: true,
             isFixedWidth: true,
             editOption: {
-                type: 'text-password',
+                type: 'password',
                 beforeContent: 'password:'
             }
         },
@@ -202,7 +201,8 @@
             title: 'text input when editing mode',
             columnName: 'column6',
             editOption: {
-                type: 'text-convertible'
+                type: 'text',
+                useViewMode: fales
             },
             isIgnore: true
         },

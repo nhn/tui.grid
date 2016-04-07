@@ -146,6 +146,16 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
+     * Returns whether the cell has view mode.
+     * @param {Object} cellData - cell data
+     * @returns {Boolean}
+     * @private
+     */
+    _isUsingViewMode: function(cellData) {
+        return tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
+    },
+
+    /**
      * Generates a HTML string from given data, and returns it.
      * @param {Object} cellData - cell data
      * @returns {String}
@@ -156,7 +166,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
 
         if (!_.isNull(cellData.convertedHTML)) {
             result = cellData.convertedHTML;
-        } else if (!cellData.columnModel.editOption.convertible || cellData.isEditing) {
+        } else if (!this._isUsingViewMode(cellData) || cellData.isEditing) {
             result = this._generateInputHtml(cellData);
         } else {
             result = this._getDisplayValue(cellData);

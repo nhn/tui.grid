@@ -579,9 +579,8 @@ describe('data.columnModel', function() {
             expect(columnModelInstance.isTextType('none')).toBe(true);
             expect(columnModelInstance.isTextType('_number')).toBe(false);
             expect(columnModelInstance.isTextType('_button')).toBe(false);
-
             expect(columnModelInstance.isTextType('text')).toBe(true);
-            expect(columnModelInstance.isTextType('text-convertible')).toBe(true);
+            expect(columnModelInstance.isTextType('password')).toBe(true);
             expect(columnModelInstance.isTextType('select')).toBe(false);
             expect(columnModelInstance.isTextType('checkbox')).toBe(false);
             expect(columnModelInstance.isTextType('radio')).toBe(false);

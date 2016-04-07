@@ -958,7 +958,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var mainRowKey = this.getMainRowKey(rowKey, columnName),
             cellState = this.get(mainRowKey).getCellState(columnName),
             editType = this.columnModel.getEditType(columnName),
-            isDeletableType = _.contains(['text', 'text-convertible', 'text-password'], editType);
+            isDeletableType = _.contains(['text', 'password'], editType);
 
         if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
             this.setValue(mainRowKey, columnName, '', silent);

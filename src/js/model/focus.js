@@ -395,7 +395,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     startEditing: function(rowKey, columnName) {
         if (this.get('editingAddress') ||
-            !this.isCurrentCell(rowKey, columnName) ||
+            !this.isCurrentCell(rowKey, columnName, true) ||
             !this.dataModel.get(rowKey).isEditable(columnName)) {
             return false;
         }

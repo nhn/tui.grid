@@ -76,7 +76,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
 
-            if (this._shouldContentBeWrapped() && !this._isConvertible(cellData)) {
+            if (this._shouldContentBeWrapped() && !this._isUsingViewMode(cellData)) {
                 beforeContent = this._getSpanWrapContent(beforeContent, 'before');
                 afterContent = this._getSpanWrapContent(afterContent, 'after');
                 content = this._getSpanWrapContent(content, 'input');
@@ -89,13 +89,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Returns whether the cell is convertible.
+     * Returns whether the cell has view mode.
      * @param {Object} cellData - cell data
      * @returns {Boolean}
      * @private
      */
-    _isConvertible: function(cellData) {
-        return tui.util.pick(cellData, 'columnModel', 'editOption', 'convertible');
+    _isUsingViewMode: function(cellData) {
+        return tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
     },
 
     /**
@@ -183,7 +183,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
         $td.attr(attrs);
 
-        if (isEditingChanged && cellData.isEditing && !this._isConvertible(cellData)) {
+        if (isEditingChanged && cellData.isEditing && !this._isUsingViewMode(cellData)) {
             this.inputPainter.focus($td);
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
