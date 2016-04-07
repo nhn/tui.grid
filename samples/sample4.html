@@ -51,8 +51,7 @@
                     "checkPattern" :/[\d]+/g,
                     "maxLength" : 10
                 },
-                "afterText" : " 원",
-                "sReturnType" : "number",
+                "afterContent" : " 원",
                 "formatter" : function(columnValue){
                     var sValue = String(columnValue) || "0";
                     return sValue.replace(/(\d)(?=(\d{3})+$)/gi, "$1,")+" 원";

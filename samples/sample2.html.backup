@@ -194,7 +194,7 @@
                 columnName: 'column7',
                 editOption: {
                     type: 'text-convertible',
-                    afterText: '패'
+                    afterContent: '패'
                 },
                 isEㅌllipsis: true
 
@@ -203,8 +203,8 @@
                 title: 'column8',
                 columnName: 'column8',
                 editOption: {
-                    type: 'text-password',
-                    beforeText: '패'
+                    type: 'password',
+                    beforeContent: '패'
                 }
             }
         ],

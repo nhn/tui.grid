@@ -172,13 +172,13 @@
                 "align" : "right",
                 "width" : 100,
                 "editOption" : {
-                    "type": "text-convertible",
+                    "type": "text",
                     "maxLength" : 10,
                     "changeCallback" : function(changeEvent){
                         //console.log("change callback", changeEvent)
                     }
                 },
-                "afterText" : " 원",
+                "afterContent" : " 원",
                 "formatter" : function(columnValue){
                     var sValue = String(columnValue) || "0";
                     return sValue.replace(/(\d)(?=(\d{3})+$)/gi, "$1,")+" 원";
@@ -268,6 +268,7 @@
                         {"value" : "03", "text" : "자동차용품"},
                         {"value" : "04", "text" : "주방"}
                     ],
+                    "useViewMode": false,
                     "changeBeforeCallback" : function(changeEvent){
                         //console.log("** 셀렉트박스1 값 변경 이벤트 : ", changeEvent);
                     }
@@ -295,6 +296,7 @@
                         {"value" : "04_02", "text" : "식기류"},
                         {"value" : "04_03", "text" : "와인용품"}
                     ],
+                    "useViewMode": false,
                     "changeCallback" : function(changeEvent){
                         //console.log("셀렉트박스2 값 변경 이벤트 : ", changeEvent);
                     }
@@ -326,6 +328,7 @@
                 "editOption" : {
                     "type": "select",
                     "list" : getDepth3Data("all"),
+                    "useViewMode": false,
                     "changeBeforeCallback" : function(changeEvent){
                         //console.log("셀렉트박스3 값 변경 이벤트 : ", changeEvent);
                     }

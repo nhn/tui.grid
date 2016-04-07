@@ -73,7 +73,7 @@
                 "columnName" : "date1",
                 "width" : 100,
                 "editOption" : {
-                    type : 'text'
+                    type: 'text'
                 }
             },
             {
@@ -92,7 +92,10 @@
                 "title" : "<b>상품주문번호</b>",
                 "columnName" : "productOrderNo",
                 "align" : "center",
-                "width" : 100
+                "width" : 100,
+                editOption: {
+                    type: 'normal'
+                }
             },
             {
                 "title" : "<b>히든컬럼</b>",
@@ -107,12 +110,12 @@
                 "width" : 100,
                 "align" : "right",
                 "editOption" : {
-                    type: 'text-convertible',
+                    type: 'text',
                     "maxLength" : 10,
                     "changeBeforeCallback" : function(changeEvent){
                         console.log("상품가격 callback", changeEvent);
                     },
-                    "afterText" : " 원"
+                    "afterContent" : " 원"
                 },
                 "formatter" : function(columnValue){
                     var sValue = String(columnValue) || "0";
@@ -170,7 +173,7 @@
                 "width" : 120,
                 "align" : "center",
                 "editOption" : {
-                    type: 'text-convertible',
+                    type: 'text',
                     "maxLength" : 8
                 },
                 "formatter" : function(columnValue){
@@ -181,7 +184,7 @@
             {
                 "title" : "<b>배송상태</b>",
                 "columnName" : "deliveryState",
-                "width" : 230,
+                "width" : 120,
                 "align" : "center",
                 "editOption" : {
                     "type" : 'radio',
@@ -232,7 +235,8 @@
                     ],
                     "changeBeforeCallback" : function(changeEvent){
                         console.log("체크박스 값 변경 이벤트 : ", changeEvent);
-                    }
+                    },
+                    "useViewMode": false
                 },
                 "formatter" : function(columnValue){
                     return Number(columnValue) < 2 ? "DISABLED" : columnValue;
