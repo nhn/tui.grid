@@ -129,9 +129,9 @@ describe('model/selection', function() {
                 selection.start(0, 1);
                 selection.update(2, 2);
                 expect(selection.getValuesToString()).toEqual('' +
-                '0-2\topt1\n' +
-                '1-2\topt2\n' +
-                '2-2\topt3'
+                '0-2\t1\n' +
+                '1-2\t2\n' +
+                '2-2\t3'
                 );
                 selection.end();
             });

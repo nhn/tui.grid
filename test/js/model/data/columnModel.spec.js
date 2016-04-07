@@ -155,13 +155,11 @@ describe('data.columnModel', function() {
             expectedColumnModel = {
                 title: '<input type="checkbox"/>',
                 columnName: '_button',
+                align: 'center',
                 isHidden: false,
                 isFixedWidth: true,
                 editOption: {
-                    type: selectType,
-                    list: [{
-                        value: 'selected'
-                    }]
+                    type: 'mainButton'
                 },
                 width: 40
             };
@@ -175,13 +173,11 @@ describe('data.columnModel', function() {
             expectedColumnModel = {
                 title: '선택',
                 columnName: '_button',
+                align: 'center',
                 isHidden: false,
                 isFixedWidth: true,
                 editOption: {
-                    type: selectType,
-                    list: [{
-                        value: 'selected'
-                    }]
+                    type: 'mainButton'
                 },
                 width: 40
             };

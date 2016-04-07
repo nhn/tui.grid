@@ -50,10 +50,9 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @private
      */
     _getEditType: function(columnName, cellData) {
-        var editOption = cellData.columnModel.editOption,
-            editType = editOption ? editOption.type : 'normal';
+        var editType = tui.util.pick(cellData.columnModel, 'editOption', 'type');
 
-        return editType;
+        return editType || 'normal';
     },
 
     /**

@@ -3,16 +3,19 @@
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
+var Focus = require('model/focus');
 var Renderer = require('model/renderer');
 var Model = require('base/model');
+var DomState = require('domState');
 
 describe('model.renderer', function() {
-    var columnModel, dataModel, renderModel, dimensionModel;
+    var columnModel, dataModel, renderModel, focusModel, dimensionModel;
 
     function createRenderModel(attrs) {
         return new Renderer(attrs, {
             columnModel: columnModel,
             dataModel: dataModel,
+            focusModel: focusModel,
             dimensionModel: dimensionModel
         });
     }
@@ -25,6 +28,12 @@ describe('model.renderer', function() {
         dimensionModel = new Dimension(null, {
             dataModel: dataModel,
             columnModel: columnModel
+        });
+        focusModel = new Focus(null, {
+            domState: new DomState($('<div />')),
+            columnModel: columnModel,
+            dataModel: dataModel,
+            dimensionModel: dimensionModel
         });
     });
 

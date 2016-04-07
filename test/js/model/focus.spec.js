@@ -98,15 +98,15 @@ describe('model/focus', function() {
         });
     });
 
-    describe('when new data appended with focus:true option', function() {
-        it('focus to first cell of new added row', function() {
-            var newRows = focusModel.dataModel.append({}, {
-                focus: true
-            });
-            expect(focusModel.get('rowKey')).toBe(newRows[0].get('rowKey'));
-            expect(focusModel.get('columnName')).toBe('c1');
-        });
-    });
+    // describe('when new data appended with focus:true option', function() {
+    //     it('focus to first cell of new added row', function() {
+    //         var newRows = focusModel.dataModel.append({}, {
+    //             focus: true
+    //         });
+    //         expect(focusModel.get('rowKey')).toBe(newRows[0].get('rowKey'));
+    //         expect(focusModel.get('columnName')).toBe('c1');
+    //     });
+    // });
 
     describe('focus()', function() {
         beforeEach(function() {

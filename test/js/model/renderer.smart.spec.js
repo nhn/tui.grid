@@ -3,7 +3,9 @@
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
+var Focus = require('model/focus');
 var SmartRenderer = require('model/renderer-smart');
+var DomState = require('domState');
 var util = require('common/util');
 
 describe('model.renderer', function() {
@@ -28,6 +30,7 @@ describe('model.renderer', function() {
         dataModel,
         renderer,
         dimensionModel,
+        focusModel,
         grid = {};
 
     (function setSampleRows() {
@@ -58,11 +61,18 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
+        focusModel = new Focus(null, {
+            domState: new DomState($('<div />')),
+            columnModel: columnModel,
+            dataModel: dataModel,
+            dimensionModel: dimensionModel
+        });
         dataModel.reset(rowList, {parse: true});
         renderer = new SmartRenderer(null, {
             dataModel: dataModel,
             columnModel: columnModel,
-            dimensionModel: dimensionModel
+            dimensionModel: dimensionModel,
+            focusModel: focusModel
         });
         renderer.refresh();
     });

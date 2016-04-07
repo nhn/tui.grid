@@ -60,9 +60,9 @@ describe('view.layout.body', function() {
             expect($cols.length).toBe(2);
 
             expect($cols.eq(0).width()).toBe(30 - extraWidth);
-            expect($cols.eq(0).attr('columnname')).toBe('c1');
+            expect($cols.eq(0).attr('data-column-name')).toBe('c1');
             expect($cols.eq(1).width()).toBe(40 - extraWidth);
-            expect($cols.eq(1).attr('columnname')).toBe('c2');
+            expect($cols.eq(1).attr('data-column-name')).toBe('c2');
         });
 
         it('View.RowList를 생성하고, render를 실행한다.', function() {
@@ -150,48 +150,24 @@ describe('view.layout.body', function() {
     });
 
     describe('_attachAllTableEventHandlers()', function() {
+        var textSpy = jasmine.createSpy('attachEventHandlers');
+        var normalSpy = jasmine.createSpy('attachEventHandlers');
+
         beforeEach(function() {
-            painterManager.rowPainter = {
-                getEventHandlerInfo: function() {
-                    return {
-                        focus: {
-                            selector: 'input',
-                            handler: 'focusHandler'
-                        }
-                    }
-                }
-            };
             painterManager.cellPainters = {
                 text: {
-                    getEventHandlerInfo: function() {
-                        return {
-                            blur: {
-                                selector: 'span',
-                                handler: 'blurHandler'
-                            }
-                        }
-                    }
+                    attachEventHandlers: textSpy
                 },
                 normal: {
-                    getEventHandlerInfo: function() {
-                        return {
-                            change: {
-                                selector: 'textarea',
-                                handler: 'changeHandler'
-                            }
-                        }
-                    }
+                    attachEventHandlers: normalSpy
                 }
             }
-            spyOn(bodyTable.$el, 'on');
         });
 
         it('Attach all event handlers in the rowPainter and cellPainters', function() {
             bodyTable._attachAllTableEventHandlers();
-            expect(bodyTable.$el.on.calls.count()).toBe(3);
-            expect(bodyTable.$el.on).toHaveBeenCalledWith('focus', 'tr input', 'focusHandler');
-            expect(bodyTable.$el.on).toHaveBeenCalledWith('blur', 'td[edit-type=text] span', 'blurHandler');
-            expect(bodyTable.$el.on).toHaveBeenCalledWith('change', 'td[edit-type=normal] textarea', 'changeHandler');
+            expect(textSpy).toHaveBeenCalledWith(bodyTable.$el, '');
+            expect(normalSpy).toHaveBeenCalledWith(bodyTable.$el, '');
         });
     });
 });

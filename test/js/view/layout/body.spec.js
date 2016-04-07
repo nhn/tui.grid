@@ -65,8 +65,8 @@ describe('view.layout.body', function() {
         beforeEach(function() {
             $tr = $(
                 '<tr key="2" style="height: 30px;">' +
-                    '<td columnname="c1" class="editable" edit-type="text-convertible" align="left">2-1</td>' +
-                    '<td columnname="c2" class="editable" edit-type="text-convertible" align="left">2-2</td>' +
+                    '<td data-column-name="c1" class="editable" edit-type="text" align="left">2-1</td>' +
+                    '<td data-column-name="c2" class="editable" edit-type="text" align="left">2-2</td>' +
                 '</tr>'
             );
 

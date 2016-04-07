@@ -4,6 +4,7 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var RowListModel = require('model/rowList');
 var RowModel = require('model/row');
+var FocusModel = require('model/focus');
 var Model = require('base/model');
 
 describe('model.rowList', function() {
@@ -34,7 +35,7 @@ describe('model.rowList', function() {
         }
     ];
 
-    var columnModel, dataModel, rowListModel;
+    var columnModel, dataModel, focusModel, rowListModel;
 
     beforeEach(function() {
         columnModel = new ColumnModelData({
@@ -43,6 +44,10 @@ describe('model.rowList', function() {
         });
         dataModel = new RowListData([], {
             columnModel: columnModel
+        });
+        focusModel = new FocusModel(null, {
+            columnModel: columnModel,
+            dataModel: dataModel
         });
     });
 
@@ -75,14 +80,15 @@ describe('model.rowList', function() {
                 model = new RowModel(null, {
                     collection: {
                         columnModel: columnModel,
-                        dataModel: dataModel
+                        dataModel: dataModel,
+                        focusModel: focusModel
                     }
                 });
             });
 
             it('sorting 되어있지 않은 경우에는 rowSpan 정보를 잘 저장한다.', function() {
                 var dataList = dataModel.toJSON(),
-                    formatted = model._formatData(dataList[0], dataModel, columnModel);
+                    formatted = model._formatData(dataList[0], dataModel, columnModel, focusModel);
 
                 expect(formatted.columnName1).toEqual({
                     rowKey: 0,
@@ -97,7 +103,7 @@ describe('model.rowList', function() {
                     className: '',
                     changed: []
                 });
-                formatted = model._formatData(dataList[1], dataModel, columnModel);
+                formatted = model._formatData(dataList[1], dataModel, columnModel, focusModel);
                 expect(formatted.columnName1).toEqual({
                     rowKey: 1,
                     columnName: 'columnName1',
@@ -159,7 +165,8 @@ describe('model.rowList', function() {
                     model = new RowModel(null, {
                         collection: {
                             columnModel: columnModel,
-                            dataModel: dataModel
+                            dataModel: dataModel,
+                            focusModel: focusModel
                         }
                     }),
                     dataList,

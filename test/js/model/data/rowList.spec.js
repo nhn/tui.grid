@@ -298,32 +298,8 @@ describe('data.rowList', function() {
     });
 
     describe('Model 테스트', function() {
-        describe('getHTMLEncodedString()', function() {
-            var testString, sampleList;
-
-            beforeEach(function() {
-                testString = 'test <script>alert("test");</script>&nbsp; string';
-                sampleList = [{
-                    'notUseHtmlEntity': testString,
-                    'none': testString
-                }];
-                dataModelInstance.set(sampleList, {parse: true});
-            });
-
-            it('일반적인 경우 - columnModel 에 notUseHtmlEntity 설정이 없음', function() {
-                var result = dataModelInstance.at(0).getHTMLEncodedString('none'),
-                    expectResult = 'test &lt;script&gt;alert(&quot;test&quot;);&lt;/script&gt;&amp;nbsp; string';
-                expect(result).toEqual(expectResult);
-            });
-
-            it('columnModel 에 notUseHtmlEntity 활성화', function() {
-                var result = dataModelInstance.at(0).getHTMLEncodedString('notUseHtmlEntity');
-                expect(result).toEqual(testString);
-            });
-        });
-
         describe('_getListTypeVisibleText()', function() {
-            it('List Type 의 경우 columnModel 의 editOptionList 에 정의된 Text 를 반환한다.', function() {
+            it('List Type 의 경우 columnModel 의 editOptionList 에 정의된 Value를 반환한다.', function() {
                 var sampleList = [{
                         'select': 1,
                         'radio': 2,
@@ -334,9 +310,9 @@ describe('data.rowList', function() {
                 dataModelInstance.set(sampleList, {parse: true});
                 row = dataModelInstance.at(0);
 
-                expect(row._getListTypeVisibleText('select')).toBe('text1');
-                expect(row._getListTypeVisibleText('radio')).toBe('text2');
-                expect(row._getListTypeVisibleText('checkbox')).toBe('text1,text2,text3');
+                expect(row._getListTypeVisibleText('select')).toBe('1');
+                expect(row._getListTypeVisibleText('radio')).toBe('2');
+                expect(row._getListTypeVisibleText('checkbox')).toBe('1,2,3');
                 expect(row._getListTypeVisibleText('none')).toBe('');
             });
 
@@ -353,10 +329,10 @@ describe('data.rowList', function() {
                 dataModelInstance.set(sampleList, {parse: true});
                 row = dataModelInstance.at(0);
 
-                expect(row._getListTypeVisibleText('select')).toBe('하나');
-                expect(row._getListTypeVisibleText('radio')).toBe('둘');
-                expect(row._getListTypeVisibleText('checkbox')).toBe('하나,둘,셋');
-                expect(row._getListTypeVisibleText('radioNoRelation')).toBe('text2');
+                expect(row._getListTypeVisibleText('select')).toBe('1');
+                expect(row._getListTypeVisibleText('radio')).toBe('2');
+                expect(row._getListTypeVisibleText('checkbox')).toBe('1,2,3');
+                expect(row._getListTypeVisibleText('radioNoRelation')).toBe('2');
             });
         });
 
@@ -391,30 +367,30 @@ describe('data.rowList', function() {
                 dataModelInstance.set(sampleList, {parse: true});
                 row = dataModelInstance.at(0);
 
-                expect(row.getVisibleText('none')).toBe('nope');
-                expect(row.getVisibleText('hasFormatter')).toBe('<script>alert("test");</script> click');
-                expect(row.getVisibleText('notUseHtmlEntity')).toBe('<html></html>');
-                expect(row.getVisibleText('relationList')).toBe('false');
-                expect(row.getVisibleText('text')).toBe('text');
-                expect(row.getVisibleText('text-convertible')).toBe('convertible-text');
-                expect(row.getVisibleText('select')).toBe('text1');
-                expect(row.getVisibleText('radio')).toBe('text2');
-                expect(row.getVisibleText('checkbox')).toBe('text1,text2,text3');
-                expect(row.getVisibleText('radioNoRelation')).toBe('text2');
-                expect(row.getVisibleText('hidden')).toBe('1');
+                expect(row.getValueString('none')).toBe('nope');
+                expect(row.getValueString('hasFormatter')).toBe('<script>alert("test");</script>');
+                expect(row.getValueString('notUseHtmlEntity')).toBe('<html></html>');
+                expect(row.getValueString('relationList')).toBe('false');
+                expect(row.getValueString('text')).toBe('text');
+                expect(row.getValueString('text-convertible')).toBe('convertible-text');
+                expect(row.getValueString('select')).toBe('1');
+                expect(row.getValueString('radio')).toBe('2');
+                expect(row.getValueString('checkbox')).toBe('1,2,3');
+                expect(row.getValueString('radioNoRelation')).toBe('2');
+                expect(row.getValueString('hidden')).toBe('1');
 
                 row = dataModelInstance.at(1);
-                expect(row.getVisibleText('none')).toBe('nope');
-                expect(row.getVisibleText('hasFormatter')).toBe('<script>alert("test");</script> click');
-                expect(row.getVisibleText('notUseHtmlEntity')).toBe('<html></html>');
-                expect(row.getVisibleText('relationList')).toBe('true');
-                expect(row.getVisibleText('text')).toBe('text');
-                expect(row.getVisibleText('text-convertible')).toBe('convertible-text');
-                expect(row.getVisibleText('select')).toBe('하나');
-                expect(row.getVisibleText('radio')).toBe('둘');
-                expect(row.getVisibleText('checkbox')).toBe('하나,둘,셋');
-                expect(row.getVisibleText('radioNoRelation')).toBe('text2');
-                expect(row.getVisibleText('hidden')).toBe('1');
+                expect(row.getValueString('none')).toBe('nope');
+                expect(row.getValueString('hasFormatter')).toBe('<script>alert("test");</script>');
+                expect(row.getValueString('notUseHtmlEntity')).toBe('<html></html>');
+                expect(row.getValueString('relationList')).toBe('true');
+                expect(row.getValueString('text')).toBe('text');
+                expect(row.getValueString('text-convertible')).toBe('convertible-text');
+                expect(row.getValueString('select')).toBe('1');
+                expect(row.getValueString('radio')).toBe('2');
+                expect(row.getValueString('checkbox')).toBe('1,2,3');
+                expect(row.getValueString('radioNoRelation')).toBe('2');
+                expect(row.getValueString('hidden')).toBe('1');
             });
         });
 
@@ -471,13 +447,13 @@ describe('data.rowList', function() {
                 expect(row0.getClassNameList('relationList').length).toEqual(2);
                 expect(row0.getClassNameList('relationList')).toContain('rowClass0');
                 expect(row0.getClassNameList('relationList')).toContain('rowClass1');
-                expect(row0.getClassNameList('text').length).toEqual(2);
+                expect(row0.getClassNameList('text').length).toEqual(3);
                 expect(row0.getClassNameList('text')).toContain('rowClass0');
                 expect(row0.getClassNameList('text')).toContain('rowClass1');
 
                 expect(row1.getClassNameList('relationList').length).toEqual(1);
                 expect(row1.getClassNameList('relationList')).toContain('relationClass1');
-                expect(row1.getClassNameList('text').length).toEqual(2);
+                expect(row1.getClassNameList('text').length).toEqual(3);
                 expect(row1.getClassNameList('text')).toContain('textClass1');
                 expect(row1.getClassNameList('text')).toContain('textClass2');
 
@@ -485,13 +461,13 @@ describe('data.rowList', function() {
                 expect(row2.getClassNameList('relationList')).toContain('rowClass0');
                 expect(row2.getClassNameList('relationList')).toContain('relationClass1');
 
-                expect(row2.getClassNameList('text').length).toEqual(3);
+                expect(row2.getClassNameList('text').length).toEqual(4);
                 expect(row2.getClassNameList('text')).toContain('rowClass0');
                 expect(row2.getClassNameList('text')).toContain('textClass1');
                 expect(row2.getClassNameList('text')).toContain('textClass2');
 
                 expect(row3.getClassNameList('relationList').length).toEqual(0);
-                expect(row3.getClassNameList('text').length).toEqual(0);
+                expect(row3.getClassNameList('text').length).toEqual(1);
             });
         });
 

@@ -51,8 +51,8 @@ describe('ResizeHandler', function() {
         });
 
         it('resize handler div 리스트를 잘 생성하는지 확인한다.', function() {
-            expect($handles.eq(0).attr('columnName')).toBe('c1');
-            expect($handles.eq(1).attr('columnName')).toBe('c2');
+            expect($handles.eq(0).attr('data-column-name')).toBe('c1');
+            expect($handles.eq(1).attr('data-column-name')).toBe('c2');
             expect($handles.length).toBe(2);
         });
 

@@ -268,7 +268,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             isDisabled = isDisabled || !!(relationResult && relationResult.isDisabled);
         }
 
-        if (_.contains(editType, notEditableTypeList)) {
+        if (_.contains(notEditableTypeList, editType)) {
             isEditable = false;
         } else {
             isEditable = !(relationResult && relationResult.isEditable === false);

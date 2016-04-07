@@ -2,6 +2,7 @@
 
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
+var Focus = require('model/focus');
 var Dimension = require('model/dimension');
 var Renderer = require('model/renderer');
 var Model = require('base/model');
@@ -123,7 +124,7 @@ describe('model.renderer', function() {
         }
     ];
 
-    var columnModel, dataModel, renderModel, dimensionModel, rowList;
+    var columnModel, dataModel, renderModel, focusModel, dimensionModel, rowList;
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalRowList);
@@ -140,9 +141,15 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
+        focusModel = new Focus(null, {
+            dataModel: dataModel,
+            columnModel: columnModel,
+            dimensionModel: dimensionModel
+        });
         renderModel = new Renderer(null, {
             columnModel: columnModel,
             dataModel: dataModel,
+            focusModel: focusModel,
             dimensionModel: dimensionModel
         });
     });
@@ -300,7 +307,8 @@ describe('model.renderer', function() {
                 renderModel = new Renderer(null, {
                     dataModel: dataModel,
                     columnModel: columnModel,
-                    dimensionModel: dimensionModel
+                    dimensionModel: dimensionModel,
+                    focusModel: focusModel
                 });
                 listenModel.listenTo(renderModel, 'rowListChanged', callback);
                 dataModel.set([], {parse: true});
@@ -316,7 +324,8 @@ describe('model.renderer', function() {
                 renderModel = new Renderer(null, {
                     dataModel: dataModel,
                     columnModel: columnModel,
-                    dimensionModel: dimensionModel
+                    dimensionModel: dimensionModel,
+                    focusModel: focusModel
                 });
                 listenModel.listenTo(renderModel, 'columnModelChanged', callback);
                 columnModel.set({

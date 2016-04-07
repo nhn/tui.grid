@@ -61,8 +61,8 @@ describe('RowData', function() {
             });
             row.addClassName('myClass');
 
-            expect(row.getClassNameList('c1')).toEqual(['myClass']);
-            expect(row.getClassNameList('c2')).toEqual(['myClass']);
+            expect(_.contains(row.getClassNameList('c1'), 'myClass')).toBe(true);
+            expect(_.contains(row.getClassNameList('c2'), 'myClass')).toBe(true);
         });
     });
 
