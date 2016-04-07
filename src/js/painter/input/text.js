@@ -6,7 +6,6 @@
 
 var InputPainter = require('./base');
 var util = require('../../common/util');
-var formUtil = require('../../common/formUtil');
 
 /**
  * Painter class for the 'input[type=text]' and 'input[type=password]'
@@ -113,8 +112,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/ce
     focus: function($parent) {
         var $input = $parent.find(this.selector);
 
-        if ($input.length === 1) {
-            formUtil.setCursorToEnd($input.get(0));
+        if ($input.length === 1 && !$input.is(':focus')) {
             $input.select();
         }
     }
