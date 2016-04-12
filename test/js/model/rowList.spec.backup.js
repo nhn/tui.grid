@@ -62,6 +62,7 @@ describe('model.rowList', function() {
 
         describe('rowSpan 에 따른 동작을 확인한다.', function() {
             var rowList, model;
+
             beforeEach(function() {
                 rowList = [
                     {

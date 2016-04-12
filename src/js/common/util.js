@@ -73,7 +73,7 @@ var util = {
     },
 
     /**
-     * Returns the count of rows based on table height and row height.
+     * Returns the total number of rows by using the table height and row height.
      * @memberof module:util
      * @param {number} tableHeight - table height
      * @param {number} rowHeight - individual row height
@@ -84,7 +84,7 @@ var util = {
     },
 
     /**
-     * Returns the individual height of a row bsaed on the count of rows and table height.
+     * Returns the individual height of a row bsaed on the total number of rows and table height.
      * @memberof module:util
      * @param {number} rowCount - row count
      * @param {number} tableHeight - table height

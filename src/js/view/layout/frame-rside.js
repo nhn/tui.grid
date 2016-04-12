@@ -46,8 +46,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             width = dimensionModel.get('rsideWidth'),
             marginLeft = dimensionModel.get('lsideWidth');
 
-        // If left side exists and the division border should not be doubled,
-        // right side should be covered border-width by left side to hide left border of the right side.
+        // If the left side exists and the division border should not be doubled,
+        // left side should cover the right side by border-width to hide the left border of the right side.
         if (marginLeft > 0 && !dimensionModel.isDivisionBorderDoubled()) {
             width += CELL_BORDER_WIDTH;
             marginLeft -= CELL_BORDER_WIDTH;
