@@ -43,7 +43,8 @@ module.exports = {
         TABLE_BORDER_WIDTH: 1
     },
     attrName: {
+        ROW_KEY: 'data-row-key',
         COLUMN_NAME: 'data-column-name',
-        ROW_KEY: 'data-row-key'
+        EDIT_TYPE: 'data-edit-type'
     }
 };

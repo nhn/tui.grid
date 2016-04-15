@@ -68,7 +68,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * <th> 템플릿
      */
     templateHeader: _.template(
-        '<th <%=columnNameAttrName%>="<%=columnName%>" ' +
+        '<th <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'height="<%=height%>" ' +
             '<%if(colspan > 0) {%>' +
@@ -87,7 +87,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     templateCol: _.template(
         '<col ' +
-            '<%=columnNameAttrName%>="<%=columnName%>" ' +
+            '<%=attrColumnName%>="<%=columnName%>" ' +
             'style="width:<%=width%>px">'
     ),
 
@@ -109,7 +109,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         _.each(columnWidthList, function(width, index) {
             htmlList.push(this.templateCol({
-                columnNameAttrName: ATTR_COLUMN_NAME,
+                attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModelList[index].columnName,
                 width: width
             }));
@@ -512,7 +512,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 columnNameList[j] = columnName;
                 rowMarkupList[j] = rowMarkupList[j] || [];
                 rowMarkupList[j].push(this.templateHeader({
-                    columnNameAttrName: ATTR_COLUMN_NAME,
+                    attrColumnName: ATTR_COLUMN_NAME,
                     columnName: columnName,
                     className: columnModel.isRequired ? 'required' : '',
                     height: height,

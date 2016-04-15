@@ -163,7 +163,7 @@ describe('view.layout.body', function() {
                 normal: {
                     attachEventHandlers: normalSpy
                 }
-            }
+            };
         });
 
         it('Attach all event handlers in the rowPainter and cellPainters', function() {

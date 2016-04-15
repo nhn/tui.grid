@@ -64,12 +64,18 @@ describe('view.layout.body', function() {
         var $tr, eventMock;
 
         beforeEach(function() {
+            var $tds;
+
             $tr = $(
-                '<tr ' + attrNameMap.ROW_KEY + '="2" style="height: 30px;">' +
-                    '<td ' + attrNameMap.COLUMN_NAME + '="c1" class="editable" edit-type="text" align="left">2-1</td>' +
-                    '<td ' + attrNameMap.COLUMN_NAME + '="c2" class="editable" edit-type="text" align="left">2-2</td>' +
+                '<tr style="height: 30px;">' +
+                    '<td class="editable" align="left">2-1</td>' +
+                    '<td class="editable" align="left">2-2</td>' +
                 '</tr>'
             );
+            $tr.attr(attrNameMap.ROW_KEY, '2');
+            $tds = $tr.find('td').attr(attrNameMap.EDIT_TYPE, 'text');
+            $tds.eq(0).attr(attrNameMap.COLUMN_NAME, 'c1');
+            $tds.eq(1).attr(attrNameMap.COLUMN_NAME, 'c2');
 
             eventMock = {
                 pageX: 0,

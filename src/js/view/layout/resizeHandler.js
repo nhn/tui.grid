@@ -44,7 +44,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
-        '<%=columnNameAttrName%>="<%=columnName%>" ' +
+        '<%=attrColumnName%>="<%=columnName%>" ' +
         'class="resize_handle' +
         '<% if(isLast === true) ' +
         ' print(" resize_handle_last");%>' +
@@ -84,7 +84,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
-                columnNameAttrName: ATTR_COLUMN_NAME,
+                attrColumnName: ATTR_COLUMN_NAME,
                 columnIndex: index,
                 columnName: columnModel.columnName,
                 isLast: index + 1 === length,

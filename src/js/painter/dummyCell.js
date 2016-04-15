@@ -33,16 +33,16 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
-    selector: 'td[edit-type=dummy]',
+    selector: 'td[' + attrNameMap.EDIT_TYPE + '=dummy]',
 
     /**
      * Template function
      * @returns {String} HTML string
      */
     template: _.template(
-        '<td <%=columnNameAttrName%>="<%=columnName%>" ' +
+        '<td <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
-            'edit-type="dummy">' +
+            '<%=attrEditType%>="dummy">' +
             '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
@@ -65,7 +65,8 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
         var isMeta = util.isMetaColumn(columnName);
 
         return this.template({
-            columnNameAttrName: attrNameMap.COLUMN_NAME,
+            attrColumnName: attrNameMap.COLUMN_NAME,
+            attrEditType: attrNameMap.EDIT_TYPE,
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'
         });

@@ -54,7 +54,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         '</table>'),
 
     templateCol: _.template(
-        '<col <%=columnNameAttrName%>="<%=columnName%>" style="width:<%=width%>px">'
+        '<col <%=attrColumnName%>="<%=columnName%>" style="width:<%=width%>px">'
     ),
 
     /**
@@ -178,7 +178,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
         _.each(columnModelList, function(columnModel, index) {
             html += this.templateCol({
-                columnNameAttrName: ATTR_COLUMN_NAME,
+                attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModel.columnName,
                 width: columnWidthList[index] - BodyTable.EXTRA_WIDTH
             });

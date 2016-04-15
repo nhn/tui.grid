@@ -23,7 +23,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
-        this.selector = 'td[edit-type=' + this.editType + ']';
+        this.selector = 'td[' + attrNameMap.EDIT_TYPE + '=' + this.editType + ']';
     },
 
     /**
@@ -132,10 +132,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     _getAttributes: function(cellData) {
         var attrs = {
             'class': cellData.className + ' cell_content',
-            'edit-type': this.editType,
             'align': cellData.columnModel.align || 'left'
         };
 
+        attrs[attrNameMap.EDIT_TYPE] = this.editType;
         attrs[attrNameMap.ROW_KEY] = cellData.rowKey;
         attrs[attrNameMap.COLUMN_NAME] = cellData.columnName;
         if (cellData.rowSpan) {
