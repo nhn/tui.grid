@@ -24,7 +24,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      * @returns {jQuery} Cell(TD) element
      */
     getElement: function(rowKey, columnName) {
-        return this.$el.find('tr[key="' + rowKey + '"]').find('td[data-column-name=' + columnName + ']');
+        return this.$el.find('tr[data-row-key="' + rowKey + '"]').find('td[data-column-name=' + columnName + ']');
     },
 
     /**

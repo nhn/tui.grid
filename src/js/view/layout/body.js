@@ -138,7 +138,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
             columnName = $td.attr('data-column-name'),
-            rowKey = $tr.attr('key'),
+            rowKey = $tr.attr('data-row-key'),
             startAction = true,
             inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
             indexData;

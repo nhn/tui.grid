@@ -4,12 +4,12 @@
  */
 'use strict';
 
-var View = require('../base/view'),
-    util = require('../common/util');
+var View = require('../base/view');
+var util = require('../common/util');
 
-var CLASSNAME_SELECTED = 'selected',
-    CLASSNAME_FOCUSED_ROW = 'focused_row',
-    SELECTOR_META_CELL = 'td.meta_column';
+var CLASSNAME_SELECTED = 'selected';
+var CLASSNAME_FOCUSED_ROW = 'focused_row';
+var SELECTOR_META_CELL = 'td.meta_column';
 
 /**
  * RowList View
@@ -137,7 +137,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _getRowElement: function(rowKey) {
-        return this.$el.find('tr[key="' + rowKey + '"]');
+        return this.$el.find('tr[data-row-key="' + rowKey + '"]');
     },
 
     /**
@@ -277,10 +277,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onModelRestore: function(cellData) {
-        var $td = this.dataModel.getElement(cellData.rowKey, cellData.columnName),
-            editType = this.columnModel.getEditType(cellData.columnName);
+        var $td = this.dataModel.getElement(cellData.rowKey, cellData.columnName);
+        var editType = this.columnModel.getEditType(cellData.columnName);
 
-        this.painterManager.getCellPainter(editType).redraw(cellData, $td);
+        this.painterManager.getCellPainter(editType).refresh(cellData, $td);
     }
 }, {
     /**

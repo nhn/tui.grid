@@ -187,7 +187,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr('data-column-name') && $cell.parent().attr('key'));
+        return !!($cell.is('td') && $cell.attr('data-column-name') && $cell.parent().attr('data-row-key'));
     },
 
     /**

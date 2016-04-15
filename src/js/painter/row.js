@@ -34,7 +34,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      */
     template: _.template(
         '<tr ' +
-        'key="<%=key%>" ' +
+        'data-row-key="<%=key%>" ' +
         'class="<%=className%>" ' +
         'style="height: <%=height%>px;">' +
         '<%=contents%>' +
