@@ -6,6 +6,7 @@
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Painter class for the row(TR) views
@@ -34,7 +35,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      */
     template: _.template(
         '<tr ' +
-        'data-row-key="<%=key%>" ' +
+        '<%=rowKeyAttrName%>="<%=rowKey%>" ' +
         'class="<%=className%>" ' +
         'style="height: <%=height%>px;">' +
         '<%=contents%>' +
@@ -113,7 +114,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         }
 
         return this.template({
-            key: rowKey,
+            rowKeyAttrName: attrNameMap.ROW_KEY,
+            rowKey: rowKey,
             height: model.get('height') + RowPainter._extraHeight,
             contents: html,
             className: ''
@@ -130,7 +132,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
-                $td = $tr.find('td[data-column-name=' + columnName + ']');
+                $td = $tr.find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 cellPainter.refresh(cellData, $td);

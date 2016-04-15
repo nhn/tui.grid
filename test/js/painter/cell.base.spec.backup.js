@@ -2,7 +2,9 @@
 
 var ModelManager = require('model/manager');
 var CellPainter = require('painter/cell');
-var keyCodeMap = require('common/constMap').keyCode;
+var constMap = require('common/constMap');
+var keyCodeMap = constMap.keyCode;
+var attrNameMap = constMap.attrName;
 
 describe('view.painter.cell.base', function() {
     var grid, cellPainter;
@@ -182,8 +184,8 @@ describe('view.painter.cell.base', function() {
 
         beforeEach(function() {
             var html;
-            //tr 은 Row Painter 에서 생성해주기 때문에 해당 test case 에서는 문자열로 넣어준다.
-            html = '<tr key="0">';
+
+            html = '<tr ' + attrNameMap.ROW_KEY + '="0">';
             html += cellPainter.getHtml({
                 columnName: 'c1',
                 rowKey: 0,
@@ -353,11 +355,11 @@ describe('view.painter.cell.base', function() {
     });
 
     describe('focusOut()', function() {
-       it('this.grid.focusClipboard 를 수행하는지 확인한다.', function() {
-           grid.focusModel.focusClipboard = jasmine.createSpy('focusClipboard');
-           cellPainter.focusOut();
-           expect(grid.focusModel.focusClipboard).toHaveBeenCalled();
-       });
+        it('this.grid.focusClipboard 를 수행하는지 확인한다.', function() {
+            grid.focusModel.focusClipboard = jasmine.createSpy('focusClipboard');
+            cellPainter.focusOut();
+            expect(grid.focusModel.focusClipboard).toHaveBeenCalled();
+        });
     });
 
     describe('onModelChange()', function() {
@@ -369,7 +371,7 @@ describe('view.painter.cell.base', function() {
             cellPainter.redraw = jasmine.createSpy('redraw');
             cellPainter.setElementAttribute = jasmine.createSpy('setElementAttribute');
             //tr 은 Row Painter 에서 생성해주기 때문에 해당 test case 에서는 문자열로 넣어준다.
-            html = '<tr key="0">';
+            html = '<tr ' + attrNameMap.ROW_KEY + '="0">';
             html += cellPainter.getHtml({
                 columnName: 'c1',
                 rowKey: 0,

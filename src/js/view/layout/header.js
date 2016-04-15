@@ -4,11 +4,12 @@
  */
 'use strict';
 
-var View = require('../../base/view'),
-    util = require('../../common/util');
+var View = require('../../base/view');
+var util = require('../../common/util');
 
-var CLASSNAME_SELECTED = 'selected',
-    DELAY_SYNC_CHECK = 10;
+var CLASSNAME_SELECTED = 'selected';
+var DELAY_SYNC_CHECK = 10;
+var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
 
 /**
  * Header 레이아웃 View
@@ -50,7 +51,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     events: {
         'click': '_onClick',
-        'mousedown th[columnName]': '_onMouseDown'
+        'mousedown th': '_onMouseDown'
     },
 
     /**
@@ -67,7 +68,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * <th> 템플릿
      */
     templateHeader: _.template(
-        '<th data-column-name="<%=columnName%>" ' +
+        '<th <%=columnNameAttrName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'height="<%=height%>" ' +
             '<%if(colspan > 0) {%>' +
@@ -86,7 +87,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     templateCol: _.template(
         '<col ' +
-            'data-column-name="<%=columnName%>" ' +
+            '<%=columnNameAttrName%>="<%=columnName%>" ' +
             'style="width:<%=width%>px">'
     ),
 
@@ -108,6 +109,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         _.each(columnWidthList, function(width, index) {
             htmlList.push(this.templateCol({
+                columnNameAttrName: ATTR_COLUMN_NAME,
                 columnName: columnModelList[index].columnName,
                 width: width
             }));
@@ -164,7 +166,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[data-column-name=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(CLASSNAME_SELECTED);
             });
         }
     },
@@ -181,7 +183,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             return;
         }
 
-        columnName = $(event.target).closest('th').attr('columnName');
+        columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
+        if (!columnName) {
+            return;
+        }
+
         columnNames = this.columnModel.getUnitColumnNamesIfMerged(columnName);
 
         if (!this._hasMetaColumn(columnNames)) {
@@ -273,7 +279,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onMouseMove: function(event) {
         var columnModel = this.columnModel,
             isExtending = true,
-            columnName = $(event.target).closest('th').attr('columnName'),
+            columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME),
             columnNames, columnIndexes;
 
         if (columnName) {
@@ -330,7 +336,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getHeaderMainCheckbox: function() {
-        return this.$el.find('th[data-column-name="_button"] input');
+        return this.$el.find('th[' + ATTR_COLUMN_NAME + '=_button] input');
     },
 
     /**
@@ -394,7 +400,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onClick: function(clickEvent) {
         var $target = $(clickEvent.target),
-            columnName = $target.closest('th').attr('data-column-name');
+            columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
 
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
@@ -419,7 +425,9 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (this._$currentSortBtn) {
             this._$currentSortBtn.removeClass('sorting_down sorting_up');
         }
-        this._$currentSortBtn = this.$el.find('th[data-column-name=' + sortOptions.columnName + '] a.btn_sorting');
+        this._$currentSortBtn = this.$el.find(
+            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.btn_sorting'
+        );
         this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
     },
 
@@ -504,6 +512,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 columnNameList[j] = columnName;
                 rowMarkupList[j] = rowMarkupList[j] || [];
                 rowMarkupList[j].push(this.templateHeader({
+                    columnNameAttrName: ATTR_COLUMN_NAME,
                     columnName: columnName,
                     className: columnModel.isRequired ? 'required' : '',
                     height: height,

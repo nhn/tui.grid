@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var attrNameMap = require('../common/constMap').attrName;
+
 /**
  * Base class for Painters
  * The Painter class is implentation of 'flyweight' pattern for the View class.
@@ -39,11 +41,11 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * @private
      */
     _getCellAddress: function($target) {
-        var $addressHolder = $target.closest('[data-row-key]');
+        var $addressHolder = $target.closest('[' + attrNameMap.ROW_KEY + ']');
 
         return {
-            rowKey: $addressHolder.attr('data-row-key'),
-            columnName: $addressHolder.attr('data-column-name')
+            rowKey: $addressHolder.attr(attrNameMap.ROW_KEY),
+            columnName: $addressHolder.attr(attrNameMap.COLUMN_NAME)
         };
     },
 

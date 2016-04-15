@@ -268,7 +268,7 @@ describe('view.painter.cell.normal', function() {
                         c2: '0-2'
                     }
                 ], {parse: true});
-                $table = $('<table><tr key=0><td></td></tr></table>');
+                $table = $('<table><tr data-row-key=0><td></td></tr></table>');
                 $button = $(cellPainter.getContentHtml({}));
                 $table.find('td').append($button);
             });

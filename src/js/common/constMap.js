@@ -41,5 +41,9 @@ module.exports = {
     dimension: {
         CELL_BORDER_WIDTH: 1,
         TABLE_BORDER_WIDTH: 1
+    },
+    attrName: {
+        COLUMN_NAME: 'data-column-name',
+        ROW_KEY: 'data-row-key'
     }
 };

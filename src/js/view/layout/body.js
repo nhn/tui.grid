@@ -4,8 +4,10 @@
  */
 'use strict';
 
-var View = require('../../base/view'),
-    util = require('../../common/util');
+var View = require('../../base/view');
+var util = require('../../common/util');
+var attrNameMap = require('../../common/constMap').attrName;
+
 
 var HTML_CONTAINER = '<div class="body_container"></div>',
 
@@ -137,8 +139,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $target = $(event.target),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
-            columnName = $td.attr('data-column-name'),
-            rowKey = $tr.attr('data-row-key'),
+            columnName = $td.attr(attrNameMap.COLUMN_NAME),
+            rowKey = $tr.attr(attrNameMap.ROW_KEY),
             startAction = true,
             inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
             indexData;

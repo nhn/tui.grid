@@ -6,6 +6,7 @@ var PainterManager = require('painter/manager');
 var ViewFactory = require('view/factory');
 var SelectionLayerView = require('view/selectionLayer');
 var BodyTableView = require('view/layout/bodyTable');
+var attrNameMap = require('common/constMap').attrName;
 
 describe('view.layout.body', function() {
     var modelManager, body;
@@ -64,9 +65,9 @@ describe('view.layout.body', function() {
 
         beforeEach(function() {
             $tr = $(
-                '<tr key="2" style="height: 30px;">' +
-                    '<td data-column-name="c1" class="editable" edit-type="text" align="left">2-1</td>' +
-                    '<td data-column-name="c2" class="editable" edit-type="text" align="left">2-2</td>' +
+                '<tr ' + attrNameMap.ROW_KEY + '="2" style="height: 30px;">' +
+                    '<td ' + attrNameMap.COLUMN_NAME + '="c1" class="editable" edit-type="text" align="left">2-1</td>' +
+                    '<td ' + attrNameMap.COLUMN_NAME + '="c2" class="editable" edit-type="text" align="left">2-2</td>' +
                 '</tr>'
             );
 
@@ -141,7 +142,7 @@ describe('view.layout.body', function() {
                     shiftKey: false
                 };
                 isInput = false;
-                columnName = 'c2'
+                columnName = 'c2';
                 indexObj = {
                     row: 2,
                     column: 1
@@ -155,7 +156,8 @@ describe('view.layout.body', function() {
                 expect(selectionModel.end).toHaveBeenCalled();
             });
 
-            it('with shiftKey and target is an input element, it should focus the target cell and end the selection', function() {
+            it('with shiftKey and target is an input element, ' +
+                'it should focus the target cell and end the selection', function() {
                 selectionModel = modelManager.selectionModel;
                 inputData = {
                     pageX: 0,

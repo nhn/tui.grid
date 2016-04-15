@@ -6,9 +6,10 @@
 
 var View = require('../../base/view');
 var util = require('../../common/util');
-var dimensionConstMap = require('../../common/constMap').dimension;
+var constMap = require('../../common/constMap');
 
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
 /**
  * Class for the table layout in the body(data) area
@@ -51,6 +52,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         '   <colgroup><%=colGroup%></colgroup>' +
         '   <tbody><%=tbody%></tbody>' +
         '</table>'),
+
+    templateCol: _.template(
+        '<col <%=columnNameAttrName%>="<%=columnName%>" style="width:<%=width%>px">'
+    ),
 
     /**
      * Event handler for 'columnWidthChanged' event on a dimension model.
@@ -172,11 +177,13 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {
-            var name = columnModel.columnName,
-                width = columnWidthList[index] - BodyTable.EXTRA_WIDTH;
+            html += this.templateCol({
+                columnNameAttrName: ATTR_COLUMN_NAME,
+                columnName: columnModel.columnName,
+                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH
+            });
+        }, this);
 
-            html += '<col data-column-name="' + name + '" style="width:' + width + 'px">';
-        });
         return html;
     }
 }, {

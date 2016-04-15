@@ -6,6 +6,8 @@ var DimensionModel = require('model/dimension');
 var ResizeHandler = require('view/layout/resizeHandler');
 var DomState = require('domState');
 
+var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
+
 describe('ResizeHandler', function() {
     var columnModel, dimensionModel, handler, $handles;
 
@@ -51,8 +53,8 @@ describe('ResizeHandler', function() {
         });
 
         it('resize handler div 리스트를 잘 생성하는지 확인한다.', function() {
-            expect($handles.eq(0).attr('data-column-name')).toBe('c1');
-            expect($handles.eq(1).attr('data-column-name')).toBe('c2');
+            expect($handles.eq(0).attr(ATTR_COLUMN_NAME)).toBe('c1');
+            expect($handles.eq(1).attr(ATTR_COLUMN_NAME)).toBe('c2');
             expect($handles.length).toBe(2);
         });
 

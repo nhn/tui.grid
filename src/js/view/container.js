@@ -4,8 +4,9 @@
  */
 'use strict';
 
-var View = require('../base/view'),
-    GridEvent = require('../common/gridEvent');
+var View = require('../base/view');
+var GridEvent = require('../common/gridEvent');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Container View
@@ -187,7 +188,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr('data-column-name') && $cell.parent().attr('data-row-key'));
+        return !!($cell.is('td') && $cell.attr(attrNameMap.COLUMN_NAME) && $cell.parent().attr(attrNameMap.ROW_KEY));
     },
 
     /**
@@ -197,8 +198,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.attr('data-row-key'));
-        var columnName = $cell.attr('data-column-name');
+        var rowKey = Number($cell.attr(attrNameMap.ROW_KEY));
+        var columnName = $cell.attr(attrNameMap.COLUMN_NAME);
 
         return {
             rowKey: rowKey,

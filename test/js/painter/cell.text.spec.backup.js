@@ -157,7 +157,7 @@ describe('view.painter.cell.text', function() {
             var $table, $input;
 
             beforeEach(function() {
-                $table = $('<table><tr key="0"><td columnname="c1"></td></tr></table>');
+                $table = $('<table><tr data-row-key="0"><td columnname="c1"></td></tr></table>');
                 $input = $(cellPainter.getContentHtml(options)).appendTo($table.find('td'));
                 cellPainter._onFocus({target: $input.get(0)});
             });
@@ -271,7 +271,7 @@ describe('view.painter.cell.text', function() {
             var html, $table, $td, $input;
 
             beforeEach(function() {
-                $table = $('<table><tr key="0"></tr></table>');
+                $table = $('<table><tr data-row-key="0"></tr></table>');
                 $td = $('<td />').attr('columnname', 'c1');
                 $table.find('tr').append($td);
             });
@@ -319,7 +319,7 @@ describe('view.painter.cell.text', function() {
             beforeEach(function() {
                 options.isDisabled = true;
                 html = cellPainter.getContentHtml(options);
-                $table = $('<table><tr key="0"><td></td></tr></table>');
+                $table = $('<table><tr data-row-key="0"><td></td></tr></table>');
                 $td = $table.find('td').html(html).attr('columnname', 'c1');
 
                 cellPainter._startEdit($td);
@@ -346,12 +346,12 @@ describe('view.painter.cell.text', function() {
         });
 
         describe('_endEditingCell', function() {
-            var html, $table, $td, $input;
+            var $table, $td, $input;
 
             beforeEach(function() {
                 var $wrapper = setFixtures('<div />');
                 options.isDisabled = true;
-                $table = $('<table><tr key="0"><td></td></tr></table>');
+                $table = $('<table><tr data-row-key="0"><td></td></tr></table>');
                 $td = $table.find('td').attr('columnname', 'c1');
                 $wrapper.append($table);
                 cellPainter._startEdit($td);
@@ -367,7 +367,7 @@ describe('view.painter.cell.text', function() {
             var $table, $input;
 
             beforeEach(function() {
-                $table = $('<table><tr key="0"><td columnname="c1"></td></tr></table>');
+                $table = $('<table><tr data-row-key="0"><td columnname="c1"></td></tr></table>');
                 $input = $(cellPainter.getContentHtml(options)).appendTo($table.find('td'));
                 cellPainter._onFocus({target: $input.get(0)});
                 jasmine.clock().install();

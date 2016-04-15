@@ -120,7 +120,7 @@ describe('view.painter.cell.base', function() {
 
             beforeEach(function() {
                 $select = $(cellPainter.getContentHtml(options));
-                $table = $('<table><tr key="0"><td></td></tr></table>');
+                $table = $('<table><tr data-row-key="0"><td></td></tr></table>');
                 $td = $table.find('td').attr('columnname', 'c1').append($select);
             });
 
@@ -136,7 +136,7 @@ describe('view.painter.cell.base', function() {
 
                 options.value = 0;
                 $select = $(cellPainter.getContentHtml(options));
-                $table = $('<table><tr key="0"><td></td></tr></table>');
+                $table = $('<table><tr data-row-key="0"><td></td></tr></table>');
                 $table.find('td').attr('columnname', 'c1').append($select);
             });
 
@@ -216,7 +216,7 @@ describe('view.painter.cell.base', function() {
                 grid: grid
             });
 
-            $table = jasmine.getFixtures().set('<table><tr key="0"><td></td></tr></table>');
+            $table = jasmine.getFixtures().set('<table><tr data-row-key="0"><td></td></tr></table>');
             $td = $table.find('td');
         });
 

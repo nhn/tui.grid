@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../base/view');
+var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
 
 /**
  * Reside Handler class
@@ -43,7 +44,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
-        'data-column-name="<%=columnName%>" ' +
+        '<%=columnNameAttrName%>="<%=columnName%>" ' +
         'class="resize_handle' +
         '<% if(isLast === true) ' +
         ' print(" resize_handle_last");%>' +
@@ -83,6 +84,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
+                columnNameAttrName: ATTR_COLUMN_NAME,
                 columnIndex: index,
                 columnName: columnModel.columnName,
                 isLast: index + 1 === length,
@@ -128,8 +130,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             $handler = $resizeHandleList.eq(index);
-            columnName = $handler.attr('data-column-name');
-            width = $table.find('th[data-column-name=' + columnName + ']').width();
+            columnName = $handler.attr(ATTR_COLUMN_NAME);
+            width = $table.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']').width();
             if (tui.util.isExisty(width)) {
                 isChanged = isChanged || (width !== columnWidthList[index]);
             } else {

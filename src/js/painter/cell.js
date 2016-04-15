@@ -6,6 +6,7 @@
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Painter class for cell(TD) views
@@ -129,14 +130,19 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getAttributes: function(cellData) {
-        return {
+        var attrs = {
             'class': cellData.className + ' cell_content',
             'edit-type': this.editType,
-            'data-row-key': cellData.rowKey,
-            'data-column-name': cellData.columnName,
-            'rowspan': cellData.rowSpan || '',
             'align': cellData.columnModel.align || 'left'
         };
+
+        attrs[attrNameMap.ROW_KEY] = cellData.rowKey;
+        attrs[attrNameMap.COLUMN_NAME] = cellData.columnName;
+        if (cellData.rowSpan) {
+            attrs.rowspan = cellData.rowSpan;
+        }
+
+        return attrs;
     },
 
     /**

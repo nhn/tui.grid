@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -39,14 +40,12 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
         var painter = this.inputPainters[editType];
 
-        this.$el.css(styleMap).show();
-        this.$el.attr({
-            'data-row-key': rowKey,
-            'data-column-name': columnName
-        });
-        this.$el.html(painter.generateHtml(cellData));
-        this._adjustLeftPosition();
+        this.$el.html(painter.generateHtml(cellData))
+            .attr(attrNameMap.ROW_KEY, rowKey)
+            .attr(attrNameMap.COLUMN_NAME, columnName)
+            .css(styleMap).show();
 
+        this._adjustLeftPosition();
         painter.focus(this.$el);
     },
 
@@ -65,8 +64,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _finishEditing: function() {
-        this.$el.removeAttr('data-row-key');
-        this.$el.removeAttr('data-column-name');
+        this.$el.removeAttr(attrNameMap.ROW_KEY);
+        this.$el.removeAttr(attrNameMap.COLUMN_NAME);
         this.$el.empty().hide();
     },
 

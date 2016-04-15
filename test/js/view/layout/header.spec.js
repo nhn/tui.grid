@@ -4,6 +4,8 @@ var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ViewFactory = require('view/factory');
 
+var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
+
 describe('Header', function() {
     var modelManager, viewFactory, header;
 
@@ -62,9 +64,9 @@ describe('Header', function() {
             expect($colgroup.length).toBe(1);
             expect($cols.length).toBe(2);
             expect($cols.eq(0).width()).toBe(50);
-            expect($cols.eq(0).attr('data-column-name')).toBe('c1');
+            expect($cols.eq(0).attr(ATTR_COLUMN_NAME)).toBe('c1');
             expect($cols.eq(1).width()).toBe(60);
-            expect($cols.eq(1).attr('data-column-name')).toBe('c2');
+            expect($cols.eq(1).attr(ATTR_COLUMN_NAME)).toBe('c2');
         });
 
         describe('_getHeaderMainCheckbox', function() {
@@ -122,8 +124,8 @@ describe('Header', function() {
             var $btns = header.$el.find('a.btn_sorting');
 
             expect($btns.length).toBe(2);
-            expect($btns.eq(0).parent().attr('data-column-name')).toBe('c1');
-            expect($btns.eq(1).parent().attr('data-column-name')).toBe('c2');
+            expect($btns.eq(0).parent().attr(ATTR_COLUMN_NAME)).toBe('c1');
+            expect($btns.eq(1).parent().attr(ATTR_COLUMN_NAME)).toBe('c2');
         });
 
         it('버튼을 클릭하면 dataModel.sort()를 실행한다.', function() {
@@ -376,7 +378,7 @@ describe('Header', function() {
             columnNames, pageX, pageY, shiftKey;
 
         beforeAll(function() {
-            tableHeader = $('<th data-column-name="c1" height="50" colspan="1" rowspan="1">c1</th>')[0];
+            tableHeader = $('<th height="50" colspan="1" rowspan="1">c1</th>').attr(ATTR_COLUMN_NAME, 'c1')[0];
         });
 
         beforeEach(function() {
@@ -487,7 +489,7 @@ describe('Header', function() {
 
     describe('[selected]', function() {
         function isHeaderSelected(columnName) {
-            return header.$el.find('th[data-column-name=' + columnName + ']').is('.selected');
+            return header.$el.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']').is('.selected');
         }
 
         beforeEach(function() {

@@ -7,6 +7,8 @@ var ViewFactory = require('view/factory');
 var RowListView = require('view/rowList');
 var BodyTableView = require('view/layout/bodyTable');
 
+var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
+
 describe('view.layout.body', function() {
     var modelManager, painterManager, bodyTable;
 
@@ -60,9 +62,9 @@ describe('view.layout.body', function() {
             expect($cols.length).toBe(2);
 
             expect($cols.eq(0).width()).toBe(30 - extraWidth);
-            expect($cols.eq(0).attr('data-column-name')).toBe('c1');
+            expect($cols.eq(0).attr(ATTR_COLUMN_NAME)).toBe('c1');
             expect($cols.eq(1).width()).toBe(40 - extraWidth);
-            expect($cols.eq(1).attr('data-column-name')).toBe('c2');
+            expect($cols.eq(1).attr(ATTR_COLUMN_NAME)).toBe('c2');
         });
 
         it('View.RowList를 생성하고, render를 실행한다.', function() {

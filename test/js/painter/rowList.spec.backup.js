@@ -309,7 +309,7 @@ describe('View.RowList', function() {
             var $trs;
 
             function isMetaCellsSelected(rowKey) {
-                var $metaCells = $trs.filter('[key=' + rowKey + ']').find('td.meta_column');
+                var $metaCells = $trs.filter('[data-row-key=' + rowKey + ']').find('td.meta_column');
                 return $metaCells.not('.selected').length === 0;
             }
 

@@ -4,8 +4,9 @@
  */
 'use strict';
 
-var Painter = require('../base/painter'),
-    util = require('../common/util');
+var Painter = require('../base/painter');
+var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Dummy Cell Painter
@@ -39,7 +40,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @returns {String} HTML string
      */
     template: _.template(
-        '<td data-column-name="<%=columnName%>" ' +
+        '<td <%=columnNameAttrName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'edit-type="dummy">' +
             '&#8203;' + // 'for height issue with empty cell in IE7
@@ -64,6 +65,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
         var isMeta = util.isMetaColumn(columnName);
 
         return this.template({
+            columnNameAttrName: attrNameMap.COLUMN_NAME,
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'
         });

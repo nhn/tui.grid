@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 var CLASSNAME_SELECTED = 'selected';
 var CLASSNAME_FOCUSED_ROW = 'focused_row';
@@ -137,7 +138,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _getRowElement: function(rowKey) {
-        return this.$el.find('tr[data-row-key="' + rowKey + '"]');
+        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']');
     },
 
     /**
@@ -226,7 +227,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             if (!trMap[mainRowKey]) {
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
-            $td = trMap[mainRowKey].find('td[data-column-name=' + columnName + ']');
+            $td = trMap[mainRowKey].find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
             $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
         }, this);
     },
