@@ -63,6 +63,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _onDataModelRestore: function(columnName) {
         var cellData = this.get(columnName);
+
         if (cellData) {
             this.trigger('restore', cellData);
         }
