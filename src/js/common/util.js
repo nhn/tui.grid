@@ -173,6 +173,19 @@ var util = {
     },
 
     /**
+     * Converts the given value to String and returns it.
+     * If the value is undefined or null, returns the empty string.
+     * @param {*} value - value
+     * @returns {String}
+     */
+    toString: function(value) {
+        if (_.isUndefined(value) || _.isNull(value)) {
+            return '';
+        }
+        return String(value);
+    },
+
+    /**
      * Create unique key
      * @memberof module:util
      * @returns {number} unique key 를 반환한다.

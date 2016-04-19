@@ -2,7 +2,6 @@
 
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
-var Model = require('base/model');
 
 describe('data.rowList', function() {
     var columnModelList = [
@@ -336,7 +335,7 @@ describe('data.rowList', function() {
             });
         });
 
-        describe('getVisibleText()', function() {
+        describe('getValueString()', function() {
             it('copy & paste 기능을 사용할 때 정상적으로 텍스트를 반환한다.', function() {
                 var sampleList = [{
                         'none': 'nope',

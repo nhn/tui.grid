@@ -395,7 +395,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
                     resultOptionList.optionList : columnModel.editOption.list;
 
             typeExpected = typeof editOptionList[0].value;
-            valueList = value.toString().split(',');
+            valueList = util.toString(value).split(',');
             if (typeExpected !== typeof valueList[0]) {
                 valueList = _.map(valueList, function(val) {
                     return util.convertValueType(val, typeExpected);
@@ -460,11 +460,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             value = '';
         }
 
-        if (!_.isUndefined(value)) {
-            value = String(value);
-        }
-
-        return value;
+        return util.toString(value);
     },
 
     /**
