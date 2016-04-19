@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.0
+ * @version 1.2.0a
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -912,6 +912,8 @@ module.exports = Model;
  */
 'use strict';
 
+var attrNameMap = require('../common/constMap').attrName;
+
 /**
  * Base class for Painters
  * The Painter class is implentation of 'flyweight' pattern for the View class.
@@ -947,11 +949,11 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * @private
      */
     _getCellAddress: function($target) {
-        var $addressHolder = $target.closest('[data-row-key]');
+        var $addressHolder = $target.closest('[' + attrNameMap.ROW_KEY + ']');
 
         return {
-            rowKey: $addressHolder.attr('data-row-key'),
-            columnName: $addressHolder.attr('data-column-name')
+            rowKey: $addressHolder.attr(attrNameMap.ROW_KEY),
+            columnName: $addressHolder.attr(attrNameMap.COLUMN_NAME)
         };
     },
 
@@ -980,7 +982,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
 
 module.exports = Painter;
 
-},{}],7:[function(require,module,exports){
+},{"../common/constMap":8}],7:[function(require,module,exports){
 /**
  * @fileoverview Base class for Views
  * @author NHN Ent. FE Development Team
@@ -1108,6 +1110,11 @@ module.exports = {
     dimension: {
         CELL_BORDER_WIDTH: 1,
         TABLE_BORDER_WIDTH: 1
+    },
+    attrName: {
+        ROW_KEY: 'data-row-key',
+        COLUMN_NAME: 'data-column-name',
+        EDIT_TYPE: 'data-edit-type'
     }
 };
 
@@ -1455,7 +1462,7 @@ var util = {
     },
 
     /**
-     * Returns the count of rows based on table height and row height.
+     * Returns the total number of rows by using the table height and row height.
      * @memberof module:util
      * @param {number} tableHeight - table height
      * @param {number} rowHeight - individual row height
@@ -1466,7 +1473,7 @@ var util = {
     },
 
     /**
-     * Returns the individual height of a row bsaed on the count of rows and table height.
+     * Returns the individual height of a row bsaed on the total number of rows and table height.
      * @memberof module:util
      * @param {number} rowCount - row count
      * @param {number} tableHeight - table height
@@ -1552,6 +1559,19 @@ var util = {
             ));
         }
         return htmlString;
+    },
+
+    /**
+     * Converts the given value to String and returns it.
+     * If the value is undefined or null, returns the empty string.
+     * @param {*} value - value
+     * @returns {String}
+     */
+    toString: function(value) {
+        if (_.isUndefined(value) || _.isNull(value)) {
+            return '';
+        }
+        return String(value);
     },
 
     /**
@@ -1682,6 +1702,8 @@ module.exports = util;
  */
 'use strict';
 
+var attrNameMap = require('./common/constMap').attrName;
+
 /**
  * Class for offering methods that can be used to get the current state of DOM element.
  * @module domState
@@ -1702,7 +1724,8 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      * @returns {jQuery} Cell(TD) element
      */
     getElement: function(rowKey, columnName) {
-        return this.$el.find('tr[key="' + rowKey + '"]').find('td[data-column-name=' + columnName + ']');
+        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']')
+            .find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
     },
 
     /**
@@ -1740,7 +1763,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
 
 module.exports = DomState;
 
-},{}],13:[function(require,module,exports){
+},{"./common/constMap":8}],13:[function(require,module,exports){
 /**
  * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
@@ -3855,7 +3878,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
                     resultOptionList.optionList : columnModel.editOption.list;
 
             typeExpected = typeof editOptionList[0].value;
-            valueList = value.toString().split(',');
+            valueList = util.toString(value).split(',');
             if (typeExpected !== typeof valueList[0]) {
                 valueList = _.map(valueList, function(val) {
                     return util.convertValueType(val, typeExpected);
@@ -3920,11 +3943,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             value = '';
         }
 
-        if (!_.isUndefined(value)) {
-            value = String(value);
-        }
-
-        return value;
+        return util.toString(value);
     },
 
     /**
@@ -7668,6 +7687,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      */
     _onDataModelRestore: function(columnName) {
         var cellData = this.get(columnName);
+
         if (cellData) {
             this.trigger('restore', cellData);
         }
@@ -8715,6 +8735,7 @@ module.exports = Toolbar;
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Painter class for cell(TD) views
@@ -8731,7 +8752,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
-        this.selector = 'td[edit-type=' + this.editType + ']';
+        this.selector = 'td[' + attrNameMap.EDIT_TYPE + '=' + this.editType + ']';
     },
 
     /**
@@ -8838,14 +8859,19 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getAttributes: function(cellData) {
-        return {
+        var attrs = {
             'class': cellData.className + ' cell_content',
-            'edit-type': this.editType,
-            'data-row-key': cellData.rowKey,
-            'data-column-name': cellData.columnName,
-            'rowspan': cellData.rowSpan || '',
             'align': cellData.columnModel.align || 'left'
         };
+
+        attrs[attrNameMap.EDIT_TYPE] = this.editType;
+        attrs[attrNameMap.ROW_KEY] = cellData.rowKey;
+        attrs[attrNameMap.COLUMN_NAME] = cellData.columnName;
+        if (cellData.rowSpan) {
+            attrs.rowspan = cellData.rowSpan;
+        }
+
+        return attrs;
     },
 
     /**
@@ -8903,7 +8929,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
 module.exports = Cell;
 
-},{"../base/painter":6,"../common/util":11}],28:[function(require,module,exports){
+},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],28:[function(require,module,exports){
 /**
  * @fileoverview Controller class to handle actions from the painters
  * @author NHN Ent. FE Development Team
@@ -9047,8 +9073,9 @@ module.exports = PainterController;
  */
 'use strict';
 
-var Painter = require('../base/painter'),
-    util = require('../common/util');
+var Painter = require('../base/painter');
+var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Dummy Cell Painter
@@ -9075,16 +9102,16 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
-    selector: 'td[edit-type=dummy]',
+    selector: 'td[' + attrNameMap.EDIT_TYPE + '=dummy]',
 
     /**
      * Template function
      * @returns {String} HTML string
      */
     template: _.template(
-        '<td data-column-name="<%=columnName%>" ' +
+        '<td <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
-            'edit-type="dummy">' +
+            '<%=attrEditType%>="dummy">' +
             '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
@@ -9107,6 +9134,8 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
         var isMeta = util.isMetaColumn(columnName);
 
         return this.template({
+            attrColumnName: attrNameMap.COLUMN_NAME,
+            attrEditType: attrNameMap.EDIT_TYPE,
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'
         });
@@ -9115,7 +9144,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
 module.exports = DummyCell;
 
-},{"../base/painter":6,"../common/util":11}],30:[function(require,module,exports){
+},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],30:[function(require,module,exports){
 /**
  * @fileoverview Base class for the Input Painter
  * @author NHN Ent. FE Development Team
@@ -10006,6 +10035,7 @@ module.exports = PainterManager;
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Painter class for the row(TR) views
@@ -10034,7 +10064,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      */
     template: _.template(
         '<tr ' +
-        'key="<%=key%>" ' +
+        '<%=rowKeyAttrName%>="<%=rowKey%>" ' +
         'class="<%=className%>" ' +
         'style="height: <%=height%>px;">' +
         '<%=contents%>' +
@@ -10113,7 +10143,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         }
 
         return this.template({
-            key: rowKey,
+            rowKeyAttrName: attrNameMap.ROW_KEY,
+            rowKey: rowKey,
             height: model.get('height') + RowPainter._extraHeight,
             contents: html,
             className: ''
@@ -10130,7 +10161,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
-                $td = $tr.find('td[data-column-name=' + columnName + ']');
+                $td = $tr.find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 cellPainter.refresh(cellData, $td);
@@ -10157,7 +10188,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
 module.exports = RowPainter;
 
-},{"../base/painter":6,"../common/util":11}],37:[function(require,module,exports){
+},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],37:[function(require,module,exports){
 /**
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
@@ -10773,8 +10804,9 @@ module.exports = Clipboard;
  */
 'use strict';
 
-var View = require('../base/view'),
-    GridEvent = require('../common/gridEvent');
+var View = require('../base/view');
+var GridEvent = require('../common/gridEvent');
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Container View
@@ -10956,7 +10988,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr('data-column-name') && $cell.parent().attr('key'));
+        return !!($cell.is('td') && $cell.attr(attrNameMap.COLUMN_NAME) && $cell.parent().attr(attrNameMap.ROW_KEY));
     },
 
     /**
@@ -10966,8 +10998,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.attr('data-row-key'));
-        var columnName = $cell.attr('data-column-name');
+        var rowKey = Number($cell.attr(attrNameMap.ROW_KEY));
+        var columnName = $cell.attr(attrNameMap.COLUMN_NAME);
 
         return {
             rowKey: rowKey,
@@ -11049,7 +11081,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
 module.exports = Container;
 
-},{"../base/view":7,"../common/gridEvent":10}],40:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/gridEvent":10}],40:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -11058,6 +11090,7 @@ module.exports = Container;
 
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var attrNameMap = require('../common/constMap').attrName;
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -11091,14 +11124,12 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         var styleMap = this._calculateLayoutStyle(rowKey, columnName, this._isWidthExpandable(editType));
         var painter = this.inputPainters[editType];
 
-        this.$el.css(styleMap).show();
-        this.$el.attr({
-            'data-row-key': rowKey,
-            'data-column-name': columnName
-        });
-        this.$el.html(painter.generateHtml(cellData));
-        this._adjustLeftPosition();
+        this.$el.html(painter.generateHtml(cellData))
+            .attr(attrNameMap.ROW_KEY, rowKey)
+            .attr(attrNameMap.COLUMN_NAME, columnName)
+            .css(styleMap).show();
 
+        this._adjustLeftPosition();
         painter.focus(this.$el);
     },
 
@@ -11117,8 +11148,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _finishEditing: function() {
-        this.$el.removeAttr('data-row-key');
-        this.$el.removeAttr('data-column-name');
+        this.$el.removeAttr(attrNameMap.ROW_KEY);
+        this.$el.removeAttr(attrNameMap.COLUMN_NAME);
         this.$el.empty().hide();
     },
 
@@ -11450,8 +11481,10 @@ module.exports = ViewFactory;
  */
 'use strict';
 
-var View = require('../../base/view'),
-    util = require('../../common/util');
+var View = require('../../base/view');
+var util = require('../../common/util');
+var attrNameMap = require('../../common/constMap').attrName;
+
 
 var HTML_CONTAINER = '<div class="body_container"></div>',
 
@@ -11583,8 +11616,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             $target = $(event.target),
             $td = $target.closest('td'),
             $tr = $target.closest('tr'),
-            columnName = $td.attr('data-column-name'),
-            rowKey = $tr.attr('key'),
+            columnName = $td.attr(attrNameMap.COLUMN_NAME),
+            rowKey = $tr.attr(attrNameMap.ROW_KEY),
             startAction = true,
             inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
             indexData;
@@ -11784,7 +11817,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7,"../../common/util":11}],43:[function(require,module,exports){
+},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],43:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -11793,9 +11826,10 @@ module.exports = Body;
 
 var View = require('../../base/view');
 var util = require('../../common/util');
-var dimensionConstMap = require('../../common/constMap').dimension;
+var constMap = require('../../common/constMap');
 
-var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
 /**
  * Class for the table layout in the body(data) area
@@ -11838,6 +11872,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         '   <colgroup><%=colGroup%></colgroup>' +
         '   <tbody><%=tbody%></tbody>' +
         '</table>'),
+
+    templateCol: _.template(
+        '<col <%=attrColumnName%>="<%=columnName%>" style="width:<%=width%>px">'
+    ),
 
     /**
      * Event handler for 'columnWidthChanged' event on a dimension model.
@@ -11959,11 +11997,13 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html = '';
 
         _.each(columnModelList, function(columnModel, index) {
-            var name = columnModel.columnName,
-                width = columnWidthList[index] - BodyTable.EXTRA_WIDTH;
+            html += this.templateCol({
+                attrColumnName: ATTR_COLUMN_NAME,
+                columnName: columnModel.columnName,
+                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH
+            });
+        }, this);
 
-            html += '<col data-column-name="' + name + '" style="width:' + width + 'px">';
-        });
         return html;
     }
 }, {
@@ -12092,8 +12132,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             width = dimensionModel.get('rsideWidth'),
             marginLeft = dimensionModel.get('lsideWidth');
 
-        // If left side exists and the division border should not be doubled,
-        // right side should be covered border-width by left side to hide left border of the right side.
+        // If the left side exists and the division border should not be doubled,
+        // left side should cover the right side by border-width to hide the left border of the right side.
         if (marginLeft > 0 && !dimensionModel.isDivisionBorderDoubled()) {
             width += CELL_BORDER_WIDTH;
             marginLeft -= CELL_BORDER_WIDTH;
@@ -12259,11 +12299,12 @@ module.exports = Frame;
  */
 'use strict';
 
-var View = require('../../base/view'),
-    util = require('../../common/util');
+var View = require('../../base/view');
+var util = require('../../common/util');
 
-var CLASSNAME_SELECTED = 'selected',
-    DELAY_SYNC_CHECK = 10;
+var CLASSNAME_SELECTED = 'selected';
+var DELAY_SYNC_CHECK = 10;
+var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
 
 /**
  * Header 레이아웃 View
@@ -12305,7 +12346,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     events: {
         'click': '_onClick',
-        'mousedown th[columnName]': '_onMouseDown'
+        'mousedown th': '_onMouseDown'
     },
 
     /**
@@ -12322,7 +12363,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * <th> 템플릿
      */
     templateHeader: _.template(
-        '<th data-column-name="<%=columnName%>" ' +
+        '<th <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
             'height="<%=height%>" ' +
             '<%if(colspan > 0) {%>' +
@@ -12341,7 +12382,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     templateCol: _.template(
         '<col ' +
-            'data-column-name="<%=columnName%>" ' +
+            '<%=attrColumnName%>="<%=columnName%>" ' +
             'style="width:<%=width%>px">'
     ),
 
@@ -12363,6 +12404,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         _.each(columnWidthList, function(width, index) {
             htmlList.push(this.templateCol({
+                attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModelList[index].columnName,
                 width: width
             }));
@@ -12419,7 +12461,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[data-column-name=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(CLASSNAME_SELECTED);
             });
         }
     },
@@ -12436,7 +12478,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             return;
         }
 
-        columnName = $(event.target).closest('th').attr('columnName');
+        columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
+        if (!columnName) {
+            return;
+        }
+
         columnNames = this.columnModel.getUnitColumnNamesIfMerged(columnName);
 
         if (!this._hasMetaColumn(columnNames)) {
@@ -12528,7 +12574,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onMouseMove: function(event) {
         var columnModel = this.columnModel,
             isExtending = true,
-            columnName = $(event.target).closest('th').attr('columnName'),
+            columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME),
             columnNames, columnIndexes;
 
         if (columnName) {
@@ -12585,7 +12631,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getHeaderMainCheckbox: function() {
-        return this.$el.find('th[data-column-name="_button"] input');
+        return this.$el.find('th[' + ATTR_COLUMN_NAME + '=_button] input');
     },
 
     /**
@@ -12649,7 +12695,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onClick: function(clickEvent) {
         var $target = $(clickEvent.target),
-            columnName = $target.closest('th').attr('data-column-name');
+            columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
 
         /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
@@ -12674,7 +12720,9 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (this._$currentSortBtn) {
             this._$currentSortBtn.removeClass('sorting_down sorting_up');
         }
-        this._$currentSortBtn = this.$el.find('th[data-column-name=' + sortOptions.columnName + '] a.btn_sorting');
+        this._$currentSortBtn = this.$el.find(
+            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.btn_sorting'
+        );
         this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
     },
 
@@ -12759,6 +12807,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 columnNameList[j] = columnName;
                 rowMarkupList[j] = rowMarkupList[j] || [];
                 rowMarkupList[j].push(this.templateHeader({
+                    attrColumnName: ATTR_COLUMN_NAME,
                     columnName: columnName,
                     className: columnModel.isRequired ? 'required' : '',
                     height: height,
@@ -12835,7 +12884,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/util":11}],48:[function(require,module,exports){
+},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],48:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -12843,6 +12892,7 @@ module.exports = Header;
 'use strict';
 
 var View = require('../../base/view');
+var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
 
 /**
  * Reside Handler class
@@ -12881,7 +12931,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
-        'data-column-name="<%=columnName%>" ' +
+        '<%=attrColumnName%>="<%=columnName%>" ' +
         'class="resize_handle' +
         '<% if(isLast === true) ' +
         ' print(" resize_handle_last");%>' +
@@ -12921,6 +12971,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
+                attrColumnName: ATTR_COLUMN_NAME,
                 columnIndex: index,
                 columnName: columnModel.columnName,
                 isLast: index + 1 === length,
@@ -12966,8 +13017,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             $handler = $resizeHandleList.eq(index);
-            columnName = $handler.attr('data-column-name');
-            width = $table.find('th[data-column-name=' + columnName + ']').width();
+            columnName = $handler.attr(ATTR_COLUMN_NAME);
+            width = $table.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']').width();
             if (tui.util.isExisty(width)) {
                 isChanged = isChanged || (width !== columnWidthList[index]);
             } else {
@@ -13120,7 +13171,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7}],49:[function(require,module,exports){
+},{"../../base/view":7,"../../common/constMap":8}],49:[function(require,module,exports){
 /**
  * @fileoverview 툴바영역 클래스
  * @author NHN Ent. FE Development Team
@@ -13503,12 +13554,13 @@ module.exports = ResizeHandler;
  */
 'use strict';
 
-var View = require('../base/view'),
-    util = require('../common/util');
+var View = require('../base/view');
+var util = require('../common/util');
+var attrNameMap = require('../common/constMap').attrName;
 
-var CLASSNAME_SELECTED = 'selected',
-    CLASSNAME_FOCUSED_ROW = 'focused_row',
-    SELECTOR_META_CELL = 'td.meta_column';
+var CLASSNAME_SELECTED = 'selected';
+var CLASSNAME_FOCUSED_ROW = 'focused_row';
+var SELECTOR_META_CELL = 'td.meta_column';
 
 /**
  * RowList View
@@ -13636,7 +13688,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _getRowElement: function(rowKey) {
-        return this.$el.find('tr[key="' + rowKey + '"]');
+        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']');
     },
 
     /**
@@ -13725,7 +13777,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             if (!trMap[mainRowKey]) {
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
-            $td = trMap[mainRowKey].find('td[data-column-name=' + columnName + ']');
+            $td = trMap[mainRowKey].find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
             $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
         }, this);
     },
@@ -13776,10 +13828,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onModelRestore: function(cellData) {
-        var $td = this.dataModel.getElement(cellData.rowKey, cellData.columnName),
-            editType = this.columnModel.getEditType(cellData.columnName);
+        var $td = this.dataModel.getElement(cellData.rowKey, cellData.columnName);
+        var editType = this.columnModel.getEditType(cellData.columnName);
 
-        this.painterManager.getCellPainter(editType).redraw(cellData, $td);
+        this.painterManager.getCellPainter(editType).refresh(cellData, $td);
     }
 }, {
     /**
@@ -13793,7 +13845,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7,"../common/util":11}],54:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":8,"../common/util":11}],54:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
