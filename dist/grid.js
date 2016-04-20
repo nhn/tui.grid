@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.0a
+ * @version 1.2.0b
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -11678,6 +11678,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!isInput && startDrag) {
+            this.dimensionModel.refreshLayout();
             this._attachDragEvents(inputData.pageX, inputData.pageY);
         }
     },

@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.0a
+ * @version 1.2.0b
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -199,6 +199,7 @@
 .uio_grid .lside_area .data .selection_layer {
   display: none;
   position: absolute;
+  box-sizing: content-box;
   top: 0;
   width: 0;
   height: 0;
@@ -236,6 +237,7 @@
 .uio_grid .rside_area .data .selection_layer {
   display: none;
   position: absolute;
+  box-sizing: content-box;
   top: 0;
   width: 0;
   height: 0;
