@@ -201,6 +201,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!isInput && startDrag) {
+            this.dimensionModel.refreshLayout();
             this._attachDragEvents(inputData.pageX, inputData.pageY);
         }
     },
