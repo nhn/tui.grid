@@ -8,14 +8,13 @@ var View = require('../../base/view');
 var util = require('../../common/util');
 var attrNameMap = require('../../common/constMap').attrName;
 
+var HTML_CONTAINER = '<div class="body_container"></div>';
 
-var HTML_CONTAINER = '<div class="body_container"></div>',
+// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
+var MIN_INTERVAL_FOR_PAUSED = 200;
 
-    // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
-    MIN_INTERVAL_FOR_PAUSED = 200,
-
-    // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-    MIN_DISATNCE_FOR_DRAG = 10;
+// Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+var MIN_DISATNCE_FOR_DRAG = 10;
 
 /**
  * Class for the body layout
@@ -274,13 +273,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onMouseMove: function(event) {
-        var selectionModel = this.selectionModel,
-            pageX = event.pageX,
-            pageY = event.pageY,
-            dragged = this._getMouseMoveDistance(pageX, pageY) > MIN_DISATNCE_FOR_DRAG;
+        var dragged = this._getMouseMoveDistance(event.pageX, event.pageY) > MIN_DISATNCE_FOR_DRAG;
 
-        if (selectionModel.hasSelection() || dragged) {
-            selectionModel.updateByMousePosition(pageX, pageY);
+        if (this.selectionModel.hasSelection() || dragged) {
+            this.selectionModel.updateByMousePosition(event.pageX, event.pageY);
         }
     },
 
@@ -292,8 +288,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _getMouseMoveDistance: function(pageX, pageY) {
-        var dx = Math.abs(this.mouseDownX - pageX),
-            dy = Math.abs(this.mouseDownY - pageY);
+        var dx = Math.abs(this.mouseDownX - pageX);
+        var dy = Math.abs(this.mouseDownY - pageY);
 
         return Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
     },
@@ -331,7 +327,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
         this._addChildren([
             this.viewFactory.createBodyTable(whichSide),
-            this.viewFactory.createSelectionLayer(whichSide)
+            this.viewFactory.createSelectionLayer(whichSide),
+            this.viewFactory.createFocusLayer(whichSide)
         ]);
         this.$container.append(this._renderChildren());
         this._resetContainerHeight();

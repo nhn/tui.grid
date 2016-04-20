@@ -4,9 +4,9 @@
  */
 'use strict';
 
-var Model = require('../base/model'),
-    util = require('../common/util'),
-    GridEvent = require('../common/gridEvent');
+var Model = require('../base/model');
+var util = require('../common/util');
+var GridEvent = require('../common/gridEvent');
 
 /**
  * Focus model

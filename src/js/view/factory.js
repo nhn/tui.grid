@@ -20,6 +20,7 @@ var BodyTableView = require('./layout/bodyTable');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
+var FocusLayerView = require('./focusLayer');
 
 /**
  * View Factory
@@ -245,6 +246,20 @@ var ViewFactory = tui.util.defineClass({
             renderModel: this.modelManager.renderModel,
             inputPainters: this.painterManager.getInputPainters(true),
             domState: this.domState
+        });
+    },
+
+    /**
+     * Creates focus layer view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @returns {module:view/focusLayer} New focus layer view instance
+     */
+    createFocusLayer: function(whichSide) {
+        return new FocusLayerView({
+            whichSide: whichSide,
+            dimensionModel: this.modelManager.dimensionModel,
+            columnModel: this.modelManager.columnModel,
+            focusModel: this.modelManager.focusModel
         });
     }
 });
