@@ -30,11 +30,20 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
             $bottom: $('<div>')
         };
 
+        this.listenTo(this.dimensionModel, 'change:width', this._onChangeWidth);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
     },
 
     className: 'focus-layer',
+
+    _onChangeWidth: function() {
+        var focusModel = this.focusModel;
+
+        if (this.$el.is(':visible')) {
+            this._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
+        }
+    },
 
     /**
      * Event handler for 'blur' event on the module:model/focus
@@ -79,7 +88,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         });
 
         this.borderEl.$top.css({
-            top: pos.top,
+            top: pos.top === 0 ? CELL_BORDER_WIDTH : pos.top,
             left: pos.left,
             width: width + CELL_BORDER_WIDTH,
             height: CELL_BORDER_WIDTH

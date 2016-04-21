@@ -92,11 +92,11 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _calculateLayoutStyle: function(rowKey, columnName, expandable) {
-        var wrapperOffset = this.domState.getOffset(),
-            $cell = this.domState.getElement(rowKey, columnName),
-            cellOffset = $cell.offset(),
-            cellHeight = $cell.height(),
-            cellWidth = $cell.width() - (CELL_BORDER_WIDTH * 2);
+        var wrapperOffset = this.domState.getOffset();
+        var $cell = this.domState.getElement(rowKey, columnName);
+        var cellOffset = $cell.offset();
+        var cellHeight = $cell.height() + CELL_BORDER_WIDTH;
+        var cellWidth = $cell.width() + CELL_BORDER_WIDTH;
 
         return {
             top: cellOffset.top - wrapperOffset.top,

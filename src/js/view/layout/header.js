@@ -6,10 +6,12 @@
 
 var View = require('../../base/view');
 var util = require('../../common/util');
+var constMap = require('../../common/constMap');
 
 var CLASSNAME_SELECTED = 'selected';
 var DELAY_SYNC_CHECK = 10;
-var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
+var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
  * Header 레이아웃 View
@@ -58,7 +60,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * 전체 template
      */
     template: _.template(
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '<table width="100%">' +
             '<colgroup><%=colGroup%></colgroup>' +
             '<tbody><%=tBody%></tbody>' +
         '</table>'
@@ -111,7 +113,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             htmlList.push(this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModelList[index].columnName,
-                width: width
+                width: width + CELL_BORDER_WIDTH
             }));
         }, this);
         return htmlList.join('');
@@ -376,7 +378,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(columnWidth, index) {
-            $colList.eq(index).css('width', columnWidth + 'px');
+            $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
     },
 

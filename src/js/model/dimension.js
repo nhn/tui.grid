@@ -202,6 +202,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 });
             }
         });
+
         return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
     },
 
@@ -234,6 +235,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
         }
         columnIndexes = _.pluck(availableList, 'index');
+
         return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
     },
 
@@ -254,7 +256,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         _.each(columnIndexes, function(columnIndex) {
             resultList[columnIndex] += avgValue;
         });
-        resultList[_.last(columnIndexes)] -= errorValue;
+
+        if (columnIndexes.length) {
+            resultList[_.last(columnIndexes)] -= errorValue;
+        }
 
         return resultList;
     },
@@ -542,10 +547,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
-        var isRsideColumn = !this.columnModel.isLside(columnName),
-            targetPosition = this.getCellPosition(rowKey, columnName),
-            bodySize = this._getBodySize(),
-            scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+        var isRsideColumn = !this.columnModel.isLside(columnName);
+        var targetPosition = this.getCellPosition(rowKey, columnName);
+        var bodySize = this._getBodySize();
+        var scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
 
         return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
     },

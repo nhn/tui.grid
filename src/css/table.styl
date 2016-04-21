@@ -1,9 +1,7 @@
 table
-    border 0
+    border 1px solid #d8d8d8
     table-layout fixed
-    background-color #d8d8d8
-    border-collapse separate
-    border-spacing 1px
+    border-collapse collapse
     margin 0
 
     th
@@ -12,7 +10,7 @@ table
         *white-space pre
         text-align center
         padding 0
-        border 0
+        border 1px solid #d8d8d8
         background #eee
 
         &.selected
@@ -44,9 +42,9 @@ table
 
     td
         overflow hidden
-        padding 0 10px
-        *padding 1px 10px
-        border 0
+        padding 1px 10px
+        *padding 1px 10px 0
+        border 1px solid #d8d8d8
         white-space nowrap
         background-color #fbfbfb
         *white-space pre
@@ -69,10 +67,6 @@ table
 
         &.disabled
             color #b0b0b0
-
-        &.focused
-            padding 0 9px
-            border dotted 1px #190000
 
         &.invalid
             padding 0 9px

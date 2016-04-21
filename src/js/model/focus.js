@@ -284,9 +284,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * Scroll to focus
      */
     scrollToFocus: function() {
-        var rowKey = this.get('rowKey'),
-            columnName = this.get('columnName'),
-            scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
+        var rowKey = this.get('rowKey');
+        var columnName = this.get('columnName');
+        var scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
 
         if (!tui.util.isEmpty(scrollPosition)) {
             this.renderModel.set(scrollPosition);

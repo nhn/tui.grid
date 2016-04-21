@@ -48,7 +48,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     className: 'table_container',
 
     template: _.template(
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '<table width="100%">' +
         '   <colgroup><%=colGroup%></colgroup>' +
         '   <tbody><%=tbody%></tbody>' +
         '</table>'),
@@ -67,7 +67,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             totalWidth = 0;
 
         _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH);
+            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH);
             totalWidth += width + CELL_BORDER_WIDTH;
         }, this);
 
@@ -180,7 +180,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html += this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModel.columnName,
-                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH
+                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH
             });
         }, this);
 

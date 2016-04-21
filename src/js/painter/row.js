@@ -6,7 +6,9 @@
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
+var constMap = require('../common/constMap');
+var attrNameMap = constMap.attrName;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
  * Painter class for the row(TR) views
@@ -116,7 +118,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         return this.template({
             rowKeyAttrName: attrNameMap.ROW_KEY,
             rowKey: rowKey,
-            height: model.get('height') + RowPainter._extraHeight,
+            height: model.get('height') + RowPainter._extraHeight + CELL_BORDER_WIDTH,
             contents: html,
             className: ''
         });
