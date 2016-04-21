@@ -30,6 +30,9 @@
     ::-webkit-scrollbar-thumb:hover
         background-color #c1c1c1
 
+    *
+        box-sizing content-box // reset bootstrap style
+
     p, input
         margin 0
         padding 0
@@ -43,6 +46,7 @@
 
     input[type=text]
         outline none
+        line-height normal // prevent to be inherit
 
     ul, li
         list-style none
