@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "1.2.0b",
+  "version": "1.2.0-c",
   "description": "grid",
   "main": "gulpfiles.js",
   "directories": {

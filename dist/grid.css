@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.0b
+ * @version 1.2.0-c
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -37,6 +37,9 @@
 .uio_grid ::-webkit-scrollbar-thumb:hover {
   background-color: #c1c1c1;
 }
+.uio_grid * {
+  box-sizing: content-box;
+}
 .uio_grid p,
 .uio_grid input {
   margin: 0;
@@ -51,6 +54,7 @@
 }
 .uio_grid input[type=text] {
   outline: none;
+  line-height: normal;
 }
 .uio_grid ul,
 .uio_grid li {
@@ -122,7 +126,6 @@
 }
 .uio_grid .state_layer {
   position: absolute;
-  box-sizing: content-box;
   top: 0;
   left: 0;
   width: 100%;
@@ -199,7 +202,6 @@
 .uio_grid .lside_area .data .selection_layer {
   display: none;
   position: absolute;
-  box-sizing: content-box;
   top: 0;
   width: 0;
   height: 0;
@@ -237,7 +239,6 @@
 .uio_grid .rside_area .data .selection_layer {
   display: none;
   position: absolute;
-  box-sizing: content-box;
   top: 0;
   width: 0;
   height: 0;
@@ -248,7 +249,6 @@
 }
 .uio_grid .rside_area .header_space {
   display: block;
-  box-sizing: content-box;
   position: absolute;
   top: 0;
   right: 0;
@@ -404,9 +404,6 @@
   line-height: 1.5;
   *margin-left: -2px;
   *padding-left: 2px;
-}
-.uio_grid table td span.input input {
-  box-sizing: border-box;
 }
 .uio_grid .toolbar {
   display: none;

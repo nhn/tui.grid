@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.0b
+ * @version 1.2.0-c
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -7827,6 +7827,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
         if (!row) {
             row = this.dataModel.get(this.get('rowKey'));
+            if (!row) {
+                return '';
+            }
         }
         if (!focusModel) {
             focusModel = this.focusModel;
