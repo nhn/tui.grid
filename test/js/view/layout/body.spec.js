@@ -5,6 +5,7 @@ var ModelManager = require('model/manager');
 var PainterManager = require('painter/manager');
 var ViewFactory = require('view/factory');
 var SelectionLayerView = require('view/selectionLayer');
+var FocusLayerView = require('view/focusLayer');
 var BodyTableView = require('view/layout/bodyTable');
 var attrNameMap = require('common/constMap').attrName;
 
@@ -349,12 +350,16 @@ describe('view.layout.body', function() {
             expect($(body.el).height()).toBe(200);
         });
 
-        it('selectionLayer와 bodyTable이 생성되었는지 확인한다.', function() {
+        it('has 3 child view, BodyTable, SelectionLzyer, FocusLayer', function() {
             body.render();
 
-            expect(body._children.length).toBe(2);
+            expect(body._children.length).toBe(3);
+
+            expect(body._children[0] instanceof BodyTableView).toBe(true);
+            expect(body._children[1] instanceof SelectionLayerView).toBe(true);
+            expect(body._children[2] instanceof FocusLayerView).toBe(true);
+
             _.each(body._children, function(childView) {
-                expect(childView instanceof SelectionLayerView || childView instanceof BodyTableView).toBe(true);
                 expect(body.$container).toContainElement(childView.el);
             });
         });

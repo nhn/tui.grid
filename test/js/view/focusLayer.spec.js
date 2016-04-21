@@ -20,7 +20,7 @@ function createFocusLayer(modelManager, whichSide) {
     });
 }
 
-fdescribe('view/focusLayer', function() {
+describe('view/focusLayer', function() {
     var $wrapper, layerLside, layerRside, modelManager;
 
     beforeEach(function() {

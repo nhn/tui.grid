@@ -647,61 +647,61 @@ describe('Dimension', function() {
                 'top': 0,
                 'left': 0,
                 'right': 40,
-                'bottom': 100
+                'bottom': 101
             });
             expect(dimensionModel.getCellPosition(0, 'keyColumn')).toEqual({
                 'top': 0,
                 'left': 40,
                 'right': 80,
-                'bottom': 100
+                'bottom': 101
             });
             expect(dimensionModel.getCellPosition(0, 'none')).toEqual({
                 top: 0,
                 left: 0,
                 right: 40,
-                bottom: 100
+                bottom: 101
             });
             expect(dimensionModel.getCellPosition(0, 'hasFormatter')).toEqual({
                 top: 0,
                 left: 40,
                 right: 80,
-                bottom: 100
+                bottom: 101
             });
             expect(dimensionModel.getCellPosition(0, 'notUseHtmlEntity')).toEqual({
                 top: 0,
                 left: 80,
                 right: 120,
-                bottom: 100
+                bottom: 101
             });
             expect(dimensionModel.getCellPosition(0, 'relationOptionList')).toEqual({
                 top: 0,
                 left: 120,
                 right: 160,
-                bottom: 100
+                bottom: 101
             });
             expect(dimensionModel.getCellPosition(0, 'text')).toEqual({
                 top: 0,
                 left: 160,
                 right: 200,
-                bottom: 100
+                bottom: 101
             });
             expect(dimensionModel.getCellPosition(0, 'text-convertible')).toEqual({
                 top: 0,
                 left: 200,
                 right: 240,
-                bottom: 100
+                bottom: 101
             });
             expect(dimensionModel.getCellPosition(1, 'changeCallback')).toEqual({
                 top: 101,
                 left: 0,
                 right: 40,
-                bottom: 201
+                bottom: 202
             });
             expect(dimensionModel.getCellPosition(1, 'keyColumn')).toEqual({
                 top: 101,
                 left: 40,
                 right: 80,
-                bottom: 201
+                bottom: 202
             });
         });
 
@@ -710,7 +710,7 @@ describe('Dimension', function() {
                 top: 101,
                 left: 0,
                 right: 40,
-                bottom: 302
+                bottom: 303
             };
             expect(dimensionModel.getCellPosition(1, 'none')).toEqual(expectedPosition);
             expect(dimensionModel.getCellPosition(2, 'none')).toEqual(expectedPosition);
@@ -721,7 +721,7 @@ describe('Dimension', function() {
                 top: 101,
                 left: 160,
                 right: 200,
-                bottom: 403
+                bottom: 404
             };
             expect(dimensionModel.getCellPosition(1, 'text')).toEqual(expectedPosition);
             expect(dimensionModel.getCellPosition(2, 'text')).toEqual(expectedPosition);
