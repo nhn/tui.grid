@@ -446,6 +446,68 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
+     * Returns the horizontal position of the given column
+     * @param {String} columnName - column name
+     * @returns {{left: Number, right: Number}}
+     * @private
+     */
+    _getCellHorizontalPosition: function(columnName) {
+        var columnModel = this.columnModel;
+        var metaColumnCount = columnModel.getVisibleMetaColumnCount();
+        var columnWidthList = this.get('columnWidthList');
+        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
+        var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
+        var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
+        var left = 0;
+
+        for (; idx < targetIdx; idx += 1) {
+            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
+        }
+
+        return {
+            left: left,
+            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
+        };
+    },
+
+    /**
+     * Returns the vertical position of the given row
+     * @param {Number} rowKey - row key
+     * @param {Number} rowSpanCount - the count of rowspan
+     * @returns {{top: Number, bottom: Number}}
+     */
+    _getCellVerticalPosition: function(rowKey, rowSpanCount) {
+        var dataModel = this.dataModel;
+        var rowHeight = this.get('rowHeight');
+        var rowIdx = dataModel.indexOfRowKey(rowKey);
+        var top = util.getHeight(rowIdx, rowHeight);
+        var height = util.getHeight(rowSpanCount, rowHeight);
+
+        return {
+            top: top,
+            bottom: top + height
+        };
+    },
+
+    /**
+     * Returns the count of rowspan of given cell
+     * @param {Number} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Number}
+     * @private
+     */
+    _getRowSpanCount: function(rowKey, columnName) {
+        var rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
+
+        if (!rowSpanData.isMainRow) {
+            rowKey = rowSpanData.mainRowKey;
+            rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
+        }
+
+        return rowSpanData.count || 1;
+    },
+
+    /**
      * 계산한 cell 의 위치를 리턴한다.
      * @param {Number|String} rowKey - 데이터의 키값
      * @param {String} columnName - 칼럼명
@@ -453,50 +515,23 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
-        var dataModel = this.dataModel,
-            columnModel = this.columnModel,
-            rowHeight = this.get('rowHeight'),
-            row = dataModel.get(rowKey),
-            metaColumnCount = columnModel.getVisibleMetaColumnCount(),
-            columnWidthList = this.get('columnWidthList').slice(metaColumnCount),
-            columnFixCount = columnModel.getVisibleColumnFixCount(),
-            columnIdx = columnModel.indexOfColumnName(columnName, true),
-            rowSpanData,
-            rowIdx, spanCount,
-            top, left, right, bottom, i;
+        var rowSpanCount, vPos, hPos;
 
-        if (!row) {
+        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
+        if (!this.dataModel.get(rowKey)) {
             return {};
         }
 
-        rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
-
-        if (!rowSpanData.isMainRow) {
-            rowKey = rowSpanData.mainRowKey;
-            rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
-        }
-
-        spanCount = rowSpanData.count || 1;
-
-        rowIdx = dataModel.indexOfRowKey(rowKey);
-
-        top = util.getHeight(rowIdx, rowHeight);
-        bottom = top + util.getHeight(spanCount, rowHeight) - CELL_BORDER_WIDTH;
-
-        left = i = 0;
-        if (columnFixCount <= columnIdx) {
-            i = columnFixCount;
-        }
-        for (; i < columnIdx; i += 1) {
-            left += columnWidthList[i] + CELL_BORDER_WIDTH;
-        }
-        right = left + columnWidthList[i] + CELL_BORDER_WIDTH;
+        rowSpanCount = this._getRowSpanCount(rowKey, columnName);
+        vPos = this._getCellVerticalPosition(rowKey, rowSpanCount);
+        hPos = this._getCellHorizontalPosition(columnName);
 
         return {
-            top: top,
-            left: left,
-            right: right,
-            bottom: bottom
+            top: vPos.top,
+            bottom: vPos.bottom,
+            left: hPos.left,
+            right: hPos.right
         };
     },
 

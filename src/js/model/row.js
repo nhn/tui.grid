@@ -179,7 +179,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isEditable: cellState.isEditable,
                 isDisabled: cellState.isDisabled,
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
-                isFocused: focusModel.isCurrentCell(rowKey, columnName),
                 optionList: tui.util.pick(column, 'editOption', 'list'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
@@ -211,10 +210,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             focusModel = this.focusModel;
         }
         classNames = row.getClassNameList(columnName);
-
-        if (focusModel.isCurrentCell(row.get('rowKey'), columnName, true)) {
-            classNames.push('focused');
-        }
 
         return classNames.join(' ');
     },

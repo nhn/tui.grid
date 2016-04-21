@@ -78,7 +78,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
-     * Event handler for the 'focus' event.
+     * Event handler for the 'focusin' event.
      * @param {Event} event - DOM event object
      * @private
      */
@@ -90,7 +90,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
-     * Event handler for the 'blur' event.
+     * Event handler for the 'focusout' event.
      * @param {Event} event - DOM event object
      * @private
      */

@@ -51,7 +51,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
-            .listenTo(this.focusModel, 'focus blur', this._onFocusOrBlur)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -129,21 +128,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onBeforeResetData: function(dataLength) {
         if (dataLength > DATA_LENGTH_FOR_LOADING) {
             this.set('state', renderStateMap.LOADING);
-        }
-    },
-
-    /**
-     * Event handler for 'focus' and 'blur' events on focusModel
-     * @param {Number|String} rowKey - row key
-     * @param {String} columnName - column name
-     * @private
-     */
-    _onFocusOrBlur: function(rowKey, columnName) {
-        var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-        var rowModel = this._getRowModel(mainRowKey, columnName);
-
-        if (rowModel) {
-            rowModel.updateClassName(columnName);
         }
     },
 

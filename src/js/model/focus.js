@@ -394,12 +394,21 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} true if succeeded, false otherwise.
      */
     startEditing: function(rowKey, columnName) {
-        if (this.get('editingAddress') ||
-            !this.isCurrentCell(rowKey, columnName, true) ||
-            !this.dataModel.get(rowKey).isEditable(columnName)) {
+        if (this.get('editingAddress')) {
             return false;
         }
 
+        if (_.isUndefined(rowKey) && _.isUndefined(columnName)) {
+            rowKey = this.get('rowKey');
+            columnName = this.get('columnName');
+        } else if (!this.isCurrentCell(rowKey, columnName, true)) {
+            return false;
+        }
+
+        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        if (!this.dataModel.get(rowKey).isEditable(columnName)) {
+            return false;
+        }
         this.set('editingAddress', {
             rowKey: rowKey,
             columnName: columnName

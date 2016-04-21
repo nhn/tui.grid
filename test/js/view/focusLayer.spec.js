@@ -20,12 +20,6 @@ function createFocusLayer(modelManager, whichSide) {
     });
 }
 
-function loadGridCSS() {
-    var fixtures = jasmien.getStyleFixtures();
-    fixtures.fixturePath = '';
-}
-
-
 fdescribe('view/focusLayer', function() {
     var $wrapper, layerLside, layerRside, modelManager;
 
@@ -43,24 +37,33 @@ fdescribe('view/focusLayer', function() {
 
         layerLside = createFocusLayer(modelManager, 'L');
         layerRside = createFocusLayer(modelManager, 'R');
-        $wrapper.append(layerLside.$el);
-        $wrapper.append(layerRside.$el);
+        $wrapper.append(layerLside.render().$el);
+        $wrapper.append(layerRside.render().$el);
     });
 
-    it('initial state is hidden', function() {
+    it('the layer element is hidden initially', function() {
         expect(layerLside.$el).toBeHidden();
         expect(layerRside.$el).toBeHidden();
     });
 
-    describe('when focus event occur', function() {
+    it('the layer has for elements to draw border', function() {
+        expect(layerLside.$el.find('div').length).toBe(4);
+    });
+
+    describe('when focus is set', function() {
         beforeEach(function() {
             modelManager.focusModel.focusAt(0, 0);
         });
 
-        it('and the target cell is in the same side, show layer', function() {
+        it('and the target cell is in the same side, show layer element', function() {
             expect(layerLside.$el).toBeVisible();
-            // console.log(layerLside.$el.is(':visible'));
             expect(layerRside.$el).toBeHidden();
+        });
+
+        it('and then blurred, hide layer element', function() {
+            modelManager.focusModel.blur();
+
+            expect(layerLside.$el).toBeHidden();
         });
     });
 });

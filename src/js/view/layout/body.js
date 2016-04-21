@@ -144,7 +144,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
             indexData;
 
-        if (!$td.length) { // selection layer
+        if (!$td.length) { // selection layer, focus layer
             indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
             columnName = this._getColumnNameByVisibleIndex(indexData.column);
         } else if (rowKey && columnName) { // valid cell
