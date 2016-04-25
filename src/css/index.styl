@@ -47,6 +47,7 @@
 
         input[type=text]
             outline none
+            box-sizing border-box
             line-height normal // prevent to be inherit
 
         ul, li
@@ -74,10 +75,6 @@
                 margin-left 8px
                 padding-right 7px
 
-            $btn-common =
-                display inline-block
-                padding-left 17px
-
             em
                 position absolute
                 left 0
@@ -86,10 +83,7 @@
                 height 12px
                 background url(../images/icons.gif) no-repeat
 
-                &.excel
-                    background-position -30px -60px
-
-                &.grid
+                &.btn-excel-icon
                     background-position -30px -60px
 
         .clipboard

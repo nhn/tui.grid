@@ -6,11 +6,8 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
-
-var CLASSNAME_SELECTED = 'selected';
-var CLASSNAME_FOCUSED_ROW = 'focused_row';
-var SELECTOR_META_CELL = 'td.meta_column';
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * RowList View
@@ -138,7 +135,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _getRowElement: function(rowKey) {
-        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']');
+        return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']');
     },
 
     /**
@@ -146,8 +143,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _refreshSelectedMetaColumns: function() {
-        var $rows = this.$el.find('tr'),
-            $filteredRows;
+        var $rows = this.$el.find('tr');
+        var metaSelector = 'td.' + classNameConst.CELL_META_COLUMN;
+        var $filteredRows;
 
         if (this.selectionModel.hasSelection()) {
             $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
@@ -155,8 +153,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        $rows.find(SELECTOR_META_CELL).removeClass(CLASSNAME_SELECTED);
-        $filteredRows.find(SELECTOR_META_CELL).addClass(CLASSNAME_SELECTED);
+        $rows.find(metaSelector).removeClass(classNameConst.CELL_SELECTED);
+        $filteredRows.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
     },
 
     /**
@@ -198,20 +196,20 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * Removes the CLASSNAME_FOCUSED_ROW class from the cells in the previously focused row and
+     * Removes the CURRENT_ROW class from the cells in the previously focused row and
      * adds it to the cells in the currently focused row.
      * @private
      */
     _refreshFocusedRow: function() {
-        var rowKey = this.focusModel.get('rowKey'),
-            prevRowKey = this.focusModel.get('prevRowKey');
+        var rowKey = this.focusModel.get('rowKey');
+        var prevRowKey = this.focusModel.get('prevRowKey');
 
         this._setFocusedRowClass(prevRowKey, false);
         this._setFocusedRowClass(rowKey, true);
     },
 
     /**
-     * Finds all cells in the row indentified by given rowKey and toggles the CLASSNAME_FOCUSED_ROW on them.
+     * Finds all cells in the row indentified by given rowKey and toggles the CURRENT_ROW on them.
      * @param {Number|String} rowKey - rowKey
      * @param {Boolean} focused - if set to true, the class will be added, otherwise be removed.
      * @private
@@ -227,8 +225,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             if (!trMap[mainRowKey]) {
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
-            $td = trMap[mainRowKey].find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
-            $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
+            $td = trMap[mainRowKey].find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+            $td.toggleClass(classNameConst.CELL_CURRENT_ROW, focused);
         }, this);
     },
 

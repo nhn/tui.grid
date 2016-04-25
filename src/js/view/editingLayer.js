@@ -6,7 +6,8 @@
 
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -26,7 +27,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         this.listenTo(this.renderModel, 'editingStateChanged', this._onEditingStateChanged);
     },
 
-    className: 'tui-grid-editing-layer tui-grid-cell-content',
+    className: classNameConst.LAYER_EDITING + ' ' + classNameConst.CELL_CONTENT,
 
     /**
      * Starts editing the given cell.
@@ -41,8 +42,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         var painter = this.inputPainters[editType];
 
         this.$el.html(painter.generateHtml(cellData))
-            .attr(attrNameMap.ROW_KEY, rowKey)
-            .attr(attrNameMap.COLUMN_NAME, columnName)
+            .attr(attrNameConst.ROW_KEY, rowKey)
+            .attr(attrNameConst.COLUMN_NAME, columnName)
             .css(styleMap).show();
 
         this._adjustLeftPosition();
@@ -64,8 +65,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _finishEditing: function() {
-        this.$el.removeAttr(attrNameMap.ROW_KEY);
-        this.$el.removeAttr(attrNameMap.COLUMN_NAME);
+        this.$el.removeAttr(attrNameConst.ROW_KEY);
+        this.$el.removeAttr(attrNameConst.COLUMN_NAME);
         this.$el.empty().hide();
     },
 

@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../../base/view');
+var classNameConst = require('../../../common/classNameConst');
 
 /**
  * Class for the pagination in the toolbar
@@ -20,19 +21,17 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
         this.toolbarModel = options.toolbarModel;
     },
 
-    tagName: 'div',
+    className: classNameConst.PAGINATION,
 
-    className: 'tui-grid-pagination',
-
-    template: _.template(
-        '<a href="#" class="tui-grid-pre-end" title="First page">First</a>' +
-        '<a href="#" class="tui-grid-pre" title="Previous page">Prev</a> ' +
-        '<a href="#" class="tui-grid-next" title="Next page">Next</a>' +
-        '<a href="#" class="tui-grid-next-end" title="Last page">Last</a>' +
-        '<span class="tui-grid-pre-end-off">First Off</span>' +
-        '<span class="tui-grid-pre-off">Prev Off</span>' +
-        '<span class="tui-grid-next-off">Next Off</span>' +
-        '<span class="tui-grid-next-end-off">Last Off</span>'
+    htmlString: (
+        '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
+        '<a href="#" class="' + classNameConst.PAGINATION_PRE + '" title="Previous page">Prev</a> ' +
+        '<a href="#" class="' + classNameConst.PAGINATION_NEXT + '" title="Next page">Next</a>' +
+        '<a href="#" class="' + classNameConst.PAGINATION_NEXT_END + '" title="Last page">Last</a>' +
+        '<span class="' + classNameConst.PAGINATION_PRE_END_OFF + '">First Off</span>' +
+        '<span class="' + classNameConst.PAGINATION_PRE_OFF + '">Prev Off</span>' +
+        '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
+        '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>'
     ),
 
     /**
@@ -41,8 +40,9 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      */
     render: function() {
         this._destroyChildren();
-        this.$el.empty().html(this.template());
+        this.$el.empty().html(this.htmlString);
         this._setPaginationInstance();
+
         return this;
     },
 
@@ -56,15 +56,16 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
         if (!pagination && PaginationClass) {
             pagination = new PaginationClass({
+                classPrefix: classNameConst.PREFIX,
                 itemCount: 1,
                 itemPerPage: 1,
                 pagePerPageList: 5,
                 isCenterAlign: true,
                 moveUnit: 'page',
-                $preOff: this.$el.find('.tui-grid-pre-off'),
-                $pre_endOff: this.$el.find('.tui-grid-pre-end-off'), // eslint-disable-line camelcase
-                $nextOff: this.$el.find('.tui-grid-next-off'),
-                $lastOff: this.$el.find('.tui-grid-next-end-off')
+                $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
+                $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
+                $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
+                $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
             }, this.$el);
         }
         this.toolbarModel.set('pagination', pagination);

@@ -5,7 +5,9 @@
 'use strict';
 
 var Frame = require('./frame');
+var classNameConst = require('../../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
+
 
 /**
  * right side frame class
@@ -26,7 +28,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             this._resetScrollBorderHeight);
     },
 
-    className: 'tui-grid-rside-area',
+    className: classNameConst.RSIDE_AREA,
 
     /**
      * Event handler for 'columnWidthChanged' event on dimensionModel
@@ -97,10 +99,10 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         headerHeight = dimensionModel.get('headerHeight');
 
         // Empty DIV for hiding scrollbar in the header area
-        $space = $('<div />').addClass('tui-grid-header-space');
+        $space = $('<div />').addClass(classNameConst.HEADER_SPACE);
 
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
-        $scrollBorder = $('<div />').addClass('tui-grid-scrollbar-border');
+        $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
 
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
@@ -113,7 +115,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
             $scrollCorner = $('<div />')
-                .addClass('tui-grid-scrollbar-corner')
+                .addClass(classNameConst.SCROLLBAR_CORNER)
                 .css('bottom', dimensionModel.get('toolbarHeight'));
             this.$el.append($scrollCorner);
         }

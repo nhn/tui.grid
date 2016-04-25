@@ -3,21 +3,21 @@ $line-common =
     background #ccc
     z-index 13
 
-.left-line
+.left-border
     {$line-common}
     top 0
     bottom 0
     left 0
     width 1px
 
-.right-line
+.right-border
     {$line-common}
     top 0
     bottom 0
     right 0
     width 1px
 
-.data-bottom-line
+.bottom-border
     {$line-common}
     bottom 0
     left 0
@@ -47,7 +47,7 @@ $selection-layer =
     .header
         overflow hidden
 
-    .data
+    .body
         overflow scroll
         position relative
         margin-right -17px
@@ -76,7 +76,7 @@ $selection-layer =
         &.no_scroll
             margin-right 0
 
-    .data
+    .body
         position relative
         overflow scroll
 

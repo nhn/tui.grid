@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../../base/view');
+var classNameConst = require('../../../common/classNameConst');
 
 /**
  * Class for the control panel in the toolbar
@@ -28,17 +29,17 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
             'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
     },
 
-    events: {
-        'click a.tui-grid-excel-download-button': '_onClickExcel'
+    events: function() {
+        var hash = {};
+        hash['click .' + classNameConst.BTN_EXCEL] = '_onClickExcel';
+        return hash;
     },
 
-    tagName: 'div',
-
-    className: 'tui-grid-btn-setup',
+    className: classNameConst.TOOLBAR_BTN_HOLDER,
 
     templateExcelBtn: _.template(
-        '<a href="#" class="tui-grid-excel-download-button tui-grid-btn-text <%=className%>">' +
-        '<span><em class="tui-grid-excel"></em><%=text%></span>' +
+        '<a href="#" class="' + classNameConst.BTN_EXCEL + ' ' + classNameConst.BTN_TEXT + ' <%=className%>">' +
+        '<span><em class="' + classNameConst.BTN_EXCEL_ICON + '"></em><%=text%></span>' +
         '</a>'
     ),
 
@@ -48,18 +49,18 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @private
      */
     _onClickExcel: function(mouseEvent) {
-        var grid = tui.Grid.getInstanceById(this.gridId),
-            net = grid.getAddOn('Net'),
-            $target;
+        var grid = tui.Grid.getInstanceById(this.gridId);
+        var net = grid.getAddOn('Net');
+        var $target;
 
         mouseEvent.preventDefault();
 
         if (net) {
             $target = $(mouseEvent.target).closest('a');
 
-            if ($target.hasClass('tui-grid-excel-page')) {
+            if ($target.hasClass(classNameConst.BTN_EXCEL_PAGE)) {
                 net.download('excel');
-            } else if ($target.hasClass('tui-grid-excel-all')) {
+            } else if ($target.hasClass(classNameConst.BTN_EXCEL_ALL)) {
                 net.download('excelAll');
             }
         }
@@ -76,13 +77,13 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
         if (toolbarModel.get('isExcelButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
-                className: 'tui-grid-excel-page',
+                className: classNameConst.BTN_EXCEL_PAGE,
                 text: '엑셀 다운로드'
             }));
         }
         if (toolbarModel.get('isExcelAllButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
-                className: 'tui-grid-excel-all',
+                className: classNameConst.BTN_EXCEL_ALL,
                 text: '전체 엑셀 다운로드'
             }));
         }

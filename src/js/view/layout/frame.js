@@ -27,13 +27,9 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.renderModel, 'columnModelChanged', this.render, this)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+        this.listenTo(this.renderModel, 'columnModelChanged', this.render)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
     },
-
-    tagName: 'div',
-
-    className: 'tui-grid-lside-area',
 
     /**
      * Render

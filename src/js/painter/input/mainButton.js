@@ -5,6 +5,7 @@
 'use strict';
 
 var Painter = require('../../base/painter');
+var classNameConst = require('../../common/classNameConst');
 
 /**
  * Main Button Painter
@@ -20,7 +21,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     init: function(options) {
         Painter.apply(this, arguments);
 
-        this.selector = 'input.tui-grid-main-button';
+        this.selector = 'input.' + classNameConst.CELL_MAIN_BUTTON;
         this.inputType = options.inputType;
         this.gridId = options.gridId;
     },
@@ -38,7 +39,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @returns {String}
      */
     template: _.template(
-        '<input class="tui-grid-main-button" type="<%=type%>" name="<%=name%>" <%=checked%> />'
+        '<input class="' + classNameConst.CELL_MAIN_BUTTON + '"' +
+        ' type="<%=type%>" name="<%=name%>" <%=checked%> />'
     ),
 
      /**

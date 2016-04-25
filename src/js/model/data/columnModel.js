@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var Model = require('../../base/model'),
-    util = require('../../common/util');
+var Model = require('../../base/model');
+var util = require('../../common/util');
 
 /**
  * 컬럼 모델 데이터를 다루는 객체

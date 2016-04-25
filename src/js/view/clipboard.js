@@ -7,6 +7,7 @@
 var View = require('../base/view');
 var util = require('../common/util');
 var keyCodeMap = require('../common/constMap').keyCode;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Clipboard view class
@@ -35,7 +36,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     tagName: 'textarea',
 
-    className: 'tui-grid-clipboard',
+    className: classNameConst.CLIPBOARD,
 
     events: {
         'keydown': '_onKeyDown',

@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../../base/view');
+var classNameConst = require('../../../common/classNameConst');
 
 /**
  * Class for the resize handler of the toolbar
@@ -21,9 +22,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
         this.timeoutIdForResize = 0;
     },
 
-    className: 'tui-grid-height-resize-bar',
+    className: classNameConst.TOOLBAR_HEIGHT_RESIZE_BAR,
 
-    template: _.template('<a href="#" class="tui-grid-height-resize-handle"><span></span></a>'),
+    htmlString: '<a href="#" class="' + classNameConst.TOOLBAR_HEIGHT_RESIZE_HANDLE + '"><span></span></a>',
 
     events: {
         'mousedown': '_onMouseDown'
@@ -111,7 +112,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
      */
     render: function() {
         this._destroyChildren();
-        this.$el.html(this.template());
+        this.$el.html(this.htmlString);
+
         return this;
     },
 

@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
+var classNameConst = require('../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
@@ -32,9 +33,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         this.listenTo(this.selectionModel, 'change:range', this.render);
     },
 
-    tagName: 'div',
-
-    className: 'tui-grid-selection-layer',
+    className: classNameConst.LAYER_SELECTION,
 
     /**
      * Updates this.columnWidthList

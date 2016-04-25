@@ -7,8 +7,8 @@
 var View = require('../../base/view');
 var util = require('../../common/util');
 var constMap = require('../../common/constMap');
+var classNameConst = require('../../common/classNameConst');
 
-var CLASSNAME_SELECTED = 'selected';
 var DELAY_SYNC_CHECK = 10;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -47,7 +47,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
-    className: 'tui-grid-header',
+    className: classNameConst.HEADER,
 
     events: {
         'click': '_onClick',
@@ -94,7 +94,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * 정렬 버튼을 위한 HTML 마크업
      */
-    markupBtnSort: '<a class="tui-grid-btn-sorting"></a>',
+    markupBtnSort: '<a class="' + classNameConst.BTN_SORT + '"></a>',
 
     /**
      * col group 마크업을 생성한다.
@@ -162,11 +162,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnNames = [this.focusModel.get('columnName')];
         }
 
-        $ths.removeClass(CLASSNAME_SELECTED);
+        $ths.removeClass(classNameConst.CELL_SELECTED);
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(classNameConst.CELL_SELECTED);
             });
         }
     },
@@ -179,7 +179,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onMouseDown: function(event) {
         var columnName, columnNames;
 
-        if (!this.selectionModel.isEnabled() || $(event.target).is('a.tui-grid-btn-sorting')) {
+        if (!this.selectionModel.isEnabled() || $(event.target).is('a.' + classNameConst.BTN_SORT)) {
             return;
         }
 
@@ -402,14 +402,13 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var $target = $(clickEvent.target),
             columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
 
-        /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
             if ($target.prop('checked')) {
                 this.dataModel.checkAll();
             } else {
                 this.dataModel.uncheckAll();
             }
-        } else if ($target.is('a.tui-grid-btn-sorting')) {
+        } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
             this.dataModel.sortByField(columnName);
         }
     },
@@ -423,12 +422,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _updateBtnSortState: function(sortOptions) {
         if (this._$currentSortBtn) {
-            this._$currentSortBtn.removeClass('tui-grid-sorting-down tui-grid-sorting-up');
+            this._$currentSortBtn.removeClass(classNameConst.BTN_SORT_DOWN + ' ' + classNameConst.BTN_SORT_UP);
         }
         this._$currentSortBtn = this.$el.find(
-            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.tui-grid-btn-sorting'
+            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.' + classNameConst.BTN_SORT
         );
-        this._$currentSortBtn.addClass(sortOptions.isAscending ? 'tui-grid-sorting-up' : 'tui-grid-sorting-down');
+        this._$currentSortBtn.addClass(sortOptions.isAscending ?
+            classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
+        );
     },
 
     /**
@@ -439,7 +440,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
-            this.$el.addClass('tui-grid-no-scroll');
+            this.$el.addClass(classNameConst.HEADER_NO_SCROLL);
         }
 
         this.$el.css({

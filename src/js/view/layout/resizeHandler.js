@@ -5,7 +5,9 @@
 'use strict';
 
 var View = require('../../base/view');
-var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
+var attrNameConst = require('../../common/constMap').attrName;
+var classNameConst = require('../../common/classNameConst');
+var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * Reside Handler class
@@ -30,28 +32,30 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             initialOffsetLeft: 0,
             initialLeft: 0
         });
+
         this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
     },
 
-    tagName: 'div',
+    className: classNameConst.HEADER_RESIZE_CONTAINER,
 
-    className: 'tui-grid-resize-handle-container',
+    events: function() {
+        var eventHash = {};
 
-    events: {
-        'mousedown .tui-grid-resize-handle': '_onMouseDown',
-        'dblclick .tui-grid-resize-handle': '_onDblClick'
+        eventHash['mousedown .' + classNameConst.HEADER_RESIZE_HANDLE] = '_onMouseDown';
+        eventHash['dblclick .' + classNameConst.HEADER_RESIZE_HANDLE] = '_onDblClick';
+
+        return eventHash;
     },
 
     template: _.template(
-        '<div columnindex="<%=columnIndex%>" ' +
-        '<%=attrColumnName%>="<%=columnName%>" ' +
-        'class="tui-grid-resize-handle' +
-        '<% if(isLast === true) ' +
-        ' print(" tui-grid-resize-handle-last");%>' +
-        '" ' +
+        '<div ' +
+        attrNameConst.COLUMN_INDEX + '="<%=columnIndex%>" ' +
+        attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
+        'class="' + classNameConst.HEADER_RESIZE_HANDLE + ' <%=lastClass%>" ' +
         'style="<%=height%>" ' +
         'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
-        '</div>'),
+        '</div>'
+    ),
 
     /**
      * Return an object that contains an array of column width and an array of column model.
@@ -59,10 +63,10 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.columnModel,
-            dimensionModel = this.dimensionModel,
-            columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnModel = this.columnModel;
+        var dimensionModel = this.dimensionModel;
+        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
+        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
 
         return {
             widthList: columnWidthList,
@@ -76,21 +80,19 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getResizeHandlerMarkup: function() {
-        var columnData = this._getColumnData(),
-            columnModelList = columnData.modelList,
-            headerHeight = this.dimensionModel.get('headerHeight'),
-            length = columnModelList.length,
-            resizeHandleMarkupList;
-
-        resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
+        var columnData = this._getColumnData();
+        var columnModelList = columnData.modelList;
+        var headerHeight = this.dimensionModel.get('headerHeight');
+        var length = columnModelList.length;
+        var resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
-                attrColumnName: ATTR_COLUMN_NAME,
+                lastClass: (index + 1 === length) ? classNameConst.HEADER_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.columnName,
-                isLast: index + 1 === length,
                 height: headerHeight
             });
         }, this);
+
         return resizeHandleMarkupList.join('');
     },
 
@@ -116,29 +118,17 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _refreshHandlerPosition: function() {
-        var columnData = this._getColumnData(),
-            columnWidthList = columnData.widthList,
-            $resizeHandleList = this.$el.find('.tui-grid-resize-handle'),
-            $table = this.$el.parent().find('table:first'),
-            isChanged = false,
-            $handler,
-            columnName,
-            curPos = 0,
-            BORDER_WIDTH = 1,
-            HANDLER_WIDTH_HALF = 3,
-            width;
+        var columnData = this._getColumnData();
+        var columnWidthList = columnData.widthList;
+        var $resizeHandleList = this.$el.find('.' + classNameConst.HEADER_RESIZE_HANDLE);
+        var curPos = 0;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
-            $handler = $resizeHandleList.eq(index);
-            columnName = $handler.attr(ATTR_COLUMN_NAME);
-            width = $table.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']').width();
-            if (tui.util.isExisty(width)) {
-                isChanged = isChanged || (width !== columnWidthList[index]);
-            } else {
-                width = columnWidthList[index];
-            }
-            curPos += width + BORDER_WIDTH;
-            $handler.css('left', curPos - HANDLER_WIDTH_HALF);
+            var $handler = $resizeHandleList.eq(index);
+            var handlerWidthHalf = Math.ceil($handler.width() / 2);
+
+            curPos += columnWidthList[index] + CELL_BORDER_WIDTH;
+            $handler.css('left', curPos - handlerWidthHalf);
         });
     },
 
@@ -157,7 +147,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _onMouseDown: function(mouseEvent) {
-        this._startResizing(mouseEvent);
+        this._startResizing($(mouseEvent.target));
     },
 
     /**
@@ -166,8 +156,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _onDblClick: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            index = parseInt($target.attr('columnindex'), 10);
+        var $target = $(mouseEvent.target);
+        var index = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
         this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
         this._refreshHandlerPosition();
@@ -189,15 +179,14 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _onMouseMove: function(mouseEvent) {
         var left, width, index;
 
-        /* istanbul ignore else */
         if (this._isResizing()) {
             mouseEvent.preventDefault();
 
             left = mouseEvent.pageX - this.initialOffsetLeft;
             width = this._calculateWidth(mouseEvent.pageX);
-            index = parseInt(this.$target.attr('columnindex'), 10);
+            index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-            this.$target.css('left', left + 'px');
+            this.$target.css('left', left);
             this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             this._refreshHandlerPosition();
         }
@@ -226,19 +215,18 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * Start resizing
-     * @param {event} mouseDownEvent - mouse event
+     * @param {jQuery} $target - target element
      * @private
      */
-    _startResizing: function(mouseDownEvent) {
-        var columnData = this._getColumnData(),
-            columnWidthList = columnData.widthList,
-            $target = $(mouseDownEvent.target);
+    _startResizing: function($target) {
+        var columnData = this._getColumnData();
+        var columnWidthList = columnData.widthList;
 
         this.isResizing = true;
         this.$target = $target;
         this.initialLeft = parseInt($target.css('left').replace('px', ''), 10);
         this.initialOffsetLeft = this.$el.offset().left;
-        this.initialWidth = columnWidthList[$target.attr('columnindex')];
+        this.initialWidth = columnWidthList[$target.attr(attrNameConst.COLUMN_INDEX)];
         $('body').css('cursor', 'col-resize');
         $(document)
             .bind('mousemove', $.proxy(this._onMouseMove, this))

@@ -6,7 +6,8 @@
 
 var View = require('../base/view');
 var GridEvent = require('../common/gridEvent');
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Container View
@@ -188,7 +189,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr(attrNameMap.COLUMN_NAME) && $cell.parent().attr(attrNameMap.ROW_KEY));
+        return !!($cell.is('td') &&
+            $cell.attr(attrNameConst.COLUMN_NAME) &&
+            $cell.parent().attr(attrNameConst.ROW_KEY)
+        );
     },
 
     /**
@@ -198,8 +202,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.attr(attrNameMap.ROW_KEY));
-        var columnName = $cell.attr(attrNameMap.COLUMN_NAME);
+        var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
+        var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
 
         return {
             rowKey: rowKey,
@@ -242,11 +246,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     render: function() {
         var childElements = this._renderChildren().concat([
-            $('<div>').addClass('tui-grid-left-line'),
-            $('<div>').addClass('tui-grid-right-line')
+            $('<div>').addClass(classNameConst.BORDER_LEFT),
+            $('<div>').addClass(classNameConst.BORDER_RIGHT)
         ]);
-        this.$el.addClass('tui-grid-container')
-            .attr('data-grid-id', this.gridId)
+        this.$el.addClass(classNameConst.CONTAINER)
+            .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
 
         this._appendBottomLine();
@@ -262,7 +266,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _appendBottomLine: function() {
         var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
         if (bottomPos) {
-            this.$el.append($('<div>').addClass('tui-grid-data-bottom-line').css('bottom', bottomPos));
+            this.$el.append($('<div>').addClass(classNameConst.BORDER_BOTTOM).css('bottom', bottomPos));
         }
     },
 

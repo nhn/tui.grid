@@ -5,7 +5,8 @@
 'use strict';
 
 var View = require('../base/view');
-var renderStateMap = require('../common/constMap').renderState;
+var stateConst = require('../common/constMap').renderState;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -26,13 +27,13 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
         this.listenTo(this.renderModel, 'change:state', this.render);
     },
 
-    className: 'tui-grid-state-layer',
+    className: classNameConst.LAYER_STATE,
 
     template: _.template(
-        '<div class="tui-grid-layer-content">' +
+        '<div class="' + classNameConst.LAYER_STATE_CONTENT + '">' +
         '    <%= text %>' +
         '    <% if (isLoading) { %>' +
-        '    <div class="tui-grid-loading-img"></div>' +
+        '    <div class="' + classNameConst.LAYER_STATE_LOADING + '"></div>' +
         '    <% } %>' +
         '</div>'
     ),
@@ -44,7 +45,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     render: function() {
         var renderState = this.renderModel.get('state');
 
-        if (renderState === renderStateMap.DONE) {
+        if (renderState === stateConst.DONE) {
             this.$el.hide();
         } else {
             this._showLayer(renderState);
@@ -61,7 +62,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     _showLayer: function(renderState) {
         var layerHtml = this.template({
             text: this._getMessage(renderState),
-            isLoading: (renderState === renderStateMap.LOADING)
+            isLoading: (renderState === stateConst.LOADING)
         });
 
         this.$el.html(layerHtml).show();
@@ -75,9 +76,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      */
     _getMessage: function(renderState) {
         switch (renderState) {
-            case renderStateMap.LOADING:
+            case stateConst.LOADING:
                 return '요청을 처리 중입니다.';
-            case renderStateMap.EMPTY:
+            case stateConst.EMPTY:
                 return (this.renderModel.get('emptyMessage') || '데이터가 존재하지 않습니다.');
             default:
                 return null;

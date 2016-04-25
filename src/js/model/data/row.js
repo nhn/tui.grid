@@ -7,6 +7,7 @@
 var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
 var util = require('../../common/util');
+var classNameConst = require('../../common/classNameConst');
 
 // Propertie names that indicate meta data
 var PRIVATE_PROPERTIES = [
@@ -216,18 +217,18 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             classNameList.push(columnModel.className);
         }
         if (columnModel.isEllipsis) {
-            classNameList.push('tui-grid-ellipsis');
+            classNameList.push(classNameConst.CELL_ELLIPSIS);
         }
         if (columnModel.isRequired) {
-            classNameList.push('tui-grid-required');
+            classNameList.push(classNameConst.CELL_REQUIRED);
         }
         if (isMetaColumn) {
-            classNameList.push('tui-grid-meta-column');
+            classNameList.push(classNameConst.CELL_META_COLUMN);
         } else if (cellState.isEditable) {
-            classNameList.push('tui-grid-editable');
+            classNameList.push(classNameConst.CELL_EDITABLE);
         }
         if (cellState.isDisabled) {
-            classNameList.push('tui-grid-disabled');
+            classNameList.push(classNameConst.CELL_DISABLED);
         }
 
         return this._makeUniqueStringArray(classNameList);

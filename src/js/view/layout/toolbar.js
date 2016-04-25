@@ -5,6 +5,7 @@
 'use strict';
 
 var View = require('../../base/view');
+var classNameConst = require('../../common/classNameConst');
 
 /**
  * 툴바 영역
@@ -24,7 +25,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
         this.viewFactory = options.viewFactory;
     },
 
-    className: 'tui-grid-toolbar',
+    className: classNameConst.TOOLBAR,
 
     /**
      * 랜더링한다.

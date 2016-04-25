@@ -45,6 +45,8 @@ module.exports = {
     attrName: {
         ROW_KEY: 'data-row-key',
         COLUMN_NAME: 'data-column-name',
-        EDIT_TYPE: 'data-edit-type'
+        COLUMN_INDEX: 'data-column-index',
+        EDIT_TYPE: 'data-edit-type',
+        GRID_ID: 'data-grid-id'
     }
 };

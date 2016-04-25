@@ -6,7 +6,8 @@
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Painter class for cell(TD) views
@@ -23,7 +24,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
-        this.selector = 'td[' + attrNameMap.EDIT_TYPE + '=' + this.editType + ']';
+        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '=' + this.editType + ']';
     },
 
     /**
@@ -78,9 +79,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             content = this.inputPainter.generateHtml(cellData);
 
             if (this._shouldContentBeWrapped() && !this._isUsingViewMode(cellData)) {
-                beforeContent = this._getSpanWrapContent(beforeContent, 'before');
-                afterContent = this._getSpanWrapContent(afterContent, 'after');
-                content = this._getSpanWrapContent(content, 'input');
+                beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
+                afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
+                content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
 
                 return beforeContent + afterContent + content;
             }
@@ -131,13 +132,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     _getAttributes: function(cellData) {
         var attrs = {
-            'class': cellData.className + ' tui-grid-cell-content',
+            'class': cellData.className + ' ' + classNameConst.CELL_CONTENT,
             'align': cellData.columnModel.align || 'left'
         };
 
-        attrs[attrNameMap.EDIT_TYPE] = this.editType;
-        attrs[attrNameMap.ROW_KEY] = cellData.rowKey;
-        attrs[attrNameMap.COLUMN_NAME] = cellData.columnName;
+        attrs[attrNameConst.EDIT_TYPE] = this.editType;
+        attrs[attrNameConst.ROW_KEY] = cellData.rowKey;
+        attrs[attrNameConst.COLUMN_NAME] = cellData.columnName;
         if (cellData.rowSpan) {
             attrs.rowspan = cellData.rowSpan;
         }

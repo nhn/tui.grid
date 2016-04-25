@@ -5,6 +5,7 @@
 'use strict';
 
 var Frame = require('./frame');
+var classNameConst = require('../../common/classNameConst');
 
 /**
  * Left Side Frame
@@ -22,7 +23,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         });
     },
 
-    className: 'tui-grid-lside-area',
+    className: classNameConst.LSIDE_AREA,
 
     /**
      * Event handler for 'changeColumnWidth' event on module:model/dimension
@@ -59,7 +60,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         }
 
         $scrollOverlay = $('<div>')
-            .addClass('tui-grid-scrollbar-overlay')
+            .addClass(classNameConst.SCROLLBAR_OVERLAY)
             .css('bottom', dimensionModel.get('toolbarHeight'));
         this.$el.append($scrollOverlay);
     }

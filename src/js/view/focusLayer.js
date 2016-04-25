@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Class for the layer view that represents the currently focused cell
@@ -35,7 +36,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.listenTo(this.focusModel, 'focus', this._onFocus);
     },
 
-    className: 'tui-grid-focus-layer',
+    className: classNameConst.LAYER_FOCUS,
 
     _onChangeWidth: function() {
         var focusModel = this.focusModel;

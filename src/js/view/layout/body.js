@@ -6,9 +6,8 @@
 
 var View = require('../../base/view');
 var util = require('../../common/util');
-var attrNameMap = require('../../common/constMap').attrName;
-
-var HTML_CONTAINER = '<div class="tui-grid-body-container"></div>';
+var attrNameConst = require('../../common/constMap').attrName;
+var classNameConst = require('../../common/classNameConst');
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 var MIN_INTERVAL_FOR_PAUSED = 200;
@@ -50,11 +49,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
-    className: 'tui-grid-data',
+    className: classNameConst.BODY,
 
     events: {
-        'scroll': '_onScroll',
-        'mousedown .tui-grid-body-container': '_onMouseDown'
+        scroll: '_onScroll',
+        mousedown: '_onMouseDown'
     },
 
     /**
@@ -136,11 +135,15 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var $target = $(event.target);
         var $td = $target.closest('td');
         var $tr = $target.closest('tr');
-        var columnName = $td.attr(attrNameMap.COLUMN_NAME);
-        var rowKey = $tr.attr(attrNameMap.ROW_KEY);
+        var columnName = $td.attr(attrNameConst.COLUMN_NAME);
+        var rowKey = $tr.attr(attrNameConst.ROW_KEY);
         var startAction = true;
         var inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey');
         var indexData;
+
+        if (!$.contains(this.$container[0], $target[0])) {
+            return;
+        }
 
         if (!$td.length) { // selection layer, focus layer
             indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
@@ -320,7 +323,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
         this.$el.css('height', this.dimensionModel.get('bodyHeight'));
 
-        this.$container = $(HTML_CONTAINER);
+        this.$container = $('<div>').addClass(classNameConst.BODY_CONTAINER);
         this.$el.append(this.$container);
 
         this._addChildren([

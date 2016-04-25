@@ -7,6 +7,7 @@
 var View = require('../../base/view');
 var util = require('../../common/util');
 var constMap = require('../../common/constMap');
+var classNameConst = require('../../common/classNameConst');
 
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
@@ -43,7 +44,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this._attachAllTableEventHandlers();
     },
 
-    className: 'tui-grid-table-container',
+    className: classNameConst.BODY_TABLE_CONTAINER,
 
     template: _.template(
         '<table width="100%">' +
