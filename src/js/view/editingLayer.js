@@ -26,7 +26,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         this.listenTo(this.renderModel, 'editingStateChanged', this._onEditingStateChanged);
     },
 
-    className: 'editing_layer cell_content',
+    className: 'tui-grid-editing-layer tui-grid-cell-content',
 
     /**
      * Starts editing the given cell.

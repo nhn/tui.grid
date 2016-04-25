@@ -131,7 +131,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      */
     _getAttributes: function(cellData) {
         var attrs = {
-            'class': cellData.className + ' cell_content',
+            'class': cellData.className + ' tui-grid-cell-content',
             'align': cellData.columnModel.align || 'left'
         };
 

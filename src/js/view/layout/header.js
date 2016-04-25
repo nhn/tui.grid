@@ -47,9 +47,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
-    tagName: 'div',
-
-    className: 'header',
+    className: 'tui-grid-header',
 
     events: {
         'click': '_onClick',
@@ -96,7 +94,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * 정렬 버튼을 위한 HTML 마크업
      */
-    markupBtnSort: '<a class="btn_sorting"></a>',
+    markupBtnSort: '<a class="tui-grid-btn-sorting"></a>',
 
     /**
      * col group 마크업을 생성한다.
@@ -181,7 +179,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onMouseDown: function(event) {
         var columnName, columnNames;
 
-        if (!this.selectionModel.isEnabled() || $(event.target).is('a.btn_sorting')) {
+        if (!this.selectionModel.isEnabled() || $(event.target).is('a.tui-grid-btn-sorting')) {
             return;
         }
 
@@ -411,7 +409,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             } else {
                 this.dataModel.uncheckAll();
             }
-        } else if ($target.is('a.btn_sorting')) {
+        } else if ($target.is('a.tui-grid-btn-sorting')) {
             this.dataModel.sortByField(columnName);
         }
     },
@@ -425,12 +423,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _updateBtnSortState: function(sortOptions) {
         if (this._$currentSortBtn) {
-            this._$currentSortBtn.removeClass('sorting_down sorting_up');
+            this._$currentSortBtn.removeClass('tui-grid-sorting-down tui-grid-sorting-up');
         }
         this._$currentSortBtn = this.$el.find(
-            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.btn_sorting'
+            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.tui-grid-btn-sorting'
         );
-        this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
+        this._$currentSortBtn.addClass(sortOptions.isAscending ? 'tui-grid-sorting-up' : 'tui-grid-sorting-down');
     },
 
     /**
@@ -441,7 +439,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
-            this.$el.addClass('no_scroll');
+            this.$el.addClass('tui-grid-no-scroll');
         }
 
         this.$el.css({

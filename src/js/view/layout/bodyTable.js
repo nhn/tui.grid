@@ -43,9 +43,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this._attachAllTableEventHandlers();
     },
 
-    tagName: 'div',
-
-    className: 'table_container',
+    className: 'tui-grid-table-container',
 
     template: _.template(
         '<table width="100%">' +

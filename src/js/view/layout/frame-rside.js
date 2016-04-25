@@ -26,7 +26,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             this._resetScrollBorderHeight);
     },
 
-    className: 'rside_area',
+    className: 'tui-grid-rside-area',
 
     /**
      * Event handler for 'columnWidthChanged' event on dimensionModel
@@ -97,10 +97,10 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         headerHeight = dimensionModel.get('headerHeight');
 
         // Empty DIV for hiding scrollbar in the header area
-        $space = $('<div />').addClass('header_space');
+        $space = $('<div />').addClass('tui-grid-header-space');
 
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
-        $scrollBorder = $('<div />').addClass('scrollbar_border');
+        $scrollBorder = $('<div />').addClass('tui-grid-scrollbar-border');
 
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
@@ -113,7 +113,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
             $scrollCorner = $('<div />')
-                .addClass('scrollbar_corner')
+                .addClass('tui-grid-scrollbar-corner')
                 .css('bottom', dimensionModel.get('toolbarHeight'));
             this.$el.append($scrollCorner);
         }

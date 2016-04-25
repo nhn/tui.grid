@@ -34,7 +34,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
     tagName: 'div',
 
-    className: 'selection_layer',
+    className: 'tui-grid-selection-layer',
 
     /**
      * Updates this.columnWidthList

@@ -29,16 +29,16 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
     },
 
     events: {
-        'click a.excel_download_button': '_onClickExcel'
+        'click a.tui-grid-excel-download-button': '_onClickExcel'
     },
 
     tagName: 'div',
 
-    className: 'btn_setup',
+    className: 'tui-grid-btn-setup',
 
     templateExcelBtn: _.template(
-        '<a href="#" class="excel_download_button btn_text <%=className%>">' +
-        '<span><em class="excel"></em><%=text%></span>' +
+        '<a href="#" class="tui-grid-excel-download-button tui-grid-btn-text <%=className%>">' +
+        '<span><em class="tui-grid-excel"></em><%=text%></span>' +
         '</a>'
     ),
 
@@ -57,9 +57,9 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         if (net) {
             $target = $(mouseEvent.target).closest('a');
 
-            if ($target.hasClass('excel_page')) {
+            if ($target.hasClass('tui-grid-excel-page')) {
                 net.download('excel');
-            } else if ($target.hasClass('excel_all')) {
+            } else if ($target.hasClass('tui-grid-excel-all')) {
                 net.download('excelAll');
             }
         }
@@ -76,13 +76,13 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
         if (toolbarModel.get('isExcelButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
-                className: 'excel_page',
+                className: 'tui-grid-excel-page',
                 text: '엑셀 다운로드'
             }));
         }
         if (toolbarModel.get('isExcelAllButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
-                className: 'excel_all',
+                className: 'tui-grid-excel-all',
                 text: '전체 엑셀 다운로드'
             }));
         }

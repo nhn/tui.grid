@@ -3,21 +3,21 @@ $line-common =
     background #ccc
     z-index 13
 
-.left_line
+.left-line
     {$line-common}
     top 0
     bottom 0
     left 0
     width 1px
 
-.right_line
+.right-line
     {$line-common}
     top 0
     bottom 0
     right 0
     width 1px
 
-.data_bottom_line
+.data-bottom-line
     {$line-common}
     bottom 0
     left 0
@@ -35,7 +35,7 @@ $selection-layer =
     opacity 0.2
     filter unquote('alpha(opacity=10)')
 
-.lside_area
+.lside-area
     display none
     height 100%
     position absolute
@@ -52,11 +52,11 @@ $selection-layer =
         position relative
         margin-right -17px
 
-        .selection_layer
+        .selection-layer
             {$selection-layer}
             left 1px
 
-    .scrollbar_overlay
+    .scrollbar-overlay
         position absolute
         bottom 0
         left 0
@@ -64,7 +64,7 @@ $selection-layer =
         height 17px
         background-color #f5f5f5
 
-.rside_area
+.rside-area
     display none
     height 100%
     overflow hidden
@@ -80,10 +80,10 @@ $selection-layer =
         position relative
         overflow scroll
 
-        .selection_layer
+        .selection-layer
             {$selection-layer}
 
-    .header_space
+    .header-space
         display block
         position absolute
         top 0
@@ -92,14 +92,14 @@ $selection-layer =
         border solid 1px #ccc
         background #eee
 
-    .scrollbar_border
+    .scrollbar-border
         display block
         position absolute
         right 17px
         width 1px
         background #ccc
 
-    .scrollbar_corner
+    .scrollbar-corner
         position absolute
         bottom 0
         right 0
@@ -108,12 +108,12 @@ $selection-layer =
         background-color #f5f5f5
 
 .header
-    .resize_handle_container
+    .resize-handle-container
         display none
         position relative
         width 0
 
-        .resize_handle
+        .resize-handle
             float left
             position absolute
             top -1px
@@ -125,12 +125,12 @@ $selection-layer =
             filter unquote('alpha(opacity=0)')
             cursor col-resize
 
-        .resize_handle_last
+        .resize-handle-last
             width 3px
 
-.body_container
+.body-container
     position relative
     margin-top -1px
 
-    .table_container
+    .table-container
         position absolute

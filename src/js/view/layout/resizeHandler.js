@@ -35,19 +35,19 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     tagName: 'div',
 
-    className: 'resize_handle_container',
+    className: 'tui-grid-resize-handle-container',
 
     events: {
-        'mousedown .resize_handle': '_onMouseDown',
-        'dblclick .resize_handle': '_onDblClick'
+        'mousedown .tui-grid-resize-handle': '_onMouseDown',
+        'dblclick .tui-grid-resize-handle': '_onDblClick'
     },
 
     template: _.template(
         '<div columnindex="<%=columnIndex%>" ' +
         '<%=attrColumnName%>="<%=columnName%>" ' +
-        'class="resize_handle' +
+        'class="tui-grid-resize-handle' +
         '<% if(isLast === true) ' +
-        ' print(" resize_handle_last");%>' +
+        ' print(" tui-grid-resize-handle-last");%>' +
         '" ' +
         'style="<%=height%>" ' +
         'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
@@ -118,7 +118,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _refreshHandlerPosition: function() {
         var columnData = this._getColumnData(),
             columnWidthList = columnData.widthList,
-            $resizeHandleList = this.$el.find('.resize_handle'),
+            $resizeHandleList = this.$el.find('.tui-grid-resize-handle'),
             $table = this.$el.parent().find('table:first'),
             isChanged = false,
             $handler,

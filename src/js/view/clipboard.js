@@ -35,7 +35,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     tagName: 'textarea',
 
-    className: 'clipboard',
+    className: 'tui-grid-clipboard',
 
     events: {
         'keydown': '_onKeyDown',

@@ -242,10 +242,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     render: function() {
         var childElements = this._renderChildren().concat([
-            $('<div>').addClass('left_line'),
-            $('<div>').addClass('right_line')
+            $('<div>').addClass('tui-grid-left-line'),
+            $('<div>').addClass('tui-grid-right-line')
         ]);
-        this.$el.addClass('grid_wrapper uio_grid')
+        this.$el.addClass('tui-grid-container')
             .attr('data-grid-id', this.gridId)
             .append(childElements);
 
@@ -262,7 +262,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _appendBottomLine: function() {
         var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
         if (bottomPos) {
-            this.$el.append($('<div>').addClass('data_bottom_line').css('bottom', bottomPos));
+            this.$el.append($('<div>').addClass('tui-grid-data-bottom-line').css('bottom', bottomPos));
         }
     },
 

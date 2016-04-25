@@ -22,7 +22,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         });
     },
 
-    className: 'lside_area',
+    className: 'tui-grid-lside-area',
 
     /**
      * Event handler for 'changeColumnWidth' event on module:model/dimension
@@ -59,7 +59,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         }
 
         $scrollOverlay = $('<div>')
-            .addClass('scrollbar_overlay')
+            .addClass('tui-grid-scrollbar-overlay')
             .css('bottom', dimensionModel.get('toolbarHeight'));
         this.$el.append($scrollOverlay);
     }

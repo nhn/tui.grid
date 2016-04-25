@@ -24,9 +24,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
         this.viewFactory = options.viewFactory;
     },
 
-    tagName: 'div',
-
-    className: 'toolbar',
+    className: 'tui-grid-toolbar',
 
     /**
      * 랜더링한다.

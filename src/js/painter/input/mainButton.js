@@ -20,7 +20,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     init: function(options) {
         Painter.apply(this, arguments);
 
-        this.selector = 'input.main_button';
+        this.selector = 'input.tui-grid-main-button';
         this.inputType = options.inputType;
         this.gridId = options.gridId;
     },
@@ -38,7 +38,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @returns {String}
      */
     template: _.template(
-        '<input class="main_button" type="<%=type%>" name="<%=name%>" <%=checked%> />'
+        '<input class="tui-grid-main-button" type="<%=type%>" name="<%=name%>" <%=checked%> />'
     ),
 
      /**

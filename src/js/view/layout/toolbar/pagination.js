@@ -22,17 +22,17 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
     tagName: 'div',
 
-    className: 'grid_pagination',
+    className: 'tui-grid-pagination',
 
     template: _.template(
-        '<a href="#" class="pre_end" title="First page">First</a>' +
-        '<a href="#" class="pre" title="Previous page">Prev</a> ' +
-        '<a href="#" class="next" title="Next page">Next</a>' +
-        '<a href="#" class="next_end" title="Last page">Last</a>' +
-        '<span class="pre_end_off">First Off</span>' +
-        '<span class="pre_off">Prev Off</span>' +
-        '<span class="next_off">Next Off</span>' +
-        '<span class="next_end_off">Last Off</span>'
+        '<a href="#" class="tui-grid-pre-end" title="First page">First</a>' +
+        '<a href="#" class="tui-grid-pre" title="Previous page">Prev</a> ' +
+        '<a href="#" class="tui-grid-next" title="Next page">Next</a>' +
+        '<a href="#" class="tui-grid-next-end" title="Last page">Last</a>' +
+        '<span class="tui-grid-pre-end-off">First Off</span>' +
+        '<span class="tui-grid-pre-off">Prev Off</span>' +
+        '<span class="tui-grid-next-off">Next Off</span>' +
+        '<span class="tui-grid-next-end-off">Last Off</span>'
     ),
 
     /**
@@ -61,10 +61,10 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
                 pagePerPageList: 5,
                 isCenterAlign: true,
                 moveUnit: 'page',
-                $preOff: this.$el.find('.pre_off'),
-                $pre_endOff: this.$el.find('.pre_end_off'), // eslint-disable-line camelcase
-                $nextOff: this.$el.find('.next_off'),
-                $lastOff: this.$el.find('.next_end_off')
+                $preOff: this.$el.find('.tui-grid-pre-off'),
+                $pre_endOff: this.$el.find('.tui-grid-pre-end-off'), // eslint-disable-line camelcase
+                $nextOff: this.$el.find('.tui-grid-next-off'),
+                $lastOff: this.$el.find('.tui-grid-next-end-off')
             }, this.$el);
         }
         this.toolbarModel.set('pagination', pagination);

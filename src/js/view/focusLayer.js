@@ -35,7 +35,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.listenTo(this.focusModel, 'focus', this._onFocus);
     },
 
-    className: 'focus-layer',
+    className: 'tui-grid-focus-layer',
 
     _onChangeWidth: function() {
         var focusModel = this.focusModel;

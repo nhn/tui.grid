@@ -26,13 +26,13 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
         this.listenTo(this.renderModel, 'change:state', this.render);
     },
 
-    className: 'state_layer',
+    className: 'tui-grid-state-layer',
 
     template: _.template(
-        '<div class="layer_content">' +
+        '<div class="tui-grid-layer-content">' +
         '    <%= text %>' +
         '    <% if (isLoading) { %>' +
-        '    <div class="loading_img"></div>' +
+        '    <div class="tui-grid-loading-img"></div>' +
         '    <% } %>' +
         '</div>'
     ),

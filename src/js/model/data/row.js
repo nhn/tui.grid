@@ -216,18 +216,18 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             classNameList.push(columnModel.className);
         }
         if (columnModel.isEllipsis) {
-            classNameList.push('ellipsis');
+            classNameList.push('tui-grid-ellipsis');
         }
         if (columnModel.isRequired) {
-            classNameList.push('required');
+            classNameList.push('tui-grid-required');
         }
         if (isMetaColumn) {
-            classNameList.push('meta_column');
+            classNameList.push('tui-grid-meta-column');
         } else if (cellState.isEditable) {
-            classNameList.push('editable');
+            classNameList.push('tui-grid-editable');
         }
         if (cellState.isDisabled) {
-            classNameList.push('disabled');
+            classNameList.push('tui-grid-disabled');
         }
 
         return this._makeUniqueStringArray(classNameList);

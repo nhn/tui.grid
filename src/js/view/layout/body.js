@@ -8,7 +8,7 @@ var View = require('../../base/view');
 var util = require('../../common/util');
 var attrNameMap = require('../../common/constMap').attrName;
 
-var HTML_CONTAINER = '<div class="body_container"></div>';
+var HTML_CONTAINER = '<div class="tui-grid-body-container"></div>';
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 var MIN_INTERVAL_FOR_PAUSED = 200;
@@ -50,13 +50,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
-    tagName: 'div',
-
-    className: 'data',
+    className: 'tui-grid-data',
 
     events: {
         'scroll': '_onScroll',
-        'mousedown .body_container': '_onMouseDown'
+        'mousedown .tui-grid-body-container': '_onMouseDown'
     },
 
     /**
@@ -134,15 +132,15 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onMouseDown: function(event) {
-        var columnModel = this.columnModel,
-            $target = $(event.target),
-            $td = $target.closest('td'),
-            $tr = $target.closest('tr'),
-            columnName = $td.attr(attrNameMap.COLUMN_NAME),
-            rowKey = $tr.attr(attrNameMap.ROW_KEY),
-            startAction = true,
-            inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
-            indexData;
+        var columnModel = this.columnModel;
+        var $target = $(event.target);
+        var $td = $target.closest('td');
+        var $tr = $target.closest('tr');
+        var columnName = $td.attr(attrNameMap.COLUMN_NAME);
+        var rowKey = $tr.attr(attrNameMap.ROW_KEY);
+        var startAction = true;
+        var inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey');
+        var indexData;
 
         if (!$td.length) { // selection layer, focus layer
             indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);

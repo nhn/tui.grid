@@ -21,11 +21,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
         this.timeoutIdForResize = 0;
     },
 
-    tagName: 'div',
+    className: 'tui-grid-height-resize-bar',
 
-    className: 'height_resize_bar',
-
-    template: _.template('<a href="#" class="height_resize_handle"><span></span></a>'),
+    template: _.template('<a href="#" class="tui-grid-height-resize-handle"><span></span></a>'),
 
     events: {
         'mousedown': '_onMouseDown'

@@ -33,7 +33,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
     tagName: 'div',
 
-    className: 'lside_area',
+    className: 'tui-grid-lside-area',
 
     /**
      * Render
