@@ -1,6 +1,5 @@
 $line-common =
     position absolute
-    background #ccc
     z-index 13
 
 .left-border
@@ -24,14 +23,14 @@ $line-common =
     right 17px
     height 1px
 
-$selection-layer =
+.selection-layer
     display none
     position absolute
     top 0
     width 0
     height 0
-    border solid 1px #004082
-    background #4DAAF9
+    border-style solid
+    border-width 1px
     opacity 0.2
     filter unquote('alpha(opacity=10)')
 
@@ -53,7 +52,6 @@ $selection-layer =
         margin-right -17px
 
         .selection-layer
-            {$selection-layer}
             left 1px
 
     .scrollbar-overlay
@@ -62,7 +60,6 @@ $selection-layer =
         left 0
         right 0
         height 17px
-        background-color #f5f5f5
 
 .rside-area
     display none
@@ -73,15 +70,12 @@ $selection-layer =
         position relative
         margin-right 17px
         overflow hidden
-        &.no_scroll
+        &.no-scroll
             margin-right 0
 
     .body
         position relative
         overflow scroll
-
-        .selection-layer
-            {$selection-layer}
 
     .header-space
         display block
@@ -89,15 +83,14 @@ $selection-layer =
         top 0
         right 0
         width 16px
-        border solid 1px #ccc
-        background #eee
+        border-style solid
+        border-width 1px
 
     .scrollbar-border
         display block
         position absolute
         right 17px
         width 1px
-        background #ccc
 
     .scrollbar-corner
         position absolute
@@ -105,7 +98,6 @@ $selection-layer =
         right 0
         width 17px
         height 17px
-        background-color #f5f5f5
 
 .header
     .resize-handle-container
@@ -120,7 +112,7 @@ $selection-layer =
             left -99px
             width 7px
             height 100%
-            background red
+            background #000
             opacity 0
             filter unquote('alpha(opacity=0)')
             cursor col-resize

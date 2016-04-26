@@ -86,7 +86,6 @@ var classNames = {
 
     // toolbar
     TOOLBAR: 'toolbar',
-    TOOLBAR_TOTAL_COUNT: 'total-count',
     TOOLBAR_BTN_HOLDER: 'btn-holder',
     TOOLBAR_HEIGHT_RESIZE_BAR: 'height-resize-bar',
     TOOLBAR_HEIGHT_RESIZE_HANDLE: 'height-resize-handle'

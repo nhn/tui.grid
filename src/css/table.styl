@@ -1,5 +1,6 @@
 table
-    border 1px solid #d8d8d8
+    border-width 1px
+    border-style solid
     table-layout fixed
     border-collapse collapse
     margin 0
@@ -10,15 +11,8 @@ table
         *white-space pre
         text-align center
         padding 0
-        border 1px solid #d8d8d8
-        background #eee
-
-        &.selected
-            background #cdcdcd
-
-        .sort a
-            color #555
-            text-decoration none
+        border-width 1px
+        border-style solid
 
         .btn-sorting
             display inline-block
@@ -36,41 +30,14 @@ table
         .btn-sorting-up
             background-position -10px -60px
 
-    tr
-        &.disabled
-            color #b0b0b0
-
     td
         overflow hidden
         padding 1px 10px
         *padding 1px 10px 0
-        border 1px solid #d8d8d8
+        border-style solid
+        border-width 1px
         white-space nowrap
-        background-color #fbfbfb
         *white-space pre
-
-        &.meta-column
-            background #eee
-            &.dummy
-                background #eee
-            &.selected
-                background #cdcdcd
-
-        &.editable
-            background-color #fff
-
-        &.dummy
-            background-color #fff
-
-        &.required
-            background-color #fffdeb
-
-        &.disabled
-            color #b0b0b0
-
-        &.invalid
-            padding 0 9px
-            border solid 1px #ff8080
 
         &.ellipsis
             -o-text-overflow ellipsis /*Opera 9*/
