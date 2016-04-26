@@ -3,6 +3,7 @@
 var RowData = require('model/data/row');
 var RowListData = require('model/data/rowList');
 var ColumnModel = require('model/data/columnModel');
+var classNameConst = require('common/classNameConst');
 
 describe('RowData', function() {
     describe('isDuplicatedPublicChanged()', function() {
@@ -89,14 +90,14 @@ describe('RowData', function() {
                 columnModel.set('columnModelList', [
                     {columnName: 'c1', isEllipsis: true}
                 ]);
-                expect(row.getClassNameList('c1')).toContain('ellipsis');
+                expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_ELLIPSIS);
             });
 
             it('containing \'required\' if columnModel.required is true', function() {
                 columnModel.set('columnModelList', [
                     {columnName: 'c1', isRequired: true}
                 ]);
-                expect(row.getClassNameList('c1')).toContain('required');
+                expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_REQUIRED);
             });
 
             it('containing row-added className', function() {

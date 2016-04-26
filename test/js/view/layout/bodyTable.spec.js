@@ -61,9 +61,9 @@ describe('view.layout.body', function() {
             expect($colgroup.length).toBe(1);
             expect($cols.length).toBe(2);
 
-            expect($cols.eq(0).width()).toBe(30 - extraWidth);
+            expect($cols.eq(0).width()).toBe(31 - extraWidth);
             expect($cols.eq(0).attr(ATTR_COLUMN_NAME)).toBe('c1');
-            expect($cols.eq(1).width()).toBe(40 - extraWidth);
+            expect($cols.eq(1).width()).toBe(41 - extraWidth);
             expect($cols.eq(1).attr(ATTR_COLUMN_NAME)).toBe('c2');
         });
 
@@ -92,7 +92,7 @@ describe('view.layout.body', function() {
             expect($cols.eq(0).width()).toBe(10);
 
             modelManager.dimensionModel.trigger('columnWidthChanged');
-            expect($cols.eq(0).width()).toBe(30 - extraWidth);
+            expect($cols.eq(0).width()).toBe(31 - extraWidth);
         });
     });
 

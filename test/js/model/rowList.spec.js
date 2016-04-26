@@ -6,6 +6,7 @@ var RowListModel = require('model/rowList');
 var RowModel = require('model/row');
 var FocusModel = require('model/focus');
 var Model = require('base/model');
+var classNameConst = require('common/classNameConst');
 
 describe('model.rowList', function() {
     var columnModelList = [
@@ -371,7 +372,7 @@ describe('model.rowList', function() {
 
                 mainRow = rowListModel.get(1);
                 expect(mainRow.get('c1').isDisabled).toEqual(true);
-                expect(mainRow.get('c1').className).toEqual('disabled');
+                expect(mainRow.get('c1').className).toEqual(classNameConst.CELL_DISABLED);
             });
 
             it('상태 변경 없을 때 기본값 검사', function() {
@@ -383,7 +384,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(false);
-                expect(cell0.className).toEqual('meta_column');
+                expect(cell0.className).toEqual(classNameConst.CELL_META_COLUMN);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
@@ -393,12 +394,12 @@ describe('model.rowList', function() {
                 expect(cell2.value).toEqual('c2');
                 expect(cell2.isEditable).toEqual(true);
                 expect(cell2.isDisabled).toEqual(false);
-                expect(cell2.className).toEqual('editable');
+                expect(cell2.className).toEqual(classNameConst.CELL_EDITABLE);
 
                 expect(cell3.value).toEqual('c3');
                 expect(cell3.isEditable).toEqual(true);
                 expect(cell3.isDisabled).toEqual(false);
-                expect(cell3.className).toEqual('editable');
+                expect(cell3.className).toEqual(classNameConst.CELL_EDITABLE);
             });
 
             it('DISABLED 로 변경 시', function() {
@@ -414,22 +415,22 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(true);
-                expect(cell0.className).toEqual('meta_column disabled');
+                expect(cell0.className).toEqual(classNameConst.CELL_META_COLUMN + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
                 expect(cell1.isDisabled).toEqual(true);
-                expect(cell1.className).toEqual('disabled');
+                expect(cell1.className).toEqual(classNameConst.CELL_DISABLED);
 
                 expect(cell2.value).toEqual('c2');
                 expect(cell2.isEditable).toEqual(true);
                 expect(cell2.isDisabled).toEqual(true);
-                expect(cell2.className).toEqual('editable disabled');
+                expect(cell2.className).toEqual(classNameConst.CELL_EDITABLE + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell3.value).toEqual('c3');
                 expect(cell3.isEditable).toEqual(true);
                 expect(cell3.isDisabled).toEqual(true);
-                expect(cell3.className).toEqual('editable disabled');
+                expect(cell3.className).toEqual(classNameConst.CELL_EDITABLE + ' ' + classNameConst.CELL_DISABLED);
             });
 
             it('DISABLED_CHECK 로 변경 시', function() {
@@ -446,7 +447,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(true);
-                expect(cell0.className).toEqual('meta_column disabled');
+                expect(cell0.className).toEqual(classNameConst.CELL_META_COLUMN + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
@@ -456,12 +457,12 @@ describe('model.rowList', function() {
                 expect(cell2.value).toEqual('c2');
                 expect(cell2.isEditable).toEqual(true);
                 expect(cell2.isDisabled).toEqual(false);
-                expect(cell2.className).toEqual('editable');
+                expect(cell2.className).toEqual(classNameConst.CELL_EDITABLE);
 
                 expect(cell3.value).toEqual('c3');
                 expect(cell3.isEditable).toEqual(true);
                 expect(cell3.isDisabled).toEqual(false);
-                expect(cell3.className).toEqual('editable');
+                expect(cell3.className).toEqual(classNameConst.CELL_EDITABLE);
             });
 
             it('className 변경 시', function() {
@@ -487,7 +488,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(false);
-                expect(cell0.className).toEqual('rowClass meta_column');
+                expect(cell0.className).toEqual('rowClass ' + classNameConst.CELL_META_COLUMN);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
@@ -497,12 +498,12 @@ describe('model.rowList', function() {
                 expect(cell2.value).toEqual('c2');
                 expect(cell2.isEditable).toEqual(true);
                 expect(cell2.isDisabled).toEqual(false);
-                expect(cell2.className).toEqual('rowClass column2Class1 column2Class2 editable');
+                expect(cell2.className).toEqual('rowClass column2Class1 column2Class2 ' + classNameConst.CELL_EDITABLE);
 
                 expect(cell3.value).toEqual('c3');
                 expect(cell3.isEditable).toEqual(true);
                 expect(cell3.isDisabled).toEqual(false);
-                expect(cell3.className).toEqual('rowClass editable');
+                expect(cell3.className).toEqual('rowClass ' + classNameConst.CELL_EDITABLE);
             });
         });
 

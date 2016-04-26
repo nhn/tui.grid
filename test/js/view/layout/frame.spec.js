@@ -5,6 +5,7 @@ var DomState = require('domState');
 var Frame = require('view/layout/frame');
 var FrameRside = require('view/layout/frame-rside');
 var FrameLside = require('view/layout/frame-lside');
+var classNameConst = require('common/classNameConst');
 
 describe('Frame', function() {
     var modelManager, frame, headerMock, bodyMock, viewFactoryMock;
@@ -158,7 +159,7 @@ describe('Frame', function() {
                 it('div.header_space를 생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
                     var $space;
                     frame.afterRender();
-                    $space = frame.$el.find('div.header_space');
+                    $space = frame.$el.find('.' + classNameConst.HEADER_SPACE);
                     expect($space.length).toBe(1);
                     expect($space.height()).toBe(28);
                 });
@@ -167,7 +168,7 @@ describe('Frame', function() {
                     var scrollHeight = modelManager.dimensionModel.get('bodyHeight') -
                         modelManager.dimensionModel.getScrollXHeight();
                     frame.afterRender();
-                    frame.$scrollBorder.is('div.scrollbar_border');
+                    frame.$scrollBorder.is('.' + classNameConst.SCROLLBAR_BORDER);
                     expect(frame.$scrollBorder.length).toBe(1);
                     expect(frame.$scrollBorder.height()).toBe(scrollHeight);
                 });

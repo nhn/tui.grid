@@ -6,6 +6,7 @@ var DimensionModel = require('model/dimension');
 var ResizeHandler = require('view/layout/resizeHandler');
 var DomState = require('domState');
 
+var classNameConst = require('common/classNameConst');
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 
 describe('ResizeHandler', function() {
@@ -59,7 +60,7 @@ describe('ResizeHandler', function() {
         });
 
         it('마지막 resize handler 에 resize_handle_last css 클래스가 할당되는지 확인한다.', function() {
-            expect($handles.filter('.resize_handle_last').is(':last-child')).toBe(true);
+            expect($handles.filter('.' + classNameConst.HEADER_RESIZE_HANDLE_LAST).is(':last-child')).toBe(true);
         });
 
         it('height와 margin을 headerHeight값으로 설정한다.', function() {
@@ -99,15 +100,15 @@ describe('ResizeHandler', function() {
     describe('_refreshHandlerPosition', function() {
         beforeEach(function() {
             handler.render();
-            $handles = handler.$el.children('div.resize_handle').each(function() {
+            $handles = handler.$el.children('.' + classNameConst.HEADER_RESIZE_HANDLE).each(function() {
                 $(this).css('position', 'absolute');
             });
         });
 
         it('columnWidthList 에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
             handler._refreshHandlerPosition();
-            expect($handles.eq(0).css('left')).toEqual('28px');
-            expect($handles.eq(1).css('left')).toEqual('69px');
+            expect($handles.eq(0).css('left')).toEqual('31px');
+            expect($handles.eq(1).css('left')).toEqual('72px');
         });
     });
 
@@ -117,7 +118,7 @@ describe('ResizeHandler', function() {
 
         beforeEach(function() {
             handler.render();
-            $handles = handler.$el.find('.resize_handle');
+            $handles = handler.$el.find('.' + classNameConst.HEADER_RESIZE_HANDLE);
             mouseEvent = {
                 target: $handles.eq(0).css('position', 'absolute').get(0),
                 preventDefault: function() {}
@@ -130,7 +131,7 @@ describe('ResizeHandler', function() {
 
                 expect(handler.isResizing).toBe(true);
                 expect(handler.$target.is($handles.eq(0))).toBe(true);
-                expect(handler.initialLeft).toBe(28);
+                expect(handler.initialLeft).toBe(31);
                 expect(handler.initialOffsetLeft).toBe(0);
                 expect(handler.initialWidth).toBe(30);
             });
@@ -156,7 +157,7 @@ describe('ResizeHandler', function() {
                 handler._onMouseDown(mouseEvent);
                 handler._onMouseMove(mouseEvent);
                 expect($target.css('left')).toBe('300px');
-                expect(dimensionModel.get('columnWidthList')[1]).toBe(302);
+                expect(dimensionModel.get('columnWidthList')[1]).toBe(299);
             });
         });
 

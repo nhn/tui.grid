@@ -4,6 +4,7 @@ var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ViewFactory = require('view/factory');
 
+var classNameConst = require('common/classNameConst');
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 
 describe('Header', function() {
@@ -50,7 +51,7 @@ describe('Header', function() {
                 scrollY: false
             });
             header.render();
-            expect(header.$el).toHaveClass('no_scroll');
+            expect(header.$el).toHaveClass(classNameConst.HEADER_NO_SCROLL);
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
@@ -63,9 +64,9 @@ describe('Header', function() {
 
             expect($colgroup.length).toBe(1);
             expect($cols.length).toBe(2);
-            expect($cols.eq(0).width()).toBe(50);
+            expect($cols.eq(0).width()).toBe(51);
             expect($cols.eq(0).attr(ATTR_COLUMN_NAME)).toBe('c1');
-            expect($cols.eq(1).width()).toBe(60);
+            expect($cols.eq(1).width()).toBe(61);
             expect($cols.eq(1).attr(ATTR_COLUMN_NAME)).toBe('c2');
         });
 
@@ -121,7 +122,7 @@ describe('Header', function() {
         });
 
         it('true인 경우 버튼이 생성된다.', function() {
-            var $btns = header.$el.find('a.btn_sorting');
+            var $btns = header.$el.find('.' + classNameConst.BTN_SORT);
 
             expect($btns.length).toBe(2);
             expect($btns.eq(0).parent().attr(ATTR_COLUMN_NAME)).toBe('c1');
@@ -129,7 +130,7 @@ describe('Header', function() {
         });
 
         it('버튼을 클릭하면 dataModel.sort()를 실행한다.', function() {
-            var $btn = header.$el.find('a.btn_sorting'),
+            var $btn = header.$el.find('.' + classNameConst.BTN_SORT),
                 eventMock = {
                     target: $btn[0]
                 };
@@ -141,24 +142,24 @@ describe('Header', function() {
         });
 
         it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {
-            var $btns = header.$el.find('a.btn_sorting'),
+            var $btns = header.$el.find('.' + classNameConst.BTN_SORT),
                 eventData = {
                     columnName: 'c1',
                     isAscending: true
                 };
 
             modelManager.dataModel.trigger('sortChanged', eventData);
-            expect($btns.eq(0)).toHaveClass('sorting_up');
+            expect($btns.eq(0)).toHaveClass(classNameConst.BTN_SORT_UP);
 
             eventData.columnName = 'c2';
             modelManager.dataModel.trigger('sortChanged', eventData);
-            expect($btns.eq(0)).not.toHaveClass('sorting_up');
-            expect($btns.eq(1)).toHaveClass('sorting_up');
+            expect($btns.eq(0)).not.toHaveClass(classNameConst.BTN_SORT_UP);
+            expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_UP);
 
             eventData.isAscending = false;
             modelManager.dataModel.trigger('sortChanged', eventData);
-            expect($btns.eq(1)).not.toHaveClass('sorting_up');
-            expect($btns.eq(1)).toHaveClass('sorting_down');
+            expect($btns.eq(1)).not.toHaveClass(classNameConst.BTN_SORT_UP);
+            expect($btns.eq(1)).toHaveClass(classNameConst.BTN_SORT_DOWN);
         });
     });
 
@@ -489,7 +490,8 @@ describe('Header', function() {
 
     describe('[selected]', function() {
         function isHeaderSelected(columnName) {
-            return header.$el.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']').is('.selected');
+            return header.$el.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']')
+                .is('.' + classNameConst.CELL_SELECTED);
         }
 
         beforeEach(function() {

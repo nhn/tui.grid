@@ -51,9 +51,12 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     className: classNameConst.BODY,
 
-    events: {
-        scroll: '_onScroll',
-        mousedown: '_onMouseDown'
+    events: function() {
+        var hash = {};
+        hash.scroll = '_onScroll';
+        hash['mousedown .' + classNameConst.BODY_CONTAINER] = '_onMouseDown';
+
+        return hash;
     },
 
     /**
@@ -140,10 +143,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var startAction = true;
         var inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey');
         var indexData;
-
-        if (!$.contains(this.$container[0], $target[0])) {
-            return;
-        }
 
         if (!$td.length) { // selection layer, focus layer
             indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
