@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var attrNameMap = require('./common/constMap').attrName;
+var attrNameConst = require('./common/constMap').attrName;
 
 /**
  * Class for offering methods that can be used to get the current state of DOM element.
@@ -26,8 +26,8 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      * @returns {jQuery} Cell(TD) element
      */
     getElement: function(rowKey, columnName) {
-        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']')
-            .find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
+        return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
+            .find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
     },
 
     /**

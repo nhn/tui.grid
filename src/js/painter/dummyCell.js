@@ -6,7 +6,7 @@
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
 
 /**
  * Dummy Cell Painter
@@ -33,7 +33,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
-    selector: 'td[' + attrNameMap.EDIT_TYPE + '=dummy]',
+    selector: 'td[' + attrNameConst.EDIT_TYPE + '=dummy]',
 
     /**
      * Template function
@@ -65,8 +65,8 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
         var isMeta = util.isMetaColumn(columnName);
 
         return this.template({
-            attrColumnName: attrNameMap.COLUMN_NAME,
-            attrEditType: attrNameMap.EDIT_TYPE,
+            attrColumnName: attrNameConst.COLUMN_NAME,
+            attrEditType: attrNameConst.EDIT_TYPE,
             columnName: columnName,
             className: (isMeta ? 'meta_column ' : '') + 'dummy'
         });

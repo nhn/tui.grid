@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
 
 /**
  * Base class for Painters
@@ -41,11 +41,11 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * @private
      */
     _getCellAddress: function($target) {
-        var $addressHolder = $target.closest('[' + attrNameMap.ROW_KEY + ']');
+        var $addressHolder = $target.closest('[' + attrNameConst.ROW_KEY + ']');
 
         return {
-            rowKey: $addressHolder.attr(attrNameMap.ROW_KEY),
-            columnName: $addressHolder.attr(attrNameMap.COLUMN_NAME)
+            rowKey: $addressHolder.attr(attrNameConst.ROW_KEY),
+            columnName: $addressHolder.attr(attrNameConst.COLUMN_NAME)
         };
     },
 

@@ -7,7 +7,7 @@
 var Painter = require('../base/painter');
 var util = require('../common/util');
 var constMap = require('../common/constMap');
-var attrNameMap = constMap.attrName;
+var attrNameConst = constMap.attrName;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
@@ -116,7 +116,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         }
 
         return this.template({
-            rowKeyAttrName: attrNameMap.ROW_KEY,
+            rowKeyAttrName: attrNameConst.ROW_KEY,
             rowKey: rowKey,
             height: model.get('height') + RowPainter._extraHeight + CELL_BORDER_WIDTH,
             contents: html,
@@ -134,7 +134,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
-                $td = $tr.find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
+                $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 cellPainter.refresh(cellData, $td);
