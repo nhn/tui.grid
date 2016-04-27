@@ -1,18 +1,10 @@
 +prefix-classes('tui-grid-')
     .container
         width 100%
-        background #fff
-        color #444
         position relative
-        border-bottom solid 1px #ccc
+        border-style solid
+        border-width 0 0 1px
         clear both
-        scrollbar-highlight-color #f5f5f5
-        scrollbar-shadow-color #f5f5f5
-        scrollbar-arrow-color #8a8a8a
-        scrollbar-face-color #d9d9d9
-        scrollbar-3dlight-color #f5f5f5
-        scrollbar-darkshadow-color #f5f5f5
-        scrollbar-track-color #f5f5f5
         font-size 12px
         font-family '돋움', Dotum, Helvetica, 'Apple SD Gothic Neo', Sans-serif
 
@@ -20,16 +12,11 @@
             -webkit-appearance none
             width 17px
             height 17px
-            background-color #f5f5f5
 
         ::-webkit-scrollbar-thumb
-            background-color #d9d9d9
             border 5px solid transparent
             border-radius 7px
             background-clip content-box
-
-        ::-webkit-scrollbar-thumb:hover
-            background-color #c1c1c1
 
         *
             box-sizing content-box // reset bootstrap style
@@ -45,7 +32,7 @@
             display inline
             white-space nowrap
 
-        input[type=text]
+        input[type=text], input[type=password]
             outline none
             box-sizing border-box
             line-height normal // prevent to be inherit

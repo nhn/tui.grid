@@ -206,5 +206,17 @@ describe('core.util', function() {
         it('should return 1 when value = 2, min = 0, max = 1', function() {
             expect(util.clamp(2, 0, 1)).toBe(1);
         });
-    })
+    });
+
+    describe('appendStyleElement', function() {
+        var $el = $('<div id="my-own-test-div">');
+
+        it('add given css rules into the page', function() {
+            util.appendStyleElement('#my-own-test-div {width: 100px; height: 100px}');
+            jasmine.getFixtures().set($el);
+
+            expect($el.width()).toBe(100);
+            expect($el.height()).toBe(100);
+        });
+    });
 });

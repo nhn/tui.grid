@@ -22,9 +22,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
         this.timeoutIdForResize = 0;
     },
 
-    className: classNameConst.TOOLBAR_HEIGHT_RESIZE_BAR,
+    className: classNameConst.TOOLBAR_RESIZE_BAR,
 
-    htmlString: '<a href="#" class="' + classNameConst.TOOLBAR_HEIGHT_RESIZE_HANDLE + '"><span></span></a>',
+    htmlString: '<a href="#" class="' + classNameConst.TOOLBAR_RESIZE_HANDLE + '"><span></span></a>',
 
     events: {
         'mousedown': '_onMouseDown'

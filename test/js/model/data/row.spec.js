@@ -131,7 +131,7 @@ describe('RowData', function() {
 
             it('add \'invalid\' className to the cell', function() {
                 row.validateCell('c1');
-                expect(row.getClassNameList('c1')).toContain('invalid');
+                expect(row.getClassNameList('c1')).toContain(classNameConst.CELL_INVALID);
             });
 
             it('returns REQUIRED', function() {
@@ -145,9 +145,9 @@ describe('RowData', function() {
             });
 
             it('remove \'invalid\' className from the cell', function() {
-                row.addCellClassName('c1', 'invalid');
+                row.addCellClassName('c1', classNameConst.CELL_INVALID);
                 row.validateCell('c1');
-                expect(row.getClassNameList('c1')).not.toContain('invalid');
+                expect(row.getClassNameList('c1')).not.toContain(classNameConst.CELL_INVALID);
             });
 
             it('returns empty string', function() {

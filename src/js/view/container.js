@@ -246,8 +246,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     render: function() {
         var childElements = this._renderChildren().concat([
-            $('<div>').addClass(classNameConst.BORDER_LEFT),
-            $('<div>').addClass(classNameConst.BORDER_RIGHT)
+            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_LEFT),
+            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_RIGHT)
         ]);
         this.$el.addClass(classNameConst.CONTAINER)
             .attr(attrNameConst.GRID_ID, this.gridId)
@@ -265,8 +265,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     _appendBottomLine: function() {
         var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
+        var $line;
+
         if (bottomPos) {
-            this.$el.append($('<div>').addClass(classNameConst.BORDER_BOTTOM).css('bottom', bottomPos));
+            $line = $('<div>')
+                .addClass(classNameConst.BORDER_BOTTOM)
+                .addClass(classNameConst.BORDER_LINE)
+                .css('bottom', bottomPos);
+
+            this.$el.append($line);
         }
     },
 

@@ -19,6 +19,7 @@ var classNames = {
     LAYER_SELECTION: 'selection-layer',
 
     // border line
+    BORDER_LINE: 'border-line',
     BORDER_LEFT: 'left-border',
     BORDER_RIGHT: 'right-border',
     BORDER_BOTTOM: 'bottom-border',
@@ -87,8 +88,8 @@ var classNames = {
     // toolbar
     TOOLBAR: 'toolbar',
     TOOLBAR_BTN_HOLDER: 'btn-holder',
-    TOOLBAR_HEIGHT_RESIZE_BAR: 'height-resize-bar',
-    TOOLBAR_HEIGHT_RESIZE_HANDLE: 'height-resize-handle'
+    TOOLBAR_RESIZE_BAR: 'height-resize-bar',
+    TOOLBAR_RESIZE_HANDLE: 'height-resize-handle'
 };
 
 var exports = _.mapObject(classNames, function(className) {

@@ -119,9 +119,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
         errorCode = this._validateCellData(columnName);
         if (errorCode) {
-            this.addCellClassName(columnName, 'invalid');
+            this.addCellClassName(columnName, classNameConst.CELL_INVALID);
         } else {
-            this.removeCellClassName(columnName, 'invalid');
+            this.removeCellClassName(columnName, classNameConst.CELL_INVALID);
         }
         this.validateMap[columnName] = errorCode;
 

@@ -309,6 +309,7 @@ var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
+var themeBuilder = require('./theme/builder');
 
 var instanceMap = {};
 
@@ -1071,3 +1072,74 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
+
+util.appendStyleElement(themeBuilder.build({
+    font: {
+        family: '',
+        size: ''
+    },
+    colorset: {
+        grid: {
+            background: '#dfd',
+            border: '#ccf',
+            text: '#000'
+        },
+        input: {
+            background: '#aaa',
+            border: '#000',
+            text: '#000'
+        },
+        selection: {
+            background: '#4DAAF9',
+            border: '#004082'
+        },
+        header: {
+            normal: {
+                background: '#aaf',
+                border: '#88f',
+                text: '#55f'
+            },
+            selected: {
+                background: '#afa',
+                border: '#8f8',
+                text: '#5f5'
+            }
+        },
+        body: {
+            normal: {
+                background: '#faa',
+                border: '#f88',
+                text: '#f55'
+            },
+            focused: {
+                background: '#ff8',
+                border: '#ff5',
+                text: '#ff0'
+            },
+            required: {
+                background: '#f00'
+            },
+            disabled: {
+                text: '#b0b0b0'
+            },
+            dummy: {
+                background: '#fee'
+            },
+            invalid: {
+                background: '#f00'
+            },
+            editable: {
+                background: '#fff'
+            }
+        },
+        toolbar: {
+            border: '#dfd',
+            background: '#afa'
+        },
+        scrollbar: {
+            background: '#835',
+            thumb: '#358',
+            active: '#136'
+        }
+    }
+}));
