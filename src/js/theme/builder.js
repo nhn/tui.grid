@@ -14,11 +14,6 @@ module.exports = {
         // common
         rules.push(ruleGen.grid(colorset.grid));
         rules.push(ruleGen.scrollbar(colorset.scrollbar));
-        rules.push(ruleGen.input(colorset.input));
-
-        // header
-        rules.push(ruleGen.header(colorset.header.normal));
-        rules.push(ruleGen.headerSelected(colorset.header.selected));
 
         // body
         rules.push(ruleGen.body(colorset.body.normal));
@@ -28,6 +23,10 @@ module.exports = {
         rules.push(ruleGen.bodyEditable(colorset.body.editable));
         rules.push(ruleGen.bodyDummy(colorset.body.dummy));
         rules.push(ruleGen.bodyInvalid(colorset.body.invalid));
+
+        // header
+        rules.push(ruleGen.header(colorset.header.normal));
+        rules.push(ruleGen.headerSelected(colorset.header.selected));
 
         // selection
         rules.push(ruleGen.selection(colorset.selection));

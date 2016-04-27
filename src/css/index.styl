@@ -45,59 +45,59 @@
         strong, em
             font-style normal
 
-        .btn-text
+    .clipboard
+        position fixed
+        top 0px
+        left -9999px
+        width 100px
+        height 100px
+
+    .btn-text
+        display inline-block
+        text-decoration none
+
+        span
             display inline-block
-            text-decoration none
+            position relative
+            font-size 11px
+            color #333
+            padding-left 17px
+            letter-spacing -1px
+            line-height 23px
+            white-space nowrap
+            cursor pointer
+            margin-left 8px
+            padding-right 7px
 
-            span
-                display inline-block
-                position relative
-                font-size 11px
-                color #333
-                padding-left 17px
-                letter-spacing -1px
-                line-height 23px
-                white-space nowrap
-                cursor pointer
-                margin-left 8px
-                padding-right 7px
+        em
+            position absolute
+            left 0
+            top 5px
+            width 17px
+            height 12px
+            background url(../images/icons.gif) no-repeat
 
-            em
-                position absolute
-                left 0
-                top 5px
-                width 17px
-                height 12px
-                background url(../images/icons.gif) no-repeat
+            &.btn-excel-icon
+                background-position -30px -60px
 
-                &.btn-excel-icon
-                    background-position -30px -60px
+    .btn-sorting
+        display inline-block
+        overflow hidden
+        margin-left 6px
+        height 15px
+        width 8px
+        background url(../images/icons.gif) -20px -60px no-repeat
+        vertical-align middle
+        cursor pointer
 
-        .clipboard
-            position fixed
-            top 0px
-            left -9999px
-            width 100px
-            height 100px
+    .btn-sorting-down
+        background-position 0 -60px
 
-        .cell-content
-            input
-                &[type=text],
-                &[type=password]
-                    width 100%
-                    padding 2px 0
-                    border-style solid
-                    border-width 1px
+    .btn-sorting-up
+        background-position -10px -60px
 
-            label + input
-                margin-left 10px
-
-            select
-                width 100%
-
-        @import 'layer.styl'
-        @import 'layout.styl'
-        @import 'table.styl'
-        @import 'toolbar.styl'
-        @import 'pagination.styl'
-        @import 'theme.styl'
+    @import 'layer.styl'
+    @import 'table.styl'
+    @import 'layout.styl'
+    @import 'toolbar.styl'
+    @import 'pagination.styl'

@@ -99,7 +99,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         headerHeight = dimensionModel.get('headerHeight');
 
         // Empty DIV for hiding scrollbar in the header area
-        $space = $('<div />').addClass(classNameConst.HEADER_SPACE);
+        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
 
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
@@ -115,7 +115,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
             $scrollCorner = $('<div />')
-                .addClass(classNameConst.SCROLLBAR_CORNER)
+                .addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
                 .css('bottom', dimensionModel.get('toolbarHeight'));
             this.$el.append($scrollCorner);
         }

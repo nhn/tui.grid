@@ -47,7 +47,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
-    className: classNameConst.HEADER,
+    className: classNameConst.HEAD_AREA,
 
     events: {
         'click': '_onClick',
@@ -58,7 +58,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * 전체 template
      */
     template: _.template(
-        '<table width="100%">' +
+        '<table class="' + classNameConst.TABLE + '">' +
             '<colgroup><%=colGroup%></colgroup>' +
             '<tbody><%=tBody%></tbody>' +
         '</table>'
@@ -495,6 +495,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 curHeight = 0;
             _.each(hierarchy, function(columnModel, j) {
                 var columnName = columnModel.columnName;
+                var classNames = [
+                    classNameConst.CELL,
+                    classNameConst.CELL_HEAD
+                ];
+
+                if (columnModel.isRequired) {
+                    classNames.push(classNameConst.CELL_REQRUIRED);
+                }
 
                 rowSpan = (length - 1 === j && (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
                 height = rowHeight * rowSpan;
@@ -515,7 +523,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 rowMarkupList[j].push(this.templateHeader({
                     attrColumnName: ATTR_COLUMN_NAME,
                     columnName: columnName,
-                    className: columnModel.isRequired ? 'required' : '',
+                    className: classNames.join(' '),
                     height: height,
                     colspan: colSpanList[j],
                     rowspan: rowSpan,

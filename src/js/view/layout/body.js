@@ -49,7 +49,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
-    className: classNameConst.BODY,
+    className: classNameConst.BODY_AREA,
 
     events: function() {
         var hash = {};

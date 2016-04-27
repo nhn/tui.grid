@@ -223,7 +223,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             classNameList.push(classNameConst.CELL_REQUIRED);
         }
         if (isMetaColumn) {
-            classNameList.push(classNameConst.CELL_META_COLUMN);
+            classNameList.push(classNameConst.CELL_HEAD);
         } else if (cellState.isEditable) {
             classNameList.push(classNameConst.CELL_EDITABLE);
         }

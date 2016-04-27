@@ -1,4 +1,4 @@
-.state-layer
+.layer-state
     position absolute
     top 0
     left 0
@@ -9,18 +9,18 @@
     text-align center
     z-index 12
 
-    .layer-content
-        padding-top 50px
+.layer-state-content
+    padding-top 50px
 
-        .loading-img
-            display block
-            margin 10px auto 0
-            background url(../images/ani_loading.gif)
-            border 0
-            width 150px
-            height 13px
+.layer-state-loading
+    display block
+    margin 10px auto 0
+    background url(../images/ani_loading.gif)
+    border 0
+    width 150px
+    height 13px
 
-.editing-layer
+.layer-editing
     position absolute
     display none
     background #fff
@@ -30,8 +30,18 @@
     border-width 1px
     white-space nowrap
 
-.focus-layer
-    div
-        position absolute
-        overflow hidden
-        z-index 14
+.layer-focus-border
+    position absolute
+    overflow hidden
+    z-index 14
+
+.layer-selection
+    position absolute
+    display none
+    top 0
+    width 0
+    height 0
+    border-style solid
+    border-width 1px
+    opacity 0.2
+    filter unquote('alpha(opacity=10)')

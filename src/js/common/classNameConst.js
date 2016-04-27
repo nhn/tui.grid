@@ -11,40 +11,41 @@ var classNames = {
     CLIPBOARD: 'clipboard',
 
     // layer
-    LAYER_STATE: 'state-layer',
-    LAYER_STATE_CONTENT: 'layer-content',
-    LAYER_STATE_LOADING: 'loading-img',
-    LAYER_EDITING: 'editing-layer',
-    LAYER_FOCUS: 'focus-layer',
-    LAYER_SELECTION: 'selection-layer',
+    LAYER_STATE: 'layer-state',
+    LAYER_STATE_CONTENT: 'layer-state-content',
+    LAYER_STATE_LOADING: 'layer-state-loading',
+    LAYER_EDITING: 'layer-editing',
+    LAYER_FOCUS: 'layer-focus',
+    LAYER_FOCUS_BORDER: 'layer-focus-border',
+    LAYER_SELECTION: 'layer-selection',
 
     // border line
     BORDER_LINE: 'border-line',
-    BORDER_LEFT: 'left-border',
-    BORDER_RIGHT: 'right-border',
-    BORDER_BOTTOM: 'bottom-border',
+    BORDER_LEFT: 'border-line-left',
+    BORDER_RIGHT: 'border-line-right',
+    BORDER_BOTTOM: 'border-line-bottom',
 
-    // layout
+    // layout (area)
     LSIDE_AREA: 'lside-area',
     RSIDE_AREA: 'rside-area',
-    HEADER: 'header',
-    BODY: 'body',
+    HEAD_AREA: 'head-area',
+    BODY_AREA: 'body-area',
 
     // header
-    HEADER_SPACE: 'header-space',
     HEADER_NO_SCROLL: 'no-scroll',
-    HEADER_RESIZE_CONTAINER: 'resize-handle-container',
-    HEADER_RESIZE_HANDLE: 'resize-handle',
-    HEADER_RESIZE_HANDLE_LAST: 'resize-handle-last',
+    COLUMN_RESIZE_CONTAINER: 'column-resize-container',
+    COLUMN_RESIZE_HANDLE: 'column-resize-handle',
+    COLUMN_RESIZE_HANDLE_LAST: 'column-resize-handle-last',
 
     // body
     BODY_CONTAINER: 'body-container',
     BODY_TABLE_CONTAINER: 'table-container',
 
     // scrollbar
+    SCROLLBAR_HEAD: 'scrollbar-head',
     SCROLLBAR_BORDER: 'scrollbar-border',
-    SCROLLBAR_CORNER: 'scrollbar-corner',
-    SCROLLBAR_OVERLAY: 'scrollbar-overlay',
+    SCROLLBAR_RIGHT_BOTTOM: 'scrollbar-right-bottom',
+    SCROLLBAR_LEFT_BOTTOM: 'scrollbar-left-bottom',
 
     // pagination
     PAGINATION: 'pagination',
@@ -57,23 +58,27 @@ var classNames = {
     PAGINATION_NEXT_END: 'next-end',
     PAGINATION_NEXT_END_OFF: 'next-end-off',
 
+    // TABLE
+    TABLE: 'table',
+
     // cell style
-    CELL_EDITABLE: 'editable',
-    CELL_META_COLUMN: 'meta-column',
-    CELL_DUMMY: 'dummy',
-    CELL_REQUIRED: 'required',
-    CELL_DISABLED: 'disabled',
-    CELL_SELECTED: 'selected',
-    CELL_INVALID: 'invalid',
-    CELL_ELLIPSIS: 'ellipsis',
-    CELL_CURRENT_ROW: 'current-row',
-    CELL_MAIN_BUTTON: 'main-button',
+    CELL: 'cell',
+    CELL_HEAD: 'cell-head',
+    CELL_EDITABLE: 'cell-editable',
+    CELL_DUMMY: 'cell-dummy',
+    CELL_REQUIRED: 'cell-required',
+    CELL_DISABLED: 'cell-disabled',
+    CELL_SELECTED: 'cell-selected',
+    CELL_INVALID: 'cell-invalid',
+    CELL_ELLIPSIS: 'cell-ellipsis',
+    CELL_CURRENT_ROW: 'cell-current-row',
+    CELL_MAIN_BUTTON: 'cell-main-button',
 
     // cell content
     CELL_CONTENT: 'cell-content',
-    CELL_CONTENT_BEFORE: 'before',
-    CELL_CONTENT_AFTER: 'after',
-    CELL_CONTENT_INPUT: 'input',
+    CELL_CONTENT_BEFORE: 'content-before',
+    CELL_CONTENT_AFTER: 'content-after',
+    CELL_CONTENT_INPUT: 'content-input',
 
     // buttons
     BTN_TEXT: 'btn-text',

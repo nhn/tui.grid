@@ -6,10 +6,6 @@
 
 var classNameConst = require('../common/classNameConst');
 
-var headCellSelector = '.' + classNameConst.CONTAINER + ' th';
-var bodyCellSelector = '.' + classNameConst.CONTAINER + ' td';
-var metaCellSelector = bodyCellSelector + '.' + classNameConst.CELL_META_COLUMN;
-
 /**
  * create css rule string and returns it
  * @param {String} selector - css selector
@@ -48,24 +44,24 @@ function rule(selector) {
         },
 
         toString: function() {
-            var selectorString = _.isArray(selector) ? selector.join(',') : selector;
-            var styleString = styles.join(';');
-
-            return selectorString + '{' + styleString + '}\n';
+            return selector + '{' + styles.join(';') + '}\n';
         }
     };
 }
 
+function classRule(className) {
+    return rule('.' + className);
+}
 
-function bodyCellRuleString(className, colorset) {
-    return rule(bodyCellSelector + '.' + className)
+function cellClassRuleString(className, colorset) {
+    return rule('.' + classNameConst.CELL + '.' + className)
         .bg(colorset.background)
         .text(colorset.text)
         .toString();
 }
 
-function normalRuleString(selector, colorset) {
-    return rule(selector)
+function normalClassRuleString(className, colorset) {
+    return classRule(className)
         .bg(colorset.background)
         .border(colorset.border)
         .text(colorset.text)
@@ -84,20 +80,22 @@ function webkitScrollbarRuleString(selector, colorset) {
 }
 
 function ieScrollbarRuleString(selector, colorset) {
-    var ieRule = rule(selector);
-
-    _.each([
+    var bgProps = [
         'scrollbar-3dlight-color',
         'scrollbar-darkshadow-color',
         'scrollbar-track-color',
         'scrollbar-shadow-color'
-    ], function(prop) {
-        ieRule.add(prop, colorset.background);
-    });
-    _.each([
+    ];
+    var thumbProps = [
         'scrollbar-face-color',
         'scrollbar-highlight-color'
-    ], function(prop) {
+    ];
+    var ieRule = rule(selector);
+
+    _.each(bgProps, function(prop) {
+        ieRule.add(prop, colorset.background);
+    });
+    _.each(thumbProps, function(prop) {
         ieRule.add(prop, colorset.thumb);
     });
     ieRule.add('scrollbar-arrow-color', colorset.active);
@@ -107,102 +105,104 @@ function ieScrollbarRuleString(selector, colorset) {
 
 module.exports = {
     grid: function(colorset) {
-        var container = normalRuleString('.' + classNameConst.CONTAINER, colorset);
-        var line = rule('.' + classNameConst.BORDER_LINE)
-            .bg(colorset.border).toString();
-        var headerSpace = rule('.' + classNameConst.HEADER_SPACE)
-            .border(colorset.border).toString();
-        var scrollbarBorder = rule('.' + classNameConst.SCROLLBAR_BORDER)
-            .bg(colorset.border).toString();
+        var container = normalClassRuleString(classNameConst.CONTAINER, colorset);
+        var line = classRule(classNameConst.BORDER_LINE)
+            .bg(colorset.border)
+            .toString();
 
-        return line + headerSpace + scrollbarBorder + container;
+        var scrollHead = classRule(classNameConst.SCROLLBAR_HEAD)
+            .border(colorset.border)
+            .toString();
+
+        var scrollBorder = classRule(classNameConst.SCROLLBAR_BORDER)
+            .bg(colorset.border)
+            .toString();
+
+        return container + line + scrollHead + scrollBorder;
     },
 
     header: function(colorset) {
-        var selectors = [
-            headCellSelector,
-            metaCellSelector,
-            metaCellSelector + '.' + classNameConst.CELL_DUMMY
-        ];
-
-        return normalRuleString(selectors, colorset);
+        return normalClassRuleString(classNameConst.CELL_HEAD, colorset);
     },
 
     headerSelected: function(colorset) {
-        var selectors = [
-            headCellSelector + '.' + classNameConst.CELL_SELECTED,
-            metaCellSelector + '.' + classNameConst.CELL_SELECTED
-        ];
-
-        return rule(selectors)
+        return rule('.' + classNameConst.CELL_HEAD + '.' + classNameConst.CELL_SELECTED)
             .bg(colorset.background)
             .text(colorset.text)
             .toString();
     },
 
     body: function(colorset) {
-        return normalRuleString(bodyCellSelector, colorset);
+        return normalClassRuleString(classNameConst.CELL, colorset);
     },
 
     bodyFocused: function(colorset) {
-        var focusLayer = rule('.' + classNameConst.LAYER_FOCUS + ' div')
-            .bg(colorset.border).toString();
-        var editingLayer = rule('.' + classNameConst.LAYER_EDITING)
-            .border(colorset.border).toString();
+        var focusLayer = classRule(classNameConst.LAYER_FOCUS_BORDER)
+            .bg(colorset.border)
+            .toString();
+
+        var editingLayer = classRule(classNameConst.LAYER_EDITING)
+            .border(colorset.border)
+            .toString();
 
         return focusLayer + editingLayer;
     },
 
     bodyEditable: function(colorset) {
-        return bodyCellRuleString(classNameConst.CELL_EDITABLE, colorset);
+        return cellClassRuleString(classNameConst.CELL_EDITABLE, colorset);
     },
 
     bodyRequired: function(colorset) {
-        return bodyCellRuleString(classNameConst.CELL_REQUIRED, colorset);
+        return cellClassRuleString(classNameConst.CELL_REQUIRED, colorset);
     },
 
     bodyDisabled: function(colorset) {
-        return bodyCellRuleString(classNameConst.CELL_DISABLED, colorset);
+        return cellClassRuleString(classNameConst.CELL_DISABLED, colorset);
     },
 
     bodyDummy: function(colorset) {
-        return bodyCellRuleString(classNameConst.CELL_DUMMY, colorset);
+        return cellClassRuleString(classNameConst.CELL_DUMMY, colorset);
     },
 
     bodyInvalid: function(colorset) {
-        return bodyCellRuleString(classNameConst.CELL_INVALID, colorset);
+        return cellClassRuleString(classNameConst.CELL_INVALID, colorset);
     },
 
     selection: function(colorset) {
-        return rule('.' + classNameConst.LAYER_SELECTION)
+        return classRule(classNameConst.LAYER_SELECTION)
             .bg(colorset.background)
             .border(colorset.border)
             .toString();
     },
 
-    input: function(colorset) {
-        return normalRuleString('.' + classNameConst.CELL_CONTENT + ' input', colorset);
-    },
-
     toolbar: function(colorset) {
-        var toolbar = rule('.' + classNameConst.TOOLBAR)
-            .border(colorset.border).bg(colorset.background).toString();
-        var resizeHandle = rule('.' + classNameConst.TOOLBAR_RESIZE_HANDLE)
-            .border(colorset.border).toString();
+        var toolbar = classRule(classNameConst.TOOLBAR)
+            .border(colorset.border)
+            .bg(colorset.background)
+            .toString();
+
+        var resizeHandle = classRule(classNameConst.TOOLBAR_RESIZE_HANDLE)
+            .border(colorset.border)
+            .toString();
 
         return toolbar + resizeHandle;
     },
 
     scrollbar: function(colorset) {
-        var corner = rule('.' + classNameConst.SCROLLBAR_CORNER)
-            .bg(colorset.background).toString();
-        var overlay = rule('.' + classNameConst.SCROLLBAR_OVERLAY)
-            .bg(colorset.background).toString();
-        var headerSpace = rule('.' + classNameConst.HEADER_SPACE)
-            .bg(colorset.background).toString();
         var containerWebkit = webkitScrollbarRuleString('.' + classNameConst.CONTAINER, colorset);
         var containerIE = ieScrollbarRuleString('.' + classNameConst.CONTAINER, colorset);
+        var scrollRB = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
+            .bg(colorset.background)
+            .toString();
 
-        return corner + overlay + headerSpace + containerWebkit + containerIE;
+        var scrollLB = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM)
+            .bg(colorset.background)
+            .toString();
+
+        var scrollHead = classRule(classNameConst.SCROLLBAR_HEAD)
+            .bg(colorset.background)
+            .toString();
+
+        return containerWebkit + containerIE + scrollRB + scrollLB + scrollHead;
     }
 };

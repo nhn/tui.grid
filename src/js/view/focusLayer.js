@@ -8,6 +8,8 @@ var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 var classNameConst = require('../common/classNameConst');
 
+var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></div>';
+
 /**
  * Class for the layer view that represents the currently focused cell
  * @module view/focusLayer
@@ -25,10 +27,10 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.whichSide = options.whichSide;
 
         this.borderEl = {
-            $top: $('<div>'),
-            $left: $('<div>'),
-            $right: $('<div>'),
-            $bottom: $('<div>')
+            $top: $(HTML_BORDER_DIV),
+            $left: $(HTML_BORDER_DIV),
+            $right: $(HTML_BORDER_DIV),
+            $bottom: $(HTML_BORDER_DIV)
         };
 
         this.listenTo(this.dimensionModel, 'change:width', this._onChangeWidth);
@@ -38,6 +40,9 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
 
     className: classNameConst.LAYER_FOCUS,
 
+    /**
+     *
+     */
     _onChangeWidth: function() {
         var focusModel = this.focusModel;
 
@@ -68,7 +73,6 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
             this.$el.show();
         }
     },
-
 
     /**
      * Resets the position and the dimension of the layer.

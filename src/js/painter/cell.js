@@ -131,8 +131,13 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getAttributes: function(cellData) {
+        var classNames = [
+            cellData.className,
+            classNameConst.CELL,
+            classNameConst.CELL_CONTENT
+        ];
         var attrs = {
-            'class': cellData.className + ' ' + classNameConst.CELL_CONTENT,
+            'class': classNames.join(' '),
             'align': cellData.columnModel.align || 'left'
         };
 

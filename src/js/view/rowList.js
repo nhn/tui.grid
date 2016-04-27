@@ -144,7 +144,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      */
     _refreshSelectedMetaColumns: function() {
         var $rows = this.$el.find('tr');
-        var metaSelector = 'td.' + classNameConst.CELL_META_COLUMN;
+        var metaSelector = '.' + classNameConst.CELL_HEAD;
         var $filteredRows;
 
         if (this.selectionModel.hasSelection()) {

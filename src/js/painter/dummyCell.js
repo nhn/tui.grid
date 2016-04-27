@@ -64,12 +64,18 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @implements {module:base/painter}
      */
     generateHtml: function(columnName) {
-        var metaClassName = util.isMetaColumn(columnName) ?
-            (classNameConst.CELL_META_COLUMN + ' ') : '';
+        var classNames = [
+            classNameConst.CELL,
+            classNameConst.CELL_DUMMY
+        ];
+
+        if (util.isMetaColumn(columnName)) {
+            classNames.push(classNameConst.CELL_HEAD);
+        }
 
         return this.template({
             columnName: columnName,
-            className: metaClassName + classNameConst.CELL_DUMMY
+            className: classNames.join(' ')
         });
     }
 });
