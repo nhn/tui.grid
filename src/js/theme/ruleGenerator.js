@@ -181,7 +181,7 @@ module.exports = {
             .bg(colorset.background)
             .toString();
 
-        var resizeHandle = classRule(classNameConst.TOOLBAR_RESIZE_HANDLE)
+        var resizeHandle = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
             .border(colorset.border)
             .toString();
 

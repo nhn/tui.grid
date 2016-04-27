@@ -92,9 +92,9 @@ var classNames = {
 
     // toolbar
     TOOLBAR: 'toolbar',
-    TOOLBAR_BTN_HOLDER: 'btn-holder',
-    TOOLBAR_RESIZE_BAR: 'height-resize-bar',
-    TOOLBAR_RESIZE_HANDLE: 'height-resize-handle'
+    TOOLBAR_BTN_HOLDER: 'toolbar-btn-holder',
+    HEIGHT_RESIZE_BAR: 'height-resize-bar',
+    HEIGHT_RESIZE_HANDLE: 'height-resize-handle'
 };
 
 var exports = _.mapObject(classNames, function(className) {
