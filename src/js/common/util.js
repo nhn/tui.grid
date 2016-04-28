@@ -307,10 +307,12 @@ var util = {
      * create style element and append it into the head element.
      * @param {String} cssString - css string
      */
-    appendStyleElement: function(cssString) {
+    appendStyleElement: function(id, cssString) {
         var style = document.createElement('style');
 
         style.type = 'text/css';
+        style.id = id;
+
         if (style.styleSheet) {
             style.styleSheet.cssText = cssString;
         } else {
