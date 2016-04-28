@@ -6,14 +6,13 @@
 
 var util = require('../common/util');
 var styleGen = require('./styleGenerator');
-var presetDefault = require('./preset/default');
-var presetBlue = require('./preset/blue');
+var themeNameConst = require('../common/constMap').themeName;
 
 var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
-var themeMap = {
-    'default': presetDefault,
-    'blue': presetBlue
-};
+
+var presetOptions = {};
+presetOptions[themeNameConst.DEFAULT] = require('./preset/default');
+presetOptions[themeNameConst.STRIPED] = require('./preset/striped');
 
 /**
  * build css string with given options.
@@ -32,10 +31,11 @@ function buildCssString(options) {
     if (cell) {
         styles = styles.concat([
             styleGen.cell(cell.normal),
-            styleGen.cellHead(cell.head),
             styleGen.cellDummy(cell.dummy),
-            styleGen.cellRequired(cell.required),
             styleGen.cellEditable(cell.editable),
+            styleGen.cellEvenRow(cell.evenRow),
+            styleGen.cellHead(cell.head),
+            styleGen.cellRequired(cell.required),
             styleGen.cellDisabled(cell.disabled),
             styleGen.cellInvalid(cell.invalid),
             styleGen.cellCurrentRow(cell.currentRow),
@@ -62,14 +62,24 @@ module.exports = {
     /**
      * Creates a style element using theme options identified by given name,
      * and appends it to the document.
-     * @param {String} name - target theme name
+     * @param {String} themeName - preset theme name
+     * @param {Object} extOptions - if exist, extend preset theme options with it.
      */
-    use: function(name) {
-        var options = themeMap[name];
+    apply: function(themeName, extOptions) {
+        var options = presetOptions[themeName];
 
         if (!options) {
-            options = presetDefault;
+            options = presetOptions[themeNameConst.DEFAULT];
         }
+        options = $.extend(true, {}, options, extOptions);
         setDocumentStyle(options);
+    },
+
+    /**
+     * Returns whether the style of a theme is applied.
+     * @returns {Boolean}
+     */
+    isApplied: function() {
+        return $('#' + STYLE_ELEMENT_ID).length === 1;
     }
 };

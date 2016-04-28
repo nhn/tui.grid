@@ -48,5 +48,9 @@ module.exports = {
         COLUMN_INDEX: 'data-column-index',
         EDIT_TYPE: 'data-edit-type',
         GRID_ID: 'data-grid-id'
+    },
+    themeName: {
+        DEFAULT: 'default',
+        STRIPED: 'striped'
     }
 };

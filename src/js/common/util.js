@@ -305,6 +305,7 @@ var util = {
 
     /**
      * create style element and append it into the head element.
+     * @param {String} id - element id
      * @param {String} cssString - css string
      */
     appendStyleElement: function(id, cssString) {

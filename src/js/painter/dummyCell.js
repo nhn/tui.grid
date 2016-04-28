@@ -43,8 +43,8 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     template: _.template(
         '<td ' +
             attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
-            attrNameConst.EDIT_TYPE + '="dummy">' +
-            'class="<%=className%>" ' +
+            attrNameConst.EDIT_TYPE + '="dummy" ' +
+            'class="<%=className%>">' +
             '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
@@ -59,14 +59,16 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
     /**
      * Generates a HTML string from given data, and returns it.
+     * @param {Number} rowNum - row number
      * @param {String} columnName - column name
      * @returns {string} HTML string
      * @implements {module:base/painter}
      */
-    generateHtml: function(columnName) {
+    generateHtml: function(rowNum, columnName) {
         var classNames = [
             classNameConst.CELL,
-            classNameConst.CELL_DUMMY
+            classNameConst.CELL_DUMMY,
+            (rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
         ];
 
         if (util.isMetaColumn(columnName)) {

@@ -40,6 +40,28 @@ var Builder = tui.util.defineClass({
     },
 
     /**
+     * Add a border-width style to the rule.
+     * @param {Boolean} vertical - whether the vertical border is visible
+     * @param {Boolean} horizontal - whether the horizontal border is visible
+     * @returns {Builder} this
+     */
+    borderWidth: function(vertical, horizontal) {
+        var value;
+
+        if (_.isBoolean(vertical)) {
+            value = vertical ? '1px' : '0';
+            this.add('border-left-width', value)
+                .add('border-right-width', value);
+        }
+        if (_.isBoolean(horizontal)) {
+            value = horizontal ? '1px' : '0';
+            this.add('border-top-width', value)
+                .add('border-bottom-width', value);
+        }
+        return this;
+    },
+
+    /**
      * Shortcut for add('background-color', value)
      * @param {String} value - css value
      * @returns {Builder} this

@@ -51,6 +51,10 @@ module.exports = {
      */
     grid: function(options) {
         var container = normalRuleString(classNameConst.CONTAINER, options);
+        var table = classRule(classNameConst.TABLE)
+            .border(options.border)
+            .build();
+
         var line = classRule(classNameConst.BORDER_LINE)
             .bg(options.border)
             .build();
@@ -63,7 +67,7 @@ module.exports = {
             .bg(options.border)
             .build();
 
-        return container + line + scrollHead + scrollBorder;
+        return container + table + line + scrollHead + scrollBorder;
     },
 
     /**
@@ -125,7 +129,27 @@ module.exports = {
      * @returns {String}
      */
     cell: function(options) {
-        return normalRuleString(classNameConst.CELL, options);
+        var cell = classRule(classNameConst.CELL)
+            .bg(options.background)
+            .border(options.border)
+            .text(options.text);
+
+        if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
+            cell.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
+        }
+
+        return cell.build();
+    },
+
+    /**
+     * Generates a css string for the cells in even rows.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellEvenRow: function(options) {
+        return classRule(classNameConst.CELL_ROW_EVEN)
+            .bg(options.background)
+            .build();
     },
 
     /**
@@ -134,7 +158,16 @@ module.exports = {
      * @returns {String}
      */
     cellHead: function(options) {
-        return normalRuleString(classNameConst.CELL_HEAD, options);
+        var head = classRule(classNameConst.CELL_HEAD)
+            .bg(options.background)
+            .border(options.border)
+            .text(options.text);
+
+        if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
+            head.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
+        }
+
+        return head.build();
     },
 
     /**

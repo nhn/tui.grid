@@ -2,52 +2,44 @@
 * @fileoverview default theme preset
 * @author NHN Ent. FE Development Team
 */
+'use strict';
 
 module.exports = {
     grid: {
-        background: '#dfd',
-        border: '#ccf',
-        text: '#000'
+        background: '#fff',
+        border: '#ccc',
+        text: '#444'
     },
     selection: {
-        background: '#4DAAF9',
+        background: '#4daaf9',
         border: '#004082'
     },
     toolbar: {
-        border: '#dfd',
-        background: '#afa'
+        border: '#ccc',
+        background: '#fff'
     },
     scrollbar: {
-        background: '#835',
-        thumb: '#358',
-        active: '#136'
+        background: '#f5f5f5',
+        thumb: '#d9d9d9',
+        active: '#c1c1c1'
     },
     cell: {
         normal: {
-            background: '#faa',
-            border: '#f88',
-            text: '#f55'
+            background: '#fbfbfb',
+            border: '#e0e0e0'
         },
         head: {
-            background: '#aaf',
-            border: '#88f',
-            text: '#55f'
+            background: '#eee',
+            border: '#ccc'
         },
         selectedHead: {
-            background: '#5f5',
-            text: '#000'
+            background: '#d8d8d8'
         },
         focused: {
-            background: '#ff8',
-            border: '#ff5',
-            text: '#ff0'
-        },
-        currentRow: {
-            background: '#afa',
-            text: '#5f5'
+            border: '#00f'
         },
         required: {
-            background: '#f00'
+            background: '#fffdeb'
         },
         editable: {
             background: '#fff'
@@ -56,10 +48,12 @@ module.exports = {
             text: '#b0b0b0'
         },
         dummy: {
-            background: '#fee'
+            background: '#fff'
         },
         invalid: {
-            background: '#f00'
-        }
+            background: '#ff8080'
+        },
+        evenRow: {},
+        currentRow: {}
     }
 };

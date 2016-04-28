@@ -137,9 +137,14 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             classNameConst.CELL_CONTENT
         ];
         var attrs = {
-            'class': classNames.join(' '),
             'align': cellData.columnModel.align || 'left'
         };
+        var rowNum = cellData.rowNum;
+
+        if (_.isNumber(rowNum)) {
+            classNames.push((rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN);
+        }
+        attrs['class'] = classNames.join(' ');
 
         attrs[attrNameConst.EDIT_TYPE] = this.editType;
         attrs[attrNameConst.ROW_KEY] = cellData.rowKey;

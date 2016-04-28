@@ -58,12 +58,18 @@ var classNames = {
     PAGINATION_NEXT_END: 'next-end',
     PAGINATION_NEXT_END_OFF: 'next-end-off',
 
-    // TABLE
+    // table
     TABLE: 'table',
+
+    // table row
+    ROW_ODD: 'row-odd',
+    ROW_EVEN: 'row-even',
 
     // cell style
     CELL: 'cell',
     CELL_HEAD: 'cell-head',
+    CELL_ROW_ODD: 'cell-row-odd',
+    CELL_ROW_EVEN: 'cell-row-even',
     CELL_EDITABLE: 'cell-editable',
     CELL_DUMMY: 'cell-dummy',
     CELL_REQUIRED: 'cell-required',

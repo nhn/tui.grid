@@ -310,6 +310,7 @@ var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
 var themeManager = require('./theme/manager');
+var themeNameConst = require('./common/constMap').themeName;
 
 var instanceMap = {};
 
@@ -336,6 +337,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.container.render();
         this.refreshLayout();
 
+        if (!themeManager.isApplied()) {
+            themeManager.apply(themeNameConst.DEFAULT);
+        }
+
         this.addOn = {};
         instanceMap[this.id] = this;
     },
@@ -343,6 +348,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
+     * @param {module:domState} domState - domState
      * @returns {module:model/manager} - New model manager object
      * @private
      */
@@ -378,7 +384,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates container view and returns it
-     * @param  {Object} options - Options set by user
+     * @param {Object} options - Options set by user
+     * @param {module:domState} domState - domState
      * @returns {module:view/container} - New container view object
      * @private
      */
@@ -1073,8 +1080,13 @@ tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
 
-tui.Grid.setTheme = function(name) {
-    themeManager.use(name);
+/**
+ * Apply theme to all grid instances with the preset options of a given name.
+ * @api
+ * @static
+ * @param {String} themeName - preset theme name
+ * @param {Object} extOptions - if exist, extend preset options with it.
+ */
+tui.Grid.applyTheme = function(themeName, extOptions) {
+    themeManager.apply(themeName, extOptions);
 };
-
-tui.Grid.setTheme('default');
