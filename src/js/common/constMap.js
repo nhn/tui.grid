@@ -51,6 +51,7 @@ module.exports = {
     },
     themeName: {
         DEFAULT: 'default',
-        STRIPED: 'striped'
+        STRIPED: 'striped',
+        CLEAN: 'clean'
     }
 };

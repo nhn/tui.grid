@@ -13,6 +13,7 @@ var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 var presetOptions = {};
 presetOptions[themeNameConst.DEFAULT] = require('./preset/default');
 presetOptions[themeNameConst.STRIPED] = require('./preset/striped');
+presetOptions[themeNameConst.CLEAN] = require('./preset/clean');
 
 /**
  * build css string with given options.

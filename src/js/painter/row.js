@@ -6,7 +6,6 @@
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var classNameConst = require('../common/classNameConst');
 var constMap = require('../common/constMap');
 var attrNameConst = constMap.attrName;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -61,7 +60,8 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Array.<String>} columnNames - An array of column names
+     * @param {Number} rowNum - row number
+     * @param {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
