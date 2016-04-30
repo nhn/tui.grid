@@ -33,7 +33,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
             $bottom: $(HTML_BORDER_DIV)
         };
 
-        this.listenTo(this.dimensionModel, 'change:width', this._onChangeWidth);
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onChangeWidth);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
     },
@@ -41,9 +41,9 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
     className: classNameConst.LAYER_FOCUS,
 
     /**
-     *
+     * Event handler for 'columnWidthChanged' event on the module:model/dimension
      */
-    _onChangeWidth: function() {
+    _onColumnWidthChanged: function() {
         var focusModel = this.focusModel;
 
         if (this.$el.is(':visible')) {

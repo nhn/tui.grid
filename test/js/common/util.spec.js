@@ -208,15 +208,22 @@ describe('core.util', function() {
         });
     });
 
-    describe('appendStyleElement', function() {
-        var $el = $('<div id="my-own-test-div">');
+    it('appendStyleElement() create a style element and append it to the document', function() {
+        var cssText = 'div {width: 100px; height: 100px}';
+        var styleId = 'my-style';
+        var styleEl, actualCssText;
 
-        it('add given css rules into the page', function() {
-            util.appendStyleElement('#my-own-test-div {width: 100px; height: 100px}');
-            jasmine.getFixtures().set($el);
+        util.appendStyleElement(styleId, cssText);
 
-            expect($el.width()).toBe(100);
-            expect($el.height()).toBe(100);
-        });
+        styleEl = $('#my-style')[0];
+        if (styleEl.styleSheet) {
+            actualCssText = styleEl.styleSheet.cssText;
+        } else {
+            actualCssText = styleEl.innerHTML;
+        }
+
+        expect(styleEl.tagName.toUpperCase()).toBe('STYLE');
+        expect(styleEl.type).toBe('text/css');
+        expect(actualCssText).toBe(cssText);
     });
 });

@@ -60,7 +60,7 @@ describe('ResizeHandler', function() {
         });
 
         it('마지막 resize handler 에 resize_handle_last css 클래스가 할당되는지 확인한다.', function() {
-            expect($handles.filter('.' + classNameConst.HEADER_RESIZE_HANDLE_LAST).is(':last-child')).toBe(true);
+            expect($handles.filter('.' + classNameConst.COLUMN_RESIZE_HANDLE_LAST).is(':last-child')).toBe(true);
         });
 
         it('height와 margin을 headerHeight값으로 설정한다.', function() {
@@ -100,7 +100,7 @@ describe('ResizeHandler', function() {
     describe('_refreshHandlerPosition', function() {
         beforeEach(function() {
             handler.render();
-            $handles = handler.$el.children('.' + classNameConst.HEADER_RESIZE_HANDLE).each(function() {
+            $handles = handler.$el.children('.' + classNameConst.COLUMN_RESIZE_HANDLE).each(function() {
                 $(this).css('position', 'absolute');
             });
         });
@@ -118,7 +118,7 @@ describe('ResizeHandler', function() {
 
         beforeEach(function() {
             handler.render();
-            $handles = handler.$el.find('.' + classNameConst.HEADER_RESIZE_HANDLE);
+            $handles = handler.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
             mouseEvent = {
                 target: $handles.eq(0).css('position', 'absolute').get(0),
                 preventDefault: function() {}
