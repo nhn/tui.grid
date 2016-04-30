@@ -2,7 +2,7 @@
 
 var builder = require('theme/cssRuleBuilder');
 
-fdescribe('theme.cssRuleBuilder', function() {
+describe('theme.cssRuleBuilder', function() {
     it('create() without selector string throws an execption', function() {
         function createWithNumber() {
             builder.create(1);

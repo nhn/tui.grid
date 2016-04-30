@@ -96,13 +96,7 @@ var CSSRuleBuilder = tui.util.defineClass({
     }
 });
 
-
 module.exports = {
-
-    is: function(target) {
-        return target instanceof CSSRuleBuilder;
-    },
-
     /**
      * Creates new Builder instance.
      * @param {String} selector - selector

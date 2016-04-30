@@ -9,7 +9,6 @@ var classNameConst = require('../common/classNameConst');
 
 /**
  * Shortcut for the builder.createClassRule() method.
- * @type {Function}
  */
 var classRule = _.bind(builder.createClassRule, builder);
 
@@ -33,14 +32,14 @@ module.exports = {
      * @returns {String}
      */
     grid: function(options) {
-        var tableRule = classRule(classNameConst.TABLE).border(options.border);
-        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
-        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
-        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
         var containerRule = classRule(classNameConst.CONTAINER)
             .bg(options.background)
             .border(options.border)
             .text(options.text);
+        var tableRule = classRule(classNameConst.TABLE).border(options.border);
+        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
+        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
+        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
 
         return builder.buildAll([
             containerRule,
@@ -78,8 +77,8 @@ module.exports = {
      */
     toolbar: function(options) {
         var toolbarRule = classRule(classNameConst.TOOLBAR)
-            .border(options.border)
-            .bg(options.background);
+            .bg(options.background)
+            .border(options.border);
 
         var resizeHandleRule = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
             .border(options.border);
@@ -91,7 +90,7 @@ module.exports = {
     },
 
     /**
-     * Generates a css string for a sclection layer.
+     * Generates a css string for selection layers.
      * @param {Object} options - options
      * @returns {String}
      */
@@ -103,21 +102,39 @@ module.exports = {
     },
 
     /**
-     * Generates a css string for a sclection layer.
+     * Generates a css string for table cells.
      * @param {Object} options - options
      * @returns {String}
      */
     cell: function(options) {
-        var cell = classRule(classNameConst.CELL)
+        var cellRule = classRule(classNameConst.CELL)
             .bg(options.background)
             .border(options.border)
             .text(options.text);
 
         if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
-            cell.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
+            cellRule.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
         }
 
-        return cell.build();
+        return cellRule.build();
+    },
+
+    /*
+     * Generates a css string for head cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellHead: function(options) {
+        var headRule = classRule(classNameConst.CELL_HEAD)
+            .bg(options.background)
+            .border(options.border)
+            .text(options.text);
+
+        if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
+            headRule.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
+        }
+
+        return headRule.build();
     },
 
     /**
@@ -132,25 +149,7 @@ module.exports = {
     },
 
     /**
-     * Generates a css string for a sclection layer.
-     * @param {Object} options - options
-     * @returns {String}
-     */
-    cellHead: function(options) {
-        var head = classRule(classNameConst.CELL_HEAD)
-            .bg(options.background)
-            .border(options.border)
-            .text(options.text);
-
-        if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
-            head.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
-        }
-
-        return head.build();
-    },
-
-    /**
-     * Generates a css string for a sclection layer.
+     * Generates a css string for selected head cells.
      * @param {Object} options - options
      * @returns {String}
      */
@@ -162,15 +161,15 @@ module.exports = {
     },
 
     /**
-     * Generates a css string for a focused cell.
+     * Generates a css string for focused cells.
      * @param {Object} options - options
      * @returns {String}
      */
     cellFocused: function(options) {
-        var focusLayer = classRule(classNameConst.LAYER_FOCUS_BORDER).bg(options.border);
-        var editingLayer = classRule(classNameConst.LAYER_EDITING).border(options.border);
+        var focusLayerRule = classRule(classNameConst.LAYER_FOCUS_BORDER).bg(options.border);
+        var editingLayerRule = classRule(classNameConst.LAYER_EDITING).border(options.border);
 
-        return builder.buildAll([focusLayer, editingLayer]);
+        return builder.buildAll([focusLayerRule, editingLayerRule]);
     },
 
     /**
