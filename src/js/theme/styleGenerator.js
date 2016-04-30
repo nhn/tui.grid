@@ -8,27 +8,10 @@ var builder = require('./cssRuleBuilder');
 var classNameConst = require('../common/classNameConst');
 
 /**
- * Shortcut to create a Builder instance with a class name selector.
- * @param {String} className - class name
- * @returns {Builder}
+ * Shortcut for the builder.createClassRule() method.
+ * @type {Function}
  */
-function classRule(className) {
-    return builder.create('.' + className);
-}
-
-/**
- * Creates a normal rule string.
- * @param {String} className - class name
- * @param {Object} options - options
- * @returns {String}
- */
-function normalRuleString(className, options) {
-    return classRule(className)
-        .bg(options.background)
-        .border(options.border)
-        .text(options.text)
-        .build();
-}
+var classRule = _.bind(builder.createClassRule, builder);
 
 /**
  * Creates a rule string for background and text colors.
@@ -50,24 +33,22 @@ module.exports = {
      * @returns {String}
      */
     grid: function(options) {
-        var container = normalRuleString(classNameConst.CONTAINER, options);
-        var table = classRule(classNameConst.TABLE)
+        var tableRule = classRule(classNameConst.TABLE).border(options.border);
+        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
+        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
+        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
+        var containerRule = classRule(classNameConst.CONTAINER)
+            .bg(options.background)
             .border(options.border)
-            .build();
+            .text(options.text);
 
-        var line = classRule(classNameConst.BORDER_LINE)
-            .bg(options.border)
-            .build();
-
-        var scrollHead = classRule(classNameConst.SCROLLBAR_HEAD)
-            .border(options.border)
-            .build();
-
-        var scrollBorder = classRule(classNameConst.SCROLLBAR_BORDER)
-            .bg(options.border)
-            .build();
-
-        return container + table + line + scrollHead + scrollBorder;
+        return builder.buildAll([
+            containerRule,
+            tableRule,
+            borderLineRule,
+            scrollHeadRule,
+            scrollBorderRule
+        ]);
     },
 
     /**
@@ -76,21 +57,18 @@ module.exports = {
      * @returns {String}
      */
     scrollbar: function(options) {
-        var containerWebkit = builder.webkitScrollbarRuleString('.' + classNameConst.CONTAINER, options);
-        var containerIE = builder.ieScrollbarRuleString('.' + classNameConst.CONTAINER, options);
-        var scrollRB = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
-            .bg(options.background)
-            .build();
+        var webkitScrollbarRules = builder.createWebkitScrollbarRules('.' + classNameConst.CONTAINER, options);
+        var ieScrollbarRule = builder.createIEScrollbarRule('.' + classNameConst.CONTAINER, options);
+        var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
+        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
+        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
 
-        var scrollLB = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM)
-            .bg(options.background)
-            .build();
-
-        var scrollHead = classRule(classNameConst.SCROLLBAR_HEAD)
-            .bg(options.background)
-            .build();
-
-        return containerWebkit + containerIE + scrollRB + scrollLB + scrollHead;
+        return builder.buildAll(webkitScrollbarRules.concat([
+            ieScrollbarRule,
+            rightBottomRule,
+            leftBottomRule,
+            scrollHeadRule
+        ]));
     },
 
     /**
@@ -99,16 +77,17 @@ module.exports = {
      * @returns {String}
      */
     toolbar: function(options) {
-        var toolbar = classRule(classNameConst.TOOLBAR)
+        var toolbarRule = classRule(classNameConst.TOOLBAR)
             .border(options.border)
-            .bg(options.background)
-            .build();
+            .bg(options.background);
 
-        var resizeHandle = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
-            .border(options.border)
-            .build();
+        var resizeHandleRule = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
+            .border(options.border);
 
-        return toolbar + resizeHandle;
+        return builder.buildAll([
+            toolbarRule,
+            resizeHandleRule
+        ]);
     },
 
     /**
@@ -188,15 +167,10 @@ module.exports = {
      * @returns {String}
      */
     cellFocused: function(options) {
-        var focusLayer = classRule(classNameConst.LAYER_FOCUS_BORDER)
-            .bg(options.border)
-            .build();
+        var focusLayer = classRule(classNameConst.LAYER_FOCUS_BORDER).bg(options.border);
+        var editingLayer = classRule(classNameConst.LAYER_EDITING).border(options.border);
 
-        var editingLayer = classRule(classNameConst.LAYER_EDITING)
-            .border(options.border)
-            .build();
-
-        return focusLayer + editingLayer;
+        return builder.buildAll([focusLayer, editingLayer]);
     },
 
     /**
