@@ -110,11 +110,8 @@ module.exports = {
         var cellRule = classRule(classNameConst.CELL)
             .bg(options.background)
             .border(options.border)
+            .borderWidth(options)
             .text(options.text);
-
-        if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
-            cellRule.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
-        }
 
         return cellRule.build();
     },
@@ -128,11 +125,8 @@ module.exports = {
         var headRule = classRule(classNameConst.CELL_HEAD)
             .bg(options.background)
             .border(options.border)
+            .borderWidth(options)
             .text(options.text);
-
-        if (_.isBoolean(options.showVerticalBorder) || _.isBoolean(options.showHorizontalBorder)) {
-            headRule.borderWidth(options.showVerticalBorder, options.showHorizontalBorder);
-        }
 
         return headRule.build();
     },

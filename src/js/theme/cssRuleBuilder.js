@@ -43,11 +43,14 @@ var CSSRuleBuilder = tui.util.defineClass({
 
     /**
      * Add a border-width style to the rule.
-     * @param {Boolean} vertical - whether the vertical border is visible
-     * @param {Boolean} horizontal - whether the horizontal border is visible
+     * @param {Object} options - visible options
+     * @param {Boolean} [options.showVerticalBorder] - whether the vertical border is visible
+     * @param {Boolean} [options.showHorizontalBorder] - whether the horizontal border is visible
      * @returns {CSSRuleBuilder}
      */
-    borderWidth: function(vertical, horizontal) {
+    borderWidth: function(options) {
+        var vertical = options.showVerticalBorder;
+        var horizontal = options.showHorizontalBorder;
         var value;
 
         if (_.isBoolean(vertical)) {

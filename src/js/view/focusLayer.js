@@ -42,6 +42,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
 
     /**
      * Event handler for 'columnWidthChanged' event on the module:model/dimension
+     * @private
      */
     _onColumnWidthChanged: function() {
         var focusModel = this.focusModel;

@@ -73,41 +73,44 @@ describe('theme.cssRuleBuilder', function() {
         });
 
         describe('borderWidth() for the border-width:', function() {
-            it('if first arg is true, add left and right value with 1px', function() {
-                rule.borderWidth(true);
+            it('if showVerticalBorder is true, add left and right value with 1px', function() {
+                rule.borderWidth({showVerticalBorder: true});
                 expect(rule.add).toHaveBeenCalledWith('border-left-width', '1px');
                 expect(rule.add).toHaveBeenCalledWith('border-right-width', '1px');
                 expect(rule.add.calls.count()).toBe(2);
             });
 
-            it('if first arg is false, add left and right value with 0', function() {
-                rule.borderWidth(false);
+            it('if showVerticalBorderis false, add left and right value with 0', function() {
+                rule.borderWidth({showVerticalBorder: false});
                 expect(rule.add).toHaveBeenCalledWith('border-left-width', '0');
                 expect(rule.add).toHaveBeenCalledWith('border-right-width', '0');
                 expect(rule.add.calls.count()).toBe(2);
             });
 
-            it('if second arg is true, add top and bottom value with 1px', function() {
-                rule.borderWidth(null, true);
+            it('if showHorizontalBorder is true, add top and bottom value with 1px', function() {
+                rule.borderWidth({showHorizontalBorder: true});
                 expect(rule.add).toHaveBeenCalledWith('border-top-width', '1px');
                 expect(rule.add).toHaveBeenCalledWith('border-bottom-width', '1px');
                 expect(rule.add.calls.count()).toBe(2);
             });
 
-            it('if second arg is false, add top and bottom value with 0', function() {
-                rule.borderWidth(null, false);
+            it('if showHorizontalBorder is false, add top and bottom value with 0', function() {
+                rule.borderWidth({showHorizontalBorder: false});
                 expect(rule.add).toHaveBeenCalledWith('border-top-width', '0');
                 expect(rule.add).toHaveBeenCalledWith('border-bottom-width', '0');
                 expect(rule.add.calls.count()).toBe(2);
             });
 
-            it('if args are not boolean, add nothing', function() {
-                rule.borderWidth(null, null);
+            it('if options have no boolean value, add nothing', function() {
+                rule.borderWidth({});
                 expect(rule.add).not.toHaveBeenCalled();
             });
 
-            it('if both args are boolean, add all', function() {
-                rule.borderWidth(true, false);
+            it('if both visible options are boolean, add all', function() {
+                rule.borderWidth({
+                    showVerticalBorder: true,
+                    showHorizontalBorder: false
+                });
                 expect(rule.add).toHaveBeenCalledWith('border-left-width', '1px');
                 expect(rule.add).toHaveBeenCalledWith('border-right-width', '1px');
                 expect(rule.add).toHaveBeenCalledWith('border-top-width', '0');

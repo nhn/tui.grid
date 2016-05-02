@@ -36,7 +36,7 @@ module.exports = {
             background: '#d8d8d8'
         },
         focused: {
-            border: '#00f'
+            border: '#418ed4'
         },
         required: {
             background: '#fffdeb'
