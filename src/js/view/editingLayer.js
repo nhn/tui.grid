@@ -85,6 +85,27 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     },
 
     /**
+     * Adjust offset value of TD, because it varies from browsers to browsers when borders are callapsed.
+     * @param {Number} offsetValue - offset value (offset.top or offset.left)
+     * @returns {Number}
+     * @private
+     */
+    _adjustCellOffsetValue: function(offsetValue) {
+        var browser = tui.util.browser;
+        var result = offsetValue;
+
+        if (browser.msie) {
+            if (browser.version === 9) {
+                result = offsetValue - 1;
+            } else if (browser.version > 9) {
+                result = Math.floor(offsetValue);
+            }
+        }
+
+        return result;
+    },
+
+    /**
      * Calculates the position and the dimension of the layer and returns the object that contains css properties.
      * @param {Stirng} rowKey - row key
      * @param {String} columnName - column name
@@ -100,8 +121,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         var cellWidth = $cell.width() + CELL_BORDER_WIDTH;
 
         return {
-            top: cellOffset.top - wrapperOffset.top,
-            left: cellOffset.left - wrapperOffset.left,
+            top: this._adjustCellOffsetValue(cellOffset.top) - wrapperOffset.top,
+            left: this._adjustCellOffsetValue(cellOffset.left) - wrapperOffset.left,
             height: cellHeight,
             minWidth: expandable ? cellWidth : '',
             width: expandable ? '' : cellWidth,
@@ -134,5 +155,6 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         return this;
     }
 });
+
 
 module.exports = EditingLayer;
