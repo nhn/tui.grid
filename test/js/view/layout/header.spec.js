@@ -51,7 +51,7 @@ describe('Header', function() {
                 scrollY: false
             });
             header.render();
-            expect(header.$el).toHaveClass(classNameConst.HEADER_NO_SCROLL);
+            expect(header.$el).toHaveClass(classNameConst.NO_SCROLL_Y);
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
