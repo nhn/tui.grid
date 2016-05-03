@@ -119,9 +119,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
         errorCode = this._validateCellData(columnName);
         if (errorCode) {
-            this.addCellClassName(columnName, 'invalid');
+            this.addCellClassName(columnName, classNameConst.CELL_INVALID);
         } else {
-            this.removeCellClassName(columnName, 'invalid');
+            this.removeCellClassName(columnName, classNameConst.CELL_INVALID);
         }
         this.validateMap[columnName] = errorCode;
 
@@ -223,7 +223,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             classNameList.push(classNameConst.CELL_REQUIRED);
         }
         if (isMetaColumn) {
-            classNameList.push(classNameConst.CELL_META_COLUMN);
+            classNameList.push(classNameConst.CELL_HEAD);
         } else if (cellState.isEditable) {
             classNameList.push(classNameConst.CELL_EDITABLE);
         }

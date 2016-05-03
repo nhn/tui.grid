@@ -42,7 +42,7 @@ describe('Header', function() {
             modelManager.dimensionModel.set('headerHeight', 20);
             header.render();
 
-            expect(header.$el.height()).toEqual(20);
+            expect(header.$el.height()).toEqual(19);
         });
 
         it('if whichSide is \'R\' and scrollY is false, add \'no_scroll\' class to element', function() {
@@ -51,7 +51,7 @@ describe('Header', function() {
                 scrollY: false
             });
             header.render();
-            expect(header.$el).toHaveClass(classNameConst.HEADER_NO_SCROLL);
+            expect(header.$el).toHaveClass(classNameConst.NO_SCROLL_Y);
         });
 
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {

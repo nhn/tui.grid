@@ -172,10 +172,10 @@ describe('core.util', function() {
 
     describe('convertValueType()', function() {
         it('인자로 들어온 타입으로 변환한다.', function() {
-           var str = '1',
-               num = 1,
-               obj = {},
-               arr = [1, 2, 3];
+            var str = '1';
+            var num = 1;
+            var obj = {};
+            var arr = [1, 2, 3];
 
             expect(util.convertValueType(str, 'string')).toEqual(str);
             expect(util.convertValueType(str, 'number')).toEqual(num);
@@ -206,5 +206,21 @@ describe('core.util', function() {
         it('should return 1 when value = 2, min = 0, max = 1', function() {
             expect(util.clamp(2, 0, 1)).toBe(1);
         });
-    })
+    });
+
+    it('appendStyleElement() create a style element and append it to the document', function() {
+        var styleId = 'my-style';
+        var $styleEl, $divEl;
+
+        jasmine.getFixtures().set('<div id="my-div"></div>');
+        util.appendStyleElement(styleId, '#my-div {width: 100px; height: 100px}');
+
+        $styleEl = $('#my-style');
+        $divEl = $('#my-div');
+
+        expect($styleEl[0].tagName.toUpperCase()).toBe('STYLE');
+        expect($styleEl[0].type).toBe('text/css');
+        expect($divEl.width()).toBe(100);
+        expect($divEl.height()).toBe(100);
+    });
 });

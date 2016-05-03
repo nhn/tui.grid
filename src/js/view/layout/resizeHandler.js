@@ -36,13 +36,13 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
     },
 
-    className: classNameConst.HEADER_RESIZE_CONTAINER,
+    className: classNameConst.COLUMN_RESIZE_CONTAINER,
 
     events: function() {
         var eventHash = {};
 
-        eventHash['mousedown .' + classNameConst.HEADER_RESIZE_HANDLE] = '_onMouseDown';
-        eventHash['dblclick .' + classNameConst.HEADER_RESIZE_HANDLE] = '_onDblClick';
+        eventHash['mousedown .' + classNameConst.COLUMN_RESIZE_HANDLE] = '_onMouseDown';
+        eventHash['dblclick .' + classNameConst.COLUMN_RESIZE_HANDLE] = '_onDblClick';
 
         return eventHash;
     },
@@ -51,7 +51,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         '<div ' +
         attrNameConst.COLUMN_INDEX + '="<%=columnIndex%>" ' +
         attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
-        'class="' + classNameConst.HEADER_RESIZE_HANDLE + ' <%=lastClass%>" ' +
+        'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
         'style="<%=height%>" ' +
         'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
         '</div>'
@@ -86,7 +86,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         var length = columnModelList.length;
         var resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
-                lastClass: (index + 1 === length) ? classNameConst.HEADER_RESIZE_HANDLE_LAST : '',
+                lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.columnName,
                 height: headerHeight
@@ -120,7 +120,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _refreshHandlerPosition: function() {
         var columnData = this._getColumnData();
         var columnWidthList = columnData.widthList;
-        var $resizeHandleList = this.$el.find('.' + classNameConst.HEADER_RESIZE_HANDLE);
+        var $resizeHandleList = this.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
         var curPos = 0;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {

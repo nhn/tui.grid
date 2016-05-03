@@ -60,7 +60,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         }
 
         $scrollOverlay = $('<div>')
-            .addClass(classNameConst.SCROLLBAR_OVERLAY)
+            .addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM)
             .css('bottom', dimensionModel.get('toolbarHeight'));
         this.$el.append($scrollOverlay);
     }

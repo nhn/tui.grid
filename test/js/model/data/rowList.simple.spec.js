@@ -2,6 +2,7 @@
 
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
+var classNameConst = require('common/classNameConst');
 
 describe('Data.RowList - simple', function() {
     var columnModelList = [
@@ -296,26 +297,26 @@ describe('Data.RowList - simple', function() {
 
         it('Returns an array which contains invalid rows', function() {
             var expected = [{
-                    rowKey: 0,
-                    errors: [{
-                        columnName: 'c2',
-                        errorCode: 'REQUIRED'
-                    }]
-                }, {
-                    rowKey: 2,
-                    errors: [{
-                        columnName: 'c1',
-                        errorCode: 'REQUIRED'
-                    }]
-                }];
+                rowKey: 0,
+                errors: [{
+                    columnName: 'c2',
+                    errorCode: 'REQUIRED'
+                }]
+            }, {
+                rowKey: 2,
+                errors: [{
+                    columnName: 'c1',
+                    errorCode: 'REQUIRED'
+                }]
+            }];
 
             expect(rowList.validate()).toEqual(expected);
         });
 
         it('Add \'invalid\' class to the invlaid cells', function() {
             rowList.validate();
-            expect(rowList.at(0).getClassNameList('c2')).toContain('invalid');
-            expect(rowList.at(2).getClassNameList('c1')).toContain('invalid');
+            expect(rowList.at(0).getClassNameList('c2')).toContain(classNameConst.CELL_INVALID);
+            expect(rowList.at(2).getClassNameList('c1')).toContain(classNameConst.CELL_INVALID);
         });
     });
 });

@@ -7,6 +7,7 @@
 var Painter = require('../base/painter');
 var util = require('../common/util');
 var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Dummy Cell Painter
@@ -40,9 +41,10 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * @returns {String} HTML string
      */
     template: _.template(
-        '<td <%=attrColumnName%>="<%=columnName%>" ' +
-            'class="<%=className%>" ' +
-            '<%=attrEditType%>="dummy">' +
+        '<td ' +
+            attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
+            attrNameConst.EDIT_TYPE + '="dummy" ' +
+            'class="<%=className%>">' +
             '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
@@ -57,18 +59,25 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
     /**
      * Generates a HTML string from given data, and returns it.
+     * @param {Number} rowNum - row number
      * @param {String} columnName - column name
      * @returns {string} HTML string
      * @implements {module:base/painter}
      */
-    generateHtml: function(columnName) {
-        var isMeta = util.isMetaColumn(columnName);
+    generateHtml: function(rowNum, columnName) {
+        var classNames = [
+            classNameConst.CELL,
+            classNameConst.CELL_DUMMY,
+            (rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+        ];
+
+        if (util.isMetaColumn(columnName)) {
+            classNames.push(classNameConst.CELL_HEAD);
+        }
 
         return this.template({
-            attrColumnName: attrNameConst.COLUMN_NAME,
-            attrEditType: attrNameConst.EDIT_TYPE,
             columnName: columnName,
-            className: (isMeta ? 'meta_column ' : '') + 'dummy'
+            className: classNames.join(' ')
         });
     }
 });

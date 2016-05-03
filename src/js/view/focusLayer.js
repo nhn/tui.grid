@@ -8,6 +8,8 @@ var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 var classNameConst = require('../common/classNameConst');
 
+var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></div>';
+
 /**
  * Class for the layer view that represents the currently focused cell
  * @module view/focusLayer
@@ -25,20 +27,25 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.whichSide = options.whichSide;
 
         this.borderEl = {
-            $top: $('<div>'),
-            $left: $('<div>'),
-            $right: $('<div>'),
-            $bottom: $('<div>')
+            $top: $(HTML_BORDER_DIV),
+            $left: $(HTML_BORDER_DIV),
+            $right: $(HTML_BORDER_DIV),
+            $bottom: $(HTML_BORDER_DIV)
         };
 
-        this.listenTo(this.dimensionModel, 'change:width', this._onChangeWidth);
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
+        // this.listenTo(this.focusModel, 'change:editingAddress', this._onChangeEditingAddress);
     },
 
     className: classNameConst.LAYER_FOCUS,
 
-    _onChangeWidth: function() {
+    /**
+     * Event handler for 'columnWidthChanged' event on the module:model/dimension
+     * @private
+     */
+    _onColumnWidthChanged: function() {
         var focusModel = this.focusModel;
 
         if (this.$el.is(':visible')) {
@@ -69,6 +76,13 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         }
     },
 
+    _onChangeEditingAddress: function(focusModel, address) {
+        if (address) {
+            this.$el.hide();
+        } else {
+            this.$el.show();
+        }
+    },
 
     /**
      * Resets the position and the dimension of the layer.

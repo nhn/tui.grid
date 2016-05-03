@@ -159,7 +159,7 @@ describe('Frame', function() {
                 it('div.header_space를 생성하여 el의 자식으로 추가하고 css속성을 설정한다.', function() {
                     var $space;
                     frame.afterRender();
-                    $space = frame.$el.find('.' + classNameConst.HEADER_SPACE);
+                    $space = frame.$el.find('.' + classNameConst.SCROLLBAR_HEAD);
                     expect($space.length).toBe(1);
                     expect($space.height()).toBe(28);
                 });

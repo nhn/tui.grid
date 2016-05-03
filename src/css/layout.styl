@@ -1,39 +1,36 @@
-$line-common =
+.border-line
     position absolute
-    background #ccc
     z-index 13
 
-.left-border
-    {$line-common}
+.border-line-top
+    top 0
+    left 0
+    right 0
+    height 1px
+
+.border-line-left
     top 0
     bottom 0
     left 0
     width 1px
 
-.right-border
-    {$line-common}
+.border-line-right
     top 0
     bottom 0
     right 0
     width 1px
 
-.bottom-border
-    {$line-common}
+.border-line-bottom
     bottom 0
     left 0
     right 17px
     height 1px
+    &.no-scroll-y
+        right 0
 
-$selection-layer =
-    display none
-    position absolute
-    top 0
-    width 0
-    height 0
-    border solid 1px #004082
-    background #4DAAF9
-    opacity 0.2
-    filter unquote('alpha(opacity=10)')
+.head-area
+    border-style solid
+    border-width 0 0 1px
 
 .lside-area
     display none
@@ -44,93 +41,65 @@ $selection-layer =
     overflow hidden
     z-index 10
 
-    .header
+    .head-area
         overflow hidden
 
-    .body
-        overflow scroll
+    .body-area
         position relative
+        overflow scroll
         margin-right -17px
 
         .selection-layer
-            {$selection-layer}
             left 1px
-
-    .scrollbar-overlay
-        position absolute
-        bottom 0
-        left 0
-        right 0
-        height 17px
-        background-color #f5f5f5
 
 .rside-area
     display none
     height 100%
     overflow hidden
 
-    .header
+    .head-area
         position relative
         margin-right 17px
         overflow hidden
-        &.no_scroll
+        &.no-scroll-y
             margin-right 0
 
-    .body
+    .body-area
         position relative
         overflow scroll
-
-        .selection-layer
-            {$selection-layer}
-
-    .header-space
-        display block
-        position absolute
-        top 0
-        right 0
-        width 16px
-        border solid 1px #ccc
-        background #eee
-
-    .scrollbar-border
-        display block
-        position absolute
-        right 17px
-        width 1px
-        background #ccc
-
-    .scrollbar-corner
-        position absolute
-        bottom 0
-        right 0
-        width 17px
-        height 17px
-        background-color #f5f5f5
-
-.header
-    .resize-handle-container
-        display none
-        position relative
-        width 0
-
-        .resize-handle
-            float left
-            position absolute
-            top -1px
-            left -99px
-            width 7px
-            height 100%
-            background red
-            opacity 0
-            filter unquote('alpha(opacity=0)')
-            cursor col-resize
-
-        .resize-handle-last
-            width 3px
 
 .body-container
     position relative
     margin-top -1px
 
-    .table-container
-        position absolute
+.table-container
+    position absolute
+
+.scrollbar-head
+    display block
+    position absolute
+    top 0
+    right 0
+    width 16px
+    border-style solid
+    border-width 1px
+
+.scrollbar-left-bottom
+    position absolute
+    bottom 0
+    left 0
+    right 0
+    height 17px
+
+.scrollbar-right-bottom
+    position absolute
+    bottom 0
+    right 0
+    width 17px
+    height 17px
+
+.scrollbar-border
+    display block
+    position absolute
+    right 17px
+    width 1px

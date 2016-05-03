@@ -131,10 +131,16 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getAttributes: function(cellData) {
+        var classNames = [
+            cellData.className,
+            classNameConst.CELL,
+            classNameConst.CELL_CONTENT,
+            (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+        ];
         var attrs = {
-            'class': cellData.className + ' ' + classNameConst.CELL_CONTENT,
             'align': cellData.columnModel.align || 'left'
         };
+        attrs['class'] = classNames.join(' ');
 
         attrs[attrNameConst.EDIT_TYPE] = this.editType;
         attrs[attrNameConst.ROW_KEY] = cellData.rowKey;

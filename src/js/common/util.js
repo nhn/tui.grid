@@ -301,6 +301,26 @@ var util = {
     isBrowserIE7: function() {
         var browser = tui.util.browser;
         return browser.msie && browser.version === 7; // eslint-disable-line no-magic-numbers
+    },
+
+    /**
+     * create style element and append it into the head element.
+     * @param {String} id - element id
+     * @param {String} cssString - css string
+     */
+    appendStyleElement: function(id, cssString) {
+        var style = document.createElement('style');
+
+        style.type = 'text/css';
+        style.id = id;
+
+        if (style.styleSheet) {
+            style.styleSheet.cssText = cssString;
+        } else {
+            style.appendChild(document.createTextNode(cssString));
+        }
+
+        document.getElementsByTagName('head')[0].appendChild(style);
     }
 };
 

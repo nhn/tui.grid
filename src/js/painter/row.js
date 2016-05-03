@@ -60,16 +60,17 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Array.<String>} columnNames - An array of column names
+     * @param {Number} rowNum - row number
+     * @param {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _generateHtmlForDummyRow: function(columnNames) {
+    _generateHtmlForDummyRow: function(rowNum, columnNames) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
         _.each(columnNames, function(columnName) {
-            html += cellPainter.generateHtml(columnName);
+            html += cellPainter.generateHtml(rowNum, columnName);
         });
 
         return html;
@@ -106,11 +107,13 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @returns {String} HTLM string
      */
     generateHtml: function(model, columnNames) {
-        var rowKey = model.get('rowKey'),
-            html;
+        var rowKey = model.get('rowKey');
+        var rowNum = model.get('rowNum');
+        var className = '';
+        var html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._generateHtmlForDummyRow(columnNames);
+            html = this._generateHtmlForDummyRow(rowNum, columnNames);
         } else {
             html = this._generateHtmlForActualRow(model, columnNames);
         }
@@ -120,7 +123,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             rowKey: rowKey,
             height: model.get('height') + RowPainter._extraHeight + CELL_BORDER_WIDTH,
             contents: html,
-            className: ''
+            className: className
         });
     },
 

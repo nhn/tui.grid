@@ -154,15 +154,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _formatData: function(data, dataModel, columnModel, focusModel) {
-        var rowKey = data.rowKey,
-            columnData, row;
+        var rowKey = data.rowKey;
+        var rowNum = data.rowNum;
+        var columnData, row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
 
         row = dataModel.get(rowKey);
-        columnData = _.omit(data, 'rowKey', '_extraData', 'height');
+        columnData = _.omit(data, 'rowKey', '_extraData', 'height', 'rowNum');
 
         _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
@@ -172,6 +173,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
             data[columnName] = {
                 rowKey: rowKey,
+                rowNum: rowNum,
                 columnName: columnName,
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,

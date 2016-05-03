@@ -302,6 +302,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
         var viewData = {
             height: height,
+            rowNum: rowNum,
             rowKey: rowDataModel.get('rowKey'),
             _extraData: rowDataModel.get('_extraData')
         };
@@ -363,7 +364,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
             lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
-            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
             rowNum += 1;
         }
 
@@ -400,17 +401,20 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _fillDummyRows: function() {
-        var displayRowCount = this.dimensionModel.get('displayRowCount'),
-            actualRowCount = this._getActualRowCount(),
-            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0),
-            rowHeight = this.dimensionModel.get('rowHeight');
+        var displayRowCount = this.dimensionModel.get('displayRowCount');
+        var actualRowCount = this._getActualRowCount();
+        var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
+        var rowHeight = this.dimensionModel.get('rowHeight');
+        var rowNum = this.get('endIndex') + 2;
 
         _.times(dummyRowCount, function() {
             _.each(['lside', 'rside'], function(listName) {
                 this.get(listName).add({
-                    height: rowHeight
+                    height: rowHeight,
+                    rowNum: rowNum
                 });
             }, this);
+            rowNum += 1;
         }, this);
 
         this.set('dummyRowCount', dummyRowCount);

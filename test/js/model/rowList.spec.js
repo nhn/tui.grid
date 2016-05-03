@@ -384,7 +384,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(false);
-                expect(cell0.className).toEqual(classNameConst.CELL_META_COLUMN);
+                expect(cell0.className).toEqual(classNameConst.CELL_HEAD);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
@@ -415,7 +415,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(true);
-                expect(cell0.className).toEqual(classNameConst.CELL_META_COLUMN + ' ' + classNameConst.CELL_DISABLED);
+                expect(cell0.className).toEqual(classNameConst.CELL_HEAD + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
@@ -447,7 +447,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(true);
-                expect(cell0.className).toEqual(classNameConst.CELL_META_COLUMN + ' ' + classNameConst.CELL_DISABLED);
+                expect(cell0.className).toEqual(classNameConst.CELL_HEAD + ' ' + classNameConst.CELL_DISABLED);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
@@ -488,7 +488,7 @@ describe('model.rowList', function() {
                 expect(cell0.value).toEqual(false);
                 expect(cell0.isEditable).toEqual(true);
                 expect(cell0.isDisabled).toEqual(false);
-                expect(cell0.className).toEqual('rowClass ' + classNameConst.CELL_META_COLUMN);
+                expect(cell0.className).toEqual('rowClass ' + classNameConst.CELL_HEAD);
 
                 expect(cell1.value).toEqual('c1');
                 expect(cell1.isEditable).toEqual(false);
