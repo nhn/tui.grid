@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.0-c
+ * @version 1.2.1
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -826,7 +826,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
 module.exports = Net;
 
-},{"../base/view":7,"../common/constMap":8,"../common/formUtil":9,"../common/gridEvent":10,"../common/util":11,"./net-router":1}],3:[function(require,module,exports){
+},{"../base/view":7,"../common/constMap":9,"../common/formUtil":10,"../common/gridEvent":11,"../common/util":12,"./net-router":1}],3:[function(require,module,exports){
 /**
  * @fileoverview Base class for Collections
  * @author NHN Ent. FE Development Team
@@ -912,7 +912,7 @@ module.exports = Model;
  */
 'use strict';
 
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
 
 /**
  * Base class for Painters
@@ -949,11 +949,11 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
      * @private
      */
     _getCellAddress: function($target) {
-        var $addressHolder = $target.closest('[' + attrNameMap.ROW_KEY + ']');
+        var $addressHolder = $target.closest('[' + attrNameConst.ROW_KEY + ']');
 
         return {
-            rowKey: $addressHolder.attr(attrNameMap.ROW_KEY),
-            columnName: $addressHolder.attr(attrNameMap.COLUMN_NAME)
+            rowKey: $addressHolder.attr(attrNameConst.ROW_KEY),
+            columnName: $addressHolder.attr(attrNameConst.COLUMN_NAME)
         };
     },
 
@@ -982,7 +982,7 @@ var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
 
 module.exports = Painter;
 
-},{"../common/constMap":8}],7:[function(require,module,exports){
+},{"../common/constMap":9}],7:[function(require,module,exports){
 /**
  * @fileoverview Base class for Views
  * @author NHN Ent. FE Development Team
@@ -1068,6 +1068,119 @@ module.exports = View;
 
 },{"./common":4}],8:[function(require,module,exports){
 /**
+* @fileoverview class name constants.
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+var PREFIX = 'tui-grid-';
+
+var classNames = {
+    CONTAINER: 'container',
+    CLIPBOARD: 'clipboard',
+
+    // common
+    NO_SCROLL_X: 'no-scroll-x',
+    NO_SCROLL_Y: 'no-scroll-y',
+
+    // layer
+    LAYER_STATE: 'layer-state',
+    LAYER_STATE_CONTENT: 'layer-state-content',
+    LAYER_STATE_LOADING: 'layer-state-loading',
+    LAYER_EDITING: 'layer-editing',
+    LAYER_FOCUS: 'layer-focus',
+    LAYER_FOCUS_BORDER: 'layer-focus-border',
+    LAYER_SELECTION: 'layer-selection',
+
+    // border line
+    BORDER_LINE: 'border-line',
+    BORDER_TOP: 'border-line-top',
+    BORDER_LEFT: 'border-line-left',
+    BORDER_RIGHT: 'border-line-right',
+    BORDER_BOTTOM: 'border-line-bottom',
+
+    // layout (area)
+    LSIDE_AREA: 'lside-area',
+    RSIDE_AREA: 'rside-area',
+    HEAD_AREA: 'head-area',
+    BODY_AREA: 'body-area',
+
+    // header
+    COLUMN_RESIZE_CONTAINER: 'column-resize-container',
+    COLUMN_RESIZE_HANDLE: 'column-resize-handle',
+    COLUMN_RESIZE_HANDLE_LAST: 'column-resize-handle-last',
+
+    // body
+    BODY_CONTAINER: 'body-container',
+    BODY_TABLE_CONTAINER: 'table-container',
+
+    // scrollbar
+    SCROLLBAR_HEAD: 'scrollbar-head',
+    SCROLLBAR_BORDER: 'scrollbar-border',
+    SCROLLBAR_RIGHT_BOTTOM: 'scrollbar-right-bottom',
+    SCROLLBAR_LEFT_BOTTOM: 'scrollbar-left-bottom',
+
+    // pagination
+    PAGINATION: 'pagination',
+    PAGINATION_PRE: 'pre',
+    PAGINATION_PRE_OFF: 'pre-off',
+    PAGINATION_PRE_END: 'pre-end',
+    PAGINATION_PRE_END_OFF: 'pre-end-off',
+    PAGINATION_NEXT: 'next',
+    PAGINATION_NEXT_OFF: 'next-off',
+    PAGINATION_NEXT_END: 'next-end',
+    PAGINATION_NEXT_END_OFF: 'next-end-off',
+
+    // table
+    TABLE: 'table',
+
+    // cell style
+    CELL: 'cell',
+    CELL_HEAD: 'cell-head',
+    CELL_ROW_ODD: 'cell-row-odd',
+    CELL_ROW_EVEN: 'cell-row-even',
+    CELL_EDITABLE: 'cell-editable',
+    CELL_DUMMY: 'cell-dummy',
+    CELL_REQUIRED: 'cell-required',
+    CELL_DISABLED: 'cell-disabled',
+    CELL_SELECTED: 'cell-selected',
+    CELL_INVALID: 'cell-invalid',
+    CELL_ELLIPSIS: 'cell-ellipsis',
+    CELL_CURRENT_ROW: 'cell-current-row',
+    CELL_MAIN_BUTTON: 'cell-main-button',
+
+    // cell content
+    CELL_CONTENT: 'cell-content',
+    CELL_CONTENT_BEFORE: 'content-before',
+    CELL_CONTENT_AFTER: 'content-after',
+    CELL_CONTENT_INPUT: 'content-input',
+
+    // buttons
+    BTN_TEXT: 'btn-text',
+    BTN_SORT: 'btn-sorting',
+    BTN_SORT_UP: 'btn-sorting-up',
+    BTN_SORT_DOWN: 'btn-sorting-down',
+    BTN_EXCEL: 'btn-excel-download',
+    BTN_EXCEL_ICON: 'btn-excel-icon',
+    BTN_EXCEL_PAGE: 'btn-excel-page',
+    BTN_EXCEL_ALL: 'btn-excel-all',
+
+    // toolbar
+    TOOLBAR: 'toolbar',
+    TOOLBAR_BTN_HOLDER: 'toolbar-btn-holder',
+    HEIGHT_RESIZE_BAR: 'height-resize-bar',
+    HEIGHT_RESIZE_HANDLE: 'height-resize-handle'
+};
+
+var exports = _.mapObject(classNames, function(className) {
+    return PREFIX + className;
+});
+exports.PREFIX = PREFIX;
+
+module.exports = exports;
+
+},{}],9:[function(require,module,exports){
+/**
 * @fileoverview Object that conatins constant values
 * @author NHN Ent. FE Development Team
 */
@@ -1114,11 +1227,18 @@ module.exports = {
     attrName: {
         ROW_KEY: 'data-row-key',
         COLUMN_NAME: 'data-column-name',
-        EDIT_TYPE: 'data-edit-type'
+        COLUMN_INDEX: 'data-column-index',
+        EDIT_TYPE: 'data-edit-type',
+        GRID_ID: 'data-grid-id'
+    },
+    themeName: {
+        DEFAULT: 'default',
+        STRIPED: 'striped',
+        CLEAN: 'clean'
     }
 };
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * @fileoverview Utilities for form data, form element
  * @author NHN Ent. Fe Development Team
@@ -1338,7 +1458,7 @@ var formUtil = {
 
 module.exports = formUtil;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * @fileoverview Event class for public event of Grid
  * @author NHN Ent. FE Development Team
@@ -1386,7 +1506,7 @@ var GridEvent = tui.util.defineClass(/**@lends module:common/gridEvent.prototype
 
 module.exports = GridEvent;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
 * @fileoverview 유틸리티 메서드 모음
 * @author NHN Ent. FE Development Team
@@ -1690,19 +1810,39 @@ var util = {
     isBrowserIE7: function() {
         var browser = tui.util.browser;
         return browser.msie && browser.version === 7; // eslint-disable-line no-magic-numbers
+    },
+
+    /**
+     * create style element and append it into the head element.
+     * @param {String} id - element id
+     * @param {String} cssString - css string
+     */
+    appendStyleElement: function(id, cssString) {
+        var style = document.createElement('style');
+
+        style.type = 'text/css';
+        style.id = id;
+
+        if (style.styleSheet) {
+            style.styleSheet.cssText = cssString;
+        } else {
+            style.appendChild(document.createTextNode(cssString));
+        }
+
+        document.getElementsByTagName('head')[0].appendChild(style);
     }
 };
 
 module.exports = util;
 
-},{"./constMap":8}],12:[function(require,module,exports){
+},{"./constMap":9}],13:[function(require,module,exports){
 /**
  * @fileoverview This class offers methods that can be used to get the current state of DOM element.
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var attrNameMap = require('./common/constMap').attrName;
+var attrNameConst = require('./common/constMap').attrName;
 
 /**
  * Class for offering methods that can be used to get the current state of DOM element.
@@ -1724,8 +1864,8 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      * @returns {jQuery} Cell(TD) element
      */
     getElement: function(rowKey, columnName) {
-        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']')
-            .find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
+        return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
+            .find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
     },
 
     /**
@@ -1763,7 +1903,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
 
 module.exports = DomState;
 
-},{"./common/constMap":8}],13:[function(require,module,exports){
+},{"./common/constMap":9}],14:[function(require,module,exports){
 /**
  * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
@@ -2075,6 +2215,8 @@ var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
 var util = require('./common/util');
+var themeManager = require('./theme/manager');
+var themeNameConst = require('./common/constMap').themeName;
 
 var instanceMap = {};
 
@@ -2101,6 +2243,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.container.render();
         this.refreshLayout();
 
+        if (!themeManager.isApplied()) {
+            themeManager.apply(themeNameConst.DEFAULT);
+        }
+
         this.addOn = {};
         instanceMap[this.id] = this;
     },
@@ -2108,6 +2254,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
+     * @param {module:domState} domState - domState
      * @returns {module:model/manager} - New model manager object
      * @private
      */
@@ -2143,7 +2290,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates container view and returns it
-     * @param  {Object} options - Options set by user
+     * @param {Object} options - Options set by user
+     * @param {module:domState} domState - domState
      * @returns {module:view/container} - New container view object
      * @private
      */
@@ -2838,15 +2986,96 @@ tui.Grid.getInstanceById = function(id) {
     return instanceMap[id];
 };
 
-},{"./addon/net":2,"./base/view":7,"./common/util":11,"./domState":12,"./model/manager":20,"./painter/controller":28,"./painter/manager":35,"./publicEventEmitter":37,"./view/factory":41}],14:[function(require,module,exports){
+/**
+ * Apply theme to all grid instances with the preset options of a given name.
+ * @api
+ * @static
+ * @param {String} presetName - preset theme name. Available values are 'default', 'striped' and 'clean'.
+ * @param {Object} [extOptions] - if exist, extend preset options with this object.
+ *   @param {Object} [extOptions.grid] - Styles for the grid (container)
+ *     @param {String} [extOptions.grid.background] - Background color of the grid.
+ *     @param {number} [extOptions.grid.border] - Border color of the grid
+ *     @param {number} [extOptions.grid.text] - Text color of the grid.
+ *   @param {Object} [extOptions.selection] - Styles for a selection layer.
+ *     @param {String} [extOptions.selection.background] - Background color of a selection layer.
+ *     @param {String} [extOptions.selection.border] - Border color of a selection layer.
+ *   @param {Object} [extOptions.toolbar] - Styles for a toolbar area.
+ *     @param {String} [extOptions.toolbar.background] - Background color of a toolbar area.
+ *     @param {String} [extOptions.toolbar.border] - Border color of a toolbar area.
+ *   @param {Object} [extOptions.scrollbar] - Styles for scrollbars.
+ *     @param {String} [extOptions.scrollbar.background] - Background color of scrollbars.
+ *     @param {String} [extOptions.scrollbar.thumb] - Color of thumbs in scrollbars.
+ *     @param {String} [extOptions.scrollbar.active] - Color of arrows(for IE) or
+ *          thumb:hover(for other browsers) in scrollbars.
+ *   @param {Object} [extOptions.cell] - Styles for the table cells.
+ *     @param {Object} [extOptions.cell.normal] - Styles for normal cells.
+ *       @param {String} [extOptions.cell.normal.background] - Background color of normal cells.
+ *       @param {String} [extOptions.cell.normal.border] - Border color of normal cells.
+ *       @param {String} [extOptions.cell.normal.text] - Text color of normal cells.
+ *       @param {Boolean} [extOptions.cell.normal.showVerticalBorder] - Whether vertical borders of
+ *           normal cells are visible.
+ *       @param {Boolean} [extOptions.cell.normal.showHorizontalBorder] - Whether horizontal borders of
+ *           normal cells are visible.
+ *     @param {Object} [extOptions.cell.head] - Styles for the head cells.
+ *       @param {String} [extOptions.cell.head.background] - Background color of head cells.
+ *       @param {String} [extOptions.cell.head.border] - border color of head cells.
+ *       @param {String} [extOptions.cell.head.text] - text color of head cells.
+ *       @param {Boolean} [extOptions.cell.head.showVerticalBorder] - Whether vertical borders of
+ *           head cells are visible.
+ *       @param {Boolean} [extOptions.cell.head.showHorizontalBorder] - Whether horizontal borders of
+ *           head cells are visible.
+ *     @param {Object} [extOptions.cell.selectedHead] - Styles for selected head cells.
+ *       @param {String} [extOptions.cell.selectedHead.background] - background color of selected haed cells.
+ *       @param {String} [extOptions.cell.selectedHead.text] - text color of selected head cells.
+ *     @param {Object} [extOptions.cell.focused] - Styles for a focused cell.
+ *       @param {String} [extOptions.cell.focused.background] - background color of a focused cell.
+ *       @param {String} [extOptions.cell.focused.border] - border color of a focused cell.
+ *     @param {Object} [extOptions.cell.required] - Styles for required cells.
+ *       @param {String} [extOptions.cell.required.background] - background color of required cells.
+ *       @param {String} [extOptions.cell.required.text] - text color of required cells.
+ *     @param {Object} [extOptions.cell.editable] - Styles for editable cells.
+ *       @param {String} [extOptions.cell.editable.background] - background color of the editable cells.
+ *       @param {String} [extOptions.cell.editable.text] - text color of the selected editable cells.
+ *     @param {Object} [extOptions.cell.disabled] - Styles for disabled cells.
+ *       @param {String} [extOptions.cell.disabled.background] - background color of disabled cells.
+ *       @param {String} [extOptions.cell.disabled.text] - text color of disabled cells.
+ *     @param {Object} [extOptions.cell.invalid] - Styles for invalid cells.
+ *       @param {String} [extOptions.cell.invalid.background] - background color of invalid cells.
+ *       @param {String} [extOptions.cell.invalid.text] - text color of invalid cells.
+ *     @param {Object} [extOptions.cell.currentRow] - Styles for cells in a current row.
+ *       @param {String} [extOptions.cell.currentRow.background] - background color of cells in a current row.
+ *       @param {String} [extOptions.cell.currentRow.text] - text color of cells in a current row.
+ *     @param {Object} [extOptions.cell.evenRow] - Styles for cells in even rows.
+ *       @param {String} [extOptions.cell.evenRow.background] - background color of cells in even rows.
+ *       @param {String} [extOptions.cell.evenRow.text] - text color of cells in even rows.
+ *     @param {Object} [extOptions.cell.dummy] - Styles for dummy cells.
+ *       @param {String} [extOptions.cell.dummy.background] - background color of dummy cells.
+ * @example
+tui.Grid.applyTheme('striped', {
+    grid: {
+        border: '#aaa',
+        text: '#333'
+    },
+    cell: {
+        disabled: {
+            text: '#999'
+        }
+    }
+});
+ */
+tui.Grid.applyTheme = function(presetName, extOptions) {
+    themeManager.apply(presetName, extOptions);
+};
+
+},{"./addon/net":2,"./base/view":7,"./common/constMap":9,"./common/util":12,"./domState":13,"./model/manager":21,"./painter/controller":29,"./painter/manager":36,"./publicEventEmitter":38,"./theme/manager":40,"./view/factory":48}],15:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var Model = require('../../base/model'),
-    util = require('../../common/util');
+var Model = require('../../base/model');
+var util = require('../../common/util');
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
@@ -3277,7 +3506,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
 module.exports = ColumnModel;
 
-},{"../../base/model":5,"../../common/util":11}],15:[function(require,module,exports){
+},{"../../base/model":5,"../../common/util":12}],16:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
@@ -3480,7 +3709,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
 
 module.exports = ExtraDataManager;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
@@ -3490,6 +3719,7 @@ module.exports = ExtraDataManager;
 var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
 var util = require('../../common/util');
+var classNameConst = require('../../common/classNameConst');
 
 // Propertie names that indicate meta data
 var PRIVATE_PROPERTIES = [
@@ -3601,9 +3831,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
         errorCode = this._validateCellData(columnName);
         if (errorCode) {
-            this.addCellClassName(columnName, 'invalid');
+            this.addCellClassName(columnName, classNameConst.CELL_INVALID);
         } else {
-            this.removeCellClassName(columnName, 'invalid');
+            this.removeCellClassName(columnName, classNameConst.CELL_INVALID);
         }
         this.validateMap[columnName] = errorCode;
 
@@ -3699,18 +3929,18 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
             classNameList.push(columnModel.className);
         }
         if (columnModel.isEllipsis) {
-            classNameList.push('ellipsis');
+            classNameList.push(classNameConst.CELL_ELLIPSIS);
         }
         if (columnModel.isRequired) {
-            classNameList.push('required');
+            classNameList.push(classNameConst.CELL_REQUIRED);
         }
         if (isMetaColumn) {
-            classNameList.push('meta_column');
+            classNameList.push(classNameConst.CELL_HEAD);
         } else if (cellState.isEditable) {
-            classNameList.push('editable');
+            classNameList.push(classNameConst.CELL_EDITABLE);
         }
         if (cellState.isDisabled) {
-            classNameList.push('disabled');
+            classNameList.push(classNameConst.CELL_DISABLED);
         }
 
         return this._makeUniqueStringArray(classNameList);
@@ -4031,7 +4261,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
 module.exports = Row;
 
-},{"../../base/model":5,"../../common/util":11,"./extraDataManager":15}],17:[function(require,module,exports){
+},{"../../base/model":5,"../../common/classNameConst":8,"../../common/util":12,"./extraDataManager":16}],18:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
  * @author NHN Ent. FE Development Team
@@ -5139,7 +5369,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
 module.exports = RowList;
 
-},{"../../base/collection":3,"./row":16}],18:[function(require,module,exports){
+},{"../../base/collection":3,"./row":17}],19:[function(require,module,exports){
 /**
  * @fileoverview 크기에 관련된 데이터를 다루는 모델
  * @author NHN Ent. FE Development Team
@@ -5344,6 +5574,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 });
             }
         });
+
         return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
     },
 
@@ -5376,6 +5607,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
         }
         columnIndexes = _.pluck(availableList, 'index');
+
         return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
     },
 
@@ -5396,7 +5628,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         _.each(columnIndexes, function(columnIndex) {
             resultList[columnIndex] += avgValue;
         });
-        resultList[_.last(columnIndexes)] -= errorValue;
+
+        if (columnIndexes.length) {
+            resultList[_.last(columnIndexes)] -= errorValue;
+        }
 
         return resultList;
     },
@@ -5588,6 +5823,68 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
+     * Returns the horizontal position of the given column
+     * @param {String} columnName - column name
+     * @returns {{left: Number, right: Number}}
+     * @private
+     */
+    _getCellHorizontalPosition: function(columnName) {
+        var columnModel = this.columnModel;
+        var metaColumnCount = columnModel.getVisibleMetaColumnCount();
+        var columnWidthList = this.get('columnWidthList');
+        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
+        var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
+        var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
+        var left = 0;
+
+        for (; idx < targetIdx; idx += 1) {
+            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
+        }
+
+        return {
+            left: left,
+            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
+        };
+    },
+
+    /**
+     * Returns the vertical position of the given row
+     * @param {Number} rowKey - row key
+     * @param {Number} rowSpanCount - the count of rowspan
+     * @returns {{top: Number, bottom: Number}}
+     */
+    _getCellVerticalPosition: function(rowKey, rowSpanCount) {
+        var dataModel = this.dataModel;
+        var rowHeight = this.get('rowHeight');
+        var rowIdx = dataModel.indexOfRowKey(rowKey);
+        var top = util.getHeight(rowIdx, rowHeight);
+        var height = util.getHeight(rowSpanCount, rowHeight);
+
+        return {
+            top: top,
+            bottom: top + height
+        };
+    },
+
+    /**
+     * Returns the count of rowspan of given cell
+     * @param {Number} rowKey - row key
+     * @param {String} columnName - column name
+     * @returns {Number}
+     * @private
+     */
+    _getRowSpanCount: function(rowKey, columnName) {
+        var rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
+
+        if (!rowSpanData.isMainRow) {
+            rowKey = rowSpanData.mainRowKey;
+            rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
+        }
+
+        return rowSpanData.count || 1;
+    },
+
+    /**
      * 계산한 cell 의 위치를 리턴한다.
      * @param {Number|String} rowKey - 데이터의 키값
      * @param {String} columnName - 칼럼명
@@ -5595,50 +5892,23 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @todo TC
      */
     getCellPosition: function(rowKey, columnName) {
-        var dataModel = this.dataModel,
-            columnModel = this.columnModel,
-            rowHeight = this.get('rowHeight'),
-            row = dataModel.get(rowKey),
-            metaColumnCount = columnModel.getVisibleMetaColumnCount(),
-            columnWidthList = this.get('columnWidthList').slice(metaColumnCount),
-            columnFixCount = columnModel.getVisibleColumnFixCount(),
-            columnIdx = columnModel.indexOfColumnName(columnName, true),
-            rowSpanData,
-            rowIdx, spanCount,
-            top, left, right, bottom, i;
+        var rowSpanCount, vPos, hPos;
 
-        if (!row) {
+        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
+        if (!this.dataModel.get(rowKey)) {
             return {};
         }
 
-        rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
-
-        if (!rowSpanData.isMainRow) {
-            rowKey = rowSpanData.mainRowKey;
-            rowSpanData = dataModel.get(rowKey).getRowSpanData(columnName);
-        }
-
-        spanCount = rowSpanData.count || 1;
-
-        rowIdx = dataModel.indexOfRowKey(rowKey);
-
-        top = util.getHeight(rowIdx, rowHeight);
-        bottom = top + util.getHeight(spanCount, rowHeight) - CELL_BORDER_WIDTH;
-
-        left = i = 0;
-        if (columnFixCount <= columnIdx) {
-            i = columnFixCount;
-        }
-        for (; i < columnIdx; i += 1) {
-            left += columnWidthList[i] + CELL_BORDER_WIDTH;
-        }
-        right = left + columnWidthList[i] + CELL_BORDER_WIDTH;
+        rowSpanCount = this._getRowSpanCount(rowKey, columnName);
+        vPos = this._getCellVerticalPosition(rowKey, rowSpanCount);
+        hPos = this._getCellHorizontalPosition(columnName);
 
         return {
-            top: top,
-            left: left,
-            right: right,
-            bottom: bottom
+            top: vPos.top,
+            bottom: vPos.bottom,
+            left: hPos.left,
+            right: hPos.right
         };
     },
 
@@ -5649,10 +5919,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
      */
     getScrollPosition: function(rowKey, columnName) {
-        var isRsideColumn = !this.columnModel.isLside(columnName),
-            targetPosition = this.getCellPosition(rowKey, columnName),
-            bodySize = this._getBodySize(),
-            scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+        var isRsideColumn = !this.columnModel.isLside(columnName);
+        var targetPosition = this.getCellPosition(rowKey, columnName);
+        var bodySize = this._getBodySize();
+        var scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
 
         return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
     },
@@ -6057,16 +6327,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
 module.exports = Dimension;
 
-},{"../base/model":5,"../common/constMap":8,"../common/util":11}],19:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":9,"../common/util":12}],20:[function(require,module,exports){
 /**
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var Model = require('../base/model'),
-    util = require('../common/util'),
-    GridEvent = require('../common/gridEvent');
+var Model = require('../base/model');
+var util = require('../common/util');
+var GridEvent = require('../common/gridEvent');
 
 /**
  * Focus model
@@ -6344,9 +6614,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * Scroll to focus
      */
     scrollToFocus: function() {
-        var rowKey = this.get('rowKey'),
-            columnName = this.get('columnName'),
-            scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
+        var rowKey = this.get('rowKey');
+        var columnName = this.get('columnName');
+        var scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
 
         if (!tui.util.isEmpty(scrollPosition)) {
             this.renderModel.set(scrollPosition);
@@ -6454,12 +6724,21 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} true if succeeded, false otherwise.
      */
     startEditing: function(rowKey, columnName) {
-        if (this.get('editingAddress') ||
-            !this.isCurrentCell(rowKey, columnName, true) ||
-            !this.dataModel.get(rowKey).isEditable(columnName)) {
+        if (this.get('editingAddress')) {
             return false;
         }
 
+        if (_.isUndefined(rowKey) && _.isUndefined(columnName)) {
+            rowKey = this.get('rowKey');
+            columnName = this.get('columnName');
+        } else if (!this.isCurrentCell(rowKey, columnName, true)) {
+            return false;
+        }
+
+        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+        if (!this.dataModel.get(rowKey).isEditable(columnName)) {
+            return false;
+        }
         this.set('editingAddress', {
             rowKey: rowKey,
             columnName: columnName
@@ -6708,7 +6987,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
 module.exports = Focus;
 
-},{"../base/model":5,"../common/gridEvent":10,"../common/util":11}],20:[function(require,module,exports){
+},{"../base/model":5,"../common/gridEvent":11,"../common/util":12}],21:[function(require,module,exports){
 /**
  * @fileoverview Model Manager
  * @author NHN Ent. FE Development Team
@@ -6921,7 +7200,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
 module.exports = ModelManager;
 
-},{"./data/columnModel":14,"./data/rowList":17,"./dimension":18,"./focus":19,"./renderer":22,"./renderer-smart":21,"./selection":25,"./toolbar":26}],21:[function(require,module,exports){
+},{"./data/columnModel":15,"./data/rowList":18,"./dimension":19,"./focus":20,"./renderer":23,"./renderer-smart":22,"./selection":26,"./toolbar":27}],22:[function(require,module,exports){
 /**
  * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
  * @author NHN Ent. FE Development Team
@@ -7060,7 +7339,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
 
 module.exports = SmartRenderer;
 
-},{"../common/util":11,"./renderer":22}],22:[function(require,module,exports){
+},{"../common/util":12,"./renderer":23}],23:[function(require,module,exports){
 /**
  * @fileoverview Rendering 모델
  * @author NHN Ent. FE Development Team
@@ -7114,7 +7393,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
-            .listenTo(this.focusModel, 'focus blur', this._onFocusOrBlur)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -7192,21 +7470,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onBeforeResetData: function(dataLength) {
         if (dataLength > DATA_LENGTH_FOR_LOADING) {
             this.set('state', renderStateMap.LOADING);
-        }
-    },
-
-    /**
-     * Event handler for 'focus' and 'blur' events on focusModel
-     * @param {Number|String} rowKey - row key
-     * @param {String} columnName - column name
-     * @private
-     */
-    _onFocusOrBlur: function(rowKey, columnName) {
-        var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-        var rowModel = this._getRowModel(mainRowKey, columnName);
-
-        if (rowModel) {
-            rowModel.updateClassName(columnName);
         }
     },
 
@@ -7381,6 +7644,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _createViewDataFromDataModel: function(rowDataModel, columnNames, height, rowNum) {
         var viewData = {
             height: height,
+            rowNum: rowNum,
             rowKey: rowDataModel.get('rowKey'),
             _extraData: rowDataModel.get('_extraData')
         };
@@ -7442,7 +7706,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
             lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
-            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height));
+            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
             rowNum += 1;
         }
 
@@ -7479,17 +7743,20 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _fillDummyRows: function() {
-        var displayRowCount = this.dimensionModel.get('displayRowCount'),
-            actualRowCount = this._getActualRowCount(),
-            dummyRowCount = Math.max(displayRowCount - actualRowCount, 0),
-            rowHeight = this.dimensionModel.get('rowHeight');
+        var displayRowCount = this.dimensionModel.get('displayRowCount');
+        var actualRowCount = this._getActualRowCount();
+        var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
+        var rowHeight = this.dimensionModel.get('rowHeight');
+        var rowNum = this.get('endIndex') + 2;
 
         _.times(dummyRowCount, function() {
             _.each(['lside', 'rside'], function(listName) {
                 this.get(listName).add({
-                    height: rowHeight
+                    height: rowHeight,
+                    rowNum: rowNum
                 });
             }, this);
+            rowNum += 1;
         }, this);
 
         this.set('dummyRowCount', dummyRowCount);
@@ -7621,7 +7888,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
 module.exports = Renderer;
 
-},{"../base/model":5,"../common/constMap":8,"./rowList":24}],23:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":9,"./rowList":25}],24:[function(require,module,exports){
 /**
  * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
@@ -7778,15 +8045,16 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _formatData: function(data, dataModel, columnModel, focusModel) {
-        var rowKey = data.rowKey,
-            columnData, row;
+        var rowKey = data.rowKey;
+        var rowNum = data.rowNum;
+        var columnData, row;
 
         if (_.isUndefined(rowKey)) {
             return data;
         }
 
         row = dataModel.get(rowKey);
-        columnData = _.omit(data, 'rowKey', '_extraData', 'height');
+        columnData = _.omit(data, 'rowKey', '_extraData', 'height', 'rowNum');
 
         _.each(columnData, function(value, columnName) {
             var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
@@ -7796,6 +8064,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
             data[columnName] = {
                 rowKey: rowKey,
+                rowNum: rowNum,
                 columnName: columnName,
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,
@@ -7803,7 +8072,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isEditable: cellState.isEditable,
                 isDisabled: cellState.isDisabled,
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
-                isFocused: focusModel.isCurrentCell(rowKey, columnName),
                 optionList: tui.util.pick(column, 'editOption', 'list'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,
@@ -7835,10 +8103,6 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             focusModel = this.focusModel;
         }
         classNames = row.getClassNameList(columnName);
-
-        if (focusModel.isCurrentCell(row.get('rowKey'), columnName, true)) {
-            classNames.push('focused');
-        }
 
         return classNames.join(' ');
     },
@@ -8037,7 +8301,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
 module.exports = Row;
 
-},{"../base/model":5,"../common/util":11}],24:[function(require,module,exports){
+},{"../base/model":5,"../common/util":12}],25:[function(require,module,exports){
 /**
  * @fileoverview RowList 클래스파일
  * @author NHN Ent. FE Development Team
@@ -8071,7 +8335,7 @@ var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/collection":3,"./row":23}],25:[function(require,module,exports){
+},{"../base/collection":3,"./row":24}],26:[function(require,module,exports){
 /**
  * @fileoverview Selection Model class
  * @author NHN Ent. FE Development Team
@@ -8688,7 +8952,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
 module.exports = Selection;
 
-},{"../base/model":5,"../common/util":11}],26:[function(require,module,exports){
+},{"../base/model":5,"../common/util":12}],27:[function(require,module,exports){
 /**
  * @fileoverview Toolbar model class
  * @author NHN Ent. FE Development Team
@@ -8729,7 +8993,7 @@ var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../base/model":5}],27:[function(require,module,exports){
+},{"../base/model":5}],28:[function(require,module,exports){
 /**
  * @fileoverview Painter class for cell(TD) views
  * @author NHN Ent. FE Development Team
@@ -8738,7 +9002,8 @@ module.exports = Toolbar;
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Painter class for cell(TD) views
@@ -8755,7 +9020,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
-        this.selector = 'td[' + attrNameMap.EDIT_TYPE + '=' + this.editType + ']';
+        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '=' + this.editType + ']';
     },
 
     /**
@@ -8810,9 +9075,9 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
             content = this.inputPainter.generateHtml(cellData);
 
             if (this._shouldContentBeWrapped() && !this._isUsingViewMode(cellData)) {
-                beforeContent = this._getSpanWrapContent(beforeContent, 'before');
-                afterContent = this._getSpanWrapContent(afterContent, 'after');
-                content = this._getSpanWrapContent(content, 'input');
+                beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
+                afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
+                content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
 
                 return beforeContent + afterContent + content;
             }
@@ -8862,14 +9127,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getAttributes: function(cellData) {
+        var classNames = [
+            cellData.className,
+            classNameConst.CELL,
+            classNameConst.CELL_CONTENT,
+            (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+        ];
         var attrs = {
-            'class': cellData.className + ' cell_content',
             'align': cellData.columnModel.align || 'left'
         };
+        attrs['class'] = classNames.join(' ');
 
-        attrs[attrNameMap.EDIT_TYPE] = this.editType;
-        attrs[attrNameMap.ROW_KEY] = cellData.rowKey;
-        attrs[attrNameMap.COLUMN_NAME] = cellData.columnName;
+        attrs[attrNameConst.EDIT_TYPE] = this.editType;
+        attrs[attrNameConst.ROW_KEY] = cellData.rowKey;
+        attrs[attrNameConst.COLUMN_NAME] = cellData.columnName;
         if (cellData.rowSpan) {
             attrs.rowspan = cellData.rowSpan;
         }
@@ -8932,7 +9203,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
 module.exports = Cell;
 
-},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],28:[function(require,module,exports){
+},{"../base/painter":6,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],29:[function(require,module,exports){
 /**
  * @fileoverview Controller class to handle actions from the painters
  * @author NHN Ent. FE Development Team
@@ -9069,7 +9340,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
 
 module.exports = PainterController;
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * @fileoverview Dummy cell painter
  * @author NHN Ent. FE Development Team
@@ -9078,7 +9349,8 @@ module.exports = PainterController;
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Dummy Cell Painter
@@ -9105,16 +9377,17 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
-    selector: 'td[' + attrNameMap.EDIT_TYPE + '=dummy]',
+    selector: 'td[' + attrNameConst.EDIT_TYPE + '=dummy]',
 
     /**
      * Template function
      * @returns {String} HTML string
      */
     template: _.template(
-        '<td <%=attrColumnName%>="<%=columnName%>" ' +
-            'class="<%=className%>" ' +
-            '<%=attrEditType%>="dummy">' +
+        '<td ' +
+            attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
+            attrNameConst.EDIT_TYPE + '="dummy" ' +
+            'class="<%=className%>">' +
             '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
@@ -9129,25 +9402,32 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
     /**
      * Generates a HTML string from given data, and returns it.
+     * @param {Number} rowNum - row number
      * @param {String} columnName - column name
      * @returns {string} HTML string
      * @implements {module:base/painter}
      */
-    generateHtml: function(columnName) {
-        var isMeta = util.isMetaColumn(columnName);
+    generateHtml: function(rowNum, columnName) {
+        var classNames = [
+            classNameConst.CELL,
+            classNameConst.CELL_DUMMY,
+            (rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
+        ];
+
+        if (util.isMetaColumn(columnName)) {
+            classNames.push(classNameConst.CELL_HEAD);
+        }
 
         return this.template({
-            attrColumnName: attrNameMap.COLUMN_NAME,
-            attrEditType: attrNameMap.EDIT_TYPE,
             columnName: columnName,
-            className: (isMeta ? 'meta_column ' : '') + 'dummy'
+            className: classNames.join(' ')
         });
     }
 });
 
 module.exports = DummyCell;
 
-},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],30:[function(require,module,exports){
+},{"../base/painter":6,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],31:[function(require,module,exports){
 /**
  * @fileoverview Base class for the Input Painter
  * @author NHN Ent. FE Development Team
@@ -9228,7 +9508,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
-     * Event handler for the 'focus' event.
+     * Event handler for the 'focusin' event.
      * @param {Event} event - DOM event object
      * @private
      */
@@ -9240,7 +9520,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     },
 
     /**
-     * Event handler for the 'blur' event.
+     * Event handler for the 'focusout' event.
      * @param {Event} event - DOM event object
      * @private
      */
@@ -9340,7 +9620,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
 
 module.exports = InputPainter;
 
-},{"../../base/painter":6,"../../common/constMap":8}],31:[function(require,module,exports){
+},{"../../base/painter":6,"../../common/constMap":9}],32:[function(require,module,exports){
 /**
  * @fileoverview Painter class for 'checkbox' and 'radio button'.
  * @author NHN Ent. FE Development Team
@@ -9596,7 +9876,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
 module.exports = ButtonPainter;
 
-},{"../../common/util":11,"./base":30}],32:[function(require,module,exports){
+},{"../../common/util":12,"./base":31}],33:[function(require,module,exports){
 /**
  * @fileoverview Main Button Painter
  * @author NHN Ent. FE Development Team
@@ -9604,6 +9884,7 @@ module.exports = ButtonPainter;
 'use strict';
 
 var Painter = require('../../base/painter');
+var classNameConst = require('../../common/classNameConst');
 
 /**
  * Main Button Painter
@@ -9619,7 +9900,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     init: function(options) {
         Painter.apply(this, arguments);
 
-        this.selector = 'input.main_button';
+        this.selector = 'input.' + classNameConst.CELL_MAIN_BUTTON;
         this.inputType = options.inputType;
         this.gridId = options.gridId;
     },
@@ -9637,7 +9918,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @returns {String}
      */
     template: _.template(
-        '<input class="main_button" type="<%=type%>" name="<%=name%>" <%=checked%> />'
+        '<input class="' + classNameConst.CELL_MAIN_BUTTON + '"' +
+        ' type="<%=type%>" name="<%=name%>" <%=checked%> />'
     ),
 
      /**
@@ -9669,7 +9951,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
 
 module.exports = InputPainter;
 
-},{"../../base/painter":6}],33:[function(require,module,exports){
+},{"../../base/painter":6,"../../common/classNameConst":8}],34:[function(require,module,exports){
 /**
  * @fileoverview Painter class for 'select' input.
  * @author NHN Ent. FE Development Team
@@ -9755,7 +10037,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
 module.exports = SelectPainter;
 
-},{"../../common/util":11,"./base":30}],34:[function(require,module,exports){
+},{"../../common/util":12,"./base":31}],35:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
  * @author NHN Ent. FE Development Team
@@ -9878,7 +10160,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
 
 module.exports = TextPainter;
 
-},{"../../common/util":11,"./base":30}],35:[function(require,module,exports){
+},{"../../common/util":12,"./base":31}],36:[function(require,module,exports){
 /**
  * @fileoverview Painter Manager
  * @author NHN Ent. FE Development Team
@@ -10029,7 +10311,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
 module.exports = PainterManager;
 
-},{"./cell":27,"./dummyCell":29,"./input/button":31,"./input/mainButton":32,"./input/select":33,"./input/text":34,"./row":36}],36:[function(require,module,exports){
+},{"./cell":28,"./dummyCell":30,"./input/button":32,"./input/mainButton":33,"./input/select":34,"./input/text":35,"./row":37}],37:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the row(TR) views
  * @author NHN Ent. FE Development Team
@@ -10038,7 +10320,9 @@ module.exports = PainterManager;
 
 var Painter = require('../base/painter');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
+var constMap = require('../common/constMap');
+var attrNameConst = constMap.attrName;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
  * Painter class for the row(TR) views
@@ -10090,16 +10374,17 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
     /**
      * Returns the HTML string of all cells in Dummy row.
-     * @param  {Array.<String>} columnNames - An array of column names
+     * @param {Number} rowNum - row number
+     * @param {Array.<String>} columnNames - An array of column names
      * @returns {String} HTLM string
      * @private
      */
-    _generateHtmlForDummyRow: function(columnNames) {
+    _generateHtmlForDummyRow: function(rowNum, columnNames) {
         var cellPainter = this.painterManager.getCellPainter('dummy'),
             html = '';
 
         _.each(columnNames, function(columnName) {
-            html += cellPainter.generateHtml(columnName);
+            html += cellPainter.generateHtml(rowNum, columnName);
         });
 
         return html;
@@ -10136,21 +10421,23 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      * @returns {String} HTLM string
      */
     generateHtml: function(model, columnNames) {
-        var rowKey = model.get('rowKey'),
-            html;
+        var rowKey = model.get('rowKey');
+        var rowNum = model.get('rowNum');
+        var className = '';
+        var html;
 
         if (_.isUndefined(rowKey)) {
-            html = this._generateHtmlForDummyRow(columnNames);
+            html = this._generateHtmlForDummyRow(rowNum, columnNames);
         } else {
             html = this._generateHtmlForActualRow(model, columnNames);
         }
 
         return this.template({
-            rowKeyAttrName: attrNameMap.ROW_KEY,
+            rowKeyAttrName: attrNameConst.ROW_KEY,
             rowKey: rowKey,
-            height: model.get('height') + RowPainter._extraHeight,
+            height: model.get('height') + RowPainter._extraHeight + CELL_BORDER_WIDTH,
             contents: html,
-            className: ''
+            className: className
         });
     },
 
@@ -10164,7 +10451,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
-                $td = $tr.find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
+                $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 cellPainter.refresh(cellData, $td);
@@ -10191,7 +10478,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
 module.exports = RowPainter;
 
-},{"../base/painter":6,"../common/constMap":8,"../common/util":11}],37:[function(require,module,exports){
+},{"../base/painter":6,"../common/constMap":9,"../common/util":12}],38:[function(require,module,exports){
 /**
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
@@ -10290,7 +10577,625 @@ _.extend(PublicEventEmitter.prototype, Backbone.Events);
 
 module.exports = PublicEventEmitter;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
+/**
+* @fileoverview CSS Rule string builder
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+/**
+ * create css rule string and returns it
+ * @param {String} selector - css selector
+ * @param {String} property - css property
+ * @param {String} value - css value
+ */
+var CSSRuleBuilder = tui.util.defineClass({
+    init: function(selector) {
+        if (!_.isString(selector) || !selector) {
+            throw new Error('The Selector must be a string and not be empty.');
+        }
+        this._selector = selector;
+        this._propValues = [];
+    },
+
+    /**
+     * Add a set of css property and value.
+     * @param {String} property - css property
+     * @param {String} value - css value
+     * @returns {CSSRuleBuilder}
+     */
+    add: function(property, value) {
+        if (value) {
+            this._propValues.push(property + ':' + value);
+        }
+        return this;
+    },
+
+    /**
+     * Shortcut for add('border-color', value)
+     * @param {String} value - css value
+     * @returns {CSSRuleBuilder}
+     */
+    border: function(value) {
+        return this.add('border-color', value);
+    },
+
+    /**
+     * Add a border-width style to the rule.
+     * @param {Object} options - visible options
+     * @param {Boolean} [options.showVerticalBorder] - whether the vertical border is visible
+     * @param {Boolean} [options.showHorizontalBorder] - whether the horizontal border is visible
+     * @returns {CSSRuleBuilder}
+     */
+    borderWidth: function(options) {
+        var vertical = options.showVerticalBorder;
+        var horizontal = options.showHorizontalBorder;
+        var value;
+
+        if (_.isBoolean(vertical)) {
+            value = vertical ? '1px' : '0';
+            this.add('border-left-width', value)
+                .add('border-right-width', value);
+        }
+        if (_.isBoolean(horizontal)) {
+            value = horizontal ? '1px' : '0';
+            this.add('border-top-width', value)
+                .add('border-bottom-width', value);
+        }
+        return this;
+    },
+
+    /**
+     * Shortcut for add('background-color', value)
+     * @param {String} value - css value
+     * @returns {CSSRuleBuilder}
+     */
+    bg: function(value) {
+        return this.add('background-color', value);
+    },
+
+    /**
+     * Shortcut for add('color', value)
+     * @param {String} value - css value
+     * @returns {CSSRuleBuilder}
+     */
+    text: function(value) {
+        return this.add('color', value);
+    },
+
+    /**
+     * Create a CSS rule string with a selector and prop-values.
+     * @returns {String}
+     */
+    build: function() {
+        var result = '';
+
+        if (this._propValues.length) {
+            result = this._selector + '{' + this._propValues.join(';') + '}';
+        }
+
+        return result;
+    }
+});
+
+module.exports = {
+    /**
+     * Creates new Builder instance.
+     * @param {String} selector - selector
+     * @returns {CSSRuleBuilder}
+     */
+    create: function(selector) {
+        return new CSSRuleBuilder(selector);
+    },
+
+    /**
+     * Creates a new Builder instance with a class name selector.
+     * @param {String} className - class name
+     * @returns {Builder}
+     */
+    createClassRule: function(className) {
+        return this.create('.' + className);
+    },
+
+    /**
+     * Creates an array of new Builder instances for the -webkit-scrollbar styles.
+     * @param {String} selector - selector
+     * @param {Object} options - options
+     * @returns {Array.<CSSRuleBuilder>}
+     */
+    createWebkitScrollbarRules: function(selector, options) {
+        return [
+            this.create(selector + ' ::-webkit-scrollbar').bg(options.background),
+            this.create(selector + ' ::-webkit-scrollbar-thumb').bg(options.thumb),
+            this.create(selector + ' ::-webkit-scrollbar-thumb:hover').bg(options.active)
+        ];
+    },
+
+    /**
+     * Creates a builder instance for the IE scrollbar styles.
+     * @param {String} selector - selector
+     * @param {Object} options - options
+     * @returns {Array.<CSSRuleBuilder>}
+     */
+    createIEScrollbarRule: function(selector, options) {
+        var bgProps = [
+            'scrollbar-3dlight-color',
+            'scrollbar-darkshadow-color',
+            'scrollbar-track-color',
+            'scrollbar-shadow-color'
+        ];
+        var thumbProps = [
+            'scrollbar-face-color',
+            'scrollbar-highlight-color'
+        ];
+        var ieScrollbarRule = this.create(selector);
+
+        _.each(bgProps, function(prop) {
+            ieScrollbarRule.add(prop, options.background);
+        });
+        _.each(thumbProps, function(prop) {
+            ieScrollbarRule.add(prop, options.thumb);
+        });
+        ieScrollbarRule.add('scrollbar-arrow-color', options.active);
+
+        return ieScrollbarRule;
+    },
+
+    /**
+     * Build all rules and returns the concatenated string.
+     * @param {Array.<Rule>} rules - rule builders
+     * @returns {String}
+     */
+    buildAll: function(rules) {
+        return _.map(rules, function(rule) {
+            return rule.build();
+        }).join('');
+    }
+};
+
+},{}],40:[function(require,module,exports){
+/**
+* @fileoverview theme manager
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+var util = require('../common/util');
+var styleGen = require('./styleGenerator');
+var themeNameConst = require('../common/constMap').themeName;
+
+var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
+
+var presetOptions = {};
+presetOptions[themeNameConst.DEFAULT] = require('./preset/default');
+presetOptions[themeNameConst.STRIPED] = require('./preset/striped');
+presetOptions[themeNameConst.CLEAN] = require('./preset/clean');
+
+/**
+ * build css string with given options.
+ * @param {Object} options - options
+ * @returns {String}
+ */
+function buildCssString(options) {
+    var styles = [
+        styleGen.grid(options.grid),
+        styleGen.scrollbar(options.scrollbar),
+        styleGen.toolbar(options.toolbar),
+        styleGen.selection(options.selection)
+    ];
+    var cell = options.cell;
+
+    if (cell) {
+        styles = styles.concat([
+            styleGen.cell(cell.normal),
+            styleGen.cellDummy(cell.dummy),
+            styleGen.cellEditable(cell.editable),
+            styleGen.cellEvenRow(cell.evenRow),
+            styleGen.cellHead(cell.head),
+            styleGen.cellRequired(cell.required),
+            styleGen.cellDisabled(cell.disabled),
+            styleGen.cellInvalid(cell.invalid),
+            styleGen.cellCurrentRow(cell.currentRow),
+            styleGen.cellSelectedHead(cell.selectedHead),
+            styleGen.cellFocused(cell.focused)
+        ]);
+    }
+
+    return styles.join('');
+}
+
+/**
+ * Set document style with given options.
+ * @param {Object} options - options
+ */
+function setDocumentStyle(options) {
+    var cssString = buildCssString(options);
+
+    $('#' + STYLE_ELEMENT_ID).remove();
+    util.appendStyleElement(STYLE_ELEMENT_ID, cssString);
+}
+
+module.exports = {
+    /**
+     * Creates a style element using theme options identified by given name,
+     * and appends it to the document.
+     * @param {String} themeName - preset theme name
+     * @param {Object} extOptions - if exist, extend preset theme options with it.
+     */
+    apply: function(themeName, extOptions) {
+        var options = presetOptions[themeName];
+
+        if (!options) {
+            options = presetOptions[themeNameConst.DEFAULT];
+        }
+        options = $.extend(true, {}, options, extOptions);
+        setDocumentStyle(options);
+    },
+
+    /**
+     * Returns whether the style of a theme is applied.
+     * @returns {Boolean}
+     */
+    isApplied: function() {
+        return $('#' + STYLE_ELEMENT_ID).length === 1;
+    }
+};
+
+},{"../common/constMap":9,"../common/util":12,"./preset/clean":41,"./preset/default":42,"./preset/striped":43,"./styleGenerator":44}],41:[function(require,module,exports){
+/**
+* @fileoverview default theme preset
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+var presetDefault = require('./default');
+
+module.exports = $.extend(true, {}, presetDefault, {
+    grid: {
+        border: '#c0c0c0'
+    },
+    toolbar: {
+        border: '#e0e0e0'
+    },
+    cell: {
+        normal: {
+            background: '#fff',
+            border: '#e0e0e0',
+            showVerticalBorder: false,
+            showHorizontalBorder: true
+        },
+        head: {
+            background: '#fff',
+            border: '#e0e0e0',
+            showVerticalBorder: false,
+            showHorizontalBorder: true
+        },
+        selectedHead: {
+            background: '#e0e0e0'
+        }
+    }
+});
+
+},{"./default":42}],42:[function(require,module,exports){
+/**
+* @fileoverview default theme preset
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+module.exports = {
+    grid: {
+        background: '#fff',
+        border: '#ccc',
+        text: '#444'
+    },
+    selection: {
+        background: '#4daaf9',
+        border: '#004082'
+    },
+    toolbar: {
+        border: '#ccc',
+        background: 'transparent'
+    },
+    scrollbar: {
+        background: '#f5f5f5',
+        thumb: '#d9d9d9',
+        active: '#c1c1c1'
+    },
+    cell: {
+        normal: {
+            background: '#fbfbfb',
+            border: '#e0e0e0',
+            showVerticalBorder: true,
+            showHorizontalBorder: true
+        },
+        head: {
+            background: '#eee',
+            border: '#ccc',
+            showVerticalBorder: true,
+            showHorizontalBorder: true
+        },
+        selectedHead: {
+            background: '#d8d8d8'
+        },
+        focused: {
+            border: '#418ed4'
+        },
+        required: {
+            background: '#fffdeb'
+        },
+        editable: {
+            background: '#fff'
+        },
+        disabled: {
+            text: '#b0b0b0'
+        },
+        dummy: {
+            background: '#fff'
+        },
+        invalid: {
+            background: '#ff8080'
+        },
+        evenRow: {},
+        currentRow: {}
+    }
+};
+
+},{}],43:[function(require,module,exports){
+/**
+* @fileoverview default theme preset
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+var presetDefault = require('./default');
+
+module.exports = $.extend(true, {}, presetDefault, {
+    cell: {
+        normal: {
+            background: '#fff',
+            border: '#e8e8e8',
+            showVerticalBorder: false,
+            showHorizontalBorder: false
+        },
+        evenRow: {
+            background: '#f3f3f3'
+        },
+        head: {
+            showVerticalBorder: true,
+            showHorizontalBorder: true
+        }
+    }
+});
+
+},{"./default":42}],44:[function(require,module,exports){
+/**
+* @fileoverview css style generator
+* @author NHN Ent. FE Development Team
+*/
+'use strict';
+
+var builder = require('./cssRuleBuilder');
+var classNameConst = require('../common/classNameConst');
+
+/**
+ * Shortcut for the builder.createClassRule() method.
+ */
+var classRule = _.bind(builder.createClassRule, builder);
+
+/**
+ * Creates a rule string for background and text colors.
+ * @param {String} className - class name
+ * @param {Objecr} options - options
+ * @returns {String}
+ */
+function bgTextRuleString(className, options) {
+    return classRule(className)
+        .bg(options.background)
+        .text(options.text)
+        .build();
+}
+
+module.exports = {
+    /**
+     * Generates a css string for the grid.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    grid: function(options) {
+        var containerRule = classRule(classNameConst.CONTAINER)
+            .bg(options.background)
+            .border(options.border)
+            .text(options.text);
+        var tableRule = classRule(classNameConst.TABLE).border(options.border);
+        var headRule = classRule(classNameConst.HEAD_AREA).border(options.border);
+        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
+        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
+        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
+
+        return builder.buildAll([
+            containerRule,
+            tableRule,
+            headRule,
+            borderLineRule,
+            scrollHeadRule,
+            scrollBorderRule
+        ]);
+    },
+
+    /**
+     * Generates a css string for scrollbars.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    scrollbar: function(options) {
+        var webkitScrollbarRules = builder.createWebkitScrollbarRules('.' + classNameConst.CONTAINER, options);
+        var ieScrollbarRule = builder.createIEScrollbarRule('.' + classNameConst.CONTAINER, options);
+        var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
+        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
+        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
+
+        return builder.buildAll(webkitScrollbarRules.concat([
+            ieScrollbarRule,
+            rightBottomRule,
+            leftBottomRule,
+            scrollHeadRule
+        ]));
+    },
+
+    /**
+     * Generates a css string for a toolbar.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    toolbar: function(options) {
+        var toolbarRule = classRule(classNameConst.TOOLBAR)
+            .bg(options.background)
+            .border(options.border);
+
+        var resizeHandleRule = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
+            .border(options.border);
+
+        return builder.buildAll([
+            toolbarRule,
+            resizeHandleRule
+        ]);
+    },
+
+    /**
+     * Generates a css string for selection layers.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    selection: function(options) {
+        return classRule(classNameConst.LAYER_SELECTION)
+            .bg(options.background)
+            .border(options.border)
+            .build();
+    },
+
+    /**
+     * Generates a css string for table cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cell: function(options) {
+        var cellRule = classRule(classNameConst.CELL)
+            .bg(options.background)
+            .border(options.border)
+            .borderWidth(options)
+            .text(options.text);
+
+        return cellRule.build();
+    },
+
+    /*
+     * Generates a css string for head cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellHead: function(options) {
+        var headRule = classRule(classNameConst.CELL_HEAD)
+            .bg(options.background)
+            .border(options.border)
+            .borderWidth(options)
+            .text(options.text);
+
+        return headRule.build();
+    },
+
+    /**
+     * Generates a css string for the cells in even rows.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellEvenRow: function(options) {
+        return classRule(classNameConst.CELL_ROW_EVEN)
+            .bg(options.background)
+            .build();
+    },
+
+    /**
+     * Generates a css string for selected head cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellSelectedHead: function(options) {
+        return builder.create('.' + classNameConst.CELL_HEAD + '.' + classNameConst.CELL_SELECTED)
+            .bg(options.background)
+            .text(options.text)
+            .build();
+    },
+
+    /**
+     * Generates a css string for focused cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellFocused: function(options) {
+        var focusLayerRule = classRule(classNameConst.LAYER_FOCUS_BORDER).bg(options.border);
+        var editingLayerRule = classRule(classNameConst.LAYER_EDITING).border(options.border);
+
+        return builder.buildAll([focusLayerRule, editingLayerRule]);
+    },
+
+    /**
+     * Generates a css string for editable cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellEditable: function(options) {
+        return bgTextRuleString(classNameConst.CELL_EDITABLE, options);
+    },
+
+    /**
+     * Generates a css string for required cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellRequired: function(options) {
+        return bgTextRuleString(classNameConst.CELL_REQUIRED, options);
+    },
+
+    /**
+     * Generates a css string for disabled cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellDisabled: function(options) {
+        return bgTextRuleString(classNameConst.CELL_DISABLED, options);
+    },
+
+    /**
+     * Generates a css string for dummy cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellDummy: function(options) {
+        return bgTextRuleString(classNameConst.CELL_DUMMY, options);
+    },
+
+    /**
+     * Generates a css string for invalid cells.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellInvalid: function(options) {
+        return bgTextRuleString(classNameConst.CELL_INVALID, options);
+    },
+
+    /**
+     * Generates a css string for cells in a current row.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellCurrentRow: function(options) {
+        return bgTextRuleString(classNameConst.CELL_CURRENT_ROW, options);
+    }
+};
+
+},{"../common/classNameConst":8,"./cssRuleBuilder":39}],45:[function(require,module,exports){
 /**
  * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
  * @author NHN Ent. FE Development Team
@@ -10300,6 +11205,7 @@ module.exports = PublicEventEmitter;
 var View = require('../base/view');
 var util = require('../common/util');
 var keyCodeMap = require('../common/constMap').keyCode;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Clipboard view class
@@ -10328,7 +11234,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     tagName: 'textarea',
 
-    className: 'clipboard',
+    className: classNameConst.CLIPBOARD,
 
     events: {
         'keydown': '_onKeyDown',
@@ -10800,7 +11706,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
 module.exports = Clipboard;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":11}],39:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],46:[function(require,module,exports){
 /**
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
@@ -10809,7 +11715,8 @@ module.exports = Clipboard;
 
 var View = require('../base/view');
 var GridEvent = require('../common/gridEvent');
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Container View
@@ -10991,7 +11898,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') && $cell.attr(attrNameMap.COLUMN_NAME) && $cell.parent().attr(attrNameMap.ROW_KEY));
+        return !!($cell.is('td') &&
+            $cell.attr(attrNameConst.COLUMN_NAME) &&
+            $cell.parent().attr(attrNameConst.ROW_KEY)
+        );
     },
 
     /**
@@ -11001,8 +11911,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
      */
     _getCellInfoFromElement: function($cell) {
-        var rowKey = Number($cell.attr(attrNameMap.ROW_KEY));
-        var columnName = $cell.attr(attrNameMap.COLUMN_NAME);
+        var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
+        var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
 
         return {
             rowKey: rowKey,
@@ -11045,12 +11955,18 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     render: function() {
         var childElements = this._renderChildren().concat([
-            $('<div>').addClass('left_line'),
-            $('<div>').addClass('right_line')
+            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_TOP),
+            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_LEFT),
+            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_RIGHT)
         ]);
-        this.$el.addClass('grid_wrapper uio_grid')
-            .attr('data-grid-id', this.gridId)
+
+        this.$el.addClass(classNameConst.CONTAINER)
+            .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
+
+        if (!this.dimensionModel.get('scrollX')) {
+            this.$el.addClass(classNameConst.NO_SCROLL_X);
+        }
 
         this._appendBottomLine();
         this._refreshHeight();
@@ -11064,9 +11980,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     _appendBottomLine: function() {
         var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
-        if (bottomPos) {
-            this.$el.append($('<div>').addClass('data_bottom_line').css('bottom', bottomPos));
+        var $line = $('<div>')
+            .addClass(classNameConst.BORDER_BOTTOM)
+            .addClass(classNameConst.BORDER_LINE)
+            .css('bottom', bottomPos);
+
+        if (!this.dimensionModel.get('scrollY')) {
+            $line.addClass(classNameConst.NO_SCROLL_Y);
         }
+        this.$el.append($line);
     },
 
     /**
@@ -11084,7 +12006,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
 module.exports = Container;
 
-},{"../base/view":7,"../common/constMap":8,"../common/gridEvent":10}],40:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/gridEvent":11}],47:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -11093,7 +12015,8 @@ module.exports = Container;
 
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
-var attrNameMap = require('../common/constMap').attrName;
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -11113,7 +12036,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         this.listenTo(this.renderModel, 'editingStateChanged', this._onEditingStateChanged);
     },
 
-    className: 'editing_layer cell_content',
+    className: classNameConst.LAYER_EDITING + ' ' + classNameConst.CELL_CONTENT,
 
     /**
      * Starts editing the given cell.
@@ -11128,8 +12051,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         var painter = this.inputPainters[editType];
 
         this.$el.html(painter.generateHtml(cellData))
-            .attr(attrNameMap.ROW_KEY, rowKey)
-            .attr(attrNameMap.COLUMN_NAME, columnName)
+            .attr(attrNameConst.ROW_KEY, rowKey)
+            .attr(attrNameConst.COLUMN_NAME, columnName)
             .css(styleMap).show();
 
         this._adjustLeftPosition();
@@ -11151,8 +12074,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _finishEditing: function() {
-        this.$el.removeAttr(attrNameMap.ROW_KEY);
-        this.$el.removeAttr(attrNameMap.COLUMN_NAME);
+        this.$el.removeAttr(attrNameConst.ROW_KEY);
+        this.$el.removeAttr(attrNameConst.COLUMN_NAME);
         this.$el.empty().hide();
     },
 
@@ -11171,6 +12094,27 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     },
 
     /**
+     * Adjust offset value of TD, because it varies from browsers to browsers when borders are callapsed.
+     * @param {Number} offsetValue - offset value (offset.top or offset.left)
+     * @returns {Number}
+     * @private
+     */
+    _adjustCellOffsetValue: function(offsetValue) {
+        var browser = tui.util.browser;
+        var result = offsetValue;
+
+        if (browser.msie) {
+            if (browser.version === 9) {
+                result = offsetValue - 1;
+            } else if (browser.version > 9) {
+                result = Math.floor(offsetValue);
+            }
+        }
+
+        return result;
+    },
+
+    /**
      * Calculates the position and the dimension of the layer and returns the object that contains css properties.
      * @param {Stirng} rowKey - row key
      * @param {String} columnName - column name
@@ -11179,15 +12123,15 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
      * @private
      */
     _calculateLayoutStyle: function(rowKey, columnName, expandable) {
-        var wrapperOffset = this.domState.getOffset(),
-            $cell = this.domState.getElement(rowKey, columnName),
-            cellOffset = $cell.offset(),
-            cellHeight = $cell.height(),
-            cellWidth = $cell.width() - (CELL_BORDER_WIDTH * 2);
+        var wrapperOffset = this.domState.getOffset();
+        var $cell = this.domState.getElement(rowKey, columnName);
+        var cellOffset = $cell.offset();
+        var cellHeight = $cell.height() + CELL_BORDER_WIDTH;
+        var cellWidth = $cell.width() + CELL_BORDER_WIDTH;
 
         return {
-            top: cellOffset.top - wrapperOffset.top,
-            left: cellOffset.left - wrapperOffset.left,
+            top: this._adjustCellOffsetValue(cellOffset.top) - wrapperOffset.top,
+            left: this._adjustCellOffsetValue(cellOffset.left) - wrapperOffset.left,
             height: cellHeight,
             minWidth: expandable ? cellWidth : '',
             width: expandable ? '' : cellWidth,
@@ -11221,9 +12165,10 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     }
 });
 
+
 module.exports = EditingLayer;
 
-},{"../base/view":7,"../common/constMap":8}],41:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],48:[function(require,module,exports){
 /**
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
@@ -11246,6 +12191,7 @@ var BodyTableView = require('./layout/bodyTable');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
+var FocusLayerView = require('./focusLayer');
 
 /**
  * View Factory
@@ -11472,12 +12418,171 @@ var ViewFactory = tui.util.defineClass({
             inputPainters: this.painterManager.getInputPainters(true),
             domState: this.domState
         });
+    },
+
+    /**
+     * Creates focus layer view and returns it.
+     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @returns {module:view/focusLayer} New focus layer view instance
+     */
+    createFocusLayer: function(whichSide) {
+        return new FocusLayerView({
+            whichSide: whichSide,
+            dimensionModel: this.modelManager.dimensionModel,
+            columnModel: this.modelManager.columnModel,
+            focusModel: this.modelManager.focusModel
+        });
     }
 });
 
 module.exports = ViewFactory;
 
-},{"./clipboard":38,"./container":39,"./editingLayer":40,"./layout/body":42,"./layout/bodyTable":43,"./layout/frame-lside":44,"./layout/frame-rside":45,"./layout/header":47,"./layout/resizeHandler":48,"./layout/toolbar":49,"./layout/toolbar/controlPanel":50,"./layout/toolbar/pagination":51,"./layout/toolbar/resizeHandler":52,"./rowList":53,"./selectionLayer":54,"./stateLayer":55}],42:[function(require,module,exports){
+},{"./clipboard":45,"./container":46,"./editingLayer":47,"./focusLayer":49,"./layout/body":50,"./layout/bodyTable":51,"./layout/frame-lside":52,"./layout/frame-rside":53,"./layout/header":55,"./layout/resizeHandler":56,"./layout/toolbar":57,"./layout/toolbar/controlPanel":58,"./layout/toolbar/pagination":59,"./layout/toolbar/resizeHandler":60,"./rowList":61,"./selectionLayer":62,"./stateLayer":63}],49:[function(require,module,exports){
+/**
+ * @fileoverview Class for the layer view that represents the currently focused cell
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var View = require('../base/view');
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var classNameConst = require('../common/classNameConst');
+
+var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></div>';
+
+/**
+ * Class for the layer view that represents the currently focused cell
+ * @module view/focusLayer
+ * @extends module:base/view
+ */
+var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - Options
+     */
+    initialize: function(options) {
+        this.focusModel = options.focusModel;
+        this.columnModel = options.columnModel;
+        this.dimensionModel = options.dimensionModel;
+        this.whichSide = options.whichSide;
+
+        this.borderEl = {
+            $top: $(HTML_BORDER_DIV),
+            $left: $(HTML_BORDER_DIV),
+            $right: $(HTML_BORDER_DIV),
+            $bottom: $(HTML_BORDER_DIV)
+        };
+
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.focusModel, 'blur', this._onBlur);
+        this.listenTo(this.focusModel, 'focus', this._onFocus);
+        // this.listenTo(this.focusModel, 'change:editingAddress', this._onChangeEditingAddress);
+    },
+
+    className: classNameConst.LAYER_FOCUS,
+
+    /**
+     * Event handler for 'columnWidthChanged' event on the module:model/dimension
+     * @private
+     */
+    _onColumnWidthChanged: function() {
+        var focusModel = this.focusModel;
+
+        if (this.$el.is(':visible')) {
+            this._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
+        }
+    },
+
+    /**
+     * Event handler for 'blur' event on the module:model/focus
+     * @private
+     */
+    _onBlur: function() {
+        this.$el.hide();
+    },
+
+    /**
+     * Event handler for 'focus' event on module:model/focus
+     * @param {Number} rowKey - target row key
+     * @param {String} columnName - target column name
+     * @private
+     */
+    _onFocus: function(rowKey, columnName) {
+        var targetSide = this.columnModel.isLside(columnName) ? 'L' : 'R';
+
+        if (targetSide === this.whichSide) {
+            this._refreshBorderLayout(rowKey, columnName);
+            this.$el.show();
+        }
+    },
+
+    _onChangeEditingAddress: function(focusModel, address) {
+        if (address) {
+            this.$el.hide();
+        } else {
+            this.$el.show();
+        }
+    },
+
+    /**
+     * Resets the position and the dimension of the layer.
+     * @param {Number} rowKey - row key
+     * @param {String} columnName - column name
+     * @private
+     */
+    _refreshBorderLayout: function(rowKey, columnName) {
+        var pos = this.dimensionModel.getCellPosition(rowKey, columnName);
+        var width = pos.right - pos.left;
+        var height = pos.bottom - pos.top;
+
+        this.borderEl.$left.css({
+            top: pos.top,
+            left: pos.left,
+            width: CELL_BORDER_WIDTH,
+            height: height + CELL_BORDER_WIDTH
+        });
+
+        this.borderEl.$top.css({
+            top: pos.top === 0 ? CELL_BORDER_WIDTH : pos.top,
+            left: pos.left,
+            width: width + CELL_BORDER_WIDTH,
+            height: CELL_BORDER_WIDTH
+        });
+
+        this.borderEl.$right.css({
+            top: pos.top,
+            left: pos.left + width,
+            width: CELL_BORDER_WIDTH,
+            height: height + CELL_BORDER_WIDTH
+        });
+
+        this.borderEl.$bottom.css({
+            top: pos.top + height,
+            left: pos.left,
+            width: width + CELL_BORDER_WIDTH,
+            height: CELL_BORDER_WIDTH
+        });
+    },
+
+    /**
+     * Render
+     * @returns {Object} this instance
+     */
+    render: function() {
+        var $el = this.$el;
+
+        _.each(this.borderEl, function($border) {
+            $el.append($border);
+        });
+        $el.hide();
+
+        return this;
+    }
+});
+
+module.exports = FocusLayer;
+
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],50:[function(require,module,exports){
 /**
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
@@ -11486,16 +12591,14 @@ module.exports = ViewFactory;
 
 var View = require('../../base/view');
 var util = require('../../common/util');
-var attrNameMap = require('../../common/constMap').attrName;
+var attrNameConst = require('../../common/constMap').attrName;
+var classNameConst = require('../../common/classNameConst');
 
+// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
+var MIN_INTERVAL_FOR_PAUSED = 200;
 
-var HTML_CONTAINER = '<div class="body_container"></div>',
-
-    // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
-    MIN_INTERVAL_FOR_PAUSED = 200,
-
-    // Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
-    MIN_DISATNCE_FOR_DRAG = 10;
+// Minimum distance (pixel) to detect if user wants to drag when moving mouse with button pressed.
+var MIN_DISATNCE_FOR_DRAG = 10;
 
 /**
  * Class for the body layout
@@ -11531,13 +12634,14 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
-    tagName: 'div',
+    className: classNameConst.BODY_AREA,
 
-    className: 'data',
+    events: function() {
+        var hash = {};
+        hash.scroll = '_onScroll';
+        hash['mousedown .' + classNameConst.BODY_CONTAINER] = '_onMouseDown';
 
-    events: {
-        'scroll': '_onScroll',
-        'mousedown .body_container': '_onMouseDown'
+        return hash;
     },
 
     /**
@@ -11615,17 +12719,17 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onMouseDown: function(event) {
-        var columnModel = this.columnModel,
-            $target = $(event.target),
-            $td = $target.closest('td'),
-            $tr = $target.closest('tr'),
-            columnName = $td.attr(attrNameMap.COLUMN_NAME),
-            rowKey = $tr.attr(attrNameMap.ROW_KEY),
-            startAction = true,
-            inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey'),
-            indexData;
+        var columnModel = this.columnModel;
+        var $target = $(event.target);
+        var $td = $target.closest('td');
+        var $tr = $target.closest('tr');
+        var columnName = $td.attr(attrNameConst.COLUMN_NAME);
+        var rowKey = $tr.attr(attrNameConst.ROW_KEY);
+        var startAction = true;
+        var inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey');
+        var indexData;
 
-        if (!$td.length) { // selection layer
+        if (!$td.length) { // selection layer, focus layer
             indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
             columnName = this._getColumnNameByVisibleIndex(indexData.column);
         } else if (rowKey && columnName) { // valid cell
@@ -11754,13 +12858,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onMouseMove: function(event) {
-        var selectionModel = this.selectionModel,
-            pageX = event.pageX,
-            pageY = event.pageY,
-            dragged = this._getMouseMoveDistance(pageX, pageY) > MIN_DISATNCE_FOR_DRAG;
+        var dragged = this._getMouseMoveDistance(event.pageX, event.pageY) > MIN_DISATNCE_FOR_DRAG;
 
-        if (selectionModel.hasSelection() || dragged) {
-            selectionModel.updateByMousePosition(pageX, pageY);
+        if (this.selectionModel.hasSelection() || dragged) {
+            this.selectionModel.updateByMousePosition(event.pageX, event.pageY);
         }
     },
 
@@ -11772,8 +12873,8 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _getMouseMoveDistance: function(pageX, pageY) {
-        var dx = Math.abs(this.mouseDownX - pageX),
-            dy = Math.abs(this.mouseDownY - pageY);
+        var dx = Math.abs(this.mouseDownX - pageX);
+        var dy = Math.abs(this.mouseDownY - pageY);
 
         return Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
     },
@@ -11806,12 +12907,13 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
         this.$el.css('height', this.dimensionModel.get('bodyHeight'));
 
-        this.$container = $(HTML_CONTAINER);
+        this.$container = $('<div>').addClass(classNameConst.BODY_CONTAINER);
         this.$el.append(this.$container);
 
         this._addChildren([
             this.viewFactory.createBodyTable(whichSide),
-            this.viewFactory.createSelectionLayer(whichSide)
+            this.viewFactory.createSelectionLayer(whichSide),
+            this.viewFactory.createFocusLayer(whichSide)
         ]);
         this.$container.append(this._renderChildren());
         this._resetContainerHeight();
@@ -11821,7 +12923,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],43:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],51:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -11831,6 +12933,7 @@ module.exports = Body;
 var View = require('../../base/view');
 var util = require('../../common/util');
 var constMap = require('../../common/constMap');
+var classNameConst = require('../../common/classNameConst');
 
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
@@ -11867,12 +12970,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
         this._attachAllTableEventHandlers();
     },
 
-    tagName: 'div',
-
-    className: 'table_container',
+    className: classNameConst.BODY_TABLE_CONTAINER,
 
     template: _.template(
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '<table class="' + classNameConst.TABLE + '">' +
         '   <colgroup><%=colGroup%></colgroup>' +
         '   <tbody><%=tbody%></tbody>' +
         '</table>'),
@@ -11891,7 +12992,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             totalWidth = 0;
 
         _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH);
+            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH);
             totalWidth += width + CELL_BORDER_WIDTH;
         }, this);
 
@@ -12004,7 +13105,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html += this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModel.columnName,
-                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH
+                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH
             });
         }, this);
 
@@ -12017,7 +13118,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
 module.exports = BodyTable;
 
-},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],44:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],52:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -12025,6 +13126,7 @@ module.exports = BodyTable;
 'use strict';
 
 var Frame = require('./frame');
+var classNameConst = require('../../common/classNameConst');
 
 /**
  * Left Side Frame
@@ -12042,7 +13144,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         });
     },
 
-    className: 'lside_area',
+    className: classNameConst.LSIDE_AREA,
 
     /**
      * Event handler for 'changeColumnWidth' event on module:model/dimension
@@ -12079,7 +13181,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         }
 
         $scrollOverlay = $('<div>')
-            .addClass('scrollbar_overlay')
+            .addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM)
             .css('bottom', dimensionModel.get('toolbarHeight'));
         this.$el.append($scrollOverlay);
     }
@@ -12087,7 +13189,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
 
 module.exports = LsideFrame;
 
-},{"./frame":46}],45:[function(require,module,exports){
+},{"../../common/classNameConst":8,"./frame":54}],53:[function(require,module,exports){
 /**
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
@@ -12095,7 +13197,9 @@ module.exports = LsideFrame;
 'use strict';
 
 var Frame = require('./frame');
+var classNameConst = require('../../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
+
 
 /**
  * right side frame class
@@ -12116,7 +13220,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             this._resetScrollBorderHeight);
     },
 
-    className: 'rside_area',
+    className: classNameConst.RSIDE_AREA,
 
     /**
      * Event handler for 'columnWidthChanged' event on dimensionModel
@@ -12187,10 +13291,10 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         headerHeight = dimensionModel.get('headerHeight');
 
         // Empty DIV for hiding scrollbar in the header area
-        $space = $('<div />').addClass('header_space');
+        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
 
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
-        $scrollBorder = $('<div />').addClass('scrollbar_border');
+        $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
 
 
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
@@ -12203,7 +13307,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
             $scrollCorner = $('<div />')
-                .addClass('scrollbar_corner')
+                .addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
                 .css('bottom', dimensionModel.get('toolbarHeight'));
             this.$el.append($scrollCorner);
         }
@@ -12215,7 +13319,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
 module.exports = RsideFrame;
 
-},{"../../common/constMap":8,"./frame":46}],46:[function(require,module,exports){
+},{"../../common/classNameConst":8,"../../common/constMap":9,"./frame":54}],54:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -12245,13 +13349,9 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.renderModel, 'columnModelChanged', this.render, this)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged, this);
+        this.listenTo(this.renderModel, 'columnModelChanged', this.render)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
     },
-
-    tagName: 'div',
-
-    className: 'lside_area',
 
     /**
      * Render
@@ -12296,7 +13396,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
 module.exports = Frame;
 
-},{"../../base/view":7}],47:[function(require,module,exports){
+},{"../../base/view":7}],55:[function(require,module,exports){
 /**
  * @fileoverview Header 관련
  * @author NHN Ent. FE Development Team
@@ -12305,10 +13405,13 @@ module.exports = Frame;
 
 var View = require('../../base/view');
 var util = require('../../common/util');
+var constMap = require('../../common/constMap');
+var classNameConst = require('../../common/classNameConst');
 
-var CLASSNAME_SELECTED = 'selected';
 var DELAY_SYNC_CHECK = 10;
-var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
+var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
 
 /**
  * Header 레이아웃 View
@@ -12344,9 +13447,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
     },
 
-    tagName: 'div',
-
-    className: 'header',
+    className: classNameConst.HEAD_AREA,
 
     events: {
         'click': '_onClick',
@@ -12357,7 +13458,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * 전체 template
      */
     template: _.template(
-        '<table width="100%" border="0" cellspacing="1" cellpadding="0" bgcolor="#EFEFEF">' +
+        '<table class="' + classNameConst.TABLE + '">' +
             '<colgroup><%=colGroup%></colgroup>' +
             '<tbody><%=tBody%></tbody>' +
         '</table>'
@@ -12393,7 +13494,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * 정렬 버튼을 위한 HTML 마크업
      */
-    markupBtnSort: '<a class="btn_sorting"></a>',
+    markupBtnSort: '<a class="' + classNameConst.BTN_SORT + '"></a>',
 
     /**
      * col group 마크업을 생성한다.
@@ -12410,7 +13511,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             htmlList.push(this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModelList[index].columnName,
-                width: width
+                width: width + CELL_BORDER_WIDTH
             }));
         }, this);
         return htmlList.join('');
@@ -12461,11 +13562,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnNames = [this.focusModel.get('columnName')];
         }
 
-        $ths.removeClass(CLASSNAME_SELECTED);
+        $ths.removeClass(classNameConst.CELL_SELECTED);
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(CLASSNAME_SELECTED);
+                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(classNameConst.CELL_SELECTED);
             });
         }
     },
@@ -12478,7 +13579,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _onMouseDown: function(event) {
         var columnName, columnNames;
 
-        if (!this.selectionModel.isEnabled() || $(event.target).is('a.btn_sorting')) {
+        if (!this.selectionModel.isEnabled() || $(event.target).is('a.' + classNameConst.BTN_SORT)) {
             return;
         }
 
@@ -12675,7 +13776,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(columnWidth, index) {
-            $colList.eq(index).css('width', columnWidth + 'px');
+            $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
     },
 
@@ -12701,14 +13802,13 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var $target = $(clickEvent.target),
             columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
 
-        /* istanbul ignore else */
         if (columnName === '_button' && $target.is('input')) {
             if ($target.prop('checked')) {
                 this.dataModel.checkAll();
             } else {
                 this.dataModel.uncheckAll();
             }
-        } else if ($target.is('a.btn_sorting')) {
+        } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
             this.dataModel.sortByField(columnName);
         }
     },
@@ -12722,12 +13822,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _updateBtnSortState: function(sortOptions) {
         if (this._$currentSortBtn) {
-            this._$currentSortBtn.removeClass('sorting_down sorting_up');
+            this._$currentSortBtn.removeClass(classNameConst.BTN_SORT_DOWN + ' ' + classNameConst.BTN_SORT_UP);
         }
         this._$currentSortBtn = this.$el.find(
-            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.btn_sorting'
+            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.' + classNameConst.BTN_SORT
         );
-        this._$currentSortBtn.addClass(sortOptions.isAscending ? 'sorting_up' : 'sorting_down');
+        this._$currentSortBtn.addClass(sortOptions.isAscending ?
+            classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
+        );
     },
 
     /**
@@ -12738,11 +13840,11 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
-            this.$el.addClass('no_scroll');
+            this.$el.addClass(classNameConst.NO_SCROLL_Y);
         }
 
         this.$el.css({
-            height: this.dimensionModel.get('headerHeight')
+            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
         }).html(this.template({
             colGroup: this._getColGroupMarkup(),
             tBody: this._getTableBodyMarkup()
@@ -12793,6 +13895,14 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 curHeight = 0;
             _.each(hierarchy, function(columnModel, j) {
                 var columnName = columnModel.columnName;
+                var classNames = [
+                    classNameConst.CELL,
+                    classNameConst.CELL_HEAD
+                ];
+
+                if (columnModel.isRequired) {
+                    classNames.push(classNameConst.CELL_REQRUIRED);
+                }
 
                 rowSpan = (length - 1 === j && (maxRowCount - length + 1) > 1) ? (maxRowCount - length + 1) : 1;
                 height = rowHeight * rowSpan;
@@ -12813,7 +13923,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 rowMarkupList[j].push(this.templateHeader({
                     attrColumnName: ATTR_COLUMN_NAME,
                     columnName: columnName,
-                    className: columnModel.isRequired ? 'required' : '',
+                    className: classNames.join(' '),
                     height: height,
                     colspan: colSpanList[j],
                     rowspan: rowSpan,
@@ -12888,7 +13998,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/constMap":8,"../../common/util":11}],48:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],56:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -12896,7 +14006,9 @@ module.exports = Header;
 'use strict';
 
 var View = require('../../base/view');
-var ATTR_COLUMN_NAME = require('../../common/constMap').attrName.COLUMN_NAME;
+var attrNameConst = require('../../common/constMap').attrName;
+var classNameConst = require('../../common/classNameConst');
+var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
  * Reside Handler class
@@ -12921,28 +14033,30 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             initialOffsetLeft: 0,
             initialLeft: 0
         });
+
         this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
     },
 
-    tagName: 'div',
+    className: classNameConst.COLUMN_RESIZE_CONTAINER,
 
-    className: 'resize_handle_container',
+    events: function() {
+        var eventHash = {};
 
-    events: {
-        'mousedown .resize_handle': '_onMouseDown',
-        'dblclick .resize_handle': '_onDblClick'
+        eventHash['mousedown .' + classNameConst.COLUMN_RESIZE_HANDLE] = '_onMouseDown';
+        eventHash['dblclick .' + classNameConst.COLUMN_RESIZE_HANDLE] = '_onDblClick';
+
+        return eventHash;
     },
 
     template: _.template(
-        '<div columnindex="<%=columnIndex%>" ' +
-        '<%=attrColumnName%>="<%=columnName%>" ' +
-        'class="resize_handle' +
-        '<% if(isLast === true) ' +
-        ' print(" resize_handle_last");%>' +
-        '" ' +
+        '<div ' +
+        attrNameConst.COLUMN_INDEX + '="<%=columnIndex%>" ' +
+        attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
+        'class="' + classNameConst.COLUMN_RESIZE_HANDLE + ' <%=lastClass%>" ' +
         'style="<%=height%>" ' +
         'title="마우스 드래그를 통해 컬럼의 넓이를 변경할 수 있고,더블클릭을 통해 넓이를 초기화할 수 있습니다.">' +
-        '</div>'),
+        '</div>'
+    ),
 
     /**
      * Return an object that contains an array of column width and an array of column model.
@@ -12950,10 +14064,10 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.columnModel,
-            dimensionModel = this.dimensionModel,
-            columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnModel = this.columnModel;
+        var dimensionModel = this.dimensionModel;
+        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
+        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
 
         return {
             widthList: columnWidthList,
@@ -12967,21 +14081,19 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getResizeHandlerMarkup: function() {
-        var columnData = this._getColumnData(),
-            columnModelList = columnData.modelList,
-            headerHeight = this.dimensionModel.get('headerHeight'),
-            length = columnModelList.length,
-            resizeHandleMarkupList;
-
-        resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
+        var columnData = this._getColumnData();
+        var columnModelList = columnData.modelList;
+        var headerHeight = this.dimensionModel.get('headerHeight');
+        var length = columnModelList.length;
+        var resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
-                attrColumnName: ATTR_COLUMN_NAME,
+                lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.columnName,
-                isLast: index + 1 === length,
                 height: headerHeight
             });
         }, this);
+
         return resizeHandleMarkupList.join('');
     },
 
@@ -13007,29 +14119,17 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _refreshHandlerPosition: function() {
-        var columnData = this._getColumnData(),
-            columnWidthList = columnData.widthList,
-            $resizeHandleList = this.$el.find('.resize_handle'),
-            $table = this.$el.parent().find('table:first'),
-            isChanged = false,
-            $handler,
-            columnName,
-            curPos = 0,
-            BORDER_WIDTH = 1,
-            HANDLER_WIDTH_HALF = 3,
-            width;
+        var columnData = this._getColumnData();
+        var columnWidthList = columnData.widthList;
+        var $resizeHandleList = this.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
+        var curPos = 0;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
-            $handler = $resizeHandleList.eq(index);
-            columnName = $handler.attr(ATTR_COLUMN_NAME);
-            width = $table.find('th[' + ATTR_COLUMN_NAME + '=' + columnName + ']').width();
-            if (tui.util.isExisty(width)) {
-                isChanged = isChanged || (width !== columnWidthList[index]);
-            } else {
-                width = columnWidthList[index];
-            }
-            curPos += width + BORDER_WIDTH;
-            $handler.css('left', curPos - HANDLER_WIDTH_HALF);
+            var $handler = $resizeHandleList.eq(index);
+            var handlerWidthHalf = Math.ceil($handler.width() / 2);
+
+            curPos += columnWidthList[index] + CELL_BORDER_WIDTH;
+            $handler.css('left', curPos - handlerWidthHalf);
         });
     },
 
@@ -13048,7 +14148,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _onMouseDown: function(mouseEvent) {
-        this._startResizing(mouseEvent);
+        this._startResizing($(mouseEvent.target));
     },
 
     /**
@@ -13057,8 +14157,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _onDblClick: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            index = parseInt($target.attr('columnindex'), 10);
+        var $target = $(mouseEvent.target);
+        var index = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
         this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
         this._refreshHandlerPosition();
@@ -13080,15 +14180,14 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _onMouseMove: function(mouseEvent) {
         var left, width, index;
 
-        /* istanbul ignore else */
         if (this._isResizing()) {
             mouseEvent.preventDefault();
 
             left = mouseEvent.pageX - this.initialOffsetLeft;
             width = this._calculateWidth(mouseEvent.pageX);
-            index = parseInt(this.$target.attr('columnindex'), 10);
+            index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-            this.$target.css('left', left + 'px');
+            this.$target.css('left', left);
             this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             this._refreshHandlerPosition();
         }
@@ -13117,19 +14216,18 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * Start resizing
-     * @param {event} mouseDownEvent - mouse event
+     * @param {jQuery} $target - target element
      * @private
      */
-    _startResizing: function(mouseDownEvent) {
-        var columnData = this._getColumnData(),
-            columnWidthList = columnData.widthList,
-            $target = $(mouseDownEvent.target);
+    _startResizing: function($target) {
+        var columnData = this._getColumnData();
+        var columnWidthList = columnData.widthList;
 
         this.isResizing = true;
         this.$target = $target;
         this.initialLeft = parseInt($target.css('left').replace('px', ''), 10);
         this.initialOffsetLeft = this.$el.offset().left;
-        this.initialWidth = columnWidthList[$target.attr('columnindex')];
+        this.initialWidth = columnWidthList[$target.attr(attrNameConst.COLUMN_INDEX)];
         $('body').css('cursor', 'col-resize');
         $(document)
             .bind('mousemove', $.proxy(this._onMouseMove, this))
@@ -13175,7 +14273,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7,"../../common/constMap":8}],49:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9}],57:[function(require,module,exports){
 /**
  * @fileoverview 툴바영역 클래스
  * @author NHN Ent. FE Development Team
@@ -13183,6 +14281,7 @@ module.exports = ResizeHandler;
 'use strict';
 
 var View = require('../../base/view');
+var classNameConst = require('../../common/classNameConst');
 
 /**
  * 툴바 영역
@@ -13202,9 +14301,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
         this.viewFactory = options.viewFactory;
     },
 
-    tagName: 'div',
-
-    className: 'toolbar',
+    className: classNameConst.TOOLBAR,
 
     /**
      * 랜더링한다.
@@ -13247,7 +14344,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../../base/view":7}],50:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8}],58:[function(require,module,exports){
 /**
  * @fileoverview Class for the control panel in the toolbar
  * @author NHN Ent. FE Development Team
@@ -13255,6 +14352,7 @@ module.exports = Toolbar;
 'use strict';
 
 var View = require('../../../base/view');
+var classNameConst = require('../../../common/classNameConst');
 
 /**
  * Class for the control panel in the toolbar
@@ -13278,17 +14376,17 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
             'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
     },
 
-    events: {
-        'click a.excel_download_button': '_onClickExcel'
+    events: function() {
+        var hash = {};
+        hash['click .' + classNameConst.BTN_EXCEL] = '_onClickExcel';
+        return hash;
     },
 
-    tagName: 'div',
-
-    className: 'btn_setup',
+    className: classNameConst.TOOLBAR_BTN_HOLDER,
 
     templateExcelBtn: _.template(
-        '<a href="#" class="excel_download_button btn_text <%=className%>">' +
-        '<span><em class="excel"></em><%=text%></span>' +
+        '<a href="#" class="' + classNameConst.BTN_EXCEL + ' ' + classNameConst.BTN_TEXT + ' <%=className%>">' +
+        '<span><em class="' + classNameConst.BTN_EXCEL_ICON + '"></em><%=text%></span>' +
         '</a>'
     ),
 
@@ -13298,18 +14396,18 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
      * @private
      */
     _onClickExcel: function(mouseEvent) {
-        var grid = tui.Grid.getInstanceById(this.gridId),
-            net = grid.getAddOn('Net'),
-            $target;
+        var grid = tui.Grid.getInstanceById(this.gridId);
+        var net = grid.getAddOn('Net');
+        var $target;
 
         mouseEvent.preventDefault();
 
         if (net) {
             $target = $(mouseEvent.target).closest('a');
 
-            if ($target.hasClass('excel_page')) {
+            if ($target.hasClass(classNameConst.BTN_EXCEL_PAGE)) {
                 net.download('excel');
-            } else if ($target.hasClass('excel_all')) {
+            } else if ($target.hasClass(classNameConst.BTN_EXCEL_ALL)) {
                 net.download('excelAll');
             }
         }
@@ -13326,13 +14424,13 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
         if (toolbarModel.get('isExcelButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
-                className: 'excel_page',
+                className: classNameConst.BTN_EXCEL_PAGE,
                 text: '엑셀 다운로드'
             }));
         }
         if (toolbarModel.get('isExcelAllButtonVisible')) {
             this.$el.append(this.templateExcelBtn({
-                className: 'excel_all',
+                className: classNameConst.BTN_EXCEL_ALL,
                 text: '전체 엑셀 다운로드'
             }));
         }
@@ -13342,7 +14440,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
 module.exports = ControlPanel;
 
-},{"../../../base/view":7}],51:[function(require,module,exports){
+},{"../../../base/view":7,"../../../common/classNameConst":8}],59:[function(require,module,exports){
 /**
  * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
@@ -13350,6 +14448,7 @@ module.exports = ControlPanel;
 'use strict';
 
 var View = require('../../../base/view');
+var classNameConst = require('../../../common/classNameConst');
 
 /**
  * Class for the pagination in the toolbar
@@ -13365,19 +14464,17 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
         this.toolbarModel = options.toolbarModel;
     },
 
-    tagName: 'div',
+    className: classNameConst.PAGINATION,
 
-    className: 'grid_pagination',
-
-    template: _.template(
-        '<a href="#" class="pre_end" title="First page">First</a>' +
-        '<a href="#" class="pre" title="Previous page">Prev</a> ' +
-        '<a href="#" class="next" title="Next page">Next</a>' +
-        '<a href="#" class="next_end" title="Last page">Last</a>' +
-        '<span class="pre_end_off">First Off</span>' +
-        '<span class="pre_off">Prev Off</span>' +
-        '<span class="next_off">Next Off</span>' +
-        '<span class="next_end_off">Last Off</span>'
+    htmlString: (
+        '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
+        '<a href="#" class="' + classNameConst.PAGINATION_PRE + '" title="Previous page">Prev</a> ' +
+        '<a href="#" class="' + classNameConst.PAGINATION_NEXT + '" title="Next page">Next</a>' +
+        '<a href="#" class="' + classNameConst.PAGINATION_NEXT_END + '" title="Last page">Last</a>' +
+        '<span class="' + classNameConst.PAGINATION_PRE_END_OFF + '">First Off</span>' +
+        '<span class="' + classNameConst.PAGINATION_PRE_OFF + '">Prev Off</span>' +
+        '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
+        '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>'
     ),
 
     /**
@@ -13386,8 +14483,9 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      */
     render: function() {
         this._destroyChildren();
-        this.$el.empty().html(this.template());
+        this.$el.empty().html(this.htmlString);
         this._setPaginationInstance();
+
         return this;
     },
 
@@ -13401,15 +14499,16 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
         if (!pagination && PaginationClass) {
             pagination = new PaginationClass({
+                classPrefix: classNameConst.PREFIX,
                 itemCount: 1,
                 itemPerPage: 1,
                 pagePerPageList: 5,
                 isCenterAlign: true,
                 moveUnit: 'page',
-                $preOff: this.$el.find('.pre_off'),
-                $pre_endOff: this.$el.find('.pre_end_off'), // eslint-disable-line camelcase
-                $nextOff: this.$el.find('.next_off'),
-                $lastOff: this.$el.find('.next_end_off')
+                $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
+                $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
+                $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
+                $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
             }, this.$el);
         }
         this.toolbarModel.set('pagination', pagination);
@@ -13418,7 +14517,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
 module.exports = Pagination;
 
-},{"../../../base/view":7}],52:[function(require,module,exports){
+},{"../../../base/view":7,"../../../common/classNameConst":8}],60:[function(require,module,exports){
 /**
  * @fileoverview Class for the resize handler of the toolbar
  * @author NHN Ent. FE Development Team
@@ -13426,6 +14525,7 @@ module.exports = Pagination;
 'use strict';
 
 var View = require('../../../base/view');
+var classNameConst = require('../../../common/classNameConst');
 
 /**
  * Class for the resize handler of the toolbar
@@ -13442,11 +14542,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
         this.timeoutIdForResize = 0;
     },
 
-    tagName: 'div',
+    className: classNameConst.HEIGHT_RESIZE_BAR,
 
-    className: 'height_resize_bar',
-
-    template: _.template('<a href="#" class="height_resize_handle"><span></span></a>'),
+    htmlString: '<a href="#" class="' + classNameConst.HEIGHT_RESIZE_HANDLE + '"><span></span></a>',
 
     events: {
         'mousedown': '_onMouseDown'
@@ -13534,7 +14632,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
      */
     render: function() {
         this._destroyChildren();
-        this.$el.html(this.template());
+        this.$el.html(this.htmlString);
+
         return this;
     },
 
@@ -13551,7 +14650,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
 module.exports = ResizeHandler;
 
-},{"../../../base/view":7}],53:[function(require,module,exports){
+},{"../../../base/view":7,"../../../common/classNameConst":8}],61:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
@@ -13560,11 +14659,8 @@ module.exports = ResizeHandler;
 
 var View = require('../base/view');
 var util = require('../common/util');
-var attrNameMap = require('../common/constMap').attrName;
-
-var CLASSNAME_SELECTED = 'selected';
-var CLASSNAME_FOCUSED_ROW = 'focused_row';
-var SELECTOR_META_CELL = 'td.meta_column';
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * RowList View
@@ -13692,7 +14788,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _getRowElement: function(rowKey) {
-        return this.$el.find('tr[' + attrNameMap.ROW_KEY + '=' + rowKey + ']');
+        return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']');
     },
 
     /**
@@ -13700,8 +14796,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _refreshSelectedMetaColumns: function() {
-        var $rows = this.$el.find('tr'),
-            $filteredRows;
+        var $rows = this.$el.find('tr');
+        var metaSelector = '.' + classNameConst.CELL_HEAD;
+        var $filteredRows;
 
         if (this.selectionModel.hasSelection()) {
             $filteredRows = this._filterRowsByIndexRange($rows, this.selectionModel.get('range').row);
@@ -13709,8 +14806,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             $filteredRows = this._filterRowByKey($rows, this.focusModel.get('rowKey'));
         }
 
-        $rows.find(SELECTOR_META_CELL).removeClass(CLASSNAME_SELECTED);
-        $filteredRows.find(SELECTOR_META_CELL).addClass(CLASSNAME_SELECTED);
+        $rows.find(metaSelector).removeClass(classNameConst.CELL_SELECTED);
+        $filteredRows.find(metaSelector).addClass(classNameConst.CELL_SELECTED);
     },
 
     /**
@@ -13752,20 +14849,20 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
     },
 
     /**
-     * Removes the CLASSNAME_FOCUSED_ROW class from the cells in the previously focused row and
+     * Removes the CURRENT_ROW class from the cells in the previously focused row and
      * adds it to the cells in the currently focused row.
      * @private
      */
     _refreshFocusedRow: function() {
-        var rowKey = this.focusModel.get('rowKey'),
-            prevRowKey = this.focusModel.get('prevRowKey');
+        var rowKey = this.focusModel.get('rowKey');
+        var prevRowKey = this.focusModel.get('prevRowKey');
 
         this._setFocusedRowClass(prevRowKey, false);
         this._setFocusedRowClass(rowKey, true);
     },
 
     /**
-     * Finds all cells in the row indentified by given rowKey and toggles the CLASSNAME_FOCUSED_ROW on them.
+     * Finds all cells in the row indentified by given rowKey and toggles the CURRENT_ROW on them.
      * @param {Number|String} rowKey - rowKey
      * @param {Boolean} focused - if set to true, the class will be added, otherwise be removed.
      * @private
@@ -13781,8 +14878,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             if (!trMap[mainRowKey]) {
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
-            $td = trMap[mainRowKey].find('td[' + attrNameMap.COLUMN_NAME + '=' + columnName + ']');
-            $td.toggleClass(CLASSNAME_FOCUSED_ROW, focused);
+            $td = trMap[mainRowKey].find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+            $td.toggleClass(classNameConst.CELL_CURRENT_ROW, focused);
         }, this);
     },
 
@@ -13849,7 +14946,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":11}],54:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],62:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
@@ -13858,6 +14955,7 @@ module.exports = RowList;
 
 var View = require('../base/view');
 var util = require('../common/util');
+var classNameConst = require('../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
@@ -13884,9 +14982,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         this.listenTo(this.selectionModel, 'change:range', this.render);
     },
 
-    tagName: 'div',
-
-    className: 'selection_layer',
+    className: classNameConst.LAYER_SELECTION,
 
     /**
      * Updates this.columnWidthList
@@ -14012,7 +15108,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
 module.exports = SelectionLayer;
 
-},{"../base/view":7,"../common/constMap":8,"../common/util":11}],55:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],63:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -14020,7 +15116,8 @@ module.exports = SelectionLayer;
 'use strict';
 
 var View = require('../base/view');
-var renderStateMap = require('../common/constMap').renderState;
+var stateConst = require('../common/constMap').renderState;
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -14041,13 +15138,13 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
         this.listenTo(this.renderModel, 'change:state', this.render);
     },
 
-    className: 'state_layer',
+    className: classNameConst.LAYER_STATE,
 
     template: _.template(
-        '<div class="layer_content">' +
+        '<div class="' + classNameConst.LAYER_STATE_CONTENT + '">' +
         '    <%= text %>' +
         '    <% if (isLoading) { %>' +
-        '    <div class="loading_img"></div>' +
+        '    <div class="' + classNameConst.LAYER_STATE_LOADING + '"></div>' +
         '    <% } %>' +
         '</div>'
     ),
@@ -14059,7 +15156,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     render: function() {
         var renderState = this.renderModel.get('state');
 
-        if (renderState === renderStateMap.DONE) {
+        if (renderState === stateConst.DONE) {
             this.$el.hide();
         } else {
             this._showLayer(renderState);
@@ -14076,7 +15173,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
     _showLayer: function(renderState) {
         var layerHtml = this.template({
             text: this._getMessage(renderState),
-            isLoading: (renderState === renderStateMap.LOADING)
+            isLoading: (renderState === stateConst.LOADING)
         });
 
         this.$el.html(layerHtml).show();
@@ -14090,9 +15187,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      */
     _getMessage: function(renderState) {
         switch (renderState) {
-            case renderStateMap.LOADING:
+            case stateConst.LOADING:
                 return '요청을 처리 중입니다.';
-            case renderStateMap.EMPTY:
+            case stateConst.EMPTY:
                 return (this.renderModel.get('emptyMessage') || '데이터가 존재하지 않습니다.');
             default:
                 return null;
@@ -14115,4 +15212,4 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
 
 module.exports = StateLayer;
 
-},{"../base/view":7,"../common/constMap":8}]},{},[13]);
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}]},{},[14]);
