@@ -10,6 +10,10 @@ var classNames = {
     CONTAINER: 'container',
     CLIPBOARD: 'clipboard',
 
+    // common
+    NO_SCROLL_X: 'no-scroll-x',
+    NO_SCROLL_Y: 'no-scroll-y',
+
     // layer
     LAYER_STATE: 'layer-state',
     LAYER_STATE_CONTENT: 'layer-state-content',
@@ -33,7 +37,6 @@ var classNames = {
     BODY_AREA: 'body-area',
 
     // header
-    HEADER_NO_SCROLL: 'no-scroll',
     COLUMN_RESIZE_CONTAINER: 'column-resize-container',
     COLUMN_RESIZE_HANDLE: 'column-resize-handle',
     COLUMN_RESIZE_HANDLE_LAST: 'column-resize-handle-last',

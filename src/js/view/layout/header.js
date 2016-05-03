@@ -441,7 +441,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
-            this.$el.addClass(classNameConst.HEADER_NO_SCROLL);
+            this.$el.addClass(classNameConst.NO_SCROLL_Y);
         }
 
         this.$el.css({

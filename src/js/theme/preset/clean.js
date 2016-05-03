@@ -8,7 +8,7 @@ var presetDefault = require('./default');
 
 module.exports = $.extend(true, {}, presetDefault, {
     grid: {
-        border: '#e0e0e0'
+        border: '#c0c0c0'
     },
     toolbar: {
         border: '#e0e0e0'

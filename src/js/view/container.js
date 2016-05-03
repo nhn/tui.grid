@@ -250,9 +250,14 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_LEFT),
             $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_RIGHT)
         ]);
+
         this.$el.addClass(classNameConst.CONTAINER)
             .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
+
+        if (!this.dimensionModel.get('scrollX')) {
+            this.$el.addClass(classNameConst.NO_SCROLL_X);
+        }
 
         this._appendBottomLine();
         this._refreshHeight();
@@ -266,16 +271,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     _appendBottomLine: function() {
         var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
-        var $line;
+        var $line = $('<div>')
+            .addClass(classNameConst.BORDER_BOTTOM)
+            .addClass(classNameConst.BORDER_LINE)
+            .css('bottom', bottomPos);
 
-        if (bottomPos) {
-            $line = $('<div>')
-                .addClass(classNameConst.BORDER_BOTTOM)
-                .addClass(classNameConst.BORDER_LINE)
-                .css('bottom', bottomPos);
-
-            this.$el.append($line);
+        if (!this.dimensionModel.get('scrollY')) {
+            $line.addClass(classNameConst.NO_SCROLL_Y);
         }
+        this.$el.append($line);
     },
 
     /**
