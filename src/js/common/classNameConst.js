@@ -21,6 +21,7 @@ var classNames = {
 
     // border line
     BORDER_LINE: 'border-line',
+    BORDER_TOP: 'border-line-top',
     BORDER_LEFT: 'border-line-left',
     BORDER_RIGHT: 'border-line-right',
     BORDER_BOTTOM: 'border-line-bottom',

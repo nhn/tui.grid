@@ -37,6 +37,7 @@ module.exports = {
             .border(options.border)
             .text(options.text);
         var tableRule = classRule(classNameConst.TABLE).border(options.border);
+        var headRule = classRule(classNameConst.HEAD_AREA).border(options.border);
         var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
         var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
         var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
@@ -44,6 +45,7 @@ module.exports = {
         return builder.buildAll([
             containerRule,
             tableRule,
+            headRule,
             borderLineRule,
             scrollHeadRule,
             scrollBorderRule

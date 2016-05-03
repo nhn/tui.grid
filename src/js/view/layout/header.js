@@ -12,6 +12,7 @@ var classNameConst = require('../../common/classNameConst');
 var DELAY_SYNC_CHECK = 10;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
 
 /**
  * Header 레이아웃 View
@@ -444,7 +445,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         }
 
         this.$el.css({
-            height: this.dimensionModel.get('headerHeight')
+            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
         }).html(this.template({
             colGroup: this._getColGroupMarkup(),
             tBody: this._getTableBodyMarkup()

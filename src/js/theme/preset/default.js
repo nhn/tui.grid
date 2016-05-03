@@ -16,7 +16,7 @@ module.exports = {
     },
     toolbar: {
         border: '#ccc',
-        background: '#fff'
+        background: '#transparent'
     },
     scrollbar: {
         background: '#f5f5f5',

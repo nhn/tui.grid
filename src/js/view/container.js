@@ -246,6 +246,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     render: function() {
         var childElements = this._renderChildren().concat([
+            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_TOP),
             $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_LEFT),
             $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_RIGHT)
         ]);
