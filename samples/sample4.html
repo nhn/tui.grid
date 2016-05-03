@@ -2,17 +2,80 @@
 <html lang="ko">
 <head>
     <meta charset="utf-8">
-    <title>그리드 기본 예제</title>
+    <title>Theme sample</title>
     <link rel="stylesheet" type="text/css" href="./css/grid.css" />
     <style>
-        .red {background:red}
-        .blue {background:blue}
+    #grid {width: 600px; float:left; margin-right:20px;}
+    #theme {width: 200px; float:left;}
+    #custom-text {width: 300px; height:520px; font-size:12px;}
+    h4 {margin: 5px 0;}
+    .preset {margin-bottom:15px;}
+    .custom p {margin: 5px 0}
     </style>
-
 </head>
 <body>
-<div>
-    <div id="grid">
+<div id="grid"></div>
+    <div id="theme">
+        <div class="preset">
+            <h4>Preset</h4>
+            <button class="btn-theme" data-preset="default">default</button>
+            <button class="btn-theme" data-preset="striped">striped</button>
+            <button class="btn-theme" data-preset="clean">clean</button>
+        </div>
+        <div class="custom">
+            <h4>Custom options</h4>
+            <p><textarea id="custom-text">
+{
+    grid: {
+        background: '#fff',
+        border: '#ccc',
+        text: '#444'
+    },
+    selection: {
+        background: '#4daaf9',
+        border: '#004082'
+    },
+    toolbar: {
+        border: '#ccc',
+        background: '#fff'
+    },
+    scrollbar: {
+        background: '#f5f5f5',
+        thumb: '#d9d9d9',
+        active: '#c1c1c1'
+    },
+    cell: {
+        normal: {
+            background: '#fbfbfb',
+            border: '#e0e0e0'
+        },
+        head: {
+            background: '#eee',
+            border: '#ccc'
+        },
+        editable: {
+            background: '#fbfbfb'
+        },
+        selectedHead: {
+            background: '#d8d8d8'
+        },
+        focused: {
+            border: '#418ed4'
+        },
+        disabled: {
+            text: '#b0b0b0'
+        },
+        evenRow: {
+            background: '#fbfbfb'
+        },
+        currentRow: {
+            background: '#e0ffe0'
+        }
+    }
+}
+            </textarea></p>
+            <p><button class="btn-custom">Apply</button></p>
+        </div>
     </div>
 </div>
 </body>
@@ -23,167 +86,93 @@
 <script type="text/javascript" src="./js/lib/code-snippet.min.js"></script>
 <script type="text/javascript" src="./js/lib/pagination.min.js"></script>
 <script type="text/javascript" src="./js/grid.js"></script>
-<script type="text/javascript" src="./js/data/grid-row-2000.js"></script>
 <script type="text/javascript">
+var grid = new tui.Grid({
+    el: $('#grid'),
+	headerHeight: 40,
+	displayRowCount: 15,
+	minimumColumnWidth: 100,
+    rowHeight: 35,
+    columnModelList: [
+		{
+			columnName: '_button',
+			width: 30
+		},
+		{
+			title: 'ID',
+            columnName: 'c1',
+            align: 'center',
+            editOption: {
+                beforeContent: 'FE',
+				type: 'text'
+			}
+        },
+		{
+			title: 'Name',
+			defaultValue: 2,
+            columnName: 'c2',
+            align: 'center',
+            editOption: {
+                type: 'text',
+			}
+        },
+		{
+			title: 'Score',
+            columnName: 'c3',
+            align: 'center',
+            editOption: {
+                type: 'text',
+                afterContent: ' Point',
+			}
+        }
+	]
+});
+var rowList = [];
+(function() {
+	_.times(20, function(number) {
+	    rowList.push({
+			c1: String(Math.random()).substring(2, 10),
+            c3: Math.round(Math.random() * 10000)
+		});
+	})
+})();
 
-    var grid = new tui.Grid({
-        el: $('#grid'),
-        selectType: 'radio',
-        columnFixIndex: 5,
-        displayRowCount: 10,
-        headerHeight: 50,
-        minimumColumnWidth: 20,
-        toolbar: null,
-        columnModelList : [
-            {
-                "title" : "<b>주문번호</b>",
-                "columnName" : "productOrderNo",
-                "align" : "center",
-                "width" : 100
-            },
-            {
-                "title" : "<b>상품가격</b>",
-                "columnName" : "productPrice",
-                "align" : "right",
-                "width" : 100,
-                "editType" : "textbox",
-                "editOption" : {
-                    "checkPattern" :/[\d]+/g,
-                    "maxLength" : 10
-                },
-                "afterContent" : " 원",
-                "formatter" : function(columnValue){
-                    var sValue = String(columnValue) || "0";
-                    return sValue.replace(/(\d)(?=(\d{3})+$)/gi, "$1,")+" 원";
-                }
-            },
-            {
-                "title" : "<b>주문자</b>",
-                "columnName" : "orderer",
-                "align" : "center",
-                "width" : 100
-            },
-            {
-                "title" : "주문인 휴대폰",
-                "columnName" : "ordererPhone",
-                "align" : "center"
-            },
-            {
-                "title" : "<b>수령인</b>",
-                "columnName" : "receiver",
-                "width" : 100,
-                "align" : "center"
-            },
-            {
-                "title" : "수령인 휴대폰",
-                "columnName" : "receiverPhone",
-                "align" : "center"
-            }
-        ]
-    });
-    grid.setRowList([{
-        "_extraData" : {
-            "rowState" : "DISABLED"     // 행 선택을 불가능하게 한다.
-        },
-        "productOrderNo": 97108832,
-        "productPrice": 785000,
-        "orderer": "정형돈",
-        "ordererPhone": "01011113456",
-        "receiver": "이효리",
-        "receiverPhone": "01032707979"
-    }, {
-        "_extraData" : {
-            "rowState" : "DISABLED_CHECK"       // 행 선택은 가능하나 체크박스만 비활성화 시킨다.
-        },
-        "productOrderNo": 37593770,
-        "productPrice": 10000,
-        "orderer": "박명수",
-        "ordererPhone": "07088963041",
-        "receiver": "정준하",
-        "receiverPhone": "01032707979"
-    }, {
-        "_extraData" : {
-            "rowState" : "CHECKED"      // 행을 체크한 상태로 렌더링한다.
-        },
-        "productOrderNo": 29221898,
-        "productPrice": 12490,
-        "orderer": "길",
-        "ordererPhone": "01011113456",
-        "receiver": "박명수",
-        "receiverPhone": "01099988444"
-    }, {
-        "_extraData" : {
-            "rowSpan" : {       // 행 병합을 할 컬럼과 병합할 수를 지정한다.
-                "orderer" : 3,
-                "receiver" : 3
-            }
-        },
-        "productOrderNo": 71159901,
-        "productPrice": 785000,
-        "orderer": "박명수",
-        "ordererPhone": "01099988444",
-        "receiver": "하하",
-        "receiverPhone": "0809998877"
-    }, {
-        "productOrderNo": 57986529,
-        "productPrice": 25000,
-        "orderer": "이효리",
-        "ordererPhone": "01093118520",
-        "receiver": "유재석",
-        "receiverPhone": "0809998877"
-    }, {
-        "productOrderNo": 8144758,
-        "productPrice": 3500,
-        "orderer": "유재석",
-        "ordererPhone": "01032413241",
-        "receiver": "길",
-        "receiverPhone": "0189634100"
-    }, {
-        "_extraData" : {
-            "className" : {     // 행에 디자인 클래스를 적용한다. (다중 적용 가능)
-                "row" : ["red"]
-            }
-        },
-        "productOrderNo": 82301523,
-        "productPrice": 12490,
-        "orderer": "길",
-        "ordererPhone": "07088963041",
-        "receiver": "이효리",
-        "receiverPhone": "01093118520"
-    }, {
-        "_extraData" : {
-            "className" : {     // 특정 컬럼에만 디자인 클래스를 적용한다. (다중 적용 가능)
-                "column" : {
-                    "orderer" : ["blue"]
-                }
-            }
-        },
-        "productOrderNo": 64918427,
-        "productPrice": 65000,
-        "orderer": "정형돈",
-        "ordererPhone": "01011113456",
-        "receiver": "정형돈",
-        "receiverPhone": "07088963041"
-    }, {
-        "_extraData" : {
-            "rowSpan" : {
-                "orderer" : 2,
-                "receiver" : 2
-            }
-        },
-        "productOrderNo": 38857278,
-        "productPrice": 17000,
-        "orderer": "길",
-        "ordererPhone": "0189634100",
-        "receiver": "정준하",
-        "receiverPhone": "0189634100"
-    }, {
-        "productOrderNo": 51874887,
-        "productPrice": 25000,
-        "orderer": "정준하",
-        "ordererPhone": "01011113456",
-        "receiver": "이효리",
-        "receiverPhone": "0809998877"
-    }]);
+rowList[0].c2 = 'Mustafa Cosme';
+rowList[1].c2 = 'Gunnar Fausto';
+rowList[2].c2 = 'Junior Morgan';
+rowList[3].c2 = 'Tódor Ingo';
+rowList[4].c2 = 'Zezé Obadiah';
+rowList[5].c2 = 'Alfwin Damir';
+rowList[6].c2 = 'Feroz Fredrik';
+rowList[7].c2 = 'Archer Beniamino';
+rowList[8].c2 = 'Dado Shaul';
+rowList[9].c2 = 'Svetoslav Eder';
+rowList[10].c2 = 'Lauri Gligor';
+rowList[11].c2 = 'Ruben Bèr';
+rowList[12].c2 = 'Vicenç Hadrien';
+rowList[13].c2 = 'Borna Rochus';
+rowList[14].c2 = 'Kristijonas Tate';
+rowList[15].c2 = 'Georg Ormazd';
+rowList[16].c2 = 'Kumara Archimedes';
+rowList[17].c2 = 'Hershel Radomil';
+rowList[18].c2 = 'Toma Levan';
+rowList[19].c2 = 'Njord Thoko';
+
+grid.setRowList(rowList);
+
+grid.disableRow(6);
+
+var currentPresetName = 'default';
+
+$('.btn-theme').click(function() {
+    var preset = $(this).data('preset');
+    currentPresetName = preset;
+	tui.Grid.applyTheme(preset);
+});
+
+$('.btn-custom').click(function() {
+    var options = eval('(' + $('#custom-text').val() + ')');
+    tui.Grid.applyTheme(currentPresetName, options);
+});
 </script>
 </html>
