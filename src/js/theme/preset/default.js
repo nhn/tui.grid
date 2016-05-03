@@ -16,7 +16,7 @@ module.exports = {
     },
     toolbar: {
         border: '#ccc',
-        background: '#transparent'
+        background: 'transparent'
     },
     scrollbar: {
         background: '#f5f5f5',
@@ -26,11 +26,15 @@ module.exports = {
     cell: {
         normal: {
             background: '#fbfbfb',
-            border: '#e0e0e0'
+            border: '#e0e0e0',
+            showVerticalBorder: true,
+            showHorizontalBorder: true
         },
         head: {
             background: '#eee',
-            border: '#ccc'
+            border: '#ccc',
+            showVerticalBorder: true,
+            showHorizontalBorder: true
         },
         selectedHead: {
             background: '#d8d8d8'

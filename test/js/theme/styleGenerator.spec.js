@@ -14,6 +14,7 @@ describe('theme/styleGenerator: ', function() {
         var expected = [
             '.' + classNameConst.CONTAINER + '{background-color:white;border-color:green;color:blue}',
             '.' + classNameConst.TABLE + '{border-color:green}',
+            '.' + classNameConst.HEAD_AREA + '{border-color:green}',
             '.' + classNameConst.BORDER_LINE + '{background-color:green}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{border-color:green}',
             '.' + classNameConst.SCROLLBAR_BORDER + '{background-color:green}'

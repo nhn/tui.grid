@@ -22,7 +22,9 @@ module.exports = $.extend(true, {}, presetDefault, {
         },
         head: {
             background: '#fff',
-            border: '#e0e0e0'
+            border: '#e0e0e0',
+            showVerticalBorder: false,
+            showHorizontalBorder: true
         },
         selectedHead: {
             background: '#e0e0e0'
