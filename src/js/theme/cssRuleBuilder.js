@@ -122,7 +122,7 @@ module.exports = {
      * Creates an array of new Builder instances for the -webkit-scrollbar styles.
      * @param {String} selector - selector
      * @param {Object} options - options
-     * @returns {String}
+     * @returns {Array.<CSSRuleBuilder>}
      */
     createWebkitScrollbarRules: function(selector, options) {
         return [
@@ -136,7 +136,7 @@ module.exports = {
      * Creates a builder instance for the IE scrollbar styles.
      * @param {String} selector - selector
      * @param {Object} options - options
-     * @returns {String}
+     * @returns {Array.<CSSRuleBuilder>}
      */
     createIEScrollbarRule: function(selector, options) {
         var bgProps = [
