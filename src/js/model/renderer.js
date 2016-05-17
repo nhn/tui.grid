@@ -529,9 +529,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _executeRelation: function(rowIndex) {
-        var row = this.dataModel.at(rowIndex),
-            renderIdx = rowIndex - this.get('startIndex'),
-            rowModel, relationResult;
+        var row = this.dataModel.at(rowIndex);
+        var renderIdx = rowIndex - this.get('startIndex');
+        var rowModel, relationResult;
 
         relationResult = row.executeRelationCallbacksAll();
 

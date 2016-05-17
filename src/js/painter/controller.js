@@ -80,10 +80,10 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @param {Boolean} reverse - if set to true, find the previous cell instead of next cell
      */
     focusInToNextCell: function(reverse) {
-        var focusModel = this.focusModel,
-            rowKey = focusModel.get('rowKey'),
-            columnName = focusModel.get('columnName'),
-            nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
+        var focusModel = this.focusModel;
+        var rowKey = focusModel.get('rowKey');
+        var columnName = focusModel.get('columnName');
+        var nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
 
         if (columnName !== nextColumnName) {
             focusModel.focusIn(rowKey, nextColumnName, true);
@@ -96,9 +96,9 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @param {{rowKey:String, columnName:String}} address - cell address
      */
     executeCustomInputEventHandler: function(event, address) {
-        var columnModel = this.columnModel.getColumnModel(address.columnName),
-            eventType = event.type,
-            eventHandler;
+        var columnModel = this.columnModel.getColumnModel(address.columnName);
+        var eventType = event.type;
+        var eventHandler;
 
         if (eventType === 'focusin') {
             eventType = 'focus';

@@ -361,9 +361,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param {Object} param - Key-Value pair of the data to change
      */
     setCell: function(columnName, param) {
-        var isValueChanged = false,
-            changed = [],
-            rowIndex, rowKey, data;
+        var isValueChanged = false;
+        var changed = [];
+        var rowIndex, rowKey, data;
 
         if (!this.has(columnName)) {
             return;
@@ -385,7 +385,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             this.set(columnName, data, {
                 silent: this._shouldSetSilently(data, isValueChanged)
             });
-            if (isValueChanged && !data.isEditing) {
+            if (isValueChanged) {
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
@@ -402,9 +402,15 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.isEditing && valueChanged;
         var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
-        var editingStarted = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
 
-        return valueChangedOnEditing || (useViewMode && editingStarted);
+        // Silent Cases
+        // 1: If values have been changed while the isEditing is true,
+        //    prevent the related cell-view from changing its value-state until editing is finished.
+        // 2: If useViewMode is true and isEditing is changing to true,
+        //    prevent the related cell-view from changing its state to enable editing,
+        //    as the editing-layer will be used for editing instead.
+        return valueChangedOnEditing || (useViewMode && editingChangedToTrue);
     }
 });
 

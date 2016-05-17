@@ -188,15 +188,15 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {jQuery} $td - cell element
      */
     refresh: function(cellData, $td) {
-        var contentProps = ['value', 'isEditing', 'isDisabled'];
-        var isEditingChanged = _.contains(cellData.changed, 'isEditing');
+        var contentProps = ['value', 'isEditing', 'isDisabled', 'optionList'];
+        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
 
         delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
         $td.attr(attrs);
 
-        if (isEditingChanged && cellData.isEditing && !this._isUsingViewMode(cellData)) {
+        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
             this.inputPainter.focus($td);
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
