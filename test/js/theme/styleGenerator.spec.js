@@ -12,7 +12,8 @@ describe('theme/styleGenerator: ', function() {
             text: 'blue'
         };
         var expected = [
-            '.' + classNameConst.CONTAINER + '{background-color:white;border-color:green;color:blue}',
+            '.' + classNameConst.CONTAINER + '{background-color:white;color:blue}',
+            '.' + classNameConst.CONTENT_AREA + '{border-color:green}',
             '.' + classNameConst.TABLE + '{border-color:green}',
             '.' + classNameConst.HEAD_AREA + '{border-color:green}',
             '.' + classNameConst.BORDER_LINE + '{background-color:green}',
