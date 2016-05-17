@@ -52,17 +52,11 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
      * @override
      */
     afterRender: function() {
-        var dimensionModel = this.dimensionModel,
-            $scrollOverlay;  // overlay DIV to hide scrollbar UI
-
-        if (!dimensionModel.get('scrollX')) {
+        if (!this.dimensionModel.get('scrollX')) {
             return;
         }
 
-        $scrollOverlay = $('<div>')
-            .addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM)
-            .css('bottom', dimensionModel.get('toolbarHeight'));
-        this.$el.append($scrollOverlay);
+        this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM));
     }
 });
 

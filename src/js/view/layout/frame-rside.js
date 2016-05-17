@@ -114,9 +114,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
-            $scrollCorner = $('<div />')
-                .addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
-                .css('bottom', dimensionModel.get('toolbarHeight'));
+            $scrollCorner = $('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM);
             this.$el.append($scrollCorner);
         }
 

@@ -58,8 +58,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var factory = this.viewFactory;
 
         this._addChildren([
-            factory.createFrame('L'),
-            factory.createFrame('R'),
+            factory.createContentArea(),
             factory.createToolbar(),
             factory.createStateLayer(),
             factory.createEditingLayer(),
@@ -98,9 +97,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent),
-            $target = $(mouseEvent.target),
-            cellInfo;
+        var eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
+        var cellInfo;
 
         this.trigger('click', eventData);
         if (eventData.isStopped()) {
@@ -121,8 +120,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onDblClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent),
-            $target = $(mouseEvent.target);
+        var eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
 
         this.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
@@ -154,8 +153,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
      */
     _onMouseOut: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            eventData;
+        var $target = $(mouseEvent.target);
+        var eventData;
 
         if (this._isCellElement($target)) {
             eventData = new GridEvent(mouseEvent);
@@ -172,6 +171,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     _triggerCellMouseEvent: function(eventName, eventData, cell) {
         var cellInfo = cell;
+
         if (cell instanceof $) {
             cellInfo = this._getCellInfoFromElement(cell);
         }
@@ -218,8 +218,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onMouseDown: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
+        var eventData = new GridEvent(mouseEvent);
 
         this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {
@@ -245,41 +245,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {module:view/container} this object
      */
     render: function() {
-        var childElements = this._renderChildren().concat([
-            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_TOP),
-            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_LEFT),
-            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_RIGHT)
-        ]);
+        var childElements = this._renderChildren();
 
         this.$el.addClass(classNameConst.CONTAINER)
             .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
 
-        if (!this.dimensionModel.get('scrollX')) {
-            this.$el.addClass(classNameConst.NO_SCROLL_X);
-        }
-
-        this._appendBottomLine();
         this._refreshHeight();
         this.trigger('rendered');
         return this;
-    },
-
-    /**
-     * Appends botton line of data
-     * @private
-     */
-    _appendBottomLine: function() {
-        var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
-        var $line = $('<div>')
-            .addClass(classNameConst.BORDER_BOTTOM)
-            .addClass(classNameConst.BORDER_LINE)
-            .css('bottom', bottomPos);
-
-        if (!this.dimensionModel.get('scrollY')) {
-            $line.addClass(classNameConst.NO_SCROLL_Y);
-        }
-        this.$el.append($line);
     },
 
     /**

@@ -5,6 +5,7 @@
 'use strict';
 
 var ContainerView = require('./container');
+var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./layout/toolbar');
 var ToolbarControlPanelView = require('./layout/toolbar/controlPanel');
 var ToolbarPaginationView = require('./layout/toolbar/pagination');
@@ -36,7 +37,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates container view and returns it.
      * @param {Object} options - Options set by user
-     * @returns {module:view/container} - New container view instance
+     * @returns {module:view/container}
      */
     createContainer: function(options) {
         return new ContainerView({
@@ -46,6 +47,17 @@ var ViewFactory = tui.util.defineClass({
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
             gridId: this.modelManager.gridId,
+            viewFactory: this
+        });
+    },
+
+    /**
+     * Creates a view instance for the contents area.
+     * @returns {module:view/layout/content-area}
+     */
+    createContentArea: function() {
+        return new ContentAreaView({
+            dimensionModel: this.modelManager.dimensionModel,
             viewFactory: this
         });
     },

@@ -34,8 +34,8 @@ module.exports = {
     grid: function(options) {
         var containerRule = classRule(classNameConst.CONTAINER)
             .bg(options.background)
-            .border(options.border)
             .text(options.text);
+        var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
         var tableRule = classRule(classNameConst.TABLE).border(options.border);
         var headRule = classRule(classNameConst.HEAD_AREA).border(options.border);
         var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
@@ -44,6 +44,7 @@ module.exports = {
 
         return builder.buildAll([
             containerRule,
+            contentAreaRule,
             tableRule,
             headRule,
             borderLineRule,

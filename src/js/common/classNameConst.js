@@ -31,6 +31,7 @@ var classNames = {
     BORDER_BOTTOM: 'border-line-bottom',
 
     // layout (area)
+    CONTENT_AREA: 'content-area',
     LSIDE_AREA: 'lside-area',
     RSIDE_AREA: 'rside-area',
     HEAD_AREA: 'head-area',

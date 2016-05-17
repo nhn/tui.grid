@@ -25,8 +25,18 @@
     left 0
     right 17px
     height 1px
-    &.no-scroll-y
-        right 0
+
+.no-scroll-x .border-line-bottom,
+.no-scroll-y .border-line-bottom
+    right 0
+
+.content-area
+    position relative
+    border-style solid
+    border-width 0 0 1px
+
+    &.no-scroll-x
+        border-bottom-width 0
 
 .head-area
     border-style solid
@@ -34,7 +44,6 @@
 
 .lside-area
     display none
-    height 100%
     position absolute
     top 0
     left 0
@@ -54,7 +63,6 @@
 
 .rside-area
     display none
-    height 100%
     overflow hidden
 
     .head-area
