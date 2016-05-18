@@ -42,6 +42,7 @@ module.exports = function(config) {
 
             'src/js/**/*.js',
             'test/**/*.spec.js'
+            // 'test/js/addon/net.spec.js'
         ],
 
         // list of files to exclude
@@ -156,6 +157,6 @@ module.exports = function(config) {
         },
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: true
+        singleRun: false
     });
 };

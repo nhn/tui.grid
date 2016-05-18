@@ -1,6 +1,5 @@
 'use strict';
 
-var util = require('common/util');
 var Model = require('base/model');
 var formUtil = require('common/formUtil');
 var renderStateMap = require('common/constMap').renderState;
@@ -16,20 +15,14 @@ describe('addon.net', function() {
         {c1: '3-1'}
     ];
 
-    var originalformData = {
-        delivery_number: 1111,
-        user_name: 'john_doe',
-        weather: 'fall',
-        gender: 'male',
-        hobby: ['sport']
-    };
-
     var grid, $grid, net;
 
     function createNet(options) {
         grid.use('Net', options);
         net = grid.getAddOn('Net');
-        net._isConfirmed = function() {return true;}
+        net._isConfirmed = function() {
+            return true;
+        };
     }
 
     beforeEach(function() {
@@ -42,8 +35,9 @@ describe('addon.net', function() {
             selectType: 'checkbox'
         });
         window.alert = function() {};
-        window.confirm = function() {return true};
-
+        window.confirm = function() {
+            return true;
+        };
         jasmine.clock().install();
         jasmine.Ajax.install();
     });
@@ -205,50 +199,48 @@ describe('addon.net', function() {
         });
     });
 
-    describe('_readDataAt', function() {
-        it('기본적으로 ajaxHistory를 사용하며, ajax history를 사용한다면, router.navigate를 호출하여 url을 변경한다.', function() {
-            createNet({
-                api: {
-                    readData: '/api/read'
-                }
-            });
-            net.router.navigate = jasmine.createSpy('navigate');
-            net._readDataAt(1);
+    it('_readDataAt: 기본적으로 ajaxHistory를 사용하며, ajax history를 사용한다면, router.navigate를 호출하여 url을 변경한다.', function() {
+        createNet({
+            api: {
+                readData: '/api/read'
+            }
+        });
+        net.router.navigate = jasmine.createSpy('navigate');
+        net._readDataAt(1);
 
-            expect(net.router.navigate).toHaveBeenCalled();
+        expect(net.router.navigate).toHaveBeenCalled();
+    });
+
+    it('_readDataAt: isUsingRequestedData가 true일 경우, formData 변경여부와 관계없이 이전 질의한 데이터로 질의한다.', function() {
+        var request,
+            beforeRequesteData,
+            afterRequesteData,
+            $form = $('<form />');
+
+        $form.append($('<input />').attr('name', 'input1'));
+        $form.append($('<input />').attr('name', 'input2'));
+        createNet({
+            el: $form,
+            api: {
+                readData: '/api/read'
+            }
         });
 
-        it('isUsingRequestedData가 true일 경우, formData 변경여부와 관계없이 이전 질의한 데이터로 질의한다.', function() {
-            var request,
-                beforeRequesteData,
-                afterRequesteData,
-                $form = $('<form />');
+        net.router.navigate = jasmine.createSpy('navigate');
+        net._readDataAt(1);
+        request = jasmine.Ajax.requests.mostRecent();
+        beforeRequesteData = $.extend(true, {}, request.data());
 
-            $form.append($('<input />').attr('name', 'input1'));
-            $form.append($('<input />').attr('name', 'input2'));
-            createNet({
-                el: $form,
-                api: {
-                    readData: '/api/read'
-                }
-            });
-
-            net.router.navigate = jasmine.createSpy('navigate');
-            net._readDataAt(1);
-            request = jasmine.Ajax.requests.mostRecent();
-            beforeRequesteData = $.extend(true, {}, request.data());
-
-            //request 요청 후 form data 를 변경한다.
-            net._setFormData({
-                input1: 'data1',
-                input2: 'data2'
-            });
-            net._readDataAt(1, true);
-            request = jasmine.Ajax.requests.mostRecent();
-            afterRequesteData = $.extend(true, {}, request.data());
-
-            expect(beforeRequesteData).toEqual(afterRequesteData);
+        //request 요청 후 form data 를 변경한다.
+        net._setFormData({
+            input1: 'data1',
+            input2: 'data2'
         });
+        net._readDataAt(1, true);
+        request = jasmine.Ajax.requests.mostRecent();
+        afterRequesteData = $.extend(true, {}, request.data());
+
+        expect(beforeRequesteData).toEqual(afterRequesteData);
     });
 
     describe('lock', function() {
