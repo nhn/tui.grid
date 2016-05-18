@@ -75,32 +75,29 @@ describe('grid paste test', function() {
         // todo: focus, selection model test
     });
 
-    describe('_paste', function() {
-        var runned;
+    describe('_pasteWhenKeyupCharV', function() {
+        var pasteToGridSpy;
         beforeEach(function() {
-            runned = false;
-            clipboard._onKeyupCharV = function() {
-                runned = true;
-            };
+            pasteToGridSpy = spyOn(clipboard, '_pasteToGrid');
         });
+
         it('paste date, while pasting', function() {
             clipboard.pasting = true;
-            clipboard._paste();
-            expect(runned).toBe(false);
+            clipboard._pasteWhenKeyupCharV();
+            expect(pasteToGridSpy).not.toHaveBeenCalled();
         });
 
         it('paste date, while idle', function() {
-            clipboard._paste();
-            expect(runned).toBe(true);
+            clipboard._pasteWhenKeyupCharV();
+            clipboard.$el.trigger('keyup');
+            expect(pasteToGridSpy).toHaveBeenCalled();
         });
     });
 
     describe('keyup event fire flow', function() {
-        var result,
-            txt;
+        var result;
 
         beforeEach(function() {
-            clipboard.pasting = false;
             clipboard.dataModel = {
                 paste: function(r) {
                     result = r;
@@ -108,24 +105,12 @@ describe('grid paste test', function() {
             };
         });
 
-        it('change pasting', function() {
-            var fststatus = clipboard.pasting,
-                sndstatus;
-            clipboard._paste();
-            sndstatus = clipboard.pasting;
-            clipboard.onKeyupCharV();
-            expect(clipboard.pasting).toBe(fststatus);
-            expect(clipboard.pasting).not.toBe(sndstatus);
-        });
-
         it('result check', function() {
-            var res;
-            clipboard._paste();
-            txt = 'aaa\tbbb\tccc\nddd\teee\tfff';
-            clipboard.$el.val(txt);
-            clipboard.onKeyupCharV();
-            res = clipboard._getProcessClipBoardData();
-            expect(res).toEqual(result);
+            var text = 'aaa\tbbb\tccc\nddd\teee\tfff';
+
+            clipboard.$el.val(text);
+            clipboard._pasteToGrid();
+            expect(clipboard._getProcessClipBoardData()).toEqual(result);
         });
     });
 });

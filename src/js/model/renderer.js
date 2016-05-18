@@ -101,8 +101,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollLeft: function() {
-        var dimension = this.dimensionModel,
-            maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
+        var dimension = this.dimensionModel;
+        var maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
                 dimension.getScrollYWidth();
 
         this.set('maxScrollLeft', maxScrollLeft);
@@ -113,9 +113,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollTop: function() {
-        var dimension = this.dimensionModel,
-            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
-                dimension.get('scrollBarSize');
+        var dimension = this.dimensionModel;
+        var maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
+            dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
     },
@@ -243,7 +243,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             startIndex: 0,
             endIndex: 0
         });
-        this.refresh(true);
+        this.refresh({
+            columnModelChanged: true
+        });
     },
 
     /**
@@ -251,7 +253,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onDataModelChange: function() {
-        this.refresh(false, true);
+        this.refresh({
+            dataModelChanged: true
+        });
     },
 
     /**
@@ -261,7 +265,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onAddDataModel: function(dataModel, options) {
-        this.refresh(false, true);
+        this.refresh({
+            dataModelChanged: true
+        });
 
         if (options.focus) {
             this.focusModel.focusAt(options.at, 0);
@@ -325,9 +331,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _getColumnNamesOfEachSide: function() {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            columnModels = this.columnModel.getVisibleColumnModelList(null, true),
-            columnNames = _.pluck(columnModels, 'columnName');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnModels = this.columnModel.getVisibleColumnModelList(null, true);
+        var columnNames = _.pluck(columnModels, 'columnName');
 
         return {
             lside: columnNames.slice(0, columnFixCount),
@@ -354,12 +360,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
-        var columnNamesMap = this._getColumnNamesOfEachSide(),
-            rowNum = this.get('startNumber') + startIndex,
-            height = this.dimensionModel.get('rowHeight'),
-            lsideData = [],
-            rsideData = [],
-            rowDataModel, i;
+        var columnNamesMap = this._getColumnNamesOfEachSide();
+        var rowNum = this.get('startNumber') + startIndex;
+        var height = this.dimensionModel.get('rowHeight');
+        var lsideData = [];
+        var rsideData = [];
+        var rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
@@ -422,10 +428,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
-     * @param {Boolean} columnModelChanged - The boolean value whether columnModel has changed
-     * @param {Boolean} dataModelChanged - The boolean value whether dataModel has changed
+     * @param {Object} options - options
+     * @param {Boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
+     * @param {Boolean} [options.dataModelChanged] - The boolean value whether dataModel has changed
      */
-    refresh: function(columnModelChanged, dataModelChanged) {
+    refresh: function(options) {
         var startIndex, endIndex, i;
 
         this._setRenderingRange(this.get('scrollTop'));
@@ -441,10 +448,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this._executeRelation(i);
         }
 
-        if (columnModelChanged) {
-            this.trigger('columnModelChanged');
-        } else {
-            this.trigger('rowListChanged', dataModelChanged);
+        if (options) {
+            if (options.columnModelChanged) {
+                this.trigger('columnModelChanged');
+            } else {
+                this.trigger('rowListChanged', options.dataModelChanged);
+            }
         }
         this._refreshState();
     },
@@ -468,8 +477,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _getCollectionByColumnName: function(columnName) {
-        var lside = this.get('lside'),
-            collection;
+        var lside = this.get('lside');
+        var collection;
 
         if (lside.at(0) && lside.at(0).get(columnName)) {
             collection = lside;
@@ -514,12 +523,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      }
      */
     getCellData: function(rowKey, columnName) {
-        var row = this._getRowModel(rowKey, columnName),
-            cellData = null;
+        var row = this._getRowModel(rowKey, columnName);
+        var cellData = null;
 
         if (row) {
             cellData = row.get(columnName);
         }
+
         return cellData;
     },
 

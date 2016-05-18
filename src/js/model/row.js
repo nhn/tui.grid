@@ -19,9 +19,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} options - Options
      */
     initialize: function(attributes) {
-        var rowKey = attributes && attributes.rowKey,
-            dataModel = this.collection.dataModel,
-            rowData = dataModel.get(rowKey);
+        var rowKey = attributes && attributes.rowKey;
+        var dataModel = this.collection.dataModel;
+        var rowData = dataModel.get(rowKey);
 
         this.dataModel = dataModel;
         this.columnModel = this.collection.columnModel;
@@ -99,18 +99,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
-        var dataModel = this.collection.dataModel,
-            columnNames = this._getColumnNameList(),
-            param;
+        var dataModel = this.collection.dataModel;
+        var columnNames = this._getColumnNameList();
+        var param;
 
         if (tui.util.isUndefined(this.collection)) {
             return;
         }
 
         _.each(columnNames, function(columnName) {
-            var cellData = this.get(columnName),
-                rowModel = this, // eslint-disable-line consistent-this
-                cellState;
+            var cellData = this.get(columnName);
+            var rowModel = this; // eslint-disable-line consistent-this
+            var cellState;
 
             if (!tui.util.isUndefined(cellData)) {
                 cellState = this.rowData.getCellState(columnName);
@@ -226,10 +226,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueAttrs: function(value, row, column, isTextType) {
-        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent'),
-            afterContent = tui.util.pick(column, 'editOption', 'afterContent'),
-            converter = tui.util.pick(column, 'editOption', 'converter'),
-            rowAttrs = row.toJSON();
+        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent');
+        var afterContent = tui.util.pick(column, 'editOption', 'afterContent');
+        var converter = tui.util.pick(column, 'editOption', 'converter');
+        var rowAttrs = row.toJSON();
 
         return {
             value: this._getValueToDisplay(value, column, isTextType),
@@ -307,9 +307,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueToDisplay: function(value, column, isTextType) {
-        var isExisty = tui.util.isExisty,
-            notUseHtmlEntity = column.notUseHtmlEntity,
-            defaultValue = column.defaultValue;
+        var isExisty = tui.util.isExisty;
+        var notUseHtmlEntity = column.notUseHtmlEntity;
+        var defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
