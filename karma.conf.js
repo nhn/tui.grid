@@ -27,7 +27,6 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             {pattern: 'lib/jquery/jquery.js', watched: false},
-            {pattern: 'lib/jquery-json/src/jquery.json.js', watched: false},
             {pattern: 'lib/underscore/underscore.js', watched: false},
             {pattern: 'lib/backbone/backbone.js', watched: false},
             {pattern: 'lib/tui-code-snippet/code-snippet.js', watched: false},
