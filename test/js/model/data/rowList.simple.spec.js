@@ -47,10 +47,10 @@ describe('Data.RowList - simple', function() {
         });
 
         it('두번째 파라미터가 true이면 json문자열 형태로 반환한다.', function() {
-            var rowData = rowList.getRowData(0),
-                rowDataJSON = rowList.getRowData(0, true);
+            var rowData = rowList.getRowData(0);
+            var rowDataJSON = rowList.getRowData(0, true);
 
-            expect($.toJSON(rowData)).toEqual(rowDataJSON);
+            expect(JSON.stringify(rowData)).toEqual(rowDataJSON);
         });
     });
 
@@ -61,7 +61,7 @@ describe('Data.RowList - simple', function() {
         });
 
         it('두번째 파라미터가 true이면 json문자열 형태로 반환한다.', function() {
-            expect($.toJSON(rowList.getRowDataAt(0))).toBe(rowList.getRowDataAt(0, true));
+            expect(JSON.stringify(rowList.getRowDataAt(0))).toBe(rowList.getRowDataAt(0, true));
         });
     });
 
@@ -165,10 +165,10 @@ describe('Data.RowList - simple', function() {
         });
 
         it('인자로 들어온 열에 대한 데이터를 json 스트링으로 반환한다.', function() {
-            var values = rowList.getColumnValues('c1'),
-                valuesJSON = rowList.getColumnValues('c1', true);
+            var values = rowList.getColumnValues('c1');
+            var valuesJSON = rowList.getColumnValues('c1', true);
 
-            expect($.toJSON(values)).toBe(valuesJSON);
+            expect(JSON.stringify(values)).toBe(valuesJSON);
         });
     });
 

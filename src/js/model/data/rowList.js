@@ -528,7 +528,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var row = this.get(rowKey),
             rowData = row ? row.toJSON() : null;
 
-        return isJsonString ? $.toJSON(rowData) : rowData;
+        return isJsonString ? JSON.stringify(rowData) : rowData;
     },
 
     /**
@@ -541,7 +541,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var row = this.at(index),
             rowData = row ? row.toJSON() : null;
 
-        return isJsonString ? $.toJSON(row) : rowData;
+        return isJsonString ? JSON.stringify(row) : rowData;
     },
 
     /**
@@ -598,7 +598,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getColumnValues: function(columnName, isJsonString) {
         var valueList = this.pluck(columnName);
-        return isJsonString ? $.toJSON(valueList) : valueList;
+        return isJsonString ? JSON.stringify(valueList) : valueList;
     },
 
     /**
@@ -839,7 +839,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var filtered = _.omit(row, filteringColumnList);
         var result = _.some(filtered, function(value, columnName) {
             if (typeof value === 'object') {
-                return ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
+                return (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
             }
             return value !== originalRow[columnName];
         }, this);

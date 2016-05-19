@@ -208,7 +208,7 @@ var util = {
 
         _.each(dataObj, function(value, name) {
             if (!_.isString(value) && !_.isNumber(value)) {
-                value = $.toJSON(value);
+                value = JSON.stringify(value);
             }
             value = encodeURIComponent(value);
             if (value) {
@@ -236,7 +236,7 @@ var util = {
             key = tmp[0];
             value = decodeURIComponent(tmp[1]);
             try {
-                value = $.parseJSON(value);
+                value = JSON.parse(value);
             } catch(e) {} // eslint-disable-line
 
             if (!_.isNull(value)) {

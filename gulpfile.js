@@ -111,14 +111,12 @@ gulp.task('deploy-image', function() {
 
 gulp.task('copy-sample-lib', function() {
     return gulp.src([
-           'lib/jquery/jquery.min.js',
-           'lib/jquery-json/src/jquery.json.js',
-           'lib/underscore/underscore.js',
-           'lib/backbone/backbone.js',
-           'lib/tui-code-snippet/code-snippet.min.js',
-           'lib/tui-component-pagination/pagination.min.js'
-       ])
-       .pipe(gulp.dest(PATH_SAMPLE + 'js/lib'));
+        'lib/jquery/jquery.min.js',
+        'lib/underscore/underscore.js',
+        'lib/backbone/backbone.js',
+        'lib/tui-code-snippet/code-snippet.min.js',
+        'lib/tui-component-pagination/pagination.min.js'
+    ]).pipe(gulp.dest(PATH_SAMPLE + 'js/lib'));
 });
 
 gulp.task('deploy', ['deploy-js', 'deploy-css', 'deploy-image', 'copy-sample-lib']);

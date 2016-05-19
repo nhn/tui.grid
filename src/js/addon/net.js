@@ -578,7 +578,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 _.each(dataMap, function(list, name) {
                     if (_.contains(checkList, name) && list.length) {
                         count += list.length;
-                        data[name] = $.toJSON(list);
+                        data[name] = JSON.stringify(list);
                     }
                 }, this);
             } else {

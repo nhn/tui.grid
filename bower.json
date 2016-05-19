@@ -25,7 +25,6 @@
   "dependencies": {
     "backbone": "~1.1.2",
     "jquery": "~1.8.3",
-    "jquery-json": "~2.5.1",
     "tui-code-snippet": "~1.0.2",
     "tui-component-pagination": "~1.0.0"
   }

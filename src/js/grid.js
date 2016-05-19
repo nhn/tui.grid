@@ -730,10 +730,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
-        var checkedRowList = this.modelManager.dataModel.getRowList(true),
-            checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
+        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+        var checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
 
-        return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
+        return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
     },
 
     /**
@@ -745,7 +745,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getCheckedRowList: function(isJsonString) {
         var checkedRowList = this.modelManager.dataModel.getRowList(true);
 
-        return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
+        return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
     },
 
     /**
