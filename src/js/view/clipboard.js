@@ -6,8 +6,10 @@
 
 var View = require('../base/view');
 var util = require('../common/util');
-var keyCodeMap = require('../common/constMap').keyCode;
 var classNameConst = require('../common/classNameConst');
+var constMap = require('../common/constMap');
+var keyCodeMap = constMap.keyCode;
+var selTypeMap = constMap.selectionType;
 
 /**
  * Clipboard view class
@@ -239,7 +241,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var index = this._getIndexBeforeMove();
         var isKeyIdentified = true;
         var isSelection = true;
-        var columnModel, scrollPosition, isValid, selectionState;
+        var columnModel, scrollPosition, isValid, selectionType;
 
         switch (keyCode) {
             case keyCodeMap.UP_ARROW:
@@ -286,10 +288,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             this._updateSelectionByKeyIn(index.row, index.column);
             scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
-                selectionState = this.selectionModel.getState();
-                if (selectionState === 'column') {
+                selectionType = this.selectionModel.getType();
+                if (selectionType === selTypeMap.COLUMN) {
                     delete scrollPosition.scrollTop;
-                } else if (selectionState === 'row') {
+                } else if (selectionType === selTypeMap.ROW) {
                     delete scrollPosition.scrollLeft;
                 }
                 this.renderModel.set(scrollPosition);

@@ -4,21 +4,9 @@
  */
 'use strict';
 
-var Model = require('../base/model'),
-    util = require('../common/util');
-
-/**
- * @ignore
- * @const
- * @type {{cell: string, row: string, column: string}}
- * @desc
- * Selection states
- */
-var SELECTION_STATE = {
-    cell: 'cell',
-    row: 'row',
-    column: 'column'
-};
+var Model = require('../base/model');
+var util = require('../common/util');
+var typeConstMap = require('../common/constMap').selectionType;
 
 /**
  * Selection Model class
@@ -44,8 +32,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             inputRange: null,
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
-            _isEnabled: true,
-            _selectionState: SELECTION_STATE.cell
+            enabled: true,
+            selectionType: typeConstMap.CELL
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -75,22 +63,22 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} state - Selection state (cell, row, column)
      */
     setState: function(state) {
-        this._selectionState = SELECTION_STATE[state] || this._selectionState;
+        this.selectionType = typeConstMap[state] || this.selectionType;
     },
 
     /**
      * Return the selection state
      * @returns {string} state - Selection state (cell, row, column)
      */
-    getState: function() {
-        return this._selectionState;
+    getType: function() {
+        return this.selectionType;
     },
 
     /**
      * Enables the selection.
      */
     enable: function() {
-        this._isEnabled = true;
+        this.enabled = true;
     },
 
     /**
@@ -98,7 +86,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     disable: function() {
         this.end();
-        this._isEnabled = false;
+        this.enabled = false;
     },
 
     /**
@@ -106,7 +94,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @returns {boolean} True if the selection is enabled.
      */
     isEnabled: function() {
-        return this._isEnabled;
+        return this.enabled;
     },
 
     /**
@@ -116,7 +104,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} state - Selection state강지
      */
     start: function(rowIndex, columnIndex, state) {
-        if (!this._isEnabled) {
+        if (!this.isEnabled()) {
             return;
         }
         this.setState(state);
@@ -147,7 +135,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     update: function(rowIndex, columnIndex, state) {
         var focusedIndex;
 
-        if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
+        if (!this.enabled || rowIndex < 0 || columnIndex < 0) {
             return;
         }
 
@@ -182,13 +170,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {number} pageY - Mouse positino Y
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
-        var minimumColumnRange = this._minimumColumnRange,
-            index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY),
-            range = {
-                row: [0, 0],
-                column: []
-            },
-            minMax;
+        var minimumColumnRange = this._minimumColumnRange;
+        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var range = {
+            row: [0, 0],
+            column: []
+        };
+        var minMax;
 
         if (!columnIndexes || !columnIndexes.length) {
             columnIndexes = [index.column];
@@ -259,9 +247,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {Number} rowIndex - Row idnex
      */
     selectRow: function(rowIndex) {
-        if (this._isEnabled) {
+        if (this.isEnabled()) {
             this.focusModel.focusAt(rowIndex, 0);
-            this.start(rowIndex, 0, SELECTION_STATE.row);
+            this.start(rowIndex, 0, typeConstMap.ROW);
             this.update(rowIndex, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -271,9 +259,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {Number} columnIdx - Column index
      */
     selectColumn: function(columnIdx) {
-        if (this._isEnabled) {
+        if (this.isEnabled()) {
             this.focusModel.focusAt(0, columnIdx);
-            this.start(0, columnIdx, SELECTION_STATE.column);
+            this.start(0, columnIdx, typeConstMap.COLUMN);
             this.update(this.dataModel.length - 1, columnIdx);
         }
     },
@@ -282,8 +270,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Selects all data range.
      */
     selectAll: function() {
-        if (this._isEnabled) {
-            this.start(0, 0, SELECTION_STATE.cell);
+        if (this.isEnabled()) {
+            this.start(0, 0, typeConstMap.CELL);
             this.update(this.dataModel.length - 1, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -294,6 +282,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     getStartIndex: function() {
         var range = this.get('range');
+
         return {
             row: range.row[0],
             column: range.column[0]
@@ -306,6 +295,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     getEndIndex: function() {
         var range = this.get('range');
+
         return {
             row: range.row[1],
             column: range.column[1]
@@ -327,10 +317,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @returns {Boolean}
      */
     _isSingleCell: function(columnNameList, rowList) {
-        var isSingleColumn = columnNameList.length === 1,
-            isSingleRow = rowList.length === 1,
-            isSingleMergedCell = isSingleColumn && !isSingleRow &&
-                (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
+        var isSingleColumn = columnNameList.length === 1;
+        var isSingleRow = rowList.length === 1;
+        var isSingleMergedCell = isSingleColumn && !isSingleRow &&
+            (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
 
         return (isSingleColumn && isSingleRow) || isSingleMergedCell;
     },
@@ -340,8 +330,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @returns {String} string of values
      */
     getValuesToString: function() {
-        var range = this.get('range'),
-            columnModelList, rowList, columnNameList, rowValues;
+        var range = this.get('range');
+        var columnModelList, rowList, columnNameList, rowValues;
 
         columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
         rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
@@ -396,8 +386,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _adjustScrollLeft: function(overflowX, scrollLeft, maxScrollLeft) {
-        var adjusted = scrollLeft,
-            pixelScale = this.scrollPixelScale;
+        var adjusted = scrollLeft;
+        var pixelScale = this.scrollPixelScale;
 
         if (overflowX < 0) {
             adjusted = Math.max(0, scrollLeft - pixelScale);
@@ -415,8 +405,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _adjustScrollTop: function(overflowY, scrollTop, maxScrollTop) {
-        var adjusted = scrollTop,
-            pixelScale = this.scrollPixelScale;
+        var adjusted = scrollTop;
+        var pixelScale = this.scrollPixelScale;
 
         if (overflowY < 0) {
             adjusted = Math.max(0, scrollTop - pixelScale);
@@ -432,8 +422,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _resetRangeAttribute: function(inputRange) {
-        var dataModel = this.dataModel,
-            hasSpannedRange, spannedRange, tmpRowRange;
+        var dataModel = this.dataModel;
+        var hasSpannedRange, spannedRange, tmpRowRange;
 
         inputRange = inputRange || this.inputRange;
         if (!inputRange) {
@@ -459,14 +449,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         this._setRangeMinMax(spannedRange.row, spannedRange.column);
-        switch (this._selectionState) {
-            case SELECTION_STATE.column:
+        switch (this.selectionType) {
+            case typeConstMap.COLUMN:
                 spannedRange.row = [0, dataModel.length - 1];
                 break;
-            case SELECTION_STATE.row:
+            case typeConstMap.ROW:
                 spannedRange.column = [0, this.columnModel.getVisibleColumnModelList().length - 1];
                 break;
-            case SELECTION_STATE.cell:
+            case typeConstMap.CELL:
             default:
                 break;
         }
@@ -513,13 +503,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _concatRowSpanIndexFromStart: function(param) {
-        var startIndex = param.startIndex,
-            endIndex = param.endIndex,
-            columnName = param.columnName,
-            rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
-            startIndexList = param.startIndexList,
-            endIndexList = param.endIndexList,
-            spannedIndex;
+        var startIndex = param.startIndex;
+        var endIndex = param.endIndex;
+        var columnName = param.columnName;
+        var rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName];
+        var startIndexList = param.startIndexList;
+        var endIndexList = param.endIndexList;
+        var spannedIndex;
 
         if (!rowSpanData) {
             return;
@@ -542,12 +532,12 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _concatRowSpanIndexFromEnd: function(param) {
-        var endIndex = param.endIndex,
-            columnName = param.columnName,
-            rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
-            endIndexList = param.endIndexList,
-            dataModel = param.dataModel,
-            spannedIndex, tmpRowSpanData;
+        var endIndex = param.endIndex;
+        var columnName = param.columnName;
+        var rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName];
+        var endIndexList = param.endIndexList;
+        var dataModel = param.dataModel;
+        var spannedIndex, tmpRowSpanData;
 
         if (!rowSpanData) {
             return;
@@ -574,14 +564,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _getRowSpannedIndex: function(spannedRange) {
         var columnModelList = this.columnModel.getVisibleColumnModelList()
-                .slice(spannedRange.column[0], spannedRange.column[1] + 1),
-            dataModel = this.dataModel,
-            startIndexList = [spannedRange.row[0]],
-            endIndexList = [spannedRange.row[1]],
-            startRow = dataModel.at(spannedRange.row[0]),
-            endRow = dataModel.at(spannedRange.row[1]),
-            newSpannedRange = $.extend({}, spannedRange),
-            startRowSpanDataMap, endRowSpanDataMap, columnName, param;
+            .slice(spannedRange.column[0], spannedRange.column[1] + 1);
+        var dataModel = this.dataModel;
+        var startIndexList = [spannedRange.row[0]];
+        var endIndexList = [spannedRange.row[1]];
+        var startRow = dataModel.at(spannedRange.row[0]);
+        var endRow = dataModel.at(spannedRange.row[1]);
+        var newSpannedRange = $.extend({}, spannedRange);
+        var startRowSpanDataMap, endRowSpanDataMap, columnName, param;
 
         if (!startRow || !endRow) {
             return newSpannedRange;

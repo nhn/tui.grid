@@ -3,7 +3,9 @@
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var Clipboard = require('view/clipboard');
-var keyCodeMap = require('common/constMap').keyCode;
+var constMap = require('common/constMap');
+var keyCodeMap = constMap.keyCode;
+var selectionTypeMap = constMap.selectionType;
 
 describe('view.clipboard', function() {
     var modelManager, timeoutDelay = 0;
@@ -19,8 +21,8 @@ describe('view.clipboard', function() {
     }
 
     beforeEach(function() {
-        var $el = setFixtures('<div />'),
-            domState = new DomState($el);
+        var $el = jasmine.getFixtures().set('<div />');
+        var domState = new DomState($el);
 
         modelManager = new ModelManager({
             el: $el,
@@ -336,28 +338,28 @@ describe('view.clipboard', function() {
                     modelManager.renderModel.set.calls.reset();
                 });
 
-                it('if selection state is "column", should set a scrollPosition to render model without scrollTop', function() {
+                it('if selection state is COLUMN, set a scrollPosition to render model without scrollTop', function() {
                     var scrollPosition = {
                         asymmetricMatch: function(actual) {
-                            return actual && actual.scrollLeft && !actual.scrollTop
+                            return actual && actual.scrollLeft && !actual.scrollTop;
                         }
                     };
                     modelManager.focusModel.focusAt(1, 1);
-                    modelManager.selectionModel.setState('column');
+                    modelManager.selectionModel.setState(selectionTypeMap.COLUMN);
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);
                     expect(modelManager.renderModel.set).toHaveBeenCalledWith(scrollPosition);
                 });
 
-                it('if selection state is "row", should set a scrollPosition to render model without scrollLeft', function() {
+                it('if selection state is ROW, set a scrollPosition to render model without scrollLeft', function() {
                     var scrollPosition = {
                         asymmetricMatch: function(actual) {
-                            return actual && actual.scrollTop && !actual.scrollLeft
+                            return actual && actual.scrollTop && !actual.scrollLeft;
                         }
                     };
                     modelManager.focusModel.focusAt(1, 1);
-                    modelManager.selectionModel.setState('row');
+                    modelManager.selectionModel.setState(selectionTypeMap.ROW);
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);
@@ -467,10 +469,10 @@ describe('view.clipboard', function() {
                     modelManager.selectionModel.inputRange = {
                         row: [2, 2],
                         column: [1, 1]
-                    }
+                    };
                 });
                 clipboard._updateSelectionByKeyIn(2, 1);
-                expect(modelManager.selectionModel.start).toHaveBeenCalledWith(0, 0, undefined);
+                expect(modelManager.selectionModel.start).toHaveBeenCalledWith(0, 0, undefined); // eslint-disable-line
             });
         });
 
@@ -511,7 +513,7 @@ describe('view.clipboard', function() {
             it('Call deffered function of the clipboard.refreshFocusState()', function() {
                 jasmine.clock().install();
 
-                spyOn(modelManager.focusModel, 'refreshState')
+                spyOn(modelManager.focusModel, 'refreshState');
                 clipboard._onBlur();
 
                 expect(modelManager.focusModel.refreshState).not.toHaveBeenCalled();

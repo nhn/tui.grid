@@ -53,5 +53,10 @@ module.exports = {
         DEFAULT: 'default',
         STRIPED: 'striped',
         CLEAN: 'clean'
+    },
+    selectionType: {
+        CELL: 'CELL',
+        ROW: 'ROW',
+        COLUMN: 'COLUMN'
     }
 };
