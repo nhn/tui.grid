@@ -275,13 +275,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Resets dummy rows and trigger 'rowListChanged' event.
+     * Resets dummy rows and trigger 'dataModelChanged' event.
      * @private
      */
     _resetDummyRows: function() {
         this._clearDummyRows();
         this._fillDummyRows();
-        this.trigger('rowListChanged');
+        this.trigger('dataModelChanged');
     },
 
     /**
@@ -452,7 +452,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             if (options.columnModelChanged) {
                 this.trigger('columnModelChanged');
             } else {
-                this.trigger('rowListChanged', options.dataModelChanged);
+                this.trigger('dataModelChanged', options.dataModelChanged);
             }
         }
         this._refreshState();

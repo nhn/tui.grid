@@ -43,12 +43,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'rowListChanged', this.render);
+            .listenTo(renderModel, 'dataModelChanged', this.render);
 
         if (this.whichSide === 'L') {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
                 .listenTo(selectionModel, 'change:range', this._refreshSelectedMetaColumns)
-                .listenTo(renderModel, 'rowListChanged', this._refreshSelectedMetaColumns);
+                .listenTo(renderModel, 'dataModelChanged', this._refreshSelectedMetaColumns);
         }
     },
 
