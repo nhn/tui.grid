@@ -119,8 +119,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} True is success
      */
     select: function(rowKey) {
-        var eventData = new GridEvent(),
-            currentRowKey = this.get('rowKey');
+        var eventData = new GridEvent();
+        var currentRowKey = this.get('rowKey');
 
         if (String(currentRowKey) === String(rowKey)) {
             return true;
@@ -150,6 +150,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     _cancelSelect: function() {
         var prevColumnName = this.get('prevColumnName');
+
         this.set('columnName', prevColumnName);
         this.trigger('focus', this.get('rowKey'), prevColumnName);
     },
@@ -203,9 +204,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} true if success
      */
     focusAt: function(rowIndex, columnIndex, isScrollable) {
-        var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true),
-            result = false;
+        var row = this.dataModel.at(rowIndex);
+        var column = this.columnModel.at(columnIndex, true);
+        var result = false;
 
         if (row && column) {
             result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
@@ -246,9 +247,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} true if success
      */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
-        var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true),
-            result = false;
+        var row = this.dataModel.at(rowIndex);
+        var column = this.columnModel.at(columnIndex, true);
+        var result = false;
 
         if (row && column) {
             result = this.focusIn(row.get('rowKey'), column.columnName, isScrollable);
@@ -333,8 +334,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
-        var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
-            columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
+        var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey');
+        var columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
 
         return {
             row: this.dataModel.indexOfRowKey(rowKey),
@@ -348,8 +349,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {boolean} True if has focus.
      */
     has: function(checkValid) {
-        var rowKey = this.get('rowKey'),
-            columnName = this.get('columnName');
+        var rowKey = this.get('rowKey');
+        var columnName = this.get('columnName');
 
         if (checkValid) {
             return this._isValidCell(rowKey, columnName);
@@ -362,9 +363,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {boolean} True if restored
      */
     restore: function() {
-        var prevRowKey = this.get('prevRowKey'),
-            prevColumnName = this.get('prevColumnName'),
-            restored = false;
+        var prevRowKey = this.get('prevRowKey');
+        var prevColumnName = this.get('prevColumnName');
+        var restored = false;
 
         if (this._isValidCell(prevRowKey, prevColumnName)) {
             this.focus(prevRowKey, prevColumnName);
@@ -439,8 +440,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _isValidCell: function(rowKey, columnName) {
-        var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),
-            isValidColumnName = !util.isBlank(columnName) && !!this.columnModel.getColumnModel(columnName);
+        var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey);
+        var isValidColumnName = !util.isBlank(columnName) && !!this.columnModel.getColumnModel(columnName);
 
         return isValidRowKey && isValidColumnName;
     },
@@ -452,9 +453,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _findRowKey: function(offset) {
-        var index, row,
-            dataModel = this.dataModel,
-            rowKey = null;
+        var dataModel = this.dataModel;
+        var rowKey = null;
+        var index, row;
 
         if (this.has(true)) {
             index = Math.max(
@@ -478,11 +479,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _findColumnName: function(offset) {
-        var index,
-            columnModel = this.columnModel,
-            columnModelList = columnModel.getVisibleColumnModelList(),
-            columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true),
-            columnName = null;
+        var columnModel = this.columnModel;
+        var columnModelList = columnModel.getVisibleColumnModelList();
+        var columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
+        var columnName = null;
+        var index;
 
         if (this.has(true)) {
             index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
@@ -509,6 +510,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     nextRowIndex: function(offset) {
         var rowKey = this.nextRowKey(offset);
+
         return this.dataModel.indexOfRowKey(rowKey);
     },
 
@@ -519,6 +521,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     prevRowIndex: function(offset) {
         var rowKey = this.prevRowKey(offset);
+
         return this.dataModel.indexOfRowKey(rowKey);
     },
 
@@ -528,6 +531,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     nextColumnIndex: function() {
         var columnName = this.nextColumnName();
+
         return this.columnModel.indexOfColumnName(columnName, true);
     },
 
@@ -537,6 +541,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     prevColumnIndex: function() {
         var columnName = this.prevColumnName();
+
         return this.columnModel.indexOfColumnName(columnName, true);
     },
 
@@ -547,9 +552,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     nextRowKey: function(offset) {
-        var focused = this.which(),
-            rowKey = focused.rowKey,
-            count, rowSpanData;
+        var focused = this.which();
+        var rowKey = focused.rowKey;
+        var count, rowSpanData;
 
         offset = (typeof offset === 'number') ? offset : 1;
         if (offset > 1) {
@@ -570,6 +575,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 rowKey = this._findRowKey(1);
             }
         }
+
         return rowKey;
     },
 
@@ -580,9 +586,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     prevRowKey: function(offset) {
-        var focused = this.which(),
-            rowKey = focused.rowKey,
-            rowSpanData;
+        var focused = this.which();
+        var rowKey = focused.rowKey;
+        var rowSpanData;
+
         offset = typeof offset === 'number' ? offset : 1;
         offset *= -1;
 
@@ -600,6 +607,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 rowKey = this._findRowKey(-1);
             }
         }
+
         return rowKey;
     },
 
@@ -641,6 +649,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     firstColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList();
+
         return columnModelList[0].columnName;
     },
 
@@ -649,8 +658,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {string} 마지막 컬럼명
      */
     lastColumnName: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(),
-            lastIndex = columnModelList.length - 1;
+        var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var lastIndex = columnModelList.length - 1;
+
         return columnModelList[lastIndex].columnName;
     }
 });

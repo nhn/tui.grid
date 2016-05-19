@@ -89,10 +89,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width'),
-            borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0),
-            totalBorderWidth = borderCount * CELL_BORDER_WIDTH,
-            availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
+        var totalWidth = this.get('width');
+        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
+        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
+        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
         return availableTotalWidth;
     },
@@ -122,8 +122,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _resetTotalRowHeight: function() {
-        var rowHeight = this.get('rowHeight'),
-            rowCount = this.dataModel.length;
+        var rowHeight = this.get('rowHeight');
+        var rowCount = this.dataModel.length;
 
         this.set('totalRowHeight', util.getHeight(rowCount, rowHeight));
     },
@@ -152,9 +152,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _fillEmptyColumnWidth: function(columnWidthList) {
-        var totalWidth = this._getAvailableTotalWidth(columnWidthList.length),
-            remainTotalWidth = totalWidth - util.sum(columnWidthList),
-            emptyIndexes = [];
+        var totalWidth = this._getAvailableTotalWidth(columnWidthList.length);
+        var remainTotalWidth = totalWidth - util.sum(columnWidthList);
+        var emptyIndexes = [];
 
         _.each(columnWidthList, function(width, index) {
             if (!width) {
@@ -173,8 +173,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
-        var fixedFlags = this._columnWidthFixedFlags,
-            columnIndexes = [];
+        var fixedFlags = this._columnWidthFixedFlags;
+        var columnIndexes = [];
 
         _.each(fixedFlags, function(flag, index) {
             if (!flag) {
@@ -219,9 +219,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
-        var avgValue = Math.round(totalRemainWidth / availableList.length),
-            newAvailableList = [],
-            columnIndexes;
+        var avgValue = Math.round(totalRemainWidth / availableList.length);
+        var newAvailableList = [];
+        var columnIndexes;
 
         _.each(availableList, function(available) {
             // note that totalRemainWidth and avgValue are negative number.
@@ -250,10 +250,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
-        var length = columnIndexes.length,
-            avgValue = Math.round(extraWidth / length),
-            errorValue = (avgValue * length) - extraWidth, // to correct total width
-            resultList = _.clone(columnWidthList);
+        var length = columnIndexes.length;
+        var avgValue = Math.round(extraWidth / length);
+        var errorValue = (avgValue * length) - extraWidth; // to correct total width
+        var resultList = _.clone(columnWidthList);
 
         _.each(columnIndexes, function(columnIndex) {
             resultList[columnIndex] += avgValue;
@@ -275,11 +275,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
-        var columnLength = columnWidthList.length,
-            availableWidth = this._getAvailableTotalWidth(columnLength),
-            totalExtraWidth = availableWidth - util.sum(columnWidthList),
-            fixedCount = _.filter(this._columnWidthFixedFlags).length,
-            adjustedList;
+        var columnLength = columnWidthList.length;
+        var availableWidth = this._getAvailableTotalWidth(columnLength);
+        var totalExtraWidth = availableWidth - util.sum(columnWidthList);
+        var fixedCount = _.filter(this._columnWidthFixedFlags).length;
+        var adjustedList;
 
         if (totalExtraWidth > 0) {
             if (columnLength > fixedCount) {
@@ -303,15 +303,15 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _initColumnWidthVariables: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
-            commonMinWidth = this.get('minimumColumnWidth'),
-            widthList = [],
-            fixedFlags = [],
-            minWidthList = [];
+        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
+        var commonMinWidth = this.get('minimumColumnWidth');
+        var widthList = [];
+        var fixedFlags = [];
+        var minWidthList = [];
 
         _.each(columnModelList, function(columnModel) {
-            var width = columnModel.width > 0 ? columnModel.width : 0,
-                minWidth = Math.max(width, commonMinWidth);
+            var width = columnModel.width > 0 ? columnModel.width : 0;
+            var minWidth = Math.max(width, commonMinWidth);
 
             // Meta columns are not affected by common 'minimumColumnWidth' value
             if (util.isMetaColumn(columnModel.columnName)) {
@@ -362,9 +362,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            columnWidthList = this.getColumnWidthList(whichSide),
-            frameWidth = this._getFrameWidth(columnWidthList);
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnWidthList = this.getColumnWidthList(whichSide);
+        var frameWidth = this._getFrameWidth(columnWidthList);
 
         if (_.isUndefined(whichSide) && columnFixCount > 0) {
             frameWidth += CELL_BORDER_WIDTH;
@@ -381,6 +381,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getFrameWidth: function(widthList) {
         var frameWidth = 0;
+
         if (widthList.length) {
             frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
         }
@@ -395,10 +396,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
-        var totalWidth = this.get('width'),
-            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            maxLeftSideWidth = this._getMaxLeftSideWidth(),
-            rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
+        var totalWidth = this.get('width');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var maxLeftSideWidth = this._getMaxLeftSideWidth();
+        var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
 
         lsideWidthList = columnWidthList.slice(0, columnFixCount);
         rsideWidthList = columnWidthList.slice(columnFixCount);
@@ -429,10 +430,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth'),
-            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            minWidth = 0,
-            borderWidth;
+        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var minWidth = 0;
+        var borderWidth;
 
         if (columnFixCount) {
             borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
@@ -588,10 +589,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
-        var renderModel = this.renderModel,
-            currentTop = renderModel.get('scrollTop'),
-            currentLeft = renderModel.get('scrollLeft'),
-            isUp, isDown, isLeft, isRight;
+        var renderModel = this.renderModel;
+        var currentTop = renderModel.get('scrollTop');
+        var currentLeft = renderModel.get('scrollLeft');
+        var isUp, isDown, isLeft, isRight;
 
         isUp = targetPosition.top < currentTop;
         isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
@@ -643,8 +644,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{x: number, y: number}} Mouse-overflow
      */
     getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this._rebasePositionToContainer(pageX, pageY),
-            bodySize = this._getBodySize();
+        var containerPos = this._rebasePositionToContainer(pageX, pageY);
+        var bodySize = this._getBodySize();
 
         return this._judgeOverflow(containerPos, bodySize);
     },
@@ -657,10 +658,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x,
-            containerY = containerPosition.y,
-            overflowY = 0,
-            overflowX = 0;
+        var containerX = containerPosition.x;
+        var containerY = containerPosition.y;
+        var overflowY = 0;
+        var overflowX = 0;
 
         if (containerY < 0) {
             overflowY = -1;
@@ -703,10 +704,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcRowIndexFromPositionY: function(containerY) {
-        var cellY = containerY + this.renderModel.get('scrollTop'),
-            tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH)),
-            min = 0,
-            max = Math.max(min, this.dataModel.length - 1);
+        var cellY = containerY + this.renderModel.get('scrollTop');
+        var tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH));
+        var min = 0;
+        var max = Math.max(min, this.dataModel.length - 1);
 
         return util.clamp(tempIndex, min, max);
     },
@@ -719,12 +720,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcColumnIndexFromPositionX: function(containerX, withMeta) {
-        var columnWidthList = this.getColumnWidthList(),
-            totalColumnWidth = this.getFrameWidth(),
-            cellX = containerX,
-            isRsidePosition = containerX >= this.get('lsideWidth'),
-            adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount(),
-            columnIndex = 0;
+        var columnWidthList = this.getColumnWidthList();
+        var totalColumnWidth = this.getFrameWidth();
+        var cellX = containerX;
+        var isRsidePosition = containerX >= this.get('lsideWidth');
+        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
+        var columnIndex = 0;
 
         if (isRsidePosition) {
             cellX += this.renderModel.get('scrollLeft');
@@ -756,8 +757,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
-        var containerPosX = pageX - this.get('offsetLeft'),
-            containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
+        var containerPosX = pageX - this.get('offsetLeft');
+        var containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
 
         return {
             x: containerPosX,
@@ -773,11 +774,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
-        var i = lsideWidthList.length - 1,
-            minimumColumnWidth = this.get('minimumColumnWidth'),
-            currentWidth = this._getFrameWidth(lsideWidthList),
-            diff = currentWidth - totalWidth,
-            changedWidth;
+        var i = lsideWidthList.length - 1;
+        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var currentWidth = this._getFrameWidth(lsideWidthList);
+        var diff = currentWidth - totalWidth;
+        var changedWidth;
+
         if (diff > 0) {
             while (i >= 0 && diff > 0) {
                 changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
@@ -831,6 +833,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _onWidthChange: function() {
         var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
+
         this._setColumnWidthVariables(widthList);
     },
 
@@ -840,10 +843,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number} width    변경할 너비 pixel값
      */
     setColumnWidth: function(index, width) {
-        var columnWidthList = this.get('columnWidthList'),
-            fixedFlags = this._columnWidthFixedFlags,
-            minWidth = this._minColumnWidthList[index],
-            adjustedList;
+        var columnWidthList = this.get('columnWidthList');
+        var fixedFlags = this._columnWidthFixedFlags;
+        var minWidth = this._minColumnWidthList[index];
+        var adjustedList;
 
         if (!fixedFlags[index] && columnWidthList[index]) {
             columnWidthList[index] = Math.max(width, minWidth);
@@ -912,8 +915,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      */
     refreshLayout: function() {
-        var domState = this.domState,
-            offset = domState.getOffset();
+        var domState = this.domState;
+        var offset = domState.getOffset();
 
         this.set({
             offsetTop: offset.top,
@@ -932,6 +935,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     restoreColumnWidth: function(index) {
         var orgWidth = this.get('originalWidthList')[index];
+
         this.setColumnWidth(index, orgWidth);
     },
 
@@ -941,8 +945,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            columnWidthList = [];
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnWidthList = [];
 
         switch (whichSide) {
             case 'l':
