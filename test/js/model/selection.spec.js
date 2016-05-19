@@ -7,8 +7,8 @@ describe('model/selection', function() {
     var modelManager, selection;
 
     beforeEach(function() {
-        var $el = setFixtures('<div />'),
-            domState = new DomState($el);
+        var $el = jasmine.getFixtures().set('<div />');
+        var domState = new DomState($el);
 
         modelManager = new ModelManager({
             columnModelList: [
@@ -128,10 +128,10 @@ describe('model/selection', function() {
             it('현재 selection 범위에 대해  string 으로 반환한다.', function() {
                 selection.start(0, 1);
                 selection.update(2, 2);
-                expect(selection.getValuesToString()).toEqual('' +
-                '0-2\t1\n' +
-                '1-2\t2\n' +
-                '2-2\t3'
+                expect(selection.getValuesToString()).toEqual(
+                    '0-2\t1\n' +
+                    '1-2\t2\n' +
+                    '2-2\t3'
                 );
                 selection.end();
             });
@@ -301,7 +301,7 @@ describe('model/selection', function() {
                     selection.extendColumnSelection([0, 1], null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
-                        row: [0, 0],
+                        row: [0, 2],
                         column: [0, 3]
                     });
                 });
@@ -312,7 +312,7 @@ describe('model/selection', function() {
                     selection.extendColumnSelection([0, 1], null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
-                        row: [0, 0],
+                        row: [0, 2],
                         column: [0, 2]
                     });
                 });
@@ -326,10 +326,10 @@ describe('model/selection', function() {
                         column: 1
                     });
                     selection.setMinimumColumnRange([2, 3]);
-                    selection.extendColumnSelection(undefined, null, null);
+                    selection.extendColumnSelection(null, null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
-                        row: [0, 0],
+                        row: [0, 2],
                         column: [1, 3]
                     });
                 });
@@ -341,10 +341,10 @@ describe('model/selection', function() {
                         column: 1
                     });
                     selection.unsetMinimumColumnRange();
-                    selection.extendColumnSelection(undefined, null, null);
+                    selection.extendColumnSelection(null, null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
-                        row: [0, 0],
+                        row: [0, 2],
                         column: [1, 2]
                     });
                 });

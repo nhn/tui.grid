@@ -10,6 +10,7 @@ var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 
 var DELAY_SYNC_CHECK = 10;
+var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
@@ -226,10 +227,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
-        var selectionModel = this.selectionModel,
-            max = Math.max.apply(null, columnIndexes);
+        var selectionModel = this.selectionModel;
+        var max = Math.max.apply(null, columnIndexes);
 
-        selectionModel.update(0, max, 'column');
+        selectionModel.update(0, max, SEL_TYPE_COLUMN);
         selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
     },
 

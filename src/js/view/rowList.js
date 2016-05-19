@@ -43,12 +43,12 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'dataModelChanged', this.render);
+            .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === 'L') {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
                 .listenTo(selectionModel, 'change:range', this._refreshSelectedMetaColumns)
-                .listenTo(renderModel, 'dataModelChanged', this._refreshSelectedMetaColumns);
+                .listenTo(renderModel, 'rowListChanged', this._refreshSelectedMetaColumns);
         }
     },
 
@@ -232,16 +232,16 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
     /**
      * Renders.
-     * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
+     * @param {boolean} dataModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
      * @returns {View.RowList} this 객체
      */
-    render: function(isModelChanged) {
+    render: function(dataModelChanged) {
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
         this.bodyTableView.resetTablePosition();
 
-        if (isModelChanged) {
+        if (dataModelChanged) {
             this._resetRows();
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);

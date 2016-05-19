@@ -59,16 +59,16 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * Set selection state
-     * @param {string} state - Selection state (cell, row, column)
+     * Set selection type
+     * @param {string} type - Selection type (CELL, ROW, COLUMN)
      */
-    setState: function(state) {
-        this.selectionType = typeConstMap[state] || this.selectionType;
+    setType: function(type) {
+        this.selectionType = typeConstMap[type] || this.selectionType;
     },
 
     /**
-     * Return the selection state
-     * @returns {string} state - Selection state (cell, row, column)
+     * Return the selection type
+     * @returns {string} type - Selection type (CELL, ROW, COLUMN)
      */
     getType: function() {
         return this.selectionType;
@@ -101,13 +101,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Starts the selection.
      * @param {Number} rowIndex - Row index
      * @param {Number} columnIndex - Column index
-     * @param {string} state - Selection state강지
+     * @param {string} type - Selection type
      */
-    start: function(rowIndex, columnIndex, state) {
+    start: function(rowIndex, columnIndex, type) {
         if (!this.isEnabled()) {
             return;
         }
-        this.setState(state);
+
+        this.setType(type);
         this.inputRange = {
             row: [rowIndex, rowIndex],
             column: [columnIndex, columnIndex]
@@ -119,20 +120,20 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Starts the selection by mouse position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
-     * @param {string} state - Selection state
+     * @param {string} type - Selection type
      */
-    startByMousePosition: function(pageX, pageY, state) {
+    startByMousePosition: function(pageX, pageY, type) {
         var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
-        this.start(index.row, index.column, state);
+        this.start(index.row, index.column, type);
     },
 
     /**
      * Updates the selection range.
      * @param {number} rowIndex - Row index
      * @param {number} columnIndex - Column index
-     * @param {string} [state] - Selection state
+     * @param {string} [type] - Selection type
      */
-    update: function(rowIndex, columnIndex, state) {
+    update: function(rowIndex, columnIndex, type) {
         var focusedIndex;
 
         if (!this.enabled || rowIndex < 0 || columnIndex < 0) {
@@ -141,9 +142,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
-            this.start(focusedIndex.row, focusedIndex.column, state);
+            this.start(focusedIndex.row, focusedIndex.column, type);
         } else {
-            this.setState(state);
+            this.setType(type);
         }
 
         this._updateInputRange(rowIndex, columnIndex);
@@ -159,6 +160,12 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _updateInputRange: function(rowIndex, columnIndex) {
         var inputRange = this.inputRange;
 
+        if (this.selectionType === typeConstMap.ROW) {
+            columnIndex = this.columnModel.getVisibleColumnModelList().length - 1;
+        } else if (this.selectionType === typeConstMap.COLUMN) {
+            rowIndex = this.dataModel.length - 1;
+        }
+
         inputRange.row[1] = rowIndex;
         inputRange.column[1] = columnIndex;
     },
@@ -173,7 +180,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         var minimumColumnRange = this._minimumColumnRange;
         var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
         var range = {
-            row: [0, 0],
+            row: [0, this.dataModel.length - 1],
             column: []
         };
         var minMax;
@@ -214,13 +221,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Updates the selection range by mouse position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
-     * @param {string} [state] - Selection state
+     * @param {string} [type] - Selection type
      */
-    updateByMousePosition: function(pageX, pageY, state) {
+    updateByMousePosition: function(pageX, pageY, type) {
         var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
 
         this._setScrolling(pageX, pageY);
-        this.update(index.row, index.column, state);
+        this.update(index.row, index.column, type);
     },
 
     /**
@@ -436,7 +443,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             column: _.sortBy(inputRange.column)
         };
 
-        if (dataModel.isRowSpanEnable()) {
+        if (dataModel.isRowSpanEnable() && this.selectionType === typeConstMap.CELL) {
             do {
                 tmpRowRange = _.assign([], spannedRange.row);
                 spannedRange = this._getRowSpannedIndex(spannedRange);
@@ -446,19 +453,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
                     spannedRange.row[1] !== tmpRowRange[1]
                 );
             } while (hasSpannedRange);
-        }
-
-        this._setRangeMinMax(spannedRange.row, spannedRange.column);
-        switch (this.selectionType) {
-            case typeConstMap.COLUMN:
-                spannedRange.row = [0, dataModel.length - 1];
-                break;
-            case typeConstMap.ROW:
-                spannedRange.column = [0, this.columnModel.getVisibleColumnModelList().length - 1];
-                break;
-            case typeConstMap.CELL:
-            default:
-                break;
+            this._setRangeMinMax(spannedRange.row, spannedRange.column);
         }
 
         this.set('range', spannedRange);

@@ -433,6 +433,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @param {Boolean} [options.dataModelChanged] - The boolean value whether dataModel has changed
      */
     refresh: function(options) {
+        var columnModelChanged = !!options && options.columnModelChanged;
+        var dataModelChanged = !!options && options.dataModelChanged;
         var startIndex, endIndex, i;
 
         this._setRenderingRange(this.get('scrollTop'));
@@ -448,12 +450,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this._executeRelation(i);
         }
 
-        if (options) {
-            if (options.columnModelChanged) {
-                this.trigger('columnModelChanged');
-            } else {
-                this.trigger('dataModelChanged', options.dataModelChanged);
-            }
+        if (columnModelChanged) {
+            this.trigger('columnModelChanged');
+        } else {
+            this.trigger('rowListChanged', dataModelChanged);
         }
         this._refreshState();
     },

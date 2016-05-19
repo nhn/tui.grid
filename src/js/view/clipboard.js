@@ -9,7 +9,7 @@ var util = require('../common/util');
 var classNameConst = require('../common/classNameConst');
 var constMap = require('../common/constMap');
 var keyCodeMap = constMap.keyCode;
-var selTypeMap = constMap.selectionType;
+var selTypeConst = constMap.selectionType;
 
 /**
  * Clipboard view class
@@ -289,9 +289,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
                 selectionType = this.selectionModel.getType();
-                if (selectionType === selTypeMap.COLUMN) {
+                if (selectionType === selTypeConst.COLUMN) {
                     delete scrollPosition.scrollTop;
-                } else if (selectionType === selTypeMap.ROW) {
+                } else if (selectionType === selTypeConst.ROW) {
                     delete scrollPosition.scrollLeft;
                 }
                 this.renderModel.set(scrollPosition);

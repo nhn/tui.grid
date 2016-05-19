@@ -74,6 +74,7 @@ describe('model.renderer', function() {
                                 {text: '넷', value: 4}
                             ];
                         }
+                        return [];
                     }
                 },
                 {
@@ -310,7 +311,7 @@ describe('model.renderer', function() {
                     dimensionModel: dimensionModel,
                     focusModel: focusModel
                 });
-                listenModel.listenTo(renderModel, 'dataModelChanged', callback);
+                listenModel.listenTo(renderModel, 'rowListChanged', callback);
                 dataModel.set([], {parse: true});
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();

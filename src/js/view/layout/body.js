@@ -6,8 +6,10 @@
 
 var View = require('../../base/view');
 var util = require('../../common/util');
-var attrNameConst = require('../../common/constMap').attrName;
+var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
+var attrNameConst = constMap.attrName;
+var selTypeMap = constMap.selectionType;
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 var MIN_INTERVAL_FOR_PAUSED = 200;
@@ -186,7 +188,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!util.isMetaColumn(columnName)) {
-            selectionModel.setState('cell');
+            selectionModel.setType(selTypeMap.CELL);
             if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
@@ -213,7 +215,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _updateSelectionByRow: function(rowIndex, shiftKey) {
         if (shiftKey) {
-            this.selectionModel.update(rowIndex, 0, 'row');
+            this.selectionModel.update(rowIndex, 0, selTypeMap.ROW);
         } else {
             this.selectionModel.selectRow(rowIndex);
         }

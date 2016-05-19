@@ -345,7 +345,7 @@ describe('view.clipboard', function() {
                         }
                     };
                     modelManager.focusModel.focusAt(1, 1);
-                    modelManager.selectionModel.setState(selectionTypeMap.COLUMN);
+                    modelManager.selectionModel.setType(selectionTypeMap.COLUMN);
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);
@@ -359,7 +359,7 @@ describe('view.clipboard', function() {
                         }
                     };
                     modelManager.focusModel.focusAt(1, 1);
-                    modelManager.selectionModel.setState(selectionTypeMap.ROW);
+                    modelManager.selectionModel.setType(selectionTypeMap.ROW);
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);

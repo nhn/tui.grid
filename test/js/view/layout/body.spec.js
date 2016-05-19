@@ -7,14 +7,17 @@ var ViewFactory = require('view/factory');
 var SelectionLayerView = require('view/selectionLayer');
 var FocusLayerView = require('view/focusLayer');
 var BodyTableView = require('view/layout/bodyTable');
-var attrNameMap = require('common/constMap').attrName;
+var constMap = require('common/constMap');
+var attrNameMap = constMap.attrName;
+var selTypeConst = constMap.selectionType;
+
 
 describe('view.layout.body', function() {
     var modelManager, body;
 
     beforeEach(function() {
-        var domState = new DomState($('<div />')),
-            painterManager, viewFactory;
+        var domState = new DomState($('<div />'));
+        var painterManager, viewFactory;
 
         modelManager = new ModelManager({
             columnModelList: [
@@ -246,7 +249,7 @@ describe('view.layout.body', function() {
                 spyOn(selectionModel, 'update');
 
                 body._controlStartAction(inputData, indexObj, columnName, isInput);
-                expect(selectionModel.update).toHaveBeenCalledWith(indexObj.row, 0, 'row');
+                expect(selectionModel.update).toHaveBeenCalledWith(indexObj.row, 0, selTypeConst.ROW);
             });
         });
 

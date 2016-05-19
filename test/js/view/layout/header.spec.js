@@ -5,7 +5,9 @@ var DomState = require('domState');
 var ViewFactory = require('view/factory');
 
 var classNameConst = require('common/classNameConst');
-var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
+var constMap = require('common/constMap');
+var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 
 describe('Header', function() {
     var modelManager, viewFactory, header;
@@ -482,7 +484,7 @@ describe('Header', function() {
 
             it('should start(update) column selection with extending', function() {
                 header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3, 'column');
+                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3, SEL_TYPE_COLUMN);
                 expect(modelManager.selectionModel.extendColumnSelection).toHaveBeenCalledWith([1, 2, 3], pageX, pageY);
             });
         });
