@@ -99,32 +99,22 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
-        var dataModel = this.collection.dataModel;
-        var columnNames = this._getColumnNameList();
-        var param;
-
         if (tui.util.isUndefined(this.collection)) {
             return;
         }
 
-        _.each(columnNames, function(columnName) {
+        _.each(this._getColumnNameList(), function(columnName) {
             var cellData = this.get(columnName);
-            var rowModel = this; // eslint-disable-line consistent-this
             var cellState;
 
-            if (!tui.util.isUndefined(cellData)) {
+            if (!tui.util.isUndefined(cellData) && cellData.isMainRow) {
                 cellState = this.rowData.getCellState(columnName);
-                if (dataModel.isRowSpanEnable() && !cellData.isMainRow) {
-                    rowModel = this.collection.get(cellData.mainRowKey);
-                }
-                if (rowModel) {
-                    param = {
-                        isDisabled: cellState.isDisabled,
-                        isEditable: cellState.isEditable,
-                        className: this._getClassNameString(columnName)
-                    };
-                    rowModel.setCell(columnName, param);
-                }
+
+                this.setCell(columnName, {
+                    isDisabled: cellState.isDisabled,
+                    isEditable: cellState.isEditable,
+                    className: this._getClassNameString(columnName)
+                });
             }
         }, this);
     },
@@ -166,10 +156,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         columnData = _.omit(data, 'rowKey', '_extraData', 'height', 'rowNum');
 
         _.each(columnData, function(value, columnName) {
-            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
-                cellState = row.getCellState(columnName),
-                isTextType = columnModel.isTextType(columnName),
-                column = columnModel.getColumnModel(columnName);
+            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable());
+            var cellState = row.getCellState(columnName);
+            var isTextType = columnModel.isTextType(columnName);
+            var column = columnModel.getColumnModel(columnName);
 
             data[columnName] = {
                 rowKey: rowKey,

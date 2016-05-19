@@ -301,7 +301,7 @@ describe('model.renderer', function() {
                 listenModel = new Model();
             });
 
-            it('데이터가 변경되었을 경우 rowListChanged 이벤트를 발생하는지 확인한다.', function(done) {
+            it('데이터가 변경되었을 경우 dataModelChanged 이벤트를 발생하는지 확인한다.', function(done) {
                 var callback = jasmine.createSpy('callback');
 
                 renderModel = new Renderer(null, {
@@ -310,7 +310,7 @@ describe('model.renderer', function() {
                     dimensionModel: dimensionModel,
                     focusModel: focusModel
                 });
-                listenModel.listenTo(renderModel, 'rowListChanged', callback);
+                listenModel.listenTo(renderModel, 'dataModelChanged', callback);
                 dataModel.set([], {parse: true});
                 setTimeout(function() {
                     expect(callback).toHaveBeenCalled();

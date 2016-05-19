@@ -365,14 +365,14 @@ describe('model.rowList', function() {
         });
 
         describe('dataModel 의 _extraData 가 변경되었을 때 해당 row 의 전체 column 에 값을 변경하는지 확인한다.', function() {
-            it('rowSpan 된 경우, mainRow 가 아닌 row 의 extraData 를 변경하면 main row 의 extraData가 변경된다.', function() {
+            it('rowSpan 된 경우, mainRow 가 아닌 row 의 extraData 를 변경하면 무시한다', function() {
                 var mainRow;
 
                 dataModel.get(3).setRowState('DISABLED');
 
                 mainRow = rowListModel.get(1);
-                expect(mainRow.get('c1').isDisabled).toEqual(true);
-                expect(mainRow.get('c1').className).toEqual(classNameConst.CELL_DISABLED);
+                expect(mainRow.get('c1').isDisabled).toBe(false);
+                expect(mainRow.get('c1').className).toBe('');
             });
 
             it('상태 변경 없을 때 기본값 검사', function() {
@@ -381,25 +381,25 @@ describe('model.rowList', function() {
                 var cell2 = rowListModel.get(0).get('c2');
                 var cell3 = rowListModel.get(0).get('c3');
 
-                expect(cell0.value).toEqual(false);
-                expect(cell0.isEditable).toEqual(true);
-                expect(cell0.isDisabled).toEqual(false);
-                expect(cell0.className).toEqual(classNameConst.CELL_HEAD);
+                expect(cell0.value).toBe(false);
+                expect(cell0.isEditable).toBe(true);
+                expect(cell0.isDisabled).toBe(false);
+                expect(cell0.className).toBe(classNameConst.CELL_HEAD);
 
-                expect(cell1.value).toEqual('c1');
-                expect(cell1.isEditable).toEqual(false);
-                expect(cell1.isDisabled).toEqual(false);
-                expect(cell1.className).toEqual('');
+                expect(cell1.value).toBe('c1');
+                expect(cell1.isEditable).toBe(false);
+                expect(cell1.isDisabled).toBe(false);
+                expect(cell1.className).toBe('');
 
-                expect(cell2.value).toEqual('c2');
-                expect(cell2.isEditable).toEqual(true);
-                expect(cell2.isDisabled).toEqual(false);
-                expect(cell2.className).toEqual(classNameConst.CELL_EDITABLE);
+                expect(cell2.value).toBe('c2');
+                expect(cell2.isEditable).toBe(true);
+                expect(cell2.isDisabled).toBe(false);
+                expect(cell2.className).toBe(classNameConst.CELL_EDITABLE);
 
-                expect(cell3.value).toEqual('c3');
-                expect(cell3.isEditable).toEqual(true);
-                expect(cell3.isDisabled).toEqual(false);
-                expect(cell3.className).toEqual(classNameConst.CELL_EDITABLE);
+                expect(cell3.value).toBe('c3');
+                expect(cell3.isEditable).toBe(true);
+                expect(cell3.isDisabled).toBe(false);
+                expect(cell3.className).toBe(classNameConst.CELL_EDITABLE);
             });
 
             it('DISABLED 로 변경 시', function() {
