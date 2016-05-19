@@ -24,6 +24,7 @@ var formUtil = {
             _.each(arr, function(value, i) {
                 arr[i] = String(value);
             });
+
             return arr;
         },
 
@@ -140,6 +141,7 @@ var formUtil = {
                 formElement = $form.prop('elements');
             }
         }
+
         return $(formElement);
     },
 

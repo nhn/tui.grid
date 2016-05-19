@@ -32,6 +32,7 @@ var util = {
         _.each(attributes, function(value, key) {
             str += ' ' + key + '="' + value + '"';
         }, this);
+
         return str;
     },
 
@@ -44,6 +45,7 @@ var util = {
     sum: function(list) {
         return _.reduce(list, function(memo, value) {
             memo += value;
+
             return memo;
         }, 0);
     },
@@ -160,13 +162,13 @@ var util = {
         htmlString = htmlString.replace(/[\n\r\t]/g, '');
         if (tui.util.hasEncodableString(htmlString)) {
             if (/<img/i.test(htmlString)) {
-                matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/i);
+                matchResult = htmlString.match(/<img[^>]*\ssrc=["']?([^>"']+)["']?[^>]*>/i);
                 htmlString = matchResult ? matchResult[1] : '';
             } else {
                 htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
             }
             htmlString = $.trim(tui.util.decodeHTMLEntity(
-                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')
+                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?::[a-z]+)?)[^>]*>/ig, '')
             ));
         }
         return htmlString;

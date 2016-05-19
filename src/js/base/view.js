@@ -30,6 +30,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
             this.message = message || 'error';
         };
         GridError.prototype = new Error();
+
         return new GridError();
     },
 
@@ -53,6 +54,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         var elements = _.map(this._children, function(view) {
             return view.render().el;
         });
+
         return elements;
     },
 

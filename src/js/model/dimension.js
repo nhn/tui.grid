@@ -104,8 +104,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _applyMinimumColumnWidth: function(columnWidthList) {
-        var minWidthList = this._minColumnWidthList,
-            appliedList = _.clone(columnWidthList);
+        var minWidthList = this._minColumnWidthList;
+        var appliedList = _.clone(columnWidthList);
 
         _.each(appliedList, function(width, index) {
             var minWidth = minWidthList[index];
@@ -113,6 +113,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 appliedList[index] = minWidth;
             }
         });
+
         return appliedList;
     },
 
@@ -160,6 +161,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 emptyIndexes.push(index);
             }
         });
+
         return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
     },
 
@@ -190,9 +192,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
-        var minWidthList = this._minColumnWidthList,
-            fixedFlags = this._columnWidthFixedFlags,
-            availableList = [];
+        var minWidthList = this._minColumnWidthList;
+        var fixedFlags = this._columnWidthFixedFlags;
+        var availableList = [];
 
         _.each(columnWidthList, function(width, index) {
             if (!fixedFlags[index]) {
@@ -292,6 +294,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         } else {
             adjustedList = columnWidthList;
         }
+
         return adjustedList;
     },
 
@@ -366,6 +369,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (_.isUndefined(whichSide) && columnFixCount > 0) {
             frameWidth += CELL_BORDER_WIDTH;
         }
+
         return frameWidth;
     },
 
@@ -380,6 +384,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (widthList.length) {
             frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
         }
+
         return frameWidth;
     },
 
@@ -433,6 +438,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
             minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
         }
+
         return minWidth;
     },
 
@@ -447,6 +453,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (maxWidth) {
             maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
         }
+
         return maxWidth;
     },
 
@@ -781,6 +788,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         } else if (diff < 0) {
             lsideWidthList[i] += Math.abs(diff);
         }
+
         return lsideWidthList;
     },
 
@@ -949,6 +957,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 columnWidthList = this.get('columnWidthList');
                 break;
         }
+
         return columnWidthList;
     }
 });

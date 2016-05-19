@@ -161,6 +161,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _initializePagination: function() {
         var pagination = this.pagination;
+
         if (pagination) {
             pagination.setOption('itemPerPage', this.perPage);
             pagination.setOption('itemCount', 1);
@@ -253,6 +254,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _setFormData: function(data) {
         var formData = _.clone(data);
+
         _.each(this.lastRequestedReadData, function(value, key) {
             if ((_.isUndefined(formData[key]) || _.isNull(formData[key])) && value) {
                 formData[key] = '';
@@ -316,7 +318,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _getFormData: function() {
-        /* istanbul ignore next*/
         return formUtil.getFormData(this.$el);
     },
 
@@ -327,8 +328,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onReadSuccess: function(dataModel, responseData) {
-        var pagination = this.pagination,
-            page, totalCount;
+        var pagination = this.pagination;
+        var page, totalCount;
 
         dataModel.setOriginalRowList();
 
@@ -609,15 +610,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getRequestParam: function(requestType, options) {
         var defaultOptions = {
-                url: this.api[requestType],
-                type: null,
-                hasDataParam: true,
-                isOnlyModified: true,
-                isOnlyChecked: true
-            },
-            newOptions = $.extend(defaultOptions, options),
-            dataParam = this._getDataParam(requestType, newOptions),
-            param = null;
+            url: this.api[requestType],
+            type: null,
+            hasDataParam: true,
+            isOnlyModified: true,
+            isOnlyChecked: true
+        };
+        var newOptions = $.extend(defaultOptions, options);
+        var dataParam = this._getDataParam(requestType, newOptions);
+        var param = null;
 
         if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
             param = {
@@ -627,6 +628,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 type: newOptions.type
             };
         }
+
         return param;
     },
 
@@ -640,12 +642,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _isConfirmed: function(requestType, count) {
         var result = false;
 
-        /* istanbul ignore next: confirm 을 확인할 수 없읔 */
         if (count > 0) {
             result = confirm(this._getConfirmMessage(requestType, count));
         } else {
             alert(this._getConfirmMessage(requestType, count));
         }
+
         return result;
     },
 
@@ -658,19 +660,20 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getConfirmMessage: function(requestType, count) {
         var textMap = {
-                'createData': '입력',
-                'updateData': '수정',
-                'deleteData': '삭제',
-                'modifyData': '반영'
-            },
-            actionName = textMap[requestType],
-            message;
+            createData: '입력',
+            updateData: '수정',
+            deleteData: '삭제',
+            modifyData: '반영'
+        };
+        var actionName = textMap[requestType];
+        var message;
 
         if (count > 0) {
             message = count + '건의 데이터를 ' + actionName + '하시겠습니까?';
         } else {
             message = actionName + '할 데이터가 없습니다.';
         }
+
         return message;
     },
 
@@ -680,8 +683,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _ajax: function(options) {
-        var eventData = new GridEvent(options.data),
-            params;
+        var eventData = new GridEvent(options.data);
+        var params;
 
         this.trigger('beforeRequest', eventData);
         if (eventData.isStopped()) {
@@ -724,13 +727,13 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
-        var message = responseData && responseData.message,
-            eventData = new GridEvent({
-                httpStatus: status,
-                requestType: options.requestType,
-                requestParameter: options.data,
-                responseData: responseData
-            });
+        var message = responseData && responseData.message;
+        var eventData = new GridEvent({
+            httpStatus: status,
+            requestType: options.requestType,
+            requestParameter: options.data,
+            responseData: responseData
+        });
 
         this.trigger('response', eventData);
         if (eventData.isStopped()) {
