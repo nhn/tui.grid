@@ -146,6 +146,17 @@ module.exports = {
     },
 
     /**
+     * Generates a css string for the cells in odd rows.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellOddRow: function(options) {
+        return classRule(classNameConst.CELL_ROW_ODD)
+            .bg(options.background)
+            .build();
+    },
+
+    /**
      * Generates a css string for selected head cells.
      * @param {Object} options - options
      * @returns {String}

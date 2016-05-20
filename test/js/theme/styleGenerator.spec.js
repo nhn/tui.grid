@@ -125,6 +125,15 @@ describe('theme/styleGenerator: ', function() {
         });
     });
 
+    it('cellOddRow() generates a css string for the cells in even rows.', function() {
+        var options = {
+            background: 'blue'
+        };
+        var expected = '.' + classNameConst.CELL_ROW_ODD + '{background-color:blue}';
+
+        expect(styleGen.cellOddRow(options)).toBe(expected);
+    });
+
     it('cellEvenRow() generates a css string for the cells in even rows.', function() {
         var options = {
             background: 'blue'

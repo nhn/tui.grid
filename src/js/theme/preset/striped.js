@@ -14,12 +14,16 @@ module.exports = $.extend(true, {}, presetDefault, {
             showVerticalBorder: false,
             showHorizontalBorder: false
         },
-        evenRow: {
+        oddRow: {
             background: '#f3f3f3'
         },
+        evenRow: {
+            background: '#fff'
+        },
         head: {
-            showVerticalBorder: true,
-            showHorizontalBorder: true
+            background: '#fff',
+            showVerticalBorder: false,
+            showHorizontalBorder: false
         }
     }
 });

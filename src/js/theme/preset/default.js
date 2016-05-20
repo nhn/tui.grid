@@ -58,6 +58,7 @@ module.exports = {
             background: '#ff8080'
         },
         evenRow: {},
+        oddRow: {},
         currentRow: {}
     }
 };
