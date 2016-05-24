@@ -71,8 +71,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _executeCustomEventHandler: function(event) {
-        var $input = $(event.target),
-            address = this._getCellAddress($input);
+        var $input = $(event.target);
+        var address = this._getCellAddress($input);
 
         this.controller.executeCustomInputEventHandler(event, address);
     },
@@ -83,9 +83,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onFocusIn: function(event) {
-        var address = this._getCellAddress($(event.target));
+        var $target = $(event.target);
+        var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
+        this.trigger('focusIn', $target);
         this.controller.startEditing(address);
     },
 
@@ -95,10 +97,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onFocusOut: function(event) {
-        var $target = $(event.target),
-            address = this._getCellAddress($target);
+        var $target = $(event.target);
+        var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
+        this.trigger('focusOut', $target);
         this.controller.finishEditing(address, false, $target.val());
     },
 
@@ -187,5 +190,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         }
     }
 });
+
+_.assign(InputPainter.prototype, Backbone.Events);
 
 module.exports = InputPainter;

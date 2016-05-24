@@ -22,6 +22,7 @@ var classNames = {
     LAYER_FOCUS: 'layer-focus',
     LAYER_FOCUS_BORDER: 'layer-focus-border',
     LAYER_SELECTION: 'layer-selection',
+    LAYER_DATE_PICKER: 'layer-datepicker',
 
     // border line
     BORDER_LINE: 'border-line',
