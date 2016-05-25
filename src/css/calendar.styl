@@ -1,0 +1,91 @@
+.calendar
+    position absolute
+    width 190px
+    background #fff
+    border 1px solid #ccc
+    font-size 11px
+    color #444
+    font-family arial
+
+    table
+        margin 0 auto
+        table-layout fixed
+        text-align center
+        tr
+            height 20px
+        th
+            width 20px
+        td
+            cursor pointer
+            &:hover
+                background #eef
+
+.calendar-header
+    padding 6px 0 5px
+    text-align center
+    border-bottom 1px solid #ddd
+
+.calendar-title
+    font-size 14px
+
+.calendar-body
+    padding 5px 7px
+
+.calendar-btn-prev-year
+    position absolute
+    top 4px
+    left 18px
+    padding 3px 6px 2px
+    border 1px solid transparent
+    &:hover
+        border-color #ccc
+
+.calendar-btn-prev-month
+    position absolute
+    top 4px
+    left 42px
+    padding 3px 6px 2px
+    border 1px solid transparent
+    &:hover
+        border-color #ccc
+
+.calendar-btn-next-month
+    position absolute
+    top 4px
+    right 42px
+    padding 3px 6px 2px
+    border 1px solid transparent
+    &:hover
+        border-color #ccc
+
+.calendar-btn-next-year
+    position absolute
+    top 4px
+    right 20px
+    padding 3px 6px 2px
+    border 1px solid transparent
+    &:hover
+        border-color #ccc
+
+.calendar-today
+    background #bcea81
+    color #ffffff
+
+.calendar-prev-month,
+.calendar-next-month
+    color #ccc
+
+.calendar-sat
+    color #00f
+    &.calendar-next-month,
+    &.calendar-prev-month
+        color: #8bb3ff
+
+.calendar-sun
+    color #e82828
+    &.calendar-next-month,
+    &.calendar-prev-month
+        color: #e3a08c
+
+.calendar-footer
+    display none

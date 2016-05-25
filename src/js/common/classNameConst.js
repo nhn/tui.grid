@@ -14,6 +14,11 @@ var classNames = {
     NO_SCROLL_X: 'no-scroll-x',
     NO_SCROLL_Y: 'no-scroll-y',
 
+    // icon
+    ICO_ARROW: 'icon-arrow',
+    ICO_ARROW_LEFT: 'icon-arrow-left',
+    ICO_ARROW_RIGHT: 'icon-arrow-right',
+
     // layer
     LAYER_STATE: 'layer-state',
     LAYER_STATE_CONTENT: 'layer-state-content',
@@ -102,7 +107,10 @@ var classNames = {
     TOOLBAR: 'toolbar',
     TOOLBAR_BTN_HOLDER: 'toolbar-btn-holder',
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
-    HEIGHT_RESIZE_HANDLE: 'height-resize-handle'
+    HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
+
+    // etc
+    CALENDAR: 'calendar'
 };
 
 var exports = _.mapObject(classNames, function(className) {
