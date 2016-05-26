@@ -87,7 +87,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
-        this.trigger('focusIn', $target);
+        this.trigger('focusIn', $target, address);
         this.controller.startEditing(address);
     },
 
@@ -101,7 +101,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
-        this.trigger('focusOut', $target);
+        this.trigger('focusOut', $target, address);
         this.controller.finishEditing(address, false, $target.val());
     },
 

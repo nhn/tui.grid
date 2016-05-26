@@ -31,61 +31,42 @@
 .calendar-body
     padding 5px 7px
 
-.calendar-btn-prev-year
+$calendar-btn
     position absolute
     top 4px
-    left 18px
     padding 3px 6px 2px
     border 1px solid transparent
     &:hover
         border-color #ccc
+
+.calendar-btn-prev-year
+    @extend $calendar-btn
+    left 18px
 
 .calendar-btn-prev-month
-    position absolute
-    top 4px
+    @extend $calendar-btn
     left 42px
-    padding 3px 6px 2px
-    border 1px solid transparent
-    &:hover
-        border-color #ccc
 
 .calendar-btn-next-month
-    position absolute
-    top 4px
+    @extend $calendar-btn
     right 42px
-    padding 3px 6px 2px
-    border 1px solid transparent
-    &:hover
-        border-color #ccc
 
 .calendar-btn-next-year
-    position absolute
-    top 4px
+    @extend $calendar-btn
     right 20px
-    padding 3px 6px 2px
-    border 1px solid transparent
-    &:hover
-        border-color #ccc
 
 .calendar-today
-    background #bcea81
-    color #ffffff
+    font-weight bold
 
 .calendar-prev-month,
 .calendar-next-month
-    color #ccc
+    opacity: 0.3
 
 .calendar-sat
     color #00f
-    &.calendar-next-month,
-    &.calendar-prev-month
-        color: #8bb3ff
 
 .calendar-sun
     color #e82828
-    &.calendar-next-month,
-    &.calendar-prev-month
-        color: #e3a08c
 
 .calendar-footer
     display none

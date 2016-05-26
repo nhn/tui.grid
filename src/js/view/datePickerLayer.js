@@ -47,15 +47,17 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      * @param {Object} options - Options
      */
     initialize: function(options) {
-        var painter = options.textPainter;
+        var textPainter = options.textPainter;
 
+        this.columnModel = options.columnModel;
         this.domState = options.domState;
         this.calendar = this._createCalendar();
         this.datePicker = this._createDatePicker();
 
         this._customizeCalendarBtns();
-        this.listenTo(painter, 'focusIn', this._show);
-        this.listenTo(painter, 'focusOut', this._hide);
+
+        this.listenTo(textPainter, 'focusIn', this._onFocusInTextInput);
+        this.listenTo(textPainter, 'focusOut', this._onFocusOutTextInput);
     },
 
     className: classNameConst.LAYER_DATE_PICKER,
@@ -136,23 +138,34 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     },
 
     /**
-     * Shows the layer.
+     * Event handler for 'focusin' event of module:painter/input/text
      * @param {jQuery} $input - target input element
+     * @param {{rowKey: String, columnName: String}} address - target cell address
      * @private
      */
-    _show: function($input) {
-        var position = this._calculatePosition($input);
+    _onFocusInTextInput: function($input, address) {
+        var columnName = address.columnName;
+        var columnInfo = this.columnModel.getColumnModel(columnName);
+        var editType = this.columnModel.getEditType(columnName);
+        var datePickerOptions = tui.util.pick(columnInfo, 'component', 'datePicker');
 
-        this.$el.css(position).show();
-        this.datePicker.setElement($input);
-        this.datePicker.open();
+        // console.log(editType);
+        // console.log(datePickerOptions);
+
+        if (editType === 'text' && datePickerOptions) {
+            this.$el.css(this._calculatePosition($input)).show();
+            this.datePicker.setDateForm(datePickerOptions.dateForm || 'yyyy-mm-dd');
+            this.datePicker.setRanges(datePickerOptions.selectableRanges || []);
+            this.datePicker.setElement($input);
+            this.datePicker.open();
+        }
     },
 
     /**
      * Hides the layer.
      * @private
      */
-    _hide: function() {
+    _onFocusOutTextInput: function() {
         this.datePicker.close();
         this.$el.hide();
     }
