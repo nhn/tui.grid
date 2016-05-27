@@ -110,7 +110,13 @@ var classNames = {
     HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
 
     // etc
-    CALENDAR: 'calendar'
+    CALENDAR: 'calendar',
+    CALENDAR_BTN_PREV_YEAR: 'calendar-btn-prev-year',
+    CALENDAR_BTN_NEXT_YEAR: 'calendar-btn-next-year',
+    CALENDAR_BTN_PREV_MONTH: 'calendar-btn-prev-month',
+    CALENDAR_BTN_NEXT_MONTH: 'calendar-btn-next-month',
+    CALENDAR_SELECTABLE: 'calendar-selectable',
+    CALENDAR_SELECTED: 'calendar-selected'
 };
 
 var exports = _.mapObject(classNames, function(className) {

@@ -4,36 +4,24 @@
  */
 'use strict';
 
+// tui-component dependencies
+var DatePicker = tui.component.DatePicker;
+var Calendar = tui.component.Calendar;
+
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
-var btnClassName = {
-    PREV_YEAR: 'btn-prev-year',
-    NEXT_YEAR: 'btn-next-year',
-    PREV_MONTH: 'btn-prev-month',
-    NEXT_MONTH: 'btn-next-month'
-};
-var PREFIX_CALENDAR = 'calendar-';
+var DEFAULT_DATE_FORM = 'yyyy-mm-dd';
 var DatePickerLayer;
 
 /**
  * Returns a HTML string of a span element to represent an arrow-icon
- * @param {String} direction - 'L'(left) or 'R'(right)
+ * @param {String} dirClassName - className to indicate direction of the arrow
  * @returns {String}
  */
-function arrowHTML(direction) {
-    var dirClassName = direction === 'L' ? classNameConst.ICO_ARROW_LEFT : classNameConst.ICO_ARROW_RIGHT;
+function arrowHTML(dirClassName) {
     var classNameStr = classNameConst.ICO_ARROW + ' ' + dirClassName;
 
     return '<span class="' + classNameStr + '"></span>';
-}
-
-/**
- * Returns a CSS selector which represents a button element
- * @param {String} btnType - button type
- * @returns {String}
- */
-function btnSelector(btnType) {
-    return '.' + classNameConst.PREFIX + PREFIX_CALENDAR + btnClassName[btnType];
 }
 
 /**
@@ -77,9 +65,9 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
             return false;
         });
 
-        return new tui.component.Calendar({
+        return new Calendar({
             element: $calendarEl,
-            classPrefix: classNameConst.PREFIX + PREFIX_CALENDAR
+            classPrefix: classNameConst.CALENDAR + '-'
         });
     },
 
@@ -89,24 +77,27 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     _customizeCalendarBtns: function() {
         var $header = this.calendar.$header;
-        var leftArrowHTML = arrowHTML('L');
-        var rightArrowHTML = arrowHTML('R');
+        var leftArrowHTML = arrowHTML(classNameConst.ICO_ARROW_LEFT);
+        var rightArrowHTML = arrowHTML(classNameConst.ICO_ARROW_RIGHT);
 
-        $header.find(btnSelector('PREV_YEAR')).html(leftArrowHTML + leftArrowHTML);
-        $header.find(btnSelector('NEXT_YEAR')).html(rightArrowHTML + rightArrowHTML);
-        $header.find(btnSelector('PREV_MONTH')).html(leftArrowHTML);
-        $header.find(btnSelector('NEXT_MONTH')).html(rightArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_YEAR).html(leftArrowHTML + leftArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_YEAR).html(rightArrowHTML + rightArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_MONTH).html(leftArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_MONTH).html(rightArrowHTML);
     },
 
     /**
      * Creates an instance of tui-component-datepicker
-     * @returns {tui.compoment.DatePicker}
+     * @returns {tui.component.DatePicker}
      * @private
      */
     _createDatePicker: function() {
-        var datePicker = new tui.component.DatePicker({
+        var datePicker = new DatePicker({
             parentElement: this.$el,
-            dateForm: 'yyyy-mm-dd',
+            dateForm: DEFAULT_DATE_FORM,
+            enableSetDateByEnterKey: false,
+            selectableClassName: classNameConst.CALENDAR_SELECTABLE,
+            selectedClassName: classNameConst.CALENDAR_SELECTED,
             pos: {
                 top: 0,
                 left: 0
@@ -118,6 +109,22 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         });
 
         return datePicker;
+    },
+
+    /**
+     * Resets date picker options
+     * @param {Object} options - datePicker options
+     * @param {jQuery} $input - target input element
+     * @private
+     */
+    _resetDatePicker: function(options, $input) {
+        var datePicker = this.datePicker;
+        var today = new Date();
+
+        datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORM);
+        datePicker.setRanges(options.selectableRanges || []);
+        datePicker.setDate(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        datePicker.setElement($input);
     },
 
     /**
@@ -149,14 +156,9 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         var editType = this.columnModel.getEditType(columnName);
         var datePickerOptions = tui.util.pick(columnInfo, 'component', 'datePicker');
 
-        // console.log(editType);
-        // console.log(datePickerOptions);
-
         if (editType === 'text' && datePickerOptions) {
             this.$el.css(this._calculatePosition($input)).show();
-            this.datePicker.setDateForm(datePickerOptions.dateForm || 'yyyy-mm-dd');
-            this.datePicker.setRanges(datePickerOptions.selectableRanges || []);
-            this.datePicker.setElement($input);
+            this._resetDatePicker(datePickerOptions, $input);
             this.datePicker.open();
         }
     },
