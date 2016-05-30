@@ -4,10 +4,6 @@
  */
 'use strict';
 
-// tui-component dependencies
-var DatePicker = tui.component.DatePicker;
-var Calendar = tui.component.Calendar;
-
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
 var DEFAULT_DATE_FORM = 'yyyy-mm-dd';
@@ -35,8 +31,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      * @param {Object} options - Options
      */
     initialize: function(options) {
-        var textPainter = options.textPainter;
-
+        this.textPainter = options.textPainter;
         this.columnModel = options.columnModel;
         this.domState = options.domState;
         this.calendar = this._createCalendar();
@@ -44,8 +39,8 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
 
         this._customizeCalendarBtns();
 
-        this.listenTo(textPainter, 'focusIn', this._onFocusInTextInput);
-        this.listenTo(textPainter, 'focusOut', this._onFocusOutTextInput);
+        this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
+        this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
     },
 
     className: classNameConst.LAYER_DATE_PICKER,
@@ -65,7 +60,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
             return false;
         });
 
-        return new Calendar({
+        return new tui.component.Calendar({
             element: $calendarEl,
             classPrefix: classNameConst.CALENDAR + '-'
         });
@@ -92,7 +87,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      * @private
      */
     _createDatePicker: function() {
-        var datePicker = new DatePicker({
+        var datePicker = new tui.component.DatePicker({
             parentElement: this.$el,
             dateForm: DEFAULT_DATE_FORM,
             enableSetDateByEnterKey: false,
@@ -152,13 +147,12 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     _onFocusInTextInput: function($input, address) {
         var columnName = address.columnName;
-        var columnInfo = this.columnModel.getColumnModel(columnName);
+        var component = this.columnModel.getColumnModel(columnName).component;
         var editType = this.columnModel.getEditType(columnName);
-        var datePickerOptions = tui.util.pick(columnInfo, 'component', 'datePicker');
 
-        if (editType === 'text' && datePickerOptions) {
+        if (editType === 'text' && component && component.name === 'datePicker') {
             this.$el.css(this._calculatePosition($input)).show();
-            this._resetDatePicker(datePickerOptions, $input);
+            this._resetDatePicker(component.option || {}, $input);
             this.datePicker.open();
         }
     },

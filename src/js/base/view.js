@@ -43,7 +43,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         if (!_.isArray(views)) {
             views = [views];
         }
-        [].push.apply(this._children, views);
+        [].push.apply(this._children, _.compact(views));
     },
 
     /**

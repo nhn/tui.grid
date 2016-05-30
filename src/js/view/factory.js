@@ -267,6 +267,12 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/datePickerLayer}
      */
     createDatePickerLayer: function() {
+        if (!tui.component ||
+            !tui.component.DatePicker ||
+            !tui.component.Calendar) {
+            return null;
+        }
+
         return new DatePickeLayerView({
             columnModel: this.modelManager.columnModel,
             textPainter: this.painterManager.getInputPainters().text,
