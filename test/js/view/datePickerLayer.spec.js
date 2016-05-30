@@ -3,9 +3,8 @@
 var DatePickerLayer = require('view/datePickerLayer');
 var classNameConst = require('common/classNameConst');
 
-function createDatePickerLayer($el) {
+function createDatePickerLayer() {
     return new DatePickerLayer({
-        el: $el,
         textPainter: _.assign({}, Backbone.Events),
         domState: {
             getOffset: _.constant({
@@ -32,8 +31,9 @@ describe('[DatePickerLayer] ', function() {
     var layer;
 
     beforeEach(function() {
-        var $el = jasmine.getFixtures().set('<div>').hide();
-        layer = createDatePickerLayer($el);
+        layer = createDatePickerLayer();
+        jasmine.getFixtures().appendSet(layer.$el);
+        layer.render();
     });
 
     it('element has a LAYER_DATE_PICKER class name', function() {
@@ -98,13 +98,13 @@ describe('[DatePickerLayer] ', function() {
                 expect(setElementSpy).toHaveBeenCalledWith($input);
             });
 
-            it('datePicker should be opened and the layer should be visible', function() {
-                var spyOpen = spyOn(layer.datePicker, 'open');
+            it('datePicker should be opened and visible', function() {
+                var spyOpen = spyOn(layer.datePicker, 'open').and.callThrough();
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
 
                 layer.textPainter.trigger('focusIn', $('<input>'), {});
 
-                expect(layer.$el).toBeVisible();
+                expect(layer.$el.css('display')).toBe('block');
                 expect(spyOpen).toHaveBeenCalled();
             });
         });

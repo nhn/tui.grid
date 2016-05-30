@@ -1,3 +1,7 @@
+opacity(n)
+    opacity n
+    filter unquote('alpha(opacity=' + round(n * 100) + ')')
+
 +prefix-classes('tui-grid-')
     .container
         width 100%

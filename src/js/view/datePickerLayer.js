@@ -164,6 +164,15 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     _onFocusOutTextInput: function() {
         this.datePicker.close();
         this.$el.hide();
+    },
+
+    /**
+     * Render
+     * @returns {Object} this object
+     */
+    render: function() {
+        this.$el.hide();
+        return this;
     }
 });
 
