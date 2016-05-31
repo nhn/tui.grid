@@ -1,12 +1,12 @@
 /**
- * @fileoverview Layer class which contains the Toast-UI-DatePicker component
+ * @fileoverview Layer View class which contains the 'tui-component-date-picker'
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
-var DEFAULT_DATE_FORM = 'yyyy-mm-dd';
+var DEFAULT_DATE_FORMAT = 'yyyy-mm-dd';
 var DatePickerLayer;
 
 /**
@@ -21,7 +21,7 @@ function arrowHTML(dirClassName) {
 }
 
 /**
- * Layer class which contains the Toast-UI-DatePicker component
+ * Layer View class which contains the 'tui-component-date-picker'
  * @module view/datePickerLayer
  * @extends module:base/view
  */
@@ -46,7 +46,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     className: classNameConst.LAYER_DATE_PICKER,
 
     /**
-     * Creates an instance of tui-component-calendar
+     * Creates an instance of 'tui-component-calendar'
      * @returns {tui.component.Calendar}
      * @private
      */
@@ -82,14 +82,14 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     },
 
     /**
-     * Creates an instance of tui-component-datepicker
+     * Creates an instance of 'tui-component-date-picker'
      * @returns {tui.component.DatePicker}
      * @private
      */
     _createDatePicker: function() {
         var datePicker = new tui.component.DatePicker({
             parentElement: this.$el,
-            dateForm: DEFAULT_DATE_FORM,
+            dateForm: DEFAULT_DATE_FORMAT,
             enableSetDateByEnterKey: false,
             selectableClassName: classNameConst.CALENDAR_SELECTABLE,
             selectedClassName: classNameConst.CALENDAR_SELECTED,
@@ -116,7 +116,8 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
         var datePicker = this.datePicker;
         var today = new Date();
 
-        datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORM);
+        options = options || {};
+        datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORMAT);
         datePicker.setRanges(options.selectableRanges || []);
         datePicker.setDate(today.getFullYear(), today.getMonth() + 1, today.getDate());
         datePicker.setElement($input);
@@ -140,7 +141,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     },
 
     /**
-     * Event handler for 'focusin' event of module:painter/input/text
+     * Event handler for 'focusIn' event of module:painter/input/text
      * @param {jQuery} $input - target input element
      * @param {{rowKey: String, columnName: String}} address - target cell address
      * @private
@@ -152,13 +153,13 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
 
         if (editType === 'text' && component && component.name === 'datePicker') {
             this.$el.css(this._calculatePosition($input)).show();
-            this._resetDatePicker(component.option || {}, $input);
+            this._resetDatePicker(component.option, $input);
             this.datePicker.open();
         }
     },
 
     /**
-     * Hides the layer.
+     * Event handler for 'focusOut' event of module:painter/input/text
      * @private
      */
     _onFocusOutTextInput: function() {

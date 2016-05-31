@@ -32,7 +32,6 @@ describe('[DatePickerLayer] ', function() {
 
     beforeEach(function() {
         layer = createDatePickerLayer();
-        jasmine.getFixtures().appendSet(layer.$el);
         layer.render();
     });
 
