@@ -21,6 +21,7 @@ var BodyTableView = require('./layout/bodyTable');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
+var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
 
 /**
@@ -257,6 +258,24 @@ var ViewFactory = tui.util.defineClass({
         return new EditingLayerView({
             renderModel: this.modelManager.renderModel,
             inputPainters: this.painterManager.getInputPainters(true),
+            domState: this.domState
+        });
+    },
+
+    /**
+     * Creates an instance of date-picker layer view.
+     * @returns {module:view/datePickerLayer}
+     */
+    createDatePickerLayer: function() {
+        if (!tui.component ||
+            !tui.component.DatePicker ||
+            !tui.component.Calendar) {
+            return null;
+        }
+
+        return new DatePickeLayerView({
+            columnModel: this.modelManager.columnModel,
+            textPainter: this.painterManager.getInputPainters().text,
             domState: this.domState
         });
     },

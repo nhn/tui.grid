@@ -1,0 +1,89 @@
+sat-day =
+    color #00f
+
+sun-day =
+    color #e82828
+
+$calendar-btn
+    position absolute
+    top 4px
+    padding 3px 6px 2px
+    border 1px solid transparent
+    &:hover
+        border-color #ccc
+
+.calendar
+    position absolute
+    width 190px
+    background #fff
+    border 1px solid #ccc
+    font-size 11px
+    color #444
+    font-family arial
+
+    table
+        margin 0 auto
+        table-layout fixed
+        text-align center
+        tr
+            height 20px
+        th
+            width 20px
+            &.calendar-sat
+                {sat-day}
+            &.calendar-sun
+                {sun-day}
+        td
+            background #eee
+            color #ccc
+            &.calendar-selectable
+                cursor pointer
+                background #fff
+                color #444
+                &.calendar-selected
+                    background #c3ebff
+                    font-weight bold
+                &.calendar-sat
+                    {sat-day}
+                &.calendar-sun
+                    {sun-day}
+                &:hover
+                    background #c3ebff
+
+
+.calendar-header
+    padding 6px 0 5px
+    text-align center
+    border-bottom 1px solid #ddd
+
+.calendar-title
+    font-size 14px
+
+.calendar-body
+    padding 5px 7px
+
+.calendar-btn-prev-year
+    @extend $calendar-btn
+    left 18px
+
+.calendar-btn-prev-month
+    @extend $calendar-btn
+    left 42px
+
+.calendar-btn-next-month
+    @extend $calendar-btn
+    right 42px
+
+.calendar-btn-next-year
+    @extend $calendar-btn
+    right 20px
+
+.calendar-today
+    text-decoration underline
+
+.calendar-prev-month,
+.calendar-next-month
+    opacity: 0.4
+
+.calendar-footer
+    display none

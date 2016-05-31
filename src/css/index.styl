@@ -1,3 +1,7 @@
+opacity(n)
+    opacity n
+    filter unquote('alpha(opacity=' + round(n * 100) + ')')
+
 +prefix-classes('tui-grid-')
     .container
         width 100%
@@ -95,8 +99,29 @@
     .btn-sorting-up
         background-position -10px -60px
 
+    .icon-arrow
+        display inline-block
+        width 0
+        height 0
+        border-style solid
+        border-width 4px
+        border-color #a0a0a0
+
+    .icon-arrow-left {
+        border-top-color transparent
+        border-bottom-color transparent
+        border-left-width 0
+    }
+
+    .icon-arrow-right {
+        border-top-color transparent
+        border-bottom-color transparent
+        border-right-width 0
+    }
+
     @import 'layer.styl'
     @import 'table.styl'
     @import 'layout.styl'
     @import 'toolbar.styl'
     @import 'pagination.styl'
+    @import 'calendar.styl'

@@ -14,6 +14,11 @@ var classNames = {
     NO_SCROLL_X: 'no-scroll-x',
     NO_SCROLL_Y: 'no-scroll-y',
 
+    // icon
+    ICO_ARROW: 'icon-arrow',
+    ICO_ARROW_LEFT: 'icon-arrow-left',
+    ICO_ARROW_RIGHT: 'icon-arrow-right',
+
     // layer
     LAYER_STATE: 'layer-state',
     LAYER_STATE_CONTENT: 'layer-state-content',
@@ -22,6 +27,7 @@ var classNames = {
     LAYER_FOCUS: 'layer-focus',
     LAYER_FOCUS_BORDER: 'layer-focus-border',
     LAYER_SELECTION: 'layer-selection',
+    LAYER_DATE_PICKER: 'layer-datepicker',
 
     // border line
     BORDER_LINE: 'border-line',
@@ -101,7 +107,16 @@ var classNames = {
     TOOLBAR: 'toolbar',
     TOOLBAR_BTN_HOLDER: 'toolbar-btn-holder',
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
-    HEIGHT_RESIZE_HANDLE: 'height-resize-handle'
+    HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
+
+    // etc
+    CALENDAR: 'calendar',
+    CALENDAR_BTN_PREV_YEAR: 'calendar-btn-prev-year',
+    CALENDAR_BTN_NEXT_YEAR: 'calendar-btn-next-year',
+    CALENDAR_BTN_PREV_MONTH: 'calendar-btn-prev-month',
+    CALENDAR_BTN_NEXT_MONTH: 'calendar-btn-next-month',
+    CALENDAR_SELECTABLE: 'calendar-selectable',
+    CALENDAR_SELECTED: 'calendar-selected'
 };
 
 var exports = _.mapObject(classNames, function(className) {
