@@ -14,7 +14,7 @@ build
 node_modules
 
 # Bower Components
-lib
+/lib
 
 #JSDOC
 doc
