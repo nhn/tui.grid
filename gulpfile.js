@@ -4,7 +4,6 @@ var gulp = require('gulp');
 var path = require('path');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
-var concat = require('gulp-concat');
 var stylus = require('gulp-stylus');
 var sourcemaps = require('gulp-sourcemaps');
 var minifycss = require('gulp-minify-css');
@@ -17,8 +16,7 @@ var header = require('gulp-header');
 var PATH_DIST = 'dist/',
     PATH_BUILD = 'build/',
     PATH_SAMPLE = 'samples/',
-    FNAME_JS = 'grid.js',
-    FNAME_CSS = 'grid.css';
+    FNAME_JS = 'grid.js';
 
 var pkg = require('./package.json');
 var banner = [
@@ -111,11 +109,13 @@ gulp.task('deploy-image', function() {
 
 gulp.task('copy-sample-lib', function() {
     return gulp.src([
-        'lib/jquery/jquery.min.js',
+        'lib/jquery/jquery.js',
         'lib/underscore/underscore.js',
         'lib/backbone/backbone.js',
-        'lib/tui-code-snippet/code-snippet.min.js',
-        'lib/tui-component-pagination/pagination.min.js'
+        'lib/tui-code-snippet/code-snippet.js',
+        'lib/tui-component-pagination/pagination.js',
+        'lib/tui-component-date-picker/date-picker.js',
+        'lib/tui-component-calendar/calendar.js'
     ]).pipe(gulp.dest(PATH_SAMPLE + 'js/lib'));
 });
 
