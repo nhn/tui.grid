@@ -89,7 +89,6 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     _createDatePicker: function() {
         var datePicker = new tui.component.DatePicker({
             parentElement: this.$el,
-            dateForm: DEFAULT_DATE_FORMAT,
             enableSetDateByEnterKey: false,
             selectableClassName: classNameConst.CALENDAR_SELECTABLE,
             selectedClassName: classNameConst.CALENDAR_SELECTED,
@@ -107,6 +106,21 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
     },
 
     /**
+     * Creates date object for now
+     * @returns {{year: Number, month: Number, date: Number}}
+     * @private
+     */
+    _createDateForNow: function() {
+        var now = new Date();
+
+        return {
+            year: now.getFullYear(),
+            month: now.getMonth() + 1,
+            date: now.getDate()
+        };
+    },
+
+    /**
      * Resets date picker options
      * @param {Object} options - datePicker options
      * @param {jQuery} $input - target input element
@@ -114,12 +128,11 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
      */
     _resetDatePicker: function(options, $input) {
         var datePicker = this.datePicker;
-        var today = new Date();
+        var date = options.date || this._createDateForNow();
 
-        options = options || {};
         datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORMAT);
         datePicker.setRanges(options.selectableRanges || []);
-        datePicker.setDate(today.getFullYear(), today.getMonth() + 1, today.getDate());
+        datePicker.setDate(date.year, date.month, date.date);
         datePicker.setElement($input);
     },
 
@@ -153,7 +166,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
 
         if (editType === 'text' && component && component.name === 'datePicker') {
             this.$el.css(this._calculatePosition($input)).show();
-            this._resetDatePicker(component.option, $input);
+            this._resetDatePicker(component.option || {}, $input);
             this.datePicker.open();
         }
     },

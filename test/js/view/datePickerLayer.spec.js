@@ -66,7 +66,9 @@ describe('[DatePickerLayer] ', function() {
             it('set component options to datePicker instance', function() {
                 var setDateFormSpy = spyOn(layer.datePicker, 'setDateForm');
                 var setRangesSpy = spyOn(layer.datePicker, 'setRanges');
+                var setDateSpy = spyOn(layer.datePicker, 'setDate');
                 var options = {
+                    date: {year: 2015, month: 11, date: 20},
                     dateForm: 'yyyy-mm-dd',
                     selectableRanges: [
                          [{year: 2015, month: 11, date: 17}, {year: 2016, month: 2, date: 15}]
@@ -78,22 +80,29 @@ describe('[DatePickerLayer] ', function() {
 
                 expect(setDateFormSpy).toHaveBeenCalledWith(options.dateForm);
                 expect(setRangesSpy).toHaveBeenCalledWith(options.selectableRanges);
+                expect(setDateSpy).toHaveBeenCalledWith(2015, 11, 20);
             });
 
-            it('change input element and set date to today', function() {
+            it('set date with current time if option.date is not specified', function() {
                 var setDateSpy = spyOn(layer.datePicker, 'setDate');
-                var setElementSpy = spyOn(layer.datePicker, 'setElement');
-                var $input = $('<input>');
                 var today = new Date();
                 var year = today.getFullYear();
                 var month = today.getMonth() + 1;
                 var date = today.getDate();
 
                 layer.columnModel = createColumnModelStub('text', 'datePicker');
-
-                layer.textPainter.trigger('focusIn', $input, {});
+                layer.textPainter.trigger('focusIn', $('<input>'), {});
 
                 expect(setDateSpy).toHaveBeenCalledWith(year, month, date);
+            });
+
+            it('change input element and set date to today', function() {
+                var setElementSpy = spyOn(layer.datePicker, 'setElement');
+                var $input = $('<input>');
+
+                layer.columnModel = createColumnModelStub('text', 'datePicker');
+                layer.textPainter.trigger('focusIn', $input, {});
+
                 expect(setElementSpy).toHaveBeenCalledWith($input);
             });
 
