@@ -10,5 +10,8 @@
     },
     "sample4": {
         "title": "4. Applying Themes"
+    },
+    "sample5": {
+        "title": "5. Using Date-Picker Component"
     }
 }
