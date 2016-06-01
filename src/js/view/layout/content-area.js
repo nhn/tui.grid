@@ -10,8 +10,8 @@ var ContentArea;
 
 /**
  * Create DIV element to draw border
- * @param {[type]} className [description]
- * @returns {[type]} [description]
+ * @param {String} className - border class name
+ * @returns {jQuery}
  */
 function borderDIV(className) {
     return $('<div>')
