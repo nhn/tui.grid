@@ -1,21 +1,17 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.1
+ * @version 1.3.0
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
 .tui-grid-container {
   width: 100%;
   position: relative;
-  border-style: solid;
-  border-width: 0 0 1px;
+  border-width: 0;
   clear: both;
   font-size: 12px;
   font-family: '돋움', Dotum, Helvetica, 'Apple SD Gothic Neo', Sans-serif;
-}
-.tui-grid-container.tui-grid-no-scroll-x {
-  border-bottom-width: 0;
 }
 .tui-grid-container ::-webkit-scrollbar {
   -webkit-appearance: none;
@@ -109,6 +105,24 @@
 .tui-grid-btn-sorting-up {
   background-position: -10px -60px;
 }
+.tui-grid-icon-arrow {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px;
+  border-color: #a0a0a0;
+}
+.tui-grid-icon-arrow-left {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-left-width: 0;
+}
+.tui-grid-icon-arrow-right {
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-right-width: 0;
+}
 .tui-grid-layer-state {
   position: absolute;
   top: 0;
@@ -155,7 +169,10 @@
   border-style: solid;
   border-width: 1px;
   opacity: 0.2;
-  filter: alpha(opacity=10);
+  filter: alpha(opacity=20);
+}
+.tui-grid-layer-datepicker {
+  position: absolute;
 }
 .tui-grid-table {
   width: 100%;
@@ -165,6 +182,9 @@
   table-layout: fixed;
   border-collapse: collapse;
   margin: 0;
+}
+.tui-grid-lside-area .tui-grid-table {
+  border-right-width: 0;
 }
 .tui-grid-cell {
   overflow: hidden;
@@ -182,8 +202,6 @@
   text-align: center;
 }
 .tui-grid-cell-ellipsis {
-  -o-text-overflow: ellipsis /*Opera 9*/;
-  -moz-binding: url("ellipsis.xml#ellipsis") /* Firefox */;
   text-overflow: ellipsis;
 }
 .tui-grid-cell-content .tui-grid-content-before {
@@ -266,16 +284,28 @@
   right: 17px;
   height: 1px;
 }
-.tui-grid-border-line-bottom.tui-grid-no-scroll-y {
+.tui-grid-no-scroll-x .tui-grid-border-line-bottom,
+.tui-grid-no-scroll-y .tui-grid-border-line-bottom {
   right: 0;
+}
+.tui-grid-content-area {
+  position: relative;
+  border-style: solid;
+  border-width: 0 0 1px;
+}
+.tui-grid-content-area.tui-grid-no-scroll-x {
+  border-bottom-width: 0;
 }
 .tui-grid-head-area {
   border-style: solid;
   border-width: 0 0 1px;
 }
+.tui-grid-head-area .tui-grid-cell-head {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
 .tui-grid-lside-area {
   display: none;
-  height: 100%;
   position: absolute;
   top: 0;
   left: 0;
@@ -295,16 +325,15 @@
 }
 .tui-grid-rside-area {
   display: none;
-  height: 100%;
   overflow: hidden;
 }
 .tui-grid-rside-area .tui-grid-head-area {
   position: relative;
-  margin-right: 17px;
+  padding-right: 17px;
   overflow: hidden;
 }
 .tui-grid-rside-area .tui-grid-head-area.tui-grid-no-scroll-y {
-  margin-right: 0;
+  padding-right: 0;
 }
 .tui-grid-rside-area .tui-grid-body-area {
   position: relative;
@@ -348,12 +377,13 @@
 }
 .tui-grid-toolbar {
   display: none;
-  width: 100%;
+  left: 0;
+  right: 0;
   height: 65px;
   bottom: 0px;
   position: absolute;
   border-style: solid;
-  border-width: 1px 0 0;
+  border-width: 0 1px 1px;
   z-index: 11;
 }
 .tui-grid-toolbar-btn-holder {
@@ -469,4 +499,101 @@
 }
 .tui-grid-pagination .tui-grid-next-end-off {
   background-position: -75px -30px;
+}
+.tui-grid-calendar-btn-prev-year,
+.tui-grid-calendar-btn-prev-month,
+.tui-grid-calendar-btn-next-month,
+.tui-grid-calendar-btn-next-year {
+  position: absolute;
+  top: 4px;
+  padding: 3px 6px 2px;
+  border: 1px solid transparent;
+}
+.tui-grid-calendar-btn-prev-year:hover,
+.tui-grid-calendar-btn-prev-month:hover,
+.tui-grid-calendar-btn-next-month:hover,
+.tui-grid-calendar-btn-next-year:hover {
+  border-color: #ccc;
+}
+.tui-grid-calendar {
+  position: absolute;
+  width: 190px;
+  background: #fff;
+  border: 1px solid #ccc;
+  font-size: 11px;
+  color: #444;
+  font-family: arial;
+}
+.tui-grid-calendar table {
+  margin: 0 auto;
+  table-layout: fixed;
+  text-align: center;
+}
+.tui-grid-calendar table tr {
+  height: 20px;
+}
+.tui-grid-calendar table th {
+  width: 20px;
+}
+.tui-grid-calendar table th.tui-grid-calendar-sat {
+  color: #00f;
+}
+.tui-grid-calendar table th.tui-grid-calendar-sun {
+  color: #e82828;
+}
+.tui-grid-calendar table td {
+  background: #eee;
+  color: #ccc;
+}
+.tui-grid-calendar table td.tui-grid-calendar-selectable {
+  cursor: pointer;
+  background: #fff;
+  color: #444;
+}
+.tui-grid-calendar table td.tui-grid-calendar-selectable.tui-grid-calendar-selected {
+  background: #c3ebff;
+  font-weight: bold;
+}
+.tui-grid-calendar table td.tui-grid-calendar-selectable.tui-grid-calendar-sat {
+  color: #00f;
+}
+.tui-grid-calendar table td.tui-grid-calendar-selectable.tui-grid-calendar-sun {
+  color: #e82828;
+}
+.tui-grid-calendar table td.tui-grid-calendar-selectable:hover {
+  background: #c3ebff;
+}
+.tui-grid-calendar-header {
+  padding: 6px 0 5px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+.tui-grid-calendar-title {
+  font-size: 14px;
+}
+.tui-grid-calendar-body {
+  padding: 5px 7px;
+}
+.tui-grid-calendar-btn-prev-year {
+  left: 18px;
+}
+.tui-grid-calendar-btn-prev-month {
+  left: 42px;
+}
+.tui-grid-calendar-btn-next-month {
+  right: 42px;
+}
+.tui-grid-calendar-btn-next-year {
+  right: 20px;
+}
+.tui-grid-calendar-today {
+  text-decoration: underline;
+}
+.tui-grid-calendar-prev-month,
+.tui-grid-calendar-next-month {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+.tui-grid-calendar-footer {
+  display: none;
 }

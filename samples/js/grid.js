@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.2.1
+ * @version 1.3.0
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -196,6 +196,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _initializePagination: function() {
         var pagination = this.pagination;
+
         if (pagination) {
             pagination.setOption('itemPerPage', this.perPage);
             pagination.setOption('itemCount', 1);
@@ -288,6 +289,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _setFormData: function(data) {
         var formData = _.clone(data);
+
         _.each(this.lastRequestedReadData, function(value, key) {
             if ((_.isUndefined(formData[key]) || _.isNull(formData[key])) && value) {
                 formData[key] = '';
@@ -351,7 +353,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _getFormData: function() {
-        /* istanbul ignore next*/
         return formUtil.getFormData(this.$el);
     },
 
@@ -362,8 +363,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onReadSuccess: function(dataModel, responseData) {
-        var pagination = this.pagination,
-            page, totalCount;
+        var pagination = this.pagination;
+        var page, totalCount;
 
         dataModel.setOriginalRowList();
 
@@ -612,7 +613,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 _.each(dataMap, function(list, name) {
                     if (_.contains(checkList, name) && list.length) {
                         count += list.length;
-                        data[name] = $.toJSON(list);
+                        data[name] = JSON.stringify(list);
                     }
                 }, this);
             } else {
@@ -644,15 +645,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getRequestParam: function(requestType, options) {
         var defaultOptions = {
-                url: this.api[requestType],
-                type: null,
-                hasDataParam: true,
-                isOnlyModified: true,
-                isOnlyChecked: true
-            },
-            newOptions = $.extend(defaultOptions, options),
-            dataParam = this._getDataParam(requestType, newOptions),
-            param = null;
+            url: this.api[requestType],
+            type: null,
+            hasDataParam: true,
+            isOnlyModified: true,
+            isOnlyChecked: true
+        };
+        var newOptions = $.extend(defaultOptions, options);
+        var dataParam = this._getDataParam(requestType, newOptions);
+        var param = null;
 
         if (newOptions.isSkipConfirm || this._isConfirmed(requestType, dataParam.count)) {
             param = {
@@ -662,6 +663,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 type: newOptions.type
             };
         }
+
         return param;
     },
 
@@ -675,12 +677,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _isConfirmed: function(requestType, count) {
         var result = false;
 
-        /* istanbul ignore next: confirm 을 확인할 수 없읔 */
         if (count > 0) {
             result = confirm(this._getConfirmMessage(requestType, count));
         } else {
             alert(this._getConfirmMessage(requestType, count));
         }
+
         return result;
     },
 
@@ -693,19 +695,20 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _getConfirmMessage: function(requestType, count) {
         var textMap = {
-                'createData': '입력',
-                'updateData': '수정',
-                'deleteData': '삭제',
-                'modifyData': '반영'
-            },
-            actionName = textMap[requestType],
-            message;
+            createData: '입력',
+            updateData: '수정',
+            deleteData: '삭제',
+            modifyData: '반영'
+        };
+        var actionName = textMap[requestType];
+        var message;
 
         if (count > 0) {
             message = count + '건의 데이터를 ' + actionName + '하시겠습니까?';
         } else {
             message = actionName + '할 데이터가 없습니다.';
         }
+
         return message;
     },
 
@@ -715,8 +718,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _ajax: function(options) {
-        var eventData = new GridEvent(options.data),
-            params;
+        var eventData = new GridEvent(options.data);
+        var params;
 
         this.trigger('beforeRequest', eventData);
         if (eventData.isStopped()) {
@@ -759,13 +762,13 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
-        var message = responseData && responseData.message,
-            eventData = new GridEvent({
-                httpStatus: status,
-                requestType: options.requestType,
-                requestParameter: options.data,
-                responseData: responseData
-            });
+        var message = responseData && responseData.message;
+        var eventData = new GridEvent({
+            httpStatus: status,
+            requestType: options.requestType,
+            requestParameter: options.data,
+            responseData: responseData
+        });
 
         this.trigger('response', eventData);
         if (eventData.isStopped()) {
@@ -1015,6 +1018,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
             this.message = message || 'error';
         };
         GridError.prototype = new Error();
+
         return new GridError();
     },
 
@@ -1027,7 +1031,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         if (!_.isArray(views)) {
             views = [views];
         }
-        [].push.apply(this._children, views);
+        [].push.apply(this._children, _.compact(views));
     },
 
     /**
@@ -1038,6 +1042,7 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         var elements = _.map(this._children, function(view) {
             return view.render().el;
         });
+
         return elements;
     },
 
@@ -1083,6 +1088,11 @@ var classNames = {
     NO_SCROLL_X: 'no-scroll-x',
     NO_SCROLL_Y: 'no-scroll-y',
 
+    // icon
+    ICO_ARROW: 'icon-arrow',
+    ICO_ARROW_LEFT: 'icon-arrow-left',
+    ICO_ARROW_RIGHT: 'icon-arrow-right',
+
     // layer
     LAYER_STATE: 'layer-state',
     LAYER_STATE_CONTENT: 'layer-state-content',
@@ -1091,6 +1101,7 @@ var classNames = {
     LAYER_FOCUS: 'layer-focus',
     LAYER_FOCUS_BORDER: 'layer-focus-border',
     LAYER_SELECTION: 'layer-selection',
+    LAYER_DATE_PICKER: 'layer-datepicker',
 
     // border line
     BORDER_LINE: 'border-line',
@@ -1100,6 +1111,7 @@ var classNames = {
     BORDER_BOTTOM: 'border-line-bottom',
 
     // layout (area)
+    CONTENT_AREA: 'content-area',
     LSIDE_AREA: 'lside-area',
     RSIDE_AREA: 'rside-area',
     HEAD_AREA: 'head-area',
@@ -1169,7 +1181,16 @@ var classNames = {
     TOOLBAR: 'toolbar',
     TOOLBAR_BTN_HOLDER: 'toolbar-btn-holder',
     HEIGHT_RESIZE_BAR: 'height-resize-bar',
-    HEIGHT_RESIZE_HANDLE: 'height-resize-handle'
+    HEIGHT_RESIZE_HANDLE: 'height-resize-handle',
+
+    // etc
+    CALENDAR: 'calendar',
+    CALENDAR_BTN_PREV_YEAR: 'calendar-btn-prev-year',
+    CALENDAR_BTN_NEXT_YEAR: 'calendar-btn-next-year',
+    CALENDAR_BTN_PREV_MONTH: 'calendar-btn-prev-month',
+    CALENDAR_BTN_NEXT_MONTH: 'calendar-btn-next-month',
+    CALENDAR_SELECTABLE: 'calendar-selectable',
+    CALENDAR_SELECTED: 'calendar-selected'
 };
 
 var exports = _.mapObject(classNames, function(className) {
@@ -1235,6 +1256,11 @@ module.exports = {
         DEFAULT: 'default',
         STRIPED: 'striped',
         CLEAN: 'clean'
+    },
+    selectionType: {
+        CELL: 'CELL',
+        ROW: 'ROW',
+        COLUMN: 'COLUMN'
     }
 };
 
@@ -1265,6 +1291,7 @@ var formUtil = {
             _.each(arr, function(value, i) {
                 arr[i] = String(value);
             });
+
             return arr;
         },
 
@@ -1381,6 +1408,7 @@ var formUtil = {
                 formElement = $form.prop('elements');
             }
         }
+
         return $(formElement);
     },
 
@@ -1541,6 +1569,7 @@ var util = {
         _.each(attributes, function(value, key) {
             str += ' ' + key + '="' + value + '"';
         }, this);
+
         return str;
     },
 
@@ -1553,6 +1582,7 @@ var util = {
     sum: function(list) {
         return _.reduce(list, function(memo, value) {
             memo += value;
+
             return memo;
         }, 0);
     },
@@ -1669,13 +1699,13 @@ var util = {
         htmlString = htmlString.replace(/[\n\r\t]/g, '');
         if (tui.util.hasEncodableString(htmlString)) {
             if (/<img/i.test(htmlString)) {
-                matchResult = htmlString.match(/<img[^>]*\ssrc=[\"']?([^>\"']+)[\"']?[^>]*>/i);
+                matchResult = htmlString.match(/<img[^>]*\ssrc=["']?([^>"']+)["']?[^>]*>/i);
                 htmlString = matchResult ? matchResult[1] : '';
             } else {
                 htmlString = htmlString.replace(/<button.*?<\/button>/gi, '');
             }
             htmlString = $.trim(tui.util.decodeHTMLEntity(
-                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?:\:[a-z]+)?)[^>]*>/ig, '')
+                htmlString.replace(/<\/?(?:h[1-5]|[a-z]+(?::[a-z]+)?)[^>]*>/ig, '')
             ));
         }
         return htmlString;
@@ -1715,7 +1745,7 @@ var util = {
 
         _.each(dataObj, function(value, name) {
             if (!_.isString(value) && !_.isNumber(value)) {
-                value = $.toJSON(value);
+                value = JSON.stringify(value);
             }
             value = encodeURIComponent(value);
             if (value) {
@@ -1743,7 +1773,7 @@ var util = {
             key = tmp[0];
             value = decodeURIComponent(tmp[1]);
             try {
-                value = $.parseJSON(value);
+                value = JSON.parse(value);
             } catch(e) {} // eslint-disable-line
 
             if (!_.isNull(value)) {
@@ -2001,6 +2031,11 @@ module.exports = DomState;
  *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
+ *          @param {Object} [options.columnModelList.component] - Option for using tui-component
+ *              @param {string} [options.columnModelList.component.name] - The name of the compnent to use
+                    for this column
+ *              @param {Object} [options.columnModelList.component.option] - The option object to be used for
+                    creating the component
  *      @param {array} options.columnMerge - The array that specifies the merged column.
  *          This options does not merge the cells of multiple columns into a single cell.
  *          This options only effects to the headers of the multiple columns, creates a new parent header
@@ -2636,10 +2671,10 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
     getCheckedRowKeyList: function(isJsonString) {
-        var checkedRowList = this.modelManager.dataModel.getRowList(true),
-            checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
+        var checkedRowList = this.modelManager.dataModel.getRowList(true);
+        var checkedRowKeyList = _.pluck(checkedRowList, 'rowKey');
 
-        return isJsonString ? $.toJSON(checkedRowKeyList) : checkedRowKeyList;
+        return isJsonString ? JSON.stringify(checkedRowKeyList) : checkedRowKeyList;
     },
 
     /**
@@ -2651,7 +2686,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     getCheckedRowList: function(isJsonString) {
         var checkedRowList = this.modelManager.dataModel.getRowList(true);
 
-        return isJsonString ? $.toJSON(checkedRowList) : checkedRowList;
+        return isJsonString ? JSON.stringify(checkedRowList) : checkedRowList;
     },
 
     /**
@@ -3067,7 +3102,7 @@ tui.Grid.applyTheme = function(presetName, extOptions) {
     themeManager.apply(presetName, extOptions);
 };
 
-},{"./addon/net":2,"./base/view":7,"./common/constMap":9,"./common/util":12,"./domState":13,"./model/manager":21,"./painter/controller":29,"./painter/manager":36,"./publicEventEmitter":38,"./theme/manager":40,"./view/factory":48}],15:[function(require,module,exports){
+},{"./addon/net":2,"./base/view":7,"./common/constMap":9,"./common/util":12,"./domState":13,"./model/manager":21,"./painter/controller":29,"./painter/manager":36,"./publicEventEmitter":38,"./theme/manager":40,"./view/factory":49}],15:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
@@ -4792,7 +4827,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var row = this.get(rowKey),
             rowData = row ? row.toJSON() : null;
 
-        return isJsonString ? $.toJSON(rowData) : rowData;
+        return isJsonString ? JSON.stringify(rowData) : rowData;
     },
 
     /**
@@ -4805,7 +4840,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var row = this.at(index),
             rowData = row ? row.toJSON() : null;
 
-        return isJsonString ? $.toJSON(row) : rowData;
+        return isJsonString ? JSON.stringify(row) : rowData;
     },
 
     /**
@@ -4862,7 +4897,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      */
     getColumnValues: function(columnName, isJsonString) {
         var valueList = this.pluck(columnName);
-        return isJsonString ? $.toJSON(valueList) : valueList;
+        return isJsonString ? JSON.stringify(valueList) : valueList;
     },
 
     /**
@@ -5103,7 +5138,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var filtered = _.omit(row, filteringColumnList);
         var result = _.some(filtered, function(value, columnName) {
             if (typeof value === 'object') {
-                return ($.toJSON(value) !== $.toJSON(originalRow[columnName]));
+                return (JSON.stringify(value) !== JSON.stringify(originalRow[columnName]));
             }
             return value !== originalRow[columnName];
         }, this);
@@ -5461,10 +5496,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getAvailableTotalWidth: function(columnLength) {
-        var totalWidth = this.get('width'),
-            borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0),
-            totalBorderWidth = borderCount * CELL_BORDER_WIDTH,
-            availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
+        var totalWidth = this.get('width');
+        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
+        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
+        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
         return availableTotalWidth;
     },
@@ -5476,8 +5511,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _applyMinimumColumnWidth: function(columnWidthList) {
-        var minWidthList = this._minColumnWidthList,
-            appliedList = _.clone(columnWidthList);
+        var minWidthList = this._minColumnWidthList;
+        var appliedList = _.clone(columnWidthList);
 
         _.each(appliedList, function(width, index) {
             var minWidth = minWidthList[index];
@@ -5485,6 +5520,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 appliedList[index] = minWidth;
             }
         });
+
         return appliedList;
     },
 
@@ -5493,8 +5529,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _resetTotalRowHeight: function() {
-        var rowHeight = this.get('rowHeight'),
-            rowCount = this.dataModel.length;
+        var rowHeight = this.get('rowHeight');
+        var rowCount = this.dataModel.length;
 
         this.set('totalRowHeight', util.getHeight(rowCount, rowHeight));
     },
@@ -5523,15 +5559,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _fillEmptyColumnWidth: function(columnWidthList) {
-        var totalWidth = this._getAvailableTotalWidth(columnWidthList.length),
-            remainTotalWidth = totalWidth - util.sum(columnWidthList),
-            emptyIndexes = [];
+        var totalWidth = this._getAvailableTotalWidth(columnWidthList.length);
+        var remainTotalWidth = totalWidth - util.sum(columnWidthList);
+        var emptyIndexes = [];
 
         _.each(columnWidthList, function(width, index) {
             if (!width) {
                 emptyIndexes.push(index);
             }
         });
+
         return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
     },
 
@@ -5543,8 +5580,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
-        var fixedFlags = this._columnWidthFixedFlags,
-            columnIndexes = [];
+        var fixedFlags = this._columnWidthFixedFlags;
+        var columnIndexes = [];
 
         _.each(fixedFlags, function(flag, index) {
             if (!flag) {
@@ -5562,9 +5599,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
-        var minWidthList = this._minColumnWidthList,
-            fixedFlags = this._columnWidthFixedFlags,
-            availableList = [];
+        var minWidthList = this._minColumnWidthList;
+        var fixedFlags = this._columnWidthFixedFlags;
+        var availableList = [];
 
         _.each(columnWidthList, function(width, index) {
             if (!fixedFlags[index]) {
@@ -5589,9 +5626,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
-        var avgValue = Math.round(totalRemainWidth / availableList.length),
-            newAvailableList = [],
-            columnIndexes;
+        var avgValue = Math.round(totalRemainWidth / availableList.length);
+        var newAvailableList = [];
+        var columnIndexes;
 
         _.each(availableList, function(available) {
             // note that totalRemainWidth and avgValue are negative number.
@@ -5620,10 +5657,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
-        var length = columnIndexes.length,
-            avgValue = Math.round(extraWidth / length),
-            errorValue = (avgValue * length) - extraWidth, // to correct total width
-            resultList = _.clone(columnWidthList);
+        var length = columnIndexes.length;
+        var avgValue = Math.round(extraWidth / length);
+        var errorValue = (avgValue * length) - extraWidth; // to correct total width
+        var resultList = _.clone(columnWidthList);
 
         _.each(columnIndexes, function(columnIndex) {
             resultList[columnIndex] += avgValue;
@@ -5645,11 +5682,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
-        var columnLength = columnWidthList.length,
-            availableWidth = this._getAvailableTotalWidth(columnLength),
-            totalExtraWidth = availableWidth - util.sum(columnWidthList),
-            fixedCount = _.filter(this._columnWidthFixedFlags).length,
-            adjustedList;
+        var columnLength = columnWidthList.length;
+        var availableWidth = this._getAvailableTotalWidth(columnLength);
+        var totalExtraWidth = availableWidth - util.sum(columnWidthList);
+        var fixedCount = _.filter(this._columnWidthFixedFlags).length;
+        var adjustedList;
 
         if (totalExtraWidth > 0) {
             if (columnLength > fixedCount) {
@@ -5664,6 +5701,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         } else {
             adjustedList = columnWidthList;
         }
+
         return adjustedList;
     },
 
@@ -5672,15 +5710,15 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _initColumnWidthVariables: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true),
-            commonMinWidth = this.get('minimumColumnWidth'),
-            widthList = [],
-            fixedFlags = [],
-            minWidthList = [];
+        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
+        var commonMinWidth = this.get('minimumColumnWidth');
+        var widthList = [];
+        var fixedFlags = [];
+        var minWidthList = [];
 
         _.each(columnModelList, function(columnModel) {
-            var width = columnModel.width > 0 ? columnModel.width : 0,
-                minWidth = Math.max(width, commonMinWidth);
+            var width = columnModel.width > 0 ? columnModel.width : 0;
+            var minWidth = Math.max(width, commonMinWidth);
 
             // Meta columns are not affected by common 'minimumColumnWidth' value
             if (util.isMetaColumn(columnModel.columnName)) {
@@ -5731,13 +5769,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {Number} 해당 frame 의 너비
      */
     getFrameWidth: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            columnWidthList = this.getColumnWidthList(whichSide),
-            frameWidth = this._getFrameWidth(columnWidthList);
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnWidthList = this.getColumnWidthList(whichSide);
+        var frameWidth = this._getFrameWidth(columnWidthList);
 
         if (_.isUndefined(whichSide) && columnFixCount > 0) {
             frameWidth += CELL_BORDER_WIDTH;
         }
+
         return frameWidth;
     },
 
@@ -5749,9 +5788,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _getFrameWidth: function(widthList) {
         var frameWidth = 0;
+
         if (widthList.length) {
             frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
         }
+
         return frameWidth;
     },
 
@@ -5762,10 +5803,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
-        var totalWidth = this.get('width'),
-            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            maxLeftSideWidth = this._getMaxLeftSideWidth(),
-            rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
+        var totalWidth = this.get('width');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var maxLeftSideWidth = this._getMaxLeftSideWidth();
+        var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
 
         lsideWidthList = columnWidthList.slice(0, columnFixCount);
         rsideWidthList = columnWidthList.slice(columnFixCount);
@@ -5796,15 +5837,16 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.get('minimumColumnWidth'),
-            columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            minWidth = 0,
-            borderWidth;
+        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var minWidth = 0;
+        var borderWidth;
 
         if (columnFixCount) {
             borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
             minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
         }
+
         return minWidth;
     },
 
@@ -5819,6 +5861,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         if (maxWidth) {
             maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
         }
+
         return maxWidth;
     },
 
@@ -5953,10 +5996,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
-        var renderModel = this.renderModel,
-            currentTop = renderModel.get('scrollTop'),
-            currentLeft = renderModel.get('scrollLeft'),
-            isUp, isDown, isLeft, isRight;
+        var renderModel = this.renderModel;
+        var currentTop = renderModel.get('scrollTop');
+        var currentLeft = renderModel.get('scrollLeft');
+        var isUp, isDown, isLeft, isRight;
 
         isUp = targetPosition.top < currentTop;
         isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
@@ -6008,8 +6051,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{x: number, y: number}} Mouse-overflow
      */
     getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this._rebasePositionToContainer(pageX, pageY),
-            bodySize = this._getBodySize();
+        var containerPos = this._rebasePositionToContainer(pageX, pageY);
+        var bodySize = this._getBodySize();
 
         return this._judgeOverflow(containerPos, bodySize);
     },
@@ -6022,10 +6065,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _judgeOverflow: function(containerPosition, bodySize) {
-        var containerX = containerPosition.x,
-            containerY = containerPosition.y,
-            overflowY = 0,
-            overflowX = 0;
+        var containerX = containerPosition.x;
+        var containerY = containerPosition.y;
+        var overflowY = 0;
+        var overflowX = 0;
 
         if (containerY < 0) {
             overflowY = -1;
@@ -6068,10 +6111,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcRowIndexFromPositionY: function(containerY) {
-        var cellY = containerY + this.renderModel.get('scrollTop'),
-            tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH)),
-            min = 0,
-            max = Math.max(min, this.dataModel.length - 1);
+        var cellY = containerY + this.renderModel.get('scrollTop');
+        var tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH));
+        var min = 0;
+        var max = Math.max(min, this.dataModel.length - 1);
 
         return util.clamp(tempIndex, min, max);
     },
@@ -6084,12 +6127,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcColumnIndexFromPositionX: function(containerX, withMeta) {
-        var columnWidthList = this.getColumnWidthList(),
-            totalColumnWidth = this.getFrameWidth(),
-            cellX = containerX,
-            isRsidePosition = containerX >= this.get('lsideWidth'),
-            adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount(),
-            columnIndex = 0;
+        var columnWidthList = this.getColumnWidthList();
+        var totalColumnWidth = this.getFrameWidth();
+        var cellX = containerX;
+        var isRsidePosition = containerX >= this.get('lsideWidth');
+        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
+        var columnIndex = 0;
 
         if (isRsidePosition) {
             cellX += this.renderModel.get('scrollLeft');
@@ -6121,8 +6164,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
-        var containerPosX = pageX - this.get('offsetLeft'),
-            containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
+        var containerPosX = pageX - this.get('offsetLeft');
+        var containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
 
         return {
             x: containerPosX,
@@ -6138,11 +6181,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
-        var i = lsideWidthList.length - 1,
-            minimumColumnWidth = this.get('minimumColumnWidth'),
-            currentWidth = this._getFrameWidth(lsideWidthList),
-            diff = currentWidth - totalWidth,
-            changedWidth;
+        var i = lsideWidthList.length - 1;
+        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var currentWidth = this._getFrameWidth(lsideWidthList);
+        var diff = currentWidth - totalWidth;
+        var changedWidth;
+
         if (diff > 0) {
             while (i >= 0 && diff > 0) {
                 changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
@@ -6153,6 +6197,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         } else if (diff < 0) {
             lsideWidthList[i] += Math.abs(diff);
         }
+
         return lsideWidthList;
     },
 
@@ -6195,6 +6240,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _onWidthChange: function() {
         var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
+
         this._setColumnWidthVariables(widthList);
     },
 
@@ -6204,10 +6250,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number} width    변경할 너비 pixel값
      */
     setColumnWidth: function(index, width) {
-        var columnWidthList = this.get('columnWidthList'),
-            fixedFlags = this._columnWidthFixedFlags,
-            minWidth = this._minColumnWidthList[index],
-            adjustedList;
+        var columnWidthList = this.get('columnWidthList');
+        var fixedFlags = this._columnWidthFixedFlags;
+        var minWidth = this._minColumnWidthList[index];
+        var adjustedList;
 
         if (!fixedFlags[index] && columnWidthList[index]) {
             columnWidthList[index] = Math.max(width, minWidth);
@@ -6276,8 +6322,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * layout 에 필요한 크기 및 위치 데이터를 갱신한다.
      */
     refreshLayout: function() {
-        var domState = this.domState,
-            offset = domState.getOffset();
+        var domState = this.domState;
+        var offset = domState.getOffset();
 
         this.set({
             offsetTop: offset.top,
@@ -6296,6 +6342,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     restoreColumnWidth: function(index) {
         var orgWidth = this.get('originalWidthList')[index];
+
         this.setColumnWidth(index, orgWidth);
     },
 
@@ -6305,8 +6352,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            columnWidthList = [];
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnWidthList = [];
 
         switch (whichSide) {
             case 'l':
@@ -6321,6 +6368,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
                 columnWidthList = this.get('columnWidthList');
                 break;
         }
+
         return columnWidthList;
     }
 });
@@ -6449,8 +6497,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} True is success
      */
     select: function(rowKey) {
-        var eventData = new GridEvent(),
-            currentRowKey = this.get('rowKey');
+        var eventData = new GridEvent();
+        var currentRowKey = this.get('rowKey');
 
         if (String(currentRowKey) === String(rowKey)) {
             return true;
@@ -6480,6 +6528,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     _cancelSelect: function() {
         var prevColumnName = this.get('prevColumnName');
+
         this.set('columnName', prevColumnName);
         this.trigger('focus', this.get('rowKey'), prevColumnName);
     },
@@ -6533,9 +6582,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} true if success
      */
     focusAt: function(rowIndex, columnIndex, isScrollable) {
-        var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true),
-            result = false;
+        var row = this.dataModel.at(rowIndex);
+        var column = this.columnModel.at(columnIndex, true);
+        var result = false;
 
         if (row && column) {
             result = this.focus(row.get('rowKey'), column.columnName, isScrollable);
@@ -6576,9 +6625,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Boolean} true if success
      */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
-        var row = this.dataModel.at(rowIndex),
-            column = this.columnModel.at(columnIndex, true),
-            result = false;
+        var row = this.dataModel.at(rowIndex);
+        var column = this.columnModel.at(columnIndex, true);
+        var result = false;
 
         if (row && column) {
             result = this.focusIn(row.get('rowKey'), column.columnName, isScrollable);
@@ -6663,8 +6712,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {{row: number, column: number}} The object that contains index info
      */
     indexOf: function(isPrevious) {
-        var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey'),
-            columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
+        var rowKey = isPrevious ? this.get('prevRowKey') : this.get('rowKey');
+        var columnName = isPrevious ? this.get('prevColumnName') : this.get('columnName');
 
         return {
             row: this.dataModel.indexOfRowKey(rowKey),
@@ -6678,8 +6727,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {boolean} True if has focus.
      */
     has: function(checkValid) {
-        var rowKey = this.get('rowKey'),
-            columnName = this.get('columnName');
+        var rowKey = this.get('rowKey');
+        var columnName = this.get('columnName');
 
         if (checkValid) {
             return this._isValidCell(rowKey, columnName);
@@ -6692,9 +6741,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {boolean} True if restored
      */
     restore: function() {
-        var prevRowKey = this.get('prevRowKey'),
-            prevColumnName = this.get('prevColumnName'),
-            restored = false;
+        var prevRowKey = this.get('prevRowKey');
+        var prevColumnName = this.get('prevColumnName');
+        var restored = false;
 
         if (this._isValidCell(prevRowKey, prevColumnName)) {
             this.focus(prevRowKey, prevColumnName);
@@ -6769,8 +6818,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _isValidCell: function(rowKey, columnName) {
-        var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey),
-            isValidColumnName = !util.isBlank(columnName) && !!this.columnModel.getColumnModel(columnName);
+        var isValidRowKey = !util.isBlank(rowKey) && !!this.dataModel.get(rowKey);
+        var isValidColumnName = !util.isBlank(columnName) && !!this.columnModel.getColumnModel(columnName);
 
         return isValidRowKey && isValidColumnName;
     },
@@ -6782,9 +6831,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _findRowKey: function(offset) {
-        var index, row,
-            dataModel = this.dataModel,
-            rowKey = null;
+        var dataModel = this.dataModel;
+        var rowKey = null;
+        var index, row;
 
         if (this.has(true)) {
             index = Math.max(
@@ -6808,11 +6857,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @private
      */
     _findColumnName: function(offset) {
-        var index,
-            columnModel = this.columnModel,
-            columnModelList = columnModel.getVisibleColumnModelList(),
-            columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true),
-            columnName = null;
+        var columnModel = this.columnModel;
+        var columnModelList = columnModel.getVisibleColumnModelList();
+        var columnIndex = columnModel.indexOfColumnName(this.get('columnName'), true);
+        var columnName = null;
+        var index;
 
         if (this.has(true)) {
             index = Math.max(Math.min(columnIndex + offset, columnModelList.length - 1), 0);
@@ -6839,6 +6888,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     nextRowIndex: function(offset) {
         var rowKey = this.nextRowKey(offset);
+
         return this.dataModel.indexOfRowKey(rowKey);
     },
 
@@ -6849,6 +6899,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     prevRowIndex: function(offset) {
         var rowKey = this.prevRowKey(offset);
+
         return this.dataModel.indexOfRowKey(rowKey);
     },
 
@@ -6858,6 +6909,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     nextColumnIndex: function() {
         var columnName = this.nextColumnName();
+
         return this.columnModel.indexOfColumnName(columnName, true);
     },
 
@@ -6867,6 +6919,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     prevColumnIndex: function() {
         var columnName = this.prevColumnName();
+
         return this.columnModel.indexOfColumnName(columnName, true);
     },
 
@@ -6877,9 +6930,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     nextRowKey: function(offset) {
-        var focused = this.which(),
-            rowKey = focused.rowKey,
-            count, rowSpanData;
+        var focused = this.which();
+        var rowKey = focused.rowKey;
+        var count, rowSpanData;
 
         offset = (typeof offset === 'number') ? offset : 1;
         if (offset > 1) {
@@ -6900,6 +6953,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 rowKey = this._findRowKey(1);
             }
         }
+
         return rowKey;
     },
 
@@ -6910,9 +6964,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {Number|String} offset 만큼 이동한 위치의 rowKey
      */
     prevRowKey: function(offset) {
-        var focused = this.which(),
-            rowKey = focused.rowKey,
-            rowSpanData;
+        var focused = this.which();
+        var rowKey = focused.rowKey;
+        var rowSpanData;
+
         offset = typeof offset === 'number' ? offset : 1;
         offset *= -1;
 
@@ -6930,6 +6985,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
                 rowKey = this._findRowKey(-1);
             }
         }
+
         return rowKey;
     },
 
@@ -6971,6 +7027,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     firstColumnName: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList();
+
         return columnModelList[0].columnName;
     },
 
@@ -6979,8 +7036,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @returns {string} 마지막 컬럼명
      */
     lastColumnName: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(),
-            lastIndex = columnModelList.length - 1;
+        var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var lastIndex = columnModelList.length - 1;
+
         return columnModelList[lastIndex].columnName;
     }
 });
@@ -7443,8 +7501,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollLeft: function() {
-        var dimension = this.dimensionModel,
-            maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
+        var dimension = this.dimensionModel;
+        var maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
                 dimension.getScrollYWidth();
 
         this.set('maxScrollLeft', maxScrollLeft);
@@ -7455,9 +7513,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _updateMaxScrollTop: function() {
-        var dimension = this.dimensionModel,
-            maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
-                dimension.get('scrollBarSize');
+        var dimension = this.dimensionModel;
+        var maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
+            dimension.get('scrollBarSize');
 
         this.set('maxScrollTop', maxScrollTop);
     },
@@ -7585,7 +7643,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             startIndex: 0,
             endIndex: 0
         });
-        this.refresh(true);
+        this.refresh({
+            columnModelChanged: true
+        });
     },
 
     /**
@@ -7593,7 +7653,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onDataModelChange: function() {
-        this.refresh(false, true);
+        this.refresh({
+            dataModelChanged: true
+        });
     },
 
     /**
@@ -7603,7 +7665,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onAddDataModel: function(dataModel, options) {
-        this.refresh(false, true);
+        this.refresh({
+            dataModelChanged: true
+        });
 
         if (options.focus) {
             this.focusModel.focusAt(options.at, 0);
@@ -7611,13 +7675,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Resets dummy rows and trigger 'rowListChanged' event.
+     * Resets dummy rows and trigger 'dataModelChanged' event.
      * @private
      */
     _resetDummyRows: function() {
         this._clearDummyRows();
         this._fillDummyRows();
-        this.trigger('rowListChanged');
+        this.trigger('dataModelChanged');
     },
 
     /**
@@ -7667,9 +7731,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _getColumnNamesOfEachSide: function() {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true),
-            columnModels = this.columnModel.getVisibleColumnModelList(null, true),
-            columnNames = _.pluck(columnModels, 'columnName');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var columnModels = this.columnModel.getVisibleColumnModelList(null, true);
+        var columnNames = _.pluck(columnModels, 'columnName');
 
         return {
             lside: columnNames.slice(0, columnFixCount),
@@ -7696,12 +7760,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
-        var columnNamesMap = this._getColumnNamesOfEachSide(),
-            rowNum = this.get('startNumber') + startIndex,
-            height = this.dimensionModel.get('rowHeight'),
-            lsideData = [],
-            rsideData = [],
-            rowDataModel, i;
+        var columnNamesMap = this._getColumnNamesOfEachSide();
+        var rowNum = this.get('startNumber') + startIndex;
+        var height = this.dimensionModel.get('rowHeight');
+        var lsideData = [];
+        var rsideData = [];
+        var rowDataModel, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
@@ -7764,10 +7828,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Refreshes the rendering range and the list of view models, and triggers events.
-     * @param {Boolean} columnModelChanged - The boolean value whether columnModel has changed
-     * @param {Boolean} dataModelChanged - The boolean value whether dataModel has changed
+     * @param {Object} options - options
+     * @param {Boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
+     * @param {Boolean} [options.dataModelChanged] - The boolean value whether dataModel has changed
      */
-    refresh: function(columnModelChanged, dataModelChanged) {
+    refresh: function(options) {
+        var columnModelChanged = !!options && options.columnModelChanged;
+        var dataModelChanged = !!options && options.dataModelChanged;
         var startIndex, endIndex, i;
 
         this._setRenderingRange(this.get('scrollTop'));
@@ -7810,8 +7877,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _getCollectionByColumnName: function(columnName) {
-        var lside = this.get('lside'),
-            collection;
+        var lside = this.get('lside');
+        var collection;
 
         if (lside.at(0) && lside.at(0).get(columnName)) {
             collection = lside;
@@ -7856,12 +7923,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      }
      */
     getCellData: function(rowKey, columnName) {
-        var row = this._getRowModel(rowKey, columnName),
-            cellData = null;
+        var row = this._getRowModel(rowKey, columnName);
+        var cellData = null;
 
         if (row) {
             cellData = row.get(columnName);
         }
+
         return cellData;
     },
 
@@ -7871,9 +7939,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _executeRelation: function(rowIndex) {
-        var row = this.dataModel.at(rowIndex),
-            renderIdx = rowIndex - this.get('startIndex'),
-            rowModel, relationResult;
+        var row = this.dataModel.at(rowIndex);
+        var renderIdx = rowIndex - this.get('startIndex');
+        var rowModel, relationResult;
 
         relationResult = row.executeRelationCallbacksAll();
 
@@ -7910,9 +7978,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param  {object} options - Options
      */
     initialize: function(attributes) {
-        var rowKey = attributes && attributes.rowKey,
-            dataModel = this.collection.dataModel,
-            rowData = dataModel.get(rowKey);
+        var rowKey = attributes && attributes.rowKey;
+        var dataModel = this.collection.dataModel;
+        var rowData = dataModel.get(rowKey);
 
         this.dataModel = dataModel;
         this.columnModel = this.collection.columnModel;
@@ -7990,32 +8058,22 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _setRowExtraData: function() {
-        var dataModel = this.collection.dataModel,
-            columnNames = this._getColumnNameList(),
-            param;
-
         if (tui.util.isUndefined(this.collection)) {
             return;
         }
 
-        _.each(columnNames, function(columnName) {
-            var cellData = this.get(columnName),
-                rowModel = this, // eslint-disable-line consistent-this
-                cellState;
+        _.each(this._getColumnNameList(), function(columnName) {
+            var cellData = this.get(columnName);
+            var cellState;
 
-            if (!tui.util.isUndefined(cellData)) {
+            if (!tui.util.isUndefined(cellData) && cellData.isMainRow) {
                 cellState = this.rowData.getCellState(columnName);
-                if (dataModel.isRowSpanEnable() && !cellData.isMainRow) {
-                    rowModel = this.collection.get(cellData.mainRowKey);
-                }
-                if (rowModel) {
-                    param = {
-                        isDisabled: cellState.isDisabled,
-                        isEditable: cellState.isEditable,
-                        className: this._getClassNameString(columnName)
-                    };
-                    rowModel.setCell(columnName, param);
-                }
+
+                this.setCell(columnName, {
+                    isDisabled: cellState.isDisabled,
+                    isEditable: cellState.isEditable,
+                    className: this._getClassNameString(columnName)
+                });
             }
         }, this);
     },
@@ -8057,10 +8115,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
         columnData = _.omit(data, 'rowKey', '_extraData', 'height', 'rowNum');
 
         _.each(columnData, function(value, columnName) {
-            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable()),
-                cellState = row.getCellState(columnName),
-                isTextType = columnModel.isTextType(columnName),
-                column = columnModel.getColumnModel(columnName);
+            var rowSpanData = this._getRowSpanData(columnName, data, dataModel.isRowSpanEnable());
+            var cellState = row.getCellState(columnName);
+            var isTextType = columnModel.isTextType(columnName);
+            var column = columnModel.getColumnModel(columnName);
 
             data[columnName] = {
                 rowKey: rowKey,
@@ -8117,10 +8175,10 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueAttrs: function(value, row, column, isTextType) {
-        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent'),
-            afterContent = tui.util.pick(column, 'editOption', 'afterContent'),
-            converter = tui.util.pick(column, 'editOption', 'converter'),
-            rowAttrs = row.toJSON();
+        var beforeContent = tui.util.pick(column, 'editOption', 'beforeContent');
+        var afterContent = tui.util.pick(column, 'editOption', 'afterContent');
+        var converter = tui.util.pick(column, 'editOption', 'converter');
+        var rowAttrs = row.toJSON();
 
         return {
             value: this._getValueToDisplay(value, column, isTextType),
@@ -8198,9 +8256,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getValueToDisplay: function(value, column, isTextType) {
-        var isExisty = tui.util.isExisty,
-            notUseHtmlEntity = column.notUseHtmlEntity,
-            defaultValue = column.defaultValue;
+        var isExisty = tui.util.isExisty;
+        var notUseHtmlEntity = column.notUseHtmlEntity;
+        var defaultValue = column.defaultValue;
 
         if (!isExisty(value)) {
             value = isExisty(defaultValue) ? defaultValue : '';
@@ -8252,9 +8310,9 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @param {Object} param - Key-Value pair of the data to change
      */
     setCell: function(columnName, param) {
-        var isValueChanged = false,
-            changed = [],
-            rowIndex, rowKey, data;
+        var isValueChanged = false;
+        var changed = [];
+        var rowIndex, rowKey, data;
 
         if (!this.has(columnName)) {
             return;
@@ -8276,7 +8334,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             this.set(columnName, data, {
                 silent: this._shouldSetSilently(data, isValueChanged)
             });
-            if (isValueChanged && !data.isEditing) {
+            if (isValueChanged) {
                 rowIndex = this.collection.dataModel.indexOfRowKey(rowKey);
                 this.trigger('valueChange', rowIndex);
             }
@@ -8293,9 +8351,15 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _shouldSetSilently: function(cellData, valueChanged) {
         var valueChangedOnEditing = cellData.isEditing && valueChanged;
         var useViewMode = tui.util.pick(cellData, 'columnModel', 'editOption', 'useViewMode') !== false;
-        var editingStarted = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
+        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
 
-        return valueChangedOnEditing || (useViewMode && editingStarted);
+        // Silent Cases
+        // 1: If values have been changed while the isEditing is true,
+        //    prevent the related cell-view from changing its value-state until editing is finished.
+        // 2: If useViewMode is true and isEditing is changing to true,
+        //    prevent the related cell-view from changing its state to enable editing,
+        //    as the editing-layer will be used for editing instead.
+        return valueChangedOnEditing || (useViewMode && editingChangedToTrue);
     }
 });
 
@@ -8342,21 +8406,9 @@ module.exports = RowList;
  */
 'use strict';
 
-var Model = require('../base/model'),
-    util = require('../common/util');
-
-/**
- * @ignore
- * @const
- * @type {{cell: string, row: string, column: string}}
- * @desc
- * Selection states
- */
-var SELECTION_STATE = {
-    cell: 'cell',
-    row: 'row',
-    column: 'column'
-};
+var Model = require('../base/model');
+var util = require('../common/util');
+var typeConstMap = require('../common/constMap').selectionType;
 
 /**
  * Selection Model class
@@ -8382,8 +8434,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             inputRange: null,
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
-            _isEnabled: true,
-            _selectionState: SELECTION_STATE.cell
+            enabled: true,
+            selectionType: typeConstMap.CELL
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
@@ -8409,26 +8461,26 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * Set selection state
-     * @param {string} state - Selection state (cell, row, column)
+     * Set selection type
+     * @param {string} type - Selection type (CELL, ROW, COLUMN)
      */
-    setState: function(state) {
-        this._selectionState = SELECTION_STATE[state] || this._selectionState;
+    setType: function(type) {
+        this.selectionType = typeConstMap[type] || this.selectionType;
     },
 
     /**
-     * Return the selection state
-     * @returns {string} state - Selection state (cell, row, column)
+     * Return the selection type
+     * @returns {string} type - Selection type (CELL, ROW, COLUMN)
      */
-    getState: function() {
-        return this._selectionState;
+    getType: function() {
+        return this.selectionType;
     },
 
     /**
      * Enables the selection.
      */
     enable: function() {
-        this._isEnabled = true;
+        this.enabled = true;
     },
 
     /**
@@ -8436,7 +8488,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     disable: function() {
         this.end();
-        this._isEnabled = false;
+        this.enabled = false;
     },
 
     /**
@@ -8444,20 +8496,21 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @returns {boolean} True if the selection is enabled.
      */
     isEnabled: function() {
-        return this._isEnabled;
+        return this.enabled;
     },
 
     /**
      * Starts the selection.
      * @param {Number} rowIndex - Row index
      * @param {Number} columnIndex - Column index
-     * @param {string} state - Selection state강지
+     * @param {string} type - Selection type
      */
-    start: function(rowIndex, columnIndex, state) {
-        if (!this._isEnabled) {
+    start: function(rowIndex, columnIndex, type) {
+        if (!this.isEnabled()) {
             return;
         }
-        this.setState(state);
+
+        this.setType(type);
         this.inputRange = {
             row: [rowIndex, rowIndex],
             column: [columnIndex, columnIndex]
@@ -8469,31 +8522,31 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Starts the selection by mouse position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
-     * @param {string} state - Selection state
+     * @param {string} type - Selection type
      */
-    startByMousePosition: function(pageX, pageY, state) {
+    startByMousePosition: function(pageX, pageY, type) {
         var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
-        this.start(index.row, index.column, state);
+        this.start(index.row, index.column, type);
     },
 
     /**
      * Updates the selection range.
      * @param {number} rowIndex - Row index
      * @param {number} columnIndex - Column index
-     * @param {string} [state] - Selection state
+     * @param {string} [type] - Selection type
      */
-    update: function(rowIndex, columnIndex, state) {
+    update: function(rowIndex, columnIndex, type) {
         var focusedIndex;
 
-        if (!this._isEnabled || rowIndex < 0 || columnIndex < 0) {
+        if (!this.enabled || rowIndex < 0 || columnIndex < 0) {
             return;
         }
 
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
-            this.start(focusedIndex.row, focusedIndex.column, state);
+            this.start(focusedIndex.row, focusedIndex.column, type);
         } else {
-            this.setState(state);
+            this.setType(type);
         }
 
         this._updateInputRange(rowIndex, columnIndex);
@@ -8509,6 +8562,12 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _updateInputRange: function(rowIndex, columnIndex) {
         var inputRange = this.inputRange;
 
+        if (this.selectionType === typeConstMap.ROW) {
+            columnIndex = this.columnModel.getVisibleColumnModelList().length - 1;
+        } else if (this.selectionType === typeConstMap.COLUMN) {
+            rowIndex = this.dataModel.length - 1;
+        }
+
         inputRange.row[1] = rowIndex;
         inputRange.column[1] = columnIndex;
     },
@@ -8520,13 +8579,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {number} pageY - Mouse positino Y
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
-        var minimumColumnRange = this._minimumColumnRange,
-            index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY),
-            range = {
-                row: [0, 0],
-                column: []
-            },
-            minMax;
+        var minimumColumnRange = this._minimumColumnRange;
+        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var range = {
+            row: [0, this.dataModel.length - 1],
+            column: []
+        };
+        var minMax;
 
         if (!columnIndexes || !columnIndexes.length) {
             columnIndexes = [index.column];
@@ -8564,13 +8623,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Updates the selection range by mouse position.
      * @param {number} pageX - X position relative to the document
      * @param {number} pageY - Y position relative to the document
-     * @param {string} [state] - Selection state
+     * @param {string} [type] - Selection type
      */
-    updateByMousePosition: function(pageX, pageY, state) {
+    updateByMousePosition: function(pageX, pageY, type) {
         var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
 
         this._setScrolling(pageX, pageY);
-        this.update(index.row, index.column, state);
+        this.update(index.row, index.column, type);
     },
 
     /**
@@ -8597,9 +8656,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {Number} rowIndex - Row idnex
      */
     selectRow: function(rowIndex) {
-        if (this._isEnabled) {
+        if (this.isEnabled()) {
             this.focusModel.focusAt(rowIndex, 0);
-            this.start(rowIndex, 0, SELECTION_STATE.row);
+            this.start(rowIndex, 0, typeConstMap.ROW);
             this.update(rowIndex, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -8609,9 +8668,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {Number} columnIdx - Column index
      */
     selectColumn: function(columnIdx) {
-        if (this._isEnabled) {
+        if (this.isEnabled()) {
             this.focusModel.focusAt(0, columnIdx);
-            this.start(0, columnIdx, SELECTION_STATE.column);
+            this.start(0, columnIdx, typeConstMap.COLUMN);
             this.update(this.dataModel.length - 1, columnIdx);
         }
     },
@@ -8620,8 +8679,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * Selects all data range.
      */
     selectAll: function() {
-        if (this._isEnabled) {
-            this.start(0, 0, SELECTION_STATE.cell);
+        if (this.isEnabled()) {
+            this.start(0, 0, typeConstMap.CELL);
             this.update(this.dataModel.length - 1, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -8632,6 +8691,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     getStartIndex: function() {
         var range = this.get('range');
+
         return {
             row: range.row[0],
             column: range.column[0]
@@ -8644,6 +8704,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     getEndIndex: function() {
         var range = this.get('range');
+
         return {
             row: range.row[1],
             column: range.column[1]
@@ -8665,10 +8726,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @returns {Boolean}
      */
     _isSingleCell: function(columnNameList, rowList) {
-        var isSingleColumn = columnNameList.length === 1,
-            isSingleRow = rowList.length === 1,
-            isSingleMergedCell = isSingleColumn && !isSingleRow &&
-                (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
+        var isSingleColumn = columnNameList.length === 1;
+        var isSingleRow = rowList.length === 1;
+        var isSingleMergedCell = isSingleColumn && !isSingleRow &&
+            (rowList[0].getRowSpanData(columnNameList[0]).count === rowList.length);
 
         return (isSingleColumn && isSingleRow) || isSingleMergedCell;
     },
@@ -8678,8 +8739,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @returns {String} string of values
      */
     getValuesToString: function() {
-        var range = this.get('range'),
-            columnModelList, rowList, columnNameList, rowValues;
+        var range = this.get('range');
+        var columnModelList, rowList, columnNameList, rowValues;
 
         columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
         rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
@@ -8734,8 +8795,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _adjustScrollLeft: function(overflowX, scrollLeft, maxScrollLeft) {
-        var adjusted = scrollLeft,
-            pixelScale = this.scrollPixelScale;
+        var adjusted = scrollLeft;
+        var pixelScale = this.scrollPixelScale;
 
         if (overflowX < 0) {
             adjusted = Math.max(0, scrollLeft - pixelScale);
@@ -8753,8 +8814,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _adjustScrollTop: function(overflowY, scrollTop, maxScrollTop) {
-        var adjusted = scrollTop,
-            pixelScale = this.scrollPixelScale;
+        var adjusted = scrollTop;
+        var pixelScale = this.scrollPixelScale;
 
         if (overflowY < 0) {
             adjusted = Math.max(0, scrollTop - pixelScale);
@@ -8770,8 +8831,8 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _resetRangeAttribute: function(inputRange) {
-        var dataModel = this.dataModel,
-            hasSpannedRange, spannedRange, tmpRowRange;
+        var dataModel = this.dataModel;
+        var hasSpannedRange, spannedRange, tmpRowRange;
 
         inputRange = inputRange || this.inputRange;
         if (!inputRange) {
@@ -8784,7 +8845,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             column: _.sortBy(inputRange.column)
         };
 
-        if (dataModel.isRowSpanEnable()) {
+        if (dataModel.isRowSpanEnable() && this.selectionType === typeConstMap.CELL) {
             do {
                 tmpRowRange = _.assign([], spannedRange.row);
                 spannedRange = this._getRowSpannedIndex(spannedRange);
@@ -8794,19 +8855,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
                     spannedRange.row[1] !== tmpRowRange[1]
                 );
             } while (hasSpannedRange);
-        }
-
-        this._setRangeMinMax(spannedRange.row, spannedRange.column);
-        switch (this._selectionState) {
-            case SELECTION_STATE.column:
-                spannedRange.row = [0, dataModel.length - 1];
-                break;
-            case SELECTION_STATE.row:
-                spannedRange.column = [0, this.columnModel.getVisibleColumnModelList().length - 1];
-                break;
-            case SELECTION_STATE.cell:
-            default:
-                break;
+            this._setRangeMinMax(spannedRange.row, spannedRange.column);
         }
 
         this.set('range', spannedRange);
@@ -8851,13 +8900,13 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _concatRowSpanIndexFromStart: function(param) {
-        var startIndex = param.startIndex,
-            endIndex = param.endIndex,
-            columnName = param.columnName,
-            rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName],
-            startIndexList = param.startIndexList,
-            endIndexList = param.endIndexList,
-            spannedIndex;
+        var startIndex = param.startIndex;
+        var endIndex = param.endIndex;
+        var columnName = param.columnName;
+        var rowSpanData = param.startRowSpanDataMap && param.startRowSpanDataMap[columnName];
+        var startIndexList = param.startIndexList;
+        var endIndexList = param.endIndexList;
+        var spannedIndex;
 
         if (!rowSpanData) {
             return;
@@ -8880,12 +8929,12 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @private
      */
     _concatRowSpanIndexFromEnd: function(param) {
-        var endIndex = param.endIndex,
-            columnName = param.columnName,
-            rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName],
-            endIndexList = param.endIndexList,
-            dataModel = param.dataModel,
-            spannedIndex, tmpRowSpanData;
+        var endIndex = param.endIndex;
+        var columnName = param.columnName;
+        var rowSpanData = param.endRowSpanDataMap && param.endRowSpanDataMap[columnName];
+        var endIndexList = param.endIndexList;
+        var dataModel = param.dataModel;
+        var spannedIndex, tmpRowSpanData;
 
         if (!rowSpanData) {
             return;
@@ -8912,14 +8961,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     _getRowSpannedIndex: function(spannedRange) {
         var columnModelList = this.columnModel.getVisibleColumnModelList()
-                .slice(spannedRange.column[0], spannedRange.column[1] + 1),
-            dataModel = this.dataModel,
-            startIndexList = [spannedRange.row[0]],
-            endIndexList = [spannedRange.row[1]],
-            startRow = dataModel.at(spannedRange.row[0]),
-            endRow = dataModel.at(spannedRange.row[1]),
-            newSpannedRange = $.extend({}, spannedRange),
-            startRowSpanDataMap, endRowSpanDataMap, columnName, param;
+            .slice(spannedRange.column[0], spannedRange.column[1] + 1);
+        var dataModel = this.dataModel;
+        var startIndexList = [spannedRange.row[0]];
+        var endIndexList = [spannedRange.row[1]];
+        var startRow = dataModel.at(spannedRange.row[0]);
+        var endRow = dataModel.at(spannedRange.row[1]);
+        var newSpannedRange = $.extend({}, spannedRange);
+        var startRowSpanDataMap, endRowSpanDataMap, columnName, param;
 
         if (!startRow || !endRow) {
             return newSpannedRange;
@@ -8952,7 +9001,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
 module.exports = Selection;
 
-},{"../base/model":5,"../common/util":12}],27:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":9,"../common/util":12}],27:[function(require,module,exports){
 /**
  * @fileoverview Toolbar model class
  * @author NHN Ent. FE Development Team
@@ -9184,15 +9233,15 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @param {jQuery} $td - cell element
      */
     refresh: function(cellData, $td) {
-        var contentProps = ['value', 'isEditing', 'isDisabled'];
-        var isEditingChanged = _.contains(cellData.changed, 'isEditing');
+        var contentProps = ['value', 'isEditing', 'isDisabled', 'optionList'];
+        var editingChangedToTrue = _.contains(cellData.changed, 'isEditing') && cellData.isEditing;
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
 
         delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
         $td.attr(attrs);
 
-        if (isEditingChanged && cellData.isEditing && !this._isUsingViewMode(cellData)) {
+        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
             this.inputPainter.focus($td);
         } else if (shouldUpdateContent) {
             $td.html(this._getContentHtml(cellData));
@@ -9286,10 +9335,10 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @param {Boolean} reverse - if set to true, find the previous cell instead of next cell
      */
     focusInToNextCell: function(reverse) {
-        var focusModel = this.focusModel,
-            rowKey = focusModel.get('rowKey'),
-            columnName = focusModel.get('columnName'),
-            nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
+        var focusModel = this.focusModel;
+        var rowKey = focusModel.get('rowKey');
+        var columnName = focusModel.get('columnName');
+        var nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
 
         if (columnName !== nextColumnName) {
             focusModel.focusIn(rowKey, nextColumnName, true);
@@ -9302,9 +9351,9 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @param {{rowKey:String, columnName:String}} address - cell address
      */
     executeCustomInputEventHandler: function(event, address) {
-        var columnModel = this.columnModel.getColumnModel(address.columnName),
-            eventType = event.type,
-            eventHandler;
+        var columnModel = this.columnModel.getColumnModel(address.columnName);
+        var eventType = event.type;
+        var eventHandler;
 
         if (eventType === 'focusin') {
             eventType = 'focus';
@@ -9501,8 +9550,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _executeCustomEventHandler: function(event) {
-        var $input = $(event.target),
-            address = this._getCellAddress($input);
+        var $input = $(event.target);
+        var address = this._getCellAddress($input);
 
         this.controller.executeCustomInputEventHandler(event, address);
     },
@@ -9513,9 +9562,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onFocusIn: function(event) {
-        var address = this._getCellAddress($(event.target));
+        var $target = $(event.target);
+        var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
+        this.trigger('focusIn', $target, address);
         this.controller.startEditing(address);
     },
 
@@ -9525,10 +9576,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onFocusOut: function(event) {
-        var $target = $(event.target),
-            address = this._getCellAddress($target);
+        var $target = $(event.target);
+        var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
+        this.trigger('focusOut', $target, address);
         this.controller.finishEditing(address, false, $target.val());
     },
 
@@ -9617,6 +9669,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         }
     }
 });
+
+_.assign(InputPainter.prototype, Backbone.Events);
 
 module.exports = InputPainter;
 
@@ -10791,8 +10845,9 @@ function buildCssString(options) {
             styleGen.cell(cell.normal),
             styleGen.cellDummy(cell.dummy),
             styleGen.cellEditable(cell.editable),
-            styleGen.cellEvenRow(cell.evenRow),
             styleGen.cellHead(cell.head),
+            styleGen.cellOddRow(cell.oddRow),
+            styleGen.cellEvenRow(cell.evenRow),
             styleGen.cellRequired(cell.required),
             styleGen.cellDisabled(cell.disabled),
             styleGen.cellInvalid(cell.invalid),
@@ -10938,6 +10993,7 @@ module.exports = {
             background: '#ff8080'
         },
         evenRow: {},
+        oddRow: {},
         currentRow: {}
     }
 };
@@ -10959,12 +11015,16 @@ module.exports = $.extend(true, {}, presetDefault, {
             showVerticalBorder: false,
             showHorizontalBorder: false
         },
-        evenRow: {
+        oddRow: {
             background: '#f3f3f3'
         },
+        evenRow: {
+            background: '#fff'
+        },
         head: {
-            showVerticalBorder: true,
-            showHorizontalBorder: true
+            background: '#fff',
+            showVerticalBorder: false,
+            showHorizontalBorder: false
         }
     }
 });
@@ -11006,8 +11066,8 @@ module.exports = {
     grid: function(options) {
         var containerRule = classRule(classNameConst.CONTAINER)
             .bg(options.background)
-            .border(options.border)
             .text(options.text);
+        var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
         var tableRule = classRule(classNameConst.TABLE).border(options.border);
         var headRule = classRule(classNameConst.HEAD_AREA).border(options.border);
         var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
@@ -11016,6 +11076,7 @@ module.exports = {
 
         return builder.buildAll([
             containerRule,
+            contentAreaRule,
             tableRule,
             headRule,
             borderLineRule,
@@ -11117,6 +11178,17 @@ module.exports = {
     },
 
     /**
+     * Generates a css string for the cells in odd rows.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    cellOddRow: function(options) {
+        return classRule(classNameConst.CELL_ROW_ODD)
+            .bg(options.background)
+            .build();
+    },
+
+    /**
      * Generates a css string for selected head cells.
      * @param {Object} options - options
      * @returns {String}
@@ -11204,8 +11276,10 @@ module.exports = {
 
 var View = require('../base/view');
 var util = require('../common/util');
-var keyCodeMap = require('../common/constMap').keyCode;
 var classNameConst = require('../common/classNameConst');
+var constMap = require('../common/constMap');
+var keyCodeMap = constMap.keyCode;
+var selTypeConst = constMap.selectionType;
 
 /**
  * Clipboard view class
@@ -11247,6 +11321,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _onBlur: function() {
         var focusModel = this.focusModel;
+
         setTimeout(function() {
             focusModel.refreshState();
         }, 0);
@@ -11300,7 +11375,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
-    _onKeyDown: function(keyDownEvent) {
+    _onKeyDown: function(keyDownEvent) { // eslint-disable-line complexity
         if (this.isLocked) {
             keyDownEvent.preventDefault();
             return;
@@ -11324,14 +11399,14 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyIn: function(keyDownEvent) { // eslint-disable-line complexity
-        var focusModel = this.focusModel,
-            selectionModel = this.selectionModel,
-            focused = focusModel.which(),
-            rowKey = focused.rowKey,
-            columnName = focused.columnName,
-            displayRowCount = this.dimensionModel.get('displayRowCount'),
-            isKeyIdentified = true,
-            keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+        var focusModel = this.focusModel;
+        var selectionModel = this.selectionModel;
+        var focused = focusModel.which();
+        var rowKey = focused.rowKey;
+        var columnName = focused.columnName;
+        var displayRowCount = this.dimensionModel.get('displayRowCount');
+        var isKeyIdentified = true;
+        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         if (util.isBlank(focused.rowKey)) {
             return;
@@ -11399,10 +11474,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _getIndexBeforeMove: function() {
-        var focusedIndex = this.focusModel.indexOf(),
-            selectionRange = this.selectionModel.get('range'),
-            index = _.extend({}, focusedIndex),
-            selectionRowRange, selectionColumnRange;
+        var focusedIndex = this.focusModel.indexOf();
+        var selectionRange = this.selectionModel.get('range');
+        var index = _.extend({}, focusedIndex);
+        var selectionRowRange, selectionColumnRange;
 
         if (selectionRange) {
             selectionRowRange = selectionRange.row;
@@ -11427,16 +11502,16 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
-        var focusModel = this.focusModel,
-            dimensionModel = this.dimensionModel,
-            columnModelList = this.columnModel.getVisibleColumnModelList(),
-            focused = focusModel.which(),
-            displayRowCount = dimensionModel.get('displayRowCount'),
-            keyCode = keyDownEvent.keyCode || keyDownEvent.which,
-            index = this._getIndexBeforeMove(),
-            isKeyIdentified = true,
-            isSelection = true,
-            columnModel, scrollPosition, isValid, selectionState;
+        var focusModel = this.focusModel;
+        var dimensionModel = this.dimensionModel;
+        var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var focused = focusModel.which();
+        var displayRowCount = dimensionModel.get('displayRowCount');
+        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+        var index = this._getIndexBeforeMove();
+        var isKeyIdentified = true;
+        var isSelection = true;
+        var columnModel, scrollPosition, isValid, selectionType;
 
         switch (keyCode) {
             case keyCodeMap.UP_ARROW:
@@ -11483,10 +11558,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             this._updateSelectionByKeyIn(index.row, index.column);
             scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
-                selectionState = this.selectionModel.getState();
-                if (selectionState === 'column') {
+                selectionType = this.selectionModel.getType();
+                if (selectionType === selTypeConst.COLUMN) {
                     delete scrollPosition.scrollTop;
-                } else if (selectionState === 'row') {
+                } else if (selectionType === selTypeConst.ROW) {
                     delete scrollPosition.scrollLeft;
                 }
                 this.renderModel.set(scrollPosition);
@@ -11503,9 +11578,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
      */
-    _keyInWithCtrl: function(keyDownEvent) {
-        var focusModel = this.focusModel,
-            keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+    _keyInWithCtrl: function(keyDownEvent) {  // eslint-disable-line complexity
+        var focusModel = this.focusModel;
+        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
             case keyCodeMap.CHAR_A:
@@ -11521,7 +11596,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 focusModel.focus(focusModel.lastRowKey(), focusModel.lastColumnName(), true);
                 break;
             case keyCodeMap.CHAR_V:
-                this._paste();
+                this._pasteWhenKeyupCharV();
                 break;
             default:
                 break;
@@ -11532,7 +11607,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * paste date
      * @private
      */
-    _paste: function() {
+    _pasteWhenKeyupCharV: function() {
+        var self = this;
+
         // pressing v long time, clear clipboard to keep final paste date
         this._clearClipBoard();
         if (this.pasting) {
@@ -11540,20 +11617,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         this.pasting = true;
-        this._onKeyupCharV();
-    },
-
-    /**
-     * keyup event attach
-     * @private
-     */
-    _onKeyupCharV: function() {
-        this.$el.on('keyup', $.proxy(this.onKeyupCharV, this));
-    },
-
-    onKeyupCharV: function() {
-        this._pasteToGrid();
-        this.pasting = false;
+        this.$el.on('keyup', function() {
+            self._pasteToGrid();
+            self.pasting = false;
+        });
     },
 
    /**
@@ -11569,10 +11636,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _pasteToGrid: function() {
-        var selectionModel = this.selectionModel,
-            focusModel = this.focusModel,
-            dataModel = this.dataModel,
-            startIdx, data;
+        var selectionModel = this.selectionModel;
+        var focusModel = this.focusModel;
+        var dataModel = this.dataModel;
+        var startIdx, data;
 
         if (selectionModel.hasSelection()) {
             startIdx = selectionModel.getStartIndex();
@@ -11591,14 +11658,15 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @returns {Array.<Array.<string>>} result
      */
     _getProcessClipBoardData: function() {
-        var text = this.$el.val(),
-            result = text.split('\n'),
-            i = 0,
-            len = result.length;
+        var text = this.$el.val();
+        var result = text.split('\n');
+        var i = 0;
+        var len = result.length;
 
         for (; i < len; i += 1) {
             result[i] = result[i].split('\t');
         }
+
         return result;
     },
 
@@ -11608,9 +11676,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _keyInWithShiftAndCtrl: function(keyDownEvent) {
-        var isKeyIdentified = true,
-            columnModelList = this.columnModel.getVisibleColumnModelList(),
-            keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+        var isKeyIdentified = true;
+        var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 
         switch (keyCode) {
             case keyCodeMap.HOME:
@@ -11635,13 +11703,13 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _del: function() {
-        var selectionModel = this.selectionModel,
-            dataModel = this.dataModel,
-            focused = this.focusModel.which(),
-            columnModelList = this.columnModel.getVisibleColumnModelList(),
-            rowKey = focused.rowKey,
-            columnName = focused.columnName,
-            range, i, j;
+        var selectionModel = this.selectionModel;
+        var dataModel = this.dataModel;
+        var focused = this.focusModel.which();
+        var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var rowKey = focused.rowKey;
+        var columnName = focused.columnName;
+        var range, i, j;
 
         if (selectionModel.hasSelection()) {
             //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
@@ -11654,7 +11722,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                     dataModel.get(rowKey).validateCell(columnName);
                 }
             }
-            this.renderModel.refresh(true);
+            this.renderModel.refresh({
+                dataModelChanged: true
+            });
         } else {
             dataModel.del(rowKey, columnName);
         }
@@ -11678,14 +11748,16 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * @private
      */
     _getClipboardString: function() {
-        var text,
-            selectionModel = this.selectionModel,
-            focused = this.focusModel.which();
+        var selectionModel = this.selectionModel;
+        var focused = this.focusModel.which();
+        var text;
+
         if (selectionModel.hasSelection()) {
             text = this.selectionModel.getValuesToString();
         } else {
             text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
+
         return text;
     },
 
@@ -11693,9 +11765,9 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * 현재 그리드의 data 를 clipboard 에 copy 한다.
      * @private
      */
-     /* istanbul ignore next */
     _copyToClipboard: function() {
         var text = this._getClipboardString();
+
         if (window.clipboardData) {
             window.clipboardData.setData('Text', text);
         } else {
@@ -11767,11 +11839,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var factory = this.viewFactory;
 
         this._addChildren([
-            factory.createFrame('L'),
-            factory.createFrame('R'),
+            factory.createContentArea(),
             factory.createToolbar(),
             factory.createStateLayer(),
             factory.createEditingLayer(),
+            factory.createDatePickerLayer(),
             factory.createClipboard()
         ]);
     },
@@ -11807,9 +11879,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent),
-            $target = $(mouseEvent.target),
-            cellInfo;
+        var eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
+        var cellInfo;
 
         this.trigger('click', eventData);
         if (eventData.isStopped()) {
@@ -11830,8 +11902,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onDblClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent),
-            $target = $(mouseEvent.target);
+        var eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
 
         this.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
@@ -11863,8 +11935,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
      */
     _onMouseOut: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            eventData;
+        var $target = $(mouseEvent.target);
+        var eventData;
 
         if (this._isCellElement($target)) {
             eventData = new GridEvent(mouseEvent);
@@ -11881,6 +11953,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      */
     _triggerCellMouseEvent: function(eventName, eventData, cell) {
         var cellInfo = cell;
+
         if (cell instanceof $) {
             cellInfo = this._getCellInfoFromElement(cell);
         }
@@ -11927,8 +12000,8 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onMouseDown: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
-            eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
+        var eventData = new GridEvent(mouseEvent);
 
         this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {
@@ -11954,41 +12027,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @returns {module:view/container} this object
      */
     render: function() {
-        var childElements = this._renderChildren().concat([
-            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_TOP),
-            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_LEFT),
-            $('<div>').addClass(classNameConst.BORDER_LINE + ' ' + classNameConst.BORDER_RIGHT)
-        ]);
+        var childElements = this._renderChildren();
 
         this.$el.addClass(classNameConst.CONTAINER)
             .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
 
-        if (!this.dimensionModel.get('scrollX')) {
-            this.$el.addClass(classNameConst.NO_SCROLL_X);
-        }
-
-        this._appendBottomLine();
         this._refreshHeight();
         this.trigger('rendered');
         return this;
-    },
-
-    /**
-     * Appends botton line of data
-     * @private
-     */
-    _appendBottomLine: function() {
-        var bottomPos = this.dimensionModel.get('toolbarHeight') + this.dimensionModel.getScrollXHeight();
-        var $line = $('<div>')
-            .addClass(classNameConst.BORDER_BOTTOM)
-            .addClass(classNameConst.BORDER_LINE)
-            .css('bottom', bottomPos);
-
-        if (!this.dimensionModel.get('scrollY')) {
-            $line.addClass(classNameConst.NO_SCROLL_Y);
-        }
-        this.$el.append($line);
     },
 
     /**
@@ -12007,6 +12054,201 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 module.exports = Container;
 
 },{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/gridEvent":11}],47:[function(require,module,exports){
+/**
+ * @fileoverview Layer View class which contains the 'tui-component-date-picker'
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
+var DEFAULT_DATE_FORMAT = 'yyyy-mm-dd';
+var DatePickerLayer;
+
+/**
+ * Returns a HTML string of a span element to represent an arrow-icon
+ * @param {String} dirClassName - className to indicate direction of the arrow
+ * @returns {String}
+ */
+function arrowHTML(dirClassName) {
+    var classNameStr = classNameConst.ICO_ARROW + ' ' + dirClassName;
+
+    return '<span class="' + classNameStr + '"></span>';
+}
+
+/**
+ * Layer View class which contains the 'tui-component-date-picker'
+ * @module view/datePickerLayer
+ * @extends module:base/view
+ */
+DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - Options
+     */
+    initialize: function(options) {
+        this.textPainter = options.textPainter;
+        this.columnModel = options.columnModel;
+        this.domState = options.domState;
+        this.calendar = this._createCalendar();
+        this.datePicker = this._createDatePicker();
+
+        this._customizeCalendarBtns();
+
+        this.listenTo(this.textPainter, 'focusIn', this._onFocusInTextInput);
+        this.listenTo(this.textPainter, 'focusOut', this._onFocusOutTextInput);
+    },
+
+    className: classNameConst.LAYER_DATE_PICKER,
+
+    /**
+     * Creates an instance of 'tui-component-calendar'
+     * @returns {tui.component.Calendar}
+     * @private
+     */
+    _createCalendar: function() {
+        var $calendarEl = $('<div>').addClass(classNameConst.CALENDAR);
+
+        // prevent blur event from occuring in the input element
+        $calendarEl.mousedown(function(ev) {
+            ev.preventDefault();
+            ev.target.unselectable = true;  // trick for IE8
+            return false;
+        });
+
+        return new tui.component.Calendar({
+            element: $calendarEl,
+            classPrefix: classNameConst.CALENDAR + '-'
+        });
+    },
+
+    /**
+     * Customize the buttons of the calendar.
+     * @private
+     */
+    _customizeCalendarBtns: function() {
+        var $header = this.calendar.$header;
+        var leftArrowHTML = arrowHTML(classNameConst.ICO_ARROW_LEFT);
+        var rightArrowHTML = arrowHTML(classNameConst.ICO_ARROW_RIGHT);
+
+        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_YEAR).html(leftArrowHTML + leftArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_YEAR).html(rightArrowHTML + rightArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_PREV_MONTH).html(leftArrowHTML);
+        $header.find('.' + classNameConst.CALENDAR_BTN_NEXT_MONTH).html(rightArrowHTML);
+    },
+
+    /**
+     * Creates an instance of 'tui-component-date-picker'
+     * @returns {tui.component.DatePicker}
+     * @private
+     */
+    _createDatePicker: function() {
+        var datePicker = new tui.component.DatePicker({
+            parentElement: this.$el,
+            enableSetDateByEnterKey: false,
+            selectableClassName: classNameConst.CALENDAR_SELECTABLE,
+            selectedClassName: classNameConst.CALENDAR_SELECTED,
+            pos: {
+                top: 0,
+                left: 0
+            }
+        }, this.calendar);
+
+        datePicker.on('update', function() {
+            datePicker.close();
+        });
+
+        return datePicker;
+    },
+
+    /**
+     * Creates date object for now
+     * @returns {{year: Number, month: Number, date: Number}}
+     * @private
+     */
+    _createDateForNow: function() {
+        var now = new Date();
+
+        return {
+            year: now.getFullYear(),
+            month: now.getMonth() + 1,
+            date: now.getDate()
+        };
+    },
+
+    /**
+     * Resets date picker options
+     * @param {Object} options - datePicker options
+     * @param {jQuery} $input - target input element
+     * @private
+     */
+    _resetDatePicker: function(options, $input) {
+        var datePicker = this.datePicker;
+        var date = options.date || this._createDateForNow();
+
+        datePicker.setDateForm(options.dateForm || DEFAULT_DATE_FORMAT);
+        datePicker.setRanges(options.selectableRanges || []);
+        datePicker.setDate(date.year, date.month, date.date);
+        datePicker.setElement($input);
+    },
+
+    /**
+     * Calculates the position of the layer and returns the object that contains css properties.
+     * @param {jQuery} $input - input element
+     * @returns {Object}
+     * @private
+     */
+    _calculatePosition: function($input) {
+        var inputOffset = $input.offset();
+        var inputHeight = $input.outerHeight();
+        var wrapperOffset = this.domState.getOffset();
+
+        return {
+            top: inputOffset.top - wrapperOffset.top + inputHeight,
+            left: inputOffset.left - wrapperOffset.left
+        };
+    },
+
+    /**
+     * Event handler for 'focusIn' event of module:painter/input/text
+     * @param {jQuery} $input - target input element
+     * @param {{rowKey: String, columnName: String}} address - target cell address
+     * @private
+     */
+    _onFocusInTextInput: function($input, address) {
+        var columnName = address.columnName;
+        var component = this.columnModel.getColumnModel(columnName).component;
+        var editType = this.columnModel.getEditType(columnName);
+
+        if (editType === 'text' && component && component.name === 'datePicker') {
+            this.$el.css(this._calculatePosition($input)).show();
+            this._resetDatePicker(component.option || {}, $input);
+            this.datePicker.open();
+        }
+    },
+
+    /**
+     * Event handler for 'focusOut' event of module:painter/input/text
+     * @private
+     */
+    _onFocusOutTextInput: function() {
+        this.datePicker.close();
+        this.$el.hide();
+    },
+
+    /**
+     * Render
+     * @returns {Object} this object
+     */
+    render: function() {
+        this.$el.hide();
+        return this;
+    }
+});
+
+module.exports = DatePickerLayer;
+
+},{"../base/view":7,"../common/classNameConst":8}],48:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -12168,7 +12410,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
 
 module.exports = EditingLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],48:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],49:[function(require,module,exports){
 /**
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
@@ -12176,6 +12418,7 @@ module.exports = EditingLayer;
 'use strict';
 
 var ContainerView = require('./container');
+var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./layout/toolbar');
 var ToolbarControlPanelView = require('./layout/toolbar/controlPanel');
 var ToolbarPaginationView = require('./layout/toolbar/pagination');
@@ -12191,6 +12434,7 @@ var BodyTableView = require('./layout/bodyTable');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
+var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
 
 /**
@@ -12207,7 +12451,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates container view and returns it.
      * @param {Object} options - Options set by user
-     * @returns {module:view/container} - New container view instance
+     * @returns {module:view/container}
      */
     createContainer: function(options) {
         return new ContainerView({
@@ -12217,6 +12461,17 @@ var ViewFactory = tui.util.defineClass({
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
             gridId: this.modelManager.gridId,
+            viewFactory: this
+        });
+    },
+
+    /**
+     * Creates a view instance for the contents area.
+     * @returns {module:view/layout/content-area}
+     */
+    createContentArea: function() {
+        return new ContentAreaView({
+            dimensionModel: this.modelManager.dimensionModel,
             viewFactory: this
         });
     },
@@ -12421,6 +12676,24 @@ var ViewFactory = tui.util.defineClass({
     },
 
     /**
+     * Creates an instance of date-picker layer view.
+     * @returns {module:view/datePickerLayer}
+     */
+    createDatePickerLayer: function() {
+        if (!tui.component ||
+            !tui.component.DatePicker ||
+            !tui.component.Calendar) {
+            return null;
+        }
+
+        return new DatePickeLayerView({
+            columnModel: this.modelManager.columnModel,
+            textPainter: this.painterManager.getInputPainters().text,
+            domState: this.domState
+        });
+    },
+
+    /**
      * Creates focus layer view and returns it.
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
      * @returns {module:view/focusLayer} New focus layer view instance
@@ -12437,7 +12710,7 @@ var ViewFactory = tui.util.defineClass({
 
 module.exports = ViewFactory;
 
-},{"./clipboard":45,"./container":46,"./editingLayer":47,"./focusLayer":49,"./layout/body":50,"./layout/bodyTable":51,"./layout/frame-lside":52,"./layout/frame-rside":53,"./layout/header":55,"./layout/resizeHandler":56,"./layout/toolbar":57,"./layout/toolbar/controlPanel":58,"./layout/toolbar/pagination":59,"./layout/toolbar/resizeHandler":60,"./rowList":61,"./selectionLayer":62,"./stateLayer":63}],49:[function(require,module,exports){
+},{"./clipboard":45,"./container":46,"./datePickerLayer":47,"./editingLayer":48,"./focusLayer":50,"./layout/body":51,"./layout/bodyTable":52,"./layout/content-area":53,"./layout/frame-lside":54,"./layout/frame-rside":55,"./layout/header":57,"./layout/resizeHandler":58,"./layout/toolbar":59,"./layout/toolbar/controlPanel":60,"./layout/toolbar/pagination":61,"./layout/toolbar/resizeHandler":62,"./rowList":63,"./selectionLayer":64,"./stateLayer":65}],50:[function(require,module,exports){
 /**
  * @fileoverview Class for the layer view that represents the currently focused cell
  * @author NHN Ent. FE Development Team
@@ -12582,7 +12855,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
 
 module.exports = FocusLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],50:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],51:[function(require,module,exports){
 /**
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
@@ -12591,8 +12864,10 @@ module.exports = FocusLayer;
 
 var View = require('../../base/view');
 var util = require('../../common/util');
-var attrNameConst = require('../../common/constMap').attrName;
+var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
+var attrNameConst = constMap.attrName;
+var selTypeMap = constMap.selectionType;
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 var MIN_INTERVAL_FOR_PAUSED = 200;
@@ -12771,7 +13046,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!util.isMetaColumn(columnName)) {
-            selectionModel.setState('cell');
+            selectionModel.setType(selTypeMap.CELL);
             if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
@@ -12798,7 +13073,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _updateSelectionByRow: function(rowIndex, shiftKey) {
         if (shiftKey) {
-            this.selectionModel.update(rowIndex, 0, 'row');
+            this.selectionModel.update(rowIndex, 0, selTypeMap.ROW);
         } else {
             this.selectionModel.selectRow(rowIndex);
         }
@@ -12923,7 +13198,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],51:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],52:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -13118,7 +13393,91 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
 module.exports = BodyTable;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],52:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],53:[function(require,module,exports){
+/**
+ * @fileoverview Class for the content area
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var View = require('../../base/view');
+var classNameConst = require('../../common/classNameConst');
+var ContentArea;
+
+/**
+ * Create DIV element to draw border
+ * @param {String} className - border class name
+ * @returns {jQuery}
+ */
+function borderDIV(className) {
+    return $('<div>')
+        .addClass(classNameConst.BORDER_LINE)
+        .addClass(className);
+}
+
+/**
+ * Content area
+ * @module view/layout/content-area
+ * @extends module:base/view
+ */
+ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - Options
+     */
+    initialize: function(options) {
+        View.prototype.initialize.call(this);
+
+        this.viewFactory = options.viewFactory;
+        this.dimensionModel = options.dimensionModel;
+        this._addFrameViews();
+    },
+
+    className: classNameConst.CONTENT_AREA,
+
+    /**
+     * Creates Frame views and add them as children.
+     * @private
+     */
+    _addFrameViews: function() {
+        var factory = this.viewFactory;
+
+        this._addChildren([
+            factory.createFrame('L'),
+            factory.createFrame('R')
+        ]);
+    },
+
+    /**
+     * Renders
+     * @returns {Object} this object
+     */
+    render: function() {
+        var dimensionModel = this.dimensionModel;
+        var scrollXHeight = dimensionModel.getScrollXHeight();
+        var childElements = this._renderChildren().concat([
+            borderDIV(classNameConst.BORDER_TOP),
+            borderDIV(classNameConst.BORDER_LEFT),
+            borderDIV(classNameConst.BORDER_RIGHT),
+            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight)
+        ]);
+
+        if (!dimensionModel.get('scrollX')) {
+            this.$el.addClass(classNameConst.NO_SCROLL_X);
+        }
+        if (!dimensionModel.get('scrollY')) {
+            this.$el.addClass(classNameConst.NO_SCROLL_Y);
+        }
+
+        this.$el.append(childElements);
+
+        return this;
+    }
+});
+
+module.exports = ContentArea;
+
+},{"../../base/view":7,"../../common/classNameConst":8}],54:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -13173,23 +13532,17 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
      * @override
      */
     afterRender: function() {
-        var dimensionModel = this.dimensionModel,
-            $scrollOverlay;  // overlay DIV to hide scrollbar UI
-
-        if (!dimensionModel.get('scrollX')) {
+        if (!this.dimensionModel.get('scrollX')) {
             return;
         }
 
-        $scrollOverlay = $('<div>')
-            .addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM)
-            .css('bottom', dimensionModel.get('toolbarHeight'));
-        this.$el.append($scrollOverlay);
+        this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM));
     }
 });
 
 module.exports = LsideFrame;
 
-},{"../../common/classNameConst":8,"./frame":54}],53:[function(require,module,exports){
+},{"../../common/classNameConst":8,"./frame":56}],55:[function(require,module,exports){
 /**
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
@@ -13306,9 +13659,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
-            $scrollCorner = $('<div />')
-                .addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM)
-                .css('bottom', dimensionModel.get('toolbarHeight'));
+            $scrollCorner = $('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM);
             this.$el.append($scrollCorner);
         }
 
@@ -13319,7 +13670,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
 module.exports = RsideFrame;
 
-},{"../../common/classNameConst":8,"../../common/constMap":9,"./frame":54}],54:[function(require,module,exports){
+},{"../../common/classNameConst":8,"../../common/constMap":9,"./frame":56}],56:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -13396,7 +13747,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
 module.exports = Frame;
 
-},{"../../base/view":7}],55:[function(require,module,exports){
+},{"../../base/view":7}],57:[function(require,module,exports){
 /**
  * @fileoverview Header 관련
  * @author NHN Ent. FE Development Team
@@ -13409,6 +13760,7 @@ var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 
 var DELAY_SYNC_CHECK = 10;
+var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
@@ -13625,10 +13977,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
-        var selectionModel = this.selectionModel,
-            max = Math.max.apply(null, columnIndexes);
+        var selectionModel = this.selectionModel;
+        var max = Math.max.apply(null, columnIndexes);
 
-        selectionModel.update(0, max, 'column');
+        selectionModel.update(0, max, SEL_TYPE_COLUMN);
         selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
     },
 
@@ -13998,7 +14350,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],56:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],58:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -14273,7 +14625,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9}],57:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9}],59:[function(require,module,exports){
 /**
  * @fileoverview 툴바영역 클래스
  * @author NHN Ent. FE Development Team
@@ -14344,7 +14696,7 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
 module.exports = Toolbar;
 
-},{"../../base/view":7,"../../common/classNameConst":8}],58:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8}],60:[function(require,module,exports){
 /**
  * @fileoverview Class for the control panel in the toolbar
  * @author NHN Ent. FE Development Team
@@ -14440,7 +14792,7 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
 
 module.exports = ControlPanel;
 
-},{"../../../base/view":7,"../../../common/classNameConst":8}],59:[function(require,module,exports){
+},{"../../../base/view":7,"../../../common/classNameConst":8}],61:[function(require,module,exports){
 /**
  * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
@@ -14517,7 +14869,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
 
 module.exports = Pagination;
 
-},{"../../../base/view":7,"../../../common/classNameConst":8}],60:[function(require,module,exports){
+},{"../../../base/view":7,"../../../common/classNameConst":8}],62:[function(require,module,exports){
 /**
  * @fileoverview Class for the resize handler of the toolbar
  * @author NHN Ent. FE Development Team
@@ -14650,7 +15002,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
 
 module.exports = ResizeHandler;
 
-},{"../../../base/view":7,"../../../common/classNameConst":8}],61:[function(require,module,exports){
+},{"../../../base/view":7,"../../../common/classNameConst":8}],63:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
@@ -14885,16 +15237,16 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
     /**
      * Renders.
-     * @param {boolean} isModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
+     * @param {boolean} dataModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
      * @returns {View.RowList} this 객체
      */
-    render: function(isModelChanged) {
+    render: function(dataModelChanged) {
         var rowKeys = this.collection.pluck('rowKey'),
             dupRowKeys;
 
         this.bodyTableView.resetTablePosition();
 
-        if (isModelChanged) {
+        if (dataModelChanged) {
             this._resetRows();
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
@@ -14946,7 +15298,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],62:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],64:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
@@ -15108,7 +15460,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
 module.exports = SelectionLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],63:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],65:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
