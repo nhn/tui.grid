@@ -38,7 +38,7 @@
     "opts": {
         "recurse": true,
         "name": "Grid",
-        "destination": "api",
+        "destination": "doc",
         "tutorials": "samples"
     }
 }
