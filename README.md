@@ -37,18 +37,20 @@ You can also see the older versions of API page on the [releases page](https://g
 
 ## Dependency
 * jquery ~1.8.3
-* jquery-json ~2.5.1
 * underscore >=1.5.0
 * backbone ~1.1.2
 * tui-code-snippet ~1.0.2
-* tui-component-pagination ~1.0.0
+* component (optional)
+  * tui-component-pagination ~1.0.0
+  * tui-component-calendar ~1.1.1
+  * tui-component-date-picker ~1.3.0
 
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
 
 ## Test environment
 * PC
-	* IE7~11
+	* IE8~11
 	* Chrome
 	* Firefox
 
