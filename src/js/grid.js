@@ -95,6 +95,11 @@
  *              @param {function} [options.columnModelList.relationList.optionListChange] - The function whose return
  *                  value specifies the option list for the 'select', 'radio', 'checkbox' type.
  *                  The options list of target columns will be replaced with the return value of this function.
+ *          @param {Object} [options.columnModelList.component] - Option for using tui-component
+ *              @param {string} [options.columnModelList.component.name] - The name of the compnent to use
+                    for this column
+ *              @param {Object} [options.columnModelList.component.option] - The option object to be used for
+                    creating the component
  *      @param {array} options.columnMerge - The array that specifies the merged column.
  *          This options does not merge the cells of multiple columns into a single cell.
  *          This options only effects to the headers of the multiple columns, creates a new parent header
