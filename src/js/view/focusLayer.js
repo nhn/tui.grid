@@ -36,7 +36,6 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
-        // this.listenTo(this.focusModel, 'change:editingAddress', this._onChangeEditingAddress);
     },
 
     className: classNameConst.LAYER_FOCUS,
@@ -72,14 +71,6 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
 
         if (targetSide === this.whichSide) {
             this._refreshBorderLayout(rowKey, columnName);
-            this.$el.show();
-        }
-    },
-
-    _onChangeEditingAddress: function(focusModel, address) {
-        if (address) {
-            this.$el.hide();
-        } else {
             this.$el.show();
         }
     },
