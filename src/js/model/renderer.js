@@ -316,7 +316,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         _.each(columnNames, function(columnName) {
             var value = rowDataModel.get(columnName);
 
-            if (columnName === '_number') {
+            if (columnName === '_number' && !_.isNumber(value)) {
                 value = rowNum;
             }
             viewData[columnName] = value;

@@ -981,6 +981,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Returns the tui.component.Pagination instance being used in the toolbar area.
+     * @returns {tui.component.Pagination}
+     */
+    getPagination: function() {
+        return this.modelManager.toolbarModel.get('pagination');
+    },
+
+    /**
      * Sets the number of rows to be shown in the table area.
      * @api
      * @param {number} count - The number of rows

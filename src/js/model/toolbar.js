@@ -6,7 +6,6 @@
 
 var Model = require('../base/model');
 
-
 /**
  * Toolbar Model
  * @module model/toolbar
@@ -24,7 +23,8 @@ var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
         isExcelAllButtonVisible: false,
 
         // tui.component.pagination
-        pagination: null
+        pagination: null,
+        paginationOption: null
     },
 
     /**
