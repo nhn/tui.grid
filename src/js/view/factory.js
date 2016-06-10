@@ -8,8 +8,8 @@ var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./layout/toolbar');
 var ToolbarControlPanelView = require('./layout/toolbar/controlPanel');
-var ToolbarPaginationView = require('./layout/toolbar/pagination');
-var ToolbarResizeHandlerView = require('./layout/toolbar/resizeHandler');
+var PaginationView = require('./pagination');
+var HeightResizeHandleView = require('./heightResizeHandle');
 var StateLayerView = require('./stateLayer');
 var ClipboardView = require('./clipboard');
 var LsideFrameView = require('./layout/frame-lside');
@@ -30,9 +30,14 @@ var FocusLayerView = require('./focusLayer');
  */
 var ViewFactory = tui.util.defineClass({
     init: function(options) {
+        // dependencies
         this.domState = options.domState;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
+
+        // view options
+        this.singleClickEdit = options.singleClickEdit;
+        this.resizeHandle = options.resizeHandle;
     },
 
     /**
@@ -40,10 +45,10 @@ var ViewFactory = tui.util.defineClass({
      * @param {Object} options - Options set by user
      * @returns {module:view/container}
      */
-    createContainer: function(options) {
+    createContainer: function() {
         return new ContainerView({
-            el: options.el,
-            singleClickEdit: options.singleClickEdit,
+            el: this.domState.$el,
+            singleClickEdit: this.singleClickEdit,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
@@ -90,9 +95,9 @@ var ViewFactory = tui.util.defineClass({
      * Creates toolbar pagination view and returns it.
      * @returns {module:view/toolbar/pagination} - New pagination view instance
      */
-    createToolbarPagination: function() {
-        return new ToolbarPaginationView({
-            toolbarModel: this.modelManager.toolbarModel
+    createPagination: function() {
+        return new PaginationView({
+            // toolbarModel: this.modelManager.toolbarModel
         });
     },
 
@@ -100,8 +105,11 @@ var ViewFactory = tui.util.defineClass({
      * Creates toolbar resize handler view and returns it.
      * @returns {module:view/toolbar/resizeHandler} - New resize hander view instance
      */
-    createToolbarResizeHandler: function() {
-        return new ToolbarResizeHandlerView({
+    createHeightResizeHandle: function() {
+        if (!this.resizeHandle) {
+            return null;
+        }
+        return new HeightResizeHandleView({
             dimensionModel: this.modelManager.dimensionModel
         });
     },

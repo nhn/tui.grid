@@ -336,7 +336,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.id = util.getUniqueKey();
         this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
-        this.container = this._createContainerView(options, domState);
+        this.viewFactory = this._createViewFactory(domState, options);
+        this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
 
         this.container.render();
@@ -387,24 +388,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         });
     },
 
-    /**
-     * Creates container view and returns it
-     * @param {Object} options - Options set by user
-     * @param {module:domState} domState - domState
-     * @returns {module:view/container} - New container view object
-     * @private
-     */
-    _createContainerView: function(options, domState) {
-        var viewFactory = new ViewFactory({
+    _createViewFactory: function(domState, options) {
+        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle');
+        var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
             domState: domState
-        });
+        };
 
-        return viewFactory.createContainer({
-            el: this.$el,
-            singleClickEdit: options.singleClickEdit
-        });
+        return new ViewFactory(_.assign(dependencies, viewOptions));
     },
 
     /**
@@ -985,7 +977,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @returns {tui.component.Pagination}
      */
     getPagination: function() {
-        return this.modelManager.toolbarModel.get('pagination');
+        return this.modelManager.toolbarModel.get('paginationComponent');
     },
 
     /**

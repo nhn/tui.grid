@@ -306,6 +306,15 @@ var util = {
     },
 
     /**
+     * Returns whether the given option is enabled. (Only for values the type of which can be Boolean or Object)
+     * @param {*} option - option value
+     * @returns {Boolean}
+     */
+    isOptionEnabled: function(option) {
+        return _.isObject(option) || option === true;
+    },
+
+    /**
      * create style element and append it into the head element.
      * @param {String} id - element id
      * @param {String} cssString - css string

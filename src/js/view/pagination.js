@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var View = require('../../../base/view');
-var classNameConst = require('../../../common/classNameConst');
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
 
 var HTML_BTNS =
     '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
@@ -37,7 +37,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @param {Object} options - Options
      */
     initialize: function(options) {
-        this.toolbarModel = options.toolbarModel;
+        this.toolbarModel = options.modelManager;
     },
 
     className: classNameConst.PAGINATION,
@@ -50,9 +50,10 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
         this._destroyChildren();
         this.$el.empty().html(HTML_BTNS);
 
-        if (!this.toolbarModel.has('paginationComponent')) {
-            this.toolbarModel.set('paginationComponent', this._createComponent());
-        }
+        // if (!this.toolbarModel.has('paginationComponent')) {
+            // this.toolbarModel.set('paginationComponent', this._createComponent());
+        // }
+        this._createComponent();
         return this;
     },
 
@@ -61,7 +62,8 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @returns {Object}
      */
     _createOptionObject: function() {
-        var customOption = this.toolbarModel.get('pagination');
+        // var customOption = this.toolbarModel.get('pagination');
+        var customOption = {};
         var btnOption = {
             $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
             $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line

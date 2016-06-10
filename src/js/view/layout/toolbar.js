@@ -36,15 +36,15 @@ var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
 
         this._destroyChildren();
 
-        if (toolbarModel.get('hasControlPanel')) {
+        if (toolbarModel.get('excelButtons')) {
             this._addChildren(this.viewFactory.createToolbarControlPanel());
         }
 
-        if (toolbarModel.get('hasResizeHandler')) {
-            this._addChildren(this.viewFactory.createToolbarResizeHandler());
-        }
+        // if (toolbarModel.get('resizeHandle')) {
+        //     this._addChildren(this.viewFactory.createToolbarResizeHandler());
+        // }
 
-        if (toolbarModel.get('hasPagination')) {
+        if (toolbarModel.get('pagination')) {
             this._addChildren(this.viewFactory.createToolbarPagination());
         }
 

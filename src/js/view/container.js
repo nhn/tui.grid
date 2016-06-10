@@ -59,7 +59,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this._addChildren([
             factory.createContentArea(),
-            factory.createToolbar(),
+            factory.createHeightResizeHandle(),
+            factory.createPagination(),
+            // factory.createToolbar(),
             factory.createStateLayer(),
             factory.createEditingLayer(),
             factory.createDatePickerLayer(),
