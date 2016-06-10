@@ -34,7 +34,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
-    selector: 'td[' + attrNameConst.EDIT_TYPE + '=dummy]',
+    selector: 'td[' + attrNameConst.EDIT_TYPE + '="dummy"]',
 
     /**
      * Template function

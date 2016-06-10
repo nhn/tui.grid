@@ -24,7 +24,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
-        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '=' + this.editType + ']';
+        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
     },
 
     /**

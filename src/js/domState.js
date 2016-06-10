@@ -27,7 +27,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      */
     getElement: function(rowKey, columnName) {
         return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
-            .find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+            .find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
     },
 
     /**

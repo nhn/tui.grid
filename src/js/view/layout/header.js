@@ -168,7 +168,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(classNameConst.CELL_SELECTED);
+                $ths.filter('[' + ATTR_COLUMN_NAME + '="' + columnName + '"]').addClass(classNameConst.CELL_SELECTED);
             });
         }
     },
@@ -338,7 +338,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getHeaderMainCheckbox: function() {
-        return this.$el.find('th[' + ATTR_COLUMN_NAME + '=_button] input');
+        return this.$el.find('th[' + ATTR_COLUMN_NAME + '="_button"] input');
     },
 
     /**
@@ -427,7 +427,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             this._$currentSortBtn.removeClass(classNameConst.BTN_SORT_DOWN + ' ' + classNameConst.BTN_SORT_UP);
         }
         this._$currentSortBtn = this.$el.find(
-            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.' + classNameConst.BTN_SORT
+            'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
         );
         this._$currentSortBtn.addClass(sortOptions.isAscending ?
             classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
