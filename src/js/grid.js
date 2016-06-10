@@ -341,6 +341,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.publicEventEmitter = this._createPublicEventEmitter();
 
         this.container.render();
+        this.modelManager.dimensionModel.resetHeightValuesFromDOM();
         this.refreshLayout();
 
         if (!themeManager.isApplied()) {

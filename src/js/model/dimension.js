@@ -65,7 +65,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         headerHeight: 0,
         bodyHeight: 0,
-        toolbarHeight: 65,
+
+        toolbarHeight: 0,
+        resizeHandleHeight: 0,
+        paginationHeight: 0,
 
         rowHeight: 0,
         totalRowHeight: 0,
@@ -115,6 +118,15 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         });
 
         return appliedList;
+    },
+
+    /**
+     * Resets the height values to the height of each DOM element.
+     */
+    resetHeightValuesFromDOM: function() {
+        this.set('toolbarHeight', this.domState.getToolbarHeight());
+        this.set('paginationHeight', this.domState.getPaginationHeight());
+        this.set('resizeHandleHeight', this.domState.getResizeHandleHeight());
     },
 
     /**

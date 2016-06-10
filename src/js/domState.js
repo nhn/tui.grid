@@ -5,6 +5,7 @@
 'use strict';
 
 var attrNameConst = require('./common/constMap').attrName;
+var classNameConst = require('./common/classNameConst');
 
 /**
  * Class for offering methods that can be used to get the current state of DOM element.
@@ -28,6 +29,30 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
     getElement: function(rowKey, columnName) {
         return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
             .find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+    },
+
+    /**
+     * Returns the height of the pagination area
+     * @returns {Number}
+     */
+    getPaginationHeight: function() {
+        return this.$el.find('.' + classNameConst.PAGINATION).height();
+    },
+
+    /**
+     * Returns the height of the toolbar area
+     * @returns {Number}
+     */
+    getToolbarHeight: function() {
+        return this.$el.find('.' + classNameConst.TOOLBAR).height();
+    },
+
+    /**
+     * Returns the height of the resize handle
+     * @returns {Number}
+     */
+    getResizeHandleHeight: function() {
+        return this.$el.find('.' + classNameConst.HEIGHT_RESIZE_HANDLE).height();
     },
 
     /**

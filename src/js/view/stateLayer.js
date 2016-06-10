@@ -93,8 +93,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
         var dimensionModel = this.dimensionModel;
 
         this.$el.css({
-            marginTop: dimensionModel.get('headerHeight'),
-            height: dimensionModel.get('bodyHeight') + dimensionModel.get('toolbarHeight')
+            top: dimensionModel.get('headerHeight')
+            // marginTop: dimensionModel.get('headerHeight'),
+            // height: dimensionModel.get('bodyHeight') + dimensionModel.get('toolbarHeight')
         });
     }
 });

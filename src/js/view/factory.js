@@ -7,7 +7,6 @@
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./layout/toolbar');
-var ToolbarControlPanelView = require('./layout/toolbar/controlPanel');
 var PaginationView = require('./pagination');
 var HeightResizeHandleView = require('./heightResizeHandle');
 var StateLayerView = require('./stateLayer');
@@ -74,18 +73,6 @@ var ViewFactory = tui.util.defineClass({
      */
     createToolbar: function() {
         return new ToolbarView({
-            toolbarModel: this.modelManager.toolbarModel,
-            dimensionModel: this.modelManager.dimensionModel,
-            viewFactory: this
-        });
-    },
-
-    /**
-     * Creates toolbar control panel view and returns it.
-     * @returns {module:view/toolbar/controlPanel} - New control panel vew insatnce
-     */
-    createToolbarControlPanel: function() {
-        return new ToolbarControlPanelView({
             gridId: this.modelManager.gridId,
             toolbarModel: this.modelManager.toolbarModel
         });
