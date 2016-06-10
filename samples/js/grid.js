@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.3.0
+ * @version 1.3.1-a
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -1895,7 +1895,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
      */
     getElement: function(rowKey, columnName) {
         return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
-            .find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+            .find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
     },
 
     /**
@@ -9069,7 +9069,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
         this.editType = options.editType;
         this.inputPainter = options.inputPainter;
-        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '=' + this.editType + ']';
+        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
     },
 
     /**
@@ -9426,7 +9426,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
-    selector: 'td[' + attrNameConst.EDIT_TYPE + '=dummy]',
+    selector: 'td[' + attrNameConst.EDIT_TYPE + '="dummy"]',
 
     /**
      * Template function
@@ -10505,7 +10505,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
             var editType, cellPainter, $td;
 
             if (columnName !== '_extraData') {
-                $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+                $td = $tr.find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
                 editType = this._getEditType(columnName, cellData);
                 cellPainter = this.painterManager.getCellPainter(editType);
                 cellPainter.refresh(cellData, $td);
@@ -13918,7 +13918,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         if (columnNames) {
             mergedColumnNames = this._getContainingMergedColumnNames(columnNames);
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
-                $ths.filter('[' + ATTR_COLUMN_NAME + '=' + columnName + ']').addClass(classNameConst.CELL_SELECTED);
+                $ths.filter('[' + ATTR_COLUMN_NAME + '="' + columnName + '"]').addClass(classNameConst.CELL_SELECTED);
             });
         }
     },
@@ -14088,7 +14088,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getHeaderMainCheckbox: function() {
-        return this.$el.find('th[' + ATTR_COLUMN_NAME + '=_button] input');
+        return this.$el.find('th[' + ATTR_COLUMN_NAME + '="_button"] input');
     },
 
     /**
@@ -14177,7 +14177,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             this._$currentSortBtn.removeClass(classNameConst.BTN_SORT_DOWN + ' ' + classNameConst.BTN_SORT_UP);
         }
         this._$currentSortBtn = this.$el.find(
-            'th[' + ATTR_COLUMN_NAME + '=' + sortOptions.columnName + '] a.' + classNameConst.BTN_SORT
+            'th[' + ATTR_COLUMN_NAME + '="' + sortOptions.columnName + '"] a.' + classNameConst.BTN_SORT
         );
         this._$currentSortBtn.addClass(sortOptions.isAscending ?
             classNameConst.BTN_SORT_UP : classNameConst.BTN_SORT_DOWN
@@ -15230,7 +15230,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             if (!trMap[mainRowKey]) {
                 trMap[mainRowKey] = this._getRowElement(mainRowKey);
             }
-            $td = trMap[mainRowKey].find('td[' + attrNameConst.COLUMN_NAME + '=' + columnName + ']');
+            $td = trMap[mainRowKey].find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
             $td.toggleClass(classNameConst.CELL_CURRENT_ROW, focused);
         }, this);
     },
