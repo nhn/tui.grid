@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.3.1-a
+ * @version 1.4.0-a
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -155,7 +155,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             // extra objects
             router: null,
-            pagination: options.toolbarModel.get('pagination'),
+            pagination: options.pagination,
 
             // configs
             api: options.api,
@@ -1047,6 +1047,16 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
+     * Trigger 'appended' event on child view.
+     * @private
+     */
+    _triggerChildrenAppended: function() {
+        _.each(this._children, function(view) {
+            view.trigger('appended');
+        });
+    },
+
+    /**
      * 자식 View를 제거한 뒤 자신도 제거한다.
      */
     destroy: function() {
@@ -1843,6 +1853,15 @@ var util = {
     },
 
     /**
+     * Returns whether the given option is enabled. (Only for values the type of which can be Boolean or Object)
+     * @param {*} option - option value
+     * @returns {Boolean}
+     */
+    isOptionEnabled: function(option) {
+        return _.isObject(option) || option === true;
+    },
+
+    /**
      * create style element and append it into the head element.
      * @param {String} id - element id
      * @param {String} cssString - css string
@@ -1866,6 +1885,57 @@ var util = {
 module.exports = util;
 
 },{"./constMap":9}],13:[function(require,module,exports){
+/**
+ * @fileoverview Component holder
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var defaultOptionsMap = {
+    pagination: null
+};
+
+/**
+ * Component holder
+ * @module componentHolder
+ */
+var ComponentHolder = tui.util.defineClass(/**@lends module:component/pagination.prototype */{
+    init: function(optionsMap) {
+        this.optionsMap = $.extend(true, defaultOptionsMap, optionsMap);
+        this.instanceMap = {};
+    },
+
+    /**
+     * Returns an instance of tui.component.Pagination
+     * @param {String} key - component key
+     * @returns {tui.component.Pagination}
+     */
+    getInstance: function(key) {
+        return this.instanceMap[key];
+    },
+
+    /**
+     * Sets an instance of tui.component.Pagination
+     * @param {String} key - component key
+     * @param {tui.component.Pagination} instance - pagination instance
+     */
+    setInstance: function(key, instance) {
+        this.instanceMap[key] = instance;
+    },
+
+    /**
+     * Returns an option object.
+     * @param {String} key - component key
+     * @returns {Object}
+     */
+    getOptions: function(key) {
+        return this.optionsMap[key];
+    }
+});
+
+module.exports = ComponentHolder;
+
+},{}],14:[function(require,module,exports){
 /**
  * @fileoverview This class offers methods that can be used to get the current state of DOM element.
  * @author NHN Ent. FE Development Team
@@ -1933,7 +2003,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
 
 module.exports = DomState;
 
-},{"./common/constMap":9}],14:[function(require,module,exports){
+},{"./common/constMap":9}],15:[function(require,module,exports){
 /**
  * @fileoverview The tui.Grid class for the external API.
  * @author NHN Ent. FE Development Team
@@ -2249,6 +2319,7 @@ var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
+var ComponentHolder = require('./componentHolder');
 var util = require('./common/util');
 var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
@@ -2272,7 +2343,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.id = util.getUniqueKey();
         this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
-        this.container = this._createContainerView(options, domState);
+        this.componentHolder = this._createComponentHolder(options.pagination);
+        this.viewFactory = this._createViewFactory(domState, options);
+        this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
 
         this.container.render();
@@ -2324,22 +2397,33 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Creates container view and returns it
-     * @param {Object} options - Options set by user
-     * @param {module:domState} domState - domState
-     * @returns {module:view/container} - New container view object
+     * Creates a view factory.
+     * @param {module:domState} domState - dom state
+     * @param {options} options - options
+     * @returns {module:view/factory}
      * @private
      */
-    _createContainerView: function(options, domState) {
-        var viewFactory = new ViewFactory({
+    _createViewFactory: function(domState, options) {
+        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar');
+        var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
+            componentHolder: this.componentHolder,
             domState: domState
-        });
+        };
 
-        return viewFactory.createContainer({
-            el: this.$el,
-            singleClickEdit: options.singleClickEdit
+        return new ViewFactory(_.assign(dependencies, viewOptions));
+    },
+
+    /**
+     * Creates a pagination component.
+     * @param {Object} pgOptions - pagination options
+     * @returns {module:component/pagination}
+     * @private
+     */
+    _createComponentHolder: function(pgOptions) {
+        return new ComponentHolder({
+            pagination: pgOptions
         });
     },
 
@@ -2817,7 +2901,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
             options = $.extend({
                 toolbarModel: this.modelManager.toolbarModel,
                 renderModel: this.modelManager.renderModel,
-                dataModel: this.modelManager.dataModel
+                dataModel: this.modelManager.dataModel,
+                pagination: this.componentHolder.getInstance('pagination')
             }, options);
             this.addOn.Net = new NetAddOn(options);
             this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
@@ -2914,6 +2999,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     getIndexOfRow: function(rowKey) {
         return this.modelManager.dataModel.indexOfRowKey(rowKey);
+    },
+
+    /**
+     * Returns an instance of tui.component.Pagination.
+     * @returns {tui.component.Pagination}
+     */
+    getPagination: function() {
+        return this.componentHolder.getInstance('pagination');
     },
 
     /**
@@ -3102,7 +3195,7 @@ tui.Grid.applyTheme = function(presetName, extOptions) {
     themeManager.apply(presetName, extOptions);
 };
 
-},{"./addon/net":2,"./base/view":7,"./common/constMap":9,"./common/util":12,"./domState":13,"./model/manager":21,"./painter/controller":29,"./painter/manager":36,"./publicEventEmitter":38,"./theme/manager":40,"./view/factory":49}],15:[function(require,module,exports){
+},{"./addon/net":2,"./base/view":7,"./common/constMap":9,"./common/util":12,"./componentHolder":13,"./domState":14,"./model/manager":22,"./painter/controller":30,"./painter/manager":37,"./publicEventEmitter":39,"./theme/manager":41,"./view/factory":50}],16:[function(require,module,exports){
 /**
  * @fileoverview 컬럼 모델
  * @author NHN Ent. FE Development Team
@@ -3541,7 +3634,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
 module.exports = ColumnModel;
 
-},{"../../base/model":5,"../../common/util":12}],16:[function(require,module,exports){
+},{"../../base/model":5,"../../common/util":12}],17:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
@@ -3744,7 +3837,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
 
 module.exports = ExtraDataManager;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
  * @author NHN Ent. FE Development Team
@@ -4296,7 +4389,7 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
 module.exports = Row;
 
-},{"../../base/model":5,"../../common/classNameConst":8,"../../common/util":12,"./extraDataManager":16}],18:[function(require,module,exports){
+},{"../../base/model":5,"../../common/classNameConst":8,"../../common/util":12,"./extraDataManager":17}],19:[function(require,module,exports){
 /**
  * @fileoverview Grid 의 Data Source 에 해당하는 Collection 정의
  * @author NHN Ent. FE Development Team
@@ -5404,7 +5497,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
 module.exports = RowList;
 
-},{"../../base/collection":3,"./row":17}],19:[function(require,module,exports){
+},{"../../base/collection":3,"./row":18}],20:[function(require,module,exports){
 /**
  * @fileoverview 크기에 관련된 데이터를 다루는 모델
  * @author NHN Ent. FE Development Team
@@ -5472,7 +5565,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         headerHeight: 0,
         bodyHeight: 0,
-        toolbarHeight: 65,
+
+        toolbarHeight: 0,
+        resizeHandleHeight: 0,
+        paginationHeight: 0,
 
         rowHeight: 0,
         totalRowHeight: 0,
@@ -6164,12 +6260,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
-        var containerPosX = pageX - this.get('offsetLeft');
-        var containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
+        var offsetX = this.get('offsetLeft');
+        var offsetY = this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
+             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
 
         return {
-            x: containerPosX,
-            y: containerPosY
+            x: pageX - offsetX,
+            y: pageY - offsetY
         };
     },
 
@@ -6375,7 +6472,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
 module.exports = Dimension;
 
-},{"../base/model":5,"../common/constMap":9,"../common/util":12}],20:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":9,"../common/util":12}],21:[function(require,module,exports){
 /**
  * @fileoverview Focus 관련 데이터 처리름 담당한다.
  * @author NHN Ent. FE Development Team
@@ -7045,7 +7142,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
 module.exports = Focus;
 
-},{"../base/model":5,"../common/gridEvent":11,"../common/util":12}],21:[function(require,module,exports){
+},{"../base/model":5,"../common/gridEvent":11,"../common/util":12}],22:[function(require,module,exports){
 /**
  * @fileoverview Model Manager
  * @author NHN Ent. FE Development Team
@@ -7078,12 +7175,7 @@ var defaultOptions = {
     scrollX: true,
     scrollY: true,
     useClientSort: true,
-    singleClickEdit: false,
-    toolbar: {
-        hasResizeHandler: true,
-        hasControlPanel: true,
-        hasPagination: true
-    }
+    toolbar: null
 };
 
 /**
@@ -7174,9 +7266,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             minimumColumnWidth: options.minimumColumnWidth,
             displayRowCount: options.displayRowCount
         };
-        if (!this.toolbarModel.isVisible()) {
-            attrs.toolbarHeight = 0;
-        }
 
         return new DimensionModel(attrs, {
             columnModel: this.columnModel,
@@ -7258,7 +7347,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
 module.exports = ModelManager;
 
-},{"./data/columnModel":15,"./data/rowList":18,"./dimension":19,"./focus":20,"./renderer":23,"./renderer-smart":22,"./selection":26,"./toolbar":27}],22:[function(require,module,exports){
+},{"./data/columnModel":16,"./data/rowList":19,"./dimension":20,"./focus":21,"./renderer":24,"./renderer-smart":23,"./selection":27,"./toolbar":28}],23:[function(require,module,exports){
 /**
  * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
  * @author NHN Ent. FE Development Team
@@ -7397,7 +7486,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
 
 module.exports = SmartRenderer;
 
-},{"../common/util":12,"./renderer":23}],23:[function(require,module,exports){
+},{"../common/util":12,"./renderer":24}],24:[function(require,module,exports){
 /**
  * @fileoverview Rendering 모델
  * @author NHN Ent. FE Development Team
@@ -7716,7 +7805,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         _.each(columnNames, function(columnName) {
             var value = rowDataModel.get(columnName);
 
-            if (columnName === '_number') {
+            if (columnName === '_number' && !_.isNumber(value)) {
                 value = rowNum;
             }
             viewData[columnName] = value;
@@ -7811,7 +7900,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var actualRowCount = this._getActualRowCount();
         var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
         var rowHeight = this.dimensionModel.get('rowHeight');
-        var rowNum = this.get('endIndex') + 2;
+        var rowNum = this.get('startNumber') + this.get('endIndex') + 1;
 
         _.times(dummyRowCount, function() {
             _.each(['lside', 'rside'], function(listName) {
@@ -7956,7 +8045,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
 module.exports = Renderer;
 
-},{"../base/model":5,"../common/constMap":9,"./rowList":25}],24:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":9,"./rowList":26}],25:[function(require,module,exports){
 /**
  * @fileoverview Row Model for Rendering (View Model)
  * @author NHN Ent. FE Development Team
@@ -8365,7 +8454,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
 
 module.exports = Row;
 
-},{"../base/model":5,"../common/util":12}],25:[function(require,module,exports){
+},{"../base/model":5,"../common/util":12}],26:[function(require,module,exports){
 /**
  * @fileoverview RowList 클래스파일
  * @author NHN Ent. FE Development Team
@@ -8399,7 +8488,7 @@ var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/collection":3,"./row":24}],26:[function(require,module,exports){
+},{"../base/collection":3,"./row":25}],27:[function(require,module,exports){
 /**
  * @fileoverview Selection Model class
  * @author NHN Ent. FE Development Team
@@ -9001,7 +9090,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
 module.exports = Selection;
 
-},{"../base/model":5,"../common/constMap":9,"../common/util":12}],27:[function(require,module,exports){
+},{"../base/model":5,"../common/constMap":9,"../common/util":12}],28:[function(require,module,exports){
 /**
  * @fileoverview Toolbar model class
  * @author NHN Ent. FE Development Team
@@ -9009,7 +9098,7 @@ module.exports = Selection;
 'use strict';
 
 var Model = require('../base/model');
-
+var isOptionEnabled = require('../common/util').isOptionEnabled;
 
 /**
  * Toolbar Model
@@ -9017,32 +9106,33 @@ var Model = require('../base/model');
  * @extends module:base/model
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
+    initialize: function(options) {
+        this.options = options;
+    },
+
     defaults: {
-        // set by user
+        // deprecated (since 1.4.0)
         hasControlPanel: false,
         hasPagination: false,
         hasResizeHandler: false,
 
-        // for control panel
+        // excel button visibility
         isExcelButtonVisible: false,
-        isExcelAllButtonVisible: false,
-
-        // tui.component.pagination
-        pagination: null
+        isExcelAllButtonVisible: false
     },
 
     /**
-     * Returns whether the toolbar is visible
-     * @returns {Boolean} True if the toolbar is visible
+     * Returns whether the toolbar is enabled
+     * @returns {Boolean} True if the toolbar is enbaled
      */
-    isVisible: function() {
-        return this.get('hasControlPanel') || this.get('hasPagination') || this.get('hasResizeHandler');
+    isEnabled: function() {
+        return isOptionEnabled(this.options);
     }
 });
 
 module.exports = Toolbar;
 
-},{"../base/model":5}],28:[function(require,module,exports){
+},{"../base/model":5,"../common/util":12}],29:[function(require,module,exports){
 /**
  * @fileoverview Painter class for cell(TD) views
  * @author NHN Ent. FE Development Team
@@ -9252,7 +9342,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
 
 module.exports = Cell;
 
-},{"../base/painter":6,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],29:[function(require,module,exports){
+},{"../base/painter":6,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],30:[function(require,module,exports){
 /**
  * @fileoverview Controller class to handle actions from the painters
  * @author NHN Ent. FE Development Team
@@ -9389,7 +9479,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
 
 module.exports = PainterController;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * @fileoverview Dummy cell painter
  * @author NHN Ent. FE Development Team
@@ -9476,7 +9566,7 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
 
 module.exports = DummyCell;
 
-},{"../base/painter":6,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],31:[function(require,module,exports){
+},{"../base/painter":6,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],32:[function(require,module,exports){
 /**
  * @fileoverview Base class for the Input Painter
  * @author NHN Ent. FE Development Team
@@ -9674,7 +9764,7 @@ _.assign(InputPainter.prototype, Backbone.Events);
 
 module.exports = InputPainter;
 
-},{"../../base/painter":6,"../../common/constMap":9}],32:[function(require,module,exports){
+},{"../../base/painter":6,"../../common/constMap":9}],33:[function(require,module,exports){
 /**
  * @fileoverview Painter class for 'checkbox' and 'radio button'.
  * @author NHN Ent. FE Development Team
@@ -9930,7 +10020,7 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
 module.exports = ButtonPainter;
 
-},{"../../common/util":12,"./base":31}],33:[function(require,module,exports){
+},{"../../common/util":12,"./base":32}],34:[function(require,module,exports){
 /**
  * @fileoverview Main Button Painter
  * @author NHN Ent. FE Development Team
@@ -10005,7 +10095,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
 
 module.exports = InputPainter;
 
-},{"../../base/painter":6,"../../common/classNameConst":8}],34:[function(require,module,exports){
+},{"../../base/painter":6,"../../common/classNameConst":8}],35:[function(require,module,exports){
 /**
  * @fileoverview Painter class for 'select' input.
  * @author NHN Ent. FE Development Team
@@ -10091,7 +10181,7 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
 
 module.exports = SelectPainter;
 
-},{"../../common/util":12,"./base":31}],35:[function(require,module,exports){
+},{"../../common/util":12,"./base":32}],36:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the 'input[type=text]' and 'input[type=password]'.
  * @author NHN Ent. FE Development Team
@@ -10214,7 +10304,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
 
 module.exports = TextPainter;
 
-},{"../../common/util":12,"./base":31}],36:[function(require,module,exports){
+},{"../../common/util":12,"./base":32}],37:[function(require,module,exports){
 /**
  * @fileoverview Painter Manager
  * @author NHN Ent. FE Development Team
@@ -10365,7 +10455,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
 
 module.exports = PainterManager;
 
-},{"./cell":28,"./dummyCell":30,"./input/button":32,"./input/mainButton":33,"./input/select":34,"./input/text":35,"./row":37}],37:[function(require,module,exports){
+},{"./cell":29,"./dummyCell":31,"./input/button":33,"./input/mainButton":34,"./input/select":35,"./input/text":36,"./row":38}],38:[function(require,module,exports){
 /**
  * @fileoverview Painter class for the row(TR) views
  * @author NHN Ent. FE Development Team
@@ -10532,7 +10622,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
 
 module.exports = RowPainter;
 
-},{"../base/painter":6,"../common/constMap":9,"../common/util":12}],38:[function(require,module,exports){
+},{"../base/painter":6,"../common/constMap":9,"../common/util":12}],39:[function(require,module,exports){
 /**
  * @fileoverview Public Event Emitter
  * @author NHN Ent. FE Development Team
@@ -10631,7 +10721,7 @@ _.extend(PublicEventEmitter.prototype, Backbone.Events);
 
 module.exports = PublicEventEmitter;
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /**
 * @fileoverview CSS Rule string builder
 * @author NHN Ent. FE Development Team
@@ -10808,7 +10898,7 @@ module.exports = {
     }
 };
 
-},{}],40:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
 * @fileoverview theme manager
 * @author NHN Ent. FE Development Team
@@ -10836,6 +10926,8 @@ function buildCssString(options) {
         styleGen.grid(options.grid),
         styleGen.scrollbar(options.scrollbar),
         styleGen.toolbar(options.toolbar),
+        styleGen.heightResizeHandle(options.heightResizeHandle),
+        styleGen.pagination(options.pagination),
         styleGen.selection(options.selection)
     ];
     var cell = options.cell;
@@ -10897,7 +10989,7 @@ module.exports = {
     }
 };
 
-},{"../common/constMap":9,"../common/util":12,"./preset/clean":41,"./preset/default":42,"./preset/striped":43,"./styleGenerator":44}],41:[function(require,module,exports){
+},{"../common/constMap":9,"../common/util":12,"./preset/clean":42,"./preset/default":43,"./preset/striped":44,"./styleGenerator":45}],42:[function(require,module,exports){
 /**
 * @fileoverview default theme preset
 * @author NHN Ent. FE Development Team
@@ -10932,7 +11024,7 @@ module.exports = $.extend(true, {}, presetDefault, {
     }
 });
 
-},{"./default":42}],42:[function(require,module,exports){
+},{"./default":43}],43:[function(require,module,exports){
 /**
 * @fileoverview default theme preset
 * @author NHN Ent. FE Development Team
@@ -10950,7 +11042,15 @@ module.exports = {
         border: '#004082'
     },
     toolbar: {
+        border: 'transparent',
+        background: 'transparent'
+    },
+    heightResizeHandle: {
         border: '#ccc',
+        background: '#fff'
+    },
+    pagination: {
+        border: 'transparent',
         background: 'transparent'
     },
     scrollbar: {
@@ -10998,7 +11098,7 @@ module.exports = {
     }
 };
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
 * @fileoverview default theme preset
 * @author NHN Ent. FE Development Team
@@ -11029,7 +11129,7 @@ module.exports = $.extend(true, {}, presetDefault, {
     }
 });
 
-},{"./default":42}],44:[function(require,module,exports){
+},{"./default":43}],45:[function(require,module,exports){
 /**
 * @fileoverview css style generator
 * @author NHN Ent. FE Development Team
@@ -11054,6 +11154,19 @@ function bgTextRuleString(className, options) {
     return classRule(className)
         .bg(options.background)
         .text(options.text)
+        .build();
+}
+
+/**
+ * Creates a rule string for background and border colors.
+ * @param {String} className - class name
+ * @param {Objecr} options - options
+ * @returns {String}
+ */
+function bgBorderRuleString(className, options) {
+    return classRule(className)
+        .bg(options.background)
+        .border(options.border)
         .build();
 }
 
@@ -11111,17 +11224,25 @@ module.exports = {
      * @returns {String}
      */
     toolbar: function(options) {
-        var toolbarRule = classRule(classNameConst.TOOLBAR)
-            .bg(options.background)
-            .border(options.border);
+        return bgBorderRuleString(classNameConst.TOOLBAR, options);
+    },
 
-        var resizeHandleRule = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
-            .border(options.border);
+    /**
+     * Generates a css string for a resize-handle.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    heightResizeHandle: function(options) {
+        return bgBorderRuleString(classNameConst.HEIGHT_RESIZE_HANDLE, options);
+    },
 
-        return builder.buildAll([
-            toolbarRule,
-            resizeHandleRule
-        ]);
+    /**
+     * Generates a css string for a pagination.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    pagination: function(options) {
+        return bgBorderRuleString(classNameConst.PAGINATION, options);
     },
 
     /**
@@ -11130,10 +11251,7 @@ module.exports = {
      * @returns {String}
      */
     selection: function(options) {
-        return classRule(classNameConst.LAYER_SELECTION)
-            .bg(options.background)
-            .border(options.border)
-            .build();
+        return bgBorderRuleString(classNameConst.LAYER_SELECTION, options);
     },
 
     /**
@@ -11267,7 +11385,7 @@ module.exports = {
     }
 };
 
-},{"../common/classNameConst":8,"./cssRuleBuilder":39}],45:[function(require,module,exports){
+},{"../common/classNameConst":8,"./cssRuleBuilder":40}],46:[function(require,module,exports){
 /**
  * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
  * @author NHN Ent. FE Development Team
@@ -11295,7 +11413,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         this.setOwnProperties({
             focusModel: options.focusModel,
             selectionModel: options.selectionModel,
-            painterManager: options.painterManager,
             dimensionModel: options.dimensionModel,
             dataModel: options.dataModel,
             columnModel: options.columnModel,
@@ -11778,7 +11895,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
 module.exports = Clipboard;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],46:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],47:[function(require,module,exports){
 /**
  * @fileoverview View class that conaints a top element of the DOM structure of the grid.
  * @author NHN Ent. FE Development Team
@@ -11812,7 +11929,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this._createChildViews();
 
-        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._refreshHeight);
         this.listenTo(this.dimensionModel, 'setSize', this._onSetSize);
         $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
@@ -11839,8 +11955,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var factory = this.viewFactory;
 
         this._addChildren([
-            factory.createContentArea(),
             factory.createToolbar(),
+            factory.createContentArea(),
+            factory.createHeightResizeHandle(),
+            factory.createPagination(),
             factory.createStateLayer(),
             factory.createEditingLayer(),
             factory.createDatePickerLayer(),
@@ -12014,15 +12132,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * rendering 이후, 또는 bodyHeight 가 변경되었을 때, header, toolbar 의 높이를 포함하여
-     * grid 의 전체 너비를 설정한다.
-     * @private
-     */
-    _refreshHeight: function() {
-        this.$el.height(this.dimensionModel.getHeight());
-    },
-
-    /**
      * Render
      * @returns {module:view/container} this object
      */
@@ -12033,7 +12142,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
 
-        this._refreshHeight();
+        this._triggerChildrenAppended();
         this.trigger('rendered');
         return this;
     },
@@ -12053,7 +12162,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
 module.exports = Container;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/gridEvent":11}],47:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/gridEvent":11}],48:[function(require,module,exports){
 /**
  * @fileoverview Layer View class which contains the 'tui-component-date-picker'
  * @author NHN Ent. FE Development Team
@@ -12248,7 +12357,7 @@ DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */
 
 module.exports = DatePickerLayer;
 
-},{"../base/view":7,"../common/classNameConst":8}],48:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8}],49:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -12410,7 +12519,7 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
 
 module.exports = EditingLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],49:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],50:[function(require,module,exports){
 /**
  * @fileoverview View factory
  * @author NHN Ent. FE Development Team
@@ -12419,10 +12528,9 @@ module.exports = EditingLayer;
 
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
-var ToolbarView = require('./layout/toolbar');
-var ToolbarControlPanelView = require('./layout/toolbar/controlPanel');
-var ToolbarPaginationView = require('./layout/toolbar/pagination');
-var ToolbarResizeHandlerView = require('./layout/toolbar/resizeHandler');
+var ToolbarView = require('./toolbar');
+var PaginationView = require('./pagination');
+var HeightResizeHandleView = require('./heightResizeHandle');
 var StateLayerView = require('./stateLayer');
 var ClipboardView = require('./clipboard');
 var LsideFrameView = require('./layout/frame-lside');
@@ -12436,6 +12544,7 @@ var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
 var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
+var isOptionEnabled = require('../common/util').isOptionEnabled;
 
 /**
  * View Factory
@@ -12443,9 +12552,15 @@ var FocusLayerView = require('./focusLayer');
  */
 var ViewFactory = tui.util.defineClass({
     init: function(options) {
+        // dependencies
         this.domState = options.domState;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
+        this.componentHolder = options.componentHolder;
+
+        // view options
+        this.singleClickEdit = options.singleClickEdit;
+        this.resizeHandle = options.resizeHandle;
     },
 
     /**
@@ -12453,10 +12568,10 @@ var ViewFactory = tui.util.defineClass({
      * @param {Object} options - Options set by user
      * @returns {module:view/container}
      */
-    createContainer: function(options) {
+    createContainer: function() {
         return new ContainerView({
-            el: options.el,
-            singleClickEdit: options.singleClickEdit,
+            el: this.domState.$el,
+            singleClickEdit: this.singleClickEdit,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
@@ -12481,40 +12596,39 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/toolbar} - New toolbar view instance
      */
     createToolbar: function() {
+        if (!this.modelManager.toolbarModel.isEnabled()) {
+            return null;
+        }
         return new ToolbarView({
-            toolbarModel: this.modelManager.toolbarModel,
-            dimensionModel: this.modelManager.dimensionModel,
-            viewFactory: this
-        });
-    },
-
-    /**
-     * Creates toolbar control panel view and returns it.
-     * @returns {module:view/toolbar/controlPanel} - New control panel vew insatnce
-     */
-    createToolbarControlPanel: function() {
-        return new ToolbarControlPanelView({
             gridId: this.modelManager.gridId,
+            dimensionModel: this.modelManager.dimensionModel,
             toolbarModel: this.modelManager.toolbarModel
         });
     },
 
     /**
      * Creates toolbar pagination view and returns it.
-     * @returns {module:view/toolbar/pagination} - New pagination view instance
+     * @returns {module:view/pagination} - New pagination view instance
      */
-    createToolbarPagination: function() {
-        return new ToolbarPaginationView({
-            toolbarModel: this.modelManager.toolbarModel
+    createPagination: function() {
+        if (!isOptionEnabled(this.componentHolder.getOptions('pagination'))) {
+            return null;
+        }
+        return new PaginationView({
+            componentHolder: this.componentHolder,
+            dimensionModel: this.modelManager.dimensionModel
         });
     },
 
     /**
-     * Creates toolbar resize handler view and returns it.
-     * @returns {module:view/toolbar/resizeHandler} - New resize hander view instance
+     * Creates height resize handle view and returns it.
+     * @returns {module:view/resizeHandle} - New resize hander view instance
      */
-    createToolbarResizeHandler: function() {
-        return new ToolbarResizeHandlerView({
+    createHeightResizeHandle: function() {
+        if (!isOptionEnabled(this.resizeHandle)) {
+            return null;
+        }
+        return new HeightResizeHandleView({
             dimensionModel: this.modelManager.dimensionModel
         });
     },
@@ -12710,7 +12824,7 @@ var ViewFactory = tui.util.defineClass({
 
 module.exports = ViewFactory;
 
-},{"./clipboard":45,"./container":46,"./datePickerLayer":47,"./editingLayer":48,"./focusLayer":50,"./layout/body":51,"./layout/bodyTable":52,"./layout/content-area":53,"./layout/frame-lside":54,"./layout/frame-rside":55,"./layout/header":57,"./layout/resizeHandler":58,"./layout/toolbar":59,"./layout/toolbar/controlPanel":60,"./layout/toolbar/pagination":61,"./layout/toolbar/resizeHandler":62,"./rowList":63,"./selectionLayer":64,"./stateLayer":65}],50:[function(require,module,exports){
+},{"../common/util":12,"./clipboard":46,"./container":47,"./datePickerLayer":48,"./editingLayer":49,"./focusLayer":51,"./heightResizeHandle":52,"./layout/body":53,"./layout/bodyTable":54,"./layout/content-area":55,"./layout/frame-lside":56,"./layout/frame-rside":57,"./layout/header":59,"./layout/resizeHandler":60,"./pagination":61,"./rowList":62,"./selectionLayer":63,"./stateLayer":64,"./toolbar":65}],51:[function(require,module,exports){
 /**
  * @fileoverview Class for the layer view that represents the currently focused cell
  * @author NHN Ent. FE Development Team
@@ -12749,7 +12863,6 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
-        // this.listenTo(this.focusModel, 'change:editingAddress', this._onChangeEditingAddress);
     },
 
     className: classNameConst.LAYER_FOCUS,
@@ -12785,14 +12898,6 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
 
         if (targetSide === this.whichSide) {
             this._refreshBorderLayout(rowKey, columnName);
-            this.$el.show();
-        }
-    },
-
-    _onChangeEditingAddress: function(focusModel, address) {
-        if (address) {
-            this.$el.hide();
-        } else {
             this.$el.show();
         }
     },
@@ -12855,7 +12960,148 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
 
 module.exports = FocusLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],51:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],52:[function(require,module,exports){
+/**
+ * @fileoverview Class for the height resize handle
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
+var HTML_INNER = '<a href="#"><span></span></a>';
+
+/**
+ * Class for the height resize handle
+ * @module view/layout/heightResizeHandle
+ * @extends module:base/view
+ */
+var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHandle.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - Options
+     */
+    initialize: function(options) {
+        this.dimensionModel = options.dimensionModel;
+        this.timeoutIdForResize = 0;
+
+        this.on('appended', this._onAppended);
+    },
+
+    className: classNameConst.HEIGHT_RESIZE_HANDLE,
+
+    events: {
+        'mousedown': '_onMouseDown'
+    },
+
+    /**
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('resizeHandleHeight', this.$el.outerHeight());
+    },
+
+    /**
+     * Attach event handlers to start 'drag' action
+     * @private
+     */
+    _attachMouseEvent: function() {
+        $(document).on('mousemove', $.proxy(this._onMouseMove, this));
+        $(document).on('mouseup', $.proxy(this._onMouseUp, this));
+        $(document).on('selectstart', $.proxy(this._onSelectStart, this));
+    },
+
+    /**
+     * Detach event handler to cancel 'drag' action
+     * @private
+     */
+    _detachMouseEvent: function() {
+        $(document).off('mousemove', $.proxy(this._onMouseMove, this));
+        $(document).off('mouseup', $.proxy(this._onMouseUp, this));
+        $(document).off('selectstart', $.proxy(this._onSelectStart, this));
+    },
+
+    /**
+     * Event handler for 'mousedown' event
+     * @param {MouseEvent} mouseEvent - MouseEvent object
+     * @private
+     */
+    _onMouseDown: function(mouseEvent) {
+        mouseEvent.preventDefault();
+        $(document.body).css('cursor', 'row-resize');
+        this._attachMouseEvent();
+    },
+
+    /**
+     * Event handler for 'mousemove' event
+     * @param {MouseEvent} mouseEvent - MouseEvent object
+     * @private
+     */
+    _onMouseMove: function(mouseEvent) {
+        var dimensionModel = this.dimensionModel;
+        var offsetTop = dimensionModel.get('offsetTop');
+        var headerHeight = dimensionModel.get('headerHeight');
+        var toolbarHeight = dimensionModel.get('toolbarHeight');
+        var rowHeight = dimensionModel.get('rowHeight');
+        var bodyHeight = mouseEvent.pageY - offsetTop - headerHeight - toolbarHeight;
+
+        clearTimeout(this.timeoutIdForResize);
+
+        bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
+
+        this.timeoutIdForResize = setTimeout(function() {
+            dimensionModel.set({
+                bodyHeight: bodyHeight
+            });
+        }, 0);
+    },
+
+    /**
+     * Event handler for 'mouseup' event
+     * @private
+     */
+    _onMouseUp: function() {
+        $(document.body).css('cursor', 'default');
+        this._detachMouseEvent();
+    },
+
+    /**
+     * Event handler for 'selectstart' event
+     * @param {Event} event - Event object
+     * @returns {boolean}
+     * @private
+     */
+    _onSelectStart: function(event) {
+        event.preventDefault();
+        return false;
+    },
+
+    /**
+     * Render
+     * @returns {Object} this object
+     */
+    render: function() {
+        this._destroyChildren();
+        this.$el.html(HTML_INNER);
+
+        return this;
+    },
+
+    /**
+     * Destroy
+     */
+    destroy: function() {
+        this.stopListening();
+        this._onMouseUp();
+        this._destroyChildren();
+        this.remove();
+    }
+});
+
+module.exports = HeightResizeHandle;
+
+},{"../base/view":7,"../common/classNameConst":8}],53:[function(require,module,exports){
 /**
  * @fileoverview Class for the body layout
  * @author NHN Ent. FE Development Team
@@ -13198,7 +13444,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
 module.exports = Body;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],52:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],54:[function(require,module,exports){
 /**
  * @fileoverview Class for the table layout in the body(data) area
  * @author NHN Ent. FE Development Team
@@ -13393,7 +13639,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
 module.exports = BodyTable;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],53:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],55:[function(require,module,exports){
 /**
  * @fileoverview Class for the content area
  * @author NHN Ent. FE Development Team
@@ -13477,7 +13723,7 @@ ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */
 
 module.exports = ContentArea;
 
-},{"../../base/view":7,"../../common/classNameConst":8}],54:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8}],56:[function(require,module,exports){
 /**
  * @fileoverview Left Side Frame
  * @author NHN Ent. FE Development Team
@@ -13542,7 +13788,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
 
 module.exports = LsideFrame;
 
-},{"../../common/classNameConst":8,"./frame":56}],55:[function(require,module,exports){
+},{"../../common/classNameConst":8,"./frame":58}],57:[function(require,module,exports){
 /**
  * @fileoverview Right Side Frame
  * @author NHN Ent. FE Development Team
@@ -13670,7 +13916,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
 
 module.exports = RsideFrame;
 
-},{"../../common/classNameConst":8,"../../common/constMap":9,"./frame":56}],56:[function(require,module,exports){
+},{"../../common/classNameConst":8,"../../common/constMap":9,"./frame":58}],58:[function(require,module,exports){
 /**
  * @fileoverview Frame Base
  * @author NHN Ent. FE Development Team
@@ -13747,7 +13993,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
 module.exports = Frame;
 
-},{"../../base/view":7}],57:[function(require,module,exports){
+},{"../../base/view":7}],59:[function(require,module,exports){
 /**
  * @fileoverview Header 관련
  * @author NHN Ent. FE Development Team
@@ -14350,7 +14596,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
 module.exports = Header;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],58:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9,"../../common/util":12}],60:[function(require,module,exports){
 /**
  * @fileoverview ResizeHandler for the Header
  * @author NHN Ent. FE Development Team
@@ -14625,384 +14871,114 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
 module.exports = ResizeHandler;
 
-},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9}],59:[function(require,module,exports){
-/**
- * @fileoverview 툴바영역 클래스
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var View = require('../../base/view');
-var classNameConst = require('../../common/classNameConst');
-
-/**
- * 툴바 영역
- * @module view/layout/toolbar
- * @extends module:base/view
- */
-var Toolbar = View.extend(/**@lends module:view/layout/toolbar.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
-    initialize: function(options) {
-        View.prototype.initialize.call(this);
-
-        this.toolbarModel = options.toolbarModel;
-        this.dimensionModel = options.dimensionModel;
-        this.viewFactory = options.viewFactory;
-    },
-
-    className: classNameConst.TOOLBAR,
-
-    /**
-     * 랜더링한다.
-     * @returns {View.Layout.Toolbar} this object
-     */
-    render: function() {
-        var toolbarModel = this.toolbarModel;
-
-        this._destroyChildren();
-
-        if (toolbarModel.get('hasControlPanel')) {
-            this._addChildren(this.viewFactory.createToolbarControlPanel());
-        }
-
-        if (toolbarModel.get('hasResizeHandler')) {
-            this._addChildren(this.viewFactory.createToolbarResizeHandler());
-        }
-
-        if (toolbarModel.get('hasPagination')) {
-            this._addChildren(this.viewFactory.createToolbarPagination());
-        }
-
-        this.$el.empty().append(this._renderChildren());
-        this._refreshHeight();
-
-        return this;
-    },
-
-    /**
-     * Reset toolbar-height based on the model/dimension->toolbarHeight.
-     * @private
-     */
-    _refreshHeight: function() {
-        var height = this.dimensionModel.get('toolbarHeight');
-
-        this.$el.height(height);
-        this.$el.toggle(!!height);
-    }
-});
-
-module.exports = Toolbar;
-
-},{"../../base/view":7,"../../common/classNameConst":8}],60:[function(require,module,exports){
-/**
- * @fileoverview Class for the control panel in the toolbar
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var View = require('../../../base/view');
-var classNameConst = require('../../../common/classNameConst');
-
-/**
- * Class for the control panel in the toolbar
- * @module view/layout/toolbar/controlPanel
- * @extends module:base/view
- */
-var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
-    initialize: function(options) {
-        this.setOwnProperties({
-            gridId: options.gridId,
-            toolbarModel: options.toolbarModel,
-            $btnExcel: null,
-            $btnExcelAll: null
-        });
-
-        this.listenTo(this.toolbarModel,
-            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
-    },
-
-    events: function() {
-        var hash = {};
-        hash['click .' + classNameConst.BTN_EXCEL] = '_onClickExcel';
-        return hash;
-    },
-
-    className: classNameConst.TOOLBAR_BTN_HOLDER,
-
-    templateExcelBtn: _.template(
-        '<a href="#" class="' + classNameConst.BTN_EXCEL + ' ' + classNameConst.BTN_TEXT + ' <%=className%>">' +
-        '<span><em class="' + classNameConst.BTN_EXCEL_ICON + '"></em><%=text%></span>' +
-        '</a>'
-    ),
-
-    /**
-     * Click event handler for excel download buttons
-     * @param  {MouseEvent} mouseEvent - MouseEvent object
-     * @private
-     */
-    _onClickExcel: function(mouseEvent) {
-        var grid = tui.Grid.getInstanceById(this.gridId);
-        var net = grid.getAddOn('Net');
-        var $target;
-
-        mouseEvent.preventDefault();
-
-        if (net) {
-            $target = $(mouseEvent.target).closest('a');
-
-            if ($target.hasClass(classNameConst.BTN_EXCEL_PAGE)) {
-                net.download('excel');
-            } else if ($target.hasClass(classNameConst.BTN_EXCEL_ALL)) {
-                net.download('excelAll');
-            }
-        }
-    },
-
-    /**
-     * Renders.
-     * @returns {View.Layout.Toolbar.ControlPanel} - this object
-     */
-    render: function() {
-        var toolbarModel = this.toolbarModel;
-
-        this.$el.empty();
-
-        if (toolbarModel.get('isExcelButtonVisible')) {
-            this.$el.append(this.templateExcelBtn({
-                className: classNameConst.BTN_EXCEL_PAGE,
-                text: '엑셀 다운로드'
-            }));
-        }
-        if (toolbarModel.get('isExcelAllButtonVisible')) {
-            this.$el.append(this.templateExcelBtn({
-                className: classNameConst.BTN_EXCEL_ALL,
-                text: '전체 엑셀 다운로드'
-            }));
-        }
-        return this;
-    }
-});
-
-module.exports = ControlPanel;
-
-},{"../../../base/view":7,"../../../common/classNameConst":8}],61:[function(require,module,exports){
+},{"../../base/view":7,"../../common/classNameConst":8,"../../common/constMap":9}],61:[function(require,module,exports){
 /**
  * @fileoverview Class for the pagination in the toolbar
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var View = require('../../../base/view');
-var classNameConst = require('../../../common/classNameConst');
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
+
+var HTML_BTNS =
+    '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
+    '<a href="#" class="' + classNameConst.PAGINATION_PRE + '" title="Previous page">Prev</a> ' +
+    '<a href="#" class="' + classNameConst.PAGINATION_NEXT + '" title="Next page">Next</a>' +
+    '<a href="#" class="' + classNameConst.PAGINATION_NEXT_END + '" title="Last page">Last</a>' +
+    '<span class="' + classNameConst.PAGINATION_PRE_END_OFF + '">First Off</span>' +
+    '<span class="' + classNameConst.PAGINATION_PRE_OFF + '">Prev Off</span>' +
+    '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
+    '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>';
+
+var defaultOptions = {
+    classPrefix: classNameConst.PREFIX,
+    itemCount: 1,
+    pagePerPageList: 5,
+    isCenterAlign: true,
+    moveUnit: 'page'
+};
 
 /**
  * Class for the pagination in the toolbar
- * @module view/layout/toolbar/pagination
+ * @module view/pagination
  * @extends module:base/view
  */
-var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
-    initialize: function(options) {
-        this.toolbarModel = options.toolbarModel;
-    },
-
-    className: classNameConst.PAGINATION,
-
-    htmlString: (
-        '<a href="#" class="' + classNameConst.PAGINATION_PRE_END + '" title="First page">First</a>' +
-        '<a href="#" class="' + classNameConst.PAGINATION_PRE + '" title="Previous page">Prev</a> ' +
-        '<a href="#" class="' + classNameConst.PAGINATION_NEXT + '" title="Next page">Next</a>' +
-        '<a href="#" class="' + classNameConst.PAGINATION_NEXT_END + '" title="Last page">Last</a>' +
-        '<span class="' + classNameConst.PAGINATION_PRE_END_OFF + '">First Off</span>' +
-        '<span class="' + classNameConst.PAGINATION_PRE_OFF + '">Prev Off</span>' +
-        '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
-        '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>'
-    ),
-
-    /**
-     * pagination 을 rendering 한다.
-     * @returns {View.Layout.Toolbar.Pagination} This object
-     */
-    render: function() {
-        this._destroyChildren();
-        this.$el.empty().html(this.htmlString);
-        this._setPaginationInstance();
-
-        return this;
-    },
-
-    /**
-     * pagination instance 를 설정한다.
-     * @private
-     */
-    _setPaginationInstance: function() {
-        var PaginationClass = tui && tui.component && tui.component.Pagination,
-            pagination = this.toolbarModel.get('pagination');
-
-        if (!pagination && PaginationClass) {
-            pagination = new PaginationClass({
-                classPrefix: classNameConst.PREFIX,
-                itemCount: 1,
-                itemPerPage: 1,
-                pagePerPageList: 5,
-                isCenterAlign: true,
-                moveUnit: 'page',
-                $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
-                $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
-                $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
-                $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
-            }, this.$el);
-        }
-        this.toolbarModel.set('pagination', pagination);
-    }
-});
-
-module.exports = Pagination;
-
-},{"../../../base/view":7,"../../../common/classNameConst":8}],62:[function(require,module,exports){
-/**
- * @fileoverview Class for the resize handler of the toolbar
- * @author NHN Ent. FE Development Team
- */
-'use strict';
-
-var View = require('../../../base/view');
-var classNameConst = require('../../../common/classNameConst');
-
-/**
- * Class for the resize handler of the toolbar
- * @module view/layout/toolbar/resizeHandler
- * @extends module:base/view
- */
-var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandler.prototype */{
+var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
     /**
      * @constructs
      * @param {Object} options - Options
      */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
-        this.timeoutIdForResize = 0;
+        this.componentHolder = options.componentHolder;
+        this.on('appended', this._onAppended);
     },
 
-    className: classNameConst.HEIGHT_RESIZE_BAR,
-
-    htmlString: '<a href="#" class="' + classNameConst.HEIGHT_RESIZE_HANDLE + '"><span></span></a>',
-
-    events: {
-        'mousedown': '_onMouseDown'
-    },
+    className: classNameConst.PAGINATION,
 
     /**
-     * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
-     * @private
-     */
-    _attachMouseEvent: function() {
-        $(document).on('mousemove', $.proxy(this._onMouseMove, this));
-        $(document).on('mouseup', $.proxy(this._onMouseUp, this));
-        $(document).on('selectstart', $.proxy(this._onSelectStart, this));
-    },
-
-    /**
-     * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
-     * @private
-     */
-    _detachMouseEvent: function() {
-        $(document).off('mousemove', $.proxy(this._onMouseMove, this));
-        $(document).off('mouseup', $.proxy(this._onMouseUp, this));
-        $(document).off('selectstart', $.proxy(this._onSelectStart, this));
-    },
-
-    /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 마우스 이벤트
-     * @private
-     */
-    _onMouseDown: function(mouseDownEvent) {
-        mouseDownEvent.preventDefault();
-        $(document.body).css('cursor', 'row-resize');
-        this._attachMouseEvent();
-    },
-
-    /**
-     * mousemove 이벤트 핸들러
-     * @param {event} mouseMoveEvent 마우스 이벤트
-     * @private
-     */
-    _onMouseMove: function(mouseMoveEvent) {
-        var dimensionModel = this.dimensionModel,
-            offsetTop = dimensionModel.get('offsetTop'),
-            headerHeight = dimensionModel.get('headerHeight'),
-            rowHeight = dimensionModel.get('rowHeight'),
-            toolbarHeight = dimensionModel.get('toolbarHeight'),
-            bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight - toolbarHeight;
-
-        clearTimeout(this.timeoutIdForResize);
-
-        bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
-
-        //매번 수행하면 성능이 느려지므로, resize 이벤트가 발생할 시 천천히 업데이트한다.
-        this.timeoutIdForResize = setTimeout(function() {
-            dimensionModel.set({
-                bodyHeight: bodyHeight
-            });
-        }, 0);
-    },
-
-    /**
-     * mouseup 이벤트 핸들러
-     * @private
-     */
-    _onMouseUp: function() {
-        $(document.body).css('cursor', 'default');
-        this._detachMouseEvent();
-    },
-
-    /**
-     * selection start 이벤트 핸들러
-     * @param {Event} event - Event object
-     * @returns {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
-     * @private
-     */
-    _onSelectStart: function(event) {
-        event.preventDefault();
-        return false;
-    },
-
-    /**
-     * 랜더링한다.
-     * @returns {ResizeHandler} this object
+     * Render
+     * @returns {Object} this object
      */
     render: function() {
         this._destroyChildren();
-        this.$el.html(this.htmlString);
+        this.$el.empty().html(HTML_BTNS);
 
+        this.componentHolder.setInstance('pagination', this._createComponent());
         return this;
     },
 
     /**
-     * 소멸자
+     * Event handler for 'appended' event
+     * @private
      */
-    destroy: function() {
-        this.stopListening();
-        this._onMouseUp();
-        this._destroyChildren();
-        this.remove();
+    _onAppended: function() {
+        this.dimensionModel.set('paginationHeight', this.$el.outerHeight());
+    },
+
+    /**
+     * Create an option object for creating a tui.component.Pagination component.
+     * @returns {Object}
+     */
+    _createOptionObject: function() {
+        var customOptions = this.componentHolder.getOptions('pagination');
+        var btnOptions = {
+            $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
+            $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
+            $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
+            $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
+        };
+
+        if (customOptions === true) {
+            customOptions = {};
+        }
+
+        if (!customOptions.itemPerPage) {
+            customOptions.itemPerPage = this.dimensionModel.get('displayRowCount');
+        }
+
+        return _.assign({}, defaultOptions, btnOptions, customOptions);
+    },
+
+    /**
+     * Create new tui.component.Pagination instance
+     * @returns {tui.component.Pagination}
+     * @private
+     */
+    _createComponent: function() {
+        var ComponentClass = tui.util.pick(tui, 'component', 'Pagination');
+
+        if (!ComponentClass) {
+            throw new Error('Cannot find component \'tui.component.Pagination\'');
+        }
+        return new ComponentClass(this._createOptionObject(), this.$el);
     }
 });
 
-module.exports = ResizeHandler;
+module.exports = Pagination;
 
-},{"../../../base/view":7,"../../../common/classNameConst":8}],63:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8}],62:[function(require,module,exports){
 /**
  * @fileoverview RowList View
  * @author NHN Ent. FE Development Team
@@ -15298,7 +15274,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
 module.exports = RowList;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],64:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],63:[function(require,module,exports){
 /**
  * @fileoverview Class for the selection layer
  * @author NHN Ent. FE Development Team
@@ -15360,8 +15336,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {array} - Relative column range indexes. [start, end]
      */
     _getOwnSideColumnRange: function(columnRange) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(),
-            ownColumnRange = null;
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount();
+        var ownColumnRange = null;
 
         if (this.whichSide === 'L') {
             if (columnRange[0] < columnFixCount) {
@@ -15387,9 +15363,9 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {{top: string, height: string}} - css values
      */
     _getVerticalStyles: function(rowRange) {
-        var rowHeight = this.dimensionModel.get('rowHeight'),
-            top = util.getHeight(rowRange[0], rowHeight),
-            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
+        var rowHeight = this.dimensionModel.get('rowHeight');
+        var top = util.getHeight(rowRange[0], rowHeight);
+        var height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
 
         return {
             top: top + 'px',
@@ -15438,8 +15414,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {SelectionLayer} this object
      */
     render: function() {
-        var range = this.selectionModel.get('range'),
-            styles, columnRange;
+        var range = this.selectionModel.get('range');
+        var styles, columnRange;
 
         if (range) {
             columnRange = this._getOwnSideColumnRange(range.column);
@@ -15460,7 +15436,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
 
 module.exports = SelectionLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],65:[function(require,module,exports){
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9,"../common/util":12}],64:[function(require,module,exports){
 /**
  * @fileoverview Layer class that represents the state of rendering phase
  * @author NHN Ent. FE Development Team
@@ -15553,15 +15529,119 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      * @private
      */
     _refreshLayout: function() {
-        var dimensionModel = this.dimensionModel;
+        var headerHeight = this.dimensionModel.get('headerHeight');
 
-        this.$el.css({
-            marginTop: dimensionModel.get('headerHeight'),
-            height: dimensionModel.get('bodyHeight') + dimensionModel.get('toolbarHeight')
-        });
+        this.$el.css(top, headerHeight);
     }
 });
 
 module.exports = StateLayer;
 
-},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}]},{},[14]);
+},{"../base/view":7,"../common/classNameConst":8,"../common/constMap":9}],65:[function(require,module,exports){
+/**
+ * @fileoverview Toolbar View
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
+
+/**
+ * Toolbar View
+ * @module view/toolbar
+ * @extends module:base/view
+ */
+var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
+    /**
+     * @constructs
+     * @param {Object} options - Options
+     */
+    initialize: function(options) {
+        this.setOwnProperties({
+            gridId: options.gridId,
+            toolbarModel: options.toolbarModel,
+            dimensionModel: options.dimensionModel,
+            $btnExcel: null,
+            $btnExcelAll: null
+        });
+
+        this.on('appended', this._onAppended);
+        this.listenTo(this.toolbarModel,
+            'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
+    },
+
+    className: classNameConst.TOOLBAR,
+
+    events: function() {
+        var hash = {};
+        hash['click .' + classNameConst.BTN_EXCEL] = '_onClickExcel';
+        return hash;
+    },
+
+    templateExcelBtn: _.template(
+        '<a href="#" class="' + classNameConst.BTN_EXCEL + ' ' + classNameConst.BTN_TEXT + ' <%=className%>">' +
+        '<span><em class="' + classNameConst.BTN_EXCEL_ICON + '"></em><%=text%></span>' +
+        '</a>'
+    ),
+
+    /**
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('toolbarHeight', this.$el.outerHeight());
+    },
+
+    /**
+     * Click event handler for excel download buttons
+     * @param  {MouseEvent} mouseEvent - MouseEvent object
+     * @private
+     */
+    _onClickExcel: function(mouseEvent) {
+        var grid = tui.Grid.getInstanceById(this.gridId);
+        var net = grid.getAddOn('Net');
+        var $target;
+
+        mouseEvent.preventDefault();
+
+        if (net) {
+            $target = $(mouseEvent.target).closest('a');
+
+            if ($target.hasClass(classNameConst.BTN_EXCEL_PAGE)) {
+                net.download('excel');
+            } else if ($target.hasClass(classNameConst.BTN_EXCEL_ALL)) {
+                net.download('excelAll');
+            }
+        }
+    },
+
+    /**
+     * Render
+     * @returns {module:view/toolbar} this object
+     */
+    render: function() {
+        var toolbarModel = this.toolbarModel;
+        var $inner = $('<div>');
+
+        if (toolbarModel.get('isExcelButtonVisible')) {
+            $inner.append(this.templateExcelBtn({
+                className: classNameConst.BTN_EXCEL_PAGE,
+                text: '엑셀 다운로드'
+            }));
+        }
+        if (toolbarModel.get('isExcelAllButtonVisible')) {
+            $inner.append(this.templateExcelBtn({
+                className: classNameConst.BTN_EXCEL_ALL,
+                text: '전체 엑셀 다운로드'
+            }));
+        }
+        this.$el.empty().append($inner);
+
+        return this;
+    }
+});
+
+module.exports = Toolbar;
+
+},{"../base/view":7,"../common/classNameConst":8}]},{},[15]);
