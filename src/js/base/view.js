@@ -59,6 +59,16 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
     },
 
     /**
+     * Trigger 'appended' event on child view.
+     * @private
+     */
+    _triggerChildrenAppended: function() {
+        _.each(this._children, function(view) {
+            view.trigger('appended');
+        });
+    },
+
+    /**
      * 자식 View를 제거한 뒤 자신도 제거한다.
      */
     destroy: function() {

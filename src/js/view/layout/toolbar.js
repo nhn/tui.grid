@@ -21,10 +21,12 @@ var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
         this.setOwnProperties({
             gridId: options.gridId,
             toolbarModel: options.toolbarModel,
+            dimensionModel: options.dimensionModel,
             $btnExcel: null,
             $btnExcelAll: null
         });
 
+        this.on('appended', this._onAppended);
         this.listenTo(this.toolbarModel,
             'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
     },
@@ -42,6 +44,14 @@ var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
         '<span><em class="' + classNameConst.BTN_EXCEL_ICON + '"></em><%=text%></span>' +
         '</a>'
     ),
+
+    /**
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('toolbarHeight', this.$el.outerHeight());
+    },
 
     /**
      * Click event handler for excel download buttons

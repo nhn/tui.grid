@@ -25,6 +25,8 @@ function buildCssString(options) {
         styleGen.grid(options.grid),
         styleGen.scrollbar(options.scrollbar),
         styleGen.toolbar(options.toolbar),
+        styleGen.heightResizeHandle(options.heightResizeHandle),
+        styleGen.pagination(options.pagination),
         styleGen.selection(options.selection)
     ];
     var cell = options.cell;

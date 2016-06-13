@@ -121,15 +121,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Resets the height values to the height of each DOM element.
-     */
-    resetHeightValuesFromDOM: function() {
-        this.set('toolbarHeight', this.domState.getToolbarHeight());
-        this.set('paginationHeight', this.domState.getPaginationHeight());
-        this.set('resizeHandleHeight', this.domState.getResizeHandleHeight());
-    },
-
-    /**
      * Resets the 'totalRowHeight' attribute.
      * @private
      */
@@ -769,12 +760,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
-        var containerPosX = pageX - this.get('offsetLeft');
-        var containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
+        var offsetX = this.get('offsetLeft');
+        var offsetY = this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
+             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
 
         return {
-            x: containerPosX,
-            y: containerPosY
+            x: pageX - offsetX,
+            y: pageY - offsetY
         };
     },
 

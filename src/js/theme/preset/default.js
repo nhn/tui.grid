@@ -15,7 +15,15 @@ module.exports = {
         border: '#004082'
     },
     toolbar: {
+        border: 'transparent',
+        background: 'transparent'
+    },
+    heightResizeHandle: {
         border: '#ccc',
+        background: '#fff'
+    },
+    pagination: {
+        border: 'transparent',
         background: 'transparent'
     },
     scrollbar: {

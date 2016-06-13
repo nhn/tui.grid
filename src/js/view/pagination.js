@@ -37,7 +37,8 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @param {Object} options - Options
      */
     initialize: function(options) {
-        this.toolbarModel = options.modelManager;
+        this.dimensionModel = options.dimensionModel;
+        this.on('appended', this._onAppended);
     },
 
     className: classNameConst.PAGINATION,
@@ -50,11 +51,16 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
         this._destroyChildren();
         this.$el.empty().html(HTML_BTNS);
 
-        // if (!this.toolbarModel.has('paginationComponent')) {
-            // this.toolbarModel.set('paginationComponent', this._createComponent());
-        // }
         this._createComponent();
         return this;
+    },
+
+    /**
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('paginationHeight', this.$el.outerHeight());
     },
 
     /**

@@ -74,6 +74,7 @@ var ViewFactory = tui.util.defineClass({
     createToolbar: function() {
         return new ToolbarView({
             gridId: this.modelManager.gridId,
+            dimensionModel: this.modelManager.dimensionModel,
             toolbarModel: this.modelManager.toolbarModel
         });
     },
@@ -84,7 +85,7 @@ var ViewFactory = tui.util.defineClass({
      */
     createPagination: function() {
         return new PaginationView({
-            // toolbarModel: this.modelManager.toolbarModel
+            dimensionModel: this.modelManager.dimensionModel
         });
     },
 

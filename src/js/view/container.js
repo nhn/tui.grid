@@ -244,6 +244,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
 
+        this._triggerChildrenAppended();
         this.trigger('rendered');
         return this;
     },

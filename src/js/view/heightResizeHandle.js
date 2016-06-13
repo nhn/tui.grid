@@ -1,5 +1,5 @@
 /**
- * @fileoverview Class for the resize handler of the toolbar
+ * @fileoverview Class for the height resize handle
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -21,17 +21,26 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.timeoutIdForResize = 0;
+
+        this.on('appended', this._onAppended);
     },
 
     className: classNameConst.HEIGHT_RESIZE_HANDLE,
-
 
     events: {
         'mousedown': '_onMouseDown'
     },
 
     /**
-     * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('resizeHandleHeight', this.$el.outerHeight());
+    },
+
+    /**
+     * Attach event handlers to start 'drag' action
      * @private
      */
     _attachMouseEvent: function() {
@@ -41,7 +50,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
+     * Detach event handler to cancel 'drag' action
      * @private
      */
     _detachMouseEvent: function() {
@@ -51,27 +60,28 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 마우스 이벤트
+     * Event handler for 'mousedown' event
+     * @param {MouseEvent} mouseEvent - MouseEvent object
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        mouseDownEvent.preventDefault();
+    _onMouseDown: function(mouseEvent) {
+        mouseEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
         this._attachMouseEvent();
     },
 
     /**
-     * mousemove 이벤트 핸들러
-     * @param {event} mouseMoveEvent 마우스 이벤트
+     * Event handler for 'mousemove' event
+     * @param {MouseEvent} mouseEvent - MouseEvent object
      * @private
      */
-    _onMouseMove: function(mouseMoveEvent) {
+    _onMouseMove: function(mouseEvent) {
         var dimensionModel = this.dimensionModel;
         var offsetTop = dimensionModel.get('offsetTop');
         var headerHeight = dimensionModel.get('headerHeight');
+        var toolbarHeight = dimensionModel.get('toolbarHeight');
         var rowHeight = dimensionModel.get('rowHeight');
-        var bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight;
+        var bodyHeight = mouseEvent.pageY - offsetTop - headerHeight - toolbarHeight;
 
         clearTimeout(this.timeoutIdForResize);
 
@@ -85,7 +95,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * mouseup 이벤트 핸들러
+     * Event handler for 'mouseup' event
      * @private
      */
     _onMouseUp: function() {
@@ -94,9 +104,9 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * selection start 이벤트 핸들러
+     * Event handler for 'selectstart' event
      * @param {Event} event - Event object
-     * @returns {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
+     * @returns {boolean}
      * @private
      */
     _onSelectStart: function(event) {
@@ -105,8 +115,8 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * 랜더링한다.
-     * @returns {ResizeHandler} this object
+     * Render
+     * @returns {Object} this object
      */
     render: function() {
         this._destroyChildren();
@@ -116,7 +126,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         this.stopListening();
