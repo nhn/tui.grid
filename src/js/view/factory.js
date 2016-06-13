@@ -22,6 +22,7 @@ var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
 var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
+var isOptionEnabled = require('../common/util').isOptionEnabled;
 
 /**
  * View Factory
@@ -33,6 +34,7 @@ var ViewFactory = tui.util.defineClass({
         this.domState = options.domState;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
+        this.componentHolder = options.componentHolder;
 
         // view options
         this.singleClickEdit = options.singleClickEdit;
@@ -72,6 +74,9 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/toolbar} - New toolbar view instance
      */
     createToolbar: function() {
+        if (!this.modelManager.toolbarModel.isEnabled()) {
+            return null;
+        }
         return new ToolbarView({
             gridId: this.modelManager.gridId,
             dimensionModel: this.modelManager.dimensionModel,
@@ -81,20 +86,24 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar pagination view and returns it.
-     * @returns {module:view/toolbar/pagination} - New pagination view instance
+     * @returns {module:view/pagination} - New pagination view instance
      */
     createPagination: function() {
+        if (!isOptionEnabled(this.componentHolder.getOptions('pagination'))) {
+            return null;
+        }
         return new PaginationView({
+            componentHolder: this.componentHolder,
             dimensionModel: this.modelManager.dimensionModel
         });
     },
 
     /**
-     * Creates toolbar resize handler view and returns it.
-     * @returns {module:view/toolbar/resizeHandler} - New resize hander view instance
+     * Creates height resize handle view and returns it.
+     * @returns {module:view/resizeHandle} - New resize hander view instance
      */
     createHeightResizeHandle: function() {
-        if (!this.resizeHandle) {
+        if (!isOptionEnabled(this.resizeHandle)) {
             return null;
         }
         return new HeightResizeHandleView({

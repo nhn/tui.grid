@@ -120,7 +120,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             // extra objects
             router: null,
-            pagination: options.toolbarModel.get('paginationComponent'),
+            pagination: options.pagination,
 
             // configs
             api: options.api,

@@ -313,6 +313,7 @@ var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
 var NetAddOn = require('./addon/net');
+var ComponentHolder = require('./componentHolder');
 var util = require('./common/util');
 var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
@@ -336,6 +337,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.id = util.getUniqueKey();
         this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
+        this.componentHolder = this._createComponentHolder(options.pagination);
         this.viewFactory = this._createViewFactory(domState, options);
         this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
@@ -388,15 +390,35 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         });
     },
 
+    /**
+     * Creates a view factory.
+     * @param {module:domState} domState - dom state
+     * @param {options} options - options
+     * @returns {module:view/factory}
+     * @private
+     */
     _createViewFactory: function(domState, options) {
-        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle');
+        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar');
         var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
+            componentHolder: this.componentHolder,
             domState: domState
         };
 
         return new ViewFactory(_.assign(dependencies, viewOptions));
+    },
+
+    /**
+     * Creates a pagination component.
+     * @param {Object} pgOptions - pagination options
+     * @returns {module:component/pagination}
+     * @private
+     */
+    _createComponentHolder: function(pgOptions) {
+        return new ComponentHolder({
+            pagination: pgOptions
+        });
     },
 
     /**
@@ -873,7 +895,8 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
             options = $.extend({
                 toolbarModel: this.modelManager.toolbarModel,
                 renderModel: this.modelManager.renderModel,
-                dataModel: this.modelManager.dataModel
+                dataModel: this.modelManager.dataModel,
+                pagination: this.componentHolder.getInstance('pagination')
             }, options);
             this.addOn.Net = new NetAddOn(options);
             this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
@@ -973,11 +996,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Returns the tui.component.Pagination instance being used in the toolbar area.
+     * Returns an instance of tui.component.Pagination.
      * @returns {tui.component.Pagination}
      */
     getPagination: function() {
-        return this.modelManager.toolbarModel.get('paginationComponent');
+        return this.componentHolder.getInstance('pagination');
     },
 
     /**

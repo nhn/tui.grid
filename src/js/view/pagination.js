@@ -17,10 +17,9 @@ var HTML_BTNS =
     '<span class="' + classNameConst.PAGINATION_NEXT_OFF + '">Next Off</span>' +
     '<span class="' + classNameConst.PAGINATION_NEXT_END_OFF + '">Last Off</span>';
 
-var defaultOption = {
+var defaultOptions = {
     classPrefix: classNameConst.PREFIX,
     itemCount: 1,
-    itemPerPage: 1,
     pagePerPageList: 5,
     isCenterAlign: true,
     moveUnit: 'page'
@@ -28,16 +27,17 @@ var defaultOption = {
 
 /**
  * Class for the pagination in the toolbar
- * @module view/layout/toolbar/pagination
+ * @module view/pagination
  * @extends module:base/view
  */
-var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.prototype */{
+var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
     /**
      * @constructs
      * @param {Object} options - Options
      */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
+        this.componentHolder = options.componentHolder;
         this.on('appended', this._onAppended);
     },
 
@@ -51,7 +51,7 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
         this._destroyChildren();
         this.$el.empty().html(HTML_BTNS);
 
-        this._createComponent();
+        this.componentHolder.setInstance('pagination', this._createComponent());
         return this;
     },
 
@@ -68,20 +68,23 @@ var Pagination = View.extend(/**@lends module:view/layout/toolbar/pagination.pro
      * @returns {Object}
      */
     _createOptionObject: function() {
-        // var customOption = this.toolbarModel.get('pagination');
-        var customOption = {};
-        var btnOption = {
+        var customOptions = this.componentHolder.getOptions('pagination');
+        var btnOptions = {
             $preOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_OFF),
             $pre_endOff: this.$el.find('.' + classNameConst.PAGINATION_PRE_END_OFF), // eslint-disable-line
             $nextOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_OFF),
             $lastOff: this.$el.find('.' + classNameConst.PAGINATION_NEXT_END_OFF)
         };
 
-        if (customOption === true) {
-            customOption = {};
+        if (customOptions === true) {
+            customOptions = {};
         }
 
-        return _.assign({}, defaultOption, btnOption, customOption);
+        if (!customOptions.itemPerPage) {
+            customOptions.itemPerPage = this.dimensionModel.get('displayRowCount');
+        }
+
+        return _.assign({}, defaultOptions, btnOptions, customOptions);
     },
 
     /**
