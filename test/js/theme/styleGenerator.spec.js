@@ -30,10 +30,7 @@ describe('theme/styleGenerator: ', function() {
             border: 'green',
             text: 'blue'
         };
-        var expected = [
-            '.' + classNameConst.TOOLBAR + '{background-color:white;border-color:green}',
-            '.' + classNameConst.HEIGHT_RESIZE_HANDLE + '{border-color:green}'
-        ].join('');
+        var expected = '.' + classNameConst.TOOLBAR + '{background-color:white;border-color:green}';
 
         expect(styleGen.toolbar(options)).toBe(expected);
     });
