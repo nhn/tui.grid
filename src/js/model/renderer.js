@@ -316,7 +316,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         _.each(columnNames, function(columnName) {
             var value = rowDataModel.get(columnName);
 
-            if (columnName === '_number') {
+            if (columnName === '_number' && !_.isNumber(value)) {
                 value = rowNum;
             }
             viewData[columnName] = value;
@@ -411,7 +411,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var actualRowCount = this._getActualRowCount();
         var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
         var rowHeight = this.dimensionModel.get('rowHeight');
-        var rowNum = this.get('endIndex') + 2;
+        var rowNum = this.get('startNumber') + this.get('endIndex') + 1;
 
         _.times(dummyRowCount, function() {
             _.each(['lside', 'rside'], function(listName) {

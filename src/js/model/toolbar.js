@@ -5,7 +5,7 @@
 'use strict';
 
 var Model = require('../base/model');
-
+var isOptionEnabled = require('../common/util').isOptionEnabled;
 
 /**
  * Toolbar Model
@@ -13,26 +13,27 @@ var Model = require('../base/model');
  * @extends module:base/model
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
+    initialize: function(options) {
+        this.options = options;
+    },
+
     defaults: {
-        // set by user
+        // deprecated (since 1.4.0)
         hasControlPanel: false,
         hasPagination: false,
         hasResizeHandler: false,
 
-        // for control panel
+        // excel button visibility
         isExcelButtonVisible: false,
-        isExcelAllButtonVisible: false,
-
-        // tui.component.pagination
-        pagination: null
+        isExcelAllButtonVisible: false
     },
 
     /**
-     * Returns whether the toolbar is visible
-     * @returns {Boolean} True if the toolbar is visible
+     * Returns whether the toolbar is enabled
+     * @returns {Boolean} True if the toolbar is enbaled
      */
-    isVisible: function() {
-        return this.get('hasControlPanel') || this.get('hasPagination') || this.get('hasResizeHandler');
+    isEnabled: function() {
+        return isOptionEnabled(this.options);
     }
 });
 

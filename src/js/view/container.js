@@ -31,7 +31,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this._createChildViews();
 
-        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._refreshHeight);
         this.listenTo(this.dimensionModel, 'setSize', this._onSetSize);
         $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
@@ -58,8 +57,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var factory = this.viewFactory;
 
         this._addChildren([
-            factory.createContentArea(),
             factory.createToolbar(),
+            factory.createContentArea(),
+            factory.createHeightResizeHandle(),
+            factory.createPagination(),
             factory.createStateLayer(),
             factory.createEditingLayer(),
             factory.createDatePickerLayer(),
@@ -233,15 +234,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * rendering 이후, 또는 bodyHeight 가 변경되었을 때, header, toolbar 의 높이를 포함하여
-     * grid 의 전체 너비를 설정한다.
-     * @private
-     */
-    _refreshHeight: function() {
-        this.$el.height(this.dimensionModel.getHeight());
-    },
-
-    /**
      * Render
      * @returns {module:view/container} this object
      */
@@ -252,7 +244,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .attr(attrNameConst.GRID_ID, this.gridId)
             .append(childElements);
 
-        this._refreshHeight();
+        this._triggerChildrenAppended();
         this.trigger('rendered');
         return this;
     },

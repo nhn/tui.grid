@@ -59,8 +59,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {array} - Relative column range indexes. [start, end]
      */
     _getOwnSideColumnRange: function(columnRange) {
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(),
-            ownColumnRange = null;
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount();
+        var ownColumnRange = null;
 
         if (this.whichSide === 'L') {
             if (columnRange[0] < columnFixCount) {
@@ -86,9 +86,9 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {{top: string, height: string}} - css values
      */
     _getVerticalStyles: function(rowRange) {
-        var rowHeight = this.dimensionModel.get('rowHeight'),
-            top = util.getHeight(rowRange[0], rowHeight),
-            height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
+        var rowHeight = this.dimensionModel.get('rowHeight');
+        var top = util.getHeight(rowRange[0], rowHeight);
+        var height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
 
         return {
             top: top + 'px',
@@ -137,8 +137,8 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {SelectionLayer} this object
      */
     render: function() {
-        var range = this.selectionModel.get('range'),
-            styles, columnRange;
+        var range = this.selectionModel.get('range');
+        var styles, columnRange;
 
         if (range) {
             columnRange = this._getOwnSideColumnRange(range.column);

@@ -1,18 +1,18 @@
 /**
- * @fileoverview Class for the control panel in the toolbar
+ * @fileoverview Toolbar View
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var View = require('../../../base/view');
-var classNameConst = require('../../../common/classNameConst');
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
 
 /**
- * Class for the control panel in the toolbar
- * @module view/layout/toolbar/controlPanel
+ * Toolbar View
+ * @module view/toolbar
  * @extends module:base/view
  */
-var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel.prototype */{
+var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
     /**
      * @constructs
      * @param {Object} options - Options
@@ -21,13 +21,17 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         this.setOwnProperties({
             gridId: options.gridId,
             toolbarModel: options.toolbarModel,
+            dimensionModel: options.dimensionModel,
             $btnExcel: null,
             $btnExcelAll: null
         });
 
+        this.on('appended', this._onAppended);
         this.listenTo(this.toolbarModel,
             'change:isExcelButtonVisible change:isExcelAllButtonVisible', this.render);
     },
+
+    className: classNameConst.TOOLBAR,
 
     events: function() {
         var hash = {};
@@ -35,13 +39,19 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
         return hash;
     },
 
-    className: classNameConst.TOOLBAR_BTN_HOLDER,
-
     templateExcelBtn: _.template(
         '<a href="#" class="' + classNameConst.BTN_EXCEL + ' ' + classNameConst.BTN_TEXT + ' <%=className%>">' +
         '<span><em class="' + classNameConst.BTN_EXCEL_ICON + '"></em><%=text%></span>' +
         '</a>'
     ),
+
+    /**
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('toolbarHeight', this.$el.outerHeight());
+    },
 
     /**
      * Click event handler for excel download buttons
@@ -67,28 +77,29 @@ var ControlPanel = View.extend(/**@lends module:view/layout/toolbar/controlPanel
     },
 
     /**
-     * Renders.
-     * @returns {View.Layout.Toolbar.ControlPanel} - this object
+     * Render
+     * @returns {module:view/toolbar} this object
      */
     render: function() {
         var toolbarModel = this.toolbarModel;
-
-        this.$el.empty();
+        var $inner = $('<div>');
 
         if (toolbarModel.get('isExcelButtonVisible')) {
-            this.$el.append(this.templateExcelBtn({
+            $inner.append(this.templateExcelBtn({
                 className: classNameConst.BTN_EXCEL_PAGE,
                 text: '엑셀 다운로드'
             }));
         }
         if (toolbarModel.get('isExcelAllButtonVisible')) {
-            this.$el.append(this.templateExcelBtn({
+            $inner.append(this.templateExcelBtn({
                 className: classNameConst.BTN_EXCEL_ALL,
                 text: '전체 엑셀 다운로드'
             }));
         }
+        this.$el.empty().append($inner);
+
         return this;
     }
 });
 
-module.exports = ControlPanel;
+module.exports = Toolbar;

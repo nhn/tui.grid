@@ -6,10 +6,9 @@
 
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
-var ToolbarView = require('./layout/toolbar');
-var ToolbarControlPanelView = require('./layout/toolbar/controlPanel');
-var ToolbarPaginationView = require('./layout/toolbar/pagination');
-var ToolbarResizeHandlerView = require('./layout/toolbar/resizeHandler');
+var ToolbarView = require('./toolbar');
+var PaginationView = require('./pagination');
+var HeightResizeHandleView = require('./heightResizeHandle');
 var StateLayerView = require('./stateLayer');
 var ClipboardView = require('./clipboard');
 var LsideFrameView = require('./layout/frame-lside');
@@ -23,6 +22,7 @@ var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
 var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
+var isOptionEnabled = require('../common/util').isOptionEnabled;
 
 /**
  * View Factory
@@ -30,9 +30,15 @@ var FocusLayerView = require('./focusLayer');
  */
 var ViewFactory = tui.util.defineClass({
     init: function(options) {
+        // dependencies
         this.domState = options.domState;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
+        this.componentHolder = options.componentHolder;
+
+        // view options
+        this.singleClickEdit = options.singleClickEdit;
+        this.resizeHandle = options.resizeHandle;
     },
 
     /**
@@ -40,10 +46,10 @@ var ViewFactory = tui.util.defineClass({
      * @param {Object} options - Options set by user
      * @returns {module:view/container}
      */
-    createContainer: function(options) {
+    createContainer: function() {
         return new ContainerView({
-            el: options.el,
-            singleClickEdit: options.singleClickEdit,
+            el: this.domState.$el,
+            singleClickEdit: this.singleClickEdit,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
@@ -68,40 +74,39 @@ var ViewFactory = tui.util.defineClass({
      * @returns {module:view/toolbar} - New toolbar view instance
      */
     createToolbar: function() {
+        if (!this.modelManager.toolbarModel.isEnabled()) {
+            return null;
+        }
         return new ToolbarView({
-            toolbarModel: this.modelManager.toolbarModel,
-            dimensionModel: this.modelManager.dimensionModel,
-            viewFactory: this
-        });
-    },
-
-    /**
-     * Creates toolbar control panel view and returns it.
-     * @returns {module:view/toolbar/controlPanel} - New control panel vew insatnce
-     */
-    createToolbarControlPanel: function() {
-        return new ToolbarControlPanelView({
             gridId: this.modelManager.gridId,
+            dimensionModel: this.modelManager.dimensionModel,
             toolbarModel: this.modelManager.toolbarModel
         });
     },
 
     /**
      * Creates toolbar pagination view and returns it.
-     * @returns {module:view/toolbar/pagination} - New pagination view instance
+     * @returns {module:view/pagination} - New pagination view instance
      */
-    createToolbarPagination: function() {
-        return new ToolbarPaginationView({
-            toolbarModel: this.modelManager.toolbarModel
+    createPagination: function() {
+        if (!isOptionEnabled(this.componentHolder.getOptions('pagination'))) {
+            return null;
+        }
+        return new PaginationView({
+            componentHolder: this.componentHolder,
+            dimensionModel: this.modelManager.dimensionModel
         });
     },
 
     /**
-     * Creates toolbar resize handler view and returns it.
-     * @returns {module:view/toolbar/resizeHandler} - New resize hander view instance
+     * Creates height resize handle view and returns it.
+     * @returns {module:view/resizeHandle} - New resize hander view instance
      */
-    createToolbarResizeHandler: function() {
-        return new ToolbarResizeHandlerView({
+    createHeightResizeHandle: function() {
+        if (!isOptionEnabled(this.resizeHandle)) {
+            return null;
+        }
+        return new HeightResizeHandleView({
             dimensionModel: this.modelManager.dimensionModel
         });
     },

@@ -65,7 +65,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         headerHeight: 0,
         bodyHeight: 0,
-        toolbarHeight: 65,
+
+        toolbarHeight: 0,
+        resizeHandleHeight: 0,
+        paginationHeight: 0,
 
         rowHeight: 0,
         totalRowHeight: 0,
@@ -757,12 +760,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _rebasePositionToContainer: function(pageX, pageY) {
-        var containerPosX = pageX - this.get('offsetLeft');
-        var containerPosY = pageY - (this.get('offsetTop') + this.get('headerHeight') + 2);
+        var offsetX = this.get('offsetLeft');
+        var offsetY = this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
+             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
 
         return {
-            x: containerPosX,
-            y: containerPosY
+            x: pageX - offsetX,
+            y: pageY - offsetY
         };
     },
 

@@ -1,18 +1,19 @@
 /**
- * @fileoverview Class for the resize handler of the toolbar
+ * @fileoverview Class for the height resize handle
  * @author NHN Ent. FE Development Team
  */
 'use strict';
 
-var View = require('../../../base/view');
-var classNameConst = require('../../../common/classNameConst');
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
+var HTML_INNER = '<a href="#"><span></span></a>';
 
 /**
- * Class for the resize handler of the toolbar
- * @module view/layout/toolbar/resizeHandler
+ * Class for the height resize handle
+ * @module view/layout/heightResizeHandle
  * @extends module:base/view
  */
-var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandler.prototype */{
+var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHandle.prototype */{
     /**
      * @constructs
      * @param {Object} options - Options
@@ -20,18 +21,26 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.timeoutIdForResize = 0;
+
+        this.on('appended', this._onAppended);
     },
 
-    className: classNameConst.HEIGHT_RESIZE_BAR,
-
-    htmlString: '<a href="#" class="' + classNameConst.HEIGHT_RESIZE_HANDLE + '"><span></span></a>',
+    className: classNameConst.HEIGHT_RESIZE_HANDLE,
 
     events: {
         'mousedown': '_onMouseDown'
     },
 
     /**
-     * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
+     * Event handler for 'appended' event
+     * @private
+     */
+    _onAppended: function() {
+        this.dimensionModel.set('resizeHandleHeight', this.$el.outerHeight());
+    },
+
+    /**
+     * Attach event handlers to start 'drag' action
      * @private
      */
     _attachMouseEvent: function() {
@@ -41,7 +50,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     },
 
     /**
-     * document 에 mousemove, mouseup 이벤트 핸들러를 추가한다.
+     * Detach event handler to cancel 'drag' action
      * @private
      */
     _detachMouseEvent: function() {
@@ -51,34 +60,33 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseDownEvent 마우스 이벤트
+     * Event handler for 'mousedown' event
+     * @param {MouseEvent} mouseEvent - MouseEvent object
      * @private
      */
-    _onMouseDown: function(mouseDownEvent) {
-        mouseDownEvent.preventDefault();
+    _onMouseDown: function(mouseEvent) {
+        mouseEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
         this._attachMouseEvent();
     },
 
     /**
-     * mousemove 이벤트 핸들러
-     * @param {event} mouseMoveEvent 마우스 이벤트
+     * Event handler for 'mousemove' event
+     * @param {MouseEvent} mouseEvent - MouseEvent object
      * @private
      */
-    _onMouseMove: function(mouseMoveEvent) {
-        var dimensionModel = this.dimensionModel,
-            offsetTop = dimensionModel.get('offsetTop'),
-            headerHeight = dimensionModel.get('headerHeight'),
-            rowHeight = dimensionModel.get('rowHeight'),
-            toolbarHeight = dimensionModel.get('toolbarHeight'),
-            bodyHeight = mouseMoveEvent.pageY - offsetTop - headerHeight - toolbarHeight;
+    _onMouseMove: function(mouseEvent) {
+        var dimensionModel = this.dimensionModel;
+        var offsetTop = dimensionModel.get('offsetTop');
+        var headerHeight = dimensionModel.get('headerHeight');
+        var toolbarHeight = dimensionModel.get('toolbarHeight');
+        var rowHeight = dimensionModel.get('rowHeight');
+        var bodyHeight = mouseEvent.pageY - offsetTop - headerHeight - toolbarHeight;
 
         clearTimeout(this.timeoutIdForResize);
 
         bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
 
-        //매번 수행하면 성능이 느려지므로, resize 이벤트가 발생할 시 천천히 업데이트한다.
         this.timeoutIdForResize = setTimeout(function() {
             dimensionModel.set({
                 bodyHeight: bodyHeight
@@ -87,7 +95,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     },
 
     /**
-     * mouseup 이벤트 핸들러
+     * Event handler for 'mouseup' event
      * @private
      */
     _onMouseUp: function() {
@@ -96,9 +104,9 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     },
 
     /**
-     * selection start 이벤트 핸들러
+     * Event handler for 'selectstart' event
      * @param {Event} event - Event object
-     * @returns {boolean} - 기본 동작 방지를 위해 무조건 false 를 반환한다.
+     * @returns {boolean}
      * @private
      */
     _onSelectStart: function(event) {
@@ -107,18 +115,18 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     },
 
     /**
-     * 랜더링한다.
-     * @returns {ResizeHandler} this object
+     * Render
+     * @returns {Object} this object
      */
     render: function() {
         this._destroyChildren();
-        this.$el.html(this.htmlString);
+        this.$el.html(HTML_INNER);
 
         return this;
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         this.stopListening();
@@ -128,4 +136,4 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/toolbar/resizeHandl
     }
 });
 
-module.exports = ResizeHandler;
+module.exports = HeightResizeHandle;

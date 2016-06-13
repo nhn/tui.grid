@@ -279,7 +279,7 @@ describe('addon.net', function() {
         }
 
         it('createData, {isOnlyModified: true, isOnlyChecked: true}', function() {
-            var param, updateList, deleteList, createList;
+            var param, createList;
 
             createNet();
             grid.setRowList(rowList);
@@ -300,10 +300,7 @@ describe('addon.net', function() {
         });
 
         it('createData, {isOnlyChecked: false}', function() {
-            var param,
-                updateList,
-                deleteList,
-                createList;
+            var param, createList;
 
             createNet();
             grid.setRowList(rowList);
@@ -326,7 +323,7 @@ describe('addon.net', function() {
         });
 
         it('createData, {isOnlyModified: false, isOnlyChecked: false}', function() {
-            var param, rowList;
+            var param;
 
             createNet();
             grid.setRowList(rowList);
@@ -472,7 +469,9 @@ describe('addon.net', function() {
         });
 
         it('_getRequestParam 의 반환값이 없다면 ajax call 을 호출하지 않는다.', function() {
-            net._getRequestParam = function() {return null;};
+            net._getRequestParam = function() {
+                return null;
+            };
             net.request('createData');
             expect(net._ajax).not.toHaveBeenCalled();
         });
@@ -490,19 +489,19 @@ describe('addon.net', function() {
             createNet();
             responseData = {
                 success: {
-                    'result': true,
-                    'data' : []
+                    result: true,
+                    data: []
                 },
                 failed: {
-                    'result': false,
-                    'data' : []
+                    result: false,
+                    data: []
                 }
             };
             options = {
                 requestType: 'POST',
                 data: {
-                    'data1': 1,
-                    'data2': 2
+                    data1: 1,
+                    data2: 2
                 }
             };
             response = jasmine.createSpy('response');
@@ -638,6 +637,7 @@ describe('addon.net', function() {
 
         beforeEach(function() {
             createNet();
+            net.pagination = {};
             net.pagination.movePageTo = jasmine.createSpy('movePageTo');
             net.pagination.setOption = jasmine.createSpy('setOption');
         });

@@ -30,12 +30,7 @@ var defaultOptions = {
     scrollX: true,
     scrollY: true,
     useClientSort: true,
-    singleClickEdit: false,
-    toolbar: {
-        hasResizeHandler: true,
-        hasControlPanel: true,
-        hasPagination: true
-    }
+    toolbar: null
 };
 
 /**
@@ -126,9 +121,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             minimumColumnWidth: options.minimumColumnWidth,
             displayRowCount: options.displayRowCount
         };
-        if (!this.toolbarModel.isVisible()) {
-            attrs.toolbarHeight = 0;
-        }
 
         return new DimensionModel(attrs, {
             columnModel: this.columnModel,

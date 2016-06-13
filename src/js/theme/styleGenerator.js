@@ -25,6 +25,19 @@ function bgTextRuleString(className, options) {
         .build();
 }
 
+/**
+ * Creates a rule string for background and border colors.
+ * @param {String} className - class name
+ * @param {Objecr} options - options
+ * @returns {String}
+ */
+function bgBorderRuleString(className, options) {
+    return classRule(className)
+        .bg(options.background)
+        .border(options.border)
+        .build();
+}
+
 module.exports = {
     /**
      * Generates a css string for the grid.
@@ -79,17 +92,25 @@ module.exports = {
      * @returns {String}
      */
     toolbar: function(options) {
-        var toolbarRule = classRule(classNameConst.TOOLBAR)
-            .bg(options.background)
-            .border(options.border);
+        return bgBorderRuleString(classNameConst.TOOLBAR, options);
+    },
 
-        var resizeHandleRule = classRule(classNameConst.HEIGHT_RESIZE_HANDLE)
-            .border(options.border);
+    /**
+     * Generates a css string for a resize-handle.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    heightResizeHandle: function(options) {
+        return bgBorderRuleString(classNameConst.HEIGHT_RESIZE_HANDLE, options);
+    },
 
-        return builder.buildAll([
-            toolbarRule,
-            resizeHandleRule
-        ]);
+    /**
+     * Generates a css string for a pagination.
+     * @param {Object} options - options
+     * @returns {String}
+     */
+    pagination: function(options) {
+        return bgBorderRuleString(classNameConst.PAGINATION, options);
     },
 
     /**
@@ -98,10 +119,7 @@ module.exports = {
      * @returns {String}
      */
     selection: function(options) {
-        return classRule(classNameConst.LAYER_SELECTION)
-            .bg(options.background)
-            .border(options.border)
-            .build();
+        return bgBorderRuleString(classNameConst.LAYER_SELECTION, options);
     },
 
     /**
