@@ -6,7 +6,7 @@
 
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
-var ToolbarView = require('./layout/toolbar');
+var ToolbarView = require('./toolbar');
 var PaginationView = require('./pagination');
 var HeightResizeHandleView = require('./heightResizeHandle');
 var StateLayerView = require('./stateLayer');

@@ -30,7 +30,6 @@ var defaultOptions = {
     scrollX: true,
     scrollY: true,
     useClientSort: true,
-    singleClickEdit: false,
     toolbar: null
 };
 

@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var View = require('../../base/view');
-var classNameConst = require('../../common/classNameConst');
+var View = require('../base/view');
+var classNameConst = require('../common/classNameConst');
 
 /**
  * Toolbar View
