@@ -12,7 +12,7 @@ var defaultOptionsMap = {
  * Component holder
  * @module componentHolder
  */
-var ComponentHolder = tui.util.defineClass(/**@lends module:component/pagination.prototype */{
+var ComponentHolder = tui.util.defineClass(/**@lends module:componentHolder.prototype */{
     init: function(optionsMap) {
         this.optionsMap = $.extend(true, defaultOptionsMap, optionsMap);
         this.instanceMap = {};
