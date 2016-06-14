@@ -21,9 +21,7 @@ var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
         this.setOwnProperties({
             gridId: options.gridId,
             toolbarModel: options.toolbarModel,
-            dimensionModel: options.dimensionModel,
-            $btnExcel: null,
-            $btnExcelAll: null
+            dimensionModel: options.dimensionModel
         });
 
         this.on('appended', this._onAppended);
