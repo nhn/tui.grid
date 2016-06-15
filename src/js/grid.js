@@ -334,6 +334,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
         var domState = new DomState(this.$el);
 
+        options = util.enableDeprecatedOptions(options);
         this.id = util.getUniqueKey();
         this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
