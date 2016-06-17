@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var util = require('../common/util');
+
 /**
  * Controller class to handle actions from the painters
  * @module painter/controller
@@ -46,11 +48,12 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * Ends editing a cell identified by a given address, and returns the result.
      * @param {{rowKey:String, columnName:String}} address - cell address
      * @param {Boolean} shouldBlur - if set to true, make the current input lose focus.
-     * @param {String} [value] - if not undefined, set the value of the data model to this value.
+     * @param {String} [value] - if exists, set the value of the data model to this value.
      * @returns {Boolean} - true if succeeded, false otherwise
      */
     finishEditing: function(address, shouldBlur, value) {
         var focusModel = this.focusModel;
+        var row, currentValue;
 
         if (!focusModel.isEditingCell(address.rowKey, address.columnName)) {
             return false;
@@ -59,8 +62,13 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
         this.selectionModel.enable();
 
         if (!_.isUndefined(value)) {
-            this.setValue(address, value);
-            this.dataModel.get(address.rowKey).validateCell(address.columnName);
+            row = this.dataModel.get(address.rowKey);
+            currentValue = row.get(address.columnName);
+
+            if (!(util.isBlank(value) && util.isBlank(currentValue))) {
+                this.setValue(address, value);
+                row.validateCell(address.columnName);
+            }
         }
         focusModel.finishEditing();
 
