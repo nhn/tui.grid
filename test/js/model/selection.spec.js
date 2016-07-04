@@ -21,6 +21,9 @@ describe('model/selection', function() {
                     title: 'c2',
                     columnName: 'c2',
                     width: 150,
+                    formatter: function(value) {
+                        return '*' + value + '*';
+                    },
                     editOption: {
                         type: 'text'
                     }
@@ -134,6 +137,17 @@ describe('model/selection', function() {
                     '2-2\t3'
                 );
                 selection.end();
+            });
+
+            it('if useFormattedValue is true, use formatted value', function() {
+                selection.start(0, 1);
+                selection.update(2, 2);
+
+                expect(selection.getValuesToString(true)).toEqual(
+                    '*0-2*\t1\n' +
+                    '*1-2*\t2\n' +
+                    '*2-2*\t3'
+                );
             });
         });
 

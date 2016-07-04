@@ -334,24 +334,25 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the string value of all cells in the selection range as a single string.
-     * @returns {String} string of values
+     * @param {Boolean} useFormattedValue - Whether using rendered value or data value
+     * @returns {String}
      */
-    getValuesToString: function() {
+    getValuesToString: function(useFormattedValue) {
         var range = this.get('range');
-        var columnModelList, rowList, columnNameList, rowValues;
-
-        columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-        rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
-
-        columnNameList = _.pluck(columnModelList, 'columnName');
-        rowValues = _.map(rowList, function(row) {
-            var tmpString = _.map(columnNameList, function(columnName) {
+        var renderModel = this.renderModel;
+        var rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
+        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
+        var columnNames = _.pluck(columnModelList, 'columnName');
+        var rowValues = _.map(rowList, function(row) {
+            return _.map(columnNames, function(columnName) {
+                if (useFormattedValue) {
+                    return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
+                }
                 return row.getValueString(columnName);
-            });
-            return tmpString.join('\t');
+            }).join('\t');
         });
 
-        if (this._isSingleCell(columnNameList, rowList)) {
+        if (this._isSingleCell(columnNames, rowList)) {
             return rowValues[0];
         }
         return rowValues.join('\n');

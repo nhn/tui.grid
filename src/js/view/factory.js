@@ -39,6 +39,7 @@ var ViewFactory = tui.util.defineClass({
         // view options
         this.singleClickEdit = options.singleClickEdit;
         this.resizeHandle = options.resizeHandle;
+        this.copyOption = options.copyOption;
     },
 
     /**
@@ -134,7 +135,8 @@ var ViewFactory = tui.util.defineClass({
             selectionModel: this.modelManager.selectionModel,
             focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
-            painterManager: this.modelManager.painterManager
+            painterManager: this.modelManager.painterManager,
+            copyOption: this.copyOption
         });
     },
 
