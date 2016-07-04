@@ -386,9 +386,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @private
      */
     _getListTypeVisibleText: function(columnName) {
-        var value = this.get(columnName),
-            columnModel = this.columnModel.getColumnModel(columnName),
-            resultOptionList, editOptionList, typeExpected, valueList;
+        var value = this.get(columnName);
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var resultOptionList, editOptionList, typeExpected, valueList;
 
         if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
             resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];

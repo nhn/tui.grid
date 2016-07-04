@@ -399,7 +399,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @private
      */
     _createViewFactory: function(domState, options) {
-        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar');
+        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption');
         var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,

@@ -378,7 +378,7 @@ describe('view.clipboard', function() {
                 clipboard._copyToClipboard = jasmine.createSpy('_copyToClipboard');
             });
 
-            it('selectAll 를 호출하는 키는 selectAll 호출하는지 확인한다.', function() {
+            it('Ctrl+C calls the _copyToClipboard', function() {
                 clipboard._unlock();
                 keyEvent = getKeyEvent('CHAR_C');
                 clipboard._keyInWithCtrl(keyEvent);

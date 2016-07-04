@@ -29,9 +29,11 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             renderModel: options.renderModel,
+            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
+
         this.listenTo(this.focusModel, 'focusClipboard', this._onFocus);
     },
 
@@ -482,13 +484,16 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var text;
 
         if (selectionModel.hasSelection()) {
-            text = this.selectionModel.getValuesToString();
+            text = this.selectionModel.getValuesToString(this.useFormattedValue);
+        } else if (this.useFormattedValue) {
+            text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
         } else {
             text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
 
         return text;
     },
+
 
     /**
      * 현재 그리드의 data 를 clipboard 에 copy 한다.
