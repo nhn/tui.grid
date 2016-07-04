@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.4.0-a
+ * @version 1.4.0-b
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -131,7 +131,7 @@
   bottom: 0;
   border-style: solid;
   border-color: #ccc;
-  border-width: 0 1px 1px;
+  border-width: 1px;
   background: #fff;
   font-weight: bold;
   text-align: center;

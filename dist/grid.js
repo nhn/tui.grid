@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.4.0-a
+ * @version 1.4.0-b
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -1879,6 +1879,43 @@ var util = {
         }
 
         document.getElementsByTagName('head')[0].appendChild(style);
+    },
+
+    /**
+     * Converts deprecated option values to valid option values.
+     * (For toolbar option which is deprecated since 1.4.0)
+     * @param {Object} options - options (by user)
+     * @returns {Object} converted options
+     */
+    enableDeprecatedOptions: function(options) {
+        var toolbar = options.toolbar;
+        var toolbarDefault = {
+            hasControlPanel: true,
+            hasResizeHandler: true,
+            hasPagination: true
+        }
+
+        options = $.extend(true, {}, options);
+
+        if (_.isObject(toolbar)) {
+            _.defaults(toolbar, toolbarDefault);
+        } else {
+            toolbar = {};
+        }
+
+        if (!util.isOptionEnabled(options.pagination) && toolbar.hasPagination) {
+            options.pagination = true;
+        }
+        if (!util.isOptionEnabled(options.resizeHandle) && toolbar.hasResizeHandler) {
+            options.resizeHandle = true;
+        }
+        if (_.isObject(options.toolbar) && !toolbar.hasControlPanel) {
+            options.toolbar = false;
+        } else if (util.isOptionEnabled(options.toolbar)) {
+            options.toolbar = true;
+        }
+
+        return options;
     }
 };
 
@@ -1899,7 +1936,7 @@ var defaultOptionsMap = {
  * Component holder
  * @module componentHolder
  */
-var ComponentHolder = tui.util.defineClass(/**@lends module:component/pagination.prototype */{
+var ComponentHolder = tui.util.defineClass(/**@lends module:componentHolder.prototype */{
     init: function(optionsMap) {
         this.optionsMap = $.extend(true, defaultOptionsMap, optionsMap);
         this.instanceMap = {};
@@ -2340,6 +2377,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
         var domState = new DomState(this.$el);
 
+        options = util.enableDeprecatedOptions(options);
         this.id = util.getUniqueKey();
         this.modelManager = this._createModelManager(options, domState);
         this.painterManager = this._createPainterManager();
@@ -2404,7 +2442,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @private
      */
     _createViewFactory: function(domState, options) {
-        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar');
+        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption');
         var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
@@ -4226,9 +4264,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @private
      */
     _getListTypeVisibleText: function(columnName) {
-        var value = this.get(columnName),
-            columnModel = this.columnModel.getColumnModel(columnName),
-            resultOptionList, editOptionList, typeExpected, valueList;
+        var value = this.get(columnName);
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var resultOptionList, editOptionList, typeExpected, valueList;
 
         if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
             resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];
@@ -8825,24 +8863,25 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the string value of all cells in the selection range as a single string.
-     * @returns {String} string of values
+     * @param {Boolean} useFormattedValue - Whether using rendered value or data value
+     * @returns {String}
      */
-    getValuesToString: function() {
+    getValuesToString: function(useFormattedValue) {
         var range = this.get('range');
-        var columnModelList, rowList, columnNameList, rowValues;
-
-        columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-        rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
-
-        columnNameList = _.pluck(columnModelList, 'columnName');
-        rowValues = _.map(rowList, function(row) {
-            var tmpString = _.map(columnNameList, function(columnName) {
+        var renderModel = this.renderModel;
+        var rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
+        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
+        var columnNames = _.pluck(columnModelList, 'columnName');
+        var rowValues = _.map(rowList, function(row) {
+            return _.map(columnNames, function(columnName) {
+                if (useFormattedValue) {
+                    return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
+                }
                 return row.getValueString(columnName);
-            });
-            return tmpString.join('\t');
+            }).join('\t');
         });
 
-        if (this._isSingleCell(columnNameList, rowList)) {
+        if (this._isSingleCell(columnNames, rowList)) {
             return rowValues[0];
         }
         return rowValues.join('\n');
@@ -9349,6 +9388,8 @@ module.exports = Cell;
  */
 'use strict';
 
+var util = require('../common/util');
+
 /**
  * Controller class to handle actions from the painters
  * @module painter/controller
@@ -9391,11 +9432,12 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * Ends editing a cell identified by a given address, and returns the result.
      * @param {{rowKey:String, columnName:String}} address - cell address
      * @param {Boolean} shouldBlur - if set to true, make the current input lose focus.
-     * @param {String} [value] - if not undefined, set the value of the data model to this value.
+     * @param {String} [value] - if exists, set the value of the data model to this value.
      * @returns {Boolean} - true if succeeded, false otherwise
      */
     finishEditing: function(address, shouldBlur, value) {
         var focusModel = this.focusModel;
+        var row, currentValue;
 
         if (!focusModel.isEditingCell(address.rowKey, address.columnName)) {
             return false;
@@ -9404,8 +9446,13 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
         this.selectionModel.enable();
 
         if (!_.isUndefined(value)) {
-            this.setValue(address, value);
-            this.dataModel.get(address.rowKey).validateCell(address.columnName);
+            row = this.dataModel.get(address.rowKey);
+            currentValue = row.get(address.columnName);
+
+            if (!(util.isBlank(value) && util.isBlank(currentValue))) {
+                this.setValue(address, value);
+                row.validateCell(address.columnName);
+            }
         }
         focusModel.finishEditing();
 
@@ -9479,7 +9526,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
 
 module.exports = PainterController;
 
-},{}],31:[function(require,module,exports){
+},{"../common/util":12}],31:[function(require,module,exports){
 /**
  * @fileoverview Dummy cell painter
  * @author NHN Ent. FE Development Team
@@ -11417,9 +11464,11 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             renderModel: options.renderModel,
+            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
+
         this.listenTo(this.focusModel, 'focusClipboard', this._onFocus);
     },
 
@@ -11870,13 +11919,16 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var text;
 
         if (selectionModel.hasSelection()) {
-            text = this.selectionModel.getValuesToString();
+            text = this.selectionModel.getValuesToString(this.useFormattedValue);
+        } else if (this.useFormattedValue) {
+            text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
         } else {
             text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
 
         return text;
     },
+
 
     /**
      * 현재 그리드의 data 를 clipboard 에 copy 한다.
@@ -12561,6 +12613,7 @@ var ViewFactory = tui.util.defineClass({
         // view options
         this.singleClickEdit = options.singleClickEdit;
         this.resizeHandle = options.resizeHandle;
+        this.copyOption = options.copyOption;
     },
 
     /**
@@ -12656,7 +12709,8 @@ var ViewFactory = tui.util.defineClass({
             selectionModel: this.modelManager.selectionModel,
             focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
-            painterManager: this.modelManager.painterManager
+            painterManager: this.modelManager.painterManager,
+            copyOption: this.copyOption
         });
     },
 
@@ -15561,9 +15615,7 @@ var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
         this.setOwnProperties({
             gridId: options.gridId,
             toolbarModel: options.toolbarModel,
-            dimensionModel: options.dimensionModel,
-            $btnExcel: null,
-            $btnExcelAll: null
+            dimensionModel: options.dimensionModel
         });
 
         this.on('appended', this._onAppended);
