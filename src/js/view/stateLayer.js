@@ -91,8 +91,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      */
     _refreshLayout: function() {
         var headerHeight = this.dimensionModel.get('headerHeight');
-
-        this.$el.css(top, headerHeight);
+        this.$el.css('top', headerHeight);
     }
 });
 
