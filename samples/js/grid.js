@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.4.0-b
+ * @version 1.4.0-c
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -9701,10 +9701,16 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     _onFocusIn: function(event) {
         var $target = $(event.target);
         var address = this._getCellAddress($target);
+        var self = this;
 
-        this._executeCustomEventHandler(event);
-        this.trigger('focusIn', $target, address);
-        this.controller.startEditing(address);
+        // Defers starting editing
+        // as button-type(checkbox, radio) defers finishing editing for detecting blurred state.
+        // see {@link module:painter/input/button#_onFocusOut}
+        _.defer(function() {
+            self._executeCustomEventHandler(event);
+            self.trigger('focusIn', $target, address);
+            self.controller.startEditing(address);
+        });
     },
 
     /**
@@ -15584,8 +15590,7 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      */
     _refreshLayout: function() {
         var headerHeight = this.dimensionModel.get('headerHeight');
-
-        this.$el.css(top, headerHeight);
+        this.$el.css('top', headerHeight);
     }
 });
 
