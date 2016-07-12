@@ -85,10 +85,16 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     _onFocusIn: function(event) {
         var $target = $(event.target);
         var address = this._getCellAddress($target);
+        var self = this;
 
-        this._executeCustomEventHandler(event);
-        this.trigger('focusIn', $target, address);
-        this.controller.startEditing(address);
+        // Defers starting editing
+        // as button-type(checkbox, radio) defers finishing editing for detecting blurred state.
+        // see {@link module:painter/input/button#_onFocusOut}
+        _.defer(function() {
+            self._executeCustomEventHandler(event);
+            self.trigger('focusIn', $target, address);
+            self.controller.startEditing(address);
+        });
     },
 
     /**
