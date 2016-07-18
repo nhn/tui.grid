@@ -7,6 +7,7 @@
 var View = require('../base/view');
 var stateConst = require('../common/constMap').renderState;
 var classNameConst = require('../common/classNameConst');
+var TABLE_BORDER_WIDTH = require('../common/constMap').dimension.TABLE_BORDER_WIDTH;
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -91,7 +92,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      */
     _refreshLayout: function() {
         var headerHeight = this.dimensionModel.get('headerHeight');
-        this.$el.css('top', headerHeight);
+        var toolbarHeight = this.dimensionModel.get('toolbarHeight');
+
+        this.$el.css('top', headerHeight + toolbarHeight - TABLE_BORDER_WIDTH);
     }
 });
 
