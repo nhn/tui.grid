@@ -1,4 +1,4 @@
-/*!code-snippet v1.0.8 | NHN Entertainment*/
+/*!code-snippet v1.2.0 | NHN Entertainment*/
 /**********
  * array.js
  **********/
@@ -7,7 +7,7 @@
  * @fileoverview This module has some functions for handling array.
  * @author NHN Ent.
  *         FE Development Team <jiung.kang@nhnent.com>
- * @dependency type.js
+ * @dependency type.js, collection.js
  */
 
 (function(tui) {
@@ -18,15 +18,21 @@
     if (!tui.util) {
         tui.util = window.tui.util = {};
     }
-
     var aps = Array.prototype.slice;
 
     /**
+     * This variable saves whether the 'indexOf' method is in Array.prototype or not.<br>
+     * And it will be checked only once when the page is loaded.
+     * @type {boolean}
+     */
+    var hasIndexOf = !!Array.prototype.indexOf;
+
+    /**
      * Generate an integer Array containing an arithmetic progression.
+     * @memberof tui.util
      * @param {number} start
      * @param {number} stop
      * @param {number} step
-     * @memberof tui.util
      * @returns {Array}
      * @example
      *
@@ -64,8 +70,8 @@
 
     /**
      * Zip together multiple lists into a single array
-     * @param {...Array}
      * @memberof tui.util
+     * @param {...Array}
      * @returns {Array}
      * @example
      *
@@ -91,6 +97,54 @@
         return result;
     };
 
+    /**
+     * Returns the first index at which a given element can be found in the array from start index(default 0), or -1 if it is not present.<br>
+     * It compares searchElement to elements of the Array using strict equality (the same method used by the ===, or triple-equals, operator).
+     * @memberof tui.util
+     * @param {*} searchElement Element to locate in the array
+     * @param {Array} array Array that will be traversed.
+     * @param {number} startIndex Start index in array for searching (default 0)
+     * @return {number} the First index at which a given element, or -1 if it is not present
+     * @example
+     *
+     *   var arr = ['one', 'two', 'three', 'four'],
+     *       idx1,
+     *       idx2;
+     *
+     *   idx1 = tui.util.inArray('one', arr, 3);
+     *   alert(idx1); // -1
+     *
+     *   idx2 = tui.util.inArray('one', arr);
+     *   alert(idx2); // 0
+     */
+    var inArray = function(searchElement, array, startIndex) {
+        var i, length;
+
+        if (!tui.util.isArray(array)) {
+            return -1;
+        }
+
+        if (hasIndexOf) {
+            return Array.prototype.indexOf.call(array, searchElement, startIndex);
+        }
+
+        length = array.length;
+        if (tui.util.isUndefined(startIndex)) {
+            startIndex = 0;
+        } else if (startIndex >= length || startIndex < 0) {
+            return -1;
+        }
+
+        for (i = startIndex; i < length; i++) {
+            if (array[i] === searchElement) {
+                return i;
+            }
+        }
+
+        return -1;
+    };
+
+    tui.util.inArray = inArray;
     tui.util.range = range;
     tui.util.zip = zip;
 })(window.tui);
@@ -124,12 +178,14 @@
      *  - chrome
      *  - firefox
      *  - safari
+     *  - edge
      * @memberof tui.util
      * @example
      *  tui.util.browser.chrome === true;    // chrome
      *  tui.util.browser.firefox === true;    // firefox
      *  tui.util.browser.safari === true;    // safari
      *  tui.util.browser.msie === true;    // IE
+     *  tui.util.browser.edge === true;     // edge
      *  tui.util.browser.other === true;    // other browser
      *  tui.util.browser.version;    // browser version
      */
@@ -138,6 +194,7 @@
         firefox: false,
         safari: false,
         msie: false,
+        edge: false,
         others: false,
         version: 0
     };
@@ -148,6 +205,7 @@
 
     var rIE = /MSIE\s([0-9]+[.0-9]*)/,
         rIE11 = /Trident.*rv:11\./,
+        rEdge = /Edge\/(\d+)\./,
         versionRegex = {
             'firefox': /Firefox\/(\d+)\./,
             'chrome': /Chrome\/(\d+)\./,
@@ -168,6 +226,11 @@
             if (rIE11.exec(userAgent)) {
                 browser.msie = true;
                 browser.version = 11;
+                detected = true;
+            } else if (rEdge.exec(userAgent)) {
+                browser.edge = true;
+                browser.version = userAgent.match(rEdge)[1];
+                detected = true;
             } else {
                 for (key in versionRegex) {
                     if (versionRegex.hasOwnProperty(key)) {
@@ -186,7 +249,12 @@
         }
     };
 
-    detector[appName]();
+    var fn = detector[appName];
+
+    if (fn) {
+        detector[appName]();
+    }
+
     tui.util.browser = browser;
 })(window.tui);
 
@@ -209,13 +277,6 @@
     if (!tui.util) {
         tui.util = window.tui.util = {};
     }
-
-    /**
-     * This variable saves whether the 'indexOf' method is in Array.prototype or not.<br>
-     * And it will be checked only once when the page is loaded.
-     * @type {boolean}
-     */
-    var hasIndexOf = !!Array.prototype.indexOf;
 
     /**
      * Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.<br>
@@ -481,55 +542,6 @@
     };
 
     /**
-     * Returns the first index at which a given element can be found in the array from start index(default 0), or -1 if it is not present.<br>
-     * It compares searchElement to elements of the Array using strict equality (the same method used by the ===, or triple-equals, operator).
-     * @param {*} searchElement Element to locate in the array
-     * @param {Array} array Array that will be traversed.
-     * @param {number} startIndex Start index in array for searching (default 0)
-     * @memberof tui.util
-     * @return {number} the First index at which a given element, or -1 if it is not present
-     * @example
-     *
-     *   var arr = ['one', 'two', 'three', 'four'],
-     *       idx1,
-     *       idx2;
-     *
-     *   idx1 = tui.util.inArray('one', arr, 3);
-     *   alert(idx1); // -1
-     *
-     *   idx2 = tui.util.inArray('one', arr);
-     *   alert(idx2); // 0
-     */
-    var inArray = function(searchElement, array, startIndex) {
-        if (!tui.util.isArray(array)) {
-            return -1;
-        }
-
-        if (hasIndexOf) {
-            return Array.prototype.indexOf.call(array, searchElement, startIndex);
-        }
-
-        var i,
-            length = array.length;
-
-        // set startIndex
-        if (tui.util.isUndefined(startIndex)) {
-            startIndex = 0;
-        } else if (startIndex >= length || startIndex < 0) {
-            return -1;
-        }
-
-        // search
-        for (i = startIndex; i < length; i++) {
-            if (array[i] === searchElement) {
-                return i;
-            }
-        }
-
-        return -1;
-    };
-
-    /**
      * fetching a property
      * @param {Array} arr target collection
      * @param {String|Number} property property name
@@ -568,9 +580,7 @@
     tui.util.map = map;
     tui.util.reduce = reduce;
     tui.util.filter = filter;
-    tui.util.inArray = inArray;
     tui.util.pluck = pluck;
-
 })(window.tui);
 
 /**********
@@ -1213,22 +1223,21 @@
             parent = null;
         }
 
-        obj = props.init || function(){};
+        obj = props.init || function() {};
 
-        if(parent) {
+        if (parent) {
             tui.util.inherit(obj, parent);
         }
 
         if (props.hasOwnProperty('static')) {
-            tui.util.extend(obj, props.static);
-            delete props.static;
+            tui.util.extend(obj, props['static']);
+            delete props['static'];
         }
 
         tui.util.extend(obj.prototype, props);
 
         return obj;
     };
-
 })(window.tui);
 
 /**********
@@ -1238,7 +1247,7 @@
 /**
  * @fileoverview Define module
  * @author NHN Ent.
- *         FE Development Team <e0242@nhnent.com>
+ *         FE Development Team <dl_javscript@nhnent.com>
  * @dependency type.js, defineNamespace.js
  */
 (function(tui) {
@@ -1281,10 +1290,9 @@
 
         if (util.isFunction(base[INITIALIZATION_METHOD_NAME])) {
             base[INITIALIZATION_METHOD_NAME]();
-            delete base[INITIALIZATION_METHOD_NAME];
         }
 
-        return util.defineNamespace(namespace, base, true);
+        return util.defineNamespace(namespace, base);
     }
     tui.util.defineModule = defineModule;
 })(window.tui);
@@ -1311,75 +1319,45 @@
         tui.util = window.tui.util = {};
     }
 
+    var util = tui.util;
+
     /**
      * Define namespace
-     * @param {string} name - Module name
+     * @param {string} namespace - Namespace (ex- 'foo.bar.baz')
      * @param {(object|function)} props - A set of modules or one module
-     * @param {boolean} isOverride flag - What if module already define, override or not
+     * @param {boolean} [isOverride] - Override the props to the namespace.<br>
+     *                                  (It removes previous properties of this namespace)
      * @returns {(object|function)} Defined namespace
      * @memberof tui.util
      * @example
-     * var neComp = defineNamespace('ne.component');
+     * var neComp = tui.util.defineNamespace('ne.component');
      * neComp.listMenu = tui.util.defineClass({
      *      init: function() {
      *          // code
      *      }
      * });
      */
-    var defineNamespace = function(name, props, isOverride) {
-        var namespace,
-            lastspace,
-            result,
-            module = getNamespace(name);
+    tui.util.defineNamespace = function(namespace, props, isOverride) {
+        var names, result, prevLast, last;
 
-        if (!isOverride && isValidType(module)) {
-            return module;
-        }
+        names = namespace.split('.');
+        names.unshift(window);
 
-        namespace = name.split('.');
-        lastspace = namespace.pop();
-        namespace.unshift(window);
-
-        result = tui.util.reduce(namespace, function(obj, name) {
+        result = util.reduce(names, function(obj, name) {
             obj[name] = obj[name] || {};
             return obj[name];
         });
 
-        result[lastspace] = isValidType(props) ? props : {};
+        if (isOverride) {
+            last = names.pop();
+            prevLast = util.pick.apply(null, names);
+            result = prevLast[last] = props;
+        } else {
+            util.extend(result, props);
+        }
 
-        return result[lastspace];
-
-    };
-
-    /**
-     * Get namespace
-     * @param {string} name - namespace
-     * @returns {*}
-     */
-    var getNamespace = function(name) {
-        var namespace,
-            result;
-
-        namespace = name.split('.');
-        namespace.unshift(window);
-
-        result = tui.util.reduce(namespace, function(obj, name) {
-            return obj && obj[name];
-        });
         return result;
     };
-
-    /**
-     * Check valid type
-     * @param {*} module
-     * @returns {boolean}
-     */
-    var isValidType = function(module) {
-        return (tui.util.isObject(module) || tui.util.isFunction(module));
-    };
-
-    tui.util.defineNamespace = defineNamespace;
-
 })(window.tui);
 
 /**********
@@ -1670,86 +1648,86 @@ tui.util.Enum = Enum;
  * @fileoverview This module has a function for date format.
  * @author NHN Ent.
  *         FE Development Team <e0242@nhnent.com>
- * @dependency type.js
+ * @dependency type.js, object.js
  */
 
 (function(tui) {
     'use strict';
 
-    var tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi,
-        MONTH_STR = ["Invalid month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-        MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-        replaceMap = {
-            M: function(date) {
-                return Number(date.month);
-            },
-            MM: function(date) {
-                var month = date.month;
-                return (Number(month) < 10) ? '0' + month : month;
-            },
-            MMM: function(date) {
-                return MONTH_STR[Number(date.month)].substr(0, 3);
-            },
-            MMMM: function(date) {
-                return MONTH_STR[Number(date.month)];
-            },
-            D: function(date) {
-                return Number(date.date);
-            },
-            d: function(date) {
-                return replaceMap.D(date);
-            },
-            DD: function(date) {
-                var dayInMonth = date.date;
-                return (Number(dayInMonth) < 10) ? '0' + dayInMonth : dayInMonth;
-            },
-            dd: function(date) {
-                return replaceMap.DD(date);
-            },
-            YY: function(date) {
-                return Number(date.year) % 100;
-            },
-            yy: function(date) {
-                return replaceMap.YY(date);
-            },
-            YYYY: function(date) {
-                var prefix = '20',
-                    year = date.year;
-                if (year > 69 && year < 100) {
-                    prefix = '19';
-                }
-                return (Number(year) < 100) ? prefix + String(year) : year;
-            },
-            yyyy: function(date) {
-                return replaceMap.YYYY(date);
-            },
-            A: function(date) {
-                return date.meridian;
-            },
-            a: function(date) {
-                return date.meridian.toLowerCase();
-            },
-            hh: function(date) {
-                var hour = date.hour;
-                return (Number(hour) < 10) ? '0' + hour : hour;
-            },
-            HH: function(date) {
-                return replaceMap.hh(date);
-            },
-            h: function(date) {
-                return String(Number(date.hour));
-            },
-            H: function(date) {
-                return replaceMap.h(date);
-            },
-            m: function(date) {
-                return String(Number(date.minute));
-            },
-            mm: function(date) {
-                var minute = date.minute;
-                return (Number(minute) < 10) ? '0' + minute : minute;
+    var tokens = /[\\]*YYYY|[\\]*YY|[\\]*MMMM|[\\]*MMM|[\\]*MM|[\\]*M|[\\]*DD|[\\]*D|[\\]*HH|[\\]*H|[\\]*A/gi;
+    var MONTH_STR = ["Invalid month", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var MONTH_DAYS = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var replaceMap = {
+        M: function(date) {
+            return Number(date.month);
+        },
+        MM: function(date) {
+            var month = date.month;
+            return (Number(month) < 10) ? '0' + month : month;
+        },
+        MMM: function(date) {
+            return MONTH_STR[Number(date.month)].substr(0, 3);
+        },
+        MMMM: function(date) {
+            return MONTH_STR[Number(date.month)];
+        },
+        D: function(date) {
+            return Number(date.date);
+        },
+        d: function(date) {
+            return replaceMap.D(date);
+        },
+        DD: function(date) {
+            var dayInMonth = date.date;
+            return (Number(dayInMonth) < 10) ? '0' + dayInMonth : dayInMonth;
+        },
+        dd: function(date) {
+            return replaceMap.DD(date);
+        },
+        YY: function(date) {
+            return Number(date.year) % 100;
+        },
+        yy: function(date) {
+            return replaceMap.YY(date);
+        },
+        YYYY: function(date) {
+            var prefix = '20',
+                year = date.year;
+            if (year > 69 && year < 100) {
+                prefix = '19';
             }
-        };
+            return (Number(year) < 100) ? prefix + String(year) : year;
+        },
+        yyyy: function(date) {
+            return replaceMap.YYYY(date);
+        },
+        A: function(date) {
+            return date.meridiem;
+        },
+        a: function(date) {
+            return date.meridiem;
+        },
+        hh: function(date) {
+            var hour = date.hour;
+            return (Number(hour) < 10) ? '0' + hour : hour;
+        },
+        HH: function(date) {
+            return replaceMap.hh(date);
+        },
+        h: function(date) {
+            return String(Number(date.hour));
+        },
+        H: function(date) {
+            return replaceMap.h(date);
+        },
+        m: function(date) {
+            return String(Number(date.minute));
+        },
+        mm: function(date) {
+            var minute = date.minute;
+            return (Number(minute) < 10) ? '0' + minute : minute;
+        }
+    };
 
     /* istanbul ignore if */
     if (!tui) {
@@ -1799,18 +1777,19 @@ tui.util.Enum = Enum;
      * Return a string that transformed from the given form and date.
      * @param {string} form - Date form
      * @param {Date|Object} date - Date object
+     * @param {{meridiemSet: {AM: string, PM: string}}} option - Option
      * @returns {boolean|string} A transformed string or false.
      * @memberOf tui.util
      * @example
-     *  // key         | Shorthand
-     *  // ------------|-----------------------
-     *  // years       | YY / YYYY / yy / yyyy
-     *  // months(n)   | M / MM
-     *  // months(str) | MMM / MMMM
-     *  // days        | D / DD / d / dd
-     *  // hours       | H / HH / h / hh
-     *  // minutes     | m / mm
-     *  // AM/PM       | A / a
+     *  // key             | Shorthand
+     *  // --------------- |-----------------------
+     *  // years           | YY / YYYY / yy / yyyy
+     *  // months(n)       | M / MM
+     *  // months(str)     | MMM / MMMM
+     *  // days            | D / DD / d / dd
+     *  // hours           | H / HH / h / hh
+     *  // minutes         | m / mm
+     *  // meridiem(AM,PM) | A / a
      *
      *  var dateStr1 = formatDate('yyyy-MM-dd', {
      *      year: 2014,
@@ -1832,11 +1811,20 @@ tui.util.Enum = Enum;
      *      dateStr3 = formatDate('yyyy년 M월 dd일', dt);
      *
      *  alert(dateStr3); // '2010년 3월 13일'
+     *
+     *  var option4 = {
+     *      meridiemSet: {
+     *          AM: '오전',
+     *          PM: '오후'
+     *      }
+     *  };
+     *  var date4 = {year: 1999, month: 9, date: 9, hour: 13, minute: 2};
+     *  var dateStr4 = formatDate('yyyy-MM-dd A hh:mm', date4, option4));
+     *
+     *  alert(dateStr4); // '1999-09-09 오후 01:02'
      */
-    function formatDate(form, date) {
-        var meridian,
-            nDate,
-            resultStr;
+    function formatDate(form, date, option) {
+        var meridiem, nDate, resultStr;
 
         if (tui.util.isDate(date)) {
             nDate = {
@@ -1860,15 +1848,17 @@ tui.util.Enum = Enum;
             return false;
         }
 
-        nDate.meridian = '';
+        nDate.meridiem = '';
         if (/[^\\][aA]\b/g.test(form)) {
-            meridian = (nDate.hour > 12) ? 'PM' : 'AM';
+            meridiem = (nDate.hour > 12) ?
+                tui.util.pick(option, 'meridiemSet', 'PM') || 'PM'
+                : tui.util.pick(option, 'meridiemSet', 'AM') || 'AM';
             nDate.hour %= 12;
-            nDate.meridian = meridian;
+            nDate.meridiem = meridiem;
         }
 
         resultStr = form.replace(tokens, function(key) {
-            if (key.indexOf('\\') > -1) {
+            if (key.indexOf('\\') > -1) { // escape character
                 return key.replace(/\\/g, '');
             } else {
                 return replaceMap[key](nDate) || '';
@@ -3083,7 +3073,7 @@ tui.util.Enum = Enum;
      * @return {boolean}
      */
     function hasEncodableString(string) {
-        return /[<>&"']/.test(string);
+        return (/[<>&"']/).test(string);
     }
 
     /**
