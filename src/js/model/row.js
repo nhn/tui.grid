@@ -239,10 +239,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getFormattedValue: function(value, rowAttrs, column) {
-        var result = value || '';
+        var result;
 
         if (_.isFunction(column.formatter)) {
-            result = column.formatter(result, rowAttrs, column);
+            result = column.formatter(value, rowAttrs, column);
+        } else {
+            result = value;
+        }
+
+        if (_.isNumber(result)) {
+            result = String(result);
+        } else if (!result) {
+            result = '';
         }
 
         return result;
