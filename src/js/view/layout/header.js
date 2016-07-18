@@ -45,8 +45,13 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
             .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
-            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
+
+        if (this.whichSide === 'L' && this.columnModel.get('selectType') === 'checkbox') {
+            this.listenTo(this.dataModel,
+                'change:_button disabledChanged extraDataChanged add remove reset',
+                _.debounce(_.bind(this._syncCheckedState, this), DELAY_SYNC_CHECK));
+        }
     },
 
     className: classNameConst.HEAD_AREA,
@@ -322,17 +327,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     * 그리드의 checkCount 가 변경되었을 때 수행하는 헨들러
-     * @private
-     */
-    _onCheckCountChange: function() {
-        if (this.columnModel.get('selectType') === 'checkbox') {
-            clearTimeout(this.timeoutForAllChecked);
-            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), DELAY_SYNC_CHECK);
-        }
-    },
-
-    /**
      * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
      * @returns {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
      * @private
@@ -345,27 +339,27 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
      * @private
      */
-    _syncCheckState: function() {
-        var $input, enableCount, checkedCount;
-
-        if (!this.columnModel || this.columnModel.get('selectType') !== 'checkbox') {
-            return;
-        }
+    _syncCheckedState: function() {
+        var checkedState = this.dataModel.getCheckedState();
+        var $input, props;
 
         $input = this._getHeaderMainCheckbox();
         if (!$input.length) {
             return;
         }
 
-        enableCount = 0;
-        checkedCount = this.dataModel.getRowList(true).length;
-        this.dataModel.forEach(function(row) {
-            var cellState = row.getCellState('_button');
-            if (!cellState.isDisabled && cellState.isEditable) {
-                enableCount += 1;
-            }
-        }, this);
-        $input.prop('checked', enableCount === checkedCount);
+        if (!checkedState.available) {
+            props = {
+                checked: false,
+                disabled: true
+            };
+        } else {
+            props = {
+                checked: checkedState.available === checkedState.checked,
+                disabled: false
+            };
+        }
+        $input.prop(props);
     },
 
     /**
@@ -597,5 +591,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return resultList;
     }
 });
+
+Header.DELAY_SYNC_CHECK = DELAY_SYNC_CHECK;
 
 module.exports = Header;

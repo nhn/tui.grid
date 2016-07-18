@@ -2,6 +2,7 @@
 
 var ModelManager = require('model/manager');
 var DomState = require('domState');
+var Header = require('view/layout/header');
 var ViewFactory = require('view/factory');
 
 var classNameConst = require('common/classNameConst');
@@ -254,85 +255,46 @@ describe('Header', function() {
         });
     });
 
-    describe('_syncCheckState()', function() {
-        var lHeader;
+    describe('_syncCheckedState()', function() {
+        var $checkbox, lHeader;
 
         beforeEach(function() {
-            lHeader = viewFactory.createHeader('L');
             modelManager.columnModel.set('selectType', 'checkbox');
-            modelManager.dataModel.reset([
-                {
-                    c1: '0-1',
-                    c2: '0-2'
-                },
-                {
-                    c1: '1-1',
-                    c2: '1-2'
-                }
-            ], {parse: true});
+            lHeader = viewFactory.createHeader('L');
             lHeader.render();
+            $checkbox = lHeader._getHeaderMainCheckbox();
         });
 
-        it('각 행의 button이 true로 설정되어 있는지 확인하고, header의 checked 상태를 갱신한다.', function() {
-            var $input = lHeader._getHeaderMainCheckbox();
-
-            lHeader._syncCheckState();
-            expect($input.prop('checked')).toBe(false);
-
-            modelManager.dataModel.forEach(function(row) {
-                row.set('_button', true);
+        it('if available count is 0, uncheck and disable checkbox', function() {
+            lHeader.dataModel.getCheckedState = _.constant({
+                available: 0
             });
-            lHeader._syncCheckState();
-            expect($input.prop('checked')).toBe(true);
+            lHeader._syncCheckedState();
+
+            expect($checkbox.prop('checked')).toBe(false);
+            expect($checkbox.prop('disabled')).toBe(true);
         });
 
-        it('각 행의 button이 disable 되어 있다면, disable 상태를 고려하여 checkbox 상태를 갱신한다.', function() {
-            var $input = lHeader._getHeaderMainCheckbox();
-
-            modelManager.dataModel.forEach(function(row) {
-                row.setRowState('DISABLED');
+        it('if checked count is less than available count, uncheck and enable checkbox', function() {
+            lHeader.dataModel.getCheckedState = _.constant({
+                available: 2,
+                checked: 1
             });
-            lHeader._syncCheckState();
-            expect($input.prop('checked')).toBe(true);
-        });
-    });
+            lHeader._syncCheckedState();
 
-    describe('_onCheckCountChange()', function() {
-        var lHeader;
-
-        beforeEach(function() {
-            lHeader = viewFactory.createHeader('L');
-            jasmine.clock().install();
+            expect($checkbox.prop('checked')).toBe(false);
+            expect($checkbox.prop('disabled')).toBe(false);
         });
 
-        afterEach(function() {
-            jasmine.clock().uninstall();
-        });
+        it('if checked count is equal to available count, check and enable checkbox', function() {
+            lHeader.dataModel.getCheckedState = _.constant({
+                available: 2,
+                checked: 2
+            });
+            lHeader._syncCheckedState();
 
-        it('timeout 을 이용하여 _syncCheckState 를 한번만 호출하는지 확인한다.', function() {
-            modelManager.columnModel.set('selectType', 'checkbox');
-            lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
-            lHeader._onCheckCountChange();
-            lHeader._onCheckCountChange();
-            lHeader._onCheckCountChange();
-            lHeader._onCheckCountChange();
-            lHeader._onCheckCountChange();
-            lHeader._onCheckCountChange();
-            lHeader._onCheckCountChange();
-
-            jasmine.clock().tick(11);
-
-            expect(lHeader._syncCheckState.calls.count()).toBe(1);
-        });
-
-        it('selectType 이 checkbox 가 아니라면 호출하지 않는다.', function() {
-            modelManager.columnModel.set('selectType', 'radio');
-            lHeader._syncCheckState = jasmine.createSpy('_syncCheckState');
-            lHeader._onCheckCountChange();
-
-            jasmine.clock().tick(11);
-
-            expect(lHeader._syncCheckState).not.toHaveBeenCalled();
+            expect($checkbox.prop('checked')).toBe(true);
+            expect($checkbox.prop('disabled')).toBe(false);
         });
     });
 

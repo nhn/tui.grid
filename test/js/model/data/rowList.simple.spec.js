@@ -319,4 +319,54 @@ describe('Data.RowList - simple', function() {
             expect(rowList.at(2).getClassNameList('c1')).toContain(classNameConst.CELL_INVALID);
         });
     });
+
+    describe('getCheckedState()', function() {
+        beforeEach(function() {
+            columnModel.set('selectType', 'checkbox');
+        });
+
+        describe('Returns the count of check-available rows and checked rows: ', function() {
+            it('when all rows are checked', function() {
+                rowList.checkAll();
+                expect(rowList.getCheckedState()).toEqual({
+                    available: 2,
+                    checked: 2
+                });
+            });
+
+            it('when only one row is checked', function() {
+                rowList.check(0);
+                expect(rowList.getCheckedState()).toEqual({
+                    available: 2,
+                    checked: 1
+                });
+            });
+
+            it('when a row is disabled', function() {
+                rowList.disableRow(0);
+                expect(rowList.getCheckedState()).toEqual({
+                    available: 1,
+                    checked: 0
+                });
+            });
+
+            it('when a row is disabled and all rows are checked', function() {
+                rowList.checkAll();
+                rowList.disableRow(0);
+                expect(rowList.getCheckedState()).toEqual({
+                    available: 1,
+                    checked: 1
+                });
+            });
+
+            it('when all rows are disabled and checked', function() {
+                rowList.checkAll();
+                rowList.setDisabled(true);
+                expect(rowList.getCheckedState()).toEqual({
+                    available: 0,
+                    checked: 0
+                });
+            });
+        });
+    });
 });

@@ -40,7 +40,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      */
     template: _.template(
         '<input class="' + classNameConst.CELL_MAIN_BUTTON + '"' +
-        ' type="<%=type%>" name="<%=name%>" <%=checked%> />'
+        ' type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
     ),
 
      /**
@@ -65,7 +65,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         return this.template({
             type: this.inputType,
             name: this.gridId,
-            checked: cellData.value ? 'checked' : ''
+            checked: cellData.value ? 'checked' : '',
+            disabled: cellData.isDisabled ? 'disabled' : ''
         });
     }
 });

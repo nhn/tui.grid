@@ -1100,6 +1100,31 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     getElement: function(rowKey, columnName) {
         var mainRowKey = this.getMainRowKey(rowKey, columnName);
         return this.domState.getElement(mainRowKey, columnName);
+    },
+
+    /**
+     * Returns the count of check-available rows and checked rows.
+     * @returns {{available: number, checked: number}}
+     */
+    getCheckedState: function() {
+        var available = 0;
+        var checked = 0;
+
+        this.forEach(function(row) {
+            var buttonState = row.getCellState('_button');
+
+            if (!buttonState.isDisabled && buttonState.isEditable) {
+                available += 1;
+                if (row.get('_button')) {
+                    checked += 1;
+                }
+            }
+        });
+
+        return {
+            available: available,
+            checked: checked
+        };
     }
 });
 
