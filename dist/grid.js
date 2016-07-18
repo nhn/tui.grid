@@ -1,7 +1,7 @@
 /**
  * @fileoverview tui-grid
  * @author NHN Ent. FE Development Team
- * @version 1.4.0-c
+ * @version 1.4.0-d
  * @license MIT
  * @link https://github.com/nhnent/tui.grid
  */
@@ -5530,6 +5530,31 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     getElement: function(rowKey, columnName) {
         var mainRowKey = this.getMainRowKey(rowKey, columnName);
         return this.domState.getElement(mainRowKey, columnName);
+    },
+
+    /**
+     * Returns the count of check-available rows and checked rows.
+     * @returns {{available: number, checked: number}}
+     */
+    getCheckedState: function() {
+        var available = 0;
+        var checked = 0;
+
+        this.forEach(function(row) {
+            var buttonState = row.getCellState('_button');
+
+            if (!buttonState.isDisabled && buttonState.isEditable) {
+                available += 1;
+                if (row.get('_button')) {
+                    checked += 1;
+                }
+            }
+        });
+
+        return {
+            available: available,
+            checked: checked
+        };
     }
 });
 
@@ -8325,10 +8350,18 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
      * @private
      */
     _getFormattedValue: function(value, rowAttrs, column) {
-        var result = value || '';
+        var result;
 
         if (_.isFunction(column.formatter)) {
-            result = column.formatter(result, rowAttrs, column);
+            result = column.formatter(value, rowAttrs, column);
+        } else {
+            result = value;
+        }
+
+        if (_.isNumber(result)) {
+            result = String(result);
+        } else if (!result) {
+            result = '';
         }
 
         return result;
@@ -10116,7 +10149,7 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      */
     template: _.template(
         '<input class="' + classNameConst.CELL_MAIN_BUTTON + '"' +
-        ' type="<%=type%>" name="<%=name%>" <%=checked%> />'
+        ' type="<%=type%>" name="<%=name%>" <%=checked%> <%=disabled%> />'
     ),
 
      /**
@@ -10141,7 +10174,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         return this.template({
             type: this.inputType,
             name: this.gridId,
-            checked: cellData.value ? 'checked' : ''
+            checked: cellData.value ? 'checked' : '',
+            disabled: cellData.isDisabled ? 'disabled' : ''
         });
     }
 });
@@ -14101,8 +14135,13 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
             .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
-            .listenTo(this.dataModel, 'change:_button', this._onCheckCountChange)
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
+
+        if (this.whichSide === 'L' && this.columnModel.get('selectType') === 'checkbox') {
+            this.listenTo(this.dataModel,
+                'change:_button disabledChanged extraDataChanged add remove reset',
+                _.debounce(_.bind(this._syncCheckedState, this), DELAY_SYNC_CHECK));
+        }
     },
 
     className: classNameConst.HEAD_AREA,
@@ -14378,17 +14417,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     * 그리드의 checkCount 가 변경되었을 때 수행하는 헨들러
-     * @private
-     */
-    _onCheckCountChange: function() {
-        if (this.columnModel.get('selectType') === 'checkbox') {
-            clearTimeout(this.timeoutForAllChecked);
-            this.timeoutForAllChecked = setTimeout($.proxy(this._syncCheckState, this), DELAY_SYNC_CHECK);
-        }
-    },
-
-    /**
      * selectType 이 checkbox 일 때 랜더링 되는 header checkbox 엘리먼트를 반환한다.
      * @returns {jQuery} _butoon 컬럼 헤더의 checkbox input 엘리먼트
      * @private
@@ -14401,27 +14429,27 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * header 영역의 input 상태를 실제 checked 된 count 에 맞추어 반영한다.
      * @private
      */
-    _syncCheckState: function() {
-        var $input, enableCount, checkedCount;
-
-        if (!this.columnModel || this.columnModel.get('selectType') !== 'checkbox') {
-            return;
-        }
+    _syncCheckedState: function() {
+        var checkedState = this.dataModel.getCheckedState();
+        var $input, props;
 
         $input = this._getHeaderMainCheckbox();
         if (!$input.length) {
             return;
         }
 
-        enableCount = 0;
-        checkedCount = this.dataModel.getRowList(true).length;
-        this.dataModel.forEach(function(row) {
-            var cellState = row.getCellState('_button');
-            if (!cellState.isDisabled && cellState.isEditable) {
-                enableCount += 1;
-            }
-        }, this);
-        $input.prop('checked', enableCount === checkedCount);
+        if (!checkedState.available) {
+            props = {
+                checked: false,
+                disabled: true
+            };
+        } else {
+            props = {
+                checked: checkedState.available === checkedState.checked,
+                disabled: false
+            };
+        }
+        $input.prop(props);
     },
 
     /**
@@ -14653,6 +14681,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return resultList;
     }
 });
+
+Header.DELAY_SYNC_CHECK = DELAY_SYNC_CHECK;
 
 module.exports = Header;
 
@@ -15506,6 +15536,7 @@ module.exports = SelectionLayer;
 var View = require('../base/view');
 var stateConst = require('../common/constMap').renderState;
 var classNameConst = require('../common/classNameConst');
+var TABLE_BORDER_WIDTH = require('../common/constMap').dimension.TABLE_BORDER_WIDTH;
 
 /**
  * Layer class that represents the state of rendering phase.
@@ -15590,7 +15621,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
      */
     _refreshLayout: function() {
         var headerHeight = this.dimensionModel.get('headerHeight');
-        this.$el.css('top', headerHeight);
+        var toolbarHeight = this.dimensionModel.get('toolbarHeight');
+
+        this.$el.css('top', headerHeight + toolbarHeight - TABLE_BORDER_WIDTH);
     }
 });
 
