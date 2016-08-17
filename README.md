@@ -49,9 +49,9 @@ You can also use **lodash** instead of underscore and use **higher version of jq
 
 
 ## Browser Support
-	* IE8~11
-	* Chrome
-	* Firefox
+* IE8~11
+* Chrome
+* Firefox
 
 ## Download/Install
 * Bower
