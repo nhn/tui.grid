@@ -48,8 +48,7 @@ You can also see the older versions of API page on the [releases page](https://g
 You can also use **lodash** instead of underscore and use **higher version of jquery** (like v2.x.x) depending on your project.
 
 
-## Test environment
-* PC
+## Browser Support
 	* IE8~11
 	* Chrome
 	* Firefox
