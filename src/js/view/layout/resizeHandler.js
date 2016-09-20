@@ -104,9 +104,10 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         var headerHeight = this.dimensionModel.get('headerHeight'),
             htmlStr = this._getResizeHandlerMarkup();
 
-        this.$el.empty().show().html(htmlStr).css({
+        this.$el.empty().html(htmlStr).css({
             marginTop: -headerHeight,
-            height: headerHeight
+            height: headerHeight,
+            display: 'block'
         });
         this._refreshHandlerPosition();
 
@@ -229,8 +230,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         this.initialWidth = columnWidthList[$target.attr(attrNameConst.COLUMN_INDEX)];
         $('body').css('cursor', 'col-resize');
         $(document)
-            .bind('mousemove', $.proxy(this._onMouseMove, this))
-            .bind('mouseup', $.proxy(this._onMouseUp, this));
+            .on('mousemove', $.proxy(this._onMouseMove, this))
+            .on('mouseup', $.proxy(this._onMouseUp, this));
 
         // for IE8 and under
         if ($target[0].setCapture) {
