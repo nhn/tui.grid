@@ -22,6 +22,8 @@
     "body-parser": "^1.12.4",
     "browserify": "^11.0.1",
     "browserify-istanbul": "^0.2.1",
+    "eslint": "^3.5.0",
+    "eslint-loader": "^1.5.0",
     "express": "^4.12.4",
     "fedoc-template": "git+https://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
     "gulp": "^3.9.0",
