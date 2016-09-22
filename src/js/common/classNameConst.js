@@ -4,6 +4,8 @@
 */
 'use strict';
 
+var _ = require('underscore');
+
 var PREFIX = 'tui-grid-';
 
 var classNames = {

@@ -4,8 +4,11 @@
 */
 'use strict';
 
+var _ = require('underscore');
+
 var builder = require('./cssRuleBuilder');
 var classNameConst = require('../common/classNameConst');
+
 
 /**
  * Shortcut for the builder.createClassRule() method.

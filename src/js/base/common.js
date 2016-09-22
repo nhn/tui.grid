@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 /**
  * Mixin object for base class
  * @mixin

@@ -4,6 +4,8 @@
 */
 'use strict';
 
+var _ = require('underscore');
+
 var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
 
 /**
@@ -346,7 +348,7 @@ var util = {
             hasControlPanel: true,
             hasResizeHandler: true,
             hasPagination: true
-        }
+        };
 
         options = $.extend(true, {}, options);
 

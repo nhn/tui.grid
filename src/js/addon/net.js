@@ -4,11 +4,14 @@
  */
 'use strict';
 
-var View = require('../base/view'),
-    Router = require('./net-router'),
-    util = require('../common/util'),
-    formUtil = require('../common/formUtil'),
-    GridEvent = require('../common/gridEvent');
+var Backbone = require('backbone');
+var _ = require('underscore');
+
+var View = require('../base/view');
+var Router = require('./net-router');
+var util = require('../common/util');
+var formUtil = require('../common/formUtil');
+var GridEvent = require('../common/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
 var DELAY_FOR_LOADING_STATE = 200;

@@ -4,6 +4,9 @@
  */
 'use strict';
 
+var _ = require('underscore');
+var Backbone = require('backbone');
+
 /**
  * Class that listens public events (for external user) to the other object and
  * triggers them on the public object(module:grid).

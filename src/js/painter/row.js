@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Painter = require('../base/painter');
 var util = require('../common/util');
 var constMap = require('../common/constMap');

@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var Backbone = require('backbone');
+
 /**
  * Router for Addon.Net
  * @module addon/net-router

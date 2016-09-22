@@ -305,6 +305,8 @@
      </script>
  *
  */
+var _ = require('underscore');
+
 var View = require('./base/view');
 var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');

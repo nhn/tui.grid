@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var View = require('../base/view');
 var util = require('../common/util');
 var attrNameConst = require('../common/constMap').attrName;

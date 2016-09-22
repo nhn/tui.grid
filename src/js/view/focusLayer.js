@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var View = require('../base/view');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 var classNameConst = require('../common/classNameConst');

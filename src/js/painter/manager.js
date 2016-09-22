@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var RowPainter = require('./row');
 var CellPainter = require('./cell');
 var DummyCellPainter = require('./dummyCell');
