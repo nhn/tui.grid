@@ -322,6 +322,8 @@ var themeNameConst = require('./common/constMap').themeName;
 
 var instanceMap = {};
 
+require('../css/index.styl');
+
  /**
   * Toast UI
   * @namespace
