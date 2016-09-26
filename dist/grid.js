@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Sep 23 2016 20:39:15 GMT+0900 (KST)"
- * version: 1.4.0-d
+ * bundle created at "Mon Sep 26 2016 14:40:44 GMT+0900 (KST)"
+ * version: 1.4.1
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -83,10 +83,10 @@
 	 *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
 	 *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
 	 *          If not specified, unique value for each rows will be created internally.
-	 *      @param {Object} [options.toolbar] - The object for configuring toolbar UI.
-	 *          @param {boolean} [options.toolbar.hasResizeHandler=true] - Specifies whether to use the resize hendler.
-	 *          @param {boolean} [options.toolbar.hasControlPanel=true] - Specifies whether to use the control panel.
-	 *          @param {boolean} [options.toolbar.hasPagination=true] - Specifies whether to use the pagination.
+	 *      @param {boolean} [options.toolbar=false] - If set to true, toolbar area will be shown.
+	 *      @param {boolean} [options.resizeHandle=false] - If set to true, a handle for resizing height will be shown.
+	 *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
+	 *          If set to null or false, pagination will not be used.
 	 *      @param {array} options.columnModelList - The configuration of the grid columns.
 	 *          @param {string} options.columnModelList.columnName - The name of the column.
 	 *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used
@@ -172,11 +172,9 @@
 	    scrollX: true, //(default:true)
 	    scrollY: true, //(default:true)
 	    keyColumnName: 'column1', //(default:null)
-	    toolbar: {
-	        hasResizeHandler: true, //(default:true)
-	        hasControlPanel: true,  //(default:true)
-	        hasPagination: true     //(default:true)
-	    },
+	    toolbar: false,
+	    resizeHandle: true, //(default:false)
+	    pagination: true, //(default:null)
 	    columnModelList: [
 	        {
 	            title: 'normal title',
