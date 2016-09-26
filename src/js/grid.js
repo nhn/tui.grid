@@ -33,10 +33,10 @@
  *      @param {boolean} [options.showDummyRows=false] - If set to true, empty area will be filled with dummy rows.
  *      @param {string} [options.keyColumnName=null] - The name of the column to be used to identify each rows.
  *          If not specified, unique value for each rows will be created internally.
- *      @param {boolean} [options.toolbar=false] = If set to true, toolbar area will be shown.
- *      @param {Object} [option.pagination=null] = Options for tui.component.Pagination.
+ *      @param {boolean} [options.toolbar=false] - If set to true, toolbar area will be shown.
+ *      @param {boolean} [options.resizeHandle=false] - If set to true, a handle for resizing height will be shown.
+ *      @param {Object} [options.pagination=null] - Options for tui.component.Pagination.
  *          If set to null or false, pagination will not be used.
- *      @param {boolean} resizeHandle - If set to true, a handle for resizing height will be shown.
  *      @param {array} options.columnModelList - The configuration of the grid columns.
  *          @param {string} options.columnModelList.columnName - The name of the column.
  *          @param {boolean} [options.columnModelList.isEllipsis=false] - If set to true, ellipsis will be used
@@ -122,11 +122,9 @@
     scrollX: true, //(default:true)
     scrollY: true, //(default:true)
     keyColumnName: 'column1', //(default:null)
-    toolbar: {
-        hasResizeHandler: true, //(default:true)
-        hasControlPanel: true,  //(default:true)
-        hasPagination: true     //(default:true)
-    },
+    toolbar: false,
+    resizeHandle: true, //(default:false)
+    pagination: true, //(default:null)
     columnModelList: [
         {
             title: 'normal title',
