@@ -144,12 +144,12 @@ module.exports = function(config) {
         ],
 
         customLaunchers: {
-            'IE8': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 8
-            },
+            // 'IE8': {
+            //     base: 'WebDriver',
+            //     config: webdriverConfig,
+            //     browserName: 'internet explorer',
+            //     version: 8
+            // },
             'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
