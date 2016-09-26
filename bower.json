@@ -10,16 +10,17 @@
   ],
   "ignore": [
     ".*",
-    "./images",
-    "./performance",
-    "./samples",
-    "./src",
-    "./test",
-    "./gulpfile.js",
-    "./jsdoc.conf.json",
-    "./karma.conf.js",
-    "./webpack.config.js",
-    "./package.json"
+    "images",
+    "!dist/images",
+    "performance",
+    "samples",
+    "src",
+    "test",
+    "gulpfile.js",
+    "jsdoc.conf.json",
+    "webpack.config.js",
+    "karma.conf.js",
+    "package.json"
   ],
   "dependencies": {
     "backbone": "~1.1.2",
