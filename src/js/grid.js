@@ -305,6 +305,8 @@
      </script>
  *
  */
+var _ = require('underscore');
+
 var View = require('./base/view');
 var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');
@@ -319,6 +321,8 @@ var themeManager = require('./theme/manager');
 var themeNameConst = require('./common/constMap').themeName;
 
 var instanceMap = {};
+
+require('../css/index.styl');
 
  /**
   * Toast UI

@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Collection = require('../../base/collection');
 var Row = require('./row');
 

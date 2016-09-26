@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
 var ToolbarModel = require('./toolbar');

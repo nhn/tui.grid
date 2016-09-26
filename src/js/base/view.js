@@ -4,6 +4,9 @@
  */
 'use strict';
 
+var _ = require('underscore');
+var Backbone = require('backbone');
+
 var common = require('./common');
 
 /**

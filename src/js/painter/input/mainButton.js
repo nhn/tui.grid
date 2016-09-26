@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Painter = require('../../base/painter');
 var classNameConst = require('../../common/classNameConst');
 

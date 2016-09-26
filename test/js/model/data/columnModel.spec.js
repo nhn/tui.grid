@@ -1,6 +1,7 @@
 'use strict';
 
 var ColumnModelData = require('model/data/columnModel');
+var _ = require('underscore');
 
 describe('data.columnModel', function() {
     var columnModelInstance,
@@ -690,7 +691,8 @@ describe('data.columnModel', function() {
                     'column0': sampleColumnModelList[0].relationList,
                     'column2': sampleColumnModelList[2].relationList
                 };
-            expect(relationListMap).toEqual(expectResult);
+
+            expect(_.isEqual(relationListMap, expectResult)).toBe(true);
         });
 
         it('columnFixCount가 저장 되었는지 확인한다.', function() {
@@ -711,7 +713,7 @@ describe('data.columnModel', function() {
                         columnName: 'column4'
                     }
                 ];
-            expect(visibleList).toEqual(expectResult);
+            expect(_.isEqual(visibleList, expectResult)).toBe(true);
         });
 
         it('컬럼모델의 "isHidden"속성이 동적으로 변경되는지 확인한다.', function() {

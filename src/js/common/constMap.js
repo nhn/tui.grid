@@ -4,6 +4,8 @@
 */
 'use strict';
 
+var _ = require('underscore');
+
 var keyCode = {
     TAB: 9,
     ENTER: 13,

@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var View = require('../base/view');
 var stateConst = require('../common/constMap').renderState;
 var classNameConst = require('../common/classNameConst');

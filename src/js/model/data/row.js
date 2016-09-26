@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Model = require('../../base/model');
 var ExtraDataManager = require('./extraDataManager');
 var util = require('../../common/util');

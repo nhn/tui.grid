@@ -1,6 +1,7 @@
 'use strict';
 
-var istanbul = require('browserify-istanbul');
+// var istanbul = require('browserify-istanbul');
+var path = require('path');
 
 module.exports = function(config) {
     var webdriverConfig = {
@@ -17,10 +18,17 @@ module.exports = function(config) {
         browserDisconnectTimeout: 60000,
         browserNoActivityTimeout: 60000,
 
+        plugins: [
+            'karma-jasmine',
+            'karma-webpack',
+            'karma-sourcemap-loader',
+            'karma-chrome-launcher',
+            'karma-webdriver-launcher'
+        ],
+
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: [
-            'browserify',
             'jasmine'
         ],
 
@@ -41,8 +49,8 @@ module.exports = function(config) {
             {pattern: 'build/grid.css', included: false},
             {pattern: 'images/*', included: false},
 
-            'src/js/**/*.js',
-            'test/**/*.spec.js'
+            'src/js/grid.js',
+            'test/js/index.js'
         ],
 
         // list of files to exclude
@@ -51,26 +59,38 @@ module.exports = function(config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            'src/js/**/*.js': ['browserify'],
-            'test/**/*.spec.js': ['browserify']
+            'src/js/grid.js': ['webpack', 'sourcemap'],
+            'test/js/index.js': ['webpack', 'sourcemap']
         },
 
-        browserify: {
-            paths: ['src/js/'],
-            debug: true,
-            transform: [istanbul({
-                ignore: ['test/**/*'],
-                defaultIgnore: true
-            })]
+        webpack: {
+            devtool: 'inline-source-map',
+            resolve: {
+                root: [path.resolve('./src/js')]
+            },
+            module: {
+                loaders: [{
+                    test: /\.(png|gif)$/,
+                    loader: 'file-loader?name=images/[name].[ext]'
+                }, {
+                    test: /\.styl$/,
+                    loader: 'css-loader!stylus-loader?paths=src/css/'
+                }]
+            },
+            externals: {
+                'jquery': '$',
+                'backbone': 'Backbone',
+                'underscore': '_'
+            }
         },
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: [
-            'dots',
-            'coverage',
-            'junit'
+            'dots'
+            // 'coverage',
+            // 'junit'
         ],
 
         // optionally, configure the reporter

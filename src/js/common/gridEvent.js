@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 /**
  * Event class for public event of Grid
  * @module common/gridEvent

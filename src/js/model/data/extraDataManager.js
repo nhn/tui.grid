@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row

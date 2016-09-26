@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Renderer = require('./renderer');
 var util = require('../common/util');
 

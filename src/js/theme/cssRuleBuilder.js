@@ -4,6 +4,8 @@
 */
 'use strict';
 
+var _ = require('underscore');
+
 /**
  * create css rule string and returns it
  * @param {String} selector - css selector
