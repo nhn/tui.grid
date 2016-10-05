@@ -44,7 +44,8 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
         this.beforeRender();
         this._addChildren([
             factory.createHeader(this.whichSide),
-            factory.createBody(this.whichSide)
+            factory.createBody(this.whichSide),
+            factory.createFooter(this.whichSide)
         ]);
         this.$el.append(this._renderChildren());
         this.afterRender();

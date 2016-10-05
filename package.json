@@ -7,9 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "start": "node test/server",
-    "test": "karma start karma.conf.local.js",
-    "test-all": "karma start karma.conf.js",
+    "dev": "webpack-dev-server",
+    "test:dev": "karma start karma.conf.local.js",
+    "test": "karma start karma.conf.js",
     "docs": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json"
   },
   "repository": {

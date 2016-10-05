@@ -40,7 +40,8 @@ function develop() {
     return {
         entry: ENTRY_PATH,
         output: {
-            path: path.join(__dirname, 'build'),
+            path: path.resolve(__dirname, 'build'),
+            publicPath: '/dev/',
             filename: 'grid.js'
         },
         plugins: [
