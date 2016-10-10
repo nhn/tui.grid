@@ -82,13 +82,16 @@ var grid = new tui.Grid({
         }
 	  ],
     footer: {
-        c1: {
-            template: '합계: {{sum}}</div>',
-            aggregates: ['sum', 'average'],
-        },
-        c2: {
-            template: '합계:',
-            aggregates: ['average']
+        height: 30,
+        columnSummary: {
+            c1: {
+                template: '합계: {{sum}}</div>',
+                types: ['sum', 'average'],
+            },
+            c2: {
+                template: '합계:',
+                types: ['average']
+            }
         }
     }
 });

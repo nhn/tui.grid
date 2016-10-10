@@ -54,6 +54,7 @@ function develop() {
         externals: externals,
         devtool: '#inline-source-map',
         devServer: {
+            inline: true,
             host: '0.0.0.0',
             port: 8000
         }

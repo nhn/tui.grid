@@ -68,6 +68,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         headerHeight: 0,
         bodyHeight: 0,
+        footerHeight: 0,
 
         toolbarHeight: 0,
         resizeHandleHeight: 0,
@@ -873,7 +874,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcRealBodyHeight: function(height) {
-        return height - this.get('headerHeight') - this.get('toolbarHeight') - TABLE_BORDER_WIDTH;
+        var extraHeight = this.get('headerHeight') + this.get('footerHeight') +
+            this.get('toolbarHeight') + TABLE_BORDER_WIDTH;
+
+        return height - extraHeight;
     },
 
     /**

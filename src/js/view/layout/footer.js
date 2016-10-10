@@ -1,5 +1,5 @@
 /**
- * @fileoverview Header 관련
+ * @fileoverview Footer 관련
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -25,29 +25,40 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     className: classNameConst.FOOTER_AREA,
 
     /**
-     * 전체 template
+     * template
      */
     template: _.template(
-        '<table class="<%=className%>" style="height:<%=height%>">' +
+        '<table class="<%=className%>" style="height:<%=height%>px">' +
             '<tbody><%=tbody%></tbody>' +
         '</table>'
     ),
 
     /**
-     * <th> 템플릿
+     * Template for <th>
      */
     templateHeader: _.template(
         '<th <%=attrColumnName%>="<%=columnName%>" ' +
             'class="<%=className%>" ' +
+            'style="width:<%=width%>px"' +
         '>' +
         '<%=value%>' +
         '</th>'
     ),
 
+    /**
+     * Render
+     * @returns {object}
+     */
     render: function() {
-        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
-        var tbodyHTML = _.reduce(columnModelList, function(memo, column, index) {
+        var columnModelList, columnWidthList, tbodyHTML;
+
+        if (!this.dimensionModel.get('footerHeight')) {
+            return this;
+        }
+
+        columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+        columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        tbodyHTML = _.reduce(columnModelList, function(memo, column, index) {
             return memo + this.templateHeader({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: column.columnName,
@@ -59,7 +70,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 
         this.$el.html(this.template({
             tbody: tbodyHTML,
-            height: 30,
+            height: this.dimensionModel.get('footerHeight'),
             className: classNameConst.TABLE
         }));
 

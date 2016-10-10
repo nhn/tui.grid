@@ -52,11 +52,17 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
      * @override
      */
     afterRender: function() {
+        var $leftBottom;
+
         if (!this.dimensionModel.get('scrollX')) {
             return;
         }
 
-        this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM));
+        $leftBottom = $('<div>').addClass(classNameConst.SCROLLBAR_LEFT_BOTTOM);
+        //if (true) {
+        $leftBottom.addClass(classNameConst.SCROLLBAR_WITH_FOOTER);
+        //}
+        this.$el.append($leftBottom);
     }
 });
 
