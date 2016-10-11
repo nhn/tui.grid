@@ -33,7 +33,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this._createChildViews();
 
-        this.listenTo(this.dimensionModel, 'setSize', this._onSetSize);
+        this.listenTo(this.dimensionModel, 'setWidth', this._onSetWidth);
         $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
         this.__$el = this.$el.clone();
@@ -91,7 +91,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * Event handler for 'setSize' event on Dimension
      * @private
      */
-    _onSetSize: function() {
+    _onSetWidth: function() {
         this.$el.width(this.dimensionModel.get('width'));
     },
 

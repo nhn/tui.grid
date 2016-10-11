@@ -19,10 +19,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     initialize: function(options) {
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
+        this.renderModel = options.renderModel;
         this.whichSide = options.whichSide;
+
+        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
 
-    className: classNameConst.FOOTER_AREA,
+    className: classNameConst.FOOT_AREA,
 
     /**
      * template
@@ -46,6 +49,18 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     ),
 
     /**
+     * Sync scroll-left position with the value of body
+     * @param {Object} model - render model
+     * @param {Number} value - scrollLeft value
+     * @private
+     */
+    _onScrollLeftChange: function(model, value) {
+        if (this.whichSide === 'R') {
+            this.el.scrollLeft = value;
+        }
+    },
+
+    /**
      * Render
      * @returns {object}
      */
@@ -62,9 +77,9 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
             return memo + this.templateHeader({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: column.columnName,
-                className: '',
+                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
                 width: columnWidthList[index],
-                value: 0
+                value: this.whichSide === 'R' ? '합계: 123' : ''
             });
         }, '', this);
 

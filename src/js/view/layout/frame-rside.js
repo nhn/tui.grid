@@ -90,7 +90,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      */
     afterRender: function() {
         var dimensionModel = this.dimensionModel,
-            $space, $scrollBorder, $scrollCorner,
+            $space, $scrollBorder,
             headerHeight;
 
         if (!dimensionModel.get('scrollY')) {
@@ -104,7 +104,6 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         // Empty DIV for showing a left-border of vertical scrollbar in the body area
         $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
 
-
         $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
         $scrollBorder.css('top', headerHeight + 'px');
 
@@ -114,8 +113,8 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
-            $scrollCorner = $('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM);
-            this.$el.append($scrollCorner);
+            this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
+            this.$el.append($('<div>').addClass(classNameConst.FOOT_AREA_RIGHT));
         }
 
         this.$scrollBorder = $scrollBorder;

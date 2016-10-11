@@ -907,11 +907,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     setSize: function(width, height) {
         if (width > 0) {
             this.set('width', width);
+            this.trigger('setWidth', width);
         }
         if (height > 0) {
             this._setHeight(height);
         }
-        this.trigger('setSize');
     },
 
     /**

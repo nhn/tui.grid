@@ -44,7 +44,8 @@ var classNames = {
     RSIDE_AREA: 'rside-area',
     HEAD_AREA: 'head-area',
     BODY_AREA: 'body-area',
-    FOOTER_AREA: 'footer-area',
+    FOOT_AREA: 'foot-area',
+    FOOT_AREA_RIGHT: 'foot-area-right',
 
     // header
     COLUMN_RESIZE_CONTAINER: 'column-resize-container',

@@ -3,9 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<title>그리드 기본 예제</title>
-    <link rel="stylesheet" type="text/css" href="../build/grid.css" />
+    <link rel="stylesheet" type="text/css" href="../dev/grid.css" />
 	<style media="screen">
-	#wrapper {width:100%;}
+	#wrapper {width:600px;}
 	</style>
 </head>
 <body>
@@ -23,7 +23,7 @@
 var grid = new tui.Grid({
     el: $('#grid'),
 	  selectType: 'checkbox',
-	  columnFixCount: 1,
+	  columnFixCount: 0,
 	  headerHeight: 30,
     // singleClickEdit: true,
     toolbar: true,
@@ -44,13 +44,13 @@ var grid = new tui.Grid({
             isRequired: true,
             width: 200,
             editOption: {
-            // useViewMode: false,
-            type: 'text',
-            list: [
-              {text:1, value:1},
-              {text:2, value:2}
-            ]
-          }
+                // useViewMode: false,
+                type: 'text',
+                list: [
+                    {text:1, value:1},
+                    {text:2, value:2}
+                ]
+            }
         },
         {
             title: 'c2',
@@ -77,7 +77,7 @@ var grid = new tui.Grid({
                 list: [
                     {text:1, value:1},
                     {text:2, value:2}
-                ],
+                ]
             }
         }
 	  ],
