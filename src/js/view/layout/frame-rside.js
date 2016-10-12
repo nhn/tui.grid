@@ -117,8 +117,11 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         }
 
         // Empty DIV for filling gary color in the right side of the footer.
-        if (dimensionModel.get('scrollY')) {
-            this.$el.append($('<div>').addClass(classNameConst.FOOT_AREA_RIGHT).css('height', footerHeight));
+        if (footerHeight && dimensionModel.get('scrollY')) {
+            this.$el.append($('<div>')
+                .addClass(classNameConst.FOOT_AREA_RIGHT)
+                .css('height', footerHeight - CELL_BORDER_WIDTH)
+            );
         }
 
         this.$scrollBorder = $scrollBorder;
