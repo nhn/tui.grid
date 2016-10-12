@@ -48,15 +48,6 @@ describe('Header', function() {
             expect(header.$el.height()).toEqual(19);
         });
 
-        it('if whichSide is \'R\' and scrollY is false, add \'no_scroll\' class to element', function() {
-            header.whichSide = 'R';
-            modelManager.dimensionModel.set({
-                scrollY: false
-            });
-            header.render();
-            expect(header.$el).toHaveClass(classNameConst.NO_SCROLL_Y);
-        });
-
         it('columnModel의 값에 따라 colgroup을 생성한다.', function() {
             var $colgroup, $cols;
 

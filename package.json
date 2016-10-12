@@ -45,6 +45,7 @@
     "karma-webdriver-launcher": "git://github.com/everedifice/karma-webdriver-launcher.git",
     "karma-webpack": "^1.8.0",
     "phantomjs": "^1.9.18",
+    "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
     "vinyl-source-stream": "^1.1.0",

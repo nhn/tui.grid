@@ -31,6 +31,7 @@ var grid = new tui.Grid({
     resizeHandle: {},
     showDummyRows: true,
 	  displayRowCount: 10,
+    scrollX: false,
 	  minimumColumnWidth: 100,
     pagination: true,
     columnModelList: [
@@ -82,7 +83,7 @@ var grid = new tui.Grid({
         }
 	  ],
     footer: {
-        height: 30,
+        height: 0,
         columnSummary: {
             c1: {
                 template: '합계: {{sum}}</div>',

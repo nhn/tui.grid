@@ -28,7 +28,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     className: classNameConst.FOOT_AREA,
 
     events: {
-        scroll: '_onScroll'
+        scroll: '_onScrollView'
     },
 
     /**
@@ -52,8 +52,11 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         '</th>'
     ),
 
-    _onScroll: function(event) {
-        console.log(event.target.scrollLeft);
+    /**
+     * Event handler for 'scroll' event
+     * @param {UIEvent} event - scroll event
+     */
+    _onScrollView: function(event) {
         if (this.whichSide === 'R') {
             this.renderModel.set('scrollLeft', event.target.scrollLeft);
         }

@@ -8,7 +8,6 @@ var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
 
-
 /**
  * right side frame class
  * @module view/layout/frame-rside
@@ -71,7 +70,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         if (this.$scrollBorder) {
             dimensionModel = this.dimensionModel;
             height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
-            this.$scrollBorder.height(height + 30);
+            this.$scrollBorder.height(height);
         }
     },
 
@@ -89,14 +88,15 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @override
      */
     afterRender: function() {
-        var dimensionModel = this.dimensionModel,
-            $space, $scrollBorder,
-            headerHeight;
+        var dimensionModel = this.dimensionModel;
+        var headerHeight, footerHeight;
+        var $space, $scrollBorder;
 
         if (!dimensionModel.get('scrollY')) {
             return;
         }
         headerHeight = dimensionModel.get('headerHeight');
+        footerHeight = dimensionModel.get('footerHeight');
 
         // Empty DIV for hiding scrollbar in the header area
         $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
@@ -114,7 +114,11 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         //  casues to be stuck in the same position in Chrome)
         if (dimensionModel.get('scrollX')) {
             this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
-            this.$el.append($('<div>').addClass(classNameConst.FOOT_AREA_RIGHT));
+        }
+
+        // Empty DIV for filling gary color in the right side of the footer.
+        if (dimensionModel.get('scrollY')) {
+            this.$el.append($('<div>').addClass(classNameConst.FOOT_AREA_RIGHT).css('height', footerHeight));
         }
 
         this.$scrollBorder = $scrollBorder;

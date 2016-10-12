@@ -18,7 +18,8 @@ describe('theme/styleGenerator: ', function() {
             '.' + classNameConst.HEAD_AREA + '{border-color:green}',
             '.' + classNameConst.BORDER_LINE + '{background-color:green}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{border-color:green}',
-            '.' + classNameConst.SCROLLBAR_BORDER + '{background-color:green}'
+            '.' + classNameConst.SCROLLBAR_BORDER + '{background-color:green}',
+            '.' + classNameConst.FOOT_AREA_RIGHT + '{border-color:green}'
         ].join('');
 
         expect(styleGen.grid(options)).toBe(expected);
@@ -47,7 +48,8 @@ describe('theme/styleGenerator: ', function() {
             builder.createIEScrollbarRule('.' + classNameConst.CONTAINER, options).build(),
             '.' + classNameConst.SCROLLBAR_RIGHT_BOTTOM + '{background-color:white}',
             '.' + classNameConst.SCROLLBAR_LEFT_BOTTOM + '{background-color:white}',
-            '.' + classNameConst.SCROLLBAR_HEAD + '{background-color:white}'
+            '.' + classNameConst.SCROLLBAR_HEAD + '{background-color:white}',
+            '.' + classNameConst.FOOT_AREA_RIGHT + '{background-color:white}'
         ].join('');
 
         expect(styleGen.scrollbar(options)).toBe(expected);

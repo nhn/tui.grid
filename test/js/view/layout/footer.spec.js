@@ -4,7 +4,7 @@ var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ViewFactory = require('view/factory');
 
-fdescribe('Footer', function() {
+describe('Footer', function() {
     var footer, modelManager, viewFactory;
 
     beforeEach(function() {

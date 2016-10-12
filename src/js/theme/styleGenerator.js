@@ -57,6 +57,7 @@ module.exports = {
         var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
         var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
         var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
+        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).border(options.border);
 
         return builder.buildAll([
             containerRule,
@@ -65,7 +66,8 @@ module.exports = {
             headRule,
             borderLineRule,
             scrollHeadRule,
-            scrollBorderRule
+            scrollBorderRule,
+            footerRightRule
         ]);
     },
 
@@ -80,12 +82,14 @@ module.exports = {
         var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
         var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
         var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
+        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).bg(options.background);
 
         return builder.buildAll(webkitScrollbarRules.concat([
             ieScrollbarRule,
             rightBottomRule,
             leftBottomRule,
-            scrollHeadRule
+            scrollHeadRule,
+            footerRightRule
         ]));
     },
 

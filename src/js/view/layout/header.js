@@ -437,10 +437,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     render: function() {
         this._destroyChildren();
 
-        if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
-            this.$el.addClass(classNameConst.NO_SCROLL_Y);
-        }
-
         this.$el.css({
             height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
         }).html(this.template({
