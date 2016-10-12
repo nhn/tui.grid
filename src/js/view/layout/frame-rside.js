@@ -71,7 +71,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
         if (this.$scrollBorder) {
             dimensionModel = this.dimensionModel;
             height = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
-            this.$scrollBorder.height(height);
+            this.$scrollBorder.height(height + 30);
         }
     },
 

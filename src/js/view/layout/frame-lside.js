@@ -63,7 +63,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         footerHeight = dimensionModel.get('footerHeight');
 
         if (footerHeight) {
-            $leftBottom.css('bottom', footerHeight);
+            // $leftBottom.css('bottom', footerHeight);
         }
         this.$el.append($leftBottom);
     }

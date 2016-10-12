@@ -27,6 +27,10 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 
     className: classNameConst.FOOT_AREA,
 
+    events: {
+        scroll: '_onScroll'
+    },
+
     /**
      * template
      */
@@ -47,6 +51,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         '<%=value%>' +
         '</th>'
     ),
+
+    _onScroll: function(event) {
+        console.log(event.target.scrollLeft);
+        if (this.whichSide === 'R') {
+            this.renderModel.set('scrollLeft', event.target.scrollLeft);
+        }
+    },
 
     /**
      * Sync scroll-left position with the value of body

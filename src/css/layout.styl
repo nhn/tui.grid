@@ -65,6 +65,12 @@
         .selection-layer
             left 1px
 
+    .foot-area
+        position relative
+        margin-top -18px
+        overflow-y hidden
+        overflow-x scroll
+
 .rside-area
     display none
     overflow hidden
@@ -81,18 +87,20 @@
         overflow scroll
 
     .foot-area
+        margin-top -18px
         position relative
         margin-right 17px
-        overflow hidden
+        overflow-y hidden
+        overflow-x scroll
         
 .foot-area-right
     position absolute
     right 0
-    bottom 0
+    bottom 17px  
     width 17px
-    height 29px
-    border-top 1px solid #ccc
-    border-left 1px solid #ccc
+    height 28px
+    border 1px solid #ccc
+    border-right 0
     background #eee
 
 .body-container
@@ -120,7 +128,7 @@
 
 .scrollbar-right-bottom
     position absolute
-    bottom 30px
+    bottom 0
     right 0
     width 17px
     height 17px
