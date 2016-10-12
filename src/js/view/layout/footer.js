@@ -22,7 +22,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         this.renderModel = options.renderModel;
         this.whichSide = options.whichSide;
 
-        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
+        this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
     },
 
     className: classNameConst.FOOT_AREA,
@@ -68,7 +68,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {Number} value - scrollLeft value
      * @private
      */
-    _onScrollLeftChange: function(model, value) {
+    _onChangeScrollLeft: function(model, value) {
         if (this.whichSide === 'R') {
             this.el.scrollLeft = value;
         }
@@ -79,14 +79,16 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @returns {object}
      */
     render: function() {
+        var footerHeight = this.dimensionModel.get('footerHeight');
         var columnModelList, columnWidthList, tbodyHTML;
 
-        if (!this.dimensionModel.get('footerHeight')) {
+        if (!footerHeight) {
             return this;
         }
 
         columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
         columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+
         tbodyHTML = _.reduce(columnModelList, function(memo, column, index) {
             return memo + this.templateHeader({
                 attrColumnName: ATTR_COLUMN_NAME,
@@ -99,7 +101,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 
         this.$el.html(this.template({
             tbody: tbodyHTML,
-            height: this.dimensionModel.get('footerHeight'),
+            height: footerHeight,
             className: classNameConst.TABLE
         }));
 

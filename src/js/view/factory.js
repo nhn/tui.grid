@@ -177,7 +177,7 @@ var ViewFactory = tui.util.defineClass({
     /**
      * Creates footer view and returns it.
      * @param {string} whichSide - 'L'(left) or 'R'(right)
-     * @returns {objeject}
+     * @returns {object}
      */
     createFooter: function(whichSide) {
         return new FooterView({
