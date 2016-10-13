@@ -10,7 +10,7 @@
 </head>
 <body>
 <div id="wrapper">
-	<div id="grid"></div>
+	  <div id="grid"></div>
 </div>
 </body>
 <script src="../lib/jquery/jquery.js"></script>
@@ -22,12 +22,9 @@
 <script>
 var grid = new tui.Grid({
     el: $('#grid'),
-	  selectType: 'checkbox',
-	  columnFixCount: 0,
+    selectType: 'checkbox',
+    columnFixCount: 0,
 	  headerHeight: 30,
-    // singleClickEdit: true,
-    toolbar: true,
-    scrollX: false,
     resizeHandle: {},
     showDummyRows: true,
 	  displayRowCount: 10,
@@ -82,7 +79,7 @@ var grid = new tui.Grid({
         }
 	  ],
     footer: {
-        height: 0,
+        height: 30,
         columnSummary: {
             c1: {
                 template: '합계: {{sum}}</div>',
