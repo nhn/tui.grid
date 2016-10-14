@@ -8,7 +8,8 @@ describe('Footer', function() {
     var footer, modelManager, viewFactory;
 
     beforeEach(function() {
-        modelManager = new ModelManager(null, new DomState($('<div>')));
+        var footerOption = {};
+        modelManager = new ModelManager({footer: footerOption}, new DomState($('<div>')));
         viewFactory = new ViewFactory({
             modelManager: modelManager
         });

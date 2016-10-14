@@ -17,11 +17,16 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {object} options - options
      */
     initialize: function(options) {
+        this.whichSide = options.whichSide;
+
+        // models
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
         this.renderModel = options.renderModel;
-        this.whichSide = options.whichSide;
+        this.summaryModel = options.summaryModel;
 
+        // event
+        this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
     },
 
@@ -74,6 +79,12 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         }
     },
 
+    _onChangeSummaryValue: function(columnName, valueMap) {
+        var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
+
+        $th.html(valueMap.sum);
+    },
+
     /**
      * Render
      * @returns {object}
@@ -90,12 +101,14 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
 
         tbodyHTML = _.reduce(columnModelList, function(memo, column, index) {
+            var summaryValueMap = this.summaryModel.getValue(column.columnName);
+
             return memo + this.templateHeader({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: column.columnName,
                 className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
                 width: columnWidthList[index],
-                value: this.whichSide === 'R' ? '합계: 123' : ''
+                value: this.whichSide === 'R' ? summaryValueMap : ''
             });
         }, '', this);
 
