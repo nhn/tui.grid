@@ -23,20 +23,37 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         this.columnSummaries = options.columnSummaries;
         this.summaryMap = {};
 
-        this._initSummaryMap();
+        this._resetSummaryMap();
+
+        this.listenTo(this.dataModel, 'add remove change reset', this._onChangeDataModel);
     },
 
     /**
      * Initialize summary map of columns specified in 'columnSummries' property.
      * @private
      */
-    _initSummaryMap: function() {
+    _resetSummaryMap: function() {
         _.each(this.columnSummaries, function(summaryTypes, columnName) {
-            var values = this.dataModel.getColumnValues(columnName);
-            var resultMap = this._calculate(values);
-
-            this.summaryMap[columnName] = _.pick(resultMap, summaryTypes);
+            this._resetColumnSummaryValue(columnName, summaryTypes);
         }, this);
+    },
+
+    /**
+     * Reset summary values of given columnName
+     * @param {string} columnName - column name
+     * @param {Array.<string>} summaryTypes - summary types
+     * @private
+     */
+    _resetColumnSummaryValue: function(columnName, summaryTypes) {
+        var values = this.dataModel.getColumnValues(columnName);
+        var resultMap = this._calculate(values);
+        var pickedResultMap = _.pick(resultMap, summaryTypes);
+
+        this.summaryMap[columnName] = pickedResultMap;
+        this.trigger('change', {
+            columnName: columnName,
+            valueMap: pickedResultMap
+        });
     },
 
     /**
@@ -72,6 +89,25 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         resultMap[typeConst.CNT] = count;
 
         return resultMap;
+    },
+
+    /**
+     * Event handler for reset summary value when dataModel is changed
+     * @param {module:model/Row} [model] - Changed(Added) Row. Undefined when Deleted
+     * @private
+     */
+    _onChangeDataModel: function(model) {
+        // for 'change' event : reset only changed column
+        if (model && model.changed) {
+            _.each(model.changed, function(value, columnName) {
+                var types = this.columnSummaries[columnName];
+                if (types) {
+                    this._resetColumnSummaryValue(columnName, types);
+                }
+            }, this);
+        } else {
+            this._resetSummaryMap();
+        }
     },
 
     /**

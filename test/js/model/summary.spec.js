@@ -67,7 +67,7 @@ fdescribe('model/summary', function() {
         });
 
         it('Treat every falsy value as a number 0', function() {
-            dataModel.set([
+            dataModel.setRowList([
                 {c1: 1},
                 {c2: 1},
                 {c1: null, c2: ''},
@@ -84,6 +84,92 @@ fdescribe('model/summary', function() {
 
             expect(summary.getValue('c1', 'sum')).toBe(1);
             expect(summary.getValue('c2', 'sum')).toBe(1);
+        });
+    });
+
+    describe('Should update summary values when dataModel is changed - ', function() {
+        beforeEach(function() {
+            dataModel.setRowList([
+                {c1: 1, c2: 1},
+                {c1: 2, c2: 2}
+            ]);
+            summary = new Summary(null, {
+                dataModel: dataModel,
+                columnSummaries: {
+                    c1: [typeConst.SUM],
+                    c2: [typeConst.SUM]
+                }
+            });
+        });
+
+        it('Add', function() {
+            dataModel.append({c1: 3, c2: 3});
+
+            expect(summary.getValue('c1', 'sum')).toBe(6);
+            expect(summary.getValue('c2', 'sum')).toBe(6);
+        });
+
+        it('Remove', function() {
+            dataModel.removeRow(1);
+
+            expect(summary.getValue('c1', 'sum')).toBe(1);
+            expect(summary.getValue('c2', 'sum')).toBe(1);
+        });
+
+        it('Update', function() {
+            dataModel.setValue(1, 'c1', 3);
+
+            expect(summary.getValue('c1', 'sum')).toBe(4);
+        });
+
+        it('Reset', function() {
+            dataModel.setRowList([
+                {c1: 3, c2: 4},
+                {c1: 3, c2: 4}
+            ]);
+
+            expect(summary.getValue('c1', 'sum')).toBe(6);
+            expect(summary.getValue('c2', 'sum')).toBe(8);
+        });
+    });
+
+    describe('When summary map is chnaged', function() {
+        var changeSpy;
+
+        beforeEach(function() {
+            dataModel.setRowList([
+                {c1: 1, c2: 1},
+                {c1: 2, c2: 2}
+            ]);
+            summary = new Summary(null, {
+                dataModel: dataModel,
+                columnSummaries: {
+                    c1: [typeConst.SUM],
+                    c2: [typeConst.SUM]
+                }
+            });
+            changeSpy = jasmine.createSpy();
+            summary.on('change', changeSpy);
+        });
+
+        it('change event should be triggered for each column', function() {
+            dataModel.append({c1: 3, c2: 3});
+
+            expect(changeSpy).toHaveBeenCalledWith({
+                columnName: 'c1',
+                valueMap: {sum: 6}
+            });
+            expect(changeSpy).toHaveBeenCalledWith({
+                columnName: 'c2',
+                valueMap: {sum: 6}
+            });
+        });
+
+        it('change event should be triggered only for changed column', function() {
+            dataModel.setValue(0, 'c1', 0);
+
+            expect(changeSpy.calls.count()).toBe(1);
+            expect(changeSpy.calls.argsFor(0)[0].columnName).toBe('c1');
         });
     });
 });
