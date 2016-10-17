@@ -192,18 +192,20 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of summary model and returns it.
-     * @param  {Object} options - Options
+     * @param  {Object} footerOptions - footer options
      * @returns {module:model/summary} - A new instance
      * @private
      */
-    _createSummaryModel: function(options) {
-        if (!options) {
+    _createSummaryModel: function(footerOptions) {
+        if (!footerOptions || !footerOptions.columnSummary) {
             return null;
         }
 
         return new SummaryModel(null, {
             dataModel: this.dataModel,
-            columnSummary: options.columnSummary
+            columnSummaryTypes: _.mapObject(footerOptions.columnSummary, function(value) {
+                return value.summaryTypes;
+            })
         });
     },
 

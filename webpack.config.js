@@ -51,6 +51,9 @@ function develop() {
             preLoaders: [eslintLoader],
             loaders: [fileLoader, stylusLoader]
         },
+        eslint: {
+            quiet: true
+        },
         externals: externals,
         devtool: '#inline-source-map',
         devServer: {

@@ -20,7 +20,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      */
     initialize: function(attr, options) {
         this.dataModel = options.dataModel;
-        this.columnSummary = options.columnSummary || {};
+        this.columnSummaryTypes = options.columnSummaryTypes || {};
 
         this.summaryMap = {};
         this._resetSummaryMap();
@@ -33,7 +33,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @private
      */
     _resetSummaryMap: function() {
-        _.each(this.columnSummary, function(summaryTypes, columnName) {
+        _.each(this.columnSummaryTypes, function(summaryTypes, columnName) {
             this._resetColumnSummaryValue(columnName, summaryTypes);
         }, this);
     },
@@ -85,7 +85,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         resultMap[typeConst.SUM] = sum;
         resultMap[typeConst.MIN] = min;
         resultMap[typeConst.MAX] = max;
-        resultMap[typeConst.AVG] = sum / count;
+        resultMap[typeConst.AVG] = count ? (sum / count) : 0;
         resultMap[typeConst.CNT] = count;
 
         return resultMap;
@@ -100,7 +100,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         // for 'change' event : reset only changed column
         if (model && model.changed) {
             _.each(model.changed, function(value, columnName) {
-                var types = this.columnSummary[columnName];
+                var types = this.columnSummaryTypes[columnName];
                 if (types) {
                     this._resetColumnSummaryValue(columnName, types);
                 }

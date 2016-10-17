@@ -77,12 +77,22 @@ var grid = new tui.Grid({
                 ]
             }
         }
-	  ],
+	],
     footer: {
         height: 30,
         columnSummary: {
-            c1: ['sum', 'avg'],
-            c2: ['avg']
+            c1: {
+                summaryTypes: ['sum', 'avg'],
+                formatter: function(valueMap) {
+                    return '합계: ' + valueMap.sum + ', 평균: ' + valueMap.avg;
+                }
+            },
+            c2: {
+                summaryTypes: ['sum', 'avg'],
+                formatter: function() {
+                    return '합계: ' + valueMap.sum + ', 평균: ' + valueMap.avg;
+                }
+            }
         }
     }
 });

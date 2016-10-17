@@ -180,9 +180,6 @@ var ViewFactory = tui.util.defineClass({
      * @returns {object}
      */
     createFooter: function(whichSide) {
-        if (!this.modelManager.summaryModel) {
-            return null;
-        }
         return new FooterView({
             whichSide: whichSide,
             columnModel: this.modelManager.columnModel,

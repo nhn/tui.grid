@@ -33,7 +33,7 @@ describe('model/summary', function() {
         it('sum/avg/count/min/max', function() {
             summary = new Summary(null, {
                 dataModel: dataModel,
-                columnSummary: {
+                columnSummaryTypes: {
                     c1: [
                         typeConst.SUM,
                         typeConst.MIN,
@@ -54,7 +54,7 @@ describe('model/summary', function() {
         it('If the type is not specified, return null', function() {
             summary = new Summary(null, {
                 dataModel: dataModel,
-                columnSummary: {
+                columnSummaryTypes: {
                     c1: [typeConst.CNT]
                 }
             });
@@ -76,7 +76,7 @@ describe('model/summary', function() {
 
             summary = new Summary(null, {
                 dataModel: dataModel,
-                columnSummary: {
+                columnSummaryTypes: {
                     c1: [typeConst.SUM],
                     c2: [typeConst.SUM]
                 }
@@ -95,7 +95,7 @@ describe('model/summary', function() {
             ]);
             summary = new Summary(null, {
                 dataModel: dataModel,
-                columnSummary: {
+                columnSummaryTypes: {
                     c1: [typeConst.SUM],
                     c2: [typeConst.SUM]
                 }
@@ -143,7 +143,7 @@ describe('model/summary', function() {
             ]);
             summary = new Summary(null, {
                 dataModel: dataModel,
-                columnSummary: {
+                columnSummaryTypes: {
                     c1: [typeConst.SUM],
                     c2: [typeConst.SUM]
                 }

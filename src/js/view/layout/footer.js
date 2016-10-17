@@ -25,9 +25,11 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         this.renderModel = options.renderModel;
         this.summaryModel = options.summaryModel;
 
-        // event
-        this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
+        // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
+        if (this.summaryModel) {
+            this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
+        }
     },
 
     className: classNameConst.FOOT_AREA,
@@ -79,10 +81,55 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         }
     },
 
+    /**
+     * Refresh <th> tag whenever summary value is changed.
+     * @param {string} columnName - column name
+     * @param {object} valueMap - value map
+     * @private
+     */
     _onChangeSummaryValue: function(columnName, valueMap) {
         var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
-        $th.html(valueMap.sum);
+        $th.html(this._generateValueHTML(valueMap));
+    },
+
+    /**
+     * Generates a HTML string of column summary value and returns it.
+     * @param {object} valueMap - value map
+     * @returns {string} HTML string
+     * @private
+     */
+    _generateValueHTML: function(valueMap) {
+        if (!valueMap) {
+            return '';
+        }
+        return _.values(valueMap).join(', ');
+    },
+
+    /**
+     * Generates a HTML string of <tbody> and returns it
+     * @returns {string} - HTML String
+     */
+    _generateTbodyHTML: function() {
+        var summaryModel = this.summaryModel;
+        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+
+        return _.reduce(columnModelList, function(memo, column, index) {
+            var valueMap;
+
+            if (summaryModel) {
+                valueMap = summaryModel.getValue(column.columnName);
+            }
+
+            return memo + this.templateHeader({
+                attrColumnName: ATTR_COLUMN_NAME,
+                columnName: column.columnName,
+                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
+                width: columnWidthList[index],
+                value: this._generateValueHTML(valueMap)
+            });
+        }, '', this);
     },
 
     /**
@@ -91,31 +138,15 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      */
     render: function() {
         var footerHeight = this.dimensionModel.get('footerHeight');
-        var columnModelList, columnWidthList, tbodyHTML;
 
         if (!footerHeight) {
             return this;
         }
 
-        columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-        columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
-
-        tbodyHTML = _.reduce(columnModelList, function(memo, column, index) {
-            var summaryValueMap = this.summaryModel.getValue(column.columnName);
-
-            return memo + this.templateHeader({
-                attrColumnName: ATTR_COLUMN_NAME,
-                columnName: column.columnName,
-                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
-                width: columnWidthList[index],
-                value: this.whichSide === 'R' ? summaryValueMap : ''
-            });
-        }, '', this);
-
         this.$el.html(this.template({
-            tbody: tbodyHTML,
+            className: classNameConst.TABLE,
             height: footerHeight,
-            className: classNameConst.TABLE
+            tbody: this._generateTbodyHTML()
         }));
 
         return this;
@@ -123,4 +154,3 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 });
 
 module.exports = Footer;
-
