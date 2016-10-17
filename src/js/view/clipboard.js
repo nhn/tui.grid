@@ -455,9 +455,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                     dataModel.get(rowKey).validateCell(columnName);
                 }
             }
-            this.renderModel.refresh({
-                dataModelChanged: true
-            });
+            this.dataModel.trigger('changeRange', range);
         } else {
             dataModel.del(rowKey, columnName);
         }

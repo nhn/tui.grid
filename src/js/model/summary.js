@@ -25,7 +25,9 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         this.summaryMap = {};
         this._resetSummaryMap();
 
-        this.listenTo(this.dataModel, 'add remove change reset', this._onChangeDataModel);
+        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
+        this.listenTo(this.dataModel, 'change', this._onChangeData);
+        // this.listenTo(this.dataModel, 'changeRange', this._onChangeDataRange);
     },
 
     /**
@@ -96,18 +98,17 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @param {module:model/Row} [model] - Changed(Added) Row. Undefined when Deleted
      * @private
      */
-    _onChangeDataModel: function(model) {
-        // for 'change' event : reset only changed column
-        if (model && model.changed) {
-            _.each(model.changed, function(value, columnName) {
-                var types = this.columnSummaryTypes[columnName];
-                if (types) {
-                    this._resetColumnSummaryValue(columnName, types);
-                }
-            }, this);
-        } else {
-            this._resetSummaryMap();
-        }
+    _onChangeDataLength: function() {
+        this._resetSummaryMap();
+    },
+
+    _onChangeData: function(model) {
+        _.each(model.changed, function(value, columnName) {
+            var types = this.columnSummaryTypes[columnName];
+            if (types) {
+                this._resetColumnSummaryValue(columnName, types);
+            }
+        }, this);
     },
 
     /**

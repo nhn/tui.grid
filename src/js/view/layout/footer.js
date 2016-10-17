@@ -17,6 +17,8 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {object} options - options
      */
     initialize: function(options) {
+        // options
+        this.formatters = options.formatters;
         this.whichSide = options.whichSide;
 
         // models
@@ -90,25 +92,32 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _onChangeSummaryValue: function(columnName, valueMap) {
         var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
-        $th.html(this._generateValueHTML(valueMap));
+        $th.html(this._generateValueHTML(columnName, valueMap));
     },
 
     /**
      * Generates a HTML string of column summary value and returns it.
+     * @param {object} columnName - column name
      * @param {object} valueMap - value map
      * @returns {string} HTML string
      * @private
      */
-    _generateValueHTML: function(valueMap) {
-        if (!valueMap) {
-            return '';
+    _generateValueHTML: function(columnName, valueMap) {
+        var formatter = this.formatters && this.formatters[columnName];
+        var html = '';
+
+        if (_.isFunction(formatter)) {
+            html = formatter(valueMap);
+        } else if (valueMap) {
+            html = _.values(valueMap).join(', ');
         }
-        return _.values(valueMap).join(', ');
+        return html;
     },
 
     /**
      * Generates a HTML string of <tbody> and returns it
      * @returns {string} - HTML String
+     * @private
      */
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
@@ -116,6 +125,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
 
         return _.reduce(columnModelList, function(memo, column, index) {
+            var columnName = column.columnName;
             var valueMap;
 
             if (summaryModel) {
@@ -124,10 +134,10 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 
             return memo + this.templateHeader({
                 attrColumnName: ATTR_COLUMN_NAME,
-                columnName: column.columnName,
+                columnName: columnName,
                 className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
                 width: columnWidthList[index],
-                value: this._generateValueHTML(valueMap)
+                value: this._generateValueHTML(columnName, valueMap)
             });
         }, '', this);
     },
@@ -139,15 +149,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     render: function() {
         var footerHeight = this.dimensionModel.get('footerHeight');
 
-        if (!footerHeight) {
-            return this;
+        if (footerHeight) {
+            this.$el.html(this.template({
+                className: classNameConst.TABLE,
+                height: footerHeight,
+                tbody: this._generateTbodyHTML()
+            }));
         }
-
-        this.$el.html(this.template({
-            className: classNameConst.TABLE,
-            height: footerHeight,
-            tbody: this._generateTbodyHTML()
-        }));
 
         return this;
     }
