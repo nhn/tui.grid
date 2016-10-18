@@ -5,7 +5,7 @@ var RowListData = require('model/data/rowList');
 var Summary = require('model/summary');
 var typeConst = require('common/constMap').summaryType;
 
-function create(data, columnSummaryTypes) {
+function create(data, summaryTypeMap, useAutoCalculation) {
     var columnModel = new ColumnModelData({
         columnModelList: [
             {
@@ -30,7 +30,8 @@ function create(data, columnSummaryTypes) {
     return new Summary(null, {
         dataModel: dataModel,
         columnModel: columnModel,
-        columnSummaryTypes: columnSummaryTypes
+        summaryTypeMap: summaryTypeMap,
+        useAutoCalculation: useAutoCalculation
     });
 }
 
@@ -139,6 +140,23 @@ describe('model/summary', function() {
             });
 
             expect(summary.getValue('c1', 'sum')).toBe(2);
+        });
+    });
+
+    describe('If useAutoCalculation is false', function() {
+        var summary;
+
+        beforeEach(function() {
+            summary = create([{c1: 1}], {c1: [typeConst.SUM]}, false);
+        });
+
+        it('initial value should not be calculated', function() {
+            expect(summary.getValue('c1', 'sum')).toBe(null);
+        });
+
+        it('change events on dataModel should be ignored', function() {
+            summary.dataModel.setValue(1, 'c1', 3);
+            expect(summary.getValue('c1', 'sum')).toBe(null);
         });
     });
 

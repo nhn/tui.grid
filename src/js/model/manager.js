@@ -204,8 +204,9 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         return new SummaryModel(null, {
             dataModel: this.dataModel,
             columnModel: this.columnModel,
-            columnSummaryTypes: _.mapObject(footerOptions.columnSummary, function(value) {
-                return value.summaryTypes;
+            useAutoCalculation: footerOptions.useAutoCalculation,
+            summaryTypeMap: _.mapObject(footerOptions.columnSummary, function(value) {
+                return value.types;
             })
         });
     },

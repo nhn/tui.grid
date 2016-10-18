@@ -89,12 +89,12 @@ describe('model/manager', function() {
             expect(manager.summaryModel).toBe(null);
         });
 
-        it('with data model and columnSummaryTypes', function() {
+        it('with data model and summaryTypeMap', function() {
             var manager = new ModelManager({
                 footer: {
                     columnSummary: {
-                        c1: {summaryTypes: ['sum', 'avg']},
-                        c2: {summaryTypes: ['min']}
+                        c1: {types: ['sum', 'avg']},
+                        c2: {types: ['min']}
                     }
                 }
             });
@@ -102,7 +102,7 @@ describe('model/manager', function() {
 
             expect(summaryModel instanceof SummaryModel).toBe(true);
             expect(summaryModel.dataModel instanceof DataModel).toBe(true);
-            expect(summaryModel.columnSummaryTypes).toEqual({
+            expect(summaryModel.summaryTypeMap).toEqual({
                 c1: ['sum', 'avg'],
                 c2: ['min']
             });

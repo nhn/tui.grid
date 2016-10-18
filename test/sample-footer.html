@@ -85,7 +85,7 @@ var grid = new tui.Grid({
         height: 100,
         columnSummary: {
             c1: {
-                summaryTypes: ['sum', 'avg', 'min', 'max', 'cnt'],
+                types: ['sum', 'avg', 'min', 'max', 'cnt'],
                 formatter: function(valueMap) {
                     var sum = String(valueMap.sum).replace(/(\d)(?=(\d{3})+$)/gi, "$1,");
                     var avg = String(valueMap.avg).replace(/(\d)(?=(\d{3})+$)/gi, "$1,");
@@ -96,7 +96,7 @@ var grid = new tui.Grid({
                 }
             },
             c2: {
-                summaryTypes: ['sum', 'avg'],
+                types: ['sum', 'avg'],
                 formatter: function(valueMap) {
                     return '합계: ' + valueMap.sum + ', 평균: ' + valueMap.avg;
                 }

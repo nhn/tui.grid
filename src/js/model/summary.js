@@ -19,16 +19,53 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @param {Object} options - options
      */
     initialize: function(attr, options) {
+        // models
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;
-        this.columnSummaryTypes = options.columnSummaryTypes || {};
 
-        this.summaryMap = {};
-        this._resetSummaryMap();
+        /**
+         * Whether using auto calculation. (defulat: true)
+         * @type {boolean}
+         */
+        this.useAutoCalculation = options.useAutoCalculation !== false;
 
-        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
-        this.listenTo(this.dataModel, 'change', this._onChangeData);
-        this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
+        /**
+         * Summary type map (KV)
+         * K: column name {string}
+         * V: summary types {Array}
+         * @type {object}
+         * @example
+         * {
+         *    columnName1: [typeConst.SUM, typeConst.AVG],
+         *    columnName2: [typeConst.MAX]
+         * }
+         */
+        this.summaryTypeMap = options.summaryTypeMap || {};
+
+        /**
+         * Summary type map (KV)
+         * K: column name {string}
+         * V: value map {object}
+         * @type {object}
+         * @example
+         * {
+         *    columnName1: {
+         *        [typeConst.SUM]: 200,
+         *        [typeConst.AVG]: 200,
+         *    },
+         *    columnName2: {
+         *        [typeConst.MAX]: 100
+         *    }
+         * }
+         */
+        this.summaryValueMap = {};
+
+        if (this.useAutoCalculation) {
+            this._resetSummaryMap();
+            this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
+            this.listenTo(this.dataModel, 'change', this._onChangeData);
+            this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
+        }
     },
 
     /**
@@ -74,7 +111,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @private
      */
     _resetSummaryMap: function() {
-        this._resetColumnSummaryValue(_.keys(this.columnSummaryTypes));
+        this._resetColumnSummaryValue(_.keys(this.summaryTypeMap));
     },
 
     /**
@@ -84,14 +121,14 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      */
     _resetColumnSummaryValue: function(columnNames) {
         _.each(columnNames, function(columnName) {
-            var summaryTypes = this.columnSummaryTypes[columnName];
+            var summaryTypes = this.summaryTypeMap[columnName];
             var values, summaryValueMap;
 
             if (summaryTypes) {
                 values = this.dataModel.getColumnValues(columnName);
                 summaryValueMap = _.pick(this._calculate(values), summaryTypes);
 
-                this.summaryMap[columnName] = summaryValueMap;
+                this.summaryValueMap[columnName] = summaryValueMap;
                 this.trigger('change', columnName, summaryValueMap);
             }
         }, this);
@@ -124,14 +161,14 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @returns {number|Object}
      */
     getValue: function(columnName, summaryType) {
-        var columnValueMap = this.summaryMap[columnName];
+        var valueMap = this.summaryValueMap[columnName];
         var value;
 
         if (!summaryType) {
-            return columnValueMap;
+            return _.isUndefined(valueMap) ? null : valueMap;
         }
 
-        value = this.summaryMap[columnName][summaryType];
+        value = tui.util.pick(valueMap, summaryType);
         return _.isUndefined(value) ? null : value;
     },
 
@@ -143,15 +180,15 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @param {number|Object} value - value
      */
     setValue: function(columnName, summaryType, value) {
-        var summaryTypes = this.columnSummaryTypes[columnName];
-        var valueMap = this.summaryMap[columnName];
-        var newValueMap;
+        var summaryTypes = this.summaryTypeMap[columnName];
+        var valueMap = this.summaryValueMap[columnName];
+        var newValueMap = {};
 
         if (_.isObject(summaryType)) {
-            newValueMap = _.extend({}, summaryType);
+            _.extend(newValueMap, summaryType);
         } else {
             newValueMap = {};
-            valueMap[summaryType] = value;
+            newValueMap[summaryType] = value;
         }
         _.extend(valueMap, _.pick(newValueMap, summaryTypes));
 
