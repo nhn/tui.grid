@@ -6,12 +6,37 @@
     <link rel="stylesheet" type="text/css" href="../dev/grid.css" />
 	<style media="screen">
 	#wrapper {width:600px;}
-    .clickable {cursor: pointer}
+    #options {margin-top:10px; border: 1px solid #ccc; white-space: pre; font-size:12px;}
 	</style>
 </head>
 <body>
 <div id="wrapper">
-	  <div id="grid"></div>
+	<div id="grid"></div>
+    <div id="options">
+    footer: {
+        height: 50,
+        columnSummary: {
+            c1: {
+                types: ['sum', 'avg'],
+                formatter: function(valueMap) {
+                    return '합계: ' + valueMap.sum + '&gt;br/&lt;평균: ' + valueMap.avg;
+                }
+            },
+            c2: {
+                types: ['min', 'max'],
+                formatter: function(valueMap) {
+                    return '최대값: ' + valueMap.max + ', 최소값: ' + valueMap.min;
+                }
+            },
+            c3: {
+                types: ['sum', 'cnt'],
+                formatter: function(valueMap) {
+                    return '합계: ' + valueMap.sum + '&gt;br/&lt; 전체개수: ' + valueMap.cnt;
+                }
+            }
+        }
+    }
+    </div>
 </div>
 </body>
 <script src="../lib/jquery/jquery.js"></script>
@@ -27,10 +52,8 @@ var grid = new tui.Grid({
     columnFixCount: 0,
 	headerHeight: 30,
     resizeHandle: {},
-    showDummyRows: true,
-	displayRowCount: 10,
+	displayRowCount: 15,
 	minimumColumnWidth: 100,
-    pagination: true,
     columnModelList: [
         {
             columnName: '_button',
@@ -40,40 +63,26 @@ var grid = new tui.Grid({
             title: 'c1',
             columnName: 'c1',
             className: 'clickable',
-            isRequired: true,
             width: 200,
             editOption: {
-                // useViewMode: false,
                 type: 'text',
-                list: [
-                    {text:1, value:1},
-                    {text:2, value:2}
-                ]
             }
         },
         {
             title: 'c2',
-            isSortable: true,
-            // defaultValue: 2,
             width: 200,
-            className: 'clickable',
             columnName: 'c2',
             editOption: {
-                type: 'select',
-                list: [
-                    {text:1, value:1},
-                    {text:2, value:2}
-                ]
+                type: 'text',
             }
         },
         {
             title: 'c3',
             columnName: 'c3',
             width: 200,
-            defaultValue: 2,
             editOption: {
                 useViewMode: false,
-                type: 'checkbox',
+                type: 'select',
                 list: [
                     {text:1, value:1},
                     {text:2, value:2}
@@ -82,23 +91,24 @@ var grid = new tui.Grid({
         }
 	],
     footer: {
-        height: 100,
+        height: 50,
         columnSummary: {
             c1: {
-                types: ['sum', 'avg', 'min', 'max', 'cnt'],
+                types: ['sum', 'avg'],
                 formatter: function(valueMap) {
-                    var sum = String(valueMap.sum).replace(/(\d)(?=(\d{3})+$)/gi, "$1,");
-                    var avg = String(valueMap.avg).replace(/(\d)(?=(\d{3})+$)/gi, "$1,");
-
-                    return '합계: ' + sum + '<br/>평균: ' + avg +
-                        '<br>최대값: ' + valueMap.max + '<br>최소값: ' + valueMap.min +
-                        '<br>개수: ' + valueMap.cnt;
+                    return '합계: ' + valueMap.sum + '<br/>평균: ' + valueMap.avg;
                 }
             },
             c2: {
-                types: ['sum', 'avg'],
+                types: ['min', 'max'],
                 formatter: function(valueMap) {
-                    return '합계: ' + valueMap.sum + ', 평균: ' + valueMap.avg;
+                    return '최대값: ' + valueMap.max + ', 최소값: ' + valueMap.min;
+                }
+            },
+            c3: {
+                types: ['sum', 'cnt'],
+                formatter: function(valueMap) {
+                    return '합계: ' + valueMap.sum + '<br/> 전체개수: ' + valueMap.cnt;
                 }
             }
         }
@@ -109,9 +119,9 @@ var rowList = [];
 (function() {
     _.times(10000, function(number) {
         rowList.push({
-            _number: number + 1,
-            'c1': String(number * 10),
-            'c2': 2
+            c1: parseInt(Math.random() * 1000, 10),
+            c2: parseInt(Math.random() * 100, 10) + 100,
+            c3: parseInt(Math.random() * 2, 10) + 1
         });
     });
 })();
