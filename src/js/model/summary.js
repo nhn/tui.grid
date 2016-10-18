@@ -117,9 +117,11 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
     },
 
     /**
+     * Returns the summary value of given column and type.
+     * If the summaryType is not specified, returns all values of types as an object
      * @param {string} columnName - column name
-     * @param {string} summaryType - summary type
-     * @returns {number}
+     * @param {string} [summaryType] - summary type
+     * @returns {number|Object}
      */
     getValue: function(columnName, summaryType) {
         var columnValueMap = this.summaryMap[columnName];
@@ -131,6 +133,29 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
 
         value = this.summaryMap[columnName][summaryType];
         return _.isUndefined(value) ? null : value;
+    },
+
+    /**
+     * Sets the summary value of given column and type.
+     * If the length of argurments is 2, use second parameter as a value map
+     * @param {string} columnName - column name
+     * @param {string} [summaryType] - summary type
+     * @param {number|Object} value - value
+     */
+    setValue: function(columnName, summaryType, value) {
+        var summaryTypes = this.columnSummaryTypes[columnName];
+        var valueMap = this.summaryMap[columnName];
+        var newValueMap;
+
+        if (_.isObject(summaryType)) {
+            newValueMap = _.extend({}, summaryType);
+        } else {
+            newValueMap = {};
+            valueMap[summaryType] = value;
+        }
+        _.extend(valueMap, _.pick(newValueMap, summaryTypes));
+
+        this.trigger('change', columnName, valueMap);
     }
 });
 

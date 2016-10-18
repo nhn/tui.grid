@@ -171,4 +171,48 @@ describe('model/summary', function() {
             expect(changeSpy.calls.argsFor(0)[0]).toBe('c1');
         });
     });
+
+    describe('setValue()', function() {
+        it('set summary value', function() {
+            var summary = create([], {
+                c1: [typeConst.SUM]
+            });
+
+            summary.setValue('c1', 'sum', 100);
+
+            expect(summary.getValue('c1', 'sum')).toBe(100);
+        });
+
+        it('set summary map if the summaryType is not specified', function() {
+            var summary = create([], {
+                c1: [typeConst.SUM]
+            });
+
+            summary.setValue('c1', {
+                sum: 100
+            });
+
+            expect(summary.getValue('c1', 'sum')).toBe(100);
+        });
+
+        it('set value for only registered type', function() {
+            var summary = create([], {
+                c1: [typeConst.SUM, typeConst.AVG]
+            });
+
+            summary.setValue('c1', 'min', 100);
+
+            expect(summary.getValue('c1', 'min')).toBeNull();
+
+            summary.setValue('c1', {
+                sum: 100,
+                min: 100,
+                max: 100
+            });
+
+            expect(summary.getValue('c1', 'sum')).toBe(100);
+            expect(summary.getValue('c1', 'min')).toBeNull();
+            expect(summary.getValue('c1', 'max')).toBeNull();
+        });
+    });
 });

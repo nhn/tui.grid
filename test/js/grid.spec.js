@@ -39,7 +39,7 @@ describe('grid', function() {
         it('getRowAt -> dataModel.getRowDataAt', function() {
             spyOn(dataModel, 'getRowDataAt');
             grid.getRowAt(0, true);
-            expect(dataModel.getRowDataAt).toHaveBeenCalledWith(0, true);    
+            expect(dataModel.getRowDataAt).toHaveBeenCalledWith(0, true);
         });
     });
 
@@ -88,6 +88,22 @@ describe('grid', function() {
             expect(rowList.length).toBe(2);
             expect(rowList[0].rowKey).toBe(1);
             expect(rowList[1].rowKey).toBe(3);
+        });
+    });
+
+    describe('setColumnSummaryValue', function() {
+        it('should call summary.setValue', function() {
+            var grid = createGrid(null, {
+                footer: {
+                    columnSummary: {}
+                }
+            });
+            var summary = grid.modelManager.summaryModel;
+            spyOn(summary, 'setValue');
+
+            grid.setColumnSummaryValue('c1', 'sum', 100);
+
+            expect(summary.setValue).toHaveBeenCalledWith('c1', 'sum', 100);
         });
     });
 });

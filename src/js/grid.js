@@ -1056,6 +1056,17 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Sets the summary value of given column and type.
+     * If the length of argurments is 2, use second parameter as a value map
+     * @param {string} columnName - column name
+     * @param {string} [summaryType] - summary type
+     * @param {number|Object} value - value
+     */
+    setColumnSummaryValue: function(columnName, summaryType, value) {
+        this.modelManager.summaryModel.setValue(columnName, summaryType, value);
+    },
+
+    /**
      * Validates all data and returns the result.
      * Return value is an array which contains only rows which have invalid cell data.
      * @returns {Array.<Object>} An array of error object
