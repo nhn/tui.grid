@@ -68,20 +68,21 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
 
     /**
      * Calculate summaries of given array.
-     * @param {Array} arr - An array of number values
+     * Values which can not be converted to Number type will be considered as 0.
+     * @param {Array} values - An array of values (to be converted to Number type)
      * @returns {Object}
      * @private
      */
-    _calculate: function(arr) {
+    _calculate: function(values) {
         var min = Number.MAX_VALUE;
         var max = Number.MIN_VALUE;
         var sum = 0;
-        var count = arr.length;
+        var count = values.length;
         var resultMap = {};
         var i, value;
 
         for (i = 0; i < count; i += 1) {
-            value = Number(arr[i]);
+            value = Number(values[i]);
             if (isNaN(value)) {
                 value = 0;
             }

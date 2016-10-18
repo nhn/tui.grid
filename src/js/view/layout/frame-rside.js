@@ -116,7 +116,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
         }
 
-        // Empty DIV for filling gary color in the right side of the footer.
+        // Empty DIV for filling gray color in the right side of the footer.
         if (footerHeight && dimensionModel.get('scrollY')) {
             this.$el.append($('<div>')
                 .addClass(classNameConst.FOOT_AREA_RIGHT)

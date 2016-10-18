@@ -21,6 +21,11 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.timeoutIdForResize = 0;
+
+        /**
+         * Relative Y-position of the mouse pointer in the element when starting dragging
+         * @type {Number}
+         */
         this.handleOffsetY = 0;
 
         this.on('appended', this._onAppended);

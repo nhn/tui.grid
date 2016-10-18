@@ -311,7 +311,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
 
     /**
      * renders
-     * @returns {View.Layout.Body}
+     * @returns {module:view/layout/body}
      */
     render: function() {
         var whichSide = this.whichSide;

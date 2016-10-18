@@ -64,6 +64,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     /**
      * Event handler for 'scroll' event
      * @param {UIEvent} event - scroll event
+     * @private
      */
     _onScrollView: function(event) {
         if (this.whichSide === 'R') {
