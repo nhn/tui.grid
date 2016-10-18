@@ -89,23 +89,16 @@ describe('model/manager', function() {
             expect(manager.summaryModel).toBe(null);
         });
 
-        it('with data model and summaryTypeMap', function() {
+        it('with dataModel', function() {
             var manager = new ModelManager({
                 footer: {
-                    columnSummary: {
-                        c1: {types: ['sum', 'avg']},
-                        c2: {types: ['min']}
-                    }
+                    columnSummary: {}
                 }
             });
             var summaryModel = manager.summaryModel;
 
             expect(summaryModel instanceof SummaryModel).toBe(true);
             expect(summaryModel.dataModel instanceof DataModel).toBe(true);
-            expect(summaryModel.summaryTypeMap).toEqual({
-                c1: ['sum', 'avg'],
-                c2: ['min']
-            });
         });
     });
 });

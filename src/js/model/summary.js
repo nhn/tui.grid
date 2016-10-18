@@ -19,9 +19,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @param {Object} options - options
      */
     initialize: function(attr, options) {
-        // models
         this.dataModel = options.dataModel;
-        this.columnModel = options.columnModel;
 
         /**
          * Whether using auto calculation. (defulat: true)
