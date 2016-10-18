@@ -20,6 +20,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      */
     initialize: function(attr, options) {
         this.dataModel = options.dataModel;
+        this.columnModel = options.columnModel;
         this.columnSummaryTypes = options.columnSummaryTypes || {};
 
         this.summaryMap = {};
@@ -27,32 +28,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
 
         this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
         this.listenTo(this.dataModel, 'change', this._onChangeData);
-        // this.listenTo(this.dataModel, 'changeRange', this._onChangeDataRange);
-    },
-
-    /**
-     * Initialize summary map of columns specified in 'columnSummries' property.
-     * @private
-     */
-    _resetSummaryMap: function() {
-        _.each(this.columnSummaryTypes, function(summaryTypes, columnName) {
-            this._resetColumnSummaryValue(columnName, summaryTypes);
-        }, this);
-    },
-
-    /**
-     * Reset summary values of given columnName
-     * @param {string} columnName - column name
-     * @param {Array.<string>} summaryTypes - summary types
-     * @private
-     */
-    _resetColumnSummaryValue: function(columnName, summaryTypes) {
-        var values = this.dataModel.getColumnValues(columnName);
-        var resultMap = this._calculate(values);
-        var pickedResultMap = _.pick(resultMap, summaryTypes);
-
-        this.summaryMap[columnName] = pickedResultMap;
-        this.trigger('change', columnName, pickedResultMap);
+        this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
     },
 
     /**
@@ -94,21 +70,50 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
     },
 
     /**
-     * Event handler for reset summary value when dataModel is changed
-     * @param {module:model/Row} [model] - Changed(Added) Row. Undefined when Deleted
+     * Initialize summary map of columns specified in 'columnSummries' property.
      * @private
      */
-    _onChangeDataLength: function() {
-        this._resetSummaryMap();
+    _resetSummaryMap: function() {
+        this._resetColumnSummaryValue(_.keys(this.columnSummaryTypes));
     },
 
-    _onChangeData: function(model) {
-        _.each(model.changed, function(value, columnName) {
-            var types = this.columnSummaryTypes[columnName];
-            if (types) {
-                this._resetColumnSummaryValue(columnName, types);
+    /**
+     * Reset summary values of given columnName
+     * @param {Array.<string>} columnNames - An array of column names
+     * @private
+     */
+    _resetColumnSummaryValue: function(columnNames) {
+        _.each(columnNames, function(columnName) {
+            var summaryTypes = this.columnSummaryTypes[columnName];
+            var values, summaryValueMap;
+
+            if (summaryTypes) {
+                values = this.dataModel.getColumnValues(columnName);
+                summaryValueMap = _.pick(this._calculate(values), summaryTypes);
+
+                this.summaryMap[columnName] = summaryValueMap;
+                this.trigger('change', columnName, summaryValueMap);
             }
         }, this);
+    },
+
+    /**
+     * Event handler for 'change' event on dataModel
+     * @param {object} model - row model
+     * @private
+     */
+    _onChangeData: function(model) {
+        this._resetColumnSummaryValue(_.keys(model.changed));
+    },
+
+    /**
+     * Event handler for 'changeRange' event on dataModel
+     * @param {Array.<number>} rowKeys - An array of rowkeys
+     * @param {Array.<number>} columnNames - An arrya of columnNames
+     * @private
+     */
+    _onDeleteRangeData: function(rowKeys, columnNames) {
+        this._resetColumnSummaryValue(columnNames);
     },
 
     /**

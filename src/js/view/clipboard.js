@@ -439,23 +439,11 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var selectionModel = this.selectionModel;
         var dataModel = this.dataModel;
         var focused = this.focusModel.which();
-        var columnModelList = this.columnModel.getVisibleColumnModelList();
         var rowKey = focused.rowKey;
         var columnName = focused.columnName;
-        var range, i, j;
 
         if (selectionModel.hasSelection()) {
-            //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
-            range = selectionModel.get('range');
-            for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
-                rowKey = dataModel.at(i).get('rowKey');
-                for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
-                    columnName = columnModelList[j].columnName;
-                    dataModel.del(rowKey, columnName, true);
-                    dataModel.get(rowKey).validateCell(columnName);
-                }
-            }
-            this.dataModel.trigger('changeRange', range);
+            dataModel.delRange(selectionModel.get('range'));
         } else {
             dataModel.del(rowKey, columnName);
         }
