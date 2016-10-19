@@ -72,9 +72,9 @@ describe('view.heightResizeHandler', function() {
             jasmine.clock().uninstall();
         });
 
-        it('call dimensionModel.setSize with (offsetY - handleOffsetY - gridOffsetY)', function() {
+        it('call dimensionModel.setSize with (offsetY - mouseOffsetY - gridOffsetY)', function() {
             mouseEvent.pageY = 300;
-            resize.handleOffsetY = 100;
+            resize.mouseOffsetY = 100;
 
             resize._onMouseMove(mouseEvent);
             jasmine.clock().tick(0);

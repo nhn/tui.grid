@@ -17,8 +17,12 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {object} options - options
      */
     initialize: function(options) {
-        // options
         this.formatters = options.formatters;
+
+        /**
+         * 'L': Left, 'R': Right
+         * @type {string}
+         */
         this.whichSide = options.whichSide;
 
         // models

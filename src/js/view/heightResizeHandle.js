@@ -26,7 +26,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
          * Relative Y-position of the mouse pointer in the element when starting dragging
          * @type {Number}
          */
-        this.handleOffsetY = 0;
+        this.mouseOffsetY = 0;
 
         this.on('appended', this._onAppended);
     },
@@ -74,7 +74,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     _onMouseDown: function(mouseEvent) {
         mouseEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
-        this.handleOffsetY = mouseEvent.offsetY;
+        this.mouseOffsetY = mouseEvent.offsetY;
         this._attachMouseEvent();
     },
 
@@ -86,12 +86,12 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     _onMouseMove: function(mouseEvent) {
         var dimensionModel = this.dimensionModel;
         var gridOffsetY = dimensionModel.get('offsetTop');
-        var handleOffsetY = this.handleOffsetY;
+        var mouseOffsetY = this.mouseOffsetY;
 
         clearTimeout(this.timeoutIdForResize);
 
         this.timeoutIdForResize = setTimeout(function() {
-            dimensionModel.setSize(null, mouseEvent.pageY - gridOffsetY - handleOffsetY);
+            dimensionModel.setSize(null, mouseEvent.pageY - gridOffsetY - mouseOffsetY);
         }, 0);
     },
 
