@@ -7,7 +7,8 @@ var ViewFactory = require('view/factory');
 function create(whichSide, options) {
     var modelManager = new ModelManager(options, new DomState($('<div>')));
     var viewFactory = new ViewFactory({
-        modelManager: modelManager
+        modelManager: modelManager,
+        footer: options.footer
     });
 
     return viewFactory.createFooter(whichSide);
@@ -22,7 +23,8 @@ describe('Footer', function() {
                 columnModelList: [
                     {columnName: 'c1', width: 50},
                     {columnName: 'c2', width: 60}
-                ]
+                ],
+                footer: {}
             });
             footer.dimensionModel.set('footerHeight', 30);
         });
@@ -85,7 +87,7 @@ describe('Footer', function() {
             expect($ths.eq(1).html('10'));
         });
 
-        it('If a formatter function exists, use it for generating HTML of <th>', function() {
+        it('If a template function exists, use it for generating HTML of <th>', function() {
             var $ths;
 
             function fmt1() {
@@ -95,7 +97,7 @@ describe('Footer', function() {
                 return 'formatted2';
             }
 
-            footer.formatters = {
+            footer.columnTemplateMap = {
                 c1: fmt1,
                 c2: fmt2
             };
@@ -106,7 +108,7 @@ describe('Footer', function() {
             expect($ths.eq(1).html()).toBe(fmt2());
         });
 
-        it('Formatter should take a value from the summaryModel as a paramater', function() {
+        it('Template should take a value from the summaryModel as a paramater', function() {
             var fmt1 = jasmine.createSpy();
             var fmt2 = jasmine.createSpy();
             var summaryMap = {
@@ -119,7 +121,7 @@ describe('Footer', function() {
                     return summaryMap[columnName];
                 }
             };
-            footer.formatters = {
+            footer.columnTemplateMap = {
                 c1: fmt1,
                 c2: fmt2
             };
@@ -132,26 +134,28 @@ describe('Footer', function() {
     });
 
     it('Refresh <th> whenever change event occurs on the summaryModel', function() {
-        var $ths;
         var footer = create('R', {
             columnModelList: [
-                {columnName: 'c1', width: 50},
-                {columnName: 'c2', width: 60}
+                {columnName: 'c1'},
+                {columnName: 'c2'}
             ],
             footer: {
                 height: 30,
-                columnSummary: {}
+                columnContents: {
+                    c1: {
+                        template: function(valueMap) {
+                            return String(valueMap.sum);
+                        }
+                    }
+                }
             }
         });
 
         footer.render();
-        $ths = footer.$el.find('th');
-
         footer.summaryModel.trigger('change', 'c1', {
-            sum: 10,
-            evg: 5
+            sum: 10
         });
 
-        expect($ths.eq(0).html()).toBe('10, 5');
+        expect(footer.$el.find('th').eq(0).html()).toBe('10');
     });
 });

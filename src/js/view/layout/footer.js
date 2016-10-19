@@ -17,7 +17,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {object} options - options
      */
     initialize: function(options) {
-        this.formatters = options.formatters;
+        this.columnTemplateMap = options.columnTemplateMap || {};
 
         /**
          * 'L': Left, 'R': Right
@@ -108,14 +108,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @private
      */
     _generateValueHTML: function(columnName, valueMap) {
-        var formatter = this.formatters && this.formatters[columnName];
+        var template = this.columnTemplateMap[columnName];
         var html = '';
 
-        if (_.isFunction(formatter)) {
-            html = formatter(valueMap);
-        } else if (valueMap) {
-            html = _.values(valueMap).join(', ');
+        if (_.isFunction(template)) {
+            html = template(valueMap);
         }
+
         return html;
     },
 

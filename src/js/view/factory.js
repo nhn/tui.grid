@@ -181,13 +181,17 @@ var ViewFactory = tui.util.defineClass({
      * @returns {object}
      */
     createFooter: function(whichSide) {
-        var formatters;
+        var templateMap = {};
 
-        if (this.footerOptions) {
-            formatters = _.mapObject(this.footerOptions.columnSummary, function(column) {
-                return column.formatter;
-            });
+        if (!this.footerOptions) {
+            return null;
         }
+
+        _.each(this.footerOptions.columnContents, function(options, columnName) {
+            if (_.isFunction(options.template)) {
+                templateMap[columnName] = options.template;
+            }
+        });
 
         return new FooterView({
             whichSide: whichSide,
@@ -195,7 +199,7 @@ var ViewFactory = tui.util.defineClass({
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
             summaryModel: this.modelManager.summaryModel,
-            formatters: formatters
+            columnTemplateMap: templateMap
         });
     },
 

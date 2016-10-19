@@ -84,21 +84,43 @@ describe('model/manager', function() {
     });
 
     describe('creates summary model', function() {
-        it('only if footer option exists', function() {
-            var manager = new ModelManager();
-            expect(manager.summaryModel).toBe(null);
+        it('only if footer.columnContents option exists', function() {
+            var manager1 = new ModelManager();
+            var manager2 = new ModelManager({
+                footer: {
+                    columnContents: {}
+                }
+            });
+
+            expect(manager1.summaryModel).toBe(null);
+            expect(manager2.summaryModel).toEqual(jasmine.any(SummaryModel));
         });
 
         it('with dataModel', function() {
             var manager = new ModelManager({
+                footer: {columnContents: {}}
+            });
+
+            expect(manager.summaryModel.dataModel).toEqual(jasmine.any(DataModel));
+        });
+
+        it('with autoColumnes which contains columnNames only which has a template function' +
+            'and its useAutoSummary is not false', function() {
+            var manager = new ModelManager({
                 footer: {
-                    columnSummary: {}
+                    columnContents: {
+                        c1: {
+                            template: function() {}
+                        },
+                        c2: {
+                            useAutoSummary: false,
+                            template: function() {}
+                        },
+                        c3: {}
+                    }
                 }
             });
-            var summaryModel = manager.summaryModel;
-
-            expect(summaryModel instanceof SummaryModel).toBe(true);
-            expect(summaryModel.dataModel instanceof DataModel).toBe(true);
+            expect(manager.summaryModel.autoColumnNames).toEqual(['c1']);
         });
     });
 });
