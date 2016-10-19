@@ -91,7 +91,7 @@ describe('grid', function() {
         });
     });
 
-    describe('setColumnSummaryValue', function() {
+    describe('setFooterSummaryValue', function() {
         it('should call summary.setValue', function() {
             var grid = createGrid(null, {
                 footer: {
@@ -101,7 +101,7 @@ describe('grid', function() {
             var summary = grid.modelManager.summaryModel;
             spyOn(summary, 'setValue');
 
-            grid.setColumnSummaryValue('c1', 'sum', 100);
+            grid.setFooterSummaryValue('c1', 'sum', 100);
 
             expect(summary.setValue).toHaveBeenCalledWith('c1', 'sum', 100);
         });

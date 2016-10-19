@@ -1062,7 +1062,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} [summaryType] - summary type
      * @param {number|Object} value - value
      */
-    setColumnSummaryValue: function(columnName, summaryType, value) {
+    setFooterSummaryValue: function(columnName, summaryType, value) {
         this.modelManager.summaryModel.setValue(columnName, summaryType, value);
     },
 
