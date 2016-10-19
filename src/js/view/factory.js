@@ -17,6 +17,7 @@ var HeaderView = require('./layout/header');
 var HeaderResizeHandlerView = require('./layout/resizeHandler');
 var BodyView = require('./layout/body');
 var BodyTableView = require('./layout/bodyTable');
+var FooterView = require('./layout/footer');
 var RowListView = require('./rowList');
 var SelectionLayerView = require('./selectionLayer');
 var EditingLayerView = require('./editingLayer');
@@ -37,6 +38,7 @@ var ViewFactory = tui.util.defineClass({
         this.componentHolder = options.componentHolder;
 
         // view options
+        this.footerOptions = options.footer;
         this.singleClickEdit = options.singleClickEdit;
         this.resizeHandle = options.resizeHandle;
         this.copyOption = options.copyOption;
@@ -170,6 +172,30 @@ var ViewFactory = tui.util.defineClass({
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             viewFactory: this
+        });
+    },
+
+    /**
+     * Creates footer view and returns it.
+     * @param {string} whichSide - 'L'(left) or 'R'(right)
+     * @returns {object}
+     */
+    createFooter: function(whichSide) {
+        var formatters;
+
+        if (this.footerOptions) {
+            formatters = _.mapObject(this.footerOptions.columnSummary, function(column) {
+                return column.formatter;
+            });
+        }
+
+        return new FooterView({
+            whichSide: whichSide,
+            columnModel: this.modelManager.columnModel,
+            renderModel: this.modelManager.renderModel,
+            dimensionModel: this.modelManager.dimensionModel,
+            summaryModel: this.modelManager.summaryModel,
+            formatters: formatters
         });
     },
 

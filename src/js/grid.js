@@ -401,7 +401,9 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @private
      */
     _createViewFactory: function(domState, options) {
-        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption');
+        var viewOptions = _.pick(options, [
+            'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption', 'footer'
+        ]);
         var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
@@ -1051,6 +1053,17 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     hideColumn: function() {
         var args = tui.util.toArray(arguments);
         this.modelManager.columnModel.setHidden(args, true);
+    },
+
+    /**
+     * Sets the summary value of given column and type.
+     * If the length of argurments is 2, use second parameter as a value map
+     * @param {string} columnName - column name
+     * @param {string} [summaryType] - summary type
+     * @param {number|Object} value - value
+     */
+    setFooterSummaryValue: function(columnName, summaryType, value) {
+        this.modelManager.summaryModel.setValue(columnName, summaryType, value);
     },
 
     /**

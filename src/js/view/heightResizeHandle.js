@@ -22,6 +22,12 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
         this.dimensionModel = options.dimensionModel;
         this.timeoutIdForResize = 0;
 
+        /**
+         * Relative Y-position of the mouse pointer in the element when starting dragging
+         * @type {Number}
+         */
+        this.mouseOffsetY = 0;
+
         this.on('appended', this._onAppended);
     },
 
@@ -53,6 +59,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
      * Detach event handler to cancel 'drag' action
      * @private
      */
+
     _detachMouseEvent: function() {
         $(document).off('mousemove', $.proxy(this._onMouseMove, this));
         $(document).off('mouseup', $.proxy(this._onMouseUp, this));
@@ -67,6 +74,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     _onMouseDown: function(mouseEvent) {
         mouseEvent.preventDefault();
         $(document.body).css('cursor', 'row-resize');
+        this.mouseOffsetY = mouseEvent.offsetY;
         this._attachMouseEvent();
     },
 
@@ -77,20 +85,13 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
      */
     _onMouseMove: function(mouseEvent) {
         var dimensionModel = this.dimensionModel;
-        var offsetTop = dimensionModel.get('offsetTop');
-        var headerHeight = dimensionModel.get('headerHeight');
-        var toolbarHeight = dimensionModel.get('toolbarHeight');
-        var rowHeight = dimensionModel.get('rowHeight');
-        var bodyHeight = mouseEvent.pageY - offsetTop - headerHeight - toolbarHeight;
+        var gridOffsetY = dimensionModel.get('offsetTop');
+        var mouseOffsetY = this.mouseOffsetY;
 
         clearTimeout(this.timeoutIdForResize);
 
-        bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
-
         this.timeoutIdForResize = setTimeout(function() {
-            dimensionModel.set({
-                bodyHeight: bodyHeight
-            });
+            dimensionModel.setSize(null, mouseEvent.pageY - gridOffsetY - mouseOffsetY);
         }, 0);
     },
 

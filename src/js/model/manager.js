@@ -14,6 +14,7 @@ var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
+var SummaryModel = require('./summary');
 
 var defaultOptions = {
     columnFixCount: 0,
@@ -57,6 +58,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
+        this.summaryModel = this._createSummaryModel(options.footer);
 
         // todo: remove dependency
         this.focusModel.renderModel = this.renderModel;
@@ -116,7 +118,9 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createDimensionModel: function(options, domState) {
         var attrs = {
             headerHeight: options.headerHeight,
+            footerHeight: options.footer ? options.footer.height : 0,
             rowHeight: options.rowHeight,
+
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
@@ -184,6 +188,27 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
         return new Constructor(attrs, renderOptions);
+    },
+
+    /**
+     * Creates an instance of summary model and returns it.
+     * @param  {Object} footerOptions - footer options
+     * @returns {module:model/summary} - A new instance
+     * @private
+     */
+    _createSummaryModel: function(footerOptions) {
+        if (!footerOptions || !footerOptions.columnSummary) {
+            return null;
+        }
+
+        return new SummaryModel(null, {
+            dataModel: this.dataModel,
+            columnModel: this.columnModel,
+            useAutoCalculation: footerOptions.useAutoCalculation,
+            summaryTypeMap: _.mapObject(footerOptions.columnSummary, function(value) {
+                return value.types;
+            })
+        });
     },
 
     /**

@@ -40,7 +40,8 @@ function develop() {
     return {
         entry: ENTRY_PATH,
         output: {
-            path: path.join(__dirname, 'build'),
+            path: path.resolve(__dirname, 'build'),
+            publicPath: '/dev/',
             filename: 'grid.js'
         },
         plugins: [
@@ -50,9 +51,13 @@ function develop() {
             preLoaders: [eslintLoader],
             loaders: [fileLoader, stylusLoader]
         },
+        eslint: {
+            quiet: true
+        },
         externals: externals,
         devtool: '#inline-source-map',
         devServer: {
+            inline: true,
             host: '0.0.0.0',
             port: 8000
         }

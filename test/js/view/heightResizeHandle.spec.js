@@ -62,32 +62,24 @@ describe('view.heightResizeHandler', function() {
     describe('_onMouseMove', function() {
         beforeEach(function() {
             dimensionModel.set({
-                offsetTop: 0,
-                height: 500,
-                headerHeight: 50,
-                rowHeight: 10,
-                scrollBarSize: 20,
-                toolbarHeight: 50,
-                bodyHeight: 200
+                offsetTop: 100
             });
+            dimensionModel.setSize = jasmine.createSpy('setSize');
+            jasmine.clock().install();
         });
 
-        it('bodyHeight를 header와 toolbar를 제외한 높이로 조정한다.', function(done) {
+        afterEach(function() {
+            jasmine.clock().uninstall();
+        });
+
+        it('call dimensionModel.setSize with (offsetY - mouseOffsetY - gridOffsetY)', function() {
             mouseEvent.pageY = 300;
-            resize._onMouseMove(mouseEvent);
-            setTimeout(function() {
-                expect(dimensionModel.get('bodyHeight')).toBe(200);
-                done();
-            }, 10);
-        });
+            resize.mouseOffsetY = 100;
 
-        it('scrollbarSize와 rowHeight를 더한 값 이하로 높이가 줄어들지 않는다.', function(done) {
-            mouseEvent.pageY = 100;
             resize._onMouseMove(mouseEvent);
-            setTimeout(function() {
-                expect(dimensionModel.get('bodyHeight')).toBe(30);
-                done();
-            }, 10);
+            jasmine.clock().tick(0);
+
+            expect(dimensionModel.setSize).toHaveBeenCalledWith(null, 100);
         });
     });
 });

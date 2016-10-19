@@ -47,7 +47,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'remove sort reset', this._onDataModelChange)
+            .listenTo(this.dataModel, 'remove sort reset delRange', this._onDataModelChange)
             .listenTo(this.dataModel, 'add', this._onAddDataModel)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)

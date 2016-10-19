@@ -968,6 +968,34 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     },
 
     /**
+     * Calls del() method for multiple cells silently, and trigger 'delRange' event
+     * @param {{row: Array.<number>, column: Array.<number>}} range - visible indexes
+     */
+    delRange: function(range) {
+        var columnModels = this.columnModel.getVisibleColumnModelList();
+        var rowIdxes = _.range(range.row[0], range.row[1] + 1);
+        var columnIdxes = _.range(range.column[0], range.column[1] + 1);
+        var rowKeys, columnNames;
+
+        rowKeys = _.map(rowIdxes, function(idx) {
+            return this.at(idx).get('rowKey');
+        }, this);
+
+        columnNames = _.map(columnIdxes, function(idx) {
+            return columnModels[idx].columnName;
+        });
+
+        _.each(rowKeys, function(rowKey) {
+            _.each(columnNames, function(columnName) {
+                this.del(rowKey, columnName, true);
+                this.get(rowKey).validateCell(columnName);
+            }, this);
+        }, this);
+
+        this.trigger('delRange', rowKeys, columnNames);
+    },
+
+    /**
      * 2차원 배열로 된 데이터를 받아 현재 Focus된 셀을 기준으로 하여 각각의 인덱스의 해당하는 만큼 우측 아래 방향으로
      * 이동하며 셀의 값을 변경한다. 완료한 후 적용된 셀 범위에 Selection을 지정한다.
      * @param {Array[]} data - 2차원 배열 데이터. 내부배열의 사이즈는 모두 동일해야 한다.

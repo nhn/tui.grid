@@ -5,6 +5,7 @@ var DomState = require('domState');
 var ColumnModel = require('model/data/columnModel');
 var DataModel = require('model/data/rowList');
 var DimensionModel = require('model/dimension');
+var SummaryModel = require('model/summary');
 
 describe('model/manager', function() {
     var domState = new DomState($('<div>'));
@@ -63,7 +64,7 @@ describe('model/manager', function() {
             options = {
                 emptyMessage: 'No Data',
                 showDummyRows: true
-            }
+            };
             manager = new ModelManager(options);
             renderModel = manager.renderModel;
 
@@ -79,6 +80,25 @@ describe('model/manager', function() {
             expect(renderModel.columnModel instanceof ColumnModel).toBe(true);
             expect(renderModel.dataModel instanceof DataModel).toBe(true);
             expect(renderModel.dimensionModel instanceof DimensionModel).toBe(true);
+        });
+    });
+
+    describe('creates summary model', function() {
+        it('only if footer option exists', function() {
+            var manager = new ModelManager();
+            expect(manager.summaryModel).toBe(null);
+        });
+
+        it('with dataModel', function() {
+            var manager = new ModelManager({
+                footer: {
+                    columnSummary: {}
+                }
+            });
+            var summaryModel = manager.summaryModel;
+
+            expect(summaryModel instanceof SummaryModel).toBe(true);
+            expect(summaryModel.dataModel instanceof DataModel).toBe(true);
         });
     });
 });

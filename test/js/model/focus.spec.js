@@ -2,11 +2,7 @@
 
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
-var Dimension = require('model/dimension');
 var FocusModel = require('model/focus');
-var RenderModel = require('model/renderer');
-var Selection = require('model/dimension');
-var Collection = require('base/collection');
 var Model = require('base/model');
 
 describe('model/focus', function() {

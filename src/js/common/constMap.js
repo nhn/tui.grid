@@ -60,5 +60,12 @@ module.exports = {
         CELL: 'CELL',
         ROW: 'ROW',
         COLUMN: 'COLUMN'
+    },
+    summaryType: {
+        SUM: 'sum',
+        AVG: 'avg',
+        CNT: 'cnt',
+        MAX: 'max',
+        MIN: 'min'
     }
 };

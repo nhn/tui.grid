@@ -8,15 +8,27 @@ var FrameLside = require('view/layout/frame-lside');
 var classNameConst = require('common/classNameConst');
 
 describe('Frame', function() {
-    var modelManager, frame, headerMock, bodyMock, viewFactoryMock;
+    var modelManager, frame;
+    var headerMock, bodyMock, footerMock;
+    var viewFactoryMock;
 
     headerMock = {
         el: $('<div />'),
-        render: function() {return this}
+        render: function() {
+            return this;
+        }
     };
     bodyMock = {
         el: $('<div />'),
-        render: function() {return this}
+        render: function() {
+            return this;
+        }
+    };
+    footerMock = {
+        el: $('<div />'),
+        render: function() {
+            return this;
+        }
     };
     viewFactoryMock = {
         createHeader: function() {
@@ -24,6 +36,9 @@ describe('Frame', function() {
         },
         createBody: function() {
             return bodyMock;
+        },
+        createFooter: function() {
+            return footerMock;
         }
     };
 
