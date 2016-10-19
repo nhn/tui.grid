@@ -187,7 +187,7 @@ var ViewFactory = tui.util.defineClass({
             return null;
         }
 
-        _.each(this.footerOptions.columnContents, function(options, columnName) {
+        _.each(this.footerOptions.columnContent, function(options, columnName) {
             if (_.isFunction(options.template)) {
                 templateMap[columnName] = options.template;
             }

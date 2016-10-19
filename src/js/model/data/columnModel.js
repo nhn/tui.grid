@@ -437,12 +437,12 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
     /**
      * Set footer contents.
-     * (Just trigger 'setFooterContents')
+     * (Just trigger 'setFooterContent')
      * @param {string} columnName - columnName
      * @param {string} contents - HTML string
      */
-    setFooterContents: function(columnName, contents) {
-        this.trigger('setFooterContents', columnName, contents);
+    setFooterContent: function(columnName, contents) {
+        this.trigger('setFooterContent', columnName, contents);
     }
 });
 

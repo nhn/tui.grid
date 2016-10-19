@@ -28,21 +28,21 @@ describe('[view/factory] ', function() {
         });
 
         it('set formatters from footer options', function() {
-            var columnContents = {
+            var columnContent = {
                 c1: {template: function() {}},
                 c2: {template: function() {}}
             };
             var factory = new Factory({
                 modelManager: modelManager,
                 footer: {
-                    columnContents: columnContents
+                    columnContent: columnContent
                 }
             });
             var footer = factory.createFooter('R');
 
             expect(footer.columnTemplateMap).toEqual({
-                c1: columnContents.c1.template,
-                c2: columnContents.c2.template
+                c1: columnContent.c1.template,
+                c2: columnContent.c2.template
             });
         });
     });

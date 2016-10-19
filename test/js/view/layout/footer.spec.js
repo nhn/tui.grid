@@ -133,6 +133,24 @@ describe('Footer', function() {
         });
     });
 
+    it('If the setFooterContent event occurs on columnModel, refresh <th>', function() {
+        var footer = create('R', {
+            columnModelList: [
+                {columnName: 'c1'},
+                {columnName: 'c2'}
+            ],
+            footer: {
+                height: 30,
+                columnContent: {}
+            }
+        });
+
+        footer.render();
+        footer.columnModel.trigger('setFooterContent', 'c1', 'contents');
+
+        expect(footer.$el.find('th').eq(0).html()).toBe('contents');
+    });
+
     it('Refresh <th> whenever change event occurs on the summaryModel', function() {
         var footer = create('R', {
             columnModelList: [
@@ -141,7 +159,7 @@ describe('Footer', function() {
             ],
             footer: {
                 height: 30,
-                columnContents: {
+                columnContent: {
                     c1: {
                         template: function(valueMap) {
                             return String(valueMap.sum);

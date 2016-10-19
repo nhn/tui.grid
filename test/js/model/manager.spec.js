@@ -84,11 +84,11 @@ describe('model/manager', function() {
     });
 
     describe('creates summary model', function() {
-        it('only if footer.columnContents option exists', function() {
+        it('only if footer.columnContent option exists', function() {
             var manager1 = new ModelManager();
             var manager2 = new ModelManager({
                 footer: {
-                    columnContents: {}
+                    columnContent: {}
                 }
             });
 
@@ -98,7 +98,7 @@ describe('model/manager', function() {
 
         it('with dataModel', function() {
             var manager = new ModelManager({
-                footer: {columnContents: {}}
+                footer: {columnContent: {}}
             });
 
             expect(manager.summaryModel.dataModel).toEqual(jasmine.any(DataModel));
@@ -108,7 +108,7 @@ describe('model/manager', function() {
             'and its useAutoSummary is not false', function() {
             var manager = new ModelManager({
                 footer: {
-                    columnContents: {
+                    columnContent: {
                         c1: {
                             template: function() {}
                         },

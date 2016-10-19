@@ -199,11 +199,11 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createSummaryModel: function(footerOptions) {
         var autoColumnNames = [];
 
-        if (!footerOptions || !footerOptions.columnContents) {
+        if (!footerOptions || !footerOptions.columnContent) {
             return null;
         }
 
-        _.each(footerOptions.columnContents, function(options, columnName) {
+        _.each(footerOptions.columnContent, function(options, columnName) {
             if (_.isFunction(options.template) && options.useAutoSummary !== false) {
                 autoColumnNames.push(columnName);
             }

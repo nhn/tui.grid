@@ -91,19 +91,19 @@ describe('grid', function() {
         });
     });
 
-    describe('setFooterColumnContents', function() {
-        it('should call columnModel.setFooterContents', function() {
+    describe('setFootercolumnContent', function() {
+        it('should call columnModel.setFooterContent', function() {
             var grid = createGrid(null, {
                 footer: {
-                    columnContents: {}
+                    columnContent: {}
                 }
             });
             var columnModel = grid.modelManager.columnModel;
-            spyOn(columnModel, 'setFooterContents');
+            spyOn(columnModel, 'setFooterContent');
 
-            grid.setFooterColumnContents('c1', 'contents');
+            grid.setFootercolumnContent('c1', 'contents');
 
-            expect(columnModel.setFooterContents).toHaveBeenCalledWith('c1', 'contents');
+            expect(columnModel.setFooterContent).toHaveBeenCalledWith('c1', 'contents');
         });
     });
 });

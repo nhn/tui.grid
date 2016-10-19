@@ -44,7 +44,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
-        this.listenTo(this.columnModel, 'setFooterContents', this._setColumnContents);
+        this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         }
@@ -106,7 +106,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {string} contents - HTML string
      * @private
      */
-    _setColumnContents: function(columnName, contents) {
+    _setcolumnContent: function(columnName, contents) {
         var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
 
         $th.html(contents);
@@ -121,7 +121,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _onChangeSummaryValue: function(columnName, valueMap) {
         var contents = this._generateValueHTML(columnName, valueMap);
 
-        this._setColumnContents(columnName, contents);
+        this._setcolumnContent(columnName, contents);
     },
 
     /**
