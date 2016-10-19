@@ -22,26 +22,13 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
         this.dataModel = options.dataModel;
 
         /**
-         * Whether using auto calculation. (defulat: true)
-         * @type {boolean}
+         * An array of columnNames using auto calculation
+         * @type {Array.<string>}
          */
-        this.useAutoCalculation = options.useAutoCalculation !== false;
+        this.autoColumnNames = options.autoColumnNames;
 
         /**
-         * Summary type map (KV)
-         * K: column name {string}
-         * V: summary types {Array}
-         * @type {object}
-         * @example
-         * {
-         *    columnName1: [typeConst.SUM, typeConst.AVG],
-         *    columnName2: [typeConst.MAX]
-         * }
-         */
-        this.summaryTypeMap = options.summaryTypeMap || {};
-
-        /**
-         * Summary type map (KV)
+         * Summary value map (KV)
          * K: column name {string}
          * V: value map {object}
          * @type {object}
@@ -56,14 +43,13 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
          *    }
          * }
          */
-        this.summaryValueMap = {};
+        this.columnSummaryMap = {};
 
-        if (this.useAutoCalculation) {
-            this._resetSummaryMap();
-            this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
-            this.listenTo(this.dataModel, 'change', this._onChangeData);
-            this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
-        }
+        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
+        this.listenTo(this.dataModel, 'change', this._onChangeData);
+        this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
+
+        this._resetSummaryMap();
     },
 
     /**
@@ -110,7 +96,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @private
      */
     _resetSummaryMap: function() {
-        this._resetFooterSummaryValue(_.keys(this.summaryTypeMap));
+        this._resetFooterSummaryValue();
     },
 
     /**
@@ -119,17 +105,17 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @private
      */
     _resetFooterSummaryValue: function(columnNames) {
-        _.each(columnNames, function(columnName) {
-            var summaryTypes = this.summaryTypeMap[columnName];
-            var values, summaryValueMap;
+        var targetColumnNames = this.autoColumnNames;
 
-            if (summaryTypes) {
-                values = this.dataModel.getColumnValues(columnName);
-                summaryValueMap = _.pick(this._calculate(values), summaryTypes);
+        if (columnNames) {
+            targetColumnNames = _.intersection(columnNames, this.autoColumnNames);
+        }
+        _.each(targetColumnNames, function(columnName) {
+            var values = this.dataModel.getColumnValues(columnName);
+            var valueMap = this._calculate(values);
 
-                this.summaryValueMap[columnName] = summaryValueMap;
-                this.trigger('change', columnName, summaryValueMap);
-            }
+            this.columnSummaryMap[columnName] = valueMap;
+            this.trigger('change', columnName, valueMap);
         }, this);
     },
 
@@ -160,7 +146,7 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
      * @returns {number|Object}
      */
     getValue: function(columnName, summaryType) {
-        var valueMap = this.summaryValueMap[columnName];
+        var valueMap = this.columnSummaryMap[columnName];
         var value;
 
         if (!summaryType) {
@@ -169,29 +155,6 @@ var Summary = Model.extend(/**@lends module:model/summary.prototype */{
 
         value = tui.util.pick(valueMap, summaryType);
         return _.isUndefined(value) ? null : value;
-    },
-
-    /**
-     * Sets the summary value of given column and type.
-     * If the length of argurments is 2, use second parameter as a value map
-     * @param {string} columnName - column name
-     * @param {string} [summaryType] - summary type
-     * @param {number|Object} value - value
-     */
-    setValue: function(columnName, summaryType, value) {
-        var summaryTypes = this.summaryTypeMap[columnName];
-        var valueMap = this.summaryValueMap[columnName];
-        var newValueMap = {};
-
-        if (_.isObject(summaryType)) {
-            _.extend(newValueMap, summaryType);
-        } else {
-            newValueMap = {};
-            newValueMap[summaryType] = value;
-        }
-        _.extend(valueMap, _.pick(newValueMap, summaryTypes));
-
-        this.trigger('change', columnName, valueMap);
     }
 });
 
