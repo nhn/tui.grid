@@ -91,19 +91,19 @@ describe('grid', function() {
         });
     });
 
-    // describe('setFooterSummaryValue', function() {
-    //     it('should call summary.setValue', function() {
-    //         var grid = createGrid(null, {
-    //             footer: {
-    //                 columnSummary: {}
-    //             }
-    //         });
-    //         var summary = grid.modelManager.summaryModel;
-    //         spyOn(summary, 'setValue');
-    //
-    //         grid.setFooterSummaryValue('c1', 'sum', 100);
-    //
-    //         expect(summary.setValue).toHaveBeenCalledWith('c1', 'sum', 100);
-    //     });
-    // });
+    describe('setFooterColumnContents', function() {
+        it('should call columnModel.setFooterContents', function() {
+            var grid = createGrid(null, {
+                footer: {
+                    columnContents: {}
+                }
+            });
+            var columnModel = grid.modelManager.columnModel;
+            spyOn(columnModel, 'setFooterContents');
+
+            grid.setFooterColumnContents('c1', 'contents');
+
+            expect(columnModel.setFooterContents).toHaveBeenCalledWith('c1', 'contents');
+        });
+    });
 });

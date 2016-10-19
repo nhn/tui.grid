@@ -1056,14 +1056,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Sets the summary value of given column and type.
-     * If the length of argurments is 2, use second parameter as a value map
+     * Sets the HTML string of given column footer.
      * @param {string} columnName - column name
-     * @param {string} [summaryType] - summary type
-     * @param {number|Object} value - value
+     * @param {string} contents - HTML string
+     * @api
      */
-    setFooterSummaryValue: function(columnName, summaryType, value) {
-        this.modelManager.summaryModel.setValue(columnName, summaryType, value);
+    setFooterColumnContents: function(columnName, contents) {
+        this.modelManager.columnModel.setFooterContents(columnName, contents);
     },
 
     /**
