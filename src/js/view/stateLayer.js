@@ -68,7 +68,9 @@ var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
             isLoading: (renderState === stateConst.LOADING)
         });
 
-        this.$el.html(layerHtml).show();
+        this.$el.html(layerHtml).show().css({
+            bottom: this.dimensionModel.get('paginationHeight')
+        });
         this._refreshLayout();
     },
 
