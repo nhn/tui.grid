@@ -101,6 +101,16 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     },
 
     /**
+     * Moves focus to the first cell of the given row, and starts editing the cell.
+     * @param {number} rowKey - rowKey
+     */
+    focusInToRow: function(rowKey) {
+        var firstColumn = this.columnModel.at(0, true);
+
+        this.focusModel.focusIn(rowKey, firstColumn.columnName, true);
+    },
+
+    /**
      * Executes the custom handler (defined by user) of the input events.
      * @param {Event} event - DOM Event object
      * @param {{rowKey:String, columnName:String}} address - cell address

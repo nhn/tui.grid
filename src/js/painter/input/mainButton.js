@@ -8,6 +8,7 @@ var _ = require('underscore');
 
 var Painter = require('../../base/painter');
 var classNameConst = require('../../common/classNameConst');
+var keyCodeMap = require('../../common/constMap').keyCode;
 
 /**
  * Main Button Painter
@@ -33,7 +34,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @type {Object}
      */
     events: {
-        change: '_onChange'
+        change: '_onChange',
+        keydown: '_onKeydown'
     },
 
     /**
@@ -55,6 +57,20 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         var address = this._getCellAddress($target);
 
         this.controller.setValue(address, $target.is(':checked'));
+    },
+
+    /**
+     * Event handler for 'keydown' DOM event
+     * @param {KeyboardEvent} event [description]
+     */
+    _onKeydown: function(event) {
+        var address;
+
+        if (event.keyCode === keyCodeMap.TAB) {
+            event.preventDefault();
+            address = this._getCellAddress($(event.target));
+            this.controller.focusInToRow(address.rowKey);
+        }
     },
 
     /**
