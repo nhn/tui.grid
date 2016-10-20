@@ -197,17 +197,21 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * @private
      */
     _createSummaryModel: function(footerOptions) {
-        if (!footerOptions || !footerOptions.columnSummary) {
+        var autoColumnNames = [];
+
+        if (!footerOptions || !footerOptions.columnContent) {
             return null;
         }
 
+        _.each(footerOptions.columnContent, function(options, columnName) {
+            if (_.isFunction(options.template) && options.useAutoSummary !== false) {
+                autoColumnNames.push(columnName);
+            }
+        });
+
         return new SummaryModel(null, {
             dataModel: this.dataModel,
-            columnModel: this.columnModel,
-            useAutoCalculation: footerOptions.useAutoCalculation,
-            summaryTypeMap: _.mapObject(footerOptions.columnSummary, function(value) {
-                return value.types;
-            })
+            autoColumnNames: autoColumnNames
         });
     },
 

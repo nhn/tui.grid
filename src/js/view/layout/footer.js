@@ -1,5 +1,5 @@
 /**
- * @fileoverview Footer 관련
+ * @fileoverview Footer
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -17,7 +17,18 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @param {object} options - options
      */
     initialize: function(options) {
-        this.formatters = options.formatters;
+        /**
+         * Store template functions of each column
+         * K: column name
+         * V: template function
+         * @example
+         * {
+         *     c1: function() {},
+         *     c2: function() {}
+         * }
+         * @type {Object}
+         */
+        this.columnTemplateMap = options.columnTemplateMap || {};
 
         /**
          * 'L': Left, 'R': Right
@@ -33,6 +44,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
 
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
+        this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
         }
@@ -89,15 +101,27 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     },
 
     /**
+     * Sets the HTML string of <th> of given column
+     * @param {string} columnName - column name
+     * @param {string} contents - HTML string
+     * @private
+     */
+    _setcolumnContent: function(columnName, contents) {
+        var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
+
+        $th.html(contents);
+    },
+
+    /**
      * Refresh <th> tag whenever summary value is changed.
      * @param {string} columnName - column name
      * @param {object} valueMap - value map
      * @private
      */
     _onChangeSummaryValue: function(columnName, valueMap) {
-        var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
+        var contents = this._generateValueHTML(columnName, valueMap);
 
-        $th.html(this._generateValueHTML(columnName, valueMap));
+        this._setcolumnContent(columnName, contents);
     },
 
     /**
@@ -108,14 +132,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @private
      */
     _generateValueHTML: function(columnName, valueMap) {
-        var formatter = this.formatters && this.formatters[columnName];
+        var template = this.columnTemplateMap[columnName];
         var html = '';
 
-        if (_.isFunction(formatter)) {
-            html = formatter(valueMap);
-        } else if (valueMap) {
-            html = _.values(valueMap).join(', ');
+        if (_.isFunction(template)) {
+            html = template(valueMap);
         }
+
         return html;
     },
 

@@ -433,6 +433,16 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             }
         }
         return _.uniq(searchedNames);
+    },
+
+    /**
+     * Set footer contents.
+     * (Just trigger 'setFooterContent')
+     * @param {string} columnName - columnName
+     * @param {string} contents - HTML string
+     */
+    setFooterContent: function(columnName, contents) {
+        this.trigger('setFooterContent', columnName, contents);
     }
 });
 

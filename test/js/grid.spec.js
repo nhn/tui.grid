@@ -91,19 +91,19 @@ describe('grid', function() {
         });
     });
 
-    describe('setFooterSummaryValue', function() {
-        it('should call summary.setValue', function() {
+    describe('setFooterColumnContent', function() {
+        it('should call columnModel.setFooterContent', function() {
             var grid = createGrid(null, {
                 footer: {
-                    columnSummary: {}
+                    columnContent: {}
                 }
             });
-            var summary = grid.modelManager.summaryModel;
-            spyOn(summary, 'setValue');
+            var columnModel = grid.modelManager.columnModel;
+            spyOn(columnModel, 'setFooterContent');
 
-            grid.setFooterSummaryValue('c1', 'sum', 100);
+            grid.setFooterColumnContent('c1', 'contents');
 
-            expect(summary.setValue).toHaveBeenCalledWith('c1', 'sum', 100);
+            expect(columnModel.setFooterContent).toHaveBeenCalledWith('c1', 'contents');
         });
     });
 });

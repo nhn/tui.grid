@@ -92,22 +92,21 @@ var grid = new tui.Grid({
 	],
     footer: {
         height: 50,
-        columnSummary: {
+        columnContent: {
             c1: {
-                types: ['sum', 'avg'],
-                formatter: function(valueMap) {
-                    return '합계: ' + valueMap.sum + '<br/>평균: ' + valueMap.avg;
+                useAutoSummary: false,
+                template: function() {
+                    console.log('template?');
+                    return 'Something';
                 }
             },
             c2: {
-                types: ['min', 'max'],
-                formatter: function(valueMap) {
+                template: function(valueMap) {
                     return '최대값: ' + valueMap.max + ', 최소값: ' + valueMap.min;
                 }
             },
             c3: {
-                types: ['sum', 'cnt'],
-                formatter: function(valueMap) {
+                template: function(valueMap) {
                     return '합계: ' + valueMap.sum + '<br/> 전체개수: ' + valueMap.cnt;
                 }
             }

@@ -14,7 +14,8 @@ describe('[view/factory] ', function() {
     describe('createFooter()', function() {
         it('create Footer with options', function() {
             var factory = new Factory({
-                modelManager: modelManager
+                modelManager: modelManager,
+                footer: {}
             });
             var footer = factory.createFooter('R');
 
@@ -27,21 +28,21 @@ describe('[view/factory] ', function() {
         });
 
         it('set formatters from footer options', function() {
-            var columnSummary = {
-                c1: {formatter: function() {}},
-                c2: {formatter: function() {}}
+            var columnContent = {
+                c1: {template: function() {}},
+                c2: {template: function() {}}
             };
             var factory = new Factory({
                 modelManager: modelManager,
                 footer: {
-                    columnSummary: columnSummary
+                    columnContent: columnContent
                 }
             });
             var footer = factory.createFooter('R');
 
-            expect(footer.formatters).toEqual({
-                c1: columnSummary.c1.formatter,
-                c2: columnSummary.c2.formatter
+            expect(footer.columnTemplateMap).toEqual({
+                c1: columnContent.c1.template,
+                c2: columnContent.c2.template
             });
         });
     });
