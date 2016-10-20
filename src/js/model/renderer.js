@@ -425,8 +425,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             rowNum += 1;
         }, this);
 
-        console.log(dummyRowCount);
-
         this.set('dummyRowCount', dummyRowCount);
     },
 

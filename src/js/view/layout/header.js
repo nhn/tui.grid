@@ -190,7 +190,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     _onKeydown: function(event) {
         if (event.keyCode === keyCodeMap.TAB) {
-            this.renderModel.set('scrollTop', 0);
+            event.preventDefault();
+            this.focusModel.focusClipboard();
         }
     },
 
