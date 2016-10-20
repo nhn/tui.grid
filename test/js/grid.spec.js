@@ -91,7 +91,7 @@ describe('grid', function() {
         });
     });
 
-    describe('setFootercolumnContent', function() {
+    describe('setFooterColumnContent', function() {
         it('should call columnModel.setFooterContent', function() {
             var grid = createGrid(null, {
                 footer: {
@@ -101,7 +101,7 @@ describe('grid', function() {
             var columnModel = grid.modelManager.columnModel;
             spyOn(columnModel, 'setFooterContent');
 
-            grid.setFootercolumnContent('c1', 'contents');
+            grid.setFooterColumnContent('c1', 'contents');
 
             expect(columnModel.setFooterContent).toHaveBeenCalledWith('c1', 'contents');
         });

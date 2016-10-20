@@ -1061,7 +1061,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {string} contents - HTML string
      * @api
      */
-    setFootercolumnContent: function(columnName, contents) {
+    setFooterColumnContent: function(columnName, contents) {
         this.modelManager.columnModel.setFooterContent(columnName, contents);
     },
 

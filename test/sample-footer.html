@@ -94,8 +94,10 @@ var grid = new tui.Grid({
         height: 50,
         columnContent: {
             c1: {
-                template: function(valueMap) {
-                    return '합계: ' + valueMap.sum + '<br/>평균: ' + valueMap.avg;
+                useAutoSummary: false,
+                template: function() {
+                    console.log('template?');
+                    return 'Something';
                 }
             },
             c2: {
