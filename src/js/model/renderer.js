@@ -283,7 +283,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _resetDummyRows: function() {
         this._clearDummyRows();
         this._fillDummyRows();
-        this.trigger('dataModelChanged');
+        this.trigger('rowListChanged');
     },
 
     /**
@@ -424,6 +424,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             }, this);
             rowNum += 1;
         }, this);
+
+        console.log(dummyRowCount);
 
         this.set('dummyRowCount', dummyRowCount);
     },
