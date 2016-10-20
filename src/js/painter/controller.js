@@ -91,13 +91,9 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      */
     focusInToNextCell: function(reverse) {
         var focusModel = this.focusModel;
-        var rowKey = focusModel.get('rowKey');
-        var columnName = focusModel.get('columnName');
-        var nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
+        var address = reverse ? focusModel.prevAddress() : focusModel.nextAddress();
 
-        if (columnName !== nextColumnName) {
-            focusModel.focusIn(rowKey, nextColumnName, true);
-        }
+        focusModel.focusIn(address.rowKey, address.columnName, true);
     },
 
     /**
@@ -105,9 +101,8 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @param {number} rowKey - rowKey
      */
     focusInToRow: function(rowKey) {
-        var firstColumn = this.columnModel.at(0, true);
-
-        this.focusModel.focusIn(rowKey, firstColumn.columnName, true);
+        var focusModel = this.focusModel;
+        focusModel.focusIn(rowKey, focusModel.firstColumnName(), true);
     },
 
     /**

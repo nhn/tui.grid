@@ -140,6 +140,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var displayRowCount = this.dimensionModel.get('displayRowCount');
         var isKeyIdentified = true;
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+        var address;
 
         if (util.isBlank(focused.rowKey)) {
             return;
@@ -179,7 +180,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 this._del(rowKey, columnName);
                 break;
             case keyCodeMap.TAB:
-                focusModel.focusIn(rowKey, focusModel.nextColumnName(), true);
+                address = focusModel.nextAddress();
+                focusModel.focusIn(address.rowKey, address.columnName, true);
                 break;
             default:
                 isKeyIdentified = false;
@@ -238,13 +240,12 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var focusModel = this.focusModel;
         var dimensionModel = this.dimensionModel;
         var columnModelList = this.columnModel.getVisibleColumnModelList();
-        var focused = focusModel.which();
         var displayRowCount = dimensionModel.get('displayRowCount');
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
         var index = this._getIndexBeforeMove();
         var isKeyIdentified = true;
         var isSelection = true;
-        var columnModel, scrollPosition, isValid, selectionType;
+        var columnModel, scrollPosition, isValid, selectionType, address;
 
         switch (keyCode) {
             case keyCodeMap.UP_ARROW:
@@ -276,7 +277,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 break;
             case keyCodeMap.TAB:
                 isSelection = false;
-                focusModel.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
+                address = focusModel.prevAddress();
+                focusModel.focusIn(address.rowKey, address.columnName, true);
                 break;
             default:
                 isSelection = false;
