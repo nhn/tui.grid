@@ -340,7 +340,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             page = responseData.pagination.page;
             totalCount = responseData.pagination.totalCount;
             pagination.setOption('itemPerPage', this.perPage);
-            pagination.setOption('itemCount', totalCount);
+            // If the totalCount is 0, set itemCount to 1 to show pagination
+            pagination.setOption('itemCount', totalCount || 1);
             pagination.movePageTo(page);
             this.curPage = page;
         }

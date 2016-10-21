@@ -1,5 +1,5 @@
 /**
- * @fileoverview Header 관련
+ * @fileoverview Header View
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -12,21 +12,22 @@ var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 
 var DELAY_SYNC_CHECK = 10;
+var keyCodeMap = constMap.keyCode;
 var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
 
 /**
- * Header 레이아웃 View
+ * Header Layout View
  * @module view/layout/header
  * @extends module:base/view
  */
 var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     /**
      * @constructs
-     * @param {Object} options 옵션
-     * @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+     * @param {Object} options - options
+     * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
      */
     initialize: function(options) {
         View.prototype.initialize.call(this);
@@ -60,11 +61,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     events: {
         'click': '_onClick',
+        'keydown input': '_onKeydown',
         'mousedown th': '_onMouseDown'
     },
 
     /**
-     * 전체 template
+     * template
      */
     template: _.template(
         '<table class="' + classNameConst.TABLE + '">' +
@@ -74,7 +76,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     ),
 
     /**
-     * <th> 템플릿
+     * template for <th>
      */
     templateHeader: _.template(
         '<th <%=attrColumnName%>="<%=columnName%>" ' +
@@ -92,7 +94,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     ),
 
     /**
-     * <col> 템플릿
+     * templse for <col>
      */
     templateCol: _.template(
         '<col ' +
@@ -101,7 +103,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     ),
 
     /**
-     * 정렬 버튼을 위한 HTML 마크업
+     * HTML string for a button
      */
     markupBtnSort: '<a class="' + classNameConst.BTN_SORT + '"></a>',
 
@@ -111,10 +113,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColGroupMarkup: function() {
-        var columnData = this._getColumnData(),
-            columnWidthList = columnData.widthList,
-            columnModelList = columnData.modelList,
-            htmlList = [];
+        var columnData = this._getColumnData();
+        var columnWidthList = columnData.widthList;
+        var columnModelList = columnData.modelList;
+        var htmlList = [];
 
         _.each(columnWidthList, function(width, index) {
             htmlList.push(this.templateCol({
@@ -123,6 +125,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 width: width + CELL_BORDER_WIDTH
             }));
         }, this);
+
         return htmlList.join('');
     },
 
@@ -177,6 +180,18 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             _.each(columnNames.concat(mergedColumnNames), function(columnName) {
                 $ths.filter('[' + ATTR_COLUMN_NAME + '="' + columnName + '"]').addClass(classNameConst.CELL_SELECTED);
             });
+        }
+    },
+
+    /**
+     * Event handler for 'keydown' event on checkbox input
+     * @param {KeyboardEvent} event - event
+     * @private
+     */
+    _onKeydown: function(event) {
+        if (event.keyCode === keyCodeMap.TAB) {
+            event.preventDefault();
+            this.focusModel.focusClipboard();
         }
     },
 
@@ -247,10 +262,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _startColumnSelectionWithoutShiftKey: function(columnIndexes) {
-        var selectionModel = this.selectionModel,
-            minMax = util.getMinMax(columnIndexes),
-            min = minMax.min,
-            max = minMax.max;
+        var selectionModel = this.selectionModel;
+        var minMax = util.getMinMax(columnIndexes);
+        var min = minMax.min;
+        var max = minMax.max;
 
         selectionModel.setMinimumColumnRange([min, max]);
         selectionModel.selectColumn(min);
@@ -286,10 +301,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onMouseMove: function(event) {
-        var columnModel = this.columnModel,
-            isExtending = true,
-            columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME),
-            columnNames, columnIndexes;
+        var columnModel = this.columnModel;
+        var isExtending = true;
+        var columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
+        var columnNames, columnIndexes;
 
         if (columnName) {
             columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
@@ -369,9 +384,9 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnData = this._getColumnData(),
-            columnWidthList = columnData.widthList,
-            $colList = this.$el.find('col');
+        var columnData = this._getColumnData();
+        var columnWidthList = columnData.widthList;
+        var $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(columnWidth, index) {
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
@@ -397,8 +412,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onClick: function(clickEvent) {
-        var $target = $(clickEvent.target),
-            columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
+        var $target = $(clickEvent.target);
+        var columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
 
         if (columnName === '_button' && $target.is('input')) {
             if ($target.prop('checked')) {
@@ -455,10 +470,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.columnModel,
-            dimensionModel = this.dimensionModel,
-            columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnModel = this.columnModel;
+        var dimensionModel = this.dimensionModel;
+        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
+        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
 
         return {
             widthList: columnWidthList,
@@ -472,21 +487,21 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getTableBodyMarkup: function() {
-        var hierarchyList = this._getColumnHierarchyList(),
-            maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-        // 가공한 컬럼 모델 리스트 정보를 바탕으로 컬럼 엘리먼트들에 대한 마크업을 구성한다.
-        var headerHeight = this.dimensionModel.get('headerHeight'),
-            rowMarkupList = new Array(maxRowCount),
-            columnNameList = new Array(maxRowCount),
-            colSpanList = [],
-            rowHeight = util.getRowHeight(maxRowCount, headerHeight) - 1,
-            rowSpan = 1,
-            height,
-            headerMarkupList;
+        var hierarchyList = this._getColumnHierarchyList();
+        var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
+        var headerHeight = this.dimensionModel.get('headerHeight');
+        var rowMarkupList = new Array(maxRowCount);
+        var columnNameList = new Array(maxRowCount);
+        var colSpanList = [];
+        var rowHeight = util.getRowHeight(maxRowCount, headerHeight) - 1;
+        var rowSpan = 1;
+        var height;
+        var headerMarkupList;
 
         _.each(hierarchyList, function(hierarchy, i) {
-            var length = hierarchyList[i].length,
-                curHeight = 0;
+            var length = hierarchyList[i].length;
+            var curHeight = 0;
+
             _.each(hierarchy, function(columnModel, j) {
                 var columnName = columnModel.columnName;
                 var classNames = [

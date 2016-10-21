@@ -91,13 +91,18 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      */
     focusInToNextCell: function(reverse) {
         var focusModel = this.focusModel;
-        var rowKey = focusModel.get('rowKey');
-        var columnName = focusModel.get('columnName');
-        var nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
+        var address = reverse ? focusModel.prevAddress() : focusModel.nextAddress();
 
-        if (columnName !== nextColumnName) {
-            focusModel.focusIn(rowKey, nextColumnName, true);
-        }
+        focusModel.focusIn(address.rowKey, address.columnName, true);
+    },
+
+    /**
+     * Moves focus to the first cell of the given row, and starts editing the cell.
+     * @param {number} rowKey - rowKey
+     */
+    focusInToRow: function(rowKey) {
+        var focusModel = this.focusModel;
+        focusModel.focusIn(rowKey, focusModel.firstColumnName(), true);
     },
 
     /**
@@ -121,15 +126,6 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
         if (_.isFunction(eventHandler)) {
             eventHandler.call(event.target, event, address);
         }
-    },
-
-    /**
-     * Appends an empty row and moves focus to the first cell of the row.
-     */
-    appendEmptyRowAndFocus: function() {
-        this.dataModel.append({}, {
-            focus: true
-        });
     },
 
     /**

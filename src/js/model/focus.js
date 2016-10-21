@@ -664,6 +664,62 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         var lastIndex = columnModelList.length - 1;
 
         return columnModelList[lastIndex].columnName;
+    },
+
+    /**
+     * Returns the address of previous cell.
+     * @returns {{rowKey: number, columnName: string}}
+     */
+    prevAddress: function() {
+        var rowKey = this.get('rowKey');
+        var columnName = this.get('columnName');
+        var isFirstColumn = columnName === this.firstColumnName();
+        var isFirstRow = rowKey === this.firstRowKey();
+        var prevRowKey, prevColumnName;
+
+        if (isFirstRow && isFirstColumn) {
+            prevRowKey = rowKey;
+            prevColumnName = columnName;
+        } else if (isFirstColumn) {
+            prevRowKey = this.prevRowKey();
+            prevColumnName = this.lastColumnName();
+        } else {
+            prevRowKey = rowKey;
+            prevColumnName = this.prevColumnName();
+        }
+
+        return {
+            rowKey: prevRowKey,
+            columnName: prevColumnName
+        };
+    },
+
+    /**
+     * Returns the address of next cell.
+     * @returns {{rowKey: number, columnName: string}}
+     */
+    nextAddress: function() {
+        var rowKey = this.get('rowKey');
+        var columnName = this.get('columnName');
+        var isLastColumn = columnName === this.lastColumnName();
+        var isLastRow = rowKey === this.lastRowKey();
+        var nextRowKey, nextColumnName;
+
+        if (isLastRow && isLastColumn) {
+            nextRowKey = rowKey;
+            nextColumnName = columnName;
+        } else if (isLastColumn) {
+            nextRowKey = this.nextRowKey();
+            nextColumnName = this.firstColumnName();
+        } else {
+            nextRowKey = rowKey;
+            nextColumnName = this.nextColumnName();
+        }
+
+        return {
+            rowKey: nextRowKey,
+            columnName: nextColumnName
+        };
     }
 });
 
