@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="utf-8">
+	<title>5. Using Date-Picker Component</title>
+    <link rel="stylesheet" type="text/css" href="./grid.css" />
+</head>
+<body>
+<div id="grid"></div>
+</body>
+<script type="text/javascript" src="./js/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/lib/underscore.js"></script>
+<script type="text/javascript" src="./js/lib/backbone.js"></script>
+<script type="text/javascript" src="./js/lib/code-snippet.js"></script>
+<script type="text/javascript" src="./js/lib/calendar.js"></script>
+<script type="text/javascript" src="./js/lib/date-picker.js"></script>
+<script type="text/javascript" src="./grid.js"></script>
+<script>
+var grid = new tui.Grid({
+    el: $('#grid'),
+	headerHeight: 30,
+    toolbar: null,
+    headerHeight: 60,
+    displayRowCount: 15,
+    columnModelList: [
+        {
+            title: 'DatePicker: Off',
+            columnName: 'c1',
+            editOption: {
+                useViewMode: false,
+                type: 'text'
+            }
+        },
+		{
+			title: 'DatePicker: (yy/mm/dd)',
+            columnName: 'c2',
+            editOption: {
+                useViewMode: false,
+				type: 'text'
+			},
+            component: {
+                name: 'datePicker',
+                option: {
+                    dateForm: 'yy/mm/dd',
+                }
+            }
+        },
+		{
+			title: 'DatePicker: (yyyy.mm.dd)',
+            columnName: 'c3',
+            editOption: {
+                type: 'text'
+			},
+            component: {
+                name: 'datePicker',
+                option: {
+                    dateForm: 'yyyy.mm.dd'
+                }
+            }
+        },
+		{
+			title: 'DatePicker (selectableRanges)',
+            columnName: 'c4',
+            editOption: {
+                type: 'text'
+			},
+            component: {
+                name: 'datePicker',
+                option: {
+                    date: {year: 2014, month: 4, date: 10},
+                    selectableRanges: [
+                        [{year: 2014, month: 4, date: 10}, {year: 2014, month: 6, date: 20}]
+                    ]
+                }
+            }
+        }
+	],
+    columnMerge: [
+        {
+            columnName : 'c1-c2',
+            title : 'useViewMode: false',
+            columnNameList : ['c1', 'c2']
+        },
+        {
+            columnName : 'c3-c4',
+            title : 'useViewMode: true',
+            columnNameList : ['c3', 'c4']
+        }
+    ]
+});
+
+var rowList = [];
+(function() {
+	_.times(20, function(number) {
+	    rowList.push({ });
+	})
+})();
+
+grid.setRowList(rowList);
+</script>
+</html>
