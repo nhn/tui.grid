@@ -25,14 +25,6 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
     },
 
     /**
-     * key-value object contains event names as keys and handler names as values
-     * @type {Object}
-     */
-    events: {
-        dblclick: '_onDblClick'
-    },
-
-    /**
      * css selector to find its own element(s) from a parent element.
      * @type {String}
      */
@@ -50,14 +42,6 @@ var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell
             '&#8203;' + // 'for height issue with empty cell in IE7
         '</td>'
     ),
-
-    /**
-     * Event handler for 'dblclick' event
-     * @private
-     */
-    _onDblClick: function() {
-        this.controller.appendEmptyRowAndFocus(true);
-    },
 
     /**
      * Generates a HTML string from given data, and returns it.

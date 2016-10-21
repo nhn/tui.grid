@@ -129,15 +129,6 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     },
 
     /**
-     * Appends an empty row and moves focus to the first cell of the row.
-     */
-    appendEmptyRowAndFocus: function() {
-        this.dataModel.append({}, {
-            focus: true
-        });
-    },
-
-    /**
      * Sets the value of the given cell.
      * @param {{rowKey:String, columnName:String}} address - cell address
      * @param {(Number|String|Boolean)} value - value

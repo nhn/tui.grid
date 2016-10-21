@@ -133,6 +133,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (this._isCellElement($target, true)) {
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
+            if (eventData.rowKey === null && !eventData.isStopped()) {
+                this.dataModel.append({}, {focus: true});
+            }
         }
     },
 
@@ -193,10 +196,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _isCellElement: function($target, isIncludeChild) {
         var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-        return !!($cell.is('td') &&
-            $cell.attr(attrNameConst.COLUMN_NAME) &&
-            $cell.parent().attr(attrNameConst.ROW_KEY)
-        );
+        return !!($cell.is('td') && $cell.attr(attrNameConst.COLUMN_NAME));
     },
 
     /**
@@ -209,6 +209,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
         var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
 
+        if (isNaN(rowKey)) {
+            rowKey = null;
+        }
         return {
             rowKey: rowKey,
             columnName: columnName,
