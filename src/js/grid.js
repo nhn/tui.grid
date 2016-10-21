@@ -3,11 +3,10 @@
  * @author NHN Ent. FE Development Team
  */
 'use strict';
-
 /**
  * Grid public API
  *
- * @param {Object} options
+ * @param {PropertiesHash} options
  *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
  *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
  *          can be used for setting this value dynamically.
@@ -16,7 +15,7 @@
  *          If not specified, the button column will not be shown.
  *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
  *          to each rows when rendering time.
- *      @param {number} [options.headerHeight=35] - The height of header area.
+ *      @param {number} [options.headerHeight=35] - The height of the header area.
  *          When rows in header are multiple (merged column), this value must be the total height of rows.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
  *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area.
@@ -74,7 +73,7 @@
  *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
  *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
  *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be
- *                   called before changing the value of the cell. If returns false, the changing will be canceled.
+ *                  called before changing the value of the cell. If returns false, the changing will be canceled.
  *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
  *                  called after changing the value of the cell.
  *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
@@ -97,13 +96,24 @@
  *                  The options list of target columns will be replaced with the return value of this function.
  *          @param {Object} [options.columnModelList.component] - Option for using tui-component
  *              @param {string} [options.columnModelList.component.name] - The name of the compnent to use
-                    for this column
+ *                  for this column
  *              @param {Object} [options.columnModelList.component.option] - The option object to be used for
-                    creating the component
- *      @param {array} options.columnMerge - The array that specifies the merged column.
+ *                  creating the component
+ *      @param {array} [options.columnMerge] - The array that specifies the merged column.
  *          This options does not merge the cells of multiple columns into a single cell.
  *          This options only effects to the headers of the multiple columns, creates a new parent header
  *          that includes the headers of spcified columns, and sets up the hierarchy.
+ *      @param {Object} [options.footer] - The object for configuring footer area.
+ *          @param {number} [options.footer.height] - The height of the footer area.
+ *          @param {Object.<string, Object>} [options.footer.columnContent]
+ *              The object for configuring each column in the footer.
+ *              Sub options below are keyed by each column name.
+ *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
+ *                  If set to true, the summary value of each column is served as a paramater to the template
+ *                  function whenever data is changed.
+ *              @param {function} [options.footer.columnContent.template] - Template function which returns the
+ *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
+ *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
  * @constructor tui.Grid
  * @example
      <div id='grid'></div>
@@ -297,9 +307,24 @@
             'title' : '1 + 2 + 3 + 4 + 5',
             'columnNameList' : ['mergeColumn2', 'column4', 'column5']
         }
-    ]
+    ],
+    footer: {
+        height: 100,
+        columnContent: {
+            c1: {
+              template: function(summary) {
+                return 'Total: ' + summary.sum + '<br> Average: ' + summary.avg;
+              }
+            },
+            c2: {
+              useAutoSummary: false,
+              template: function() {
+                return 'c2-footer';
+              }
+            }
+        }
+    }
 });
-
      </script>
  *
  */
