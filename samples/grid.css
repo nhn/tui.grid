@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Sep 26 2016 14:40:44 GMT+0900 (KST)"
- * version: 1.4.1
+ * bundle created at "Fri Oct 21 2016 14:46:00 GMT+0900 (KST)"
+ * version: 1.5.0
  */
 .tui-grid-container {
   width: 100%;
@@ -186,6 +186,12 @@
 .tui-grid-lside-area .tui-grid-table {
   border-right-width: 0;
 }
+.tui-grid-foot-area .tui-grid-table {
+  border-width: 0 0 1px;
+}
+.tui-grid-foot-area .tui-grid-cell {
+  border-width: 0 1px;
+}
 .tui-grid-cell {
   overflow: hidden;
   white-space: nowrap;
@@ -299,10 +305,22 @@
 .tui-grid-head-area {
   border-style: solid;
   border-width: 0 0 1px;
+  position: relative;
+  overflow: hidden;
 }
 .tui-grid-head-area .tui-grid-cell-head {
   border-top-width: 1px;
   border-bottom-width: 1px;
+}
+.tui-grid-body-area {
+  position: relative;
+  overflow: scroll;
+}
+.tui-grid-foot-area {
+  position: relative;
+  margin-top: -17px;
+  overflow-y: hidden;
+  overflow-x: scroll;
 }
 .tui-grid-lside-area {
   display: none;
@@ -312,12 +330,7 @@
   overflow: hidden;
   z-index: 10;
 }
-.tui-grid-lside-area .tui-grid-head-area {
-  overflow: hidden;
-}
 .tui-grid-lside-area .tui-grid-body-area {
-  position: relative;
-  overflow: scroll;
   margin-right: -17px;
 }
 .tui-grid-lside-area .tui-grid-body-area .tui-grid-selection-layer {
@@ -327,17 +340,28 @@
   display: none;
   overflow: hidden;
 }
-.tui-grid-rside-area .tui-grid-head-area {
-  position: relative;
+.tui-grid-rside-area .tui-grid-head-area,
+.tui-grid-rside-area .tui-grid-foot-area {
   margin-right: 17px;
-  overflow: hidden;
 }
-.tui-grid-rside-area .tui-grid-head-area.tui-grid-no-scroll-y {
+.tui-grid-no-scroll-y .tui-grid-rside-area .tui-grid-head-area,
+.tui-grid-no-scroll-y .tui-grid-rside-area .tui-grid-foot-area {
   margin-right: 0;
 }
-.tui-grid-rside-area .tui-grid-body-area {
-  position: relative;
-  overflow: scroll;
+.tui-grid-no-scroll-x .tui-grid-foot-area {
+  margin-top: 0;
+  overflow-x: hidden;
+}
+.tui-grid-no-scroll-x .tui-grid-foot-area-right {
+  bottom: 0;
+}
+.tui-grid-foot-area-right {
+  position: absolute;
+  right: 0;
+  bottom: 17px;
+  width: 17px;
+  border-style: solid;
+  border-width: 1px 0 1px 1px;
 }
 .tui-grid-body-container {
   position: relative;

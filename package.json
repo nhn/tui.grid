@@ -1,6 +1,6 @@
 {
   "name": "tui-grid",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "grid",
   "main": "gulpfiles.js",
   "directories": {
@@ -16,7 +16,7 @@
     "type": "git",
     "url": "https://github.com/nhnent/tui.grid"
   },
-  "author": "NHN Ent. FE Development Team",
+  "author": "NHN Ent. FE Development Lab",
   "license": "MIT",
   "devDependencies": {
     "body-parser": "^1.12.4",

@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Sep 26 2016 14:40:44 GMT+0900 (KST)"
- * version: 1.4.1
+ * bundle created at "Fri Oct 21 2016 14:44:34 GMT+0900 (KST)"
+ * version: 1.5.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -53,11 +53,10 @@
 	 * @author NHN Ent. FE Development Team
 	 */
 	'use strict';
-
 	/**
 	 * Grid public API
 	 *
-	 * @param {Object} options
+	 * @param {PropertiesHash} options
 	 *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
 	 *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
 	 *          can be used for setting this value dynamically.
@@ -66,7 +65,7 @@
 	 *          If not specified, the button column will not be shown.
 	 *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
 	 *          to each rows when rendering time.
-	 *      @param {number} [options.headerHeight=35] - The height of header area.
+	 *      @param {number} [options.headerHeight=35] - The height of the header area.
 	 *          When rows in header are multiple (merged column), this value must be the total height of rows.
 	 *      @param {number} [options.rowHeight=27] - The height of each rows.
 	 *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area.
@@ -124,7 +123,7 @@
 	 *                  'select', 'radio', 'checkbox' type. The item of the array must contain properties named
 	 *                  'text' and 'value'. (e.g. [{text: 'option1', value: 1}, {...}])
 	 *              @param {function} [options.columnModelList.editOption.changeBeforeCallback] - The function that will be
-	 *                   called before changing the value of the cell. If returns false, the changing will be canceled.
+	 *                  called before changing the value of the cell. If returns false, the changing will be canceled.
 	 *              @param {function} [options.columnModelList.editOption.changeAfterCallback] - The function that will be
 	 *                  called after changing the value of the cell.
 	 *              @param {(string|function)} [options.columnModelList.editOption.beforeContent] - The HTML string to be
@@ -147,13 +146,24 @@
 	 *                  The options list of target columns will be replaced with the return value of this function.
 	 *          @param {Object} [options.columnModelList.component] - Option for using tui-component
 	 *              @param {string} [options.columnModelList.component.name] - The name of the compnent to use
-	                    for this column
+	 *                  for this column
 	 *              @param {Object} [options.columnModelList.component.option] - The option object to be used for
-	                    creating the component
-	 *      @param {array} options.columnMerge - The array that specifies the merged column.
+	 *                  creating the component
+	 *      @param {array} [options.columnMerge] - The array that specifies the merged column.
 	 *          This options does not merge the cells of multiple columns into a single cell.
 	 *          This options only effects to the headers of the multiple columns, creates a new parent header
 	 *          that includes the headers of spcified columns, and sets up the hierarchy.
+	 *      @param {Object} [options.footer] - The object for configuring footer area.
+	 *          @param {number} [options.footer.height] - The height of the footer area.
+	 *          @param {Object.<string, Object>} [options.footer.columnContent]
+	 *              The object for configuring each column in the footer.
+	 *              Sub options below are keyed by each column name.
+	 *              @param {boolean} [options.footer.columnContent.useAutoSummary=true]
+	 *                  If set to true, the summary value of each column is served as a paramater to the template
+	 *                  function whenever data is changed.
+	 *              @param {function} [options.footer.columnContent.template] - Template function which returns the
+	 *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
+	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
 	 * @constructor tui.Grid
 	 * @example
 	     <div id='grid'></div>
@@ -347,9 +357,24 @@
 	            'title' : '1 + 2 + 3 + 4 + 5',
 	            'columnNameList' : ['mergeColumn2', 'column4', 'column5']
 	        }
-	    ]
+	    ],
+	    footer: {
+	        height: 100,
+	        columnContent: {
+	            c1: {
+	              template: function(summary) {
+	                return 'Total: ' + summary.sum + '<br> Average: ' + summary.avg;
+	              }
+	            },
+	            c2: {
+	              useAutoSummary: false,
+	              template: function() {
+	                return 'c2-footer';
+	              }
+	            }
+	        }
+	    }
 	});
-
 	     </script>
 	 *
 	 */
@@ -357,20 +382,20 @@
 
 	var View = __webpack_require__(2);
 	var ModelManager = __webpack_require__(5);
-	var ViewFactory = __webpack_require__(24);
-	var DomState = __webpack_require__(44);
-	var PublicEventEmitter = __webpack_require__(45);
-	var PainterManager = __webpack_require__(46);
-	var PainterController = __webpack_require__(56);
-	var NetAddOn = __webpack_require__(57);
-	var ComponentHolder = __webpack_require__(60);
+	var ViewFactory = __webpack_require__(25);
+	var DomState = __webpack_require__(46);
+	var PublicEventEmitter = __webpack_require__(47);
+	var PainterManager = __webpack_require__(48);
+	var PainterController = __webpack_require__(58);
+	var NetAddOn = __webpack_require__(59);
+	var ComponentHolder = __webpack_require__(62);
 	var util = __webpack_require__(8);
-	var themeManager = __webpack_require__(61);
+	var themeManager = __webpack_require__(63);
 	var themeNameConst = __webpack_require__(9).themeName;
 
 	var instanceMap = {};
 
-	__webpack_require__(67);
+	__webpack_require__(69);
 
 	 /**
 	  * Toast UI
@@ -451,7 +476,9 @@
 	     * @private
 	     */
 	    _createViewFactory: function(domState, options) {
-	        var viewOptions = _.pick(options, 'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption');
+	        var viewOptions = _.pick(options, [
+	            'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption', 'footer'
+	        ]);
 	        var dependencies = {
 	            modelManager: this.modelManager,
 	            painterManager: this.painterManager,
@@ -1104,6 +1131,16 @@
 	    },
 
 	    /**
+	     * Sets the HTML string of given column footer.
+	     * @param {string} columnName - column name
+	     * @param {string} contents - HTML string
+	     * @api
+	     */
+	    setFooterColumnContent: function(columnName, contents) {
+	        this.modelManager.columnModel.setFooterContent(columnName, contents);
+	    },
+
+	    /**
 	     * Validates all data and returns the result.
 	     * Return value is an array which contains only rows which have invalid cell data.
 	     * @returns {Array.<Object>} An array of error object
@@ -1409,6 +1446,7 @@
 	var RenderModel = __webpack_require__(19);
 	var SmartRenderModel = __webpack_require__(22);
 	var SelectionModel = __webpack_require__(23);
+	var SummaryModel = __webpack_require__(24);
 
 	var defaultOptions = {
 	    columnFixCount: 0,
@@ -1452,6 +1490,7 @@
 	        this.focusModel = this._createFocusModel(domState);
 	        this.renderModel = this._createRenderModel(options);
 	        this.selectionModel = this._createSelectionModel();
+	        this.summaryModel = this._createSummaryModel(options.footer);
 
 	        // todo: remove dependency
 	        this.focusModel.renderModel = this.renderModel;
@@ -1511,7 +1550,9 @@
 	    _createDimensionModel: function(options, domState) {
 	        var attrs = {
 	            headerHeight: options.headerHeight,
+	            footerHeight: options.footer ? options.footer.height : 0,
 	            rowHeight: options.rowHeight,
+
 	            fitToParentHeight: options.fitToParentHeight,
 	            scrollX: !!options.scrollX,
 	            scrollY: !!options.scrollY,
@@ -1579,6 +1620,31 @@
 	        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
 	        return new Constructor(attrs, renderOptions);
+	    },
+
+	    /**
+	     * Creates an instance of summary model and returns it.
+	     * @param  {Object} footerOptions - footer options
+	     * @returns {module:model/summary} - A new instance
+	     * @private
+	     */
+	    _createSummaryModel: function(footerOptions) {
+	        var autoColumnNames = [];
+
+	        if (!footerOptions || !footerOptions.columnContent) {
+	            return null;
+	        }
+
+	        _.each(footerOptions.columnContent, function(options, columnName) {
+	            if (_.isFunction(options.template) && options.useAutoSummary !== false) {
+	                autoColumnNames.push(columnName);
+	            }
+	        });
+
+	        return new SummaryModel(null, {
+	            dataModel: this.dataModel,
+	            autoColumnNames: autoColumnNames
+	        });
 	    },
 
 	    /**
@@ -2039,6 +2105,16 @@
 	            }
 	        }
 	        return _.uniq(searchedNames);
+	    },
+
+	    /**
+	     * Set footer contents.
+	     * (Just trigger 'setFooterContent')
+	     * @param {string} columnName - columnName
+	     * @param {string} contents - HTML string
+	     */
+	    setFooterContent: function(columnName, contents) {
+	        this.trigger('setFooterContent', columnName, contents);
 	    }
 	});
 
@@ -2521,6 +2597,13 @@
 	        CELL: 'CELL',
 	        ROW: 'ROW',
 	        COLUMN: 'COLUMN'
+	    },
+	    summaryType: {
+	        SUM: 'sum',
+	        AVG: 'avg',
+	        CNT: 'cnt',
+	        MAX: 'max',
+	        MIN: 'min'
 	    }
 	};
 
@@ -3496,6 +3579,34 @@
 	        if (isDeletableType && cellState.isEditable && !cellState.isDisabled) {
 	            this.setValue(mainRowKey, columnName, '', silent);
 	        }
+	    },
+
+	    /**
+	     * Calls del() method for multiple cells silently, and trigger 'delRange' event
+	     * @param {{row: Array.<number>, column: Array.<number>}} range - visible indexes
+	     */
+	    delRange: function(range) {
+	        var columnModels = this.columnModel.getVisibleColumnModelList();
+	        var rowIdxes = _.range(range.row[0], range.row[1] + 1);
+	        var columnIdxes = _.range(range.column[0], range.column[1] + 1);
+	        var rowKeys, columnNames;
+
+	        rowKeys = _.map(rowIdxes, function(idx) {
+	            return this.at(idx).get('rowKey');
+	        }, this);
+
+	        columnNames = _.map(columnIdxes, function(idx) {
+	            return columnModels[idx].columnName;
+	        });
+
+	        _.each(rowKeys, function(rowKey) {
+	            _.each(columnNames, function(columnName) {
+	                this.del(rowKey, columnName, true);
+	                this.get(rowKey).validateCell(columnName);
+	            }, this);
+	        }, this);
+
+	        this.trigger('delRange', rowKeys, columnNames);
 	    },
 
 	    /**
@@ -4522,6 +4633,8 @@
 	    RSIDE_AREA: 'rside-area',
 	    HEAD_AREA: 'head-area',
 	    BODY_AREA: 'body-area',
+	    FOOT_AREA: 'foot-area',
+	    FOOT_AREA_RIGHT: 'foot-area-right',
 
 	    // header
 	    COLUMN_RESIZE_CONTAINER: 'column-resize-container',
@@ -4727,6 +4840,7 @@
 
 	        headerHeight: 0,
 	        bodyHeight: 0,
+	        footerHeight: 0,
 
 	        toolbarHeight: 0,
 	        resizeHandleHeight: 0,
@@ -5532,7 +5646,10 @@
 	     * @private
 	     */
 	    _calcRealBodyHeight: function(height) {
-	        return height - this.get('headerHeight') - this.get('toolbarHeight') - TABLE_BORDER_WIDTH;
+	        var extraHeight = this.get('headerHeight') + this.get('footerHeight') +
+	            this.get('toolbarHeight') + TABLE_BORDER_WIDTH;
+
+	        return height - extraHeight;
 	    },
 
 	    /**
@@ -5562,11 +5679,11 @@
 	    setSize: function(width, height) {
 	        if (width > 0) {
 	            this.set('width', width);
+	            this.trigger('setWidth', width);
 	        }
 	        if (height > 0) {
 	            this._setHeight(height);
 	        }
-	        this.trigger('setSize');
 	    },
 
 	    /**
@@ -6305,6 +6422,62 @@
 	        var lastIndex = columnModelList.length - 1;
 
 	        return columnModelList[lastIndex].columnName;
+	    },
+
+	    /**
+	     * Returns the address of previous cell.
+	     * @returns {{rowKey: number, columnName: string}}
+	     */
+	    prevAddress: function() {
+	        var rowKey = this.get('rowKey');
+	        var columnName = this.get('columnName');
+	        var isFirstColumn = columnName === this.firstColumnName();
+	        var isFirstRow = rowKey === this.firstRowKey();
+	        var prevRowKey, prevColumnName;
+
+	        if (isFirstRow && isFirstColumn) {
+	            prevRowKey = rowKey;
+	            prevColumnName = columnName;
+	        } else if (isFirstColumn) {
+	            prevRowKey = this.prevRowKey();
+	            prevColumnName = this.lastColumnName();
+	        } else {
+	            prevRowKey = rowKey;
+	            prevColumnName = this.prevColumnName();
+	        }
+
+	        return {
+	            rowKey: prevRowKey,
+	            columnName: prevColumnName
+	        };
+	    },
+
+	    /**
+	     * Returns the address of next cell.
+	     * @returns {{rowKey: number, columnName: string}}
+	     */
+	    nextAddress: function() {
+	        var rowKey = this.get('rowKey');
+	        var columnName = this.get('columnName');
+	        var isLastColumn = columnName === this.lastColumnName();
+	        var isLastRow = rowKey === this.lastRowKey();
+	        var nextRowKey, nextColumnName;
+
+	        if (isLastRow && isLastColumn) {
+	            nextRowKey = rowKey;
+	            nextColumnName = columnName;
+	        } else if (isLastColumn) {
+	            nextRowKey = this.nextRowKey();
+	            nextColumnName = this.firstColumnName();
+	        } else {
+	            nextRowKey = rowKey;
+	            nextColumnName = this.nextColumnName();
+	        }
+
+	        return {
+	            rowKey: nextRowKey,
+	            columnName: nextColumnName
+	        };
 	    }
 	});
 
@@ -6417,8 +6590,8 @@
 	            rside: rside
 	        });
 
-	        this.listenTo(this.columnModel, 'all', this._onColumnModelChange)
-	            .listenTo(this.dataModel, 'remove sort reset', this._onDataModelChange)
+	        this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
+	            .listenTo(this.dataModel, 'remove sort reset delRange', this._onDataModelChange)
 	            .listenTo(this.dataModel, 'add', this._onAddDataModel)
 	            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
 	            .listenTo(lside, 'valueChange', this._executeRelation)
@@ -6654,7 +6827,7 @@
 	    _resetDummyRows: function() {
 	        this._clearDummyRows();
 	        this._fillDummyRows();
-	        this.trigger('dataModelChanged');
+	        this.trigger('rowListChanged');
 	    },
 
 	    /**
@@ -8150,29 +8323,197 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
+	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
+	 * @author NHN Ent. FE Development Team
+	 */
+	'use strict';
+
+	var Model = __webpack_require__(7);
+	var typeConst = __webpack_require__(9).summaryType;
+
+	/**
+	 * Summary Model
+	 * @module model/summary
+	 * @extends module:base/model
+	 */
+	var Summary = Model.extend(/**@lends module:model/summary.prototype */{
+	    /**
+	     * @constructs
+	     * @param {Object} attr - attributes
+	     * @param {Object} options - options
+	     */
+	    initialize: function(attr, options) {
+	        this.dataModel = options.dataModel;
+
+	        /**
+	         * An array of columnNames using auto calculation
+	         * @type {Array.<string>}
+	         */
+	        this.autoColumnNames = options.autoColumnNames;
+
+	        /**
+	         * Summary value map (KV)
+	         * K: column name {string}
+	         * V: value map {object}
+	         * @type {object}
+	         * @example
+	         * {
+	         *    columnName1: {
+	         *        [typeConst.SUM]: 200,
+	         *        [typeConst.AVG]: 200,
+	         *    },
+	         *    columnName2: {
+	         *        [typeConst.MAX]: 100
+	         *    }
+	         * }
+	         */
+	        this.columnSummaryMap = {};
+
+	        this.listenTo(this.dataModel, 'add remove reset', this._resetSummaryMap);
+	        this.listenTo(this.dataModel, 'change', this._onChangeData);
+	        this.listenTo(this.dataModel, 'delRange', this._onDeleteRangeData);
+
+	        this._resetSummaryMap();
+	    },
+
+	    /**
+	     * Calculate summaries of given array.
+	     * Values which can not be converted to Number type will be considered as 0.
+	     * @param {Array} values - An array of values (to be converted to Number type)
+	     * @returns {Object}
+	     * @private
+	     */
+	    _calculate: function(values) {
+	        var min = Number.MAX_VALUE;
+	        var max = Number.MIN_VALUE;
+	        var sum = 0;
+	        var count = values.length;
+	        var resultMap = {};
+	        var i, value;
+
+	        for (i = 0; i < count; i += 1) {
+	            value = Number(values[i]);
+	            if (isNaN(value)) {
+	                value = 0;
+	            }
+
+	            sum += value;
+	            if (min > value) {
+	                min = value;
+	            }
+	            if (max < value) {
+	                max = value;
+	            }
+	        }
+
+	        resultMap[typeConst.SUM] = sum;
+	        resultMap[typeConst.MIN] = min;
+	        resultMap[typeConst.MAX] = max;
+	        resultMap[typeConst.AVG] = count ? (sum / count) : 0;
+	        resultMap[typeConst.CNT] = count;
+
+	        return resultMap;
+	    },
+
+	    /**
+	     * Initialize summary map of columns specified in 'columnSummries' property.
+	     * @private
+	     */
+	    _resetSummaryMap: function() {
+	        this._resetFooterSummaryValue();
+	    },
+
+	    /**
+	     * Reset summary values of given columnName
+	     * @param {Array.<string>} columnNames - An array of column names
+	     * @private
+	     */
+	    _resetFooterSummaryValue: function(columnNames) {
+	        var targetColumnNames = this.autoColumnNames;
+
+	        if (columnNames) {
+	            targetColumnNames = _.intersection(columnNames, this.autoColumnNames);
+	        }
+	        _.each(targetColumnNames, function(columnName) {
+	            var values = this.dataModel.getColumnValues(columnName);
+	            var valueMap = this._calculate(values);
+
+	            this.columnSummaryMap[columnName] = valueMap;
+	            this.trigger('change', columnName, valueMap);
+	        }, this);
+	    },
+
+	    /**
+	     * Event handler for 'change' event on dataModel
+	     * @param {object} model - row model
+	     * @private
+	     */
+	    _onChangeData: function(model) {
+	        this._resetFooterSummaryValue(_.keys(model.changed));
+	    },
+
+	    /**
+	     * Event handler for 'changeRange' event on dataModel
+	     * @param {Array.<number>} rowKeys - An array of rowkeys
+	     * @param {Array.<number>} columnNames - An arrya of columnNames
+	     * @private
+	     */
+	    _onDeleteRangeData: function(rowKeys, columnNames) {
+	        this._resetFooterSummaryValue(columnNames);
+	    },
+
+	    /**
+	     * Returns the summary value of given column and type.
+	     * If the summaryType is not specified, returns all values of types as an object
+	     * @param {string} columnName - column name
+	     * @param {string} [summaryType] - summary type
+	     * @returns {number|Object}
+	     */
+	    getValue: function(columnName, summaryType) {
+	        var valueMap = this.columnSummaryMap[columnName];
+	        var value;
+
+	        if (!summaryType) {
+	            return _.isUndefined(valueMap) ? null : valueMap;
+	        }
+
+	        value = tui.util.pick(valueMap, summaryType);
+	        return _.isUndefined(value) ? null : value;
+	    }
+	});
+
+	module.exports = Summary;
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
 	 * @fileoverview View factory
 	 * @author NHN Ent. FE Development Team
 	 */
 	'use strict';
 
-	var ContainerView = __webpack_require__(25);
-	var ContentAreaView = __webpack_require__(26);
-	var ToolbarView = __webpack_require__(27);
-	var PaginationView = __webpack_require__(28);
-	var HeightResizeHandleView = __webpack_require__(29);
-	var StateLayerView = __webpack_require__(30);
-	var ClipboardView = __webpack_require__(31);
-	var LsideFrameView = __webpack_require__(32);
-	var RsideFrameView = __webpack_require__(34);
-	var HeaderView = __webpack_require__(35);
-	var HeaderResizeHandlerView = __webpack_require__(36);
-	var BodyView = __webpack_require__(37);
-	var BodyTableView = __webpack_require__(38);
-	var RowListView = __webpack_require__(39);
-	var SelectionLayerView = __webpack_require__(40);
-	var EditingLayerView = __webpack_require__(41);
-	var DatePickeLayerView = __webpack_require__(42);
-	var FocusLayerView = __webpack_require__(43);
+	var ContainerView = __webpack_require__(26);
+	var ContentAreaView = __webpack_require__(27);
+	var ToolbarView = __webpack_require__(28);
+	var PaginationView = __webpack_require__(29);
+	var HeightResizeHandleView = __webpack_require__(30);
+	var StateLayerView = __webpack_require__(31);
+	var ClipboardView = __webpack_require__(32);
+	var LsideFrameView = __webpack_require__(33);
+	var RsideFrameView = __webpack_require__(35);
+	var HeaderView = __webpack_require__(36);
+	var HeaderResizeHandlerView = __webpack_require__(37);
+	var BodyView = __webpack_require__(38);
+	var BodyTableView = __webpack_require__(39);
+	var FooterView = __webpack_require__(40);
+	var RowListView = __webpack_require__(41);
+	var SelectionLayerView = __webpack_require__(42);
+	var EditingLayerView = __webpack_require__(43);
+	var DatePickeLayerView = __webpack_require__(44);
+	var FocusLayerView = __webpack_require__(45);
 	var isOptionEnabled = __webpack_require__(8).isOptionEnabled;
 
 	/**
@@ -8188,6 +8529,7 @@
 	        this.componentHolder = options.componentHolder;
 
 	        // view options
+	        this.footerOptions = options.footer;
 	        this.singleClickEdit = options.singleClickEdit;
 	        this.resizeHandle = options.resizeHandle;
 	        this.copyOption = options.copyOption;
@@ -8325,6 +8667,34 @@
 	    },
 
 	    /**
+	     * Creates footer view and returns it.
+	     * @param {string} whichSide - 'L'(left) or 'R'(right)
+	     * @returns {object}
+	     */
+	    createFooter: function(whichSide) {
+	        var templateMap = {};
+
+	        if (!this.footerOptions) {
+	            return null;
+	        }
+
+	        _.each(this.footerOptions.columnContent, function(options, columnName) {
+	            if (_.isFunction(options.template)) {
+	                templateMap[columnName] = options.template;
+	            }
+	        });
+
+	        return new FooterView({
+	            whichSide: whichSide,
+	            columnModel: this.modelManager.columnModel,
+	            renderModel: this.modelManager.renderModel,
+	            dimensionModel: this.modelManager.dimensionModel,
+	            summaryModel: this.modelManager.summaryModel,
+	            columnTemplateMap: templateMap
+	        });
+	    },
+
+	    /**
 	     * Creates resize handler of header view and returns it.
 	     * @param  {String} whichSide - 'L'(left) or 'R'(right)
 	     * @returns {module:view/layout/header} New resize handler view instance
@@ -8457,7 +8827,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8495,7 +8865,7 @@
 
 	        this._createChildViews();
 
-	        this.listenTo(this.dimensionModel, 'setSize', this._onSetSize);
+	        this.listenTo(this.dimensionModel, 'setWidth', this._onSetWidth);
 	        $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
 
 	        this.__$el = this.$el.clone();
@@ -8553,7 +8923,7 @@
 	     * Event handler for 'setSize' event on Dimension
 	     * @private
 	     */
-	    _onSetSize: function() {
+	    _onSetWidth: function() {
 	        this.$el.width(this.dimensionModel.get('width'));
 	    },
 
@@ -8595,6 +8965,9 @@
 	        }
 	        if (this._isCellElement($target, true)) {
 	            this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
+	            if (eventData.rowKey === null && !eventData.isStopped()) {
+	                this.dataModel.append({}, {focus: true});
+	            }
 	        }
 	    },
 
@@ -8655,10 +9028,7 @@
 	    _isCellElement: function($target, isIncludeChild) {
 	        var $cell = isIncludeChild ? $target.closest('td') : $target;
 
-	        return !!($cell.is('td') &&
-	            $cell.attr(attrNameConst.COLUMN_NAME) &&
-	            $cell.parent().attr(attrNameConst.ROW_KEY)
-	        );
+	        return !!($cell.is('td') && $cell.attr(attrNameConst.COLUMN_NAME));
 	    },
 
 	    /**
@@ -8671,6 +9041,9 @@
 	        var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
 	        var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
 
+	        if (isNaN(rowKey)) {
+	            rowKey = null;
+	        }
 	        return {
 	            rowKey: rowKey,
 	            columnName: columnName,
@@ -8710,6 +9083,7 @@
 
 	        this._triggerChildrenAppended();
 	        this.trigger('rendered');
+
 	        return this;
 	    },
 
@@ -8730,7 +9104,7 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8794,11 +9168,12 @@
 	    render: function() {
 	        var dimensionModel = this.dimensionModel;
 	        var scrollXHeight = dimensionModel.getScrollXHeight();
+	        var footerHeight = dimensionModel.get('footerHeight');
 	        var childElements = this._renderChildren().concat([
 	            borderDIV(classNameConst.BORDER_TOP),
 	            borderDIV(classNameConst.BORDER_LEFT),
 	            borderDIV(classNameConst.BORDER_RIGHT),
-	            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight)
+	            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight + footerHeight)
 	        ]);
 
 	        if (!dimensionModel.get('scrollX')) {
@@ -8818,7 +9193,7 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8929,7 +9304,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9042,7 +9417,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9068,6 +9443,12 @@
 	    initialize: function(options) {
 	        this.dimensionModel = options.dimensionModel;
 	        this.timeoutIdForResize = 0;
+
+	        /**
+	         * Relative Y-position of the mouse pointer in the element when starting dragging
+	         * @type {Number}
+	         */
+	        this.mouseOffsetY = 0;
 
 	        this.on('appended', this._onAppended);
 	    },
@@ -9100,6 +9481,7 @@
 	     * Detach event handler to cancel 'drag' action
 	     * @private
 	     */
+
 	    _detachMouseEvent: function() {
 	        $(document).off('mousemove', $.proxy(this._onMouseMove, this));
 	        $(document).off('mouseup', $.proxy(this._onMouseUp, this));
@@ -9114,6 +9496,7 @@
 	    _onMouseDown: function(mouseEvent) {
 	        mouseEvent.preventDefault();
 	        $(document.body).css('cursor', 'row-resize');
+	        this.mouseOffsetY = mouseEvent.offsetY;
 	        this._attachMouseEvent();
 	    },
 
@@ -9124,20 +9507,13 @@
 	     */
 	    _onMouseMove: function(mouseEvent) {
 	        var dimensionModel = this.dimensionModel;
-	        var offsetTop = dimensionModel.get('offsetTop');
-	        var headerHeight = dimensionModel.get('headerHeight');
-	        var toolbarHeight = dimensionModel.get('toolbarHeight');
-	        var rowHeight = dimensionModel.get('rowHeight');
-	        var bodyHeight = mouseEvent.pageY - offsetTop - headerHeight - toolbarHeight;
+	        var gridOffsetY = dimensionModel.get('offsetTop');
+	        var mouseOffsetY = this.mouseOffsetY;
 
 	        clearTimeout(this.timeoutIdForResize);
 
-	        bodyHeight = Math.max(bodyHeight, rowHeight + dimensionModel.getScrollXHeight());
-
 	        this.timeoutIdForResize = setTimeout(function() {
-	            dimensionModel.set({
-	                bodyHeight: bodyHeight
-	            });
+	            dimensionModel.setSize(null, mouseEvent.pageY - gridOffsetY - mouseOffsetY);
 	        }, 0);
 	    },
 
@@ -9187,7 +9563,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9260,7 +9636,9 @@
 	            isLoading: (renderState === stateConst.LOADING)
 	        });
 
-	        this.$el.html(layerHtml).show();
+	        this.$el.html(layerHtml).show().css({
+	            bottom: this.dimensionModel.get('paginationHeight')
+	        });
 	        this._refreshLayout();
 	    },
 
@@ -9296,7 +9674,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9441,6 +9819,7 @@
 	        var displayRowCount = this.dimensionModel.get('displayRowCount');
 	        var isKeyIdentified = true;
 	        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
+	        var address;
 
 	        if (util.isBlank(focused.rowKey)) {
 	            return;
@@ -9480,7 +9859,8 @@
 	                this._del(rowKey, columnName);
 	                break;
 	            case keyCodeMap.TAB:
-	                focusModel.focusIn(rowKey, focusModel.nextColumnName(), true);
+	                address = focusModel.nextAddress();
+	                focusModel.focusIn(address.rowKey, address.columnName, true);
 	                break;
 	            default:
 	                isKeyIdentified = false;
@@ -9539,13 +9919,12 @@
 	        var focusModel = this.focusModel;
 	        var dimensionModel = this.dimensionModel;
 	        var columnModelList = this.columnModel.getVisibleColumnModelList();
-	        var focused = focusModel.which();
 	        var displayRowCount = dimensionModel.get('displayRowCount');
 	        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 	        var index = this._getIndexBeforeMove();
 	        var isKeyIdentified = true;
 	        var isSelection = true;
-	        var columnModel, scrollPosition, isValid, selectionType;
+	        var columnModel, scrollPosition, isValid, selectionType, address;
 
 	        switch (keyCode) {
 	            case keyCodeMap.UP_ARROW:
@@ -9577,7 +9956,8 @@
 	                break;
 	            case keyCodeMap.TAB:
 	                isSelection = false;
-	                focusModel.focusIn(focused.rowKey, focusModel.prevColumnName(), true);
+	                address = focusModel.prevAddress();
+	                focusModel.focusIn(address.rowKey, address.columnName, true);
 	                break;
 	            default:
 	                isSelection = false;
@@ -9740,25 +10120,11 @@
 	        var selectionModel = this.selectionModel;
 	        var dataModel = this.dataModel;
 	        var focused = this.focusModel.which();
-	        var columnModelList = this.columnModel.getVisibleColumnModelList();
 	        var rowKey = focused.rowKey;
 	        var columnName = focused.columnName;
-	        var range, i, j;
 
 	        if (selectionModel.hasSelection()) {
-	            //다수의 cell 을 제거 할 때에는 silent 로 데이터를 변환한 후 한번에 랜더링을 refresh 한다.
-	            range = selectionModel.get('range');
-	            for (i = range.row[0]; i < range.row[1] + 1; i += 1) {
-	                rowKey = dataModel.at(i).get('rowKey');
-	                for (j = range.column[0]; j < range.column[1] + 1; j += 1) {
-	                    columnName = columnModelList[j].columnName;
-	                    dataModel.del(rowKey, columnName, true);
-	                    dataModel.get(rowKey).validateCell(columnName);
-	                }
-	            }
-	            this.renderModel.refresh({
-	                dataModelChanged: true
-	            });
+	            dataModel.delRange(selectionModel.get('range'));
 	        } else {
 	            dataModel.del(rowKey, columnName);
 	        }
@@ -9817,7 +10183,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9826,7 +10192,7 @@
 	 */
 	'use strict';
 
-	var Frame = __webpack_require__(33);
+	var Frame = __webpack_require__(34);
 	var classNameConst = __webpack_require__(14);
 
 	/**
@@ -9886,7 +10252,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9935,7 +10301,8 @@
 	        this.beforeRender();
 	        this._addChildren([
 	            factory.createHeader(this.whichSide),
-	            factory.createBody(this.whichSide)
+	            factory.createBody(this.whichSide),
+	            factory.createFooter(this.whichSide)
 	        ]);
 	        this.$el.append(this._renderChildren());
 	        this.afterRender();
@@ -9967,7 +10334,7 @@
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9976,10 +10343,9 @@
 	 */
 	'use strict';
 
-	var Frame = __webpack_require__(33);
+	var Frame = __webpack_require__(34);
 	var classNameConst = __webpack_require__(14);
 	var CELL_BORDER_WIDTH = __webpack_require__(9).dimension.CELL_BORDER_WIDTH;
-
 
 	/**
 	 * right side frame class
@@ -10061,21 +10427,21 @@
 	     * @override
 	     */
 	    afterRender: function() {
-	        var dimensionModel = this.dimensionModel,
-	            $space, $scrollBorder, $scrollCorner,
-	            headerHeight;
+	        var dimensionModel = this.dimensionModel;
+	        var headerHeight, footerHeight;
+	        var $space, $scrollBorder;
 
 	        if (!dimensionModel.get('scrollY')) {
 	            return;
 	        }
 	        headerHeight = dimensionModel.get('headerHeight');
+	        footerHeight = dimensionModel.get('footerHeight');
 
 	        // Empty DIV for hiding scrollbar in the header area
 	        $space = $('<div />').addClass(classNameConst.SCROLLBAR_HEAD);
 
 	        // Empty DIV for showing a left-border of vertical scrollbar in the body area
 	        $scrollBorder = $('<div />').addClass(classNameConst.SCROLLBAR_BORDER);
-
 
 	        $space.height(headerHeight - 2); // subtract 2px for border-width (top and bottom)
 	        $scrollBorder.css('top', headerHeight + 'px');
@@ -10086,8 +10452,15 @@
 	        // (For resolving the issue that styling scrollbar-corner with '-webkit-scrollbar-corner'
 	        //  casues to be stuck in the same position in Chrome)
 	        if (dimensionModel.get('scrollX')) {
-	            $scrollCorner = $('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM);
-	            this.$el.append($scrollCorner);
+	            this.$el.append($('<div>').addClass(classNameConst.SCROLLBAR_RIGHT_BOTTOM));
+	        }
+
+	        // Empty DIV for filling gray color in the right side of the footer.
+	        if (footerHeight && dimensionModel.get('scrollY')) {
+	            this.$el.append($('<div>')
+	                .addClass(classNameConst.FOOT_AREA_RIGHT)
+	                .css('height', footerHeight - CELL_BORDER_WIDTH)
+	            );
 	        }
 
 	        this.$scrollBorder = $scrollBorder;
@@ -10099,11 +10472,11 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Header 관련
+	 * @fileoverview Header View
 	 * @author NHN Ent. FE Development Team
 	 */
 	'use strict';
@@ -10116,21 +10489,22 @@
 	var classNameConst = __webpack_require__(14);
 
 	var DELAY_SYNC_CHECK = 10;
+	var keyCodeMap = constMap.keyCode;
 	var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
 
 	/**
-	 * Header 레이아웃 View
+	 * Header Layout View
 	 * @module view/layout/header
 	 * @extends module:base/view
 	 */
 	var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 	    /**
 	     * @constructs
-	     * @param {Object} options 옵션
-	     * @param {String} [options.whichSide='R']  어느 영역의 header 인지 여부.
+	     * @param {Object} options - options
+	     * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
 	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
@@ -10164,11 +10538,12 @@
 
 	    events: {
 	        'click': '_onClick',
+	        'keydown input': '_onKeydown',
 	        'mousedown th': '_onMouseDown'
 	    },
 
 	    /**
-	     * 전체 template
+	     * template
 	     */
 	    template: _.template(
 	        '<table class="' + classNameConst.TABLE + '">' +
@@ -10178,7 +10553,7 @@
 	    ),
 
 	    /**
-	     * <th> 템플릿
+	     * template for <th>
 	     */
 	    templateHeader: _.template(
 	        '<th <%=attrColumnName%>="<%=columnName%>" ' +
@@ -10196,7 +10571,7 @@
 	    ),
 
 	    /**
-	     * <col> 템플릿
+	     * templse for <col>
 	     */
 	    templateCol: _.template(
 	        '<col ' +
@@ -10205,7 +10580,7 @@
 	    ),
 
 	    /**
-	     * 정렬 버튼을 위한 HTML 마크업
+	     * HTML string for a button
 	     */
 	    markupBtnSort: '<a class="' + classNameConst.BTN_SORT + '"></a>',
 
@@ -10215,10 +10590,10 @@
 	     * @private
 	     */
 	    _getColGroupMarkup: function() {
-	        var columnData = this._getColumnData(),
-	            columnWidthList = columnData.widthList,
-	            columnModelList = columnData.modelList,
-	            htmlList = [];
+	        var columnData = this._getColumnData();
+	        var columnWidthList = columnData.widthList;
+	        var columnModelList = columnData.modelList;
+	        var htmlList = [];
 
 	        _.each(columnWidthList, function(width, index) {
 	            htmlList.push(this.templateCol({
@@ -10227,6 +10602,7 @@
 	                width: width + CELL_BORDER_WIDTH
 	            }));
 	        }, this);
+
 	        return htmlList.join('');
 	    },
 
@@ -10281,6 +10657,18 @@
 	            _.each(columnNames.concat(mergedColumnNames), function(columnName) {
 	                $ths.filter('[' + ATTR_COLUMN_NAME + '="' + columnName + '"]').addClass(classNameConst.CELL_SELECTED);
 	            });
+	        }
+	    },
+
+	    /**
+	     * Event handler for 'keydown' event on checkbox input
+	     * @param {KeyboardEvent} event - event
+	     * @private
+	     */
+	    _onKeydown: function(event) {
+	        if (event.keyCode === keyCodeMap.TAB) {
+	            event.preventDefault();
+	            this.focusModel.focusClipboard();
 	        }
 	    },
 
@@ -10351,10 +10739,10 @@
 	     * @private
 	     */
 	    _startColumnSelectionWithoutShiftKey: function(columnIndexes) {
-	        var selectionModel = this.selectionModel,
-	            minMax = util.getMinMax(columnIndexes),
-	            min = minMax.min,
-	            max = minMax.max;
+	        var selectionModel = this.selectionModel;
+	        var minMax = util.getMinMax(columnIndexes);
+	        var min = minMax.min;
+	        var max = minMax.max;
 
 	        selectionModel.setMinimumColumnRange([min, max]);
 	        selectionModel.selectColumn(min);
@@ -10390,10 +10778,10 @@
 	     * @private
 	     */
 	    _onMouseMove: function(event) {
-	        var columnModel = this.columnModel,
-	            isExtending = true,
-	            columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME),
-	            columnNames, columnIndexes;
+	        var columnModel = this.columnModel;
+	        var isExtending = true;
+	        var columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
+	        var columnNames, columnIndexes;
 
 	        if (columnName) {
 	            columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
@@ -10473,9 +10861,9 @@
 	     * @private
 	     */
 	    _onColumnWidthChanged: function() {
-	        var columnData = this._getColumnData(),
-	            columnWidthList = columnData.widthList,
-	            $colList = this.$el.find('col');
+	        var columnData = this._getColumnData();
+	        var columnWidthList = columnData.widthList;
+	        var $colList = this.$el.find('col');
 
 	        _.each(columnWidthList, function(columnWidth, index) {
 	            $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
@@ -10501,8 +10889,8 @@
 	     * @private
 	     */
 	    _onClick: function(clickEvent) {
-	        var $target = $(clickEvent.target),
-	            columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
+	        var $target = $(clickEvent.target);
+	        var columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
 
 	        if (columnName === '_button' && $target.is('input')) {
 	            if ($target.prop('checked')) {
@@ -10541,10 +10929,6 @@
 	    render: function() {
 	        this._destroyChildren();
 
-	        if (this.whichSide === 'R' && !this.dimensionModel.get('scrollY')) {
-	            this.$el.addClass(classNameConst.NO_SCROLL_Y);
-	        }
-
 	        this.$el.css({
 	            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
 	        }).html(this.template({
@@ -10563,10 +10947,10 @@
 	     * @private
 	     */
 	    _getColumnData: function() {
-	        var columnModel = this.columnModel,
-	            dimensionModel = this.dimensionModel,
-	            columnWidthList = dimensionModel.getColumnWidthList(this.whichSide),
-	            columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+	        var columnModel = this.columnModel;
+	        var dimensionModel = this.dimensionModel;
+	        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
+	        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
 
 	        return {
 	            widthList: columnWidthList,
@@ -10580,21 +10964,21 @@
 	     * @private
 	     */
 	    _getTableBodyMarkup: function() {
-	        var hierarchyList = this._getColumnHierarchyList(),
-	            maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-	        // 가공한 컬럼 모델 리스트 정보를 바탕으로 컬럼 엘리먼트들에 대한 마크업을 구성한다.
-	        var headerHeight = this.dimensionModel.get('headerHeight'),
-	            rowMarkupList = new Array(maxRowCount),
-	            columnNameList = new Array(maxRowCount),
-	            colSpanList = [],
-	            rowHeight = util.getRowHeight(maxRowCount, headerHeight) - 1,
-	            rowSpan = 1,
-	            height,
-	            headerMarkupList;
+	        var hierarchyList = this._getColumnHierarchyList();
+	        var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
+	        var headerHeight = this.dimensionModel.get('headerHeight');
+	        var rowMarkupList = new Array(maxRowCount);
+	        var columnNameList = new Array(maxRowCount);
+	        var colSpanList = [];
+	        var rowHeight = util.getRowHeight(maxRowCount, headerHeight) - 1;
+	        var rowSpan = 1;
+	        var height;
+	        var headerMarkupList;
 
 	        _.each(hierarchyList, function(hierarchy, i) {
-	            var length = hierarchyList[i].length,
-	                curHeight = 0;
+	            var length = hierarchyList[i].length;
+	            var curHeight = 0;
+
 	            _.each(hierarchy, function(columnModel, j) {
 	                var columnName = columnModel.columnName;
 	                var classNames = [
@@ -10704,7 +11088,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10986,7 +11370,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11302,7 +11686,7 @@
 
 	    /**
 	     * renders
-	     * @returns {View.Layout.Body}   자기 자신
+	     * @returns {module:view/layout/body}
 	     */
 	    render: function() {
 	        var whichSide = this.whichSide;
@@ -11335,7 +11719,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11536,7 +11920,205 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Footer
+	 * @author NHN Ent. FE Development Team
+	 */
+	'use strict';
+
+	var _ = __webpack_require__(1);
+	var View = __webpack_require__(2);
+	var classNameConst = __webpack_require__(14);
+	var constMap = __webpack_require__(9);
+
+	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
+
+	var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
+	    /**
+	     * Initialize
+	     * @param {object} options - options
+	     */
+	    initialize: function(options) {
+	        /**
+	         * Store template functions of each column
+	         * K: column name
+	         * V: template function
+	         * @example
+	         * {
+	         *     c1: function() {},
+	         *     c2: function() {}
+	         * }
+	         * @type {Object}
+	         */
+	        this.columnTemplateMap = options.columnTemplateMap || {};
+
+	        /**
+	         * 'L': Left, 'R': Right
+	         * @type {string}
+	         */
+	        this.whichSide = options.whichSide;
+
+	        // models
+	        this.columnModel = options.columnModel;
+	        this.dimensionModel = options.dimensionModel;
+	        this.renderModel = options.renderModel;
+	        this.summaryModel = options.summaryModel;
+
+	        // events
+	        this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
+	        this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
+	        if (this.summaryModel) {
+	            this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
+	        }
+	    },
+
+	    className: classNameConst.FOOT_AREA,
+
+	    events: {
+	        scroll: '_onScrollView'
+	    },
+
+	    /**
+	     * template
+	     */
+	    template: _.template(
+	        '<table class="<%=className%>" style="height:<%=height%>px">' +
+	            '<tbody><%=tbody%></tbody>' +
+	        '</table>'
+	    ),
+
+	    /**
+	     * Template for <th>
+	     */
+	    templateHeader: _.template(
+	        '<th <%=attrColumnName%>="<%=columnName%>" ' +
+	            'class="<%=className%>" ' +
+	            'style="width:<%=width%>px"' +
+	        '>' +
+	        '<%=value%>' +
+	        '</th>'
+	    ),
+
+	    /**
+	     * Event handler for 'scroll' event
+	     * @param {UIEvent} event - scroll event
+	     * @private
+	     */
+	    _onScrollView: function(event) {
+	        if (this.whichSide === 'R') {
+	            this.renderModel.set('scrollLeft', event.target.scrollLeft);
+	        }
+	    },
+
+	    /**
+	     * Sync scroll-left position with the value of body
+	     * @param {Object} model - render model
+	     * @param {Number} value - scrollLeft value
+	     * @private
+	     */
+	    _onChangeScrollLeft: function(model, value) {
+	        if (this.whichSide === 'R') {
+	            this.el.scrollLeft = value;
+	        }
+	    },
+
+	    /**
+	     * Sets the HTML string of <th> of given column
+	     * @param {string} columnName - column name
+	     * @param {string} contents - HTML string
+	     * @private
+	     */
+	    _setcolumnContent: function(columnName, contents) {
+	        var $th = this.$el.find('th[' + ATTR_COLUMN_NAME + '="' + columnName + '"]');
+
+	        $th.html(contents);
+	    },
+
+	    /**
+	     * Refresh <th> tag whenever summary value is changed.
+	     * @param {string} columnName - column name
+	     * @param {object} valueMap - value map
+	     * @private
+	     */
+	    _onChangeSummaryValue: function(columnName, valueMap) {
+	        var contents = this._generateValueHTML(columnName, valueMap);
+
+	        this._setcolumnContent(columnName, contents);
+	    },
+
+	    /**
+	     * Generates a HTML string of column summary value and returns it.
+	     * @param {object} columnName - column name
+	     * @param {object} valueMap - value map
+	     * @returns {string} HTML string
+	     * @private
+	     */
+	    _generateValueHTML: function(columnName, valueMap) {
+	        var template = this.columnTemplateMap[columnName];
+	        var html = '';
+
+	        if (_.isFunction(template)) {
+	            html = template(valueMap);
+	        }
+
+	        return html;
+	    },
+
+	    /**
+	     * Generates a HTML string of <tbody> and returns it
+	     * @returns {string} - HTML String
+	     * @private
+	     */
+	    _generateTbodyHTML: function() {
+	        var summaryModel = this.summaryModel;
+	        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
+	        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+
+	        return _.reduce(columnModelList, function(memo, column, index) {
+	            var columnName = column.columnName;
+	            var valueMap;
+
+	            if (summaryModel) {
+	                valueMap = summaryModel.getValue(column.columnName);
+	            }
+
+	            return memo + this.templateHeader({
+	                attrColumnName: ATTR_COLUMN_NAME,
+	                columnName: columnName,
+	                className: classNameConst.CELL_HEAD + ' ' + classNameConst.CELL,
+	                width: columnWidthList[index],
+	                value: this._generateValueHTML(columnName, valueMap)
+	            });
+	        }, '', this);
+	    },
+
+	    /**
+	     * Render
+	     * @returns {object}
+	     */
+	    render: function() {
+	        var footerHeight = this.dimensionModel.get('footerHeight');
+
+	        if (footerHeight) {
+	            this.$el.html(this.template({
+	                className: classNameConst.TABLE,
+	                height: footerHeight,
+	                tbody: this._generateTbodyHTML()
+	            }));
+	        }
+
+	        return this;
+	    }
+	});
+
+	module.exports = Footer;
+
+
+/***/ },
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11838,7 +12420,7 @@
 
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12006,7 +12588,7 @@
 
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12174,7 +12756,7 @@
 
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12373,7 +12955,7 @@
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12515,7 +13097,7 @@
 
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12587,7 +13169,7 @@
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12693,7 +13275,7 @@
 
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12704,13 +13286,13 @@
 
 	var _ = __webpack_require__(1);
 
-	var RowPainter = __webpack_require__(47);
-	var CellPainter = __webpack_require__(49);
-	var DummyCellPainter = __webpack_require__(50);
-	var TextPainter = __webpack_require__(51);
-	var SelectPainter = __webpack_require__(53);
-	var ButtonPainter = __webpack_require__(54);
-	var MainButtonPainter = __webpack_require__(55);
+	var RowPainter = __webpack_require__(49);
+	var CellPainter = __webpack_require__(51);
+	var DummyCellPainter = __webpack_require__(52);
+	var TextPainter = __webpack_require__(53);
+	var SelectPainter = __webpack_require__(55);
+	var ButtonPainter = __webpack_require__(56);
+	var MainButtonPainter = __webpack_require__(57);
 
 	/**
 	 * Painter manager
@@ -12850,7 +13432,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12861,7 +13443,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(48);
+	var Painter = __webpack_require__(50);
 	var util = __webpack_require__(8);
 	var constMap = __webpack_require__(9);
 	var attrNameConst = constMap.attrName;
@@ -13023,7 +13605,7 @@
 
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13105,7 +13687,7 @@
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13116,7 +13698,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(48);
+	var Painter = __webpack_require__(50);
 	var util = __webpack_require__(8);
 	var attrNameConst = __webpack_require__(9).attrName;
 	var classNameConst = __webpack_require__(14);
@@ -13321,7 +13903,7 @@
 
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13332,7 +13914,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(48);
+	var Painter = __webpack_require__(50);
 	var util = __webpack_require__(8);
 	var attrNameConst = __webpack_require__(9).attrName;
 	var classNameConst = __webpack_require__(14);
@@ -13348,14 +13930,6 @@
 	     */
 	    init: function() {
 	        Painter.apply(this, arguments);
-	    },
-
-	    /**
-	     * key-value object contains event names as keys and handler names as values
-	     * @type {Object}
-	     */
-	    events: {
-	        dblclick: '_onDblClick'
 	    },
 
 	    /**
@@ -13376,14 +13950,6 @@
 	            '&#8203;' + // 'for height issue with empty cell in IE7
 	        '</td>'
 	    ),
-
-	    /**
-	     * Event handler for 'dblclick' event
-	     * @private
-	     */
-	    _onDblClick: function() {
-	        this.controller.appendEmptyRowAndFocus(true);
-	    },
 
 	    /**
 	     * Generates a HTML string from given data, and returns it.
@@ -13414,7 +13980,7 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13425,7 +13991,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(52);
+	var InputPainter = __webpack_require__(54);
 	var util = __webpack_require__(8);
 
 	/**
@@ -13543,7 +14109,7 @@
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13554,7 +14120,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(48);
+	var Painter = __webpack_require__(50);
 	var keyNameMap = __webpack_require__(9).keyName;
 
 	/**
@@ -13753,7 +14319,7 @@
 
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13764,7 +14330,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(52);
+	var InputPainter = __webpack_require__(54);
 	var util = __webpack_require__(8);
 
 	/**
@@ -13845,7 +14411,7 @@
 
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13856,7 +14422,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(52);
+	var InputPainter = __webpack_require__(54);
 	var util = __webpack_require__(8);
 
 	/**
@@ -14107,7 +14673,7 @@
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14118,8 +14684,9 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(48);
+	var Painter = __webpack_require__(50);
 	var classNameConst = __webpack_require__(14);
+	var keyCodeMap = __webpack_require__(9).keyCode;
 
 	/**
 	 * Main Button Painter
@@ -14145,7 +14712,8 @@
 	     * @type {Object}
 	     */
 	    events: {
-	        change: '_onChange'
+	        change: '_onChange',
+	        keydown: '_onKeydown'
 	    },
 
 	    /**
@@ -14170,6 +14738,20 @@
 	    },
 
 	    /**
+	     * Event handler for 'keydown' DOM event
+	     * @param {KeyboardEvent} event [description]
+	     */
+	    _onKeydown: function(event) {
+	        var address;
+
+	        if (event.keyCode === keyCodeMap.TAB) {
+	            event.preventDefault();
+	            address = this._getCellAddress($(event.target));
+	            this.controller.focusInToRow(address.rowKey);
+	        }
+	    },
+
+	    /**
 	     * Generates a HTML string from given data, and returns it.
 	     * @param {Object} cellData - cell data
 	     * @returns {String}
@@ -14189,7 +14771,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14285,13 +14867,18 @@
 	     */
 	    focusInToNextCell: function(reverse) {
 	        var focusModel = this.focusModel;
-	        var rowKey = focusModel.get('rowKey');
-	        var columnName = focusModel.get('columnName');
-	        var nextColumnName = reverse ? focusModel.prevColumnName() : focusModel.nextColumnName();
+	        var address = reverse ? focusModel.prevAddress() : focusModel.nextAddress();
 
-	        if (columnName !== nextColumnName) {
-	            focusModel.focusIn(rowKey, nextColumnName, true);
-	        }
+	        focusModel.focusIn(address.rowKey, address.columnName, true);
+	    },
+
+	    /**
+	     * Moves focus to the first cell of the given row, and starts editing the cell.
+	     * @param {number} rowKey - rowKey
+	     */
+	    focusInToRow: function(rowKey) {
+	        var focusModel = this.focusModel;
+	        focusModel.focusIn(rowKey, focusModel.firstColumnName(), true);
 	    },
 
 	    /**
@@ -14318,15 +14905,6 @@
 	    },
 
 	    /**
-	     * Appends an empty row and moves focus to the first cell of the row.
-	     */
-	    appendEmptyRowAndFocus: function() {
-	        this.dataModel.append({}, {
-	            focus: true
-	        });
-	    },
-
-	    /**
 	     * Sets the value of the given cell.
 	     * @param {{rowKey:String, columnName:String}} address - cell address
 	     * @param {(Number|String|Boolean)} value - value
@@ -14340,7 +14918,7 @@
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14353,9 +14931,9 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var Router = __webpack_require__(58);
+	var Router = __webpack_require__(60);
 	var util = __webpack_require__(8);
-	var formUtil = __webpack_require__(59);
+	var formUtil = __webpack_require__(61);
 	var GridEvent = __webpack_require__(18);
 
 	var renderStateMap = __webpack_require__(9).renderState;
@@ -14685,7 +15263,8 @@
 	            page = responseData.pagination.page;
 	            totalCount = responseData.pagination.totalCount;
 	            pagination.setOption('itemPerPage', this.perPage);
-	            pagination.setOption('itemCount', totalCount);
+	            // If the totalCount is 0, set itemCount to 1 to show pagination
+	            pagination.setOption('itemCount', totalCount || 1);
 	            pagination.movePageTo(page);
 	            this.curPage = page;
 	        }
@@ -15144,7 +15723,7 @@
 
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15177,7 +15756,7 @@
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15405,7 +15984,7 @@
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports) {
 
 	/**
@@ -15460,7 +16039,7 @@
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15470,15 +16049,15 @@
 	'use strict';
 
 	var util = __webpack_require__(8);
-	var styleGen = __webpack_require__(62);
+	var styleGen = __webpack_require__(64);
 	var themeNameConst = __webpack_require__(9).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(64);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(65);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(66);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(66);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(67);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(68);
 
 	/**
 	 * build css string with given options.
@@ -15555,7 +16134,7 @@
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15566,7 +16145,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var builder = __webpack_require__(63);
+	var builder = __webpack_require__(65);
 	var classNameConst = __webpack_require__(14);
 
 
@@ -15617,6 +16196,7 @@
 	        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
 	        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
+	        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).border(options.border);
 
 	        return builder.buildAll([
 	            containerRule,
@@ -15625,7 +16205,8 @@
 	            headRule,
 	            borderLineRule,
 	            scrollHeadRule,
-	            scrollBorderRule
+	            scrollBorderRule,
+	            footerRightRule
 	        ]);
 	    },
 
@@ -15640,12 +16221,14 @@
 	        var rightBottomRule = classRule(classNameConst.SCROLLBAR_RIGHT_BOTTOM).bg(options.background);
 	        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
+	        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).bg(options.background);
 
 	        return builder.buildAll(webkitScrollbarRules.concat([
 	            ieScrollbarRule,
 	            rightBottomRule,
 	            leftBottomRule,
-	            scrollHeadRule
+	            scrollHeadRule,
+	            footerRightRule
 	        ]));
 	    },
 
@@ -15818,7 +16401,7 @@
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16001,7 +16584,7 @@
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports) {
 
 	/**
@@ -16079,7 +16662,7 @@
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16088,7 +16671,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(64);
+	var presetDefault = __webpack_require__(66);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    cell: {
@@ -16114,7 +16697,7 @@
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16123,7 +16706,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(64);
+	var presetDefault = __webpack_require__(66);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    grid: {
@@ -16153,7 +16736,7 @@
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin

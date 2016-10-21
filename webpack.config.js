@@ -67,10 +67,7 @@ function develop() {
 function production() {
     var readableTimestamp = (new Date()).toString();
     var bannerText = 'bundle created at "' + readableTimestamp + '"\nversion: ' + VERSION;
-    var pluginConfig = [
-        new webpack.BannerPlugin(bannerText, {entryOnly: true}),
-        new ExtractTextPlugin('grid' + (isMinified ? '.min' : '') + '.css')
-    ];
+    var pluginConfig = [];
 
     if (isCombined) {
         delete externals.backbone;
@@ -82,6 +79,10 @@ function production() {
             output: {comments: false}
         }));
     }
+    pluginConfig.push(
+        new webpack.BannerPlugin(bannerText, {entryOnly: true}),
+        new ExtractTextPlugin('grid' + (isMinified ? '.min' : '') + '.css')
+    );
 
     return {
         entry: ENTRY_PATH,
