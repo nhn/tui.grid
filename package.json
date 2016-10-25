@@ -1,16 +1,17 @@
 {
   "name": "tui-grid",
   "version": "1.5.0",
-  "description": "grid",
-  "main": "gulpfiles.js",
-  "directories": {
-    "test": "test"
-  },
+  "description": "TOAST UI Grid : Powerful data grid control supported by TOAST UI",
+  "main": "dist/grid.js",
   "scripts": {
     "dev": "webpack-dev-server",
     "test:dev": "karma start karma.conf.local.js",
     "test": "karma start karma.conf.js",
-    "docs": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json"
+    "deploy": "npm run deploy:normal & npm run deploy:combine",
+    "deploy:normal": "webpack --production & webpack --production --minify",
+    "deploy:combine": "webpack --production --combine & webpack --production --combine --minify",
+    "docs": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json & npm run copy:docs",
+    "copy:docs": "cpy dist/grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "body-parser": "^1.12.4",
     "copy-webpack-plugin": "^3.0.1",
+    "cpy-cli": "^1.0.1",
     "css-loader": "^0.25.0",
     "es5-shim": "^4.5.9",
     "eslint": "^3.5.0",
