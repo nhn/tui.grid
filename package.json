@@ -5,13 +5,14 @@
   "main": "dist/grid.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "test:dev": "karma start karma.conf.local.js",
     "test": "karma start karma.conf.js",
+    "test:ne": "karma start karma.conf.ne.js",
     "deploy": "npm run deploy:normal & npm run deploy:combine",
     "deploy:normal": "webpack --production & webpack --production --minify",
     "deploy:combine": "webpack --production --combine & webpack --production --combine --minify",
-    "docs": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json & npm run copy:docs",
-    "copy:docs": "cpy dist/grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
+    "docs": "npm run docs:jsdoc & npm run docs:copy",
+    "docs:jsdoc": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json",
+    "docs:copy": "cpy dist/grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "fedoc-template": "git+https://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
     "file-loader": "^0.9.0",
+    "istanbul-instrumenter-loader": "^1.0.0",
     "jasmine-ajax": "^2.99.0",
     "jasmine-core": "^2.3.4",
     "jasmine-jquery": "^2.0.5",

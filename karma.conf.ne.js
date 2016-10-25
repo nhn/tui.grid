@@ -1,13 +1,20 @@
 'use strict';
 
+// var istanbul = require('browserify-istanbul');
 var path = require('path');
 
 module.exports = function(config) {
+    var webdriverConfig = {
+        hostname: 'fe.nhnent.com',
+        port: 4444,
+        remoteHost: true
+    };
+
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
 
-        captureTimeout: 60000,
+        captureTimeout: 100000,
         browserDisconnectTimeout: 60000,
         browserNoActivityTimeout: 60000,
 
@@ -16,7 +23,9 @@ module.exports = function(config) {
             'karma-webpack',
             'karma-sourcemap-loader',
             'karma-chrome-launcher',
-            'karma-phantomjs-launcher'
+            'karma-webdriver-launcher',
+            'karma-coverage',
+            'karma-junit-reporter'
         ],
 
         // frameworks to use
@@ -45,7 +54,6 @@ module.exports = function(config) {
             'test/js/index.js'
         ],
 
-
         // list of files to exclude
         exclude: [],
 
@@ -62,6 +70,11 @@ module.exports = function(config) {
                 root: [path.resolve('./src/js')]
             },
             module: {
+                preLoaders: [{
+                    test: /\.js$/,
+                    include: path.resolve('./src/js'),
+                    loader: 'istanbul-instrumenter'
+                }],
                 loaders: [{
                     test: /\.(png|gif)$/,
                     loader: 'file-loader?name=images/[name].[ext]'
@@ -77,6 +90,39 @@ module.exports = function(config) {
             }
         },
 
+        // test results reporter to use
+        // possible values: 'dots', 'progress'
+        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+        reporters: [
+            'dots',
+            'coverage'
+            // 'junit'
+        ],
+
+        // optionally, configure the reporter
+        coverageReporter: {
+            dir: 'report/coverage/',
+            reporters: [
+                {
+                    type: 'html',
+                    subdir: function(browser) {
+                        return 'report-html/' + browser;
+                    }
+                },
+                {
+                    type: 'cobertura',
+                    subdir: function(browser) {
+                        return 'report-cobertura/' + browser;
+                    },
+                    file: 'cobertura.txt'
+                }
+            ]
+        },
+
+        // junitReporter: {
+        //     outputDir: 'report/junit',
+        //     suite: ''
+        // },
 
         // web server port
         port: 9876,
@@ -85,7 +131,8 @@ module.exports = function(config) {
         colors: true,
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN ||
+        // config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
 
         // enable / disable watching file and executing tests whenever any file changes
@@ -96,11 +143,46 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'PhantomJS'
-        ]
+            'IE8',
+            'IE9',
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver'
+        ],
 
+        customLaunchers: {
+            'IE8': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 8
+            },
+            'IE9': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 9
+            },
+            'IE10': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 10
+            },
+            'IE11': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 11
+            },
+            'Chrome-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
+            }
+        },
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        // singleRun: true
+        singleRun: true
     });
 };

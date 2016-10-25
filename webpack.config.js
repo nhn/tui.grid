@@ -40,7 +40,6 @@ function develop() {
     return {
         entry: ENTRY_PATH,
         output: {
-            path: path.resolve(__dirname, 'build'),
             publicPath: '/dev/',
             filename: 'grid.js'
         },
