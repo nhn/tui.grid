@@ -95,8 +95,8 @@ module.exports = function(config) {
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: [
             'dots',
-            'coverage'
-            // 'junit'
+            'coverage',
+            'junit'
         ],
 
         // optionally, configure the reporter
@@ -119,10 +119,10 @@ module.exports = function(config) {
             ]
         },
 
-        // junitReporter: {
-        //     outputDir: 'report/junit',
-        //     suite: ''
-        // },
+        junitReporter: {
+            outputDir: 'report/junit',
+            suite: ''
+        },
 
         // web server port
         port: 9876,
