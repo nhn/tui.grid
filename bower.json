@@ -13,12 +13,13 @@
         "images",
         "!dist/images",
         "performance",
-        "samples",
+        "examples",
         "src",
         "test",
         "jsdoc.conf.json",
         "webpack.config.js",
         "karma.conf.js",
+        "karma.conf.ne.js",
         "package.json"
     ],
     "dependencies": {
