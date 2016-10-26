@@ -1,20 +1,20 @@
 {
-    "sample1": {
+    "example1": {
         "title": "1. Basic Example"
     },
-    "sample2": {
+    "example2": {
         "title": "2. Using Relation List"
     },
-    "sample3": {
+    "example3": {
         "title": "3. Using _extraData"
     },
-    "sample4": {
+    "example4": {
         "title": "4. Applying Themes"
     },
-    "sample5": {
+    "example5": {
         "title": "5. Using Date-Picker Component"
     },
-    "sample6": {
+    "example6": {
         "title": "6. Using Footer with column summary"
     }
 }

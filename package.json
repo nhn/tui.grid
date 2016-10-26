@@ -10,7 +10,7 @@
     "deploy": "npm run deploy:normal & npm run deploy:combine",
     "deploy:normal": "webpack --production & webpack --production --minify",
     "deploy:combine": "webpack --production --combine & webpack --production --combine --minify",
-    "docs": "npm run docs:jsdoc & npm run docs:copy",
+    "docs": "npm run docs:jsdoc && npm run docs:copy",
     "docs:jsdoc": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json",
     "docs:copy": "cpy dist/grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
   },

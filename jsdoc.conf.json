@@ -39,6 +39,6 @@
         "recurse": true,
         "name": "Grid",
         "destination": "doc",
-        "tutorials": "samples"
+        "tutorials": "examples"
     }
 }
