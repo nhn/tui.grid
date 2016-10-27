@@ -133,6 +133,16 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             prevRowKey: currentRowKey,
             rowData: this.dataModel.getRowData(rowKey)
         });
+
+        /**
+         * Occurs when a table row is selected
+         * @api
+         * @event tui.Grid#selectRow
+         * @type {module:common/gridEvent}
+         * @property {number} rowKey - rowKey of the target row
+         * @property {number} prevRowKey - previously selected rowKey
+         * @property {Object} rowData - data of the target row
+         */
         this.trigger('select', eventData);
         if (eventData.isStopped()) {
             this._cancelSelect();

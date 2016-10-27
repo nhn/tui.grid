@@ -105,6 +105,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var $target = $(mouseEvent.target);
         var cellInfo;
 
+        /**
+         * Occurs when a mouse button is clicked on the Grid.
+         * The properties of the event object is the same as the native MouseEvent.
+         * @api
+         * @event tui.Grid#click
+         * @type {module:common/gridEvent}
+         */
         this.trigger('click', eventData);
         if (eventData.isStopped()) {
             return;
@@ -114,6 +121,17 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             if (this.singleClickEdit && !$target.is('input')) {
                 this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
+
+            /**
+             * Occurs when a mouse button is clicked on a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#clickCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data
+             */
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
     },
@@ -127,11 +145,28 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var eventData = new GridEvent(mouseEvent);
         var $target = $(mouseEvent.target);
 
+        /**
+         * Occurs when a mouse button is double clicked on the Grid.
+         * The event object has all properties copied from the native MouseEvent.
+         * @api
+         * @event tui.Grid#dblclick
+         * @type {module:common/gridEvent}
+         */
         this.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (this._isCellElement($target, true)) {
+            /**
+             * Occurs when a mouse button is double clicked on a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#dblclickCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data containing the target cell
+             */
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
             if (eventData.rowKey === null && !eventData.isStopped()) {
                 this.dataModel.append({}, {focus: true});
@@ -150,6 +185,16 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         if (this._isCellElement($target)) {
             eventData = new GridEvent(mouseEvent);
+            /**
+             * Occurs when a mouse pointer is moved onto a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#mouseoverCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data containing the target cell
+             */
             this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
         }
     },
@@ -165,6 +210,16 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         if (this._isCellElement($target)) {
             eventData = new GridEvent(mouseEvent);
+            /**
+             * Occurs when a mouse pointer is moved off from a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#mouseoutCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data containing the target cell
+             */
             this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
         }
     },
@@ -228,6 +283,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         var $target = $(mouseEvent.target);
         var eventData = new GridEvent(mouseEvent);
 
+        /**
+         * Occurs when a mouse button is pressed on the Grid.
+         * The properties of the event object is the same as the native MouseEvent.
+         * @api
+         * @event tui.Grid#mousedown
+         * @type {module:common/gridEvent}
+         */
         this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {
             return;
