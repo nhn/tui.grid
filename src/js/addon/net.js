@@ -690,6 +690,12 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         var eventData = new GridEvent(options.data);
         var params;
 
+        /**
+         * Occurs before the http request is sent
+         * @api
+         * @event tui.Grid#beforeRequest
+         * @type {module:common/gridEvent}
+         */
         this.trigger('beforeRequest', eventData);
         if (eventData.isStopped()) {
             return;
@@ -739,11 +745,31 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             responseData: responseData
         });
 
+        /**
+         * Occurs when the response is received from the server
+         * @api
+         * @event tui.Grid#reponse
+         * @type {module:common/gridEvent}
+         * @property {number} httpStatus - HTTP status
+         * @property {string} requestType - Request type
+         * @property {string} requestParameter - Request parameters
+         * @property {Object} responseData - response data
+         */
         this.trigger('response', eventData);
         if (eventData.isStopped()) {
             return;
         }
         if (responseData && responseData.result) {
+            /**
+             * Occurs after the response event, if the result is true
+             * @api
+             * @event tui.Grid#successReponse
+             * @type {module:common/gridEvent}
+             * @property {number} httpStatus - HTTP status
+             * @property {string} requestType - Request type
+             * @property {string} requestParameter - Request parameter
+             * @property {Object} responseData - response data
+             */
             this.trigger('successResponse', eventData);
             if (eventData.isStopped()) {
                 return;
@@ -752,6 +778,16 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
                 callback(responseData.data || {}, status, jqXHR);
             }
         } else {
+            /**
+             * Occurs after the response event, if the result is false
+             * @api
+             * @event tui.Grid#failResponse
+             * @type {module:common/gridEvent}
+             * @property {number} httpStatus - HTTP status
+             * @property {string} requestType - Request type
+             * @property {string} requestParameter - Request parameter
+             * @property {Object} responseData - response data
+             */
             this.trigger('failResponse', eventData);
             if (eventData.isStopped()) {
                 return;
@@ -785,6 +821,15 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             return;
         }
 
+        /**
+         * Occurs after the response event, if the response is Error
+         * @api
+         * @event tui.Grid#errorResponse
+         * @type {module:common/gridEvent}
+         * @property {number} httpStatus - HTTP status
+         * @property {string} requestType - Request type
+         * @property {string} requestParameter - Request parameters
+         */
         this.trigger('errorResponse', eventData);
         if (eventData.isStopped()) {
             return;
