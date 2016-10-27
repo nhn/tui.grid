@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Fri Oct 21 2016 14:46:00 GMT+0900 (KST)"
- * version: 1.5.0
+ * bundle created at "Thu Oct 27 2016 17:27:35 GMT+0900 (KST)"
+ * version: 1.5.1
  */
 .tui-grid-container {
   width: 100%;
@@ -122,10 +122,6 @@
 }
 .tui-grid-layer-state {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   border-style: solid;
   border-color: #ccc;
   border-width: 1px;
