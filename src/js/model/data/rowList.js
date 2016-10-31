@@ -358,11 +358,18 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         var isAscending = this.sortOptions.isAscending;
         var valueA = a.get(columnName);
         var valueB = b.get(columnName);
+
+        var isEmptyA = _.isNull(valueA) || _.isUndefined(valueA) || valueA === '';
+        var isEmptyB = _.isNull(valueB) || _.isUndefined(valueB) || valueB === '';
         var result = 0;
 
-        if ((!valueA && valueB) || (valueA < valueB)) {
+        if (isEmptyA && !isEmptyB) {
             result = -1;
-        } else if ((valueA && !valueB) || (valueA > valueB)) {
+        } else if (!isEmptyA && isEmptyB) {
+            result = 1;
+        } else if (valueA < valueB) {
+            result = -1;
+        } else if (valueA > valueB) {
             result = 1;
         }
 

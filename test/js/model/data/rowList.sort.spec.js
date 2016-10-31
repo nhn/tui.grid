@@ -93,7 +93,7 @@ describe('data.rowList', function() {
         });
     });
 
-    describe('sortByField()', function() {
+    fdescribe('sortByField()', function() {
         beforeEach(function() {
             dataModel.set([
                 {
@@ -101,7 +101,7 @@ describe('data.rowList', function() {
                     c2: 2
                 }, {
                     c1: 'b',
-                    c2: 1
+                    c2: -1
                 }, {
                     c1: 'a',
                     c2: 3
