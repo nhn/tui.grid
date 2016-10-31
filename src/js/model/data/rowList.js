@@ -354,15 +354,15 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @returns {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
      */
     comparator: function(a, b) {
-        var columnName = this.sortOptions.columnName,
-            isAscending = this.sortOptions.isAscending,
-            valueA = a.get(columnName),
-            valueB = b.get(columnName),
-            result = 0;
+        var columnName = this.sortOptions.columnName;
+        var isAscending = this.sortOptions.isAscending;
+        var valueA = a.get(columnName);
+        var valueB = b.get(columnName);
+        var result = 0;
 
-        if (valueA < valueB) {
+        if ((!valueA && valueB) || (valueA < valueB)) {
             result = -1;
-        } else if (valueA > valueB) {
+        } else if ((valueA && !valueB) || (valueA > valueB)) {
             result = 1;
         }
 
