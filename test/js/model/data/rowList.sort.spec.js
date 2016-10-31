@@ -98,13 +98,13 @@ describe('data.rowList', function() {
             dataModel.set([
                 {
                     c1: 'c',
-                    c2: '2'
+                    c2: 2
                 }, {
                     c1: 'b',
-                    c2: '1'
+                    c2: 1
                 }, {
                     c1: 'a',
-                    c2: '3'
+                    c2: 3
                 }
             ], {parse: true});
         });
@@ -125,6 +125,24 @@ describe('data.rowList', function() {
             expect(dataModel.at(2).get('rowKey')).toBe(1);
         });
 
+        it('null is the least value for String types', function() {
+            dataModel.setValue(0, 'c1', null);
+            dataModel.sortByField('c1', true);
+
+            expect(dataModel.at(0).get('rowKey')).toBe(0);
+            expect(dataModel.at(1).get('rowKey')).toBe(2);
+            expect(dataModel.at(2).get('rowKey')).toBe(1);
+        });
+
+        it('null is the is the least for Number types', function() {
+            dataModel.setValue(0, 'c2', null);
+            dataModel.sortByField('c2', true);
+
+            expect(dataModel.at(0).get('rowKey')).toBe(0);
+            expect(dataModel.at(1).get('rowKey')).toBe(1);
+            expect(dataModel.at(2).get('rowKey')).toBe(2);
+        });
+
         it('기존 컬럼과 같을 경우 isAsecnding값이 없으면 기존의 isAscending 값을 반대로 설정한다.', function() {
             dataModel.sortByField('c1', true);
             dataModel.sortByField('c1');
@@ -141,5 +159,6 @@ describe('data.rowList', function() {
 
             expect(dataModel.sort).not.toHaveBeenCalled();
         });
+
     });
 });
