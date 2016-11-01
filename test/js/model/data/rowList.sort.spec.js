@@ -93,7 +93,7 @@ describe('data.rowList', function() {
         });
     });
 
-    fdescribe('sortByField()', function() {
+    describe('sortByField()', function() {
         beforeEach(function() {
             dataModel.set([
                 {
