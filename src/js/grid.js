@@ -11,7 +11,7 @@
  *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
  *          can be used for setting this value dynamically.
  *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
- *          The string value 'checkbox' or 'radiobox' can be used.
+ *          The string value 'checkbox' or 'radio' can be used.
  *          If not specified, the button column will not be shown.
  *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
  *          to each rows when rendering time.
