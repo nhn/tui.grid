@@ -275,6 +275,52 @@ describe('Data.RowList - simple', function() {
         });
     });
 
+    describe('delRange()', function() {
+        it('should call del() for each cell silently', function() {
+            spyOn(rowList, 'del');
+
+            rowList.delRange({
+                row: [0, 1],
+                column: [0, 1]
+            });
+
+            expect(rowList.del).toHaveBeenCalledWith(0, 'c1', true);
+            expect(rowList.del).toHaveBeenCalledWith(0, 'c2', true);
+            expect(rowList.del).toHaveBeenCalledWith(1, 'c1', true);
+            expect(rowList.del).toHaveBeenCalledWith(1, 'c2', true);
+        });
+
+        it('should call validateCell() for each cell', function() {
+            var row1 = rowList.at(0);
+            var row2 = rowList.at(1);
+
+            spyOn(row1, 'validateCell');
+            spyOn(row2, 'validateCell');
+
+            rowList.delRange({
+                row: [0, 1],
+                column: [0, 1]
+            });
+
+            expect(row1.validateCell).toHaveBeenCalledWith('c1', true);
+            expect(row1.validateCell).toHaveBeenCalledWith('c2', true);
+            expect(row2.validateCell).toHaveBeenCalledWith('c1', true);
+            expect(row2.validateCell).toHaveBeenCalledWith('c2', true);
+        });
+
+        it('should trigger delRange event', function() {
+            var callback = jasmine.createSpy();
+
+            rowList.on('delRange', callback);
+            rowList.delRange({
+                row: [0, 1],
+                column: [0, 1]
+            });
+
+            expect(callback).toHaveBeenCalledWith([0, 1], ['c1', 'c2']);
+        });
+    });
+
     describe('validate()', function() {
         beforeEach(function() {
             columnModel.getColumnModel('c1').isRequired = true;

@@ -69,7 +69,6 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
 
             if (!(util.isBlank(value) && util.isBlank(currentValue))) {
                 this.setValue(address, value);
-                row.validateCell(address.columnName);
             }
         }
         focusModel.finishEditing();

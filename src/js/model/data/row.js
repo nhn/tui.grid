@@ -95,9 +95,9 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
      * @private
      */
     _validateCellData: function(columnName) {
-        var columnModel = this.columnModel.getColumnModel(columnName),
-            value = this.get(columnName),
-            errorCode = '';
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var value = this.get(columnName);
+        var errorCode = '';
 
         if (columnModel.isRequired && util.isBlank(value)) {
             errorCode = VALID_ERR_REQUIRED;
