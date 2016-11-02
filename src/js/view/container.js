@@ -118,7 +118,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (this.singleClickEdit && !$target.is('input')) {
+            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input')) {
                 this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
 
