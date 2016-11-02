@@ -995,7 +995,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         _.each(rowKeys, function(rowKey) {
             _.each(columnNames, function(columnName) {
                 this.del(rowKey, columnName, true);
-                this.get(rowKey).validateCell(columnName);
+                this.get(rowKey).validateCell(columnName, true);
             }, this);
         }, this);
 
