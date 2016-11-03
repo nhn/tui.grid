@@ -21,9 +21,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
         this.textType = {
-            'normal': true,
-            'text': true,
-            'password': true
+            normal: true,
+            text: true,
+            password: true
         };
         this._setColumnModelList(this.get('columnModelList'));
         this.on('change', this._onChange, this);
@@ -45,7 +45,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     /**
      * 메타컬럼모델들을 초기화한다.
      * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
-     * @returns {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
+     * @returns {Array} dest - 초기화가 완료된 메타컬럼 모델 리스트
      * @private
      */
     _initializeMetaColumns: function(source) {
@@ -75,14 +75,15 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _initializeNumberColumn: function(metaColumnModelList) {
-        var hasNumberColumn = this.get('hasNumberColumn'),
-            numberColumn = {
-                columnName: '_number',
-                align: 'center',
-                title: 'No.',
-                isFixedWidth: true,
-                width: 60
-            };
+        var hasNumberColumn = this.get('hasNumberColumn');
+        var numberColumn = {
+            columnName: '_number',
+            align: 'center',
+            title: 'No.',
+            isFixedWidth: true,
+            width: 60
+        };
+
         if (!hasNumberColumn) {
             numberColumn.isHidden = true;
         }
@@ -96,17 +97,17 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _initializeButtonColumn: function(metaColumnModelList) {
-        var selectType = this.get('selectType'),
-            buttonColumn = {
-                columnName: '_button',
-                isHidden: false,
-                align: 'center',
-                editOption: {
-                    type: 'mainButton'
-                },
-                isFixedWidth: true,
-                width: 40
-            };
+        var selectType = this.get('selectType');
+        var buttonColumn = {
+            columnName: '_button',
+            isHidden: false,
+            align: 'center',
+            editOption: {
+                type: 'mainButton'
+            },
+            isFixedWidth: true,
+            width: 40
+        };
 
         if (selectType === 'checkbox') {
             buttonColumn.title = '<input type="checkbox"/>';
@@ -127,8 +128,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _extendColumnList: function(columnObj, columnModelList) {
-        var columnName = columnObj.columnName,
-            index = _.findIndex(columnModelList, {columnName: columnName});
+        var columnName = columnObj.columnName;
+        var index = _.findIndex(columnModelList, {columnName: columnName});
 
         if (index === -1) {
             columnModelList.push(columnObj);
@@ -145,6 +146,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      */
     at: function(index, isVisible) {
         var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('dataColumnModelList');
+
         return columnModelList[index];
     },
 
@@ -183,9 +185,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {Array}  조회한 컬럼모델 배열
      */
     getVisibleColumnModelList: function(whichSide, withMeta) {
-        var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount(),
-            visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta),
-            columnModelList;
+        var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount();
+        var visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta);
+        var columnModelList;
 
         whichSide = whichSide && whichSide.toUpperCase();
 
@@ -205,11 +207,11 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {number} count
      */
     getVisibleMetaColumnCount: function() {
-        var models = this.get('metaColumnModelList'),
-            totalLength = models.length,
-            hiddenLength = _.where(models, {
-                isHidden: true
-            }).length;
+        var models = this.get('metaColumnModelList');
+        var totalLength = models.length;
+        var hiddenLength = _.where(models, {
+            isHidden: true
+        }).length;
 
         return (totalLength - hiddenLength);
     },
@@ -220,16 +222,19 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {number} Visible columnFix count
      */
     getVisibleColumnFixCount: function(withMeta) {
-        var count = this.get('columnFixCount'),
-            fixedColumns = _.first(this.get('dataColumnModelList'), count),
-            visibleFixedColumns = _.filter(fixedColumns, function(column) {
-                return !column.isHidden;
-            }),
-            visibleCount = visibleFixedColumns.length;
+        var count = this.get('columnFixCount');
+        var fixedColumns = _.first(this.get('dataColumnModelList'), count);
+        var visibleFixedColumns, visibleCount;
+
+        visibleFixedColumns = _.filter(fixedColumns, function(column) {
+            return !column.isHidden;
+        });
+        visibleCount = visibleFixedColumns.length;
 
         if (withMeta) {
             visibleCount += this.getVisibleMetaColumnCount();
         }
+
         return visibleCount;
     },
 
@@ -258,8 +263,8 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {string} 해당하는 columnName 의 editType 을 반환한다.
      */
     getEditType: function(columnName) {
-        var columnModel = this.getColumnModel(columnName),
-            editType = 'normal';
+        var columnModel = this.getColumnModel(columnName);
+        var editType = 'normal';
 
         if (columnName === '_button' || columnName === '_number') {
             editType = columnName;
@@ -293,11 +298,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _getRelationListMap: function(columnModelList) {
-        var columnName,
-            relationListMap = {};
+        var relationListMap = {};
 
         _.each(columnModelList, function(columnModel) {
-            columnName = columnModel.columnName;
+            var columnName = columnModel.columnName;
             if (columnModel.relationList) {
                 relationListMap[columnName] = columnModel.relationList;
             }
@@ -310,8 +314,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {Array} isIgnore 가 true 로 설정된 columnName 배열.
      */
     getIgnoredColumnNameList: function() {
-        var columnModelLsit = this.get('dataColumnModelList'),
-            ignoreColumnNameList = [];
+        var columnModelLsit = this.get('dataColumnModelList');
+        var ignoreColumnNameList = [];
+
         _.each(columnModelLsit, function(columnModel) {
             if (columnModel.isIgnore) {
                 ignoreColumnNameList.push(columnModel.columnName);
@@ -365,9 +370,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @private
      */
     _onChange: function(model) {
-        var changed = model.changed,
-            columnFixCount = changed.columnFixCount,
-            columnModelList = changed.columnModelList;
+        var changed = model.changed;
+        var columnFixCount = changed.columnFixCount;
+        var columnModelList = changed.columnModelList;
 
         if (!columnModelList) {
             columnModelList = this.get('dataColumnModelList');
@@ -411,10 +416,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
      * @returns {Array.<string>} Unit column names
      */
     getUnitColumnNamesIfMerged: function(columnName) {
-        var columnMergeInfoList = this.get('columnMerge'),
-            stackForSearch = [],
-            searchedNames = [],
-            name, columnModel, columnMergeInfoItem;
+        var columnMergeInfoList = this.get('columnMerge');
+        var stackForSearch = [];
+        var searchedNames = [];
+        var name, columnModel, columnMergeInfoItem;
 
         stackForSearch.push(columnName);
         while (stackForSearch.length) {
