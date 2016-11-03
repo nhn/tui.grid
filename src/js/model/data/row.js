@@ -20,6 +20,7 @@ var PRIVATE_PROPERTIES = [
 
 // Error code for validtaion
 var VALID_ERR_REQUIRED = 'REQUIRED';
+var VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
 
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
@@ -101,6 +102,8 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
         if (columnModel.isRequired && util.isBlank(value)) {
             errorCode = VALID_ERR_REQUIRED;
+        } else if (columnModel.dataType === 'number' && !_.isNumber(value)) {
+            errorCode = VALID_ERR_TYPE_NUMBER;
         }
         return errorCode;
     },

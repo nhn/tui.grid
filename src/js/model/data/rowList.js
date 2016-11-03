@@ -572,31 +572,25 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return value;
     },
 
+
     /**
      * Sets the vlaue of the cell identified by the specified rowKey and columnName.
-     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-     * @param {String} columnName   컬럼 이름
-     * @param {(Number|String)} columnValue 할당될 값
-     * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
-     * @returns {Boolean} True if affected row is exist
+     * @param {(Number|String)} rowKey - rowKey
+     * @param {String} columnName - columnName
+     * @param {(Number|String)} value - value
+     * @param {Boolean} [silent=false] - whether set silently
+     * @returns {Boolean} True if affected row exists
      */
-    setValue: function(rowKey, columnName, columnValue, silent) {
-        var row = this.get(rowKey),
-            obj = {},
-            result;
+    setValue: function(rowKey, columnName, value, silent) {
+        var row = this.get(rowKey);
 
-        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
         if (row) {
-            obj[columnName] = columnValue;
-            row.set(obj, {
+            row.set(columnName, value, {
                 silent: silent
             });
-            result = true;
-        } else {
-            result = false;
+            return true;
         }
-
-        return result;
+        return false;
     },
 
     /**

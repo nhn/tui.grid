@@ -5,7 +5,6 @@
 'use strict';
 
 var _ = require('underscore');
-
 var util = require('../common/util');
 
 /**
@@ -133,8 +132,30 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
      * @param {(Number|String|Boolean)} value - value
      */
     setValue: function(address, value) {
+        var columnModel = this.columnModel.getColumnModel(address.columnName);
+
+        if (_.isString(value)) {
+            value = $.trim(value);
+        }
+        if (columnModel.dataType === 'number') {
+            value = convertToNumber(value);
+        }
+
         this.dataModel.setValue(address.rowKey, address.columnName, value);
     }
 });
+
+/**
+ * Converts given value to a number type and returns it.
+ * If the value is not a number type, returns the original value.
+ * @param {*} value - value
+ * @returns {*}
+ */
+function convertToNumber(value) {
+    if (typeof value === 'number' || isNaN(value) || util.isBlank(value)) {
+        return value;
+    }
+    return Number(value);
+}
 
 module.exports = PainterController;
