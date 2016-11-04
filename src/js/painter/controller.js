@@ -152,7 +152,11 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
  * @returns {*}
  */
 function convertToNumber(value) {
-    if (typeof value === 'number' || isNaN(value) || util.isBlank(value)) {
+    if (_.isString(value)) {
+        value = value.replace(/,/g, '');
+    }
+
+    if (_.isNumber(value) || isNaN(value) || util.isBlank(value)) {
         return value;
     }
     return Number(value);

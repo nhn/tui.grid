@@ -25,7 +25,7 @@ describe('painter/controller', function() {
             spyOn(controller.dataModel, 'setValue');
             controller.setValue({
                 rowKey: 0,
-                columnName: 'c1',
+                columnName: 'c1'
             }, '   hi   ');
 
             expect(controller.dataModel.setValue).toHaveBeenCalledWith(0, 'c1', 'hi');
@@ -50,6 +50,16 @@ describe('painter/controller', function() {
                 }, '1234');
 
                 expect(controller.dataModel.setValue).toHaveBeenCalledWith(0, 'c1', 1234);
+            });
+
+            it('comma(,) contained in the value should be ignored', function() {
+                spyOn(controller.dataModel, 'setValue');
+                controller.setValue({
+                    rowKey: 0,
+                    columnName: 'c1'
+                }, '123,456');
+
+                expect(controller.dataModel.setValue).toHaveBeenCalledWith(0, 'c1', 123456);
             });
 
             it('if value cannot be converted to number, use original value', function() {
