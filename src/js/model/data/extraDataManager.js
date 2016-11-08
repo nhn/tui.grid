@@ -17,7 +17,7 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
      * @param {Object} data - Data object
      */
     init: function(data) {
-        this.data = data;
+        this.data = data || {};
     },
 
     /**
@@ -197,6 +197,22 @@ var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraDat
             classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
             this.className = classNameData;
         }
+    },
+
+    /**
+     * Sets the height of the row
+     * @param {number} value - value
+     */
+    setHeight: function(value) {
+        this.data.height = value;
+    },
+
+    /**
+     * Returns the height of the row
+     * @returns {number}
+     */
+    getHeight: function() {
+        return this.data.height;
     }
 });
 

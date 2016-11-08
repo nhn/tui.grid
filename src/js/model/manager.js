@@ -10,6 +10,7 @@ var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
 var ToolbarModel = require('./toolbar');
 var DimensionModel = require('./dimension');
+var CoordRowModel = require('./coordRow');
 var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
@@ -55,6 +56,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
+        this.coordRowModel = this._createCoordRowModel(options);
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
@@ -132,6 +134,18 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             domState: domState
+        });
+    },
+
+    /**
+     * Creates an instance of coordRow model and returns it
+     * @returns {module:model/coordRow}
+     * @private
+     */
+    _createCoordRowModel: function() {
+        return new CoordRowModel({
+            dataModel: this.dataModel,
+            dimensionModel: this.dimensionModel
         });
     },
 

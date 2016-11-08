@@ -5,6 +5,7 @@ var DomState = require('domState');
 var ColumnModel = require('model/data/columnModel');
 var DataModel = require('model/data/rowList');
 var DimensionModel = require('model/dimension');
+var CoordRowModel = require('model/coordRow');
 var SummaryModel = require('model/summary');
 
 describe('model/manager', function() {
@@ -122,5 +123,11 @@ describe('model/manager', function() {
             });
             expect(manager.summaryModel.autoColumnNames).toEqual(['c1']);
         });
+    });
+
+    it('creates coordRow model', function() {
+        var manager = new ModelManager();
+
+        expect(manager.coordRowModel).toEqual(jasmine.any(CoordRowModel));
     });
 });

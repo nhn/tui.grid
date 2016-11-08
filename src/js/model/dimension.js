@@ -46,8 +46,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.domState = options.domState;
 
         this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
-        this.listenTo(this.dataModel, 'add remove reset', this._resetTotalRowHeight);
-
         this.on('change:width', this._onWidthChange, this);
         this.on('change:bodyHeight', this._resetDisplayRowCount, this);
         this.on('change:displayRowCount', this._resetBodyHeight, this);
@@ -55,10 +53,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.resetColumnWidths();
         this._resetBodyHeight();
     },
-
-    models: null,
-
-    columnModel: null,
 
     defaults: {
         offsetLeft: 0,
@@ -122,17 +116,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         });
 
         return appliedList;
-    },
-
-    /**
-     * Resets the 'totalRowHeight' attribute.
-     * @private
-     */
-    _resetTotalRowHeight: function() {
-        var rowHeight = this.get('rowHeight');
-        var rowCount = this.dataModel.length;
-
-        this.set('totalRowHeight', util.getHeight(rowCount, rowHeight));
     },
 
     /**
