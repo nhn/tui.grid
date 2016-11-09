@@ -30,7 +30,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             focusModel: options.focusModel,
-            dimensionModel: options.dimensionModel
+            dimensionModel: options.dimensionModel,
+            coordRowModel: options.coordRowModel
         });
 
         rowListOptions = {
@@ -364,13 +365,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var rowNum = this.get('startNumber') + startIndex;
-        var height = this.dimensionModel.get('rowHeight');
         var lsideData = [];
         var rsideData = [];
-        var rowDataModel, i;
+        var rowDataModel, height, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
+            height = this.coordRowModel.getHeightAt(i);
+
             lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
             rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
             rowNum += 1;

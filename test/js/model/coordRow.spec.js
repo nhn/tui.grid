@@ -26,15 +26,15 @@ function create(data) {
     });
 }
 
-fdescribe('CoordRow', function() {
+describe('CoordRow', function() {
     describe('initialize', function() {
         it('without height data', function() {
             var coordRow = create([{}, {}]);
 
             expect(coordRow.getHeight(0)).toBe(ROW_DEF_HEIGHT);
             expect(coordRow.getHeight(1)).toBe(ROW_DEF_HEIGHT);
-            expect(coordRow.getOffset(0)).toBe(CELL_BORDER_WIDTH);
-            expect(coordRow.getOffset(1)).toBe(ROW_DEF_HEIGHT + CELL_BORDER_WIDTH * 2);
+            expect(coordRow.getOffset(0)).toBe(0);
+            expect(coordRow.getOffset(1)).toBe(ROW_DEF_HEIGHT + CELL_BORDER_WIDTH);
         });
 
         it('with height data', function() {
@@ -53,13 +53,13 @@ fdescribe('CoordRow', function() {
 
             expect(coordRow.getHeight(0)).toBe(15);
             expect(coordRow.getHeight(1)).toBe(20);
-            expect(coordRow.getOffset(0)).toBe(CELL_BORDER_WIDTH);
-            expect(coordRow.getOffset(1)).toBe(15 + CELL_BORDER_WIDTH * 2);
+            expect(coordRow.getOffset(0)).toBe(0);
+            expect(coordRow.getOffset(1)).toBe(15 + CELL_BORDER_WIDTH);
         });
 
         it('should set totalRowHeight of DimensionModel', function() {
             var coordRow = create([{}, {}]);
-            var totalHeight = (ROW_DEF_HEIGHT + CELL_BORDER_WIDTH) * 2;
+            var totalHeight = (ROW_DEF_HEIGHT * 2) + CELL_BORDER_WIDTH;
 
             expect(coordRow.dimensionModel.get('totalRowHeight')).toBe(totalHeight);
         });
@@ -72,8 +72,8 @@ fdescribe('CoordRow', function() {
             coordRow.dataModel.append({});
 
             expect(coordRow.getHeight(1)).toBe(ROW_DEF_HEIGHT);
-            expect(coordRow.getOffset(1)).toBe(ROW_DEF_HEIGHT + CELL_BORDER_WIDTH * 2);
-            expect(coordRow.dimensionModel.get('totalRowHeight')).toBe((ROW_DEF_HEIGHT + CELL_BORDER_WIDTH) * 2);
+            expect(coordRow.getOffset(1)).toBe(ROW_DEF_HEIGHT + CELL_BORDER_WIDTH);
+            expect(coordRow.dimensionModel.get('totalRowHeight')).toBe((ROW_DEF_HEIGHT * 2) + CELL_BORDER_WIDTH);
         });
 
         it('when a row is removed', function() {
@@ -83,6 +83,15 @@ fdescribe('CoordRow', function() {
 
             expect(coordRow.getHeight(1)).toBeUndefined();
             expect(coordRow.getOffset(1)).toBeUndefined();
+        });
+
+        it('when data is reset', function() {
+            var coordRow = create([]);
+
+            coordRow.dataModel.setRowList([{}]);
+
+            expect(coordRow.getHeight(0)).toBe(ROW_DEF_HEIGHT);
+            expect(coordRow.getOffset(0)).toBe(0);
         });
     });
 });

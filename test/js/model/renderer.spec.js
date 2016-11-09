@@ -4,6 +4,7 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Focus = require('model/focus');
 var Dimension = require('model/dimension');
+var CoordRow = require('model/coordRow');
 var Renderer = require('model/renderer');
 var Model = require('base/model');
 
@@ -125,7 +126,7 @@ describe('model.renderer', function() {
         }
     ];
 
-    var columnModel, dataModel, renderModel, focusModel, dimensionModel, rowList;
+    var columnModel, dataModel, renderModel, focusModel, dimensionModel, rowList, coordRowModel;
 
     beforeEach(function() {
         rowList = $.extend(true, [], originalRowList);
@@ -142,6 +143,10 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
+        coordRowModel = new CoordRow({
+            dataModel: dataModel,
+            dimensionModel: dimensionModel
+        });
         focusModel = new Focus(null, {
             dataModel: dataModel,
             columnModel: columnModel,
@@ -151,7 +156,8 @@ describe('model.renderer', function() {
             columnModel: columnModel,
             dataModel: dataModel,
             focusModel: focusModel,
-            dimensionModel: dimensionModel
+            dimensionModel: dimensionModel,
+            coordRowModel: coordRowModel
         });
     });
 
@@ -309,7 +315,8 @@ describe('model.renderer', function() {
                     dataModel: dataModel,
                     columnModel: columnModel,
                     dimensionModel: dimensionModel,
-                    focusModel: focusModel
+                    focusModel: focusModel,
+                    coordRowModel: coordRowModel
                 });
                 listenModel.listenTo(renderModel, 'rowListChanged', callback);
                 dataModel.set([], {parse: true});
@@ -326,7 +333,8 @@ describe('model.renderer', function() {
                     dataModel: dataModel,
                     columnModel: columnModel,
                     dimensionModel: dimensionModel,
-                    focusModel: focusModel
+                    focusModel: focusModel,
+                    coordRowModel: coordRowModel
                 });
                 listenModel.listenTo(renderModel, 'columnModelChanged', callback);
                 columnModel.set({

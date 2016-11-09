@@ -3,20 +3,21 @@
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
+var CoordRowModel = require('model/coordRow');
 var Focus = require('model/focus');
 var Renderer = require('model/renderer');
-var Model = require('base/model');
 var DomState = require('domState');
 
 describe('model.renderer', function() {
-    var columnModel, dataModel, renderModel, focusModel, dimensionModel;
+    var columnModel, dataModel, renderModel, focusModel, coordRowModel, dimensionModel;
 
     function createRenderModel(attrs) {
         return new Renderer(attrs, {
             columnModel: columnModel,
             dataModel: dataModel,
             focusModel: focusModel,
-            dimensionModel: dimensionModel
+            dimensionModel: dimensionModel,
+            coordRowModel: coordRowModel
         });
     }
 
@@ -29,6 +30,11 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
+        coordRowModel = new CoordRowModel({
+            dataModel: dataModel,
+            dimensionModel: dimensionModel
+        });
+        dimensionModel.coordRowModel = coordRowModel;
         focusModel = new Focus(null, {
             domState: new DomState($('<div />')),
             columnModel: columnModel,
@@ -38,14 +44,14 @@ describe('model.renderer', function() {
     });
 
     describe('refresh', function() {
-         beforeEach(function() {
+        beforeEach(function() {
             dataModel.reset([
                 {}, {}, {}
             ], {parse: true});
             renderModel = createRenderModel();
-         });
+        });
 
-         it('executes all relation', function() {
+        it('executes all relation', function() {
             spyOn(renderModel, '_executeRelation');
             renderModel.refresh();
 
@@ -53,7 +59,7 @@ describe('model.renderer', function() {
             expect(renderModel._executeRelation).toHaveBeenCalledWith(0);
             expect(renderModel._executeRelation).toHaveBeenCalledWith(1);
             expect(renderModel._executeRelation).toHaveBeenCalledWith(2);
-         });
+        });
     });
 
     describe('if showDummyRows:true', function() {

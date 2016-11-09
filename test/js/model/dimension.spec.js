@@ -2,6 +2,7 @@
 
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
+var CoordRowModel = require('model/coordRow');
 var Model = require('base/model');
 var Dimension = require('model/dimension');
 
@@ -307,6 +308,10 @@ describe('Dimension', function() {
         dimensionModel = new Dimension(defaultConfig, {
             columnModel: columnModelInstance,
             dataModel: dataModelInstance
+        });
+        dimensionModel.coordRowModel = new CoordRowModel({
+            dataModel: dataModelInstance,
+            dimensionModel: dimensionModel
         });
         dimensionModel.renderModel = new Model({
             scrollLeft: 0,
@@ -959,13 +964,16 @@ describe('Dimension', function() {
 
     describe('getIndexFromMousePosition()', function() {
         it('should return first cell when (0,0)', function() {
-            var actual = dimensionModel.getIndexFromMousePosition(0, 0),
-                expected = {
-                    row: 0,
-                    column: 0
-                };
+            dimensionModel.dataModel.append({});
+            spyOn(dimensionModel, '_rebasePositionToContainer').and.returnValue({
+                x: 0,
+                y: 0
+            });
 
-            expect(actual).toEqual(expected);
+            expect(dimensionModel.getIndexFromMousePosition(0, 0)).toEqual({
+                row: 0,
+                column: 0
+            });
         });
         /************************************************
          * See the more test cases of unit functions
@@ -990,7 +998,7 @@ describe('Dimension', function() {
                 actual;
 
             spyOn(dimensionModel, 'get').and.callFake(function(key) {
-                switch(key) {
+                switch (key) {
                     case 'offsetLeft':  // No break
                     case 'offsetTop':   // No break
                     case 'headerHeight':
@@ -1061,80 +1069,13 @@ describe('Dimension', function() {
     });
 
     describe('_calcRowIndexFromPositionY', function() {
-        beforeEach(function() {
-            spyOn(dimensionModel.renderModel, 'get').and.returnValue(0);
-        });
+        it('should return the result of CoordRowModel.indexOf', function() {
+            dimensionModel.renderModel.set('scrollTop', 50);
+            spyOn(dimensionModel.coordRowModel, 'indexOf');
 
-        it('should return 0 when the Y-position is in first row', function() {
-            var containerY = 100,
-                actual;
+            dimensionModel._calcRowIndexFromPositionY(10);
 
-            spyOn(dimensionModel, 'get').and.callFake(function(key) {
-                if (key === 'rowHeight') {
-                    return 100;
-                }
-                return 0;
-            });
-
-            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
-
-            expect(actual).toEqual(0);
-        });
-
-        it('should return 0 when the Y-position is negative', function() {
-            var containerY = -150,
-                actual;
-
-            spyOn(dimensionModel, 'get').and.callFake(function(key) {
-                if (key === 'rowHeight') {
-                    return 100;
-                }
-                return 0;
-            });
-
-            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
-
-            expect(actual).toEqual(0);
-        });
-
-        it('should return normal index when the Y-position is in container', function() {
-            var rowHeight = 10,
-                rowCount = 10,
-                containerY = (rowHeight + 1) * 5,
-                expectedIndex = 5,
-                actual;
-
-            dimensionModel.dataModel.length = rowCount;
-            spyOn(dimensionModel, 'get').and.callFake(function(key) {
-                if (key === 'rowHeight') {
-                    return rowHeight;
-                }
-                return 0;
-            });
-
-            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
-
-            expect(actual).toEqual(expectedIndex);
-        });
-
-        it('should return last index of rows ' +
-            'when the Y-position is over the container', function() {
-            var containerY = Number.MAX_SAFE_INTEGER || 9007199254740991,
-                rowCount = 10,
-                expectedIndex = rowCount - 1,
-                actual;
-
-            dimensionModel.dataModel.length = rowCount;
-            spyOn(dimensionModel, 'get').and.callFake(function(key) {
-                if (key === 'rowHeight') {
-                    return 100;
-                }
-                return 0;
-            });
-
-            actual = dimensionModel._calcRowIndexFromPositionY(containerY);
-
-            expect(actual).toEqual(expectedIndex);
+            expect(dimensionModel.coordRowModel.indexOf).toHaveBeenCalledWith(50 + 10);
         });
     });
 

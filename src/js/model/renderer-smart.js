@@ -7,7 +7,6 @@
 var _ = require('underscore');
 
 var Renderer = require('./renderer');
-var util = require('../common/util');
 
 /**
  *  View 에서 Rendering 시 사용할 객체
@@ -51,13 +50,15 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             displayRowCount = dimensionModel.get('displayRowCount'),
             startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
             endIndex = Math.min(dataModel.length - 1, startIndex + displayRowCount + (this.hiddenRowCount * 2)),
-            top;
+            top = 0;
 
         if (dataModel.isRowSpanEnable()) {
             startIndex += this._getStartRowSpanMinCount(startIndex);
             endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
-        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight);
+        if (startIndex) {
+            top = this.coordRowModel.getOffsetAt(startIndex);
+        }
 
         this.set({
             top: top,

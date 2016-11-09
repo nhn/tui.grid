@@ -479,15 +479,18 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{top: Number, bottom: Number}}
      */
     _getCellVerticalPosition: function(rowKey, rowSpanCount) {
-        var dataModel = this.dataModel;
-        var rowHeight = this.get('rowHeight');
-        var rowIdx = dataModel.indexOfRowKey(rowKey);
-        var top = util.getHeight(rowIdx, rowHeight);
-        var height = util.getHeight(rowSpanCount, rowHeight);
+        var firstIdx, lastIdx, top, bottom;
+        var coordRowModel = this.coordRowModel;
+
+        firstIdx = this.dataModel.indexOfRowKey(rowKey);
+        lastIdx = firstIdx + rowSpanCount - 1;
+        top = coordRowModel.getOffsetAt(firstIdx);
+        bottom = coordRowModel.getOffsetAt(lastIdx) +
+            coordRowModel.getHeightAt(lastIdx) + CELL_BORDER_WIDTH;
 
         return {
             top: top,
-            bottom: top + height
+            bottom: bottom
         };
     },
 
@@ -694,11 +697,8 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     _calcRowIndexFromPositionY: function(containerY) {
         var cellY = containerY + this.renderModel.get('scrollTop');
-        var tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH));
-        var min = 0;
-        var max = Math.max(min, this.dataModel.length - 1);
 
-        return util.clamp(tempIndex, min, max);
+        return this.coordRowModel.indexOf(cellY);
     },
 
     /**

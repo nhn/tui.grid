@@ -65,6 +65,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         // todo: remove dependency
         this.focusModel.renderModel = this.renderModel;
         this.dimensionModel.renderModel = this.renderModel;
+        this.dimensionModel.coordRowModel = this.coordRowModel;
     },
 
     /**
@@ -197,7 +198,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
-            focusModel: this.focusModel
+            focusModel: this.focusModel,
+            coordRowModel: this.coordRowModel
         };
         Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 

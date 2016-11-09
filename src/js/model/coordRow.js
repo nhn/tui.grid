@@ -4,7 +4,6 @@
  */
 'use strict';
 
-// var _ = require('underscore');
 var Model = require('../base/model');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
@@ -31,33 +30,55 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
 
         this.dataModel.each(function(row, index) {
             var height = row.getHeight() || defHeight;
+            var prevOffset = index ? (rowOffsets[index - 1] + CELL_BORDER_WIDTH) : 0;
+            var prevHeight = index ? rowHeights[index - 1] : 0;
+
             rowHeights[index] = height;
-            rowOffsets[index] = CELL_BORDER_WIDTH
-                + (rowOffsets[index - 1] || 0) + (rowHeights[index - 1] || 0);
+            rowOffsets[index] = prevOffset + prevHeight;
         });
 
         this.rowHeights = rowHeights;
         this.rowOffsets = rowOffsets;
-
         this.dimensionModel.set('totalRowHeight', _.last(rowOffsets) + _.last(rowHeights));
     },
 
-    /**
-     * Returns the height of the row at the given index
-     * @param {number} index - row index
-     * @returns {number}
-     */
-    getHeight: function(index) {
+    getHeightAt: function(index) {
         return this.rowHeights[index];
     },
 
+    getOffsetAt: function(index) {
+        return this.rowOffsets[index];
+    },
+
     /**
-     * Returns the offset of the row at the given index
-     * @param {number} index - row index
+     * Returns the height of the row of the given rowKey
+     * @param {number} rowKey - rowKey
      * @returns {number}
      */
-    getOffset: function(index) {
-        return this.rowOffsets[index];
+    getHeight: function(rowKey) {
+        var index = this.dataModel.indexOfRowKey(rowKey);
+        return this.getHeightAt(index);
+    },
+
+    /**
+     * Returns the offset of the row of the given rowKey
+     * @param {number} rowKey - rowKey
+     * @returns {number}
+     */
+    getOffset: function(rowKey) {
+        var index = this.dataModel.indexOfRowKey(rowKey);
+        return this.getOffsetAt(index);
+    },
+
+    indexOf: function(position) {
+        var rowOffsets = this.rowOffsets;
+        var idx = 0;
+
+        while (rowOffsets[idx] <= position + CELL_BORDER_WIDTH) {
+            idx += 1;
+        }
+
+        return idx - 1;
     }
 });
 

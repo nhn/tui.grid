@@ -278,6 +278,7 @@ describe('view.layout.body', function() {
             body.mouseDownY = 10;
             spyOn(modelManager.selectionModel, '_isAutoScrollable').and.returnValue(false);
             spyOn(modelManager.selectionModel, '_setScrolling').and.stub();
+            spyOn(modelManager.selectionModel, 'updateByMousePosition');
         });
 
         describe('selection이 없을경우', function() {
@@ -290,7 +291,7 @@ describe('view.layout.body', function() {
                     pageX: 20,
                     pageY: 20
                 });
-                expect(modelManager.selectionModel.hasSelection()).toBe(true);
+                expect(modelManager.selectionModel.updateByMousePosition).toHaveBeenCalledWith(20, 20);
             });
 
             it('움직인 거리가 10보다 작을 경우 selection 시작하지 않는다.', function() {
@@ -298,7 +299,7 @@ describe('view.layout.body', function() {
                     pageX: 15,
                     pageY: 15
                 });
-                expect(modelManager.selectionModel.hasSelection()).toBe(false);
+                expect(modelManager.selectionModel.updateByMousePosition).not.toHaveBeenCalled();
             });
         });
 
@@ -308,7 +309,6 @@ describe('view.layout.body', function() {
             });
 
             it('기존의 셀렉션을 확장한다', function() {
-                spyOn(modelManager.selectionModel, 'updateByMousePosition');
                 body._onMouseMove({
                     pageX: 15,
                     pageY: 15
