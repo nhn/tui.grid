@@ -59,7 +59,7 @@ describe('CoordRow', function() {
 
         it('should set totalRowHeight of DimensionModel', function() {
             var coordRow = create([{}, {}]);
-            var totalHeight = (ROW_DEF_HEIGHT * 2) + CELL_BORDER_WIDTH;
+            var totalHeight = (ROW_DEF_HEIGHT + CELL_BORDER_WIDTH) * 2;
 
             expect(coordRow.dimensionModel.get('totalRowHeight')).toBe(totalHeight);
         });
@@ -73,7 +73,7 @@ describe('CoordRow', function() {
 
             expect(coordRow.getHeight(1)).toBe(ROW_DEF_HEIGHT);
             expect(coordRow.getOffset(1)).toBe(ROW_DEF_HEIGHT + CELL_BORDER_WIDTH);
-            expect(coordRow.dimensionModel.get('totalRowHeight')).toBe((ROW_DEF_HEIGHT * 2) + CELL_BORDER_WIDTH);
+            expect(coordRow.dimensionModel.get('totalRowHeight')).toBe((ROW_DEF_HEIGHT + CELL_BORDER_WIDTH) * 2);
         });
 
         it('when a row is removed', function() {

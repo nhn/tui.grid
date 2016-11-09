@@ -7,7 +7,6 @@
 var _ = require('underscore');
 
 var View = require('../../base/view');
-var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 
@@ -39,8 +38,8 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
         this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
-        // To prevent issue of appearing vertical scrollbar when dummy rows exists
-        this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
+        // To prevent issue of appearing vertical scrollbar when dummy rows exist
+        this.listenTo(this.renderModel, 'change:dummyRowCount', this._onChangeDummyRowCount);
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
 
         this._attachAllTableEventHandlers();
@@ -63,20 +62,21 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide),
-            $colList = this.$el.find('col'),
-            totalWidth = 0;
+        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        var $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(width, index) {
-            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH);
-            totalWidth += width + CELL_BORDER_WIDTH;
+            $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
         }, this);
+    },
 
-        // to solve the overflow issue in IE7
-        // (don't automatically expand to child's width when overflow:hidden)
-        if (util.isBrowserIE7()) {
-            this.$el.width(totalWidth);
-        }
+    /**
+     * Event handler for 'change:dummyRowCount' event on the renderModel.
+     * @private
+     */
+    _onChangeDummyRowCount: function() {
+        this._resetOverflow();
+        this._resetHeight();
     },
 
     /**
@@ -181,15 +181,12 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             html += this.templateCol({
                 attrColumnName: ATTR_COLUMN_NAME,
                 columnName: columnModel.columnName,
-                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH
+                width: columnWidthList[index] + CELL_BORDER_WIDTH
             });
         }, this);
 
         return html;
     }
-}, {
-    // IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
-    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0 // eslint-disable-line no-magic-numbers
 });
 
 module.exports = BodyTable;

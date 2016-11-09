@@ -8,6 +8,9 @@ var _ = require('underscore');
 
 var Renderer = require('./renderer');
 
+var BUFFER_SIZE = 200;
+var BUFFER_MIN = 50;
+
 /**
  *  View 에서 Rendering 시 사용할 객체
  *  Smart Rendering 을 지원한다.
@@ -22,18 +25,14 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         Renderer.prototype.initialize.apply(this, arguments);
         this.on('change:scrollTop', this._onChange, this);
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onChange, this);
-
-        this.setOwnProperties({
-            hiddenRowCount: 10,
-            criticalPoint: 3
-        });
     },
+
     /**
      * bodyHeight 가 변경 되었을때 이벤트 핸들러
      * @private
      */
     _onChange: function() {
-        if (this._isRenderable(this.get('scrollTop'))) {
+        if (this._shouldRefresh(this.get('scrollTop'))) {
             this.refresh();
         }
     },
@@ -44,24 +43,22 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @private
      */
     _setRenderingRange: function(scrollTop) {
-        var dimensionModel = this.dimensionModel,
-            dataModel = this.dataModel,
-            rowHeight = dimensionModel.get('rowHeight'),
-            displayRowCount = dimensionModel.get('displayRowCount'),
-            startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-            endIndex = Math.min(dataModel.length - 1, startIndex + displayRowCount + (this.hiddenRowCount * 2)),
-            top = 0;
+        var dimensionModel = this.dimensionModel;
+        var dataModel = this.dataModel;
+        var coordRowModel = this.coordRowModel;
+        var bodyHeight = dimensionModel.get('bodyHeight');
+        var startIndex = Math.max(coordRowModel.indexOf(scrollTop - BUFFER_SIZE), 0);
+        var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + BUFFER_SIZE), dataModel.length - 1);
 
         if (dataModel.isRowSpanEnable()) {
             startIndex += this._getStartRowSpanMinCount(startIndex);
             endIndex += this._getEndRowSpanMaxCount(endIndex);
         }
-        if (startIndex) {
-            top = this.coordRowModel.getOffsetAt(startIndex);
-        }
 
         this.set({
-            top: top,
+            top: coordRowModel.getOffsetAt(startIndex),
+            renderTop: coordRowModel.getOffsetAt(startIndex),
+            renderBottom: coordRowModel.getOffsetAt(endIndex) + coordRowModel.getHeightAt(endIndex),
             startIndex: startIndex,
             endIndex: endIndex
         });
@@ -110,31 +107,21 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @returns {boolean}    랜더링 해야할지 여부
      * @private
      */
-    _isRenderable: function(scrollTop) {
-        var dimensionModel = this.dimensionModel,
-            dataModel = this.dataModel,
-            rowHeight = dimensionModel.get('rowHeight'),
-            bodyHeight = dimensionModel.get('bodyHeight'),
-            rowCount = dataModel.length,
-            displayStartIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1))),
-            displayEndIdx = Math.min(dataModel.length - 1, Math.floor((scrollTop + bodyHeight) / (rowHeight + 1))),
-            startIndex = this.get('startIndex'),
-            endIndex = this.get('endIndex');
+    _shouldRefresh: function(scrollTop) {
+        var scrollBottom = scrollTop + this.dimensionModel.get('bodyHeight');
+        var totalRowHeight = this.dimensionModel.get('totalRowHeight');
+        var renderTop = this.get('renderTop');
+        var renderBottom = this.get('renderBottom');
 
-        //시작 지점이 임계점 이하로 올라갈 경우 return true
-        if (startIndex !== 0) {
-            if (startIndex + this.criticalPoint > displayStartIdx) {
-                return true;
-            }
-        }
-        //마지막 지점이 임계점 이하로 내려갔을 경우 return true
-        if (endIndex !== rowCount - 1) {
-            if (endIndex - this.criticalPoint < displayEndIdx) {
-                return true;
-            }
-        }
-        return false;
+        var hitTopBuffer = scrollTop - renderTop < BUFFER_MIN;
+        var hitBottomBuffer = renderBottom - scrollBottom < BUFFER_MIN;
+
+        return (hitTopBuffer && renderTop > 0) || (hitBottomBuffer && renderBottom < totalRowHeight);
     }
 });
+
+// exports consts for external use
+SmartRenderer.BUFFER_SIZE = BUFFER_SIZE;
+SmartRenderer.BUFFER_MIN = BUFFER_MIN;
 
 module.exports = SmartRenderer;

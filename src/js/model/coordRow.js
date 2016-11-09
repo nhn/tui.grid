@@ -39,7 +39,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
 
         this.rowHeights = rowHeights;
         this.rowOffsets = rowOffsets;
-        this.dimensionModel.set('totalRowHeight', _.last(rowOffsets) + _.last(rowHeights));
+        this.dimensionModel.set('totalRowHeight', _.last(rowOffsets) + _.last(rowHeights) + CELL_BORDER_WIDTH);
     },
 
     getHeightAt: function(index) {

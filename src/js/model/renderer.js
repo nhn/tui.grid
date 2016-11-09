@@ -9,6 +9,7 @@ var _ = require('underscore');
 var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 var DATA_LENGTH_FOR_LOADING = 1000;
 
@@ -82,6 +83,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         rside: null,
         showDummyRows: false,
         dummyRowCount: 0,
+
+        renderTop: 0,
+        renderBottom: 0,
 
         // text that will be shown if no data to render (custom value set by user)
         emptyMessage: null,
@@ -411,21 +415,28 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _fillDummyRows: function() {
-        var displayRowCount = this.dimensionModel.get('displayRowCount');
-        var actualRowCount = this._getActualRowCount();
-        var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
-        var rowHeight = this.dimensionModel.get('rowHeight');
-        var rowNum = this.get('startNumber') + this.get('endIndex') + 1;
+        var dimensionModel = this.dimensionModel;
+        var totalRowHeight = dimensionModel.get('totalRowHeight');
+        var rowHeight = dimensionModel.get('rowHeight') + CELL_BORDER_WIDTH;
+        var bodyHeight = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+        var dummyRowCount, rowNum;
 
-        _.times(dummyRowCount, function() {
-            _.each(['lside', 'rside'], function(listName) {
-                this.get(listName).add({
-                    height: rowHeight,
-                    rowNum: rowNum
-                });
+        if (totalRowHeight >= bodyHeight) {
+            dummyRowCount = 0;
+        } else {
+            dummyRowCount = Math.ceil((bodyHeight - totalRowHeight) / rowHeight);
+            rowNum = this.get('startNumber') + this.get('endIndex') + 1;
+
+            _.times(dummyRowCount, function() {
+                _.each(['lside', 'rside'], function(listName) {
+                    this.get(listName).add({
+                        height: rowHeight,
+                        rowNum: rowNum
+                    });
+                }, this);
+                rowNum += 1;
             }, this);
-            rowNum += 1;
-        }, this);
+        }
 
         this.set('dummyRowCount', dummyRowCount);
     },
