@@ -1061,6 +1061,13 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Reset the width of each column by using initial setting of column models.
+     */
+    resetColumnWidths: function() {
+        this.modelManager.dimensionModel.resetColumnWidths();
+    },
+
+    /**
      * Show columns
      * @api
      * @param {...string} arguments - Column names to show
