@@ -45,14 +45,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.dataModel = options.dataModel;
         this.domState = options.domState;
 
-        this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
+        this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
         this.listenTo(this.dataModel, 'add remove reset', this._resetTotalRowHeight);
 
         this.on('change:width', this._onWidthChange, this);
         this.on('change:bodyHeight', this._resetDisplayRowCount, this);
         this.on('change:displayRowCount', this._resetBodyHeight, this);
 
-        this._initColumnWidthVariables();
+        this.resetColumnWidths();
         this._resetBodyHeight();
     },
 
@@ -306,10 +306,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * columnModel 에 설정된 넓이값을 기준으로 컬럼넓이와 관련된 변수들의 값을 초기화한다.
-     * @private
+     * Reset the width of each column by using initial setting of column models.
      */
-    _initColumnWidthVariables: function() {
+    resetColumnWidths: function() {
         var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
         var commonMinWidth = this.get('minimumColumnWidth');
         var widthList = [];
