@@ -20,8 +20,7 @@ describe('model/manager', function() {
                 fitToParentHeight: true,
                 scrollX: true,
                 scrollY: true,
-                minimumColumnWidth: 192,
-                displayRowCount: 36
+                minimumColumnWidth: 192
             }, domState);
 
             dimension = manager.dimensionModel;
@@ -31,7 +30,6 @@ describe('model/manager', function() {
             expect(dimension.get('scrollX')).toBe(true);
             expect(dimension.get('scrollY')).toBe(true);
             expect(dimension.get('minimumColumnWidth')).toBe(192);
-            expect(dimension.get('displayRowCount')).toBe(36);
         });
 
         it('with options (boolean)', function() {

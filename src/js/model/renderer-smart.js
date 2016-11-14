@@ -9,9 +9,13 @@ var _ = require('underscore');
 var Renderer = require('./renderer');
 var dimensionConst = require('../common/constMap').dimension;
 
-var BUFFER_RATIO = 0.3;
-var BUFFER_HIT_RATIO = 0.1;
 var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
+
+// The ratio of buffer size to bodyHeight
+var BUFFER_RATIO = 0.3;
+
+// The ratio of buffer hit size to bodyHeight
+var BUFFER_HIT_RATIO = 0.1;
 
 /**
  *  View 에서 Rendering 시 사용할 객체
@@ -25,23 +29,23 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      */
     initialize: function() {
         Renderer.prototype.initialize.apply(this, arguments);
-        this.on('change:scrollTop', this._onChange, this);
-        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onChange, this);
+        this.on('change:scrollTop', this._onChangeScrollTop, this);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this.refresh);
     },
 
     /**
-     * bodyHeight 가 변경 되었을때 이벤트 핸들러
+     * Event handler for change:scrollTop event
      * @private
      */
-    _onChange: function() {
+    _onChangeScrollTop: function() {
         if (this._shouldRefresh(this.get('scrollTop'))) {
             this.refresh();
         }
     },
 
     /**
-     * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
-     * @param {Number} scrollTop    랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
+     * Calculate the range to render and set the attributes.
+     * @param {number} scrollTop - scrollTop
      * @private
      */
     _setRenderingRange: function(scrollTop) {
@@ -106,6 +110,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         }
         return result;
     },
+
     /**
      * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
      * @param {Number} scrollTop 랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값

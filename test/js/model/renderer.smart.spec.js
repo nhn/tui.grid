@@ -14,39 +14,20 @@ var BUFFER_HIT_RATIO = SmartRenderer.BUFFER_HIT_RATIO;
 var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
 describe('model.renderer', function() {
-    var columnModelList = [
-        {columnName: 'c1'},
-        {columnName: 'c2'},
-        {columnName: 'c3'}
-    ];
-    var sampleRow = {
-        c1: '1',
-        c2: '2',
-        c3: '3'
-    };
+    var renderer;
 
-    var rowList = [],
-        columnModel,
-        dataModel,
-        renderer,
-        dimensionModel,
-        coordRowModel,
-        focusModel;
-
-    (function setSampleRows() {
-        var i;
-        for (i = 0; i < 100; i += 1) {
-            rowList.push($.extend({}, sampleRow));
-        }
-    })();
-
-    beforeEach(function() {
-        columnModel = new ColumnModelData();
-        columnModel.set('columnModelList', columnModelList);
-        dataModel = new RowListData([], {
+    function create() {
+        var columnModel = new ColumnModelData({
+            columnModelList: [
+                {columnName: 'c1'},
+                {columnName: 'c2'},
+                {columnName: 'c3'}
+            ]
+        });
+        var dataModel = new RowListData([], {
             columnModel: columnModel
         });
-        dimensionModel = new Dimension({
+        var dimensionModel = new Dimension({
             headerHeight: 0,
             scrollX: false,
             isFixedHeight: true
@@ -54,25 +35,37 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
-        coordRowModel = new CoordRow({
+        var coordRowModel = new CoordRow({
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
-        focusModel = new Focus(null, {
+        var focusModel = new Focus(null, {
             domState: new DomState($('<div />')),
             columnModel: columnModel,
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
-        renderer = new SmartRenderer(null, {
+
+        return new SmartRenderer(null, {
             dataModel: dataModel,
             columnModel: columnModel,
             dimensionModel: dimensionModel,
             focusModel: focusModel,
             coordRowModel: coordRowModel
         });
-        renderer.refresh();
-    });
+    }
+
+    function setSampleRows() {
+        var rowList = [], i;
+        for (i = 0; i < 50; i += 1) {
+            rowList.push({
+                c1: '1',
+                c2: '2',
+                c3: '3'
+            });
+        }
+        renderer.dataModel.setRowList(rowList);
+    }
 
     describe('_setRenderingRange()', function() {
         var rowHeight = 10;
@@ -81,11 +74,13 @@ describe('model.renderer', function() {
         var bufferRowCount = parseInt(bufferSize / 10, 10);
 
         beforeEach(function() {
-            dimensionModel.set({
+            renderer = create();
+            renderer.dimensionModel.set({
                 bodyHeight: bodyHeight,
                 rowHeight: rowHeight - CELL_BORDER_WIDTH
             });
-            dataModel.setRowList(rowList);
+            setSampleRows();
+            renderer.refresh();
         });
 
         it('when scrollTop = 0', function() {
@@ -106,8 +101,8 @@ describe('model.renderer', function() {
             var maxScrollTop = renderer.get('maxScrollTop');
             renderer._setRenderingRange(maxScrollTop);
             expect(renderer.get('top')).toBe(maxScrollTop - bufferSize);
-            expect(renderer.get('startIndex')).toBe(90 - bufferRowCount);
-            expect(renderer.get('endIndex')).toBe(99);
+            expect(renderer.get('startIndex')).toBe(40 - bufferRowCount);
+            expect(renderer.get('endIndex')).toBe(49);
         });
     });
 
@@ -117,11 +112,13 @@ describe('model.renderer', function() {
         var bufferHitSize = parseInt(bodyHeight * BUFFER_HIT_RATIO, 10);
 
         beforeEach(function() {
-            dimensionModel.set({
+            renderer = create();
+            renderer.dimensionModel.set({
                 bodyHeight: bodyHeight,
                 rowHeight: rowHeight - CELL_BORDER_WIDTH
             });
-            dataModel.setRowList(rowList);
+            setSampleRows();
+            renderer.refresh();
         });
 
         it('when top : 0', function() {
@@ -162,20 +159,14 @@ describe('model.renderer', function() {
         var proto;
 
         beforeEach(function() {
-            proto = renderer.constructor.prototype;
+            proto = SmartRenderer.prototype;
             spyOn(proto, 'refresh');
+            renderer = create();
         });
 
-        it('refresh() method should be called if _shouldRefresh return true', function() {
-            spyOn(proto, '_shouldRefresh').and.returnValue(true);
-            dimensionModel.set('bodyHeight', 200);
+        it('refresh() method should be called', function() {
+            renderer.dimensionModel.set('bodyHeight', 200);
             expect(proto.refresh).toHaveBeenCalled();
-        });
-
-        it('refresh() method should not be called if _shouldRefresh return false', function() {
-            spyOn(proto, '_shouldRefresh').and.returnValue(false);
-            dimensionModel.set('bodyHeight', 200);
-            expect(proto.refresh).not.toHaveBeenCalled();
         });
     });
 
@@ -183,6 +174,7 @@ describe('model.renderer', function() {
         var proto;
 
         beforeEach(function() {
+            renderer = create();
             proto = renderer.constructor.prototype;
             spyOn(proto, 'refresh');
         });

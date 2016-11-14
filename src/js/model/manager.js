@@ -27,7 +27,6 @@ var defaultOptions = {
     rowHeight: 27,
     fitToParentHeight: false,
     showDummyRows: false,
-    displayRowCount: 10,
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
     columnMerge: [],
@@ -127,15 +126,21 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.minimumColumnWidth,
-            displayRowCount: options.displayRowCount
+            minimumColumnWidth: options.minimumColumnWidth
         };
-
-        return new DimensionModel(attrs, {
+        var dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             domState: domState
         });
+
+        // The displayRowCount option is deprecated.
+        // This code should be removed after the option is removed.
+        if (options.displayRowCount) {
+            dimensionModel.setBodyHeightWithRowCount(options.displayRowCount);
+        }
+
+        return dimensionModel;
     },
 
     /**

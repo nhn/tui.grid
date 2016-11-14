@@ -47,10 +47,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
         this.on('change:width', this._onWidthChange, this);
-        if (!this.get('isFixedHeight')) {
-            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
-        }
+        this.on('change:isFixedHeight', this._resetSyncHeightHandler);
 
+        this._resetSyncHeightHandler();
         this.resetColumnWidths();
     },
 
@@ -98,6 +97,22 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         return availableTotalWidth;
     },
 
+    /**
+     * Attach/Detach event handler of change:totalRowHeight event based on the isFixedHeight.
+     * @private
+     */
+    _resetSyncHeightHandler: function() {
+        if (this.get('isFixedHeight')) {
+            this.off('change:totalRowHeight');
+        } else {
+            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
+        }
+    },
+
+    /**
+     * Sets the bodyHeight value based on the totalRowHeight value.
+     * @private
+     */
     _syncBodyHeightWithTotalRowHeight: function() {
         this.set('bodyHeight', this.get('totalRowHeight') + this.getScrollXHeight());
     },
@@ -933,7 +948,13 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     setBodyHeightWithRowCount: function(rowCount) {
         var rowHeight = this.get('rowHeight');
         var scrollXHeight = this.getScrollXHeight();
-        this.set('bodyHeight', (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight);
+
+        console.log(rowCount, rowHeight, scrollXHeight);
+
+        this.set({
+            isFixedHeight: true,
+            bodyHeight: (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight
+        });
     }
 });
 

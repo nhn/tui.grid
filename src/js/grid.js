@@ -1040,9 +1040,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @param {number} count - The number of rows
      */
     setDisplayRowCount: function(count) {
-        // @TODO call dimensionModel.setBodyHeightWithRowCount();
         this.modelManager.dimensionModel.setBodyHeightWithRowCount(count);
-        // this.modelManager.dimensionModel.set('displayRowCount', count);
     },
 
     /**
