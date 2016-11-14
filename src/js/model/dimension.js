@@ -47,11 +47,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
         this.on('change:width', this._onWidthChange, this);
-        this.on('change:bodyHeight', this._resetDisplayRowCount, this);
-        this.on('change:displayRowCount', this._resetBodyHeight, this);
+        if (!this.get('isFixedHeight')) {
+            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
+        }
 
         this.resetColumnWidths();
-        this._resetBodyHeight();
     },
 
     defaults: {
@@ -76,11 +76,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         columnWidthList: [],
 
         minimumColumnWidth: 0,
-        displayRowCount: 1,
         scrollBarSize: 17,
         scrollX: true,
         scrollY: true,
-        fitToParentHeight: false
+        fitToParentHeight: false,
+        isFixedHeight: false
     },
 
     /**
@@ -96,6 +96,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
         return availableTotalWidth;
+    },
+
+    _syncBodyHeightWithTotalRowHeight: function() {
+        this.set('bodyHeight', this.get('totalRowHeight') + this.getScrollXHeight());
     },
 
     /**
@@ -116,23 +120,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         });
 
         return appliedList;
-    },
-
-    /**
-     * Resets the 'displayRowCount' attribute.
-     * @private
-     */
-    _resetDisplayRowCount: function() {
-        var actualBodyHeight, displayRowCount;
-
-        // To prevent recursive call with _resetBodyHeight (called by change:displayRowCount event)
-        if (_.has(this.changed, 'displayRowCount')) {
-            return;
-        }
-        actualBodyHeight = this.get('bodyHeight') - this.getScrollXHeight();
-        displayRowCount = util.getDisplayRowCount(actualBodyHeight, this.get('rowHeight'));
-
-        this.set('displayRowCount', displayRowCount);
     },
 
     /**
@@ -785,21 +772,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Resets the 'bodyHeight' attribute.
-     * @private
-     */
-    _resetBodyHeight: function() {
-        var rowListHeight;
-
-        // To prevent recursive call with _resetDisplayRowCount (called by change:bodyHeight event)
-        if (_.has(this.changed, 'bodyHeight')) {
-            return;
-        }
-        rowListHeight = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
-        this.set('bodyHeight', rowListHeight + this.getScrollXHeight());
-    },
-
-    /**
      * Return height of X-scrollBar.
      * If no X-scrollBar, return 0
      * @returns {number} Height of X-scrollBar
@@ -873,7 +845,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
     /**
      * Sets the height of the dimension.
-     * (Resets the bodyHeight and displayRowCount relative to the dimension height)
+     * (Resets the bodyHeight relative to the dimension height)
      * @param  {number} height - The height of the dimension
      * @private
      */
@@ -956,6 +928,12 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         }
 
         return columnWidthList;
+    },
+
+    setBodyHeightWithRowCount: function(rowCount) {
+        var rowHeight = this.get('rowHeight');
+        var scrollXHeight = this.getScrollXHeight();
+        this.set('bodyHeight', (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight);
     }
 });
 

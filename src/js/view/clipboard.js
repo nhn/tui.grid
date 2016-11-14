@@ -31,6 +31,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             renderModel: options.renderModel,
+            coordRowModel: options.coordRowModel,
             useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
             timeoutIdForKeyIn: 0,
             isLocked: false
@@ -137,7 +138,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var focused = focusModel.which();
         var rowKey = focused.rowKey;
         var columnName = focused.columnName;
-        var displayRowCount = this.dimensionModel.get('displayRowCount');
+        var rowIdx = this.dataModel.indexOfRowKey(rowKey);
+        var columnIdx = this.columnModel.indexOfColumnName(columnName, true);
         var isKeyIdentified = true;
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
         var address;
@@ -160,10 +162,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 focusModel.focus(rowKey, focusModel.nextColumnName(), true);
                 break;
             case keyCodeMap.PAGE_UP:
-                focusModel.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
+                focusModel.focusAt(this._getPageMovedRowIndex(rowIdx, false), columnIdx, true);
                 break;
             case keyCodeMap.PAGE_DOWN:
-                focusModel.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
+                focusModel.focusAt(this._getPageMovedRowIndex(rowIdx, true), columnIdx, true);
                 break;
             case keyCodeMap.HOME:
                 focusModel.focus(rowKey, focusModel.firstColumnName(), true);
@@ -232,6 +234,26 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
+     * Returns the row index moved by body height from given row.
+     * @param {number} rowIdx - current row index
+     * @param {Boolean} isDownDir - true: down, false: up
+     * @returns {number}
+     * @private
+     */
+    _getPageMovedRowIndex: function(rowIdx, isDownDir) {
+        var curOffset = this.coordRowModel.getOffsetAt(rowIdx);
+        var distance = this.dimensionModel.get('bodyHeight');
+        var movedIdx;
+
+        if (!isDownDir) {
+            distance = -distance;
+        }
+        movedIdx = this.coordRowModel.indexOf(curOffset + distance);
+
+        return util.clamp(movedIdx, 0, this.dataModel.length - 1);
+    },
+
+    /**
      * shift 가 눌린 상태에서의 key down event handler
      * @param {Event} keyDownEvent 이벤트 객체
      * @private
@@ -240,7 +262,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var focusModel = this.focusModel;
         var dimensionModel = this.dimensionModel;
         var columnModelList = this.columnModel.getVisibleColumnModelList();
-        var displayRowCount = dimensionModel.get('displayRowCount');
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
         var index = this._getIndexBeforeMove();
         var isKeyIdentified = true;
@@ -261,10 +282,10 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
                 index.column += 1;
                 break;
             case keyCodeMap.PAGE_UP:
-                index.row = focusModel.prevRowIndex(displayRowCount - 1);
+                index.row = this._getPageMovedRowIndex(index.row, false);
                 break;
             case keyCodeMap.PAGE_DOWN:
-                index.row = focusModel.nextRowIndex(displayRowCount - 1);
+                index.row = this._getPageMovedRowIndex(index.row, true);
                 break;
             case keyCodeMap.HOME:
                 index.column = 0;

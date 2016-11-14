@@ -48,17 +48,6 @@ describe('[view/pagination] ', function() {
             expect(compInstance.getOption('isCenterAlign')).toBe(false);
         });
 
-        it('if itemPerPage option is empty, set it to dimensionModel.displayRowCount', function() {
-            var pagination = create({});
-            var compInstance;
-
-            pagination.dimensionModel.set('displayRowCount', 20);
-            pagination.render();
-            compInstance = pagination.componentHolder.getInstance('pagination');
-
-            expect(compInstance.getOption('itemPerPage')).toBe(20);
-        });
-
         it('if tui.compoent.Pagination does not exist, throw an error', function() {
             var pagination = create({});
             var renderBound = _.bind(pagination.render, pagination);

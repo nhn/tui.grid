@@ -119,17 +119,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * Starts the selection by mouse position.
-     * @param {number} pageX - X position relative to the document
-     * @param {number} pageY - Y position relative to the document
-     * @param {string} type - Selection type
-     */
-    startByMousePosition: function(pageX, pageY, type) {
-        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
-        this.start(index.row, index.column, type);
-    },
-
-    /**
      * Updates the selection range.
      * @param {number} rowIndex - Row index
      * @param {number} columnIndex - Column index

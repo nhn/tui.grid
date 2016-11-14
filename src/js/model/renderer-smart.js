@@ -7,9 +7,11 @@
 var _ = require('underscore');
 
 var Renderer = require('./renderer');
+var dimensionConst = require('../common/constMap').dimension;
 
-var BUFFER_SIZE = 200;
-var BUFFER_MIN = 50;
+var BUFFER_RATIO = 0.3;
+var BUFFER_HIT_RATIO = 0.1;
+var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
 /**
  *  View 에서 Rendering 시 사용할 객체
@@ -47,8 +49,12 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         var dataModel = this.dataModel;
         var coordRowModel = this.coordRowModel;
         var bodyHeight = dimensionModel.get('bodyHeight');
-        var startIndex = Math.max(coordRowModel.indexOf(scrollTop - BUFFER_SIZE), 0);
-        var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + BUFFER_SIZE), dataModel.length - 1);
+        var bufferSize = parseInt(bodyHeight * BUFFER_RATIO, 10);
+        var startIndex = Math.max(coordRowModel.indexOf(scrollTop - bufferSize), 0);
+        var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + bufferSize), dataModel.length - 1);
+        var top = coordRowModel.getOffsetAt(startIndex);
+        var bottom = coordRowModel.getOffsetAt(endIndex) +
+            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
 
         if (dataModel.isRowSpanEnable()) {
             startIndex += this._getStartRowSpanMinCount(startIndex);
@@ -56,9 +62,8 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         }
 
         this.set({
-            top: coordRowModel.getOffsetAt(startIndex),
-            renderTop: coordRowModel.getOffsetAt(startIndex),
-            renderBottom: coordRowModel.getOffsetAt(endIndex) + coordRowModel.getHeightAt(endIndex),
+            top: top,
+            bottom: bottom,
             startIndex: startIndex,
             endIndex: endIndex
         });
@@ -108,20 +113,21 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      * @private
      */
     _shouldRefresh: function(scrollTop) {
-        var scrollBottom = scrollTop + this.dimensionModel.get('bodyHeight');
+        var bodyHeight = this.dimensionModel.get('bodyHeight');
+        var scrollBottom = scrollTop + bodyHeight;
         var totalRowHeight = this.dimensionModel.get('totalRowHeight');
-        var renderTop = this.get('renderTop');
-        var renderBottom = this.get('renderBottom');
+        var top = this.get('top');
+        var bottom = this.get('bottom');
+        var bufferHitSize = parseInt(bodyHeight * BUFFER_HIT_RATIO, 10);
+        var hitTopBuffer = scrollTop - top < bufferHitSize;
+        var hitBottomBuffer = bottom - scrollBottom < bufferHitSize;
 
-        var hitTopBuffer = scrollTop - renderTop < BUFFER_MIN;
-        var hitBottomBuffer = renderBottom - scrollBottom < BUFFER_MIN;
-
-        return (hitTopBuffer && renderTop > 0) || (hitBottomBuffer && renderBottom < totalRowHeight);
+        return (hitTopBuffer && top > 0) || (hitBottomBuffer && bottom < totalRowHeight);
     }
 });
 
 // exports consts for external use
-SmartRenderer.BUFFER_SIZE = BUFFER_SIZE;
-SmartRenderer.BUFFER_MIN = BUFFER_MIN;
+SmartRenderer.BUFFER_RATIO = BUFFER_RATIO;
+SmartRenderer.BUFFER_HIT_RATIO = BUFFER_HIT_RATIO;
 
 module.exports = SmartRenderer;

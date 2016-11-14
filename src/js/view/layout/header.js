@@ -40,7 +40,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
-            timeoutForAllChecked: 0,
             whichSide: options.whichSide || 'R'
         });
 

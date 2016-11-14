@@ -579,30 +579,6 @@ describe('Dimension', function() {
         });
     });
 
-    describe('_resetBodyHeight()', function() {
-        describe('displayRowHeight 와 rowHeight 값을 기반으로 bodyHeight 값을 계산한다.', function() {
-            it('scrollX 옵션이 false 일 경우', function() {
-                dimensionModel.set({
-                    displayRowCount: 10,
-                    rowHeight: 20,
-                    scrollX: false
-                });
-                dimensionModel._resetBodyHeight();
-                expect(dimensionModel.get('bodyHeight')).toEqual(210);
-            });
-
-            it('scrollX 옵션이 true 일 경우', function() {
-                dimensionModel.set({
-                    displayRowCount: 10,
-                    rowHeight: 20,
-                    scrollX: true
-                });
-                dimensionModel._resetBodyHeight();
-                expect(dimensionModel.get('bodyHeight')).toEqual(227);
-            });
-        });
-    });
-
     describe('getScrollXHeight()', function() {
         it('Should return 0 when the "scrollX" attr is false', function() {
             dimensionModel.set({
@@ -1016,6 +992,10 @@ describe('Dimension', function() {
     describe('getOverflowFromMousePosition', function() {
         var pageX, pageY;
 
+        beforeEach(function() {
+            dimensionModel.set('bodyHeight', 100);
+        });
+
         it('should return -1 when the position is negative', function() {
             var actual,
                 expected = {
@@ -1138,13 +1118,6 @@ describe('Dimension', function() {
 
             actual = dimensionModel._calcColumnIndexFromPositionX(containerX, withMeta);
             expect(actual).toEqual(expectedIndex);
-        });
-    });
-
-    describe('change:displayRowCount', function() {
-        it('이벤트 발생시 bodyHeight를 재설정한다.', function() {
-            dimensionModel.set('displayRowCount', 10);
-            expect(dimensionModel.get('bodyHeight')).toBe(1027);
         });
     });
 });
