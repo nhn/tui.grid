@@ -323,14 +323,18 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
 
     /**
      * Returns the _extraData.height
-     * @returns {(number|null)}
+     * @returns {number}
      */
     getHeight: function() {
         return this.extraDataManager.getHeight();
     },
 
-    setHeight: function(value) {
-        this.extraDataManager.setHeight(value);
+    /**
+     * Sets the height of the row
+     * @param {number} height - height
+     */
+    setHeight: function(height) {
+        this.extraDataManager.setHeight(height);
         this._triggerExtraDataChangeEvent();
     },
 

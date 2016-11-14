@@ -112,9 +112,9 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
     },
 
     /**
-     * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
-     * @param {Number} scrollTop 랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
-     * @returns {boolean}    랜더링 해야할지 여부
+     * Returns whether the scroll potision hits the buffer limit or not.
+     * @param {number} scrollTop - scroll top
+     * @returns {boolean}
      * @private
      */
     _shouldRefresh: function(scrollTop) {

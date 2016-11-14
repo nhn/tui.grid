@@ -409,6 +409,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         }, this);
     },
 
+    /**
+     * Calculate required count of dummy rows and set the 'dummyRowCount' attribute.
+     * @private
+     */
     _resetDummyRowCount: function() {
         var dimensionModel = this.dimensionModel;
         var totalRowHeight = dimensionModel.get('totalRowHeight');

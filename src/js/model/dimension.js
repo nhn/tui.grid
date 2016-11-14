@@ -945,11 +945,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         return columnWidthList;
     },
 
+    /**
+     * Set bodyHeight value based on the count of row.
+     * (This method is temporary and required only until the displayRowCount option is removed)
+     * @param {number} rowCount - row count
+     */
     setBodyHeightWithRowCount: function(rowCount) {
         var rowHeight = this.get('rowHeight');
         var scrollXHeight = this.getScrollXHeight();
-
-        console.log(rowCount, rowHeight, scrollXHeight);
 
         this.set({
             isFixedHeight: true,

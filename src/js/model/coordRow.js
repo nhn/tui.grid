@@ -1,6 +1,6 @@
 /**
- * @fileoverview Coordinate Row
- * @author NHN Ent. FE Development Team
+ * @fileoverview Manage coordinates of rows
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
@@ -8,6 +8,10 @@ var Model = require('../base/model');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
+    /**
+     * @constructs
+     * @param {object} options - options
+     */
     initialize: function(options) {
         this.dataModel = options.dataModel;
         this.dimensionModel = options.dimensionModel;
@@ -47,10 +51,20 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         this.dimensionModel.set('totalRowHeight', totalRowHeight);
     },
 
+    /**
+     * Returns the height of the row of given index
+     * @param {number} index - row index
+     * @returns {number}
+     */
     getHeightAt: function(index) {
         return this.rowHeights[index];
     },
 
+    /**
+     * Returns the offset of the row of given index
+     * @param {number} index - row index
+     * @returns {number}
+     */
     getOffsetAt: function(index) {
         return this.rowOffsets[index];
     },
@@ -75,6 +89,11 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         return this.getOffsetAt(index);
     },
 
+    /**
+     * Returns the index of the row which contains given position
+     * @param {number} position - target position
+     * @returns {number}
+     */
     indexOf: function(position) {
         var rowOffsets = this.rowOffsets;
         var idx = 0;

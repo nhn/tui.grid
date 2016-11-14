@@ -93,7 +93,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         var bottom = coordRowModel.getOffsetAt(rowRange[1]) + coordRowModel.getHeightAt(rowRange[1]);
 
         return {
-            top: (top) + 'px',
+            top: top + 'px',
             height: (bottom - top) + 'px'
         };
     },
