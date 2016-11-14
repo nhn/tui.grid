@@ -20,7 +20,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         this.rowOffsets = null;
 
         this._reset();
-        this.listenTo(this.dataModel, 'add remove reset', this._reset);
+        this.listenTo(this.dataModel, 'add remove reset sort', this._reset);
     },
 
     /**

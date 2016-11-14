@@ -7,6 +7,7 @@ var CoordRowModel = require('model/coordRow');
 var Focus = require('model/focus');
 var Renderer = require('model/renderer');
 var DomState = require('domState');
+var CELL_BORDER_WIDTH = require('common/constMap').dimension.CELL_BORDER_WIDTH;
 
 describe('model.renderer', function() {
     var columnModel, dataModel, renderModel, focusModel, coordRowModel, dimensionModel;
@@ -68,6 +69,10 @@ describe('model.renderer', function() {
                 {columnName: 'c1'},
                 {columnName: 'c2'}
             ]);
+            dimensionModel.set({
+                rowHeight: 10 - CELL_BORDER_WIDTH,
+                scrollX: false
+            });
             dataModel.reset([
                 {c1: '0-1', c2: '0-2'},
                 {c1: '1-1', c2: '1-2'}
@@ -77,58 +82,27 @@ describe('model.renderer', function() {
             });
         });
 
-        // describe('when refresh', function() {
-            // @TODO fix TC
-            // it('create dummy rows to fit rowCount to displayRowCount', function() {
-            //     dimensionModel.set('displayRowCount', 5, {silent: true});
-            //     renderModel.refresh();
-            //
-            //     _.each(['lside', 'rside'], function(attrName) {
-            //         var rowList = renderModel.get(attrName),
-            //             dummyRows = rowList.slice(2);
-            //
-            //         expect(rowList.length).toBe(5);
-            //         _.each(dummyRows, function(row) {
-            //             expect(row.get('rowKey')).toBeUndefined();
-            //         });
-            //     });
-            // });
-            //
-            // it('set dummyRowCount to length of dummy rows', function() {
-            //     dimensionModel.set('displayRowCount', 5, {silent: true});
-            //     renderModel.refresh();
-            //
-            //     expect(renderModel.get('dummyRowCount')).toBe(3);
-            // });
-            //
-            // it('if actual rowCount is less then displayRowCount, dummyRowCount is 0', function() {
-            //     dimensionModel.set('displayRowCount', 2, {silent: true});
-            //     renderModel.refresh();
-            //     expect(renderModel.get('dummyRowCount')).toBe(0);
-            //
-            //     dimensionModel.set('displayRowCount', 1, {silent: true});
-            //     renderModel.refresh();
-            //     expect(renderModel.get('dummyRowCount')).toBe(0);
-            // });
-        // });
+        it('and bodyHeight is changed, dummyRowCount should be reset', function() {
+            dimensionModel.set('bodyHeight', 30);
+            expect(renderModel.get('dummyRowCount')).toBe(1);
 
-        // describe('when displayRowCount changed', function() {
-        //     it('reset dummy rows', function() {
-        //         dimensionModel.set('displayRowCount', 5, {silent: true});
-        //         renderModel.refresh();
-        //         dimensionModel.set('displayRowCount', 4);
-        //
-        //         _.each(['lside', 'rside'], function(attrName) {
-        //             var rowList = renderModel.get(attrName),
-        //                 dummyRows = rowList.slice(2);
-        //
-        //             expect(rowList.length).toBe(4);
-        //             _.each(dummyRows, function(row) {
-        //                 expect(row.get('rowKey')).toBeUndefined();
-        //             });
-        //         });
-        //         expect(renderModel.get('dummyRowCount')).toBe(2);
-        //     });
-        // });
+            dimensionModel.set('bodyHeight', 40);
+            expect(renderModel.get('dummyRowCount')).toBe(2);
+        });
+
+        it('and dummyRowCount is change, rowList should be filled with dummy rows', function() {
+            var dummyRowCount = 3;
+            renderModel.set('dummyRowCount', dummyRowCount);
+
+            _.each(['lside', 'rside'], function(attrName) {
+                var rowList = renderModel.get(attrName);
+                var dummyRows = rowList.slice(2);
+
+                expect(rowList.length).toBe(dummyRowCount);
+                _.each(dummyRows, function(row) {
+                    expect(row.get('rowKey')).toBeUndefined();
+                });
+            });
+        });
     });
 });
