@@ -23,6 +23,7 @@ var defaultOptions = {
     classPrefix: classNameConst.PREFIX,
     itemCount: 1,
     pagePerPageList: 5,
+    itemPerPage: 10,
     isCenterAlign: true,
     moveUnit: 'page'
 };
@@ -80,10 +81,6 @@ var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
 
         if (customOptions === true) {
             customOptions = {};
-        }
-
-        if (!customOptions.itemPerPage) {
-            customOptions.itemPerPage = this.dimensionModel.get('displayRowCount');
         }
 
         return _.assign({}, defaultOptions, btnOptions, customOptions);

@@ -322,6 +322,23 @@ var Row = Model.extend(/**@lends module:model/data/row.prototype */{
     },
 
     /**
+     * Returns the _extraData.height
+     * @returns {number}
+     */
+    getHeight: function() {
+        return this.extraDataManager.getHeight();
+    },
+
+    /**
+     * Sets the height of the row
+     * @param {number} height - height
+     */
+    setHeight: function(height) {
+        this.extraDataManager.setHeight(height);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
      * rowSpanData를 설정한다.
      * @param {string} columnName - 컬럼명
      * @param {object} data - rowSpan 정보를 가진 객체

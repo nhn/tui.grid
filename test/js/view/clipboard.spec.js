@@ -80,7 +80,8 @@ describe('view.clipboard', function() {
                 dimensionModel: modelManager.dimensionModel,
                 selectionModel: modelManager.selectionModel,
                 focusModel: modelManager.focusModel,
-                renderModel: modelManager.renderModel
+                renderModel: modelManager.renderModel,
+                coordRowModel: modelManager.coordRowModel
             });
         });
 
@@ -283,6 +284,7 @@ describe('view.clipboard', function() {
                 });
 
                 it('PAGE-UP/DOWN', function() {
+                    modelManager.dimensionModel.set('bodyHeight', 100);
                     modelManager.focusModel.focusAt(1, 1);
                     keyEvent = getKeyEvent('PAGE_DOWN');
                     clipboard._keyInWithShift(keyEvent);

@@ -7,7 +7,6 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var util = require('../common/util');
 var classNameConst = require('../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
@@ -26,6 +25,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         this.setOwnProperties({
             whichSide: options.whichSide || 'R',
             dimensionModel: options.dimensionModel,
+            coordRowModel: options.coordRowModel,
             columnModel: options.columnModel,
             selectionModel: options.selectionModel
         });
@@ -88,13 +88,13 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {{top: string, height: string}} - css values
      */
     _getVerticalStyles: function(rowRange) {
-        var rowHeight = this.dimensionModel.get('rowHeight');
-        var top = util.getHeight(rowRange[0], rowHeight);
-        var height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
+        var coordRowModel = this.coordRowModel;
+        var top = coordRowModel.getOffsetAt(rowRange[0]);
+        var bottom = coordRowModel.getOffsetAt(rowRange[1]) + coordRowModel.getHeightAt(rowRange[1]);
 
         return {
             top: top + 'px',
-            height: height + 'px'
+            height: (bottom - top) + 'px'
         };
     },
 

@@ -4,145 +4,154 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
 var Focus = require('model/focus');
+var CoordRow = require('model/coordRow');
 var SmartRenderer = require('model/renderer-smart');
 var DomState = require('domState');
-var util = require('common/util');
+var dimensionConst = require('common/constMap').dimension;
+
+var BUFFER_RATIO = SmartRenderer.BUFFER_RATIO;
+var BUFFER_HIT_RATIO = SmartRenderer.BUFFER_HIT_RATIO;
+var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
 describe('model.renderer', function() {
-    var columnModelList = [
-        {columnName: 'c1'},
-        {columnName: 'c2'},
-        {columnName: 'c3'}
-    ];
-    var sampleRow = {
-        _extraData: {
-            rowSpan: {
-                c1: 3
-            }
-        },
-        c1: '1',
-        c2: '2',
-        c3: '3'
-    };
+    var renderer;
 
-    var rowList = [],
-        columnModel,
-        dataModel,
-        renderer,
-        dimensionModel,
-        focusModel,
-        grid = {};
-
-    (function setSampleRows() {
-        var i;
-        for (i = 0; i < 100; i += 1) {
-            rowList.push($.extend({}, sampleRow));
-        }
-    })();
-
-    beforeEach(function() {
-        columnModel = new ColumnModelData();
-        columnModel.set('columnModelList', columnModelList);
-        dataModel = new RowListData([], {
+    function create() {
+        var columnModel = new ColumnModelData({
+            columnModelList: [
+                {columnName: 'c1'},
+                {columnName: 'c2'},
+                {columnName: 'c3'}
+            ]
+        });
+        var dataModel = new RowListData([], {
             columnModel: columnModel
         });
-        dimensionModel = new Dimension({
-            offsetLeft: 100,
-            offsetTop: 200,
-            width: 500,
-            height: 500,
-            headerHeight: 150,
-            rowHeight: 10,
-            displayRowCount: 20,
-            scrollX: true,
-            scrollBarSize: 17,
-            minimumColumnWidth: 20
+        var dimensionModel = new Dimension({
+            headerHeight: 0,
+            scrollX: false,
+            isFixedHeight: true
         }, {
             dataModel: dataModel,
             columnModel: columnModel
         });
-        focusModel = new Focus(null, {
+        var coordRowModel = new CoordRow({
+            dataModel: dataModel,
+            dimensionModel: dimensionModel
+        });
+        var focusModel = new Focus(null, {
             domState: new DomState($('<div />')),
             columnModel: columnModel,
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
-        dataModel.reset(rowList, {parse: true});
-        renderer = new SmartRenderer(null, {
+
+        return new SmartRenderer(null, {
             dataModel: dataModel,
             columnModel: columnModel,
             dimensionModel: dimensionModel,
-            focusModel: focusModel
+            focusModel: focusModel,
+            coordRowModel: coordRowModel
         });
-        renderer.refresh();
-    });
+    }
+
+    function setSampleRows() {
+        var rowList = [], i;
+        for (i = 0; i < 50; i += 1) {
+            rowList.push({
+                c1: '1',
+                c2: '2',
+                c3: '3'
+            });
+        }
+        renderer.dataModel.setRowList(rowList);
+    }
 
     describe('_setRenderingRange()', function() {
+        var rowHeight = 10;
+        var bodyHeight = 100;
+        var bufferSize = parseInt(bodyHeight * BUFFER_RATIO, 10);
+        var bufferRowCount = parseInt(bufferSize / 10, 10);
+
+        beforeEach(function() {
+            renderer = create();
+            renderer.dimensionModel.set({
+                bodyHeight: bodyHeight,
+                rowHeight: rowHeight - CELL_BORDER_WIDTH
+            });
+            setSampleRows();
+            renderer.refresh();
+        });
+
         it('when scrollTop = 0', function() {
             renderer._setRenderingRange(0);
             expect(renderer.get('top')).toBe(0);
             expect(renderer.get('startIndex')).toBe(0);
-            expect(renderer.get('endIndex')).toBe(40);
+            expect(renderer.get('endIndex')).toBe(10 + bufferRowCount);
         });
 
         it('when scrollTop = 100', function() {
             renderer._setRenderingRange(100);
-            expect(renderer.get('top')).toBe(0);
-            expect(renderer.get('startIndex')).toBe(0);
-            expect(renderer.get('endIndex')).toBe(40);
+            expect(renderer.get('top')).toBe(100 - bufferSize);
+            expect(renderer.get('startIndex')).toBe(10 - bufferRowCount);
+            expect(renderer.get('endIndex')).toBe(20 + bufferRowCount);
         });
 
-        it('when scrollTop = 200', function() {
-            renderer._setRenderingRange(200);
-            expect(renderer.get('top')).toBe(77);
-            expect(renderer.get('startIndex')).toBe(7);
+        it('when scrollTop is max value', function() {
+            var maxScrollTop = renderer.get('maxScrollTop');
+            renderer._setRenderingRange(maxScrollTop);
+            expect(renderer.get('top')).toBe(maxScrollTop - bufferSize);
+            expect(renderer.get('startIndex')).toBe(40 - bufferRowCount);
             expect(renderer.get('endIndex')).toBe(49);
-        });
-
-        it('when scrollTop = 300', function() {
-            renderer._setRenderingRange(300);
-            expect(renderer.get('top')).toBe(176);
-            expect(renderer.get('startIndex')).toBe(16);
-            expect(renderer.get('endIndex')).toBe(58);
-        });
-
-        it('when scrollTop = 400', function() {
-            renderer._setRenderingRange(400);
-            expect(renderer.get('top')).toBe(275);
-            expect(renderer.get('startIndex')).toBe(25);
-            expect(renderer.get('endIndex')).toBe(67);
         });
     });
 
-    describe('_isRenderable()', function() {
-        it('when scrollTop = 0', function() {
-            renderer._setRenderingRange(0);
-            expect(renderer._isRenderable(0)).toBe(false);
-            expect(renderer._isRenderable(100)).toBe(false);
-            expect(renderer._isRenderable(200)).toBe(true);
-            expect(renderer._isRenderable(300)).toBe(true);
-            expect(renderer._isRenderable(400)).toBe(true);
-            expect(renderer._isRenderable(500)).toBe(true);
+    describe('_shouldRefresh()', function() {
+        var rowHeight = 10;
+        var bodyHeight = 100;
+        var bufferHitSize = parseInt(bodyHeight * BUFFER_HIT_RATIO, 10);
+
+        beforeEach(function() {
+            renderer = create();
+            renderer.dimensionModel.set({
+                bodyHeight: bodyHeight,
+                rowHeight: rowHeight - CELL_BORDER_WIDTH
+            });
+            setSampleRows();
+            renderer.refresh();
         });
 
-        it('when scrollTop = 200', function() {
-            renderer._setRenderingRange(200);
-            expect(renderer._isRenderable(0)).toBe(true);
-            expect(renderer._isRenderable(100)).toBe(false);
-            expect(renderer._isRenderable(200)).toBe(false);
-            expect(renderer._isRenderable(300)).toBe(true);
-            expect(renderer._isRenderable(400)).toBe(true);
-            expect(renderer._isRenderable(500)).toBe(true);
+        it('when top : 0', function() {
+            var limitBottom = renderer.get('bottom') - bodyHeight - bufferHitSize;
+
+            expect(renderer._shouldRefresh(0)).toBe(false);
+            expect(renderer._shouldRefresh(limitBottom)).toBe(false);
+            expect(renderer._shouldRefresh(limitBottom + 1)).toBe(true);
         });
 
-        it('when scrollTop = 400', function() {
-            renderer._setRenderingRange(400);
-            expect(renderer._isRenderable(0)).toBe(true);
-            expect(renderer._isRenderable(100)).toBe(true);
-            expect(renderer._isRenderable(200)).toBe(true);
-            expect(renderer._isRenderable(300)).toBe(false);
-            expect(renderer._isRenderable(400)).toBe(false);
-            expect(renderer._isRenderable(500)).toBe(true);
+        it('when scrollTop = 100', function() {
+            var limitTop, limitBottom;
+
+            renderer._setRenderingRange(100);
+            limitTop = renderer.get('top') + bufferHitSize;
+            limitBottom = renderer.get('bottom') - bodyHeight - bufferHitSize;
+
+            expect(renderer._shouldRefresh(limitTop - 1)).toBe(true);
+            expect(renderer._shouldRefresh(limitTop)).toBe(false);
+            expect(renderer._shouldRefresh(limitBottom)).toBe(false);
+            expect(renderer._shouldRefresh(limitBottom + 1)).toBe(true);
+        });
+
+        it('when scrollTop is max value', function() {
+            var maxScrollTop = renderer.get('maxScrollTop');
+            var limitTop;
+
+            renderer._setRenderingRange(maxScrollTop);
+            limitTop = renderer.get('top') + bufferHitSize;
+
+            expect(renderer._shouldRefresh(limitTop - 1)).toBe(true);
+            expect(renderer._shouldRefresh(limitTop)).toBe(false);
+            expect(renderer._shouldRefresh(maxScrollTop)).toBe(false);
         });
     });
 
@@ -150,20 +159,36 @@ describe('model.renderer', function() {
         var proto;
 
         beforeEach(function() {
-            renderer._setRenderingRange(0);
+            proto = SmartRenderer.prototype;
+            spyOn(proto, 'refresh');
+            renderer = create();
+        });
+
+        it('refresh() method should be called', function() {
+            renderer.dimensionModel.set('bodyHeight', 200);
+            expect(proto.refresh).toHaveBeenCalled();
+        });
+    });
+
+    describe('When scrollTop is changed', function() {
+        var proto;
+
+        beforeEach(function() {
+            renderer = create();
             proto = renderer.constructor.prototype;
             spyOn(proto, 'refresh');
         });
 
-        it('refresh() method will be called if renderable', function() {
-            dimensionModel.set('bodyHeight', 200);
-            expect(proto.refresh).not.toHaveBeenCalled();
-
-            dimensionModel.set('bodyHeight', 300);
-            expect(proto.refresh).not.toHaveBeenCalled();
-
-            dimensionModel.set('bodyHeight', 500);
+        it('refresh() method should be called if _shouldRefresh return true', function() {
+            spyOn(proto, '_shouldRefresh').and.returnValue(true);
+            renderer.set('scrollTop', 100);
             expect(proto.refresh).toHaveBeenCalled();
+        });
+
+        it('refresh() method should not be called if _shouldRefresh return false', function() {
+            spyOn(proto, '_shouldRefresh').and.returnValue(false);
+            renderer.set('scrollTop', 100);
+            expect(proto.refresh).not.toHaveBeenCalled();
         });
     });
 });

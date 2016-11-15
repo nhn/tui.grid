@@ -1036,10 +1036,11 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Sets the number of rows to be shown in the table area.
      * @api
+     * @deprecated
      * @param {number} count - The number of rows
      */
     setDisplayRowCount: function(count) {
-        this.modelManager.dimensionModel.set('displayRowCount', count);
+        this.modelManager.dimensionModel.setBodyHeightWithRowCount(count);
     },
 
     /**

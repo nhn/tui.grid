@@ -7,7 +7,6 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var util = require('../common/util');
 var attrNameConst = require('../common/constMap').attrName;
 var classNameConst = require('../common/classNameConst');
 
@@ -99,11 +98,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         if (RowList.isInnerHtmlOfTbodyReadOnly) {
             $tbody = this.bodyTableView.redrawTable(html);
             this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
-
-            // prevent layout from breaking in IE7
-            if (util.isBrowserIE7()) {
-                $tbody.width($tbody.width());
-            }
         } else {
             // As using a compatibility mode in IE makes it hard to detect the actual version of the browser,
             // use try/catch block to make in correct.

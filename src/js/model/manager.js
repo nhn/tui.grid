@@ -10,6 +10,7 @@ var ColumnModelData = require('./data/columnModel');
 var RowListData = require('./data/rowList');
 var ToolbarModel = require('./toolbar');
 var DimensionModel = require('./dimension');
+var CoordRowModel = require('./coordRow');
 var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
@@ -26,7 +27,6 @@ var defaultOptions = {
     rowHeight: 27,
     fitToParentHeight: false,
     showDummyRows: false,
-    displayRowCount: 10,
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
     columnMerge: [],
@@ -55,6 +55,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
+        this.coordRowModel = this._createCoordRowModel(options);
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
@@ -63,6 +64,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         // todo: remove dependency
         this.focusModel.renderModel = this.renderModel;
         this.dimensionModel.renderModel = this.renderModel;
+        this.dimensionModel.coordRowModel = this.coordRowModel;
     },
 
     /**
@@ -124,14 +126,32 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.minimumColumnWidth,
-            displayRowCount: options.displayRowCount
+            minimumColumnWidth: options.minimumColumnWidth
         };
-
-        return new DimensionModel(attrs, {
+        var dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             domState: domState
+        });
+
+        // The displayRowCount option is deprecated.
+        // This code should be removed after the option is removed.
+        if (options.displayRowCount) {
+            dimensionModel.setBodyHeightWithRowCount(options.displayRowCount);
+        }
+
+        return dimensionModel;
+    },
+
+    /**
+     * Creates an instance of coordRow model and returns it
+     * @returns {module:model/coordRow}
+     * @private
+     */
+    _createCoordRowModel: function() {
+        return new CoordRowModel({
+            dataModel: this.dataModel,
+            dimensionModel: this.dimensionModel
         });
     },
 
@@ -183,7 +203,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
-            focusModel: this.focusModel
+            focusModel: this.focusModel,
+            coordRowModel: this.coordRowModel
         };
         Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 

@@ -3,7 +3,6 @@
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
-var util = require('common/util');
 
 describe('model.dimension', function() {
     var defaultAttrs, columnModel, dataModel;
@@ -19,39 +18,16 @@ describe('model.dimension', function() {
             headerHeight: 100,
             rowHeight: 30,
             scrollX: false,
-            scrollY: false,
-            displayRowCount: 20
+            scrollY: false
         };
     });
 
-    function createDimension() {
-        return new Dimension(defaultAttrs, {
+    function createDimension(attrs) {
+        return new Dimension(_.extend(defaultAttrs, attrs), {
             columnModel: columnModel,
             dataModel: dataModel
         });
     }
-
-    describe('set displayRowCount', function() {
-        it('change the bodyHeight', function() {
-            var dimension = createDimension(),
-                displayRowCount = 10,
-                expectedBodyHeight = util.getHeight(displayRowCount, dimension.get('rowHeight'));
-
-            dimension.set('displayRowCount', displayRowCount);
-            expect(dimension.get('bodyHeight')).toBe(expectedBodyHeight);
-        });
-    });
-
-    describe('set bodyHeight', function() {
-        it('change the displayRowCount', function() {
-            var dimension = createDimension(),
-                bodyHeight = 65,
-                expectedCount = util.getDisplayRowCount(bodyHeight, dimension.get('rowHeight'));
-
-            dimension.set('bodyHeight', bodyHeight);
-            expect(dimension.get('displayRowCount')).toBe(expectedCount);
-        });
-    });
 
     describe('_distributeExtraWidthEqually()', function() {
         var testFn = Dimension.prototype._distributeExtraWidthEqually;
@@ -86,13 +62,9 @@ describe('model.dimension', function() {
         var dimension;
 
         beforeEach(function() {
-            var attrs = _.extend(defaultAttrs, {
+            dimension = createDimension({
                 width: 506, // total 500
                 minimumColumnWidth: 50
-            });
-            dimension = new Dimension(attrs, {
-                columnModel: columnModel,
-                dataModel: dataModel
             });
         });
 
@@ -116,13 +88,9 @@ describe('model.dimension', function() {
 
         describe('available:500, minWidth:50', function() {
             beforeEach(function() {
-                var attrs = _.extend(defaultAttrs, {
+                dimension = createDimension({
                     width: 506,
                     minimumColumnWidth: 50
-                });
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
                 });
             });
 
@@ -145,13 +113,9 @@ describe('model.dimension', function() {
 
         describe('available:300, minWidth:50 (fitToReducedTotal:true)', function() {
             beforeEach(function() {
-                var attrs = _.extend(defaultAttrs, {
+                dimension = createDimension({
                     width: 306,
                     minimumColumnWidth: 50
-                });
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
                 });
                 dimension._minColumnWidthList = [50, 50, 50, 50, 50];
                 dimension._columnWidthFixedFlags = [false, false, false, false, false];
@@ -209,10 +173,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
-                });
+                dimension = createDimension(attrs);
                 expect(dimension.get('columnWidthList')).toEqual([100, 100, 100, 100, 100]);
             });
 
@@ -225,10 +186,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4'},
                     {columnName: 'c5'}
                 ]);
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
-                });
+                dimension = createDimension(attrs);
                 expect(dimension.get('columnWidthList')).toEqual([150, 150, 150, 50, 50]);
             });
 
@@ -240,10 +198,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
-                });
+                dimension = createDimension(attrs);
                 expect(dimension.get('columnWidthList')).toEqual([80, 80, 80, 130, 130]);
             });
 
@@ -255,10 +210,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 100},
                     {columnName: 'c5', width: 100}
                 ]);
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
-                });
+                dimension = createDimension(attrs);
                 expect(dimension.get('columnWidthList')).toEqual([50, 50, 50, 175, 175]);
             });
 
@@ -270,10 +222,7 @@ describe('model.dimension', function() {
                     {columnName: 'c4', width: 50, isFixedWidth: true},
                     {columnName: 'c5', width: 50, isFixedWidth: true}
                 ]);
-                dimension = new Dimension(attrs, {
-                    columnModel: columnModel,
-                    dataModel: dataModel
-                });
+                dimension = createDimension(attrs);
                 expect(dimension.get('columnWidthList')).toEqual([50, 50, 50, 50, 300]);
             });
         });
@@ -340,10 +289,7 @@ describe('model.dimension', function() {
                         {columnName: 'c4'},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Dimension(attrs, {
-                        columnModel: columnModel,
-                        dataModel: dataModel
-                    });
+                    dimension = createDimension(attrs);
                 });
 
                 it('set first width to 150', function() {
@@ -371,10 +317,7 @@ describe('model.dimension', function() {
                         {columnName: 'c4', width: 100},
                         {columnName: 'c5'}
                     ]);
-                    dimension = new Dimension(attrs, {
-                        columnModel: columnModel,
-                        dataModel: dataModel
-                    });
+                    dimension = createDimension(attrs);
                 });
 
                 it('set first width(fixed) to 150', function() {

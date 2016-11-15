@@ -9,6 +9,7 @@ var _ = require('underscore');
 var Model = require('../base/model');
 var RowList = require('./rowList');
 var renderStateMap = require('../common/constMap').renderState;
+var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
 var DATA_LENGTH_FOR_LOADING = 1000;
 
@@ -30,7 +31,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             focusModel: options.focusModel,
-            dimensionModel: options.dimensionModel
+            dimensionModel: options.dimensionModel,
+            coordRowModel: options.coordRowModel
         });
 
         rowListOptions = {
@@ -58,7 +60,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
                 this._updateMaxScrollTop);
 
         if (this.get('showDummyRows')) {
-            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
+            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetDummyRowCount);
+            this.on('change:dummyRowCount', this._resetDummyRows);
         }
 
         this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
@@ -70,6 +73,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     defaults: {
         top: 0,
+        bottom: 0,
         scrollTop: 0,
         scrollLeft: 0,
         maxScrollLeft: 0,
@@ -117,7 +121,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _updateMaxScrollTop: function() {
         var dimension = this.dimensionModel;
         var maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
-            dimension.get('scrollBarSize');
+            dimension.getScrollXHeight();
 
         this.set('maxScrollTop', maxScrollTop);
     },
@@ -364,13 +368,14 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _resetAllViewModelListWithRange: function(startIndex, endIndex) {
         var columnNamesMap = this._getColumnNamesOfEachSide();
         var rowNum = this.get('startNumber') + startIndex;
-        var height = this.dimensionModel.get('rowHeight');
         var lsideData = [];
         var rsideData = [];
-        var rowDataModel, i;
+        var rowDataModel, height, i;
 
         for (i = startIndex; i <= endIndex; i += 1) {
             rowDataModel = this.dataModel.at(i);
+            height = this.coordRowModel.getHeightAt(i);
+
             lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
             rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
             rowNum += 1;
@@ -405,27 +410,45 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
+     * Calculate required count of dummy rows and set the 'dummyRowCount' attribute.
+     * @private
+     */
+    _resetDummyRowCount: function() {
+        var dimensionModel = this.dimensionModel;
+        var totalRowHeight = dimensionModel.get('totalRowHeight');
+        var rowHeight = dimensionModel.get('rowHeight') + CELL_BORDER_WIDTH;
+        var bodyHeight = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+        var dummyRowCount = 0;
+
+        if (totalRowHeight < bodyHeight) {
+            dummyRowCount = Math.ceil((bodyHeight - totalRowHeight) / rowHeight);
+        }
+
+        this.set('dummyRowCount', dummyRowCount);
+    },
+
+    /**
      * fills the empty area with dummy rows.
      * @private
      */
     _fillDummyRows: function() {
-        var displayRowCount = this.dimensionModel.get('displayRowCount');
-        var actualRowCount = this._getActualRowCount();
-        var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
-        var rowHeight = this.dimensionModel.get('rowHeight');
-        var rowNum = this.get('startNumber') + this.get('endIndex') + 1;
+        var dummyRowCount = this.get('dummyRowCount');
+        var rowNum, rowHeight;
 
-        _.times(dummyRowCount, function() {
-            _.each(['lside', 'rside'], function(listName) {
-                this.get(listName).add({
-                    height: rowHeight,
-                    rowNum: rowNum
-                });
+        if (dummyRowCount) {
+            rowNum = this.get('startNumber') + this.get('endIndex') + 1;
+            rowHeight = this.dimensionModel.get('rowHeight');
+
+            _.times(dummyRowCount, function() {
+                _.each(['lside', 'rside'], function(listName) {
+                    this.get(listName).add({
+                        height: rowHeight,
+                        rowNum: rowNum
+                    });
+                }, this);
+                rowNum += 1;
             }, this);
-            rowNum += 1;
-        }, this);
-
-        this.set('dummyRowCount', dummyRowCount);
+        }
     },
 
     /**

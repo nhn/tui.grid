@@ -5,6 +5,7 @@ var DomState = require('domState');
 var ColumnModel = require('model/data/columnModel');
 var DataModel = require('model/data/rowList');
 var DimensionModel = require('model/dimension');
+var CoordRowModel = require('model/coordRow');
 var SummaryModel = require('model/summary');
 
 describe('model/manager', function() {
@@ -19,8 +20,7 @@ describe('model/manager', function() {
                 fitToParentHeight: true,
                 scrollX: true,
                 scrollY: true,
-                minimumColumnWidth: 192,
-                displayRowCount: 36
+                minimumColumnWidth: 192
             }, domState);
 
             dimension = manager.dimensionModel;
@@ -30,7 +30,6 @@ describe('model/manager', function() {
             expect(dimension.get('scrollX')).toBe(true);
             expect(dimension.get('scrollY')).toBe(true);
             expect(dimension.get('minimumColumnWidth')).toBe(192);
-            expect(dimension.get('displayRowCount')).toBe(36);
         });
 
         it('with options (boolean)', function() {
@@ -122,5 +121,11 @@ describe('model/manager', function() {
             });
             expect(manager.summaryModel.autoColumnNames).toEqual(['c1']);
         });
+    });
+
+    it('creates coordRow model', function() {
+        var manager = new ModelManager();
+
+        expect(manager.coordRowModel).toEqual(jasmine.any(CoordRowModel));
     });
 });
