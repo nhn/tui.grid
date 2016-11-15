@@ -24,7 +24,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
     },
 
     /**
-     * Initialize the valuve of rowHeights and rowOffsets
+     * Initialize the values of rowHeights and rowOffsets
      * @private
      */
     _reset: function() {
@@ -42,7 +42,16 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
             rowOffsets[index] = prevOffset + prevHeight;
         });
 
+        /**
+         * Height of each rows
+         * @type {Array}
+         */
         this.rowHeights = rowHeights;
+
+        /**
+         * Offset of each rows
+         * @type {Array}
+         */
         this.rowOffsets = rowOffsets;
 
         if (this.dataModel.length) {
@@ -98,7 +107,8 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         var rowOffsets = this.rowOffsets;
         var idx = 0;
 
-        while (rowOffsets[idx] <= position + CELL_BORDER_WIDTH) {
+        position += CELL_BORDER_WIDTH;
+        while (rowOffsets[idx] <= position) {
             idx += 1;
         }
 

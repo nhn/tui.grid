@@ -14,13 +14,13 @@ var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 // The ratio of buffer size to bodyHeight
 var BUFFER_RATIO = 0.3;
 
-// The ratio of buffer hit size to bodyHeight
+// The ratio of the size bodyHeight which can cause to refresh the rendering range
 var BUFFER_HIT_RATIO = 0.1;
 
 /**
- *  View 에서 Rendering 시 사용할 객체
- *  Smart Rendering 을 지원한다.
- *  @module model/renderer-smart
+ * View 에서 Rendering 시 사용할 객체
+ * Smart Rendering 을 지원한다.
+ * @module model/renderer-smart
  * @extends module:model/renderer
  */
 var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
@@ -124,8 +124,8 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         var top = this.get('top');
         var bottom = this.get('bottom');
         var bufferHitSize = parseInt(bodyHeight * BUFFER_HIT_RATIO, 10);
-        var hitTopBuffer = scrollTop - top < bufferHitSize;
-        var hitBottomBuffer = bottom - scrollBottom < bufferHitSize;
+        var hitTopBuffer = (scrollTop - top) < bufferHitSize;
+        var hitBottomBuffer = (bottom - scrollBottom) < bufferHitSize;
 
         return (hitTopBuffer && top > 0) || (hitBottomBuffer && bottom < totalRowHeight);
     }
