@@ -122,7 +122,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             headerHeight: options.headerHeight,
             footerHeight: options.footer ? options.footer.height : 0,
             rowHeight: options.rowHeight,
-
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,

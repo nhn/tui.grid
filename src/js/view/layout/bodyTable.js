@@ -153,7 +153,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
     /**
      * table 요소를 새로 생성한다.
-     * (IE7-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
+     * (IE8-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
      * @param {string} tbodyHtml - tbody의 innerHTML 문자열
      * @returns {jquery} - 새로 생성된 table의 tbody 요소
      */

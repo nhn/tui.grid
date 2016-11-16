@@ -7,7 +7,6 @@
 var _ = require('underscore');
 
 var Painter = require('../base/painter');
-var util = require('../common/util');
 var constMap = require('../common/constMap');
 var attrNameConst = constMap.attrName;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -123,7 +122,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         return this.template({
             rowKeyAttrName: attrNameConst.ROW_KEY,
             rowKey: rowKey,
-            height: model.get('height') + RowPainter._extraHeight + CELL_BORDER_WIDTH,
+            height: model.get('height') + CELL_BORDER_WIDTH,
             contents: html,
             className: className
         });
@@ -145,22 +144,6 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
                 cellPainter.refresh(cellData, $td);
             }
         }, this);
-    },
-
-    static: {
-        /**
-         * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
-         * @memberof RowPainter
-         * @static
-         */
-        _extraHeight: (function() {
-            var value = 0;
-            if (util.isBrowserIE7()) {
-                // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
-                value = -2;
-            }
-            return value;
-        })()
     }
 });
 
