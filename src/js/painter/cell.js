@@ -175,12 +175,12 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @implements {module:base/painter}
      */
     generateHtml: function(cellData) {
-        var attributeString = util.getAttributesString(this._getAttributes(cellData)),
-            contentHtml = this._getContentHtml(cellData);
+        var attributeString = util.getAttributesString(this._getAttributes(cellData));
+        var contentHtml = this._getContentHtml(cellData);
 
         return this.template({
             attributeString: attributeString,
-            contentHtml: contentHtml || '&#8203;' // '&#8203;' for height issue with empty cell in IE7
+            contentHtml: contentHtml
         });
     },
 
@@ -195,7 +195,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
 
-        delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
         $td.attr(attrs);
 
         if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
