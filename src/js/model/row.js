@@ -148,6 +148,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     _formatData: function(data, dataModel, columnModel, focusModel) {
         var rowKey = data.rowKey;
         var rowNum = data.rowNum;
+        var rowHeight = data.height;
         var columnData, row;
 
         if (_.isUndefined(rowKey)) {
@@ -166,6 +167,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
             data[columnName] = {
                 rowKey: rowKey,
                 rowNum: rowNum,
+                height: rowHeight,
                 columnName: columnName,
                 rowSpan: rowSpanData.count,
                 isMainRow: rowSpanData.isMainRow,

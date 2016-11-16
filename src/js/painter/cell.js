@@ -45,6 +45,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         '<td <%=attributeString%>><%=contentHtml%></td>'
     ),
 
+    contentTemplate: _.template(
+        '<div class="<%=className%>" style="max-height:<%=height%>"><%=content%></div>'
+    ),
+
     /**
      * Event handler for 'dblclick' DOM event.
      * @param {MouseEvent} event - mouse event object
@@ -73,9 +77,10 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @private
      */
     _getContentHtml: function(cellData) {
-        var content = cellData.formattedValue,
-            beforeContent = cellData.beforeContent,
-            afterContent = cellData.afterContent;
+        var content = cellData.formattedValue;
+        var beforeContent = cellData.beforeContent;
+        var afterContent = cellData.afterContent;
+        var fullContent;
 
         if (this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
@@ -84,12 +89,19 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
                 beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
                 afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
                 content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
-
-                return beforeContent + afterContent + content;
+                fullContent = beforeContent + afterContent + content;
             }
         }
 
-        return beforeContent + content + afterContent;
+        if (!fullContent) {
+            fullContent = beforeContent + content + afterContent;
+        }
+
+        return this.contentTemplate({
+            content: fullContent,
+            className: classNameConst.CELL_CONTENT,
+            height: cellData.height + 'px'
+        });
     },
 
     /**
@@ -136,7 +148,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var classNames = [
             cellData.className,
             classNameConst.CELL,
-            classNameConst.CELL_CONTENT,
             (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
         ];
         var attrs = {

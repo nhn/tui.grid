@@ -18,11 +18,15 @@
 
 .cell
     overflow hidden
-    white-space nowrap
-    *white-space pre
     border-width 1px
     border-style solid
-    padding 0 10px
+    padding 0
+
+    .cell-content
+        padding 3px 10px
+        overflow hidden
+        box-sizing border-box
+        word-break break-all
 
     img
         vertical-align middle
@@ -30,6 +34,9 @@
 .cell-head
     padding 0
     text-align center
+
+.cell-nowrap
+    white-space nowrap
 
 .cell-ellipsis
     text-overflow ellipsis

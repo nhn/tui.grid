@@ -119,8 +119,8 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
         var wrapperOffset = this.domState.getOffset();
         var $cell = this.domState.getElement(rowKey, columnName);
         var cellOffset = $cell.offset();
-        var cellHeight = $cell.height() + CELL_BORDER_WIDTH;
-        var cellWidth = $cell.width() + CELL_BORDER_WIDTH;
+        var cellHeight = $cell.outerHeight() + CELL_BORDER_WIDTH;
+        var cellWidth = $cell.outerWidth() + CELL_BORDER_WIDTH;
 
         return {
             top: this._adjustCellOffsetValue(cellOffset.top) - wrapperOffset.top,
