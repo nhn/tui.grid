@@ -55,7 +55,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
-        this.coordRowModel = this._createCoordRowModel(options);
+        this.coordRowModel = this._createCoordRowModel(domState);
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
@@ -125,7 +125,9 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.minimumColumnWidth
+            minimumColumnWidth: options.minimumColumnWidth,
+            isFixedRowHeight: options.isFixedRowHeight,
+            isFixedHeight: options.isFixedHeight
         };
         var dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
@@ -144,13 +146,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of coordRow model and returns it
+     * @param {module:domState} domState - domState
      * @returns {module:model/coordRow}
      * @private
      */
-    _createCoordRowModel: function() {
+    _createCoordRowModel: function(domState) {
         return new CoordRowModel({
             dataModel: this.dataModel,
-            dimensionModel: this.dimensionModel
+            dimensionModel: this.dimensionModel,
+            domState: domState
         });
     },
 

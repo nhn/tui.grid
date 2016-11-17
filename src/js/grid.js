@@ -370,6 +370,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.viewFactory = this._createViewFactory(domState, options);
         this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
+        this.domState = domState;
 
         this.container.render();
         this.refreshLayout();
@@ -415,6 +416,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new PainterManager({
             gridId: this.id,
             selectType: this.modelManager.columnModel.get('selectType'),
+            isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
             controller: controller
         });
     },

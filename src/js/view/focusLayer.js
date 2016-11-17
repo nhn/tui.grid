@@ -48,9 +48,13 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      */
     _onColumnWidthChanged: function() {
         var focusModel = this.focusModel;
+        var self = this;
 
         if (this.$el.is(':visible')) {
-            this._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
+            // wait for 'CoordRow.syncFromDom' to be executed.
+            _.defer(function() {
+                self._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
+            });
         }
     },
 

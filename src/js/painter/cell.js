@@ -25,6 +25,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         Painter.apply(this, arguments);
 
         this.editType = options.editType;
+        this.isFixedRowHeight = options.isFixedRowHeight;
         this.inputPainter = options.inputPainter;
         this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
     },
@@ -46,7 +47,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     ),
 
     contentTemplate: _.template(
-        '<div class="<%=className%>" style="max-height:<%=height%>"><%=content%></div>'
+        '<div class="<%=className%>" style="<%=style%>"><%=content%></div>'
     ),
 
     /**
@@ -80,6 +81,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var content = cellData.formattedValue;
         var beforeContent = cellData.beforeContent;
         var afterContent = cellData.afterContent;
+        var styles = [];
         var fullContent;
 
         if (this.inputPainter) {
@@ -96,11 +98,17 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (!fullContent) {
             fullContent = beforeContent + content + afterContent;
         }
+        if (cellData.whiteSpace) {
+            styles.push('white-space:' + cellData.whiteSpace);
+        }
+        if (this.isFixedRowHeight) {
+            styles.push('max-height:' + cellData.height + 'px');
+        }
 
         return this.contentTemplate({
             content: fullContent,
             className: classNameConst.CELL_CONTENT,
-            height: cellData.height + 'px'
+            style: styles.join(';')
         });
     },
 

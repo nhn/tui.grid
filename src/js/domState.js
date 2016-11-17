@@ -5,6 +5,7 @@
 'use strict';
 
 var attrNameConst = require('./common/constMap').attrName;
+var classNameConst = require('./common/classNameConst');
 
 /**
  * Class for offering methods that can be used to get the current state of DOM element.
@@ -19,6 +20,19 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
         this.$el = $el;
     },
 
+    _getBodyTableRows: function(frameClassName) {
+        return this.$el.find('.' + frameClassName)
+            .find('.' + classNameConst.BODY_TABLE_CONTAINER).find('tr');
+    },
+
+    _getMaxCellHeight: function($row) {
+        var heights = $row.find('.' + classNameConst.CELL_CONTENT).map(function() {
+            return this.scrollHeight;
+        }).get();
+
+        return _.max(heights);
+    },
+
     /**
      * Returns the element of the table-cell identified by rowKey and columnName
      * @param {(Number|String)} rowKey - Row key
@@ -28,6 +42,22 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
     getElement: function(rowKey, columnName) {
         return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
             .find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
+    },
+
+    getRowHeights: function() {
+        var $lsideRows = this._getBodyTableRows(classNameConst.LSIDE_AREA);
+        var $rsideRows = this._getBodyTableRows(classNameConst.RSIDE_AREA);
+        var lsideHeight, rsideHeight;
+        var heights = [];
+        var i, len;
+
+        for (i = 0, len = $lsideRows.length; i < len; i += 1) {
+            lsideHeight = this._getMaxCellHeight($lsideRows.eq(i));
+            rsideHeight = this._getMaxCellHeight($rsideRows.eq(i));
+            heights[i] = Math.max(lsideHeight, rsideHeight) + 1;
+        }
+
+        return heights;
     },
 
     /**

@@ -7,8 +7,11 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var attrNameConst = require('../common/constMap').attrName;
+var constMap = require('../common/constMap');
 var classNameConst = require('../common/classNameConst');
+
+var attrNameConst = constMap.attrName;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
  * RowList View
@@ -22,10 +25,10 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
      */
     initialize: function(options) {
-        var focusModel = options.focusModel,
-            renderModel = options.renderModel,
-            selectionModel = options.selectionModel,
-            whichSide = options.whichSide || 'R';
+        var focusModel = options.focusModel;
+        var renderModel = options.renderModel;
+        var selectionModel = options.selectionModel;
+        var whichSide = options.whichSide || 'R';
 
         this.setOwnProperties({
             whichSide: whichSide,
@@ -33,6 +36,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             focusModel: focusModel,
             renderModel: renderModel,
             selectionModel: selectionModel,
+            coordRowModel: options.coordRowModel,
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
@@ -44,7 +48,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'rowListChanged', this.render);
+            .listenTo(renderModel, 'rowListChanged', this.render)
+            .listenTo(this.coordRowModel, 'syncWithDom', this._refreshRowHeights);
 
         if (this.whichSide === 'L') {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -108,6 +113,17 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 this._resetRows();
             }
         }
+    },
+
+    /**
+     * Refresh the height of each rows.
+     * @private
+     */
+    _refreshRowHeights: function() {
+        var coordRowModel = this.coordRowModel;
+        this.$el.find('tr').each(function(index) {
+            $(this).css('height', coordRowModel.getHeightAt(index) + CELL_BORDER_WIDTH);
+        });
     },
 
     /**
@@ -232,8 +248,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @returns {View.RowList} this 객체
      */
     render: function(dataModelChanged) {
-        var rowKeys = this.collection.pluck('rowKey'),
-            dupRowKeys;
+        var rowKeys = this.collection.pluck('rowKey');
+        var dupRowKeys;
 
         this.bodyTableView.resetTablePosition();
 
@@ -251,6 +267,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             }
         }
         this.renderedRowKeys = rowKeys;
+        this.coordRowModel.syncWithDom();
 
         return this;
     },

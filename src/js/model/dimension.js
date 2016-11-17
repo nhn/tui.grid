@@ -69,6 +69,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         rowHeight: 0,
         totalRowHeight: 0,
+        isFixedRowHeight: true,
 
         rsideWidth: 0,
         lsideWidth: 0,

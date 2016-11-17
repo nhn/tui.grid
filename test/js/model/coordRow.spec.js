@@ -14,16 +14,18 @@ function create(data) {
         columnModel: columnModel
     });
     var dimensionMock = new Model();
+    var coordRowModel;
 
-    dataModel.setRowList(data);
     dimensionMock.set({
         rowHeight: ROW_DEF_HEIGHT
     });
-
-    return new CoordRow({
+    coordRowModel = new CoordRow({
         dataModel: dataModel,
         dimensionModel: dimensionMock
     });
+    dataModel.setRowList(data);
+
+    return coordRowModel;
 }
 
 describe('CoordRow', function() {

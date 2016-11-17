@@ -40,6 +40,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
+            coordRowModel: options.coordRowModel,
             whichSide: options.whichSide || 'R'
         });
 
@@ -390,6 +391,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         _.each(columnWidthList, function(columnWidth, index) {
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
+        this.coordRowModel.syncWithDom();
     },
 
     /**
