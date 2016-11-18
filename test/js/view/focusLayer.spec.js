@@ -16,7 +16,8 @@ function createFocusLayer(modelManager, whichSide) {
         whichSide: whichSide,
         focusModel: modelManager.focusModel,
         columnModel: modelManager.columnModel,
-        dimensionModel: modelManager.dimensionModel
+        dimensionModel: modelManager.dimensionModel,
+        coordRowModel: modelManager.coordRowModel
     });
 }
 

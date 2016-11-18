@@ -20,11 +20,23 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
         this.$el = $el;
     },
 
+    /**
+     * Returns a jquery object contains the tr elements
+     * @param {string} frameClassName - class name of frame
+     * @returns {jQuery}
+     * @private
+     */
     _getBodyTableRows: function(frameClassName) {
         return this.$el.find('.' + frameClassName)
-            .find('.' + classNameConst.BODY_TABLE_CONTAINER).find('tr');
+            .find('.' + classNameConst.BODY_TABLE_CONTAINER).find('tr[' + attrNameConst.ROW_KEY + ']');
     },
 
+    /**
+     * Returns max height of cells in the given row.
+     * @param {jQuery} $row - traget row
+     * @returns {number}
+     * @private
+     */
     _getMaxCellHeight: function($row) {
         var heights = $row.find('.' + classNameConst.CELL_CONTENT).map(function() {
             return this.scrollHeight;
@@ -34,7 +46,7 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
     },
 
     /**
-     * Returns the element of the table-cell identified by rowKey and columnName
+     * Returns an element of the table-cell identified by rowKey and columnName
      * @param {(Number|String)} rowKey - Row key
      * @param {String} columnName - Column name
      * @returns {jQuery} Cell(TD) element
@@ -44,6 +56,10 @@ var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
             .find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
     },
 
+    /**
+     * Returns an array of heights of all rows
+     * @returns {Array.<number>}
+     */
     getRowHeights: function() {
         var $lsideRows = this._getBodyTableRows(classNameConst.LSIDE_AREA);
         var $rsideRows = this._getBodyTableRows(classNameConst.RSIDE_AREA);

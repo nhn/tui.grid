@@ -38,7 +38,7 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
      */
     template: _.template(
         '<tr ' +
-        '<%=rowKeyAttrName%>="<%=rowKey%>" ' +
+        '<%=rowKeyAttr%>" ' +
         'class="<%=className%>" ' +
         'style="height: <%=height%>px;">' +
         '<%=contents%>' +
@@ -111,17 +111,18 @@ var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prot
         var rowKey = model.get('rowKey');
         var rowNum = model.get('rowNum');
         var className = '';
+        var rowKeyAttr = '';
         var html;
 
         if (_.isUndefined(rowKey)) {
             html = this._generateHtmlForDummyRow(rowNum, columnNames);
         } else {
+            rowKeyAttr = attrNameConst.ROW_KEY + '="' + rowKey + '"';
             html = this._generateHtmlForActualRow(model, columnNames);
         }
 
         return this.template({
-            rowKeyAttrName: attrNameConst.ROW_KEY,
-            rowKey: rowKey,
+            rowKeyAttr: rowKeyAttr,
             height: model.get('height') + CELL_BORDER_WIDTH,
             contents: html,
             className: className

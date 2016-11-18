@@ -26,6 +26,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.focusModel = options.focusModel;
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
+        this.coordRowModel = options.coordRowModel;
         this.whichSide = options.whichSide;
 
         this.borderEl = {
@@ -35,7 +36,8 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
             $bottom: $(HTML_BORDER_DIV)
         };
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._refreshCurrentLayout);
+        this.listenTo(this.coordRowModel, 'reset', this._refreshCurrentLayout);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);
     },
@@ -46,15 +48,11 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      * Event handler for 'columnWidthChanged' event on the module:model/dimension
      * @private
      */
-    _onColumnWidthChanged: function() {
+    _refreshCurrentLayout: function() {
         var focusModel = this.focusModel;
-        var self = this;
 
         if (this.$el.is(':visible')) {
-            // wait for 'CoordRow.syncFromDom' to be executed.
-            _.defer(function() {
-                self._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
-            });
+            this._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
         }
     },
 

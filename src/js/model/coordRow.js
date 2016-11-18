@@ -36,22 +36,25 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
      * Reset coordinate data with real DOM height of cells
      */
     syncWithDom: function() {
-        var rowHeights;
+        var domRowHeights, dataRowHeights, rowHeights;
+        var i, len;
 
         if (this.dimensionModel.get('isFixedRowHeight')) {
             return;
         }
 
-        rowHeights = this.domState.getRowHeights();
+        domRowHeights = this.domState.getRowHeights();
+        dataRowHeights = this._getHeightFromData();
+        rowHeights = [];
+
+        for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
+            rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
+        }
         this._reset(rowHeights);
         this.trigger('syncWithDom');
     },
 
-    /**
-     * Event handler to be called when dataModel is changed
-     * @private
-     */
-    _onChangeData: function() {
+    _getHeightFromData: function() {
         var defHeight = this.dimensionModel.get('rowHeight');
         var rowHeights = [];
 
@@ -59,7 +62,15 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
             rowHeights[index] = (row.getHeight() || defHeight);
         });
 
-        this._reset(rowHeights);
+        return rowHeights;
+    },
+
+    /**
+     * Event handler to be called when dataModel is changed
+     * @private
+     */
+    _onChangeData: function() {
+        this._reset(this._getHeightFromData());
     },
 
     /**
@@ -85,6 +96,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
             totalRowHeight = _.last(rowOffsets) + _.last(rowHeights) + CELL_BORDER_WIDTH;
         }
         this.dimensionModel.set('totalRowHeight', totalRowHeight);
+        this.trigger('reset');
     },
 
     /**

@@ -49,7 +49,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
             .listenTo(renderModel, 'rowListChanged', this.render)
-            .listenTo(this.coordRowModel, 'syncWithDom', this._refreshRowHeights);
+            .listenTo(this.coordRowModel, 'reset', this._refreshRowHeights);
 
         if (this.whichSide === 'L') {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -281,6 +281,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var $tr = this._getRowElement(model.get('rowKey'));
 
         this.painterManager.getRowPainter().refresh(model.changed, $tr);
+        this.coordRowModel.syncWithDom();
     },
 
     /**
@@ -293,6 +294,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var editType = this.columnModel.getEditType(cellData.columnName);
 
         this.painterManager.getCellPainter(editType).refresh(cellData, $td);
+        this.coordRowModel.syncWithDom();
     }
 }, {
     /**
