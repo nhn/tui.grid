@@ -176,6 +176,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
                 isDisabled: cellState.isDisabled,
                 isEditing: focusModel.isEditingCell(rowKey, columnName),
                 whiteSpace: column.whiteSpace || 'nowrap',
+                valign: column.valign,
                 optionList: tui.util.pick(column, 'editOption', 'list'),
                 className: this._getClassNameString(columnName, row, focusModel),
                 columnModel: column,

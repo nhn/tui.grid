@@ -43,7 +43,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @returns {string} template
      */
     template: _.template(
-        '<td <%=attributeString%>><%=contentHtml%></td>'
+        '<td <%=attributeString%> style="<%=style%>"><%=contentHtml%></td>'
     ),
 
     /**
@@ -199,9 +199,15 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     generateHtml: function(cellData) {
         var attributeString = util.getAttributesString(this._getAttributes(cellData));
         var contentHtml = this._getContentHtml(cellData);
+        var styles = [];
+
+        if (cellData.valign) {
+            styles.push('vertical-align:' + cellData.valign);
+        }
 
         return this.template({
             attributeString: attributeString,
+            style: styles.join(';'),
             contentHtml: contentHtml
         });
     },

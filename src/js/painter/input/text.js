@@ -40,7 +40,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
     },
 
     /**
-     * Markup template
+     * template for input
      * @returns {string} html
      */
     templateInput: _.template(
@@ -56,7 +56,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
     ),
 
     /**
-     * Markup template
+     * template for textarea
      * @returns {string} html
      */
     templateTextArea: _.template(
