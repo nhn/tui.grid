@@ -18,8 +18,10 @@
  *      @param {number} [options.headerHeight=35] - The height of the header area.
  *          When rows in header are multiple (merged column), this value must be the total height of rows.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not expand with content.
- *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body area expands
+ *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
+ *          expand with content.
+ *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
+ *          area expands.
  *          to total height of rows.
  *      @param {number} [options.displayRowCount=10] - Deprecated.
  *          <del>The number of rows to be shown in the table area.
