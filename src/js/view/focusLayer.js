@@ -51,7 +51,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
     _refreshCurrentLayout: function() {
         var focusModel = this.focusModel;
 
-        if (this.$el.is(':visible')) {
+        if (this.$el.css('display') !== 'none') {
             this._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
         }
     },

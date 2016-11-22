@@ -165,7 +165,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (startAction) {
-            this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
+            this._controlStartAction(inputData, indexData, columnName, $target.is('input, textarea'));
         }
     },
 

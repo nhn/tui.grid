@@ -387,11 +387,17 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var columnData = this._getColumnData();
         var columnWidthList = columnData.widthList;
         var $colList = this.$el.find('col');
+        var coordRowModel = this.coordRowModel;
 
         _.each(columnWidthList, function(columnWidth, index) {
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
-        this.coordRowModel.syncWithDom();
+
+        if (this.whichSide === 'R') {
+            _.defer(function() {
+                coordRowModel.syncWithDom();
+            });
+        }
     },
 
     /**

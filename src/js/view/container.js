@@ -118,7 +118,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input')) {
+            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input, textarea')) {
                 this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
             }
 
@@ -294,7 +294,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         if (eventData.isStopped()) {
             return;
         }
-        if (!$target.is('input, a, button, select')) {
+        if (!$target.is('input, a, button, select, textarea')) {
             mouseEvent.preventDefault();
             this.focusModel.focusClipboard();
         }

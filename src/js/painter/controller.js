@@ -19,6 +19,9 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     init: function(options) {
         this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
+        /**
+         * @type {module:model/columnModel}
+         */
         this.columnModel = options.columnModel;
         this.selectionModel = options.selectionModel;
     },
@@ -46,6 +49,23 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
     },
 
     /**
+     * Check if given column has 'maxLength' property and returns the substring limited by maxLength.
+     * @param {string} columnName - columnName
+     * @param {string} value - value
+     * @returns {string}
+     * @private
+     */
+    _checkMaxLength: function(columnName, value) {
+        var column = this.columnModel.getColumnModel(columnName);
+        var maxLength = tui.util.pick(column, 'editOption', 'maxLength');
+
+        if (maxLength > 0 && value.length > maxLength) {
+            return value.substring(0, maxLength);
+        }
+        return value;
+    },
+
+    /**
      * Ends editing a cell identified by a given address, and returns the result.
      * @param {{rowKey:String, columnName:String}} address - cell address
      * @param {Boolean} shouldBlur - if set to true, make the current input lose focus.
@@ -67,7 +87,7 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
             currentValue = row.get(address.columnName);
 
             if (!(util.isBlank(value) && util.isBlank(currentValue))) {
-                this.setValue(address, value);
+                this.setValue(address, this._checkMaxLength(address.columnName, value));
             }
         }
         focusModel.finishEditing();

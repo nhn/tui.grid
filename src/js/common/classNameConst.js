@@ -96,6 +96,7 @@ var classNames = {
     CELL_CONTENT_BEFORE: 'content-before',
     CELL_CONTENT_AFTER: 'content-after',
     CELL_CONTENT_INPUT: 'content-input',
+    CELL_CONTENT_TEXT: 'content-text',
 
     // buttons
     BTN_TEXT: 'btn-text',

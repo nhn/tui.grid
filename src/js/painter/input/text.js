@@ -8,6 +8,10 @@ var _ = require('underscore');
 
 var InputPainter = require('./base');
 var util = require('../../common/util');
+var classNameConst = require('../../common/classNameConst');
+
+var SELECTOR_TEXT = '.' + classNameConst.CELL_CONTENT_TEXT;
+var SELECTOR_PASSWORD = 'input[type=password]';
 
 /**
  * Painter class for the 'input[type=text]' and 'input[type=password]'
@@ -15,7 +19,7 @@ var util = require('../../common/util');
  * @extends module:painter/input/base
  */
 var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
-    /**
+   /**
      * @constructs
      * @param {Object} options - options
      */
@@ -28,7 +32,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
          * css selector to use delegated event handlers by '$.on()' method.
          * @type {String}
          */
-        this.selector = 'input[type=' + this.inputType + ']';
+        this.selector = (options.inputType === 'text') ? SELECTOR_TEXT : SELECTOR_PASSWORD;
 
         this._extendEvents({
             selectstart: '_onSelectStart'
@@ -39,8 +43,9 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
      * Markup template
      * @returns {string} html
      */
-    template: _.template(
+    templateInput: _.template(
         '<input' +
+        ' class="<%=className%>" ' +
         ' type="<%=type%>"' +
         ' value="<%=value%>"' +
         ' name="<%=name%>"' +
@@ -51,7 +56,20 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
     ),
 
     /**
-     * Event handler for the'selectstart' event.
+     * Markup template
+     * @returns {string} html
+     */
+    templateTextArea: _.template(
+        '<textarea ' +
+        ' class="<%=className%>" ' +
+        ' name="<%=name%>" ' +
+        ' maxLength="<%=maxLength%>"' +
+        ' <%=disabled%>><%=value%>' +
+        '</textarea>'
+    ),
+
+    /**
+     * Event handler for the 'selectstart' event.
      * (To prevent 'selectstart' event be prevented by module:view/layout/body in IE)
      * @param {Event} event - DOM event object
      * @private
@@ -96,14 +114,19 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
      */
     _generateInputHtml: function(cellData) {
         var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
-
-        return this.template({
+        var params = {
             type: this.inputType,
+            className: classNameConst.CELL_CONTENT_TEXT,
             value: cellData.value,
             name: util.getUniqueKey(),
             disabled: cellData.isDisabled ? 'disabled' : '',
             maxLength: maxLength
-        });
+        };
+
+        if (cellData.whiteSpace === 'normal') {
+            return this.templateTextArea(params);
+        }
+        return this.templateInput(params);
     },
 
     /**

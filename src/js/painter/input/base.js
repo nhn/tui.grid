@@ -106,11 +106,21 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      */
     _onFocusOut: function(event) {
         var $target = $(event.target);
-        var address = this._getCellAddress($target);
+        var address = this._getcelladdress($target);
 
         this._executeCustomEventHandler(event);
         this.trigger('focusOut', $target, address);
+        // this._checkMaxLength($target);
         this.controller.finishEditing(address, false, $target.val());
+    },
+
+    _checkMaxLength: function($target) {
+        var maxLength = $target.attr('maxLength');
+        var value = $target.val();
+
+        if (maxLength > 0 && value.length > maxLength) {
+            $target.val(value.substring(0, maxLength));
+        }
     },
 
     /**
@@ -119,16 +129,16 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onKeyDown: function(event) {
-        var keyCode = event.keyCode || event.which,
-            keyName = keyNameMap[keyCode],
-            action = this.keyDownActions[keyName],
-            $target = $(event.target),
-            param = {
-                $target: $target,
-                address: this._getCellAddress($target),
-                shiftKey: event.shiftKey,
-                value: $target.val()
-            };
+        var keyCode = event.keyCode || event.which;
+        var keyName = keyNameMap[keyCode];
+        var action = this.keyDownActions[keyName];
+        var $target = $(event.target);
+        var param = {
+            $target: $target,
+            address: this._getCellAddress($target),
+            shiftKey: event.shiftKey,
+            value: $target.val()
+        };
 
         this._executeCustomEventHandler(event);
 
