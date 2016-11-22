@@ -54,6 +54,12 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         this.trigger('syncWithDom');
     },
 
+
+    /**
+     * Returns the height of rows from dataModel as an array
+     * @returns {Array.<number>}
+     * @private
+     */
     _getHeightFromData: function() {
         var defHeight = this.dimensionModel.get('rowHeight');
         var rowHeights = [];

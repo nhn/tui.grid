@@ -45,7 +45,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
     className: classNameConst.LAYER_FOCUS,
 
     /**
-     * Event handler for 'columnWidthChanged' event on the module:model/dimension
+     * Refresh the layout of current layer
      * @private
      */
     _refreshCurrentLayout: function() {

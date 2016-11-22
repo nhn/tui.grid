@@ -393,6 +393,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
 
+        // Calls syncWithDom only from the Rside to prevent calling twice.
+        // Defered call to ensure that the execution occurs after both sides are rendered.
         if (this.whichSide === 'R') {
             _.defer(function() {
                 coordRowModel.syncWithDom();

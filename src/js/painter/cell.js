@@ -39,13 +39,16 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Markup template
+     * template for TD
      * @returns {string} template
      */
     template: _.template(
         '<td <%=attributeString%>><%=contentHtml%></td>'
     ),
 
+    /**
+     * template for DIV (inner content of TD)
+     */
     contentTemplate: _.template(
         '<div class="<%=className%>" style="<%=style%>"><%=content%></div>'
     ),
