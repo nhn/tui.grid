@@ -106,21 +106,11 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      */
     _onFocusOut: function(event) {
         var $target = $(event.target);
-        var address = this._getcelladdress($target);
+        var address = this._getCellAddress($target);
 
         this._executeCustomEventHandler(event);
         this.trigger('focusOut', $target, address);
-        // this._checkMaxLength($target);
         this.controller.finishEditing(address, false, $target.val());
-    },
-
-    _checkMaxLength: function($target) {
-        var maxLength = $target.attr('maxLength');
-        var value = $target.val();
-
-        if (maxLength > 0 && value.length > maxLength) {
-            $target.val(value.substring(0, maxLength));
-        }
     },
 
     /**
