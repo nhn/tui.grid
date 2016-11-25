@@ -135,7 +135,7 @@ describe('CoordRow', function() {
             coordRow.on('syncWithDom', callbackSpy);
             coordRow.syncWithDom();
 
-            expect(callbackSpy).not.toHaveBeenCalled();
+            expect(callbackSpy).toHaveBeenCalled();
         });
     });
 });
