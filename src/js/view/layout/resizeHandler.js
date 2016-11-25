@@ -18,7 +18,7 @@ var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
  * @module view/layout/resizeHandler
  * @extends module:base/view
  */
-var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
+var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */ {
     /**
      * @constructs
      * @param {Object} options - Options
@@ -62,7 +62,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     ),
 
     /**
-     * Return an objetermct that contains an array of column width and an array of column model.
+     * Return an object that contains an array of column width and an array of column model.
      * @returns {{widthList: (Array|*), modelList: (Array|*)}} Column Data
      * @private
      */

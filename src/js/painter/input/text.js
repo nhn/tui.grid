@@ -45,7 +45,7 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
      */
     templateInput: _.template(
         '<input' +
-        ' class="<%=className%>" ' +
+        ' class="<%=className%>"' +
         ' type="<%=type%>"' +
         ' value="<%=value%>"' +
         ' name="<%=name%>"' +
@@ -60,9 +60,9 @@ var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/in
      * @returns {string} html
      */
     templateTextArea: _.template(
-        '<textarea ' +
-        ' class="<%=className%>" ' +
-        ' name="<%=name%>" ' +
+        '<textarea' +
+        ' class="<%=className%>"' +
+        ' name="<%=name%>"' +
         ' maxLength="<%=maxLength%>"' +
         ' <%=disabled%>><%=value%>' +
         '</textarea>'

@@ -118,16 +118,14 @@ describe('CoordRow', function() {
 
         it('should not reset rowHeights if dimensionModel.isFixedRowHeight is true', function() {
             var coordRow = create([{}, {}]);
-            var heights = [
-                coordRow.getHeightAt(0),
-                coordRow.getHeightAt(1)
-            ];
+            var domState = coordRow.domState;
 
             coordRow.dimensionModel.set('isFixedRowHeight', true);
+            spyOn(domState, 'getRowHeights').and.returnValue([20, 30]);
             coordRow.syncWithDom();
 
-            expect(coordRow.getHeightAt(0)).toBe(heights[0]);
-            expect(coordRow.getHeightAt(1)).toBe(heights[1]);
+            expect(coordRow.getHeightAt(0)).toBe(ROW_DEF_HEIGHT);
+            expect(coordRow.getHeightAt(1)).toBe(ROW_DEF_HEIGHT);
         });
 
         it('should trigger syncWithDom event', function() {
@@ -137,7 +135,7 @@ describe('CoordRow', function() {
             coordRow.on('syncWithDom', callbackSpy);
             coordRow.syncWithDom();
 
-            expect(callbackSpy).toHaveBeenCalled();
+            expect(callbackSpy).not.toHaveBeenCalled();
         });
     });
 });

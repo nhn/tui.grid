@@ -75,6 +75,25 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
+     * Returns css style string for given cellData
+     * @param {Object} cellData - cell data
+     * @returns {string}
+     */
+    _getContentStyle: function(cellData) {
+        var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+        var styles = [];
+
+        if (whiteSpace) {
+            styles.push('white-space:' + whiteSpace);
+        }
+        if (this.isFixedRowHeight) {
+            styles.push('max-height:' + cellData.height + 'px');
+        }
+
+        return styles.join(';');
+    },
+
+    /**
      * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
      * @param {Object} cellData - cell data
      * @returns {String}
@@ -84,7 +103,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var content = cellData.formattedValue;
         var beforeContent = cellData.beforeContent;
         var afterContent = cellData.afterContent;
-        var styles = [];
         var fullContent;
 
         if (this.inputPainter) {
@@ -94,6 +112,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
                 beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
                 afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
                 content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
+                // notice the order of concatenation
                 fullContent = beforeContent + afterContent + content;
             }
         }
@@ -101,17 +120,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         if (!fullContent) {
             fullContent = beforeContent + content + afterContent;
         }
-        if (cellData.whiteSpace) {
-            styles.push('white-space:' + cellData.whiteSpace);
-        }
-        if (this.isFixedRowHeight) {
-            styles.push('max-height:' + cellData.height + 'px');
-        }
 
         return this.contentTemplate({
             content: fullContent,
             className: classNameConst.CELL_CONTENT,
-            style: styles.join(';')
+            style: this._getContentStyle(cellData)
         });
     },
 
@@ -199,10 +212,11 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     generateHtml: function(cellData) {
         var attributeString = util.getAttributesString(this._getAttributes(cellData));
         var contentHtml = this._getContentHtml(cellData);
+        var valign = cellData.columnModel.valign;
         var styles = [];
 
-        if (cellData.valign) {
-            styles.push('vertical-align:' + cellData.valign);
+        if (valign) {
+            styles.push('vertical-align:' + valign);
         }
 
         return this.template({

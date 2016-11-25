@@ -120,6 +120,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createDimensionModel: function(options, domState) {
         var attrs = {
             headerHeight: options.headerHeight,
+            bodyHeight: options.bodyHeight,
             footerHeight: options.footer ? options.footer.height : 0,
             rowHeight: options.rowHeight,
             fitToParentHeight: options.fitToParentHeight,
@@ -137,7 +138,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
         // The displayRowCount option is deprecated.
         // This code should be removed after the option is removed.
-        if (options.displayRowCount) {
+        if (_.isUndefined(options.bodyHeight) && options.displayRowCount) {
             dimensionModel.setBodyHeightWithRowCount(options.displayRowCount);
         }
 
