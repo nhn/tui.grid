@@ -16,14 +16,12 @@ var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 /**
  * 크기 관련 데이터 저장
  * @module model/dimension
+ * @param {Object} attrs - Attributes
+ * @param {Object} options - Options
  * @extends module:base/model
+ * @ignore
  */
 var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
-    /**
-     * @constructs
-     * @param {Object} attrs - Attributes
-     * @param {Object} options - Options
-     */
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
 
@@ -480,6 +478,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @param {Number} rowKey - row key
      * @param {Number} rowSpanCount - the count of rowspan
      * @returns {{top: Number, bottom: Number}}
+     * @private
      */
     _getCellVerticalPosition: function(rowKey, rowSpanCount) {
         var firstIdx, lastIdx, top, bottom;

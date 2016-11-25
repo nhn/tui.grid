@@ -12,6 +12,7 @@ var ContentArea;
  * Create DIV element to draw border
  * @param {String} className - border class name
  * @returns {jQuery}
+ * @ignore
  */
 function borderDIV(className) {
     return $('<div>')
@@ -23,12 +24,10 @@ function borderDIV(className) {
  * Content area
  * @module view/layout/content-area
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

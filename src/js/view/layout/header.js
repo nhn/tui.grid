@@ -22,15 +22,13 @@ var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
  * Header Layout View
  * @module view/layout/header
  * @extends module:base/view
+ * @param {Object} options - options
+ * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
+ * @ignore
  */
 var Header = View.extend(/**@lends module:view/layout/header.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
-     */
     initialize: function(options) {
-        View.prototype.initialize.call(this);
+        View.prototype.initialize.call();
 
         this.setOwnProperties({
             renderModel: options.renderModel,

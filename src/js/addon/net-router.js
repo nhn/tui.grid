@@ -9,12 +9,10 @@ var Backbone = require('backbone');
 /**
  * Router for Addon.Net
  * @module addon/net-router
+ * @param  {object} attributes - Attributes
+ * @ignore
  */
 var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype */{
-    /**
-     * @constructs
-     * @param  {object} attributes - Attributes
-     */
     initialize: function(attributes) {
         this.net = attributes.net;
     },

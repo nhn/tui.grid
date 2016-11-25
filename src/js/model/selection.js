@@ -14,13 +14,11 @@ var typeConstMap = require('../common/constMap').selectionType;
  * Selection Model class
  * @module model/selection
  * @extends module:base/view
+ * @param {Object} attr - Attributes
+ * @param {Object} options - Options
+ * @ignore
  */
 var Selection = Model.extend(/**@lends module:model/selection.prototype */{
-    /**
-     * @constructs
-     * @param {Object} attr - Attributes
-     * @param {Object} options - Options
-     */
     initialize: function(attr, options) {
         Model.prototype.initialize.apply(this, arguments);
 

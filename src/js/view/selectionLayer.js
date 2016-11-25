@@ -14,13 +14,11 @@ var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDT
  * Class for the selection layer
  * @module view/selectionLayer
  * @extends module:base/view
+ * @param {object} options Options
+ * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
+ * @ignore
  */
 var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
-    /**
-     * @constructs
-     * @param {object} options Options
-     * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
-     */
     initialize: function(options) {
         this.setOwnProperties({
             whichSide: options.whichSide || 'R',

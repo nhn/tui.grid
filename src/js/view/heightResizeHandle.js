@@ -12,12 +12,10 @@ var HTML_INNER = '<a href="#"><span></span></a>';
  * Class for the height resize handle
  * @module view/layout/heightResizeHandle
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHandle.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.timeoutIdForResize = 0;

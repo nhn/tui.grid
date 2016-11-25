@@ -13,12 +13,10 @@ var attrNameConst = require('../common/constMap').attrName;
  * This aims to act like a View class but doesn't create an instance of each view items
  * to improve rendering performance.
  * @module base/painter
+ * @param {Object} options - options
+ * @ignore
  */
 var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function(options) {
         this.controller = options.controller;
     },

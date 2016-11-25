@@ -13,11 +13,9 @@ var util = require('../../common/util');
  * 컬럼 모델 데이터를 다루는 객체
  * @module model/data/columnModel
  * @extends module:base/model
+ * @ignore
  */
 var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
-    /**
-     * @constructs
-     */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
         this.textType = {

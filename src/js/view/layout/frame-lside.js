@@ -11,11 +11,9 @@ var classNameConst = require('../../common/classNameConst');
  * Left Side Frame
  * @module view/layout/frame-lside
  * @extends module:view/layout/frame
+ * @ignore
  */
 var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
-    /**
-     * @constructs
-     */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({

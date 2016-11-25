@@ -12,11 +12,9 @@ var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_W
  * right side frame class
  * @module view/layout/frame-rside
  * @extends module:view/layout/frame
+ * @ignore
  */
 var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
-    /**
-     * @constructs
-     */
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({

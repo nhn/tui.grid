@@ -11,11 +11,14 @@ var constMap = require('../../common/constMap');
 
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
+/**
+ * Footer area
+ * @module view/layout/footer
+ * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
+ */
 var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
-    /**
-     * Initialize
-     * @param {object} options - options
-     */
     initialize: function(options) {
         /**
          * Store template functions of each column

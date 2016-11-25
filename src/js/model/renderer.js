@@ -17,13 +17,11 @@ var DATA_LENGTH_FOR_LOADING = 1000;
  * View 에서 Rendering 시 사용할 객체
  * @module model/renderer
  * @extends module:base/model
+ * @param {Object} attrs - Attributes
+ * @param {Object} options - Options
+ * @ignore
  */
 var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
-    /**
-     * @constructs
-     * @param {Object} attrs - Attributes
-     * @param {Object} options - Options
-     */
     initialize: function(attrs, options) {
         var lside, rside, rowListOptions;
 

@@ -13,15 +13,13 @@ var GridEvent = require('../common/gridEvent');
 /**
  * Focus model
  * RowList collection 이 focus class 를 listen 한다.
+ * @param {Object} attrs - Attributes
+ * @param {Object} options - Options
  * @module model/focus
  * @extends module:base/model
+ * @ignore
  */
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
-    /**
-     * @constructs
-     * @param {Object} attrs - Attributes
-     * @param {Object} options - Options
-     */
     initialize: function(attrs, options) {
         Model.prototype.initialize.apply(this, arguments);
 

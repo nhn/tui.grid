@@ -357,7 +357,7 @@ var instanceMap = {};
 require('../css/index.styl');
 
  /**
-  * Toast UI
+  * Toast UI Namespace
   * @namespace
   */
 tui = window.tui = tui || {};
@@ -366,6 +366,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Initializes the instance.
      * @param {Object} options - Options set by user
+     * @ignore
      */
     initialize: function(options) {
         var domState = new DomState(this.$el);

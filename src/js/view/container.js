@@ -15,12 +15,10 @@ var classNameConst = require('../common/classNameConst');
  * Container View
  * @module view/container
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var Container = View.extend(/**@lends module:view/container.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

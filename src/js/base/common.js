@@ -10,6 +10,7 @@ var _ = require('underscore');
  * Mixin object for base class
  * @mixin
  * @exports module:base/common
+ * @ignore
  */
 var common = {
     /**

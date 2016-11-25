@@ -13,12 +13,10 @@ var classNameConst = require('../common/classNameConst');
  * Toolbar View
  * @module view/toolbar
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.setOwnProperties({
             gridId: options.gridId,

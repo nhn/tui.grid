@@ -18,12 +18,10 @@ var MESSAGE_EMPTY = '데이터가 존재하지 않습니다.';
  * Layer class that represents the state of rendering phase.
  * @module view/stateLayer
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.renderModel = options.renderModel;

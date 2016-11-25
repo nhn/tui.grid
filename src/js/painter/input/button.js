@@ -13,12 +13,10 @@ var util = require('../../common/util');
  * Painter class for 'checkbox' and 'radio button'.
  * @module painter/input/button
  * @extends module:painter/input/base
+ * @param {Object} options - options
+ * @ignore
  */
 var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function(options) {
         InputPainter.apply(this, arguments);
 

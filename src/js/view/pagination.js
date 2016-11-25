@@ -32,12 +32,10 @@ var defaultOptions = {
  * Class for the pagination in the toolbar
  * @module view/pagination
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
         this.componentHolder = options.componentHolder;

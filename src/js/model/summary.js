@@ -11,13 +11,11 @@ var typeConst = require('../common/constMap').summaryType;
  * Summary Model
  * @module model/summary
  * @extends module:base/model
+ * @param {Object} attr - attributes
+ * @param {Object} options - options
+ * @ignore
  */
 var Summary = Model.extend(/**@lends module:model/summary.prototype */{
-    /**
-     * @constructs
-     * @param {Object} attr - attributes
-     * @param {Object} options - options
-     */
     initialize: function(attr, options) {
         this.dataModel = options.dataModel;
 

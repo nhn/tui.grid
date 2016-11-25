@@ -11,13 +11,11 @@ var Backbone = require('backbone');
  * Class that listens public events (for external user) to the other object and
  * triggers them on the public object(module:grid).
  * @module publicEventEmitter
+ * @param {Object} publicObject - Object on which event will be triggered.
+ *            This object should have methods of Backbone.Events.
+ * @ignore
  */
 var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitter.prototype */{
-    /**
-     * @constructs
-     * @param {Object} publicObject - Object on which event will be triggered.
-     *            This object should have methods of Backbone.Events.
-     */
     init: function(publicObject) {
         this.publicObject = publicObject;
     },

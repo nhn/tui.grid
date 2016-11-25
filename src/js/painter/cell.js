@@ -15,12 +15,10 @@ var classNameConst = require('../common/classNameConst');
  * Painter class for cell(TD) views
  * @module painter/cell
  * @extends module:base/painter
+ * @param {Object} options - options
+ * @ignore
  */
 var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function(options) {
         Painter.apply(this, arguments);
 

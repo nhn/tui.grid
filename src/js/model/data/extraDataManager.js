@@ -9,13 +9,11 @@ var _ = require('underscore');
 /**
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module data/row
+ * @param {Object} data - Data object
  * @extends module:base/model
+ * @ignore
  */
 var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraData.prototype */{
-    /**
-     * @constructs
-     * @param {Object} data - Data object
-     */
     init: function(data) {
         this.data = data || {};
     },

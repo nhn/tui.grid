@@ -20,82 +20,78 @@ var DELAY_FOR_LOADING_STATE = 200;
  * Net Addon
  * @module addon/net
  * @mixes module:base/common
+ * @param {object} options
+ *      @param {jquery} options.el   form 엘리먼트
+ *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+ *      @param {object} [options.api]   사용할 API URL 리스트
+ *          @param {string} [options.api.readData]  데이터 조회 API 주소
+ *          @param {string} [options.api.createData] 데이터 생성 API 주소
+ *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
+ *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+ *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
+ *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
+ *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
+ * @example
+ *   <form id="data_form">
+ *   <input type="text" name="query"/>
+ *   </form>
+ *   <script>
+ *      var net,
+ *          grid = new tui.Grid({
+ *                 //...option 생략...
+ *          });
+ *
+ *      //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+ *      grid.use('Net', {
+ *         el: $('#data_form'),         //필수 - form 엘리먼트
+ *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+ *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
+ *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
+ *         //사용할 API URL 리스트
+ *         api: {
+ *             'readData': './api/read',                       //데이터 조회 API 주소
+ *             'createData': './api/create',                   //데이터 생성 API 주소
+ *             'updateData': './api/update',                   //데이터 업데이트 API 주소
+ *             'deleteData': './api/delete',                   //데이터 삭제 API 주소
+ *             'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+ *             'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
+ *             'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
+ *         }
+ *      });
+ *       //이벤트 핸들러 바인딩
+ *       grid.on('beforeRequest', function(data) {
+ *          //모든 dataRequest 시 호출된다.
+ *      }).on('response', function(data) {
+ *          //response 이벤트 핸들러
+ *          //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+ *      }).on('successResponse', function(data) {
+ *          //successResponse 이벤트 핸들러
+ *          //response.result 가 true 일 때 호출된다.
+ *      }).on('failResponse', function(data) {
+ *          //failResponse 이벤트 핸들러
+ *          //response.result 가 false 일 때 호출된다.
+ *      }).on('errorResponse', function(data) {
+ *          //ajax error response 이벤트 핸들러
+ *      });
+ *
+ *      //grid 로부터 사용할 net 인스턴스를 가져온다.
+ *      net = grid.getAddOn('Net');
+ *
+ *      //request 관련 자세한 옵션은 Net#request 를 참고한다.
+ *      //createData API 요청
+ *      net.request('createData');
+ *
+ *      //updateData API 요청
+ *      net.request('updateData');
+ *
+ *      //deleteData API 요청
+ *      net.request('deleteData');
+ *
+ *      //modifyData API 요청
+ *      net.request('modifyData');
+ *   </script>
  */
 var Net = View.extend(/**@lends module:addon/net.prototype */{
-    /**
-     * @constructs
-     * @param {object} options
-     *      @param {jquery} options.el   form 엘리먼트
-     *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-     *      @param {object} [options.api]   사용할 API URL 리스트
-     *          @param {string} [options.api.readData]  데이터 조회 API 주소
-     *          @param {string} [options.api.createData] 데이터 생성 API 주소
-     *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
-     *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-     *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
-     *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
-     *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
-     * @example
-     *   <form id="data_form">
-     *   <input type="text" name="query"/>
-     *   </form>
-     *   <script>
-     *      var net,
-     *          grid = new tui.Grid({
-     *                 //...option 생략...
-     *          });
-     *
-     *      //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
-     *      grid.use('Net', {
-     *         el: $('#data_form'),         //필수 - form 엘리먼트
-     *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-     *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
-     *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
-     *         //사용할 API URL 리스트
-     *         api: {
-     *             'readData': './api/read',                       //데이터 조회 API 주소
-     *             'createData': './api/create',                   //데이터 생성 API 주소
-     *             'updateData': './api/update',                   //데이터 업데이트 API 주소
-     *             'deleteData': './api/delete',                   //데이터 삭제 API 주소
-     *             'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-     *             'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
-     *             'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
-     *         }
-     *      });
-     *       //이벤트 핸들러 바인딩
-     *       grid.on('beforeRequest', function(data) {
-     *          //모든 dataRequest 시 호출된다.
-     *      }).on('response', function(data) {
-     *          //response 이벤트 핸들러
-     *          //성공/실패와 관계없이 response 를 받을 떄 호출된다.
-     *      }).on('successResponse', function(data) {
-     *          //successResponse 이벤트 핸들러
-     *          //response.result 가 true 일 때 호출된다.
-     *      }).on('failResponse', function(data) {
-     *          //failResponse 이벤트 핸들러
-     *          //response.result 가 false 일 때 호출된다.
-     *      }).on('errorResponse', function(data) {
-     *          //ajax error response 이벤트 핸들러
-     *      });
-     *
-     *      //grid 로부터 사용할 net 인스턴스를 가져온다.
-     *      net = grid.getAddOn('Net');
-     *
-     *      //request 관련 자세한 옵션은 Net#request 를 참고한다.
-     *      //createData API 요청
-     *      net.request('createData');
-     *
-     *      //updateData API 요청
-     *      net.request('updateData');
-     *
-     *      //deleteData API 요청
-     *      net.request('deleteData');
-     *
-     *      //modifyData API 요청
-     *      net.request('modifyData');
-     *   </script>
-     */
-
     initialize: function(options) {
         var defaultOptions;
 

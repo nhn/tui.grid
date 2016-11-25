@@ -13,6 +13,7 @@ var common = require('./common');
  * Base class for Collection
  * @module base/collection
  * @mixes module:base/common
+ * @ignore
  */
 var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
     /**

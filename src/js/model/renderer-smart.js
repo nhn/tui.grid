@@ -1,5 +1,5 @@
 /**
- * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
+ * @fileoverview Render model to be used for smart-rendering
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -18,15 +18,12 @@ var BUFFER_RATIO = 0.3;
 var BUFFER_HIT_RATIO = 0.1;
 
 /**
- * View 에서 Rendering 시 사용할 객체
- * Smart Rendering 을 지원한다.
+ * Render model to be used for smart-rendering
  * @module model/renderer-smart
  * @extends module:model/renderer
+ * @ignore
  */
 var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
-    /**
-     * @constructs
-     */
     initialize: function() {
         Renderer.prototype.initialize.apply(this, arguments);
         this.on('change:scrollTop', this._onChangeScrollTop, this);

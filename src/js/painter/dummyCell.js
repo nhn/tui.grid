@@ -15,11 +15,9 @@ var classNameConst = require('../common/classNameConst');
  * Dummy Cell Painter
  * @module painter/dummyCell
  * @extends module:base/painter
+ * @ignore
  */
 var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
-    /**
-     * @constructs
-     */
     init: function() {
         Painter.apply(this, arguments);
     },

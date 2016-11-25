@@ -12,6 +12,7 @@ var classNameConst = require('../common/classNameConst');
 
 /**
  * Shortcut for the builder.createClassRule() method.
+ * @ignore
  */
 var classRule = _.bind(builder.createClassRule, builder);
 
@@ -20,6 +21,7 @@ var classRule = _.bind(builder.createClassRule, builder);
  * @param {String} className - class name
  * @param {Objecr} options - options
  * @returns {String}
+ * @ignore
  */
 function bgTextRuleString(className, options) {
     return classRule(className)
@@ -33,6 +35,7 @@ function bgTextRuleString(className, options) {
  * @param {String} className - class name
  * @param {Objecr} options - options
  * @returns {String}
+ * @ignore
  */
 function bgBorderRuleString(className, options) {
     return classRule(className)

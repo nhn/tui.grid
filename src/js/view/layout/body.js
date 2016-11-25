@@ -23,13 +23,11 @@ var MIN_DISATNCE_FOR_DRAG = 10;
  * Class for the body layout
  * @module view/layout/body
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @param {String} [options.whichSide='R'] L or R (which side)
+ * @ignore
  */
 var Body = View.extend(/**@lends module:view/layout/body.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     * @param {String} [options.whichSide='R'] L or R (which side)
-     */
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

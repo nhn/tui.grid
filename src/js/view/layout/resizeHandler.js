@@ -17,12 +17,10 @@ var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
  * Reside Handler class
  * @module view/layout/resizeHandler
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */ {
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,

@@ -11,6 +11,7 @@ var CELL_BORDER_WIDTH = require('./constMap').dimension.CELL_BORDER_WIDTH;
 /**
 * util 모듈
 * @module util
+* @ignore
 */
 var util = {
     uniqueId: 0,

@@ -13,6 +13,7 @@ var DatePickerLayer;
  * Returns a HTML string of a span element to represent an arrow-icon
  * @param {String} dirClassName - className to indicate direction of the arrow
  * @returns {String}
+ * @ignore
  */
 function arrowHTML(dirClassName) {
     var classNameStr = classNameConst.ICO_ARROW + ' ' + dirClassName;
@@ -24,12 +25,10 @@ function arrowHTML(dirClassName) {
  * Layer View class which contains the 'tui-component-date-picker'
  * @module view/datePickerLayer
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.textPainter = options.textPainter;
         this.columnModel = options.columnModel;

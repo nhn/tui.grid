@@ -9,12 +9,10 @@ var _ = require('underscore');
 /**
  * Event class for public event of Grid
  * @module common/gridEvent
+ * @param {Object} data - Event data for handler
+ * @ignore
  */
 var GridEvent = tui.util.defineClass(/**@lends module:common/gridEvent.prototype */{
-    /**
-     * @constructs
-     * @param {Object} data - Event data for handler
-     */
     init: function(data) {
         this._stopped = false;
         this.setData(data);

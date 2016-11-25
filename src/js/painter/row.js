@@ -15,12 +15,10 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * Painter class for the row(TR) views
  * @module painter/row
  * @extends module:base/painter
+ * @param {object} options - Options
+ * @ignore
  */
 var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prototype */{
-    /**
-     * @constructs
-     * @param {object} options - Options
-     */
     init: function(options) {
         Painter.apply(this, arguments);
         this.painterManager = options.painterManager;

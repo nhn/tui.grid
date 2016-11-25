@@ -13,11 +13,9 @@ var util = require('../../common/util');
  * Painter class for 'select' input.
  * @module painter/input/select
  * @extends module:painter/input/base
+ * @ignore
  */
 var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/select.prototype */{
-    /**
-     * @constructs
-     */
     init: function() {
         InputPainter.apply(this, arguments);
 

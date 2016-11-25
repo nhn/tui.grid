@@ -15,12 +15,10 @@ var classNameConst = require('../common/classNameConst');
  * Layer class that represents the state of rendering phase.
  * @module view/editingLayer
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.renderModel = options.renderModel;
         this.domState = options.domState;

@@ -13,11 +13,9 @@ var common = require('./common');
  * Base class for Views
  * @module base/view
  * @mixes module:base/common
+ * @ignore
  */
 var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
-    /**
-     * @constructs
-     */
     initialize: function() {
         this._children = [];
     },

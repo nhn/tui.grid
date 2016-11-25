@@ -14,13 +14,11 @@ var Row = require('./row');
  * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
  * @module model/data/rowList
  * @extends module:base/collection
+ * @param {Array} models - 콜랙션에 추가할 model 리스트
+ * @param {Object} options - 생성자의 option 객체
+ * @ignore
  */
 var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
-    /**
-     * @param {Array} models    콜랙션에 추가할 model 리스트
-     * @param {Object} options   생성자의 option 객체
-     * @constructs
-     */
     initialize: function(models, options) {
         Collection.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({

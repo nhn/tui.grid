@@ -11,6 +11,7 @@ var defaultOptionsMap = {
 /**
  * Component holder
  * @module componentHolder
+ * @ignore
  */
 var ComponentHolder = tui.util.defineClass(/**@lends module:componentHolder.prototype */{
     init: function(optionsMap) {

@@ -16,12 +16,10 @@ var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></
  * Class for the layer view that represents the currently focused cell
  * @module view/focusLayer
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.focusModel = options.focusModel;
         this.columnModel = options.columnModel;

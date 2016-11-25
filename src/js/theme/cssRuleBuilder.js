@@ -8,9 +8,11 @@ var _ = require('underscore');
 
 /**
  * create css rule string and returns it
+ * @module {theme/cssBuilder}
  * @param {String} selector - css selector
  * @param {String} property - css property
  * @param {String} value - css value
+ * @ignore
  */
 var CSSRuleBuilder = tui.util.defineClass({
     init: function(selector) {

@@ -11,7 +11,7 @@
     "deploy:normal": "webpack --production & webpack --production --minify",
     "deploy:combine": "webpack --production --combine & webpack --production --combine --minify",
     "docs": "npm run docs:jsdoc && npm run docs:copy",
-    "docs:jsdoc": "./node_modules/.bin/jsdoc -t ./node_modules/fedoc-template -c ./jsdoc.conf.json",
+    "docs:jsdoc": "jsdoc -c ./jsdoc.conf.json",
     "docs:copy": "cpy dist/grid.{js,css} doc/dist & cpy dist/images/* doc/dist/images"
   },
   "repository": {
@@ -30,7 +30,6 @@
     "eslint-loader": "^1.5.0",
     "express": "^4.12.4",
     "extract-text-webpack-plugin": "^1.0.1",
-    "fedoc-template": "git+https://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
     "file-loader": "^0.9.0",
     "istanbul-instrumenter-loader": "^1.0.0",
     "jasmine-ajax": "^2.99.0",
@@ -52,6 +51,7 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
+    "tui-jsdoc-template": "^1.0.4",
     "vinyl-source-stream": "^1.1.0",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.1"

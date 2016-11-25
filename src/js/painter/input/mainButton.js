@@ -15,12 +15,10 @@ var keyCodeMap = require('../../common/constMap').keyCode;
  * (This class does not extend from module:painter/input/base but from module:base/painter directly)
  * @module painter/input/mainButton
  * @extends module:base/painter
+ * @param {Object} options - options
+ * @ignore
  */
 var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/mainButton.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function(options) {
         Painter.apply(this, arguments);
 

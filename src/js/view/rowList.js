@@ -17,13 +17,11 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
  * RowList View
  * @module view/rowList
  * @extends module:baes/view
+ * @param {object} options - Options
+ * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
+ * @ignore
  */
 var RowList = View.extend(/**@lends module:view/rowList.prototype */{
-    /**
-     * @constructs
-     * @param {object} options - Options
-     * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
-     */
     initialize: function(options) {
         var focusModel = options.focusModel;
         var renderModel = options.renderModel;

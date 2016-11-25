@@ -10,13 +10,11 @@ var View = require('../../base/view');
  * Base class for frame view.
  * @module view/layout/frame
  * @extends module:base/view
+ * @param {Object} options Options
+ *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
+ * @ignore
  */
 var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options Options
-     *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
-     */
     initialize: function(options) {
         View.prototype.initialize.call(this);
 

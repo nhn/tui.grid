@@ -10,18 +10,13 @@ var util = require('../common/util');
 /**
  * Controller class to handle actions from the painters
  * @module painter/controller
+ * @param {Object} options - options
+ * @ignore
  */
 var PainterController = tui.util.defineClass(/**@lends module:painter/controller.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function(options) {
         this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
-        /**
-         * @type {module:model/columnModel}
-         */
         this.columnModel = options.columnModel;
         this.selectionModel = options.selectionModel;
     },

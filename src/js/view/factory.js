@@ -28,6 +28,7 @@ var isOptionEnabled = require('../common/util').isOptionEnabled;
 /**
  * View Factory
  * @module viewFactory
+ * @ignore
  */
 var ViewFactory = tui.util.defineClass({
     init: function(options) {

@@ -17,12 +17,10 @@ var SELECTOR_PASSWORD = 'input[type=password]';
  * Painter class for the 'input[type=text]' and 'input[type=password]'
  * @module painter/input/text
  * @extends module:painter/input/base
+ * @param {Object} options - options
+ * @ignore
  */
 var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
-   /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function(options) {
         InputPainter.apply(this, arguments);
 

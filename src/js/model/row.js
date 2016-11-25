@@ -12,14 +12,12 @@ var util = require('../common/util');
 /**
  * Row Model
  * @module model/row
+ * @param  {object} attributes - Attributes
+ * @param  {object} options - Options
  * @extends module:base/model
+ * @ignore
  */
 var Row = Model.extend(/**@lends module:model/row.prototype */{
-    /**
-     * @constructs
-     * @param  {object} attributes - Attributes
-     * @param  {object} options - Options
-     */
     initialize: function(attributes) {
         var rowKey = attributes && attributes.rowKey;
         var dataModel = this.collection.dataModel;

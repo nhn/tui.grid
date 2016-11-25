@@ -10,12 +10,10 @@ var classNameConst = require('./common/classNameConst');
 /**
  * Class for offering methods that can be used to get the current state of DOM element.
  * @module domState
+ * @param {jQuery} $el - jQuery object of the container element.
+ * @ignore
  */
 var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
-    /**
-     * @constructs
-     * @param {jQuery} $el - jQuery object of the container element.
-     */
     init: function($el) {
         this.$el = $el;
     },

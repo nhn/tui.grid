@@ -17,12 +17,10 @@ var selTypeConst = constMap.selectionType;
  * Clipboard view class
  * @module view/clipboard
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
  */
 var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     initialize: function(options) {
         this.setOwnProperties({
             focusModel: options.focusModel,

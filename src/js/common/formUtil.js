@@ -8,6 +8,7 @@ var _ = require('underscore');
 
 /**
  * @module formUtil
+ * @ignore
  */
 var formUtil = {
     /**

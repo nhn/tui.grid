@@ -19,6 +19,7 @@ presetOptions[themeNameConst.CLEAN] = require('./preset/clean');
  * build css string with given options.
  * @param {Object} options - options
  * @returns {String}
+ * @ignore
  */
 function buildCssString(options) {
     var styles = [
@@ -54,6 +55,7 @@ function buildCssString(options) {
 /**
  * Set document style with given options.
  * @param {Object} options - options
+ * @ignore
  */
 function setDocumentStyle(options) {
     var cssString = buildCssString(options);

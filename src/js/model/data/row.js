@@ -26,11 +26,9 @@ var VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
  * Data 중 각 행의 데이터 모델 (DataSource)
  * @module model/data/row
  * @extends module:base/model
+ * @ignore
  */
 var Row = Model.extend(/**@lends module:model/data/row.prototype */{
-    /**
-     * @constructs
-     */
     initialize: function() {
         Model.prototype.initialize.apply(this, arguments);
         this.extraDataManager = new ExtraDataManager(this.get('_extraData'));

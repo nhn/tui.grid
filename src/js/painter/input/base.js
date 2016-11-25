@@ -13,12 +13,10 @@ var keyNameMap = require('../../common/constMap').keyName;
  * Input Painter Base
  * @module painter/input/base
  * @extends module:base/painter
+ * @param {Object} options - options
+ * @ignore
  */
 var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - options
-     */
     init: function() {
         Painter.apply(this, arguments);
     },

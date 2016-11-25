@@ -11,6 +11,7 @@ var isOptionEnabled = require('../common/util').isOptionEnabled;
  * Toolbar Model
  * @module model/toolbar
  * @extends module:base/model
+ * @ignore
  */
 var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
     initialize: function(options) {

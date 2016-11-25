@@ -17,12 +17,10 @@ var MainButtonPainter = require('./input/mainButton');
 /**
  * Painter manager
  * @module painter/manager
+ * @param {Object} options - Options
+ * @ignore
  */
 var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     */
     init: function(options) {
         this.gridId = options.gridId;
         this.selectType = options.selectType;

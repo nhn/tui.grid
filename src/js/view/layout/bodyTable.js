@@ -17,13 +17,11 @@ var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
  * Class for the table layout in the body(data) area
  * @module view/layout/bodyTable
  * @extends module:base/view
+ * @param {Object} options - Options
+ * @param {String} [options.whichSide='R'] L or R (which side)
+ * @ignore
  */
 var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
-    /**
-     * @constructs
-     * @param {Object} options - Options
-     * @param {String} [options.whichSide='R'] L or R (which side)
-     */
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
