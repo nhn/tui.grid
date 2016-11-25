@@ -25,6 +25,7 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         Painter.apply(this, arguments);
 
         this.editType = options.editType;
+        this.isFixedRowHeight = options.isFixedRowHeight;
         this.inputPainter = options.inputPainter;
         this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
     },
@@ -38,11 +39,18 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * Markup template
+     * template for TD
      * @returns {string} template
      */
     template: _.template(
-        '<td <%=attributeString%>><%=contentHtml%></td>'
+        '<td <%=attributeString%> style="<%=style%>"><%=contentHtml%></td>'
+    ),
+
+    /**
+     * template for DIV (inner content of TD)
+     */
+    contentTemplate: _.template(
+        '<div class="<%=className%>" style="<%=style%>"><%=content%></div>'
     ),
 
     /**
@@ -67,15 +75,35 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
+     * Returns css style string for given cellData
+     * @param {Object} cellData - cell data
+     * @returns {string}
+     */
+    _getContentStyle: function(cellData) {
+        var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+        var styles = [];
+
+        if (whiteSpace) {
+            styles.push('white-space:' + whiteSpace);
+        }
+        if (this.isFixedRowHeight) {
+            styles.push('max-height:' + cellData.height + 'px');
+        }
+
+        return styles.join(';');
+    },
+
+    /**
      * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
      * @param {Object} cellData - cell data
      * @returns {String}
      * @private
      */
     _getContentHtml: function(cellData) {
-        var content = cellData.formattedValue,
-            beforeContent = cellData.beforeContent,
-            afterContent = cellData.afterContent;
+        var content = cellData.formattedValue;
+        var beforeContent = cellData.beforeContent;
+        var afterContent = cellData.afterContent;
+        var fullContent;
 
         if (this.inputPainter) {
             content = this.inputPainter.generateHtml(cellData);
@@ -84,12 +112,20 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
                 beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
                 afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
                 content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
-
-                return beforeContent + afterContent + content;
+                // notice the order of concatenation
+                fullContent = beforeContent + afterContent + content;
             }
         }
 
-        return beforeContent + content + afterContent;
+        if (!fullContent) {
+            fullContent = beforeContent + content + afterContent;
+        }
+
+        return this.contentTemplate({
+            content: fullContent,
+            className: classNameConst.CELL_CONTENT,
+            style: this._getContentStyle(cellData)
+        });
     },
 
     /**
@@ -136,7 +172,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var classNames = [
             cellData.className,
             classNameConst.CELL,
-            classNameConst.CELL_CONTENT,
             (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
         ];
         var attrs = {
@@ -175,12 +210,19 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
      * @implements {module:base/painter}
      */
     generateHtml: function(cellData) {
-        var attributeString = util.getAttributesString(this._getAttributes(cellData)),
-            contentHtml = this._getContentHtml(cellData);
+        var attributeString = util.getAttributesString(this._getAttributes(cellData));
+        var contentHtml = this._getContentHtml(cellData);
+        var valign = cellData.columnModel.valign;
+        var styles = [];
+
+        if (valign) {
+            styles.push('vertical-align:' + valign);
+        }
 
         return this.template({
             attributeString: attributeString,
-            contentHtml: contentHtml || '&#8203;' // '&#8203;' for height issue with empty cell in IE7
+            style: styles.join(';'),
+            contentHtml: contentHtml
         });
     },
 
@@ -195,7 +237,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
         var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
         var attrs = this._getAttributes(cellData);
 
-        delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
         $td.attr(attrs);
 
         if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {

@@ -18,8 +18,14 @@
  *      @param {number} [options.headerHeight=35] - The height of the header area.
  *          When rows in header are multiple (merged column), this value must be the total height of rows.
  *      @param {number} [options.rowHeight=27] - The height of each rows.
- *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area.
- *          Total height of grid will be set based on this value.
+ *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
+ *          expand with content.
+ *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
+ *          area expands.
+ *          to total height of rows.
+ *      @param {number} [options.displayRowCount=10] - Deprecated.
+ *          <del>The number of rows to be shown in the table area.
+ *          Total height of grid will be set based on this value.</del>
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
@@ -42,6 +48,9 @@
  *              for overflowing content.
  *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content.
  *              Available values are 'left', 'center', 'right'.
+ *          @param {string} [options.columnModelList.valign=middle] - Vertical alignment of the column content.
+ *              Available values are 'top', 'middle', 'bottom'.
+ *      @param {number} [options.valign=27] - The height of each rows.
  *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
  *              the column.
  *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
@@ -369,6 +378,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.viewFactory = this._createViewFactory(domState, options);
         this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
+        this.domState = domState;
 
         this.container.render();
         this.refreshLayout();
@@ -414,6 +424,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         return new PainterManager({
             gridId: this.id,
             selectType: this.modelManager.columnModel.get('selectType'),
+            isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
             controller: controller
         });
     },

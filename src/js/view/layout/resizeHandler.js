@@ -7,16 +7,18 @@
 var _ = require('underscore');
 
 var View = require('../../base/view');
-var attrNameConst = require('../../common/constMap').attrName;
+var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
-var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
+var attrNameConst = constMap.attrName;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
 /**
  * Reside Handler class
  * @module view/layout/resizeHandler
  * @extends module:base/view
  */
-var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
+var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */ {
     /**
      * @constructs
      * @param {Object} options - Options
@@ -124,12 +126,11 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         var columnData = this._getColumnData();
         var columnWidthList = columnData.widthList;
         var $resizeHandleList = this.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
+        var handlerWidthHalf = Math.floor(RESIZE_HANDLE_WIDTH / 2);
         var curPos = 0;
 
         tui.util.forEachArray($resizeHandleList, function(item, index) {
             var $handler = $resizeHandleList.eq(index);
-            var handlerWidthHalf = Math.ceil($handler.width() / 2);
-
             curPos += columnWidthList[index] + CELL_BORDER_WIDTH;
             $handler.css('left', curPos - handlerWidthHalf);
         });
@@ -180,16 +181,14 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _onMouseMove: function(mouseEvent) {
-        var left, width, index;
+        var width, index;
 
         if (this._isResizing()) {
             mouseEvent.preventDefault();
 
-            left = mouseEvent.pageX - this.initialOffsetLeft;
             width = this._calculateWidth(mouseEvent.pageX);
             index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-            this.$target.css('left', left);
             this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             this._refreshHandlerPosition();
         }

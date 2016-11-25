@@ -55,7 +55,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
-        this.coordRowModel = this._createCoordRowModel(options);
+        this.coordRowModel = this._createCoordRowModel(domState);
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
@@ -120,13 +120,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     _createDimensionModel: function(options, domState) {
         var attrs = {
             headerHeight: options.headerHeight,
+            bodyHeight: options.bodyHeight,
             footerHeight: options.footer ? options.footer.height : 0,
             rowHeight: options.rowHeight,
-
             fitToParentHeight: options.fitToParentHeight,
             scrollX: !!options.scrollX,
             scrollY: !!options.scrollY,
-            minimumColumnWidth: options.minimumColumnWidth
+            minimumColumnWidth: options.minimumColumnWidth,
+            isFixedRowHeight: options.isFixedRowHeight,
+            isFixedHeight: options.isFixedHeight
         };
         var dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
@@ -136,7 +138,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
         // The displayRowCount option is deprecated.
         // This code should be removed after the option is removed.
-        if (options.displayRowCount) {
+        if (_.isUndefined(options.bodyHeight) && options.displayRowCount) {
             dimensionModel.setBodyHeightWithRowCount(options.displayRowCount);
         }
 
@@ -145,13 +147,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of coordRow model and returns it
+     * @param {module:domState} domState - domState
      * @returns {module:model/coordRow}
      * @private
      */
-    _createCoordRowModel: function() {
+    _createCoordRowModel: function(domState) {
         return new CoordRowModel({
             dataModel: this.dataModel,
-            dimensionModel: this.dimensionModel
+            dimensionModel: this.dimensionModel,
+            domState: domState
         });
     },
 

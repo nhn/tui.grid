@@ -4,6 +4,7 @@ var CoordRow = require('model/coordRow');
 var ColumnModel = require('model/data/columnModel');
 var DataModel = require('model/data/rowList');
 var Model = require('base/model');
+var DomState = require('domState');
 
 var CELL_BORDER_WIDTH = require('common/constMap').dimension.CELL_BORDER_WIDTH;
 var ROW_DEF_HEIGHT = 10;
@@ -14,16 +15,19 @@ function create(data) {
         columnModel: columnModel
     });
     var dimensionMock = new Model();
+    var coordRowModel;
 
-    dataModel.setRowList(data);
     dimensionMock.set({
         rowHeight: ROW_DEF_HEIGHT
     });
-
-    return new CoordRow({
+    coordRowModel = new CoordRow({
+        domState: new DomState($('<div>')),
         dataModel: dataModel,
         dimensionModel: dimensionMock
     });
+    dataModel.setRowList(data);
+
+    return coordRowModel;
 }
 
 describe('CoordRow', function() {
@@ -92,6 +96,46 @@ describe('CoordRow', function() {
 
             expect(coordRow.getHeight(0)).toBe(ROW_DEF_HEIGHT);
             expect(coordRow.getOffset(0)).toBe(0);
+        });
+    });
+
+    describe('syncWithDom', function() {
+        it('should reset rowHeights with max height of DOM and data', function() {
+            var coordRow = create([{
+                _extraData: {
+                    height: 50
+                }
+            }, {}, {}]);
+            var domState = coordRow.domState;
+
+            spyOn(domState, 'getRowHeights').and.returnValue([20, 30, 40]);
+            coordRow.syncWithDom();
+
+            expect(coordRow.getHeightAt(0)).toBe(50);
+            expect(coordRow.getHeightAt(1)).toBe(30);
+            expect(coordRow.getHeightAt(2)).toBe(40);
+        });
+
+        it('should not reset rowHeights if dimensionModel.isFixedRowHeight is true', function() {
+            var coordRow = create([{}, {}]);
+            var domState = coordRow.domState;
+
+            coordRow.dimensionModel.set('isFixedRowHeight', true);
+            spyOn(domState, 'getRowHeights').and.returnValue([20, 30]);
+            coordRow.syncWithDom();
+
+            expect(coordRow.getHeightAt(0)).toBe(ROW_DEF_HEIGHT);
+            expect(coordRow.getHeightAt(1)).toBe(ROW_DEF_HEIGHT);
+        });
+
+        it('should trigger syncWithDom event', function() {
+            var coordRow = create([{}]);
+            var callbackSpy = jasmine.createSpy('callback');
+
+            coordRow.on('syncWithDom', callbackSpy);
+            coordRow.syncWithDom();
+
+            expect(callbackSpy).not.toHaveBeenCalled();
         });
     });
 });

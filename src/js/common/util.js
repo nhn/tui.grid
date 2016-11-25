@@ -299,15 +299,6 @@ var util = {
     },
 
     /**
-     * Returns whether the browser is IE7
-     * @returns {boolean} True if the browser is IE7
-     */
-    isBrowserIE7: function() {
-        var browser = tui.util.browser;
-        return browser.msie && browser.version === 7; // eslint-disable-line no-magic-numbers
-    },
-
-    /**
      * Returns whether the given option is enabled. (Only for values the type of which can be Boolean or Object)
      * @param {*} option - option value
      * @returns {Boolean}

@@ -40,6 +40,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
+            coordRowModel: options.coordRowModel,
             whichSide: options.whichSide || 'R'
         });
 
@@ -386,10 +387,19 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var columnData = this._getColumnData();
         var columnWidthList = columnData.widthList;
         var $colList = this.$el.find('col');
+        var coordRowModel = this.coordRowModel;
 
         _.each(columnWidthList, function(columnWidth, index) {
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
         });
+
+        // Calls syncWithDom only from the Rside to prevent calling twice.
+        // Defered call to ensure that the execution occurs after both sides are rendered.
+        if (this.whichSide === 'R') {
+            _.defer(function() {
+                coordRowModel.syncWithDom();
+            });
+        }
     },
 
     /**

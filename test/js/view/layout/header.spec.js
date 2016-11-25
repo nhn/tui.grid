@@ -2,7 +2,6 @@
 
 var ModelManager = require('model/manager');
 var DomState = require('domState');
-var Header = require('view/layout/header');
 var ViewFactory = require('view/factory');
 
 var classNameConst = require('common/classNameConst');

@@ -10,14 +10,14 @@ it('domState:init', function() {
 });
 
 describe('domState', function() {
-    var domState;
+    var $parent, domState;
 
     beforeEach(function() {
-        domState = new DomState($('<div>'));
+        $parent = jasmine.getFixtures().set('<div />');
+        domState = new DomState($('<table>'));
     });
 
     it('getParentHeight', function() {
-        var $parent = $('<div>');
         $parent.append(domState.$el).height(300);
 
         expect(domState.getParentHeight()).toBe(300);

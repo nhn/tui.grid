@@ -10,19 +10,24 @@
 .lside-area .table
     border-right-width 0
 
-.foot-area 
-    .table 
+.foot-area
+    .table
         border-width 0 0 1px
     .cell
         border-width 0 1px
 
 .cell
     overflow hidden
-    white-space nowrap
-    *white-space pre
     border-width 1px
     border-style solid
-    padding 0 10px
+    white-space nowrap
+    padding 0
+
+    .cell-content
+        padding 3px 10px
+        overflow hidden
+        box-sizing border-box
+        word-break break-all
 
     img
         vertical-align middle

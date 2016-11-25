@@ -119,16 +119,16 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
      * @private
      */
     _onKeyDown: function(event) {
-        var keyCode = event.keyCode || event.which,
-            keyName = keyNameMap[keyCode],
-            action = this.keyDownActions[keyName],
-            $target = $(event.target),
-            param = {
-                $target: $target,
-                address: this._getCellAddress($target),
-                shiftKey: event.shiftKey,
-                value: $target.val()
-            };
+        var keyCode = event.keyCode || event.which;
+        var keyName = keyNameMap[keyCode];
+        var action = this.keyDownActions[keyName];
+        var $target = $(event.target);
+        var param = {
+            $target: $target,
+            address: this._getCellAddress($target),
+            shiftKey: event.shiftKey,
+            value: $target.val()
+        };
 
         this._executeCustomEventHandler(event);
 

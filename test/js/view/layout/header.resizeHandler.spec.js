@@ -107,8 +107,8 @@ describe('ResizeHandler', function() {
 
         it('columnWidthList 에 맞추어 div 포지션을 잘 세팅하는지 확인한다.', function() {
             handler._refreshHandlerPosition();
-            expect($handles.eq(0).css('left')).toEqual('31px');
-            expect($handles.eq(1).css('left')).toEqual('72px');
+            expect($handles.eq(0).css('left')).toEqual('28px');
+            expect($handles.eq(1).css('left')).toEqual('69px');
         });
     });
 
@@ -131,7 +131,7 @@ describe('ResizeHandler', function() {
 
                 expect(handler.isResizing).toBe(true);
                 expect(handler.$target.is($handles.eq(0))).toBe(true);
-                expect(handler.initialLeft).toBe(31);
+                expect(handler.initialLeft).toBe(28);
                 expect(handler.initialOffsetLeft).toBe(0);
                 expect(handler.initialWidth).toBe(30);
             });
@@ -157,7 +157,7 @@ describe('ResizeHandler', function() {
                 handler._onMouseDown(mouseEvent);
                 handler._onMouseMove(mouseEvent);
                 expect($target.css('left')).toBe('300px');
-                expect(dimensionModel.get('columnWidthList')[1]).toBe(299);
+                expect(dimensionModel.get('columnWidthList')[1]).toBe(302);
             });
         });
 

@@ -48,6 +48,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         });
 
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
+            .listenTo(this.dimensionModel, 'change:totalRowHeight', this._resetContainerHeight)
             .listenTo(this.dataModel, 'add remove reset', this._resetContainerHeight)
             .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
@@ -164,7 +165,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (startAction) {
-            this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
+            this._controlStartAction(inputData, indexData, columnName, $target.is('input, textarea'));
         }
     },
 
