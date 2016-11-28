@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Oct 27 2016 17:27:35 GMT+0900 (KST)"
- * version: 1.5.1
+ * bundle created at "Mon Nov 28 2016 12:23:06 GMT+0900 (KST)"
+ * version: 1.6.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -53,23 +53,55 @@
 	 * @author NHN Ent. FE Development Team
 	 */
 	'use strict';
+
+	var _ = __webpack_require__(1);
+
+	var View = __webpack_require__(2);
+	var ModelManager = __webpack_require__(5);
+	var ViewFactory = __webpack_require__(26);
+	var DomState = __webpack_require__(47);
+	var PublicEventEmitter = __webpack_require__(48);
+	var PainterManager = __webpack_require__(49);
+	var PainterController = __webpack_require__(59);
+	var NetAddOn = __webpack_require__(60);
+	var ComponentHolder = __webpack_require__(63);
+	var util = __webpack_require__(8);
+	var themeManager = __webpack_require__(64);
+	var themeNameConst = __webpack_require__(9).themeName;
+
+	var instanceMap = {};
+
+	__webpack_require__(70);
+
+	 /**
+	  * Toast UI Namespace
+	  * @namespace
+	  */
+	tui = window.tui = tui || {};
+
 	/**
 	 * Grid public API
-	 *
+	 * @class
 	 * @param {PropertiesHash} options
 	 *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
 	 *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
 	 *          can be used for setting this value dynamically.
 	 *      @param {string} [options.selectType=''] - Type of buttons shown next to the _number(rowKey) column.
-	 *          The string value 'checkbox' or 'radiobox' can be used.
+	 *          The string value 'checkbox' or 'radio' can be used.
 	 *          If not specified, the button column will not be shown.
 	 *      @param {boolean} [options.autoNumbering=true] - Specifies whether to assign a auto increasing number
 	 *          to each rows when rendering time.
 	 *      @param {number} [options.headerHeight=35] - The height of the header area.
 	 *          When rows in header are multiple (merged column), this value must be the total height of rows.
 	 *      @param {number} [options.rowHeight=27] - The height of each rows.
-	 *      @param {number} [options.displayRowCount=10] - The number of rows to be shown in the table area.
-	 *          Total height of grid will be set based on this value.
+	 *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
+	 *          expand with content.
+	 *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
+	 *          area expands.
+	 *          to total height of rows.
+	 *      @param {number} [options.displayRowCount=10] - Deprecated.
+	 *          <del>The number of rows to be shown in the table area.
+	 *          Total height of grid will be set based on this value.</del>
 	 *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
 	 *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
 	 *          without server.
@@ -92,6 +124,9 @@
 	 *              for overflowing content.
 	 *          @param {string} [options.columnModelList.align=left] - Horizontal alignment of the column content.
 	 *              Available values are 'left', 'center', 'right'.
+	 *          @param {string} [options.columnModelList.valign=middle] - Vertical alignment of the column content.
+	 *              Available values are 'top', 'middle', 'bottom'.
+	 *      @param {number} [options.valign=27] - The height of each rows.
 	 *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
 	 *              the column.
 	 *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
@@ -164,250 +199,9 @@
 	 *              @param {function} [options.footer.columnContent.template] - Template function which returns the
 	 *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
 	 *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
-	 * @constructor tui.Grid
-	 * @example
-	     <div id='grid'></div>
-	     <script>
-	 var grid = new tui.Grid({
-	    el: $('#grid'),
-	    columnFixCount: 2,  //(default=0)
-	    selectType: 'checkbox', //(default='')
-	    autoNumbering: true, //(default=true)
-	    headerHeight: 100, //(default=35)
-	    rowHeight: 27, // (default=27)
-	    displayRowCount: 10, //(default=10)
-	    fitToParentHeight: true // (default=false)
-	    showDummyRows: false // (default=false)
-	    minimumColumnWidth: 50, //(default=50)
-	    scrollX: true, //(default:true)
-	    scrollY: true, //(default:true)
-	    keyColumnName: 'column1', //(default:null)
-	    toolbar: false,
-	    resizeHandle: true, //(default:false)
-	    pagination: true, //(default:null)
-	    columnModelList: [
-	        {
-	            title: 'normal title',
-	            columnName: 'column0',
-	            className: 'bg_red',
-	            width: 100,
-	            isEllipsis: false,
-	            notUseHtmlEntity: false,
-	            defaultValue: 'empty',
-	            isIgnore: false
-	        },
-	        {
-	            title: 'hidden column',
-	            columnName: 'column1',
-	            isHidden: true
-	        },
-	        {
-	            title: 'formatter example',
-	            columnName: 'column2',
-	            formatter: function(value, row) {
-	                return '<img src="' + value + '" />';
-	            }
-	        },
-	        {
-	            title: 'converter example',
-	            columnName: 'column3',
-	            editOption: {
-	                type: 'text',
-	                converter: function(value, row) {
-	                    if (row.rowKey % 2 === 0) {
-	                        return 'Plain text value : ' + value;
-	                    }
-	                }
-	            }
-	        },
-	        {
-	            title: 'normal text input column',
-	            columnName: 'column4',
-	            editOption: {
-	                type: 'text',
-	                beforeContent: 'price:',
-	                afterContent: '$'
-	            },
-	            // - param {Object}  changeEvent
-	            //      - param {(number|string)} changeEvent.rowKey - The rowKey of the target cell
-	            //      - param {(number|string)} changeEvent.columnName - The field(column) name of the target cell
-	            //      - param {*} changeEvent.value - The changed value of the target cell
-	            //      - param {Object} changeEvent.instance - The instance of the Grid
-	            // - returns {boolean}
-	            changeBeforeCallback: function(changeEvent) {
-	                if (!/[0-9]+/.test(changeEvent.value)) {
-	                    alert('Integer only.');
-	                    return false;
-	                }
-	            },
-	            // - param {Object}  changeEvent
-	            //      - param {(number|string)} changeEvent.rowKey - The rowKey of the target cell
-	            //      - param {(number|string)} changeEvent.columnName - The field(column) name of the target
-	            //      - param {*} changeEvent.value - The changed value of the target cell
-	            //      - param {Object} changeEvent.instance - - The instance of the Grid
-	            // - returns {boolean}
-	            //
-	            changeAfterCallback: function(changeEvent) {}
-	        },
-	        {
-	            title: 'password input column',
-	            columnName: 'column5',
-	            width: 100,
-	            isRequired: true,
-	            isFixedWidth: true,
-	            editOption: {
-	                type: 'password',
-	                beforeContent: 'password:'
-	            }
-	        },
-	        {
-	            title: 'text input when editing mode',
-	            columnName: 'column6',
-	            editOption: {
-	                type: 'text',
-	                useViewMode: fales
-	            },
-	            isIgnore: true
-	        },
-	        {
-	            title: 'select box',
-	            columnName: 'column7',
-	            editOption: {
-	                type: 'select',
-	                list: [
-	                    {text: '1', value: 1},
-	                    {text: '2', value: 2},
-	                    {text: '3', value: 3},
-	                    {text: '4', value: 4}
-	                ]
-	            },
-	            relationList: [
-	                {
-	                    columnList: ['column8', 'column9'],
-	                    // - param {*} value - The changed value of the target cell
-	                    // - param {Object} rowData - The data of the row that contains the target cell
-	                    // - return {boolean}
-	                    isDisabled: function(value, rowData) {
-	                        return value == 2;
-	                    },
-	                    // - param {*} value - The changed value of the target cell
-	                    // - param {Object} rowData - The data of the row that contains the target cell
-	                    // - return {boolean}
-	                    //
-	                    isEditable: function(value, rowData) {
-	                        return value != 3;
-	                    },
-	                    // - param {*} value - The changed value of the target cell
-	                    // - param {Object} rowData - The data of the row that contains the target cell
-	                    // - return {{text: string, value: number}[]}
-	                    optionListChange: function(value, rowData) {
-	                        if (value == 1) {
-	                            console.log('changev return');
-	                            return [
-	                                { text: 'option 1', value: 1},
-	                                { text: 'option 2', value: 2},
-	                                { text: 'option 3', value: 3},
-	                                { text: 'option 4', value: 4}
-	                            ];
-	                        }
-	                    }
-	                }
-	            ]
-	        },
-	        {
-	            title: 'checkbox',
-	            columnName: 'column8',
-	            editOption: {
-	                type: 'checkbox',
-	                list: [
-	                    {text: 'option 1', value: 1},
-	                    {text: 'option 2', value: 2},
-	                    {text: 'option 3', value: 3},
-	                    {text: 'option 4', value: 4}
-	                ]
-	            }
-	        },
-	        {
-	            title: 'radio button',
-	            columnName: 'column9',
-	            editOption: {
-	                type: 'radio',
-	                list: [
-	                    {text: 'option 1', value: 1},
-	                    {text: 'option 2', value: 2},
-	                    {text: 'option 3', value: 3},
-	                    {text: 'option 4', value: 4}
-	                ]
-	            }
-	        },
-	    ],
-	    columnMerge: [
-	        {
-	            'columnName' : 'mergeColumn1',
-	            'title' : '1 + 2',
-	            'columnNameList' : ['column1', 'column2']
-	        },
-	        {
-	            'columnName' : 'mergeColumn2',
-	            'title' : '1 + 2 + 3',
-	            'columnNameList' : ['mergeColumn1', 'column3']
-	        },
-	        {
-	            'columnName' : 'mergeColumn3',
-	            'title' : '1 + 2 + 3 + 4 + 5',
-	            'columnNameList' : ['mergeColumn2', 'column4', 'column5']
-	        }
-	    ],
-	    footer: {
-	        height: 100,
-	        columnContent: {
-	            c1: {
-	              template: function(summary) {
-	                return 'Total: ' + summary.sum + '<br> Average: ' + summary.avg;
-	              }
-	            },
-	            c2: {
-	              useAutoSummary: false,
-	              template: function() {
-	                return 'c2-footer';
-	              }
-	            }
-	        }
-	    }
-	});
-	     </script>
-	 *
+	 * @param {Object} options - Options set by user
 	 */
-	var _ = __webpack_require__(1);
-
-	var View = __webpack_require__(2);
-	var ModelManager = __webpack_require__(5);
-	var ViewFactory = __webpack_require__(25);
-	var DomState = __webpack_require__(46);
-	var PublicEventEmitter = __webpack_require__(47);
-	var PainterManager = __webpack_require__(48);
-	var PainterController = __webpack_require__(58);
-	var NetAddOn = __webpack_require__(59);
-	var ComponentHolder = __webpack_require__(62);
-	var util = __webpack_require__(8);
-	var themeManager = __webpack_require__(63);
-	var themeNameConst = __webpack_require__(9).themeName;
-
-	var instanceMap = {};
-
-	__webpack_require__(69);
-
-	 /**
-	  * Toast UI
-	  * @namespace
-	  */
-	tui = window.tui = tui || {};
-
 	tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
-	    /**
-	     * Initializes the instance.
-	     * @param {Object} options - Options set by user
-	     */
 	    initialize: function(options) {
 	        var domState = new DomState(this.$el);
 
@@ -419,6 +213,7 @@
 	        this.viewFactory = this._createViewFactory(domState, options);
 	        this.container = this.viewFactory.createContainer();
 	        this.publicEventEmitter = this._createPublicEventEmitter();
+	        this.domState = domState;
 
 	        this.container.render();
 	        this.refreshLayout();
@@ -464,6 +259,7 @@
 	        return new PainterManager({
 	            gridId: this.id,
 	            selectType: this.modelManager.columnModel.get('selectType'),
+	            isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
 	            controller: controller
 	        });
 	    },
@@ -1086,10 +882,11 @@
 	    /**
 	     * Sets the number of rows to be shown in the table area.
 	     * @api
+	     * @deprecated
 	     * @param {number} count - The number of rows
 	     */
 	    setDisplayRowCount: function(count) {
-	        this.modelManager.dimensionModel.set('displayRowCount', count);
+	        this.modelManager.dimensionModel.setBodyHeightWithRowCount(count);
 	    },
 
 	    /**
@@ -1108,6 +905,14 @@
 	     */
 	    refreshLayout: function() {
 	        this.modelManager.dimensionModel.refreshLayout();
+	    },
+
+	    /**
+	     * Reset the width of each column by using initial setting of column models.
+	     * @api
+	     */
+	    resetColumnWidths: function() {
+	        this.modelManager.dimensionModel.resetColumnWidths();
 	    },
 
 	    /**
@@ -1305,11 +1110,9 @@
 	 * Base class for Views
 	 * @module base/view
 	 * @mixes module:base/common
+	 * @ignore
 	 */
 	var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    initialize: function() {
 	        this._children = [];
 	    },
@@ -1411,6 +1214,7 @@
 	 * Mixin object for base class
 	 * @mixin
 	 * @exports module:base/common
+	 * @ignore
 	 */
 	var common = {
 	    /**
@@ -1442,11 +1246,12 @@
 	var RowListData = __webpack_require__(10);
 	var ToolbarModel = __webpack_require__(15);
 	var DimensionModel = __webpack_require__(16);
-	var FocusModel = __webpack_require__(17);
-	var RenderModel = __webpack_require__(19);
-	var SmartRenderModel = __webpack_require__(22);
-	var SelectionModel = __webpack_require__(23);
-	var SummaryModel = __webpack_require__(24);
+	var CoordRowModel = __webpack_require__(17);
+	var FocusModel = __webpack_require__(18);
+	var RenderModel = __webpack_require__(20);
+	var SmartRenderModel = __webpack_require__(23);
+	var SelectionModel = __webpack_require__(24);
+	var SummaryModel = __webpack_require__(25);
 
 	var defaultOptions = {
 	    columnFixCount: 0,
@@ -1458,7 +1263,6 @@
 	    rowHeight: 27,
 	    fitToParentHeight: false,
 	    showDummyRows: false,
-	    displayRowCount: 10,
 	    minimumColumnWidth: 50,
 	    notUseSmartRendering: false,
 	    columnMerge: [],
@@ -1470,14 +1274,12 @@
 
 	/**
 	 * Model Manager
-	 * @module modelManager
+	 * @module model/manager
+	 * @param {Object} options - Options to create models
+	 * @param {module/domState} domState - DomState instance
+	 * @ignore
 	 */
 	var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options to create models
-	     * @param {module/domState} domState - DomState instance
-	     */
 	    init: function(options, domState) {
 	        options = $.extend(true, {}, defaultOptions, options);
 
@@ -1487,6 +1289,7 @@
 	        this.dataModel = this._createDataModel(options, domState);
 	        this.toolbarModel = this._createToolbarModel(options);
 	        this.dimensionModel = this._createDimensionModel(options, domState);
+	        this.coordRowModel = this._createCoordRowModel(domState);
 	        this.focusModel = this._createFocusModel(domState);
 	        this.renderModel = this._createRenderModel(options);
 	        this.selectionModel = this._createSelectionModel();
@@ -1495,6 +1298,7 @@
 	        // todo: remove dependency
 	        this.focusModel.renderModel = this.renderModel;
 	        this.dimensionModel.renderModel = this.renderModel;
+	        this.dimensionModel.coordRowModel = this.coordRowModel;
 	    },
 
 	    /**
@@ -1550,19 +1354,41 @@
 	    _createDimensionModel: function(options, domState) {
 	        var attrs = {
 	            headerHeight: options.headerHeight,
+	            bodyHeight: options.bodyHeight,
 	            footerHeight: options.footer ? options.footer.height : 0,
 	            rowHeight: options.rowHeight,
-
 	            fitToParentHeight: options.fitToParentHeight,
 	            scrollX: !!options.scrollX,
 	            scrollY: !!options.scrollY,
 	            minimumColumnWidth: options.minimumColumnWidth,
-	            displayRowCount: options.displayRowCount
+	            isFixedRowHeight: options.isFixedRowHeight,
+	            isFixedHeight: options.isFixedHeight
 	        };
-
-	        return new DimensionModel(attrs, {
+	        var dimensionModel = new DimensionModel(attrs, {
 	            columnModel: this.columnModel,
 	            dataModel: this.dataModel,
+	            domState: domState
+	        });
+
+	        // The displayRowCount option is deprecated.
+	        // This code should be removed after the option is removed.
+	        if (_.isUndefined(options.bodyHeight) && options.displayRowCount) {
+	            dimensionModel.setBodyHeightWithRowCount(options.displayRowCount);
+	        }
+
+	        return dimensionModel;
+	    },
+
+	    /**
+	     * Creates an instance of coordRow model and returns it
+	     * @param {module:domState} domState - domState
+	     * @returns {module:model/coordRow}
+	     * @private
+	     */
+	    _createCoordRowModel: function(domState) {
+	        return new CoordRowModel({
+	            dataModel: this.dataModel,
+	            dimensionModel: this.dimensionModel,
 	            domState: domState
 	        });
 	    },
@@ -1615,7 +1441,8 @@
 	            columnModel: this.columnModel,
 	            dataModel: this.dataModel,
 	            dimensionModel: this.dimensionModel,
-	            focusModel: this.focusModel
+	            focusModel: this.focusModel,
+	            coordRowModel: this.coordRowModel
 	        };
 	        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
@@ -1685,17 +1512,15 @@
 	 * 컬럼 모델 데이터를 다루는 객체
 	 * @module model/data/columnModel
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    initialize: function() {
 	        Model.prototype.initialize.apply(this, arguments);
 	        this.textType = {
-	            'normal': true,
-	            'text': true,
-	            'password': true
+	            normal: true,
+	            text: true,
+	            password: true
 	        };
 	        this._setColumnModelList(this.get('columnModelList'));
 	        this.on('change', this._onChange, this);
@@ -1717,7 +1542,7 @@
 	    /**
 	     * 메타컬럼모델들을 초기화한다.
 	     * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
-	     * @returns {Array} dset - 초기화가 완료된 메타컬럼 모델 리스트
+	     * @returns {Array} dest - 초기화가 완료된 메타컬럼 모델 리스트
 	     * @private
 	     */
 	    _initializeMetaColumns: function(source) {
@@ -1747,14 +1572,15 @@
 	     * @private
 	     */
 	    _initializeNumberColumn: function(metaColumnModelList) {
-	        var hasNumberColumn = this.get('hasNumberColumn'),
-	            numberColumn = {
-	                columnName: '_number',
-	                align: 'center',
-	                title: 'No.',
-	                isFixedWidth: true,
-	                width: 60
-	            };
+	        var hasNumberColumn = this.get('hasNumberColumn');
+	        var numberColumn = {
+	            columnName: '_number',
+	            align: 'center',
+	            title: 'No.',
+	            isFixedWidth: true,
+	            width: 60
+	        };
+
 	        if (!hasNumberColumn) {
 	            numberColumn.isHidden = true;
 	        }
@@ -1768,17 +1594,17 @@
 	     * @private
 	     */
 	    _initializeButtonColumn: function(metaColumnModelList) {
-	        var selectType = this.get('selectType'),
-	            buttonColumn = {
-	                columnName: '_button',
-	                isHidden: false,
-	                align: 'center',
-	                editOption: {
-	                    type: 'mainButton'
-	                },
-	                isFixedWidth: true,
-	                width: 40
-	            };
+	        var selectType = this.get('selectType');
+	        var buttonColumn = {
+	            columnName: '_button',
+	            isHidden: false,
+	            align: 'center',
+	            editOption: {
+	                type: 'mainButton'
+	            },
+	            isFixedWidth: true,
+	            width: 40
+	        };
 
 	        if (selectType === 'checkbox') {
 	            buttonColumn.title = '<input type="checkbox"/>';
@@ -1799,8 +1625,8 @@
 	     * @private
 	     */
 	    _extendColumnList: function(columnObj, columnModelList) {
-	        var columnName = columnObj.columnName,
-	            index = _.findIndex(columnModelList, {columnName: columnName});
+	        var columnName = columnObj.columnName;
+	        var index = _.findIndex(columnModelList, {columnName: columnName});
 
 	        if (index === -1) {
 	            columnModelList.push(columnObj);
@@ -1817,6 +1643,7 @@
 	     */
 	    at: function(index, isVisible) {
 	        var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('dataColumnModelList');
+
 	        return columnModelList[index];
 	    },
 
@@ -1855,9 +1682,9 @@
 	     * @returns {Array}  조회한 컬럼모델 배열
 	     */
 	    getVisibleColumnModelList: function(whichSide, withMeta) {
-	        var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount(),
-	            visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta),
-	            columnModelList;
+	        var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount();
+	        var visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta);
+	        var columnModelList;
 
 	        whichSide = whichSide && whichSide.toUpperCase();
 
@@ -1877,11 +1704,11 @@
 	     * @returns {number} count
 	     */
 	    getVisibleMetaColumnCount: function() {
-	        var models = this.get('metaColumnModelList'),
-	            totalLength = models.length,
-	            hiddenLength = _.where(models, {
-	                isHidden: true
-	            }).length;
+	        var models = this.get('metaColumnModelList');
+	        var totalLength = models.length;
+	        var hiddenLength = _.where(models, {
+	            isHidden: true
+	        }).length;
 
 	        return (totalLength - hiddenLength);
 	    },
@@ -1892,16 +1719,19 @@
 	     * @returns {number} Visible columnFix count
 	     */
 	    getVisibleColumnFixCount: function(withMeta) {
-	        var count = this.get('columnFixCount'),
-	            fixedColumns = _.first(this.get('dataColumnModelList'), count),
-	            visibleFixedColumns = _.filter(fixedColumns, function(column) {
-	                return !column.isHidden;
-	            }),
-	            visibleCount = visibleFixedColumns.length;
+	        var count = this.get('columnFixCount');
+	        var fixedColumns = _.first(this.get('dataColumnModelList'), count);
+	        var visibleFixedColumns, visibleCount;
+
+	        visibleFixedColumns = _.filter(fixedColumns, function(column) {
+	            return !column.isHidden;
+	        });
+	        visibleCount = visibleFixedColumns.length;
 
 	        if (withMeta) {
 	            visibleCount += this.getVisibleMetaColumnCount();
 	        }
+
 	        return visibleCount;
 	    },
 
@@ -1930,8 +1760,8 @@
 	     * @returns {string} 해당하는 columnName 의 editType 을 반환한다.
 	     */
 	    getEditType: function(columnName) {
-	        var columnModel = this.getColumnModel(columnName),
-	            editType = 'normal';
+	        var columnModel = this.getColumnModel(columnName);
+	        var editType = 'normal';
 
 	        if (columnName === '_button' || columnName === '_number') {
 	            editType = columnName;
@@ -1965,11 +1795,10 @@
 	     * @private
 	     */
 	    _getRelationListMap: function(columnModelList) {
-	        var columnName,
-	            relationListMap = {};
+	        var relationListMap = {};
 
 	        _.each(columnModelList, function(columnModel) {
-	            columnName = columnModel.columnName;
+	            var columnName = columnModel.columnName;
 	            if (columnModel.relationList) {
 	                relationListMap[columnName] = columnModel.relationList;
 	            }
@@ -1982,8 +1811,9 @@
 	     * @returns {Array} isIgnore 가 true 로 설정된 columnName 배열.
 	     */
 	    getIgnoredColumnNameList: function() {
-	        var columnModelLsit = this.get('dataColumnModelList'),
-	            ignoreColumnNameList = [];
+	        var columnModelLsit = this.get('dataColumnModelList');
+	        var ignoreColumnNameList = [];
+
 	        _.each(columnModelLsit, function(columnModel) {
 	            if (columnModel.isIgnore) {
 	                ignoreColumnNameList.push(columnModel.columnName);
@@ -2037,9 +1867,9 @@
 	     * @private
 	     */
 	    _onChange: function(model) {
-	        var changed = model.changed,
-	            columnFixCount = changed.columnFixCount,
-	            columnModelList = changed.columnModelList;
+	        var changed = model.changed;
+	        var columnFixCount = changed.columnFixCount;
+	        var columnModelList = changed.columnModelList;
 
 	        if (!columnModelList) {
 	            columnModelList = this.get('dataColumnModelList');
@@ -2083,10 +1913,10 @@
 	     * @returns {Array.<string>} Unit column names
 	     */
 	    getUnitColumnNamesIfMerged: function(columnName) {
-	        var columnMergeInfoList = this.get('columnMerge'),
-	            stackForSearch = [],
-	            searchedNames = [],
-	            name, columnModel, columnMergeInfoItem;
+	        var columnMergeInfoList = this.get('columnMerge');
+	        var stackForSearch = [];
+	        var searchedNames = [];
+	        var name, columnModel, columnMergeInfoItem;
 
 	        stackForSearch.push(columnName);
 	        while (stackForSearch.length) {
@@ -2140,6 +1970,7 @@
 	 * Base class for Models
 	 * @module base/model
 	 * @mixes module:base/common
+	 * @ignore
 	 */
 	var Model = Backbone.Model.extend(/**@lends module:base/model.prototype*/{});
 
@@ -2165,6 +1996,7 @@
 	/**
 	* util 모듈
 	* @module util
+	* @ignore
 	*/
 	var util = {
 	    uniqueId: 0,
@@ -2453,15 +2285,6 @@
 	    },
 
 	    /**
-	     * Returns whether the browser is IE7
-	     * @returns {boolean} True if the browser is IE7
-	     */
-	    isBrowserIE7: function() {
-	        var browser = tui.util.browser;
-	        return browser.msie && browser.version === 7; // eslint-disable-line no-magic-numbers
-	    },
-
-	    /**
 	     * Returns whether the given option is enabled. (Only for values the type of which can be Boolean or Object)
 	     * @param {*} option - option value
 	     * @returns {Boolean}
@@ -2579,7 +2402,8 @@
 	    },
 	    dimension: {
 	        CELL_BORDER_WIDTH: 1,
-	        TABLE_BORDER_WIDTH: 1
+	        TABLE_BORDER_WIDTH: 1,
+	        RESIZE_HANDLE_WIDTH: 7
 	    },
 	    attrName: {
 	        ROW_KEY: 'data-row-key',
@@ -2628,13 +2452,11 @@
 	 * Grid.setRowList 를 사용하여 콜렉션을 설정한다.
 	 * @module model/data/rowList
 	 * @extends module:base/collection
+	 * @param {Array} models - 콜랙션에 추가할 model 리스트
+	 * @param {Object} options - 생성자의 option 객체
+	 * @ignore
 	 */
 	var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
-	    /**
-	     * @param {Array} models    콜랙션에 추가할 model 리스트
-	     * @param {Object} options   생성자의 option 객체
-	     * @constructs
-	     */
 	    initialize: function(models, options) {
 	        Collection.prototype.initialize.apply(this, arguments);
 	        this.setOwnProperties({
@@ -2968,13 +2790,20 @@
 	     * @returns {number} a가 b보다 작으면 -1, 같으면 0, 크면 1. 내림차순이면 반대.
 	     */
 	    comparator: function(a, b) {
-	        var columnName = this.sortOptions.columnName,
-	            isAscending = this.sortOptions.isAscending,
-	            valueA = a.get(columnName),
-	            valueB = b.get(columnName),
-	            result = 0;
+	        var columnName = this.sortOptions.columnName;
+	        var isAscending = this.sortOptions.isAscending;
+	        var valueA = a.get(columnName);
+	        var valueB = b.get(columnName);
 
-	        if (valueA < valueB) {
+	        var isEmptyA = _.isNull(valueA) || _.isUndefined(valueA) || valueA === '';
+	        var isEmptyB = _.isNull(valueB) || _.isUndefined(valueB) || valueB === '';
+	        var result = 0;
+
+	        if (isEmptyA && !isEmptyB) {
+	            result = -1;
+	        } else if (!isEmptyA && isEmptyB) {
+	            result = 1;
+	        } else if (valueA < valueB) {
 	            result = -1;
 	        } else if (valueA > valueB) {
 	            result = 1;
@@ -3179,31 +3008,25 @@
 	        return value;
 	    },
 
+
 	    /**
 	     * Sets the vlaue of the cell identified by the specified rowKey and columnName.
-	     * @param {(Number|String)} rowKey    행 데이터의 고유 키
-	     * @param {String} columnName   컬럼 이름
-	     * @param {(Number|String)} columnValue 할당될 값
-	     * @param {Boolean} [silent=false] 이벤트 발생 여부. true 로 변경할 상황은 거의 없다.
-	     * @returns {Boolean} True if affected row is exist
+	     * @param {(Number|String)} rowKey - rowKey
+	     * @param {String} columnName - columnName
+	     * @param {(Number|String)} value - value
+	     * @param {Boolean} [silent=false] - whether set silently
+	     * @returns {Boolean} True if affected row exists
 	     */
-	    setValue: function(rowKey, columnName, columnValue, silent) {
-	        var row = this.get(rowKey),
-	            obj = {},
-	            result;
+	    setValue: function(rowKey, columnName, value, silent) {
+	        var row = this.get(rowKey);
 
-	        columnValue = _.isString(columnValue) ? $.trim(columnValue) : columnValue;
 	        if (row) {
-	            obj[columnName] = columnValue;
-	            row.set(obj, {
+	            row.set(columnName, value, {
 	                silent: silent
 	            });
-	            result = true;
-	        } else {
-	            result = false;
+	            return true;
 	        }
-
-	        return result;
+	        return false;
 	    },
 
 	    /**
@@ -3602,7 +3425,7 @@
 	        _.each(rowKeys, function(rowKey) {
 	            _.each(columnNames, function(columnName) {
 	                this.del(rowKey, columnName, true);
-	                this.get(rowKey).validateCell(columnName);
+	                this.get(rowKey).validateCell(columnName, true);
 	            }, this);
 	        }, this);
 
@@ -3794,6 +3617,7 @@
 	 * Base class for Collection
 	 * @module base/collection
 	 * @mixes module:base/common
+	 * @ignore
 	 */
 	var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
 	    /**
@@ -3842,16 +3666,15 @@
 
 	// Error code for validtaion
 	var VALID_ERR_REQUIRED = 'REQUIRED';
+	var VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
 
 	/**
 	 * Data 중 각 행의 데이터 모델 (DataSource)
 	 * @module model/data/row
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var Row = Model.extend(/**@lends module:model/data/row.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    initialize: function() {
 	        Model.prototype.initialize.apply(this, arguments);
 	        this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
@@ -3917,12 +3740,14 @@
 	     * @private
 	     */
 	    _validateCellData: function(columnName) {
-	        var columnModel = this.columnModel.getColumnModel(columnName),
-	            value = this.get(columnName),
-	            errorCode = '';
+	        var columnModel = this.columnModel.getColumnModel(columnName);
+	        var value = this.get(columnName);
+	        var errorCode = '';
 
 	        if (columnModel.isRequired && util.isBlank(value)) {
 	            errorCode = VALID_ERR_REQUIRED;
+	        } else if (columnModel.dataType === 'number' && !_.isNumber(value)) {
+	            errorCode = VALID_ERR_TYPE_NUMBER;
 	        }
 	        return errorCode;
 	    },
@@ -4138,6 +3963,23 @@
 	            rowKey = this.get('rowKey');
 
 	        return this.extraDataManager.getRowSpanData(columnName, rowKey, isRowSpanEnable);
+	    },
+
+	    /**
+	     * Returns the _extraData.height
+	     * @returns {number}
+	     */
+	    getHeight: function() {
+	        return this.extraDataManager.getHeight();
+	    },
+
+	    /**
+	     * Sets the height of the row
+	     * @param {number} height - height
+	     */
+	    setHeight: function(height) {
+	        this.extraDataManager.setHeight(height);
+	        this._triggerExtraDataChangeEvent();
 	    },
 
 	    /**
@@ -4389,15 +4231,13 @@
 	/**
 	 * Data 중 각 행의 데이터 모델 (DataSource)
 	 * @module data/row
+	 * @param {Object} data - Data object
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var ExtraDataManager = tui.util.defineClass(/**@lends module:model/data/extraData.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} data - Data object
-	     */
 	    init: function(data) {
-	        this.data = data;
+	        this.data = data || {};
 	    },
 
 	    /**
@@ -4577,6 +4417,22 @@
 	            classNameData.row = this._removeClassNameFromArray(classNameData.row, className);
 	            this.className = classNameData;
 	        }
+	    },
+
+	    /**
+	     * Sets the height of the row
+	     * @param {number} value - value
+	     */
+	    setHeight: function(value) {
+	        this.data.height = value;
+	    },
+
+	    /**
+	     * Returns the height of the row
+	     * @returns {number}
+	     */
+	    getHeight: function() {
+	        return this.data.height;
 	    }
 	});
 
@@ -4685,6 +4541,7 @@
 	    CELL_CONTENT_BEFORE: 'content-before',
 	    CELL_CONTENT_AFTER: 'content-after',
 	    CELL_CONTENT_INPUT: 'content-input',
+	    CELL_CONTENT_TEXT: 'content-text',
 
 	    // buttons
 	    BTN_TEXT: 'btn-text',
@@ -4737,6 +4594,7 @@
 	 * Toolbar Model
 	 * @module model/toolbar
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var Toolbar = Model.extend(/**@lends module:model/toolbar.prototype */{
 	    initialize: function(options) {
@@ -4788,14 +4646,12 @@
 	/**
 	 * 크기 관련 데이터 저장
 	 * @module model/dimension
+	 * @param {Object} attrs - Attributes
+	 * @param {Object} options - Options
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} attrs - Attributes
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(attrs, options) {
 	        Model.prototype.initialize.apply(this, arguments);
 
@@ -4817,20 +4673,13 @@
 	        this.dataModel = options.dataModel;
 	        this.domState = options.domState;
 
-	        this.listenTo(this.columnModel, 'columnModelChange', this._initColumnWidthVariables);
-	        this.listenTo(this.dataModel, 'add remove reset', this._resetTotalRowHeight);
-
+	        this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
 	        this.on('change:width', this._onWidthChange, this);
-	        this.on('change:bodyHeight', this._resetDisplayRowCount, this);
-	        this.on('change:displayRowCount', this._resetBodyHeight, this);
+	        this.on('change:isFixedHeight', this._resetSyncHeightHandler);
 
-	        this._initColumnWidthVariables();
-	        this._resetBodyHeight();
+	        this._resetSyncHeightHandler();
+	        this.resetColumnWidths();
 	    },
-
-	    models: null,
-
-	    columnModel: null,
 
 	    defaults: {
 	        offsetLeft: 0,
@@ -4848,17 +4697,18 @@
 
 	        rowHeight: 0,
 	        totalRowHeight: 0,
+	        isFixedRowHeight: true,
 
 	        rsideWidth: 0,
 	        lsideWidth: 0,
 	        columnWidthList: [],
 
 	        minimumColumnWidth: 0,
-	        displayRowCount: 1,
 	        scrollBarSize: 17,
 	        scrollX: true,
 	        scrollY: true,
-	        fitToParentHeight: false
+	        fitToParentHeight: false,
+	        isFixedHeight: false
 	    },
 
 	    /**
@@ -4874,6 +4724,26 @@
 	        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
 	        return availableTotalWidth;
+	    },
+
+	    /**
+	     * Attach/Detach event handler of change:totalRowHeight event based on the isFixedHeight.
+	     * @private
+	     */
+	    _resetSyncHeightHandler: function() {
+	        if (this.get('isFixedHeight')) {
+	            this.off('change:totalRowHeight');
+	        } else {
+	            this.on('change:totalRowHeight', this._syncBodyHeightWithTotalRowHeight);
+	        }
+	    },
+
+	    /**
+	     * Sets the bodyHeight value based on the totalRowHeight value.
+	     * @private
+	     */
+	    _syncBodyHeightWithTotalRowHeight: function() {
+	        this.set('bodyHeight', this.get('totalRowHeight') + this.getScrollXHeight());
 	    },
 
 	    /**
@@ -4894,34 +4764,6 @@
 	        });
 
 	        return appliedList;
-	    },
-
-	    /**
-	     * Resets the 'totalRowHeight' attribute.
-	     * @private
-	     */
-	    _resetTotalRowHeight: function() {
-	        var rowHeight = this.get('rowHeight');
-	        var rowCount = this.dataModel.length;
-
-	        this.set('totalRowHeight', util.getHeight(rowCount, rowHeight));
-	    },
-
-	    /**
-	     * Resets the 'displayRowCount' attribute.
-	     * @private
-	     */
-	    _resetDisplayRowCount: function() {
-	        var actualBodyHeight, displayRowCount;
-
-	        // To prevent recursive call with _resetBodyHeight (called by change:displayRowCount event)
-	        if (_.has(this.changed, 'displayRowCount')) {
-	            return;
-	        }
-	        actualBodyHeight = this.get('bodyHeight') - this.getScrollXHeight();
-	        displayRowCount = util.getDisplayRowCount(actualBodyHeight, this.get('rowHeight'));
-
-	        this.set('displayRowCount', displayRowCount);
 	    },
 
 	    /**
@@ -5078,10 +4920,9 @@
 	    },
 
 	    /**
-	     * columnModel 에 설정된 넓이값을 기준으로 컬럼넓이와 관련된 변수들의 값을 초기화한다.
-	     * @private
+	     * Reset the width of each column by using initial setting of column models.
 	     */
-	    _initColumnWidthVariables: function() {
+	    resetColumnWidths: function() {
 	        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
 	        var commonMinWidth = this.get('minimumColumnWidth');
 	        var widthList = [];
@@ -5267,17 +5108,21 @@
 	     * @param {Number} rowKey - row key
 	     * @param {Number} rowSpanCount - the count of rowspan
 	     * @returns {{top: Number, bottom: Number}}
+	     * @private
 	     */
 	    _getCellVerticalPosition: function(rowKey, rowSpanCount) {
-	        var dataModel = this.dataModel;
-	        var rowHeight = this.get('rowHeight');
-	        var rowIdx = dataModel.indexOfRowKey(rowKey);
-	        var top = util.getHeight(rowIdx, rowHeight);
-	        var height = util.getHeight(rowSpanCount, rowHeight);
+	        var firstIdx, lastIdx, top, bottom;
+	        var coordRowModel = this.coordRowModel;
+
+	        firstIdx = this.dataModel.indexOfRowKey(rowKey);
+	        lastIdx = firstIdx + rowSpanCount - 1;
+	        top = coordRowModel.getOffsetAt(firstIdx);
+	        bottom = coordRowModel.getOffsetAt(lastIdx) +
+	            coordRowModel.getHeightAt(lastIdx) + CELL_BORDER_WIDTH;
 
 	        return {
 	            top: top,
-	            bottom: top + height
+	            bottom: bottom
 	        };
 	    },
 
@@ -5484,11 +5329,8 @@
 	     */
 	    _calcRowIndexFromPositionY: function(containerY) {
 	        var cellY = containerY + this.renderModel.get('scrollTop');
-	        var tempIndex = Math.floor(cellY / (this.get('rowHeight') + CELL_BORDER_WIDTH));
-	        var min = 0;
-	        var max = Math.max(min, this.dataModel.length - 1);
 
-	        return util.clamp(tempIndex, min, max);
+	        return this.coordRowModel.indexOf(cellY);
 	    },
 
 	    /**
@@ -5575,21 +5417,6 @@
 	    },
 
 	    /**
-	     * Resets the 'bodyHeight' attribute.
-	     * @private
-	     */
-	    _resetBodyHeight: function() {
-	        var rowListHeight;
-
-	        // To prevent recursive call with _resetDisplayRowCount (called by change:bodyHeight event)
-	        if (_.has(this.changed, 'bodyHeight')) {
-	            return;
-	        }
-	        rowListHeight = util.getHeight(this.get('displayRowCount'), this.get('rowHeight'));
-	        this.set('bodyHeight', rowListHeight + this.getScrollXHeight());
-	    },
-
-	    /**
 	     * Return height of X-scrollBar.
 	     * If no X-scrollBar, return 0
 	     * @returns {number} Height of X-scrollBar
@@ -5663,7 +5490,7 @@
 
 	    /**
 	     * Sets the height of the dimension.
-	     * (Resets the bodyHeight and displayRowCount relative to the dimension height)
+	     * (Resets the bodyHeight relative to the dimension height)
 	     * @param  {number} height - The height of the dimension
 	     * @private
 	     */
@@ -5746,6 +5573,21 @@
 	        }
 
 	        return columnWidthList;
+	    },
+
+	    /**
+	     * Set bodyHeight value based on the count of row.
+	     * (This method is temporary and required only until the displayRowCount option is removed)
+	     * @param {number} rowCount - row count
+	     */
+	    setBodyHeightWithRowCount: function(rowCount) {
+	        var rowHeight = this.get('rowHeight');
+	        var scrollXHeight = this.getScrollXHeight();
+
+	        this.set({
+	            isFixedHeight: true,
+	            bodyHeight: (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight
+	        });
 	    }
 	});
 
@@ -5754,6 +5596,178 @@
 
 /***/ },
 /* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Manage coordinates of rows
+	 * @author NHN Ent. FE Development Lab
+	 */
+	'use strict';
+
+	var Model = __webpack_require__(7);
+	var CELL_BORDER_WIDTH = __webpack_require__(9).dimension.CELL_BORDER_WIDTH;
+
+	/**
+	 * @module model/coordRow
+	 * @param {Object} options - Options
+	 * @extends module:base/model
+	 * @ignore
+	 */
+	var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
+	    initialize: function(options) {
+	        this.dataModel = options.dataModel;
+	        this.dimensionModel = options.dimensionModel;
+	        this.domState = options.domState;
+
+	        /**
+	         * Height of each rows
+	         * @type {Array}
+	         */
+	        this.rowHeights = [];
+
+	        /**
+	         * Offset of each rows
+	         * @type {Array}
+	         */
+	        this.rowOffsets = [];
+
+	        this.listenTo(this.dataModel, 'add remove reset sort', this._onChangeData);
+	    },
+
+	    /**
+	     * Reset coordinate data with real DOM height of cells
+	     */
+	    syncWithDom: function() {
+	        var domRowHeights, dataRowHeights, rowHeights;
+	        var i, len;
+
+	        if (this.dimensionModel.get('isFixedRowHeight')) {
+	            return;
+	        }
+
+	        domRowHeights = this.domState.getRowHeights();
+	        dataRowHeights = this._getHeightFromData();
+	        rowHeights = [];
+
+	        for (i = 0, len = dataRowHeights.length; i < len; i += 1) {
+	            rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
+	        }
+	        this._reset(rowHeights);
+	        this.trigger('syncWithDom');
+	    },
+
+
+	    /**
+	     * Returns the height of rows from dataModel as an array
+	     * @returns {Array.<number>}
+	     * @private
+	     */
+	    _getHeightFromData: function() {
+	        var defHeight = this.dimensionModel.get('rowHeight');
+	        var rowHeights = [];
+
+	        this.dataModel.each(function(row, index) {
+	            rowHeights[index] = (row.getHeight() || defHeight);
+	        });
+
+	        return rowHeights;
+	    },
+
+	    /**
+	     * Event handler to be called when dataModel is changed
+	     * @private
+	     */
+	    _onChangeData: function() {
+	        this._reset(this._getHeightFromData());
+	    },
+
+	    /**
+	     * Initialize the values of rowHeights and rowOffsets
+	     * @param {Array.<number>} rowHeights - array of row height
+	     * @private
+	     */
+	    _reset: function(rowHeights) {
+	        var rowOffsets = [];
+	        var totalRowHeight = 0;
+
+	        _.each(rowHeights, function(height, index) {
+	            var prevOffset = index ? (rowOffsets[index - 1] + CELL_BORDER_WIDTH) : 0;
+	            var prevHeight = index ? rowHeights[index - 1] : 0;
+
+	            rowOffsets[index] = prevOffset + prevHeight;
+	        });
+
+	        this.rowHeights = rowHeights;
+	        this.rowOffsets = rowOffsets;
+
+	        if (rowHeights.length) {
+	            totalRowHeight = _.last(rowOffsets) + _.last(rowHeights) + CELL_BORDER_WIDTH;
+	        }
+	        this.dimensionModel.set('totalRowHeight', totalRowHeight);
+	        this.trigger('reset');
+	    },
+
+	    /**
+	     * Returns the height of the row of given index
+	     * @param {number} index - row index
+	     * @returns {number}
+	     */
+	    getHeightAt: function(index) {
+	        return this.rowHeights[index];
+	    },
+
+	    /**
+	     * Returns the offset of the row of given index
+	     * @param {number} index - row index
+	     * @returns {number}
+	     */
+	    getOffsetAt: function(index) {
+	        return this.rowOffsets[index];
+	    },
+
+	    /**
+	     * Returns the height of the row of the given rowKey
+	     * @param {number} rowKey - rowKey
+	     * @returns {number}
+	     */
+	    getHeight: function(rowKey) {
+	        var index = this.dataModel.indexOfRowKey(rowKey);
+	        return this.getHeightAt(index);
+	    },
+
+	    /**
+	     * Returns the offset of the row of the given rowKey
+	     * @param {number} rowKey - rowKey
+	     * @returns {number}
+	     */
+	    getOffset: function(rowKey) {
+	        var index = this.dataModel.indexOfRowKey(rowKey);
+	        return this.getOffsetAt(index);
+	    },
+
+	    /**
+	     * Returns the index of the row which contains given position
+	     * @param {number} position - target position
+	     * @returns {number}
+	     */
+	    indexOf: function(position) {
+	        var rowOffsets = this.rowOffsets;
+	        var idx = 0;
+
+	        position += CELL_BORDER_WIDTH;
+	        while (rowOffsets[idx] <= position) {
+	            idx += 1;
+	        }
+
+	        return idx - 1;
+	    }
+	});
+
+	module.exports = CoordRow;
+
+
+/***/ },
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5766,20 +5780,18 @@
 
 	var Model = __webpack_require__(7);
 	var util = __webpack_require__(8);
-	var GridEvent = __webpack_require__(18);
+	var GridEvent = __webpack_require__(19);
 
 	/**
 	 * Focus model
 	 * RowList collection 이 focus class 를 listen 한다.
+	 * @param {Object} attrs - Attributes
+	 * @param {Object} options - Options
 	 * @module model/focus
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var Focus = Model.extend(/**@lends module:model/focus.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} attrs - Attributes
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(attrs, options) {
 	        Model.prototype.initialize.apply(this, arguments);
 
@@ -5891,6 +5903,16 @@
 	            prevRowKey: currentRowKey,
 	            rowData: this.dataModel.getRowData(rowKey)
 	        });
+
+	        /**
+	         * Occurs when a table row is selected
+	         * @api
+	         * @event tui.Grid#selectRow
+	         * @type {module:common/gridEvent}
+	         * @property {number} rowKey - rowKey of the target row
+	         * @property {number} prevRowKey - previously selected rowKey
+	         * @property {Object} rowData - data of the target row
+	         */
 	        this.trigger('select', eventData);
 	        if (eventData.isStopped()) {
 	            this._cancelSelect();
@@ -6485,7 +6507,7 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6499,12 +6521,10 @@
 	/**
 	 * Event class for public event of Grid
 	 * @module common/gridEvent
+	 * @param {Object} data - Event data for handler
+	 * @ignore
 	 */
 	var GridEvent = tui.util.defineClass(/**@lends module:common/gridEvent.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} data - Event data for handler
-	     */
 	    init: function(data) {
 	        this._stopped = false;
 	        this.setData(data);
@@ -6539,7 +6559,7 @@
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6551,8 +6571,9 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(7);
-	var RowList = __webpack_require__(20);
+	var RowList = __webpack_require__(21);
 	var renderStateMap = __webpack_require__(9).renderState;
+	var CELL_BORDER_WIDTH = __webpack_require__(9).dimension.CELL_BORDER_WIDTH;
 
 	var DATA_LENGTH_FOR_LOADING = 1000;
 
@@ -6560,13 +6581,11 @@
 	 * View 에서 Rendering 시 사용할 객체
 	 * @module model/renderer
 	 * @extends module:base/model
+	 * @param {Object} attrs - Attributes
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} attrs - Attributes
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(attrs, options) {
 	        var lside, rside, rowListOptions;
 
@@ -6574,7 +6593,8 @@
 	            dataModel: options.dataModel,
 	            columnModel: options.columnModel,
 	            focusModel: options.focusModel,
-	            dimensionModel: options.dimensionModel
+	            dimensionModel: options.dimensionModel,
+	            coordRowModel: options.coordRowModel
 	        });
 
 	        rowListOptions = {
@@ -6602,7 +6622,8 @@
 	                this._updateMaxScrollTop);
 
 	        if (this.get('showDummyRows')) {
-	            this.listenTo(this.dimensionModel, 'change:displayRowCount', this._resetDummyRows);
+	            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetDummyRowCount);
+	            this.on('change:dummyRowCount', this._resetDummyRows);
 	        }
 
 	        this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
@@ -6614,6 +6635,7 @@
 
 	    defaults: {
 	        top: 0,
+	        bottom: 0,
 	        scrollTop: 0,
 	        scrollLeft: 0,
 	        maxScrollLeft: 0,
@@ -6661,7 +6683,7 @@
 	    _updateMaxScrollTop: function() {
 	        var dimension = this.dimensionModel;
 	        var maxScrollTop = dimension.get('totalRowHeight') - dimension.get('bodyHeight') +
-	            dimension.get('scrollBarSize');
+	            dimension.getScrollXHeight();
 
 	        this.set('maxScrollTop', maxScrollTop);
 	    },
@@ -6908,13 +6930,14 @@
 	    _resetAllViewModelListWithRange: function(startIndex, endIndex) {
 	        var columnNamesMap = this._getColumnNamesOfEachSide();
 	        var rowNum = this.get('startNumber') + startIndex;
-	        var height = this.dimensionModel.get('rowHeight');
 	        var lsideData = [];
 	        var rsideData = [];
-	        var rowDataModel, i;
+	        var rowDataModel, height, i;
 
 	        for (i = startIndex; i <= endIndex; i += 1) {
 	            rowDataModel = this.dataModel.at(i);
+	            height = this.coordRowModel.getHeightAt(i);
+
 	            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
 	            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
 	            rowNum += 1;
@@ -6949,27 +6972,45 @@
 	    },
 
 	    /**
+	     * Calculate required count of dummy rows and set the 'dummyRowCount' attribute.
+	     * @private
+	     */
+	    _resetDummyRowCount: function() {
+	        var dimensionModel = this.dimensionModel;
+	        var totalRowHeight = dimensionModel.get('totalRowHeight');
+	        var rowHeight = dimensionModel.get('rowHeight') + CELL_BORDER_WIDTH;
+	        var bodyHeight = dimensionModel.get('bodyHeight') - dimensionModel.getScrollXHeight();
+	        var dummyRowCount = 0;
+
+	        if (totalRowHeight < bodyHeight) {
+	            dummyRowCount = Math.ceil((bodyHeight - totalRowHeight) / rowHeight);
+	        }
+
+	        this.set('dummyRowCount', dummyRowCount);
+	    },
+
+	    /**
 	     * fills the empty area with dummy rows.
 	     * @private
 	     */
 	    _fillDummyRows: function() {
-	        var displayRowCount = this.dimensionModel.get('displayRowCount');
-	        var actualRowCount = this._getActualRowCount();
-	        var dummyRowCount = Math.max(displayRowCount - actualRowCount, 0);
-	        var rowHeight = this.dimensionModel.get('rowHeight');
-	        var rowNum = this.get('startNumber') + this.get('endIndex') + 1;
+	        var dummyRowCount = this.get('dummyRowCount');
+	        var rowNum, rowHeight;
 
-	        _.times(dummyRowCount, function() {
-	            _.each(['lside', 'rside'], function(listName) {
-	                this.get(listName).add({
-	                    height: rowHeight,
-	                    rowNum: rowNum
-	                });
+	        if (dummyRowCount) {
+	            rowNum = this.get('startNumber') + this.get('endIndex') + 1;
+	            rowHeight = this.dimensionModel.get('rowHeight');
+
+	            _.times(dummyRowCount, function() {
+	                _.each(['lside', 'rside'], function(listName) {
+	                    this.get(listName).add({
+	                        height: rowHeight,
+	                        rowNum: rowNum
+	                    });
+	                }, this);
+	                rowNum += 1;
 	            }, this);
-	            rowNum += 1;
-	        }, this);
-
-	        this.set('dummyRowCount', dummyRowCount);
+	        }
 	    },
 
 	    /**
@@ -7104,7 +7145,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7114,19 +7155,17 @@
 	'use strict';
 
 	var Collection = __webpack_require__(11);
-	var Row = __webpack_require__(21);
+	var Row = __webpack_require__(22);
 
 	/**
 	  * View Model rowList collection
 	  * @module model/rowList
 	  * @extends module:base/collection
+	  * @param {Object} rawData - Raw data
+	  * @param {Object} options - Options
+	  * @ignore
 	  */
 	var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} rawData - Raw data
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(rawData, options) {
 	        this.setOwnProperties({
 	            dataModel: options.dataModel,
@@ -7142,7 +7181,7 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7159,14 +7198,12 @@
 	/**
 	 * Row Model
 	 * @module model/row
+	 * @param  {object} attributes - Attributes
+	 * @param  {object} options - Options
 	 * @extends module:base/model
+	 * @ignore
 	 */
 	var Row = Model.extend(/**@lends module:model/row.prototype */{
-	    /**
-	     * @constructs
-	     * @param  {object} attributes - Attributes
-	     * @param  {object} options - Options
-	     */
 	    initialize: function(attributes) {
 	        var rowKey = attributes && attributes.rowKey;
 	        var dataModel = this.collection.dataModel;
@@ -7295,6 +7332,7 @@
 	    _formatData: function(data, dataModel, columnModel, focusModel) {
 	        var rowKey = data.rowKey;
 	        var rowNum = data.rowNum;
+	        var rowHeight = data.height;
 	        var columnData, row;
 
 	        if (_.isUndefined(rowKey)) {
@@ -7313,6 +7351,7 @@
 	            data[columnName] = {
 	                rowKey: rowKey,
 	                rowNum: rowNum,
+	                height: rowHeight,
 	                columnName: columnName,
 	                rowSpan: rowSpanData.count,
 	                isMainRow: rowSpanData.isMainRow,
@@ -7320,6 +7359,8 @@
 	                isEditable: cellState.isEditable,
 	                isDisabled: cellState.isDisabled,
 	                isEditing: focusModel.isEditingCell(rowKey, columnName),
+	                whiteSpace: column.whiteSpace || 'nowrap',
+	                valign: column.valign,
 	                optionList: tui.util.pick(column, 'editOption', 'list'),
 	                className: this._getClassNameString(columnName, row, focusModel),
 	                columnModel: column,
@@ -7565,72 +7606,76 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview 스마트 랜더링을 지원하는 Renderer 모ㄷ델
+	 * @fileoverview Render model to be used for smart-rendering
 	 * @author NHN Ent. FE Development Team
 	 */
 	'use strict';
 
 	var _ = __webpack_require__(1);
 
-	var Renderer = __webpack_require__(19);
-	var util = __webpack_require__(8);
+	var Renderer = __webpack_require__(20);
+	var dimensionConst = __webpack_require__(9).dimension;
+
+	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
+
+	// The ratio of buffer size to bodyHeight
+	var BUFFER_RATIO = 0.3;
+
+	// The ratio of the size bodyHeight which can cause to refresh the rendering range
+	var BUFFER_HIT_RATIO = 0.1;
 
 	/**
-	 *  View 에서 Rendering 시 사용할 객체
-	 *  Smart Rendering 을 지원한다.
-	 *  @module model/renderer-smart
+	 * Render model to be used for smart-rendering
+	 * @module model/renderer-smart
 	 * @extends module:model/renderer
+	 * @ignore
 	 */
 	var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    initialize: function() {
 	        Renderer.prototype.initialize.apply(this, arguments);
-	        this.on('change:scrollTop', this._onChange, this);
-	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onChange, this);
-
-	        this.setOwnProperties({
-	            hiddenRowCount: 10,
-	            criticalPoint: 3
-	        });
+	        this.on('change:scrollTop', this._onChangeScrollTop, this);
+	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this.refresh);
 	    },
+
 	    /**
-	     * bodyHeight 가 변경 되었을때 이벤트 핸들러
+	     * Event handler for change:scrollTop event
 	     * @private
 	     */
-	    _onChange: function() {
-	        if (this._isRenderable(this.get('scrollTop'))) {
+	    _onChangeScrollTop: function() {
+	        if (this._shouldRefresh(this.get('scrollTop'))) {
 	            this.refresh();
 	        }
 	    },
 
 	    /**
-	     * SmartRendering 을 사용하여 rendering 할 index 범위를 결정한다.
-	     * @param {Number} scrollTop    랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
+	     * Calculate the range to render and set the attributes.
+	     * @param {number} scrollTop - scrollTop
 	     * @private
 	     */
 	    _setRenderingRange: function(scrollTop) {
-	        var dimensionModel = this.dimensionModel,
-	            dataModel = this.dataModel,
-	            rowHeight = dimensionModel.get('rowHeight'),
-	            displayRowCount = dimensionModel.get('displayRowCount'),
-	            startIndex = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1)) - this.hiddenRowCount),
-	            endIndex = Math.min(dataModel.length - 1, startIndex + displayRowCount + (this.hiddenRowCount * 2)),
-	            top;
+	        var dimensionModel = this.dimensionModel;
+	        var dataModel = this.dataModel;
+	        var coordRowModel = this.coordRowModel;
+	        var bodyHeight = dimensionModel.get('bodyHeight');
+	        var bufferSize = parseInt(bodyHeight * BUFFER_RATIO, 10);
+	        var startIndex = Math.max(coordRowModel.indexOf(scrollTop - bufferSize), 0);
+	        var endIndex = Math.min(coordRowModel.indexOf(scrollTop + bodyHeight + bufferSize), dataModel.length - 1);
+	        var top = coordRowModel.getOffsetAt(startIndex);
+	        var bottom = coordRowModel.getOffsetAt(endIndex) +
+	            coordRowModel.getHeightAt(endIndex) + CELL_BORDER_WIDTH;
 
 	        if (dataModel.isRowSpanEnable()) {
 	            startIndex += this._getStartRowSpanMinCount(startIndex);
 	            endIndex += this._getEndRowSpanMaxCount(endIndex);
 	        }
-	        top = (startIndex === 0) ? 0 : util.getHeight(startIndex, rowHeight);
 
 	        this.set({
 	            top: top,
+	            bottom: bottom,
 	            startIndex: startIndex,
 	            endIndex: endIndex
 	        });
@@ -7673,44 +7718,36 @@
 	        }
 	        return result;
 	    },
+
 	    /**
-	     * scrollTop 값 에 따라 rendering 해야하는지 판단한다.
-	     * @param {Number} scrollTop 랜더링 범위를 결정하기 위한 현재 scrollTop 위치 값
-	     * @returns {boolean}    랜더링 해야할지 여부
+	     * Returns whether the scroll potision hits the buffer limit or not.
+	     * @param {number} scrollTop - scroll top
+	     * @returns {boolean}
 	     * @private
 	     */
-	    _isRenderable: function(scrollTop) {
-	        var dimensionModel = this.dimensionModel,
-	            dataModel = this.dataModel,
-	            rowHeight = dimensionModel.get('rowHeight'),
-	            bodyHeight = dimensionModel.get('bodyHeight'),
-	            rowCount = dataModel.length,
-	            displayStartIdx = Math.max(0, Math.ceil(scrollTop / (rowHeight + 1))),
-	            displayEndIdx = Math.min(dataModel.length - 1, Math.floor((scrollTop + bodyHeight) / (rowHeight + 1))),
-	            startIndex = this.get('startIndex'),
-	            endIndex = this.get('endIndex');
+	    _shouldRefresh: function(scrollTop) {
+	        var bodyHeight = this.dimensionModel.get('bodyHeight');
+	        var scrollBottom = scrollTop + bodyHeight;
+	        var totalRowHeight = this.dimensionModel.get('totalRowHeight');
+	        var top = this.get('top');
+	        var bottom = this.get('bottom');
+	        var bufferHitSize = parseInt(bodyHeight * BUFFER_HIT_RATIO, 10);
+	        var hitTopBuffer = (scrollTop - top) < bufferHitSize;
+	        var hitBottomBuffer = (bottom - scrollBottom) < bufferHitSize;
 
-	        //시작 지점이 임계점 이하로 올라갈 경우 return true
-	        if (startIndex !== 0) {
-	            if (startIndex + this.criticalPoint > displayStartIdx) {
-	                return true;
-	            }
-	        }
-	        //마지막 지점이 임계점 이하로 내려갔을 경우 return true
-	        if (endIndex !== rowCount - 1) {
-	            if (endIndex - this.criticalPoint < displayEndIdx) {
-	                return true;
-	            }
-	        }
-	        return false;
+	        return (hitTopBuffer && top > 0) || (hitBottomBuffer && bottom < totalRowHeight);
 	    }
 	});
+
+	// exports consts for external use
+	SmartRenderer.BUFFER_RATIO = BUFFER_RATIO;
+	SmartRenderer.BUFFER_HIT_RATIO = BUFFER_HIT_RATIO;
 
 	module.exports = SmartRenderer;
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7729,13 +7766,11 @@
 	 * Selection Model class
 	 * @module model/selection
 	 * @extends module:base/view
+	 * @param {Object} attr - Attributes
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var Selection = Model.extend(/**@lends module:model/selection.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} attr - Attributes
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(attr, options) {
 	        Model.prototype.initialize.apply(this, arguments);
 
@@ -7831,17 +7866,6 @@
 	            column: [columnIndex, columnIndex]
 	        };
 	        this._resetRangeAttribute();
-	    },
-
-	    /**
-	     * Starts the selection by mouse position.
-	     * @param {number} pageX - X position relative to the document
-	     * @param {number} pageY - Y position relative to the document
-	     * @param {string} type - Selection type
-	     */
-	    startByMousePosition: function(pageX, pageY, type) {
-	        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
-	        this.start(index.row, index.column, type);
 	    },
 
 	    /**
@@ -8319,7 +8343,7 @@
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8335,13 +8359,11 @@
 	 * Summary Model
 	 * @module model/summary
 	 * @extends module:base/model
+	 * @param {Object} attr - attributes
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var Summary = Model.extend(/**@lends module:model/summary.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} attr - attributes
-	     * @param {Object} options - options
-	     */
 	    initialize: function(attr, options) {
 	        this.dataModel = options.dataModel;
 
@@ -8486,7 +8508,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8495,30 +8517,31 @@
 	 */
 	'use strict';
 
-	var ContainerView = __webpack_require__(26);
-	var ContentAreaView = __webpack_require__(27);
-	var ToolbarView = __webpack_require__(28);
-	var PaginationView = __webpack_require__(29);
-	var HeightResizeHandleView = __webpack_require__(30);
-	var StateLayerView = __webpack_require__(31);
-	var ClipboardView = __webpack_require__(32);
-	var LsideFrameView = __webpack_require__(33);
-	var RsideFrameView = __webpack_require__(35);
-	var HeaderView = __webpack_require__(36);
-	var HeaderResizeHandlerView = __webpack_require__(37);
-	var BodyView = __webpack_require__(38);
-	var BodyTableView = __webpack_require__(39);
-	var FooterView = __webpack_require__(40);
-	var RowListView = __webpack_require__(41);
-	var SelectionLayerView = __webpack_require__(42);
-	var EditingLayerView = __webpack_require__(43);
-	var DatePickeLayerView = __webpack_require__(44);
-	var FocusLayerView = __webpack_require__(45);
+	var ContainerView = __webpack_require__(27);
+	var ContentAreaView = __webpack_require__(28);
+	var ToolbarView = __webpack_require__(29);
+	var PaginationView = __webpack_require__(30);
+	var HeightResizeHandleView = __webpack_require__(31);
+	var StateLayerView = __webpack_require__(32);
+	var ClipboardView = __webpack_require__(33);
+	var LsideFrameView = __webpack_require__(34);
+	var RsideFrameView = __webpack_require__(36);
+	var HeaderView = __webpack_require__(37);
+	var HeaderResizeHandlerView = __webpack_require__(38);
+	var BodyView = __webpack_require__(39);
+	var BodyTableView = __webpack_require__(40);
+	var FooterView = __webpack_require__(41);
+	var RowListView = __webpack_require__(42);
+	var SelectionLayerView = __webpack_require__(43);
+	var EditingLayerView = __webpack_require__(44);
+	var DatePickeLayerView = __webpack_require__(45);
+	var FocusLayerView = __webpack_require__(46);
 	var isOptionEnabled = __webpack_require__(8).isOptionEnabled;
 
 	/**
 	 * View Factory
 	 * @module viewFactory
+	 * @ignore
 	 */
 	var ViewFactory = tui.util.defineClass({
 	    init: function(options) {
@@ -8628,6 +8651,7 @@
 	            selectionModel: this.modelManager.selectionModel,
 	            focusModel: this.modelManager.focusModel,
 	            renderModel: this.modelManager.renderModel,
+	            coordRowModel: this.modelManager.coordRowModel,
 	            painterManager: this.modelManager.painterManager,
 	            copyOption: this.copyOption
 	        });
@@ -8662,6 +8686,7 @@
 	            selectionModel: this.modelManager.selectionModel,
 	            dataModel: this.modelManager.dataModel,
 	            columnModel: this.modelManager.columnModel,
+	            coordRowModel: this.modelManager.coordRowModel,
 	            viewFactory: this
 	        });
 	    },
@@ -8760,6 +8785,7 @@
 	            selectionModel: this.modelManager.selectionModel,
 	            renderModel: this.modelManager.renderModel,
 	            focusModel: this.modelManager.focusModel,
+	            coordRowModel: this.modelManager.coordRowModel,
 	            painterManager: this.painterManager
 	        });
 	    },
@@ -8774,7 +8800,8 @@
 	            whichSide: whichSide,
 	            selectionModel: this.modelManager.selectionModel,
 	            dimensionModel: this.modelManager.dimensionModel,
-	            columnModel: this.modelManager.columnModel
+	            columnModel: this.modelManager.columnModel,
+	            coordRowModel: this.modelManager.coordRowModel
 	        });
 	    },
 
@@ -8818,7 +8845,8 @@
 	            whichSide: whichSide,
 	            dimensionModel: this.modelManager.dimensionModel,
 	            columnModel: this.modelManager.columnModel,
-	            focusModel: this.modelManager.focusModel
+	            focusModel: this.modelManager.focusModel,
+	            coordRowModel: this.modelManager.coordRowModel
 	        });
 	    }
 	});
@@ -8827,7 +8855,7 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8839,7 +8867,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var GridEvent = __webpack_require__(18);
+	var GridEvent = __webpack_require__(19);
 	var attrNameConst = __webpack_require__(9).attrName;
 	var classNameConst = __webpack_require__(14);
 
@@ -8847,12 +8875,10 @@
 	 * Container View
 	 * @module view/container
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var Container = View.extend(/**@lends module:view/container.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -8937,15 +8963,33 @@
 	        var $target = $(mouseEvent.target);
 	        var cellInfo;
 
+	        /**
+	         * Occurs when a mouse button is clicked on the Grid.
+	         * The properties of the event object is the same as the native MouseEvent.
+	         * @api
+	         * @event tui.Grid#click
+	         * @type {module:common/gridEvent}
+	         */
 	        this.trigger('click', eventData);
 	        if (eventData.isStopped()) {
 	            return;
 	        }
 	        if (this._isCellElement($target, true)) {
 	            cellInfo = this._getCellInfoFromElement($target.closest('td'));
-	            if (this.singleClickEdit && !$target.is('input')) {
+	            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input, textarea')) {
 	                this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
 	            }
+
+	            /**
+	             * Occurs when a mouse button is clicked on a table cell
+	             * The event object has all properties copied from the native MouseEvent.
+	             * @api
+	             * @event tui.Grid#clickCell
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the target cell
+	             * @property {string} columnName - columnName of the target cell
+	             * @property {Object} rowData - row data
+	             */
 	            this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
 	        }
 	    },
@@ -8959,11 +9003,28 @@
 	        var eventData = new GridEvent(mouseEvent);
 	        var $target = $(mouseEvent.target);
 
+	        /**
+	         * Occurs when a mouse button is double clicked on the Grid.
+	         * The event object has all properties copied from the native MouseEvent.
+	         * @api
+	         * @event tui.Grid#dblclick
+	         * @type {module:common/gridEvent}
+	         */
 	        this.trigger('dblclick', eventData);
 	        if (eventData.isStopped()) {
 	            return;
 	        }
 	        if (this._isCellElement($target, true)) {
+	            /**
+	             * Occurs when a mouse button is double clicked on a table cell
+	             * The event object has all properties copied from the native MouseEvent.
+	             * @api
+	             * @event tui.Grid#dblclickCell
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the target cell
+	             * @property {string} columnName - columnName of the target cell
+	             * @property {Object} rowData - row data containing the target cell
+	             */
 	            this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
 	            if (eventData.rowKey === null && !eventData.isStopped()) {
 	                this.dataModel.append({}, {focus: true});
@@ -8982,6 +9043,16 @@
 
 	        if (this._isCellElement($target)) {
 	            eventData = new GridEvent(mouseEvent);
+	            /**
+	             * Occurs when a mouse pointer is moved onto a table cell
+	             * The event object has all properties copied from the native MouseEvent.
+	             * @api
+	             * @event tui.Grid#mouseoverCell
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the target cell
+	             * @property {string} columnName - columnName of the target cell
+	             * @property {Object} rowData - row data containing the target cell
+	             */
 	            this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
 	        }
 	    },
@@ -8997,6 +9068,16 @@
 
 	        if (this._isCellElement($target)) {
 	            eventData = new GridEvent(mouseEvent);
+	            /**
+	             * Occurs when a mouse pointer is moved off from a table cell
+	             * The event object has all properties copied from the native MouseEvent.
+	             * @api
+	             * @event tui.Grid#mouseoutCell
+	             * @type {module:common/gridEvent}
+	             * @property {number} rowKey - rowKey of the target cell
+	             * @property {string} columnName - columnName of the target cell
+	             * @property {Object} rowData - row data containing the target cell
+	             */
 	            this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
 	        }
 	    },
@@ -9060,11 +9141,18 @@
 	        var $target = $(mouseEvent.target);
 	        var eventData = new GridEvent(mouseEvent);
 
+	        /**
+	         * Occurs when a mouse button is pressed on the Grid.
+	         * The properties of the event object is the same as the native MouseEvent.
+	         * @api
+	         * @event tui.Grid#mousedown
+	         * @type {module:common/gridEvent}
+	         */
 	        this.trigger('mousedown', eventData);
 	        if (eventData.isStopped()) {
 	            return;
 	        }
-	        if (!$target.is('input, a, button, select')) {
+	        if (!$target.is('input, a, button, select, textarea')) {
 	            mouseEvent.preventDefault();
 	            this.focusModel.focusClipboard();
 	        }
@@ -9104,7 +9192,7 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9121,6 +9209,7 @@
 	 * Create DIV element to draw border
 	 * @param {String} className - border class name
 	 * @returns {jQuery}
+	 * @ignore
 	 */
 	function borderDIV(className) {
 	    return $('<div>')
@@ -9132,12 +9221,10 @@
 	 * Content area
 	 * @module view/layout/content-area
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -9193,7 +9280,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9211,12 +9298,10 @@
 	 * Toolbar View
 	 * @module view/toolbar
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.setOwnProperties({
 	            gridId: options.gridId,
@@ -9304,7 +9389,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9332,6 +9417,7 @@
 	    classPrefix: classNameConst.PREFIX,
 	    itemCount: 1,
 	    pagePerPageList: 5,
+	    itemPerPage: 10,
 	    isCenterAlign: true,
 	    moveUnit: 'page'
 	};
@@ -9340,12 +9426,10 @@
 	 * Class for the pagination in the toolbar
 	 * @module view/pagination
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var Pagination = View.extend(/**@lends module:view/pagination.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.dimensionModel = options.dimensionModel;
 	        this.componentHolder = options.componentHolder;
@@ -9391,10 +9475,6 @@
 	            customOptions = {};
 	        }
 
-	        if (!customOptions.itemPerPage) {
-	            customOptions.itemPerPage = this.dimensionModel.get('displayRowCount');
-	        }
-
 	        return _.assign({}, defaultOptions, btnOptions, customOptions);
 	    },
 
@@ -9417,7 +9497,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9434,12 +9514,10 @@
 	 * Class for the height resize handle
 	 * @module view/layout/heightResizeHandle
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHandle.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.dimensionModel = options.dimensionModel;
 	        this.timeoutIdForResize = 0;
@@ -9563,7 +9641,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9586,12 +9664,10 @@
 	 * Layer class that represents the state of rendering phase.
 	 * @module view/stateLayer
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var StateLayer = View.extend(/**@lends module:view/stateLayer.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.dimensionModel = options.dimensionModel;
 	        this.renderModel = options.renderModel;
@@ -9686,7 +9762,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9708,12 +9784,10 @@
 	 * Clipboard view class
 	 * @module view/clipboard
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.setOwnProperties({
 	            focusModel: options.focusModel,
@@ -9722,6 +9796,7 @@
 	            dataModel: options.dataModel,
 	            columnModel: options.columnModel,
 	            renderModel: options.renderModel,
+	            coordRowModel: options.coordRowModel,
 	            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
 	            timeoutIdForKeyIn: 0,
 	            isLocked: false
@@ -9828,7 +9903,8 @@
 	        var focused = focusModel.which();
 	        var rowKey = focused.rowKey;
 	        var columnName = focused.columnName;
-	        var displayRowCount = this.dimensionModel.get('displayRowCount');
+	        var rowIdx = this.dataModel.indexOfRowKey(rowKey);
+	        var columnIdx = this.columnModel.indexOfColumnName(columnName, true);
 	        var isKeyIdentified = true;
 	        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 	        var address;
@@ -9851,10 +9927,10 @@
 	                focusModel.focus(rowKey, focusModel.nextColumnName(), true);
 	                break;
 	            case keyCodeMap.PAGE_UP:
-	                focusModel.focus(focusModel.prevRowKey(displayRowCount - 1), columnName, true);
+	                focusModel.focusAt(this._getPageMovedRowIndex(rowIdx, false), columnIdx, true);
 	                break;
 	            case keyCodeMap.PAGE_DOWN:
-	                focusModel.focus(focusModel.nextRowKey(displayRowCount - 1), columnName, true);
+	                focusModel.focusAt(this._getPageMovedRowIndex(rowIdx, true), columnIdx, true);
 	                break;
 	            case keyCodeMap.HOME:
 	                focusModel.focus(rowKey, focusModel.firstColumnName(), true);
@@ -9923,6 +9999,26 @@
 	    },
 
 	    /**
+	     * Returns the row index moved by body height from given row.
+	     * @param {number} rowIdx - current row index
+	     * @param {Boolean} isDownDir - true: down, false: up
+	     * @returns {number}
+	     * @private
+	     */
+	    _getPageMovedRowIndex: function(rowIdx, isDownDir) {
+	        var curOffset = this.coordRowModel.getOffsetAt(rowIdx);
+	        var distance = this.dimensionModel.get('bodyHeight');
+	        var movedIdx;
+
+	        if (!isDownDir) {
+	            distance = -distance;
+	        }
+	        movedIdx = this.coordRowModel.indexOf(curOffset + distance);
+
+	        return util.clamp(movedIdx, 0, this.dataModel.length - 1);
+	    },
+
+	    /**
 	     * shift 가 눌린 상태에서의 key down event handler
 	     * @param {Event} keyDownEvent 이벤트 객체
 	     * @private
@@ -9931,7 +10027,6 @@
 	        var focusModel = this.focusModel;
 	        var dimensionModel = this.dimensionModel;
 	        var columnModelList = this.columnModel.getVisibleColumnModelList();
-	        var displayRowCount = dimensionModel.get('displayRowCount');
 	        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 	        var index = this._getIndexBeforeMove();
 	        var isKeyIdentified = true;
@@ -9952,10 +10047,10 @@
 	                index.column += 1;
 	                break;
 	            case keyCodeMap.PAGE_UP:
-	                index.row = focusModel.prevRowIndex(displayRowCount - 1);
+	                index.row = this._getPageMovedRowIndex(index.row, false);
 	                break;
 	            case keyCodeMap.PAGE_DOWN:
-	                index.row = focusModel.nextRowIndex(displayRowCount - 1);
+	                index.row = this._getPageMovedRowIndex(index.row, true);
 	                break;
 	            case keyCodeMap.HOME:
 	                index.column = 0;
@@ -10195,7 +10290,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10204,18 +10299,16 @@
 	 */
 	'use strict';
 
-	var Frame = __webpack_require__(34);
+	var Frame = __webpack_require__(35);
 	var classNameConst = __webpack_require__(14);
 
 	/**
 	 * Left Side Frame
 	 * @module view/layout/frame-lside
 	 * @extends module:view/layout/frame
+	 * @ignore
 	 */
 	var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    initialize: function() {
 	        Frame.prototype.initialize.apply(this, arguments);
 	        this.setOwnProperties({
@@ -10264,7 +10357,7 @@
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10279,13 +10372,11 @@
 	 * Base class for frame view.
 	 * @module view/layout/frame
 	 * @extends module:base/view
+	 * @param {Object} options Options
+	 *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
+	 * @ignore
 	 */
 	var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options Options
-	     *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
-	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -10346,7 +10437,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10355,7 +10446,7 @@
 	 */
 	'use strict';
 
-	var Frame = __webpack_require__(34);
+	var Frame = __webpack_require__(35);
 	var classNameConst = __webpack_require__(14);
 	var CELL_BORDER_WIDTH = __webpack_require__(9).dimension.CELL_BORDER_WIDTH;
 
@@ -10363,11 +10454,9 @@
 	 * right side frame class
 	 * @module view/layout/frame-rside
 	 * @extends module:view/layout/frame
+	 * @ignore
 	 */
 	var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    initialize: function() {
 	        Frame.prototype.initialize.apply(this, arguments);
 	        this.setOwnProperties({
@@ -10484,7 +10573,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10511,13 +10600,11 @@
 	 * Header Layout View
 	 * @module view/layout/header
 	 * @extends module:base/view
+	 * @param {Object} options - options
+	 * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
+	 * @ignore
 	 */
 	var Header = View.extend(/**@lends module:view/layout/header.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
-	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -10529,7 +10616,7 @@
 	            columnModel: options.columnModel,
 	            dataModel: options.dataModel,
 	            viewFactory: options.viewFactory,
-	            timeoutForAllChecked: 0,
+	            coordRowModel: options.coordRowModel,
 	            whichSide: options.whichSide || 'R'
 	        });
 
@@ -10876,10 +10963,19 @@
 	        var columnData = this._getColumnData();
 	        var columnWidthList = columnData.widthList;
 	        var $colList = this.$el.find('col');
+	        var coordRowModel = this.coordRowModel;
 
 	        _.each(columnWidthList, function(columnWidth, index) {
 	            $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
 	        });
+
+	        // Calls syncWithDom only from the Rside to prevent calling twice.
+	        // Defered call to ensure that the execution occurs after both sides are rendered.
+	        if (this.whichSide === 'R') {
+	            _.defer(function() {
+	                coordRowModel.syncWithDom();
+	            });
+	        }
 	    },
 
 	    /**
@@ -11100,7 +11196,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11112,20 +11208,20 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var attrNameConst = __webpack_require__(9).attrName;
+	var constMap = __webpack_require__(9);
 	var classNameConst = __webpack_require__(14);
-	var CELL_BORDER_WIDTH = __webpack_require__(9).dimension.CELL_BORDER_WIDTH;
+	var attrNameConst = constMap.attrName;
+	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
+	var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
 	/**
 	 * Reside Handler class
 	 * @module view/layout/resizeHandler
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
-	var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
+	var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */ {
 	    initialize: function(options) {
 	        this.setOwnProperties({
 	            dimensionModel: options.dimensionModel,
@@ -11229,12 +11325,11 @@
 	        var columnData = this._getColumnData();
 	        var columnWidthList = columnData.widthList;
 	        var $resizeHandleList = this.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
+	        var handlerWidthHalf = Math.floor(RESIZE_HANDLE_WIDTH / 2);
 	        var curPos = 0;
 
 	        tui.util.forEachArray($resizeHandleList, function(item, index) {
 	            var $handler = $resizeHandleList.eq(index);
-	            var handlerWidthHalf = Math.ceil($handler.width() / 2);
-
 	            curPos += columnWidthList[index] + CELL_BORDER_WIDTH;
 	            $handler.css('left', curPos - handlerWidthHalf);
 	        });
@@ -11285,16 +11380,14 @@
 	     * @private
 	     */
 	    _onMouseMove: function(mouseEvent) {
-	        var left, width, index;
+	        var width, index;
 
 	        if (this._isResizing()) {
 	            mouseEvent.preventDefault();
 
-	            left = mouseEvent.pageX - this.initialOffsetLeft;
 	            width = this._calculateWidth(mouseEvent.pageX);
 	            index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-	            this.$target.css('left', left);
 	            this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
 	            this._refreshHandlerPosition();
 	        }
@@ -11382,7 +11475,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11410,13 +11503,11 @@
 	 * Class for the body layout
 	 * @module view/layout/body
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @param {String} [options.whichSide='R'] L or R (which side)
+	 * @ignore
 	 */
 	var Body = View.extend(/**@lends module:view/layout/body.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     * @param {String} [options.whichSide='R'] L or R (which side)
-	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -11435,6 +11526,7 @@
 	        });
 
 	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
+	            .listenTo(this.dimensionModel, 'change:totalRowHeight', this._resetContainerHeight)
 	            .listenTo(this.dataModel, 'add remove reset', this._resetContainerHeight)
 	            .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
 	            .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
@@ -11551,7 +11643,7 @@
 	        }
 
 	        if (startAction) {
-	            this._controlStartAction(inputData, indexData, columnName, $target.is('input'));
+	            this._controlStartAction(inputData, indexData, columnName, $target.is('input, textarea'));
 	        }
 	    },
 
@@ -11731,7 +11823,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11743,7 +11835,6 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var util = __webpack_require__(8);
 	var constMap = __webpack_require__(9);
 	var classNameConst = __webpack_require__(14);
 
@@ -11754,13 +11845,11 @@
 	 * Class for the table layout in the body(data) area
 	 * @module view/layout/bodyTable
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @param {String} [options.whichSide='R'] L or R (which side)
+	 * @ignore
 	 */
 	var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     * @param {String} [options.whichSide='R'] L or R (which side)
-	     */
 	    initialize: function(options) {
 	        View.prototype.initialize.call(this);
 
@@ -11775,8 +11864,8 @@
 
 	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
-	        // To prevent issue of appearing vertical scrollbar when dummy rows exists
-	        this.listenTo(this.renderModel, 'change:dummyRowCount', this._resetOverflow);
+	        // To prevent issue of appearing vertical scrollbar when dummy rows exist
+	        this.listenTo(this.renderModel, 'change:dummyRowCount', this._onChangeDummyRowCount);
 	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetHeight);
 
 	        this._attachAllTableEventHandlers();
@@ -11799,20 +11888,21 @@
 	     * @private
 	     */
 	    _onColumnWidthChanged: function() {
-	        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide),
-	            $colList = this.$el.find('col'),
-	            totalWidth = 0;
+	        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+	        var $colList = this.$el.find('col');
 
 	        _.each(columnWidthList, function(width, index) {
-	            $colList.eq(index).css('width', width - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH);
-	            totalWidth += width + CELL_BORDER_WIDTH;
+	            $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
 	        }, this);
+	    },
 
-	        // to solve the overflow issue in IE7
-	        // (don't automatically expand to child's width when overflow:hidden)
-	        if (util.isBrowserIE7()) {
-	            this.$el.width(totalWidth);
-	        }
+	    /**
+	     * Event handler for 'change:dummyRowCount' event on the renderModel.
+	     * @private
+	     */
+	    _onChangeDummyRowCount: function() {
+	        this._resetOverflow();
+	        this._resetHeight();
 	    },
 
 	    /**
@@ -11889,7 +11979,7 @@
 
 	    /**
 	     * table 요소를 새로 생성한다.
-	     * (IE7-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
+	     * (IE8-9에서 tbody의 innerHTML 변경할 수 없는 문제를 해결하여 성능개선을 하기 위해 사용)
 	     * @param {string} tbodyHtml - tbody의 innerHTML 문자열
 	     * @returns {jquery} - 새로 생성된 table의 tbody 요소
 	     */
@@ -11917,22 +12007,19 @@
 	            html += this.templateCol({
 	                attrColumnName: ATTR_COLUMN_NAME,
 	                columnName: columnModel.columnName,
-	                width: columnWidthList[index] - BodyTable.EXTRA_WIDTH + CELL_BORDER_WIDTH
+	                width: columnWidthList[index] + CELL_BORDER_WIDTH
 	            });
 	        }, this);
 
 	        return html;
 	    }
-	}, {
-	    // IE7에서만 TD의 padding 만큼 넓이가 늘어나는 버그를 위한 예외처리를 위한 값
-	    EXTRA_WIDTH: util.isBrowserIE7() ? 20 : 0 // eslint-disable-line no-magic-numbers
 	});
 
 	module.exports = BodyTable;
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11948,11 +12035,14 @@
 
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
+	/**
+	 * Footer area
+	 * @module view/layout/footer
+	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
+	 */
 	var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
-	    /**
-	     * Initialize
-	     * @param {object} options - options
-	     */
 	    initialize: function(options) {
 	        /**
 	         * Store template functions of each column
@@ -12130,7 +12220,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12142,26 +12232,26 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var util = __webpack_require__(8);
-	var attrNameConst = __webpack_require__(9).attrName;
+	var constMap = __webpack_require__(9);
 	var classNameConst = __webpack_require__(14);
+
+	var attrNameConst = constMap.attrName;
+	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 	/**
 	 * RowList View
 	 * @module view/rowList
 	 * @extends module:baes/view
+	 * @param {object} options - Options
+	 * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
+	 * @ignore
 	 */
 	var RowList = View.extend(/**@lends module:view/rowList.prototype */{
-	    /**
-	     * @constructs
-	     * @param {object} options - Options
-	     * @param {string} [options.whichSide='R']   어느 영역에 속하는 rowList 인지 여부. 'L|R' 중 하나를 지정한다.
-	     */
 	    initialize: function(options) {
-	        var focusModel = options.focusModel,
-	            renderModel = options.renderModel,
-	            selectionModel = options.selectionModel,
-	            whichSide = options.whichSide || 'R';
+	        var focusModel = options.focusModel;
+	        var renderModel = options.renderModel;
+	        var selectionModel = options.selectionModel;
+	        var whichSide = options.whichSide || 'R';
 
 	        this.setOwnProperties({
 	            whichSide: whichSide,
@@ -12169,6 +12259,7 @@
 	            focusModel: focusModel,
 	            renderModel: renderModel,
 	            selectionModel: selectionModel,
+	            coordRowModel: options.coordRowModel,
 	            dataModel: options.dataModel,
 	            columnModel: options.columnModel,
 	            collection: renderModel.getCollection(whichSide),
@@ -12180,7 +12271,8 @@
 	        this.listenTo(this.collection, 'change', this._onModelChange)
 	            .listenTo(this.collection, 'restore', this._onModelRestore)
 	            .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-	            .listenTo(renderModel, 'rowListChanged', this.render);
+	            .listenTo(renderModel, 'rowListChanged', this.render)
+	            .listenTo(this.coordRowModel, 'reset', this._refreshRowHeights);
 
 	        if (this.whichSide === 'L') {
 	            this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -12234,11 +12326,6 @@
 	        if (RowList.isInnerHtmlOfTbodyReadOnly) {
 	            $tbody = this.bodyTableView.redrawTable(html);
 	            this.setElement($tbody, false); // table이 다시 생성되었기 때문에 tbody의 참조를 갱신해준다.
-
-	            // prevent layout from breaking in IE7
-	            if (util.isBrowserIE7()) {
-	                $tbody.width($tbody.width());
-	            }
 	        } else {
 	            // As using a compatibility mode in IE makes it hard to detect the actual version of the browser,
 	            // use try/catch block to make in correct.
@@ -12249,6 +12336,17 @@
 	                this._resetRows();
 	            }
 	        }
+	    },
+
+	    /**
+	     * Refresh the height of each rows.
+	     * @private
+	     */
+	    _refreshRowHeights: function() {
+	        var coordRowModel = this.coordRowModel;
+	        this.$el.find('tr').each(function(index) {
+	            $(this).css('height', coordRowModel.getHeightAt(index) + CELL_BORDER_WIDTH);
+	        });
 	    },
 
 	    /**
@@ -12373,8 +12471,8 @@
 	     * @returns {View.RowList} this 객체
 	     */
 	    render: function(dataModelChanged) {
-	        var rowKeys = this.collection.pluck('rowKey'),
-	            dupRowKeys;
+	        var rowKeys = this.collection.pluck('rowKey');
+	        var dupRowKeys;
 
 	        this.bodyTableView.resetTablePosition();
 
@@ -12392,6 +12490,7 @@
 	            }
 	        }
 	        this.renderedRowKeys = rowKeys;
+	        this.coordRowModel.syncWithDom();
 
 	        return this;
 	    },
@@ -12405,6 +12504,7 @@
 	        var $tr = this._getRowElement(model.get('rowKey'));
 
 	        this.painterManager.getRowPainter().refresh(model.changed, $tr);
+	        this.coordRowModel.syncWithDom();
 	    },
 
 	    /**
@@ -12417,6 +12517,7 @@
 	        var editType = this.columnModel.getEditType(cellData.columnName);
 
 	        this.painterManager.getCellPainter(editType).refresh(cellData, $td);
+	        this.coordRowModel.syncWithDom();
 	    }
 	}, {
 	    /**
@@ -12432,7 +12533,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12444,7 +12545,6 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var util = __webpack_require__(8);
 	var classNameConst = __webpack_require__(14);
 	var CELL_BORDER_WIDTH = __webpack_require__(9).dimension.CELL_BORDER_WIDTH;
 
@@ -12452,17 +12552,16 @@
 	 * Class for the selection layer
 	 * @module view/selectionLayer
 	 * @extends module:base/view
+	 * @param {object} options Options
+	 * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
+	 * @ignore
 	 */
 	var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
-	    /**
-	     * @constructs
-	     * @param {object} options Options
-	     * @param {array} options.columnWidthList  selection 레이어에 해당하는 영역의 컬럼 너비 리스트 정보
-	     */
 	    initialize: function(options) {
 	        this.setOwnProperties({
 	            whichSide: options.whichSide || 'R',
 	            dimensionModel: options.dimensionModel,
+	            coordRowModel: options.coordRowModel,
 	            columnModel: options.columnModel,
 	            selectionModel: options.selectionModel
 	        });
@@ -12525,13 +12624,13 @@
 	     * @returns {{top: string, height: string}} - css values
 	     */
 	    _getVerticalStyles: function(rowRange) {
-	        var rowHeight = this.dimensionModel.get('rowHeight');
-	        var top = util.getHeight(rowRange[0], rowHeight);
-	        var height = util.getHeight(rowRange[1] - rowRange[0] + 1, rowHeight) - CELL_BORDER_WIDTH;
+	        var coordRowModel = this.coordRowModel;
+	        var top = coordRowModel.getOffsetAt(rowRange[0]);
+	        var bottom = coordRowModel.getOffsetAt(rowRange[1]) + coordRowModel.getHeightAt(rowRange[1]);
 
 	        return {
 	            top: top + 'px',
-	            height: height + 'px'
+	            height: (bottom - top) + 'px'
 	        };
 	    },
 
@@ -12600,7 +12699,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12620,12 +12719,10 @@
 	 * Layer class that represents the state of rendering phase.
 	 * @module view/editingLayer
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.renderModel = options.renderModel;
 	        this.domState = options.domState;
@@ -12724,8 +12821,8 @@
 	        var wrapperOffset = this.domState.getOffset();
 	        var $cell = this.domState.getElement(rowKey, columnName);
 	        var cellOffset = $cell.offset();
-	        var cellHeight = $cell.height() + CELL_BORDER_WIDTH;
-	        var cellWidth = $cell.width() + CELL_BORDER_WIDTH;
+	        var cellHeight = $cell.outerHeight() + CELL_BORDER_WIDTH;
+	        var cellWidth = $cell.outerWidth() + CELL_BORDER_WIDTH;
 
 	        return {
 	            top: this._adjustCellOffsetValue(cellOffset.top) - wrapperOffset.top,
@@ -12768,7 +12865,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12786,6 +12883,7 @@
 	 * Returns a HTML string of a span element to represent an arrow-icon
 	 * @param {String} dirClassName - className to indicate direction of the arrow
 	 * @returns {String}
+	 * @ignore
 	 */
 	function arrowHTML(dirClassName) {
 	    var classNameStr = classNameConst.ICO_ARROW + ' ' + dirClassName;
@@ -12797,12 +12895,10 @@
 	 * Layer View class which contains the 'tui-component-date-picker'
 	 * @module view/datePickerLayer
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	DatePickerLayer = View.extend(/**@lends module:view/datePickerLayer.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.textPainter = options.textPainter;
 	        this.columnModel = options.columnModel;
@@ -12967,7 +13063,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12988,16 +13084,15 @@
 	 * Class for the layer view that represents the currently focused cell
 	 * @module view/focusLayer
 	 * @extends module:base/view
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    initialize: function(options) {
 	        this.focusModel = options.focusModel;
 	        this.columnModel = options.columnModel;
 	        this.dimensionModel = options.dimensionModel;
+	        this.coordRowModel = options.coordRowModel;
 	        this.whichSide = options.whichSide;
 
 	        this.borderEl = {
@@ -13007,7 +13102,8 @@
 	            $bottom: $(HTML_BORDER_DIV)
 	        };
 
-	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._refreshCurrentLayout);
+	        this.listenTo(this.coordRowModel, 'reset', this._refreshCurrentLayout);
 	        this.listenTo(this.focusModel, 'blur', this._onBlur);
 	        this.listenTo(this.focusModel, 'focus', this._onFocus);
 	    },
@@ -13015,13 +13111,13 @@
 	    className: classNameConst.LAYER_FOCUS,
 
 	    /**
-	     * Event handler for 'columnWidthChanged' event on the module:model/dimension
+	     * Refresh the layout of current layer
 	     * @private
 	     */
-	    _onColumnWidthChanged: function() {
+	    _refreshCurrentLayout: function() {
 	        var focusModel = this.focusModel;
 
-	        if (this.$el.is(':visible')) {
+	        if (this.$el.css('display') !== 'none') {
 	            this._refreshBorderLayout(focusModel.get('rowKey'), focusModel.get('columnName'));
 	        }
 	    },
@@ -13109,7 +13205,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13119,22 +13215,46 @@
 	'use strict';
 
 	var attrNameConst = __webpack_require__(9).attrName;
+	var classNameConst = __webpack_require__(14);
 
 	/**
 	 * Class for offering methods that can be used to get the current state of DOM element.
 	 * @module domState
+	 * @param {jQuery} $el - jQuery object of the container element.
+	 * @ignore
 	 */
 	var DomState = tui.util.defineClass(/**@lends module:domState.prototype */{
-	    /**
-	     * @constructs
-	     * @param {jQuery} $el - jQuery object of the container element.
-	     */
 	    init: function($el) {
 	        this.$el = $el;
 	    },
 
 	    /**
-	     * Returns the element of the table-cell identified by rowKey and columnName
+	     * Returns a jquery object contains the tr elements
+	     * @param {string} frameClassName - class name of frame
+	     * @returns {jQuery}
+	     * @private
+	     */
+	    _getBodyTableRows: function(frameClassName) {
+	        return this.$el.find('.' + frameClassName)
+	            .find('.' + classNameConst.BODY_TABLE_CONTAINER).find('tr[' + attrNameConst.ROW_KEY + ']');
+	    },
+
+	    /**
+	     * Returns max height of cells in the given row.
+	     * @param {jQuery} $row - traget row
+	     * @returns {number}
+	     * @private
+	     */
+	    _getMaxCellHeight: function($row) {
+	        var heights = $row.find('.' + classNameConst.CELL_CONTENT).map(function() {
+	            return this.scrollHeight;
+	        }).get();
+
+	        return _.max(heights);
+	    },
+
+	    /**
+	     * Returns an element of the table-cell identified by rowKey and columnName
 	     * @param {(Number|String)} rowKey - Row key
 	     * @param {String} columnName - Column name
 	     * @returns {jQuery} Cell(TD) element
@@ -13142,6 +13262,26 @@
 	    getElement: function(rowKey, columnName) {
 	        return this.$el.find('tr[' + attrNameConst.ROW_KEY + '=' + rowKey + ']')
 	            .find('td[' + attrNameConst.COLUMN_NAME + '="' + columnName + '"]');
+	    },
+
+	    /**
+	     * Returns an array of heights of all rows
+	     * @returns {Array.<number>}
+	     */
+	    getRowHeights: function() {
+	        var $lsideRows = this._getBodyTableRows(classNameConst.LSIDE_AREA);
+	        var $rsideRows = this._getBodyTableRows(classNameConst.RSIDE_AREA);
+	        var lsideHeight, rsideHeight;
+	        var heights = [];
+	        var i, len;
+
+	        for (i = 0, len = $lsideRows.length; i < len; i += 1) {
+	            lsideHeight = this._getMaxCellHeight($lsideRows.eq(i));
+	            rsideHeight = this._getMaxCellHeight($rsideRows.eq(i));
+	            heights[i] = Math.max(lsideHeight, rsideHeight) + 1;
+	        }
+
+	        return heights;
 	    },
 
 	    /**
@@ -13181,7 +13321,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13197,13 +13337,11 @@
 	 * Class that listens public events (for external user) to the other object and
 	 * triggers them on the public object(module:grid).
 	 * @module publicEventEmitter
+	 * @param {Object} publicObject - Object on which event will be triggered.
+	 *            This object should have methods of Backbone.Events.
+	 * @ignore
 	 */
 	var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitter.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} publicObject - Object on which event will be triggered.
-	     *            This object should have methods of Backbone.Events.
-	     */
 	    init: function(publicObject) {
 	        this.publicObject = publicObject;
 	    },
@@ -13287,7 +13425,7 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13298,26 +13436,25 @@
 
 	var _ = __webpack_require__(1);
 
-	var RowPainter = __webpack_require__(49);
-	var CellPainter = __webpack_require__(51);
-	var DummyCellPainter = __webpack_require__(52);
-	var TextPainter = __webpack_require__(53);
-	var SelectPainter = __webpack_require__(55);
-	var ButtonPainter = __webpack_require__(56);
-	var MainButtonPainter = __webpack_require__(57);
+	var RowPainter = __webpack_require__(50);
+	var CellPainter = __webpack_require__(52);
+	var DummyCellPainter = __webpack_require__(53);
+	var TextPainter = __webpack_require__(54);
+	var SelectPainter = __webpack_require__(56);
+	var ButtonPainter = __webpack_require__(57);
+	var MainButtonPainter = __webpack_require__(58);
 
 	/**
 	 * Painter manager
 	 * @module painter/manager
+	 * @param {Object} options - Options
+	 * @ignore
 	 */
 	var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - Options
-	     */
 	    init: function(options) {
 	        this.gridId = options.gridId;
 	        this.selectType = options.selectType;
+	        this.isFixedRowHeight = options.isFixedRowHeight;
 
 	        this.inputPainters = this._createInputPainters(options.controller);
 	        this.cellPainters = this._createCellPainters(options.controller);
@@ -13374,6 +13511,7 @@
 	            }),
 	            normal: new CellPainter({
 	                controller: controller,
+	                isFixedRowHeight: this.isFixedRowHeight,
 	                editType: 'normal'
 	            })
 	        };
@@ -13382,6 +13520,7 @@
 	            cellPainters[editType] = new CellPainter({
 	                editType: editType,
 	                controller: controller,
+	                isFixedRowHeight: this.isFixedRowHeight,
 	                inputPainter: inputPainter
 	            });
 	        }, this);
@@ -13444,7 +13583,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13455,8 +13594,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(50);
-	var util = __webpack_require__(8);
+	var Painter = __webpack_require__(51);
 	var constMap = __webpack_require__(9);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -13465,12 +13603,10 @@
 	 * Painter class for the row(TR) views
 	 * @module painter/row
 	 * @extends module:base/painter
+	 * @param {object} options - Options
+	 * @ignore
 	 */
 	var RowPainter = tui.util.defineClass(Painter, /**@lends module:painter/row.prototype */{
-	    /**
-	     * @constructs
-	     * @param {object} options - Options
-	     */
 	    init: function(options) {
 	        Painter.apply(this, arguments);
 	        this.painterManager = options.painterManager;
@@ -13488,7 +13624,7 @@
 	     */
 	    template: _.template(
 	        '<tr ' +
-	        '<%=rowKeyAttrName%>="<%=rowKey%>" ' +
+	        '<%=rowKeyAttr%>" ' +
 	        'class="<%=className%>" ' +
 	        'style="height: <%=height%>px;">' +
 	        '<%=contents%>' +
@@ -13561,18 +13697,19 @@
 	        var rowKey = model.get('rowKey');
 	        var rowNum = model.get('rowNum');
 	        var className = '';
+	        var rowKeyAttr = '';
 	        var html;
 
 	        if (_.isUndefined(rowKey)) {
 	            html = this._generateHtmlForDummyRow(rowNum, columnNames);
 	        } else {
+	            rowKeyAttr = attrNameConst.ROW_KEY + '="' + rowKey + '"';
 	            html = this._generateHtmlForActualRow(model, columnNames);
 	        }
 
 	        return this.template({
-	            rowKeyAttrName: attrNameConst.ROW_KEY,
-	            rowKey: rowKey,
-	            height: model.get('height') + RowPainter._extraHeight + CELL_BORDER_WIDTH,
+	            rowKeyAttr: rowKeyAttr,
+	            height: model.get('height') + CELL_BORDER_WIDTH,
 	            contents: html,
 	            className: className
 	        });
@@ -13594,22 +13731,6 @@
 	                cellPainter.refresh(cellData, $td);
 	            }
 	        }, this);
-	    },
-
-	    static: {
-	        /**
-	         * IE7에서만 TD의 border만큼 높이가 늘어나는 버그에 대한 예외처리를 위한 값
-	         * @memberof RowPainter
-	         * @static
-	         */
-	        _extraHeight: (function() {
-	            var value = 0;
-	            if (util.isBrowserIE7()) {
-	                // css에서 IE7에 대해서만 padding의 높이를 위아래 1px씩 주고 있음 (border가 생겼을 때는 0)
-	                value = -2;
-	            }
-	            return value;
-	        })()
 	    }
 	});
 
@@ -13617,7 +13738,7 @@
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13635,12 +13756,10 @@
 	 * This aims to act like a View class but doesn't create an instance of each view items
 	 * to improve rendering performance.
 	 * @module base/painter
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var Painter = tui.util.defineClass(/**@lends module:base/painter.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function(options) {
 	        this.controller = options.controller;
 	    },
@@ -13699,7 +13818,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13710,7 +13829,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(50);
+	var Painter = __webpack_require__(51);
 	var util = __webpack_require__(8);
 	var attrNameConst = __webpack_require__(9).attrName;
 	var classNameConst = __webpack_require__(14);
@@ -13719,16 +13838,15 @@
 	 * Painter class for cell(TD) views
 	 * @module painter/cell
 	 * @extends module:base/painter
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function(options) {
 	        Painter.apply(this, arguments);
 
 	        this.editType = options.editType;
+	        this.isFixedRowHeight = options.isFixedRowHeight;
 	        this.inputPainter = options.inputPainter;
 	        this.selector = 'td[' + attrNameConst.EDIT_TYPE + '="' + this.editType + '"]';
 	    },
@@ -13742,11 +13860,18 @@
 	    },
 
 	    /**
-	     * Markup template
+	     * template for TD
 	     * @returns {string} template
 	     */
 	    template: _.template(
-	        '<td <%=attributeString%>><%=contentHtml%></td>'
+	        '<td <%=attributeString%> style="<%=style%>"><%=contentHtml%></td>'
+	    ),
+
+	    /**
+	     * template for DIV (inner content of TD)
+	     */
+	    contentTemplate: _.template(
+	        '<div class="<%=className%>" style="<%=style%>"><%=content%></div>'
 	    ),
 
 	    /**
@@ -13771,15 +13896,35 @@
 	    },
 
 	    /**
+	     * Returns css style string for given cellData
+	     * @param {Object} cellData - cell data
+	     * @returns {string}
+	     */
+	    _getContentStyle: function(cellData) {
+	        var whiteSpace = cellData.columnModel.whiteSpace || 'nowrap';
+	        var styles = [];
+
+	        if (whiteSpace) {
+	            styles.push('white-space:' + whiteSpace);
+	        }
+	        if (this.isFixedRowHeight) {
+	            styles.push('max-height:' + cellData.height + 'px');
+	        }
+
+	        return styles.join(';');
+	    },
+
+	    /**
 	     * Returns the HTML string of the contents containg the value of the 'beforeContent' and 'afterContent'.
 	     * @param {Object} cellData - cell data
 	     * @returns {String}
 	     * @private
 	     */
 	    _getContentHtml: function(cellData) {
-	        var content = cellData.formattedValue,
-	            beforeContent = cellData.beforeContent,
-	            afterContent = cellData.afterContent;
+	        var content = cellData.formattedValue;
+	        var beforeContent = cellData.beforeContent;
+	        var afterContent = cellData.afterContent;
+	        var fullContent;
 
 	        if (this.inputPainter) {
 	            content = this.inputPainter.generateHtml(cellData);
@@ -13788,12 +13933,20 @@
 	                beforeContent = this._getSpanWrapContent(beforeContent, classNameConst.CELL_CONTENT_BEFORE);
 	                afterContent = this._getSpanWrapContent(afterContent, classNameConst.CELL_CONTENT_AFTER);
 	                content = this._getSpanWrapContent(content, classNameConst.CELL_CONTENT_INPUT);
-
-	                return beforeContent + afterContent + content;
+	                // notice the order of concatenation
+	                fullContent = beforeContent + afterContent + content;
 	            }
 	        }
 
-	        return beforeContent + content + afterContent;
+	        if (!fullContent) {
+	            fullContent = beforeContent + content + afterContent;
+	        }
+
+	        return this.contentTemplate({
+	            content: fullContent,
+	            className: classNameConst.CELL_CONTENT,
+	            style: this._getContentStyle(cellData)
+	        });
 	    },
 
 	    /**
@@ -13840,7 +13993,6 @@
 	        var classNames = [
 	            cellData.className,
 	            classNameConst.CELL,
-	            classNameConst.CELL_CONTENT,
 	            (cellData.rowNum % 2) ? classNameConst.CELL_ROW_ODD : classNameConst.CELL_ROW_EVEN
 	        ];
 	        var attrs = {
@@ -13879,12 +14031,19 @@
 	     * @implements {module:base/painter}
 	     */
 	    generateHtml: function(cellData) {
-	        var attributeString = util.getAttributesString(this._getAttributes(cellData)),
-	            contentHtml = this._getContentHtml(cellData);
+	        var attributeString = util.getAttributesString(this._getAttributes(cellData));
+	        var contentHtml = this._getContentHtml(cellData);
+	        var valign = cellData.columnModel.valign;
+	        var styles = [];
+
+	        if (valign) {
+	            styles.push('vertical-align:' + valign);
+	        }
 
 	        return this.template({
 	            attributeString: attributeString,
-	            contentHtml: contentHtml || '&#8203;' // '&#8203;' for height issue with empty cell in IE7
+	            style: styles.join(';'),
+	            contentHtml: contentHtml
 	        });
 	    },
 
@@ -13899,7 +14058,6 @@
 	        var shouldUpdateContent = _.intersection(contentProps, cellData.changed).length > 0;
 	        var attrs = this._getAttributes(cellData);
 
-	        delete attrs.rowspan; // prevent error in IE7 (cannot update rowspan attribute)
 	        $td.attr(attrs);
 
 	        if (editingChangedToTrue && !this._isUsingViewMode(cellData)) {
@@ -13915,7 +14073,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13926,7 +14084,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(50);
+	var Painter = __webpack_require__(51);
 	var util = __webpack_require__(8);
 	var attrNameConst = __webpack_require__(9).attrName;
 	var classNameConst = __webpack_require__(14);
@@ -13935,11 +14093,9 @@
 	 * Dummy Cell Painter
 	 * @module painter/dummyCell
 	 * @extends module:base/painter
+	 * @ignore
 	 */
 	var DummyCell = tui.util.defineClass(Painter, /**@lends module:painter/dummyCell.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    init: function() {
 	        Painter.apply(this, arguments);
 	    },
@@ -13959,7 +14115,6 @@
 	            attrNameConst.COLUMN_NAME + '="<%=columnName%>" ' +
 	            attrNameConst.EDIT_TYPE + '="dummy" ' +
 	            'class="<%=className%>">' +
-	            '&#8203;' + // 'for height issue with empty cell in IE7
 	        '</td>'
 	    ),
 
@@ -13992,7 +14147,7 @@
 
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14003,19 +14158,21 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(54);
+	var InputPainter = __webpack_require__(55);
 	var util = __webpack_require__(8);
+	var classNameConst = __webpack_require__(14);
+
+	var SELECTOR_TEXT = '.' + classNameConst.CELL_CONTENT_TEXT;
+	var SELECTOR_PASSWORD = 'input[type=password]';
 
 	/**
 	 * Painter class for the 'input[type=text]' and 'input[type=password]'
 	 * @module painter/input/text
 	 * @extends module:painter/input/base
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var TextPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/text.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function(options) {
 	        InputPainter.apply(this, arguments);
 
@@ -14025,7 +14182,7 @@
 	         * css selector to use delegated event handlers by '$.on()' method.
 	         * @type {String}
 	         */
-	        this.selector = 'input[type=' + this.inputType + ']';
+	        this.selector = (options.inputType === 'text') ? SELECTOR_TEXT : SELECTOR_PASSWORD;
 
 	        this._extendEvents({
 	            selectstart: '_onSelectStart'
@@ -14033,11 +14190,12 @@
 	    },
 
 	    /**
-	     * Markup template
+	     * template for input
 	     * @returns {string} html
 	     */
-	    template: _.template(
+	    templateInput: _.template(
 	        '<input' +
+	        ' class="<%=className%>"' +
 	        ' type="<%=type%>"' +
 	        ' value="<%=value%>"' +
 	        ' name="<%=name%>"' +
@@ -14048,7 +14206,20 @@
 	    ),
 
 	    /**
-	     * Event handler for the'selectstart' event.
+	     * template for textarea
+	     * @returns {string} html
+	     */
+	    templateTextArea: _.template(
+	        '<textarea' +
+	        ' class="<%=className%>"' +
+	        ' name="<%=name%>"' +
+	        ' maxLength="<%=maxLength%>"' +
+	        ' <%=disabled%>><%=value%>' +
+	        '</textarea>'
+	    ),
+
+	    /**
+	     * Event handler for the 'selectstart' event.
 	     * (To prevent 'selectstart' event be prevented by module:view/layout/body in IE)
 	     * @param {Event} event - DOM event object
 	     * @private
@@ -14093,14 +14264,19 @@
 	     */
 	    _generateInputHtml: function(cellData) {
 	        var maxLength = tui.util.pick(cellData, 'columnModel', 'editOption', 'maxLength');
-
-	        return this.template({
+	        var params = {
 	            type: this.inputType,
+	            className: classNameConst.CELL_CONTENT_TEXT,
 	            value: cellData.value,
 	            name: util.getUniqueKey(),
 	            disabled: cellData.isDisabled ? 'disabled' : '',
 	            maxLength: maxLength
-	        });
+	        };
+
+	        if (cellData.whiteSpace === 'normal') {
+	            return this.templateTextArea(params);
+	        }
+	        return this.templateInput(params);
 	    },
 
 	    /**
@@ -14121,7 +14297,7 @@
 
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14132,19 +14308,17 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(50);
+	var Painter = __webpack_require__(51);
 	var keyNameMap = __webpack_require__(9).keyName;
 
 	/**
 	 * Input Painter Base
 	 * @module painter/input/base
 	 * @extends module:base/painter
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/base.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function() {
 	        Painter.apply(this, arguments);
 	    },
@@ -14245,16 +14419,16 @@
 	     * @private
 	     */
 	    _onKeyDown: function(event) {
-	        var keyCode = event.keyCode || event.which,
-	            keyName = keyNameMap[keyCode],
-	            action = this.keyDownActions[keyName],
-	            $target = $(event.target),
-	            param = {
-	                $target: $target,
-	                address: this._getCellAddress($target),
-	                shiftKey: event.shiftKey,
-	                value: $target.val()
-	            };
+	        var keyCode = event.keyCode || event.which;
+	        var keyName = keyNameMap[keyCode];
+	        var action = this.keyDownActions[keyName];
+	        var $target = $(event.target);
+	        var param = {
+	            $target: $target,
+	            address: this._getCellAddress($target),
+	            shiftKey: event.shiftKey,
+	            value: $target.val()
+	        };
 
 	        this._executeCustomEventHandler(event);
 
@@ -14331,7 +14505,7 @@
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14342,18 +14516,16 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(54);
+	var InputPainter = __webpack_require__(55);
 	var util = __webpack_require__(8);
 
 	/**
 	 * Painter class for 'select' input.
 	 * @module painter/input/select
 	 * @extends module:painter/input/base
+	 * @ignore
 	 */
 	var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/select.prototype */{
-	    /**
-	     * @constructs
-	     */
 	    init: function() {
 	        InputPainter.apply(this, arguments);
 
@@ -14423,7 +14595,7 @@
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14434,19 +14606,17 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(54);
+	var InputPainter = __webpack_require__(55);
 	var util = __webpack_require__(8);
 
 	/**
 	 * Painter class for 'checkbox' and 'radio button'.
 	 * @module painter/input/button
 	 * @extends module:painter/input/base
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/input/button.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function(options) {
 	        InputPainter.apply(this, arguments);
 
@@ -14685,7 +14855,7 @@
 
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14696,7 +14866,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(50);
+	var Painter = __webpack_require__(51);
 	var classNameConst = __webpack_require__(14);
 	var keyCodeMap = __webpack_require__(9).keyCode;
 
@@ -14705,12 +14875,10 @@
 	 * (This class does not extend from module:painter/input/base but from module:base/painter directly)
 	 * @module painter/input/mainButton
 	 * @extends module:base/painter
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/mainButton.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function(options) {
 	        Painter.apply(this, arguments);
 
@@ -14783,7 +14951,7 @@
 
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14793,18 +14961,15 @@
 	'use strict';
 
 	var _ = __webpack_require__(1);
-
 	var util = __webpack_require__(8);
 
 	/**
 	 * Controller class to handle actions from the painters
 	 * @module painter/controller
+	 * @param {Object} options - options
+	 * @ignore
 	 */
 	var PainterController = tui.util.defineClass(/**@lends module:painter/controller.prototype */{
-	    /**
-	     * @constructs
-	     * @param {Object} options - options
-	     */
 	    init: function(options) {
 	        this.focusModel = options.focusModel;
 	        this.dataModel = options.dataModel;
@@ -14835,6 +15000,23 @@
 	    },
 
 	    /**
+	     * Check if given column has 'maxLength' property and returns the substring limited by maxLength.
+	     * @param {string} columnName - columnName
+	     * @param {string} value - value
+	     * @returns {string}
+	     * @private
+	     */
+	    _checkMaxLength: function(columnName, value) {
+	        var column = this.columnModel.getColumnModel(columnName);
+	        var maxLength = tui.util.pick(column, 'editOption', 'maxLength');
+
+	        if (maxLength > 0 && value.length > maxLength) {
+	            return value.substring(0, maxLength);
+	        }
+	        return value;
+	    },
+
+	    /**
 	     * Ends editing a cell identified by a given address, and returns the result.
 	     * @param {{rowKey:String, columnName:String}} address - cell address
 	     * @param {Boolean} shouldBlur - if set to true, make the current input lose focus.
@@ -14856,8 +15038,7 @@
 	            currentValue = row.get(address.columnName);
 
 	            if (!(util.isBlank(value) && util.isBlank(currentValue))) {
-	                this.setValue(address, value);
-	                row.validateCell(address.columnName);
+	                this.setValue(address, this._checkMaxLength(address.columnName, value));
 	            }
 	        }
 	        focusModel.finishEditing();
@@ -14922,15 +15103,41 @@
 	     * @param {(Number|String|Boolean)} value - value
 	     */
 	    setValue: function(address, value) {
+	        var columnModel = this.columnModel.getColumnModel(address.columnName);
+
+	        if (_.isString(value)) {
+	            value = $.trim(value);
+	        }
+	        if (columnModel.dataType === 'number') {
+	            value = convertToNumber(value);
+	        }
+
 	        this.dataModel.setValue(address.rowKey, address.columnName, value);
 	    }
 	});
+
+	/**
+	 * Converts given value to a number type and returns it.
+	 * If the value is not a number type, returns the original value.
+	 * @param {*} value - value
+	 * @returns {*}
+	 */
+	function convertToNumber(value) {
+	    if (_.isString(value)) {
+	        value = value.replace(/,/g, '');
+	    }
+
+	    if (_.isNumber(value) || isNaN(value) || util.isBlank(value)) {
+	        return value;
+	    }
+	    return Number(value);
+	}
 
 	module.exports = PainterController;
 
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14943,10 +15150,10 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var Router = __webpack_require__(60);
+	var Router = __webpack_require__(61);
 	var util = __webpack_require__(8);
-	var formUtil = __webpack_require__(61);
-	var GridEvent = __webpack_require__(18);
+	var formUtil = __webpack_require__(62);
+	var GridEvent = __webpack_require__(19);
 
 	var renderStateMap = __webpack_require__(9).renderState;
 	var DELAY_FOR_LOADING_STATE = 200;
@@ -14954,83 +15161,78 @@
 	/**
 	 * Net Addon
 	 * @module addon/net
-	 * @mixes module:base/common
+	 * @param {object} options
+	 *      @param {jquery} options.el   form 엘리먼트
+	 *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+	 *      @param {object} [options.api]   사용할 API URL 리스트
+	 *          @param {string} [options.api.readData]  데이터 조회 API 주소
+	 *          @param {string} [options.api.createData] 데이터 생성 API 주소
+	 *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
+	 *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+	 *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
+	 *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
+	 *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
+	 * @example
+	 *   <form id="data_form">
+	 *   <input type="text" name="query"/>
+	 *   </form>
+	 *   <script>
+	 *      var net,
+	 *          grid = new tui.Grid({
+	 *                 //...option 생략...
+	 *          });
+	 *
+	 *      //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+	 *      grid.use('Net', {
+	 *         el: $('#data_form'),         //필수 - form 엘리먼트
+	 *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+	 *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
+	 *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
+	 *         //사용할 API URL 리스트
+	 *         api: {
+	 *             'readData': './api/read',                       //데이터 조회 API 주소
+	 *             'createData': './api/create',                   //데이터 생성 API 주소
+	 *             'updateData': './api/update',                   //데이터 업데이트 API 주소
+	 *             'deleteData': './api/delete',                   //데이터 삭제 API 주소
+	 *             'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+	 *             'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
+	 *             'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
+	 *         }
+	 *      });
+	 *       //이벤트 핸들러 바인딩
+	 *       grid.on('beforeRequest', function(data) {
+	 *          //모든 dataRequest 시 호출된다.
+	 *      }).on('response', function(data) {
+	 *          //response 이벤트 핸들러
+	 *          //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+	 *      }).on('successResponse', function(data) {
+	 *          //successResponse 이벤트 핸들러
+	 *          //response.result 가 true 일 때 호출된다.
+	 *      }).on('failResponse', function(data) {
+	 *          //failResponse 이벤트 핸들러
+	 *          //response.result 가 false 일 때 호출된다.
+	 *      }).on('errorResponse', function(data) {
+	 *          //ajax error response 이벤트 핸들러
+	 *      });
+	 *
+	 *      //grid 로부터 사용할 net 인스턴스를 가져온다.
+	 *      net = grid.getAddOn('Net');
+	 *
+	 *      //request 관련 자세한 옵션은 Net#request 를 참고한다.
+	 *      //createData API 요청
+	 *      net.request('createData');
+	 *
+	 *      //updateData API 요청
+	 *      net.request('updateData');
+	 *
+	 *      //deleteData API 요청
+	 *      net.request('deleteData');
+	 *
+	 *      //modifyData API 요청
+	 *      net.request('modifyData');
+	 *   </script>
 	 */
 	var Net = View.extend(/**@lends module:addon/net.prototype */{
-	    /**
-	     * @constructs
-	     * @param {object} options
-	     *      @param {jquery} options.el   form 엘리먼트
-	     *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-	     *      @param {object} [options.api]   사용할 API URL 리스트
-	     *          @param {string} [options.api.readData]  데이터 조회 API 주소
-	     *          @param {string} [options.api.createData] 데이터 생성 API 주소
-	     *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
-	     *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-	     *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
-	     *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
-	     *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
-	     * @example
-	     *   <form id="data_form">
-	     *   <input type="text" name="query"/>
-	     *   </form>
-	     *   <script>
-	     *      var net,
-	     *          grid = new tui.Grid({
-	     *                 //...option 생략...
-	     *          });
-	     *
-	     *      //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
-	     *      grid.use('Net', {
-	     *         el: $('#data_form'),         //필수 - form 엘리먼트
-	     *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-	     *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
-	     *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
-	     *         //사용할 API URL 리스트
-	     *         api: {
-	     *             'readData': './api/read',                       //데이터 조회 API 주소
-	     *             'createData': './api/create',                   //데이터 생성 API 주소
-	     *             'updateData': './api/update',                   //데이터 업데이트 API 주소
-	     *             'deleteData': './api/delete',                   //데이터 삭제 API 주소
-	     *             'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-	     *             'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
-	     *             'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
-	     *         }
-	     *      });
-	     *       //이벤트 핸들러 바인딩
-	     *       grid.on('beforeRequest', function(data) {
-	     *          //모든 dataRequest 시 호출된다.
-	     *      }).on('response', function(data) {
-	     *          //response 이벤트 핸들러
-	     *          //성공/실패와 관계없이 response 를 받을 떄 호출된다.
-	     *      }).on('successResponse', function(data) {
-	     *          //successResponse 이벤트 핸들러
-	     *          //response.result 가 true 일 때 호출된다.
-	     *      }).on('failResponse', function(data) {
-	     *          //failResponse 이벤트 핸들러
-	     *          //response.result 가 false 일 때 호출된다.
-	     *      }).on('errorResponse', function(data) {
-	     *          //ajax error response 이벤트 핸들러
-	     *      });
-	     *
-	     *      //grid 로부터 사용할 net 인스턴스를 가져온다.
-	     *      net = grid.getAddOn('Net');
-	     *
-	     *      //request 관련 자세한 옵션은 Net#request 를 참고한다.
-	     *      //createData API 요청
-	     *      net.request('createData');
-	     *
-	     *      //updateData API 요청
-	     *      net.request('updateData');
-	     *
-	     *      //deleteData API 요청
-	     *      net.request('deleteData');
-	     *
-	     *      //modifyData API 요청
-	     *      net.request('modifyData');
-	     *   </script>
-	     */
-
 	    initialize: function(options) {
 	        var defaultOptions;
 
@@ -15625,6 +15827,12 @@
 	        var eventData = new GridEvent(options.data);
 	        var params;
 
+	        /**
+	         * Occurs before the http request is sent
+	         * @api
+	         * @event tui.Grid#beforeRequest
+	         * @type {module:common/gridEvent}
+	         */
 	        this.trigger('beforeRequest', eventData);
 	        if (eventData.isStopped()) {
 	            return;
@@ -15674,11 +15882,31 @@
 	            responseData: responseData
 	        });
 
+	        /**
+	         * Occurs when the response is received from the server
+	         * @api
+	         * @event tui.Grid#reponse
+	         * @type {module:common/gridEvent}
+	         * @property {number} httpStatus - HTTP status
+	         * @property {string} requestType - Request type
+	         * @property {string} requestParameter - Request parameters
+	         * @property {Object} responseData - response data
+	         */
 	        this.trigger('response', eventData);
 	        if (eventData.isStopped()) {
 	            return;
 	        }
 	        if (responseData && responseData.result) {
+	            /**
+	             * Occurs after the response event, if the result is true
+	             * @api
+	             * @event tui.Grid#successReponse
+	             * @type {module:common/gridEvent}
+	             * @property {number} httpStatus - HTTP status
+	             * @property {string} requestType - Request type
+	             * @property {string} requestParameter - Request parameter
+	             * @property {Object} responseData - response data
+	             */
 	            this.trigger('successResponse', eventData);
 	            if (eventData.isStopped()) {
 	                return;
@@ -15687,6 +15915,16 @@
 	                callback(responseData.data || {}, status, jqXHR);
 	            }
 	        } else {
+	            /**
+	             * Occurs after the response event, if the result is false
+	             * @api
+	             * @event tui.Grid#failResponse
+	             * @type {module:common/gridEvent}
+	             * @property {number} httpStatus - HTTP status
+	             * @property {string} requestType - Request type
+	             * @property {string} requestParameter - Request parameter
+	             * @property {Object} responseData - response data
+	             */
 	            this.trigger('failResponse', eventData);
 	            if (eventData.isStopped()) {
 	                return;
@@ -15720,6 +15958,15 @@
 	            return;
 	        }
 
+	        /**
+	         * Occurs after the response event, if the response is Error
+	         * @api
+	         * @event tui.Grid#errorResponse
+	         * @type {module:common/gridEvent}
+	         * @property {number} httpStatus - HTTP status
+	         * @property {string} requestType - Request type
+	         * @property {string} requestParameter - Request parameters
+	         */
 	        this.trigger('errorResponse', eventData);
 	        if (eventData.isStopped()) {
 	            return;
@@ -15735,7 +15982,7 @@
 
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15749,12 +15996,10 @@
 	/**
 	 * Router for Addon.Net
 	 * @module addon/net-router
+	 * @param  {object} attributes - Attributes
+	 * @ignore
 	 */
 	var Router = Backbone.Router.extend(/**@lends module:addon/net-router.prototype */{
-	    /**
-	     * @constructs
-	     * @param  {object} attributes - Attributes
-	     */
 	    initialize: function(attributes) {
 	        this.net = attributes.net;
 	    },
@@ -15768,7 +16013,7 @@
 
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15781,6 +16026,7 @@
 
 	/**
 	 * @module formUtil
+	 * @ignore
 	 */
 	var formUtil = {
 	    /**
@@ -15996,7 +16242,7 @@
 
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports) {
 
 	/**
@@ -16012,6 +16258,7 @@
 	/**
 	 * Component holder
 	 * @module componentHolder
+	 * @ignore
 	 */
 	var ComponentHolder = tui.util.defineClass(/**@lends module:componentHolder.prototype */{
 	    init: function(optionsMap) {
@@ -16051,7 +16298,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16061,20 +16308,21 @@
 	'use strict';
 
 	var util = __webpack_require__(8);
-	var styleGen = __webpack_require__(64);
+	var styleGen = __webpack_require__(65);
 	var themeNameConst = __webpack_require__(9).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(66);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(67);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(68);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(67);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(68);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(69);
 
 	/**
 	 * build css string with given options.
 	 * @param {Object} options - options
 	 * @returns {String}
+	 * @ignore
 	 */
 	function buildCssString(options) {
 	    var styles = [
@@ -16110,6 +16358,7 @@
 	/**
 	 * Set document style with given options.
 	 * @param {Object} options - options
+	 * @ignore
 	 */
 	function setDocumentStyle(options) {
 	    var cssString = buildCssString(options);
@@ -16146,7 +16395,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16157,12 +16406,13 @@
 
 	var _ = __webpack_require__(1);
 
-	var builder = __webpack_require__(65);
+	var builder = __webpack_require__(66);
 	var classNameConst = __webpack_require__(14);
 
 
 	/**
 	 * Shortcut for the builder.createClassRule() method.
+	 * @ignore
 	 */
 	var classRule = _.bind(builder.createClassRule, builder);
 
@@ -16171,6 +16421,7 @@
 	 * @param {String} className - class name
 	 * @param {Objecr} options - options
 	 * @returns {String}
+	 * @ignore
 	 */
 	function bgTextRuleString(className, options) {
 	    return classRule(className)
@@ -16184,6 +16435,7 @@
 	 * @param {String} className - class name
 	 * @param {Objecr} options - options
 	 * @returns {String}
+	 * @ignore
 	 */
 	function bgBorderRuleString(className, options) {
 	    return classRule(className)
@@ -16413,7 +16665,7 @@
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16426,9 +16678,11 @@
 
 	/**
 	 * create css rule string and returns it
+	 * @module {theme/cssBuilder}
 	 * @param {String} selector - css selector
 	 * @param {String} property - css property
 	 * @param {String} value - css value
+	 * @ignore
 	 */
 	var CSSRuleBuilder = tui.util.defineClass({
 	    init: function(selector) {
@@ -16596,7 +16850,7 @@
 
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports) {
 
 	/**
@@ -16674,7 +16928,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16683,7 +16937,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(66);
+	var presetDefault = __webpack_require__(67);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    cell: {
@@ -16709,7 +16963,7 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16718,7 +16972,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(66);
+	var presetDefault = __webpack_require__(67);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    grid: {
@@ -16748,7 +17002,7 @@
 
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
