@@ -3,9 +3,35 @@
  * @author NHN Ent. FE Development Team
  */
 'use strict';
+
+var _ = require('underscore');
+
+var View = require('./base/view');
+var ModelManager = require('./model/manager');
+var ViewFactory = require('./view/factory');
+var DomState = require('./domState');
+var PublicEventEmitter = require('./publicEventEmitter');
+var PainterManager = require('./painter/manager');
+var PainterController = require('./painter/controller');
+var NetAddOn = require('./addon/net');
+var ComponentHolder = require('./componentHolder');
+var util = require('./common/util');
+var themeManager = require('./theme/manager');
+var themeNameConst = require('./common/constMap').themeName;
+
+var instanceMap = {};
+
+require('../css/index.styl');
+
+ /**
+  * Toast UI Namespace
+  * @namespace
+  */
+tui = window.tui = tui || {};
+
 /**
  * Grid public API
- *
+ * @class
  * @param {PropertiesHash} options
  *      @param {number} [options.columnFixCount=0] - Column index for fixed column. The columns indexed from 0 to this
  *          value will always be shown on the left side. {@link tui.Grid#setColumnFixCount|setColumnFixCount}
@@ -123,251 +149,9 @@
  *              @param {function} [options.footer.columnContent.template] - Template function which returns the
  *                  content(HTML) of the column of the footer. This function takes an K-V object as a parameter
  *                  which contains a summary values keyed by 'sum', 'avg', 'min', 'max' and 'cnt'.
- * @constructor tui.Grid
- * @example
-     <div id='grid'></div>
-     <script>
- var grid = new tui.Grid({
-    el: $('#grid'),
-    columnFixCount: 2,  //(default=0)
-    selectType: 'checkbox', //(default='')
-    autoNumbering: true, //(default=true)
-    headerHeight: 100, //(default=35)
-    rowHeight: 27, // (default=27)
-    displayRowCount: 10, //(default=10)
-    fitToParentHeight: true // (default=false)
-    showDummyRows: false // (default=false)
-    minimumColumnWidth: 50, //(default=50)
-    scrollX: true, //(default:true)
-    scrollY: true, //(default:true)
-    keyColumnName: 'column1', //(default:null)
-    toolbar: false,
-    resizeHandle: true, //(default:false)
-    pagination: true, //(default:null)
-    columnModelList: [
-        {
-            title: 'normal title',
-            columnName: 'column0',
-            className: 'bg_red',
-            width: 100,
-            isEllipsis: false,
-            notUseHtmlEntity: false,
-            defaultValue: 'empty',
-            isIgnore: false
-        },
-        {
-            title: 'hidden column',
-            columnName: 'column1',
-            isHidden: true
-        },
-        {
-            title: 'formatter example',
-            columnName: 'column2',
-            formatter: function(value, row) {
-                return '<img src="' + value + '" />';
-            }
-        },
-        {
-            title: 'converter example',
-            columnName: 'column3',
-            editOption: {
-                type: 'text',
-                converter: function(value, row) {
-                    if (row.rowKey % 2 === 0) {
-                        return 'Plain text value : ' + value;
-                    }
-                }
-            }
-        },
-        {
-            title: 'normal text input column',
-            columnName: 'column4',
-            editOption: {
-                type: 'text',
-                beforeContent: 'price:',
-                afterContent: '$'
-            },
-            // - param {Object}  changeEvent
-            //      - param {(number|string)} changeEvent.rowKey - The rowKey of the target cell
-            //      - param {(number|string)} changeEvent.columnName - The field(column) name of the target cell
-            //      - param {*} changeEvent.value - The changed value of the target cell
-            //      - param {Object} changeEvent.instance - The instance of the Grid
-            // - returns {boolean}
-            changeBeforeCallback: function(changeEvent) {
-                if (!/[0-9]+/.test(changeEvent.value)) {
-                    alert('Integer only.');
-                    return false;
-                }
-            },
-            // - param {Object}  changeEvent
-            //      - param {(number|string)} changeEvent.rowKey - The rowKey of the target cell
-            //      - param {(number|string)} changeEvent.columnName - The field(column) name of the target
-            //      - param {*} changeEvent.value - The changed value of the target cell
-            //      - param {Object} changeEvent.instance - - The instance of the Grid
-            // - returns {boolean}
-            //
-            changeAfterCallback: function(changeEvent) {}
-        },
-        {
-            title: 'password input column',
-            columnName: 'column5',
-            width: 100,
-            isRequired: true,
-            isFixedWidth: true,
-            editOption: {
-                type: 'password',
-                beforeContent: 'password:'
-            }
-        },
-        {
-            title: 'text input when editing mode',
-            columnName: 'column6',
-            editOption: {
-                type: 'text',
-                useViewMode: fales
-            },
-            isIgnore: true
-        },
-        {
-            title: 'select box',
-            columnName: 'column7',
-            editOption: {
-                type: 'select',
-                list: [
-                    {text: '1', value: 1},
-                    {text: '2', value: 2},
-                    {text: '3', value: 3},
-                    {text: '4', value: 4}
-                ]
-            },
-            relationList: [
-                {
-                    columnList: ['column8', 'column9'],
-                    // - param {*} value - The changed value of the target cell
-                    // - param {Object} rowData - The data of the row that contains the target cell
-                    // - return {boolean}
-                    isDisabled: function(value, rowData) {
-                        return value == 2;
-                    },
-                    // - param {*} value - The changed value of the target cell
-                    // - param {Object} rowData - The data of the row that contains the target cell
-                    // - return {boolean}
-                    //
-                    isEditable: function(value, rowData) {
-                        return value != 3;
-                    },
-                    // - param {*} value - The changed value of the target cell
-                    // - param {Object} rowData - The data of the row that contains the target cell
-                    // - return {{text: string, value: number}[]}
-                    optionListChange: function(value, rowData) {
-                        if (value == 1) {
-                            console.log('changev return');
-                            return [
-                                { text: 'option 1', value: 1},
-                                { text: 'option 2', value: 2},
-                                { text: 'option 3', value: 3},
-                                { text: 'option 4', value: 4}
-                            ];
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            title: 'checkbox',
-            columnName: 'column8',
-            editOption: {
-                type: 'checkbox',
-                list: [
-                    {text: 'option 1', value: 1},
-                    {text: 'option 2', value: 2},
-                    {text: 'option 3', value: 3},
-                    {text: 'option 4', value: 4}
-                ]
-            }
-        },
-        {
-            title: 'radio button',
-            columnName: 'column9',
-            editOption: {
-                type: 'radio',
-                list: [
-                    {text: 'option 1', value: 1},
-                    {text: 'option 2', value: 2},
-                    {text: 'option 3', value: 3},
-                    {text: 'option 4', value: 4}
-                ]
-            }
-        },
-    ],
-    columnMerge: [
-        {
-            'columnName' : 'mergeColumn1',
-            'title' : '1 + 2',
-            'columnNameList' : ['column1', 'column2']
-        },
-        {
-            'columnName' : 'mergeColumn2',
-            'title' : '1 + 2 + 3',
-            'columnNameList' : ['mergeColumn1', 'column3']
-        },
-        {
-            'columnName' : 'mergeColumn3',
-            'title' : '1 + 2 + 3 + 4 + 5',
-            'columnNameList' : ['mergeColumn2', 'column4', 'column5']
-        }
-    ],
-    footer: {
-        height: 100,
-        columnContent: {
-            c1: {
-              template: function(summary) {
-                return 'Total: ' + summary.sum + '<br> Average: ' + summary.avg;
-              }
-            },
-            c2: {
-              useAutoSummary: false,
-              template: function() {
-                return 'c2-footer';
-              }
-            }
-        }
-    }
-});
-     </script>
- *
+ * @param {Object} options - Options set by user
  */
-var _ = require('underscore');
-
-var View = require('./base/view');
-var ModelManager = require('./model/manager');
-var ViewFactory = require('./view/factory');
-var DomState = require('./domState');
-var PublicEventEmitter = require('./publicEventEmitter');
-var PainterManager = require('./painter/manager');
-var PainterController = require('./painter/controller');
-var NetAddOn = require('./addon/net');
-var ComponentHolder = require('./componentHolder');
-var util = require('./common/util');
-var themeManager = require('./theme/manager');
-var themeNameConst = require('./common/constMap').themeName;
-
-var instanceMap = {};
-
-require('../css/index.styl');
-
- /**
-  * Toast UI Namespace
-  * @namespace
-  */
-tui = window.tui = tui || {};
-
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
-    /**
-     * Initializes the instance.
-     * @param {Object} options - Options set by user
-     * @ignore
-     */
     initialize: function(options) {
         var domState = new DomState(this.$el);
 
