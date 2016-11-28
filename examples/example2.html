@@ -6,10 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
-<div>
-    <div id="grid">
-    </div>
-</div
+<div class="code-html">
+<div id="grid"></div>
+</div>
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
@@ -18,419 +17,410 @@
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
 <script type="text/javascript" src="./data/grid-row-2000.js"></script>
-<script type="text/javascript">
-    function getTestData(list, nCount){
-        var aResult = [];
-        var rowData = {};
-        for(var i=0; i<nCount; i++){
-            rowData = {};
-            for(var j=0; j<list.length; j++){
-                rowData[list[j]] = getRandomData(list[j]);
-            }
-            aResult.push(rowData);
+<script type="text/javascript" class="code-js">
+function getTestData(list, nCount){
+    var aResult = [];
+    var rowData = {};
+    for(var i = 0; i < nCount; i += 1){
+        rowData = {};
+        for(var j=0; j < list.length; j++){
+            rowData[list[j]] = getRandomData(list[j]);
         }
-        aResult.reverse();
-        return aResult;
+        aResult.push(rowData);
+    }
+    aResult.reverse();
+    return aResult;
+}
+
+function getRandomData(sFieldName){
+    var nNowTime = +new Date;
+    var aProductOrderNo = [parseInt(Math.random() * 100000000, 10)];
+
+    var aCategory1 = ["01", "02", "03", "04"];
+    var aCategory2 = ["02_01","02_02","02_03","03_01","03_02","03_03","04_01","04_02","04_03"];
+    var aCategory_dummy = [];
+
+    var aDeliveryNo = [parseInt(Math.random() * 100000000, 10)];
+    var aProductPrice = [300, 3500, 5000, 10000, 17000, 28000, 35000, 65000, 12490, 33300, 785000, 25000, 39000];
+
+
+    var aTarget = [];
+    try {
+        aTarget = eval("a"+sFieldName.substr(0,1).toUpperCase()+sFieldName.substr(1));
+    } catch(e){}
+
+    if (aTarget.length) {
+        var nIndex = parseInt(Math.random() * aTarget.length);
+        return aTarget[nIndex];
+    } else {
+        return "";
+    }
+}
+
+function getDepth3Data(key) {
+    var category3_list = [
+        {"value" : "01_01_1001", "text" : "남자백"},
+        {"value" : "01_01_1002", "text" : "백팩"},
+        {"value" : "01_01_1003", "text" : "서류가방"},
+        {"value" : "01_01_1004", "text" : "숄더백"},
+        {"value" : "01_01_1005", "text" : "여행가방"},
+        {"value" : "01_01_1006", "text" : "크로스백"},
+        {"value" : "01_01_1007", "text" : "토트백"},
+
+        {"value" : "01_02_1008", "text" : "동전 지갑"},
+        {"value" : "01_02_1009", "text" : "머니클립"},
+        {"value" : "01_02_1010", "text" : "명함 지갑"},
+        {"value" : "01_02_1011", "text" : "반지갑"},
+        {"value" : "01_02_1012", "text" : "장지갑"},
+        {"value" : "01_02_1013", "text" : "열쇠 지갑"},
+
+        {"value" : "01_03_1014", "text" : "남성화"},
+        {"value" : "01_03_1015", "text" : "여성화"},
+
+        {"value" : "01_04_1016", "text" : "남녀 공용시계"},
+        {"value" : "01_04_1017", "text" : "남성 시계"},
+        {"value" : "01_04_1018", "text" : "여성 시계"},
+
+        {"value" : "02_01_1019", "text" : "운동화"},
+        {"value" : "02_01_1020", "text" : "슬리퍼"},
+        {"value" : "02_01_1021", "text" : "샌들"},
+        {"value" : "02_01_1022", "text" : "부츠"},
+
+        {"value" : "02_02_1023", "text" : "점퍼"},
+        {"value" : "02_02_1024", "text" : "트랙탑"},
+        {"value" : "02_02_1025", "text" : "조끼"},
+        {"value" : "02_02_1026", "text" : "바지"},
+
+        {"value" : "02_03_1027", "text" : "가방"},
+        {"value" : "02_03_1028", "text" : "모자"},
+        {"value" : "02_03_1029", "text" : "벨트"},
+        {"value" : "02_03_1030", "text" : "양말"},
+        {"value" : "02_03_1031", "text" : "장갑"},
+
+        {"value" : "03_01_1032", "text" : "가죽시트"},
+        {"value" : "03_01_1033", "text" : "겨울시트"},
+        {"value" : "03_01_1034", "text" : "여름시트"},
+        {"value" : "03_01_1035", "text" : "열선시트"},
+
+        {"value" : "03_02_0401", "text" : "핸들용품"},
+        {"value" : "03_02_0402", "text" : "룸미러"},
+        {"value" : "03_02_0403", "text" : "기어용품"},
+
+        {"value" : "03_03_0401", "text" : "레이싱용품"},
+        {"value" : "03_03_0402", "text" : "브레이크"},
+        {"value" : "03_03_0403", "text" : "냉각"},
+
+        {"value" : "04_01_1131", "text" : "냄비세트"},
+        {"value" : "04_01_0400", "text" : "양수냄비"},
+        {"value" : "04_01_0401", "text" : "찜기"},
+        {"value" : "04_01_0402", "text" : "돌솥"},
+        {"value" : "04_01_0403", "text" : "뚝배기"},
+
+        {"value" : "04_02_1111", "text" : "접시"},
+        {"value" : "04_02_1112", "text" : "공기"},
+        {"value" : "04_02_1113", "text" : "면기"},
+        {"value" : "04_02_1114", "text" : "볼"},
+        {"value" : "04_02_1115", "text" : "홈세트"},
+
+        {"value" : "04_03_9874", "text" : "기타와인소품"},
+        {"value" : "04_03_1375", "text" : "디캔터"},
+        {"value" : "04_03_5712", "text" : "샴페인잔"},
+        {"value" : "04_03_7315", "text" : "와인랙"},
+        {"value" : "04_03_7932", "text" : "와인잔"},
+        {"value" : "04_03_4345", "text" : "와인쿨러"}
+    ];
+
+    if (key == "all") {
+        return category3_list;
     }
 
-    function getRandomData(sFieldName){
-        var nNowTime = +new Date;
-        var aProductOrderNo = [parseInt(Math.random() * 100000000, 10)];
+    var returnArray = [];
+    returnArray.push({"value":"", "text":"선택하세요"});
 
-        var aCategory1 = ["01", "02", "03", "04"];
-        var aCategory2 = ["02_01","02_02","02_03","03_01","03_02","03_03","04_01","04_02","04_03"];
-        var aCategory_dummy = [];
+    for(var i=0; i<category3_list.length; i++) {
 
-        var aDeliveryNo = [parseInt(Math.random() * 100000000, 10)];
-        var aProductPrice = [300, 3500, 5000, 10000, 17000, 28000, 35000, 65000, 12490, 33300, 785000, 25000, 39000];
-
-
-        var aTarget = [];
-        try{
-            aTarget = eval("a"+sFieldName.substr(0,1).toUpperCase()+sFieldName.substr(1));
-        }catch(e){
-        }
-
-        if(aTarget.length){
-            var nIndex = parseInt(Math.random() * aTarget.length);
-            return aTarget[nIndex];
-        }else{
-            return "";
+        if(category3_list[i]["value"].substr(0,5) == key) {
+            returnArray.push(category3_list[i]);
         }
     }
 
-    function getDepth3Data(key) {
+    return returnArray;
+}
 
-        var category3_list = [
-            {"value" : "01_01_1001", "text" : "남자백"},
-            {"value" : "01_01_1002", "text" : "백팩"},
-            {"value" : "01_01_1003", "text" : "서류가방"},
-            {"value" : "01_01_1004", "text" : "숄더백"},
-            {"value" : "01_01_1005", "text" : "여행가방"},
-            {"value" : "01_01_1006", "text" : "크로스백"},
-            {"value" : "01_01_1007", "text" : "토트백"},
-
-            {"value" : "01_02_1008", "text" : "동전 지갑"},
-            {"value" : "01_02_1009", "text" : "머니클립"},
-            {"value" : "01_02_1010", "text" : "명함 지갑"},
-            {"value" : "01_02_1011", "text" : "반지갑"},
-            {"value" : "01_02_1012", "text" : "장지갑"},
-            {"value" : "01_02_1013", "text" : "열쇠 지갑"},
-
-            {"value" : "01_03_1014", "text" : "남성화"},
-            {"value" : "01_03_1015", "text" : "여성화"},
-
-            {"value" : "01_04_1016", "text" : "남녀 공용시계"},
-            {"value" : "01_04_1017", "text" : "남성 시계"},
-            {"value" : "01_04_1018", "text" : "여성 시계"},
-
-            {"value" : "02_01_1019", "text" : "운동화"},
-            {"value" : "02_01_1020", "text" : "슬리퍼"},
-            {"value" : "02_01_1021", "text" : "샌들"},
-            {"value" : "02_01_1022", "text" : "부츠"},
-
-            {"value" : "02_02_1023", "text" : "점퍼"},
-            {"value" : "02_02_1024", "text" : "트랙탑"},
-            {"value" : "02_02_1025", "text" : "조끼"},
-            {"value" : "02_02_1026", "text" : "바지"},
-
-            {"value" : "02_03_1027", "text" : "가방"},
-            {"value" : "02_03_1028", "text" : "모자"},
-            {"value" : "02_03_1029", "text" : "벨트"},
-            {"value" : "02_03_1030", "text" : "양말"},
-            {"value" : "02_03_1031", "text" : "장갑"},
-
-            {"value" : "03_01_1032", "text" : "가죽시트"},
-            {"value" : "03_01_1033", "text" : "겨울시트"},
-            {"value" : "03_01_1034", "text" : "여름시트"},
-            {"value" : "03_01_1035", "text" : "열선시트"},
-
-            {"value" : "03_02_0401", "text" : "핸들용품"},
-            {"value" : "03_02_0402", "text" : "룸미러"},
-            {"value" : "03_02_0403", "text" : "기어용품"},
-
-            {"value" : "03_03_0401", "text" : "레이싱용품"},
-            {"value" : "03_03_0402", "text" : "브레이크"},
-            {"value" : "03_03_0403", "text" : "냉각"},
-
-            {"value" : "04_01_1131", "text" : "냄비세트"},
-            {"value" : "04_01_0400", "text" : "양수냄비"},
-            {"value" : "04_01_0401", "text" : "찜기"},
-            {"value" : "04_01_0402", "text" : "돌솥"},
-            {"value" : "04_01_0403", "text" : "뚝배기"},
-
-            {"value" : "04_02_1111", "text" : "접시"},
-            {"value" : "04_02_1112", "text" : "공기"},
-            {"value" : "04_02_1113", "text" : "면기"},
-            {"value" : "04_02_1114", "text" : "볼"},
-            {"value" : "04_02_1115", "text" : "홈세트"},
-
-            {"value" : "04_03_9874", "text" : "기타와인소품"},
-            {"value" : "04_03_1375", "text" : "디캔터"},
-            {"value" : "04_03_5712", "text" : "샴페인잔"},
-            {"value" : "04_03_7315", "text" : "와인랙"},
-            {"value" : "04_03_7932", "text" : "와인잔"},
-            {"value" : "04_03_4345", "text" : "와인쿨러"}
-        ];
-
-        if (key == "all") {
-            return category3_list;
-        }
-
-        var returnArray = [];
-        returnArray.push({"value":"", "text":"선택하세요"});
-
-        for(var i=0; i<category3_list.length; i++) {
-
-            if(category3_list[i]["value"].substr(0,5) == key) {
-                returnArray.push(category3_list[i]);
-            }
-        }
-
-        return returnArray;
-    }
-
-    var grid = new tui.Grid({
-        el: $('#grid'),
-        selectType: 'checkbox',
-        columnFixIndex: 5,
-        displayRowCount: 10,
-        headerHeight: 135,
-        minimumColumnWidth: 20,
-        columnModelList : [
-            {
-                "title" : "<b>주문번호</b>",
-                "columnName" : "productOrderNo",
-                "align" : "center",
-                "width" : 100
+var grid = new tui.Grid({
+    el: $('#grid'),
+    selectType: 'checkbox',
+    columnFixIndex: 5,
+    displayRowCount: 10,
+    headerHeight: 135,
+    minimumColumnWidth: 20,
+    columnModelList : [
+        {
+            "title" : "<b>주문번호</b>",
+            "columnName" : "productOrderNo",
+            "align" : "center",
+            "width" : 100
+        },
+        {
+            "title" : "<b>상품가격</b>",
+            "columnName" : "productPrice",
+            "align" : "right",
+            "width" : 100,
+            "editOption" : {
+                "type": "text",
+                "maxLength" : 10,
+                "changeCallback" : function(changeEvent){
+                    //console.log("change callback", changeEvent)
+                }
             },
-            {
-                "title" : "<b>상품가격</b>",
-                "columnName" : "productPrice",
-                "align" : "right",
-                "width" : 100,
-                "editOption" : {
-                    "type": "text",
-                    "maxLength" : 10,
-                    "changeCallback" : function(changeEvent){
-                        //console.log("change callback", changeEvent)
+            "afterContent" : " 원",
+            "formatter" : function(columnValue){
+                var sValue = String(columnValue) || "0";
+                return sValue.replace(/(\d)(?=(\d{3})+$)/gi, "$1,")+" 원";
+            },
+            "relationList": [
+                {
+                    "columnList": [ 'deliveryNo' ],
+                    "isEditable": function(columnValue, rowData) {
+                        if (rowData.productPrice < 10000) {
+                            return false;     //편집 불가능하도록 함.
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "title" : "<b>대분류</b>",
+            "columnName" : "category1",
+            "relationList" : [
+                {
+                    "columnList" : ["category2", "memo"],
+                    "isDisabled" : function(columnValue, rowData) {
+                        //caregory2항목을 disable시키려면 true 리턴해야 함
+                        if (rowData["category1"] == "") {
+                            return true;      //DISABLED 시킨다는 의미.
+                        } else {
+                            return false;
+                        }
                     }
                 },
-                "afterContent" : " 원",
-                "formatter" : function(columnValue){
-                    var sValue = String(columnValue) || "0";
-                    return sValue.replace(/(\d)(?=(\d{3})+$)/gi, "$1,")+" 원";
-                },
-                "relationList": [
-                    {
-                        "columnList": [ 'deliveryNo' ],
-                        "isEditable": function(columnValue, rowData) {
-                            if (rowData.productPrice < 10000) {
-                                return false;     //편집 불가능하도록 함.
-                            } else {
-                                return true;
-                            }
+                {
+                    "columnList" : "category2",
+                    "optionListChange" : function(columnValue, rowData) {
+                        //*
+                        //중분류에 해당하는 값을 노출하는 아래 조건 함수 부분은 서비스 개발쪽의 로직에 따라서 작성 필요합니다.
+                        //*
+                        if(rowData["category1"] == "01") {
+                            return [
+                                {"value" : "", "text" : "선택하세요"},
+                                {"value" : "01_01", "text" : "가방"},
+                                {"value" : "01_02", "text" : "지갑"},
+                                {"value" : "01_03", "text" : "신발"},
+                                {"value" : "01_04", "text" : "시계"}
+                            ];
+                        }else if(rowData["category1"] == "02") {
+                            return [
+                                {"value" : "", "text" : "선택하세요"},
+                                {"value" : "02_01", "text" : "신발"},
+                                {"value" : "02_02", "text" : "의류"},
+                                {"value" : "02_03", "text" : "잡화"}
+                            ];
+                        }else if(rowData["category1"] == "03") {
+                            return [
+                                {"value" : "", "text" : "선택하세요"},
+                                {"value" : "03_01", "text" : "시트커버"},
+                                {"value" : "03_02", "text" : "인테리어용품"},
+                                {"value" : "03_03", "text" : "튜닝용품"}
+                            ];
+                        }else if(rowData["category1"] == "04") {
+                            return [
+                                {"value" : "", "text" : "선택하세요"},
+                                {"value" : "04_01", "text" : "냄비"},
+                                {"value" : "04_02", "text" : "식기류"},
+                                {"value" : "04_03", "text" : "와인용품"}
+                            ];
+                        }else {
+                            return [
+                                {"value" : "", "text" : "선택하세요"}
+                            ];
                         }
                     }
-                ]
-            },
-            {
-                "title" : "<b>대분류</b>",
-                "columnName" : "category1",
-                "relationList" : [
-                    {
-                        "columnList" : ["category2", "memo"],
-                        "isDisabled" : function(columnValue, rowData) {
-                            //caregory2항목을 disable시키려면 true 리턴해야 함
-                            if (rowData["category1"] == "") {
-                                return true;      //DISABLED 시킨다는 의미.
-                            } else {
-                                return false;
-                            }
-                        }
-                    },
-                    {
-                        "columnList" : "category2",
-                        "optionListChange" : function(columnValue, rowData) {
-
-                            //*
-                            //중분류에 해당하는 값을 노출하는 아래 조건 함수 부분은 서비스 개발쪽의 로직에 따라서 작성 필요합니다.
-                            //*
-
-
-                            if(rowData["category1"] == "01") {
-                                return [
-                                    {"value" : "", "text" : "선택하세요"},
-                                    {"value" : "01_01", "text" : "가방"},
-                                    {"value" : "01_02", "text" : "지갑"},
-                                    {"value" : "01_03", "text" : "신발"},
-                                    {"value" : "01_04", "text" : "시계"}
-                                ];
-                            }else if(rowData["category1"] == "02") {
-                                return [
-                                    {"value" : "", "text" : "선택하세요"},
-                                    {"value" : "02_01", "text" : "신발"},
-                                    {"value" : "02_02", "text" : "의류"},
-                                    {"value" : "02_03", "text" : "잡화"}
-                                ];
-                            }else if(rowData["category1"] == "03") {
-                                return [
-                                    {"value" : "", "text" : "선택하세요"},
-                                    {"value" : "03_01", "text" : "시트커버"},
-                                    {"value" : "03_02", "text" : "인테리어용품"},
-                                    {"value" : "03_03", "text" : "튜닝용품"}
-                                ];
-                            }else if(rowData["category1"] == "04") {
-                                return [
-                                    {"value" : "", "text" : "선택하세요"},
-                                    {"value" : "04_01", "text" : "냄비"},
-                                    {"value" : "04_02", "text" : "식기류"},
-                                    {"value" : "04_03", "text" : "와인용품"}
-                                ];
-                            }else {
-                                return [
-                                    {"value" : "", "text" : "선택하세요"}
-                                ];
-                            }
-                        }
-                    }
+                }
+            ],
+            "align" : "center",
+            "width" : 100,
+            "editOption" : {
+                "type": "select",
+                "list" : [
+                    {"value" : "", "text" : "선택하세요"},
+                    {"value" : "01", "text" : "명품"},
+                    {"value" : "02", "text" : "스포츠류"},
+                    {"value" : "03", "text" : "자동차용품"},
+                    {"value" : "04", "text" : "주방"}
                 ],
-                "align" : "center",
-                "width" : 100,
-                "editOption" : {
-                    "type": "select",
-                    "list" : [
-                        {"value" : "", "text" : "선택하세요"},
-                        {"value" : "01", "text" : "명품"},
-                        {"value" : "02", "text" : "스포츠류"},
-                        {"value" : "03", "text" : "자동차용품"},
-                        {"value" : "04", "text" : "주방"}
-                    ],
-                    "useViewMode": false,
-                    "changeBeforeCallback" : function(changeEvent){
-                        //console.log("** 셀렉트박스1 값 변경 이벤트 : ", changeEvent);
-                    }
-                }
-            },
-            {
-                "title" : "<b>중분류</b>",
-                "columnName" : "category2",
-                "editType" : "selectbox",
-                "editOption" : {
-                    "type": "select",
-                    "list" : [
-                        {"value" : "", "text" : "선택하세요"},
-                        {"value" : "01_01", "text" : "가방"},
-                        {"value" : "01_02", "text" : "지갑"},
-                        {"value" : "01_03", "text" : "신발"},
-                        {"value" : "01_04", "text" : "시계"},
-                        {"value" : "02_01", "text" : "신발"},
-                        {"value" : "02_02", "text" : "의류"},
-                        {"value" : "02_03", "text" : "잡화"},
-                        {"value" : "03_01", "text" : "시트커버"},
-                        {"value" : "03_02", "text" : "인테리어용품"},
-                        {"value" : "03_03", "text" : "튜닝용품"},
-                        {"value" : "04_01", "text" : "냄비"},
-                        {"value" : "04_02", "text" : "식기류"},
-                        {"value" : "04_03", "text" : "와인용품"}
-                    ],
-                    "useViewMode": false,
-                    "changeCallback" : function(changeEvent){
-                        //console.log("셀렉트박스2 값 변경 이벤트 : ", changeEvent);
-                    }
-                },
-
-                "relationList" : [
-                    {
-                        "columnList" : ["category3"],
-                        "isEditable" : function(columnValue, rowData) {
-                            return getDepth3Data(rowData["category2"]);
-
-                        }
-                    },
-                    {
-                        "columnList" : "category3",
-                        "isDisabled" : function(columnValue, rowData) {
-                            if (rowData["category2"] == "") {
-                                return true;      //"DISABLED"
-                            } else {
-                                return false;        //""
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                "title" : "<b>소분류</b>",
-                "columnName" : "category3",
-                "editOption" : {
-                    "type": "select",
-                    "list" : getDepth3Data("all"),
-                    "useViewMode": false,
-                    "changeBeforeCallback" : function(changeEvent){
-                        //console.log("셀렉트박스3 값 변경 이벤트 : ", changeEvent);
-                    }
-                },
-                "relationList" : [
-                    {
-                        "columnList" : ["deliveryNo"],
-                        "isDisabled" : function(columnValue, rowData) {
-                            if (rowData["category3"] == "") {
-                                return true;       //"DISABLED" 의 의미.
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                    ,{
-                        "columnList" : ["productPrice"],
-                        "isEditable" : function(columnValue, rowData) {
-                            if (rowData["category3"] == "") {
-                                return true;       //"DISABLED" 의 의미.
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                ]
-            },
-            {
-                "title" : "<b>송장번호</b>",
-                "columnName" : "deliveryNo",
-                "align" : "center",
-                "editOption" : {
-                    "type": "text",
-                    "changeBeforeCallback" : function(changeEvent){
-                        console.log("텍스트박스 값 변경 이벤트 : ", changeEvent);
-                    }
-                }
-            },
-            {
-                "title" : "<b>메모</b>",
-                "columnName" : "memo",
-                "align" : "center",
-                "editOption" : {
-                    "type": "text",
-                    "changeBeforeCallback" : function(changeEvent){
-                        console.log("텍스트박스 값 변경 이벤트 : ", changeEvent);
-                    }
+                "useViewMode": false,
+                "changeBeforeCallback" : function(changeEvent){
+                    //console.log("** 셀렉트박스1 값 변경 이벤트 : ", changeEvent);
                 }
             }
-        ]
-    });
-    grid.setRowList([
-
-        {
-            productOrderNo : "88449966",
-            productPrice : 1000,
-            category1 : "01",
-            category2 : "01_02",
-            category3 : "01_02_1008",
-            deliveryNo : "73020122"
         },
-
         {
-            productOrderNo : "43452421",
-            productPrice : 398000,
-            category1 : "04",
-            category2 : "04_03",
-            category3 : "04_03_7315",
-            deliveryNo : "78109248"
+            "title" : "<b>중분류</b>",
+            "columnName" : "category2",
+            "editType" : "selectbox",
+            "editOption" : {
+                "type": "select",
+                "list" : [
+                    {"value" : "", "text" : "선택하세요"},
+                    {"value" : "01_01", "text" : "가방"},
+                    {"value" : "01_02", "text" : "지갑"},
+                    {"value" : "01_03", "text" : "신발"},
+                    {"value" : "01_04", "text" : "시계"},
+                    {"value" : "02_01", "text" : "신발"},
+                    {"value" : "02_02", "text" : "의류"},
+                    {"value" : "02_03", "text" : "잡화"},
+                    {"value" : "03_01", "text" : "시트커버"},
+                    {"value" : "03_02", "text" : "인테리어용품"},
+                    {"value" : "03_03", "text" : "튜닝용품"},
+                    {"value" : "04_01", "text" : "냄비"},
+                    {"value" : "04_02", "text" : "식기류"},
+                    {"value" : "04_03", "text" : "와인용품"}
+                ],
+                "useViewMode": false,
+                "changeCallback" : function(changeEvent){
+                    //console.log("셀렉트박스2 값 변경 이벤트 : ", changeEvent);
+                }
+            },
+
+            "relationList" : [
+                {
+                    "columnList" : ["category3"],
+                    "isEditable" : function(columnValue, rowData) {
+                        return getDepth3Data(rowData["category2"]);
+
+                    }
+                },
+                {
+                    "columnList" : "category3",
+                    "isDisabled" : function(columnValue, rowData) {
+                        if (rowData["category2"] == "") {
+                            return true;      //"DISABLED"
+                        } else {
+                            return false;        //""
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "title" : "<b>소분류</b>",
+            "columnName" : "category3",
+            "editOption" : {
+                "type": "select",
+                "list" : getDepth3Data("all"),
+                "useViewMode": false,
+                "changeBeforeCallback" : function(changeEvent){
+                    //console.log("셀렉트박스3 값 변경 이벤트 : ", changeEvent);
+                }
+            },
+            "relationList" : [
+                {
+                    "columnList" : ["deliveryNo"],
+                    "isDisabled" : function(columnValue, rowData) {
+                        if (rowData["category3"] == "") {
+                            return true;       //"DISABLED" 의 의미.
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+                ,{
+                    "columnList" : ["productPrice"],
+                    "isEditable" : function(columnValue, rowData) {
+                        if (rowData["category3"] == "") {
+                            return true;       //"DISABLED" 의 의미.
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "title" : "<b>송장번호</b>",
+            "columnName" : "deliveryNo",
+            "align" : "center",
+            "editOption" : {
+                "type": "text",
+                "changeBeforeCallback" : function(changeEvent){
+                    console.log("텍스트박스 값 변경 이벤트 : ", changeEvent);
+                }
+            }
+        },
+        {
+            "title" : "<b>메모</b>",
+            "columnName" : "memo",
+            "align" : "center",
+            "editOption" : {
+                "type": "text",
+                "changeBeforeCallback" : function(changeEvent){
+                    console.log("텍스트박스 값 변경 이벤트 : ", changeEvent);
+                }
+            }
         }
-        ,
-        {
-            productOrderNo : "77770330",
-            productPrice : 95000,
-            category1 : "04",
-            category2 : "04_02",
-            category3 : "04_02_1111",
-            deliveryNo : "32796543"
-        },
-        {
-            productOrderNo : "27437315",
-            productPrice : 789110,
-            category1 : "03",
-            category2 : "03_02",
-            category3 : "03_02_0402",
-            deliveryNo : "22225755"
-        },
-        {
-            productOrderNo : "10193852",
-            productPrice : 789110,
-            category1 : "02",
-            category2 : "02_03",
-            category3 : "02_03_1031",
-            deliveryNo : "10311031"
-        },
-        {
-            productOrderNo : "99821033",
-            productPrice : 179800,
-            category1 : "",
-            category2 : "",
-            category3 : "",
-            deliveryNo : "73103301"
-        }
-
-    ]);
+    ]
+});
+grid.setRowList([
+    {
+        productOrderNo : "88449966",
+        productPrice : 1000,
+        category1 : "01",
+        category2 : "01_02",
+        category3 : "01_02_1008",
+        deliveryNo : "73020122"
+    },
+    {
+        productOrderNo : "43452421",
+        productPrice : 398000,
+        category1 : "04",
+        category2 : "04_03",
+        category3 : "04_03_7315",
+        deliveryNo : "78109248"
+    },
+    {
+        productOrderNo : "77770330",
+        productPrice : 95000,
+        category1 : "04",
+        category2 : "04_02",
+        category3 : "04_02_1111",
+        deliveryNo : "32796543"
+    },
+    {
+        productOrderNo : "27437315",
+        productPrice : 789110,
+        category1 : "03",
+        category2 : "03_02",
+        category3 : "03_02_0402",
+        deliveryNo : "22225755"
+    },
+    {
+        productOrderNo : "10193852",
+        productPrice : 789110,
+        category1 : "02",
+        category2 : "02_03",
+        category3 : "02_03_1031",
+        deliveryNo : "10311031"
+    },
+    {
+        productOrderNo : "99821033",
+        productPrice : 179800,
+        category1 : "",
+        category2 : "",
+        category3 : "",
+        deliveryNo : "73103301"
+    }
+]);
 </script>
 </html>

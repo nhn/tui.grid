@@ -6,7 +6,9 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="code-html">
 <div id="grid"></div>
+</div>
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
@@ -15,10 +17,10 @@
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.calendar/1.1.2/calendar.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.date-picker/1.3.1/date-picker.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
-<script>
+<script type="text/javascript" class="code-js">
 var grid = new tui.Grid({
     el: $('#grid'),
-	headerHeight: 30,
+    headerHeight: 30,
     toolbar: null,
     headerHeight: 60,
     displayRowCount: 15,
@@ -31,13 +33,13 @@ var grid = new tui.Grid({
                 type: 'text'
             }
         },
-		{
-			title: 'DatePicker: (yy/mm/dd)',
+        {
+            title: 'DatePicker: (yy/mm/dd)',
             columnName: 'c2',
             editOption: {
                 useViewMode: false,
-				type: 'text'
-			},
+                type: 'text'
+            },
             component: {
                 name: 'datePicker',
                 option: {
@@ -45,12 +47,12 @@ var grid = new tui.Grid({
                 }
             }
         },
-		{
-			title: 'DatePicker: (yyyy.mm.dd)',
+        {
+            title: 'DatePicker: (yyyy.mm.dd)',
             columnName: 'c3',
             editOption: {
                 type: 'text'
-			},
+            },
             component: {
                 name: 'datePicker',
                 option: {
@@ -58,12 +60,12 @@ var grid = new tui.Grid({
                 }
             }
         },
-		{
-			title: 'DatePicker (selectableRanges)',
+        {
+            title: 'DatePicker (selectableRanges)',
             columnName: 'c4',
             editOption: {
                 type: 'text'
-			},
+            },
             component: {
                 name: 'datePicker',
                 option: {
@@ -74,7 +76,7 @@ var grid = new tui.Grid({
                 }
             }
         }
-	],
+    ],
     columnMerge: [
         {
             columnName : 'c1-c2',
@@ -91,9 +93,9 @@ var grid = new tui.Grid({
 
 var rowList = [];
 (function() {
-	_.times(20, function(number) {
-	    rowList.push({ });
-	})
+    _.times(20, function(number) {
+        rowList.push({ });
+    })
 })();
 
 grid.setRowList(rowList);

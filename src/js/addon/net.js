@@ -19,7 +19,6 @@ var DELAY_FOR_LOADING_STATE = 200;
 /**
  * Net Addon
  * @module addon/net
- * @mixes module:base/common
  * @param {object} options
  *      @param {jquery} options.el   form 엘리먼트
  *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.

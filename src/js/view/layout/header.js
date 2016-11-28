@@ -28,7 +28,7 @@ var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
  */
 var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     initialize: function(options) {
-        View.prototype.initialize.call();
+        View.prototype.initialize.call(this);
 
         this.setOwnProperties({
             renderModel: options.renderModel,

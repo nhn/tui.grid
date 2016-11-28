@@ -6,22 +6,24 @@
     <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
 </head>
 <body>
+<div class="code-html">
 <div id="grid"></div>
+</div>
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
-<script>
+<script type="text/javascript" class="code-js">
 var grid = new tui.Grid({
     el: $('#grid'),
     selectType: 'checkbox',
     columnFixCount: 0,
-	headerHeight: 30,
+    headerHeight: 30,
     resizeHandle: {},
-	displayRowCount: 15,
-	minimumColumnWidth: 100,
+    displayRowCount: 15,
+    minimumColumnWidth: 100,
     columnModelList: [
         {
             title: 'User ID',
@@ -49,7 +51,7 @@ var grid = new tui.Grid({
                 type: 'text',
             }
         },
-	],
+    ],
     footer: {
         height: 50,
         columnContent: {

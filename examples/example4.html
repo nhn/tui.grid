@@ -14,17 +14,18 @@
     </style>
 </head>
 <body>
+<div class="code-html">
 <div id="grid"></div>
-    <div id="theme">
-        <div class="preset">
-            <h4>Preset</h4>
-            <button class="btn-theme" data-preset="default">default</button>
-            <button class="btn-theme" data-preset="striped">striped</button>
-            <button class="btn-theme" data-preset="clean">clean</button>
-        </div>
-        <div class="custom">
-            <h4>Custom options</h4>
-            <p><textarea id="custom-text">
+<div id="theme">
+    <div class="preset">
+        <h4>Preset</h4>
+        <button class="btn-theme" data-preset="default">default</button>
+        <button class="btn-theme" data-preset="striped">striped</button>
+        <button class="btn-theme" data-preset="clean">clean</button>
+    </div>
+    <div class="custom">
+        <h4>Custom options</h4>
+        <p><textarea id="custom-text">
 {
     grid: {
         background: '#fff',
@@ -73,10 +74,10 @@
         }
     }
 }
-            </textarea></p>
-            <p><button class="btn-custom">Apply</button></p>
-        </div>
+        </textarea></p>
+        <p><button class="btn-custom">Apply</button></p>
     </div>
+</div>
 </div>
 </body>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
@@ -85,55 +86,56 @@
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
 <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
 <script type="text/javascript" src="../dist/grid.js"></script>
-<script type="text/javascript">
+<script type="text/javascript" class="code-js">
 var grid = new tui.Grid({
     el: $('#grid'),
-	headerHeight: 40,
-	displayRowCount: 15,
-	minimumColumnWidth: 100,
+    headerHeight: 40,
+    displayRowCount: 15,
+    minimumColumnWidth: 100,
     rowHeight: 35,
     columnModelList: [
-		{
-			columnName: '_button',
-			width: 30
-		},
-		{
-			title: 'ID',
+        {
+            columnName: '_button',
+            width: 30
+        },
+        {
+            title: 'ID',
             columnName: 'c1',
             align: 'center',
             editOption: {
                 beforeContent: 'FE',
-				type: 'text'
-			}
+                type: 'text'
+            }
         },
-		{
-			title: 'Name',
-			defaultValue: 2,
+        {
+            title: 'Name',
+            defaultValue: 2,
             columnName: 'c2',
             align: 'center',
             editOption: {
                 type: 'text',
-			}
+            }
         },
-		{
-			title: 'Score',
+        {
+            title: 'Score',
             columnName: 'c3',
             align: 'center',
             editOption: {
                 type: 'text',
                 afterContent: ' Point',
-			}
+            }
         }
-	]
+    ]
 });
+
 var rowList = [];
 (function() {
-	_.times(20, function(number) {
-	    rowList.push({
-			c1: String(Math.random()).substring(2, 10),
+    _.times(20, function(number) {
+        rowList.push({
+            c1: String(Math.random()).substring(2, 10),
             c3: Math.round(Math.random() * 10000)
-		});
-	})
+        });
+    })
 })();
 
 rowList[0].c2 = 'Mustafa Cosme';
@@ -158,7 +160,6 @@ rowList[18].c2 = 'Toma Levan';
 rowList[19].c2 = 'Njord Thoko';
 
 grid.setRowList(rowList);
-
 grid.disableRow(6);
 
 var currentPresetName = 'default';
