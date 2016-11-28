@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        <img src="img/toast-ui.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example1.html">1. Basic Example</a><div class="hidden" id="example1_sub"></div></li><li><a href="tutorial-example2.html">2. Using Relation List</a><div class="hidden" id="example2_sub"></div></li><li><a href="tutorial-example3.html">3. Using _extraData</a><div class="hidden" id="example3_sub"></div></li><li><a href="tutorial-example4.html">4. Applying Themes</a><div class="hidden" id="example4_sub"></div></li><li><a href="tutorial-example5.html">5. Using Date-Picker Component</a><div class="hidden" id="example5_sub"></div></li><li><a href="tutorial-example6.html">6. Using Footer with column summary</a><div class="hidden" id="example6_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="tui.Grid.html">Grid</a><div class="hidden" id="tui.Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.Grid.html#.applyTheme">applyTheme</a></li><li><a href="tui.Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="tui.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="tui.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="tui.Grid.html#appendRow">appendRow</a></li><li><a href="tui.Grid.html#blur">blur</a></li><li><a href="tui.Grid.html#check">check</a></li><li><a href="tui.Grid.html#checkAll">checkAll</a></li><li><a href="tui.Grid.html#clear">clear</a></li><li><a href="tui.Grid.html#destroy">destroy</a></li><li><a href="tui.Grid.html#disable">disable</a></li><li><a href="tui.Grid.html#disableCheck">disableCheck</a></li><li><a href="tui.Grid.html#disableRow">disableRow</a></li><li><a href="tui.Grid.html#enable">enable</a></li><li><a href="tui.Grid.html#enableCheck">enableCheck</a></li><li><a href="tui.Grid.html#enableRow">enableRow</a></li><li><a href="tui.Grid.html#focus">focus</a></li><li><a href="tui.Grid.html#focusAt">focusAt</a></li><li><a href="tui.Grid.html#focusIn">focusIn</a></li><li><a href="tui.Grid.html#focusInAt">focusInAt</a></li><li><a href="tui.Grid.html#getAddOn">getAddOn</a></li><li><a href="tui.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="tui.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="tui.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="tui.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="tui.Grid.html#getElement">getElement</a></li><li><a href="tui.Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="tui.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="tui.Grid.html#getPagination">getPagination</a></li><li><a href="tui.Grid.html#getRow">getRow</a></li><li><a href="tui.Grid.html#getRowAt">getRowAt</a></li><li><a href="tui.Grid.html#getRowCount">getRowCount</a></li><li><a href="tui.Grid.html#getRowList">getRowList</a></li><li><a href="tui.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="tui.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="tui.Grid.html#getValue">getValue</a></li><li><a href="tui.Grid.html#hideColumn">hideColumn</a></li><li><a href="tui.Grid.html#isChanged">isChanged</a></li><li><a href="tui.Grid.html#prependRow">prependRow</a></li><li><a href="tui.Grid.html#readyForKeyControl">readyForKeyControl</a></li><li><a href="tui.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="tui.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="tui.Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="tui.Grid.html#removeRow">removeRow</a></li><li><a href="tui.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="tui.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="tui.Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="tui.Grid.html#restore">restore</a></li><li><a href="tui.Grid.html#select">select</a></li><li><a href="tui.Grid.html#setColumnFixCount">setColumnFixCount</a></li><li><a href="tui.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="tui.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="tui.Grid.html#setDisplayRowCount">setDisplayRowCount</a></li><li><a href="tui.Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="tui.Grid.html#setRowList">setRowList</a></li><li><a href="tui.Grid.html#setSize">setSize</a></li><li><a href="tui.Grid.html#setValue">setValue</a></li><li><a href="tui.Grid.html#showColumn">showColumn</a></li><li><a href="tui.Grid.html#sort">sort</a></li><li><a href="tui.Grid.html#uncheck">uncheck</a></li><li><a href="tui.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="tui.Grid.html#unselect">unselect</a></li><li><a href="tui.Grid.html#unSort">unSort</a></li><li><a href="tui.Grid.html#use">use</a></li><li><a href="tui.Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="tui.Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="tui.Grid.html#event:click">click</a></li><li><a href="tui.Grid.html#event:clickCell">clickCell</a></li><li><a href="tui.Grid.html#event:dblclick">dblclick</a></li><li><a href="tui.Grid.html#event:dblclickCell">dblclickCell</a></li><li><a href="tui.Grid.html#event:errorResponse">errorResponse</a></li><li><a href="tui.Grid.html#event:failResponse">failResponse</a></li><li><a href="tui.Grid.html#event:mousedown">mousedown</a></li><li><a href="tui.Grid.html#event:mouseoutCell">mouseoutCell</a></li><li><a href="tui.Grid.html#event:mouseoverCell">mouseoverCell</a></li><li><a href="tui.Grid.html#event:reponse">reponse</a></li><li><a href="tui.Grid.html#event:selectRow">selectRow</a></li><li><a href="tui.Grid.html#event:successReponse">successReponse</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.html">tui</a><div class="hidden" id="tui_sub"></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview View class that conaints a top element of the DOM structure of the grid.
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var _ = require('underscore');
+
+var View = require('../base/view');
+var GridEvent = require('../common/gridEvent');
+var attrNameConst = require('../common/constMap').attrName;
+var classNameConst = require('../common/classNameConst');
+
+/**
+ * Container View
+ * @module view/container
+ * @extends module:base/view
+ * @param {Object} options - Options
+ * @ignore
+ */
+var Container = View.extend(/**@lends module:view/container.prototype */{
+    initialize: function(options) {
+        View.prototype.initialize.call(this);
+
+        this.gridId = options.gridId;
+        this.singleClickEdit = options.singleClickEdit;
+        this.dimensionModel = options.dimensionModel;
+        this.focusModel = options.focusModel;
+        this.dataModel = options.dataModel;
+        this.viewFactory = options.viewFactory;
+
+        this._createChildViews();
+
+        this.listenTo(this.dimensionModel, 'setWidth', this._onSetWidth);
+        $(window).on('resize.grid', $.proxy(this._onResizeWindow, this));
+
+        this.__$el = this.$el.clone();
+    },
+
+    events: {
+        'click': '_onClick',
+        'dblclick': '_onDblClick',
+        'mousedown': '_onMouseDown',
+        'mouseover': '_onMouseOver',
+        'mouseout': '_onMouseOut',
+
+        // for preventing drag
+        'selectstart': '_preventDrag',
+        'dragstart': '_preventDrag'
+    },
+
+    /**
+     * 내부에서 사용할 view 인스턴스들을 초기화한다.
+     * @private
+     */
+    _createChildViews: function() {
+        var factory = this.viewFactory;
+
+        this._addChildren([
+            factory.createToolbar(),
+            factory.createContentArea(),
+            factory.createHeightResizeHandle(),
+            factory.createPagination(),
+            factory.createStateLayer(),
+            factory.createEditingLayer(),
+            factory.createDatePickerLayer(),
+            factory.createClipboard()
+        ]);
+    },
+
+    /**
+     * Event handler for resize event on window.
+     * @private
+     */
+    _onResizeWindow: function() {
+        this.dimensionModel.refreshLayout();
+    },
+
+    /**
+     * drag 이벤트 발생시 이벤트 핸들러
+     * @returns {boolean} false
+     * @private
+     */
+    _preventDrag: function() {
+        return false;
+    },
+
+    /**
+     * Event handler for 'setSize' event on Dimension
+     * @private
+     */
+    _onSetWidth: function() {
+        this.$el.width(this.dimensionModel.get('width'));
+    },
+
+    /**
+     * click 이벤트 핸들러
+     * @param {MouseEvent} mouseEvent 이벤트 객체
+     * @private
+     */
+    _onClick: function(mouseEvent) {
+        var eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
+        var cellInfo;
+
+        /**
+         * Occurs when a mouse button is clicked on the Grid.
+         * The properties of the event object is the same as the native MouseEvent.
+         * @api
+         * @event tui.Grid#click
+         * @type {module:common/gridEvent}
+         */
+        this.trigger('click', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
+        if (this._isCellElement($target, true)) {
+            cellInfo = this._getCellInfoFromElement($target.closest('td'));
+            if (!_.isNull(cellInfo.rowKey) &amp;&amp; this.singleClickEdit &amp;&amp; !$target.is('input, textarea')) {
+                this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
+            }
+
+            /**
+             * Occurs when a mouse button is clicked on a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#clickCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data
+             */
+            this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
+        }
+    },
+
+    /**
+     * doubleClick 이벤트 핸들러
+     * @param {MouseEvent} mouseEvent 이벤트 객체
+     * @private
+     */
+    _onDblClick: function(mouseEvent) {
+        var eventData = new GridEvent(mouseEvent);
+        var $target = $(mouseEvent.target);
+
+        /**
+         * Occurs when a mouse button is double clicked on the Grid.
+         * The event object has all properties copied from the native MouseEvent.
+         * @api
+         * @event tui.Grid#dblclick
+         * @type {module:common/gridEvent}
+         */
+        this.trigger('dblclick', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
+        if (this._isCellElement($target, true)) {
+            /**
+             * Occurs when a mouse button is double clicked on a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#dblclickCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data containing the target cell
+             */
+            this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
+            if (eventData.rowKey === null &amp;&amp; !eventData.isStopped()) {
+                this.dataModel.append({}, {focus: true});
+            }
+        }
+    },
+
+    /**
+     * mouseover 이벤트 발생시 실행될 핸들러
+     * @private
+     * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
+     */
+    _onMouseOver: function(mouseEvent) {
+        var $target = $(mouseEvent.target),
+            eventData;
+
+        if (this._isCellElement($target)) {
+            eventData = new GridEvent(mouseEvent);
+            /**
+             * Occurs when a mouse pointer is moved onto a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#mouseoverCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data containing the target cell
+             */
+            this._triggerCellMouseEvent('mouseoverCell', eventData, $target);
+        }
+    },
+
+    /**
+     * mouseout 이벤트 발생시 실행될 핸들러
+     * @private
+     * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
+     */
+    _onMouseOut: function(mouseEvent) {
+        var $target = $(mouseEvent.target);
+        var eventData;
+
+        if (this._isCellElement($target)) {
+            eventData = new GridEvent(mouseEvent);
+            /**
+             * Occurs when a mouse pointer is moved off from a table cell
+             * The event object has all properties copied from the native MouseEvent.
+             * @api
+             * @event tui.Grid#mouseoutCell
+             * @type {module:common/gridEvent}
+             * @property {number} rowKey - rowKey of the target cell
+             * @property {string} columnName - columnName of the target cell
+             * @property {Object} rowData - row data containing the target cell
+             */
+            this._triggerCellMouseEvent('mouseoutCell', eventData, $target);
+        }
+    },
+
+    /**
+     * 셀과 관련된 커스텀 마우스 이벤트를 발생시킨다.
+     * @private
+     * @param {string} eventName 이벤트명
+     * @param {MouseEvent} eventData 커스터마이징 된 마우스 이벤트 객체
+     * @param {(jQuery|object)} cell 이벤트가 발생한 cell (jquery 객체이거나 rowKey, columnName, rowData를 갖는 plain 객체)
+     */
+    _triggerCellMouseEvent: function(eventName, eventData, cell) {
+        var cellInfo = cell;
+
+        if (cell instanceof $) {
+            cellInfo = this._getCellInfoFromElement(cell);
+        }
+        _.extend(eventData, cellInfo);
+        this.trigger(eventName, eventData);
+    },
+
+    /**
+     * 해당 HTML요소가 셀인지 여부를 반환한다.
+     * @private
+     * @param {jQuery} $target 검사할 HTML요소의 jQuery 객체
+     * @param {boolean} isIncludeChild true이면 셀의 자식요소까지 포함한다.
+     * @returns {boolean} 셀이면 true, 아니면 false
+     */
+    _isCellElement: function($target, isIncludeChild) {
+        var $cell = isIncludeChild ? $target.closest('td') : $target;
+
+        return !!($cell.is('td') &amp;&amp; $cell.attr(attrNameConst.COLUMN_NAME));
+    },
+
+    /**
+     * HTML요소에서 셀의 rowKey와 columnName값을 찾아서 rowData와 함께 객체로 반환한다.
+     * @private
+     * @param {jQuery} $cell TD요소의 jquery 객체
+     * @returns {{rowKey: string, rowData: Data.Row, columnName: string}} 셀 관련 정보를 담은 객체
+     */
+    _getCellInfoFromElement: function($cell) {
+        var rowKey = Number($cell.attr(attrNameConst.ROW_KEY));
+        var columnName = $cell.attr(attrNameConst.COLUMN_NAME);
+
+        if (isNaN(rowKey)) {
+            rowKey = null;
+        }
+        return {
+            rowKey: rowKey,
+            columnName: columnName,
+            rowData: this.dataModel.getRowData(rowKey)
+        };
+    },
+
+    /**
+     * mousedown 이벤트 핸들러
+     * @param {event} mouseEvent 이벤트 객체
+     * @private
+     */
+    _onMouseDown: function(mouseEvent) {
+        var $target = $(mouseEvent.target);
+        var eventData = new GridEvent(mouseEvent);
+
+        /**
+         * Occurs when a mouse button is pressed on the Grid.
+         * The properties of the event object is the same as the native MouseEvent.
+         * @api
+         * @event tui.Grid#mousedown
+         * @type {module:common/gridEvent}
+         */
+        this.trigger('mousedown', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
+        if (!$target.is('input, a, button, select, textarea')) {
+            mouseEvent.preventDefault();
+            this.focusModel.focusClipboard();
+        }
+    },
+
+    /**
+     * Render
+     * @returns {module:view/container} this object
+     */
+    render: function() {
+        var childElements = this._renderChildren();
+
+        this.$el.addClass(classNameConst.CONTAINER)
+            .attr(attrNameConst.GRID_ID, this.gridId)
+            .append(childElements);
+
+        this._triggerChildrenAppended();
+        this.trigger('rendered');
+
+        return this;
+    },
+
+    /**
+     * 소멸자
+     */
+    destroy: function() {
+        this.stopListening();
+        $(window).off('resize.grid');
+        this._destroyChildren();
+
+        this.$el.replaceWith(this.__$el);
+        this.$el = this.__$el = null;
+    }
+});
+
+module.exports = Container;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

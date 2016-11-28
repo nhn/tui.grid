@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        <img src="img/toast-ui.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example1.html">1. Basic Example</a><div class="hidden" id="example1_sub"></div></li><li><a href="tutorial-example2.html">2. Using Relation List</a><div class="hidden" id="example2_sub"></div></li><li><a href="tutorial-example3.html">3. Using _extraData</a><div class="hidden" id="example3_sub"></div></li><li><a href="tutorial-example4.html">4. Applying Themes</a><div class="hidden" id="example4_sub"></div></li><li><a href="tutorial-example5.html">5. Using Date-Picker Component</a><div class="hidden" id="example5_sub"></div></li><li><a href="tutorial-example6.html">6. Using Footer with column summary</a><div class="hidden" id="example6_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="tui.Grid.html">Grid</a><div class="hidden" id="tui.Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.Grid.html#.applyTheme">applyTheme</a></li><li><a href="tui.Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="tui.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="tui.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="tui.Grid.html#appendRow">appendRow</a></li><li><a href="tui.Grid.html#blur">blur</a></li><li><a href="tui.Grid.html#check">check</a></li><li><a href="tui.Grid.html#checkAll">checkAll</a></li><li><a href="tui.Grid.html#clear">clear</a></li><li><a href="tui.Grid.html#destroy">destroy</a></li><li><a href="tui.Grid.html#disable">disable</a></li><li><a href="tui.Grid.html#disableCheck">disableCheck</a></li><li><a href="tui.Grid.html#disableRow">disableRow</a></li><li><a href="tui.Grid.html#enable">enable</a></li><li><a href="tui.Grid.html#enableCheck">enableCheck</a></li><li><a href="tui.Grid.html#enableRow">enableRow</a></li><li><a href="tui.Grid.html#focus">focus</a></li><li><a href="tui.Grid.html#focusAt">focusAt</a></li><li><a href="tui.Grid.html#focusIn">focusIn</a></li><li><a href="tui.Grid.html#focusInAt">focusInAt</a></li><li><a href="tui.Grid.html#getAddOn">getAddOn</a></li><li><a href="tui.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="tui.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="tui.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="tui.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="tui.Grid.html#getElement">getElement</a></li><li><a href="tui.Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="tui.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="tui.Grid.html#getPagination">getPagination</a></li><li><a href="tui.Grid.html#getRow">getRow</a></li><li><a href="tui.Grid.html#getRowAt">getRowAt</a></li><li><a href="tui.Grid.html#getRowCount">getRowCount</a></li><li><a href="tui.Grid.html#getRowList">getRowList</a></li><li><a href="tui.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="tui.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="tui.Grid.html#getValue">getValue</a></li><li><a href="tui.Grid.html#hideColumn">hideColumn</a></li><li><a href="tui.Grid.html#isChanged">isChanged</a></li><li><a href="tui.Grid.html#prependRow">prependRow</a></li><li><a href="tui.Grid.html#readyForKeyControl">readyForKeyControl</a></li><li><a href="tui.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="tui.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="tui.Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="tui.Grid.html#removeRow">removeRow</a></li><li><a href="tui.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="tui.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="tui.Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="tui.Grid.html#restore">restore</a></li><li><a href="tui.Grid.html#select">select</a></li><li><a href="tui.Grid.html#setColumnFixCount">setColumnFixCount</a></li><li><a href="tui.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="tui.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="tui.Grid.html#setDisplayRowCount">setDisplayRowCount</a></li><li><a href="tui.Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="tui.Grid.html#setRowList">setRowList</a></li><li><a href="tui.Grid.html#setSize">setSize</a></li><li><a href="tui.Grid.html#setValue">setValue</a></li><li><a href="tui.Grid.html#showColumn">showColumn</a></li><li><a href="tui.Grid.html#sort">sort</a></li><li><a href="tui.Grid.html#uncheck">uncheck</a></li><li><a href="tui.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="tui.Grid.html#unselect">unselect</a></li><li><a href="tui.Grid.html#unSort">unSort</a></li><li><a href="tui.Grid.html#use">use</a></li><li><a href="tui.Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="tui.Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="tui.Grid.html#event:click">click</a></li><li><a href="tui.Grid.html#event:clickCell">clickCell</a></li><li><a href="tui.Grid.html#event:dblclick">dblclick</a></li><li><a href="tui.Grid.html#event:dblclickCell">dblclickCell</a></li><li><a href="tui.Grid.html#event:errorResponse">errorResponse</a></li><li><a href="tui.Grid.html#event:failResponse">failResponse</a></li><li><a href="tui.Grid.html#event:mousedown">mousedown</a></li><li><a href="tui.Grid.html#event:mouseoutCell">mouseoutCell</a></li><li><a href="tui.Grid.html#event:mouseoverCell">mouseoverCell</a></li><li><a href="tui.Grid.html#event:reponse">reponse</a></li><li><a href="tui.Grid.html#event:selectRow">selectRow</a></li><li><a href="tui.Grid.html#event:successReponse">successReponse</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.html">tui</a><div class="hidden" id="tui_sub"></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Net Addon</p></div>
+        
+
+        
+            
+
+<dt>
+
+    
+
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>el</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">jquery</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>form 엘리먼트</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>initialRequest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>api</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>사용할 API URL 리스트</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>readData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>데이터 조회 API 주소</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>createData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>데이터 생성 API 주소</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>updateData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>데이터 업데이트 API 주소</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>modifyData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>deleteData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>데이터 삭제 API 주소</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>perPage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    500
+                
+                </td>
+            
+
+            <td class="description last"><p>한 페이지당 보여줄 item 개수</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>enableAjaxHistory</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>ajaxHistory 를 사용할지 여부</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+        <h5>Example</h5>
+        
+    <pre class="prettyprint"><code>&lt;form id="data_form">
+  &lt;input type="text" name="query"/>
+  &lt;/form>
+  &lt;script>
+     var net,
+         grid = new tui.Grid({
+                //...option 생략...
+         });
+
+     //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+     grid.use('Net', {
+        el: $('#data_form'),         //필수 - form 엘리먼트
+        initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+        perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
+        enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
+        //사용할 API URL 리스트
+        api: {
+            'readData': './api/read',                       //데이터 조회 API 주소
+            'createData': './api/create',                   //데이터 생성 API 주소
+            'updateData': './api/update',                   //데이터 업데이트 API 주소
+            'deleteData': './api/delete',                   //데이터 삭제 API 주소
+            'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
+            'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
+            'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
+        }
+     });
+      //이벤트 핸들러 바인딩
+      grid.on('beforeRequest', function(data) {
+         //모든 dataRequest 시 호출된다.
+     }).on('response', function(data) {
+         //response 이벤트 핸들러
+         //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+     }).on('successResponse', function(data) {
+         //successResponse 이벤트 핸들러
+         //response.result 가 true 일 때 호출된다.
+     }).on('failResponse', function(data) {
+         //failResponse 이벤트 핸들러
+         //response.result 가 false 일 때 호출된다.
+     }).on('errorResponse', function(data) {
+         //ajax error response 이벤트 핸들러
+     });
+
+     //grid 로부터 사용할 net 인스턴스를 가져온다.
+     net = grid.getAddOn('Net');
+
+     //request 관련 자세한 옵션은 Net#request 를 참고한다.
+     //createData API 요청
+     net.request('createData');
+
+     //updateData API 요청
+     net.request('updateData');
+
+     //deleteData API 요청
+     net.request('deleteData');
+
+     //modifyData API 요청
+     net.request('modifyData');
+  &lt;/script></code></pre>
+
+    
+
+</dd>
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="download">
+            <span class="type-signature"></span>download<span class="signature">(type)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="addon_net.js.html">addon/net.js</a></code>,
+                <code><a href="addon_net.js.html#line514">line 514</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Change window.location to registered url for downloading data</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Download type. 'excel' or 'excelAll'.<br>       Will be matched with API 'downloadExcel', 'downloadExcelAll'.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="readData">
+            <span class="type-signature"></span>readData<span class="signature">(page, data, resetData)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="addon_net.js.html">addon/net.js</a></code>,
+                <code><a href="addon_net.js.html#line369">line 369</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Requests 'readData' to the server. The last requested data will be extended with new data.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>page</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Page number</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Data(parameters) to send to the server</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>resetData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>If set to true, last requested data will be ignored.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="reloadData">
+            <span class="type-signature"></span>reloadData<span class="signature">()</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="addon_net.js.html">addon/net.js</a></code>,
+                <code><a href="addon_net.js.html#line358">line 358</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Requests 'readData' with last requested data.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="request">
+            <span class="type-signature"></span>request<span class="signature">(requestType, options)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="addon_net.js.html">addon/net.js</a></code>,
+                <code><a href="addon_net.js.html#line491">line 491</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>서버로 API request 한다.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>requestType</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Options</p>
+                <h6>Properties</h6>
+                
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>hasDataParam</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>rowList 데이터 파라미터를 포함하여 보낼지 여부</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isOnlyChecked</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.<br>     isOnlyModified 도 설정되었을 경우, 선택&amp;변경된 목록을 요청한다.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isOnlyModified</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>수정된 행 데이터 목록을 간추려 요청한다.<br>     isOnlyChecked 도 설정되었을 경우, 선택&amp;변경된 목록을 요청한다.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isSkipConfirm</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>confirm 메세지를 보여줄지 여부를 지정한다.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setPerPage">
+            <span class="type-signature"></span>setPerPage<span class="signature">(perPage)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="addon_net.js.html">addon/net.js</a></code>,
+                <code><a href="addon_net.js.html#line536">line 536</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set number of rows per page and reload current page</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>perPage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Number of rows per page</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'module:addon/net_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

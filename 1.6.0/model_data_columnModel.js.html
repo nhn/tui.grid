@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        <img src="img/toast-ui.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example1.html">1. Basic Example</a><div class="hidden" id="example1_sub"></div></li><li><a href="tutorial-example2.html">2. Using Relation List</a><div class="hidden" id="example2_sub"></div></li><li><a href="tutorial-example3.html">3. Using _extraData</a><div class="hidden" id="example3_sub"></div></li><li><a href="tutorial-example4.html">4. Applying Themes</a><div class="hidden" id="example4_sub"></div></li><li><a href="tutorial-example5.html">5. Using Date-Picker Component</a><div class="hidden" id="example5_sub"></div></li><li><a href="tutorial-example6.html">6. Using Footer with column summary</a><div class="hidden" id="example6_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="tui.Grid.html">Grid</a><div class="hidden" id="tui.Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.Grid.html#.applyTheme">applyTheme</a></li><li><a href="tui.Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="tui.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="tui.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="tui.Grid.html#appendRow">appendRow</a></li><li><a href="tui.Grid.html#blur">blur</a></li><li><a href="tui.Grid.html#check">check</a></li><li><a href="tui.Grid.html#checkAll">checkAll</a></li><li><a href="tui.Grid.html#clear">clear</a></li><li><a href="tui.Grid.html#destroy">destroy</a></li><li><a href="tui.Grid.html#disable">disable</a></li><li><a href="tui.Grid.html#disableCheck">disableCheck</a></li><li><a href="tui.Grid.html#disableRow">disableRow</a></li><li><a href="tui.Grid.html#enable">enable</a></li><li><a href="tui.Grid.html#enableCheck">enableCheck</a></li><li><a href="tui.Grid.html#enableRow">enableRow</a></li><li><a href="tui.Grid.html#focus">focus</a></li><li><a href="tui.Grid.html#focusAt">focusAt</a></li><li><a href="tui.Grid.html#focusIn">focusIn</a></li><li><a href="tui.Grid.html#focusInAt">focusInAt</a></li><li><a href="tui.Grid.html#getAddOn">getAddOn</a></li><li><a href="tui.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="tui.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="tui.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="tui.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="tui.Grid.html#getElement">getElement</a></li><li><a href="tui.Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="tui.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="tui.Grid.html#getPagination">getPagination</a></li><li><a href="tui.Grid.html#getRow">getRow</a></li><li><a href="tui.Grid.html#getRowAt">getRowAt</a></li><li><a href="tui.Grid.html#getRowCount">getRowCount</a></li><li><a href="tui.Grid.html#getRowList">getRowList</a></li><li><a href="tui.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="tui.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="tui.Grid.html#getValue">getValue</a></li><li><a href="tui.Grid.html#hideColumn">hideColumn</a></li><li><a href="tui.Grid.html#isChanged">isChanged</a></li><li><a href="tui.Grid.html#prependRow">prependRow</a></li><li><a href="tui.Grid.html#readyForKeyControl">readyForKeyControl</a></li><li><a href="tui.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="tui.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="tui.Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="tui.Grid.html#removeRow">removeRow</a></li><li><a href="tui.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="tui.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="tui.Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="tui.Grid.html#restore">restore</a></li><li><a href="tui.Grid.html#select">select</a></li><li><a href="tui.Grid.html#setColumnFixCount">setColumnFixCount</a></li><li><a href="tui.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="tui.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="tui.Grid.html#setDisplayRowCount">setDisplayRowCount</a></li><li><a href="tui.Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="tui.Grid.html#setRowList">setRowList</a></li><li><a href="tui.Grid.html#setSize">setSize</a></li><li><a href="tui.Grid.html#setValue">setValue</a></li><li><a href="tui.Grid.html#showColumn">showColumn</a></li><li><a href="tui.Grid.html#sort">sort</a></li><li><a href="tui.Grid.html#uncheck">uncheck</a></li><li><a href="tui.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="tui.Grid.html#unselect">unselect</a></li><li><a href="tui.Grid.html#unSort">unSort</a></li><li><a href="tui.Grid.html#use">use</a></li><li><a href="tui.Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="tui.Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="tui.Grid.html#event:click">click</a></li><li><a href="tui.Grid.html#event:clickCell">clickCell</a></li><li><a href="tui.Grid.html#event:dblclick">dblclick</a></li><li><a href="tui.Grid.html#event:dblclickCell">dblclickCell</a></li><li><a href="tui.Grid.html#event:errorResponse">errorResponse</a></li><li><a href="tui.Grid.html#event:failResponse">failResponse</a></li><li><a href="tui.Grid.html#event:mousedown">mousedown</a></li><li><a href="tui.Grid.html#event:mouseoutCell">mouseoutCell</a></li><li><a href="tui.Grid.html#event:mouseoverCell">mouseoverCell</a></li><li><a href="tui.Grid.html#event:reponse">reponse</a></li><li><a href="tui.Grid.html#event:selectRow">selectRow</a></li><li><a href="tui.Grid.html#event:successReponse">successReponse</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.html">tui</a><div class="hidden" id="tui_sub"></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview 컬럼 모델
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var _ = require('underscore');
+
+var Model = require('../../base/model');
+var util = require('../../common/util');
+
+/**
+ * 컬럼 모델 데이터를 다루는 객체
+ * @module model/data/columnModel
+ * @extends module:base/model
+ * @ignore
+ */
+var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype */{
+    initialize: function() {
+        Model.prototype.initialize.apply(this, arguments);
+        this.textType = {
+            normal: true,
+            text: true,
+            password: true
+        };
+        this._setColumnModelList(this.get('columnModelList'));
+        this.on('change', this._onChange, this);
+    },
+
+    defaults: {
+        keyColumnName: null,
+        columnFixCount: 0,
+        metaColumnModelList: [],
+        dataColumnModelList: [],
+        visibleList: [], // 이 리스트는 메타컬럼/데이터컬럼 구분하지 않고 저장
+        hasNumberColumn: true,
+        selectType: '',
+        columnModelMap: {},
+        relationListMap: {},
+        columnMerge: []
+    },
+
+    /**
+     * 메타컬럼모델들을 초기화한다.
+     * @param {Array} source - 사용자가 입력한 메타컬럼의 셋팅값
+     * @returns {Array} dest - 초기화가 완료된 메타컬럼 모델 리스트
+     * @private
+     */
+    _initializeMetaColumns: function(source) {
+        var dest = [];
+
+        this._initializeButtonColumn(dest);
+        this._initializeNumberColumn(dest);
+        this._overwriteColumnModelList(dest, source);
+        return dest;
+    },
+
+    /**
+     * overwrite column model list
+     * @param {Array} dest - destination model list
+     * @param {Array} source - source model list
+     * @private
+     */
+    _overwriteColumnModelList: function(dest, source) {
+        _.each(source, function(columnModel) {
+            this._extendColumnList(columnModel, dest);
+        }, this);
+    },
+
+    /**
+     * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 number column 을 추가한다.
+     * @param {Array} metaColumnModelList - Meta column model list
+     * @private
+     */
+    _initializeNumberColumn: function(metaColumnModelList) {
+        var hasNumberColumn = this.get('hasNumberColumn');
+        var numberColumn = {
+            columnName: '_number',
+            align: 'center',
+            title: 'No.',
+            isFixedWidth: true,
+            width: 60
+        };
+
+        if (!hasNumberColumn) {
+            numberColumn.isHidden = true;
+        }
+
+        this._extendColumnList(numberColumn, metaColumnModelList);
+    },
+
+    /**
+     * 인자로 넘어온 metaColumnModelList 에 설정값에 맞게 button column 을 추가한다.
+     * @param {Array} metaColumnModelList - Meta column model listt
+     * @private
+     */
+    _initializeButtonColumn: function(metaColumnModelList) {
+        var selectType = this.get('selectType');
+        var buttonColumn = {
+            columnName: '_button',
+            isHidden: false,
+            align: 'center',
+            editOption: {
+                type: 'mainButton'
+            },
+            isFixedWidth: true,
+            width: 40
+        };
+
+        if (selectType === 'checkbox') {
+            buttonColumn.title = '&lt;input type="checkbox"/>';
+        } else if (selectType === 'radio') {
+            buttonColumn.title = '선택';
+        } else {
+            buttonColumn.isHidden = true;
+        }
+
+        this._extendColumnList(buttonColumn, metaColumnModelList);
+    },
+
+    /**
+     * column을 추가(push)한다.
+     * - 만약 columnName 에 해당하는 columnModel 이 이미 존재한다면 해당 columnModel 을 columnObj 로 확장한다.
+     * @param {object} columnObj 추가할 컬럼모델
+     * @param {Array} columnModelList 컬럼모델 배열
+     * @private
+     */
+    _extendColumnList: function(columnObj, columnModelList) {
+        var columnName = columnObj.columnName;
+        var index = _.findIndex(columnModelList, {columnName: columnName});
+
+        if (index === -1) {
+            columnModelList.push(columnObj);
+        } else {
+            columnModelList[index] = $.extend(columnModelList[index], columnObj);
+        }
+    },
+
+    /**
+     * index 에 해당하는 columnModel 을 반환한다.
+     * @param {Number} index    조회할 컬럼모델의 인덱스 값
+     * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 찾을것인지 여부.
+     * @returns {object} 조회한 컬럼 모델
+     */
+    at: function(index, isVisible) {
+        var columnModelList = isVisible ? this.getVisibleColumnModelList() : this.get('dataColumnModelList');
+
+        return columnModelList[index];
+    },
+
+    /**
+     * columnName 에 해당하는 index를 반환한다.
+     * @param {string} columnName   컬럼명
+     * @param {Boolean} isVisible [isVisible=false] 화면에 노출되는 컬럼모델 기준으로 반환할 것인지 여부.
+     * @returns {number} index   컬럼명에 해당하는 인덱스 값
+     */
+    indexOfColumnName: function(columnName, isVisible) {
+        var columnModelList;
+
+        if (isVisible) {
+            columnModelList = this.getVisibleColumnModelList();
+        } else {
+            columnModelList = this.get('dataColumnModelList');
+        }
+        return _.findIndex(columnModelList, {columnName: columnName});
+    },
+
+    /**
+     * columnName 이 열고정 영역에 있는 column 인지 반환한다.
+     * @param {String} columnName   컬럼명
+     * @returns {Boolean} 열고정 영역에 존재하는 컬럼인지 여부
+     */
+    isLside: function(columnName) {
+        var index = this.indexOfColumnName(columnName, true);
+
+        return (index > -1) &amp;&amp; (index &lt; this.get('columnFixCount'));
+    },
+
+    /**
+     * 화면에 노출되는 (!isHidden) 컬럼 모델 리스트를 반환한다.
+     * @param {String} [whichSide] 열고정 영역인지, 열고정이 아닌 영역인지 여부. 지정하지 않았을 경우 전체 visibleList를 반환한다.
+     * @param {boolean} [withMeta=false] 메타컬럼 포함 여부. 지정하지 않으면 데이터컬럼리스트 기준으로 반환한다.
+     * @returns {Array}  조회한 컬럼모델 배열
+     */
+    getVisibleColumnModelList: function(whichSide, withMeta) {
+        var startIndex = withMeta ? 0 : this.getVisibleMetaColumnCount();
+        var visibleColumnFixCount = this.getVisibleColumnFixCount(withMeta);
+        var columnModelList;
+
+        whichSide = whichSide &amp;&amp; whichSide.toUpperCase();
+
+        if (whichSide === 'L') {
+            columnModelList = this.get('visibleList').slice(startIndex, visibleColumnFixCount);
+        } else if (whichSide === 'R') {
+            columnModelList = this.get('visibleList').slice(visibleColumnFixCount);
+        } else {
+            columnModelList = this.get('visibleList').slice(startIndex);
+        }
+
+        return columnModelList;
+    },
+
+    /**
+     * 현재 보여지고 있는 메타컬럼의 카운트를 반환한다.
+     * @returns {number} count
+     */
+    getVisibleMetaColumnCount: function() {
+        var models = this.get('metaColumnModelList');
+        var totalLength = models.length;
+        var hiddenLength = _.where(models, {
+            isHidden: true
+        }).length;
+
+        return (totalLength - hiddenLength);
+    },
+
+    /**
+     * 현재 노출되는 컬럼들 중, 고정된 컬럼들(L-side)의 갯수를 반환한다.
+     * @param {boolean} [withMeta=false] 현재 보여지고 있는 메타컬럼의 count를 합칠지 여부
+     * @returns {number} Visible columnFix count
+     */
+    getVisibleColumnFixCount: function(withMeta) {
+        var count = this.get('columnFixCount');
+        var fixedColumns = _.first(this.get('dataColumnModelList'), count);
+        var visibleFixedColumns, visibleCount;
+
+        visibleFixedColumns = _.filter(fixedColumns, function(column) {
+            return !column.isHidden;
+        });
+        visibleCount = visibleFixedColumns.length;
+
+        if (withMeta) {
+            visibleCount += this.getVisibleMetaColumnCount();
+        }
+
+        return visibleCount;
+    },
+
+    /**
+     * 인자로 받은 columnName 에 해당하는 columnModel 을 반환한다.
+     * @param {String} columnName   컬럼명
+     * @returns {Object} 컬럼명에 해당하는 컬럼모델
+     */
+    getColumnModel: function(columnName) {
+        return this.get('columnModelMap')[columnName];
+    },
+
+    /**
+     * columnName 에 해당하는 컬럼의 타입이 textType 인지 확인한다.
+     * 랜더링시 html 태그 문자열을 제거할때 사용됨.
+     * @param {String} columnName 컬럼명
+     * @returns {boolean} text 타입인지 여부
+     */
+    isTextType: function(columnName) {
+        return !!this.textType[this.getEditType(columnName)];
+    },
+
+    /**
+     * 컬럼 모델로부터 editType 을 반환한다.
+     * @param {string} columnName The name of the target column
+     * @returns {string} 해당하는 columnName 의 editType 을 반환한다.
+     */
+    getEditType: function(columnName) {
+        var columnModel = this.getColumnModel(columnName);
+        var editType = 'normal';
+
+        if (columnName === '_button' || columnName === '_number') {
+            editType = columnName;
+        } else if (columnModel &amp;&amp; columnModel.editOption &amp;&amp; columnModel.editOption.type) {
+            editType = columnModel.editOption.type;
+        }
+
+        return editType;
+    },
+
+    /**
+     * 인자로 받은 컬럼 모델에서 !isHidden 를 만족하는 리스트를 추려서 반환한다.
+     * @param {Array} metaColumnModelList 메타 컬럼 모델 리스트
+     * @param {Array} dataColumnModelList 데이터 컬럼 모델 리스트
+     * @returns {Array}  isHidden 이 설정되지 않은 전체 컬럼 모델 리스트
+     * @private
+     */
+    _makeVisibleColumnModelList: function(metaColumnModelList, dataColumnModelList) {
+        metaColumnModelList = metaColumnModelList || this.get('metaColumnModelList');
+        dataColumnModelList = dataColumnModelList || this.get('dataColumnModelList');
+
+        return _.filter(metaColumnModelList.concat(dataColumnModelList), function(item) {
+            return !item.isHidden;
+        });
+    },
+
+    /**
+     * 각 columnModel 의 relationList 를 모아 주체가 되는 columnName 기준으로 relationListMap 를 생성하여 반환한다.
+     * @param {Array} columnModelList - Column Model List
+     * @returns {{}|{columnName1: Array, columnName1: Array}} columnName 기준으로 생성된 relationListMap
+     * @private
+     */
+    _getRelationListMap: function(columnModelList) {
+        var relationListMap = {};
+
+        _.each(columnModelList, function(columnModel) {
+            var columnName = columnModel.columnName;
+            if (columnModel.relationList) {
+                relationListMap[columnName] = columnModel.relationList;
+            }
+        });
+        return relationListMap;
+    },
+
+    /**
+     * isIgnore 가 true 로 설정된 columnName 의 list 를 반환한다.
+     * @returns {Array} isIgnore 가 true 로 설정된 columnName 배열.
+     */
+    getIgnoredColumnNameList: function() {
+        var columnModelLsit = this.get('dataColumnModelList');
+        var ignoreColumnNameList = [];
+
+        _.each(columnModelLsit, function(columnModel) {
+            if (columnModel.isIgnore) {
+                ignoreColumnNameList.push(columnModel.columnName);
+            }
+        });
+        return ignoreColumnNameList;
+    },
+
+    /**
+     * 인자로 받은 columnModel 을 _number, _button 에 대하여 기본 형태로 가공한 뒤,
+     * 메타컬럼과 데이터컬럼을 분리하여 저장한다.
+     * @param {Array} columnModelList   컬럼모델 배열
+     * @param {number} [columnFixCount]   열고정 카운트
+     * @private
+     */
+    _setColumnModelList: function(columnModelList, columnFixCount) {
+        var division, relationListMap, visibleList, metaColumnModelList, dataColumnModelList;
+
+        columnModelList = $.extend(true, [], columnModelList);
+        if (tui.util.isUndefined(columnFixCount)) {
+            columnFixCount = this.get('columnFixCount');
+        }
+
+        division = _.partition(columnModelList, function(model) {
+            return util.isMetaColumn(model.columnName);
+        }, this);
+        metaColumnModelList = this._initializeMetaColumns(division[0]);
+        dataColumnModelList = division[1];
+
+        relationListMap = this._getRelationListMap(dataColumnModelList);
+        visibleList = this._makeVisibleColumnModelList(metaColumnModelList, dataColumnModelList);
+        this.set({
+            metaColumnModelList: metaColumnModelList,
+            dataColumnModelList: dataColumnModelList,
+            columnModelMap: _.indexBy(metaColumnModelList.concat(dataColumnModelList), 'columnName'),
+            relationListMap: relationListMap,
+            columnFixCount: Math.max(0, columnFixCount),
+            visibleList: visibleList
+        }, {
+            silent: true
+        });
+        this.unset('columnModelList', {
+            silent: true
+        });
+        this.trigger('columnModelChange');
+    },
+
+    /**
+     * change 이벤트 발생시 핸들러
+     * @param {Object} model change 이벤트가 발생한 model 객체
+     * @private
+     */
+    _onChange: function(model) {
+        var changed = model.changed;
+        var columnFixCount = changed.columnFixCount;
+        var columnModelList = changed.columnModelList;
+
+        if (!columnModelList) {
+            columnModelList = this.get('dataColumnModelList');
+        }
+        this._setColumnModelList(columnModelList, columnFixCount);
+    },
+
+    /**
+     * Set 'isHidden' property of column model to true or false
+     * @param {Array} columnNames - Column names to set 'isHidden' property
+     * @param {boolean} isHidden - Hidden flag for setting
+     */
+    setHidden: function(columnNames, isHidden) {
+        var name, names, columnModel, visibleList;
+
+        while (columnNames.length) {
+            name = columnNames.shift();
+            columnModel = this.getColumnModel(name);
+
+            if (columnModel) {
+                columnModel.isHidden = isHidden;
+            } else {
+                names = this.getUnitColumnNamesIfMerged(name);
+                columnNames.push.apply(columnNames, names);
+            }
+        }
+
+        visibleList = this._makeVisibleColumnModelList(
+            this.get('metaColumnModelList'),
+            this.get('dataColumnModelList')
+        );
+        this.set('visibleList', visibleList, {
+            silent: true
+        });
+        this.trigger('columnModelChange');
+    },
+
+    /**
+     * Get unit column names
+     * @param {string} columnName - columnName
+     * @returns {Array.&lt;string>} Unit column names
+     */
+    getUnitColumnNamesIfMerged: function(columnName) {
+        var columnMergeInfoList = this.get('columnMerge');
+        var stackForSearch = [];
+        var searchedNames = [];
+        var name, columnModel, columnMergeInfoItem;
+
+        stackForSearch.push(columnName);
+        while (stackForSearch.length) {
+            name = stackForSearch.shift();
+            columnModel = this.getColumnModel(name);
+
+            if (columnModel) {
+                searchedNames.push(name);
+            } else {
+                columnMergeInfoItem = _.findWhere(columnMergeInfoList, {
+                    columnName: name
+                });
+                if (columnMergeInfoItem) {
+                    stackForSearch.push.apply(stackForSearch, columnMergeInfoItem.columnNameList);
+                }
+            }
+        }
+        return _.uniq(searchedNames);
+    },
+
+    /**
+     * Set footer contents.
+     * (Just trigger 'setFooterContent')
+     * @param {string} columnName - columnName
+     * @param {string} contents - HTML string
+     */
+    setFooterContent: function(columnName, contents) {
+        this.trigger('setFooterContent', columnName, contents);
+    }
+});
+
+module.exports = ColumnModel;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
