@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Nov 28 2016 12:23:06 GMT+0900 (KST)"
- * version: 1.6.0
+ * bundle created at "Thu Dec 01 2016 14:39:18 GMT+0900 (KST)"
+ * version: 1.6.1
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -9983,6 +9983,7 @@
 	     * @private
 	     */
 	    _onDataModelChange: function() {
+	        this._resetDummyRowCount();
 	        this.refresh({
 	            dataModelChanged: true
 	        });
