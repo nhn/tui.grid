@@ -257,6 +257,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onDataModelChange: function() {
+        this._resetDummyRowCount();
         this.refresh({
             dataModelChanged: true
         });
