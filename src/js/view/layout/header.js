@@ -32,6 +32,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         this.setOwnProperties({
             renderModel: options.renderModel,
+            coordColumnModel: options.coordColumnModel,
             dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
             focusModel: options.focusModel,
@@ -477,10 +478,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.columnModel;
-        var dimensionModel = this.dimensionModel;
-        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
-        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
 
         return {
             widthList: columnWidthList,

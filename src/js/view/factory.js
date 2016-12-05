@@ -154,6 +154,7 @@ var ViewFactory = tui.util.defineClass({
 
         return new Constructor({
             dimensionModel: this.modelManager.dimensionModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             renderModel: this.modelManager.renderModel,
             viewFactory: this
         });
@@ -174,6 +175,7 @@ var ViewFactory = tui.util.defineClass({
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             coordRowModel: this.modelManager.coordRowModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             viewFactory: this
         });
     },
@@ -215,7 +217,8 @@ var ViewFactory = tui.util.defineClass({
         return new HeaderResizeHandlerView({
             whichSide: whichSide,
             dimensionModel: this.modelManager.dimensionModel,
-            columnModel: this.modelManager.columnModel
+            columnModel: this.modelManager.columnModel,
+            coordColumnModel: this.modelManager.coordColumnModel
         });
     },
 
@@ -246,6 +249,7 @@ var ViewFactory = tui.util.defineClass({
         return new BodyTableView({
             whichSide: whichSide,
             dimensionModel: this.modelManager.dimensionModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             renderModel: this.modelManager.renderModel,
             columnModel: this.modelManager.columnModel,
             painterManager: this.painterManager,
@@ -288,7 +292,8 @@ var ViewFactory = tui.util.defineClass({
             selectionModel: this.modelManager.selectionModel,
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel,
-            coordRowModel: this.modelManager.coordRowModel
+            coordRowModel: this.modelManager.coordRowModel,
+            coordColumnModel: this.modelManager.coordColumnModel
         });
     },
 

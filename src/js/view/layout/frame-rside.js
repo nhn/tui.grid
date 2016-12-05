@@ -41,13 +41,16 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @private
      */
     _refreshLayout: function() {
-        var dimensionModel = this.dimensionModel,
-            width = dimensionModel.get('rsideWidth'),
-            marginLeft = dimensionModel.get('lsideWidth');
+        var coordColumnModel = this.coordColumnModel;
+        var width = coordColumnModel.get('rsideWidth');
+        var marginLeft = coordColumnModel.get('lsideWidth');
+
+        console.log('width', width);
+
 
         // If the left side exists and the division border should not be doubled,
         // left side should cover the right side by border-width to hide the left border of the right side.
-        if (marginLeft > 0 && !dimensionModel.isDivisionBorderDoubled()) {
+        if (marginLeft > 0 && !this.dimensionModel.isDivisionBorderDoubled()) {
             width += CELL_BORDER_WIDTH;
             marginLeft -= CELL_BORDER_WIDTH;
         }

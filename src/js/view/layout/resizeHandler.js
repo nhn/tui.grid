@@ -25,6 +25,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,
             columnModel: options.columnModel,
+            coordColumnModel: options.coordColumnModel,
             whichSide: options.whichSide || 'R',
 
             isResizing: false,
@@ -35,7 +36,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             initialLeft: 0
         });
 
-        this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._refreshHandlerPosition);
     },
 
     className: classNameConst.COLUMN_RESIZE_CONTAINER,
@@ -65,10 +66,8 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.columnModel;
-        var dimensionModel = this.dimensionModel;
-        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
-        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
 
         return {
             widthList: columnWidthList,
@@ -161,7 +160,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
         var $target = $(mouseEvent.target);
         var index = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-        this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+        this.coordColumnModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
         this._refreshHandlerPosition();
     },
 

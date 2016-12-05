@@ -41,7 +41,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     beforeRender: function() {
         this.$el.css({
             display: 'block',
-            width: this.dimensionModel.get('lsideWidth')
+            width: this.coordColumnModel.get('lsideWidth')
         });
     },
 
