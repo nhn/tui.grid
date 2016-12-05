@@ -24,6 +24,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             whichSide: options.whichSide || 'R',
             dimensionModel: options.dimensionModel,
             coordRowModel: options.coordRowModel,
+            coordColumnModel: options.coordColumnModel,
             columnModel: options.columnModel,
             selectionModel: options.selectionModel
         });
@@ -40,7 +41,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @private
      */
     _updateColumnWidthList: function() {
-        this.columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        this.columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
     },
 
     /**

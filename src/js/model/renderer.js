@@ -30,7 +30,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             columnModel: options.columnModel,
             focusModel: options.focusModel,
             dimensionModel: options.dimensionModel,
-            coordRowModel: options.coordRowModel
+            coordRowModel: options.coordRowModel,
+            coordColumnModel: options.coordColumnModel
         });
 
         rowListOptions = {
@@ -106,7 +107,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      */
     _updateMaxScrollLeft: function() {
         var dimension = this.dimensionModel;
-        var maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
+        var maxScrollLeft = this.coordColumnModel.getFrameWidth('R') - dimension.get('rsideWidth') +
                 dimension.getScrollYWidth();
 
         this.set('maxScrollLeft', maxScrollLeft);

@@ -22,6 +22,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
             viewFactory: options.viewFactory,
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
+            coordColumnModel: options.coordColumnModel,
             whichSide: options.whichSide || 'R'
         });
 
