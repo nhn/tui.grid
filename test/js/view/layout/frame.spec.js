@@ -59,7 +59,6 @@ describe('Frame', function() {
     describe('initialize', function() {
         beforeEach(function() {
             spyOn(Frame.prototype, 'render');
-            spyOn(Frame.prototype, '_onColumnWidthChanged');
 
             frame = createFrame(Frame);
         });
@@ -67,11 +66,6 @@ describe('Frame', function() {
         it('renderModel:columnModelChanged 이벤트 발생시 render()를 호출한다.', function() {
             modelManager.renderModel.trigger('columnModelChanged');
             expect(frame.render).toHaveBeenCalled();
-        });
-
-        it('dimensionModel:columnWidthChanged 이벤트 발생시 _onColumnWidthChanged()를 호출한다.', function() {
-            modelManager.dimensionModel.trigger('columnWidthChanged');
-            expect(frame._onColumnWidthChanged).toHaveBeenCalled();
         });
     });
 
@@ -113,7 +107,6 @@ describe('Frame', function() {
             it('dimensionModel에 정의된 값으로 el의 넓이를 변경한다.', function() {
                 frame.$el.width(10);
                 modelManager.dimensionModel.set('lsideWidth', 100);
-                frame._onColumnWidthChanged();
 
                 expect(frame.$el.width()).toBe(100);
             });

@@ -25,6 +25,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
         this.coordRowModel = options.coordRowModel;
+        this.coordColumnModel = options.coordColumnModel;
         this.whichSide = options.whichSide;
 
         this.borderEl = {
@@ -34,7 +35,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
             $bottom: $(HTML_BORDER_DIV)
         };
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._refreshCurrentLayout);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._refreshCurrentLayout);
         this.listenTo(this.coordRowModel, 'reset', this._refreshCurrentLayout);
         this.listenTo(this.focusModel, 'blur', this._onBlur);
         this.listenTo(this.focusModel, 'focus', this._onFocus);

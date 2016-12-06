@@ -42,11 +42,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         // models
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
+        this.coordColumnModel = options.coordColumnModel;
         this.renderModel = options.renderModel;
         this.summaryModel = options.summaryModel;
 
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
         this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
@@ -103,6 +105,15 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         }
     },
 
+    _onChangeColumnWidth: function() {
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var $ths = this.$el.find('th');
+
+        _.each(columnWidthList, function(columnWidth, index) {
+            $ths.eq(index).css('width', columnWidth);
+        });
+    },
+
     /**
      * Sets the HTML string of <th> of given column
      * @param {string} columnName - column name
@@ -153,7 +164,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
         var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 
         return _.reduce(columnModelList, function(memo, column, index) {
             var columnName = column.columnName;

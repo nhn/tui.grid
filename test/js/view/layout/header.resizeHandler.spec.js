@@ -4,13 +4,14 @@ var Collection = require('base/collection');
 var ColumnModel = require('model/data/columnModel');
 var DimensionModel = require('model/dimension');
 var ResizeHandler = require('view/layout/resizeHandler');
+var CoordColumnModel = require('model/coordColumn');
 var DomState = require('domState');
 
 var classNameConst = require('common/classNameConst');
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 
 describe('ResizeHandler', function() {
-    var columnModel, dimensionModel, handler, $handles;
+    var columnModel, dimensionModel, coordColumnModel, handler, $handles;
 
     function initialize() {
         columnModel = new ColumnModel({
@@ -31,6 +32,10 @@ describe('ResizeHandler', function() {
             dataModel: new Collection(),
             domState: new DomState()
         });
+        coordColumnModel = new CoordColumnModel({
+            dimensionModel: dimensionModel,
+            columnModel: columnModel
+        });
     }
 
     beforeEach(function() {
@@ -38,6 +43,7 @@ describe('ResizeHandler', function() {
         handler = new ResizeHandler({
             columnModel: columnModel,
             dimensionModel: dimensionModel,
+            coordColumnModel: coordColumnModel,
             whichSide: 'R'
         });
     });
@@ -157,7 +163,7 @@ describe('ResizeHandler', function() {
                 handler._onMouseDown(mouseEvent);
                 handler._onMouseMove(mouseEvent);
                 expect($target.css('left')).toBe('300px');
-                expect(dimensionModel.get('columnWidthList')[1]).toBe(302);
+                expect(coordColumnModel.get('columnWidthList')[1]).toBe(302);
             });
         });
 

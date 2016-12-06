@@ -49,7 +49,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             .listenTo(this.dimensionModel, 'change:totalRowHeight', this._resetContainerHeight)
             .listenTo(this.dataModel, 'add remove reset', this._resetContainerHeight)
             .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
-            .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
+            .listenTo(this.renderModel, 'change: crollLeft', this._onScrollLeftChange);
     },
 
     className: classNameConst.BODY_AREA,

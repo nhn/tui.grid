@@ -66,6 +66,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.focusModel.renderModel = this.renderModel;
         this.dimensionModel.renderModel = this.renderModel;
         this.dimensionModel.coordRowModel = this.coordRowModel;
+        this.dimensionModel.coordColumnModel = this.coordColumnModel;
     },
 
     /**

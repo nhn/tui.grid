@@ -1,6 +1,6 @@
 'use strict';
 
-fdescribe('CoordColumn', function() {
+describe('CoordColumn', function() {
     it('test', function() {
         console.log('hello');
     });

@@ -21,6 +21,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
             whichSide: 'R',
             $scrollBorder: null
         });
+        this.listenTo(this.dimensionModel, 'change:lsideWidth change:rsideWidth', this._onFrameWidthChanged);
         this.listenTo(this.dimensionModel, 'change:bodyHeight change:headerHeight',
             this._resetScrollBorderHeight);
     },
@@ -28,11 +29,11 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     className: classNameConst.RSIDE_AREA,
 
     /**
-     * Event handler for 'columnWidthChanged' event on dimensionModel
+     * Event handler for 'change:rsideWidth' event on dimensionModel
      * @private
      * @override
      */
-    _onColumnWidthChanged: function() {
+    _onFrameWidthChanged: function() {
         this._refreshLayout();
     },
 
@@ -41,16 +42,13 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
      * @private
      */
     _refreshLayout: function() {
-        var coordColumnModel = this.coordColumnModel;
-        var width = coordColumnModel.get('rsideWidth');
-        var marginLeft = coordColumnModel.get('lsideWidth');
-
-        console.log('width', width);
-
+        var dimensionModel = this.dimensionModel;
+        var width = dimensionModel.get('rsideWidth');
+        var marginLeft = dimensionModel.get('lsideWidth');
 
         // If the left side exists and the division border should not be doubled,
         // left side should cover the right side by border-width to hide the left border of the right side.
-        if (marginLeft > 0 && !this.dimensionModel.isDivisionBorderDoubled()) {
+        if (marginLeft > 0 && !dimensionModel.isDivisionBorderDoubled()) {
             width += CELL_BORDER_WIDTH;
             marginLeft -= CELL_BORDER_WIDTH;
         }

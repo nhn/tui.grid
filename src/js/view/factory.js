@@ -154,7 +154,6 @@ var ViewFactory = tui.util.defineClass({
 
         return new Constructor({
             dimensionModel: this.modelManager.dimensionModel,
-            coordColumnModel: this.modelManager.coordColumnModel,
             renderModel: this.modelManager.renderModel,
             viewFactory: this
         });
@@ -203,6 +202,7 @@ var ViewFactory = tui.util.defineClass({
             columnModel: this.modelManager.columnModel,
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             summaryModel: this.modelManager.summaryModel,
             columnTemplateMap: templateMap
         });
@@ -338,7 +338,8 @@ var ViewFactory = tui.util.defineClass({
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel,
             focusModel: this.modelManager.focusModel,
-            coordRowModel: this.modelManager.coordRowModel
+            coordRowModel: this.modelManager.coordRowModel,
+            coordColumnModel: this.modelManager.coordColumnModel
         });
     }
 });

@@ -99,10 +99,10 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         }
         rsideWidth = totalWidth - lsideWidth;
 
-        console.log('totalWidth', totalWidth);
-        console.log('rsideWidth', rsideWidth);
         this.set({
-            columnWidthList: columnWidthList,
+            columnWidthList: columnWidthList
+        });
+        this.dimensionModel.set({
             rsideWidth: rsideWidth,
             lsideWidth: lsideWidth
         });
@@ -130,6 +130,34 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         }
 
         return minWidth;
+    },
+
+    /**
+     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+     * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
+     * @param {Number} totalWidth   grid 전체 너비
+     * @returns {Array} 열고정 영역의 너비 리스트
+     * @private
+     */
+    _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
+        var i = lsideWidthList.length - 1;
+        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var currentWidth = this._getFrameWidth(lsideWidthList);
+        var diff = currentWidth - totalWidth;
+        var changedWidth;
+
+        if (diff > 0) {
+            while (i >= 0 && diff > 0) {
+                changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
+                diff -= lsideWidthList[i] - changedWidth;
+                lsideWidthList[i] = changedWidth;
+                i -= 1;
+            }
+        } else if (diff < 0) {
+            lsideWidthList[i] += Math.abs(diff);
+        }
+
+        return lsideWidthList;
     },
 
     /**
@@ -396,14 +424,33 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         var columnWidthList = this.getColumnWidthList(whichSide);
         var frameWidth = this._getFrameWidth(columnWidthList);
 
-        console.log('column width list', columnWidthList);
-        console.log('frame width', frameWidth);
-
         if (_.isUndefined(whichSide) && columnFixCount > 0) {
             frameWidth += CELL_BORDER_WIDTH;
         }
 
         return frameWidth;
+    },
+
+    /**
+     * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
+     * @param {Number} index    너비를 변경할 컬럼의 인덱스
+     * @param {Number} width    변경할 너비 pixel값
+     */
+    setColumnWidth: function(index, width) {
+        var columnWidthList = this.get('columnWidthList');
+        var fixedFlags = this._columnWidthFixedFlags;
+        var minWidth = this._minColumnWidthList[index];
+        var adjustedList;
+
+        if (!fixedFlags[index] && columnWidthList[index]) {
+            columnWidthList[index] = Math.max(width, minWidth);
+            // makes width of the target column fixed temporarily
+            // to not be influenced while adjusting column widths.
+            fixedFlags[index] = true;
+            adjustedList = this._adjustColumnWidthList(columnWidthList);
+            fixedFlags[index] = false;
+            this._setColumnWidthVariables(adjustedList);
+        }
     },
 
     /**
