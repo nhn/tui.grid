@@ -35,7 +35,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
         // To prevent issue of appearing vertical scrollbar when dummy rows exist
         this.listenTo(this.renderModel, 'change:dummyRowCount', this._onChangeDummyRowCount);

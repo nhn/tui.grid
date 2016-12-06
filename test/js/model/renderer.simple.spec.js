@@ -4,13 +4,15 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
 var CoordRowModel = require('model/coordRow');
+var CoordColumnModel = require('model/coordColumn');
 var Focus = require('model/focus');
 var Renderer = require('model/renderer');
 var DomState = require('domState');
 var CELL_BORDER_WIDTH = require('common/constMap').dimension.CELL_BORDER_WIDTH;
 
 describe('model.renderer', function() {
-    var columnModel, dataModel, renderModel, focusModel, coordRowModel, dimensionModel;
+    var columnModel, dataModel, renderModel, focusModel;
+    var coordRowModel, coordColumnModel, dimensionModel;
 
     function createRenderModel(attrs) {
         return new Renderer(attrs, {
@@ -18,7 +20,8 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             focusModel: focusModel,
             dimensionModel: dimensionModel,
-            coordRowModel: coordRowModel
+            coordRowModel: coordRowModel,
+            coordColumnModel: coordColumnModel
         });
     }
 
@@ -35,6 +38,10 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
+        coordColumnModel = new CoordColumnModel({
+            columnModel: columnModel,
+            dimensionModel: dimensionModel
+        })
         dimensionModel.coordRowModel = coordRowModel;
         focusModel = new Focus(null, {
             domState: new DomState($('<div />')),

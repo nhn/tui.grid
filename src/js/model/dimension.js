@@ -114,7 +114,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     _getCellHorizontalPosition: function(columnName) {
         var columnModel = this.columnModel;
         var metaColumnCount = columnModel.getVisibleMetaColumnCount();
-        var columnWidthList = this.get('columnWidthList');
+        var columnWidthList = this.coordColumnModel.get('columnWidthList');
         var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
         var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
         var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
@@ -368,9 +368,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _calcColumnIndexFromPositionX: function(containerX, withMeta) {
-        var columnWidthList = this.getColumnWidthList();
-        var totalColumnWidth = this.getFrameWidth();
         var cellX = containerX;
+        var coordColumnModel = this.coordColumnModel;
+        var columnWidthList = coordColumnModel.getColumnWidthList();
+        var totalColumnWidth = coordColumnModel.getFrameWidth();
         var isRsidePosition = containerX >= this.get('lsideWidth');
         var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
         var columnIndex = 0;
@@ -416,34 +417,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
-     * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
-     * @param {Number} totalWidth   grid 전체 너비
-     * @returns {Array} 열고정 영역의 너비 리스트
-     * @private
-     */
-    _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
-        var i = lsideWidthList.length - 1;
-        var minimumColumnWidth = this.get('minimumColumnWidth');
-        var currentWidth = this._getFrameWidth(lsideWidthList);
-        var diff = currentWidth - totalWidth;
-        var changedWidth;
-
-        if (diff > 0) {
-            while (i >= 0 && diff > 0) {
-                changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
-                diff -= lsideWidthList[i] - changedWidth;
-                lsideWidthList[i] = changedWidth;
-                i -= 1;
-            }
-        } else if (diff < 0) {
-            lsideWidthList[i] += Math.abs(diff);
-        }
-
-        return lsideWidthList;
-    },
-
-    /**
      * Return height of X-scrollBar.
      * If no X-scrollBar, return 0
      * @returns {number} Height of X-scrollBar
@@ -459,28 +432,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     getScrollYWidth: function() {
         return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-    },
-
-    /**
-     * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
-     * @param {Number} index    너비를 변경할 컬럼의 인덱스
-     * @param {Number} width    변경할 너비 pixel값
-     */
-    setColumnWidth: function(index, width) {
-        var columnWidthList = this.get('columnWidthList');
-        var fixedFlags = this._columnWidthFixedFlags;
-        var minWidth = this._minColumnWidthList[index];
-        var adjustedList;
-
-        if (!fixedFlags[index] && columnWidthList[index]) {
-            columnWidthList[index] = Math.max(width, minWidth);
-            // makes width of the target column fixed temporarily
-            // to not be influenced while adjusting column widths.
-            fixedFlags[index] = true;
-            adjustedList = this._adjustColumnWidthList(columnWidthList);
-            fixedFlags[index] = false;
-            this._setColumnWidthVariables(adjustedList);
-        }
     },
 
     /**

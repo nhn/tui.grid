@@ -30,7 +30,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         });
         this._updateColumnWidthList();
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onChangeColumnWidth);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
         this.listenTo(this.selectionModel, 'change:range', this.render);
     },
 
@@ -104,13 +104,13 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {{left: string, width: string}} - css values
      */
     _getHorizontalStyles: function(columnRange) {
-        var columnWidthList = this.columnWidthList,
-            metaColumnCount = this.columnModel.getVisibleMetaColumnCount(),
-            startIndex = columnRange[0],
-            endIndex = columnRange[1],
-            left = 0,
-            width = 0,
-            i = 0;
+        var columnWidthList = this.columnWidthList;
+        var metaColumnCount = this.columnModel.getVisibleMetaColumnCount();
+        var startIndex = columnRange[0];
+        var endIndex = columnRange[1];
+        var left = 0;
+        var width = 0;
+        var i = 0;
 
         if (this.whichSide === 'L') {
             startIndex += metaColumnCount;

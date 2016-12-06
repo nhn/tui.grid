@@ -22,12 +22,10 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
             viewFactory: options.viewFactory,
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
-            coordColumnModel: options.coordColumnModel,
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.renderModel, 'columnModelChanged', this.render)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.renderModel, 'columnModelChanged', this.render);
     },
 
     /**
@@ -51,13 +49,6 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
         return this;
     },
-
-    /**
-     * Event handler for 'columnWidthChanged' event on module:module/dimension
-     * @abstract
-     * @private
-     */
-    _onColumnWidthChanged: function() {},
 
     /**
      * To be called at the beginning of the 'render' method.

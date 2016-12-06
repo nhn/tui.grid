@@ -5,7 +5,6 @@ var ModelManager = require('model/manager');
 var PainterManager = require('painter/manager');
 var ViewFactory = require('view/factory');
 var RowListView = require('view/rowList');
-var BodyTableView = require('view/layout/bodyTable');
 
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 
@@ -13,8 +12,8 @@ describe('view.layout.body', function() {
     var modelManager, painterManager, bodyTable;
 
     beforeEach(function() {
-        var domState = new DomState($('<div />')),
-            viewFactory;
+        var domState = new DomState($('<div />'));
+        var viewFactory;
 
         modelManager = new ModelManager({
             columnModelList: [
@@ -22,7 +21,7 @@ describe('view.layout.body', function() {
                 {columnName: 'c2'}
             ]
         }, domState);
-        spyOn(modelManager.dimensionModel, 'getColumnWidthList').and.returnValue([30, 40]);
+        spyOn(modelManager.coordColumnModel, 'getColumnWidthList').and.returnValue([30, 40]);
         painterManager = new PainterManager({
             modelManager: modelManager
         });
@@ -89,7 +88,7 @@ describe('view.layout.body', function() {
             $cols.eq(0).width(10);
             expect($cols.eq(0).width()).toBe(10);
 
-            modelManager.dimensionModel.trigger('columnWidthChanged');
+            modelManager.coordColumnModel.trigger('columnWidthChanged');
             expect($cols.eq(0).width()).toBe(31);
         });
     });

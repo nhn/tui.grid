@@ -6,7 +6,7 @@ var CoordRowModel = require('model/coordRow');
 var Model = require('base/model');
 var Dimension = require('model/dimension');
 
-describe('Dimension', function() {
+xdescribe('Dimension', function() {
     var columnModelList = [
         {
             title: 'changeCallback',

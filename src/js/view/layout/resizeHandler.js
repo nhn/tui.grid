@@ -186,7 +186,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             width = this._calculateWidth(mouseEvent.pageX);
             index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-            this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
+            this.coordColumnModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
             this._refreshHandlerPosition();
         }
     },

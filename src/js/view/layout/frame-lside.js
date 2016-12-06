@@ -19,16 +19,17 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
         this.setOwnProperties({
             whichSide: 'L'
         });
+
+        this.listenTo(this.dimensionModel, 'change:lsideWidth', this._onFrameWidthChanged);
     },
 
     className: classNameConst.LSIDE_AREA,
 
     /**
-     * Event handler for 'changeColumnWidth' event on module:model/dimension
-     * @override
+     * Event handler for 'change:lsideWidth' event on module:model/dimension
      * @private
      */
-    _onColumnWidthChanged: function() {
+    _onFrameWidthChanged: function() {
         this.$el.css({
             width: this.dimensionModel.get('lsideWidth')
         });
@@ -41,7 +42,7 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     beforeRender: function() {
         this.$el.css({
             display: 'block',
-            width: this.coordColumnModel.get('lsideWidth')
+            width: this.dimensionModel.get('lsideWidth')
         });
     },
 

@@ -44,7 +44,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         });
 
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged)
             .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
