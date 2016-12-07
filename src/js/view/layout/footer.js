@@ -101,7 +101,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @private
      */
     _onChangeScrollLeft: function(model, value) {
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             this.el.scrollLeft = value;
         }
     },

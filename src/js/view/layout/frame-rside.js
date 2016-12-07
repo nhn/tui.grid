@@ -6,7 +6,9 @@
 
 var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
-var CELL_BORDER_WIDTH = require('../../common/constMap').dimension.CELL_BORDER_WIDTH;
+var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
  * right side frame class
@@ -18,7 +20,7 @@ var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            whichSide: 'R',
+            whichSide: frameConst.R,
             $scrollBorder: null
         });
         this.listenTo(this.dimensionModel, 'change:lsideWidth change:rsideWidth', this._onFrameWidthChanged);
