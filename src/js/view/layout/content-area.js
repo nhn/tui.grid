@@ -6,6 +6,7 @@
 
 var View = require('../../base/view');
 var classNameConst = require('../../common/classNameConst');
+var frameConst = require('../../common/constMap').frame;
 var ContentArea;
 
 /**
@@ -46,8 +47,8 @@ ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */
         var factory = this.viewFactory;
 
         this._addChildren([
-            factory.createFrame('L'),
-            factory.createFrame('R')
+            factory.createFrame(frameConst.L),
+            factory.createFrame(frameConst.R)
         ]);
     },
 

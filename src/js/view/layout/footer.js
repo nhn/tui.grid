@@ -8,6 +8,7 @@ var _ = require('underscore');
 var View = require('../../base/view');
 var classNameConst = require('../../common/classNameConst');
 var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
 
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
@@ -34,7 +35,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         this.columnTemplateMap = options.columnTemplateMap || {};
 
         /**
-         * 'L': Left, 'R': Right
+         * L: Left, R: Right
          * @type {string}
          */
         this.whichSide = options.whichSide;
@@ -88,7 +89,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @private
      */
     _onScrollView: function(event) {
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             this.renderModel.set('scrollLeft', event.target.scrollLeft);
         }
     },

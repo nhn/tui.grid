@@ -11,6 +11,7 @@ var constMap = require('../common/constMap');
 var classNameConst = require('../common/classNameConst');
 
 var attrNameConst = constMap.attrName;
+var frameConst = constMap.frame;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 /**
@@ -49,7 +50,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
             .listenTo(renderModel, 'rowListChanged', this.render);
 
-        if (this.whichSide === 'L') {
+        if (this.whichSide === frameConst.L) {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
                 .listenTo(selectionModel, 'change:range', this._refreshSelectedMetaColumns)
                 .listenTo(renderModel, 'rowListChanged', this._refreshSelectedMetaColumns);

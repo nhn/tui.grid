@@ -45,6 +45,10 @@ module.exports = {
         TABLE_BORDER_WIDTH: 1,
         RESIZE_HANDLE_WIDTH: 7
     },
+    frame: {
+        L: 'L',
+        R: 'R'
+    },
     attrName: {
         ROW_KEY: 'data-row-key',
         COLUMN_NAME: 'data-column-name',

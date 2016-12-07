@@ -1,7 +1,8 @@
 'use strict';
 
-var ColumnModelData = require('model/data/columnModel');
 var _ = require('underscore');
+var ColumnModelData = require('model/data/columnModel');
+var frameConst = require('common/constMap').frame;
 
 describe('data.columnModel', function() {
     var columnModelInstance,
@@ -418,24 +419,18 @@ describe('data.columnModel', function() {
 
         it('whichSide = L 이라면 L Side 의 visibleList 를 반환한다.', function() {
             var expectList = [
-                    {
-                        columnName: 'column2'
-                    },
-                    {
-                        columnName: 'column3'
-                    }
-                ],
-                visibleList = columnModelInstance.getVisibleColumnModelList('L');
+                {columnName: 'column2'},
+                {columnName: 'column3'}
+            ];
+            var visibleList = columnModelInstance.getVisibleColumnModelList(frameConst.L);
+
             expect(visibleList).toEqual(expectList);
         });
 
         it('whichSide = R 이라면 L Side 의 visibleList 를 반환한다.', function() {
-            var expectList = [
-                    {
-                        columnName: 'column4'
-                    }
-                ],
-                visibleList = columnModelInstance.getVisibleColumnModelList('R');
+            var expectList = [{columnName: 'column4'}];
+            var visibleList = columnModelInstance.getVisibleColumnModelList(frameConst.R);
+
             expect(visibleList).toEqual(expectList);
         });
     });

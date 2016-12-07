@@ -3,6 +3,7 @@
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var FocusLayer = require('view/focusLayer');
+var frameConst = require('common/constMap').frame;
 
 function createModelManager(columnFixCount) {
     return new ModelManager({
@@ -37,8 +38,8 @@ describe('view/focusLayer', function() {
             {c1: '1-1', c2: '1-2'}
         ]);
 
-        layerLside = createFocusLayer(modelManager, 'L');
-        layerRside = createFocusLayer(modelManager, 'R');
+        layerLside = createFocusLayer(modelManager, frameConst.L);
+        layerRside = createFocusLayer(modelManager, frameConst.R);
         $wrapper.append(layerLside.render().$el);
         $wrapper.append(layerRside.render().$el);
     });

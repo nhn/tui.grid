@@ -6,6 +6,7 @@ var Frame = require('view/layout/frame');
 var FrameRside = require('view/layout/frame-rside');
 var FrameLside = require('view/layout/frame-lside');
 var classNameConst = require('common/classNameConst');
+var frameConst = require('common/constMap').frame;
 
 describe('Frame', function() {
     var modelManager, frame;
@@ -99,8 +100,8 @@ describe('Frame', function() {
         });
 
         it('whichSide의 값은 무조건 L이다.', function() {
-            frame = createFrame(FrameLside, 'R');
-            expect(frame.whichSide).toBe('L');
+            frame = createFrame(FrameLside, frameConst.R);
+            expect(frame.whichSide).toBe(frameConst.L);
         });
 
         describe('_onColumnWidthChanged', function() {
@@ -129,8 +130,8 @@ describe('Frame', function() {
 
     describe('Rside', function() {
         it('whichSide의 값은 무조건 R이다.', function() {
-            frame = createFrame(FrameRside, 'L');
-            expect(frame.whichSide).toBe('R');
+            frame = createFrame(FrameRside, frameConst.L);
+            expect(frame.whichSide).toBe(frameConst.R);
         });
 
         describe('beforeRender()', function() {
