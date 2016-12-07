@@ -22,7 +22,7 @@ var frameConst = require('../common/constMap').frame;
 var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
     initialize: function(options) {
         this.setOwnProperties({
-            whichSide: options.whichSide || 'R',
+            whichSide: options.whichSide || frameConst.R,
             dimensionModel: options.dimensionModel,
             coordRowModel: options.coordRowModel,
             coordColumnModel: options.coordColumnModel,

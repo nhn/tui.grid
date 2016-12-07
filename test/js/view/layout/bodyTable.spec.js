@@ -5,6 +5,7 @@ var ModelManager = require('model/manager');
 var PainterManager = require('painter/manager');
 var ViewFactory = require('view/factory');
 var RowListView = require('view/rowList');
+var frameConst = require('common/constMap');
 
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 
@@ -38,7 +39,7 @@ describe('view.layout.body', function() {
 
     describe('initialize', function() {
         it('whichSide is default R', function() {
-            expect(bodyTable.whichSide).toBe('R');
+            expect(bodyTable.whichSide).toBe(frameConst.R);
         });
     });
 

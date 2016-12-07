@@ -395,7 +395,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         // Calls syncWithDom only from the Rside to prevent calling twice.
         // Defered call to ensure that the execution occurs after both sides are rendered.
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             _.defer(function() {
                 coordRowModel.syncWithDom();
             });
@@ -410,7 +410,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      */
     /* istanbul ignore next: scrollLeft 를 확인할 수 없음 */
     _onScrollLeftChange: function(model, value) {
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             this.el.scrollLeft = value;
         }
     },

@@ -10,6 +10,7 @@ var View = require('../../base/view');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var attrNameConst = constMap.attrName;
+var frameConst = constMap.frame;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
@@ -26,7 +27,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
             dimensionModel: options.dimensionModel,
             columnModel: options.columnModel,
             coordColumnModel: options.coordColumnModel,
-            whichSide: options.whichSide || 'R',
+            whichSide: options.whichSide || frameConst.R,
 
             isResizing: false,
             $target: null,
@@ -209,7 +210,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      * @private
      */
     _getHandlerColumnIndex: function(index) {
-        return (this.whichSide === 'R') ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
+        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
     },
 
     /**
