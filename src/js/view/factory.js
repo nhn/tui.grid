@@ -24,6 +24,7 @@ var EditingLayerView = require('./editingLayer');
 var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
 var isOptionEnabled = require('../common/util').isOptionEnabled;
+var frameConst = require('../common/constMap').frame;
 
 /**
  * View Factory
@@ -146,11 +147,11 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates frame view and returns it.
-     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @param  {String} whichSide - L(left) or R(right)
      * @returns {module:view/layout/frame} New frame view instance
      */
     createFrame: function(whichSide) {
-        var Constructor = whichSide === 'L' ? LsideFrameView : RsideFrameView;
+        var Constructor = whichSide === frameConst.L ? LsideFrameView : RsideFrameView;
 
         return new Constructor({
             dimensionModel: this.modelManager.dimensionModel,

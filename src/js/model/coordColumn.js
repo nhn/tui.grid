@@ -6,7 +6,11 @@
 
 var Model = require('../base/model');
 var util = require('../common/util');
-var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var constMap = require('../common/constMap');
+var dimensionConst = constMap.dimension;
+var frameConst = constMap.frame;
+
+var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
 /**
  * @module model/coordColumn
@@ -390,7 +394,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
 
     /**
      * L side 와 R side 에 따른 columnWidthList 를 반환한다.
-     * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
+     * @param {String} [whichSide] 어느 영역인지 여부. L,R 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
      * @returns {Array}  조회한 영역의 columnWidthList
      */
     getColumnWidthList: function(whichSide) {
@@ -398,12 +402,10 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         var columnWidthList = [];
 
         switch (whichSide) {
-            case 'l':
-            case 'L':
+            case frameConst.L:
                 columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
                 break;
-            case 'r':
-            case 'R':
+            case frameConst.R:
                 columnWidthList = this.get('columnWidthList').slice(columnFixCount);
                 break;
             default :

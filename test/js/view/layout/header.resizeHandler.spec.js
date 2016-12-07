@@ -9,6 +9,7 @@ var DomState = require('domState');
 
 var classNameConst = require('common/classNameConst');
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
+var frameConst = require('common/constMap').frame;
 
 describe('ResizeHandler', function() {
     var columnModel, dimensionModel, coordColumnModel, handler, $handles;
@@ -44,7 +45,7 @@ describe('ResizeHandler', function() {
             columnModel: columnModel,
             dimensionModel: dimensionModel,
             coordColumnModel: coordColumnModel,
-            whichSide: 'R'
+            whichSide: frameConst.R
         });
     });
 
@@ -87,14 +88,14 @@ describe('ResizeHandler', function() {
         });
 
         it('R side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
-            handler.whichSide = 'R';
+            handler.whichSide = frameConst.R;
             expect(handler._getHandlerColumnIndex(0)).toBe(3);
             expect(handler._getHandlerColumnIndex(1)).toBe(4);
             expect(handler._getHandlerColumnIndex(2)).toBe(5);
         });
 
         it('L side 일때 columnFixCount를 고려하여 실제 columnIndex 를 계산한다.', function() {
-            handler.whichSide = 'L';
+            handler.whichSide = frameConst.L;
             expect(handler._getHandlerColumnIndex(0)).toBe(0);
             expect(handler._getHandlerColumnIndex(1)).toBe(1);
             expect(handler._getHandlerColumnIndex(2)).toBe(2);

@@ -5,6 +5,7 @@ var RowListData = require('model/data/rowList');
 var CoordRowModel = require('model/coordRow');
 var Model = require('base/model');
 var Dimension = require('model/dimension');
+var frameConst = require('common/constMap').frame;
 
 xdescribe('Dimension', function() {
     var columnModelList = [
@@ -329,8 +330,8 @@ xdescribe('Dimension', function() {
             });
 
             expect(dimensionModel.getColumnWidthList()).toEqual([10, 20, 30, 40, 50, 60]);
-            expect(dimensionModel.getColumnWidthList('L')).toEqual([10, 20, 30, 40]);
-            expect(dimensionModel.getColumnWidthList('R')).toEqual([50, 60]);
+            expect(dimensionModel.getColumnWidthList(frameConst.L)).toEqual([10, 20, 30, 40]);
+            expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual([50, 60]);
 
             columnModelInstance.set({
                 columnFixCount: 4
@@ -338,8 +339,8 @@ xdescribe('Dimension', function() {
             dimensionModel.set({
                 columnWidthList: [10, 20, 30, 40, 50, 60]
             });
-            expect(dimensionModel.getColumnWidthList('L')).toEqual([10, 20, 30, 40, 50]);
-            expect(dimensionModel.getColumnWidthList('R')).toEqual([60]);
+            expect(dimensionModel.getColumnWidthList(frameConst.L)).toEqual([10, 20, 30, 40, 50]);
+            expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual([60]);
         });
     });
 
@@ -365,11 +366,11 @@ xdescribe('Dimension', function() {
             });
 
             it('L일 경우 Left Side의 Frame 너비를 반환한다.', function() {
-                expect(dimensionModel.getFrameWidth('L')).toEqual(64);
+                expect(dimensionModel.getFrameWidth(frameConst.L)).toEqual(64);
             });
 
             it('R일 경우 Right Side의 Frame 너비를 반환한다.', function() {
-                expect(dimensionModel.getFrameWidth('R')).toEqual(93);
+                expect(dimensionModel.getFrameWidth(frameConst.R)).toEqual(93);
             });
         });
     });
@@ -517,41 +518,41 @@ xdescribe('Dimension', function() {
                         rsideWidthList;
 
                     changeFixCount(6);
-                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
+                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList(frameConst.L));
                     rsideWidthList = widthList.slice(5);
-                    expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
+                    expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual(rsideWidthList);
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
                     changeFixCount(7);
-                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
+                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList(frameConst.L));
                     rsideWidthList = widthList.slice(6);
-                    expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
+                    expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual(rsideWidthList);
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
                     changeFixCount(8);
-                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
+                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList(frameConst.L));
                     rsideWidthList = widthList.slice(7);
-                    expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
+                    expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual(rsideWidthList);
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
                     changeFixCount(9);
-                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
+                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList(frameConst.L));
                     rsideWidthList = widthList.slice(8);
-                    expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
+                    expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual(rsideWidthList);
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);
 
                     changeFixCount(10);
-                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList('L'));
+                    leftSideframeWidth = dimensionModel._getFrameWidth(dimensionModel.getColumnWidthList(frameConst.L));
                     rsideWidthList = widthList.slice(9);
-                    expect(dimensionModel.getColumnWidthList('R')).toEqual(rsideWidthList);
+                    expect(dimensionModel.getColumnWidthList(frameConst.R)).toEqual(rsideWidthList);
                     expect(leftSideframeWidth).toEqual(900);
                     expect(dimensionModel.get('lsideWidth')).toEqual(900);
                     expect(dimensionModel.get('rsideWidth')).toEqual(100);

@@ -8,6 +8,7 @@ var classNameConst = require('common/classNameConst');
 var constMap = require('common/constMap');
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
+var frameConst = require('common/constMap').frame;
 
 describe('Header', function() {
     var modelManager, viewFactory, header;
@@ -27,7 +28,7 @@ describe('Header', function() {
                 width: 60
             }
         ]);
-        header = viewFactory.createHeader('R');
+        header = viewFactory.createHeader(frameConst.R);
     });
 
     describe('render', function() {
@@ -67,7 +68,7 @@ describe('Header', function() {
             var lHeader;
 
             beforeEach(function() {
-                lHeader = viewFactory.createHeader('L');
+                lHeader = viewFactory.createHeader(frameConst.L);
             });
 
             it('header에 checkbox가 랜더링 되었을 때, checkbox를 잘 가져오는지 확인한다.', function() {
@@ -250,7 +251,7 @@ describe('Header', function() {
 
         beforeEach(function() {
             modelManager.columnModel.set('selectType', 'checkbox');
-            lHeader = viewFactory.createHeader('L');
+            lHeader = viewFactory.createHeader(frameConst.L);
             lHeader.render();
             $checkbox = lHeader._getHeaderMainCheckbox();
         });
@@ -292,7 +293,7 @@ describe('Header', function() {
         var $input, clickEvent, lHeader;
 
         beforeEach(function() {
-            lHeader = viewFactory.createHeader('L');
+            lHeader = viewFactory.createHeader(frameConst.L);
             modelManager.columnModel.set('selectType', 'checkbox');
             lHeader.render();
 

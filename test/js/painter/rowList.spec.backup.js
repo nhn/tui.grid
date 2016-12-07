@@ -8,7 +8,7 @@ var RowListView = require('view/rowList');
 var PainterManager = require('painter/manager');
 var DomState = require('domState');
 var SmartRenderModel = require('model/renderer-smart');
-var GridEvent = require('common/gridEvent');
+var frameConst = require('common/constMap').frame;
 
 describe('View.RowList', function() {
     var grid, rowListView, $container, $tableContainer;
@@ -78,7 +78,7 @@ describe('View.RowList', function() {
         $tableContainer = $('<div/>').appendTo($container);
         redrawTable('');
 
-        rowListView = createRowListView('R');
+        rowListView = createRowListView(frameConst.L);
         rowListView.render();
     });
 
@@ -126,7 +126,7 @@ describe('View.RowList', function() {
             var collection;
 
             grid.renderModel.refresh();
-            collection = grid.renderModel.getCollection('R');
+            collection = grid.renderModel.getCollection(frameConst.L);
             rowListView.collection = new RowListModel(collection.slice(from, to), {
                 dataModel: grid.dataModel,
                 columnModel: grid.columnModel
@@ -314,7 +314,7 @@ describe('View.RowList', function() {
             }
 
             beforeEach(function() {
-                rowListView = createRowListView('L');
+                rowListView = createRowListView(frameConst.L);
                 rowListView.render();
                 $trs = rowListView.$el.find('tr');
             });

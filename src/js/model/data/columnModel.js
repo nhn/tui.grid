@@ -8,6 +8,7 @@ var _ = require('underscore');
 
 var Model = require('../../base/model');
 var util = require('../../common/util');
+var frameConst = require('../../common/constMap').frame;
 
 /**
  * 컬럼 모델 데이터를 다루는 객체
@@ -189,9 +190,9 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
 
         whichSide = whichSide && whichSide.toUpperCase();
 
-        if (whichSide === 'L') {
+        if (whichSide === frameConst.L) {
             columnModelList = this.get('visibleList').slice(startIndex, visibleColumnFixCount);
-        } else if (whichSide === 'R') {
+        } else if (whichSide === frameConst.R) {
             columnModelList = this.get('visibleList').slice(visibleColumnFixCount);
         } else {
             columnModelList = this.get('visibleList').slice(startIndex);

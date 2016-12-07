@@ -8,6 +8,7 @@ var CoordRow = require('model/coordRow');
 var CoordColumn = require('model/coordColumn');
 var Renderer = require('model/renderer');
 var Model = require('base/model');
+var frameConst = require('common/constMap').frame;
 
 describe('model.renderer', function() {
     var columnModelList = [
@@ -186,8 +187,8 @@ describe('model.renderer', function() {
         });
 
         it('인자가 있다면 L R 중 하나의 콜렉션을 반환한다.', function() {
-            expect(renderModel.getCollection('R')).toEqual(renderModel.get('rside'));
-            expect(renderModel.getCollection('L')).toEqual(renderModel.get('lside'));
+            expect(renderModel.getCollection(frameConst.R)).toEqual(renderModel.get('rside'));
+            expect(renderModel.getCollection(frameConst.L)).toEqual(renderModel.get('lside'));
         });
     });
 

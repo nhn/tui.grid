@@ -7,9 +7,11 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var constMap = require('../common/constMap');
 var classNameConst = require('../common/classNameConst');
 
+var frameConst = constMap.frame;
+var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></div>';
 
 /**
@@ -70,7 +72,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      * @private
      */
     _onFocus: function(rowKey, columnName) {
-        var targetSide = this.columnModel.isLside(columnName) ? 'L' : 'R';
+        var targetSide = this.columnModel.isLside(columnName) ? frameConst.L : frameConst.R;
 
         if (targetSide === this.whichSide) {
             this._refreshBorderLayout(rowKey, columnName);
