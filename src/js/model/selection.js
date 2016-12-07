@@ -28,6 +28,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             dimensionModel: options.dimensionModel,
             focusModel: options.focusModel,
             renderModel: options.renderModel,
+            coordConverterModel: options.coordConverterModel,
 
             inputRange: null,
             intervalIdForAutoScroll: null,
@@ -167,7 +168,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this._minimumColumnRange;
-        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
         var range = {
             row: [0, this.dataModel.length - 1],
             column: []
@@ -213,7 +214,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} [type] - Selection type
      */
     updateByMousePosition: function(pageX, pageY, type) {
-        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+        var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
 
         this._setScrolling(pageX, pageY);
         this.update(index.row, index.column, type);

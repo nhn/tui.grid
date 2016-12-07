@@ -456,6 +456,38 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
     },
 
     /**
+     * Returns column index from X-position relative to the body-area
+     * @param {number} posX - X-position relative to the body-area
+     * @param {boolean} withMeta - Whether the meta columns go with this calculation
+     * @returns {number} Column index
+     * @private
+     */
+    indexOf: function(posX, withMeta) {
+        var columnWidthList = this.getColumnWidthList();
+        var totalColumnWidth = this.getFrameWidth();
+        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
+        var columnIndex = 0;
+
+        if (posX >= totalColumnWidth) {
+            columnIndex = columnWidthList.length - 1;
+        } else {
+            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
+                width += CELL_BORDER_WIDTH;
+                columnIndex = index;
+
+                if (posX > width) {
+                    posX -= width;
+                } else {
+                    return false;
+                }
+            });
+        }
+
+        return Math.max(0, columnIndex - adjustableIndex);
+    },
+
+
+    /**
      * 초기 너비로 돌린다.
      * @param {Number} index    너비를 변경할 컬럼의 인덱스
      */

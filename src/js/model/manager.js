@@ -12,6 +12,7 @@ var ToolbarModel = require('./toolbar');
 var DimensionModel = require('./dimension');
 var CoordRowModel = require('./coordRow');
 var CoordColumnModel = require('./coordColumn');
+var CoordConverterModel = require('./coordConverter');
 var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
@@ -59,6 +60,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.coordColumnModel = this._createCoordColumnModel();
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
+        this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel();
         this.summaryModel = this._createSummaryModel(options.footer);
 
@@ -181,6 +183,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         });
     },
 
+    _createCoordConverterModel: function() {
+        return new CoordConverterModel({
+            dimensionModel: this.dimensionModel,
+            coordRowModel: this.coordRowModel,
+            renderModel: this.renderModel,
+            coordColumnModel: this.coordColumnModel
+        });
+    },
+
     /**
      * Creates an instance of focus model and returns it.
      * @param  {module:domState} domState - DomState instance
@@ -207,6 +218,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
+            coordConverterModel: this.coordConverterModel,
             renderModel: this.renderModel,
             focusModel: this.focusModel
         });

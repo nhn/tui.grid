@@ -298,7 +298,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @returns {{x: number, y: number}} Mouse-overflow
      */
     getOverflowFromMousePosition: function(pageX, pageY) {
-        var containerPos = this._rebasePositionToContainer(pageX, pageY);
+        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
         var bodySize = this._getBodySize();
 
         return this._judgeOverflow(containerPos, bodySize);
@@ -332,90 +332,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         return {
             x: overflowX,
             y: overflowY
-        };
-    },
-
-    /**
-     * Get cell index from mouse position
-     * @param {Number} pageX - Mouse X-position based on page
-     * @param {Number} pageY - Mouse Y-position based on page
-     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
-     * @returns {{row: number, column: number}} Cell index
-     */
-    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
-        var containerPos = this._rebasePositionToContainer(pageX, pageY);
-
-        return {
-            row: this._calcRowIndexFromPositionY(containerPos.y),
-            column: this._calcColumnIndexFromPositionX(containerPos.x, withMeta)
-        };
-    },
-
-    /**
-     * Calc and get column index from Y-position based on the container
-     * @param {number} containerY - X-position based on the container
-     * @returns {number} Row index
-     * @private
-     */
-    _calcRowIndexFromPositionY: function(containerY) {
-        var cellY = containerY + this.renderModel.get('scrollTop');
-
-        return this.coordRowModel.indexOf(cellY);
-    },
-
-    /**
-     * Calc and get column index from X-position based on the container
-     * @param {number} containerX - X-position based on the container
-     * @param {boolean} withMeta - Whether the meta columns go with this calculation
-     * @returns {number} Column index
-     * @private
-     */
-    _calcColumnIndexFromPositionX: function(containerX, withMeta) {
-        var cellX = containerX;
-        var coordColumnModel = this.coordColumnModel;
-        var columnWidthList = coordColumnModel.getColumnWidthList();
-        var totalColumnWidth = coordColumnModel.getFrameWidth();
-        var isRsidePosition = containerX >= this.get('lsideWidth');
-        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
-        var columnIndex = 0;
-
-        if (isRsidePosition) {
-            cellX += this.renderModel.get('scrollLeft');
-        }
-
-        if (cellX >= totalColumnWidth) {
-            columnIndex = columnWidthList.length - 1;
-        } else {
-            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
-                width += CELL_BORDER_WIDTH;
-                columnIndex = index;
-
-                if (cellX > width) {
-                    cellX -= width;
-                } else {
-                    return false;
-                }
-            });
-        }
-
-        return Math.max(0, columnIndex - adjustableIndex);
-    },
-
-    /**
-     * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-     * @param {Number} pageX    마우스 x 좌표
-     * @param {Number} pageY    마우스 y 좌표
-     * @returns {{x: number, y: number}} 그리드 container 기준의 x, y 값
-     * @private
-     */
-    _rebasePositionToContainer: function(pageX, pageY) {
-        var offsetX = this.get('offsetLeft');
-        var offsetY = this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
-             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-
-        return {
-            x: pageX - offsetX,
-            y: pageY - offsetY
         };
     },
 
@@ -523,6 +439,32 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
             isFixedHeight: true,
             bodyHeight: (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight
         });
+    },
+
+    /**
+     * Returns the offset.top of body
+     * @returns {number}
+     */
+    getBodyOffsetTop: function() {
+        return this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
+            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
+    },
+
+    /**
+     * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
+     * @param {Number} pageX    마우스 x 좌표
+     * @param {Number} pageY    마우스 y 좌표
+     * @returns {{x: number, y: number}} 그리드 container 기준의 x, y 값
+     * @private
+     */
+    getPositionFromBodyArea: function(pageX, pageY) {
+        var bodyOffsetX = this.get('offsetLeft');
+        var bodyOffsetY = this.getBodyOffsetTop();
+
+        return {
+            x: pageX - bodyOffsetX,
+            y: pageY - bodyOffsetY
+        };
     }
 });
 

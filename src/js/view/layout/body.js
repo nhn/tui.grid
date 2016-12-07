@@ -11,7 +11,8 @@ var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var attrNameConst = constMap.attrName;
-var selTypeMap = constMap.selectionType;
+var selTypeConst = constMap.selectionType;
+var frameConst = constMap.frame;
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 var MIN_INTERVAL_FOR_PAUSED = 200;
@@ -24,7 +25,7 @@ var MIN_DISATNCE_FOR_DRAG = 10;
  * @module view/layout/body
  * @extends module:base/view
  * @param {Object} options - Options
- * @param {String} [options.whichSide='R'] L or R (which side)
+ * @param {String} [options.whichSide=R] L or R (which side)
  * @ignore
  */
 var Body = View.extend(/**@lends module:view/layout/body.prototype */{
@@ -36,18 +37,18 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             renderModel: options.renderModel,
+            coordConverterModel: options.coordConverterModel,
             selectionModel: options.selectionModel,
             focusModel: options.focusModel,
             viewFactory: options.viewFactory,
 
             // DIV for setting rendering position of entire child-nodes of $el.
             $container: null,
-            whichSide: options && options.whichSide || 'R'
+            whichSide: options && options.whichSide || frameConst.R
         });
 
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
             .listenTo(this.dimensionModel, 'change:totalRowHeight', this._resetContainerHeight)
-            .listenTo(this.dataModel, 'add remove reset', this._resetContainerHeight)
             .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
     },
@@ -92,7 +93,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             scrollTop: event.target.scrollTop
         };
 
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             attrs.scrollLeft = event.target.scrollLeft;
         }
         this.renderModel.set(attrs);
@@ -105,7 +106,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      * @private
      */
     _onScrollLeftChange: function(model, value) {
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             this.el.scrollLeft = value;
         }
     },
@@ -148,7 +149,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var indexData;
 
         if (!$td.length) { // selection layer, focus layer
-            indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
+            indexData = this.coordConverterModel.getIndexFromMousePosition(event.pageX, event.pageY);
             columnName = this._getColumnNameByVisibleIndex(indexData.column);
         } else if (rowKey && columnName) { // valid cell
             indexData = {
@@ -189,7 +190,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         }
 
         if (!util.isMetaColumn(columnName)) {
-            selectionModel.setType(selTypeMap.CELL);
+            selectionModel.setType(selTypeConst.CELL);
             if (inputData.shiftKey && !isInput) {
                 selectionModel.update(rowIndex, columnIndex);
             } else {
@@ -216,7 +217,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _updateSelectionByRow: function(rowIndex, shiftKey) {
         if (shiftKey) {
-            this.selectionModel.update(rowIndex, 0, selTypeMap.ROW);
+            this.selectionModel.update(rowIndex, 0, selTypeConst.ROW);
         } else {
             this.selectionModel.selectRow(rowIndex);
         }
@@ -320,7 +321,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         if (!this.dimensionModel.get('scrollX')) {
             this.$el.css('overflow-x', 'hidden');
         }
-        if (!this.dimensionModel.get('scrollY') && whichSide === 'R') {
+        if (!this.dimensionModel.get('scrollY') && whichSide === frameConst.R) {
             this.$el.css('overflow-y', 'hidden');
         }
         this.$el.css('height', this.dimensionModel.get('bodyHeight'));
