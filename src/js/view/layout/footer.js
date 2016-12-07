@@ -8,6 +8,7 @@ var _ = require('underscore');
 var View = require('../../base/view');
 var classNameConst = require('../../common/classNameConst');
 var constMap = require('../../common/constMap');
+var frameConst = constMap.frame;
 
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
@@ -34,7 +35,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         this.columnTemplateMap = options.columnTemplateMap || {};
 
         /**
-         * 'L': Left, 'R': Right
+         * L: Left, R: Right
          * @type {string}
          */
         this.whichSide = options.whichSide;
@@ -42,11 +43,13 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         // models
         this.columnModel = options.columnModel;
         this.dimensionModel = options.dimensionModel;
+        this.coordColumnModel = options.coordColumnModel;
         this.renderModel = options.renderModel;
         this.summaryModel = options.summaryModel;
 
         // events
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
         this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
         if (this.summaryModel) {
             this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
@@ -86,7 +89,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
      * @private
      */
     _onScrollView: function(event) {
-        if (this.whichSide === 'R') {
+        if (this.whichSide === frameConst.R) {
             this.renderModel.set('scrollLeft', event.target.scrollLeft);
         }
     },
@@ -101,6 +104,15 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
         if (this.whichSide === 'R') {
             this.el.scrollLeft = value;
         }
+    },
+
+    _onChangeColumnWidth: function() {
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var $ths = this.$el.find('th');
+
+        _.each(columnWidthList, function(columnWidth, index) {
+            $ths.eq(index).css('width', columnWidth);
+        });
     },
 
     /**
@@ -153,7 +165,7 @@ var Footer = View.extend(/**@lends module:view/layout/footer.prototype */{
     _generateTbodyHTML: function() {
         var summaryModel = this.summaryModel;
         var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 
         return _.reduce(columnModelList, function(memo, column, index) {
             var columnName = column.columnName;

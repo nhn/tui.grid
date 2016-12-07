@@ -24,6 +24,7 @@ var EditingLayerView = require('./editingLayer');
 var DatePickeLayerView = require('./datePickerLayer');
 var FocusLayerView = require('./focusLayer');
 var isOptionEnabled = require('../common/util').isOptionEnabled;
+var frameConst = require('../common/constMap').frame;
 
 /**
  * View Factory
@@ -146,11 +147,11 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates frame view and returns it.
-     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+     * @param  {String} whichSide - L(left) or R(right)
      * @returns {module:view/layout/frame} New frame view instance
      */
     createFrame: function(whichSide) {
-        var Constructor = whichSide === 'L' ? LsideFrameView : RsideFrameView;
+        var Constructor = whichSide === frameConst.L ? LsideFrameView : RsideFrameView;
 
         return new Constructor({
             dimensionModel: this.modelManager.dimensionModel,
@@ -174,6 +175,7 @@ var ViewFactory = tui.util.defineClass({
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             coordRowModel: this.modelManager.coordRowModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             viewFactory: this
         });
     },
@@ -201,6 +203,7 @@ var ViewFactory = tui.util.defineClass({
             columnModel: this.modelManager.columnModel,
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             summaryModel: this.modelManager.summaryModel,
             columnTemplateMap: templateMap
         });
@@ -215,7 +218,8 @@ var ViewFactory = tui.util.defineClass({
         return new HeaderResizeHandlerView({
             whichSide: whichSide,
             dimensionModel: this.modelManager.dimensionModel,
-            columnModel: this.modelManager.columnModel
+            columnModel: this.modelManager.columnModel,
+            coordColumnModel: this.modelManager.coordColumnModel
         });
     },
 
@@ -246,6 +250,7 @@ var ViewFactory = tui.util.defineClass({
         return new BodyTableView({
             whichSide: whichSide,
             dimensionModel: this.modelManager.dimensionModel,
+            coordColumnModel: this.modelManager.coordColumnModel,
             renderModel: this.modelManager.renderModel,
             columnModel: this.modelManager.columnModel,
             painterManager: this.painterManager,
@@ -288,7 +293,8 @@ var ViewFactory = tui.util.defineClass({
             selectionModel: this.modelManager.selectionModel,
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel,
-            coordRowModel: this.modelManager.coordRowModel
+            coordRowModel: this.modelManager.coordRowModel,
+            coordColumnModel: this.modelManager.coordColumnModel
         });
     },
 
@@ -333,7 +339,8 @@ var ViewFactory = tui.util.defineClass({
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel,
             focusModel: this.modelManager.focusModel,
-            coordRowModel: this.modelManager.coordRowModel
+            coordRowModel: this.modelManager.coordRowModel,
+            coordColumnModel: this.modelManager.coordColumnModel
         });
     }
 });

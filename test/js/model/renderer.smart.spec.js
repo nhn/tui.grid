@@ -5,6 +5,7 @@ var RowListData = require('model/data/rowList');
 var Dimension = require('model/dimension');
 var Focus = require('model/focus');
 var CoordRow = require('model/coordRow');
+var CoordColumn = require('model/coordColumn');
 var SmartRenderer = require('model/renderer-smart');
 var DomState = require('domState');
 var dimensionConst = require('common/constMap').dimension;
@@ -39,6 +40,10 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
+        var coordColumnModel = new CoordColumn({
+            columnModel: columnModel,
+            dimensionModel: dimensionModel
+        });
         var focusModel = new Focus(null, {
             domState: new DomState($('<div />')),
             columnModel: columnModel,
@@ -51,7 +56,8 @@ describe('model.renderer', function() {
             columnModel: columnModel,
             dimensionModel: dimensionModel,
             focusModel: focusModel,
-            coordRowModel: coordRowModel
+            coordRowModel: coordRowModel,
+            coordColumnModel: coordColumnModel
         });
     }
 

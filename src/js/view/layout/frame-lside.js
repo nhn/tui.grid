@@ -6,6 +6,7 @@
 
 var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
+var frameConst = require('../../common/constMap').frame;
 
 /**
  * Left Side Frame
@@ -17,18 +18,19 @@ var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
         this.setOwnProperties({
-            whichSide: 'L'
+            whichSide: frameConst.L
         });
+
+        this.listenTo(this.dimensionModel, 'change:lsideWidth', this._onFrameWidthChanged);
     },
 
     className: classNameConst.LSIDE_AREA,
 
     /**
-     * Event handler for 'changeColumnWidth' event on module:model/dimension
-     * @override
+     * Event handler for 'change:lsideWidth' event on module:model/dimension
      * @private
      */
-    _onColumnWidthChanged: function() {
+    _onFrameWidthChanged: function() {
         this.$el.css({
             width: this.dimensionModel.get('lsideWidth')
         });

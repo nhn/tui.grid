@@ -10,7 +10,7 @@ var BodyTableView = require('view/layout/bodyTable');
 var constMap = require('common/constMap');
 var attrNameMap = constMap.attrName;
 var selTypeConst = constMap.selectionType;
-
+var frameConst = require('common/constMap').frame;
 
 describe('view.layout.body', function() {
     var modelManager, body;
@@ -49,7 +49,7 @@ describe('view.layout.body', function() {
 
     describe('initialize', function() {
         it('whichSide is default R', function() {
-            expect(body.whichSide).toBe('R');
+            expect(body.whichSide).toBe(frameConst.R);
         });
     });
 
@@ -337,12 +337,12 @@ describe('view.layout.body', function() {
                 scrollX: false,
                 scrollY: false
             });
-            body.whichSide = 'L';
+            body.whichSide = frameConst.L;
             body.render();
             expect(body.$el.css('overflow-x')).toBe('hidden');
             expect(body.$el.css('overflow-y')).not.toBe('hidden');
 
-            body.whichSide = 'R';
+            body.whichSide = frameConst.R;
             body.render();
             expect(body.$el.css('overflow-y')).toBe('hidden');
         });

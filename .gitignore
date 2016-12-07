@@ -44,3 +44,6 @@ karma.conf.local.js
 tags
 .ctags
 .tern-project
+
+# etc
+.agignore 

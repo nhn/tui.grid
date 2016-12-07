@@ -6,6 +6,7 @@ var Frame = require('view/layout/frame');
 var FrameRside = require('view/layout/frame-rside');
 var FrameLside = require('view/layout/frame-lside');
 var classNameConst = require('common/classNameConst');
+var frameConst = require('common/constMap').frame;
 
 describe('Frame', function() {
     var modelManager, frame;
@@ -59,7 +60,6 @@ describe('Frame', function() {
     describe('initialize', function() {
         beforeEach(function() {
             spyOn(Frame.prototype, 'render');
-            spyOn(Frame.prototype, '_onColumnWidthChanged');
 
             frame = createFrame(Frame);
         });
@@ -67,11 +67,6 @@ describe('Frame', function() {
         it('renderModel:columnModelChanged 이벤트 발생시 render()를 호출한다.', function() {
             modelManager.renderModel.trigger('columnModelChanged');
             expect(frame.render).toHaveBeenCalled();
-        });
-
-        it('dimensionModel:columnWidthChanged 이벤트 발생시 _onColumnWidthChanged()를 호출한다.', function() {
-            modelManager.dimensionModel.trigger('columnWidthChanged');
-            expect(frame._onColumnWidthChanged).toHaveBeenCalled();
         });
     });
 
@@ -105,15 +100,14 @@ describe('Frame', function() {
         });
 
         it('whichSide의 값은 무조건 L이다.', function() {
-            frame = createFrame(FrameLside, 'R');
-            expect(frame.whichSide).toBe('L');
+            frame = createFrame(FrameLside, frameConst.R);
+            expect(frame.whichSide).toBe(frameConst.L);
         });
 
         describe('_onColumnWidthChanged', function() {
             it('dimensionModel에 정의된 값으로 el의 넓이를 변경한다.', function() {
                 frame.$el.width(10);
                 modelManager.dimensionModel.set('lsideWidth', 100);
-                frame._onColumnWidthChanged();
 
                 expect(frame.$el.width()).toBe(100);
             });
@@ -136,8 +130,8 @@ describe('Frame', function() {
 
     describe('Rside', function() {
         it('whichSide의 값은 무조건 R이다.', function() {
-            frame = createFrame(FrameRside, 'L');
-            expect(frame.whichSide).toBe('R');
+            frame = createFrame(FrameRside, frameConst.L);
+            expect(frame.whichSide).toBe(frameConst.R);
         });
 
         describe('beforeRender()', function() {

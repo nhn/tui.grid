@@ -27,6 +27,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
 
         this.setOwnProperties({
             dimensionModel: options.dimensionModel,
+            coordColumnModel: options.coordColumnModel,
             renderModel: options.renderModel,
             columnModel: options.columnModel,
             viewFactory: options.viewFactory,
@@ -34,7 +35,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
             whichSide: options.whichSide || 'R'
         });
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
         // To prevent issue of appearing vertical scrollbar when dummy rows exist
         this.listenTo(this.renderModel, 'change:dummyRowCount', this._onChangeDummyRowCount);
@@ -60,7 +61,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _onColumnWidthChanged: function() {
-        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var $colList = this.$el.find('col');
 
         _.each(columnWidthList, function(width, index) {
@@ -170,10 +171,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
      * @private
      */
     _getColGroupMarkup: function() {
-        var whichSide = this.whichSide,
-            columnWidthList = this.dimensionModel.getColumnWidthList(whichSide),
-            columnModelList = this.columnModel.getVisibleColumnModelList(whichSide, true),
-            html = '';
+        var whichSide = this.whichSide;
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(whichSide);
+        var columnModelList = this.columnModel.getVisibleColumnModelList(whichSide, true);
+        var html = '';
 
         _.each(columnModelList, function(columnModel, index) {
             html += this.templateCol({

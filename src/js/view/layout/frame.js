@@ -5,13 +5,14 @@
 'use strict';
 
 var View = require('../../base/view');
+var frameConst = require('../../common/constMap').frame;
 
 /**
  * Base class for frame view.
  * @module view/layout/frame
  * @extends module:base/view
  * @param {Object} options Options
- *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
+ *      @param {String} [options.whichSide=R] R for Right side, L for Left side
  * @ignore
  */
 var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
@@ -22,11 +23,10 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
             viewFactory: options.viewFactory,
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,
-            whichSide: options.whichSide || 'R'
+            whichSide: options.whichSide || frameConst.R
         });
 
-        this.listenTo(this.renderModel, 'columnModelChanged', this.render)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+        this.listenTo(this.renderModel, 'columnModelChanged', this.render);
     },
 
     /**
@@ -50,13 +50,6 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
 
         return this;
     },
-
-    /**
-     * Event handler for 'columnWidthChanged' event on module:module/dimension
-     * @abstract
-     * @private
-     */
-    _onColumnWidthChanged: function() {},
 
     /**
      * To be called at the beginning of the 'render' method.

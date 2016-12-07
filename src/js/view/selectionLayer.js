@@ -9,6 +9,7 @@ var _ = require('underscore');
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
+var frameConst = require('../common/constMap').frame;
 
 /**
  * Class for the selection layer
@@ -24,12 +25,13 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
             whichSide: options.whichSide || 'R',
             dimensionModel: options.dimensionModel,
             coordRowModel: options.coordRowModel,
+            coordColumnModel: options.coordColumnModel,
             columnModel: options.columnModel,
             selectionModel: options.selectionModel
         });
         this._updateColumnWidthList();
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onChangeColumnWidth);
+        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
         this.listenTo(this.selectionModel, 'change:range', this.render);
     },
 
@@ -40,7 +42,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @private
      */
     _updateColumnWidthList: function() {
-        this.columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+        this.columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
     },
 
     /**
@@ -62,7 +64,7 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
         var columnFixCount = this.columnModel.getVisibleColumnFixCount();
         var ownColumnRange = null;
 
-        if (this.whichSide === 'L') {
+        if (this.whichSide === frameConst.L) {
             if (columnRange[0] < columnFixCount) {
                 ownColumnRange = [
                     columnRange[0],
@@ -103,15 +105,15 @@ var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype 
      * @returns {{left: string, width: string}} - css values
      */
     _getHorizontalStyles: function(columnRange) {
-        var columnWidthList = this.columnWidthList,
-            metaColumnCount = this.columnModel.getVisibleMetaColumnCount(),
-            startIndex = columnRange[0],
-            endIndex = columnRange[1],
-            left = 0,
-            width = 0,
-            i = 0;
+        var columnWidthList = this.columnWidthList;
+        var metaColumnCount = this.columnModel.getVisibleMetaColumnCount();
+        var startIndex = columnRange[0];
+        var endIndex = columnRange[1];
+        var left = 0;
+        var width = 0;
+        var i = 0;
 
-        if (this.whichSide === 'L') {
+        if (this.whichSide === frameConst.L) {
             startIndex += metaColumnCount;
             endIndex += metaColumnCount;
         }

@@ -3,6 +3,7 @@
 var ModelManager = require('model/manager');
 var DomState = require('domState');
 var ViewFactory = require('view/factory');
+var frameConst = require('common/constMap').frame;
 
 function create(whichSide, options) {
     var modelManager = new ModelManager(options, new DomState($('<div>')));
@@ -19,7 +20,7 @@ describe('Footer', function() {
         var footer;
 
         beforeEach(function() {
-            footer = create('R', {
+            footer = create(frameConst.R, {
                 columnModelList: [
                     {columnName: 'c1', width: 50},
                     {columnName: 'c2', width: 60}
@@ -42,12 +43,12 @@ describe('Footer', function() {
             expect(footer.$el.find('table').height()).toBe(30);
         });
 
-        it('width of each column should be the same as the result of dimension.getColumnWidthList()', function() {
+        it('width of each column should be the same as the result of coordColumnModel.getColumnWidthList()', function() {
             var widthList, $ths;
 
             footer.render();
 
-            widthList = footer.dimensionModel.getColumnWidthList('R');
+            widthList = footer.coordColumnModel.getColumnWidthList(frameConst.R);
             $ths = footer.$el.find('th');
             expect($ths.eq(0).width()).toBe(widthList[0]);
             expect($ths.eq(1).width()).toBe(widthList[1]);
@@ -134,7 +135,7 @@ describe('Footer', function() {
     });
 
     it('If the setFooterContent event occurs on columnModel, refresh <th>', function() {
-        var footer = create('R', {
+        var footer = create(frameConst.R, {
             columnModelList: [
                 {columnName: 'c1'},
                 {columnName: 'c2'}
@@ -152,7 +153,7 @@ describe('Footer', function() {
     });
 
     it('Refresh <th> whenever change event occurs on the summaryModel', function() {
-        var footer = create('R', {
+        var footer = create(frameConst.R, {
             columnModelList: [
                 {columnName: 'c1'},
                 {columnName: 'c2'}

@@ -11,6 +11,7 @@ var RowListData = require('./data/rowList');
 var ToolbarModel = require('./toolbar');
 var DimensionModel = require('./dimension');
 var CoordRowModel = require('./coordRow');
+var CoordColumnModel = require('./coordColumn');
 var FocusModel = require('./focus');
 var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
@@ -54,6 +55,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState);
         this.coordRowModel = this._createCoordRowModel(domState);
+        this.coordColumnModel = this._createCoordColumnModel();
         this.focusModel = this._createFocusModel(domState);
         this.renderModel = this._createRenderModel(options);
         this.selectionModel = this._createSelectionModel();
@@ -63,6 +65,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.focusModel.renderModel = this.renderModel;
         this.dimensionModel.renderModel = this.renderModel;
         this.dimensionModel.coordRowModel = this.coordRowModel;
+        this.dimensionModel.coordColumnModel = this.coordColumnModel;
     },
 
     /**
@@ -158,6 +161,18 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
     },
 
     /**
+     * Creates an instance of coordColumn model and returns it
+     * @returns {module:model/coordColumnModel}
+     * @private
+     */
+    _createCoordColumnModel: function() {
+        return new CoordColumnModel({
+            columnModel: this.columnModel,
+            dimensionModel: this.dimensionModel
+        });
+    },
+
+    /**
      * Creates an instance of focus model and returns it.
      * @param  {module:domState} domState - DomState instance
      * @returns {module:model/focus} - A new instance
@@ -206,7 +221,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             focusModel: this.focusModel,
-            coordRowModel: this.coordRowModel
+            coordRowModel: this.coordRowModel,
+            coordColumnModel: this.coordColumnModel
         };
         Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 

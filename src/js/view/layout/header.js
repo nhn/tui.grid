@@ -10,6 +10,7 @@ var View = require('../../base/view');
 var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
+var frameConst = constMap.frame;
 
 var DELAY_SYNC_CHECK = 10;
 var keyCodeMap = constMap.keyCode;
@@ -23,7 +24,7 @@ var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
  * @module view/layout/header
  * @extends module:base/view
  * @param {Object} options - options
- * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
+ * @param {String} [options.whichSide=R]  R: Right, L: Left
  * @ignore
  */
 var Header = View.extend(/**@lends module:view/layout/header.prototype */{
@@ -32,6 +33,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         this.setOwnProperties({
             renderModel: options.renderModel,
+            coordColumnModel: options.coordColumnModel,
             dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
             focusModel: options.focusModel,
@@ -39,16 +41,16 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
             coordRowModel: options.coordRowModel,
-            whichSide: options.whichSide || 'R'
+            whichSide: options.whichSide || frameConst.R
         });
 
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
-            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+            .listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged)
             .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
             .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
             .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
 
-        if (this.whichSide === 'L' && this.columnModel.get('selectType') === 'checkbox') {
+        if (this.whichSide === frameConst.L && this.columnModel.get('selectType') === 'checkbox') {
             this.listenTo(this.dataModel,
                 'change:_button disabledChanged extraDataChanged add remove reset',
                 _.debounce(_.bind(this._syncCheckedState, this), DELAY_SYNC_CHECK));
@@ -477,10 +479,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _getColumnData: function() {
-        var columnModel = this.columnModel;
-        var dimensionModel = this.dimensionModel;
-        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
-        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
 
         return {
             widthList: columnWidthList,
