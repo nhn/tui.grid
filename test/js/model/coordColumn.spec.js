@@ -2,6 +2,6 @@
 
 describe('CoordColumn', function() {
     it('test', function() {
-        console.log('hello');
-    })
+        // console.log('hello');
+    });
 });
