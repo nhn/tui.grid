@@ -5,7 +5,7 @@ var ModelManager = require('model/manager');
 var PainterManager = require('painter/manager');
 var ViewFactory = require('view/factory');
 var RowListView = require('view/rowList');
-var frameConst = require('common/constMap');
+var frameConst = require('common/constMap').frame;
 
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 
