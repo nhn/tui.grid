@@ -877,7 +877,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         // 추가/ 수정된 행 추출
         _.each(current, function(row, rowKey) {
             var originalRow = original[rowKey],
-                item = isOnlyRowKeyList ? row.rowKey : row;
+                item = isOnlyRowKeyList ? row.rowKey : _.omit(row, filteringColumnList);
 
             if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
                 if (!originalRow) {
@@ -890,7 +890,7 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
 
         //삭제된 행 추출
         _.each(original, function(obj, rowKey) {
-            var item = isOnlyRowKeyList ? obj.rowKey : obj;
+            var item = isOnlyRowKeyList ? obj.rowKey : _.omit(obj, filteringColumnList);
             if (!current[rowKey]) {
                 result.deleteList.push(item);
             }
