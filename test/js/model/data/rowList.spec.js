@@ -1697,17 +1697,17 @@ describe('data.rowList', function() {
                     modifiedList = getModified();
                     expect(modifiedList.createList).toBeDefined();
                     expect(modifiedList.createList.length).toBe(2);
-                    expect(modifiedList.createList).toContain({none: 'none_appended', text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
-                    expect(modifiedList.createList).toContain({none: 'none_prepended', text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
+                    expect(modifiedList.createList).toContain({text: 'text_appended', hidden: 'hidden_appended', rowKey: 6});
+                    expect(modifiedList.createList).toContain({text: 'text_prepended', hidden: 'hidden_prepended', rowKey: 7});
 
                     expect(modifiedList.deleteList).toBeDefined();
                     expect(modifiedList.deleteList.length).toBe(2);
-                    expect(modifiedList.deleteList).toContain({none: 'none3', text: 'text3', hidden: 'hidden3', rowKey: 2});
-                    expect(modifiedList.deleteList).toContain({none: 'none4', text: 'text4', hidden: 'hidden4', rowKey: 3});
+                    expect(modifiedList.deleteList).toContain({text: 'text3', hidden: 'hidden3', rowKey: 2});
+                    expect(modifiedList.deleteList).toContain({text: 'text4', hidden: 'hidden4', rowKey: 3});
 
                     expect(modifiedList.updateList).toBeDefined();
                     expect(modifiedList.updateList.length).toBe(1);
-                    expect(modifiedList.updateList).toContain({none: 'none5', text: 'dirty', hidden: 'hidden5', rowKey: 4});
+                    expect(modifiedList.updateList).toContain({text: 'dirty', hidden: 'hidden5', rowKey: 4});
                 });
             });
 
