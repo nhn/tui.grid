@@ -66,9 +66,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
         // todo: remove dependency
         this.focusModel.renderModel = this.renderModel;
-        this.dimensionModel.renderModel = this.renderModel;
-        this.dimensionModel.coordRowModel = this.coordRowModel;
-        this.dimensionModel.coordColumnModel = this.coordColumnModel;
     },
 
     /**
@@ -185,7 +182,10 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     _createCoordConverterModel: function() {
         return new CoordConverterModel({
+            columnModel: this.columnModel,
+            dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
+            focusModel: this.focusModel,
             coordRowModel: this.coordRowModel,
             renderModel: this.renderModel,
             coordColumnModel: this.coordColumnModel

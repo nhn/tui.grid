@@ -81,7 +81,8 @@ describe('view.clipboard', function() {
                 selectionModel: modelManager.selectionModel,
                 focusModel: modelManager.focusModel,
                 renderModel: modelManager.renderModel,
-                coordRowModel: modelManager.coordRowModel
+                coordRowModel: modelManager.coordRowModel,
+                coordConverterModel: modelManager.coordConverterModel
             });
         });
 
@@ -329,7 +330,7 @@ describe('view.clipboard', function() {
 
             describe('with scrolling', function() {
                 beforeEach(function() {
-                    spyOn(modelManager.dimensionModel, 'getScrollPosition').and.returnValue({
+                    spyOn(modelManager.coordConverterModel, 'getScrollPosition').and.returnValue({
                         scrollLeft: 1,
                         scrollTop: 1
                     });

@@ -198,11 +198,8 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         }
 
         this.set('columnName', columnName);
-        this.trigger('focus', rowKey, columnName);
+        this.trigger('focus', rowKey, columnName, isScrollable);
 
-        if (isScrollable) {
-            this.scrollToFocus();
-        }
         return true;
     },
 
@@ -288,19 +285,6 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             if (!restored) {
                 this.focusAt(0, 0);
             }
-        }
-    },
-
-    /**
-     * Scroll to focus
-     */
-    scrollToFocus: function() {
-        var rowKey = this.get('rowKey');
-        var columnName = this.get('columnName');
-        var scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
-
-        if (!tui.util.isEmpty(scrollPosition)) {
-            this.renderModel.set(scrollPosition);
         }
     },
 

@@ -267,7 +267,7 @@ describe('model/selection', function() {
 
         describe('updateByMousePosition()', function() {
             beforeEach(function() {
-                spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                spyOn(selection.coordConverterModel, 'getIndexFromMousePosition').and.returnValue({
                     row: 2,
                     column: 2
                 });
@@ -307,7 +307,7 @@ describe('model/selection', function() {
 
             describe('when called with columnIndexes[0, 1]', function() {
                 beforeEach(function() {
-                    spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.stub();
+                    spyOn(selection.coordConverterModel, 'getIndexFromMousePosition').and.stub();
                 });
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
@@ -335,7 +335,7 @@ describe('model/selection', function() {
             describe('when called without columnIndexes(=null or undefined) and with cell index', function() {
                 it('with minimumColumnRange, should extend column selection to [1, 3]', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                    spyOn(selection.coordConverterModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
                         column: 1
                     });
@@ -350,7 +350,7 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2]', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    spyOn(selection.dimensionModel, 'getIndexFromMousePosition').and.returnValue({
+                    spyOn(selection.coordConverterModel, 'getIndexFromMousePosition').and.returnValue({
                         row: 0,
                         column: 1
                     });

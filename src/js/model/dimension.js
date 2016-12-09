@@ -1,5 +1,5 @@
 /**
- * @fileoverview 크기에 관련된 데이터를 다루는 모델
+ * @fileoverview module:model/dimension
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -11,7 +11,7 @@ var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 /**
- * 크기 관련 데이터 저장
+ * Manage values about dimension (layout)
  * @module model/dimension
  * @param {Object} attrs - Attributes
  * @param {Object} options - Options
@@ -109,120 +109,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Returns the horizontal position of the given column
-     * @param {String} columnName - column name
-     * @returns {{left: Number, right: Number}}
-     * @private
-     */
-    _getCellHorizontalPosition: function(columnName) {
-        var columnModel = this.columnModel;
-        var metaColumnCount = columnModel.getVisibleMetaColumnCount();
-        var columnWidthList = this.coordColumnModel.get('columnWidthList');
-        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
-        var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
-        var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
-        var left = 0;
-
-        for (; idx < targetIdx; idx += 1) {
-            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
-        }
-
-        return {
-            left: left,
-            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
-        };
-    },
-
-    /**
-     * Returns the vertical position of the given row
-     * @param {Number} rowKey - row key
-     * @param {Number} rowSpanCount - the count of rowspan
-     * @returns {{top: Number, bottom: Number}}
-     * @private
-     */
-    _getCellVerticalPosition: function(rowKey, rowSpanCount) {
-        var firstIdx, lastIdx, top, bottom;
-        var coordRowModel = this.coordRowModel;
-
-        firstIdx = this.dataModel.indexOfRowKey(rowKey);
-        lastIdx = firstIdx + rowSpanCount - 1;
-        top = coordRowModel.getOffsetAt(firstIdx);
-        bottom = coordRowModel.getOffsetAt(lastIdx) +
-            coordRowModel.getHeightAt(lastIdx) + CELL_BORDER_WIDTH;
-
-        return {
-            top: top,
-            bottom: bottom
-        };
-    },
-
-    /**
-     * Returns the count of rowspan of given cell
-     * @param {Number} rowKey - row key
-     * @param {String} columnName - column name
-     * @returns {Number}
-     * @private
-     */
-    _getRowSpanCount: function(rowKey, columnName) {
-        var rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
-
-        if (!rowSpanData.isMainRow) {
-            rowKey = rowSpanData.mainRowKey;
-            rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
-        }
-
-        return rowSpanData.count || 1;
-    },
-
-    /**
-     * 계산한 cell 의 위치를 리턴한다.
-     * @param {Number|String} rowKey - 데이터의 키값
-     * @param {String} columnName - 칼럼명
-     * @returns {{top: number, left: number, right: number, bottom: number}} - cell의 위치
-     * @todo TC
-     */
-    getCellPosition: function(rowKey, columnName) {
-        var rowSpanCount, vPos, hPos;
-
-        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-
-        if (!this.dataModel.get(rowKey)) {
-            return {};
-        }
-
-        rowSpanCount = this._getRowSpanCount(rowKey, columnName);
-        vPos = this._getCellVerticalPosition(rowKey, rowSpanCount);
-        hPos = this._getCellHorizontalPosition(columnName);
-
-        return {
-            top: vPos.top,
-            bottom: vPos.bottom,
-            left: hPos.left,
-            right: hPos.right
-        };
-    },
-
-    /**
-     * Return scroll position from the received index
-     * @param {Number|String} rowKey - Row-key of target cell
-     * @param {String} columnName - Column name of target cell
-     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
-     */
-    getScrollPosition: function(rowKey, columnName) {
-        var isRsideColumn = !this.columnModel.isLside(columnName);
-        var targetPosition = this.getCellPosition(rowKey, columnName);
-        var bodySize = this._getBodySize();
-        var scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
-
-        return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
-    },
-
-    /**
      * Calc body size of grid except scrollBar
      * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-     * @private
      */
-    _getBodySize: function() {
+    getBodySize: function() {
         var lsideWidth = this.get('lsideWidth'),
             rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
             height = this.get('bodyHeight') - this.getScrollXHeight();
@@ -235,63 +125,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Judge scroll direction.
-     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {boolean} isRsideColumn - Whether the target cell is in rside
-     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-     * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
-     * @private
-     */
-    _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
-        var renderModel = this.renderModel;
-        var currentTop = renderModel.get('scrollTop');
-        var currentLeft = renderModel.get('scrollLeft');
-        var isUp, isDown, isLeft, isRight;
-
-        isUp = targetPosition.top < currentTop;
-        isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
-        if (isRsideColumn) {
-            isLeft = targetPosition.left < currentLeft;
-            isRight = !isLeft && (targetPosition.right > (currentLeft + bodySize.rsideWidth - 1));
-        } else {
-            isLeft = isRight = false;
-        }
-
-        return {
-            isUp: isUp,
-            isDown: isDown,
-            isLeft: isLeft,
-            isRight: isRight
-        };
-    },
-
-    /**
-     * Make scroll position
-     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
-     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
-     * @private
-     */
-    _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
-        var pos = {};
-
-        if (scrollDirection.isUp) {
-            pos.scrollTop = targetPosition.top;
-        } else if (scrollDirection.isDown) {
-            pos.scrollTop = targetPosition.bottom - bodySize.height;
-        }
-
-        if (scrollDirection.isLeft) {
-            pos.scrollLeft = targetPosition.left;
-        } else if (scrollDirection.isRight) {
-            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + TABLE_BORDER_WIDTH;
-        }
-
-        return pos;
-    },
-
-    /**
      * Calc and get overflow values from container position
      * @param {Number} pageX - Mouse X-position based on page
      * @param {Number} pageY - Mouse Y-position based on page
@@ -299,7 +132,7 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      */
     getOverflowFromMousePosition: function(pageX, pageY) {
         var containerPos = this.getPositionFromBodyArea(pageX, pageY);
-        var bodySize = this._getBodySize();
+        var bodySize = this.getBodySize();
 
         return this._judgeOverflow(containerPos, bodySize);
     },
@@ -451,10 +284,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-     * @param {Number} pageX    마우스 x 좌표
-     * @param {Number} pageY    마우스 y 좌표
-     * @returns {{x: number, y: number}} 그리드 container 기준의 x, y 값
+     * Returns the position relative to the body-area.
+     * @param {Number} pageX - x-pos relative to document
+     * @param {Number} pageY - y-pos relative to document
+     * @returns {{x: number, y: number}}
      * @private
      */
     getPositionFromBodyArea: function(pageX, pageY) {
