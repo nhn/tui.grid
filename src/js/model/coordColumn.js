@@ -42,7 +42,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         this.resetColumnWidths();
     },
 
-    default: {
+    defaults: {
         columnWidthList: []
     },
 
