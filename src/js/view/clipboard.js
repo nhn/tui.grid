@@ -23,13 +23,14 @@ var selTypeConst = constMap.selectionType;
 var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     initialize: function(options) {
         this.setOwnProperties({
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
             focusModel: options.focusModel,
             selectionModel: options.selectionModel,
             dimensionModel: options.dimensionModel,
-            dataModel: options.dataModel,
-            columnModel: options.columnModel,
-            renderModel: options.renderModel,
             coordRowModel: options.coordRowModel,
+            coordConverterModel: options.coordConverterModel,
+            renderModel: options.renderModel,
             useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
             timeoutIdForKeyIn: 0,
             isLocked: false
@@ -258,8 +259,8 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      */
     _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
         var focusModel = this.focusModel;
-        var dimensionModel = this.dimensionModel;
         var columnModelList = this.columnModel.getVisibleColumnModelList();
+        var coordConverterModel = this.coordConverterModel;
         var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
         var index = this._getIndexBeforeMove();
         var isKeyIdentified = true;
@@ -310,7 +311,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
         if (isSelection && isValid) {
             this._updateSelectionByKeyIn(index.row, index.column);
-            scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
+            scrollPosition = coordConverterModel.getScrollPosition(index.row, columnModel.columnName);
             if (scrollPosition) {
                 selectionType = this.selectionModel.getType();
                 if (selectionType === selTypeConst.COLUMN) {

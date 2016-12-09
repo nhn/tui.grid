@@ -140,7 +140,7 @@ var ViewFactory = tui.util.defineClass({
             focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
             coordRowModel: this.modelManager.coordRowModel,
-            painterManager: this.modelManager.painterManager,
+            coordConverterModel: this.modelManager.coordConverterModel,
             copyOption: this.copyOption
         });
     },
@@ -341,7 +341,8 @@ var ViewFactory = tui.util.defineClass({
             columnModel: this.modelManager.columnModel,
             focusModel: this.modelManager.focusModel,
             coordRowModel: this.modelManager.coordRowModel,
-            coordColumnModel: this.modelManager.coordColumnModel
+            coordColumnModel: this.modelManager.coordColumnModel,
+            coordConverterModel: this.modelManager.coordConverterModel
         });
     }
 });

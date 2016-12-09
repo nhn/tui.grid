@@ -25,9 +25,9 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
     initialize: function(options) {
         this.focusModel = options.focusModel;
         this.columnModel = options.columnModel;
-        this.dimensionModel = options.dimensionModel;
         this.coordRowModel = options.coordRowModel;
         this.coordColumnModel = options.coordColumnModel;
+        this.coordConverterModel = options.coordConverterModel;
         this.whichSide = options.whichSide;
 
         this.borderEl = {
@@ -87,7 +87,7 @@ var FocusLayer = View.extend(/**@lends module:view/focusLayer.prototype */{
      * @private
      */
     _refreshBorderLayout: function(rowKey, columnName) {
-        var pos = this.dimensionModel.getCellPosition(rowKey, columnName);
+        var pos = this.coordConverterModel.getCellPosition(rowKey, columnName);
         var width = pos.right - pos.left;
         var height = pos.bottom - pos.top;
 

@@ -119,9 +119,8 @@ describe('model/focus', function() {
             var callback = jasmine.createSpy('callback'),
                 listenModel = new Model();
             listenModel.listenToOnce(focusModel, 'focus', callback);
-            focusModel.focus('1', 'c1');
-            expect(callback).toHaveBeenCalled();
-            expect(callback).toHaveBeenCalledWith('1', 'c1');
+            focusModel.focus('1', 'c1', true);
+            expect(callback).toHaveBeenCalledWith('1', 'c1' true);
         });
 
         it('이전 focus 정보를 저장하는지 확인한다.', function() {
@@ -132,43 +131,6 @@ describe('model/focus', function() {
             expect(focusModel.get('columnName')).toEqual('c2');
             expect(focusModel.get('prevRowKey')).toEqual(0);
             expect(focusModel.get('prevColumnName')).toEqual('c1');
-        });
-
-        it('if "isScrollable" option is true, it should scroll to focus.', function() {
-            var rowKey = 0,
-                columnName = 'c1';
-
-            spyOn(focusModel, 'scrollToFocus');
-            focusModel.focus(rowKey, columnName, true);
-
-            expect(focusModel.scrollToFocus).toHaveBeenCalled();
-        });
-    });
-
-    describe('scrollToFocus()', function() {
-        beforeEach(function() {
-            focusModel.renderModel = new Model();
-            focusModel.dimensionModel = new Model();
-            focusModel.dimensionModel.getScrollPosition = function() {};
-
-            spyOn(focusModel.renderModel, 'set');
-        });
-
-        it('should scroll to focused index', function() {
-            spyOn(focusModel.dimensionModel, 'getScrollPosition').and.returnValue({
-                scrollTop: 1,
-                scrollLeft: 1
-            });
-            focusModel.scrollToFocus();
-
-            expect(focusModel.renderModel.set).toHaveBeenCalled();
-        });
-
-        it('should not scroll if index is invalid', function() {
-            focusModel.set('rowKey', undefined);
-            focusModel.scrollToFocus();
-
-            expect(focusModel.renderModel.set).not.toHaveBeenCalled();
         });
     });
 
