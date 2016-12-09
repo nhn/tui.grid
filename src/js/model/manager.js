@@ -171,6 +171,11 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         });
     },
 
+    /**
+     * Creates an instance of coordConvert model and returns it
+     * @returns {module:model/coordConverterModel}
+     * @private
+     */
     _createCoordConverterModel: function() {
         return new CoordConverterModel({
             columnModel: this.columnModel,
