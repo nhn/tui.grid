@@ -39,6 +39,7 @@ var Row = Model.extend(/**@lends module:model/row.prototype */{
     idAttribute: 'rowKey',
 
     /**
+     * TODO: 양쪽 프레임에서 중복처리 하고 있는 부분 수정
      * Event handler for 'change' event on module:data/row
      * @param {Object} rowData - RowData model on which event occurred
      * @private

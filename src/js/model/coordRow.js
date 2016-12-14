@@ -31,15 +31,21 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
          */
         this.rowOffsets = [];
 
-        this.listenTo(this.dataModel, 'add remove reset sort', this._onChangeData);
+        // Sync height and offest data when dataModel is changed only if the isFixedRowHeight is true.
+        // If the isFixedRowHeight is false, as the height of each row should be synced with DOM,
+        // syncWithDom() method is called instead at the end of rendering process.
+        if (this.dimensionModel.get('isFixedRowHeight')) {
+            this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel);
+        }
     },
 
     /**
-     * Reset coordinate data with real DOM height of cells
+     * Refresh coordinate data with real DOM height of cells
      */
     syncWithDom: function() {
         var domRowHeights, dataRowHeights, rowHeights;
         var i, len;
+
 
         if (this.dimensionModel.get('isFixedRowHeight')) {
             return;
@@ -53,9 +59,7 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
             rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
         }
         this._reset(rowHeights);
-        this.trigger('syncWithDom');
     },
-
 
     /**
      * Returns the height of rows from dataModel as an array
@@ -74,10 +78,9 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
     },
 
     /**
-     * Event handler to be called when dataModel is changed
-     * @private
+     * Refresh coordinate data with extraData.height
      */
-    _onChangeData: function() {
+    syncWithDataModel: function() {
         this._reset(this._getHeightFromData());
     },
 
