@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Dec 01 2016 14:39:18 GMT+0900 (KST)"
- * version: 1.6.1
+ * bundle created at "Thu Dec 15 2016 17:38:35 GMT+0900 (KST)"
+ * version: 1.6.2
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -4414,6 +4414,7 @@
 	var SmartRenderModel = __webpack_require__(24);
 	var SelectionModel = __webpack_require__(25);
 	var SummaryModel = __webpack_require__(26);
+	var util = __webpack_require__(9);
 
 	var defaultOptions = {
 	    columnFixCount: 0,
@@ -4514,6 +4515,7 @@
 	     * @private
 	     */
 	    _createDimensionModel: function(options, domState) {
+	        var dimensionModel;
 	        var attrs = {
 	            headerHeight: options.headerHeight,
 	            bodyHeight: options.bodyHeight,
@@ -4526,7 +4528,14 @@
 	            isFixedRowHeight: options.isFixedRowHeight,
 	            isFixedHeight: options.isFixedHeight
 	        };
-	        var dimensionModel = new DimensionModel(attrs, {
+
+	        // isfixedRowHeight and notUseSmartRendering can not be false at the same time.
+	        if (options.isFixedRowHeight === false && !options.notUseSmartRendering) {
+	            util.warning('The isFixedRowHeight can\'t be false if the notUseSmartRendering is not set to false.');
+	            attrs.isFixedRowHeight = true;
+	        }
+
+	        dimensionModel = new DimensionModel(attrs, {
 	            columnModel: this.columnModel,
 	            dataModel: this.dataModel,
 	            domState: domState
@@ -5510,6 +5519,18 @@
 	        }
 
 	        return options;
+	    },
+
+	    /**
+	     * Outputs a warning message to the web console.
+	     * @param {string} message - message
+	     */
+	    warning: function(message) {
+	        /* eslint-disable no-console */
+	        if (console && console.warn) {
+	            console.warn(message);
+	        }
+	        /* eslint-enable no-console */
 	    }
 	};
 
@@ -6303,8 +6324,8 @@
 	     * @param {Boolean} [silent] 이벤트 발생 여부
 	     */
 	    check: function(rowKey, silent) {
-	        var isDisabledCheck = this.get(rowKey).getRowState().isDisabledCheck,
-	            selectType = this.columnModel.get('selectType');
+	        var isDisabledCheck = this.get(rowKey).getRowState().isDisabledCheck;
+	        var selectType = this.columnModel.get('selectType');
 
 	        if (!isDisabledCheck && selectType) {
 	            if (selectType === 'radio') {
@@ -7905,7 +7926,10 @@
 	     * @private
 	     */
 	    _syncBodyHeightWithTotalRowHeight: function() {
-	        this.set('bodyHeight', this.get('totalRowHeight') + this.getScrollXHeight());
+	        var currBodyHeight = this.get('bodyHeight');
+	        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
+
+	        this.set('bodyHeight', Math.max(currBodyHeight, realBodyHeight));
 	    },
 
 	    /**
@@ -8793,15 +8817,21 @@
 	         */
 	        this.rowOffsets = [];
 
-	        this.listenTo(this.dataModel, 'add remove reset sort', this._onChangeData);
+	        // Sync height and offest data when dataModel is changed only if the isFixedRowHeight is true.
+	        // If the isFixedRowHeight is false, as the height of each row should be synced with DOM,
+	        // syncWithDom() method is called instead at the end of rendering process.
+	        if (this.dimensionModel.get('isFixedRowHeight')) {
+	            this.listenTo(this.dataModel, 'add remove reset sort', this.syncWithDataModel);
+	        }
 	    },
 
 	    /**
-	     * Reset coordinate data with real DOM height of cells
+	     * Refresh coordinate data with real DOM height of cells
 	     */
 	    syncWithDom: function() {
 	        var domRowHeights, dataRowHeights, rowHeights;
 	        var i, len;
+
 
 	        if (this.dimensionModel.get('isFixedRowHeight')) {
 	            return;
@@ -8815,9 +8845,7 @@
 	            rowHeights[i] = Math.max(domRowHeights[i], dataRowHeights[i]);
 	        }
 	        this._reset(rowHeights);
-	        this.trigger('syncWithDom');
 	    },
-
 
 	    /**
 	     * Returns the height of rows from dataModel as an array
@@ -8836,10 +8864,9 @@
 	    },
 
 	    /**
-	     * Event handler to be called when dataModel is changed
-	     * @private
+	     * Refresh coordinate data with extraData.height
 	     */
-	    _onChangeData: function() {
+	    syncWithDataModel: function() {
 	        this._reset(this._getHeightFromData());
 	    },
 
@@ -9773,18 +9800,19 @@
 	        });
 
 	        this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-	            .listenTo(this.dataModel, 'remove sort reset delRange', this._onDataModelChange)
+	            .listenTo(this.dataModel, 'add remove sort reset delRange', this._onDataListChange)
 	            .listenTo(this.dataModel, 'add', this._onAddDataModel)
 	            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
 	            .listenTo(lside, 'valueChange', this._executeRelation)
 	            .listenTo(rside, 'valueChange', this._executeRelation)
 	            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
+	            .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
 	            .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
 	            .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
 	                this._updateMaxScrollTop);
 
 	        if (this.get('showDummyRows')) {
-	            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetDummyRowCount);
+	            this.listenTo(this.dimensionModel, 'change:bodyHeight change:totalRowHeight', this._resetDummyRowCount);
 	            this.on('change:dummyRowCount', this._resetDummyRows);
 	        }
 
@@ -9824,6 +9852,25 @@
 	    _onChangeLayout: function() {
 	        this.focusModel.finishEditing();
 	        this.focusModel.focusClipboard();
+	    },
+
+	    /**
+	     * Event handler for 'reset' event on coordRowModel
+	     * @private
+	     */
+	    _onChangeRowHeights: function() {
+	        var coordRowModel = this.coordRowModel;
+	        var lside = this.get('lside');
+	        var rside = this.get('rside');
+	        var len = lside.length;
+	        var i = 0;
+	        var height;
+
+	        for (; i < len; i += 1) {
+	            height = coordRowModel.getHeightAt(i);
+	            lside.at(i).set('height', height);
+	            rside.at(i).set('height', height);
+	        }
 	    },
 
 	    /**
@@ -9979,13 +10026,12 @@
 	    },
 
 	    /**
-	     * Event handler for change
+	     * Event handler for changing data list
 	     * @private
 	     */
-	    _onDataModelChange: function() {
-	        this._resetDummyRowCount();
+	    _onDataListChange: function() {
 	        this.refresh({
-	            dataModelChanged: true
+	            dataListChanged: true
 	        });
 	    },
 
@@ -9996,17 +10042,13 @@
 	     * @private
 	     */
 	    _onAddDataModel: function(dataModel, options) {
-	        this.refresh({
-	            dataModelChanged: true
-	        });
-
 	        if (options.focus) {
 	            this.focusModel.focusAt(options.at, 0);
 	        }
 	    },
 
 	    /**
-	     * Resets dummy rows and trigger 'dataModelChanged' event.
+	     * Resets dummy rows and trigger 'dataListChanged' event.
 	     * @private
 	     */
 	    _resetDummyRows: function() {
@@ -10128,6 +10170,7 @@
 
 	        _.each(['lside', 'rside'], function(attrName) {
 	            var rowList = this.get(attrName);
+
 	            while (rowList.length > dataRowCount) {
 	                rowList.pop();
 	            }
@@ -10136,6 +10179,7 @@
 
 	    /**
 	     * Calculate required count of dummy rows and set the 'dummyRowCount' attribute.
+	     * @param {boolean} silent - whether sets the dummyRowCount silently
 	     * @private
 	     */
 	    _resetDummyRowCount: function() {
@@ -10160,6 +10204,7 @@
 	        var dummyRowCount = this.get('dummyRowCount');
 	        var rowNum, rowHeight;
 
+
 	        if (dummyRowCount) {
 	            rowNum = this.get('startNumber') + this.get('endIndex') + 1;
 	            rowHeight = this.dimensionModel.get('rowHeight');
@@ -10180,11 +10225,11 @@
 	     * Refreshes the rendering range and the list of view models, and triggers events.
 	     * @param {Object} options - options
 	     * @param {Boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
-	     * @param {Boolean} [options.dataModelChanged] - The boolean value whether dataModel has changed
+	     * @param {Boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
 	     */
 	    refresh: function(options) {
 	        var columnModelChanged = !!options && options.columnModelChanged;
-	        var dataModelChanged = !!options && options.dataModelChanged;
+	        var dataListChanged = !!options && options.dataListChanged;
 	        var startIndex, endIndex, i;
 
 	        this._setRenderingRange(this.get('scrollTop'));
@@ -10192,9 +10237,6 @@
 	        endIndex = this.get('endIndex');
 
 	        this._resetAllViewModelListWithRange(startIndex, endIndex);
-	        if (this.get('showDummyRows')) {
-	            this._fillDummyRows();
-	        }
 
 	        for (i = startIndex; i <= endIndex; i += 1) {
 	            this._executeRelation(i);
@@ -10203,7 +10245,10 @@
 	        if (columnModelChanged) {
 	            this.trigger('columnModelChanged');
 	        } else {
-	            this.trigger('rowListChanged', dataModelChanged);
+	            this.trigger('rowListChanged', dataListChanged);
+	            if (dataListChanged) {
+	                this.coordRowModel.syncWithDom();
+	            }
 	        }
 	        this._refreshState();
 	    },
@@ -10800,6 +10845,7 @@
 	var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
 	    initialize: function() {
 	        Renderer.prototype.initialize.apply(this, arguments);
+
 	        this.on('change:scrollTop', this._onChangeScrollTop, this);
 	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this.refresh);
 	    },
@@ -14799,7 +14845,7 @@
 	                row: this.dataModel.indexOfRowKey(rowKey)
 	            };
 	            if (this.columnModel.get('selectType') === 'radio') {
-	                this.dataModel.check(indexData.row);
+	                this.dataModel.check(rowKey);
 	            }
 	        } else { // dummy cell
 	            startAction = false;
@@ -15414,6 +15460,7 @@
 	        var focusModel = options.focusModel;
 	        var renderModel = options.renderModel;
 	        var selectionModel = options.selectionModel;
+	        var coordRowModel = options.coordRowModel;
 	        var whichSide = options.whichSide || 'R';
 
 	        this.setOwnProperties({
@@ -15422,7 +15469,7 @@
 	            focusModel: focusModel,
 	            renderModel: renderModel,
 	            selectionModel: selectionModel,
-	            coordRowModel: options.coordRowModel,
+	            coordRowModel: coordRowModel,
 	            dataModel: options.dataModel,
 	            columnModel: options.columnModel,
 	            collection: renderModel.getCollection(whichSide),
@@ -15434,8 +15481,7 @@
 	        this.listenTo(this.collection, 'change', this._onModelChange)
 	            .listenTo(this.collection, 'restore', this._onModelRestore)
 	            .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-	            .listenTo(renderModel, 'rowListChanged', this.render)
-	            .listenTo(this.coordRowModel, 'reset', this._refreshRowHeights);
+	            .listenTo(renderModel, 'rowListChanged', this.render);
 
 	        if (this.whichSide === 'L') {
 	            this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -15457,9 +15503,9 @@
 	     * @param {array} dupRowKeys 중복된 데이터의 rowKey 목록
 	     */
 	    _removeOldRows: function(dupRowKeys) {
-	        var firstIdx = _.indexOf(this.renderedRowKeys, dupRowKeys[0]),
-	            lastIdx = _.indexOf(this.renderedRowKeys, _.last(dupRowKeys)),
-	            $rows = this.$el.children('tr');
+	        var firstIdx = _.indexOf(this.renderedRowKeys, dupRowKeys[0]);
+	        var lastIdx = _.indexOf(this.renderedRowKeys, _.last(dupRowKeys));
+	        var $rows = this.$el.children('tr');
 
 	        $rows.slice(0, firstIdx).remove();
 	        $rows.slice(lastIdx + 1).remove();
@@ -15499,17 +15545,6 @@
 	                this._resetRows();
 	            }
 	        }
-	    },
-
-	    /**
-	     * Refresh the height of each rows.
-	     * @private
-	     */
-	    _refreshRowHeights: function() {
-	        var coordRowModel = this.coordRowModel;
-	        this.$el.find('tr').each(function(index) {
-	            $(this).css('height', coordRowModel.getHeightAt(index) + CELL_BORDER_WIDTH);
-	        });
 	    },
 
 	    /**
@@ -15613,8 +15648,8 @@
 	     * @private
 	     */
 	    _setFocusedRowClass: function(rowKey, focused) {
-	        var columnNames = _.pluck(this._getColumnModelList(), 'columnName'),
-	            trMap = {};
+	        var columnNames = _.pluck(this._getColumnModelList(), 'columnName');
+	        var trMap = {};
 
 	        _.each(columnNames, function(columnName) {
 	            var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName),
@@ -15630,16 +15665,16 @@
 
 	    /**
 	     * Renders.
-	     * @param {boolean} dataModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
+	     * @param {boolean} dataListChanged - 데이터 목록이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
 	     * @returns {View.RowList} this 객체
 	     */
-	    render: function(dataModelChanged) {
+	    render: function(dataListChanged) {
 	        var rowKeys = this.collection.pluck('rowKey');
 	        var dupRowKeys;
 
 	        this.bodyTableView.resetTablePosition();
 
-	        if (dataModelChanged) {
+	        if (dataListChanged) {
 	            this._resetRows();
 	        } else {
 	            dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
@@ -15653,7 +15688,6 @@
 	            }
 	        }
 	        this.renderedRowKeys = rowKeys;
-	        this.coordRowModel.syncWithDom();
 
 	        return this;
 	    },
@@ -15664,10 +15698,15 @@
 	     * @private
 	     */
 	    _onModelChange: function(model) {
-	        var $tr = this._getRowElement(model.get('rowKey'));
+	        var rowKey = model.get('rowKey');
+	        var $tr = this._getRowElement(rowKey);
 
-	        this.painterManager.getRowPainter().refresh(model.changed, $tr);
-	        this.coordRowModel.syncWithDom();
+	        if ('height' in model.changed) {
+	            $tr.css('height', model.get('height') + CELL_BORDER_WIDTH);
+	        } else {
+	            this.painterManager.getRowPainter().refresh(model.changed, $tr);
+	            this.coordRowModel.syncWithDom();
+	        }
 	    },
 
 	    /**
