@@ -26,6 +26,7 @@ var BUFFER_HIT_RATIO = 0.1;
 var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.prototype */{
     initialize: function() {
         Renderer.prototype.initialize.apply(this, arguments);
+
         this.on('change:scrollTop', this._onChangeScrollTop, this);
         this.listenTo(this.dimensionModel, 'change:bodyHeight', this.refresh);
     },

@@ -703,8 +703,8 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
      * @param {Boolean} [silent] 이벤트 발생 여부
      */
     check: function(rowKey, silent) {
-        var isDisabledCheck = this.get(rowKey).getRowState().isDisabledCheck,
-            selectType = this.columnModel.get('selectType');
+        var isDisabledCheck = this.get(rowKey).getRowState().isDisabledCheck;
+        var selectType = this.columnModel.get('selectType');
 
         if (!isDisabledCheck && selectType) {
             if (selectType === 'radio') {
