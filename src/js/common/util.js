@@ -363,6 +363,18 @@ var util = {
         }
 
         return options;
+    },
+
+    /**
+     * Outputs a warning message to the web console.
+     * @param {string} message - message
+     */
+    warning: function(message) {
+        /* eslint-disable no-console */
+        if (console && console.warn) {
+            console.warn(message);
+        }
+        /* eslint-enable no-console */
     }
 };
 

@@ -18,6 +18,7 @@ var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
 var SummaryModel = require('./summary');
+var util = require('../common/util');
 
 var defaultOptions = {
     columnFixCount: 0,
@@ -118,6 +119,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * @private
      */
     _createDimensionModel: function(options, domState) {
+        var dimensionModel;
         var attrs = {
             headerHeight: options.headerHeight,
             bodyHeight: options.bodyHeight,
@@ -130,7 +132,14 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             isFixedRowHeight: options.isFixedRowHeight,
             isFixedHeight: options.isFixedHeight
         };
-        var dimensionModel = new DimensionModel(attrs, {
+
+        // isfixedRowHeight and notUseSmartRendering can not be false at the same time.
+        if (options.isFixedRowHeight === false && !options.notUseSmartRendering) {
+            util.warning('The isFixedRowHeight can\'t be false if the notUseSmartRendering is not set to false.');
+            attrs.isFixedRowHeight = true;
+        }
+
+        dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             domState: domState

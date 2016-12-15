@@ -157,7 +157,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
                 row: this.dataModel.indexOfRowKey(rowKey)
             };
             if (this.columnModel.get('selectType') === 'radio') {
-                this.dataModel.check(indexData.row);
+                this.dataModel.check(rowKey);
             }
         } else { // dummy cell
             startAction = false;

@@ -77,9 +77,11 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _syncBodyHeightWithTotalRowHeight: function() {
-        this.set('bodyHeight', this.get('totalRowHeight') + this.getScrollXHeight());
-    },
+        var currBodyHeight = this.get('bodyHeight');
+        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
 
+        this.set('bodyHeight', Math.max(currBodyHeight, realBodyHeight));
+    },
 
     /**
      * Returns whether division border (between meta column and data column) is doubled or not.
