@@ -47,18 +47,19 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         });
 
         this.listenTo(this.columnModel, 'columnModelChange change', this._onColumnModelChange)
-            .listenTo(this.dataModel, 'remove sort reset delRange', this._onDataModelChange)
+            .listenTo(this.dataModel, 'add remove sort reset delRange', this._onDataListChange)
             .listenTo(this.dataModel, 'add', this._onAddDataModel)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
             .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
+            .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
 
         if (this.get('showDummyRows')) {
-            this.listenTo(this.dimensionModel, 'change:bodyHeight', this._resetDummyRowCount);
+            this.listenTo(this.dimensionModel, 'change:bodyHeight change:totalRowHeight', this._resetDummyRowCount);
             this.on('change:dummyRowCount', this._resetDummyRows);
         }
 
@@ -98,6 +99,25 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     _onChangeLayout: function() {
         this.focusModel.finishEditing();
         this.focusModel.focusClipboard();
+    },
+
+    /**
+     * Event handler for 'reset' event on coordRowModel
+     * @private
+     */
+    _onChangeRowHeights: function() {
+        var coordRowModel = this.coordRowModel;
+        var lside = this.get('lside');
+        var rside = this.get('rside');
+        var len = lside.length;
+        var i = 0;
+        var height;
+
+        for (; i < len; i += 1) {
+            height = coordRowModel.getHeightAt(i);
+            lside.at(i).set('height', height);
+            rside.at(i).set('height', height);
+        }
     },
 
     /**
@@ -253,13 +273,12 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * Event handler for change
+     * Event handler for changing data list
      * @private
      */
-    _onDataModelChange: function() {
-        this._resetDummyRowCount();
+    _onDataListChange: function() {
         this.refresh({
-            dataModelChanged: true
+            dataListChanged: true
         });
     },
 
@@ -270,17 +289,13 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onAddDataModel: function(dataModel, options) {
-        this.refresh({
-            dataModelChanged: true
-        });
-
         if (options.focus) {
             this.focusModel.focusAt(options.at, 0);
         }
     },
 
     /**
-     * Resets dummy rows and trigger 'dataModelChanged' event.
+     * Resets dummy rows and trigger 'dataListChanged' event.
      * @private
      */
     _resetDummyRows: function() {
@@ -402,6 +417,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
         _.each(['lside', 'rside'], function(attrName) {
             var rowList = this.get(attrName);
+
             while (rowList.length > dataRowCount) {
                 rowList.pop();
             }
@@ -410,6 +426,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
 
     /**
      * Calculate required count of dummy rows and set the 'dummyRowCount' attribute.
+     * @param {boolean} silent - whether sets the dummyRowCount silently
      * @private
      */
     _resetDummyRowCount: function() {
@@ -434,6 +451,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var dummyRowCount = this.get('dummyRowCount');
         var rowNum, rowHeight;
 
+
         if (dummyRowCount) {
             rowNum = this.get('startNumber') + this.get('endIndex') + 1;
             rowHeight = this.dimensionModel.get('rowHeight');
@@ -454,11 +472,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * Refreshes the rendering range and the list of view models, and triggers events.
      * @param {Object} options - options
      * @param {Boolean} [options.columnModelChanged] - The boolean value whether columnModel has changed
-     * @param {Boolean} [options.dataModelChanged] - The boolean value whether dataModel has changed
+     * @param {Boolean} [options.dataListChanged] - The boolean value whether dataModel has changed
      */
     refresh: function(options) {
         var columnModelChanged = !!options && options.columnModelChanged;
-        var dataModelChanged = !!options && options.dataModelChanged;
+        var dataListChanged = !!options && options.dataListChanged;
         var startIndex, endIndex, i;
 
         this._setRenderingRange(this.get('scrollTop'));
@@ -466,9 +484,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         endIndex = this.get('endIndex');
 
         this._resetAllViewModelListWithRange(startIndex, endIndex);
-        if (this.get('showDummyRows')) {
-            this._fillDummyRows();
-        }
 
         for (i = startIndex; i <= endIndex; i += 1) {
             this._executeRelation(i);
@@ -477,7 +492,10 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         if (columnModelChanged) {
             this.trigger('columnModelChanged');
         } else {
-            this.trigger('rowListChanged', dataModelChanged);
+            this.trigger('rowListChanged', dataListChanged);
+            if (dataListChanged) {
+                this.coordRowModel.syncWithDom();
+            }
         }
         this._refreshState();
     },

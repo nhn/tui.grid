@@ -26,6 +26,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var focusModel = options.focusModel;
         var renderModel = options.renderModel;
         var selectionModel = options.selectionModel;
+        var coordRowModel = options.coordRowModel;
         var whichSide = options.whichSide || 'R';
 
         this.setOwnProperties({
@@ -34,7 +35,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             focusModel: focusModel,
             renderModel: renderModel,
             selectionModel: selectionModel,
-            coordRowModel: options.coordRowModel,
+            coordRowModel: coordRowModel,
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             collection: renderModel.getCollection(whichSide),
@@ -46,8 +47,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         this.listenTo(this.collection, 'change', this._onModelChange)
             .listenTo(this.collection, 'restore', this._onModelRestore)
             .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
-            .listenTo(renderModel, 'rowListChanged', this.render)
-            .listenTo(this.coordRowModel, 'reset', this._refreshRowHeights);
+            .listenTo(renderModel, 'rowListChanged', this.render);
 
         if (this.whichSide === 'L') {
             this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
@@ -69,9 +69,9 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @param {array} dupRowKeys 중복된 데이터의 rowKey 목록
      */
     _removeOldRows: function(dupRowKeys) {
-        var firstIdx = _.indexOf(this.renderedRowKeys, dupRowKeys[0]),
-            lastIdx = _.indexOf(this.renderedRowKeys, _.last(dupRowKeys)),
-            $rows = this.$el.children('tr');
+        var firstIdx = _.indexOf(this.renderedRowKeys, dupRowKeys[0]);
+        var lastIdx = _.indexOf(this.renderedRowKeys, _.last(dupRowKeys));
+        var $rows = this.$el.children('tr');
 
         $rows.slice(0, firstIdx).remove();
         $rows.slice(lastIdx + 1).remove();
@@ -111,17 +111,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
                 this._resetRows();
             }
         }
-    },
-
-    /**
-     * Refresh the height of each rows.
-     * @private
-     */
-    _refreshRowHeights: function() {
-        var coordRowModel = this.coordRowModel;
-        this.$el.find('tr').each(function(index) {
-            $(this).css('height', coordRowModel.getHeightAt(index) + CELL_BORDER_WIDTH);
-        });
     },
 
     /**
@@ -225,8 +214,8 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _setFocusedRowClass: function(rowKey, focused) {
-        var columnNames = _.pluck(this._getColumnModelList(), 'columnName'),
-            trMap = {};
+        var columnNames = _.pluck(this._getColumnModelList(), 'columnName');
+        var trMap = {};
 
         _.each(columnNames, function(columnName) {
             var mainRowKey = this.dataModel.getMainRowKey(rowKey, columnName),
@@ -242,16 +231,16 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
 
     /**
      * Renders.
-     * @param {boolean} dataModelChanged - 모델이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
+     * @param {boolean} dataListChanged - 데이터 목록이 변경된 경우(add, remove..) true, 아니면(스크롤 변경 등) false
      * @returns {View.RowList} this 객체
      */
-    render: function(dataModelChanged) {
+    render: function(dataListChanged) {
         var rowKeys = this.collection.pluck('rowKey');
         var dupRowKeys;
 
         this.bodyTableView.resetTablePosition();
 
-        if (dataModelChanged) {
+        if (dataListChanged) {
             this._resetRows();
         } else {
             dupRowKeys = _.intersection(rowKeys, this.renderedRowKeys);
@@ -265,7 +254,6 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
             }
         }
         this.renderedRowKeys = rowKeys;
-        this.coordRowModel.syncWithDom();
 
         return this;
     },
@@ -276,10 +264,15 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
      * @private
      */
     _onModelChange: function(model) {
-        var $tr = this._getRowElement(model.get('rowKey'));
+        var rowKey = model.get('rowKey');
+        var $tr = this._getRowElement(rowKey);
 
-        this.painterManager.getRowPainter().refresh(model.changed, $tr);
-        this.coordRowModel.syncWithDom();
+        if ('height' in model.changed) {
+            $tr.css('height', model.get('height') + CELL_BORDER_WIDTH);
+        } else {
+            this.painterManager.getRowPainter().refresh(model.changed, $tr);
+            this.coordRowModel.syncWithDom();
+        }
     },
 
     /**

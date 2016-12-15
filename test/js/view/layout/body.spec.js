@@ -11,7 +11,6 @@ var constMap = require('common/constMap');
 var attrNameMap = constMap.attrName;
 var selTypeConst = constMap.selectionType;
 
-
 describe('view.layout.body', function() {
     var modelManager, body;
 
@@ -112,7 +111,7 @@ describe('view.layout.body', function() {
 
             body._onMouseDown(eventMock);
 
-            expect(modelManager.dataModel.check).toHaveBeenCalledWith(2);
+            expect(modelManager.dataModel.check).toHaveBeenCalledWith('2');
         });
     });
 

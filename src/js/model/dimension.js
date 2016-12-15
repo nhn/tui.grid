@@ -113,7 +113,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * @private
      */
     _syncBodyHeightWithTotalRowHeight: function() {
-        this.set('bodyHeight', this.get('totalRowHeight') + this.getScrollXHeight());
+        var currBodyHeight = this.get('bodyHeight');
+        var realBodyHeight = this.get('totalRowHeight') + this.getScrollXHeight();
+
+        this.set('bodyHeight', Math.max(currBodyHeight, realBodyHeight));
     },
 
     /**
