@@ -38,7 +38,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         this._minColumnWidthList = null;
 
         this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
-        this.listenTo(this.dimensionModel, 'change:width', this._onWidthChange);
+        this.listenTo(this.dimensionModel, 'change:width', this._onDimensionWidthChange);
         this.resetColumnWidths();
     },
 
@@ -145,7 +145,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      */
     _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
         var i = lsideWidthList.length - 1;
-        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var minimumColumnWidth = this.dimensionModel.get('minimumColumnWidth');
         var currentWidth = this._getFrameWidth(lsideWidthList);
         var diff = currentWidth - totalWidth;
         var changedWidth;
@@ -386,7 +386,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      * width 값 변경시 각 column 별 너비를 계산한다.
      * @private
      */
-    _onWidthChange: function() {
+    _onDimensionWidthChange: function() {
         var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
 
         this._setColumnWidthVariables(widthList);
@@ -442,16 +442,10 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         var columnWidthList = this.get('columnWidthList');
         var fixedFlags = this._columnWidthFixedFlags;
         var minWidth = this._minColumnWidthList[index];
-        var adjustedList;
 
         if (!fixedFlags[index] && columnWidthList[index]) {
             columnWidthList[index] = Math.max(width, minWidth);
-            // makes width of the target column fixed temporarily
-            // to not be influenced while adjusting column widths.
-            fixedFlags[index] = true;
-            adjustedList = this._adjustColumnWidthList(columnWidthList);
-            fixedFlags[index] = false;
-            this._setColumnWidthVariables(adjustedList);
+            this._setColumnWidthVariables(columnWidthList);
         }
     },
 

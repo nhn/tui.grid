@@ -27,7 +27,7 @@ var fileLoader = {
 };
 var stylusLoader = {
     test: /\.styl$/,
-    loader: ExtractTextPlugin.extract('css-loader!stylus-loader?paths=src/css/')
+    loader: ExtractTextPlugin.extract('css-loader?sourceMap!stylus-loader?paths=src/css/')
 };
 
 var externals = {
