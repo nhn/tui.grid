@@ -37,6 +37,12 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
          */
         this._minColumnWidthList = null;
 
+        /**
+         * Whether the column width is modified by user.
+         * @type {boolean}
+         */
+        this._isModified = false;
+
         this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
         this.listenTo(this.dimensionModel, 'change:width', this._onDimensionWidthChange);
         this.resetColumnWidths();
@@ -387,8 +393,11 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      * @private
      */
     _onDimensionWidthChange: function() {
-        var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
+        var widthList = this.get('columnWidthList');
 
+        if (!this._isModified) {
+            widthList = this._adjustColumnWidthList(widthList, true);
+        }
         this._setColumnWidthVariables(widthList);
     },
 
@@ -446,6 +455,7 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         if (!fixedFlags[index] && columnWidthList[index]) {
             columnWidthList[index] = Math.max(width, minWidth);
             this._setColumnWidthVariables(columnWidthList);
+            this._isModified = true;
         }
     },
 
@@ -480,10 +490,9 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         return Math.max(0, columnIndex - adjustableIndex);
     },
 
-
     /**
-     * 초기 너비로 돌린다.
-     * @param {Number} index    너비를 변경할 컬럼의 인덱스
+     * Restore a column to the default width.
+     * @param {Number} index - target column index
      */
     restoreColumnWidth: function(index) {
         var orgWidth = this.get('originalWidthList')[index];

@@ -49,7 +49,8 @@ describe('theme/styleGenerator: ', function() {
             '.' + classNameConst.SCROLLBAR_RIGHT_BOTTOM + '{background-color:white}',
             '.' + classNameConst.SCROLLBAR_LEFT_BOTTOM + '{background-color:white}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{background-color:white}',
-            '.' + classNameConst.FOOT_AREA_RIGHT + '{background-color:white}'
+            '.' + classNameConst.FOOT_AREA_RIGHT + '{background-color:white}',
+            '.' + classNameConst.BODY_AREA + '{background-color:white}'
         ].join('');
 
         expect(styleGen.scrollbar(options)).toBe(expected);
@@ -102,7 +103,9 @@ describe('theme/styleGenerator: ', function() {
                 border: 'green',
                 text: 'blue'
             };
-            var expected = '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}';
+            var expected =
+              '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}' +
+              '.' + classNameConst.HEAD_AREA + '{background-color:white}';
 
             expect(styleGen.cellHead(options)).toBe(expected);
         });
