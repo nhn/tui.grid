@@ -34,14 +34,14 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
-        coordRowModel = new CoordRowModel({
+        coordRowModel = new CoordRowModel(null, {
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
-        coordColumnModel = new CoordColumnModel({
+        coordColumnModel = new CoordColumnModel(null, {
             columnModel: columnModel,
             dimensionModel: dimensionModel
-        })
+        });
         dimensionModel.coordRowModel = coordRowModel;
         focusModel = new Focus(null, {
             domState: new DomState($('<div />')),

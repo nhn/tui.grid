@@ -9,12 +9,13 @@ var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDT
 
 /**
  * @module model/coordRow
+ * @param {Object} attrs - Attributes
  * @param {Object} options - Options
  * @extends module:base/model
  * @ignore
  */
 var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
-    initialize: function(options) {
+    initialize: function(attrs, options) {
         this.dataModel = options.dataModel;
         this.dimensionModel = options.dimensionModel;
         this.domState = options.domState;

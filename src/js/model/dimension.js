@@ -218,6 +218,40 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
+     * 열 고정 영역의 minimum width 값을 구한다.
+     * @returns {number} 열고정 영역의 최소 너비값.
+     * @private
+     */
+    _getMinLeftSideWidth: function() {
+        var minimumColumnWidth = this.get('minimumColumnWidth');
+        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+        var minWidth = 0;
+        var borderWidth;
+
+        if (columnFixCount) {
+            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
+            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
+        }
+
+        return minWidth;
+    },
+
+    /**
+     * 열 고정 영역의 maximum width 값을 구한다.
+     * @returns {number} 열고정 영역의 최대 너비값.
+     * @private
+     */
+    getMaxLeftSideWidth: function() {
+        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
+
+        if (maxWidth) {
+            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+        }
+
+        return maxWidth;
+    },
+
+    /**
      * Sets the width and height of the dimension.
      * @param {(Number|Null)} width - Width
      * @param {(Number|Null)} height - Height

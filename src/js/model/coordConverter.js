@@ -12,12 +12,13 @@ var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 /**
  * @module model/coordConverter
+ * @param {Object} attrs - Attributes
  * @param {Object} options - Options
  * @extends module:base/model
  * @ignore
  */
 var CoordConverter = Model.extend(/**@lends module:model/coordConverter.prototype */{
-    initialize: function(options) {
+    initialize: function(attrs, options) {
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;
         this.focusModel = options.focusModel;

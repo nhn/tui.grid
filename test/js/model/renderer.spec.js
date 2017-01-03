@@ -146,11 +146,11 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
-        coordRowModel = new CoordRow({
+        coordRowModel = new CoordRow(null, {
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
-        coordColumnModel = new CoordColumn({
+        coordColumnModel = new CoordColumn(null, {
             columnModel: columnModel,
             dimensionModel: dimensionModel
         });

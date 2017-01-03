@@ -28,12 +28,12 @@ describe('ResizeHandler', function() {
                 }
             ]
         });
-        dimensionModel = new DimensionModel({}, {
+        dimensionModel = new DimensionModel(null, {
             columnModel: columnModel,
             dataModel: new Collection(),
             domState: new DomState()
         });
-        coordColumnModel = new CoordColumnModel({
+        coordColumnModel = new CoordColumnModel(null, {
             dimensionModel: dimensionModel,
             columnModel: columnModel
         });
@@ -52,7 +52,6 @@ describe('ResizeHandler', function() {
     afterEach(function() {
         handler.destroy();
     });
-
 
     describe('render()', function() {
         beforeEach(function() {

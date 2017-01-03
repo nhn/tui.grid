@@ -14,12 +14,13 @@ var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
 
 /**
  * @module model/coordColumn
+ * @param {Object} attrs - Attributes
  * @param {Object} options - Options
  * @extends module:base/model
  * @ignore
  */
 var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
-    initialize: function(options) {
+    initialize: function(attrs, options) {
         this.dimensionModel = options.dimensionModel;
         this.columnModel = options.columnModel;
 
@@ -94,8 +95,8 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
      */
     _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
         var totalWidth = this.dimensionModel.get('width');
+        var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
         var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-        var maxLeftSideWidth = this._getMaxLeftSideWidth();
         var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
 
         lsideWidthList = columnWidthList.slice(0, columnFixCount);
@@ -124,25 +125,6 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
     },
 
     /**
-     * 열 고정 영역의 minimum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최소 너비값.
-     * @private
-     */
-    _getMinLeftSideWidth: function() {
-        var minimumColumnWidth = this.dimensionModel.get('minimumColumnWidth');
-        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-        var minWidth = 0;
-        var borderWidth;
-
-        if (columnFixCount) {
-            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
-            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
-        }
-
-        return minWidth;
-    },
-
-    /**
      * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
      * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
      * @param {Number} totalWidth   grid 전체 너비
@@ -168,21 +150,6 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         }
 
         return lsideWidthList;
-    },
-
-    /**
-     * 열 고정 영역의 maximum width 값을 구한다.
-     * @returns {number} 열고정 영역의 최대 너비값.
-     * @private
-     */
-    _getMaxLeftSideWidth: function() {
-        var maxWidth = Math.ceil(this.dimensionModel.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-        if (maxWidth) {
-            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-        }
-
-        return maxWidth;
     },
 
     /**
