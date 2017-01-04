@@ -263,7 +263,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Disables all rows.
-     * @api
      */
     disable: function() {
         this.modelManager.dataModel.setDisabled(true);
@@ -271,7 +270,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Enables all rows.
-     * @api
      */
     enable: function() {
         this.modelManager.dataModel.setDisabled(false);
@@ -279,7 +277,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Disables the row identified by the rowkey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the target row
      */
     disableRow: function(rowKey) {
@@ -288,7 +285,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Enables the row identified by the rowKey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the target row
      */
     enableRow: function(rowKey) {
@@ -297,7 +293,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the value of the cell identified by the rowKey and columnName.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the target row.
      * @param {string} columnName - The name of the column
      * @param {boolean} [isOriginal] - It set to true, the original value will be return.
@@ -309,7 +304,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of all values in the specified column.
-     * @api
      * @param {string} columnName - The name of the column
      * @param {boolean} [isJsonString=false] - It set to true, return value will be converted to JSON string.
      * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
@@ -320,7 +314,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the object that contains all values in the specified row.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the target row
      * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
@@ -331,7 +324,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the object that contains all values in the row at specified index.
-     * @api
      * @param {number} index - The index of the row
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
@@ -342,7 +334,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the total number of the rows.
-     * @api
      * @returns {number} - The total number of the rows
      */
     getRowCount: function() {
@@ -351,7 +342,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the rowKey of the currently selected row.
-     * @api
      * @returns {(number|string)} - The rowKey of the row
      */
     getSelectedRowKey: function() {
@@ -360,7 +350,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the jquery object of the cell identified by the rowKey and columnName.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @returns {jQuery} - The jquery object of the cell element
@@ -371,7 +360,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the value of the cell identified by the specified rowKey and columnName.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {(number|string)} columnValue - The value to be set
@@ -382,7 +370,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the all values in the specified column.
-     * @api
      * @param {string} columnName - The name of the column
      * @param {(number|string)} columnValue - The value to be set
      * @param {Boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
@@ -393,7 +380,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Replace all rows with the specified list. This will not change the original data.
-     * @api
      * @param {Array} rowList - A list of new rows
      */
     replaceRowList: function(rowList) {
@@ -402,7 +388,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Replace all rows with the specified list. This will change the original data.
-     * @api
      * @param {Array} rowList - A list of new rows
      * @param {function} callback - The function that will be called when done.
      */
@@ -412,7 +397,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the height of body-area.
-     * @api
      * @param {number} value - The number of pixel
      */
     setBodyHeight: function(value) {
@@ -421,7 +405,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -433,7 +416,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets focus on the cell at the specified index of row and column.
-     * @api
      * @param {(number|string)} rowIndex - The index of the row
      * @param {string} columnIndex - The index of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -444,7 +426,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -455,17 +436,16 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets focus on the cell at the specified index of row and column and starts to edit.
-     * @api
      * @param {(number|string)} rowIndex - The index of the row
      * @param {string} columnIndex - The index of the column
-     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.     */
+     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
+     */
     focusInAt: function(rowIndex, columnIndex, isScrollable) {
         this.modelManager.focusModel.focusInAt(rowIndex, columnIndex, isScrollable);
     },
 
     /**
      * Makes view ready to get keyboard input.
-     * @api
      */
     readyForKeyControl: function() {
         this.modelManager.focusModel.focusClipboard();
@@ -473,7 +453,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes focus from the focused cell.
-     * @api
      */
     blur: function() {
         this.modelManager.focusModel.blur();
@@ -481,7 +460,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Checks all rows.
-     * @api
      */
     checkAll: function() {
         this.modelManager.dataModel.checkAll();
@@ -489,7 +467,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Checks the row identified by the specified rowKey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      */
     check: function(rowKey) {
@@ -498,7 +475,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Unchecks all rows.
-     * @api
      */
     uncheckAll: function() {
         this.modelManager.dataModel.uncheckAll();
@@ -506,7 +482,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Unchecks the row identified by the specified rowKey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      */
     uncheck: function(rowKey) {
@@ -515,7 +490,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes all rows.
-     * @api
      */
     clear: function() {
         this.modelManager.dataModel.setRowList([]);
@@ -523,7 +497,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes the row identified by the specified rowKey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to
      *     options.removeOriginalData.
@@ -542,7 +515,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes all checked rows.
-     * @api
      * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
      * @returns {boolean} - True if there's at least one row removed.
      */
@@ -561,7 +533,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Enables the row identified by the rowKey to be able to check.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      */
     enableCheck: function(rowKey) {
@@ -570,7 +541,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Disables the row identified by the spcified rowKey to not be abled to check.
-     * @api
      * @param {(number|string)} rowKey - The unique keyof the row.
      */
     disableCheck: function(rowKey) {
@@ -579,7 +549,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of the rowKey of checked rows.
-     * @api
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
      */
@@ -592,7 +561,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of the checked rows.
-     * @api
      * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
      * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
      */
@@ -604,7 +572,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of the column model.
-     * @api
      * @returns {Array} - A list of the column model.
      */
     getColumnModelList: function() {
@@ -614,7 +581,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Returns the object that contains the lists of changed data compared to the original data.
      * The object has properties 'createList', 'updateList', 'deleteList'.
-     * @api
      * @param {Object} [options] Options
      *      @param {boolean} [options.isOnlyChecked=false] - If set to true, only checked rows will be considered.
      *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains
@@ -630,7 +596,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Insert the new row with specified data to the end of table.
-     * @api
      * @param {object} [row] - The data for the new row
      * @param {object} [options] - Options
      * @param {number} [options.at] - The index at which new row will be inserted
@@ -644,7 +609,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Insert the new row with specified data to the beginning of table.
-     * @api
      * @param {object} [row] - The data for the new row
      * @param {object} [options] - Options
      * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
@@ -655,7 +619,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns true if there are at least one row changed.
-     * @api
      * @returns {boolean} - True if there are at least one row changed.
      */
     isChanged: function() {
@@ -664,7 +627,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the instance of specified AddOn.
-     * @api
      * @param {string} name - The name of the AddOn
      * @returns {instance} addOn - The instance of the AddOn
      */
@@ -675,7 +637,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Restores the data to the original data.
      * (Original data is set by {@link tui.Grid#setRowList|setRowList}
-     * @api
      */
     restore: function() {
         this.modelManager.dataModel.restore();
@@ -683,7 +644,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Selects the row identified by the rowKey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      */
     select: function(rowKey) {
@@ -694,7 +654,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Unselects selected rows.
-     * @api
      */
     unselect: function() {
         this.modelManager.focusModel.unselect(true);
@@ -702,7 +661,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the count of fixed column.
-     * @api
      * @param {number} count - The count of column to be fixed
      */
     setColumnFixCount: function(count) {
@@ -711,7 +669,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the list of column model.
-     * @api
      * @param {Array} columnModelList - A new list of column model
      */
     setColumnModelList: function(columnModelList) {
@@ -720,7 +677,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Create an specified AddOn and use it on this instance.
-     * @api
      * @param {string} name - The name of the AddOn to use.
      * @param {object} options - The option objects for configuring the AddON.
      * @returns {tui.Grid} - This instance.
@@ -741,7 +697,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns a list of all rows.
-     * @api
      * @returns {Array} - A list of all rows
      */
     getRowList: function() {
@@ -750,7 +705,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sorts all rows by the specified column.
-     * @api
      * @param {string} columnName - The name of the column to be used to compare the rows
      * @param {boolean} [isAscending] - Whether the sort order is ascending.
      *        If not specified, use the negative value of the current order.
@@ -761,7 +715,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Unsorts all rows. (Sorts by rowKey).
-     * @api
      */
     unSort: function() {
         this.sort('rowKey');
@@ -769,7 +722,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Adds the specified css class to cell element identified by the rowKey and className
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {string} className - The css class name to add
@@ -780,7 +732,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Adds the specified css class to all cell elements in the row identified by the rowKey
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} className - The css class name to add
      */
@@ -790,7 +741,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes the specified css class from the cell element indentified by the rowKey and columnName.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @param {string} className - The css class name to be removed
@@ -801,7 +751,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Removes the specified css class from all cell elements in the row identified by the rowKey.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} className - The css class name to be removed
      */
@@ -811,7 +760,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the rowspan data of the cell identified by the rowKey and columnName.
-     * @api
      * @param {(number|string)} rowKey - The unique key of the row
      * @param {string} columnName - The name of the column
      * @returns {Object} - Row span data
@@ -822,7 +770,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Returns the index of the row indentified by the rowKey.
-     * @api
      * @param {number|string} rowKey - The unique key of the row
      * @returns {number} - The index of the row
      */
@@ -840,7 +787,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the number of rows to be shown in the table area.
-     * @api
      * @deprecated
      * @param {number} count - The number of rows
      */
@@ -850,7 +796,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Sets the width and height of the dimension.
-     * @api
      * @param  {(number|null)} width - The width of the dimension
      * @param  {(number|null)} height - The height of the dimension
      */
@@ -860,7 +805,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Refresh the layout view. Use this method when the view was rendered while hidden.
-     * @api
      */
     refreshLayout: function() {
         this.modelManager.dimensionModel.refreshLayout();
@@ -868,7 +812,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Reset the width of each column by using initial setting of column models.
-     * @api
      */
     resetColumnWidths: function() {
         this.modelManager.coordColumnModel.resetColumnWidths();
@@ -876,7 +819,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Show columns
-     * @api
      * @param {...string} arguments - Column names to show
      */
     showColumn: function() {
@@ -886,7 +828,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Hide columns
-     * @api
      * @param {...string} arguments - Column names to hide
      */
     hideColumn: function() {
@@ -898,7 +839,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Sets the HTML string of given column footer.
      * @param {string} columnName - column name
      * @param {string} contents - HTML string
-     * @api
      */
     setFooterColumnContent: function(columnName, contents) {
         this.modelManager.columnModel.setFooterContent(columnName, contents);
@@ -908,7 +848,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * Validates all data and returns the result.
      * Return value is an array which contains only rows which have invalid cell data.
      * @returns {Array.<Object>} An array of error object
-     * @api
      * @example
      // return value example
     [
@@ -942,7 +881,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Destroys the instance.
-     * @api
      */
     destroy: function() {
         this.modelManager.destroy();

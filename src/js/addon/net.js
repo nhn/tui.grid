@@ -1,6 +1,6 @@
 /**
- * @fileoverview Network 모듈 addon
- * @author NHN Ent. FE Development Team
+ * @fileoverview Add-on for binding to remote data
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
@@ -17,78 +17,75 @@ var renderStateMap = require('../common/constMap').renderState;
 var DELAY_FOR_LOADING_STATE = 200;
 
 /**
- * Net Addon
+ * Add-on for binding to remote data
  * @module addon/net
  * @param {object} options
- *      @param {jquery} options.el   form 엘리먼트
- *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+ *      @param {jquery} [options.el] - Form element (to be used for ajax request)
+ *      @param {boolean} [options.initialRequest=true] - Whether to request 'readData' after initialized
  *      @param {string} [options.readDataMethod='POST'] - Http method to be used for 'readData' API ('POST' or 'GET')
- *      @param {object} [options.api]   사용할 API URL 리스트
- *          @param {string} [options.api.readData]  데이터 조회 API 주소
- *          @param {string} [options.api.createData] 데이터 생성 API 주소
- *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
- *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
- *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
- *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
- *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
+ *      @param {object} [options.api] - URL map
+ *          @param {string} [options.api.readData] - URL for read-data
+ *          @param {string} [options.api.createData] - URL for create
+ *          @param {string} [options.api.updateData] - URL for update
+ *          @param {string} [options.api.modifyData] - URL for modify (create/update/delete at once)
+ *          @param {string} [options.api.deleteData] - URL for delete
+ *          @param {string} [options.api.downloadExcel] - URL for download data of this page as an excel-file
+ *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
+ *      @param {number} [options.perPage=500] - The number of items to be shown in a page
+ *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
  * @example
  *   <form id="data_form">
  *   <input type="text" name="query"/>
  *   </form>
  *   <script>
- *      var net,
- *          grid = new tui.Grid({
- *                 //...option 생략...
- *          });
+ *      var net;
+ *      var grid = new tui.Grid({
+ *          //...options...
+ *      });
  *
- *      //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+ *      // Activate 'Net' addon
  *      grid.use('Net', {
- *         el: $('#data_form'),         //필수 - form 엘리먼트
- *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
- *         readDataMethod: 'GET',  //(default: 'POST')
- *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
- *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
- *         //사용할 API URL 리스트
+ *         el: $('#data_form'),
+ *         initialRequest: true,
+ *         readDataMethod: 'GET',
+ *         perPage: 500,
+ *         enableAjaxHistory: true,
  *         api: {
- *             'readData': './api/read',                       //데이터 조회 API 주소
- *             'createData': './api/create',                   //데이터 생성 API 주소
- *             'updateData': './api/update',                   //데이터 업데이트 API 주소
- *             'deleteData': './api/delete',                   //데이터 삭제 API 주소
- *             'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
- *             'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
- *             'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
+ *             'readData': './api/read', 
+ *             'createData': './api/create',
+ *             'updateData': './api/update',
+ *             'deleteData': './api/delete',
+ *             'modifyData': './api/modify',
+ *             'downloadExcel': './api/download/excel',
+ *             'downloadExcelAll': './api/download/excelAll'
  *         }
  *      });
- *       //이벤트 핸들러 바인딩
- *       grid.on('beforeRequest', function(data) {
- *          //모든 dataRequest 시 호출된다.
+ *
+ *      // Bind event handlers
+ *      grid.on('beforeRequest', function(data) {
+ *          // For all requests
  *      }).on('response', function(data) {
- *          //response 이벤트 핸들러
- *          //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+ *          // For all response (regardless of success or failure)
  *      }).on('successResponse', function(data) {
- *          //successResponse 이벤트 핸들러
- *          //response.result 가 true 일 때 호출된다.
+ *          // Only if response.result is true
  *      }).on('failResponse', function(data) {
- *          //failResponse 이벤트 핸들러
- *          //response.result 가 false 일 때 호출된다.
+ *          // Only if response.result is false
  *      }).on('errorResponse', function(data) {
- *          //ajax error response 이벤트 핸들러
+ *          // For error response
  *      });
  *
- *      //grid 로부터 사용할 net 인스턴스를 가져온다.
  *      net = grid.getAddOn('Net');
  *
- *      //request 관련 자세한 옵션은 Net#request 를 참고한다.
- *      //createData API 요청
+ *      // Request create
  *      net.request('createData');
  *
- *      //updateData API 요청
+ *      // Request update
  *      net.request('updateData');
  *
- *      //deleteData API 요청
+ *      // Request delete
  *      net.request('deleteData');
  *
- *      //modifyData API 요청
+ *      // Request create/update/delete at once
  *      net.request('modifyData');
  *   </script>
  */
@@ -211,8 +208,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _showToolbarExcelBtns: function() {
-        var toolbarModel = this.toolbarModel,
-            api = this.api;
+        var toolbarModel = this.toolbarModel;
+        var api = this.api;
 
         if (!toolbarModel) {
             return;
@@ -356,7 +353,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * Requests 'readData' with last requested data.
-     * @api
      */
     reloadData: function() {
         this._requestReadData(this.lastRequestedReadData);
@@ -364,7 +360,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * Requests 'readData' to the server. The last requested data will be extended with new data.
-     * @api
      * @param {Number} page - Page number
      * @param {Object} data - Data(parameters) to send to the server
      * @param {Boolean} resetData - If set to true, last requested data will be ignored.
@@ -479,17 +474,14 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     },
 
     /**
-     * 서버로 API request 한다.
-     * @api
-     * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
-     * @param {object} options Options
-     *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-     *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-     *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-     *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-     *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-     *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-     *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+     * Send request to server to sync data
+     * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
+     * @param {object} options - Options
+     *      @param {String} [options.url] - URL to send the request
+     *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+     *      @param {String} [options.isOnlyChecked=true] - Whether the request param only contains checked rows
+     *      @param {String} [options.isOnlyModified=true] - Whether the request param only contains modified rows
+     *      @param {String} [options.isSkipConfirm=false] - Whether to show confirm dialog before sending request
      */
     request: function(requestType, options) {
         var defaultOptions = {
@@ -510,7 +502,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * Change window.location to registered url for downloading data
-     * @api
      * @param {string} type - Download type. 'excel' or 'excelAll'.
      *        Will be matched with API 'downloadExcel', 'downloadExcelAll'.
      */
@@ -533,7 +524,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
     /**
      * Set number of rows per page and reload current page
-     * @api
      * @param {number} perPage - Number of rows per page
      */
     setPerPage: function(perPage) {
@@ -690,7 +680,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         /**
          * Occurs before the http request is sent
-         * @api
          * @event tui.Grid#beforeRequest
          * @type {module:common/gridEvent}
          */
@@ -745,7 +734,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         /**
          * Occurs when the response is received from the server
-         * @api
          * @event tui.Grid#reponse
          * @type {module:common/gridEvent}
          * @property {number} httpStatus - HTTP status
@@ -760,7 +748,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         if (responseData && responseData.result) {
             /**
              * Occurs after the response event, if the result is true
-             * @api
              * @event tui.Grid#successReponse
              * @type {module:common/gridEvent}
              * @property {number} httpStatus - HTTP status
@@ -778,7 +765,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         } else {
             /**
              * Occurs after the response event, if the result is false
-             * @api
              * @event tui.Grid#failResponse
              * @type {module:common/gridEvent}
              * @property {number} httpStatus - HTTP status
@@ -821,7 +807,6 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
         /**
          * Occurs after the response event, if the response is Error
-         * @api
          * @event tui.Grid#errorResponse
          * @type {module:common/gridEvent}
          * @property {number} httpStatus - HTTP status
