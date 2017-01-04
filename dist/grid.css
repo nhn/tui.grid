@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Dec 15 2016 17:38:35 GMT+0900 (KST)"
- * version: 1.6.2
+ * bundle created at "Wed Jan 04 2017 12:39:59 GMT+0900 (KST)"
+ * version: 1.7.0
  */
 .tui-grid-container {
   width: 100%;
@@ -187,7 +187,6 @@
   position: absolute;
 }
 .tui-grid-table {
-  width: 100%;
   border-width: 1px;
   box-sizing: border-box;
   border-style: solid;

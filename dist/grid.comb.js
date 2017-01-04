@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Dec 15 2016 17:38:35 GMT+0900 (KST)"
- * version: 1.6.2
+ * bundle created at "Wed Jan 04 2017 12:39:59 GMT+0900 (KST)"
+ * version: 1.7.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -58,20 +58,20 @@
 
 	var View = __webpack_require__(2);
 	var ModelManager = __webpack_require__(6);
-	var ViewFactory = __webpack_require__(27);
-	var DomState = __webpack_require__(48);
-	var PublicEventEmitter = __webpack_require__(49);
-	var PainterManager = __webpack_require__(50);
-	var PainterController = __webpack_require__(60);
-	var NetAddOn = __webpack_require__(61);
-	var ComponentHolder = __webpack_require__(64);
+	var ViewFactory = __webpack_require__(29);
+	var DomState = __webpack_require__(50);
+	var PublicEventEmitter = __webpack_require__(51);
+	var PainterManager = __webpack_require__(52);
+	var PainterController = __webpack_require__(62);
+	var NetAddOn = __webpack_require__(63);
+	var ComponentHolder = __webpack_require__(66);
 	var util = __webpack_require__(9);
-	var themeManager = __webpack_require__(65);
+	var themeManager = __webpack_require__(67);
 	var themeNameConst = __webpack_require__(10).themeName;
 
 	var instanceMap = {};
 
-	__webpack_require__(71);
+	__webpack_require__(73);
 
 	 /**
 	  * Toast UI Namespace
@@ -313,7 +313,6 @@
 
 	    /**
 	     * Disables all rows.
-	     * @api
 	     */
 	    disable: function() {
 	        this.modelManager.dataModel.setDisabled(true);
@@ -321,7 +320,6 @@
 
 	    /**
 	     * Enables all rows.
-	     * @api
 	     */
 	    enable: function() {
 	        this.modelManager.dataModel.setDisabled(false);
@@ -329,7 +327,6 @@
 
 	    /**
 	     * Disables the row identified by the rowkey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the target row
 	     */
 	    disableRow: function(rowKey) {
@@ -338,7 +335,6 @@
 
 	    /**
 	     * Enables the row identified by the rowKey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the target row
 	     */
 	    enableRow: function(rowKey) {
@@ -347,7 +343,6 @@
 
 	    /**
 	     * Returns the value of the cell identified by the rowKey and columnName.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the target row.
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isOriginal] - It set to true, the original value will be return.
@@ -359,7 +354,6 @@
 
 	    /**
 	     * Returns a list of all values in the specified column.
-	     * @api
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isJsonString=false] - It set to true, return value will be converted to JSON string.
 	     * @returns {(Array|string)} - A List of all values in the specified column. (or JSON string of the list)
@@ -370,7 +364,6 @@
 
 	    /**
 	     * Returns the object that contains all values in the specified row.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the target row
 	     * @param {boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {(Object|string)} - The object that contains all values in the row. (or JSON string of the object)
@@ -381,7 +374,6 @@
 
 	    /**
 	     * Returns the object that contains all values in the row at specified index.
-	     * @api
 	     * @param {number} index - The index of the row
 	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Object|string} - The object that contains all values in the row. (or JSON string of the object)
@@ -392,7 +384,6 @@
 
 	    /**
 	     * Returns the total number of the rows.
-	     * @api
 	     * @returns {number} - The total number of the rows
 	     */
 	    getRowCount: function() {
@@ -401,7 +392,6 @@
 
 	    /**
 	     * Returns the rowKey of the currently selected row.
-	     * @api
 	     * @returns {(number|string)} - The rowKey of the row
 	     */
 	    getSelectedRowKey: function() {
@@ -410,7 +400,6 @@
 
 	    /**
 	     * Returns the jquery object of the cell identified by the rowKey and columnName.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @returns {jQuery} - The jquery object of the cell element
@@ -421,7 +410,6 @@
 
 	    /**
 	     * Sets the value of the cell identified by the specified rowKey and columnName.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {(number|string)} columnValue - The value to be set
@@ -432,7 +420,6 @@
 
 	    /**
 	     * Sets the all values in the specified column.
-	     * @api
 	     * @param {string} columnName - The name of the column
 	     * @param {(number|string)} columnValue - The value to be set
 	     * @param {Boolean} [isCheckCellState=true] - If set to true, only editable and not disabled cells will be affected.
@@ -443,7 +430,6 @@
 
 	    /**
 	     * Replace all rows with the specified list. This will not change the original data.
-	     * @api
 	     * @param {Array} rowList - A list of new rows
 	     */
 	    replaceRowList: function(rowList) {
@@ -452,7 +438,6 @@
 
 	    /**
 	     * Replace all rows with the specified list. This will change the original data.
-	     * @api
 	     * @param {Array} rowList - A list of new rows
 	     * @param {function} callback - The function that will be called when done.
 	     */
@@ -461,8 +446,15 @@
 	    },
 
 	    /**
+	     * Sets the height of body-area.
+	     * @param {number} value - The number of pixel
+	     */
+	    setBodyHeight: function(value) {
+	        this.modelManager.dimensionModel.set('bodyHeight', value);
+	    },
+
+	    /**
 	     * Sets focus on the cell identified by the specified rowKey and columnName.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -474,7 +466,6 @@
 
 	    /**
 	     * Sets focus on the cell at the specified index of row and column.
-	     * @api
 	     * @param {(number|string)} rowIndex - The index of the row
 	     * @param {string} columnIndex - The index of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -485,7 +476,6 @@
 
 	    /**
 	     * Sets focus on the cell at the specified index of row and column and starts to edit.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
@@ -496,17 +486,16 @@
 
 	    /**
 	     * Sets focus on the cell at the specified index of row and column and starts to edit.
-	     * @api
 	     * @param {(number|string)} rowIndex - The index of the row
 	     * @param {string} columnIndex - The index of the column
-	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.     */
+	     * @param {boolean} [isScrollable=false] - If set to true, the view will scroll to the cell element.
+	     */
 	    focusInAt: function(rowIndex, columnIndex, isScrollable) {
 	        this.modelManager.focusModel.focusInAt(rowIndex, columnIndex, isScrollable);
 	    },
 
 	    /**
 	     * Makes view ready to get keyboard input.
-	     * @api
 	     */
 	    readyForKeyControl: function() {
 	        this.modelManager.focusModel.focusClipboard();
@@ -514,7 +503,6 @@
 
 	    /**
 	     * Removes focus from the focused cell.
-	     * @api
 	     */
 	    blur: function() {
 	        this.modelManager.focusModel.blur();
@@ -522,7 +510,6 @@
 
 	    /**
 	     * Checks all rows.
-	     * @api
 	     */
 	    checkAll: function() {
 	        this.modelManager.dataModel.checkAll();
@@ -530,7 +517,6 @@
 
 	    /**
 	     * Checks the row identified by the specified rowKey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     */
 	    check: function(rowKey) {
@@ -539,7 +525,6 @@
 
 	    /**
 	     * Unchecks all rows.
-	     * @api
 	     */
 	    uncheckAll: function() {
 	        this.modelManager.dataModel.uncheckAll();
@@ -547,7 +532,6 @@
 
 	    /**
 	     * Unchecks the row identified by the specified rowKey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     */
 	    uncheck: function(rowKey) {
@@ -556,7 +540,6 @@
 
 	    /**
 	     * Removes all rows.
-	     * @api
 	     */
 	    clear: function() {
 	        this.modelManager.dataModel.setRowList([]);
@@ -564,7 +547,6 @@
 
 	    /**
 	     * Removes the row identified by the specified rowKey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {(boolean|object)} [options] - Options. If the type is boolean, this value is equivalent to
 	     *     options.removeOriginalData.
@@ -583,7 +565,6 @@
 
 	    /**
 	     * Removes all checked rows.
-	     * @api
 	     * @param {boolean} isConfirm - If set to true, confirm message will be shown before remove.
 	     * @returns {boolean} - True if there's at least one row removed.
 	     */
@@ -602,7 +583,6 @@
 
 	    /**
 	     * Enables the row identified by the rowKey to be able to check.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     */
 	    enableCheck: function(rowKey) {
@@ -611,7 +591,6 @@
 
 	    /**
 	     * Disables the row identified by the spcified rowKey to not be abled to check.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique keyof the row.
 	     */
 	    disableCheck: function(rowKey) {
@@ -620,7 +599,6 @@
 
 	    /**
 	     * Returns a list of the rowKey of checked rows.
-	     * @api
 	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Array|string} - A list of the rowKey. (or JSON string of the list)
 	     */
@@ -633,7 +611,6 @@
 
 	    /**
 	     * Returns a list of the checked rows.
-	     * @api
 	     * @param {Boolean} [isJsonString=false] - If set to true, return value will be converted to JSON string.
 	     * @returns {Array|string} - A list of the checked rows. (or JSON string of the list)
 	     */
@@ -645,7 +622,6 @@
 
 	    /**
 	     * Returns a list of the column model.
-	     * @api
 	     * @returns {Array} - A list of the column model.
 	     */
 	    getColumnModelList: function() {
@@ -655,7 +631,6 @@
 	    /**
 	     * Returns the object that contains the lists of changed data compared to the original data.
 	     * The object has properties 'createList', 'updateList', 'deleteList'.
-	     * @api
 	     * @param {Object} [options] Options
 	     *      @param {boolean} [options.isOnlyChecked=false] - If set to true, only checked rows will be considered.
 	     *      @param {boolean} [options.isRaw=false] - If set to true, the data will contains
@@ -671,7 +646,6 @@
 
 	    /**
 	     * Insert the new row with specified data to the end of table.
-	     * @api
 	     * @param {object} [row] - The data for the new row
 	     * @param {object} [options] - Options
 	     * @param {number} [options.at] - The index at which new row will be inserted
@@ -685,7 +659,6 @@
 
 	    /**
 	     * Insert the new row with specified data to the beginning of table.
-	     * @api
 	     * @param {object} [row] - The data for the new row
 	     * @param {object} [options] - Options
 	     * @param {boolean} [options.focus] - If set to true, move focus to the new row after appending
@@ -696,7 +669,6 @@
 
 	    /**
 	     * Returns true if there are at least one row changed.
-	     * @api
 	     * @returns {boolean} - True if there are at least one row changed.
 	     */
 	    isChanged: function() {
@@ -705,7 +677,6 @@
 
 	    /**
 	     * Returns the instance of specified AddOn.
-	     * @api
 	     * @param {string} name - The name of the AddOn
 	     * @returns {instance} addOn - The instance of the AddOn
 	     */
@@ -716,7 +687,6 @@
 	    /**
 	     * Restores the data to the original data.
 	     * (Original data is set by {@link tui.Grid#setRowList|setRowList}
-	     * @api
 	     */
 	    restore: function() {
 	        this.modelManager.dataModel.restore();
@@ -724,7 +694,6 @@
 
 	    /**
 	     * Selects the row identified by the rowKey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     */
 	    select: function(rowKey) {
@@ -735,7 +704,6 @@
 
 	    /**
 	     * Unselects selected rows.
-	     * @api
 	     */
 	    unselect: function() {
 	        this.modelManager.focusModel.unselect(true);
@@ -743,7 +711,6 @@
 
 	    /**
 	     * Sets the count of fixed column.
-	     * @api
 	     * @param {number} count - The count of column to be fixed
 	     */
 	    setColumnFixCount: function(count) {
@@ -752,7 +719,6 @@
 
 	    /**
 	     * Sets the list of column model.
-	     * @api
 	     * @param {Array} columnModelList - A new list of column model
 	     */
 	    setColumnModelList: function(columnModelList) {
@@ -761,7 +727,6 @@
 
 	    /**
 	     * Create an specified AddOn and use it on this instance.
-	     * @api
 	     * @param {string} name - The name of the AddOn to use.
 	     * @param {object} options - The option objects for configuring the AddON.
 	     * @returns {tui.Grid} - This instance.
@@ -782,7 +747,6 @@
 
 	    /**
 	     * Returns a list of all rows.
-	     * @api
 	     * @returns {Array} - A list of all rows
 	     */
 	    getRowList: function() {
@@ -791,7 +755,6 @@
 
 	    /**
 	     * Sorts all rows by the specified column.
-	     * @api
 	     * @param {string} columnName - The name of the column to be used to compare the rows
 	     * @param {boolean} [isAscending] - Whether the sort order is ascending.
 	     *        If not specified, use the negative value of the current order.
@@ -802,7 +765,6 @@
 
 	    /**
 	     * Unsorts all rows. (Sorts by rowKey).
-	     * @api
 	     */
 	    unSort: function() {
 	        this.sort('rowKey');
@@ -810,7 +772,6 @@
 
 	    /**
 	     * Adds the specified css class to cell element identified by the rowKey and className
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {string} className - The css class name to add
@@ -821,7 +782,6 @@
 
 	    /**
 	     * Adds the specified css class to all cell elements in the row identified by the rowKey
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} className - The css class name to add
 	     */
@@ -831,7 +791,6 @@
 
 	    /**
 	     * Removes the specified css class from the cell element indentified by the rowKey and columnName.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @param {string} className - The css class name to be removed
@@ -842,7 +801,6 @@
 
 	    /**
 	     * Removes the specified css class from all cell elements in the row identified by the rowKey.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} className - The css class name to be removed
 	     */
@@ -852,7 +810,6 @@
 
 	    /**
 	     * Returns the rowspan data of the cell identified by the rowKey and columnName.
-	     * @api
 	     * @param {(number|string)} rowKey - The unique key of the row
 	     * @param {string} columnName - The name of the column
 	     * @returns {Object} - Row span data
@@ -863,7 +820,6 @@
 
 	    /**
 	     * Returns the index of the row indentified by the rowKey.
-	     * @api
 	     * @param {number|string} rowKey - The unique key of the row
 	     * @returns {number} - The index of the row
 	     */
@@ -881,7 +837,6 @@
 
 	    /**
 	     * Sets the number of rows to be shown in the table area.
-	     * @api
 	     * @deprecated
 	     * @param {number} count - The number of rows
 	     */
@@ -891,7 +846,6 @@
 
 	    /**
 	     * Sets the width and height of the dimension.
-	     * @api
 	     * @param  {(number|null)} width - The width of the dimension
 	     * @param  {(number|null)} height - The height of the dimension
 	     */
@@ -901,7 +855,6 @@
 
 	    /**
 	     * Refresh the layout view. Use this method when the view was rendered while hidden.
-	     * @api
 	     */
 	    refreshLayout: function() {
 	        this.modelManager.dimensionModel.refreshLayout();
@@ -909,15 +862,13 @@
 
 	    /**
 	     * Reset the width of each column by using initial setting of column models.
-	     * @api
 	     */
 	    resetColumnWidths: function() {
-	        this.modelManager.dimensionModel.resetColumnWidths();
+	        this.modelManager.coordColumnModel.resetColumnWidths();
 	    },
 
 	    /**
 	     * Show columns
-	     * @api
 	     * @param {...string} arguments - Column names to show
 	     */
 	    showColumn: function() {
@@ -927,7 +878,6 @@
 
 	    /**
 	     * Hide columns
-	     * @api
 	     * @param {...string} arguments - Column names to hide
 	     */
 	    hideColumn: function() {
@@ -939,7 +889,6 @@
 	     * Sets the HTML string of given column footer.
 	     * @param {string} columnName - column name
 	     * @param {string} contents - HTML string
-	     * @api
 	     */
 	    setFooterColumnContent: function(columnName, contents) {
 	        this.modelManager.columnModel.setFooterContent(columnName, contents);
@@ -949,7 +898,6 @@
 	     * Validates all data and returns the result.
 	     * Return value is an array which contains only rows which have invalid cell data.
 	     * @returns {Array.<Object>} An array of error object
-	     * @api
 	     * @example
 	     // return value example
 	    [
@@ -983,7 +931,6 @@
 
 	    /**
 	     * Destroys the instance.
-	     * @api
 	     */
 	    destroy: function() {
 	        this.modelManager.destroy();
@@ -2744,14 +2691,19 @@
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global) {//     Backbone.js 1.3.3
 
-	//     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	//     (c) 2010-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	//     Backbone may be freely distributed under the MIT license.
 	//     For all details and documentation:
 	//     http://backbonejs.org
 
-	(function(root, factory) {
+	(function(factory) {
+
+	  // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
+	  // We use `self` instead of `window` for `WebWorker` support.
+	  var root = (typeof self == 'object' && self.self === self && self) ||
+	            (typeof global == 'object' && global.global === global && global);
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
@@ -2763,15 +2715,16 @@
 
 	  // Next for Node.js or CommonJS. jQuery may not be needed as a module.
 	  } else if (typeof exports !== 'undefined') {
-	    var _ = require('underscore');
-	    factory(root, exports, _);
+	    var _ = require('underscore'), $;
+	    try { $ = require('jquery'); } catch (e) {}
+	    factory(root, exports, _, $);
 
 	  // Finally, as a browser global.
 	  } else {
 	    root.Backbone = factory(root, {}, root._, (root.jQuery || root.Zepto || root.ender || root.$));
 	  }
 
-	}(this, function(root, Backbone, _, $) {
+	})(function(root, Backbone, _, $) {
 
 	  // Initial Setup
 	  // -------------
@@ -2780,14 +2733,11 @@
 	  // restored later on, if `noConflict` is used.
 	  var previousBackbone = root.Backbone;
 
-	  // Create local references to array methods we'll want to use later.
-	  var array = [];
-	  var push = array.push;
-	  var slice = array.slice;
-	  var splice = array.splice;
+	  // Create a local reference to a common array method we'll want to use later.
+	  var slice = Array.prototype.slice;
 
 	  // Current version of the library. Keep in sync with `package.json`.
-	  Backbone.VERSION = '1.1.2';
+	  Backbone.VERSION = '1.3.3';
 
 	  // For Backbone's purposes, jQuery, Zepto, Ender, or My Library (kidding) owns
 	  // the `$` variable.
@@ -2806,17 +2756,65 @@
 	  Backbone.emulateHTTP = false;
 
 	  // Turn on `emulateJSON` to support legacy servers that can't deal with direct
-	  // `application/json` requests ... will encode the body as
+	  // `application/json` requests ... this will encode the body as
 	  // `application/x-www-form-urlencoded` instead and will send the model in a
 	  // form param named `model`.
 	  Backbone.emulateJSON = false;
+
+	  // Proxy Backbone class methods to Underscore functions, wrapping the model's
+	  // `attributes` object or collection's `models` array behind the scenes.
+	  //
+	  // collection.filter(function(model) { return model.get('age') > 10 });
+	  // collection.each(this.addView);
+	  //
+	  // `Function#apply` can be slow so we use the method's arg count, if we know it.
+	  var addMethod = function(length, method, attribute) {
+	    switch (length) {
+	      case 1: return function() {
+	        return _[method](this[attribute]);
+	      };
+	      case 2: return function(value) {
+	        return _[method](this[attribute], value);
+	      };
+	      case 3: return function(iteratee, context) {
+	        return _[method](this[attribute], cb(iteratee, this), context);
+	      };
+	      case 4: return function(iteratee, defaultVal, context) {
+	        return _[method](this[attribute], cb(iteratee, this), defaultVal, context);
+	      };
+	      default: return function() {
+	        var args = slice.call(arguments);
+	        args.unshift(this[attribute]);
+	        return _[method].apply(_, args);
+	      };
+	    }
+	  };
+	  var addUnderscoreMethods = function(Class, methods, attribute) {
+	    _.each(methods, function(length, method) {
+	      if (_[method]) Class.prototype[method] = addMethod(length, method, attribute);
+	    });
+	  };
+
+	  // Support `collection.sortBy('attr')` and `collection.findWhere({id: 1})`.
+	  var cb = function(iteratee, instance) {
+	    if (_.isFunction(iteratee)) return iteratee;
+	    if (_.isObject(iteratee) && !instance._isModel(iteratee)) return modelMatcher(iteratee);
+	    if (_.isString(iteratee)) return function(model) { return model.get(iteratee); };
+	    return iteratee;
+	  };
+	  var modelMatcher = function(attrs) {
+	    var matcher = _.matches(attrs);
+	    return function(model) {
+	      return matcher(model.attributes);
+	    };
+	  };
 
 	  // Backbone.Events
 	  // ---------------
 
 	  // A module that can be mixed in to *any object* in order to provide it with
-	  // custom events. You may bind with `on` or remove with `off` callback
-	  // functions to an event; `trigger`-ing an event fires all callbacks in
+	  // a custom event channel. You may bind a callback to an event with `on` or
+	  // remove with `off`; `trigger`-ing an event fires all callbacks in
 	  // succession.
 	  //
 	  //     var object = {};
@@ -2824,123 +2822,234 @@
 	  //     object.on('expand', function(){ alert('expanded'); });
 	  //     object.trigger('expand');
 	  //
-	  var Events = Backbone.Events = {
-
-	    // Bind an event to a `callback` function. Passing `"all"` will bind
-	    // the callback to all events fired.
-	    on: function(name, callback, context) {
-	      if (!eventsApi(this, 'on', name, [callback, context]) || !callback) return this;
-	      this._events || (this._events = {});
-	      var events = this._events[name] || (this._events[name] = []);
-	      events.push({callback: callback, context: context, ctx: context || this});
-	      return this;
-	    },
-
-	    // Bind an event to only be triggered a single time. After the first time
-	    // the callback is invoked, it will be removed.
-	    once: function(name, callback, context) {
-	      if (!eventsApi(this, 'once', name, [callback, context]) || !callback) return this;
-	      var self = this;
-	      var once = _.once(function() {
-	        self.off(name, once);
-	        callback.apply(this, arguments);
-	      });
-	      once._callback = callback;
-	      return this.on(name, once, context);
-	    },
-
-	    // Remove one or many callbacks. If `context` is null, removes all
-	    // callbacks with that function. If `callback` is null, removes all
-	    // callbacks for the event. If `name` is null, removes all bound
-	    // callbacks for all events.
-	    off: function(name, callback, context) {
-	      var retain, ev, events, names, i, l, j, k;
-	      if (!this._events || !eventsApi(this, 'off', name, [callback, context])) return this;
-	      if (!name && !callback && !context) {
-	        this._events = void 0;
-	        return this;
-	      }
-	      names = name ? [name] : _.keys(this._events);
-	      for (i = 0, l = names.length; i < l; i++) {
-	        name = names[i];
-	        if (events = this._events[name]) {
-	          this._events[name] = retain = [];
-	          if (callback || context) {
-	            for (j = 0, k = events.length; j < k; j++) {
-	              ev = events[j];
-	              if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
-	                  (context && context !== ev.context)) {
-	                retain.push(ev);
-	              }
-	            }
-	          }
-	          if (!retain.length) delete this._events[name];
-	        }
-	      }
-
-	      return this;
-	    },
-
-	    // Trigger one or many events, firing all bound callbacks. Callbacks are
-	    // passed the same arguments as `trigger` is, apart from the event name
-	    // (unless you're listening on `"all"`, which will cause your callback to
-	    // receive the true name of the event as the first argument).
-	    trigger: function(name) {
-	      if (!this._events) return this;
-	      var args = slice.call(arguments, 1);
-	      if (!eventsApi(this, 'trigger', name, args)) return this;
-	      var events = this._events[name];
-	      var allEvents = this._events.all;
-	      if (events) triggerEvents(events, args);
-	      if (allEvents) triggerEvents(allEvents, arguments);
-	      return this;
-	    },
-
-	    // Tell this object to stop listening to either specific events ... or
-	    // to every object it's currently listening to.
-	    stopListening: function(obj, name, callback) {
-	      var listeningTo = this._listeningTo;
-	      if (!listeningTo) return this;
-	      var remove = !name && !callback;
-	      if (!callback && typeof name === 'object') callback = this;
-	      if (obj) (listeningTo = {})[obj._listenId] = obj;
-	      for (var id in listeningTo) {
-	        obj = listeningTo[id];
-	        obj.off(name, callback, this);
-	        if (remove || _.isEmpty(obj._events)) delete this._listeningTo[id];
-	      }
-	      return this;
-	    }
-
-	  };
+	  var Events = Backbone.Events = {};
 
 	  // Regular expression used to split event strings.
 	  var eventSplitter = /\s+/;
 
-	  // Implement fancy features of the Events API such as multiple event
-	  // names `"change blur"` and jQuery-style event maps `{change: action}`
-	  // in terms of the existing API.
-	  var eventsApi = function(obj, action, name, rest) {
-	    if (!name) return true;
-
-	    // Handle event maps.
-	    if (typeof name === 'object') {
-	      for (var key in name) {
-	        obj[action].apply(obj, [key, name[key]].concat(rest));
+	  // Iterates over the standard `event, callback` (as well as the fancy multiple
+	  // space-separated events `"change blur", callback` and jQuery-style event
+	  // maps `{event: callback}`).
+	  var eventsApi = function(iteratee, events, name, callback, opts) {
+	    var i = 0, names;
+	    if (name && typeof name === 'object') {
+	      // Handle event maps.
+	      if (callback !== void 0 && 'context' in opts && opts.context === void 0) opts.context = callback;
+	      for (names = _.keys(name); i < names.length ; i++) {
+	        events = eventsApi(iteratee, events, names[i], name[names[i]], opts);
 	      }
-	      return false;
+	    } else if (name && eventSplitter.test(name)) {
+	      // Handle space-separated event names by delegating them individually.
+	      for (names = name.split(eventSplitter); i < names.length; i++) {
+	        events = iteratee(events, names[i], callback, opts);
+	      }
+	    } else {
+	      // Finally, standard events.
+	      events = iteratee(events, name, callback, opts);
+	    }
+	    return events;
+	  };
+
+	  // Bind an event to a `callback` function. Passing `"all"` will bind
+	  // the callback to all events fired.
+	  Events.on = function(name, callback, context) {
+	    return internalOn(this, name, callback, context);
+	  };
+
+	  // Guard the `listening` argument from the public API.
+	  var internalOn = function(obj, name, callback, context, listening) {
+	    obj._events = eventsApi(onApi, obj._events || {}, name, callback, {
+	      context: context,
+	      ctx: obj,
+	      listening: listening
+	    });
+
+	    if (listening) {
+	      var listeners = obj._listeners || (obj._listeners = {});
+	      listeners[listening.id] = listening;
 	    }
 
-	    // Handle space separated event names.
-	    if (eventSplitter.test(name)) {
-	      var names = name.split(eventSplitter);
-	      for (var i = 0, l = names.length; i < l; i++) {
-	        obj[action].apply(obj, [names[i]].concat(rest));
-	      }
-	      return false;
+	    return obj;
+	  };
+
+	  // Inversion-of-control versions of `on`. Tell *this* object to listen to
+	  // an event in another object... keeping track of what it's listening to
+	  // for easier unbinding later.
+	  Events.listenTo = function(obj, name, callback) {
+	    if (!obj) return this;
+	    var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
+	    var listeningTo = this._listeningTo || (this._listeningTo = {});
+	    var listening = listeningTo[id];
+
+	    // This object is not listening to any other events on `obj` yet.
+	    // Setup the necessary references to track the listening callbacks.
+	    if (!listening) {
+	      var thisId = this._listenId || (this._listenId = _.uniqueId('l'));
+	      listening = listeningTo[id] = {obj: obj, objId: id, id: thisId, listeningTo: listeningTo, count: 0};
 	    }
 
-	    return true;
+	    // Bind callbacks on obj, and keep track of them on listening.
+	    internalOn(obj, name, callback, this, listening);
+	    return this;
+	  };
+
+	  // The reducing API that adds a callback to the `events` object.
+	  var onApi = function(events, name, callback, options) {
+	    if (callback) {
+	      var handlers = events[name] || (events[name] = []);
+	      var context = options.context, ctx = options.ctx, listening = options.listening;
+	      if (listening) listening.count++;
+
+	      handlers.push({callback: callback, context: context, ctx: context || ctx, listening: listening});
+	    }
+	    return events;
+	  };
+
+	  // Remove one or many callbacks. If `context` is null, removes all
+	  // callbacks with that function. If `callback` is null, removes all
+	  // callbacks for the event. If `name` is null, removes all bound
+	  // callbacks for all events.
+	  Events.off = function(name, callback, context) {
+	    if (!this._events) return this;
+	    this._events = eventsApi(offApi, this._events, name, callback, {
+	      context: context,
+	      listeners: this._listeners
+	    });
+	    return this;
+	  };
+
+	  // Tell this object to stop listening to either specific events ... or
+	  // to every object it's currently listening to.
+	  Events.stopListening = function(obj, name, callback) {
+	    var listeningTo = this._listeningTo;
+	    if (!listeningTo) return this;
+
+	    var ids = obj ? [obj._listenId] : _.keys(listeningTo);
+
+	    for (var i = 0; i < ids.length; i++) {
+	      var listening = listeningTo[ids[i]];
+
+	      // If listening doesn't exist, this object is not currently
+	      // listening to obj. Break out early.
+	      if (!listening) break;
+
+	      listening.obj.off(name, callback, this);
+	    }
+
+	    return this;
+	  };
+
+	  // The reducing API that removes a callback from the `events` object.
+	  var offApi = function(events, name, callback, options) {
+	    if (!events) return;
+
+	    var i = 0, listening;
+	    var context = options.context, listeners = options.listeners;
+
+	    // Delete all events listeners and "drop" events.
+	    if (!name && !callback && !context) {
+	      var ids = _.keys(listeners);
+	      for (; i < ids.length; i++) {
+	        listening = listeners[ids[i]];
+	        delete listeners[listening.id];
+	        delete listening.listeningTo[listening.objId];
+	      }
+	      return;
+	    }
+
+	    var names = name ? [name] : _.keys(events);
+	    for (; i < names.length; i++) {
+	      name = names[i];
+	      var handlers = events[name];
+
+	      // Bail out if there are no events stored.
+	      if (!handlers) break;
+
+	      // Replace events if there are any remaining.  Otherwise, clean up.
+	      var remaining = [];
+	      for (var j = 0; j < handlers.length; j++) {
+	        var handler = handlers[j];
+	        if (
+	          callback && callback !== handler.callback &&
+	            callback !== handler.callback._callback ||
+	              context && context !== handler.context
+	        ) {
+	          remaining.push(handler);
+	        } else {
+	          listening = handler.listening;
+	          if (listening && --listening.count === 0) {
+	            delete listeners[listening.id];
+	            delete listening.listeningTo[listening.objId];
+	          }
+	        }
+	      }
+
+	      // Update tail event if the list has any events.  Otherwise, clean up.
+	      if (remaining.length) {
+	        events[name] = remaining;
+	      } else {
+	        delete events[name];
+	      }
+	    }
+	    return events;
+	  };
+
+	  // Bind an event to only be triggered a single time. After the first time
+	  // the callback is invoked, its listener will be removed. If multiple events
+	  // are passed in using the space-separated syntax, the handler will fire
+	  // once for each event, not once for a combination of all events.
+	  Events.once = function(name, callback, context) {
+	    // Map the event into a `{event: once}` object.
+	    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.off, this));
+	    if (typeof name === 'string' && context == null) callback = void 0;
+	    return this.on(events, callback, context);
+	  };
+
+	  // Inversion-of-control versions of `once`.
+	  Events.listenToOnce = function(obj, name, callback) {
+	    // Map the event into a `{event: once}` object.
+	    var events = eventsApi(onceMap, {}, name, callback, _.bind(this.stopListening, this, obj));
+	    return this.listenTo(obj, events);
+	  };
+
+	  // Reduces the event callbacks into a map of `{event: onceWrapper}`.
+	  // `offer` unbinds the `onceWrapper` after it has been called.
+	  var onceMap = function(map, name, callback, offer) {
+	    if (callback) {
+	      var once = map[name] = _.once(function() {
+	        offer(name, once);
+	        callback.apply(this, arguments);
+	      });
+	      once._callback = callback;
+	    }
+	    return map;
+	  };
+
+	  // Trigger one or many events, firing all bound callbacks. Callbacks are
+	  // passed the same arguments as `trigger` is, apart from the event name
+	  // (unless you're listening on `"all"`, which will cause your callback to
+	  // receive the true name of the event as the first argument).
+	  Events.trigger = function(name) {
+	    if (!this._events) return this;
+
+	    var length = Math.max(0, arguments.length - 1);
+	    var args = Array(length);
+	    for (var i = 0; i < length; i++) args[i] = arguments[i + 1];
+
+	    eventsApi(triggerApi, this._events, name, void 0, args);
+	    return this;
+	  };
+
+	  // Handles triggering the appropriate event callbacks.
+	  var triggerApi = function(objEvents, name, callback, args) {
+	    if (objEvents) {
+	      var events = objEvents[name];
+	      var allEvents = objEvents.all;
+	      if (events && allEvents) allEvents = allEvents.slice();
+	      if (events) triggerEvents(events, args);
+	      if (allEvents) triggerEvents(allEvents, [name].concat(args));
+	    }
+	    return objEvents;
 	  };
 
 	  // A difficult-to-believe, but optimized internal dispatch function for
@@ -2956,22 +3065,6 @@
 	      default: while (++i < l) (ev = events[i]).callback.apply(ev.ctx, args); return;
 	    }
 	  };
-
-	  var listenMethods = {listenTo: 'on', listenToOnce: 'once'};
-
-	  // Inversion-of-control versions of `on` and `once`. Tell *this* object to
-	  // listen to an event in another object ... keeping track of what it's
-	  // listening to.
-	  _.each(listenMethods, function(implementation, method) {
-	    Events[method] = function(obj, name, callback) {
-	      var listeningTo = this._listeningTo || (this._listeningTo = {});
-	      var id = obj._listenId || (obj._listenId = _.uniqueId('l'));
-	      listeningTo[id] = obj;
-	      if (!callback && typeof name === 'object') callback = this;
-	      obj[implementation](name, callback, this);
-	      return this;
-	    };
-	  });
 
 	  // Aliases for backwards compatibility.
 	  Events.bind   = Events.on;
@@ -2994,11 +3087,12 @@
 	  var Model = Backbone.Model = function(attributes, options) {
 	    var attrs = attributes || {};
 	    options || (options = {});
-	    this.cid = _.uniqueId('c');
+	    this.cid = _.uniqueId(this.cidPrefix);
 	    this.attributes = {};
 	    if (options.collection) this.collection = options.collection;
 	    if (options.parse) attrs = this.parse(attrs, options) || {};
-	    attrs = _.defaults({}, attrs, _.result(this, 'defaults'));
+	    var defaults = _.result(this, 'defaults');
+	    attrs = _.defaults(_.extend({}, defaults, attrs), defaults);
 	    this.set(attrs, options);
 	    this.changed = {};
 	    this.initialize.apply(this, arguments);
@@ -3016,6 +3110,10 @@
 	    // The default name for the JSON `id` attribute is `"id"`. MongoDB and
 	    // CouchDB users may want to set this to `"_id"`.
 	    idAttribute: 'id',
+
+	    // The prefix is used to create the client id which is used to identify models locally.
+	    // You may want to override this if you're experiencing name clashes with model ids.
+	    cidPrefix: 'c',
 
 	    // Initialize is an empty function by default. Override it with your own
 	    // initialization logic.
@@ -3048,14 +3146,19 @@
 	      return this.get(attr) != null;
 	    },
 
+	    // Special-cased proxy to underscore's `_.matches` method.
+	    matches: function(attrs) {
+	      return !!_.iteratee(attrs, this)(this.attributes);
+	    },
+
 	    // Set a hash of model attributes on the object, firing `"change"`. This is
 	    // the core primitive operation of a model, updating the data and notifying
 	    // anyone who needs to know about the change in state. The heart of the beast.
 	    set: function(key, val, options) {
-	      var attr, attrs, unset, changes, silent, changing, prev, current;
 	      if (key == null) return this;
 
 	      // Handle both `"key", value` and `{key: value}` -style arguments.
+	      var attrs;
 	      if (typeof key === 'object') {
 	        attrs = key;
 	        options = val;
@@ -3069,37 +3172,40 @@
 	      if (!this._validate(attrs, options)) return false;
 
 	      // Extract attributes and options.
-	      unset           = options.unset;
-	      silent          = options.silent;
-	      changes         = [];
-	      changing        = this._changing;
-	      this._changing  = true;
+	      var unset      = options.unset;
+	      var silent     = options.silent;
+	      var changes    = [];
+	      var changing   = this._changing;
+	      this._changing = true;
 
 	      if (!changing) {
 	        this._previousAttributes = _.clone(this.attributes);
 	        this.changed = {};
 	      }
-	      current = this.attributes, prev = this._previousAttributes;
 
-	      // Check for changes of `id`.
-	      if (this.idAttribute in attrs) this.id = attrs[this.idAttribute];
+	      var current = this.attributes;
+	      var changed = this.changed;
+	      var prev    = this._previousAttributes;
 
 	      // For each `set` attribute, update or delete the current value.
-	      for (attr in attrs) {
+	      for (var attr in attrs) {
 	        val = attrs[attr];
 	        if (!_.isEqual(current[attr], val)) changes.push(attr);
 	        if (!_.isEqual(prev[attr], val)) {
-	          this.changed[attr] = val;
+	          changed[attr] = val;
 	        } else {
-	          delete this.changed[attr];
+	          delete changed[attr];
 	        }
 	        unset ? delete current[attr] : current[attr] = val;
 	      }
 
+	      // Update the `id`.
+	      if (this.idAttribute in attrs) this.id = this.get(this.idAttribute);
+
 	      // Trigger all relevant attribute changes.
 	      if (!silent) {
 	        if (changes.length) this._pending = options;
-	        for (var i = 0, l = changes.length; i < l; i++) {
+	        for (var i = 0; i < changes.length; i++) {
 	          this.trigger('change:' + changes[i], this, current[changes[i]], options);
 	        }
 	      }
@@ -3147,13 +3253,14 @@
 	    // determining if there *would be* a change.
 	    changedAttributes: function(diff) {
 	      if (!diff) return this.hasChanged() ? _.clone(this.changed) : false;
-	      var val, changed = false;
 	      var old = this._changing ? this._previousAttributes : this.attributes;
+	      var changed = {};
 	      for (var attr in diff) {
-	        if (_.isEqual(old[attr], (val = diff[attr]))) continue;
-	        (changed || (changed = {}))[attr] = val;
+	        var val = diff[attr];
+	        if (_.isEqual(old[attr], val)) continue;
+	        changed[attr] = val;
 	      }
-	      return changed;
+	      return _.size(changed) ? changed : false;
 	    },
 
 	    // Get the previous value of an attribute, recorded at the time the last
@@ -3169,17 +3276,16 @@
 	      return _.clone(this._previousAttributes);
 	    },
 
-	    // Fetch the model from the server. If the server's representation of the
-	    // model differs from its current attributes, they will be overridden,
-	    // triggering a `"change"` event.
+	    // Fetch the model from the server, merging the response with the model's
+	    // local attributes. Any changed attributes will trigger a "change" event.
 	    fetch: function(options) {
-	      options = options ? _.clone(options) : {};
-	      if (options.parse === void 0) options.parse = true;
+	      options = _.extend({parse: true}, options);
 	      var model = this;
 	      var success = options.success;
 	      options.success = function(resp) {
-	        if (!model.set(model.parse(resp, options), options)) return false;
-	        if (success) success(model, resp, options);
+	        var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+	        if (!model.set(serverAttrs, options)) return false;
+	        if (success) success.call(options.context, model, resp, options);
 	        model.trigger('sync', model, resp, options);
 	      };
 	      wrapError(this, options);
@@ -3190,9 +3296,8 @@
 	    // If the server returns an attributes hash that differs, the model's
 	    // state will be `set` again.
 	    save: function(key, val, options) {
-	      var attrs, method, xhr, attributes = this.attributes;
-
 	      // Handle both `"key", value` and `{key: value}` -style arguments.
+	      var attrs;
 	      if (key == null || typeof key === 'object') {
 	        attrs = key;
 	        options = val;
@@ -3200,46 +3305,43 @@
 	        (attrs = {})[key] = val;
 	      }
 
-	      options = _.extend({validate: true}, options);
+	      options = _.extend({validate: true, parse: true}, options);
+	      var wait = options.wait;
 
 	      // If we're not waiting and attributes exist, save acts as
 	      // `set(attr).save(null, opts)` with validation. Otherwise, check if
 	      // the model will be valid when the attributes, if any, are set.
-	      if (attrs && !options.wait) {
+	      if (attrs && !wait) {
 	        if (!this.set(attrs, options)) return false;
-	      } else {
-	        if (!this._validate(attrs, options)) return false;
-	      }
-
-	      // Set temporary attributes if `{wait: true}`.
-	      if (attrs && options.wait) {
-	        this.attributes = _.extend({}, attributes, attrs);
+	      } else if (!this._validate(attrs, options)) {
+	        return false;
 	      }
 
 	      // After a successful server-side save, the client is (optionally)
 	      // updated with the server-side state.
-	      if (options.parse === void 0) options.parse = true;
 	      var model = this;
 	      var success = options.success;
+	      var attributes = this.attributes;
 	      options.success = function(resp) {
 	        // Ensure attributes are restored during synchronous saves.
 	        model.attributes = attributes;
-	        var serverAttrs = model.parse(resp, options);
-	        if (options.wait) serverAttrs = _.extend(attrs || {}, serverAttrs);
-	        if (_.isObject(serverAttrs) && !model.set(serverAttrs, options)) {
-	          return false;
-	        }
-	        if (success) success(model, resp, options);
+	        var serverAttrs = options.parse ? model.parse(resp, options) : resp;
+	        if (wait) serverAttrs = _.extend({}, attrs, serverAttrs);
+	        if (serverAttrs && !model.set(serverAttrs, options)) return false;
+	        if (success) success.call(options.context, model, resp, options);
 	        model.trigger('sync', model, resp, options);
 	      };
 	      wrapError(this, options);
 
-	      method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
-	      if (method === 'patch') options.attrs = attrs;
-	      xhr = this.sync(method, this, options);
+	      // Set temporary attributes if `{wait: true}` to properly find new ids.
+	      if (attrs && wait) this.attributes = _.extend({}, attributes, attrs);
+
+	      var method = this.isNew() ? 'create' : (options.patch ? 'patch' : 'update');
+	      if (method === 'patch' && !options.attrs) options.attrs = attrs;
+	      var xhr = this.sync(method, this, options);
 
 	      // Restore attributes.
-	      if (attrs && options.wait) this.attributes = attributes;
+	      this.attributes = attributes;
 
 	      return xhr;
 	    },
@@ -3251,25 +3353,27 @@
 	      options = options ? _.clone(options) : {};
 	      var model = this;
 	      var success = options.success;
+	      var wait = options.wait;
 
 	      var destroy = function() {
+	        model.stopListening();
 	        model.trigger('destroy', model, model.collection, options);
 	      };
 
 	      options.success = function(resp) {
-	        if (options.wait || model.isNew()) destroy();
-	        if (success) success(model, resp, options);
+	        if (wait) destroy();
+	        if (success) success.call(options.context, model, resp, options);
 	        if (!model.isNew()) model.trigger('sync', model, resp, options);
 	      };
 
+	      var xhr = false;
 	      if (this.isNew()) {
-	        options.success();
-	        return false;
+	        _.defer(options.success);
+	      } else {
+	        wrapError(this, options);
+	        xhr = this.sync('delete', this, options);
 	      }
-	      wrapError(this, options);
-
-	      var xhr = this.sync('delete', this, options);
-	      if (!options.wait) destroy();
+	      if (!wait) destroy();
 	      return xhr;
 	    },
 
@@ -3282,7 +3386,8 @@
 	        _.result(this.collection, 'url') ||
 	        urlError();
 	      if (this.isNew()) return base;
-	      return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id);
+	      var id = this.get(this.idAttribute);
+	      return base.replace(/[^\/]$/, '$&/') + encodeURIComponent(id);
 	    },
 
 	    // **parse** converts a response into the hash of attributes to be `set` on
@@ -3303,7 +3408,7 @@
 
 	    // Check if the model is currently in a valid state.
 	    isValid: function(options) {
-	      return this._validate({}, _.extend(options || {}, { validate: true }));
+	      return this._validate({}, _.extend({}, options, {validate: true}));
 	    },
 
 	    // Run validation against the next complete set of model attributes,
@@ -3319,23 +3424,19 @@
 
 	  });
 
-	  // Underscore methods that we want to implement on the Model.
-	  var modelMethods = ['keys', 'values', 'pairs', 'invert', 'pick', 'omit'];
+	  // Underscore methods that we want to implement on the Model, mapped to the
+	  // number of arguments they take.
+	  var modelMethods = {keys: 1, values: 1, pairs: 1, invert: 1, pick: 0,
+	      omit: 0, chain: 1, isEmpty: 1};
 
 	  // Mix in each Underscore method as a proxy to `Model#attributes`.
-	  _.each(modelMethods, function(method) {
-	    Model.prototype[method] = function() {
-	      var args = slice.call(arguments);
-	      args.unshift(this.attributes);
-	      return _[method].apply(_, args);
-	    };
-	  });
+	  addUnderscoreMethods(Model, modelMethods, 'attributes');
 
 	  // Backbone.Collection
 	  // -------------------
 
 	  // If models tend to represent a single row of data, a Backbone Collection is
-	  // more analagous to a table full of data ... or a small slice or page of that
+	  // more analogous to a table full of data ... or a small slice or page of that
 	  // table, or a collection of rows that belong together for a particular reason
 	  // -- all of the messages in this particular folder, all of the documents
 	  // belonging to this particular author, and so on. Collections maintain
@@ -3357,6 +3458,17 @@
 	  var setOptions = {add: true, remove: true, merge: true};
 	  var addOptions = {add: true, remove: false};
 
+	  // Splices `insert` into `array` at index `at`.
+	  var splice = function(array, insert, at) {
+	    at = Math.min(Math.max(at, 0), array.length);
+	    var tail = Array(array.length - at);
+	    var length = insert.length;
+	    var i;
+	    for (i = 0; i < tail.length; i++) tail[i] = array[i + at];
+	    for (i = 0; i < length; i++) array[i + at] = insert[i];
+	    for (i = 0; i < tail.length; i++) array[i + length + at] = tail[i];
+	  };
+
 	  // Define the Collection's inheritable methods.
 	  _.extend(Collection.prototype, Events, {
 
@@ -3371,7 +3483,7 @@
 	    // The JSON representation of a Collection is an array of the
 	    // models' attributes.
 	    toJSON: function(options) {
-	      return this.map(function(model){ return model.toJSON(options); });
+	      return this.map(function(model) { return model.toJSON(options); });
 	    },
 
 	    // Proxy `Backbone.sync` by default.
@@ -3379,32 +3491,24 @@
 	      return Backbone.sync.apply(this, arguments);
 	    },
 
-	    // Add a model, or list of models to the set.
+	    // Add a model, or list of models to the set. `models` may be Backbone
+	    // Models or raw JavaScript objects to be converted to Models, or any
+	    // combination of the two.
 	    add: function(models, options) {
 	      return this.set(models, _.extend({merge: false}, options, addOptions));
 	    },
 
 	    // Remove a model, or a list of models from the set.
 	    remove: function(models, options) {
+	      options = _.extend({}, options);
 	      var singular = !_.isArray(models);
-	      models = singular ? [models] : _.clone(models);
-	      options || (options = {});
-	      var i, l, index, model;
-	      for (i = 0, l = models.length; i < l; i++) {
-	        model = models[i] = this.get(models[i]);
-	        if (!model) continue;
-	        delete this._byId[model.id];
-	        delete this._byId[model.cid];
-	        index = this.indexOf(model);
-	        this.models.splice(index, 1);
-	        this.length--;
-	        if (!options.silent) {
-	          options.index = index;
-	          model.trigger('remove', model, this, options);
-	        }
-	        this._removeReference(model, options);
+	      models = singular ? [models] : models.slice();
+	      var removed = this._removeModels(models, options);
+	      if (!options.silent && removed.length) {
+	        options.changes = {added: [], merged: [], removed: removed};
+	        this.trigger('update', this, options);
 	      }
-	      return singular ? models[0] : models;
+	      return singular ? removed[0] : removed;
 	    },
 
 	    // Update a collection by `set`-ing a new list of models, adding new ones,
@@ -3412,89 +3516,114 @@
 	    // already exist in the collection, as necessary. Similar to **Model#set**,
 	    // the core operation for updating the data contained by the collection.
 	    set: function(models, options) {
-	      options = _.defaults({}, options, setOptions);
-	      if (options.parse) models = this.parse(models, options);
+	      if (models == null) return;
+
+	      options = _.extend({}, setOptions, options);
+	      if (options.parse && !this._isModel(models)) {
+	        models = this.parse(models, options) || [];
+	      }
+
 	      var singular = !_.isArray(models);
-	      models = singular ? (models ? [models] : []) : _.clone(models);
-	      var i, l, id, model, attrs, existing, sort;
+	      models = singular ? [models] : models.slice();
+
 	      var at = options.at;
-	      var targetModel = this.model;
-	      var sortable = this.comparator && (at == null) && options.sort !== false;
+	      if (at != null) at = +at;
+	      if (at > this.length) at = this.length;
+	      if (at < 0) at += this.length + 1;
+
+	      var set = [];
+	      var toAdd = [];
+	      var toMerge = [];
+	      var toRemove = [];
+	      var modelMap = {};
+
+	      var add = options.add;
+	      var merge = options.merge;
+	      var remove = options.remove;
+
+	      var sort = false;
+	      var sortable = this.comparator && at == null && options.sort !== false;
 	      var sortAttr = _.isString(this.comparator) ? this.comparator : null;
-	      var toAdd = [], toRemove = [], modelMap = {};
-	      var add = options.add, merge = options.merge, remove = options.remove;
-	      var order = !sortable && add && remove ? [] : false;
 
 	      // Turn bare objects into model references, and prevent invalid models
 	      // from being added.
-	      for (i = 0, l = models.length; i < l; i++) {
-	        attrs = models[i] || {};
-	        if (attrs instanceof Model) {
-	          id = model = attrs;
-	        } else {
-	          id = attrs[targetModel.prototype.idAttribute || 'id'];
-	        }
+	      var model, i;
+	      for (i = 0; i < models.length; i++) {
+	        model = models[i];
 
 	        // If a duplicate is found, prevent it from being added and
 	        // optionally merge it into the existing model.
-	        if (existing = this.get(id)) {
-	          if (remove) modelMap[existing.cid] = true;
-	          if (merge) {
-	            attrs = attrs === model ? model.attributes : attrs;
+	        var existing = this.get(model);
+	        if (existing) {
+	          if (merge && model !== existing) {
+	            var attrs = this._isModel(model) ? model.attributes : model;
 	            if (options.parse) attrs = existing.parse(attrs, options);
 	            existing.set(attrs, options);
-	            if (sortable && !sort && existing.hasChanged(sortAttr)) sort = true;
+	            toMerge.push(existing);
+	            if (sortable && !sort) sort = existing.hasChanged(sortAttr);
+	          }
+	          if (!modelMap[existing.cid]) {
+	            modelMap[existing.cid] = true;
+	            set.push(existing);
 	          }
 	          models[i] = existing;
 
 	        // If this is a new, valid model, push it to the `toAdd` list.
 	        } else if (add) {
-	          model = models[i] = this._prepareModel(attrs, options);
-	          if (!model) continue;
-	          toAdd.push(model);
-	          this._addReference(model, options);
+	          model = models[i] = this._prepareModel(model, options);
+	          if (model) {
+	            toAdd.push(model);
+	            this._addReference(model, options);
+	            modelMap[model.cid] = true;
+	            set.push(model);
+	          }
 	        }
-
-	        // Do not add multiple models with the same `id`.
-	        model = existing || model;
-	        if (order && (model.isNew() || !modelMap[model.id])) order.push(model);
-	        modelMap[model.id] = true;
 	      }
 
-	      // Remove nonexistent models if appropriate.
+	      // Remove stale models.
 	      if (remove) {
-	        for (i = 0, l = this.length; i < l; ++i) {
-	          if (!modelMap[(model = this.models[i]).cid]) toRemove.push(model);
+	        for (i = 0; i < this.length; i++) {
+	          model = this.models[i];
+	          if (!modelMap[model.cid]) toRemove.push(model);
 	        }
-	        if (toRemove.length) this.remove(toRemove, options);
+	        if (toRemove.length) this._removeModels(toRemove, options);
 	      }
 
 	      // See if sorting is needed, update `length` and splice in new models.
-	      if (toAdd.length || (order && order.length)) {
+	      var orderChanged = false;
+	      var replace = !sortable && add && remove;
+	      if (set.length && replace) {
+	        orderChanged = this.length !== set.length || _.some(this.models, function(m, index) {
+	          return m !== set[index];
+	        });
+	        this.models.length = 0;
+	        splice(this.models, set, 0);
+	        this.length = this.models.length;
+	      } else if (toAdd.length) {
 	        if (sortable) sort = true;
-	        this.length += toAdd.length;
-	        if (at != null) {
-	          for (i = 0, l = toAdd.length; i < l; i++) {
-	            this.models.splice(at + i, 0, toAdd[i]);
-	          }
-	        } else {
-	          if (order) this.models.length = 0;
-	          var orderedModels = order || toAdd;
-	          for (i = 0, l = orderedModels.length; i < l; i++) {
-	            this.models.push(orderedModels[i]);
-	          }
-	        }
+	        splice(this.models, toAdd, at == null ? this.length : at);
+	        this.length = this.models.length;
 	      }
 
 	      // Silently sort the collection if appropriate.
 	      if (sort) this.sort({silent: true});
 
-	      // Unless silenced, it's time to fire all appropriate add/sort events.
+	      // Unless silenced, it's time to fire all appropriate add/sort/update events.
 	      if (!options.silent) {
-	        for (i = 0, l = toAdd.length; i < l; i++) {
-	          (model = toAdd[i]).trigger('add', model, this, options);
+	        for (i = 0; i < toAdd.length; i++) {
+	          if (at != null) options.index = at + i;
+	          model = toAdd[i];
+	          model.trigger('add', model, this, options);
 	        }
-	        if (sort || (order && order.length)) this.trigger('sort', this, options);
+	        if (sort || orderChanged) this.trigger('sort', this, options);
+	        if (toAdd.length || toRemove.length || toMerge.length) {
+	          options.changes = {
+	            added: toAdd,
+	            removed: toRemove,
+	            merged: toMerge
+	          };
+	          this.trigger('update', this, options);
+	        }
 	      }
 
 	      // Return the added (or merged) model (or models).
@@ -3506,8 +3635,8 @@
 	    // any granular `add` or `remove` events. Fires `reset` when finished.
 	    // Useful for bulk operations and optimizations.
 	    reset: function(models, options) {
-	      options || (options = {});
-	      for (var i = 0, l = this.models.length; i < l; i++) {
+	      options = options ? _.clone(options) : {};
+	      for (var i = 0; i < this.models.length; i++) {
 	        this._removeReference(this.models[i], options);
 	      }
 	      options.previousModels = this.models;
@@ -3525,8 +3654,7 @@
 	    // Remove a model from the end of the collection.
 	    pop: function(options) {
 	      var model = this.at(this.length - 1);
-	      this.remove(model, options);
-	      return model;
+	      return this.remove(model, options);
 	    },
 
 	    // Add a model to the beginning of the collection.
@@ -3537,8 +3665,7 @@
 	    // Remove a model from the beginning of the collection.
 	    shift: function(options) {
 	      var model = this.at(0);
-	      this.remove(model, options);
-	      return model;
+	      return this.remove(model, options);
 	    },
 
 	    // Slice out a sub-array of models from the collection.
@@ -3546,27 +3673,30 @@
 	      return slice.apply(this.models, arguments);
 	    },
 
-	    // Get a model from the set by id.
+	    // Get a model from the set by id, cid, model object with id or cid
+	    // properties, or an attributes object that is transformed through modelId.
 	    get: function(obj) {
 	      if (obj == null) return void 0;
-	      return this._byId[obj] || this._byId[obj.id] || this._byId[obj.cid];
+	      return this._byId[obj] ||
+	        this._byId[this.modelId(obj.attributes || obj)] ||
+	        obj.cid && this._byId[obj.cid];
+	    },
+
+	    // Returns `true` if the model is in the collection.
+	    has: function(obj) {
+	      return this.get(obj) != null;
 	    },
 
 	    // Get the model at the given index.
 	    at: function(index) {
+	      if (index < 0) index += this.length;
 	      return this.models[index];
 	    },
 
 	    // Return models with matching attributes. Useful for simple cases of
 	    // `filter`.
 	    where: function(attrs, first) {
-	      if (_.isEmpty(attrs)) return first ? void 0 : [];
-	      return this[first ? 'find' : 'filter'](function(model) {
-	        for (var key in attrs) {
-	          if (attrs[key] !== model.get(key)) return false;
-	        }
-	        return true;
-	      });
+	      return this[first ? 'find' : 'filter'](attrs);
 	    },
 
 	    // Return the first model with matching attributes. Useful for simple cases
@@ -3579,37 +3709,39 @@
 	    // normal circumstances, as the set will maintain sort order as each item
 	    // is added.
 	    sort: function(options) {
-	      if (!this.comparator) throw new Error('Cannot sort a set without a comparator');
+	      var comparator = this.comparator;
+	      if (!comparator) throw new Error('Cannot sort a set without a comparator');
 	      options || (options = {});
 
-	      // Run sort based on type of `comparator`.
-	      if (_.isString(this.comparator) || this.comparator.length === 1) {
-	        this.models = this.sortBy(this.comparator, this);
-	      } else {
-	        this.models.sort(_.bind(this.comparator, this));
-	      }
+	      var length = comparator.length;
+	      if (_.isFunction(comparator)) comparator = _.bind(comparator, this);
 
+	      // Run sort based on type of `comparator`.
+	      if (length === 1 || _.isString(comparator)) {
+	        this.models = this.sortBy(comparator);
+	      } else {
+	        this.models.sort(comparator);
+	      }
 	      if (!options.silent) this.trigger('sort', this, options);
 	      return this;
 	    },
 
 	    // Pluck an attribute from each model in the collection.
 	    pluck: function(attr) {
-	      return _.invoke(this.models, 'get', attr);
+	      return this.map(attr + '');
 	    },
 
 	    // Fetch the default set of models for this collection, resetting the
 	    // collection when they arrive. If `reset: true` is passed, the response
 	    // data will be passed through the `reset` method instead of `set`.
 	    fetch: function(options) {
-	      options = options ? _.clone(options) : {};
-	      if (options.parse === void 0) options.parse = true;
+	      options = _.extend({parse: true}, options);
 	      var success = options.success;
 	      var collection = this;
 	      options.success = function(resp) {
 	        var method = options.reset ? 'reset' : 'set';
 	        collection[method](resp, options);
-	        if (success) success(collection, resp, options);
+	        if (success) success.call(options.context, collection, resp, options);
 	        collection.trigger('sync', collection, resp, options);
 	      };
 	      wrapError(this, options);
@@ -3621,13 +3753,15 @@
 	    // wait for the server to agree.
 	    create: function(model, options) {
 	      options = options ? _.clone(options) : {};
-	      if (!(model = this._prepareModel(model, options))) return false;
-	      if (!options.wait) this.add(model, options);
+	      var wait = options.wait;
+	      model = this._prepareModel(model, options);
+	      if (!model) return false;
+	      if (!wait) this.add(model, options);
 	      var collection = this;
 	      var success = options.success;
-	      options.success = function(model, resp) {
-	        if (options.wait) collection.add(model, options);
-	        if (success) success(model, resp, options);
+	      options.success = function(m, resp, callbackOpts) {
+	        if (wait) collection.add(m, callbackOpts);
+	        if (success) success.call(callbackOpts.context, m, resp, callbackOpts);
 	      };
 	      model.save(null, options);
 	      return model;
@@ -3641,7 +3775,15 @@
 
 	    // Create a new collection with an identical list of models as this one.
 	    clone: function() {
-	      return new this.constructor(this.models);
+	      return new this.constructor(this.models, {
+	        model: this.model,
+	        comparator: this.comparator
+	      });
+	    },
+
+	    // Define how to uniquely identify models in the collection.
+	    modelId: function(attrs) {
+	      return attrs[this.model.prototype.idAttribute || 'id'];
 	    },
 
 	    // Private method to reset all internal state. Called when the collection
@@ -3655,7 +3797,10 @@
 	    // Prepare a hash of attributes (or other model) to be added to this
 	    // collection.
 	    _prepareModel: function(attrs, options) {
-	      if (attrs instanceof Model) return attrs;
+	      if (this._isModel(attrs)) {
+	        if (!attrs.collection) attrs.collection = this;
+	        return attrs;
+	      }
 	      options = options ? _.clone(options) : {};
 	      options.collection = this;
 	      var model = new this.model(attrs, options);
@@ -3664,16 +3809,53 @@
 	      return false;
 	    },
 
+	    // Internal method called by both remove and set.
+	    _removeModels: function(models, options) {
+	      var removed = [];
+	      for (var i = 0; i < models.length; i++) {
+	        var model = this.get(models[i]);
+	        if (!model) continue;
+
+	        var index = this.indexOf(model);
+	        this.models.splice(index, 1);
+	        this.length--;
+
+	        // Remove references before triggering 'remove' event to prevent an
+	        // infinite loop. #3693
+	        delete this._byId[model.cid];
+	        var id = this.modelId(model.attributes);
+	        if (id != null) delete this._byId[id];
+
+	        if (!options.silent) {
+	          options.index = index;
+	          model.trigger('remove', model, this, options);
+	        }
+
+	        removed.push(model);
+	        this._removeReference(model, options);
+	      }
+	      return removed;
+	    },
+
+	    // Method for checking whether an object should be considered a model for
+	    // the purposes of adding to the collection.
+	    _isModel: function(model) {
+	      return model instanceof Model;
+	    },
+
 	    // Internal method to create a model's ties to a collection.
 	    _addReference: function(model, options) {
 	      this._byId[model.cid] = model;
-	      if (model.id != null) this._byId[model.id] = model;
-	      if (!model.collection) model.collection = this;
+	      var id = this.modelId(model.attributes);
+	      if (id != null) this._byId[id] = model;
 	      model.on('all', this._onModelEvent, this);
 	    },
 
 	    // Internal method to sever a model's ties to a collection.
 	    _removeReference: function(model, options) {
+	      delete this._byId[model.cid];
+	      var id = this.modelId(model.attributes);
+	      if (id != null) delete this._byId[id];
 	      if (this === model.collection) delete model.collection;
 	      model.off('all', this._onModelEvent, this);
 	    },
@@ -3683,11 +3865,17 @@
 	    // events simply proxy through. "add" and "remove" events that originate
 	    // in other collections are ignored.
 	    _onModelEvent: function(event, model, collection, options) {
-	      if ((event === 'add' || event === 'remove') && collection !== this) return;
-	      if (event === 'destroy') this.remove(model, options);
-	      if (model && event === 'change:' + model.idAttribute) {
-	        delete this._byId[model.previous(model.idAttribute)];
-	        if (model.id != null) this._byId[model.id] = model;
+	      if (model) {
+	        if ((event === 'add' || event === 'remove') && collection !== this) return;
+	        if (event === 'destroy') this.remove(model, options);
+	        if (event === 'change') {
+	          var prevId = this.modelId(model.previousAttributes());
+	          var id = this.modelId(model.attributes);
+	          if (prevId !== id) {
+	            if (prevId != null) delete this._byId[prevId];
+	            if (id != null) this._byId[id] = model;
+	          }
+	        }
 	      }
 	      this.trigger.apply(this, arguments);
 	    }
@@ -3697,34 +3885,17 @@
 	  // Underscore methods that we want to implement on the Collection.
 	  // 90% of the core usefulness of Backbone Collections is actually implemented
 	  // right here:
-	  var methods = ['forEach', 'each', 'map', 'collect', 'reduce', 'foldl',
-	    'inject', 'reduceRight', 'foldr', 'find', 'detect', 'filter', 'select',
-	    'reject', 'every', 'all', 'some', 'any', 'include', 'contains', 'invoke',
-	    'max', 'min', 'toArray', 'size', 'first', 'head', 'take', 'initial', 'rest',
-	    'tail', 'drop', 'last', 'without', 'difference', 'indexOf', 'shuffle',
-	    'lastIndexOf', 'isEmpty', 'chain', 'sample'];
+	  var collectionMethods = {forEach: 3, each: 3, map: 3, collect: 3, reduce: 0,
+	      foldl: 0, inject: 0, reduceRight: 0, foldr: 0, find: 3, detect: 3, filter: 3,
+	      select: 3, reject: 3, every: 3, all: 3, some: 3, any: 3, include: 3, includes: 3,
+	      contains: 3, invoke: 0, max: 3, min: 3, toArray: 1, size: 1, first: 3,
+	      head: 3, take: 3, initial: 3, rest: 3, tail: 3, drop: 3, last: 3,
+	      without: 0, difference: 0, indexOf: 3, shuffle: 1, lastIndexOf: 3,
+	      isEmpty: 1, chain: 1, sample: 3, partition: 3, groupBy: 3, countBy: 3,
+	      sortBy: 3, indexBy: 3, findIndex: 3, findLastIndex: 3};
 
 	  // Mix in each Underscore method as a proxy to `Collection#models`.
-	  _.each(methods, function(method) {
-	    Collection.prototype[method] = function() {
-	      var args = slice.call(arguments);
-	      args.unshift(this.models);
-	      return _[method].apply(_, args);
-	    };
-	  });
-
-	  // Underscore methods that take a property name as an argument.
-	  var attributeMethods = ['groupBy', 'countBy', 'sortBy', 'indexBy'];
-
-	  // Use attributes instead of properties.
-	  _.each(attributeMethods, function(method) {
-	    Collection.prototype[method] = function(value, context) {
-	      var iterator = _.isFunction(value) ? value : function(model) {
-	        return model.get(value);
-	      };
-	      return _[method](this.models, iterator, context);
-	    };
-	  });
+	  addUnderscoreMethods(Collection, collectionMethods, 'models');
 
 	  // Backbone.View
 	  // -------------
@@ -3741,17 +3912,15 @@
 	  // if an existing element is not provided...
 	  var View = Backbone.View = function(options) {
 	    this.cid = _.uniqueId('view');
-	    options || (options = {});
 	    _.extend(this, _.pick(options, viewOptions));
 	    this._ensureElement();
 	    this.initialize.apply(this, arguments);
-	    this.delegateEvents();
 	  };
 
 	  // Cached regex to split keys for `delegate`.
 	  var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
-	  // List of view options to be merged as properties.
+	  // List of view options to be set as properties.
 	  var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'events'];
 
 	  // Set up all inheritable **Backbone.View** properties and methods.
@@ -3780,19 +3949,35 @@
 	    // Remove this view by taking the element out of the DOM, and removing any
 	    // applicable Backbone.Events listeners.
 	    remove: function() {
-	      this.$el.remove();
+	      this._removeElement();
 	      this.stopListening();
 	      return this;
 	    },
 
-	    // Change the view's element (`this.el` property), including event
-	    // re-delegation.
-	    setElement: function(element, delegate) {
-	      if (this.$el) this.undelegateEvents();
-	      this.$el = element instanceof Backbone.$ ? element : Backbone.$(element);
-	      this.el = this.$el[0];
-	      if (delegate !== false) this.delegateEvents();
+	    // Remove this view's element from the document and all event listeners
+	    // attached to it. Exposed for subclasses using an alternative DOM
+	    // manipulation API.
+	    _removeElement: function() {
+	      this.$el.remove();
+	    },
+
+	    // Change the view's element (`this.el` property) and re-delegate the
+	    // view's events on the new element.
+	    setElement: function(element) {
+	      this.undelegateEvents();
+	      this._setElement(element);
+	      this.delegateEvents();
 	      return this;
+	    },
+
+	    // Creates the `this.el` and `this.$el` references for this view using the
+	    // given `el`. `el` can be a CSS selector or an HTML string, a jQuery
+	    // context or an element. Subclasses can override this to utilize an
+	    // alternative DOM manipulation API and are only required to set the
+	    // `this.el` property.
+	    _setElement: function(el) {
+	      this.$el = el instanceof Backbone.$ ? el : Backbone.$(el);
+	      this.el = this.$el[0];
 	    },
 
 	    // Set callbacks, where `this.events` is a hash of
@@ -3808,35 +3993,47 @@
 	    // pairs. Callbacks will be bound to the view, with `this` set properly.
 	    // Uses event delegation for efficiency.
 	    // Omitting the selector binds the event to `this.el`.
-	    // This only works for delegate-able events: not `focus`, `blur`, and
-	    // not `change`, `submit`, and `reset` in Internet Explorer.
 	    delegateEvents: function(events) {
-	      if (!(events || (events = _.result(this, 'events')))) return this;
+	      events || (events = _.result(this, 'events'));
+	      if (!events) return this;
 	      this.undelegateEvents();
 	      for (var key in events) {
 	        var method = events[key];
-	        if (!_.isFunction(method)) method = this[events[key]];
+	        if (!_.isFunction(method)) method = this[method];
 	        if (!method) continue;
-
 	        var match = key.match(delegateEventSplitter);
-	        var eventName = match[1], selector = match[2];
-	        method = _.bind(method, this);
-	        eventName += '.delegateEvents' + this.cid;
-	        if (selector === '') {
-	          this.$el.on(eventName, method);
-	        } else {
-	          this.$el.on(eventName, selector, method);
-	        }
+	        this.delegate(match[1], match[2], _.bind(method, this));
 	      }
 	      return this;
 	    },
 
-	    // Clears all callbacks previously bound to the view with `delegateEvents`.
+	    // Add a single event listener to the view's element (or a child element
+	    // using `selector`). This only works for delegate-able events: not `focus`,
+	    // `blur`, and not `change`, `submit`, and `reset` in Internet Explorer.
+	    delegate: function(eventName, selector, listener) {
+	      this.$el.on(eventName + '.delegateEvents' + this.cid, selector, listener);
+	      return this;
+	    },
+
+	    // Clears all callbacks previously bound to the view by `delegateEvents`.
 	    // You usually don't need to use this, but may wish to if you have multiple
 	    // Backbone views attached to the same DOM element.
 	    undelegateEvents: function() {
-	      this.$el.off('.delegateEvents' + this.cid);
+	      if (this.$el) this.$el.off('.delegateEvents' + this.cid);
 	      return this;
+	    },
+
+	    // A finer-grained `undelegateEvents` for removing a single delegated event.
+	    // `selector` and `listener` are both optional.
+	    undelegate: function(eventName, selector, listener) {
+	      this.$el.off(eventName + '.delegateEvents' + this.cid, selector, listener);
+	      return this;
+	    },
+
+	    // Produces a DOM element to be assigned to your view. Exposed for
+	    // subclasses using an alternative DOM manipulation API.
+	    _createElement: function(tagName) {
+	      return document.createElement(tagName);
 	    },
 
 	    // Ensure that the View has a DOM element to render into.
@@ -3848,11 +4045,17 @@
 	        var attrs = _.extend({}, _.result(this, 'attributes'));
 	        if (this.id) attrs.id = _.result(this, 'id');
 	        if (this.className) attrs['class'] = _.result(this, 'className');
-	        var $el = Backbone.$('<' + _.result(this, 'tagName') + '>').attr(attrs);
-	        this.setElement($el, false);
+	        this.setElement(this._createElement(_.result(this, 'tagName')));
+	        this._setAttributes(attrs);
 	      } else {
-	        this.setElement(_.result(this, 'el'), false);
+	        this.setElement(_.result(this, 'el'));
 	      }
+	    },
+
+	    // Set attributes from a hash on this view's element.  Exposed for
+	    // subclasses using an alternative DOM manipulation API.
+	    _setAttributes: function(attributes) {
+	      this.$el.attr(attributes);
 	    }
 
 	  });
@@ -3921,14 +4124,13 @@
 	      params.processData = false;
 	    }
 
-	    // If we're sending a `PATCH` request, and we're in an old Internet Explorer
-	    // that still has ActiveX enabled by default, override jQuery to use that
-	    // for XHR instead. Remove this line when jQuery supports `PATCH` on IE8.
-	    if (params.type === 'PATCH' && noXhrPatch) {
-	      params.xhr = function() {
-	        return new ActiveXObject("Microsoft.XMLHTTP");
-	      };
-	    }
+	    // Pass along `textStatus` and `errorThrown` from jQuery.
+	    var error = options.error;
+	    options.error = function(xhr, textStatus, errorThrown) {
+	      options.textStatus = textStatus;
+	      options.errorThrown = errorThrown;
+	      if (error) error.call(options.context, xhr, textStatus, errorThrown);
+	    };
 
 	    // Make the request, allowing the user to override any Ajax options.
 	    var xhr = options.xhr = Backbone.ajax(_.extend(params, options));
@@ -3936,17 +4138,13 @@
 	    return xhr;
 	  };
 
-	  var noXhrPatch =
-	    typeof window !== 'undefined' && !!window.ActiveXObject &&
-	      !(window.XMLHttpRequest && (new XMLHttpRequest).dispatchEvent);
-
 	  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
 	  var methodMap = {
 	    'create': 'POST',
 	    'update': 'PUT',
-	    'patch':  'PATCH',
+	    'patch': 'PATCH',
 	    'delete': 'DELETE',
-	    'read':   'GET'
+	    'read': 'GET'
 	  };
 
 	  // Set the default implementation of `Backbone.ajax` to proxy through to `$`.
@@ -3997,17 +4195,18 @@
 	      var router = this;
 	      Backbone.history.route(route, function(fragment) {
 	        var args = router._extractParameters(route, fragment);
-	        router.execute(callback, args);
-	        router.trigger.apply(router, ['route:' + name].concat(args));
-	        router.trigger('route', name, args);
-	        Backbone.history.trigger('route', router, name, args);
+	        if (router.execute(callback, args, name) !== false) {
+	          router.trigger.apply(router, ['route:' + name].concat(args));
+	          router.trigger('route', name, args);
+	          Backbone.history.trigger('route', router, name, args);
+	        }
 	      });
 	      return this;
 	    },
 
 	    // Execute a route handler with the provided parameters.  This is an
 	    // excellent place to do pre-route setup or post-route cleanup.
-	    execute: function(callback, args) {
+	    execute: function(callback, args, name) {
 	      if (callback) callback.apply(this, args);
 	    },
 
@@ -4065,7 +4264,7 @@
 	  // falls back to polling.
 	  var History = Backbone.History = function() {
 	    this.handlers = [];
-	    _.bindAll(this, 'checkUrl');
+	    this.checkUrl = _.bind(this.checkUrl, this);
 
 	    // Ensure that `History` can be used outside of the browser.
 	    if (typeof window !== 'undefined') {
@@ -4079,12 +4278,6 @@
 
 	  // Cached regex for stripping leading and trailing slashes.
 	  var rootStripper = /^\/+|\/+$/g;
-
-	  // Cached regex for detecting MSIE.
-	  var isExplorer = /msie [\w.]+/;
-
-	  // Cached regex for removing a trailing slash.
-	  var trailingSlash = /\/$/;
 
 	  // Cached regex for stripping urls of hash.
 	  var pathStripper = /#.*$/;
@@ -4101,7 +4294,29 @@
 
 	    // Are we at the app root?
 	    atRoot: function() {
-	      return this.location.pathname.replace(/[^\/]$/, '$&/') === this.root;
+	      var path = this.location.pathname.replace(/[^\/]$/, '$&/');
+	      return path === this.root && !this.getSearch();
+	    },
+
+	    // Does the pathname match the root?
+	    matchRoot: function() {
+	      var path = this.decodeFragment(this.location.pathname);
+	      var rootPath = path.slice(0, this.root.length - 1) + '/';
+	      return rootPath === this.root;
+	    },
+
+	    // Unicode characters in `location.pathname` are percent encoded so they're
+	    // decoded for comparison. `%25` should not be decoded since it may be part
+	    // of an encoded parameter.
+	    decodeFragment: function(fragment) {
+	      return decodeURI(fragment.replace(/%25/g, '%2525'));
+	    },
+
+	    // In IE6, the hash fragment and search params are incorrect if the
+	    // fragment contains `?`.
+	    getSearch: function() {
+	      var match = this.location.href.replace(/#.*/, '').match(/\?.+/);
+	      return match ? match[0] : '';
 	    },
 
 	    // Gets the true hash value. Cannot use location.hash directly due to bug
@@ -4111,14 +4326,19 @@
 	      return match ? match[1] : '';
 	    },
 
-	    // Get the cross-browser normalized URL fragment, either from the URL,
-	    // the hash, or the override.
-	    getFragment: function(fragment, forcePushState) {
+	    // Get the pathname and search params, without the root.
+	    getPath: function() {
+	      var path = this.decodeFragment(
+	        this.location.pathname + this.getSearch()
+	      ).slice(this.root.length - 1);
+	      return path.charAt(0) === '/' ? path.slice(1) : path;
+	    },
+
+	    // Get the cross-browser normalized URL fragment from the path or hash.
+	    getFragment: function(fragment) {
 	      if (fragment == null) {
-	        if (this._hasPushState || !this._wantsHashChange || forcePushState) {
-	          fragment = decodeURI(this.location.pathname + this.location.search);
-	          var root = this.root.replace(trailingSlash, '');
-	          if (!fragment.indexOf(root)) fragment = fragment.slice(root.length);
+	        if (this._usePushState || !this._wantsHashChange) {
+	          fragment = this.getPath();
 	        } else {
 	          fragment = this.getHash();
 	        }
@@ -4129,7 +4349,7 @@
 	    // Start the hash change handling, returning `true` if the current URL matches
 	    // an existing route, and `false` otherwise.
 	    start: function(options) {
-	      if (History.started) throw new Error("Backbone.history has already been started");
+	      if (History.started) throw new Error('Backbone.history has already been started');
 	      History.started = true;
 
 	      // Figure out the initial configuration. Do we need an iframe?
@@ -4137,35 +4357,15 @@
 	      this.options          = _.extend({root: '/'}, this.options, options);
 	      this.root             = this.options.root;
 	      this._wantsHashChange = this.options.hashChange !== false;
+	      this._hasHashChange   = 'onhashchange' in window && (document.documentMode === void 0 || document.documentMode > 7);
+	      this._useHashChange   = this._wantsHashChange && this._hasHashChange;
 	      this._wantsPushState  = !!this.options.pushState;
-	      this._hasPushState    = !!(this.options.pushState && this.history && this.history.pushState);
-	      var fragment          = this.getFragment();
-	      var docMode           = document.documentMode;
-	      var oldIE             = (isExplorer.exec(navigator.userAgent.toLowerCase()) && (!docMode || docMode <= 7));
+	      this._hasPushState    = !!(this.history && this.history.pushState);
+	      this._usePushState    = this._wantsPushState && this._hasPushState;
+	      this.fragment         = this.getFragment();
 
 	      // Normalize root to always include a leading and trailing slash.
 	      this.root = ('/' + this.root + '/').replace(rootStripper, '/');
-
-	      if (oldIE && this._wantsHashChange) {
-	        var frame = Backbone.$('<iframe src="javascript:0" tabindex="-1">');
-	        this.iframe = frame.hide().appendTo('body')[0].contentWindow;
-	        this.navigate(fragment);
-	      }
-
-	      // Depending on whether we're using pushState or hashes, and whether
-	      // 'onhashchange' is supported, determine how we check the URL state.
-	      if (this._hasPushState) {
-	        Backbone.$(window).on('popstate', this.checkUrl);
-	      } else if (this._wantsHashChange && ('onhashchange' in window) && !oldIE) {
-	        Backbone.$(window).on('hashchange', this.checkUrl);
-	      } else if (this._wantsHashChange) {
-	        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
-	      }
-
-	      // Determine if we need to change the base url, for a pushState link
-	      // opened by a non-pushState browser.
-	      this.fragment = fragment;
-	      var loc = this.location;
 
 	      // Transition from hashChange to pushState or vice versa if both are
 	      // requested.
@@ -4174,18 +4374,48 @@
 	        // If we've started off with a route from a `pushState`-enabled
 	        // browser, but we're currently in a browser that doesn't support it...
 	        if (!this._hasPushState && !this.atRoot()) {
-	          this.fragment = this.getFragment(null, true);
-	          this.location.replace(this.root + '#' + this.fragment);
+	          var rootPath = this.root.slice(0, -1) || '/';
+	          this.location.replace(rootPath + '#' + this.getPath());
 	          // Return immediately as browser will do redirect to new url
 	          return true;
 
 	        // Or if we've started out with a hash-based route, but we're currently
 	        // in a browser where it could be `pushState`-based instead...
-	        } else if (this._hasPushState && this.atRoot() && loc.hash) {
-	          this.fragment = this.getHash().replace(routeStripper, '');
-	          this.history.replaceState({}, document.title, this.root + this.fragment);
+	        } else if (this._hasPushState && this.atRoot()) {
+	          this.navigate(this.getHash(), {replace: true});
 	        }
 
+	      }
+
+	      // Proxy an iframe to handle location events if the browser doesn't
+	      // support the `hashchange` event, HTML5 history, or the user wants
+	      // `hashChange` but not `pushState`.
+	      if (!this._hasHashChange && this._wantsHashChange && !this._usePushState) {
+	        this.iframe = document.createElement('iframe');
+	        this.iframe.src = 'javascript:0';
+	        this.iframe.style.display = 'none';
+	        this.iframe.tabIndex = -1;
+	        var body = document.body;
+	        // Using `appendChild` will throw on IE < 9 if the document is not ready.
+	        var iWindow = body.insertBefore(this.iframe, body.firstChild).contentWindow;
+	        iWindow.document.open();
+	        iWindow.document.close();
+	        iWindow.location.hash = '#' + this.fragment;
+	      }
+
+	      // Add a cross-platform `addEventListener` shim for older browsers.
+	      var addEventListener = window.addEventListener || function(eventName, listener) {
+	        return attachEvent('on' + eventName, listener);
+	      };
+
+	      // Depending on whether we're using pushState or hashes, and whether
+	      // 'onhashchange' is supported, determine how we check the URL state.
+	      if (this._usePushState) {
+	        addEventListener('popstate', this.checkUrl, false);
+	      } else if (this._useHashChange && !this.iframe) {
+	        addEventListener('hashchange', this.checkUrl, false);
+	      } else if (this._wantsHashChange) {
+	        this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
 	      }
 
 	      if (!this.options.silent) return this.loadUrl();
@@ -4194,7 +4424,25 @@
 	    // Disable Backbone.history, perhaps temporarily. Not useful in a real app,
 	    // but possibly useful for unit testing Routers.
 	    stop: function() {
-	      Backbone.$(window).off('popstate', this.checkUrl).off('hashchange', this.checkUrl);
+	      // Add a cross-platform `removeEventListener` shim for older browsers.
+	      var removeEventListener = window.removeEventListener || function(eventName, listener) {
+	        return detachEvent('on' + eventName, listener);
+	      };
+
+	      // Remove window listeners.
+	      if (this._usePushState) {
+	        removeEventListener('popstate', this.checkUrl, false);
+	      } else if (this._useHashChange && !this.iframe) {
+	        removeEventListener('hashchange', this.checkUrl, false);
+	      }
+
+	      // Clean up the iframe if necessary.
+	      if (this.iframe) {
+	        document.body.removeChild(this.iframe);
+	        this.iframe = null;
+	      }
+
+	      // Some environments will throw when clearing an undefined interval.
 	      if (this._checkUrlInterval) clearInterval(this._checkUrlInterval);
 	      History.started = false;
 	    },
@@ -4209,9 +4457,13 @@
 	    // calls `loadUrl`, normalizing across the hidden iframe.
 	    checkUrl: function(e) {
 	      var current = this.getFragment();
+
+	      // If the user pressed the back button, the iframe's hash will have
+	      // changed and we should use that for comparison.
 	      if (current === this.fragment && this.iframe) {
-	        current = this.getFragment(this.getHash(this.iframe));
+	        current = this.getHash(this.iframe.contentWindow);
 	      }
+
 	      if (current === this.fragment) return false;
 	      if (this.iframe) this.navigate(current);
 	      this.loadUrl();
@@ -4221,8 +4473,10 @@
 	    // match, returns `true`. If no defined routes matches the fragment,
 	    // returns `false`.
 	    loadUrl: function(fragment) {
+	      // If the root doesn't match, no routes can match either.
+	      if (!this.matchRoot()) return false;
 	      fragment = this.fragment = this.getFragment(fragment);
-	      return _.any(this.handlers, function(handler) {
+	      return _.some(this.handlers, function(handler) {
 	        if (handler.route.test(fragment)) {
 	          handler.callback(fragment);
 	          return true;
@@ -4241,31 +4495,42 @@
 	      if (!History.started) return false;
 	      if (!options || options === true) options = {trigger: !!options};
 
-	      var url = this.root + (fragment = this.getFragment(fragment || ''));
+	      // Normalize the fragment.
+	      fragment = this.getFragment(fragment || '');
 
-	      // Strip the hash for matching.
-	      fragment = fragment.replace(pathStripper, '');
+	      // Don't include a trailing slash on the root.
+	      var rootPath = this.root;
+	      if (fragment === '' || fragment.charAt(0) === '?') {
+	        rootPath = rootPath.slice(0, -1) || '/';
+	      }
+	      var url = rootPath + fragment;
+
+	      // Strip the hash and decode for matching.
+	      fragment = this.decodeFragment(fragment.replace(pathStripper, ''));
 
 	      if (this.fragment === fragment) return;
 	      this.fragment = fragment;
 
-	      // Don't include a trailing slash on the root.
-	      if (fragment === '' && url !== '/') url = url.slice(0, -1);
-
 	      // If pushState is available, we use it to set the fragment as a real URL.
-	      if (this._hasPushState) {
+	      if (this._usePushState) {
 	        this.history[options.replace ? 'replaceState' : 'pushState']({}, document.title, url);
 
 	      // If hash changes haven't been explicitly disabled, update the hash
 	      // fragment to store history.
 	      } else if (this._wantsHashChange) {
 	        this._updateHash(this.location, fragment, options.replace);
-	        if (this.iframe && (fragment !== this.getFragment(this.getHash(this.iframe)))) {
+	        if (this.iframe && fragment !== this.getHash(this.iframe.contentWindow)) {
+	          var iWindow = this.iframe.contentWindow;
+
 	          // Opening and closing the iframe tricks IE7 and earlier to push a
 	          // history entry on hash-tag change.  When replace is true, we don't
 	          // want this.
-	          if(!options.replace) this.iframe.document.open().close();
-	          this._updateHash(this.iframe.location, fragment, options.replace);
+	          if (!options.replace) {
+	            iWindow.document.open();
+	            iWindow.document.close();
+	          }
+
+	          this._updateHash(iWindow.location, fragment, options.replace);
 	        }
 
 	      // If you've told us that you explicitly don't want fallback hashchange-
@@ -4296,7 +4561,7 @@
 	  // Helpers
 	  // -------
 
-	  // Helper function to correctly set up the prototype chain, for subclasses.
+	  // Helper function to correctly set up the prototype chain for subclasses.
 	  // Similar to `goog.inherits`, but uses a hash of prototype properties and
 	  // class properties to be extended.
 	  var extend = function(protoProps, staticProps) {
@@ -4305,7 +4570,7 @@
 
 	    // The constructor function for the new subclass is either defined by you
 	    // (the "constructor" property in your `extend` definition), or defaulted
-	    // by us to simply call the parent's constructor.
+	    // by us to simply call the parent constructor.
 	    if (protoProps && _.has(protoProps, 'constructor')) {
 	      child = protoProps.constructor;
 	    } else {
@@ -4316,14 +4581,9 @@
 	    _.extend(child, parent, staticProps);
 
 	    // Set the prototype chain to inherit from `parent`, without calling
-	    // `parent`'s constructor function.
-	    var Surrogate = function(){ this.constructor = child; };
-	    Surrogate.prototype = parent.prototype;
-	    child.prototype = new Surrogate;
-
-	    // Add prototype properties (instance properties) to the subclass,
-	    // if supplied.
-	    if (protoProps) _.extend(child.prototype, protoProps);
+	    // `parent`'s constructor function and add the prototype properties.
+	    child.prototype = _.create(parent.prototype, protoProps);
+	    child.prototype.constructor = child;
 
 	    // Set a convenience property in case the parent's prototype is needed
 	    // later.
@@ -4344,15 +4604,15 @@
 	  var wrapError = function(model, options) {
 	    var error = options.error;
 	    options.error = function(resp) {
-	      if (error) error(model, resp, options);
+	      if (error) error.call(options.context, model, resp, options);
 	      model.trigger('error', model, resp, options);
 	    };
 	  };
 
 	  return Backbone;
+	});
 
-	}));
-
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
 /* 4 */
@@ -4409,11 +4669,13 @@
 	var ToolbarModel = __webpack_require__(16);
 	var DimensionModel = __webpack_require__(17);
 	var CoordRowModel = __webpack_require__(18);
-	var FocusModel = __webpack_require__(19);
-	var RenderModel = __webpack_require__(21);
-	var SmartRenderModel = __webpack_require__(24);
-	var SelectionModel = __webpack_require__(25);
-	var SummaryModel = __webpack_require__(26);
+	var CoordColumnModel = __webpack_require__(19);
+	var CoordConverterModel = __webpack_require__(20);
+	var FocusModel = __webpack_require__(21);
+	var RenderModel = __webpack_require__(23);
+	var SmartRenderModel = __webpack_require__(26);
+	var SelectionModel = __webpack_require__(27);
+	var SummaryModel = __webpack_require__(28);
 	var util = __webpack_require__(9);
 
 	var defaultOptions = {
@@ -4453,15 +4715,15 @@
 	        this.toolbarModel = this._createToolbarModel(options);
 	        this.dimensionModel = this._createDimensionModel(options, domState);
 	        this.coordRowModel = this._createCoordRowModel(domState);
+	        this.coordColumnModel = this._createCoordColumnModel();
 	        this.focusModel = this._createFocusModel(domState);
 	        this.renderModel = this._createRenderModel(options);
+	        this.coordConverterModel = this._createCoordConverterModel();
 	        this.selectionModel = this._createSelectionModel();
 	        this.summaryModel = this._createSummaryModel(options.footer);
 
 	        // todo: remove dependency
 	        this.focusModel.renderModel = this.renderModel;
-	        this.dimensionModel.renderModel = this.renderModel;
-	        this.dimensionModel.coordRowModel = this.coordRowModel;
 	    },
 
 	    /**
@@ -4557,10 +4819,39 @@
 	     * @private
 	     */
 	    _createCoordRowModel: function(domState) {
-	        return new CoordRowModel({
+	        return new CoordRowModel(null, {
 	            dataModel: this.dataModel,
 	            dimensionModel: this.dimensionModel,
 	            domState: domState
+	        });
+	    },
+
+	    /**
+	     * Creates an instance of coordColumn model and returns it
+	     * @returns {module:model/coordColumnModel}
+	     * @private
+	     */
+	    _createCoordColumnModel: function() {
+	        return new CoordColumnModel(null, {
+	            columnModel: this.columnModel,
+	            dimensionModel: this.dimensionModel
+	        });
+	    },
+
+	    /**
+	     * Creates an instance of coordConvert model and returns it
+	     * @returns {module:model/coordConverterModel}
+	     * @private
+	     */
+	    _createCoordConverterModel: function() {
+	        return new CoordConverterModel(null, {
+	            columnModel: this.columnModel,
+	            dataModel: this.dataModel,
+	            dimensionModel: this.dimensionModel,
+	            focusModel: this.focusModel,
+	            coordRowModel: this.coordRowModel,
+	            renderModel: this.renderModel,
+	            coordColumnModel: this.coordColumnModel
 	        });
 	    },
 
@@ -4590,6 +4881,7 @@
 	            columnModel: this.columnModel,
 	            dataModel: this.dataModel,
 	            dimensionModel: this.dimensionModel,
+	            coordConverterModel: this.coordConverterModel,
 	            renderModel: this.renderModel,
 	            focusModel: this.focusModel
 	        });
@@ -4613,7 +4905,8 @@
 	            dataModel: this.dataModel,
 	            dimensionModel: this.dimensionModel,
 	            focusModel: this.focusModel,
-	            coordRowModel: this.coordRowModel
+	            coordRowModel: this.coordRowModel,
+	            coordColumnModel: this.coordColumnModel
 	        };
 	        Constructor = options.notUseSmartRendering ? RenderModel : SmartRenderModel;
 
@@ -4678,6 +4971,7 @@
 
 	var Model = __webpack_require__(8);
 	var util = __webpack_require__(9);
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * 컬럼 모델 데이터를 다루는 객체
@@ -4859,9 +5153,9 @@
 
 	        whichSide = whichSide && whichSide.toUpperCase();
 
-	        if (whichSide === 'L') {
+	        if (whichSide === frameConst.L) {
 	            columnModelList = this.get('visibleList').slice(startIndex, visibleColumnFixCount);
-	        } else if (whichSide === 'R') {
+	        } else if (whichSide === frameConst.R) {
 	            columnModelList = this.get('visibleList').slice(visibleColumnFixCount);
 	        } else {
 	            columnModelList = this.get('visibleList').slice(startIndex);
@@ -5587,6 +5881,10 @@
 	        CELL_BORDER_WIDTH: 1,
 	        TABLE_BORDER_WIDTH: 1,
 	        RESIZE_HANDLE_WIDTH: 7
+	    },
+	    frame: {
+	        L: 'L',
+	        R: 'R'
 	    },
 	    attrName: {
 	        ROW_KEY: 'data-row-key',
@@ -6498,7 +6796,7 @@
 	        // 추가/ 수정된 행 추출
 	        _.each(current, function(row, rowKey) {
 	            var originalRow = original[rowKey],
-	                item = isOnlyRowKeyList ? row.rowKey : row;
+	                item = isOnlyRowKeyList ? row.rowKey : _.omit(row, filteringColumnList);
 
 	            if (!isOnlyChecked || (isOnlyChecked && this.get(rowKey).get('_button'))) {
 	                if (!originalRow) {
@@ -6511,7 +6809,7 @@
 
 	        //삭제된 행 추출
 	        _.each(original, function(obj, rowKey) {
-	            var item = isOnlyRowKeyList ? obj.rowKey : obj;
+	            var item = isOnlyRowKeyList ? obj.rowKey : _.omit(obj, filteringColumnList);
 	            if (!current[rowKey]) {
 	                result.deleteList.push(item);
 	            }
@@ -7812,22 +8110,19 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview 크기에 관련된 데이터를 다루는 모델
+	 * @fileoverview module:model/dimension
 	 * @author NHN Ent. FE Development Team
 	 */
 	'use strict';
 
-	var _ = __webpack_require__(1);
-
 	var Model = __webpack_require__(8);
-	var util = __webpack_require__(9);
 	var dimensionConstMap = __webpack_require__(10).dimension;
 
 	var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
 	var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
 
 	/**
-	 * 크기 관련 데이터 저장
+	 * Manage values about dimension (layout)
 	 * @module model/dimension
 	 * @param {Object} attrs - Attributes
 	 * @param {Object} options - Options
@@ -7838,30 +8133,13 @@
 	    initialize: function(attrs, options) {
 	        Model.prototype.initialize.apply(this, arguments);
 
-	        /**
-	         * An array of the fixed flags of the columns
-	         * @private
-	         * @type {boolean[]}
-	         */
-	        this._columnWidthFixedFlags = null;
-
-	        /**
-	         * An array of the minimum width of the columns
-	         * @private
-	         * @type {number[]}
-	         */
-	        this._minColumnWidthList = null;
-
 	        this.columnModel = options.columnModel;
 	        this.dataModel = options.dataModel;
 	        this.domState = options.domState;
 
-	        this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
-	        this.on('change:width', this._onWidthChange, this);
 	        this.on('change:isFixedHeight', this._resetSyncHeightHandler);
 
 	        this._resetSyncHeightHandler();
-	        this.resetColumnWidths();
 	    },
 
 	    defaults: {
@@ -7884,7 +8162,6 @@
 
 	        rsideWidth: 0,
 	        lsideWidth: 0,
-	        columnWidthList: [],
 
 	        minimumColumnWidth: 0,
 	        scrollBarSize: 17,
@@ -7892,21 +8169,6 @@
 	        scrollY: true,
 	        fitToParentHeight: false,
 	        isFixedHeight: false
-	    },
-
-	    /**
-	     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
-	     * @param {number} columnLength - 컬럼의 개수
-	     * @returns {number} 사용가능한 전체 셀의 넓이
-	     * @private
-	     */
-	    _getAvailableTotalWidth: function(columnLength) {
-	        var totalWidth = this.get('width');
-	        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
-	        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
-	        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
-
-	        return availableTotalWidth;
 	    },
 
 	    /**
@@ -7933,227 +8195,6 @@
 	    },
 
 	    /**
-	     * Makes all width of columns not less than minimumColumnWidth.
-	     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
-	     * @returns {number[]} - 수정된 새로운 넓이값 배열
-	     * @private
-	     */
-	    _applyMinimumColumnWidth: function(columnWidthList) {
-	        var minWidthList = this._minColumnWidthList;
-	        var appliedList = _.clone(columnWidthList);
-
-	        _.each(appliedList, function(width, index) {
-	            var minWidth = minWidthList[index];
-	            if (width < minWidth) {
-	                appliedList[index] = minWidth;
-	            }
-	        });
-
-	        return appliedList;
-	    },
-
-	    /**
-	     * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
-	     * @param {number[]} columnWidthList - An array of column widths
-	     * @returns {number[]} - A new array of column widths
-	     * @private
-	     */
-	    _fillEmptyColumnWidth: function(columnWidthList) {
-	        var totalWidth = this._getAvailableTotalWidth(columnWidthList.length);
-	        var remainTotalWidth = totalWidth - util.sum(columnWidthList);
-	        var emptyIndexes = [];
-
-	        _.each(columnWidthList, function(width, index) {
-	            if (!width) {
-	                emptyIndexes.push(index);
-	            }
-	        });
-
-	        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
-	    },
-
-	    /**
-	     * Adds extra widths of the column equally.
-	     * @param {number[]} columnWidthList - An array of column widths
-	     * @param {number} totalExtraWidth - Total extra width
-	     * @returns {number[]} - A new array of column widths
-	     * @private
-	     */
-	    _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
-	        var fixedFlags = this._columnWidthFixedFlags;
-	        var columnIndexes = [];
-
-	        _.each(fixedFlags, function(flag, index) {
-	            if (!flag) {
-	                columnIndexes.push(index);
-	            }
-	        });
-	        return this._distributeExtraWidthEqually(columnWidthList, totalExtraWidth, columnIndexes);
-	    },
-
-	    /**
-	     * Reduces excess widths of the column equally.
-	     * @param {number[]} columnWidthList - An array of column widths
-	     * @param {number} totalExcessWidth - Total excess width (negative number)
-	     * @returns {number[]} - A new array of column widths
-	     * @private
-	     */
-	    _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
-	        var minWidthList = this._minColumnWidthList;
-	        var fixedFlags = this._columnWidthFixedFlags;
-	        var availableList = [];
-
-	        _.each(columnWidthList, function(width, index) {
-	            if (!fixedFlags[index]) {
-	                availableList.push({
-	                    index: index,
-	                    width: width - minWidthList[index]
-	                });
-	            }
-	        });
-
-	        return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
-	    },
-
-	    /**
-	     * Reduce the (remaining) excess widths of the column.
-	     * This method will be called recursively by _reduceExcessColumnWidth.
-	     * @param {number[]} columnWidthList - An array of column Width
-	     * @param {number} totalRemainWidth - Remaining excess width (negative number)
-	     * @param {object[]} availableList - An array of infos about available column.
-	     *                                 Each item of the array has {index:number, width:number}.
-	     * @returns {number[]} - A new array of column widths
-	     * @private
-	     */
-	    _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
-	        var avgValue = Math.round(totalRemainWidth / availableList.length);
-	        var newAvailableList = [];
-	        var columnIndexes;
-
-	        _.each(availableList, function(available) {
-	            // note that totalRemainWidth and avgValue are negative number.
-	            if (available.width < Math.abs(avgValue)) {
-	                totalRemainWidth += available.width;
-	                columnWidthList[available.index] -= available.width;
-	            } else {
-	                newAvailableList.push(available);
-	            }
-	        });
-	        // call recursively until all available width are less than average
-	        if (availableList.length > newAvailableList.length) {
-	            return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
-	        }
-	        columnIndexes = _.pluck(availableList, 'index');
-
-	        return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
-	    },
-
-	    /**
-	     * Distributes the extra width equally to each column at specified indexes.
-	     * @param {number[]} columnWidthList - An array of column width
-	     * @param {number} extraWidth - Extra width
-	     * @param {number[]} columnIndexes - An array of indexes of target columns
-	     * @returns {number[]} - A new array of column widths
-	     * @private
-	     */
-	    _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
-	        var length = columnIndexes.length;
-	        var avgValue = Math.round(extraWidth / length);
-	        var errorValue = (avgValue * length) - extraWidth; // to correct total width
-	        var resultList = _.clone(columnWidthList);
-
-	        _.each(columnIndexes, function(columnIndex) {
-	            resultList[columnIndex] += avgValue;
-	        });
-
-	        if (columnIndexes.length) {
-	            resultList[_.last(columnIndexes)] -= errorValue;
-	        }
-
-	        return resultList;
-	    },
-
-	    /**
-	     * Adjust the column widths to make them fit into the dimension.
-	     * @param {number[]} columnWidthList - An array of column width
-	     * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
-	     *                                    the column widths will be reduced.
-	     * @returns {number[]} - A new array of column widths
-	     * @private
-	     */
-	    _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
-	        var columnLength = columnWidthList.length;
-	        var availableWidth = this._getAvailableTotalWidth(columnLength);
-	        var totalExtraWidth = availableWidth - util.sum(columnWidthList);
-	        var fixedCount = _.filter(this._columnWidthFixedFlags).length;
-	        var adjustedList;
-
-	        if (totalExtraWidth > 0) {
-	            if (columnLength > fixedCount) {
-	                adjustedList = this._addExtraColumnWidth(columnWidthList, totalExtraWidth);
-	            } else {
-	                // If all column has fixed width, add extra width to the last column.
-	                adjustedList = _.clone(columnWidthList);
-	                adjustedList[columnLength - 1] += totalExtraWidth;
-	            }
-	        } else if (fitToReducedTotal && totalExtraWidth < 0) {
-	            adjustedList = this._reduceExcessColumnWidth(columnWidthList, totalExtraWidth);
-	        } else {
-	            adjustedList = columnWidthList;
-	        }
-
-	        return adjustedList;
-	    },
-
-	    /**
-	     * Reset the width of each column by using initial setting of column models.
-	     */
-	    resetColumnWidths: function() {
-	        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
-	        var commonMinWidth = this.get('minimumColumnWidth');
-	        var widthList = [];
-	        var fixedFlags = [];
-	        var minWidthList = [];
-
-	        _.each(columnModelList, function(columnModel) {
-	            var width = columnModel.width > 0 ? columnModel.width : 0;
-	            var minWidth = Math.max(width, commonMinWidth);
-
-	            // Meta columns are not affected by common 'minimumColumnWidth' value
-	            if (util.isMetaColumn(columnModel.columnName)) {
-	                minWidth = width;
-	            }
-
-	            // If the width is not assigned (in other words, the width is not positive number),
-	            // set it to zero (no need to worry about minimum width at this point)
-	            // so that #_fillEmptyColumnWidth() can detect which one is empty.
-	            // After then, minimum width will be applied by #_applyMinimumColumnWidth().
-	            widthList.push(width ? minWidth : 0);
-	            minWidthList.push(minWidth);
-	            fixedFlags.push(!!columnModel.isFixedWidth);
-	        }, this);
-
-	        this._columnWidthFixedFlags = fixedFlags;
-	        this._minColumnWidthList = minWidthList;
-
-	        this._setColumnWidthVariables(this._calculateColumnWidth(widthList), true);
-	    },
-
-	    /**
-	     * calculate column width list
-	     * @param {Array.<Number>} widthList - widthList
-	     * @returns {Array.<Number>}
-	     * @private
-	     */
-	    _calculateColumnWidth: function(widthList) {
-	        widthList = this._fillEmptyColumnWidth(widthList);
-	        widthList = this._applyMinimumColumnWidth(widthList);
-	        widthList = this._adjustColumnWidthList(widthList);
-
-	        return widthList;
-	    },
-
-	    /**
 	     * Returns whether division border (between meta column and data column) is doubled or not.
 	     * Division border should be doubled only if visible fixed data column exists.
 	     * @returns {Boolean}
@@ -8163,222 +8204,25 @@
 	    },
 
 	    /**
-	     * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
-	     * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
-	     * @returns {Number} 해당 frame 의 너비
-	     */
-	    getFrameWidth: function(whichSide) {
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var columnWidthList = this.getColumnWidthList(whichSide);
-	        var frameWidth = this._getFrameWidth(columnWidthList);
-
-	        if (_.isUndefined(whichSide) && columnFixCount > 0) {
-	            frameWidth += CELL_BORDER_WIDTH;
-	        }
-
-	        return frameWidth;
-	    },
-
-	    /**
-	     * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
-	     * @param {Array} widthList 너비 리스트 배열
-	     * @returns {Number} 계산된 frame 너비값
+	     * 전체 넓이에서 스크롤바, border등의 넓이를 제외하고 실제 셀의 넓이에 사용되는 값만 반환한다.
+	     * @param {number} columnLength - 컬럼의 개수
+	     * @returns {number} 사용가능한 전체 셀의 넓이
 	     * @private
 	     */
-	    _getFrameWidth: function(widthList) {
-	        var frameWidth = 0;
-
-	        if (widthList.length) {
-	            frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
-	        }
-
-	        return frameWidth;
-	    },
-
-	    /**
-	     * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
-	     * @param {array} columnWidthList - 컬럼 넓이값 배열
-	     * @param {boolean} [isSaveWidthList] - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
-	     * @private
-	     */
-	    _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
+	    getAvailableTotalWidth: function(columnLength) {
 	        var totalWidth = this.get('width');
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var maxLeftSideWidth = this._getMaxLeftSideWidth();
-	        var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
+	        var borderCount = columnLength + 1 + (this.isDivisionBorderDoubled() ? 1 : 0);
+	        var totalBorderWidth = borderCount * CELL_BORDER_WIDTH;
+	        var availableTotalWidth = totalWidth - this.getScrollYWidth() - totalBorderWidth;
 
-	        lsideWidthList = columnWidthList.slice(0, columnFixCount);
-	        rsideWidthList = columnWidthList.slice(columnFixCount);
-
-	        lsideWidth = this._getFrameWidth(lsideWidthList);
-	        if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
-	            lsideWidthList = this._adjustLeftSideWidthList(lsideWidthList, maxLeftSideWidth);
-	            lsideWidth = this._getFrameWidth(lsideWidthList);
-	            columnWidthList = lsideWidthList.concat(rsideWidthList);
-	        }
-	        rsideWidth = totalWidth - lsideWidth;
-
-	        this.set({
-	            columnWidthList: columnWidthList,
-	            rsideWidth: rsideWidth,
-	            lsideWidth: lsideWidth
-	        });
-
-	        if (isSaveWidthList) {
-	            this.set('originalWidthList', _.clone(columnWidthList));
-	        }
-	        this.trigger('columnWidthChanged');
-	    },
-
-	    /**
-	     * 열 고정 영역의 minimum width 값을 구한다.
-	     * @returns {number} 열고정 영역의 최소 너비값.
-	     * @private
-	     */
-	    _getMinLeftSideWidth: function() {
-	        var minimumColumnWidth = this.get('minimumColumnWidth');
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var minWidth = 0;
-	        var borderWidth;
-
-	        if (columnFixCount) {
-	            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
-	            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
-	        }
-
-	        return minWidth;
-	    },
-
-	    /**
-	     * 열 고정 영역의 maximum width 값을 구한다.
-	     * @returns {number} 열고정 영역의 최대 너비값.
-	     * @private
-	     */
-	    _getMaxLeftSideWidth: function() {
-	        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
-
-	        if (maxWidth) {
-	            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
-	        }
-
-	        return maxWidth;
-	    },
-
-	    /**
-	     * Returns the horizontal position of the given column
-	     * @param {String} columnName - column name
-	     * @returns {{left: Number, right: Number}}
-	     * @private
-	     */
-	    _getCellHorizontalPosition: function(columnName) {
-	        var columnModel = this.columnModel;
-	        var metaColumnCount = columnModel.getVisibleMetaColumnCount();
-	        var columnWidthList = this.get('columnWidthList');
-	        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
-	        var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
-	        var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
-	        var left = 0;
-
-	        for (; idx < targetIdx; idx += 1) {
-	            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
-	        }
-
-	        return {
-	            left: left,
-	            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
-	        };
-	    },
-
-	    /**
-	     * Returns the vertical position of the given row
-	     * @param {Number} rowKey - row key
-	     * @param {Number} rowSpanCount - the count of rowspan
-	     * @returns {{top: Number, bottom: Number}}
-	     * @private
-	     */
-	    _getCellVerticalPosition: function(rowKey, rowSpanCount) {
-	        var firstIdx, lastIdx, top, bottom;
-	        var coordRowModel = this.coordRowModel;
-
-	        firstIdx = this.dataModel.indexOfRowKey(rowKey);
-	        lastIdx = firstIdx + rowSpanCount - 1;
-	        top = coordRowModel.getOffsetAt(firstIdx);
-	        bottom = coordRowModel.getOffsetAt(lastIdx) +
-	            coordRowModel.getHeightAt(lastIdx) + CELL_BORDER_WIDTH;
-
-	        return {
-	            top: top,
-	            bottom: bottom
-	        };
-	    },
-
-	    /**
-	     * Returns the count of rowspan of given cell
-	     * @param {Number} rowKey - row key
-	     * @param {String} columnName - column name
-	     * @returns {Number}
-	     * @private
-	     */
-	    _getRowSpanCount: function(rowKey, columnName) {
-	        var rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
-
-	        if (!rowSpanData.isMainRow) {
-	            rowKey = rowSpanData.mainRowKey;
-	            rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
-	        }
-
-	        return rowSpanData.count || 1;
-	    },
-
-	    /**
-	     * 계산한 cell 의 위치를 리턴한다.
-	     * @param {Number|String} rowKey - 데이터의 키값
-	     * @param {String} columnName - 칼럼명
-	     * @returns {{top: number, left: number, right: number, bottom: number}} - cell의 위치
-	     * @todo TC
-	     */
-	    getCellPosition: function(rowKey, columnName) {
-	        var rowSpanCount, vPos, hPos;
-
-	        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
-
-	        if (!this.dataModel.get(rowKey)) {
-	            return {};
-	        }
-
-	        rowSpanCount = this._getRowSpanCount(rowKey, columnName);
-	        vPos = this._getCellVerticalPosition(rowKey, rowSpanCount);
-	        hPos = this._getCellHorizontalPosition(columnName);
-
-	        return {
-	            top: vPos.top,
-	            bottom: vPos.bottom,
-	            left: hPos.left,
-	            right: hPos.right
-	        };
-	    },
-
-	    /**
-	     * Return scroll position from the received index
-	     * @param {Number|String} rowKey - Row-key of target cell
-	     * @param {String} columnName - Column name of target cell
-	     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
-	     */
-	    getScrollPosition: function(rowKey, columnName) {
-	        var isRsideColumn = !this.columnModel.isLside(columnName);
-	        var targetPosition = this.getCellPosition(rowKey, columnName);
-	        var bodySize = this._getBodySize();
-	        var scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
-
-	        return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+	        return availableTotalWidth;
 	    },
 
 	    /**
 	     * Calc body size of grid except scrollBar
 	     * @returns {{height: number, totalWidth: number, rsideWidth: number}} Body size
-	     * @private
 	     */
-	    _getBodySize: function() {
+	    getBodySize: function() {
 	        var lsideWidth = this.get('lsideWidth'),
 	            rsideWidth = this.get('rsideWidth') - this.getScrollYWidth(),
 	            height = this.get('bodyHeight') - this.getScrollXHeight();
@@ -8391,71 +8235,14 @@
 	    },
 
 	    /**
-	     * Judge scroll direction.
-	     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-	     * @param {boolean} isRsideColumn - Whether the target cell is in rside
-	     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-	     * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
-	     * @private
-	     */
-	    _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
-	        var renderModel = this.renderModel;
-	        var currentTop = renderModel.get('scrollTop');
-	        var currentLeft = renderModel.get('scrollLeft');
-	        var isUp, isDown, isLeft, isRight;
-
-	        isUp = targetPosition.top < currentTop;
-	        isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
-	        if (isRsideColumn) {
-	            isLeft = targetPosition.left < currentLeft;
-	            isRight = !isLeft && (targetPosition.right > (currentLeft + bodySize.rsideWidth - 1));
-	        } else {
-	            isLeft = isRight = false;
-	        }
-
-	        return {
-	            isUp: isUp,
-	            isDown: isDown,
-	            isLeft: isLeft,
-	            isRight: isRight
-	        };
-	    },
-
-	    /**
-	     * Make scroll position
-	     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
-	     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
-	     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
-	     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
-	     * @private
-	     */
-	    _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
-	        var pos = {};
-
-	        if (scrollDirection.isUp) {
-	            pos.scrollTop = targetPosition.top;
-	        } else if (scrollDirection.isDown) {
-	            pos.scrollTop = targetPosition.bottom - bodySize.height;
-	        }
-
-	        if (scrollDirection.isLeft) {
-	            pos.scrollLeft = targetPosition.left;
-	        } else if (scrollDirection.isRight) {
-	            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + TABLE_BORDER_WIDTH;
-	        }
-
-	        return pos;
-	    },
-
-	    /**
 	     * Calc and get overflow values from container position
 	     * @param {Number} pageX - Mouse X-position based on page
 	     * @param {Number} pageY - Mouse Y-position based on page
 	     * @returns {{x: number, y: number}} Mouse-overflow
 	     */
 	    getOverflowFromMousePosition: function(pageX, pageY) {
-	        var containerPos = this._rebasePositionToContainer(pageX, pageY);
-	        var bodySize = this._getBodySize();
+	        var containerPos = this.getPositionFromBodyArea(pageX, pageY);
+	        var bodySize = this.getBodySize();
 
 	        return this._judgeOverflow(containerPos, bodySize);
 	    },
@@ -8492,117 +8279,6 @@
 	    },
 
 	    /**
-	     * Get cell index from mouse position
-	     * @param {Number} pageX - Mouse X-position based on page
-	     * @param {Number} pageY - Mouse Y-position based on page
-	     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
-	     * @returns {{row: number, column: number}} Cell index
-	     */
-	    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
-	        var containerPos = this._rebasePositionToContainer(pageX, pageY);
-
-	        return {
-	            row: this._calcRowIndexFromPositionY(containerPos.y),
-	            column: this._calcColumnIndexFromPositionX(containerPos.x, withMeta)
-	        };
-	    },
-
-	    /**
-	     * Calc and get column index from Y-position based on the container
-	     * @param {number} containerY - X-position based on the container
-	     * @returns {number} Row index
-	     * @private
-	     */
-	    _calcRowIndexFromPositionY: function(containerY) {
-	        var cellY = containerY + this.renderModel.get('scrollTop');
-
-	        return this.coordRowModel.indexOf(cellY);
-	    },
-
-	    /**
-	     * Calc and get column index from X-position based on the container
-	     * @param {number} containerX - X-position based on the container
-	     * @param {boolean} withMeta - Whether the meta columns go with this calculation
-	     * @returns {number} Column index
-	     * @private
-	     */
-	    _calcColumnIndexFromPositionX: function(containerX, withMeta) {
-	        var columnWidthList = this.getColumnWidthList();
-	        var totalColumnWidth = this.getFrameWidth();
-	        var cellX = containerX;
-	        var isRsidePosition = containerX >= this.get('lsideWidth');
-	        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
-	        var columnIndex = 0;
-
-	        if (isRsidePosition) {
-	            cellX += this.renderModel.get('scrollLeft');
-	        }
-
-	        if (cellX >= totalColumnWidth) {
-	            columnIndex = columnWidthList.length - 1;
-	        } else {
-	            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
-	                width += CELL_BORDER_WIDTH;
-	                columnIndex = index;
-
-	                if (cellX > width) {
-	                    cellX -= width;
-	                } else {
-	                    return false;
-	                }
-	            });
-	        }
-
-	        return Math.max(0, columnIndex - adjustableIndex);
-	    },
-
-	    /**
-	     * 마우스 위치 정보에 해당하는 grid container 기준 pageX 와 pageY 를 반환한다.
-	     * @param {Number} pageX    마우스 x 좌표
-	     * @param {Number} pageY    마우스 y 좌표
-	     * @returns {{x: number, y: number}} 그리드 container 기준의 x, y 값
-	     * @private
-	     */
-	    _rebasePositionToContainer: function(pageX, pageY) {
-	        var offsetX = this.get('offsetLeft');
-	        var offsetY = this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
-	             + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
-
-	        return {
-	            x: pageX - offsetX,
-	            y: pageY - offsetY
-	        };
-	    },
-
-	    /**
-	     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
-	     * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
-	     * @param {Number} totalWidth   grid 전체 너비
-	     * @returns {Array} 열고정 영역의 너비 리스트
-	     * @private
-	     */
-	    _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
-	        var i = lsideWidthList.length - 1;
-	        var minimumColumnWidth = this.get('minimumColumnWidth');
-	        var currentWidth = this._getFrameWidth(lsideWidthList);
-	        var diff = currentWidth - totalWidth;
-	        var changedWidth;
-
-	        if (diff > 0) {
-	            while (i >= 0 && diff > 0) {
-	                changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
-	                diff -= lsideWidthList[i] - changedWidth;
-	                lsideWidthList[i] = changedWidth;
-	                i -= 1;
-	            }
-	        } else if (diff < 0) {
-	            lsideWidthList[i] += Math.abs(diff);
-	        }
-
-	        return lsideWidthList;
-	    },
-
-	    /**
 	     * Return height of X-scrollBar.
 	     * If no X-scrollBar, return 0
 	     * @returns {number} Height of X-scrollBar
@@ -8618,38 +8294,6 @@
 	     */
 	    getScrollYWidth: function() {
 	        return (this.get('scrollY') ? this.get('scrollBarSize') : 0);
-	    },
-
-	    /**
-	     * width 값 변경시 각 column 별 너비를 계산한다.
-	     * @private
-	     */
-	    _onWidthChange: function() {
-	        var widthList = this._adjustColumnWidthList(this.get('columnWidthList'), true);
-
-	        this._setColumnWidthVariables(widthList);
-	    },
-
-	    /**
-	     * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
-	     * @param {Number} index    너비를 변경할 컬럼의 인덱스
-	     * @param {Number} width    변경할 너비 pixel값
-	     */
-	    setColumnWidth: function(index, width) {
-	        var columnWidthList = this.get('columnWidthList');
-	        var fixedFlags = this._columnWidthFixedFlags;
-	        var minWidth = this._minColumnWidthList[index];
-	        var adjustedList;
-
-	        if (!fixedFlags[index] && columnWidthList[index]) {
-	            columnWidthList[index] = Math.max(width, minWidth);
-	            // makes width of the target column fixed temporarily
-	            // to not be influenced while adjusting column widths.
-	            fixedFlags[index] = true;
-	            adjustedList = this._adjustColumnWidthList(columnWidthList);
-	            fixedFlags[index] = false;
-	            this._setColumnWidthVariables(adjustedList);
-	        }
 	    },
 
 	    /**
@@ -8682,6 +8326,40 @@
 	     */
 	    _setHeight: function(height) {
 	        this.set('bodyHeight', Math.max(this._calcRealBodyHeight(height), this._getMinBodyHeight()));
+	    },
+
+	    /**
+	     * 열 고정 영역의 minimum width 값을 구한다.
+	     * @returns {number} 열고정 영역의 최소 너비값.
+	     * @private
+	     */
+	    _getMinLeftSideWidth: function() {
+	        var minimumColumnWidth = this.get('minimumColumnWidth');
+	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+	        var minWidth = 0;
+	        var borderWidth;
+
+	        if (columnFixCount) {
+	            borderWidth = (columnFixCount + 1) * CELL_BORDER_WIDTH;
+	            minWidth = borderWidth + (minimumColumnWidth * columnFixCount);
+	        }
+
+	        return minWidth;
+	    },
+
+	    /**
+	     * 열 고정 영역의 maximum width 값을 구한다.
+	     * @returns {number} 열고정 영역의 최대 너비값.
+	     * @private
+	     */
+	    getMaxLeftSideWidth: function() {
+	        var maxWidth = Math.ceil(this.get('width') * 0.9); // eslint-disable-line no-magic-number
+
+	        if (maxWidth) {
+	            maxWidth = Math.max(maxWidth, this._getMinLeftSideWidth());
+	        }
+
+	        return maxWidth;
 	    },
 
 	    /**
@@ -8726,42 +8404,6 @@
 	    },
 
 	    /**
-	     * 초기 너비로 돌린다.
-	     * @param {Number} index    너비를 변경할 컬럼의 인덱스
-	     */
-	    restoreColumnWidth: function(index) {
-	        var orgWidth = this.get('originalWidthList')[index];
-
-	        this.setColumnWidth(index, orgWidth);
-	    },
-
-	    /**
-	     * L side 와 R side 에 따른 columnWidthList 를 반환한다.
-	     * @param {String} [whichSide] 어느 영역인지 여부. 'L|R' 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
-	     * @returns {Array}  조회한 영역의 columnWidthList
-	     */
-	    getColumnWidthList: function(whichSide) {
-	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
-	        var columnWidthList = [];
-
-	        switch (whichSide) {
-	            case 'l':
-	            case 'L':
-	                columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
-	                break;
-	            case 'r':
-	            case 'R':
-	                columnWidthList = this.get('columnWidthList').slice(columnFixCount);
-	                break;
-	            default :
-	                columnWidthList = this.get('columnWidthList');
-	                break;
-	        }
-
-	        return columnWidthList;
-	    },
-
-	    /**
 	     * Set bodyHeight value based on the count of row.
 	     * (This method is temporary and required only until the displayRowCount option is removed)
 	     * @param {number} rowCount - row count
@@ -8774,6 +8416,32 @@
 	            isFixedHeight: true,
 	            bodyHeight: (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight
 	        });
+	    },
+
+	    /**
+	     * Returns the offset.top of body
+	     * @returns {number}
+	     */
+	    getBodyOffsetTop: function() {
+	        return this.get('offsetTop') + this.get('headerHeight') + this.get('toolbarHeight')
+	            + CELL_BORDER_WIDTH + TABLE_BORDER_WIDTH;
+	    },
+
+	    /**
+	     * Returns the position relative to the body-area.
+	     * @param {Number} pageX - x-pos relative to document
+	     * @param {Number} pageY - y-pos relative to document
+	     * @returns {{x: number, y: number}}
+	     * @private
+	     */
+	    getPositionFromBodyArea: function(pageX, pageY) {
+	        var bodyOffsetX = this.get('offsetLeft');
+	        var bodyOffsetY = this.getBodyOffsetTop();
+
+	        return {
+	            x: pageX - bodyOffsetX,
+	            y: pageY - bodyOffsetY
+	        };
 	    }
 	});
 
@@ -8795,12 +8463,13 @@
 
 	/**
 	 * @module model/coordRow
+	 * @param {Object} attrs - Attributes
 	 * @param {Object} options - Options
 	 * @extends module:base/model
 	 * @ignore
 	 */
 	var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
-	    initialize: function(options) {
+	    initialize: function(attrs, options) {
 	        this.dataModel = options.dataModel;
 	        this.dimensionModel = options.dimensionModel;
 	        this.domState = options.domState;
@@ -8960,6 +8629,744 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
+	 * @fileoverview Manage coordinates of rows
+	 * @author NHN Ent. FE Development Lab
+	 */
+	'use strict';
+
+	var Model = __webpack_require__(8);
+	var util = __webpack_require__(9);
+	var constMap = __webpack_require__(10);
+	var dimensionConst = constMap.dimension;
+	var frameConst = constMap.frame;
+
+	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
+
+	/**
+	 * @module model/coordColumn
+	 * @param {Object} attrs - Attributes
+	 * @param {Object} options - Options
+	 * @extends module:base/model
+	 * @ignore
+	 */
+	var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
+	    initialize: function(attrs, options) {
+	        this.dimensionModel = options.dimensionModel;
+	        this.columnModel = options.columnModel;
+
+	        /**
+	         * An array of the fixed flags of the columns
+	         * @private
+	         * @type {boolean[]}
+	         */
+	        this._columnWidthFixedFlags = null;
+
+	        /**
+	         * An array of the minimum width of the columns
+	         * @private
+	         * @type {number[]}
+	         */
+	        this._minColumnWidthList = null;
+
+	        /**
+	         * Whether the column width is modified by user.
+	         * @type {boolean}
+	         */
+	        this._isModified = false;
+
+	        this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
+	        this.listenTo(this.dimensionModel, 'change:width', this._onDimensionWidthChange);
+	        this.resetColumnWidths();
+	    },
+
+	    defaults: {
+	        columnWidthList: []
+	    },
+
+	    /**
+	     * Reset the width of each column by using initial setting of column models.
+	     */
+	    resetColumnWidths: function() {
+	        var columnModelList = this.columnModel.getVisibleColumnModelList(null, true);
+	        var commonMinWidth = this.dimensionModel.get('minimumColumnWidth');
+	        var widthList = [];
+	        var fixedFlags = [];
+	        var minWidthList = [];
+
+	        _.each(columnModelList, function(columnModel) {
+	            var width = columnModel.width > 0 ? columnModel.width : 0;
+	            var minWidth = Math.max(width, commonMinWidth);
+
+	            // Meta columns are not affected by common 'minimumColumnWidth' value
+	            if (util.isMetaColumn(columnModel.columnName)) {
+	                minWidth = width;
+	            }
+
+	            // If the width is not assigned (in other words, the width is not positive number),
+	            // set it to zero (no need to worry about minimum width at this point)
+	            // so that #_fillEmptyColumnWidth() can detect which one is empty.
+	            // After then, minimum width will be applied by #_applyMinimumColumnWidth().
+	            widthList.push(width ? minWidth : 0);
+	            minWidthList.push(minWidth);
+	            fixedFlags.push(!!columnModel.isFixedWidth);
+	        }, this);
+
+	        this._columnWidthFixedFlags = fixedFlags;
+	        this._minColumnWidthList = minWidthList;
+
+	        this._setColumnWidthVariables(this._calculateColumnWidth(widthList), true);
+	    },
+
+	    /**
+	     * columnWidthList 로 부터, lside 와 rside 의 전체 너비를 계산하여 저장한다.
+	     * @param {array} columnWidthList - 컬럼 넓이값 배열
+	     * @param {boolean} [isSaveWidthList] - 저장 여부. true이면 넓이값 배열을 originalWidthList로 저장한다.
+	     * @private
+	     */
+	    _setColumnWidthVariables: function(columnWidthList, isSaveWidthList) {
+	        var totalWidth = this.dimensionModel.get('width');
+	        var maxLeftSideWidth = this.dimensionModel.getMaxLeftSideWidth();
+	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+	        var rsideWidth, lsideWidth, lsideWidthList, rsideWidthList;
+
+	        lsideWidthList = columnWidthList.slice(0, columnFixCount);
+	        rsideWidthList = columnWidthList.slice(columnFixCount);
+
+	        lsideWidth = this._getFrameWidth(lsideWidthList);
+	        if (maxLeftSideWidth && maxLeftSideWidth < lsideWidth) {
+	            lsideWidthList = this._adjustLeftSideWidthList(lsideWidthList, maxLeftSideWidth);
+	            lsideWidth = this._getFrameWidth(lsideWidthList);
+	            columnWidthList = lsideWidthList.concat(rsideWidthList);
+	        }
+	        rsideWidth = totalWidth - lsideWidth;
+
+	        this.set({
+	            columnWidthList: columnWidthList
+	        });
+	        this.dimensionModel.set({
+	            rsideWidth: rsideWidth,
+	            lsideWidth: lsideWidth
+	        });
+
+	        if (isSaveWidthList) {
+	            this.set('originalWidthList', _.clone(columnWidthList));
+	        }
+	        this.trigger('columnWidthChanged');
+	    },
+
+	    /**
+	     * columnFixCount 가 적용되었을 때, window resize 시 left side 의 너비를 조정한다.
+	     * @param {Array} lsideWidthList    열고정 영역의 너비 리스트 배열
+	     * @param {Number} totalWidth   grid 전체 너비
+	     * @returns {Array} 열고정 영역의 너비 리스트
+	     * @private
+	     */
+	    _adjustLeftSideWidthList: function(lsideWidthList, totalWidth) {
+	        var i = lsideWidthList.length - 1;
+	        var minimumColumnWidth = this.dimensionModel.get('minimumColumnWidth');
+	        var currentWidth = this._getFrameWidth(lsideWidthList);
+	        var diff = currentWidth - totalWidth;
+	        var changedWidth;
+
+	        if (diff > 0) {
+	            while (i >= 0 && diff > 0) {
+	                changedWidth = Math.max(minimumColumnWidth, lsideWidthList[i] - diff);
+	                diff -= lsideWidthList[i] - changedWidth;
+	                lsideWidthList[i] = changedWidth;
+	                i -= 1;
+	            }
+	        } else if (diff < 0) {
+	            lsideWidthList[i] += Math.abs(diff);
+	        }
+
+	        return lsideWidthList;
+	    },
+
+	    /**
+	     * calculate column width list
+	     * @param {Array.<Number>} widthList - widthList
+	     * @returns {Array.<Number>}
+	     * @private
+	     */
+	    _calculateColumnWidth: function(widthList) {
+	        widthList = this._fillEmptyColumnWidth(widthList);
+	        widthList = this._applyMinimumColumnWidth(widthList);
+	        widthList = this._adjustColumnWidthList(widthList);
+
+	        return widthList;
+	    },
+
+	    /**
+	     * Sets the width of columns whose width is not assigned by distributing extra width to them equally.
+	     * @param {number[]} columnWidthList - An array of column widths
+	     * @returns {number[]} - A new array of column widths
+	     * @private
+	     */
+	    _fillEmptyColumnWidth: function(columnWidthList) {
+	        var totalWidth = this.dimensionModel.getAvailableTotalWidth(columnWidthList.length);
+	        var remainTotalWidth = totalWidth - util.sum(columnWidthList);
+	        var emptyIndexes = [];
+
+	        _.each(columnWidthList, function(width, index) {
+	            if (!width) {
+	                emptyIndexes.push(index);
+	            }
+	        });
+
+	        return this._distributeExtraWidthEqually(columnWidthList, remainTotalWidth, emptyIndexes);
+	    },
+
+	    /**
+	     * widthList 로부터 보더 값을 포함하여 계산한 frameWidth 를 구한다.
+	     * @param {Array} widthList 너비 리스트 배열
+	     * @returns {Number} 계산된 frame 너비값
+	     * @private
+	     */
+	    _getFrameWidth: function(widthList) {
+	        var frameWidth = 0;
+
+	        if (widthList.length) {
+	            frameWidth = util.sum(widthList) + ((widthList.length + 1) * CELL_BORDER_WIDTH);
+	        }
+
+	        return frameWidth;
+	    },
+
+	    /**
+	     * Adds extra widths of the column equally.
+	     * @param {number[]} columnWidthList - An array of column widths
+	     * @param {number} totalExtraWidth - Total extra width
+	     * @returns {number[]} - A new array of column widths
+	     * @private
+	     */
+	    _addExtraColumnWidth: function(columnWidthList, totalExtraWidth) {
+	        var fixedFlags = this._columnWidthFixedFlags;
+	        var columnIndexes = [];
+
+	        _.each(fixedFlags, function(flag, index) {
+	            if (!flag) {
+	                columnIndexes.push(index);
+	            }
+	        });
+	        return this._distributeExtraWidthEqually(columnWidthList, totalExtraWidth, columnIndexes);
+	    },
+
+	    /**
+	     * Reduces excess widths of the column equally.
+	     * @param {number[]} columnWidthList - An array of column widths
+	     * @param {number} totalExcessWidth - Total excess width (negative number)
+	     * @returns {number[]} - A new array of column widths
+	     * @private
+	     */
+	    _reduceExcessColumnWidth: function(columnWidthList, totalExcessWidth) {
+	        var minWidthList = this._minColumnWidthList;
+	        var fixedFlags = this._columnWidthFixedFlags;
+	        var availableList = [];
+
+	        _.each(columnWidthList, function(width, index) {
+	            if (!fixedFlags[index]) {
+	                availableList.push({
+	                    index: index,
+	                    width: width - minWidthList[index]
+	                });
+	            }
+	        });
+
+	        return this._reduceExcessColumnWidthSub(_.clone(columnWidthList), totalExcessWidth, availableList);
+	    },
+
+	    /**
+	     * Reduce the (remaining) excess widths of the column.
+	     * This method will be called recursively by _reduceExcessColumnWidth.
+	     * @param {number[]} columnWidthList - An array of column Width
+	     * @param {number} totalRemainWidth - Remaining excess width (negative number)
+	     * @param {object[]} availableList - An array of infos about available column.
+	     *                                 Each item of the array has {index:number, width:number}.
+	     * @returns {number[]} - A new array of column widths
+	     * @private
+	     */
+	    _reduceExcessColumnWidthSub: function(columnWidthList, totalRemainWidth, availableList) {
+	        var avgValue = Math.round(totalRemainWidth / availableList.length);
+	        var newAvailableList = [];
+	        var columnIndexes;
+
+	        _.each(availableList, function(available) {
+	            // note that totalRemainWidth and avgValue are negative number.
+	            if (available.width < Math.abs(avgValue)) {
+	                totalRemainWidth += available.width;
+	                columnWidthList[available.index] -= available.width;
+	            } else {
+	                newAvailableList.push(available);
+	            }
+	        });
+	        // call recursively until all available width are less than average
+	        if (availableList.length > newAvailableList.length) {
+	            return this._reduceExcessColumnWidthSub(columnWidthList, totalRemainWidth, newAvailableList);
+	        }
+	        columnIndexes = _.pluck(availableList, 'index');
+
+	        return this._distributeExtraWidthEqually(columnWidthList, totalRemainWidth, columnIndexes);
+	    },
+
+	    /**
+	     * Distributes the extra width equally to each column at specified indexes.
+	     * @param {number[]} columnWidthList - An array of column width
+	     * @param {number} extraWidth - Extra width
+	     * @param {number[]} columnIndexes - An array of indexes of target columns
+	     * @returns {number[]} - A new array of column widths
+	     * @private
+	     */
+	    _distributeExtraWidthEqually: function(columnWidthList, extraWidth, columnIndexes) {
+	        var length = columnIndexes.length;
+	        var avgValue = Math.round(extraWidth / length);
+	        var errorValue = (avgValue * length) - extraWidth; // to correct total width
+	        var resultList = _.clone(columnWidthList);
+
+	        _.each(columnIndexes, function(columnIndex) {
+	            resultList[columnIndex] += avgValue;
+	        });
+
+	        if (columnIndexes.length) {
+	            resultList[_.last(columnIndexes)] -= errorValue;
+	        }
+
+	        return resultList;
+	    },
+
+	    /**
+	     * Makes all width of columns not less than minimumColumnWidth.
+	     * @param {number[]} columnWidthList - 컬럼 넓이값 배열
+	     * @returns {number[]} - 수정된 새로운 넓이값 배열
+	     * @private
+	     */
+	    _applyMinimumColumnWidth: function(columnWidthList) {
+	        var minWidthList = this._minColumnWidthList;
+	        var appliedList = _.clone(columnWidthList);
+
+	        _.each(appliedList, function(width, index) {
+	            var minWidth = minWidthList[index];
+	            if (width < minWidth) {
+	                appliedList[index] = minWidth;
+	            }
+	        });
+
+	        return appliedList;
+	    },
+
+	    /**
+	     * Adjust the column widths to make them fit into the dimension.
+	     * @param {number[]} columnWidthList - An array of column width
+	     * @param {boolean} [fitToReducedTotal] - If set to true and the total width is smaller than dimension(width),
+	     *                                    the column widths will be reduced.
+	     * @returns {number[]} - A new array of column widths
+	     * @private
+	     */
+	    _adjustColumnWidthList: function(columnWidthList, fitToReducedTotal) {
+	        var columnLength = columnWidthList.length;
+	        var availableWidth = this.dimensionModel.getAvailableTotalWidth(columnLength);
+	        var totalExtraWidth = availableWidth - util.sum(columnWidthList);
+	        var fixedCount = _.filter(this._columnWidthFixedFlags).length;
+	        var adjustedList;
+
+	        if (totalExtraWidth > 0) {
+	            if (columnLength > fixedCount) {
+	                adjustedList = this._addExtraColumnWidth(columnWidthList, totalExtraWidth);
+	            } else {
+	                // If all column has fixed width, add extra width to the last column.
+	                adjustedList = _.clone(columnWidthList);
+	                adjustedList[columnLength - 1] += totalExtraWidth;
+	            }
+	        } else if (fitToReducedTotal && totalExtraWidth < 0) {
+	            adjustedList = this._reduceExcessColumnWidth(columnWidthList, totalExtraWidth);
+	        } else {
+	            adjustedList = columnWidthList;
+	        }
+
+	        return adjustedList;
+	    },
+
+	    /**
+	     * width 값 변경시 각 column 별 너비를 계산한다.
+	     * @private
+	     */
+	    _onDimensionWidthChange: function() {
+	        var widthList = this.get('columnWidthList');
+
+	        if (!this._isModified) {
+	            widthList = this._adjustColumnWidthList(widthList, true);
+	        }
+	        this._setColumnWidthVariables(widthList);
+	    },
+
+	    /**
+	     * L side 와 R side 에 따른 columnWidthList 를 반환한다.
+	     * @param {String} [whichSide] 어느 영역인지 여부. L,R 중 하나를 인자로 넘긴다. 생략시 전체 columnList 반환
+	     * @returns {Array}  조회한 영역의 columnWidthList
+	     */
+	    getColumnWidthList: function(whichSide) {
+	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+	        var columnWidthList = [];
+
+	        switch (whichSide) {
+	            case frameConst.L:
+	                columnWidthList = this.get('columnWidthList').slice(0, columnFixCount);
+	                break;
+	            case frameConst.R:
+	                columnWidthList = this.get('columnWidthList').slice(columnFixCount);
+	                break;
+	            default :
+	                columnWidthList = this.get('columnWidthList');
+	                break;
+	        }
+
+	        return columnWidthList;
+	    },
+
+	    /**
+	     * L, R 중 하나를 입력받아 frame 의 너비를 구한다.
+	     * @param {String} [whichSide]  지정하지 않을 경우 전체 너비.
+	     * @returns {Number} 해당 frame 의 너비
+	     */
+	    getFrameWidth: function(whichSide) {
+	        var columnFixCount = this.columnModel.getVisibleColumnFixCount(true);
+	        var columnWidthList = this.getColumnWidthList(whichSide);
+	        var frameWidth = this._getFrameWidth(columnWidthList);
+
+	        if (_.isUndefined(whichSide) && columnFixCount > 0) {
+	            frameWidth += CELL_BORDER_WIDTH;
+	        }
+
+	        return frameWidth;
+	    },
+
+	    /**
+	     * columnResize 발생 시 index 에 해당하는 컬럼의 width 를 변경하여 반영한다.
+	     * @param {Number} index    너비를 변경할 컬럼의 인덱스
+	     * @param {Number} width    변경할 너비 pixel값
+	     */
+	    setColumnWidth: function(index, width) {
+	        var columnWidthList = this.get('columnWidthList');
+	        var fixedFlags = this._columnWidthFixedFlags;
+	        var minWidth = this._minColumnWidthList[index];
+
+	        if (!fixedFlags[index] && columnWidthList[index]) {
+	            columnWidthList[index] = Math.max(width, minWidth);
+	            this._setColumnWidthVariables(columnWidthList);
+	            this._isModified = true;
+	        }
+	    },
+
+	    /**
+	     * Returns column index from X-position relative to the body-area
+	     * @param {number} posX - X-position relative to the body-area
+	     * @param {boolean} withMeta - Whether the meta columns go with this calculation
+	     * @returns {number} Column index
+	     * @private
+	     */
+	    indexOf: function(posX, withMeta) {
+	        var columnWidthList = this.getColumnWidthList();
+	        var totalColumnWidth = this.getFrameWidth();
+	        var adjustableIndex = (withMeta) ? 0 : this.columnModel.getVisibleMetaColumnCount();
+	        var columnIndex = 0;
+
+	        if (posX >= totalColumnWidth) {
+	            columnIndex = columnWidthList.length - 1;
+	        } else {
+	            tui.util.forEachArray(columnWidthList, function(width, index) { // eslint-disable-line consistent-return
+	                width += CELL_BORDER_WIDTH;
+	                columnIndex = index;
+
+	                if (posX > width) {
+	                    posX -= width;
+	                } else {
+	                    return false;
+	                }
+	            });
+	        }
+
+	        return Math.max(0, columnIndex - adjustableIndex);
+	    },
+
+	    /**
+	     * Restore a column to the default width.
+	     * @param {Number} index - target column index
+	     */
+	    restoreColumnWidth: function(index) {
+	        var orgWidth = this.get('originalWidthList')[index];
+
+	        this.setColumnWidth(index, orgWidth);
+	    }
+	});
+
+	module.exports = CoordColumn;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Converts coordinates to index of rows and columns
+	 * @author NHN Ent. FE Development Lab
+	 */
+	'use strict';
+
+	var Model = __webpack_require__(8);
+	var dimensionConstMap = __webpack_require__(10).dimension;
+
+	var TABLE_BORDER_WIDTH = dimensionConstMap.TABLE_BORDER_WIDTH;
+	var CELL_BORDER_WIDTH = dimensionConstMap.CELL_BORDER_WIDTH;
+
+	/**
+	 * @module model/coordConverter
+	 * @param {Object} attrs - Attributes
+	 * @param {Object} options - Options
+	 * @extends module:base/model
+	 * @ignore
+	 */
+	var CoordConverter = Model.extend(/**@lends module:model/coordConverter.prototype */{
+	    initialize: function(attrs, options) {
+	        this.dataModel = options.dataModel;
+	        this.columnModel = options.columnModel;
+	        this.focusModel = options.focusModel;
+	        this.dimensionModel = options.dimensionModel;
+	        this.renderModel = options.renderModel;
+	        this.coordRowModel = options.coordRowModel;
+	        this.coordColumnModel = options.coordColumnModel;
+
+	        this.listenTo(this.focusModel, 'focus', this._onFocus);
+	    },
+
+	    /**
+	     * Get cell index from mouse position
+	     * @param {Number} pageX - Mouse X-position based on page
+	     * @param {Number} pageY - Mouse Y-position based on page
+	     * @param {boolean} [withMeta] - Whether the meta columns go with this calculation
+	     * @returns {{row: number, column: number}} Cell index
+	     */
+	    getIndexFromMousePosition: function(pageX, pageY, withMeta) {
+	        var position = this.dimensionModel.getPositionFromBodyArea(pageX, pageY);
+	        var posWithScroll = this._getScrolledPosition(position);
+
+	        return {
+	            row: this.coordRowModel.indexOf(posWithScroll.y),
+	            column: this.coordColumnModel.indexOf(posWithScroll.x, withMeta)
+	        };
+	    },
+
+	    /**
+	     * Returns the scrolled position in addition to given position
+	     * @param {{x: number, y: number}} position - position
+	     * @returns {{x: number, y: number}}
+	     * @private
+	     */
+	    _getScrolledPosition: function(position) {
+	        var renderModel = this.renderModel;
+	        var isRside = position.x > this.dimensionModel.get('lsideWidth');
+	        var scrollLeft = isRside ? renderModel.get('scrollLeft') : 0;
+	        var scrollTop = renderModel.get('scrollTop');
+
+	        return {
+	            x: position.x + scrollLeft,
+	            y: position.y + scrollTop
+	        };
+	    },
+
+	    /**
+	     * Returns the count of rowspan of given cell
+	     * @param {Number} rowKey - row key
+	     * @param {String} columnName - column name
+	     * @returns {Number}
+	     * @private
+	     */
+	    _getRowSpanCount: function(rowKey, columnName) {
+	        var rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
+
+	        if (!rowSpanData.isMainRow) {
+	            rowKey = rowSpanData.mainRowKey;
+	            rowSpanData = this.dataModel.get(rowKey).getRowSpanData(columnName);
+	        }
+
+	        return rowSpanData.count || 1;
+	    },
+
+	    /**
+	     * Returns the vertical position of the given row
+	     * @param {Number} rowKey - row key
+	     * @param {Number} rowSpanCount - the count of rowspan
+	     * @returns {{top: Number, bottom: Number}}
+	     * @private
+	     */
+	    _getCellVerticalPosition: function(rowKey, rowSpanCount) {
+	        var firstIdx, lastIdx, top, bottom;
+	        var coordRowModel = this.coordRowModel;
+
+	        firstIdx = this.dataModel.indexOfRowKey(rowKey);
+	        lastIdx = firstIdx + rowSpanCount - 1;
+	        top = coordRowModel.getOffsetAt(firstIdx);
+	        bottom = coordRowModel.getOffsetAt(lastIdx) +
+	            coordRowModel.getHeightAt(lastIdx) + CELL_BORDER_WIDTH;
+
+	        return {
+	            top: top,
+	            bottom: bottom
+	        };
+	    },
+
+	    /**
+	     * Returns the horizontal position of the given column
+	     * @param {String} columnName - column name
+	     * @returns {{left: Number, right: Number}}
+	     * @private
+	     */
+	    _getCellHorizontalPosition: function(columnName) {
+	        var columnModel = this.columnModel;
+	        var metaColumnCount = columnModel.getVisibleMetaColumnCount();
+	        var columnWidthList = this.coordColumnModel.get('columnWidthList');
+	        var leftColumnCount = columnModel.getVisibleColumnFixCount() + metaColumnCount;
+	        var targetIdx = columnModel.indexOfColumnName(columnName, true) + metaColumnCount;
+	        var idx = leftColumnCount > targetIdx ? 0 : leftColumnCount;
+	        var left = 0;
+
+	        for (; idx < targetIdx; idx += 1) {
+	            left += columnWidthList[idx] + CELL_BORDER_WIDTH;
+	        }
+
+	        return {
+	            left: left,
+	            right: left + columnWidthList[targetIdx] + CELL_BORDER_WIDTH
+	        };
+	    },
+
+	    /**
+	     * Returns the bounds of the cell identified by given address
+	     * @param {Number|String} rowKey - row key
+	     * @param {String} columnName - column name
+	     * @returns {{top: number, left: number, right: number, bottom: number}}
+	     * @todo TC
+	     */
+	    getCellPosition: function(rowKey, columnName) {
+	        var rowSpanCount, vPos, hPos;
+
+	        rowKey = this.dataModel.getMainRowKey(rowKey, columnName);
+
+	        if (!this.dataModel.get(rowKey)) {
+	            return {};
+	        }
+
+	        rowSpanCount = this._getRowSpanCount(rowKey, columnName);
+	        vPos = this._getCellVerticalPosition(rowKey, rowSpanCount);
+	        hPos = this._getCellHorizontalPosition(columnName);
+
+	        return {
+	            top: vPos.top,
+	            bottom: vPos.bottom,
+	            left: hPos.left,
+	            right: hPos.right
+	        };
+	    },
+
+	    /**
+	     * Judge scroll direction.
+	     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
+	     * @param {boolean} isRsideColumn - Whether the target cell is in rside
+	     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
+	     * @returns {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} Direction
+	     * @private
+	     */
+	    _judgeScrollDirection: function(targetPosition, isRsideColumn, bodySize) {
+	        var renderModel = this.renderModel;
+	        var currentTop = renderModel.get('scrollTop');
+	        var currentLeft = renderModel.get('scrollLeft');
+	        var isUp, isDown, isLeft, isRight;
+
+	        isUp = targetPosition.top < currentTop;
+	        isDown = !isUp && (targetPosition.bottom > (currentTop + bodySize.height));
+	        if (isRsideColumn) {
+	            isLeft = targetPosition.left < currentLeft;
+	            isRight = !isLeft && (targetPosition.right > (currentLeft + bodySize.rsideWidth - 1));
+	        } else {
+	            isLeft = isRight = false;
+	        }
+
+	        return {
+	            isUp: isUp,
+	            isDown: isDown,
+	            isLeft: isLeft,
+	            isRight: isRight
+	        };
+	    },
+
+	    /**
+	     * Scroll to focus
+	     * @param {number} rowKey - row key
+	     * @param {string} columnName - column name
+	     * @param {boolean} shouldScroll - whether scroll to the target cell
+	     * @private
+	     */
+	    _onFocus: function(rowKey, columnName, shouldScroll) {
+	        var scrollPosition;
+
+	        if (!shouldScroll) {
+	            return;
+	        }
+	        scrollPosition = this.getScrollPosition(rowKey, columnName);
+
+	        if (!tui.util.isEmpty(scrollPosition)) {
+	            this.renderModel.set(scrollPosition);
+	        }
+	    },
+
+	    /**
+	     * Make scroll position
+	     * @param {{isUp: boolean, isDown: boolean, isLeft: boolean, isRight: boolean}} scrollDirection - Direction
+	     * @param {{top: number, bottom: number, left: number, right: number}} targetPosition - Position of target element
+	     * @param {{height: number, rsideWidth: number}} bodySize - Using cached bodySize
+	     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
+	     * @private
+	     */
+	    _makeScrollPosition: function(scrollDirection, targetPosition, bodySize) {
+	        var pos = {};
+
+	        if (scrollDirection.isUp) {
+	            pos.scrollTop = targetPosition.top;
+	        } else if (scrollDirection.isDown) {
+	            pos.scrollTop = targetPosition.bottom - bodySize.height;
+	        }
+
+	        if (scrollDirection.isLeft) {
+	            pos.scrollLeft = targetPosition.left;
+	        } else if (scrollDirection.isRight) {
+	            pos.scrollLeft = targetPosition.right - bodySize.rsideWidth + TABLE_BORDER_WIDTH;
+	        }
+
+	        return pos;
+	    },
+
+	    /**
+	     * Return scroll position from the received index
+	     * @param {Number|String} rowKey - Row-key of target cell
+	     * @param {String} columnName - Column name of target cell
+	     * @returns {{scrollLeft: ?Number, scrollTop: ?Number}} Position to scroll
+	     */
+	    getScrollPosition: function(rowKey, columnName) {
+	        var isRsideColumn = !this.columnModel.isLside(columnName);
+	        var targetPosition = this.getCellPosition(rowKey, columnName);
+	        var bodySize = this.dimensionModel.getBodySize();
+	        var scrollDirection = this._judgeScrollDirection(targetPosition, isRsideColumn, bodySize);
+
+	        return this._makeScrollPosition(scrollDirection, targetPosition, bodySize);
+	    }
+	});
+
+	module.exports = CoordConverter;
+
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
 	 * @fileoverview Focus 관련 데이터 처리름 담당한다.
 	 * @author NHN Ent. FE Development Team
 	 */
@@ -8969,7 +9376,7 @@
 
 	var Model = __webpack_require__(8);
 	var util = __webpack_require__(9);
-	var GridEvent = __webpack_require__(20);
+	var GridEvent = __webpack_require__(22);
 
 	/**
 	 * Focus model
@@ -9159,11 +9566,8 @@
 	        }
 
 	        this.set('columnName', columnName);
-	        this.trigger('focus', rowKey, columnName);
+	        this.trigger('focus', rowKey, columnName, isScrollable);
 
-	        if (isScrollable) {
-	            this.scrollToFocus();
-	        }
 	        return true;
 	    },
 
@@ -9249,19 +9653,6 @@
 	            if (!restored) {
 	                this.focusAt(0, 0);
 	            }
-	        }
-	    },
-
-	    /**
-	     * Scroll to focus
-	     */
-	    scrollToFocus: function() {
-	        var rowKey = this.get('rowKey');
-	        var columnName = this.get('columnName');
-	        var scrollPosition = this.dimensionModel.getScrollPosition(rowKey, columnName);
-
-	        if (!tui.util.isEmpty(scrollPosition)) {
-	            this.renderModel.set(scrollPosition);
 	        }
 	    },
 
@@ -9696,7 +10087,7 @@
 
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9748,7 +10139,7 @@
 
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9760,7 +10151,7 @@
 	var _ = __webpack_require__(1);
 
 	var Model = __webpack_require__(8);
-	var RowList = __webpack_require__(22);
+	var RowList = __webpack_require__(24);
 	var renderStateMap = __webpack_require__(10).renderState;
 	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
 
@@ -9783,7 +10174,8 @@
 	            columnModel: options.columnModel,
 	            focusModel: options.focusModel,
 	            dimensionModel: options.dimensionModel,
-	            coordRowModel: options.coordRowModel
+	            coordRowModel: options.coordRowModel,
+	            coordColumnModel: options.coordColumnModel
 	        });
 
 	        rowListOptions = {
@@ -9879,7 +10271,7 @@
 	     */
 	    _updateMaxScrollLeft: function() {
 	        var dimension = this.dimensionModel;
-	        var maxScrollLeft = dimension.getFrameWidth('R') - dimension.get('rsideWidth') +
+	        var maxScrollLeft = this.coordColumnModel.getFrameWidth('R') - dimension.get('rsideWidth') +
 	                dimension.getScrollYWidth();
 
 	        this.set('maxScrollLeft', maxScrollLeft);
@@ -10353,7 +10745,7 @@
 
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10363,7 +10755,7 @@
 	'use strict';
 
 	var Collection = __webpack_require__(12);
-	var Row = __webpack_require__(23);
+	var Row = __webpack_require__(25);
 
 	/**
 	  * View Model rowList collection
@@ -10389,7 +10781,7 @@
 
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10814,7 +11206,7 @@
 
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10825,7 +11217,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Renderer = __webpack_require__(21);
+	var Renderer = __webpack_require__(23);
 	var dimensionConst = __webpack_require__(10).dimension;
 
 	var CELL_BORDER_WIDTH = dimensionConst.CELL_BORDER_WIDTH;
@@ -10956,7 +11348,7 @@
 
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10989,6 +11381,7 @@
 	            dimensionModel: options.dimensionModel,
 	            focusModel: options.focusModel,
 	            renderModel: options.renderModel,
+	            coordConverterModel: options.coordConverterModel,
 
 	            inputRange: null,
 	            intervalIdForAutoScroll: null,
@@ -11128,7 +11521,7 @@
 	     */
 	    extendColumnSelection: function(columnIndexes, pageX, pageY) {
 	        var minimumColumnRange = this._minimumColumnRange;
-	        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+	        var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
 	        var range = {
 	            row: [0, this.dataModel.length - 1],
 	            column: []
@@ -11174,7 +11567,7 @@
 	     * @param {string} [type] - Selection type
 	     */
 	    updateByMousePosition: function(pageX, pageY, type) {
-	        var index = this.dimensionModel.getIndexFromMousePosition(pageX, pageY);
+	        var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
 
 	        this._setScrolling(pageX, pageY);
 	        this.update(index.row, index.column, type);
@@ -11552,7 +11945,7 @@
 
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11717,7 +12110,7 @@
 
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11726,26 +12119,27 @@
 	 */
 	'use strict';
 
-	var ContainerView = __webpack_require__(28);
-	var ContentAreaView = __webpack_require__(29);
-	var ToolbarView = __webpack_require__(30);
-	var PaginationView = __webpack_require__(31);
-	var HeightResizeHandleView = __webpack_require__(32);
-	var StateLayerView = __webpack_require__(33);
-	var ClipboardView = __webpack_require__(34);
-	var LsideFrameView = __webpack_require__(35);
-	var RsideFrameView = __webpack_require__(37);
-	var HeaderView = __webpack_require__(38);
-	var HeaderResizeHandlerView = __webpack_require__(39);
-	var BodyView = __webpack_require__(40);
-	var BodyTableView = __webpack_require__(41);
-	var FooterView = __webpack_require__(42);
-	var RowListView = __webpack_require__(43);
-	var SelectionLayerView = __webpack_require__(44);
-	var EditingLayerView = __webpack_require__(45);
-	var DatePickeLayerView = __webpack_require__(46);
-	var FocusLayerView = __webpack_require__(47);
+	var ContainerView = __webpack_require__(30);
+	var ContentAreaView = __webpack_require__(31);
+	var ToolbarView = __webpack_require__(32);
+	var PaginationView = __webpack_require__(33);
+	var HeightResizeHandleView = __webpack_require__(34);
+	var StateLayerView = __webpack_require__(35);
+	var ClipboardView = __webpack_require__(36);
+	var LsideFrameView = __webpack_require__(37);
+	var RsideFrameView = __webpack_require__(39);
+	var HeaderView = __webpack_require__(40);
+	var HeaderResizeHandlerView = __webpack_require__(41);
+	var BodyView = __webpack_require__(42);
+	var BodyTableView = __webpack_require__(43);
+	var FooterView = __webpack_require__(44);
+	var RowListView = __webpack_require__(45);
+	var SelectionLayerView = __webpack_require__(46);
+	var EditingLayerView = __webpack_require__(47);
+	var DatePickeLayerView = __webpack_require__(48);
+	var FocusLayerView = __webpack_require__(49);
 	var isOptionEnabled = __webpack_require__(9).isOptionEnabled;
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * View Factory
@@ -11861,18 +12255,18 @@
 	            focusModel: this.modelManager.focusModel,
 	            renderModel: this.modelManager.renderModel,
 	            coordRowModel: this.modelManager.coordRowModel,
-	            painterManager: this.modelManager.painterManager,
+	            coordConverterModel: this.modelManager.coordConverterModel,
 	            copyOption: this.copyOption
 	        });
 	    },
 
 	    /**
 	     * Creates frame view and returns it.
-	     * @param  {String} whichSide - 'L'(left) or 'R'(right)
+	     * @param  {String} whichSide - L(left) or R(right)
 	     * @returns {module:view/layout/frame} New frame view instance
 	     */
 	    createFrame: function(whichSide) {
-	        var Constructor = whichSide === 'L' ? LsideFrameView : RsideFrameView;
+	        var Constructor = whichSide === frameConst.L ? LsideFrameView : RsideFrameView;
 
 	        return new Constructor({
 	            dimensionModel: this.modelManager.dimensionModel,
@@ -11896,6 +12290,7 @@
 	            dataModel: this.modelManager.dataModel,
 	            columnModel: this.modelManager.columnModel,
 	            coordRowModel: this.modelManager.coordRowModel,
+	            coordColumnModel: this.modelManager.coordColumnModel,
 	            viewFactory: this
 	        });
 	    },
@@ -11923,6 +12318,7 @@
 	            columnModel: this.modelManager.columnModel,
 	            renderModel: this.modelManager.renderModel,
 	            dimensionModel: this.modelManager.dimensionModel,
+	            coordColumnModel: this.modelManager.coordColumnModel,
 	            summaryModel: this.modelManager.summaryModel,
 	            columnTemplateMap: templateMap
 	        });
@@ -11937,7 +12333,8 @@
 	        return new HeaderResizeHandlerView({
 	            whichSide: whichSide,
 	            dimensionModel: this.modelManager.dimensionModel,
-	            columnModel: this.modelManager.columnModel
+	            columnModel: this.modelManager.columnModel,
+	            coordColumnModel: this.modelManager.coordColumnModel
 	        });
 	    },
 
@@ -11951,6 +12348,7 @@
 	            whichSide: whichSide,
 	            renderModel: this.modelManager.renderModel,
 	            dimensionModel: this.modelManager.dimensionModel,
+	            coordConverterModel: this.modelManager.coordConverterModel,
 	            dataModel: this.modelManager.dataModel,
 	            columnModel: this.modelManager.columnModel,
 	            selectionModel: this.modelManager.selectionModel,
@@ -11968,6 +12366,7 @@
 	        return new BodyTableView({
 	            whichSide: whichSide,
 	            dimensionModel: this.modelManager.dimensionModel,
+	            coordColumnModel: this.modelManager.coordColumnModel,
 	            renderModel: this.modelManager.renderModel,
 	            columnModel: this.modelManager.columnModel,
 	            painterManager: this.painterManager,
@@ -12010,7 +12409,8 @@
 	            selectionModel: this.modelManager.selectionModel,
 	            dimensionModel: this.modelManager.dimensionModel,
 	            columnModel: this.modelManager.columnModel,
-	            coordRowModel: this.modelManager.coordRowModel
+	            coordRowModel: this.modelManager.coordRowModel,
+	            coordColumnModel: this.modelManager.coordColumnModel
 	        });
 	    },
 
@@ -12055,7 +12455,9 @@
 	            dimensionModel: this.modelManager.dimensionModel,
 	            columnModel: this.modelManager.columnModel,
 	            focusModel: this.modelManager.focusModel,
-	            coordRowModel: this.modelManager.coordRowModel
+	            coordRowModel: this.modelManager.coordRowModel,
+	            coordColumnModel: this.modelManager.coordColumnModel,
+	            coordConverterModel: this.modelManager.coordConverterModel
 	        });
 	    }
 	});
@@ -12064,7 +12466,7 @@
 
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12076,7 +12478,7 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var GridEvent = __webpack_require__(20);
+	var GridEvent = __webpack_require__(22);
 	var attrNameConst = __webpack_require__(10).attrName;
 	var classNameConst = __webpack_require__(15);
 
@@ -12401,7 +12803,7 @@
 
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12412,6 +12814,7 @@
 
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(15);
+	var frameConst = __webpack_require__(10).frame;
 	var ContentArea;
 
 	/**
@@ -12452,8 +12855,8 @@
 	        var factory = this.viewFactory;
 
 	        this._addChildren([
-	            factory.createFrame('L'),
-	            factory.createFrame('R')
+	            factory.createFrame(frameConst.L),
+	            factory.createFrame(frameConst.R)
 	        ]);
 	    },
 
@@ -12489,7 +12892,7 @@
 
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12598,7 +13001,7 @@
 
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12706,7 +13109,7 @@
 
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12850,7 +13253,7 @@
 
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12971,7 +13374,7 @@
 
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12999,13 +13402,14 @@
 	var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 	    initialize: function(options) {
 	        this.setOwnProperties({
+	            dataModel: options.dataModel,
+	            columnModel: options.columnModel,
 	            focusModel: options.focusModel,
 	            selectionModel: options.selectionModel,
 	            dimensionModel: options.dimensionModel,
-	            dataModel: options.dataModel,
-	            columnModel: options.columnModel,
-	            renderModel: options.renderModel,
 	            coordRowModel: options.coordRowModel,
+	            coordConverterModel: options.coordConverterModel,
+	            renderModel: options.renderModel,
 	            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
 	            timeoutIdForKeyIn: 0,
 	            isLocked: false
@@ -13234,8 +13638,8 @@
 	     */
 	    _keyInWithShift: function(keyDownEvent) { // eslint-disable-line complexity
 	        var focusModel = this.focusModel;
-	        var dimensionModel = this.dimensionModel;
 	        var columnModelList = this.columnModel.getVisibleColumnModelList();
+	        var coordConverterModel = this.coordConverterModel;
 	        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
 	        var index = this._getIndexBeforeMove();
 	        var isKeyIdentified = true;
@@ -13286,7 +13690,7 @@
 
 	        if (isSelection && isValid) {
 	            this._updateSelectionByKeyIn(index.row, index.column);
-	            scrollPosition = dimensionModel.getScrollPosition(index.row, columnModel.columnName);
+	            scrollPosition = coordConverterModel.getScrollPosition(index.row, columnModel.columnName);
 	            if (scrollPosition) {
 	                selectionType = this.selectionModel.getType();
 	                if (selectionType === selTypeConst.COLUMN) {
@@ -13499,7 +13903,7 @@
 
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13508,8 +13912,9 @@
 	 */
 	'use strict';
 
-	var Frame = __webpack_require__(36);
+	var Frame = __webpack_require__(38);
 	var classNameConst = __webpack_require__(15);
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * Left Side Frame
@@ -13521,18 +13926,19 @@
 	    initialize: function() {
 	        Frame.prototype.initialize.apply(this, arguments);
 	        this.setOwnProperties({
-	            whichSide: 'L'
+	            whichSide: frameConst.L
 	        });
+
+	        this.listenTo(this.dimensionModel, 'change:lsideWidth', this._onFrameWidthChanged);
 	    },
 
 	    className: classNameConst.LSIDE_AREA,
 
 	    /**
-	     * Event handler for 'changeColumnWidth' event on module:model/dimension
-	     * @override
+	     * Event handler for 'change:lsideWidth' event on module:model/dimension
 	     * @private
 	     */
-	    _onColumnWidthChanged: function() {
+	    _onFrameWidthChanged: function() {
 	        this.$el.css({
 	            width: this.dimensionModel.get('lsideWidth')
 	        });
@@ -13566,7 +13972,7 @@
 
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13576,13 +13982,14 @@
 	'use strict';
 
 	var View = __webpack_require__(2);
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * Base class for frame view.
 	 * @module view/layout/frame
 	 * @extends module:base/view
 	 * @param {Object} options Options
-	 *      @param {String} [options.whichSide='R'] 'R' for Right side, 'L' for Left side
+	 *      @param {String} [options.whichSide=R] R for Right side, L for Left side
 	 * @ignore
 	 */
 	var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
@@ -13593,11 +14000,10 @@
 	            viewFactory: options.viewFactory,
 	            renderModel: options.renderModel,
 	            dimensionModel: options.dimensionModel,
-	            whichSide: options.whichSide || 'R'
+	            whichSide: options.whichSide || frameConst.R
 	        });
 
-	        this.listenTo(this.renderModel, 'columnModelChanged', this.render)
-	            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+	        this.listenTo(this.renderModel, 'columnModelChanged', this.render);
 	    },
 
 	    /**
@@ -13623,13 +14029,6 @@
 	    },
 
 	    /**
-	     * Event handler for 'columnWidthChanged' event on module:module/dimension
-	     * @abstract
-	     * @private
-	     */
-	    _onColumnWidthChanged: function() {},
-
-	    /**
 	     * To be called at the beginning of the 'render' method.
 	     * @abstract
 	     */
@@ -13646,7 +14045,7 @@
 
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13655,9 +14054,11 @@
 	 */
 	'use strict';
 
-	var Frame = __webpack_require__(36);
+	var Frame = __webpack_require__(38);
 	var classNameConst = __webpack_require__(15);
-	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
+	var constMap = __webpack_require__(10);
+	var frameConst = constMap.frame;
+	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 	/**
 	 * right side frame class
@@ -13669,9 +14070,10 @@
 	    initialize: function() {
 	        Frame.prototype.initialize.apply(this, arguments);
 	        this.setOwnProperties({
-	            whichSide: 'R',
+	            whichSide: frameConst.R,
 	            $scrollBorder: null
 	        });
+	        this.listenTo(this.dimensionModel, 'change:lsideWidth change:rsideWidth', this._onFrameWidthChanged);
 	        this.listenTo(this.dimensionModel, 'change:bodyHeight change:headerHeight',
 	            this._resetScrollBorderHeight);
 	    },
@@ -13679,11 +14081,11 @@
 	    className: classNameConst.RSIDE_AREA,
 
 	    /**
-	     * Event handler for 'columnWidthChanged' event on dimensionModel
+	     * Event handler for 'change:rsideWidth' event on dimensionModel
 	     * @private
 	     * @override
 	     */
-	    _onColumnWidthChanged: function() {
+	    _onFrameWidthChanged: function() {
 	        this._refreshLayout();
 	    },
 
@@ -13692,9 +14094,9 @@
 	     * @private
 	     */
 	    _refreshLayout: function() {
-	        var dimensionModel = this.dimensionModel,
-	            width = dimensionModel.get('rsideWidth'),
-	            marginLeft = dimensionModel.get('lsideWidth');
+	        var dimensionModel = this.dimensionModel;
+	        var width = dimensionModel.get('rsideWidth');
+	        var marginLeft = dimensionModel.get('lsideWidth');
 
 	        // If the left side exists and the division border should not be doubled,
 	        // left side should cover the right side by border-width to hide the left border of the right side.
@@ -13782,7 +14184,7 @@
 
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13797,6 +14199,7 @@
 	var util = __webpack_require__(9);
 	var constMap = __webpack_require__(10);
 	var classNameConst = __webpack_require__(15);
+	var frameConst = constMap.frame;
 
 	var DELAY_SYNC_CHECK = 10;
 	var keyCodeMap = constMap.keyCode;
@@ -13810,7 +14213,7 @@
 	 * @module view/layout/header
 	 * @extends module:base/view
 	 * @param {Object} options - options
-	 * @param {String} [options.whichSide='R']  'R': Right, 'L': Left
+	 * @param {String} [options.whichSide=R]  R: Right, L: Left
 	 * @ignore
 	 */
 	var Header = View.extend(/**@lends module:view/layout/header.prototype */{
@@ -13819,6 +14222,7 @@
 
 	        this.setOwnProperties({
 	            renderModel: options.renderModel,
+	            coordColumnModel: options.coordColumnModel,
 	            dimensionModel: options.dimensionModel,
 	            selectionModel: options.selectionModel,
 	            focusModel: options.focusModel,
@@ -13826,16 +14230,16 @@
 	            dataModel: options.dataModel,
 	            viewFactory: options.viewFactory,
 	            coordRowModel: options.coordRowModel,
-	            whichSide: options.whichSide || 'R'
+	            whichSide: options.whichSide || frameConst.R
 	        });
 
 	        this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
-	            .listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged)
+	            .listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged)
 	            .listenTo(this.selectionModel, 'change:range', this._refreshSelectedHeaders)
 	            .listenTo(this.focusModel, 'change:columnName', this._refreshSelectedHeaders)
 	            .listenTo(this.dataModel, 'sortChanged', this._updateBtnSortState);
 
-	        if (this.whichSide === 'L' && this.columnModel.get('selectType') === 'checkbox') {
+	        if (this.whichSide === frameConst.L && this.columnModel.get('selectType') === 'checkbox') {
 	            this.listenTo(this.dataModel,
 	                'change:_button disabledChanged extraDataChanged add remove reset',
 	                _.debounce(_.bind(this._syncCheckedState, this), DELAY_SYNC_CHECK));
@@ -14169,18 +14573,20 @@
 	     * @private
 	     */
 	    _onColumnWidthChanged: function() {
-	        var columnData = this._getColumnData();
-	        var columnWidthList = columnData.widthList;
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 	        var $colList = this.$el.find('col');
 	        var coordRowModel = this.coordRowModel;
+	        var totalWidth = 0;
 
 	        _.each(columnWidthList, function(columnWidth, index) {
 	            $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
+	            totalWidth += columnWidth;
 	        });
+	        this.$el.find('table').css('width', totalWidth);
 
 	        // Calls syncWithDom only from the Rside to prevent calling twice.
 	        // Defered call to ensure that the execution occurs after both sides are rendered.
-	        if (this.whichSide === 'R') {
+	        if (this.whichSide === frameConst.R) {
 	            _.defer(function() {
 	                coordRowModel.syncWithDom();
 	            });
@@ -14195,7 +14601,7 @@
 	     */
 	    /* istanbul ignore next: scrollLeft 를 확인할 수 없음 */
 	    _onScrollLeftChange: function(model, value) {
-	        if (this.whichSide === 'R') {
+	        if (this.whichSide === frameConst.R) {
 	            this.el.scrollLeft = value;
 	        }
 	    },
@@ -14264,10 +14670,8 @@
 	     * @private
 	     */
 	    _getColumnData: function() {
-	        var columnModel = this.columnModel;
-	        var dimensionModel = this.dimensionModel;
-	        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
-	        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
 
 	        return {
 	            widthList: columnWidthList,
@@ -14405,7 +14809,7 @@
 
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14420,6 +14824,7 @@
 	var constMap = __webpack_require__(10);
 	var classNameConst = __webpack_require__(15);
 	var attrNameConst = constMap.attrName;
+	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
@@ -14435,7 +14840,8 @@
 	        this.setOwnProperties({
 	            dimensionModel: options.dimensionModel,
 	            columnModel: options.columnModel,
-	            whichSide: options.whichSide || 'R',
+	            coordColumnModel: options.coordColumnModel,
+	            whichSide: options.whichSide || frameConst.R,
 
 	            isResizing: false,
 	            $target: null,
@@ -14445,7 +14851,7 @@
 	            initialLeft: 0
 	        });
 
-	        this.listenTo(this.dimensionModel, 'change:which columnWidthChanged', this._refreshHandlerPosition);
+	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._refreshHandlerPosition);
 	    },
 
 	    className: classNameConst.COLUMN_RESIZE_CONTAINER,
@@ -14475,10 +14881,8 @@
 	     * @private
 	     */
 	    _getColumnData: function() {
-	        var columnModel = this.columnModel;
-	        var dimensionModel = this.dimensionModel;
-	        var columnWidthList = dimensionModel.getColumnWidthList(this.whichSide);
-	        var columnModelList = columnModel.getVisibleColumnModelList(this.whichSide, true);
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
 
 	        return {
 	            widthList: columnWidthList,
@@ -14571,7 +14975,7 @@
 	        var $target = $(mouseEvent.target);
 	        var index = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-	        this.dimensionModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
+	        this.coordColumnModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
 	        this._refreshHandlerPosition();
 	    },
 
@@ -14597,7 +15001,7 @@
 	            width = this._calculateWidth(mouseEvent.pageX);
 	            index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-	            this.dimensionModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
+	            this.coordColumnModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
 	            this._refreshHandlerPosition();
 	        }
 	    },
@@ -14620,7 +15024,7 @@
 	     * @private
 	     */
 	    _getHandlerColumnIndex: function(index) {
-	        return (this.whichSide === 'R') ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
+	        return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
 	    },
 
 	    /**
@@ -14684,7 +15088,7 @@
 
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14700,7 +15104,8 @@
 	var constMap = __webpack_require__(10);
 	var classNameConst = __webpack_require__(15);
 	var attrNameConst = constMap.attrName;
-	var selTypeMap = constMap.selectionType;
+	var selTypeConst = constMap.selectionType;
+	var frameConst = constMap.frame;
 
 	// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
 	var MIN_INTERVAL_FOR_PAUSED = 200;
@@ -14713,7 +15118,7 @@
 	 * @module view/layout/body
 	 * @extends module:base/view
 	 * @param {Object} options - Options
-	 * @param {String} [options.whichSide='R'] L or R (which side)
+	 * @param {String} [options.whichSide=R] L or R (which side)
 	 * @ignore
 	 */
 	var Body = View.extend(/**@lends module:view/layout/body.prototype */{
@@ -14725,18 +15130,18 @@
 	            dataModel: options.dataModel,
 	            columnModel: options.columnModel,
 	            renderModel: options.renderModel,
+	            coordConverterModel: options.coordConverterModel,
 	            selectionModel: options.selectionModel,
 	            focusModel: options.focusModel,
 	            viewFactory: options.viewFactory,
 
 	            // DIV for setting rendering position of entire child-nodes of $el.
 	            $container: null,
-	            whichSide: options && options.whichSide || 'R'
+	            whichSide: options && options.whichSide || frameConst.R
 	        });
 
 	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onBodyHeightChange)
 	            .listenTo(this.dimensionModel, 'change:totalRowHeight', this._resetContainerHeight)
-	            .listenTo(this.dataModel, 'add remove reset', this._resetContainerHeight)
 	            .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
 	            .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
 	    },
@@ -14781,7 +15186,7 @@
 	            scrollTop: event.target.scrollTop
 	        };
 
-	        if (this.whichSide === 'R') {
+	        if (this.whichSide === frameConst.R) {
 	            attrs.scrollLeft = event.target.scrollLeft;
 	        }
 	        this.renderModel.set(attrs);
@@ -14794,7 +15199,7 @@
 	     * @private
 	     */
 	    _onScrollLeftChange: function(model, value) {
-	        if (this.whichSide === 'R') {
+	        if (this.whichSide === frameConst.R) {
 	            this.el.scrollLeft = value;
 	        }
 	    },
@@ -14837,7 +15242,7 @@
 	        var indexData;
 
 	        if (!$td.length) { // selection layer, focus layer
-	            indexData = this.dimensionModel.getIndexFromMousePosition(event.pageX, event.pageY);
+	            indexData = this.coordConverterModel.getIndexFromMousePosition(event.pageX, event.pageY);
 	            columnName = this._getColumnNameByVisibleIndex(indexData.column);
 	        } else if (rowKey && columnName) { // valid cell
 	            indexData = {
@@ -14878,7 +15283,7 @@
 	        }
 
 	        if (!util.isMetaColumn(columnName)) {
-	            selectionModel.setType(selTypeMap.CELL);
+	            selectionModel.setType(selTypeConst.CELL);
 	            if (inputData.shiftKey && !isInput) {
 	                selectionModel.update(rowIndex, columnIndex);
 	            } else {
@@ -14905,7 +15310,7 @@
 	     */
 	    _updateSelectionByRow: function(rowIndex, shiftKey) {
 	        if (shiftKey) {
-	            this.selectionModel.update(rowIndex, 0, selTypeMap.ROW);
+	            this.selectionModel.update(rowIndex, 0, selTypeConst.ROW);
 	        } else {
 	            this.selectionModel.selectRow(rowIndex);
 	        }
@@ -15009,7 +15414,7 @@
 	        if (!this.dimensionModel.get('scrollX')) {
 	            this.$el.css('overflow-x', 'hidden');
 	        }
-	        if (!this.dimensionModel.get('scrollY') && whichSide === 'R') {
+	        if (!this.dimensionModel.get('scrollY') && whichSide === frameConst.R) {
 	            this.$el.css('overflow-y', 'hidden');
 	        }
 	        this.$el.css('height', this.dimensionModel.get('bodyHeight'));
@@ -15032,7 +15437,7 @@
 
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15064,6 +15469,7 @@
 
 	        this.setOwnProperties({
 	            dimensionModel: options.dimensionModel,
+	            coordColumnModel: options.coordColumnModel,
 	            renderModel: options.renderModel,
 	            columnModel: options.columnModel,
 	            viewFactory: options.viewFactory,
@@ -15071,7 +15477,7 @@
 	            whichSide: options.whichSide || 'R'
 	        });
 
-	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onColumnWidthChanged);
+	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onColumnWidthChanged);
 
 	        // To prevent issue of appearing vertical scrollbar when dummy rows exist
 	        this.listenTo(this.renderModel, 'change:dummyRowCount', this._onChangeDummyRowCount);
@@ -15097,12 +15503,16 @@
 	     * @private
 	     */
 	    _onColumnWidthChanged: function() {
-	        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 	        var $colList = this.$el.find('col');
+	        var totalWidth = 0;
 
 	        _.each(columnWidthList, function(width, index) {
 	            $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
+	            totalWidth += width;
 	        }, this);
+
+	        this.$el.find('table').css('width', totalWidth);
 	    },
 
 	    /**
@@ -15207,10 +15617,10 @@
 	     * @private
 	     */
 	    _getColGroupMarkup: function() {
-	        var whichSide = this.whichSide,
-	            columnWidthList = this.dimensionModel.getColumnWidthList(whichSide),
-	            columnModelList = this.columnModel.getVisibleColumnModelList(whichSide, true),
-	            html = '';
+	        var whichSide = this.whichSide;
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(whichSide);
+	        var columnModelList = this.columnModel.getVisibleColumnModelList(whichSide, true);
+	        var html = '';
 
 	        _.each(columnModelList, function(columnModel, index) {
 	            html += this.templateCol({
@@ -15228,7 +15638,7 @@
 
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15241,6 +15651,7 @@
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(15);
 	var constMap = __webpack_require__(10);
+	var frameConst = constMap.frame;
 
 	var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 
@@ -15267,7 +15678,7 @@
 	        this.columnTemplateMap = options.columnTemplateMap || {};
 
 	        /**
-	         * 'L': Left, 'R': Right
+	         * L: Left, R: Right
 	         * @type {string}
 	         */
 	        this.whichSide = options.whichSide;
@@ -15275,11 +15686,13 @@
 	        // models
 	        this.columnModel = options.columnModel;
 	        this.dimensionModel = options.dimensionModel;
+	        this.coordColumnModel = options.coordColumnModel;
 	        this.renderModel = options.renderModel;
 	        this.summaryModel = options.summaryModel;
 
 	        // events
 	        this.listenTo(this.renderModel, 'change:scrollLeft', this._onChangeScrollLeft);
+	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
 	        this.listenTo(this.columnModel, 'setFooterContent', this._setcolumnContent);
 	        if (this.summaryModel) {
 	            this.listenTo(this.summaryModel, 'change', this._onChangeSummaryValue);
@@ -15319,7 +15732,7 @@
 	     * @private
 	     */
 	    _onScrollView: function(event) {
-	        if (this.whichSide === 'R') {
+	        if (this.whichSide === frameConst.R) {
 	            this.renderModel.set('scrollLeft', event.target.scrollLeft);
 	        }
 	    },
@@ -15331,9 +15744,18 @@
 	     * @private
 	     */
 	    _onChangeScrollLeft: function(model, value) {
-	        if (this.whichSide === 'R') {
+	        if (this.whichSide === frameConst.R) {
 	            this.el.scrollLeft = value;
 	        }
+	    },
+
+	    _onChangeColumnWidth: function() {
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+	        var $ths = this.$el.find('th');
+
+	        _.each(columnWidthList, function(columnWidth, index) {
+	            $ths.eq(index).css('width', columnWidth);
+	        });
 	    },
 
 	    /**
@@ -15386,7 +15808,7 @@
 	    _generateTbodyHTML: function() {
 	        var summaryModel = this.summaryModel;
 	        var columnModelList = this.columnModel.getVisibleColumnModelList(this.whichSide, true);
-	        var columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 
 	        return _.reduce(columnModelList, function(memo, column, index) {
 	            var columnName = column.columnName;
@@ -15429,7 +15851,7 @@
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15445,6 +15867,7 @@
 	var classNameConst = __webpack_require__(15);
 
 	var attrNameConst = constMap.attrName;
+	var frameConst = constMap.frame;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 
 	/**
@@ -15483,7 +15906,7 @@
 	            .listenTo(focusModel, 'change:rowKey', this._refreshFocusedRow)
 	            .listenTo(renderModel, 'rowListChanged', this.render);
 
-	        if (this.whichSide === 'L') {
+	        if (this.whichSide === frameConst.L) {
 	            this.listenTo(focusModel, 'change:rowKey', this._refreshSelectedMetaColumns)
 	                .listenTo(selectionModel, 'change:range', this._refreshSelectedMetaColumns)
 	                .listenTo(renderModel, 'rowListChanged', this._refreshSelectedMetaColumns);
@@ -15735,7 +16158,7 @@
 
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15749,6 +16172,7 @@
 	var View = __webpack_require__(2);
 	var classNameConst = __webpack_require__(15);
 	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
+	var frameConst = __webpack_require__(10).frame;
 
 	/**
 	 * Class for the selection layer
@@ -15761,15 +16185,16 @@
 	var SelectionLayer = View.extend(/**@lends module:view/selectionLayer.prototype */{
 	    initialize: function(options) {
 	        this.setOwnProperties({
-	            whichSide: options.whichSide || 'R',
+	            whichSide: options.whichSide || frameConst.R,
 	            dimensionModel: options.dimensionModel,
 	            coordRowModel: options.coordRowModel,
+	            coordColumnModel: options.coordColumnModel,
 	            columnModel: options.columnModel,
 	            selectionModel: options.selectionModel
 	        });
 	        this._updateColumnWidthList();
 
-	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._onChangeColumnWidth);
+	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._onChangeColumnWidth);
 	        this.listenTo(this.selectionModel, 'change:range', this.render);
 	    },
 
@@ -15780,7 +16205,7 @@
 	     * @private
 	     */
 	    _updateColumnWidthList: function() {
-	        this.columnWidthList = this.dimensionModel.getColumnWidthList(this.whichSide);
+	        this.columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 	    },
 
 	    /**
@@ -15802,7 +16227,7 @@
 	        var columnFixCount = this.columnModel.getVisibleColumnFixCount();
 	        var ownColumnRange = null;
 
-	        if (this.whichSide === 'L') {
+	        if (this.whichSide === frameConst.L) {
 	            if (columnRange[0] < columnFixCount) {
 	                ownColumnRange = [
 	                    columnRange[0],
@@ -15843,15 +16268,15 @@
 	     * @returns {{left: string, width: string}} - css values
 	     */
 	    _getHorizontalStyles: function(columnRange) {
-	        var columnWidthList = this.columnWidthList,
-	            metaColumnCount = this.columnModel.getVisibleMetaColumnCount(),
-	            startIndex = columnRange[0],
-	            endIndex = columnRange[1],
-	            left = 0,
-	            width = 0,
-	            i = 0;
+	        var columnWidthList = this.columnWidthList;
+	        var metaColumnCount = this.columnModel.getVisibleMetaColumnCount();
+	        var startIndex = columnRange[0];
+	        var endIndex = columnRange[1];
+	        var left = 0;
+	        var width = 0;
+	        var i = 0;
 
-	        if (this.whichSide === 'L') {
+	        if (this.whichSide === frameConst.L) {
 	            startIndex += metaColumnCount;
 	            endIndex += metaColumnCount;
 	        }
@@ -15901,7 +16326,7 @@
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16067,7 +16492,7 @@
 
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16265,7 +16690,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16277,9 +16702,11 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var CELL_BORDER_WIDTH = __webpack_require__(10).dimension.CELL_BORDER_WIDTH;
+	var constMap = __webpack_require__(10);
 	var classNameConst = __webpack_require__(15);
 
+	var frameConst = constMap.frame;
+	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 	var HTML_BORDER_DIV = '<div class="' + classNameConst.LAYER_FOCUS_BORDER + '"></div>';
 
 	/**
@@ -16293,8 +16720,9 @@
 	    initialize: function(options) {
 	        this.focusModel = options.focusModel;
 	        this.columnModel = options.columnModel;
-	        this.dimensionModel = options.dimensionModel;
 	        this.coordRowModel = options.coordRowModel;
+	        this.coordColumnModel = options.coordColumnModel;
+	        this.coordConverterModel = options.coordConverterModel;
 	        this.whichSide = options.whichSide;
 
 	        this.borderEl = {
@@ -16304,7 +16732,7 @@
 	            $bottom: $(HTML_BORDER_DIV)
 	        };
 
-	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this._refreshCurrentLayout);
+	        this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._refreshCurrentLayout);
 	        this.listenTo(this.coordRowModel, 'reset', this._refreshCurrentLayout);
 	        this.listenTo(this.focusModel, 'blur', this._onBlur);
 	        this.listenTo(this.focusModel, 'focus', this._onFocus);
@@ -16339,7 +16767,7 @@
 	     * @private
 	     */
 	    _onFocus: function(rowKey, columnName) {
-	        var targetSide = this.columnModel.isLside(columnName) ? 'L' : 'R';
+	        var targetSide = this.columnModel.isLside(columnName) ? frameConst.L : frameConst.R;
 
 	        if (targetSide === this.whichSide) {
 	            this._refreshBorderLayout(rowKey, columnName);
@@ -16354,7 +16782,7 @@
 	     * @private
 	     */
 	    _refreshBorderLayout: function(rowKey, columnName) {
-	        var pos = this.dimensionModel.getCellPosition(rowKey, columnName);
+	        var pos = this.coordConverterModel.getCellPosition(rowKey, columnName);
 	        var width = pos.right - pos.left;
 	        var height = pos.bottom - pos.top;
 
@@ -16407,7 +16835,7 @@
 
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16523,7 +16951,7 @@
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16627,7 +17055,7 @@
 
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16638,13 +17066,13 @@
 
 	var _ = __webpack_require__(1);
 
-	var RowPainter = __webpack_require__(51);
-	var CellPainter = __webpack_require__(53);
-	var DummyCellPainter = __webpack_require__(54);
-	var TextPainter = __webpack_require__(55);
-	var SelectPainter = __webpack_require__(57);
-	var ButtonPainter = __webpack_require__(58);
-	var MainButtonPainter = __webpack_require__(59);
+	var RowPainter = __webpack_require__(53);
+	var CellPainter = __webpack_require__(55);
+	var DummyCellPainter = __webpack_require__(56);
+	var TextPainter = __webpack_require__(57);
+	var SelectPainter = __webpack_require__(59);
+	var ButtonPainter = __webpack_require__(60);
+	var MainButtonPainter = __webpack_require__(61);
 
 	/**
 	 * Painter manager
@@ -16785,7 +17213,7 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16796,7 +17224,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(52);
+	var Painter = __webpack_require__(54);
 	var constMap = __webpack_require__(10);
 	var attrNameConst = constMap.attrName;
 	var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -16940,7 +17368,7 @@
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17020,7 +17448,7 @@
 
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17031,7 +17459,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(52);
+	var Painter = __webpack_require__(54);
 	var util = __webpack_require__(9);
 	var attrNameConst = __webpack_require__(10).attrName;
 	var classNameConst = __webpack_require__(15);
@@ -17275,7 +17703,7 @@
 
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17286,7 +17714,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(52);
+	var Painter = __webpack_require__(54);
 	var util = __webpack_require__(9);
 	var attrNameConst = __webpack_require__(10).attrName;
 	var classNameConst = __webpack_require__(15);
@@ -17349,7 +17777,7 @@
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17360,7 +17788,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(56);
+	var InputPainter = __webpack_require__(58);
 	var util = __webpack_require__(9);
 	var classNameConst = __webpack_require__(15);
 
@@ -17499,7 +17927,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17510,7 +17938,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(52);
+	var Painter = __webpack_require__(54);
 	var keyNameMap = __webpack_require__(10).keyName;
 
 	/**
@@ -17707,7 +18135,7 @@
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17718,7 +18146,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(56);
+	var InputPainter = __webpack_require__(58);
 	var util = __webpack_require__(9);
 
 	/**
@@ -17797,7 +18225,7 @@
 
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17808,7 +18236,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var InputPainter = __webpack_require__(56);
+	var InputPainter = __webpack_require__(58);
 	var util = __webpack_require__(9);
 
 	/**
@@ -18057,7 +18485,7 @@
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18068,7 +18496,7 @@
 
 	var _ = __webpack_require__(1);
 
-	var Painter = __webpack_require__(52);
+	var Painter = __webpack_require__(54);
 	var classNameConst = __webpack_require__(15);
 	var keyCodeMap = __webpack_require__(10).keyCode;
 
@@ -18153,7 +18581,7 @@
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -18339,12 +18767,12 @@
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Network 모듈 addon
-	 * @author NHN Ent. FE Development Team
+	 * @fileoverview Add-on for binding to remote data
+	 * @author NHN Ent. FE Development Lab
 	 */
 	'use strict';
 
@@ -18352,85 +18780,84 @@
 	var _ = __webpack_require__(1);
 
 	var View = __webpack_require__(2);
-	var Router = __webpack_require__(62);
+	var Router = __webpack_require__(64);
 	var util = __webpack_require__(9);
-	var formUtil = __webpack_require__(63);
-	var GridEvent = __webpack_require__(20);
+	var formUtil = __webpack_require__(65);
+	var GridEvent = __webpack_require__(22);
 
 	var renderStateMap = __webpack_require__(10).renderState;
 	var DELAY_FOR_LOADING_STATE = 200;
 
 	/**
-	 * Net Addon
+	 * Add-on for binding to remote data
 	 * @module addon/net
 	 * @param {object} options
-	 *      @param {jquery} options.el   form 엘리먼트
-	 *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-	 *      @param {object} [options.api]   사용할 API URL 리스트
-	 *          @param {string} [options.api.readData]  데이터 조회 API 주소
-	 *          @param {string} [options.api.createData] 데이터 생성 API 주소
-	 *          @param {string} [options.api.updateData] 데이터 업데이트 API 주소
-	 *          @param {string} [options.api.modifyData] 데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-	 *          @param {string} [options.api.deleteData] 데이터 삭제 API 주소
-	 *      @param {number} [options.perPage=500]  한 페이지당 보여줄 item 개수
-	 *      @param {boolean} [options.enableAjaxHistory=true]   ajaxHistory 를 사용할지 여부
+	 *      @param {jquery} [options.el] - Form element (to be used for ajax request)
+	 *      @param {boolean} [options.initialRequest=true] - Whether to request 'readData' after initialized
+	 *      @param {string} [options.readDataMethod='POST'] - Http method to be used for 'readData' API ('POST' or 'GET')
+	 *      @param {object} [options.api] - URL map
+	 *          @param {string} [options.api.readData] - URL for read-data
+	 *          @param {string} [options.api.createData] - URL for create
+	 *          @param {string} [options.api.updateData] - URL for update
+	 *          @param {string} [options.api.modifyData] - URL for modify (create/update/delete at once)
+	 *          @param {string} [options.api.deleteData] - URL for delete
+	 *          @param {string} [options.api.downloadExcel] - URL for download data of this page as an excel-file
+	 *          @param {string} [options.api.downloadExcelAll] - URL for download all data as an excel-file
+	 *      @param {number} [options.perPage=500] - The number of items to be shown in a page
+	 *      @param {boolean} [options.enableAjaxHistory=true] - Whether to use the browser history for the ajax requests
 	 * @example
 	 *   <form id="data_form">
 	 *   <input type="text" name="query"/>
 	 *   </form>
 	 *   <script>
-	 *      var net,
-	 *          grid = new tui.Grid({
-	 *                 //...option 생략...
-	 *          });
+	 *      var net;
+	 *      var grid = new tui.Grid({
+	 *          //...options...
+	 *      });
 	 *
-	 *      //Net AddOn 을 그리드 내부에서 인스턴스화 하며 초기화 한다.
+	 *      // Activate 'Net' addon
 	 *      grid.use('Net', {
-	 *         el: $('#data_form'),         //필수 - form 엘리먼트
-	 *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
-	 *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
-	 *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
-	 *         //사용할 API URL 리스트
+	 *         el: $('#data_form'),
+	 *         initialRequest: true,
+	 *         readDataMethod: 'GET',
+	 *         perPage: 500,
+	 *         enableAjaxHistory: true,
 	 *         api: {
-	 *             'readData': './api/read',                       //데이터 조회 API 주소
-	 *             'createData': './api/create',                   //데이터 생성 API 주소
-	 *             'updateData': './api/update',                   //데이터 업데이트 API 주소
-	 *             'deleteData': './api/delete',                   //데이터 삭제 API 주소
-	 *             'modifyData': './api/modify',                   //데이터 수정 API 주소 (생성/조회/삭제 한번에 처리하는 API 주소)
-	 *             'downloadExcel': './api/download/excel',        //엑셀 다운로드 (현재페이지) API 주소
-	 *             'downloadExcelAll': './api/download/excelAll'   //엑셀 다운로드 (전체 데이터) API 주소
+	 *             'readData': './api/read',
+	 *             'createData': './api/create',
+	 *             'updateData': './api/update',
+	 *             'deleteData': './api/delete',
+	 *             'modifyData': './api/modify',
+	 *             'downloadExcel': './api/download/excel',
+	 *             'downloadExcelAll': './api/download/excelAll'
 	 *         }
 	 *      });
-	 *       //이벤트 핸들러 바인딩
-	 *       grid.on('beforeRequest', function(data) {
-	 *          //모든 dataRequest 시 호출된다.
+	 *
+	 *      // Bind event handlers
+	 *      grid.on('beforeRequest', function(data) {
+	 *          // For all requests
 	 *      }).on('response', function(data) {
-	 *          //response 이벤트 핸들러
-	 *          //성공/실패와 관계없이 response 를 받을 떄 호출된다.
+	 *          // For all response (regardless of success or failure)
 	 *      }).on('successResponse', function(data) {
-	 *          //successResponse 이벤트 핸들러
-	 *          //response.result 가 true 일 때 호출된다.
+	 *          // Only if response.result is true
 	 *      }).on('failResponse', function(data) {
-	 *          //failResponse 이벤트 핸들러
-	 *          //response.result 가 false 일 때 호출된다.
+	 *          // Only if response.result is false
 	 *      }).on('errorResponse', function(data) {
-	 *          //ajax error response 이벤트 핸들러
+	 *          // For error response
 	 *      });
 	 *
-	 *      //grid 로부터 사용할 net 인스턴스를 가져온다.
 	 *      net = grid.getAddOn('Net');
 	 *
-	 *      //request 관련 자세한 옵션은 Net#request 를 참고한다.
-	 *      //createData API 요청
+	 *      // Request create
 	 *      net.request('createData');
 	 *
-	 *      //updateData API 요청
+	 *      // Request update
 	 *      net.request('updateData');
 	 *
-	 *      //deleteData API 요청
+	 *      // Request delete
 	 *      net.request('deleteData');
 	 *
-	 *      //modifyData API 요청
+	 *      // Request create/update/delete at once
 	 *      net.request('modifyData');
 	 *   </script>
 	 */
@@ -18467,6 +18894,7 @@
 	            // configs
 	            api: options.api,
 	            enableAjaxHistory: options.enableAjaxHistory,
+	            readDataMethod: options.readDataMethod || 'POST',
 	            perPage: options.perPage,
 
 	            // state data
@@ -18552,8 +18980,8 @@
 	     * @private
 	     */
 	    _showToolbarExcelBtns: function() {
-	        var toolbarModel = this.toolbarModel,
-	            api = this.api;
+	        var toolbarModel = this.toolbarModel;
+	        var api = this.api;
 
 	        if (!toolbarModel) {
 	            return;
@@ -18697,7 +19125,6 @@
 
 	    /**
 	     * Requests 'readData' with last requested data.
-	     * @api
 	     */
 	    reloadData: function() {
 	        this._requestReadData(this.lastRequestedReadData);
@@ -18705,7 +19132,6 @@
 
 	    /**
 	     * Requests 'readData' to the server. The last requested data will be extended with new data.
-	     * @api
 	     * @param {Number} page - Page number
 	     * @param {Object} data - Data(parameters) to send to the server
 	     * @param {Boolean} resetData - If set to true, last requested data will be ignored.
@@ -18750,7 +19176,7 @@
 	            this.dataModel.fetch({
 	                requestType: 'readData',
 	                data: data,
-	                type: 'POST',
+	                type: this.readDataMethod,
 	                success: $.proxy(this._onReadSuccess, this),
 	                error: $.proxy(this._onReadError, this),
 	                reset: true
@@ -18820,17 +19246,14 @@
 	    },
 
 	    /**
-	     * 서버로 API request 한다.
-	     * @api
-	     * @param {String} requestType 요청 타입. 'createData|updateData|deleteData|modifyData' 중 하나를 인자로 넘긴다.
-	     * @param {object} options Options
-	     *      @param {String} [options.url]  url 정보. 생략시 Net 에 설정된 api 옵션 정보로 요청한다.
-	     *      @param {String} [options.hasDataParam=true] rowList 데이터 파라미터를 포함하여 보낼지 여부
-	     *      @param {String} [options.isOnlyChecked=true]  선택(Check)된 row 에 대한 목록 데이터를 포함하여 요청한다.
-	     *      isOnlyModified 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-	     *      @param {String} [options.isOnlyModified=true]  수정된 행 데이터 목록을 간추려 요청한다.
-	     *      isOnlyChecked 도 설정되었을 경우, 선택&변경된 목록을 요청한다.
-	     *      @param {String} [options.isSkipConfirm=false]  confirm 메세지를 보여줄지 여부를 지정한다.
+	     * Send request to server to sync data
+	     * @param {String} requestType - 'createData|updateData|deleteData|modifyData'
+	     * @param {object} options - Options
+	     *      @param {String} [options.url] - URL to send the request
+	     *      @param {String} [options.hasDataParam=true] - Whether the row-data to be included in the request param
+	     *      @param {String} [options.isOnlyChecked=true] - Whether the request param only contains checked rows
+	     *      @param {String} [options.isOnlyModified=true] - Whether the request param only contains modified rows
+	     *      @param {String} [options.isSkipConfirm=false] - Whether to show confirm dialog before sending request
 	     */
 	    request: function(requestType, options) {
 	        var defaultOptions = {
@@ -18851,7 +19274,6 @@
 
 	    /**
 	     * Change window.location to registered url for downloading data
-	     * @api
 	     * @param {string} type - Download type. 'excel' or 'excelAll'.
 	     *        Will be matched with API 'downloadExcel', 'downloadExcelAll'.
 	     */
@@ -18874,7 +19296,6 @@
 
 	    /**
 	     * Set number of rows per page and reload current page
-	     * @api
 	     * @param {number} perPage - Number of rows per page
 	     */
 	    setPerPage: function(perPage) {
@@ -19031,7 +19452,6 @@
 
 	        /**
 	         * Occurs before the http request is sent
-	         * @api
 	         * @event tui.Grid#beforeRequest
 	         * @type {module:common/gridEvent}
 	         */
@@ -19086,7 +19506,6 @@
 
 	        /**
 	         * Occurs when the response is received from the server
-	         * @api
 	         * @event tui.Grid#reponse
 	         * @type {module:common/gridEvent}
 	         * @property {number} httpStatus - HTTP status
@@ -19101,7 +19520,6 @@
 	        if (responseData && responseData.result) {
 	            /**
 	             * Occurs after the response event, if the result is true
-	             * @api
 	             * @event tui.Grid#successReponse
 	             * @type {module:common/gridEvent}
 	             * @property {number} httpStatus - HTTP status
@@ -19119,7 +19537,6 @@
 	        } else {
 	            /**
 	             * Occurs after the response event, if the result is false
-	             * @api
 	             * @event tui.Grid#failResponse
 	             * @type {module:common/gridEvent}
 	             * @property {number} httpStatus - HTTP status
@@ -19162,7 +19579,6 @@
 
 	        /**
 	         * Occurs after the response event, if the response is Error
-	         * @api
 	         * @event tui.Grid#errorResponse
 	         * @type {module:common/gridEvent}
 	         * @property {number} httpStatus - HTTP status
@@ -19184,7 +19600,7 @@
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19215,7 +19631,7 @@
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19444,7 +19860,7 @@
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports) {
 
 	/**
@@ -19500,7 +19916,7 @@
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19510,15 +19926,15 @@
 	'use strict';
 
 	var util = __webpack_require__(9);
-	var styleGen = __webpack_require__(66);
+	var styleGen = __webpack_require__(68);
 	var themeNameConst = __webpack_require__(10).themeName;
 
 	var STYLE_ELEMENT_ID = 'tui-grid-theme-style';
 
 	var presetOptions = {};
-	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(68);
-	presetOptions[themeNameConst.STRIPED] = __webpack_require__(69);
-	presetOptions[themeNameConst.CLEAN] = __webpack_require__(70);
+	presetOptions[themeNameConst.DEFAULT] = __webpack_require__(70);
+	presetOptions[themeNameConst.STRIPED] = __webpack_require__(71);
+	presetOptions[themeNameConst.CLEAN] = __webpack_require__(72);
 
 	/**
 	 * build css string with given options.
@@ -19597,7 +20013,7 @@
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19608,9 +20024,8 @@
 
 	var _ = __webpack_require__(1);
 
-	var builder = __webpack_require__(67);
+	var builder = __webpack_require__(69);
 	var classNameConst = __webpack_require__(15);
-
 
 	/**
 	 * Shortcut for the builder.createClassRule() method.
@@ -19688,13 +20103,15 @@
 	        var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
 	        var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).bg(options.background);
+	        var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
 
 	        return builder.buildAll(webkitScrollbarRules.concat([
 	            ieScrollbarRule,
 	            rightBottomRule,
 	            leftBottomRule,
 	            scrollHeadRule,
-	            footerRightRule
+	            footerRightRule,
+	            bodyAreaRule
 	        ]));
 	    },
 
@@ -19761,7 +20178,10 @@
 	            .borderWidth(options)
 	            .text(options.text);
 
-	        return headRule.build();
+	        var headAreaRule = classRule(classNameConst.HEAD_AREA)
+	            .bg(options.background);
+
+	        return builder.buildAll([headRule, headAreaRule]);
 	    },
 
 	    /**
@@ -19867,7 +20287,7 @@
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20052,7 +20472,7 @@
 
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports) {
 
 	/**
@@ -20130,7 +20550,7 @@
 
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20139,7 +20559,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(68);
+	var presetDefault = __webpack_require__(70);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    cell: {
@@ -20165,7 +20585,7 @@
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20174,7 +20594,7 @@
 	*/
 	'use strict';
 
-	var presetDefault = __webpack_require__(68);
+	var presetDefault = __webpack_require__(70);
 
 	module.exports = $.extend(true, {}, presetDefault, {
 	    grid: {
@@ -20204,7 +20624,7 @@
 
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
