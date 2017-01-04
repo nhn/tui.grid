@@ -9,7 +9,6 @@ var _ = require('underscore');
 var builder = require('./cssRuleBuilder');
 var classNameConst = require('../common/classNameConst');
 
-
 /**
  * Shortcut for the builder.createClassRule() method.
  * @ignore
@@ -86,13 +85,15 @@ module.exports = {
         var leftBottomRule = classRule(classNameConst.SCROLLBAR_LEFT_BOTTOM).bg(options.background);
         var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).bg(options.background);
         var footerRightRule = classRule(classNameConst.FOOT_AREA_RIGHT).bg(options.background);
+        var bodyAreaRule = classRule(classNameConst.BODY_AREA).bg(options.background);
 
         return builder.buildAll(webkitScrollbarRules.concat([
             ieScrollbarRule,
             rightBottomRule,
             leftBottomRule,
             scrollHeadRule,
-            footerRightRule
+            footerRightRule,
+            bodyAreaRule
         ]));
     },
 
@@ -159,7 +160,10 @@ module.exports = {
             .borderWidth(options)
             .text(options.text);
 
-        return headRule.build();
+        var headAreaRule = classRule(classNameConst.HEAD_AREA)
+            .bg(options.background);
+
+        return builder.buildAll([headRule, headAreaRule]);
     },
 
     /**

@@ -161,7 +161,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * @private
      */
     _createCoordRowModel: function(domState) {
-        return new CoordRowModel({
+        return new CoordRowModel(null, {
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             domState: domState
@@ -174,7 +174,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * @private
      */
     _createCoordColumnModel: function() {
-        return new CoordColumnModel({
+        return new CoordColumnModel(null, {
             columnModel: this.columnModel,
             dimensionModel: this.dimensionModel
         });
@@ -186,7 +186,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * @private
      */
     _createCoordConverterModel: function() {
-        return new CoordConverterModel({
+        return new CoordConverterModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,

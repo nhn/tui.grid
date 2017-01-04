@@ -862,7 +862,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      * @api
      */
     resetColumnWidths: function() {
-        this.modelManager.dimensionModel.resetColumnWidths();
+        this.modelManager.coordColumnModel.resetColumnWidths();
     },
 
     /**

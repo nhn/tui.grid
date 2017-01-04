@@ -21,7 +21,7 @@ function create(isFixedRowHeight) {
         isFixedRowHeight: isFixedRowHeight,
         rowHeight: ROW_DEF_HEIGHT
     });
-    coordRowModel = new CoordRow({
+    coordRowModel = new CoordRow(null, {
         domState: new DomState($('<div>')),
         dataModel: dataModel,
         dimensionModel: dimensionMock

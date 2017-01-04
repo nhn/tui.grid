@@ -36,11 +36,11 @@ describe('model.renderer', function() {
             dataModel: dataModel,
             columnModel: columnModel
         });
-        var coordRowModel = new CoordRow({
+        var coordRowModel = new CoordRow(null, {
             dataModel: dataModel,
             dimensionModel: dimensionModel
         });
-        var coordColumnModel = new CoordColumn({
+        var coordColumnModel = new CoordColumn(null, {
             columnModel: columnModel,
             dimensionModel: dimensionModel
         });

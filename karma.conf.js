@@ -14,6 +14,7 @@ module.exports = function(config) {
         plugins: [
             'karma-jasmine',
             'karma-webpack',
+            'karma-simple-reporter',
             'karma-sourcemap-loader',
             'karma-chrome-launcher',
             'karma-phantomjs-launcher'
@@ -77,6 +78,19 @@ module.exports = function(config) {
             }
         },
 
+        webpackMiddleware: {
+            noInfo: true
+        },
+
+        reporters: [
+            'karmaSimpleReporter'
+        ],
+
+        specReporter: {
+            suppressPassed: true,
+            suppressSkipped: true,
+            suppressErrorSummary: true
+        },
 
         // web server port
         port: 9876,
@@ -86,7 +100,7 @@ module.exports = function(config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_WARN,
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,

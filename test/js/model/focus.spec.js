@@ -120,7 +120,7 @@ describe('model/focus', function() {
                 listenModel = new Model();
             listenModel.listenToOnce(focusModel, 'focus', callback);
             focusModel.focus('1', 'c1', true);
-            expect(callback).toHaveBeenCalledWith('1', 'c1' true);
+            expect(callback).toHaveBeenCalledWith('1', 'c1', true);
         });
 
         it('이전 focus 정보를 저장하는지 확인한다.', function() {
