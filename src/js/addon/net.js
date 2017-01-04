@@ -22,6 +22,7 @@ var DELAY_FOR_LOADING_STATE = 200;
  * @param {object} options
  *      @param {jquery} options.el   form 엘리먼트
  *      @param {boolean} [options.initialRequest=true]   Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+ *      @param {string} [options.readDataMethod='POST'] - Http method to be used for 'readData' API ('POST' or 'GET')
  *      @param {object} [options.api]   사용할 API URL 리스트
  *          @param {string} [options.api.readData]  데이터 조회 API 주소
  *          @param {string} [options.api.createData] 데이터 생성 API 주소
@@ -44,6 +45,7 @@ var DELAY_FOR_LOADING_STATE = 200;
  *      grid.use('Net', {
  *         el: $('#data_form'),         //필수 - form 엘리먼트
  *         initialRequest: true,   //(default: true) Net 인스턴스 생성과 동시에 readData request 요청을 할 지 여부.
+ *         readDataMethod: 'GET',  //(default: 'POST')
  *         perPage: 500,           //(default: 500) 한 페이지당 load 할 데이터 개수
  *         enableAjaxHistory: true, //(default: true) ajaxHistory 를 사용할지 여부
  *         //사용할 API URL 리스트
@@ -123,6 +125,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             // configs
             api: options.api,
             enableAjaxHistory: options.enableAjaxHistory,
+            readDataMethod: options.readDataMethod || 'POST',
             perPage: options.perPage,
 
             // state data
@@ -406,7 +409,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             this.dataModel.fetch({
                 requestType: 'readData',
                 data: data,
-                type: 'POST',
+                type: this.readDataMethod,
                 success: $.proxy(this._onReadSuccess, this),
                 error: $.proxy(this._onReadError, this),
                 reset: true
