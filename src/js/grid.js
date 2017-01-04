@@ -411,6 +411,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
+     * Sets the height of body-area.
+     * @api
+     * @param {number} value - The number of pixel
+     */
+    setBodyHeight: function(value) {
+        this.modelManager.dimensionModel.set('bodyHeight', value);
+    },
+
+    /**
      * Sets focus on the cell identified by the specified rowKey and columnName.
      * @api
      * @param {(number|string)} rowKey - The unique key of the row
