@@ -40,7 +40,7 @@ function develop() {
     return {
         entry: ENTRY_PATH,
         output: {
-            publicPath: '/dev/',
+            publicPath: '/dist/',
             filename: 'grid.js'
         },
         plugins: [
