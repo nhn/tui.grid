@@ -51,7 +51,7 @@ var DELAY_FOR_LOADING_STATE = 200;
  *         perPage: 500,
  *         enableAjaxHistory: true,
  *         api: {
- *             'readData': './api/read', 
+ *             'readData': './api/read',
  *             'createData': './api/create',
  *             'updateData': './api/update',
  *             'deleteData': './api/delete',
