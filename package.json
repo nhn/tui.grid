@@ -7,6 +7,7 @@
     "dev": "webpack-dev-server",
     "test": "karma start karma.conf.js",
     "test:ne": "karma start karma.conf.ne.js",
+    "test:integ": "wdio wdio.conf.js",
     "bundle": "npm run bundle:normal & npm run bundle:combine",
     "bundle:normal": "webpack --production & webpack --production --minify",
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
@@ -54,6 +55,10 @@
     "stylus-loader": "^2.3.1",
     "tui-jsdoc-template": "^1.0.4",
     "vinyl-source-stream": "^1.1.0",
+    "wdio-jasmine-framework": "^0.2.19",
+    "wdio-selenium-standalone-service": "0.0.7",
+    "wdio-static-server-service": "^1.0.1",
+    "webdriverio": "^4.5.2",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.1"
   },

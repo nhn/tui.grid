@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <title>그리드 기본 예제</title>
+    <link rel="stylesheet" type="text/css" href="/dist/grid.css" />
+    <style media="screen">
+        #wrapper {
+            width: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div id="grid"></div>
+    </div>
+</body>
+<script src="/lib/jquery/jquery.js"></script>
+<script src="/lib/underscore/underscore.js"></script>
+<script src="/lib/backbone/backbone.js"></script>
+<script src="/lib/tui-code-snippet/code-snippet.js"></script>
+<script src="/lib/tui-component-pagination/pagination.js"></script>
+<script src="/dist/grid.js"></script>
+<script>
+    var grid = new tui.Grid({
+        el: $('#grid'),
+        selectType: 'checkbox',
+        columnFixCount: 1,
+        headerHeight: 30,
+        toolbar: false,
+        resizeHandle: {},
+        showDummyRows: true,
+        displayRowCount: 10,
+        minimumColumnWidth: 100,
+        pagination: true,
+        columnModelList: [
+            {
+                columnName: '_button',
+                width: 30
+            },
+            {
+                title: 'c1',
+                columnName: 'c1',
+                isRequired: true,
+                width: 200,
+                editOption: {
+                    type: 'text',
+                    list: [{
+                        text: 1,
+                        value: 1
+                    }, {
+                        text: 2,
+                        value: 2
+                    }]
+                }
+            },
+            {
+                title: 'c2',
+                isSortable: true,
+                width: 200,
+                columnName: 'c2',
+                editOption: {
+                    type: 'select',
+                    list: [{
+                        text: 1,
+                        value: 1
+                    }, {
+                        text: 2,
+                        value: 2
+                    }]
+                }
+            }
+        ]
+    });
+
+    var rowList = [];
+    (function() {
+        _.times(50, function(number) {
+            rowList.push({
+                _number: number + 1,
+                'c1': String(number * 10),
+                'c2': 2
+            });
+        })
+    })();
+
+    grid.setRowList(rowList);
+</script>
+
+</html>
