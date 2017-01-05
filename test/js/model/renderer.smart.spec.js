@@ -86,17 +86,18 @@ describe('model.renderer', function() {
                 rowHeight: rowHeight - CELL_BORDER_WIDTH
             });
             setSampleRows();
-            renderer.refresh();
         });
 
         it('when scrollTop = 0', function() {
-            renderer._setRenderingRange(0);
+            renderer.set('scrollTop', 0);
+            renderer._setRenderingRange();
             expect(renderer.get('top')).toBe(0);
             expect(renderer.get('startIndex')).toBe(0);
             expect(renderer.get('endIndex')).toBe(10 + bufferRowCount);
         });
 
         it('when scrollTop = 100', function() {
+            renderer.set('scrollTop', 100);
             renderer._setRenderingRange(100);
             expect(renderer.get('top')).toBe(100 - bufferSize);
             expect(renderer.get('startIndex')).toBe(10 - bufferRowCount);
@@ -105,7 +106,8 @@ describe('model.renderer', function() {
 
         it('when scrollTop is max value', function() {
             var maxScrollTop = renderer.get('maxScrollTop');
-            renderer._setRenderingRange(maxScrollTop);
+            renderer.set('scrollTop', maxScrollTop);
+            renderer._setRenderingRange();
             expect(renderer.get('top')).toBe(maxScrollTop - bufferSize);
             expect(renderer.get('startIndex')).toBe(40 - bufferRowCount);
             expect(renderer.get('endIndex')).toBe(49);
@@ -124,11 +126,13 @@ describe('model.renderer', function() {
                 rowHeight: rowHeight - CELL_BORDER_WIDTH
             });
             setSampleRows();
-            renderer.refresh();
         });
 
         it('when top : 0', function() {
             var limitBottom = renderer.get('bottom') - bodyHeight - bufferHitSize;
+
+            renderer.set('scrollTop', 0);
+            renderer._setRenderingRange();
 
             expect(renderer._shouldRefresh(0)).toBe(false);
             expect(renderer._shouldRefresh(limitBottom)).toBe(false);
@@ -138,7 +142,8 @@ describe('model.renderer', function() {
         it('when scrollTop = 100', function() {
             var limitTop, limitBottom;
 
-            renderer._setRenderingRange(100);
+            renderer.set('scrollTop', 100);
+            renderer._setRenderingRange();
             limitTop = renderer.get('top') + bufferHitSize;
             limitBottom = renderer.get('bottom') - bodyHeight - bufferHitSize;
 
@@ -152,7 +157,8 @@ describe('model.renderer', function() {
             var maxScrollTop = renderer.get('maxScrollTop');
             var limitTop;
 
-            renderer._setRenderingRange(maxScrollTop);
+            renderer.set('scrollTop', maxScrollTop);
+            renderer._setRenderingRange();
             limitTop = renderer.get('top') + bufferHitSize;
 
             expect(renderer._shouldRefresh(limitTop - 1)).toBe(true);
@@ -166,13 +172,13 @@ describe('model.renderer', function() {
 
         beforeEach(function() {
             proto = SmartRenderer.prototype;
-            spyOn(proto, 'refresh');
+            spyOn(proto, '_setRenderingRange');
             renderer = create();
         });
 
         it('refresh() method should be called', function() {
             renderer.dimensionModel.set('bodyHeight', 200);
-            expect(proto.refresh).toHaveBeenCalled();
+            expect(proto._setRenderingRange).toHaveBeenCalled();
         });
     });
 
@@ -182,19 +188,19 @@ describe('model.renderer', function() {
         beforeEach(function() {
             renderer = create();
             proto = renderer.constructor.prototype;
-            spyOn(proto, 'refresh');
+            spyOn(proto, '_setRenderingRange');
         });
 
         it('refresh() method should be called if _shouldRefresh return true', function() {
             spyOn(proto, '_shouldRefresh').and.returnValue(true);
             renderer.set('scrollTop', 100);
-            expect(proto.refresh).toHaveBeenCalled();
+            expect(proto._setRenderingRange).toHaveBeenCalled();
         });
 
         it('refresh() method should not be called if _shouldRefresh return false', function() {
             spyOn(proto, '_shouldRefresh').and.returnValue(false);
             renderer.set('scrollTop', 100);
-            expect(proto.refresh).not.toHaveBeenCalled();
+            expect(proto._setRenderingRange).not.toHaveBeenCalled();
         });
     });
 });

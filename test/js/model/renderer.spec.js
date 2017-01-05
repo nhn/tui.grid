@@ -175,8 +175,8 @@ describe('model.renderer', function() {
             expect(renderModel.get('top')).toEqual(0);
             expect(renderModel.get('scrollTop')).toEqual(0);
             expect(renderModel.get('scrollLeft')).toEqual(0);
-            expect(renderModel.get('startIndex')).toEqual(0);
-            expect(renderModel.get('endIndex')).toEqual(0);
+            expect(renderModel.get('startIndex')).toEqual(-1);
+            expect(renderModel.get('endIndex')).toEqual(-1);
             expect(renderModel.get('startNumber')).toEqual(1);
         });
     });
