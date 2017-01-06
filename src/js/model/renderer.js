@@ -51,10 +51,11 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             .listenTo(this.dataModel, 'add remove sort reset delRange', this._onDataListChange)
             .listenTo(this.dataModel, 'add', this._onAddDataModel)
             .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(lside, 'valueChange', this._executeRelation)
             .listenTo(rside, 'valueChange', this._executeRelation)
-            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
             .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
+            .listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing)
             .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
             .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
                 this._updateMaxScrollTop);
@@ -64,9 +65,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             this.on('change:dummyRowCount', this._resetDummyRows);
         }
 
+        this.on('change:startIndex change:endIndex', this.refresh);
         this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
 
-        this.listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing);
 
         this._updateMaxScrollLeft();
     },
@@ -78,8 +79,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         scrollLeft: 0,
         maxScrollLeft: 0,
         maxScrollTop: 0,
-        startIndex: 0,
-        endIndex: 0,
+        startIndex: -1,
+        endIndex: -1,
         startNumber: 1,
         lside: null,
         rside: null,
@@ -242,8 +243,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
             top: 0,
             scrollTop: 0,
             scrollLeft: 0,
-            startIndex: 0,
-            endIndex: 0,
             startNumber: 1
         });
     },
@@ -262,12 +261,9 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onColumnModelChange: function() {
-        this.set({
-            scrollTop: 0,
-            top: 0,
-            startIndex: 0,
-            endIndex: 0
-        });
+        this.set({scrollTop: 0}, {silent: true});
+        this._setRenderingRange(true);
+
         this.refresh({
             columnModelChanged: true
         });
@@ -278,6 +274,8 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
      * @private
      */
     _onDataListChange: function() {
+        this._setRenderingRange(true);
+
         this.refresh({
             dataListChanged: true
         });
@@ -306,14 +304,18 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     },
 
     /**
-     * rendering 할 index 범위를 결정한다.
-     * Smart rendering 을 사용하지 않을 경우 전체 범위로 랜더링한다.
+     * Set index-range to render
+     * @param {boolean} silent - whether set attributes silently
      * @private
      */
-    _setRenderingRange: function() {
+    _setRenderingRange: function(silent) {
+        var dataLength = this.dataModel.length;
+
         this.set({
-            startIndex: 0,
-            endIndex: this.dataModel.length - 1
+            startIndex: dataLength ? 0 : -1,
+            endIndex: dataLength - 1
+        }, {
+            silent: silent
         });
     },
 
@@ -387,13 +389,15 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var rsideData = [];
         var rowDataModel, height, i;
 
-        for (i = startIndex; i <= endIndex; i += 1) {
-            rowDataModel = this.dataModel.at(i);
-            height = this.coordRowModel.getHeightAt(i);
+        if (startIndex >= 0 && endIndex >= 0) {
+            for (i = startIndex; i <= endIndex; i += 1) {
+                rowDataModel = this.dataModel.at(i);
+                height = this.coordRowModel.getHeightAt(i);
 
-            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
-            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
-            rowNum += 1;
+                lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
+                rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
+                rowNum += 1;
+            }
         }
 
         this._resetViewModelList('lside', lsideData);
@@ -452,7 +456,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var dummyRowCount = this.get('dummyRowCount');
         var rowNum, rowHeight;
 
-
         if (dummyRowCount) {
             rowNum = this.get('startNumber') + this.get('endIndex') + 1;
             rowHeight = this.dimensionModel.get('rowHeight');
@@ -480,14 +483,16 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         var dataListChanged = !!options && options.dataListChanged;
         var startIndex, endIndex, i;
 
-        this._setRenderingRange(this.get('scrollTop'));
         startIndex = this.get('startIndex');
         endIndex = this.get('endIndex');
 
         this._resetAllViewModelListWithRange(startIndex, endIndex);
+        this._fillDummyRows();
 
-        for (i = startIndex; i <= endIndex; i += 1) {
-            this._executeRelation(i);
+        if (startIndex >= 0 && endIndex >= 0) {
+            for (i = startIndex; i <= endIndex; i += 1) {
+                this._executeRelation(i);
+            }
         }
 
         if (columnModelChanged) {

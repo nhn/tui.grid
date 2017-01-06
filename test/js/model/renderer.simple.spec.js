@@ -53,10 +53,10 @@ describe('model.renderer', function() {
 
     describe('refresh', function() {
         beforeEach(function() {
+            renderModel = createRenderModel();
             dataModel.reset([
                 {}, {}, {}
             ], {parse: true});
-            renderModel = createRenderModel();
         });
 
         it('executes all relation', function() {

@@ -28,7 +28,7 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
         Renderer.prototype.initialize.apply(this, arguments);
 
         this.on('change:scrollTop', this._onChangeScrollTop, this);
-        this.listenTo(this.dimensionModel, 'change:bodyHeight', this.refresh);
+        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onChangeBodyHeight);
     },
 
     /**
@@ -37,16 +37,25 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
      */
     _onChangeScrollTop: function() {
         if (this._shouldRefresh(this.get('scrollTop'))) {
-            this.refresh();
+            this._setRenderingRange();
         }
     },
 
     /**
-     * Calculate the range to render and set the attributes.
-     * @param {number} scrollTop - scrollTop
+     * Event handler for change:bodyHeight event on model/dimension
      * @private
      */
-    _setRenderingRange: function(scrollTop) {
+    _onChangeBodyHeight: function() {
+        this._setRenderingRange();
+    },
+
+    /**
+     * Calculate the range to render and set the attributes.
+     * @param {boolean} silent - whether set attributes silently
+     * @private
+     */
+    _setRenderingRange: function(silent) {
+        var scrollTop = this.get('scrollTop');
         var dimensionModel = this.dimensionModel;
         var dataModel = this.dataModel;
         var coordRowModel = this.coordRowModel;
@@ -68,6 +77,8 @@ var SmartRenderer = Renderer.extend(/**@lends module:model/renderer-smart.protot
             bottom: bottom,
             startIndex: startIndex,
             endIndex: endIndex
+        }, {
+            silent: silent
         });
     },
 
