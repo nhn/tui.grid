@@ -504,7 +504,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         return text;
     },
 
-
     /**
      * 현재 그리드의 data 를 clipboard 에 copy 한다.
      * @private

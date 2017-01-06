@@ -156,5 +156,4 @@ var EditingLayer = View.extend(/**@lends module:view/editingLayer.prototype */{
     }
 });
 
-
 module.exports = EditingLayer;

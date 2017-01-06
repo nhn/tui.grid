@@ -570,7 +570,6 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
         return value;
     },
 
-
     /**
      * Sets the vlaue of the cell identified by the specified rowKey and columnName.
      * @param {(Number|String)} rowKey - rowKey
