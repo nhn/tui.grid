@@ -47,11 +47,11 @@ module.exports = function(config) {
             {pattern: 'node_modules/jasmine-jquery/lib/jasmine-jquery.js', watched: false},
             {pattern: 'node_modules/jasmine-ajax/lib/mock-ajax.js', watched: false},
 
-            {pattern: 'test/fixtures/*.html', included: false},
+            {pattern: 'test/unit/fixtures/*.html', included: false},
             {pattern: 'images/*', included: false},
 
             'src/js/grid.js',
-            'test/js/index.js'
+            'test/unit/js/index.js'
         ],
 
         // list of files to exclude
@@ -61,7 +61,7 @@ module.exports = function(config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             'src/js/grid.js': ['webpack', 'sourcemap'],
-            'test/js/index.js': ['webpack', 'sourcemap']
+            'test/unit/js/index.js': ['webpack', 'sourcemap']
         },
 
         webpack: {
