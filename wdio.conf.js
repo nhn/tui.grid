@@ -1,5 +1,30 @@
 'use strict';
 
+var path = require('path');
+var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
+
+/**
+ * Returns the screenshot name
+ * @param {String} basePath - base path
+ * @returns {String}
+ */
+function getScreenshotName(basePath) {
+    return function(context) {
+        var testFileName = context.test.file.match(/([^\/]+)\.spec\.js$/)[1];
+        var testName = context.test.title.replace(/\s+/g, '-');
+        var browserName = context.browser.name;
+        var browserVersion = parseInt(context.browser.version, 10);
+
+        var sshotFileName = [
+            '[' + testFileName + ']' + testName,
+            browserName,
+            'v' + browserVersion
+        ].join('_');
+
+        return path.join(basePath, sshotFileName + '.png');
+    };
+}
+
 exports.config = {
     //
     // =====================
@@ -26,7 +51,7 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './test/integ/*'
+        './test/e2e/js/**/*.spec.js'
     ],
     // Patterns to exclude.
     exclude: [
@@ -74,7 +99,7 @@ exports.config = {
     sync: true,
     //
     // Level of logging verbosity: silent | verbose | command | data | result | error
-    logLevel: 'verbose',
+    logLevel: 'data',
     //
     // Enables colors for log output.
     coloredLogs: true,
@@ -88,7 +113,7 @@ exports.config = {
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with "/", then the base url gets prepended.
-    baseUrl: 'http://localhost:8000',
+    baseUrl: 'http://localhost:4567',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -122,12 +147,12 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['static-server', 'selenium-standalone'],
+    services: ['static-server', 'selenium-standalone', 'visual-regression'],
 
     staticServerFolders: [
         {
-            mount: '/fixture',
-            path: './test/integ/fixture'
+            mount: '/examples',
+            path: './examples'
         },
         {
             mount: '/dist',
@@ -142,6 +167,15 @@ exports.config = {
     staticServerPort: 4567,
 
     staticServerLog: true,
+
+    visualRegression: {
+        compare: new VisualRegressionCompare.LocalCompare({
+            referenceName: getScreenshotName(path.join(process.cwd(), 'screenshots/reference')),
+            screenshotName: getScreenshotName(path.join(process.cwd(), 'screenshots/screen')),
+            diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff'))
+        }),
+        widths: [800]
+    },
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
@@ -165,7 +199,7 @@ exports.config = {
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
         // an assertion fails.
-        expectationResultHandler: function(passed, assertion) {
+        expectationResultHandler: function(passed, assertion) { // eslint-disable-line no-unused-vars
             // do something
         }
     }

@@ -7,7 +7,7 @@
     "dev": "webpack-dev-server",
     "test": "karma start karma.conf.js",
     "test:ne": "karma start karma.conf.ne.js",
-    "test:integ": "wdio wdio.conf.js",
+    "test:e2e": "wdio wdio.conf.js",
     "bundle": "npm run bundle:normal & npm run bundle:combine",
     "bundle:normal": "webpack --production & webpack --production --minify",
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
@@ -58,6 +58,7 @@
     "wdio-jasmine-framework": "^0.2.19",
     "wdio-selenium-standalone-service": "0.0.7",
     "wdio-static-server-service": "^1.0.1",
+    "wdio-visual-regression-service": "^0.5.0",
     "webdriverio": "^4.5.2",
     "webpack": "^1.13.2",
     "webpack-dev-server": "^1.16.1"
