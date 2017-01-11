@@ -128,37 +128,105 @@ var grid = new tui.Grid({
     ]
 });
 
-var rowList = [];
-(function() {
-    _.times(20, function(number) {
-        rowList.push({
-            c1: String(Math.random()).substring(2, 10),
-            c3: Math.round(Math.random() * 10000)
-        });
-    })
-})();
+var rowList = [
+    {
+        c1: '100013',
+        c2: 'Mustafa Cosme',
+        c3: 291232
+    },
+    {
+        c1: '201212',
+        c2: 'Gunnar Fausto',
+        c3: 32123
+    },
+    {
 
-rowList[0].c2 = 'Mustafa Cosme';
-rowList[1].c2 = 'Gunnar Fausto';
-rowList[2].c2 = 'Junior Morgan';
-rowList[3].c2 = 'Tódor Ingo';
-rowList[4].c2 = 'Zezé Obadiah';
-rowList[5].c2 = 'Alfwin Damir';
-rowList[6].c2 = 'Feroz Fredrik';
-rowList[7].c2 = 'Archer Beniamino';
-rowList[8].c2 = 'Dado Shaul';
-rowList[9].c2 = 'Svetoslav Eder';
-rowList[10].c2 = 'Lauri Gligor';
-rowList[11].c2 = 'Ruben Bèr';
-rowList[12].c2 = 'Vicenç Hadrien';
-rowList[13].c2 = 'Borna Rochus';
-rowList[14].c2 = 'Kristijonas Tate';
-rowList[15].c2 = 'Georg Ormazd';
-rowList[16].c2 = 'Kumara Archimedes';
-rowList[17].c2 = 'Hershel Radomil';
-rowList[18].c2 = 'Toma Levan';
-rowList[19].c2 = 'Njord Thoko';
+        c1: '241221',
+        c2: 'Junior Morgan',
+        c3: 88823
+    },
+    {
+        c1: '991232',
+        c2: 'Tódor Ingo',
+        c3: 9981
+    },
+    {
+        c1: '299921',
+        c2: 'Zezé Obadiah',
+        c3: 140212
+    },
+    {
+        c1: '772193',
+        c2: 'Alfwin Damir',
+        c3: 30012
+    },
+    {
+        c1: '991232',
+        c2: 'Feroz Fredrik',
+        c3: 111023
+    },
+    {
+        c1: '572812',
+        c2: 'Archer Beniamino',
+        c3: 229123
+    },
+    {
+        c1: '310832',
+        c2: 'Dado Shaul',
+        c3: 123
+    },
+    {
+        c1: '321232',
+        c2: 'Svetoslav Eder',
+        c3: 81252
+    },
+    {
+        c1: '229123',
+        c2: 'Lauri Gligor',
+        c3: 230923
+    },
+    {
+        c1: '589282',
+        c2: 'Ruben Bèr',
+        c3: 11523
+    },
+    {
+        c1: '321234',
+        c2: 'Vicenç Hadrien',
+        c3: 29912
+    },
+    {
+        c1: '632123',
+        c2: 'Borna Rochus',
+        c3: 62842
+    },
 
+    {
+        c1: '122123',
+        c2: 'Kristijonas Tate',
+        c3: 199823
+    },
+    {
+        c1: '211232',
+        c2: 'Kumara Archimedes',
+        c3: 112522
+    },
+    {
+        c1: '487297',
+        c2: 'Hershel Radomil',
+        c3: 399123
+    },
+    {
+        c1: '232123',
+        c2: 'Toma Levan',
+        c3: 231253
+    },
+    {
+        c1: '828723',
+        c2: 'Njord Thoko',
+        c3: 89123
+    }
+];
 grid.setRowList(rowList);
 grid.disableRow(6);
 

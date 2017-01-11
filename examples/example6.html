@@ -74,8 +74,8 @@ var rowList = [];
     _.times(120, function(number) {
         rowList.push({
             c1: 'User' + (number + 1),
-            c2: parseInt(Math.random() * 1000, 10) + 200,
-            c3: parseInt(Math.random() * 100, 10) + 100,
+            c2: ((number + 5) % 8) * 100 + number,
+            c3: ((number + 3) % 7) * 60
         });
     });
 })();
