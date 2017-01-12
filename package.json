@@ -9,7 +9,7 @@
     "test:ne": "karma start karma.conf.ne.js",
     "test:e2e": "npm run sshot:clean && wdio wdio.conf.js",
     "sshot:clean": "del screenshots/diff screenshots/screen",
-    "sshot:update": "del screenshots/reference && cpy screenshots/screen/* screenshots/reference",
+    "sshot:cleanRef": "del screenshots/reference",
     "bundle": "npm run bundle:normal & npm run bundle:combine",
     "bundle:normal": "webpack --production & webpack --production --minify",
     "bundle:combine": "webpack --production --combine & webpack --production --combine --minify",
