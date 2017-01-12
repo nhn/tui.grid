@@ -63,14 +63,8 @@ describe('date picker', function() {
         loadExample('example5');
     });
 
-    it('datepicker-viewMode off', function() {
+    it('datepicker', function() {
         browser.leftClick('#grid', 300, 75);
-        expect(isSameVisual()).toBe(true);
-    });
-
-    it('datepicker-viewMode on', function() {
-        browser.moveToObject('#grid', 530, 75);
-        browser.doDoubleClick();
         expect(isSameVisual()).toBe(true);
     });
 });
