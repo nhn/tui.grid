@@ -27,7 +27,7 @@ describe('addon.net', function() {
 
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/addon.net.html');
+        loadFixtures('test/unit/fixtures/addon.net.html');
         $grid = $('#grid');
         grid = new tui.Grid({
             el: $grid,

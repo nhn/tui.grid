@@ -5,7 +5,7 @@ var util = require('common/util');
 describe('core.util', function() {
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/util.template.html');
+        loadFixtures('test/unit/fixtures/util.template.html');
     });
 
     describe('sum()', function() {

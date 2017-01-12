@@ -68,7 +68,6 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
         this.on('change:startIndex change:endIndex', this.refresh);
         this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
 
-
         this._updateMaxScrollLeft();
     },
 

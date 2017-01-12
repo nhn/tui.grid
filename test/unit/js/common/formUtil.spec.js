@@ -8,7 +8,7 @@ describe('core.formUtil', function() {
 
     beforeEach(function() {
         jasmine.getFixtures().fixturesPath = 'base/';
-        loadFixtures('test/fixtures/form.html');
+        loadFixtures('test/unit/fixtures/form.html');
     });
 
     describe('getFormElement()', function() {

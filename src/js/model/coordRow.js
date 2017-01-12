@@ -47,7 +47,6 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         var domRowHeights, dataRowHeights, rowHeights;
         var i, len;
 
-
         if (this.dimensionModel.get('isFixedRowHeight')) {
             return;
         }

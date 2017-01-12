@@ -167,7 +167,7 @@
         "no-inline-comments": 0,
         "no-lonely-if": 2,
         "no-mixed-spaces-and-tabs": [2, "smart-tabs"],
-        "no-multiple-empty-lines": [2, {"max": 2}],
+        "no-multiple-empty-lines": [2, {"max": 1}],
         "no-nested-ternary": 2,
         "no-new-object": 2,
         "no-plusplus": 2,

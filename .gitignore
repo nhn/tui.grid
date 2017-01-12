@@ -34,11 +34,10 @@ Desktop.ini
 .project
 .metadata
 
-#report
+#report / screenshots
 report
-
-#local
-karma.conf.local.js
+screenshots
+errorShots
 
 # Atom
 tags
