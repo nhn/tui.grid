@@ -10,13 +10,12 @@ var VisualRegressionCompare = require('wdio-visual-regression-service/compare');
  */
 function getScreenshotName(basePath) {
     return function(context) {
-        var testFileName = context.test.file.match(/([^\/]+)\.spec\.js$/)[1];
         var testName = context.test.title.replace(/\s+/g, '-');
         var browserName = context.browser.name;
         var browserVersion = parseInt(context.browser.version, 10);
 
         var sshotFileName = [
-            '[' + testFileName + ']' + testName,
+            '[' + testName + ']' +
             browserName,
             'v' + browserVersion
         ].join('_');
@@ -113,7 +112,7 @@ exports.config = {
     sync: true,
     //
     // Level of logging verbosity: silent | verbose | command | data | result | error
-    logLevel: 'data',
+    logLevel: 'command',
     //
     // Enables colors for log output.
     coloredLogs: true,
@@ -188,8 +187,7 @@ exports.config = {
             referenceName: getScreenshotName(path.join(process.cwd(), 'screenshots/reference')),
             screenshotName: getScreenshotName(path.join(process.cwd(), 'screenshots/screen')),
             diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff'))
-        }),
-        widths: [800]
+        })
     },
 
     // Framework you want to run your specs with.
@@ -210,7 +208,7 @@ exports.config = {
     jasmineNodeOpts: {
         //
         // Jasmine default timeout
-        defaultTimeoutInterval: 50000,
+        defaultTimeoutInterval: 500000,
         //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
