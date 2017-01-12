@@ -187,7 +187,8 @@ exports.config = {
             referenceName: getScreenshotName(path.join(process.cwd(), 'screenshots/reference')),
             screenshotName: getScreenshotName(path.join(process.cwd(), 'screenshots/screen')),
             diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff'))
-        })
+        }),
+        misMatchTolerance: 0.01
     },
 
     // Framework you want to run your specs with.
@@ -208,7 +209,7 @@ exports.config = {
     jasmineNodeOpts: {
         //
         // Jasmine default timeout
-        defaultTimeoutInterval: 500000,
+        defaultTimeoutInterval: 50000,
         //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time
