@@ -59,12 +59,12 @@ ContentArea = View.extend(/**@lends module:view/layout/content-area.prototype */
     render: function() {
         var dimensionModel = this.dimensionModel;
         var scrollXHeight = dimensionModel.getScrollXHeight();
-        var footerHeight = dimensionModel.get('footerHeight');
+        // var footerHeight = dimensionModel.get('footerHeight');
         var childElements = this._renderChildren().concat([
             borderDIV(classNameConst.BORDER_TOP),
             borderDIV(classNameConst.BORDER_LEFT),
             borderDIV(classNameConst.BORDER_RIGHT),
-            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight + footerHeight)
+            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight)
         ]);
 
         if (!dimensionModel.get('scrollX')) {
