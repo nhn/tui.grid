@@ -105,7 +105,8 @@ describe('theme/styleGenerator: ', function() {
             };
             var expected =
               '.' + classNameConst.CELL_HEAD + '{background-color:white;border-color:green;color:blue}' +
-              '.' + classNameConst.HEAD_AREA + '{background-color:white}';
+              '.' + classNameConst.HEAD_AREA + '{background-color:white}' +
+              '.' + classNameConst.FOOT_AREA + '{background-color:white}';
 
             expect(styleGen.cellHead(options)).toBe(expected);
         });
