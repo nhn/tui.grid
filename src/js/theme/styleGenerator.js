@@ -55,7 +55,8 @@ module.exports = {
             .text(options.text);
         var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
         var tableRule = classRule(classNameConst.TABLE).border(options.border);
-        var headRule = classRule(classNameConst.HEAD_AREA).border(options.border);
+        var headerRule = classRule(classNameConst.HEAD_AREA).border(options.border);
+        var footerRule = classRule(classNameConst.FOOT_AREA).border(options.border);
         var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
         var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
         var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
@@ -65,7 +66,8 @@ module.exports = {
             containerRule,
             contentAreaRule,
             tableRule,
-            headRule,
+            headerRule,
+            footerRule,
             borderLineRule,
             scrollHeadRule,
             scrollBorderRule,
