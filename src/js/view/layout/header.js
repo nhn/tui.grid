@@ -387,13 +387,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var $colList = this.$el.find('col');
         var coordRowModel = this.coordRowModel;
-        var totalWidth = 0;
 
         _.each(columnWidthList, function(columnWidth, index) {
             $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
-            totalWidth += columnWidth;
         });
-        this.$el.find('table').css('width', totalWidth);
 
         // Calls syncWithDom only from the Rside to prevent calling twice.
         // Defered call to ensure that the execution occurs after both sides are rendered.

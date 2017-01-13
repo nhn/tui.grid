@@ -163,7 +163,10 @@ module.exports = {
         var headAreaRule = classRule(classNameConst.HEAD_AREA)
             .bg(options.background);
 
-        return builder.buildAll([headRule, headAreaRule]);
+        var footerAreaRule = classRule(classNameConst.FOOT_AREA)
+            .bg(options.background);
+
+        return builder.buildAll([headRule, headAreaRule, footerAreaRule]);
     },
 
     /**

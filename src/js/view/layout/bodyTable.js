@@ -63,14 +63,10 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     _onColumnWidthChanged: function() {
         var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
         var $colList = this.$el.find('col');
-        var totalWidth = 0;
 
         _.each(columnWidthList, function(width, index) {
             $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
-            totalWidth += width;
         }, this);
-
-        this.$el.find('table').css('width', totalWidth);
     },
 
     /**
