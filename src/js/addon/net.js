@@ -482,20 +482,24 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      *      @param {String} [options.isOnlyChecked=true] - Whether the request param only contains checked rows
      *      @param {String} [options.isOnlyModified=true] - Whether the request param only contains modified rows
      *      @param {String} [options.isSkipConfirm=false] - Whether to show confirm dialog before sending request
+     *      @param {String} [options.isUpdateOriginal=false] - Whether to update original data with current data
      */
     request: function(requestType, options) {
-        var defaultOptions = {
-                url: this.api[requestType],
-                type: null,
-                hasDataParam: true,
-                isOnlyChecked: true,
-                isOnlyModified: true,
-                isSkipConfirm: false
-            },
-            newOptions = $.extend(defaultOptions, options),
-            param = this._getRequestParam(requestType, newOptions);
+        var newOptions = _.extend({
+            url: this.api[requestType],
+            type: null,
+            hasDataParam: true,
+            isOnlyChecked: true,
+            isOnlyModified: true,
+            isSkipConfirm: false,
+            isUpdateOriginal: false
+        }, options);
+        var param = this._getRequestParam(requestType, newOptions);
 
         if (param) {
+            if (newOptions.isUpdateOriginal) {
+                this.dataModel.setOriginalRowList();
+            }
             this._ajax(param);
         }
     },

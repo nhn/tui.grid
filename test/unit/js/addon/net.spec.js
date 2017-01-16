@@ -475,6 +475,14 @@ describe('addon.net', function() {
             net.request('createData');
             expect(net._ajax).not.toHaveBeenCalled();
         });
+
+        it('call setOriginalRowList() if isUpdateOriginal is true', function() {
+            spyOn(net.dataModel, 'setOriginalRowList');
+            net.request('updateData', {
+                isUpdateOriginal: true
+            });
+            expect(net.dataModel.setOriginalRowList).toHaveBeenCalled();
+        });
     });
 
     describe('request', function() {
