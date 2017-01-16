@@ -295,9 +295,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (!$target.is('input, a, button, select, textarea')) {
             mouseEvent.preventDefault();
-            _.defer(function() {
-                focusModel.focusClipboard();
-            });
+
+            // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
+            $target[0].unselectable = true;
+
+            focusModel.focusClipboard();
         }
     },
 

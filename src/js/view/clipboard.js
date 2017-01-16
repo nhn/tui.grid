@@ -36,7 +36,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             isLocked: false
         });
 
-        this.listenTo(this.focusModel, 'focusClipboard', this._onFocus);
+        this.listenTo(this.focusModel, 'focusClipboard', this._onFocusClipboard);
     },
 
     tagName: 'textarea',
@@ -73,7 +73,7 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * Event handler for 'focusClipboard' event on focusModel
      * @private
      */
-    _onFocus: function() {
+    _onFocusClipboard: function() {
         try {
             if (!this._hasFocus()) {
                 this.$el.focus();
