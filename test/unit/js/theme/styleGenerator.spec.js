@@ -16,6 +16,7 @@ describe('theme/styleGenerator: ', function() {
             '.' + classNameConst.CONTENT_AREA + '{border-color:green}',
             '.' + classNameConst.TABLE + '{border-color:green}',
             '.' + classNameConst.HEAD_AREA + '{border-color:green}',
+            '.' + classNameConst.FOOT_AREA + '{border-color:green}',
             '.' + classNameConst.BORDER_LINE + '{background-color:green}',
             '.' + classNameConst.SCROLLBAR_HEAD + '{border-color:green}',
             '.' + classNameConst.SCROLLBAR_BORDER + '{background-color:green}',
