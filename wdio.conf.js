@@ -188,7 +188,7 @@ exports.config = {
             screenshotName: getScreenshotName(path.join(process.cwd(), 'screenshots/screen')),
             diffName: getScreenshotName(path.join(process.cwd(), 'screenshots/diff'))
         }),
-        misMatchTolerance: 0.05
+        misMatchTolerance: 0.1
     },
 
     // Framework you want to run your specs with.
