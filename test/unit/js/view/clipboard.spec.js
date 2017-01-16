@@ -527,11 +527,11 @@ describe('view.clipboard', function() {
             });
         });
 
-        describe('_onFocus', function() {
+        describe('_onFocusClipboard', function() {
             it('Focus on the $el and call clipboard.refreshFocusState()', function() {
                 spyOn(modelManager.focusModel, 'refreshState');
 
-                clipboard._onFocus();
+                clipboard._onFocusClipboard();
                 expect(modelManager.focusModel.refreshState).toHaveBeenCalled();
             });
         });
