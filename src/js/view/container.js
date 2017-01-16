@@ -280,6 +280,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     _onMouseDown: function(mouseEvent) {
         var $target = $(mouseEvent.target);
         var eventData = new GridEvent(mouseEvent);
+        var focusModel = this.focusModel;
 
         /**
          * Occurs when a mouse button is pressed on the Grid.
@@ -294,7 +295,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         }
         if (!$target.is('input, a, button, select, textarea')) {
             mouseEvent.preventDefault();
-            this.focusModel.focusClipboard();
+            _.defer(function() {
+                focusModel.focusClipboard();
+            });
         }
     },
 

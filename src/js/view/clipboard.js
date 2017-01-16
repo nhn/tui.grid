@@ -61,13 +61,27 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
+     * Returns whether the element has focus
+     * @returns {boolean}
+     * @private
+     */
+    _hasFocus: function() {
+        return this.$el.is(':focus');
+    },
+
+    /**
      * Event handler for 'focusClipboard' event on focusModel
      * @private
      */
     _onFocus: function() {
         try {
-            if (!this.$el.is(':focus')) {
+            if (!this._hasFocus()) {
                 this.$el.focus();
+
+                // bug fix for IE8 (calling focus() only once doesn't work)
+                if (!this._hasFocus()) {
+                    this.$el.focus();
+                }
                 this.focusModel.refreshState();
             }
         } catch (e) {
