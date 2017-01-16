@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Wed Jan 04 2017 12:39:59 GMT+0900 (KST)"
- * version: 1.7.0
+ * bundle created at "Mon Jan 16 2017 17:27:57 GMT+0900 (KST)"
+ * version: 1.7.1
  */
 .tui-grid-container {
   width: 100%;
@@ -188,6 +188,7 @@
 }
 .tui-grid-table {
   border-width: 1px;
+  width: 1px;
   box-sizing: border-box;
   border-style: solid;
   table-layout: fixed;
@@ -334,7 +335,9 @@
 }
 .tui-grid-foot-area {
   position: relative;
-  margin-top: -17px;
+  border-width: 1px 0 0;
+  border-style: solid;
+  margin-top: -18px;
   overflow-y: hidden;
   overflow-x: scroll;
 }

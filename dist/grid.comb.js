@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Wed Jan 04 2017 12:39:59 GMT+0900 (KST)"
- * version: 1.7.0
+ * bundle created at "Mon Jan 16 2017 17:27:57 GMT+0900 (KST)"
+ * version: 1.7.1
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -6489,7 +6489,6 @@
 	        return value;
 	    },
 
-
 	    /**
 	     * Sets the vlaue of the cell identified by the specified rowKey and columnName.
 	     * @param {(Number|String)} rowKey - rowKey
@@ -8501,7 +8500,6 @@
 	        var domRowHeights, dataRowHeights, rowHeights;
 	        var i, len;
 
-
 	        if (this.dimensionModel.get('isFixedRowHeight')) {
 	            return;
 	        }
@@ -10195,10 +10193,11 @@
 	            .listenTo(this.dataModel, 'add remove sort reset delRange', this._onDataListChange)
 	            .listenTo(this.dataModel, 'add', this._onAddDataModel)
 	            .listenTo(this.dataModel, 'beforeReset', this._onBeforeResetData)
+	            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
 	            .listenTo(lside, 'valueChange', this._executeRelation)
 	            .listenTo(rside, 'valueChange', this._executeRelation)
-	            .listenTo(this.focusModel, 'change:editingAddress', this._onEditingAddressChange)
 	            .listenTo(this.coordRowModel, 'reset', this._onChangeRowHeights)
+	            .listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing)
 	            .listenTo(this.dimensionModel, 'change:width', this._updateMaxScrollLeft)
 	            .listenTo(this.dimensionModel, 'change:totalRowHeight change:scrollBarSize change:bodyHeight',
 	                this._updateMaxScrollTop);
@@ -10208,9 +10207,8 @@
 	            this.on('change:dummyRowCount', this._resetDummyRows);
 	        }
 
+	        this.on('change:startIndex change:endIndex', this.refresh);
 	        this._onChangeLayoutBound = _.bind(this._onChangeLayout, this);
-
-	        this.listenTo(this.dimensionModel, 'columnWidthChanged', this.finishEditing);
 
 	        this._updateMaxScrollLeft();
 	    },
@@ -10222,8 +10220,8 @@
 	        scrollLeft: 0,
 	        maxScrollLeft: 0,
 	        maxScrollTop: 0,
-	        startIndex: 0,
-	        endIndex: 0,
+	        startIndex: -1,
+	        endIndex: -1,
 	        startNumber: 1,
 	        lside: null,
 	        rside: null,
@@ -10386,8 +10384,6 @@
 	            top: 0,
 	            scrollTop: 0,
 	            scrollLeft: 0,
-	            startIndex: 0,
-	            endIndex: 0,
 	            startNumber: 1
 	        });
 	    },
@@ -10406,12 +10402,9 @@
 	     * @private
 	     */
 	    _onColumnModelChange: function() {
-	        this.set({
-	            scrollTop: 0,
-	            top: 0,
-	            startIndex: 0,
-	            endIndex: 0
-	        });
+	        this.set({scrollTop: 0}, {silent: true});
+	        this._setRenderingRange(true);
+
 	        this.refresh({
 	            columnModelChanged: true
 	        });
@@ -10422,6 +10415,8 @@
 	     * @private
 	     */
 	    _onDataListChange: function() {
+	        this._setRenderingRange(true);
+
 	        this.refresh({
 	            dataListChanged: true
 	        });
@@ -10450,14 +10445,18 @@
 	    },
 
 	    /**
-	     * rendering 할 index 범위를 결정한다.
-	     * Smart rendering 을 사용하지 않을 경우 전체 범위로 랜더링한다.
+	     * Set index-range to render
+	     * @param {boolean} silent - whether set attributes silently
 	     * @private
 	     */
-	    _setRenderingRange: function() {
+	    _setRenderingRange: function(silent) {
+	        var dataLength = this.dataModel.length;
+
 	        this.set({
-	            startIndex: 0,
-	            endIndex: this.dataModel.length - 1
+	            startIndex: dataLength ? 0 : -1,
+	            endIndex: dataLength - 1
+	        }, {
+	            silent: silent
 	        });
 	    },
 
@@ -10531,13 +10530,15 @@
 	        var rsideData = [];
 	        var rowDataModel, height, i;
 
-	        for (i = startIndex; i <= endIndex; i += 1) {
-	            rowDataModel = this.dataModel.at(i);
-	            height = this.coordRowModel.getHeightAt(i);
+	        if (startIndex >= 0 && endIndex >= 0) {
+	            for (i = startIndex; i <= endIndex; i += 1) {
+	                rowDataModel = this.dataModel.at(i);
+	                height = this.coordRowModel.getHeightAt(i);
 
-	            lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
-	            rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
-	            rowNum += 1;
+	                lsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.lside, height, rowNum));
+	                rsideData.push(this._createViewDataFromDataModel(rowDataModel, columnNamesMap.rside, height, rowNum));
+	                rowNum += 1;
+	            }
 	        }
 
 	        this._resetViewModelList('lside', lsideData);
@@ -10596,7 +10597,6 @@
 	        var dummyRowCount = this.get('dummyRowCount');
 	        var rowNum, rowHeight;
 
-
 	        if (dummyRowCount) {
 	            rowNum = this.get('startNumber') + this.get('endIndex') + 1;
 	            rowHeight = this.dimensionModel.get('rowHeight');
@@ -10624,14 +10624,16 @@
 	        var dataListChanged = !!options && options.dataListChanged;
 	        var startIndex, endIndex, i;
 
-	        this._setRenderingRange(this.get('scrollTop'));
 	        startIndex = this.get('startIndex');
 	        endIndex = this.get('endIndex');
 
 	        this._resetAllViewModelListWithRange(startIndex, endIndex);
+	        this._fillDummyRows();
 
-	        for (i = startIndex; i <= endIndex; i += 1) {
-	            this._executeRelation(i);
+	        if (startIndex >= 0 && endIndex >= 0) {
+	            for (i = startIndex; i <= endIndex; i += 1) {
+	                this._executeRelation(i);
+	            }
 	        }
 
 	        if (columnModelChanged) {
@@ -11239,7 +11241,7 @@
 	        Renderer.prototype.initialize.apply(this, arguments);
 
 	        this.on('change:scrollTop', this._onChangeScrollTop, this);
-	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this.refresh);
+	        this.listenTo(this.dimensionModel, 'change:bodyHeight', this._onChangeBodyHeight);
 	    },
 
 	    /**
@@ -11248,16 +11250,25 @@
 	     */
 	    _onChangeScrollTop: function() {
 	        if (this._shouldRefresh(this.get('scrollTop'))) {
-	            this.refresh();
+	            this._setRenderingRange();
 	        }
 	    },
 
 	    /**
-	     * Calculate the range to render and set the attributes.
-	     * @param {number} scrollTop - scrollTop
+	     * Event handler for change:bodyHeight event on model/dimension
 	     * @private
 	     */
-	    _setRenderingRange: function(scrollTop) {
+	    _onChangeBodyHeight: function() {
+	        this._setRenderingRange();
+	    },
+
+	    /**
+	     * Calculate the range to render and set the attributes.
+	     * @param {boolean} silent - whether set attributes silently
+	     * @private
+	     */
+	    _setRenderingRange: function(silent) {
+	        var scrollTop = this.get('scrollTop');
 	        var dimensionModel = this.dimensionModel;
 	        var dataModel = this.dataModel;
 	        var coordRowModel = this.coordRowModel;
@@ -11279,6 +11290,8 @@
 	            bottom: bottom,
 	            startIndex: startIndex,
 	            endIndex: endIndex
+	        }, {
+	            silent: silent
 	        });
 	    },
 
@@ -12751,6 +12764,7 @@
 	    _onMouseDown: function(mouseEvent) {
 	        var $target = $(mouseEvent.target);
 	        var eventData = new GridEvent(mouseEvent);
+	        var focusModel = this.focusModel;
 
 	        /**
 	         * Occurs when a mouse button is pressed on the Grid.
@@ -12765,7 +12779,11 @@
 	        }
 	        if (!$target.is('input, a, button, select, textarea')) {
 	            mouseEvent.preventDefault();
-	            this.focusModel.focusClipboard();
+
+	            // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
+	            $target[0].unselectable = true;
+
+	            focusModel.focusClipboard();
 	        }
 	    },
 
@@ -12867,12 +12885,11 @@
 	    render: function() {
 	        var dimensionModel = this.dimensionModel;
 	        var scrollXHeight = dimensionModel.getScrollXHeight();
-	        var footerHeight = dimensionModel.get('footerHeight');
 	        var childElements = this._renderChildren().concat([
 	            borderDIV(classNameConst.BORDER_TOP),
 	            borderDIV(classNameConst.BORDER_LEFT),
 	            borderDIV(classNameConst.BORDER_RIGHT),
-	            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight + footerHeight)
+	            borderDIV(classNameConst.BORDER_BOTTOM).css('bottom', scrollXHeight)
 	        ]);
 
 	        if (!dimensionModel.get('scrollX')) {
@@ -13415,7 +13432,7 @@
 	            isLocked: false
 	        });
 
-	        this.listenTo(this.focusModel, 'focusClipboard', this._onFocus);
+	        this.listenTo(this.focusModel, 'focusClipboard', this._onFocusClipboard);
 	    },
 
 	    tagName: 'textarea',
@@ -13440,13 +13457,27 @@
 	    },
 
 	    /**
+	     * Returns whether the element has focus
+	     * @returns {boolean}
+	     * @private
+	     */
+	    _hasFocus: function() {
+	        return this.$el.is(':focus');
+	    },
+
+	    /**
 	     * Event handler for 'focusClipboard' event on focusModel
 	     * @private
 	     */
-	    _onFocus: function() {
+	    _onFocusClipboard: function() {
 	        try {
-	            if (!this.$el.is(':focus')) {
+	            if (!this._hasFocus()) {
 	                this.$el.focus();
+
+	                // bug fix for IE8 (calling focus() only once doesn't work)
+	                if (!this._hasFocus()) {
+	                    this.$el.focus();
+	                }
 	                this.focusModel.refreshState();
 	            }
 	        } catch (e) {
@@ -13882,7 +13913,6 @@
 
 	        return text;
 	    },
-
 
 	    /**
 	     * 현재 그리드의 data 를 clipboard 에 copy 한다.
@@ -14576,13 +14606,10 @@
 	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 	        var $colList = this.$el.find('col');
 	        var coordRowModel = this.coordRowModel;
-	        var totalWidth = 0;
 
 	        _.each(columnWidthList, function(columnWidth, index) {
 	            $colList.eq(index).css('width', columnWidth + CELL_BORDER_WIDTH);
-	            totalWidth += columnWidth;
 	        });
-	        this.$el.find('table').css('width', totalWidth);
 
 	        // Calls syncWithDom only from the Rside to prevent calling twice.
 	        // Defered call to ensure that the execution occurs after both sides are rendered.
@@ -15505,14 +15532,10 @@
 	    _onColumnWidthChanged: function() {
 	        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
 	        var $colList = this.$el.find('col');
-	        var totalWidth = 0;
 
 	        _.each(columnWidthList, function(width, index) {
 	            $colList.eq(index).css('width', width + CELL_BORDER_WIDTH);
-	            totalWidth += width;
 	        }, this);
-
-	        this.$el.find('table').css('width', totalWidth);
 	    },
 
 	    /**
@@ -16486,7 +16509,6 @@
 	        return this;
 	    }
 	});
-
 
 	module.exports = EditingLayer;
 
@@ -19254,20 +19276,24 @@
 	     *      @param {String} [options.isOnlyChecked=true] - Whether the request param only contains checked rows
 	     *      @param {String} [options.isOnlyModified=true] - Whether the request param only contains modified rows
 	     *      @param {String} [options.isSkipConfirm=false] - Whether to show confirm dialog before sending request
+	     *      @param {String} [options.isUpdateOriginal=false] - Whether to update original data with current data
 	     */
 	    request: function(requestType, options) {
-	        var defaultOptions = {
-	                url: this.api[requestType],
-	                type: null,
-	                hasDataParam: true,
-	                isOnlyChecked: true,
-	                isOnlyModified: true,
-	                isSkipConfirm: false
-	            },
-	            newOptions = $.extend(defaultOptions, options),
-	            param = this._getRequestParam(requestType, newOptions);
+	        var newOptions = _.extend({
+	            url: this.api[requestType],
+	            type: null,
+	            hasDataParam: true,
+	            isOnlyChecked: true,
+	            isOnlyModified: true,
+	            isSkipConfirm: false,
+	            isUpdateOriginal: false
+	        }, options);
+	        var param = this._getRequestParam(requestType, newOptions);
 
 	        if (param) {
+	            if (newOptions.isUpdateOriginal) {
+	                this.dataModel.setOriginalRowList();
+	            }
 	            this._ajax(param);
 	        }
 	    },
@@ -20073,7 +20099,8 @@
 	            .text(options.text);
 	        var contentAreaRule = classRule(classNameConst.CONTENT_AREA).border(options.border);
 	        var tableRule = classRule(classNameConst.TABLE).border(options.border);
-	        var headRule = classRule(classNameConst.HEAD_AREA).border(options.border);
+	        var headerRule = classRule(classNameConst.HEAD_AREA).border(options.border);
+	        var footerRule = classRule(classNameConst.FOOT_AREA).border(options.border);
 	        var borderLineRule = classRule(classNameConst.BORDER_LINE).bg(options.border);
 	        var scrollHeadRule = classRule(classNameConst.SCROLLBAR_HEAD).border(options.border);
 	        var scrollBorderRule = classRule(classNameConst.SCROLLBAR_BORDER).bg(options.border);
@@ -20083,7 +20110,8 @@
 	            containerRule,
 	            contentAreaRule,
 	            tableRule,
-	            headRule,
+	            headerRule,
+	            footerRule,
 	            borderLineRule,
 	            scrollHeadRule,
 	            scrollBorderRule,
@@ -20181,7 +20209,10 @@
 	        var headAreaRule = classRule(classNameConst.HEAD_AREA)
 	            .bg(options.background);
 
-	        return builder.buildAll([headRule, headAreaRule]);
+	        var footerAreaRule = classRule(classNameConst.FOOT_AREA)
+	            .bg(options.background);
+
+	        return builder.buildAll([headRule, headAreaRule, footerAreaRule]);
 	    },
 
 	    /**
