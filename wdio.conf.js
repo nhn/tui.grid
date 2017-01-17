@@ -13,14 +13,10 @@ function getScreenshotName(basePath) {
         var testName = context.test.title.replace(/\s+/g, '-');
         var browserName = context.browser.name;
         var browserVersion = parseInt(context.browser.version, 10);
+        var subDir = browserName + '_v' + browserVersion;
+        var fileName = testName + '.png';
 
-        var sshotFileName = [
-            '[' + testName + ']' +
-            browserName,
-            'v' + browserVersion
-        ].join('_');
-
-        return path.join(basePath, sshotFileName + '.png');
+        return path.join(basePath, subDir, fileName);
     };
 }
 
@@ -112,7 +108,7 @@ exports.config = {
     sync: true,
     //
     // Level of logging verbosity: silent | verbose | command | data | result | error
-    logLevel: 'command',
+    logLevel: 'error',
     //
     // Enables colors for log output.
     coloredLogs: true,
@@ -122,7 +118,7 @@ exports.config = {
     bail: 0,
     //
     // Saves a screenshot to a given path if a command fails.
-    screenshotPath: './errorShots/',
+    screenshotPath: './screenshots/error/',
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with "/", then the base url gets prepended.
@@ -209,7 +205,7 @@ exports.config = {
     jasmineNodeOpts: {
         //
         // Jasmine default timeout
-        defaultTimeoutInterval: 50000,
+        defaultTimeoutInterval: 30000,
         //
         // The Jasmine framework allows interception of each assertion in order to log the state of the application
         // or website depending on the result. For example, it is pretty handy to take a screenshot every time

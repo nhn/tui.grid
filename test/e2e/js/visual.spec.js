@@ -77,4 +77,37 @@ describe('footer', function() {
     it('footer', function() {
         expect(isSameVisual()).toBe(true);
     });
+
+    it('increase column width', function() {
+        var handle = browser.element('.tui-grid-rside-area .tui-grid-column-resize-handle:nth-of-type(2)');
+        var handleId = handle.value.ELEMENT;
+
+        browser.moveTo(handleId, 3, 10);
+        browser.buttonDown(0);
+        browser.moveTo(handleId, 100, 10);
+        browser.buttonUp(0);
+
+        expect(isSameVisual()).toBe(true);
+    });
+
+    it('decrease column width', function() {
+        var handle = browser.element('.tui-grid-rside-area .tui-grid-column-resize-handle:nth-of-type(2)');
+        var handleId = handle.value.ELEMENT;
+
+        browser.moveTo(handleId, 3, 10);
+        browser.buttonDown(0);
+        browser.moveTo(handleId, -100, 10);
+        browser.buttonUp(0);
+
+        expect(isSameVisual()).toBe(true);
+    });
+
+    it('selection by drag', function() {
+        browser.moveToObject('.tui-grid-container', 200, 70);
+        browser.buttonDown(0);
+        browser.moveToObject('.tui-grid-container', 400, 300);
+        browser.buttonUp(0);
+
+        expect(isSameVisual()).toBe(true);
+    });
 });
