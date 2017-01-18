@@ -9,6 +9,7 @@ var _ = require('underscore');
 var View = require('./base/view');
 var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');
+var DomEventBus = require('./event/domEventBus');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
@@ -154,13 +155,14 @@ tui = window.tui = tui || {};
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
         var domState = new DomState(this.$el);
+        var domEventBus = DomEventBus.create();
 
         options = util.enableDeprecatedOptions(options);
         this.id = util.getUniqueKey();
-        this.modelManager = this._createModelManager(options, domState);
+        this.modelManager = this._createModelManager(domState, domEventBus, options);
         this.painterManager = this._createPainterManager();
         this.componentHolder = this._createComponentHolder(options.pagination);
-        this.viewFactory = this._createViewFactory(domState, options);
+        this.viewFactory = this._createViewFactory(domState, domEventBus, options);
         this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
         this.domState = domState;
@@ -178,19 +180,20 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates core model and returns it.
-     * @param {Object} options - Options set by user
      * @param {module:domState} domState - domState
+     * @param {module:event/domEventBus} domEventBus - domEventBus
+     * @param {Object} options - Options set by user
      * @returns {module:model/manager} - New model manager object
      * @private
      */
-    _createModelManager: function(options, domState) {
+    _createModelManager: function(domState, domEventBus, options) {
         var modelOptions = _.assign({}, options, {
             gridId: this.id
         });
 
-        _.omit(modelOptions, 'el', 'singleClickEdit');
+        _.omit(modelOptions, 'el');
 
-        return new ModelManager(modelOptions, domState);
+        return new ModelManager(modelOptions, domState, domEventBus);
     },
 
     /**
@@ -217,11 +220,12 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates a view factory.
      * @param {module:domState} domState - dom state
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @param {options} options - options
      * @returns {module:view/factory}
      * @private
      */
-    _createViewFactory: function(domState, options) {
+    _createViewFactory: function(domState, domEventBus, options) {
         var viewOptions = _.pick(options, [
             'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption', 'footer'
         ]);
@@ -229,6 +233,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
             modelManager: this.modelManager,
             painterManager: this.painterManager,
             componentHolder: this.componentHolder,
+            domEventBus: domEventBus,
             domState: domState
         };
 

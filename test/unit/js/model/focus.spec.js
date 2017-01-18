@@ -3,10 +3,11 @@
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var FocusModel = require('model/focus');
+var DomEventBus = require('event/domEventBus');
 var Model = require('base/model');
 
 describe('model/focus', function() {
-    var focusModel;
+    var focusModel, domEventBus;
 
     beforeEach(function() {
         var columnModel, dataModel;
@@ -52,9 +53,12 @@ describe('model/focus', function() {
             c3: '3-3'
         }], {parse: true});
 
+        domEventBus = DomEventBus.create();
         focusModel = new FocusModel(null, {
             columnModel: columnModel,
-            dataModel: dataModel
+            dataModel: dataModel,
+            singleClickEdit: false,
+            domEventBus: domEventBus
         });
     });
 
@@ -93,6 +97,12 @@ describe('model/focus', function() {
             expect(focusModel.get('rowKey')).toBeNull();
         });
     });
+
+    // describe('when singleClickEdit is true', function() {
+    //     it('and clickCell event occurs, call focusIn() with given address', function() {
+
+    //     });
+    // });
 
     // describe('when new data appended with focus:true option', function() {
     //     it('focus to first cell of new added row', function() {

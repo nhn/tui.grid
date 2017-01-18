@@ -35,6 +35,7 @@ var defaultOptions = {
     columnMerge: [],
     scrollX: true,
     scrollY: true,
+    singleClickEdit: false,
     useClientSort: true,
     toolbar: null
 };
@@ -47,7 +48,7 @@ var defaultOptions = {
  * @ignore
  */
 var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype */{
-    init: function(options, domState) {
+    init: function(options, domState, domEventBus) {
         options = $.extend(true, {}, defaultOptions, options);
 
         this.gridId = options.gridId;
@@ -58,7 +59,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.dimensionModel = this._createDimensionModel(options, domState);
         this.coordRowModel = this._createCoordRowModel(domState);
         this.coordColumnModel = this._createCoordColumnModel();
-        this.focusModel = this._createFocusModel(domState);
+        this.focusModel = this._createFocusModel(options, domState, domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel();
@@ -199,17 +200,21 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of focus model and returns it.
+     * @param  {Object} options - options
      * @param  {module:domState} domState - DomState instance
+     * @param  {module:event/domState} domEventBus - Dom event bus
      * @returns {module:model/focus} - A new instance
      * @private
      */
-    _createFocusModel: function(domState) {
+    _createFocusModel: function(options, domState, domEventBus) {
         return new FocusModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             renderModel: this.renderModel,
-            domState: domState
+            domEventBus: domEventBus,
+            domState: domState,
+            singleClickEdit: options.singleClickEdit
         });
     },
 

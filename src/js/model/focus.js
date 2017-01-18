@@ -29,6 +29,10 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         this.domState = options.domState;
 
         this.listenTo(this.dataModel, 'reset', this._onResetData);
+
+        if (options.singleClickEdit) {
+            this.listenTo(options.domEventBus, 'clickCell', this._onClickCell);
+        }
     },
 
     defaults: {
@@ -69,6 +73,20 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      */
     _onResetData: function() {
         this.unselect(true);
+    },
+
+    /**
+     * Event handler for 'clickCell' event on domEventBus
+     * @param {module:event/gridEvent} eventData - event data
+     * @private
+     */
+    _onClickCell: function(eventData) {
+        var rowKey = eventData.rowKey;
+        var columnName = eventData.columnName;
+
+        if (!eventData.isStopped() && !_.isNull(rowKey)) {
+            this.focusIn(rowKey, columnName);
+        }
     },
 
     /**

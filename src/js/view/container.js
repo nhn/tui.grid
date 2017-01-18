@@ -23,11 +23,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         View.prototype.initialize.call(this);
 
         this.gridId = options.gridId;
-        this.singleClickEdit = options.singleClickEdit;
         this.dimensionModel = options.dimensionModel;
         this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
         this.viewFactory = options.viewFactory;
+        this.domEventBus = options.domEventBus;
 
         this._createChildViews();
 
@@ -94,13 +94,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * click 이벤트 핸들러
-     * @param {MouseEvent} mouseEvent 이벤트 객체
+     * Event handler for click event
+     * @param {MouseEvent} ev - Mouse event
      * @private
      */
-    _onClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent);
-        var $target = $(mouseEvent.target);
+    _onClick: function(ev) {
+        var eventData = new GridEvent(ev);
+        var $target = $(ev.target);
         var cellInfo;
 
         /**
@@ -110,15 +110,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @event tui.Grid#click
          * @type {module:common/gridEvent}
          */
-        this.trigger('click', eventData);
-        if (eventData.isStopped()) {
-            return;
-        }
+        this.domEventBus.trigger('click', eventData);
+
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input, textarea')) {
-                this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
-            }
+            cellInfo.isTargetInput = !$target.is('input, textarea');
 
             /**
              * Occurs when a mouse button is clicked on a table cell
@@ -129,6 +125,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data
+             * @property {boolean} isTargetInput - whether the target is the input(or textarea) element
              */
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
@@ -236,7 +233,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             cellInfo = this._getCellInfoFromElement(cell);
         }
         _.extend(eventData, cellInfo);
-        this.trigger(eventName, eventData);
+        this.domEventBus.trigger(eventName, eventData);
     },
 
     /**

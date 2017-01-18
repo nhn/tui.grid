@@ -35,13 +35,13 @@ var ViewFactory = tui.util.defineClass({
     init: function(options) {
         // dependencies
         this.domState = options.domState;
+        this.domEventBus = options.domEventBus;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
         this.componentHolder = options.componentHolder;
 
         // view options
         this.footerOptions = options.footer;
-        this.singleClickEdit = options.singleClickEdit;
         this.resizeHandle = options.resizeHandle;
         this.copyOption = options.copyOption;
     },
@@ -54,7 +54,7 @@ var ViewFactory = tui.util.defineClass({
     createContainer: function() {
         return new ContainerView({
             el: this.domState.$el,
-            singleClickEdit: this.singleClickEdit,
+            domEventBus: this.domEventBus,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
