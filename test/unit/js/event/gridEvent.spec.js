@@ -1,8 +1,8 @@
 'use strict';
 
-var GridEvent = require('common/gridEvent');
+var GridEvent = require('event/gridEvent');
 
-describe('common/gridEvent', function() {
+describe('event/gridEvent', function() {
     it('constructor copy all of the properties from given object', function() {
         var ev = new GridEvent({
             paramNum: 1,

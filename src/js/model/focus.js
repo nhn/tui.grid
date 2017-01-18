@@ -8,7 +8,7 @@ var _ = require('underscore');
 
 var Model = require('../base/model');
 var util = require('../common/util');
-var GridEvent = require('../common/gridEvent');
+var GridEvent = require('../event/gridEvent');
 
 /**
  * Focus model
@@ -154,7 +154,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
          * Occurs when a table row is selected
          * @api
          * @event tui.Grid#selectRow
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          * @property {number} rowKey - rowKey of the target row
          * @property {number} prevRowKey - previously selected rowKey
          * @property {Object} rowData - data of the target row

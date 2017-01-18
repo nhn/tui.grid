@@ -7,7 +7,7 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var GridEvent = require('../common/gridEvent');
+var GridEvent = require('../event/gridEvent');
 var attrNameConst = require('../common/constMap').attrName;
 var classNameConst = require('../common/classNameConst');
 
@@ -108,7 +108,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The properties of the event object is the same as the native MouseEvent.
          * @api
          * @event tui.Grid#click
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
         this.domEventBus.trigger('click', eventData);
 
@@ -121,7 +121,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#clickCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data
@@ -145,7 +145,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The event object has all properties copied from the native MouseEvent.
          * @api
          * @event tui.Grid#dblclick
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
         this.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
@@ -157,7 +157,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#dblclickCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data containing the target cell
@@ -185,7 +185,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#mouseoverCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data containing the target cell
@@ -210,7 +210,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#mouseoutCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data containing the target cell
@@ -284,7 +284,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The properties of the event object is the same as the native MouseEvent.
          * @api
          * @event tui.Grid#mousedown
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
         this.trigger('mousedown', eventData);
         if (eventData.isStopped()) {

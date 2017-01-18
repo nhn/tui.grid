@@ -4,12 +4,11 @@ var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var FocusModel = require('model/focus');
 var DomEventBus = require('event/domEventBus');
+var GridEvent = require('event/gridEvent');
 var Model = require('base/model');
 
 describe('model/focus', function() {
-    var focusModel, domEventBus;
-
-    beforeEach(function() {
+    function create(options) {
         var columnModel, dataModel;
 
         columnModel = new ColumnModelData({
@@ -53,16 +52,19 @@ describe('model/focus', function() {
             c3: '3-3'
         }], {parse: true});
 
-        domEventBus = DomEventBus.create();
-        focusModel = new FocusModel(null, {
+        return new FocusModel(null, _.extend({
             columnModel: columnModel,
-            dataModel: dataModel,
-            singleClickEdit: false,
-            domEventBus: domEventBus
-        });
-    });
+            dataModel: dataModel
+        }, options));
+    }
 
     describe('select()', function() {
+        var focusModel;
+
+        beforeEach(function() {
+            focusModel = create();
+        });
+
         it('select 된 rowKey 를 저장한다.', function() {
             focusModel.select(1);
             expect(focusModel.get('rowKey')).toEqual(1);
@@ -93,16 +95,30 @@ describe('model/focus', function() {
 
     describe('unselect()', function() {
         it('저장된 rowKey 를 제거한다.', function() {
+            var focusModel = create();
+
             focusModel.unselect();
             expect(focusModel.get('rowKey')).toBeNull();
         });
     });
 
-    // describe('when singleClickEdit is true', function() {
-    //     it('and clickCell event occurs, call focusIn() with given address', function() {
+    describe('when singleClickEdit is true', function() {
+        it('and clickCell event occurs, call focusIn() with given address', function() {
+            var domEventBus = DomEventBus.create();
+            var focusModel = create({
+                domEventBus: domEventBus,
+                singleClickEdit: true
+            });
 
-    //     });
-    // });
+            spyOn(focusModel, 'focusIn');
+            domEventBus.trigger('clickCell', new GridEvent({
+                rowKey: 0,
+                columnName: 'c1'
+            }));
+
+            expect(focusModel.focusIn).toHaveBeenCalledWith(0, 'c1');
+        });
+    });
 
     // describe('when new data appended with focus:true option', function() {
     //     it('focus to first cell of new added row', function() {
@@ -115,7 +131,10 @@ describe('model/focus', function() {
     // });
 
     describe('focus()', function() {
+        var focusModel;
+
         beforeEach(function() {
+            focusModel = create();
             focusModel.blur();
         });
 
@@ -145,6 +164,12 @@ describe('model/focus', function() {
     });
 
     describe('blur()', function() {
+        var focusModel;
+
+        beforeEach(function() {
+            focusModel = create();
+        });
+
         it('blur 한다.', function() {
             focusModel.blur();
             expect(focusModel.get('columnName')).toEqual('');
@@ -163,6 +188,12 @@ describe('model/focus', function() {
     });
 
     describe('which()', function() {
+        var focusModel;
+
+        beforeEach(function() {
+            focusModel = create();
+        });
+
         it('현재 focus 정보를 반환하는지 확인한다.', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel.which()).toEqual({
@@ -178,6 +209,12 @@ describe('model/focus', function() {
     });
 
     describe('indexOf()', function() {
+        var focusModel;
+
+        beforeEach(function() {
+            focusModel = create();
+        });
+
         it('현재 focus 정보를 화면에 노출되는 Index 기준으로 반환하는지 확인한다.', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel.indexOf()).toEqual({
@@ -217,6 +254,12 @@ describe('model/focus', function() {
     });
 
     describe('has()', function() {
+        var focusModel;
+
+        beforeEach(function() {
+            focusModel = create();
+        });
+
         it('현재 focus 를 가지고 있는지 확인한다.', function() {
             focusModel.focus(0, 'c1');
             expect(focusModel.has()).toBe(true);
@@ -232,6 +275,12 @@ describe('model/focus', function() {
     });
 
     describe('_findRowKey()', function() {
+        var focusModel;
+
+        beforeEach(function() {
+            focusModel = create();
+        });
+
         it('offset 만큼 이동한 rowKey 를 반환한다.', function() {
             focusModel.focus(1, 'c1');
             expect(focusModel._findRowKey(2)).toBe(3);
@@ -244,6 +293,8 @@ describe('model/focus', function() {
 
     describe('_findColumnName()', function() {
         it('offset 만큼 이동한 columnName 을 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(1, 'c1');
             expect(focusModel._findColumnName(2)).toBe('c3');
             expect(focusModel._findColumnName(-1)).toBe('c1');
@@ -255,6 +306,8 @@ describe('model/focus', function() {
 
     describe('nextColumnIndex()', function() {
         it('다음 columnIndex를 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(0, 'c1');
             expect(focusModel.nextColumnIndex()).toBe(1);
             focusModel.focus(0, 'c2');
@@ -264,6 +317,8 @@ describe('model/focus', function() {
 
     describe('prevColumnIndex()', function() {
         it('이전 columnIndex를 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(0, 'c3');
             expect(focusModel.prevColumnIndex()).toBe(1);
             focusModel.focus(0, 'c2');
@@ -275,6 +330,8 @@ describe('model/focus', function() {
 
     describe('firstRowKey()', function() {
         it('첫번째 rowKey 를 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(2, 'c2');
             expect(focusModel.firstRowKey()).toBe(0);
         });
@@ -282,6 +339,8 @@ describe('model/focus', function() {
 
     describe('lastRowKey()', function() {
         it('마지막 rowKey 를 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(2, 'c2');
             expect(focusModel.lastRowKey()).toBe(3);
         });
@@ -289,6 +348,8 @@ describe('model/focus', function() {
 
     describe('firstColumnName()', function() {
         it('첫번째 columnName 을 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(2, 'c2');
             expect(focusModel.firstColumnName()).toBe('c1');
         });
@@ -296,6 +357,8 @@ describe('model/focus', function() {
 
     describe('lastColumnName()', function() {
         it('마지막 columnName 을 반환한다.', function() {
+            var focusModel = create();
+
             focusModel.focus(2, 'c2');
             expect(focusModel.lastColumnName()).toBe('c3');
         });
@@ -303,6 +366,8 @@ describe('model/focus', function() {
 
     describe('_isValidCell', function() {
         it('Returns where specified cell is valid', function() {
+            var focusModel = create();
+
             expect(focusModel._isValidCell(1, 'c1')).toBe(true);
             expect(focusModel._isValidCell(2, 'c3')).toBe(true);
             expect(focusModel._isValidCell(1, 'c4')).toBe(false);
@@ -312,6 +377,7 @@ describe('model/focus', function() {
 
     describe('restore', function() {
         it('If previous data exist, restore it and return true', function() {
+            var focusModel = create();
             var result;
 
             focusModel.focus(0, 'c1');
@@ -326,6 +392,7 @@ describe('model/focus', function() {
         });
 
         it('If previous data does not exist, return false', function() {
+            var focusModel = create();
             var result = focusModel.restore();
 
             expect(result).toBe(false);
@@ -334,7 +401,10 @@ describe('model/focus', function() {
     });
 
     describe('with rowSpan Data', function() {
+        var focusModel;
+
         beforeEach(function() {
+            focusModel = create();
             focusModel.dataModel.lastRowKey = -1;
             focusModel.dataModel.reset(
                 [
