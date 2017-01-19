@@ -68,19 +68,18 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
     },
 
     /**
-     * Listen to Conatiner view.
-     * @param  {module:view/container} container - Container view object
+     * Listen to Dom Event bus
+     * @param  {module:event/domEventBus} domEventBus - Dom Event bus
      */
-    listenToContainerView: function(container) {
-        this._listenForThrough(container, [
+    listenToDomEventBus: function(domEventBus) {
+        this._listenForThrough(domEventBus, [
             'click',
             'dblclick',
             'mousedown',
             'clickCell',
             'dblclickCell',
             'mouseoverCell',
-            'mouseoutCell',
-            'rendered'
+            'mouseoutCell'
         ]);
     },
 

@@ -28,6 +28,10 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
 
         this.on('change:isFixedHeight', this._resetSyncHeightHandler);
 
+        if (options.domEventBus) {
+            this.listenTo(options.domEventBus, 'windowResize', this._onWindowResize);
+        }
+
         this._resetSyncHeightHandler();
     },
 
@@ -58,6 +62,14 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         scrollY: true,
         fitToParentHeight: false,
         isFixedHeight: false
+    },
+
+    /**
+     * Event handler for 'windowResize' event on domEventBus
+     * @private
+     */
+    _onWindowResize: function() {
+        this.refreshLayout();
     },
 
     /**

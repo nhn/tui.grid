@@ -24,7 +24,6 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
         this.gridId = options.gridId;
         this.dimensionModel = options.dimensionModel;
-        this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
         this.viewFactory = options.viewFactory;
         this.domEventBus = options.domEventBus;
@@ -73,7 +72,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onResizeWindow: function() {
-        this.dimensionModel.refreshLayout();
+        this.domEventBus.trigger('windowResize');
     },
 
     /**
@@ -111,6 +110,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @type {module:event/gridEvent}
          */
         this.domEventBus.trigger('click', eventData);
+        if (eventData.isStopped()) {
+            return;
+        }
 
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
@@ -147,10 +149,11 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @event tui.Grid#dblclick
          * @type {module:event/gridEvent}
          */
-        this.trigger('dblclick', eventData);
+        this.domEventBus.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
             return;
         }
+
         if (this._isCellElement($target, true)) {
             /**
              * Occurs when a mouse button is double clicked on a table cell
@@ -163,9 +166,9 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * @property {Object} rowData - row data containing the target cell
              */
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
-            if (eventData.rowKey === null && !eventData.isStopped()) {
-                this.dataModel.append({}, {focus: true});
-            }
+            // if (eventData.rowKey === null && !eventData.isStopped()) {
+            //     this.dataModel.append({}, {focus: true});
+            // }
         }
     },
 
@@ -270,14 +273,14 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseEvent 이벤트 객체
+     * Event handler for 'mousedown' event
+     * @param {MouseEvent} mouseEvent - Mouse event
      * @private
      */
     _onMouseDown: function(mouseEvent) {
         var $target = $(mouseEvent.target);
         var eventData = new GridEvent(mouseEvent);
-        var focusModel = this.focusModel;
+        var shouldFocus = !$target.is('input, a, button, select, textarea');
 
         /**
          * Occurs when a mouse button is pressed on the Grid.
@@ -286,17 +289,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @event tui.Grid#mousedown
          * @type {module:event/gridEvent}
          */
-        this.trigger('mousedown', eventData);
-        if (eventData.isStopped()) {
-            return;
-        }
-        if (!$target.is('input, a, button, select, textarea')) {
+        this.domEventBus.trigger('mousedown', eventData);
+
+        if (shouldFocus) {
             mouseEvent.preventDefault();
 
             // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
             $target[0].unselectable = true;
 
-            focusModel.focusClipboard();
+            this.domEventBus.trigger('mousedown:focus', eventData);
         }
     },
 
@@ -312,13 +313,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .append(childElements);
 
         this._triggerChildrenAppended();
-        this.trigger('rendered');
+        // this.trigger('rendered');
 
         return this;
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         this.stopListening();

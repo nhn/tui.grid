@@ -30,8 +30,11 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.listenTo(this.dataModel, 'reset', this._onResetData);
 
-        if (options.singleClickEdit) {
-            this.listenTo(options.domEventBus, 'clickCell', this._onClickCell);
+        if (options.domEventBus) {
+            if (options.singleClickEdit) {
+                this.listenTo(options.domEventBus, 'clickCell', this._onClickCell);
+            }
+            this.listenTo(options.domEventBus, 'mousedown:focus', this._onMouseDownFocus);
         }
     },
 
@@ -77,16 +80,24 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
     /**
      * Event handler for 'clickCell' event on domEventBus
-     * @param {module:event/gridEvent} eventData - event data
+     * @param {module:event/gridEvent} ev - event data
      * @private
      */
-    _onClickCell: function(eventData) {
-        var rowKey = eventData.rowKey;
-        var columnName = eventData.columnName;
+    _onClickCell: function(ev) {
+        var rowKey = ev.rowKey;
+        var columnName = ev.columnName;
 
-        if (!eventData.isStopped() && !_.isNull(rowKey)) {
+        if (!ev.isStopped() && !_.isNull(rowKey)) {
             this.focusIn(rowKey, columnName);
         }
+    },
+
+    /**
+     * Event handler for 'mousedown' event on domEventBus
+     * @private
+     */
+    _onMouseDownFocus: function() {
+        this.focusClipboard();
     },
 
     /**

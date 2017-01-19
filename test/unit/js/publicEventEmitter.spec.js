@@ -46,9 +46,9 @@ describe('publicEventEmitter', function() {
         });
     });
 
-    describe('listenToContainerView', function() {
+    describe('listenToDomEventBus', function() {
         beforeEach(function() {
-            emitter.listenToContainerView(target);
+            emitter.listenToDomEventBus(target);
         });
 
         it('should listen click event', function() {
@@ -77,10 +77,6 @@ describe('publicEventEmitter', function() {
 
         it('should listen mouseoutCell event', function() {
             testTrigger(target, publicObject, 'mouseoutCell');
-        });
-
-        it('should listen rendered event', function() {
-            testTrigger(target, publicObject, 'rendered');
         });
     });
 

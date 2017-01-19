@@ -56,7 +56,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.columnModel = this._createColumnModel(options);
         this.dataModel = this._createDataModel(options, domState);
         this.toolbarModel = this._createToolbarModel(options);
-        this.dimensionModel = this._createDimensionModel(options, domState);
+        this.dimensionModel = this._createDimensionModel(options, domState, domEventBus);
         this.coordRowModel = this._createCoordRowModel(domState);
         this.coordColumnModel = this._createCoordColumnModel();
         this.focusModel = this._createFocusModel(options, domState, domEventBus);
@@ -116,10 +116,11 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of dimension model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
+     * @param  {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/dimension} - A new instance
      * @private
      */
-    _createDimensionModel: function(options, domState) {
+    _createDimensionModel: function(options, domState, domEventBus) {
         var dimensionModel;
         var attrs = {
             headerHeight: options.headerHeight,
@@ -143,7 +144,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
-            domState: domState
+            domState: domState,
+            domEventBus: domEventBus
         });
 
         // The displayRowCount option is deprecated.

@@ -54,11 +54,10 @@ var ViewFactory = tui.util.defineClass({
     createContainer: function() {
         return new ContainerView({
             el: this.domState.$el,
+            gridId: this.modelManager.gridId,
             domEventBus: this.domEventBus,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
-            focusModel: this.modelManager.focusModel,
-            gridId: this.modelManager.gridId,
             viewFactory: this
         });
     },

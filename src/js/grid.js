@@ -164,7 +164,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         this.componentHolder = this._createComponentHolder(options.pagination);
         this.viewFactory = this._createViewFactory(domState, domEventBus, options);
         this.container = this.viewFactory.createContainer();
-        this.publicEventEmitter = this._createPublicEventEmitter();
+        this.publicEventEmitter = this._createPublicEventEmitter(domEventBus);
         this.domState = domState;
 
         this.container.render();
@@ -254,14 +254,15 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates public event emitter and returns it.
+     * @param {module:event/domEventBus} domEventBus - dom event bus
      * @returns {module:publicEventEmitter} - New public event emitter
      * @private
      */
-    _createPublicEventEmitter: function() {
+    _createPublicEventEmitter: function(domEventBus) {
         var emitter = new PublicEventEmitter(this);
 
         emitter.listenToFocusModel(this.modelManager.focusModel);
-        emitter.listenToContainerView(this.container);
+        emitter.listenToDomEventBus(domEventBus);
 
         return emitter;
     },
