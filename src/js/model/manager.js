@@ -54,7 +54,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.gridId = options.gridId;
 
         this.columnModel = this._createColumnModel(options);
-        this.dataModel = this._createDataModel(options, domState);
+        this.dataModel = this._createDataModel(options, domState, domEventBus);
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState, domEventBus);
         this.coordRowModel = this._createCoordRowModel(domState);
@@ -62,7 +62,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.focusModel = this._createFocusModel(options, domState, domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
-        this.selectionModel = this._createSelectionModel();
+        this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
 
         // todo: remove dependency
@@ -90,13 +90,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of data model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
+     * @param  {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:data/rowList} - A new instance
      * @private
      */
-    _createDataModel: function(options, domState) {
+    _createDataModel: function(options, domState, domEventBus) {
         return new RowListData([], {
             gridId: this.gridId,
             domState: domState,
+            domEventBus: domEventBus,
             columnModel: this.columnModel,
             useClientSort: options.useClientSort
         });
@@ -222,17 +224,19 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of seleciton model and returns it.
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/selection} - A new instance
      * @private
      */
-    _createSelectionModel: function() {
+    _createSelectionModel: function(domEventBus) {
         return new SelectionModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             coordConverterModel: this.coordConverterModel,
             renderModel: this.renderModel,
-            focusModel: this.focusModel
+            focusModel: this.focusModel,
+            domEventBus: domEventBus
         });
     },
 

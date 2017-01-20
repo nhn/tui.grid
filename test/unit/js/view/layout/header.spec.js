@@ -2,20 +2,22 @@
 
 var ModelManager = require('model/manager');
 var DomState = require('domState');
+var DomEventBus = require('event/domEventBus');
 var ViewFactory = require('view/factory');
 
 var classNameConst = require('common/classNameConst');
 var constMap = require('common/constMap');
+var frameConst = constMap.frame;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
-var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
-var frameConst = require('common/constMap').frame;
 
 describe('Header', function() {
-    var modelManager, viewFactory, header;
+    var modelManager, viewFactory, domEventBus, header;
 
     beforeEach(function() {
-        modelManager = new ModelManager(null, new DomState($('<div>')));
+        domEventBus = DomEventBus.create();
+        modelManager = new ModelManager(null, new DomState($('<div>'), domEventBus));
         viewFactory = new ViewFactory({
+            domEventBus: domEventBus,
             modelManager: modelManager
         });
         modelManager.columnModel.set('columnModelList', [
@@ -123,16 +125,16 @@ describe('Header', function() {
             expect($btns.eq(1).parent().attr(ATTR_COLUMN_NAME)).toBe('c2');
         });
 
-        it('버튼을 클릭하면 dataModel.sort()를 실행한다.', function() {
-            var $btn = header.$el.find('.' + classNameConst.BTN_SORT),
-                eventMock = {
-                    target: $btn[0]
-                };
-            modelManager.dataModel.sortByField = jasmine.createSpy('sortByField');
+        it('trigger click:headerSort when click sort button', function() {
+            var clickSpy = jasmine.createSpy('clickSpy');
+            var eventMock = {
+                target: header.$el.find('.' + classNameConst.BTN_SORT)[0]
+            };
 
-            // click the button
+            domEventBus.on('click:headerSort', clickSpy);
             header._onClick(eventMock);
-            expect(modelManager.dataModel.sortByField).toHaveBeenCalled();
+
+            expect(clickSpy).toHaveBeenCalled();
         });
 
         it('dataModel의 sortChanged 이벤트 발생시 정렬 버튼이 갱신된다.', function() {
@@ -289,8 +291,8 @@ describe('Header', function() {
         });
     });
 
-    describe('_onClick', function() {
-        var $input, clickEvent, lHeader;
+    describe('when check button is clicked, trigger click:headerCheck event on domEventBus', function() {
+        var $input, clickEvent, clickSpy, lHeader;
 
         beforeEach(function() {
             lHeader = viewFactory.createHeader(frameConst.L);
@@ -299,147 +301,47 @@ describe('Header', function() {
 
             $input = lHeader._getHeaderMainCheckbox();
             clickEvent = {target: $input.get(0)};
-            modelManager.dataModel.checkAll = jasmine.createSpy('checkAll');
-            modelManager.dataModel.uncheckAll = jasmine.createSpy('uncheckAll');
+            clickSpy = jasmine.createSpy('clickSpy');
+            domEventBus.on('click:headerCheck', clickSpy);
         });
 
-        describe('selectType 이 checkbox 일 때', function() {
-            it('체크한 상태라면 전체 행을 check 하기 위해 checkAll 을 호출한다.', function() {
+        describe('with checked status (true)', function() {
+            it('trigger click:headerCheck event', function() {
                 $input.prop('checked', true);
                 lHeader._onClick(clickEvent);
-                expect(modelManager.dataModel.checkAll).toHaveBeenCalled();
-                expect(modelManager.dataModel.uncheckAll).not.toHaveBeenCalled();
+
+                expect(clickSpy.calls.first().args[0].checked).toBe(true);
             });
 
-            it('체크 해제된 상태라면 전체 행을 check 하기 위해 uncheckAll 을 호출한다.', function() {
+            it('with checked status (false)', function() {
                 $input.prop('checked', false);
                 lHeader._onClick(clickEvent);
-                expect(modelManager.dataModel.checkAll).not.toHaveBeenCalled();
-                expect(modelManager.dataModel.uncheckAll).toHaveBeenCalled();
+
+                expect(clickSpy.calls.first().args[0].checked).toBe(false);
             });
         });
-    });
-
-    it('_hasMetaColumn', function() {
-        var columnNames = ['c1', 'c2'];
-
-        expect(header._hasMetaColumn(columnNames)).toBe(false);
-
-        columnNames.unshift('_number');
-        expect(header._hasMetaColumn(columnNames)).toBe(true);
     });
 
     describe('_onMouseDown', function() {
-        var eventMock, tableHeader,
-            columnNames, pageX, pageY, shiftKey;
-
-        beforeAll(function() {
-            tableHeader = $('<th height="50" colspan="1" rowspan="1">c1</th>').attr(ATTR_COLUMN_NAME, 'c1')[0];
-        });
+        var eventMock, tableHeader;
 
         beforeEach(function() {
-            columnNames = ['c1'];
-            pageX = 0;
-            pageY = 0;
-            shiftKey = false;
-
+            tableHeader = $('<th height="50" colspan="1" rowspan="1">c1</th>').attr(ATTR_COLUMN_NAME, 'c1')[0];
             eventMock = {
-                pageX: pageX,
-                pageY: pageY,
-                shiftKey: shiftKey,
                 target: tableHeader
             };
-            spyOn(modelManager.columnModel, 'getUnitColumnNamesIfMerged').and.returnValue(columnNames);
-            spyOn(header, '_controlStartAction');
         });
 
-        it('if selectionModel is disabled, should be interrupted', function() {
-            modelManager.selectionModel.disable();
-            spyOn(header, '_hasMetaColumn').and.returnValue(false);
+        it('trigger mousedown:header on domEventBus', function() {
+            var eventSpy = jasmine.createSpy('eventSpy');
 
+            domEventBus.on('mousedown:header', eventSpy);
             header._onMouseDown(eventMock);
-            expect(header._controlStartAction).not.toHaveBeenCalled();
-        });
 
-        it('if meta column selected, should be interrupted', function() {
-            modelManager.columnModel.getUnitColumnNamesIfMerged = jasmine.createSpy().and.returnValue([
-                '_number'
-            ]);
-
-            header._onMouseDown(eventMock);
-            expect(header._controlStartAction).not.toHaveBeenCalled();
-        });
-
-        it('should call "_controlStartAction" with expected params', function() {
-            header._onMouseDown(eventMock);
-            expect(header._controlStartAction).toHaveBeenCalledWith(columnNames, pageX, pageY, shiftKey);
-        });
-    });
-
-    describe('_controlStartAction', function() {
-        var columns, columnNames, pageX, pageY, shiftKey;
-
-        beforeEach(function() {
-            columns = {
-                'c1': 1,
-                'c2': 2,
-                'c3': 3
-            };
-            columnNames = ['c2'];
-            pageX = 0;
-            pageY = 0;
-            shiftKey = false;
-            spyOn(modelManager.selectionModel, 'selectColumn');
-            spyOn(modelManager.selectionModel, 'update');
-            spyOn(modelManager.columnModel, 'indexOfColumnName').and.callFake(function(name) {
-                return columns[name] || -1;
-            });
-            spyOn(header, '_attachDragEvents');
-        });
-
-        it('should attach drag events', function() {
-            header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-
-            expect(header._attachDragEvents).toHaveBeenCalled();
-        });
-
-        describe('without shiftKey', function() {
-            it('should set a minimum range of selection from column names', function() {
-                spyOn(modelManager.selectionModel, 'setMinimumColumnRange').and.callThrough();
-                columnNames.push('c1', 'c3');
-                header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-
-                expect(modelManager.selectionModel.setMinimumColumnRange).toHaveBeenCalledWith([1, 3]);
-            });
-
-            it('should select a column - 1', function() {
-                header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-
-                expect(modelManager.selectionModel.selectColumn).toHaveBeenCalledWith(2);
-                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 2);
-            });
-
-            it('should select columns - 2', function() {
-                columnNames.push('c1', 'c3');
-                header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-
-                expect(modelManager.selectionModel.selectColumn).toHaveBeenCalledWith(1);
-                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3);
-            });
-        });
-
-        describe('with shiftKey', function() {
-            beforeEach(function() {
-                columnNames = ['c1', 'c2', 'c3'];
-                shiftKey = true;
-                spyOn(modelManager.selectionModel, 'extendColumnSelection');
-            });
-
-            it('should start(update) column selection with extending', function() {
-                header._controlStartAction(columnNames, pageX, pageY, shiftKey);
-                expect(modelManager.selectionModel.update).toHaveBeenCalledWith(0, 3, SEL_TYPE_COLUMN);
-                expect(modelManager.selectionModel.extendColumnSelection).toHaveBeenCalledWith([1, 2, 3], pageX, pageY);
-            });
+            expect(eventSpy.calls.first().args[0]).toEqual(jasmine.objectContaining({
+                columnName: 'c1',
+                targetType: 'header'
+            }));
         });
     });
 

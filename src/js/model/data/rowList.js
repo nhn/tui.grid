@@ -21,7 +21,7 @@ var Row = require('./row');
 var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */{
     initialize: function(models, options) {
         Collection.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
+        _.assign(this, {
             columnModel: options.columnModel,
             domState: options.domState,
             gridId: options.gridId,
@@ -42,8 +42,14 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
              */
             isDisabled: false
         });
+
         if (!this.sortOptions.useClient) {
             this.comparator = null;
+        }
+
+        if (options.domEventBus) {
+            this.listenTo(options.domEventBus, 'click:headerCheck', this._onClickHeaderCheck);
+            this.listenTo(options.domEventBus, 'click:headerSort', this._onClickHeaderSort);
         }
     },
 
@@ -57,6 +63,28 @@ var RowList = Collection.extend(/**@lends module:model/data/rowList.prototype */
     parse: function(data) {
         data = data && data.contents || data;
         return this._formatData(data);
+    },
+
+    /**
+     * Event handler for 'click:headerCheck' event on domEventBus
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onClickHeaderCheck: function(ev) {
+        if (ev.checked) {
+            this.checkAll();
+        } else {
+            this.uncheckAll();
+        }
+    },
+
+    /**
+     * Event handler for 'click:headerSort' event on domEventBus
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onClickHeaderSort: function(ev) {
+        this.sortByField(ev.columnName);
     },
 
     /**

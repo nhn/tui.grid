@@ -175,6 +175,7 @@ var ViewFactory = tui.util.defineClass({
             columnModel: this.modelManager.columnModel,
             coordRowModel: this.modelManager.coordRowModel,
             coordColumnModel: this.modelManager.coordColumnModel,
+            domEventBus: this.domEventBus,
             viewFactory: this
         });
     },

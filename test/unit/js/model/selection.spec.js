@@ -2,6 +2,7 @@
 
 var ModelManager = require('model/manager');
 var DomState = require('domState');
+var DomEventBus = require('event/domEventBus');
 
 describe('model/selection', function() {
     var modelManager, selection;
@@ -9,6 +10,7 @@ describe('model/selection', function() {
     beforeEach(function() {
         var $el = jasmine.getFixtures().set('<div />');
         var domState = new DomState($el);
+        var domEventBus = DomEventBus.create();
 
         modelManager = new ModelManager({
             columnModelList: [
@@ -54,7 +56,7 @@ describe('model/selection', function() {
                     }
                 }
             ]
-        }, domState);
+        }, domState, domEventBus);
 
         modelManager.dataModel.setRowList([
             {
@@ -311,7 +313,7 @@ describe('model/selection', function() {
                 });
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    selection.setMinimumColumnRange([2, 3]);
+                    selection.minimumColumnRange = [2, 3];
                     selection.extendColumnSelection([0, 1], null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
@@ -322,7 +324,7 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    selection.unsetMinimumColumnRange();
+                    selection.minimumColumnRange = null;
                     selection.extendColumnSelection([0, 1], null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
@@ -339,7 +341,7 @@ describe('model/selection', function() {
                         row: 0,
                         column: 1
                     });
-                    selection.setMinimumColumnRange([2, 3]);
+                    selection.minimumColumnRange = [2, 3];
                     selection.extendColumnSelection(null, null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
@@ -354,7 +356,7 @@ describe('model/selection', function() {
                         row: 0,
                         column: 1
                     });
-                    selection.unsetMinimumColumnRange();
+                    selection.minimumColumnRange = null;
                     selection.extendColumnSelection(null, null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({

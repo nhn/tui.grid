@@ -22,15 +22,17 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     initialize: function(attr, options) {
         Model.prototype.initialize.apply(this, arguments);
 
-        this.setOwnProperties({
+        _.assign(this, {
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             dimensionModel: options.dimensionModel,
             focusModel: options.focusModel,
             renderModel: options.renderModel,
             coordConverterModel: options.coordConverterModel,
+            domEventBus: options.domEventBus,
 
             inputRange: null,
+            minimumColumnRange: null,
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             enabled: true,
@@ -39,6 +41,11 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
         this.listenTo(this.dataModel, 'paste', this._onPasteData);
+
+        if (this.isEnabled() && options.domEventBus) {
+            this.listenTo(options.domEventBus, 'dragmove:header', this._onHeaderDragMove);
+            this.listenTo(options.domEventBus, 'dragstart:header', this._onHeaderDragStart);
+        }
     },
 
     defaults: {
@@ -51,12 +58,75 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
+     * Event handler for 'dragstart:header' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onHeaderDragStart: function(gridEvent) {
+        var columnModel = this.columnModel;
+        var columnNames = columnModel.getUnitColumnNamesIfMerged(gridEvent.columnName);
+        var columnRange;
+
+        if (_.some(columnNames, util.isMetaColumn)) {
+            gridEvent.stop();
+            return;
+        }
+
+        columnRange = this._getColumnRangeWithNames(columnNames);
+
+        if (gridEvent.shiftKey) {
+            this.update(0, columnRange[1], typeConstMap.COLUMN);
+            this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+        } else {
+            this.minimumColumnWidth = columnRange;
+            this.selectColumn(columnRange[0]);
+            this.update(0, columnRange[1]);
+        }
+    },
+
+    /**
+     * Event handler for 'dragmove:header' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onHeaderDragMove: function(gridEvent) {
+        var columnModel = this.columnModel;
+        var columnNames, columnRange;
+
+        if (gridEvent.isOnHeaderArea && !gridEvent.columnName) {
+            return;
+        }
+
+        columnNames = columnModel.getUnitColumnNamesIfMerged(gridEvent.columnName);
+        if (columnNames.length) {
+            columnRange = this._getColumnRangeWithNames(columnNames);
+        }
+        this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+    },
+
+    /**
      * Event handler for 'paste' event on DataModel
      * @param {Object} range - Range
      */
     _onPasteData: function(range) {
         this.start(range.startIdx.row, range.startIdx.column);
         this.update(range.endIdx.row, range.endIdx.column);
+    },
+
+    /**
+     * Returns the range of column index of given column names
+     * @param {Array.<string>} columnNames - column names
+     * @returns {Array.<number>}
+     * @private
+     */
+    _getColumnRangeWithNames: function(columnNames) {
+        var columnModel = this.columnModel;
+        var columnIndexes = _.map(columnNames, function(name) {
+            return columnModel.indexOfColumnName(name, true);
+        });
+        var minMax = util.getMinMax(columnIndexes);
+
+        return [minMax.min, minMax.max];
     },
 
     /**
@@ -167,7 +237,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {number} pageY - Mouse positino Y
      */
     extendColumnSelection: function(columnIndexes, pageX, pageY) {
-        var minimumColumnRange = this._minimumColumnRange;
+        var minimumColumnRange = this.minimumColumnRange;
         var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
         var range = {
             row: [0, this.dataModel.length - 1],
@@ -226,7 +296,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     end: function() {
         this.inputRange = null;
         this.unset('range');
-        this.unsetMinimumColumnRange();
+        this.minimumColumnRange = null;
     },
 
     /**
@@ -448,21 +518,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         }
 
         this.set('range', spannedRange);
-    },
-
-    /**
-     * Set minimum column range
-     * @param {Array} range - Minimum column range
-     */
-    setMinimumColumnRange: function(range) {
-        this._minimumColumnRange = _.extend(range);
-    },
-
-    /**
-     * Unset minimum column range
-     */
-    unsetMinimumColumnRange: function() {
-        this._minimumColumnRange = null;
     },
 
     /**

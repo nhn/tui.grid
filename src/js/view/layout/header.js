@@ -10,11 +10,11 @@ var View = require('../../base/view');
 var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
+var GridEvent = require('../../event/gridEvent');
 var frameConst = constMap.frame;
 
 var DELAY_SYNC_CHECK = 10;
 var keyCodeMap = constMap.keyCode;
-var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
@@ -31,7 +31,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
-        this.setOwnProperties({
+        _.assign(this, {
             renderModel: options.renderModel,
             coordColumnModel: options.coordColumnModel,
             dimensionModel: options.dimensionModel,
@@ -40,6 +40,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnModel: options.columnModel,
             dataModel: options.dataModel,
             viewFactory: options.viewFactory,
+            domEventBus: options.domEventBus,
             coordRowModel: options.coordRowModel,
             whichSide: options.whichSide || frameConst.R
         });
@@ -197,126 +198,25 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {jQuery.Event} event - MouseDown event
+     * @param {jQuery.Event} ev - MouseDown event
      * @private
      */
-    _onMouseDown: function(event) {
-        var columnName, columnNames;
+    _onMouseDown: function(ev) {
+        var columnName;
+        var $target = $(ev.target);
+        var eventData = new GridEvent(ev);
 
-        if (!this.selectionModel.isEnabled() || $(event.target).is('a.' + classNameConst.BTN_SORT)) {
+        if ($target.hasClass(classNameConst.BTN_SORT)) {
             return;
         }
 
-        columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
-        if (!columnName) {
-            return;
-        }
-
-        columnNames = this.columnModel.getUnitColumnNamesIfMerged(columnName);
-
-        if (!this._hasMetaColumn(columnNames)) {
-            this._controlStartAction(columnNames, event.pageX, event.pageY, event.shiftKey);
-        }
-    },
-
-    /**
-     * Control selection action when started
-     * @param {Array} columnNames - An array of column names
-     * @param {number} pageX - Mouse position X
-     * @param {number} pageY - Mouse position Y
-     * @param {boolean} shiftKey - Whether the shift-key is pressed.
-     * @private
-     */
-    _controlStartAction: function(columnNames, pageX, pageY, shiftKey) {
-        var columnModel = this.columnModel,
-            columnIndexes = _.map(columnNames, function(name) {
-                return columnModel.indexOfColumnName(name, true);
-            });
-
-        if (shiftKey) {
-            this._startColumnSelectionWithShiftKey(columnIndexes, pageX, pageY);
-        } else {
-            this._startColumnSelectionWithoutShiftKey(columnIndexes);
-        }
-        this._attachDragEvents();
-    },
-
-    /**
-     * Start column selection with shiftKey pressed
-     * @param {Array.<number>} columnIndexes - Indexes of columns
-     * @param {number} pageX - Mouse position X
-     * @param {number} pageY - Mouse position Y
-     * @private
-     */
-    _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
-        var selectionModel = this.selectionModel;
-        var max = Math.max.apply(null, columnIndexes);
-
-        selectionModel.update(0, max, SEL_TYPE_COLUMN);
-        selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
-    },
-
-    /**
-     * Start column selection when shiftKey is not pressed
-     * @param {Array.<number>} columnIndexes - Indexes of columns
-     * @private
-     */
-    _startColumnSelectionWithoutShiftKey: function(columnIndexes) {
-        var selectionModel = this.selectionModel;
-        var minMax = util.getMinMax(columnIndexes);
-        var min = minMax.min;
-        var max = minMax.max;
-
-        selectionModel.setMinimumColumnRange([min, max]);
-        selectionModel.selectColumn(min);
-        selectionModel.update(0, max);
-    },
-
-    /**
-     * Attach mouse drag event
-     * @private
-     */
-    _attachDragEvents: function() {
-        $(document)
-            .on('mousemove', $.proxy(this._onMouseMove, this))
-            .on('mouseup', $.proxy(this._detachDragEvents, this))
-            .on('selectstart', $.proxy(this._onSelectStart, this));
-    },
-
-    /**
-     * Detach mouse drag event
-     * @private
-     */
-    _detachDragEvents: function() {
-        this.selectionModel.stopAutoScroll();
-        $(document)
-            .off('mousemove', this._onMouseMove)
-            .off('mouseup', this._detachDragEvents)
-            .off('selectstart', this._onSelectStart);
-    },
-
-    /**
-     * Mousemove event handler
-     * @param {jQuery.Event} event - MouseMove event
-     * @private
-     */
-    _onMouseMove: function(event) {
-        var columnModel = this.columnModel;
-        var isExtending = true;
-        var columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
-        var columnNames, columnIndexes;
-
+        columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
         if (columnName) {
-            columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
-            columnIndexes = _.map(columnNames, function(name) {
-                return columnModel.indexOfColumnName(name, true);
+            eventData.setData({
+                targetType: 'header',
+                columnName: columnName
             });
-        } else if ($.contains(this.el, event.target)) {
-            isExtending = false;
-        }
-
-        if (isExtending) {
-            this.selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
+            this.domEventBus.trigger('mousedown:header', eventData);
         }
     },
 
@@ -330,17 +230,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return _.some(columnNames, function(name) {
             return util.isMetaColumn(name);
         });
-    },
-
-    /**
-     * Selectstart event handler
-     * @param {jQuery.Event} event - Mouse event
-     * @returns {boolean} false for preventDefault
-     * @private
-     */
-    _onSelectStart: function(event) {
-        event.preventDefault();
-        return false;
     },
 
     /**
@@ -415,22 +304,25 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     * 클릭 이벤트 핸들러
-     * @param {jQuery.Event} clickEvent 클릭이벤트
+     * Event handler for click event
+     * @param {jQuery.Event} ev - MouseEvent
      * @private
      */
-    _onClick: function(clickEvent) {
-        var $target = $(clickEvent.target);
+    _onClick: function(ev) {
+        var $target = $(ev.target);
         var columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
+        var eventData = new GridEvent(ev);
 
         if (columnName === '_button' && $target.is('input')) {
-            if ($target.prop('checked')) {
-                this.dataModel.checkAll();
-            } else {
-                this.dataModel.uncheckAll();
-            }
+            eventData.setData({
+                checked: $target.prop('checked')
+            });
+            this.domEventBus.trigger('click:headerCheck', eventData);
         } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
-            this.dataModel.sortByField(columnName);
+            eventData.setData({
+                columnName: columnName
+            });
+            this.domEventBus.trigger('click:headerSort', eventData);
         }
     },
 
