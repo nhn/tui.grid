@@ -6,6 +6,7 @@
 
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
+var DragEventEmitter = require('../event/dragEventEmitter');
 var HTML_INNER = '<a href="#"><span></span></a>';
 
 /**
@@ -18,13 +19,13 @@ var HTML_INNER = '<a href="#"><span></span></a>';
 var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHandle.prototype */{
     initialize: function(options) {
         this.dimensionModel = options.dimensionModel;
-        this.timeoutIdForResize = 0;
+        this.domEventBus = options.domEventBus;
 
-        /**
-         * Relative Y-position of the mouse pointer in the element when starting dragging
-         * @type {Number}
-         */
-        this.mouseOffsetY = 0;
+        this.dragEmitter = new DragEventEmitter({
+            type: 'resizeHeight',
+            onDragEnd: _.bind(this._onDragEnd, this),
+            domEventBus: this.domEventBus
+        });
 
         this.on('appended', this._onAppended);
     },
@@ -44,73 +45,25 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * Attach event handlers to start 'drag' action
-     * @private
-     */
-    _attachMouseEvent: function() {
-        $(document).on('mousemove', $.proxy(this._onMouseMove, this));
-        $(document).on('mouseup', $.proxy(this._onMouseUp, this));
-        $(document).on('selectstart', $.proxy(this._onSelectStart, this));
-    },
-
-    /**
-     * Detach event handler to cancel 'drag' action
-     * @private
-     */
-
-    _detachMouseEvent: function() {
-        $(document).off('mousemove', $.proxy(this._onMouseMove, this));
-        $(document).off('mouseup', $.proxy(this._onMouseUp, this));
-        $(document).off('selectstart', $.proxy(this._onSelectStart, this));
-    },
-
-    /**
      * Event handler for 'mousedown' event
-     * @param {MouseEvent} mouseEvent - MouseEvent object
+     * @param {MouseEvent} ev - MouseEvent object
      * @private
      */
-    _onMouseDown: function(mouseEvent) {
-        mouseEvent.preventDefault();
+    _onMouseDown: function(ev) {
+        ev.preventDefault();
         $(document.body).css('cursor', 'row-resize');
-        this.mouseOffsetY = mouseEvent.offsetY;
-        this._attachMouseEvent();
-    },
 
-    /**
-     * Event handler for 'mousemove' event
-     * @param {MouseEvent} mouseEvent - MouseEvent object
-     * @private
-     */
-    _onMouseMove: function(mouseEvent) {
-        var dimensionModel = this.dimensionModel;
-        var gridOffsetY = dimensionModel.get('offsetTop');
-        var mouseOffsetY = this.mouseOffsetY;
-
-        clearTimeout(this.timeoutIdForResize);
-
-        this.timeoutIdForResize = setTimeout(function() {
-            dimensionModel.setSize(null, mouseEvent.pageY - gridOffsetY - mouseOffsetY);
-        }, 0);
+        this.dragEmitter.start(ev, {
+            mouseOffsetY: ev.offsetY
+        });
     },
 
     /**
      * Event handler for 'mouseup' event
      * @private
      */
-    _onMouseUp: function() {
+    _onDragEnd: function() {
         $(document.body).css('cursor', 'default');
-        this._detachMouseEvent();
-    },
-
-    /**
-     * Event handler for 'selectstart' event
-     * @param {Event} event - Event object
-     * @returns {boolean}
-     * @private
-     */
-    _onSelectStart: function(event) {
-        event.preventDefault();
-        return false;
     },
 
     /**
@@ -122,16 +75,6 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
         this.$el.html(HTML_INNER);
 
         return this;
-    },
-
-    /**
-     * Destroy
-     */
-    destroy: function() {
-        this.stopListening();
-        this._onMouseUp();
-        this._destroyChildren();
-        this.remove();
     }
 });
 

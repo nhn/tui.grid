@@ -11,6 +11,7 @@ var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var GridEvent = require('../../event/gridEvent');
+var DragEventEmitter = require('../../event/dragEventEmitter');
 var frameConst = constMap.frame;
 
 var DELAY_SYNC_CHECK = 10;
@@ -43,6 +44,12 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             domEventBus: options.domEventBus,
             coordRowModel: options.coordRowModel,
             whichSide: options.whichSide || frameConst.R
+        });
+
+        this.dragEmitter = new DragEventEmitter({
+            type: 'header',
+            domEventBus: this.domEventBus,
+            onDragMove: _.bind(this._onDragMove, this)
         });
 
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
@@ -143,6 +150,17 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return _.pluck(selectedColumns, 'columnName');
     },
 
+    _onDragMove: function(gridEvent) {
+        var $target = $(gridEvent.target);
+
+        gridEvent.setData({
+            columnName: $target.closest('th').attr(ATTR_COLUMN_NAME),
+            isOnHeaderArea: $.contains(this.el, $target[0])
+        });
+
+        console.log('on drag move');
+    },
+
     /**
      * Returns an array of names of merged-column which contains every column name in the given array.
      * @param {Array.<String>} columnNames - an array of column names to test
@@ -202,9 +220,8 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
      * @private
      */
     _onMouseDown: function(ev) {
-        var columnName;
         var $target = $(ev.target);
-        var eventData = new GridEvent(ev);
+        var columnName;
 
         if ($target.hasClass(classNameConst.BTN_SORT)) {
             return;
@@ -212,24 +229,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
         columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
         if (columnName) {
-            eventData.setData({
-                targetType: 'header',
+            this.dragEmitter.start(ev, {
                 columnName: columnName
             });
-            this.domEventBus.trigger('mousedown:header', eventData);
         }
-    },
-
-    /**
-     * Whether this columnNames array has a meta column name.
-     * @param {Array} columnNames - An array of column names
-     * @returns {boolean} Has a meta column name or not.
-     * @private
-     */
-    _hasMetaColumn: function(columnNames) {
-        return _.some(columnNames, function(name) {
-            return util.isMetaColumn(name);
-        });
     },
 
     /**

@@ -111,7 +111,8 @@ var ViewFactory = tui.util.defineClass({
             return null;
         }
         return new HeightResizeHandleView({
-            dimensionModel: this.modelManager.dimensionModel
+            dimensionModel: this.modelManager.dimensionModel,
+            domEventBus: this.domEventBus
         });
     },
 

@@ -6,38 +6,33 @@
 
 var _ = require('underscore');
 var GridEvent = require('./gridEvent');
-var attrNameConst = require('../common/constMap').attrName;
-var classNameConst = require('../common/classNameConst');
 
 /* Drag event emitter
  * @module event/dragEventEmitter
  * @ignore
  */
 var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmitter.prototype */{
-    init: function(domEventBus) {
-        this.domEventBus = domEventBus;
-        this.targetType = null;
-
-        domEventBus.on('mousedown:header', this._onMouseDown, this);
+    init: function(options) {
+        _.assign(this, {
+            type: options.type,
+            domEventBus: options.domEventBus,
+            onDragMove: options.onDragMove,
+            onDragEnd: options.onDragEnd,
+            startData: null
+        });
     },
 
     /**
-     * Event handler for 'mouseup' event on document
-     * @private
+     * Starts drag action
+     * @param {MouseEvent} ev - MouseEvent
+     * @param {Object} data - start data (to be used in dragmove, dragend event)
      */
-    _onMouseUp: function() {
-        this._detachDragEvents();
-        this.domEventBus.trigger('dragend:' + this.targetType);
-    },
+    start: function(ev, data) {
+        var gridEvent = new GridEvent();
 
-    /**
-     * Event handler for 'mousedown:*' events on domEventBus
-     * @param {module:event/gridEvent} gridEvent - GridEvent
-     * @private
-     */
-    _onMouseDown: function(gridEvent) {
-        this.targetType = gridEvent.targetType;
-        this.domEventBus.trigger('dragstart:' + this.targetType, gridEvent);
+        this.startData = data;
+        gridEvent.setData(data);
+        this.domEventBus.trigger('dragstart:' + this.type, gridEvent);
 
         if (!gridEvent.isStopped()) {
             this._attachDragEvents();
@@ -50,26 +45,33 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
      * @private
      */
     _onMouseMove: function(ev) {
-        var eventData = new GridEvent(ev);
-        var $target = $(ev.target);
+        var gridEvent = new GridEvent(ev);
 
-        if (this.targetType === 'header') {
-            eventData.setData(this._getHeaderEventData($target));
+        if (_.isFunction(this.onDragMove)) {
+            this.onDragMove(gridEvent);
         }
-        this.domEventBus.trigger('dragmove:' + this.targetType, eventData);
+
+        gridEvent.setData({startData: this.startData});
+        this.domEventBus.trigger('dragmove:' + this.type, gridEvent);
     },
 
     /**
-     * Returns the columnName and isOnHeaderArea value as an object from $target
-     * @param {$} $target - target
-     * @returns {Object}
+     * Event handler for 'mouseup' event on document
+     * @param {MouseEvent} ev - MouseEvent
      * @private
      */
-    _getHeaderEventData: function($target) {
-        return {
-            columnName: $target.closest('th').attr(attrNameConst.COLUMN_NAME),
-            isOnHeaderArea: $target.closest('.' + classNameConst.HEAD_AREA).length === 1
-        };
+    _onMouseUp: function(ev) {
+        var gridEvent = new GridEvent(ev);
+
+        if (_.isFunction(this.onDragEnd)) {
+            this.onDragEnd(gridEvent);
+        }
+
+        gridEvent.setData({startData: this.startData});
+        this.domEventBus.trigger('dragend:' + this.type, gridEvent);
+
+        this.startData = null;
+        this._detachDragEvents();
     },
 
     /**
@@ -100,15 +102,5 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
         $(document).off('.grid');
     }
 });
-
-/**
- * Create new instance of DragEventEmitter and returns it
- * @param {module:event/domEventBus} domEventBus - domEventBus
- * @returns {module:event/dragEventEmitter}
- * @static
- */
-DragEventEmitter.create = function(domEventBus) {
-    return new DragEventEmitter(domEventBus);
-};
 
 module.exports = DragEventEmitter;

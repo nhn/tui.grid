@@ -11,7 +11,6 @@ var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');
 var DomEventBus = require('./event/domEventBus');
 var DomState = require('./domState');
-var DragEventEmitter = require('./event/dragEventEmitter');
 var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
 var PainterController = require('./painter/controller');
@@ -158,7 +157,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var domState = new DomState(this.$el);
         var domEventBus = DomEventBus.create();
 
-        DragEventEmitter.create(domEventBus);
         options = util.enableDeprecatedOptions(options);
         this.id = util.getUniqueKey();
         this.modelManager = this._createModelManager(domState, domEventBus, options);

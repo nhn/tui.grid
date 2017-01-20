@@ -29,7 +29,9 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
         this.on('change:isFixedHeight', this._resetSyncHeightHandler);
 
         if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'windowResize', this._onWindowResize);
+            this.listenTo(options.domEventBus, 'windowResize', this._onResizeWindow);
+            this.listenTo(options.domEventBus, 'dragmove:resizeHeight',
+                    _.debounce(_.bind(this._onDragMoveForHeight, this)));
         }
 
         this._resetSyncHeightHandler();
@@ -68,8 +70,19 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
      * Event handler for 'windowResize' event on domEventBus
      * @private
      */
-    _onWindowResize: function() {
+    _onResizeWindow: function() {
         this.refreshLayout();
+    },
+
+    /**
+     * Event handler for 'dragmmove:resizeHgith' event on domEventBus
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onDragMoveForHeight: function(ev) {
+        var height = ev.pageY - this.get('offsetTop') - ev.startData.mouseOffsetY;
+
+        this.setSize(null, height);
     },
 
     /**

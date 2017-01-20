@@ -335,12 +335,11 @@ describe('Header', function() {
         it('trigger mousedown:header on domEventBus', function() {
             var eventSpy = jasmine.createSpy('eventSpy');
 
-            domEventBus.on('mousedown:header', eventSpy);
+            domEventBus.on('dragstart:header', eventSpy);
             header._onMouseDown(eventMock);
 
             expect(eventSpy.calls.first().args[0]).toEqual(jasmine.objectContaining({
-                columnName: 'c1',
-                targetType: 'header'
+                columnName: 'c1'
             }));
         });
     });
