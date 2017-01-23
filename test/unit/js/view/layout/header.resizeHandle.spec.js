@@ -70,7 +70,7 @@ describe('ResizeHandle', function() {
         });
 
         it('height와 margin을 headerHeight값으로 설정한다.', function() {
-            dimensionModel.set('headerHeight', 50);
+            handler.headerHeight = 50;
             handler.render();
             expect(handler.$el.css('marginTop')).toBe('-50px');
             expect(handler.$el.height()).toBe(50);

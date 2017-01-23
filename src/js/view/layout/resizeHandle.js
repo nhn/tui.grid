@@ -25,10 +25,10 @@ var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototype */ {
     initialize: function(options) {
         _.assign(this, {
-            dimensionModel: options.dimensionModel,
             columnModel: options.columnModel,
             coordColumnModel: options.coordColumnModel,
             domEventBus: options.domEventBus,
+            headerHeight: options.headerHeight,
             whichSide: options.whichSide || frameConst.R
         });
 
@@ -86,14 +86,13 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
     _getResizeHandlerMarkup: function() {
         var columnData = this._getColumnData();
         var columnModelList = columnData.modelList;
-        var headerHeight = this.dimensionModel.get('headerHeight');
         var length = columnModelList.length;
         var resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
                 lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.columnName,
-                height: headerHeight
+                height: this.headerHeight
             });
         }, this);
 
@@ -105,8 +104,8 @@ var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototy
      * @returns {module:view/layout/resizeHandle} This object
      */
     render: function() {
-        var headerHeight = this.dimensionModel.get('headerHeight'),
-            htmlStr = this._getResizeHandlerMarkup();
+        var headerHeight = this.headerHeight;
+        var htmlStr = this._getResizeHandlerMarkup();
 
         this.$el.empty().html(htmlStr).css({
             marginTop: -headerHeight,

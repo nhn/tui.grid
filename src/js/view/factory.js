@@ -218,7 +218,7 @@ var ViewFactory = tui.util.defineClass({
     createHeaderResizeHandle: function(whichSide) {
         return new HeaderResizeHandleView({
             whichSide: whichSide,
-            dimensionModel: this.modelManager.dimensionModel,
+            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             columnModel: this.modelManager.columnModel,
             coordColumnModel: this.modelManager.coordColumnModel,
             domEventBus: this.domEventBus
