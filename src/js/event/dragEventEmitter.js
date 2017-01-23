@@ -18,24 +18,62 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
             domEventBus: options.domEventBus,
             onDragMove: options.onDragMove,
             onDragEnd: options.onDragEnd,
+            cursor: options.cursor,
             startData: null
         });
     },
 
     /**
-     * Starts drag action
+     * Starts drag
      * @param {MouseEvent} ev - MouseEvent
      * @param {Object} data - start data (to be used in dragmove, dragend event)
      */
     start: function(ev, data) {
         var gridEvent = new GridEvent();
 
-        this.startData = data;
         gridEvent.setData(data);
         this.domEventBus.trigger('dragstart:' + this.type, gridEvent);
 
         if (!gridEvent.isStopped()) {
-            this._attachDragEvents();
+            this._startDrag(ev.target, data);
+        }
+    },
+
+    /**
+     * Starts drag
+     * @param {HTMLElement} target - drag target
+     * @param {Object} data - start data
+     * @private
+     */
+    _startDrag: function(target, data) {
+        this.startData = data;
+        this._attachDragEvents();
+
+        if (this.cursor) {
+            $('body').css('cursor', this.cursor);
+        }
+
+        // for IE8 and under
+        if (target.setCapture) {
+            target.setCapture();
+        }
+    },
+
+    /**
+     * Ends drag
+     * @private
+     */
+    _endDrag: function() {
+        this.startData = null;
+        this._detachDragEvents();
+
+        if (this.cursor) {
+            $('body').css('cursor', 'default');
+        }
+
+        // for IE8 and under
+        if (document.releaseCapture) {
+            document.releaseCapture();
         }
     },
 
@@ -47,11 +85,12 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
     _onMouseMove: function(ev) {
         var gridEvent = new GridEvent(ev);
 
+        gridEvent.setData({startData: this.startData});
+
         if (_.isFunction(this.onDragMove)) {
             this.onDragMove(gridEvent);
         }
 
-        gridEvent.setData({startData: this.startData});
         this.domEventBus.trigger('dragmove:' + this.type, gridEvent);
     },
 
@@ -70,8 +109,7 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
         gridEvent.setData({startData: this.startData});
         this.domEventBus.trigger('dragend:' + this.type, gridEvent);
 
-        this.startData = null;
-        this._detachDragEvents();
+        this._endDrag();
     },
 
     /**

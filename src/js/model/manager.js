@@ -58,15 +58,12 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState, domEventBus);
         this.coordRowModel = this._createCoordRowModel(domState);
-        this.coordColumnModel = this._createCoordColumnModel();
+        this.coordColumnModel = this._createCoordColumnModel(domEventBus);
         this.focusModel = this._createFocusModel(options, domState, domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
-
-        // todo: remove dependency
-        this.focusModel.renderModel = this.renderModel;
     },
 
     /**
@@ -175,13 +172,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of coordColumn model and returns it
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/coordColumnModel}
      * @private
      */
-    _createCoordColumnModel: function() {
+    _createCoordColumnModel: function(domEventBus) {
         return new CoordColumnModel(null, {
             columnModel: this.columnModel,
-            dimensionModel: this.dimensionModel
+            dimensionModel: this.dimensionModel,
+            domEventBus: domEventBus
         });
     },
 

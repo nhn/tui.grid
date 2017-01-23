@@ -14,7 +14,7 @@ var ClipboardView = require('./clipboard');
 var LsideFrameView = require('./layout/frame-lside');
 var RsideFrameView = require('./layout/frame-rside');
 var HeaderView = require('./layout/header');
-var HeaderResizeHandlerView = require('./layout/resizeHandler');
+var HeaderResizeHandleView = require('./layout/resizeHandle');
 var BodyView = require('./layout/body');
 var BodyTableView = require('./layout/bodyTable');
 var FooterView = require('./layout/footer');
@@ -215,12 +215,13 @@ var ViewFactory = tui.util.defineClass({
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
      * @returns {module:view/layout/header} New resize handler view instance
      */
-    createHeaderResizeHandler: function(whichSide) {
-        return new HeaderResizeHandlerView({
+    createHeaderResizeHandle: function(whichSide) {
+        return new HeaderResizeHandleView({
             whichSide: whichSide,
             dimensionModel: this.modelManager.dimensionModel,
             columnModel: this.modelManager.columnModel,
-            coordColumnModel: this.modelManager.coordColumnModel
+            coordColumnModel: this.modelManager.coordColumnModel,
+            domEventBus: this.domEventBus
         });
     },
 

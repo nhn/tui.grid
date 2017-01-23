@@ -157,8 +157,6 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             columnName: $target.closest('th').attr(ATTR_COLUMN_NAME),
             isOnHeaderArea: $.contains(this.el, $target[0])
         });
-
-        console.log('on drag move');
     },
 
     /**
@@ -362,7 +360,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
             tBody: this._getTableBodyMarkup()
         }));
 
-        this._addChildren(this.viewFactory.createHeaderResizeHandler(this.whichSide));
+        this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide));
         this.$el.append(this._renderChildren());
         return this;
     },

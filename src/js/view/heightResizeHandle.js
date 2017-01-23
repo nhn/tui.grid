@@ -7,7 +7,6 @@
 var View = require('../base/view');
 var classNameConst = require('../common/classNameConst');
 var DragEventEmitter = require('../event/dragEventEmitter');
-var HTML_INNER = '<a href="#"><span></span></a>';
 
 /**
  * Class for the height resize handle
@@ -23,7 +22,7 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
 
         this.dragEmitter = new DragEventEmitter({
             type: 'resizeHeight',
-            onDragEnd: _.bind(this._onDragEnd, this),
+            cursor: 'row-resize',
             domEventBus: this.domEventBus
         });
 
@@ -51,7 +50,6 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
      */
     _onMouseDown: function(ev) {
         ev.preventDefault();
-        $(document.body).css('cursor', 'row-resize');
 
         this.dragEmitter.start(ev, {
             mouseOffsetY: ev.offsetY
@@ -59,20 +57,11 @@ var HeightResizeHandle = View.extend(/**@lends module:view/layout/heightResizeHa
     },
 
     /**
-     * Event handler for 'mouseup' event
-     * @private
-     */
-    _onDragEnd: function() {
-        $(document.body).css('cursor', 'default');
-    },
-
-    /**
      * Render
      * @returns {Object} this object
      */
     render: function() {
-        this._destroyChildren();
-        this.$el.html(HTML_INNER);
+        this.$el.html('<a href="#"><span></span></a>');
 
         return this;
     }
