@@ -5,6 +5,7 @@
 'use strict';
 
 var _ = require('underscore');
+var Backbone = require('Backbone');
 
 var Painter = require('../../base/painter');
 var keyNameMap = require('../../common/constMap').keyName;

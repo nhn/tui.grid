@@ -109,7 +109,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         options = _.assign(defaultOptions, options);
         options.api = _.assign(defaultApi, options.api);
 
-        this.setOwnProperties({
+        _.assign(this, {
             // models
             dataModel: options.dataModel,
             toolbarModel: options.toolbarModel,

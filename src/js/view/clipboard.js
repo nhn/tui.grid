@@ -22,7 +22,7 @@ var selTypeConst = constMap.selectionType;
  */
 var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     initialize: function(options) {
-        this.setOwnProperties({
+        _.assign(this, {
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             focusModel: options.focusModel,

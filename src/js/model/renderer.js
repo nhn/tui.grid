@@ -25,7 +25,7 @@ var Renderer = Model.extend(/**@lends module:model/renderer.prototype */{
     initialize: function(attrs, options) {
         var lside, rside, rowListOptions;
 
-        this.setOwnProperties({
+        _.assign(this, {
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             focusModel: options.focusModel,

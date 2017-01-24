@@ -5,14 +5,10 @@
 'use strict';
 
 var Backbone = require('backbone');
-var _ = require('underscore');
-
-var common = require('./common');
 
 /**
  * Base class for Collection
  * @module base/collection
- * @mixes module:base/common
  * @ignore
  */
 var Collection = Backbone.Collection.extend(/**@lends module:base/collection.prototype */{
@@ -30,7 +26,5 @@ var Collection = Backbone.Collection.extend(/**@lends module:base/collection.pro
         return this;
     }
 });
-
-_.assign(Collection.prototype, common);
 
 module.exports = Collection;

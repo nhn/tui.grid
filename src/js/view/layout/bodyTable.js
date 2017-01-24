@@ -25,7 +25,7 @@ var BodyTable = View.extend(/**@lends module:view/layout/bodyTable.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
-        this.setOwnProperties({
+        _.assign(this, {
             dimensionModel: options.dimensionModel,
             coordColumnModel: options.coordColumnModel,
             renderModel: options.renderModel,

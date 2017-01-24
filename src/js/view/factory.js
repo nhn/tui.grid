@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./toolbar');
@@ -169,8 +171,8 @@ var ViewFactory = tui.util.defineClass({
     createHeader: function(whichSide) {
         return new HeaderView({
             whichSide: whichSide,
+            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             renderModel: this.modelManager.renderModel,
-            dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
             selectionModel: this.modelManager.selectionModel,
             dataModel: this.modelManager.dataModel,
