@@ -91,7 +91,9 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
             this.onDragMove(gridEvent);
         }
 
-        this.domEventBus.trigger('dragmove:' + this.type, gridEvent);
+        if (!gridEvent.isStopped()) {
+            this.domEventBus.trigger('dragmove:' + this.type, gridEvent);
+        }
     },
 
     /**
@@ -102,14 +104,16 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
     _onMouseUp: function(ev) {
         var gridEvent = new GridEvent(ev);
 
+        gridEvent.setData({startData: this.startData});
+
         if (_.isFunction(this.onDragEnd)) {
             this.onDragEnd(gridEvent);
         }
 
-        gridEvent.setData({startData: this.startData});
-        this.domEventBus.trigger('dragend:' + this.type, gridEvent);
-
-        this._endDrag();
+        if (!gridEvent.isStopped()) {
+            this.domEventBus.trigger('dragend:' + this.type, gridEvent);
+            this._endDrag();
+        }
     },
 
     /**

@@ -8,7 +8,7 @@ var _ = require('underscore');
 
 var Model = require('../base/model');
 var util = require('../common/util');
-var typeConstMap = require('../common/constMap').selectionType;
+var typeConst = require('../common/constMap').selectionType;
 
 /**
  * Selection Model class
@@ -36,15 +36,17 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             intervalIdForAutoScroll: null,
             scrollPixelScale: 40,
             enabled: true,
-            selectionType: typeConstMap.CELL
+            selectionType: typeConst.CELL
         });
 
         this.listenTo(this.dataModel, 'add remove sort reset', this.end);
         this.listenTo(this.dataModel, 'paste', this._onPasteData);
 
         if (this.isEnabled() && options.domEventBus) {
-            this.listenTo(options.domEventBus, 'dragmove:header', this._onHeaderDragMove);
-            this.listenTo(options.domEventBus, 'dragstart:header', this._onHeaderDragStart);
+            this.listenTo(options.domEventBus, 'dragstart:header', this._onDragStartHeader);
+            this.listenTo(options.domEventBus, 'dragmove:header', this._onDragMoveHeader);
+            this.listenTo(options.domEventBus, 'dragmove:body', this._onDragMoveBody);
+            this.listenTo(options.domEventBus, 'mousedown:body', this._onMouseDownBody);
         }
     },
 
@@ -62,7 +64,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {module:event/gridEvent} gridEvent - GridEvent
      * @private
      */
-    _onHeaderDragStart: function(gridEvent) {
+    _onDragStartHeader: function(gridEvent) {
         var columnModel = this.columnModel;
         var columnNames = columnModel.getUnitColumnNamesIfMerged(gridEvent.columnName);
         var columnRange;
@@ -75,7 +77,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         columnRange = this._getColumnRangeWithNames(columnNames);
 
         if (gridEvent.shiftKey) {
-            this.update(0, columnRange[1], typeConstMap.COLUMN);
+            this.update(0, columnRange[1], typeConst.COLUMN);
             this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
         } else {
             this.minimumColumnWidth = columnRange;
@@ -89,7 +91,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {module:event/gridEvent} gridEvent - GridEvent
      * @private
      */
-    _onHeaderDragMove: function(gridEvent) {
+    _onDragMoveHeader: function(gridEvent) {
         var columnModel = this.columnModel;
         var columnNames, columnRange;
 
@@ -102,6 +104,63 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             columnRange = this._getColumnRangeWithNames(columnNames);
         }
         this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+    },
+
+    /**
+     * Examine the type of selection with given column index
+     * @param {Number} columnIndex - columnIndex
+     * @returns {String}
+     * @private
+     */
+    _getTypeByColumnIndex: function(columnIndex) {
+        var visibleColumns = this.columnModel.getVisibleColumnModelList(null, true);
+        var columnName = visibleColumns[columnIndex].columnName;
+
+        switch (columnName) {
+            case '_button':
+                return null;
+            case '_number':
+                return typeConst.ROW;
+            default:
+                return typeConst.CELL;
+        }
+    },
+
+    /**
+     * Event handler for 'mousedown:body' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onMouseDownBody: function(gridEvent) {
+        var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY, true);
+        var selType = this._getTypeByColumnIndex(address.column);
+        var rowIndex = address.row;
+        var columnIndex = address.column - this.columnModel.getVisibleMetaColumnCount();
+
+        if (!selType) {
+            return;
+        }
+
+        if (gridEvent.shiftKey) {
+            this.update(rowIndex, Math.max(columnIndex, 0));
+        } else if (selType === typeConst.ROW) {
+            this.selectRow(address.row);
+        } else {
+            this.focusModel.focusAt(rowIndex, columnIndex);
+            this.end();
+        }
+    },
+
+    /**
+     * Event handler for 'dragmove:body' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onDragMoveBody: function(gridEvent) {
+        var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY);
+
+        this.update(address.row, address.column);
+        this._setScrolling(gridEvent.pageX, gridEvent.pageY);
     },
 
     /**
@@ -134,7 +193,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {string} type - Selection type (CELL, ROW, COLUMN)
      */
     setType: function(type) {
-        this.selectionType = typeConstMap[type] || this.selectionType;
+        this.selectionType = typeConst[type] || this.selectionType;
     },
 
     /**
@@ -196,13 +255,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     update: function(rowIndex, columnIndex, type) {
         var focusedIndex;
 
-        if (!this.enabled || rowIndex < 0 || columnIndex < 0) {
+        if (!this.enabled ||
+            (type !== typeConst.COLUMN && rowIndex < 0) ||
+            (type !== typeConst.ROW && columnIndex < 0)) {
             return;
         }
 
         if (!this.hasSelection()) {
             focusedIndex = this.focusModel.indexOf();
-            this.start(focusedIndex.row, focusedIndex.column, type);
+            this.start(focusedIndex.row, focusedIndex.column, typeConst.CELL);
         } else {
             this.setType(type);
         }
@@ -220,9 +281,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _updateInputRange: function(rowIndex, columnIndex) {
         var inputRange = this.inputRange;
 
-        if (this.selectionType === typeConstMap.ROW) {
+        if (this.selectionType === typeConst.ROW) {
             columnIndex = this.columnModel.getVisibleColumnModelList().length - 1;
-        } else if (this.selectionType === typeConstMap.COLUMN) {
+        } else if (this.selectionType === typeConst.COLUMN) {
             rowIndex = this.dataModel.length - 1;
         }
 
@@ -278,19 +339,6 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * Updates the selection range by mouse position.
-     * @param {number} pageX - X position relative to the document
-     * @param {number} pageY - Y position relative to the document
-     * @param {string} [type] - Selection type
-     */
-    updateByMousePosition: function(pageX, pageY, type) {
-        var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
-
-        this._setScrolling(pageX, pageY);
-        this.update(index.row, index.column, type);
-    },
-
-    /**
      * selection 영역 선택을 종료하고 selection 데이터를 초기화한다.
      */
     end: function() {
@@ -316,7 +364,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     selectRow: function(rowIndex) {
         if (this.isEnabled()) {
             this.focusModel.focusAt(rowIndex, 0);
-            this.start(rowIndex, 0, typeConstMap.ROW);
+            this.start(rowIndex, 0, typeConst.ROW);
             this.update(rowIndex, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -328,7 +376,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     selectColumn: function(columnIdx) {
         if (this.isEnabled()) {
             this.focusModel.focusAt(0, columnIdx);
-            this.start(0, columnIdx, typeConstMap.COLUMN);
+            this.start(0, columnIdx, typeConst.COLUMN);
             this.update(this.dataModel.length - 1, columnIdx);
         }
     },
@@ -338,7 +386,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      */
     selectAll: function() {
         if (this.isEnabled()) {
-            this.start(0, 0, typeConstMap.CELL);
+            this.start(0, 0, typeConst.CELL);
             this.update(this.dataModel.length - 1, this.columnModel.getVisibleColumnModelList().length - 1);
         }
     },
@@ -504,7 +552,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             column: _.sortBy(inputRange.column)
         };
 
-        if (dataModel.isRowSpanEnable() && this.selectionType === typeConstMap.CELL) {
+        if (dataModel.isRowSpanEnable() && this.selectionType === typeConst.CELL) {
             do {
                 tmpRowRange = _.assign([], spannedRange.row);
                 spannedRange = this._getRowSpannedIndex(spannedRange);

@@ -267,36 +267,6 @@ describe('model/selection', function() {
             });
         });
 
-        describe('updateByMousePosition()', function() {
-            beforeEach(function() {
-                spyOn(selection.coordConverterModel, 'getIndexFromMousePosition').and.returnValue({
-                    row: 2,
-                    column: 2
-                });
-                spyOn(selection.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
-                    x: 0,
-                    y: 0
-                });
-            });
-            it('it should call the "setScrolling" method.', function() {
-                spyOn(selection, '_setScrolling');
-
-                selection.updateByMousePosition(2, 2);
-                expect(selection._setScrolling).toHaveBeenCalled();
-            });
-
-            it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
-                selection.start(0, 0);
-                selection.update(1, 1);
-
-                selection.updateByMousePosition(2, 2);
-                expect(selection.get('range')).toEqual({
-                    row: [0, 2],
-                    column: [0, 2]
-                });
-            });
-        });
-
         describe('extendColumnSelection', function() {
             beforeEach(function() {
                 selection.selectColumn(2);

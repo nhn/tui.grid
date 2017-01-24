@@ -4,8 +4,8 @@ var ModelManager = require('model/manager');
 var DomState = require('domState');
 var Clipboard = require('view/clipboard');
 var constMap = require('common/constMap');
-var keyCodeMap = constMap.keyCode;
-var selectionTypeMap = constMap.selectionType;
+var keyCodeConst = constMap.keyCode;
+var selTypeConst = constMap.selectionType;
 
 describe('view.clipboard', function() {
     var modelManager, timeoutDelay = 0;
@@ -13,8 +13,8 @@ describe('view.clipboard', function() {
     function getKeyEvent(keyName, $target) {
         $target = $target || $('<div>');
         return {
-            keyCode: keyCodeMap[keyName],
-            which: keyCodeMap[keyName],
+            keyCode: keyCodeConst[keyName],
+            which: keyCodeConst[keyName],
             target: $target.get(0),
             preventDefault: function() {}
         };
@@ -348,7 +348,7 @@ describe('view.clipboard', function() {
                         }
                     };
                     modelManager.focusModel.focusAt(1, 1);
-                    modelManager.selectionModel.setType(selectionTypeMap.COLUMN);
+                    modelManager.selectionModel.setType(selTypeConst.COLUMN);
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);
@@ -362,7 +362,7 @@ describe('view.clipboard', function() {
                         }
                     };
                     modelManager.focusModel.focusAt(1, 1);
-                    modelManager.selectionModel.setType(selectionTypeMap.ROW);
+                    modelManager.selectionModel.setType(selTypeConst.ROW);
 
                     keyEvent = getKeyEvent('DOWN_ARROW');
                     clipboard._keyInWithShift(keyEvent);
@@ -475,7 +475,7 @@ describe('view.clipboard', function() {
                     };
                 });
                 clipboard._updateSelectionByKeyIn(2, 1);
-                expect(modelManager.selectionModel.start).toHaveBeenCalledWith(0, 0, undefined); // eslint-disable-line
+                expect(modelManager.selectionModel.start).toHaveBeenCalledWith(0, 0, selTypeConst.CELL); // eslint-disable-line
             });
         });
 
