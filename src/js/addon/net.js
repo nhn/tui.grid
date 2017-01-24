@@ -91,23 +91,23 @@ var DELAY_FOR_LOADING_STATE = 200;
  */
 var Net = View.extend(/**@lends module:addon/net.prototype */{
     initialize: function(options) {
-        var defaultOptions;
-
-        defaultOptions = {
+        var defaultOptions = {
             initialRequest: true,
-            api: {
-                readData: '',
-                createData: '',
-                updateData: '',
-                deleteData: '',
-                modifyData: '',
-                downloadExcel: '',
-                downloadExcelAll: ''
-            },
             perPage: 500,
             enableAjaxHistory: true
         };
-        options = $.extend(true, defaultOptions, options); // deep extend
+        var defaultApi = {
+            readData: '',
+            createData: '',
+            updateData: '',
+            deleteData: '',
+            modifyData: '',
+            downloadExcel: '',
+            downloadExcelAll: ''
+        };
+
+        options = _.assign(defaultOptions, options);
+        options.api = _.assign(defaultApi, options.api);
 
         this.setOwnProperties({
             // models
@@ -117,6 +117,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             // extra objects
             router: null,
+            domEventBus: options.domEventBus,
             pagination: options.pagination,
 
             // configs
@@ -138,7 +139,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._initializePagination();
         this._showToolbarExcelBtns();
 
-        this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged, this);
+        this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged);
+        this.listenTo(this.domEventBus, 'click:excel', this._onClickExcel);
 
         if (options.initialRequest) {
             if (!this.lastRequestedReadData) {
@@ -175,6 +177,16 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _onRouterRead: function(queryStr) {
         var data = util.toQueryObject(queryStr);
         this._requestReadData(data);
+    },
+
+    /**
+     * Event listener for 'click:excel' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onClickExcel: function(gridEvent) {
+        var downloadType = (gridEvent.type === 'all') ? 'excelAll' : 'excel';
+        this.download(downloadType);
     },
 
     /**

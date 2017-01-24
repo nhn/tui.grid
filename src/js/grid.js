@@ -154,18 +154,17 @@ tui = window.tui = tui || {};
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
-        var domState = new DomState(this.$el);
-        var domEventBus = DomEventBus.create();
-
         options = util.enableDeprecatedOptions(options);
+
         this.id = util.getUniqueKey();
-        this.modelManager = this._createModelManager(domState, domEventBus, options);
+        this.domState = new DomState(this.$el);
+        this.domEventBus = DomEventBus.create();
+        this.modelManager = this._createModelManager(options);
         this.painterManager = this._createPainterManager();
         this.componentHolder = this._createComponentHolder(options.pagination);
-        this.viewFactory = this._createViewFactory(domState, domEventBus, options);
+        this.viewFactory = this._createViewFactory(options);
         this.container = this.viewFactory.createContainer();
-        this.publicEventEmitter = this._createPublicEventEmitter(domEventBus);
-        this.domState = domState;
+        this.publicEventEmitter = this._createPublicEventEmitter();
 
         this.container.render();
         this.refreshLayout();
@@ -180,20 +179,18 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates core model and returns it.
-     * @param {module:domState} domState - domState
-     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @param {Object} options - Options set by user
      * @returns {module:model/manager} - New model manager object
      * @private
      */
-    _createModelManager: function(domState, domEventBus, options) {
+    _createModelManager: function(options) {
         var modelOptions = _.assign({}, options, {
             gridId: this.id
         });
 
         _.omit(modelOptions, 'el');
 
-        return new ModelManager(modelOptions, domState, domEventBus);
+        return new ModelManager(modelOptions, this.domState, this.domEventBus);
     },
 
     /**
@@ -213,28 +210,27 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
             gridId: this.id,
             selectType: this.modelManager.columnModel.get('selectType'),
             isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
+            domEventBus: this.domEventBus,
             controller: controller
         });
     },
 
     /**
      * Creates a view factory.
-     * @param {module:domState} domState - dom state
-     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @param {options} options - options
      * @returns {module:view/factory}
      * @private
      */
-    _createViewFactory: function(domState, domEventBus, options) {
+    _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption', 'footer'
+            'resizeHandle', 'toolbar', 'copyOption', 'footer'
         ]);
         var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
             componentHolder: this.componentHolder,
-            domEventBus: domEventBus,
-            domState: domState
+            domEventBus: this.domEventBus,
+            domState: this.domState
         };
 
         return new ViewFactory(_.assign(dependencies, viewOptions));
@@ -254,15 +250,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
 
     /**
      * Creates public event emitter and returns it.
-     * @param {module:event/domEventBus} domEventBus - dom event bus
      * @returns {module:publicEventEmitter} - New public event emitter
      * @private
      */
-    _createPublicEventEmitter: function(domEventBus) {
+    _createPublicEventEmitter: function() {
         var emitter = new PublicEventEmitter(this);
 
         emitter.listenToFocusModel(this.modelManager.focusModel);
-        emitter.listenToDomEventBus(domEventBus);
+        emitter.listenToDomEventBus(this.domEventBus);
 
         return emitter;
     },
@@ -689,12 +684,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     use: function(name, options) {
         if (name === 'Net') {
-            options = $.extend({
+            options = _.assign({
+                domEventBus: this.domEventBus,
                 toolbarModel: this.modelManager.toolbarModel,
                 renderModel: this.modelManager.renderModel,
                 dataModel: this.modelManager.dataModel,
                 pagination: this.componentHolder.getInstance('pagination')
             }, options);
+
             this.addOn.Net = new NetAddOn(options);
             this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
         }

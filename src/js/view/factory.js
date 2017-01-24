@@ -75,6 +75,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar view and returns it.
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:view/toolbar} - New toolbar view instance
      */
     createToolbar: function() {
@@ -82,7 +83,7 @@ var ViewFactory = tui.util.defineClass({
             return null;
         }
         return new ToolbarView({
-            gridId: this.modelManager.gridId,
+            domEventBus: this.domEventBus,
             dimensionModel: this.modelManager.dimensionModel,
             toolbarModel: this.modelManager.toolbarModel
         });

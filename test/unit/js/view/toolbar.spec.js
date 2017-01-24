@@ -2,13 +2,14 @@
 
 var ToolbarView = require('view/toolbar');
 var Model = require('base/model');
+var DomEventBus = require('event/domEventBus');
 var classNameConst = require('common/classNameConst');
 
 function create() {
     return new ToolbarView({
-        gridId: 1,
         toolbarModel: new Model(),
-        dimensionModel: new Model()
+        dimensionModel: new Model(),
+        domEventBus: DomEventBus.create()
     });
 }
 
@@ -78,41 +79,30 @@ describe('[view/toolbar] ', function() {
         });
     });
 
-    describe('when net addon exist and ', function() {
-        function mockGrid(net) {
-            tui.Grid.getInstanceById = _.constant({
-                getAddOn: _.constant(net)
-            });
-        }
+    describe('trigger click:excel', function() {
+        var toolbar, clickSpy;
 
-        function createNetStub() {
-            return {
-                download: jasmine.createSpy('download')
-            };
-        }
+        beforeEach(function() {
+            toolbar = create();
+            clickSpy = jasmine.createSpy('clickSpy');
 
-        it('download-page-button is clicked, call net.download(\'excel\')', function() {
-            var net = createNetStub();
-            var toolbar = create();
-
-            mockGrid(net);
-            toolbar.toolbarModel.set('isExcelButtonVisible', true);
-            toolbar.render();
-            toolbar.$el.find('.' + classNameConst.BTN_EXCEL_PAGE).trigger('click');
-
-            expect(net.download).toHaveBeenCalledWith('excel');
+            toolbar.domEventBus.on('click:excel', clickSpy);
         });
 
-        it('download-all-button is clicked, call net.download(\'excelAll\')', function() {
-            var net = createNetStub();
-            var toolbar = create();
+        it('with page type', function() {
+            toolbar.toolbarModel.set('isExcelButtonVisible', true);
+            toolbar.render();
 
-            mockGrid(net);
+            toolbar.$el.find('.' + classNameConst.BTN_EXCEL_PAGE).trigger('click');
+            expect(clickSpy.calls.argsFor(0)[0].type).toBe('page');
+        });
+
+        it('with all type', function() {
             toolbar.toolbarModel.set('isExcelAllButtonVisible', true);
             toolbar.render();
-            toolbar.$el.find('.' + classNameConst.BTN_EXCEL_ALL).trigger('click');
 
-            expect(net.download).toHaveBeenCalledWith('excelAll');
+            toolbar.$el.find('.' + classNameConst.BTN_EXCEL_ALL).trigger('click');
+            expect(clickSpy.calls.argsFor(0)[0].type).toBe('all');
         });
     });
 });

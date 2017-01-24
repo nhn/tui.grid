@@ -29,14 +29,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     },
 
     /**
-     * key-value object contains event names as keys and handler names as values
-     * @type {Object}
-     */
-    events: {
-        dblclick: '_onDblClick'
-    },
-
-    /**
      * template for TD
      * @returns {string} template
      */
@@ -50,19 +42,6 @@ var Cell = tui.util.defineClass(Painter, /**@lends module:painter/cell.prototype
     contentTemplate: _.template(
         '<div class="<%=className%>" style="<%=style%>"><%=content%></div>'
     ),
-
-    /**
-     * Event handler for 'dblclick' DOM event.
-     * @param {MouseEvent} event - mouse event object
-     */
-    _onDblClick: function(event) {
-        var address;
-
-        if (this._isEditableType()) {
-            address = this._getCellAddress($(event.target));
-            this.controller.startEditing(address, true);
-        }
-    },
 
     /**
      * Returns whether the instance is editable type.
