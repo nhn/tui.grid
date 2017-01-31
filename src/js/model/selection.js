@@ -49,8 +49,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             this.listenTo(domEventBus, 'dragstart:header', this._onDragStartHeader);
             this.listenTo(domEventBus, 'dragmove:header', this._onDragMoveHeader);
             this.listenTo(domEventBus, 'dragmove:body', this._onDragMoveBody);
+            this.listenTo(domEventBus, 'dragend:body', this._onDragEndBody);
             this.listenTo(domEventBus, 'mousedown:body', this._onMouseDownBody);
-            this.listenTo(domEventBus, 'key:move', this._onKeyMove);
+            this.listenTo(domEventBus, 'key:move key:edit', this._onKeyMoveOrEdit);
             this.listenTo(domEventBus, 'key:select', this._onKeySelect);
             this.listenTo(domEventBus, 'key:delete', this._onKeyDelete);
         }
@@ -113,10 +114,10 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     },
 
     /**
-     * Event handler for key:move event on domEventBus
+     * Event handler for key:move/key:edit fevent on domEventBus
      * @private
      */
-    _onKeyMove: function() {
+    _onKeyMoveOrEdit: function() {
         this.end();
     },
 
@@ -302,6 +303,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         this.update(address.row, address.column);
         this._setScrolling(gridEvent.pageX, gridEvent.pageY);
+    },
+
+    /**
+     * Event handler for 'dragend:body' event on domEventBus
+     * @private
+     */
+    _onDragEndBody: function() {
+        this.stopAutoScroll();
     },
 
     /**

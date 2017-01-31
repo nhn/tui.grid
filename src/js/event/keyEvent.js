@@ -30,7 +30,7 @@ var keyCodeMap = {
 };
 var keyNameMap = _.invert(keyCodeMap);
 
-var commandBindingMap = {
+var keyStrokeCommandMap = {
     'up': ['move', 'up'],
     'down': ['move', 'down'],
     'left': ['move', 'left'],
@@ -87,7 +87,7 @@ function getKeyStrokeString(ev) {
 module.exports = {
     generate: function(ev) {
         var keyStroke = getKeyStrokeString(ev);
-        var commandInfo = commandBindingMap[keyStroke];
+        var commandInfo = keyStrokeCommandMap[keyStroke];
         var gridEvent;
 
         if (commandInfo) {
