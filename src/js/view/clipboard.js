@@ -1,6 +1,6 @@
 /**
- * @fileoverview 키 이벤트 핸들링 담당하는 Clipboard 정의
- * @author NHN Ent. FE Development Team
+ * @fileoverview Hidden Textarea View for handling key navigation events and emulating clipboard actions
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
@@ -9,8 +9,28 @@ var _ = require('underscore');
 var View = require('../base/view');
 var keyEvent = require('../event/keyEvent');
 var classNameConst = require('../common/classNameConst');
-var constMap = require('../common/constMap');
-var keyCodeMap = constMap.keyCode;
+var Clipboard;
+
+var PASTE_DEBOUNCE_TIME = 300;
+var KEYDOWN_LOCK_TIME = 10;
+
+/**
+ * Returns whether the ev.preventDefault should be called
+ * @param {module:event/gridEvent} gridEvent - GridEvent
+ * @returns {boolean}
+ */
+function shouldPreventDefault(gridEvent) {
+    return gridEvent.type !== 'key:clipboard';
+}
+
+/**
+ * Returns whether given GrivEvent instance is paste event
+ * @param {module:event/gridEvent} gridEvent - GridEvent
+ * @returns {boolean}
+ */
+function isPasteEvent(gridEvent) {
+    return gridEvent.type === 'key:clipboard' && gridEvent.command === 'paste';
+}
 
 /**
  * Clipboard view class
@@ -19,21 +39,21 @@ var keyCodeMap = constMap.keyCode;
  * @param {Object} options - Options
  * @ignore
  */
-var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
+Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     initialize: function(options) {
         _.assign(this, {
-            dataModel: options.dataModel,
-            columnModel: options.columnModel,
             focusModel: options.focusModel,
-            selectionModel: options.selectionModel,
-            renderModel: options.renderModel,
+            clipboardModel: options.clipboardModel,
             domEventBus: options.domEventBus,
-            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
-            timeoutIdForKeyIn: 0,
-            isLocked: false
+
+            isLocked: false,
+            lockTimerId: null
         });
 
+        this._handlePasteEventDebounced = _.debounce(_.bind(this._handlePasteEvent, this), PASTE_DEBOUNCE_TIME);
+
         this.listenTo(this.focusModel, 'focusClipboard', this._onFocusClipboard);
+        this.listenTo(this.clipboardModel, 'change:text', this._onClipboardTextChange);
     },
 
     tagName: 'textarea',
@@ -89,37 +109,37 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
     },
 
     /**
-     * 랜더링 한다.
-     * @returns {View.Clipboard} this object
+     * Render
+     * @returns {module:view/clipboard}
      */
     render: function() {
         return this;
     },
 
     /**
-     * keyEvent 의 중복 호출을 방지하는 lock 을 설정한다.
+     * Lock for a moment to reduce event frequency
      * @private
      */
     _lock: function() {
-        clearTimeout(this.timeoutIdForKeyIn);
         this.isLocked = true;
-        this.timeoutIdForKeyIn = setTimeout($.proxy(this._unlock, this), 10); // eslint-disable-line no-magic-numbers
+        this.lockTimerId = setTimeout(_.bind(this._unlock, this), KEYDOWN_LOCK_TIME);
     },
 
     /**
-     * keyEvent 의 중복 호출을 방지하는 lock 을 해제한다.
+     * Unlock
      * @private
      */
     _unlock: function() {
         this.isLocked = false;
+        this.lockTimerId = null;
     },
 
     /**
-     * keyDown 이벤트 핸들러
-     * @param {Event} ev - event이벤트 객체
+     * Event handler for the keydown event
+     * @param {Event} ev - Event
      * @private
      */
-    _onKeyDown: function(ev) { // eslint-disable-line complexity
+    _onKeyDown: function(ev) {
         var gridEvent;
 
         if (this.isLocked) {
@@ -127,135 +147,49 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             return;
         }
 
-        gridEvent = keyEvent.generate(ev);
-
-        if (gridEvent) {
-            ev.preventDefault();
-            this.domEventBus.trigger(gridEvent.type, gridEvent);
-        }
         this._lock();
-    },
 
-    /**
-     * ctrl 가 눌린 상태에서의 key down event handler
-     * @param {Event} keyDownEvent 이벤트 객체
-     * @private
-     */
-    _keyInWithCtrl: function(keyDownEvent) {  // eslint-disable-line complexity
-        var keyCode = keyDownEvent.keyCode || keyDownEvent.which;
-
-        switch (keyCode) {
-            case keyCodeMap.CHAR_C:
-                this._copyToClipboard();
-                break;
-            case keyCodeMap.CHAR_V:
-                this._pasteWhenKeyupCharV();
-                break;
-            default:
-                break;
-        }
-    },
-
-    /**
-     * paste date
-     * @private
-     */
-    _pasteWhenKeyupCharV: function() {
-        var self = this;
-
-        // pressing v long time, clear clipboard to keep final paste date
-        this._clearClipBoard();
-        if (this.pasting) {
+        gridEvent = keyEvent.generate(ev);
+        if (!gridEvent) {
             return;
         }
 
-        this.pasting = true;
-        this.$el.on('keyup', function() {
-            self._pasteToGrid();
-            self.pasting = false;
-        });
-    },
+        if (shouldPreventDefault(gridEvent)) {
+            ev.preventDefault();
+        }
 
-   /**
-     * clipboard textarea clear
-     * @private
-     */
-    _clearClipBoard: function() {
-        this.$el.val('');
-    },
-
-    /**
-     * paste text data
-     * @private
-     */
-    _pasteToGrid: function() {
-        var selectionModel = this.selectionModel;
-        var focusModel = this.focusModel;
-        var dataModel = this.dataModel;
-        var startIdx, data;
-
-        if (selectionModel.hasSelection()) {
-            startIdx = selectionModel.getStartIndex();
+        if (isPasteEvent(gridEvent)) {
+            this._handlePasteEventDebounced(gridEvent);
         } else {
-            startIdx = focusModel.indexOf();
+            this.domEventBus.trigger(gridEvent.type, gridEvent);
         }
-        data = this._getProcessClipBoardData();
-
-        this.$el.off('keyup');
-        dataModel.paste(data, startIdx);
     },
 
     /**
-     * process data for paste to grid
-     * @private
-     * @returns {Array.<Array.<string>>} result
-     */
-    _getProcessClipBoardData: function() {
-        var text = this.$el.val();
-        var result = text.split('\n');
-        var i = 0;
-        var len = result.length;
-
-        for (; i < len; i += 1) {
-            result[i] = result[i].split('\t');
-        }
-
-        return result;
-    },
-
-    /**
-     * clipboard 에 설정될 문자열 반환한다.
-     * @returns {String} 데이터를 text 형태로 변환한 문자열
+     * Event handler for the 'change:text' event on the model/clipboard module
      * @private
      */
-    _getClipboardString: function() {
-        var selectionModel = this.selectionModel;
-        var focused = this.focusModel.which();
-        var text;
-
-        if (selectionModel.hasSelection()) {
-            text = this.selectionModel.getValuesToString(this.useFormattedValue);
-        } else if (this.useFormattedValue) {
-            text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
-        } else {
-            text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
-        }
-
-        return text;
-    },
-
-    /**
-     * 현재 그리드의 data 를 clipboard 에 copy 한다.
-     * @private
-     */
-    _copyToClipboard: function() {
-        var text = this._getClipboardString();
+    _onClipboardTextChange: function() {
+        var text = this.clipboardModel.get('text');
 
         if (window.clipboardData) {
             window.clipboardData.setData('Text', text);
         } else {
             this.$el.val(text).select();
         }
+    },
+
+    /**
+     * Handle paste event.
+     * This handler should be called with debounced to :
+     * (should be called in the next frame to use the text pasted into the textarea by native action)
+     * (also should be called debounced for preventing repetitive execution)
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     */
+    _handlePasteEvent: function(gridEvent) {
+        gridEvent.setData({text: this.$el.val()});
+        this.domEventBus.trigger(gridEvent.type, gridEvent);
+        this.$el.val('');
     }
 });
 

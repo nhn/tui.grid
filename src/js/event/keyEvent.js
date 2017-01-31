@@ -54,7 +54,7 @@ var commandBindingMap = {
     'shift-end': ['select', 'lastColumn'],
     'ctrl-a': ['select', 'all'],
     'ctrl-c': ['clipboard', 'copy'],
-    'ctrl-p': ['clipboard', 'paste'],
+    'ctrl-v': ['clipboard', 'paste'],
     'ctrl-home': ['move', 'firstCell'],
     'ctrl-end': ['move', 'lastCell'],
     'ctrl-shift-home': ['select', 'firstCell'],

@@ -223,7 +223,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'resizeHandle', 'toolbar', 'copyOption', 'footer'
+            'resizeHandle', 'toolbar', 'footer'
         ]);
         var dependencies = {
             modelManager: this.modelManager,

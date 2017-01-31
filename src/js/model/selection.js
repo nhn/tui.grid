@@ -1,6 +1,6 @@
 /**
  * @fileoverview Selection Model class
- * @author NHN Ent. FE Development Team
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 

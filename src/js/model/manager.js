@@ -18,6 +18,7 @@ var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
 var SummaryModel = require('./summary');
+var ClipboardModel = require('./clipboard');
 var util = require('../common/util');
 
 var defaultOptions = {
@@ -33,6 +34,7 @@ var defaultOptions = {
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
     columnMerge: [],
+    copyOption: null,
     scrollX: true,
     scrollY: true,
     singleClickEdit: false,
@@ -64,6 +66,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
         this.toolbarModel = this._createToolbarModel(options);
+        this.clipboardModel = this._createClipboardModel(options, domEventBus);
     },
 
     /**
@@ -287,6 +290,24 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         return new SummaryModel(null, {
             dataModel: this.dataModel,
             autoColumnNames: autoColumnNames
+        });
+    },
+
+    /**
+     * Creates an instance of clipboard model and returns it
+     * @param {Object} options - options
+     * @param {module:event/domEventBus} domEventBus - domEventBus
+     * @returns {module:model/clipboard}
+     * @private
+     */
+    _createClipboardModel: function(options, domEventBus) {
+        return new ClipboardModel(null, {
+            dataModel: this.dataModel,
+            selectionModel: this.selectionModel,
+            renderModel: this.renderModel,
+            focusModel: this.focusModel,
+            copyOptions: this.copyOption,
+            domEventBus: domEventBus
         });
     },
 

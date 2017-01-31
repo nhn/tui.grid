@@ -45,7 +45,6 @@ var ViewFactory = tui.util.defineClass({
         // view options
         this.footerOptions = options.footer;
         this.resizeHandle = options.resizeHandle;
-        this.copyOption = options.copyOption;
     },
 
     /**
@@ -136,13 +135,9 @@ var ViewFactory = tui.util.defineClass({
      */
     createClipboard: function() {
         return new ClipboardView({
-            columnModel: this.modelManager.columnModel,
-            dataModel: this.modelManager.dataModel,
-            selectionModel: this.modelManager.selectionModel,
+            clipboardModel: this.modelManager.clipboardModel,
             focusModel: this.modelManager.focusModel,
-            renderModel: this.modelManager.renderModel,
-            domEventBus: this.domEventBus,
-            copyOption: this.copyOption
+            domEventBus: this.domEventBus
         });
     },
 
