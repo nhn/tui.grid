@@ -27,14 +27,16 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
 
         this.dataModel = options.dataModel;
         this.columnModel = options.columnModel;
-        this.dimensionModel = options.dimensionModel;
+        this.coordRowModel = options.coordRowModel;
         this.domState = options.domState;
 
         this.listenTo(this.dataModel, 'reset', this._onResetData);
 
         if (options.domEventBus) {
-            this.listenTo(options.domEventBus, editEventName, this._onEditCellEvent);
+            this.listenTo(options.domEventBus, editEventName, this._onMouseEdit);
             this.listenTo(options.domEventBus, 'mousedown:focus', this._onMouseDownFocus);
+            this.listenTo(options.domEventBus, 'key:move', this._onKeyMove);
+            this.listenTo(options.domEventBus, 'key:edit', this._onKeyEdit);
         }
     },
 
@@ -83,13 +85,100 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
      * @param {module:event/gridEvent} ev - event data
      * @private
      */
-    _onEditCellEvent: function(ev) {
+    _onMouseEdit: function(ev) {
         var rowKey = ev.rowKey;
         var columnName = ev.columnName;
 
         if (!ev.isStopped() && !_.isNull(rowKey)) {
             this.focusIn(rowKey, columnName);
         }
+    },
+
+    /**
+     * Event handler for key:move event
+     * @param {module:event/gridEvent} ev - GridEvent
+     */
+    _onKeyMove: function(ev) {  // eslint-disable-line complexity
+        var rowKey, columnName;
+
+        switch (ev.command) {
+            case 'up':
+                rowKey = this.prevRowKey();
+                break;
+            case 'down':
+                rowKey = this.nextRowKey();
+                break;
+            case 'left':
+                columnName = this.prevColumnName();
+                break;
+            case 'right':
+                columnName = this.nextColumnName();
+                break;
+            case 'pageUp':
+                rowKey = this._getPageMovedRowKey(false);
+                break;
+            case 'pageDown':
+                rowKey = this._getPageMovedRowKey(true);
+                break;
+            case 'firstColumn':
+                columnName = this.firstColumnName();
+                break;
+            case 'lastColumn':
+                columnName = this.lastColumnName();
+                break;
+            case 'firstCell':
+                rowKey = this.firstRowKey();
+                columnName = this.firstColumnName();
+                break;
+            case 'lastCell':
+                rowKey = this.lastRowKey();
+                columnName = this.lastColumnName();
+                break;
+            default:
+        }
+
+        rowKey = _.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
+        columnName = columnName || this.get('columnName');
+
+        this.focus(rowKey, columnName, true);
+    },
+
+    /**
+     * Event handler for key:edit event
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onKeyEdit: function(ev) {
+        var address;
+
+        switch (ev.command) {
+            case 'currentCell':
+                address = this.which();
+                break;
+            case 'nextCell':
+                address = this.nextAddress();
+                break;
+            case 'prevCell':
+                address = this.prevAddress();
+                break;
+            default:
+        }
+
+        this.focusIn(address.rowKey, address.columnName, true);
+    },
+
+    _getPageMovedRowKey: function(isDownDir) {
+        var rowIndex = this.dataModel.indexOfRowKey(this.get('rowKey'));
+        var prevPageRowIndex = this.coordRowModel.getPageMovedIndex(rowIndex, isDownDir);
+        var rowKey;
+
+        if (isDownDir) {
+            rowKey = this.nextRowKey(prevPageRowIndex - rowIndex);
+        } else {
+            rowKey = this.prevRowKey(rowIndex - prevPageRowIndex);
+        }
+
+        return rowKey;
     },
 
     /**

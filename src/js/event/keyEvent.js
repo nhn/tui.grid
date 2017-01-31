@@ -1,0 +1,103 @@
+/**
+ * @fileoverview Drag event emitter
+ * @author NHN Ent. FE Development Lab
+ */
+'use strict';
+
+var _ = require('underscore');
+var GridEvent = require('./gridEvent');
+
+var keyCodeMap = {
+    tab: 9,
+    enter: 13,
+    ctrl: 17,
+    esc: 27,
+    left: 37,
+    up: 38,
+    right: 39,
+    down: 40,
+    a: 65,
+    c: 67,
+    f: 70,
+    r: 82,
+    v: 86,
+    space: 32,
+    pageUp: 33,
+    pageDown: 34,
+    home: 36,
+    end: 35,
+    del: 46
+};
+var keyNameMap = _.invert(keyCodeMap);
+
+var commandBindingMap = {
+    'up': ['move', 'up'],
+    'down': ['move', 'down'],
+    'left': ['move', 'left'],
+    'right': ['move', 'right'],
+    'pageUp': ['move', 'pageUp'],
+    'pageDown': ['move', 'pageDown'],
+    'home': ['move', 'firstColumn'],
+    'end': ['move', 'lastColumn'],
+    'enter': ['edit', 'currentCell'],
+    'space': ['edit', 'currentCell'],
+    'tab': ['edit', 'nextCell'],
+    'del': ['delete'],
+    'shift-tab': ['edit', 'prevCell'],
+    'shift-up': ['select', 'up'],
+    'shift-down': ['select', 'down'],
+    'shift-left': ['select', 'left'],
+    'shift-right': ['select', 'right'],
+    'shift-pageUp': ['select', 'pageUp'],
+    'shift-pageDown': ['select', 'pageDown'],
+    'shift-home': ['select', 'firstColumn'],
+    'shift-end': ['select', 'lastColumn'],
+    'ctrl-a': ['select', 'all'],
+    'ctrl-c': ['clipboard', 'copy'],
+    'ctrl-p': ['clipboard', 'paste'],
+    'ctrl-home': ['move', 'firstCell'],
+    'ctrl-end': ['move', 'lastCell'],
+    'ctrl-shift-home': ['select', 'firstCell'],
+    'ctrl-shift-end': ['select', 'lastCell']
+};
+
+/**
+ * Returns the keyStroke string
+ * @param {Event} ev - Keyboard event
+ * @returns {String}
+ */
+function getKeyStrokeString(ev) {
+    var keys = [];
+
+    if (ev.ctrlKey || ev.metaKey) {
+        keys.push('ctrl');
+    }
+    if (ev.shiftKey) {
+        keys.push('shift');
+    }
+    keys.push(keyNameMap[ev.keyCode]);
+
+    return keys.join('-');
+}
+
+/* Keyboard Event Generator
+ * @module event/keyEvent
+ * @ignore
+ */
+module.exports = {
+    generate: function(ev) {
+        var keyStroke = getKeyStrokeString(ev);
+        var commandInfo = commandBindingMap[keyStroke];
+        var gridEvent;
+
+        if (commandInfo) {
+            gridEvent = new GridEvent(ev);
+            gridEvent.setData({
+                type: 'key:' + commandInfo[0],
+                command: commandInfo[1]
+            });
+        }
+
+        return gridEvent;
+    }
+};

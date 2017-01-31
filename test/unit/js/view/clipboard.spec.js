@@ -7,7 +7,7 @@ var constMap = require('common/constMap');
 var keyCodeConst = constMap.keyCode;
 var selTypeConst = constMap.selectionType;
 
-describe('view.clipboard', function() {
+xdescribe('view.clipboard', function() {
     var modelManager, timeoutDelay = 0;
 
     function getKeyEvent(keyName, $target) {

@@ -6,6 +6,7 @@
 
 var _ = require('underscore');
 
+var util = require('../common/util');
 var Model = require('../base/model');
 var CELL_BORDER_WIDTH = require('../common/constMap').dimension.CELL_BORDER_WIDTH;
 
@@ -165,6 +166,26 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
         }
 
         return idx - 1;
+    },
+
+    /**
+     * Returns the row index moved by body height from given row.
+     * @param {number} rowIdx - current row index
+     * @param {Boolean} isDownDir - true: down, false: up
+     * @returns {number}
+     * @private
+     */
+    getPageMovedIndex: function(rowIdx, isDownDir) {
+        var curOffset = this.getOffsetAt(rowIdx);
+        var distance = this.dimensionModel.get('bodyHeight');
+        var movedIdx;
+
+        if (!isDownDir) {
+            distance = -distance;
+        }
+        movedIdx = this.indexOf(curOffset + distance);
+
+        return util.clamp(movedIdx, 0, this.dataModel.length - 1);
     }
 });
 

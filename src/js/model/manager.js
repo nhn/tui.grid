@@ -55,15 +55,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
         this.columnModel = this._createColumnModel(options);
         this.dataModel = this._createDataModel(options, domState, domEventBus);
-        this.toolbarModel = this._createToolbarModel(options);
         this.dimensionModel = this._createDimensionModel(options, domState, domEventBus);
         this.coordRowModel = this._createCoordRowModel(domState);
-        this.coordColumnModel = this._createCoordColumnModel(domEventBus);
         this.focusModel = this._createFocusModel(options, domState, domEventBus);
+        this.coordColumnModel = this._createCoordColumnModel(domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
         this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
+        this.toolbarModel = this._createToolbarModel(options);
     },
 
     /**
@@ -213,8 +213,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         return new FocusModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
-            dimensionModel: this.dimensionModel,
-            renderModel: this.renderModel,
+            coordRowModel: this.coordRowModel,
             domEventBus: domEventBus,
             domState: domState,
             singleClickEdit: options.singleClickEdit
@@ -233,6 +232,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             coordConverterModel: this.coordConverterModel,
+            coordRowModel: this.coordRowModel,
             renderModel: this.renderModel,
             focusModel: this.focusModel,
             domEventBus: domEventBus

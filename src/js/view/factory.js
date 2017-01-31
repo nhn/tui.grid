@@ -138,12 +138,10 @@ var ViewFactory = tui.util.defineClass({
         return new ClipboardView({
             columnModel: this.modelManager.columnModel,
             dataModel: this.modelManager.dataModel,
-            dimensionModel: this.modelManager.dimensionModel,
             selectionModel: this.modelManager.selectionModel,
             focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
-            coordRowModel: this.modelManager.coordRowModel,
-            coordConverterModel: this.modelManager.coordConverterModel,
+            domEventBus: this.domEventBus,
             copyOption: this.copyOption
         });
     },
