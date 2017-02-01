@@ -183,9 +183,9 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
 
     /**
      * Handle paste event.
-     * This handler should be called with debounced to :
-     * (should be called in the next frame to use the text pasted into the textarea by native action)
-     * (also should be called debounced for preventing repetitive execution)
+     * This handler should be called with debounce applied for following reasons :
+     * 1: should be called in the next frame to use the text pasted into the textarea by native action)
+     * 2: should prevent repetitive execution
      * @param {module:event/gridEvent} gridEvent - GridEvent
      */
     _triggerPasteEvent: function(gridEvent) {

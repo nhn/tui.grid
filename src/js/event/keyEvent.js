@@ -28,6 +28,12 @@ var keyCodeMap = {
 };
 var keyNameMap = _.invert(keyCodeMap);
 
+/**
+ * K-V object for matching keystroke and event command
+ * K: keystroke (order : ctrl -> shift -> keyName)
+ * V: [key event type, command]
+ * @type {Object}
+ */
 var keyStrokeCommandMap = {
     'up': ['move', 'up'],
     'down': ['move', 'down'],
