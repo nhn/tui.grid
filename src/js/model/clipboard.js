@@ -46,14 +46,12 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
      * @private
      */
     _onKeyClipboard: function(gridEvent) {
-        switch (gridEvent.command) {
-            case 'copy':
-                this.set('text', this._getClipboardText());
-                break;
-            case 'paste':
-                this._pasteClipboardTextToGrid(gridEvent.text);
-                break;
-            default:
+        var command = gridEvent.command;
+
+        if (command === 'copy') {
+            this.set('text', this._getClipboardText());
+        } else if (command === 'paste') {
+            this._pasteClipboardTextToGrid(gridEvent.text);
         }
     },
 
