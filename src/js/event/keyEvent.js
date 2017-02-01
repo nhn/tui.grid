@@ -18,8 +18,6 @@ var keyCodeMap = {
     down: 40,
     a: 65,
     c: 67,
-    f: 70,
-    r: 82,
     v: 86,
     space: 32,
     pageUp: 33,
