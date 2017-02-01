@@ -17,6 +17,8 @@ var Model = require('../base/model');
  */
 var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
     initialize: function(attr, options) {
+        Model.prototype.initialize.apply(this, arguments);
+
         _.assign(this, {
             dataModel: options.dataModel,
             selectionModel: options.selectionModel,
