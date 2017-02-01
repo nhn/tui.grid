@@ -22,7 +22,7 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
             selectionModel: options.selectionModel,
             renderModel: options.renderModel,
             focusModel: options.focusModel,
-            copyOptions: options.copyOptions
+            copyOption: options.copyOption
         });
 
         if (options.domEventBus) {

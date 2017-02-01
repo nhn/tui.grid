@@ -7,6 +7,7 @@ var DataModel = require('model/data/rowList');
 var DimensionModel = require('model/dimension');
 var CoordRowModel = require('model/coordRow');
 var SummaryModel = require('model/summary');
+var ClipboardModel = require('model/clipboard');
 
 describe('model/manager', function() {
     var domState = new DomState($('<div>'));
@@ -127,5 +128,16 @@ describe('model/manager', function() {
         var manager = new ModelManager();
 
         expect(manager.coordRowModel).toEqual(jasmine.any(CoordRowModel));
+    });
+
+    it('creates clipboard model', function() {
+        var manager = new ModelManager({
+            copyOption: {
+                useFormattedValue: true
+            }
+        });
+
+        expect(manager.clipboardModel).toEqual(jasmine.any(ClipboardModel));
+        expect(manager.clipboardModel.copyOption.useFormattedValue).toBe(true);
     });
 });

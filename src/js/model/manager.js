@@ -306,7 +306,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             selectionModel: this.selectionModel,
             renderModel: this.renderModel,
             focusModel: this.focusModel,
-            copyOptions: this.copyOption,
+            copyOption: options.copyOption,
             domEventBus: domEventBus
         });
     },
