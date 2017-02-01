@@ -32,6 +32,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             renderModel: options.renderModel,
             coordRowModel: options.coordRowModel,
             coordConverterModel: options.coordConverterModel,
+            domEventBus: options.domEventBus,
 
             inputRange: null,
             minimumColumnRange: null,
@@ -85,7 +86,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (gridEvent.shiftKey) {
             this.update(0, columnRange[1], typeConst.COLUMN);
-            this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+            this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
         } else {
             this.minimumColumnWidth = columnRange;
             this.selectColumn(columnRange[0]);
@@ -110,7 +111,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (columnNames.length) {
             columnRange = this._getColumnRangeWithNames(columnNames);
         }
-        this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+        this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
     },
 
     /**
@@ -124,6 +125,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     /**
      * Event handler for key:select event on domEventBus
      * @param {module:event/gridEvent} ev - GridEvent
+     * @private
      */
     _onKeySelect: function(ev) { // eslint-disable-line complexity
         var address = this._getRecentAddress();
@@ -173,7 +175,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (address) {
             this.update(address.row, address.column);
-            this._scrollTo(address);
+            this._scrollTo(address.row, address.column);
         }
     },
 
@@ -221,13 +223,25 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         return index;
     },
 
+    /**
+     * Returns whether the given address is valid
+     * @param {{row: number, column: number}} address - address
+     * @returns {boolean}
+     * @private
+     */
     _isValidAddress: function(address) {
         return !!this.dataModel.at(address.row) && !!this.columnModel.at(address.colummn);
     },
 
-    _scrollTo: function(address) {
-        var row = this.dataModel.at(address.row);
-        var column = this.columnModel.at(address.column);
+    /**
+     * Scrolls to the position of given address
+     * @param {number} rowIndex - row index
+     * @param {number} columnIndex - column index
+     * @private
+     */
+    _scrollTo: function(rowIndex, columnIndex) {
+        var row = this.dataModel.at(rowIndex);
+        var column = this.columnModel.at(columnIndex);
         var rowKey, columnName, selectionType, scrollPosition;
 
         if (!row || !column) {
@@ -447,7 +461,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse positino Y
      */
-    extendColumnSelection: function(columnIndexes, pageX, pageY) {
+    _extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this.minimumColumnRange;
         var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
         var range = {

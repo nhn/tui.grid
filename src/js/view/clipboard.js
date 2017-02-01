@@ -9,10 +9,9 @@ var _ = require('underscore');
 var View = require('../base/view');
 var keyEvent = require('../event/keyEvent');
 var classNameConst = require('../common/classNameConst');
-var Clipboard;
-
 var PASTE_DEBOUNCE_TIME = 300;
 var KEYDOWN_LOCK_TIME = 10;
+var Clipboard;
 
 /**
  * Returns whether the ev.preventDefault should be called
@@ -50,7 +49,9 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             lockTimerId: null
         });
 
-        this._handlePasteEventDebounced = _.debounce(_.bind(this._handlePasteEvent, this), PASTE_DEBOUNCE_TIME);
+        this._triggerPasteEventDebounced = _.debounce(
+            _.bind(this._triggerPasteEvent, this), PASTE_DEBOUNCE_TIME, true
+        );
 
         this.listenTo(this.focusModel, 'focusClipboard', this._onFocusClipboard);
         this.listenTo(this.clipboardModel, 'change:text', this._onClipboardTextChange);
@@ -159,7 +160,8 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         }
 
         if (isPasteEvent(gridEvent)) {
-            this._handlePasteEventDebounced(gridEvent);
+            this._triggerPasteEventDebounced(gridEvent);
+            this.$el.val('');
         } else {
             this.domEventBus.trigger(gridEvent.type, gridEvent);
         }
@@ -186,11 +188,12 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * (also should be called debounced for preventing repetitive execution)
      * @param {module:event/gridEvent} gridEvent - GridEvent
      */
-    _handlePasteEvent: function(gridEvent) {
+    _triggerPasteEvent: function(gridEvent) {
         gridEvent.setData({text: this.$el.val()});
         this.domEventBus.trigger(gridEvent.type, gridEvent);
-        this.$el.val('');
     }
 });
+
+Clipboard.KEYDOWN_LOCK_TIME = KEYDOWN_LOCK_TIME;
 
 module.exports = Clipboard;

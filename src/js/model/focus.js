@@ -164,7 +164,9 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
             default:
         }
 
-        this.focusIn(address.rowKey, address.columnName, true);
+        if (address) {
+            this.focusIn(address.rowKey, address.columnName, true);
+        }
     },
 
     _getPageMovedRowKey: function(isDownDir) {
