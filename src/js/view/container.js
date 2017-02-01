@@ -166,6 +166,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * @property {Object} rowData - row data containing the target cell
              */
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
+            // @todo remove this
             // if (eventData.rowKey === null && !eventData.isStopped()) {
             //     this.dataModel.append({}, {focus: true});
             // }

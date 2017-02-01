@@ -22,21 +22,27 @@ var GridEvent = require('../event/gridEvent');
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     initialize: function(attrs, options) {
         var editEventName = options.singleClickEdit ? 'clickCell' : 'dblclickCell';
+        var domEventBus;
 
         Model.prototype.initialize.apply(this, arguments);
 
-        this.dataModel = options.dataModel;
-        this.columnModel = options.columnModel;
-        this.coordRowModel = options.coordRowModel;
-        this.domState = options.domState;
+        _.assign(this, {
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
+            coordRowModel: options.coordRowModel,
+            domEventBus: options.domEventBus,
+            domState: options.domState
+        });
 
         this.listenTo(this.dataModel, 'reset', this._onResetData);
+        this.listenTo(this.dataModel, 'add', this._onAddDataModel);
 
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, editEventName, this._onMouseEdit);
-            this.listenTo(options.domEventBus, 'mousedown:focus', this._onMouseDownFocus);
-            this.listenTo(options.domEventBus, 'key:move', this._onKeyMove);
-            this.listenTo(options.domEventBus, 'key:edit', this._onKeyEdit);
+        if (this.domEventBus) {
+            domEventBus = this.domEventBus;
+            this.listenTo(domEventBus, editEventName, this._onMouseClickEdit);
+            this.listenTo(domEventBus, 'mousedown:focus', this._onMouseDownFocus);
+            this.listenTo(domEventBus, 'key:move', this._onKeyMove);
+            this.listenTo(domEventBus, 'key:edit', this._onKeyEdit);
         }
     },
 
@@ -81,11 +87,23 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {module:model/data/rowList} dataModel - data model
+     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
+     * @private
+     */
+    _onAddDataModel: function(dataModel, options) {
+        if (options.focus) {
+            this.focusAt(options.at, 0);
+        }
+    },
+
+    /**
      * Event handler for 'clickCell' or 'dblclickCell' event on domEventBus
      * @param {module:event/gridEvent} ev - event data
      * @private
      */
-    _onMouseEdit: function(ev) {
+    _onMouseClickEdit: function(ev) {
         var rowKey = ev.rowKey;
         var columnName = ev.columnName;
 
