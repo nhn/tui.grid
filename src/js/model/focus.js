@@ -187,6 +187,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
         }
     },
 
+    /**
+     * Returns the moved rowKey by page unit from current position
+     * @param {boolean} isDownDir - true: down, false: up
+     * @returns {number}
+     * @private
+     */
     _getPageMovedRowKey: function(isDownDir) {
         var rowIndex = this.dataModel.indexOfRowKey(this.get('rowKey'));
         var prevPageRowIndex = this.coordRowModel.getPageMovedIndex(rowIndex, isDownDir);
