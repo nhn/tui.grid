@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Mon Jan 16 2017 17:27:57 GMT+0900 (KST)"
- * version: 1.7.1
+ * bundle created at "Thu Feb 02 2017 16:53:28 GMT+0900 (KST)"
+ * version: 1.7.2
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -13804,23 +13804,63 @@
 	        var selectionModel = this.selectionModel;
 	        var focusModel = this.focusModel;
 	        var dataModel = this.dataModel;
+	        var selRange, selRowLen, selColLen;
 	        var startIdx, data;
 
+	        data = this._getProcessClipBoardData();
+
 	        if (selectionModel.hasSelection()) {
+	            selRange = selectionModel.get('range');
+	            selRowLen = selRange.row[1] - selRange.row[0] + 1;
+	            selColLen = selRange.column[1] - selRange.column[0] + 1;
+	            data = this._duplicateData(data, selRowLen, selColLen);
 	            startIdx = selectionModel.getStartIndex();
 	        } else {
 	            startIdx = focusModel.indexOf();
 	        }
-	        data = this._getProcessClipBoardData();
 
 	        this.$el.off('keyup');
 	        dataModel.paste(data, startIdx);
 	    },
 
 	    /**
-	     * process data for paste to grid
+	     * Duplicate given data based on the selection range
+	     * @param {Array.<Array.<string>>} data - 2D array of string values
+	     * @param {number} selRowLen - row length of selection range
+	     * @param {number} selColLen - column length of selection range
+	     * @returns {Array.<Array.<string>>}
 	     * @private
-	     * @returns {Array.<Array.<string>>} result
+	     */
+	    _duplicateData: function(data, selRowLen, selColLen) {
+	        var dataRowLen = data.length;
+	        var dataColLen = data[0].length;
+	        var rowDupCount = Math.floor(selRowLen / dataRowLen) - 1;
+	        var colDupCount = Math.floor(selColLen / dataColLen) - 1;
+	        var result = $.extend(true, [], data);
+
+	        // duplicate rows
+	        _.times(rowDupCount, function() {
+	            _.forEach(data, function(row) {
+	                result.push(row.slice(0));
+	            });
+	        });
+
+	        // duplicate columns
+	        _.forEach(result, function(row) {
+	            var rowData = row.slice(0);
+
+	            _.times(colDupCount, function() {
+	                [].push.apply(row, rowData);
+	            });
+	        });
+
+	        return result;
+	    },
+
+	    /**
+	     * process data for paste to grid
+	     * @returns {Array.<Array.<string>>}
+	     * @private
 	     */
 	    _getProcessClipBoardData: function() {
 	        var text = this.$el.val();
