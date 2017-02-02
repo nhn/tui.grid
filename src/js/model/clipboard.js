@@ -96,7 +96,7 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
     _getClipboardText: function() {
         var selectionModel = this.selectionModel;
         var focused = this.focusModel.which();
-        var useFormattedValue = !!tui.util.pick(this.copyOption, 'useFormattedValue');
+        var useFormattedValue = _.result(this.copyOption, 'useFormattedValue', false);
         var text;
 
         if (selectionModel.hasSelection()) {
