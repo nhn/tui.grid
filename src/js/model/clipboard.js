@@ -83,15 +83,9 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
      * @private
      */
     _parseClipboardText: function(text) {
-        var result = text.split('\n');
-        var len = result.length;
-        var i = 0;
-
-        for (; i < len; i += 1) {
-            result[i] = result[i].split('\t');
-        }
-
-        return result;
+        return _.map(text.split('\n'), function(row) {
+            return row.split('\t');
+        });
     },
 
     /**
