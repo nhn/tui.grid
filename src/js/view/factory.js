@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./toolbar');
@@ -14,7 +16,7 @@ var ClipboardView = require('./clipboard');
 var LsideFrameView = require('./layout/frame-lside');
 var RsideFrameView = require('./layout/frame-rside');
 var HeaderView = require('./layout/header');
-var HeaderResizeHandlerView = require('./layout/resizeHandler');
+var HeaderResizeHandleView = require('./layout/resizeHandle');
 var BodyView = require('./layout/body');
 var BodyTableView = require('./layout/bodyTable');
 var FooterView = require('./layout/footer');
@@ -35,15 +37,14 @@ var ViewFactory = tui.util.defineClass({
     init: function(options) {
         // dependencies
         this.domState = options.domState;
+        this.domEventBus = options.domEventBus;
         this.modelManager = options.modelManager;
         this.painterManager = options.painterManager;
         this.componentHolder = options.componentHolder;
 
         // view options
         this.footerOptions = options.footer;
-        this.singleClickEdit = options.singleClickEdit;
         this.resizeHandle = options.resizeHandle;
-        this.copyOption = options.copyOption;
     },
 
     /**
@@ -54,11 +55,10 @@ var ViewFactory = tui.util.defineClass({
     createContainer: function() {
         return new ContainerView({
             el: this.domState.$el,
-            singleClickEdit: this.singleClickEdit,
+            gridId: this.modelManager.gridId,
+            domEventBus: this.domEventBus,
             dataModel: this.modelManager.dataModel,
             dimensionModel: this.modelManager.dimensionModel,
-            focusModel: this.modelManager.focusModel,
-            gridId: this.modelManager.gridId,
             viewFactory: this
         });
     },
@@ -76,6 +76,7 @@ var ViewFactory = tui.util.defineClass({
 
     /**
      * Creates toolbar view and returns it.
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:view/toolbar} - New toolbar view instance
      */
     createToolbar: function() {
@@ -83,7 +84,7 @@ var ViewFactory = tui.util.defineClass({
             return null;
         }
         return new ToolbarView({
-            gridId: this.modelManager.gridId,
+            domEventBus: this.domEventBus,
             dimensionModel: this.modelManager.dimensionModel,
             toolbarModel: this.modelManager.toolbarModel
         });
@@ -112,7 +113,8 @@ var ViewFactory = tui.util.defineClass({
             return null;
         }
         return new HeightResizeHandleView({
-            dimensionModel: this.modelManager.dimensionModel
+            dimensionModel: this.modelManager.dimensionModel,
+            domEventBus: this.domEventBus
         });
     },
 
@@ -133,15 +135,9 @@ var ViewFactory = tui.util.defineClass({
      */
     createClipboard: function() {
         return new ClipboardView({
-            columnModel: this.modelManager.columnModel,
-            dataModel: this.modelManager.dataModel,
-            dimensionModel: this.modelManager.dimensionModel,
-            selectionModel: this.modelManager.selectionModel,
+            clipboardModel: this.modelManager.clipboardModel,
             focusModel: this.modelManager.focusModel,
-            renderModel: this.modelManager.renderModel,
-            coordRowModel: this.modelManager.coordRowModel,
-            coordConverterModel: this.modelManager.coordConverterModel,
-            copyOption: this.copyOption
+            domEventBus: this.domEventBus
         });
     },
 
@@ -168,14 +164,15 @@ var ViewFactory = tui.util.defineClass({
     createHeader: function(whichSide) {
         return new HeaderView({
             whichSide: whichSide,
+            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             renderModel: this.modelManager.renderModel,
-            dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
             selectionModel: this.modelManager.selectionModel,
             dataModel: this.modelManager.dataModel,
             columnModel: this.modelManager.columnModel,
             coordRowModel: this.modelManager.coordRowModel,
             coordColumnModel: this.modelManager.coordColumnModel,
+            domEventBus: this.domEventBus,
             viewFactory: this
         });
     },
@@ -214,12 +211,13 @@ var ViewFactory = tui.util.defineClass({
      * @param  {String} whichSide - 'L'(left) or 'R'(right)
      * @returns {module:view/layout/header} New resize handler view instance
      */
-    createHeaderResizeHandler: function(whichSide) {
-        return new HeaderResizeHandlerView({
+    createHeaderResizeHandle: function(whichSide) {
+        return new HeaderResizeHandleView({
             whichSide: whichSide,
-            dimensionModel: this.modelManager.dimensionModel,
+            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             columnModel: this.modelManager.columnModel,
-            coordColumnModel: this.modelManager.coordColumnModel
+            coordColumnModel: this.modelManager.coordColumnModel,
+            domEventBus: this.domEventBus
         });
     },
 
@@ -233,11 +231,7 @@ var ViewFactory = tui.util.defineClass({
             whichSide: whichSide,
             renderModel: this.modelManager.renderModel,
             dimensionModel: this.modelManager.dimensionModel,
-            coordConverterModel: this.modelManager.coordConverterModel,
-            dataModel: this.modelManager.dataModel,
-            columnModel: this.modelManager.columnModel,
-            selectionModel: this.modelManager.selectionModel,
-            focusModel: this.modelManager.focusModel,
+            domEventBus: this.domEventBus,
             viewFactory: this
         });
     },

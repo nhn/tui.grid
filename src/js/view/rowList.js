@@ -30,7 +30,7 @@ var RowList = View.extend(/**@lends module:view/rowList.prototype */{
         var coordRowModel = options.coordRowModel;
         var whichSide = options.whichSide || 'R';
 
-        this.setOwnProperties({
+        _.assign(this, {
             whichSide: whichSide,
             bodyTableView: options.bodyTableView,
             focusModel: focusModel,

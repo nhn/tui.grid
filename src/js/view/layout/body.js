@@ -1,17 +1,17 @@
 /**
  * @fileoverview Class for the body layout
- * @author NHN Ent. FE Development Team
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
 var _ = require('underscore');
 
 var View = require('../../base/view');
-var util = require('../../common/util');
+var DragEventEmitter = require('../../event/dragEventEmitter');
+var GridEvent = require('../../event/gridEvent');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
 var attrNameConst = constMap.attrName;
-var selTypeConst = constMap.selectionType;
 var frameConst = constMap.frame;
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
@@ -32,15 +32,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
-        this.setOwnProperties({
+        _.assign(this, {
             dimensionModel: options.dimensionModel,
-            dataModel: options.dataModel,
-            columnModel: options.columnModel,
             renderModel: options.renderModel,
-            coordConverterModel: options.coordConverterModel,
-            selectionModel: options.selectionModel,
-            focusModel: options.focusModel,
             viewFactory: options.viewFactory,
+            domEventBus: options.domEventBus,
 
             // DIV for setting rendering position of entire child-nodes of $el.
             $container: null,
@@ -51,6 +47,12 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
             .listenTo(this.dimensionModel, 'change:totalRowHeight', this._resetContainerHeight)
             .listenTo(this.renderModel, 'change:scrollTop', this._onScrollTopChange)
             .listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange);
+
+        this.dragEmitter = new DragEventEmitter({
+            type: 'body',
+            domEventBus: this.domEventBus,
+            onDragMove: _.bind(this._onDragMove, this)
+        });
     },
 
     className: classNameConst.BODY_AREA,
@@ -122,191 +124,92 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Returns the name of the visible data columns at given index
-     * @param  {Number} columnIndex - Column index
-     * @returns {String} - Column name
-     * @private
+     * Test if given target element is dummy cell
+     * @param {jQuery} $target - target element
+     * @returns {boolean}
      */
-    _getColumnNameByVisibleIndex: function(columnIndex) {
-        var columns = this.columnModel.getVisibleColumnModelList(null, false);
-        return columns[columnIndex].columnName;
+    _isDummyCell: function($target) {
+        var $tr = $target.closest('tr');
+
+        return $tr.length && !$tr.attr(attrNameConst.ROW_KEY);
     },
 
     /**
      * Mousedown event handler
-     * @param {MouseEvent} event - Mousedown event
+     * @param {MouseEvent} ev - MouseEvent
      * @private
      */
-    _onMouseDown: function(event) {
-        var columnModel = this.columnModel;
-        var $target = $(event.target);
-        var $td = $target.closest('td');
-        var $tr = $target.closest('tr');
-        var columnName = $td.attr(attrNameConst.COLUMN_NAME);
-        var rowKey = $tr.attr(attrNameConst.ROW_KEY);
-        var startAction = true;
-        var inputData = _.pick(event, 'pageX', 'pageY', 'shiftKey');
-        var indexData;
+    _onMouseDown: function(ev) {
+        var $target = $(ev.target);
+        var isTargetInput = $target.is('input, teaxarea');
 
-        if (!$td.length) { // selection layer, focus layer
-            indexData = this.coordConverterModel.getIndexFromMousePosition(event.pageX, event.pageY);
-            columnName = this._getColumnNameByVisibleIndex(indexData.column);
-        } else if (rowKey && columnName) { // valid cell
-            indexData = {
-                column: columnModel.indexOfColumnName(columnName, true),
-                row: this.dataModel.indexOfRowKey(rowKey)
-            };
-            if (this.columnModel.get('selectType') === 'radio') {
-                this.dataModel.check(rowKey);
-            }
-        } else { // dummy cell
-            startAction = false;
-        }
-
-        if (startAction) {
-            this._controlStartAction(inputData, indexData, columnName, $target.is('input, textarea'));
-        }
-    },
-
-    /**
-     * Control selection action when started
-     * @param {Object} inputData - Mouse position X
-     * @param   {number} inputData.pageY - Mouse position Y
-     * @param   {number} inputData.pageY - Mouse position Y
-     * @param   {boolean} inputData.shiftKey - Whether the shift-key is pressed.
-     * @param {{column:number, row:number}} indexData - Index map object
-     * @param {String} columnName - column name
-     * @param {boolean} isInput - Whether the target is input element.
-     * @private
-     */
-    _controlStartAction: function(inputData, indexData, columnName, isInput) {
-        var selectionModel = this.selectionModel,
-            columnIndex = indexData.column,
-            rowIndex = indexData.row,
-            startDrag = true;
-
-        if (!selectionModel.isEnabled()) {
+        if (this._isDummyCell($target)) {
             return;
         }
 
-        if (!util.isMetaColumn(columnName)) {
-            selectionModel.setType(selTypeConst.CELL);
-            if (inputData.shiftKey && !isInput) {
-                selectionModel.update(rowIndex, columnIndex);
-            } else {
-                startDrag = this._doFocusAtAndCheckDraggable(rowIndex, columnIndex);
-                selectionModel.end();
-            }
-        } else if (columnName === '_number') {
-            this._updateSelectionByRow(rowIndex, inputData.shiftKey);
-        } else {
-            startDrag = false;
+        if (!this._triggerMousedown(ev)) {
+            return;
         }
 
-        if (!isInput && startDrag) {
-            this.dimensionModel.refreshLayout();
-            this._attachDragEvents(inputData.pageX, inputData.pageY);
+        if (isTargetInput && ev.shiftKey) {
+            ev.preventDefault();
+        }
+        if (!isTargetInput || ev.shiftKey) {
+            this.dragEmitter.start(ev, {
+                pageX: ev.pageX,
+                pageY: ev.pageY
+            });
         }
     },
 
     /**
-     * Update selection model by row unit.
-     * @param {number} rowIndex - row index
-     * @param {boolean} shiftKey - true if the shift key is pressed
-     * @private
-     */
-    _updateSelectionByRow: function(rowIndex, shiftKey) {
-        if (shiftKey) {
-            this.selectionModel.update(rowIndex, 0, selTypeConst.ROW);
-        } else {
-            this.selectionModel.selectRow(rowIndex);
-        }
-    },
-
-    /**
-     * Executes the `focusModel.focusAt()` and returns the boolean value which indicates whether to start drag.
-     * @param {number} rowIndex - row index
-     * @param {number} columnIndex - column index
+     * Trigger mousedown:body event on domEventBus and returns the result
+     * @param {MouseEvent} ev - MouseEvent
      * @returns {boolean}
      * @private
      */
-    _doFocusAtAndCheckDraggable: function(rowIndex, columnIndex) {
-        var startTime = (new Date()).getTime(),
-            focusSuccessed = this.focusModel.focusAt(rowIndex, columnIndex),
-            endTime = (new Date()).getTime(),
-            hasPaused = (endTime - startTime) > MIN_INTERVAL_FOR_PAUSED;
+    _triggerMousedown: function(ev) {
+        var startTime, endTime, hasPaused;
+        var gridEvent = new GridEvent(ev);
 
-        if (!focusSuccessed || hasPaused) {
-            return false;
-        }
-        return true;
+        startTime = (new Date()).getTime();
+        this.domEventBus.trigger('mousedown:body', gridEvent);
+        endTime = (new Date()).getTime();
+
+        // check if the model window (alert or confirm) was popped up
+        hasPaused = (endTime - startTime) > MIN_INTERVAL_FOR_PAUSED;
+
+        return !gridEvent.isStopped() && !hasPaused;
     },
 
     /**
-     * Attach event handlers for drag event.
-     * @param {Number} pageX - initial pageX value
-     * @param {Number} pageY - initial pageY value
-     * @private
+     * Event handler for dragmove
+     * @param {event:module/gridEvent} gridEvent - GridEvent
      */
-    _attachDragEvents: function(pageX, pageY) {
-        this.setOwnProperties({
-            mouseDownX: pageX,
-            mouseDownY: pageY
-        });
-        $(document)
-            .on('mousemove', $.proxy(this._onMouseMove, this))
-            .on('mouseup', $.proxy(this._detachDragEvents, this))
-            .on('selectstart', $.proxy(this._onSelectStart, this));
-    },
+    _onDragMove: function(gridEvent) {
+        var startData = gridEvent.startData;
+        var currentData = {
+            pageX: gridEvent.pageX,
+            pageY: gridEvent.pageY
+        };
 
-    /**
-     * Detach all handlers which are used for drag event.
-     * @private
-     */
-    _detachDragEvents: function() {
-        this.selectionModel.stopAutoScroll();
-        $(document)
-            .off('mousemove', this._onMouseMove)
-            .off('mouseup', this._detachDragEvents)
-            .off('selectstart', this._onSelectStart);
-    },
-
-    /**
-     * Event handler for 'mousemove' event during drag
-     * @param {MouseEvent} event - MouseEvent object
-     * @private
-     */
-    _onMouseMove: function(event) {
-        var dragged = this._getMouseMoveDistance(event.pageX, event.pageY) > MIN_DISATNCE_FOR_DRAG;
-
-        if (this.selectionModel.hasSelection() || dragged) {
-            this.selectionModel.updateByMousePosition(event.pageX, event.pageY);
+        if (this._getMouseMoveDistance(startData, currentData) < MIN_DISATNCE_FOR_DRAG) {
+            gridEvent.stop();
         }
     },
 
     /**
-     * Returns the distance between 'mousedown' position and specified position.
-     * @param {number} pageX - X position relative to the document
-     * @param {number} pageY - Y position relative to the document
-     * @returns {number} Distance
+     * Returns the distance between start position and current position.
+     * @param {{pageX:number, pageY:number}} start - start position
+     * @param {{pageX:number, pageY:number}} current - current position
+     * @returns {number}
      * @private
      */
-    _getMouseMoveDistance: function(pageX, pageY) {
-        var dx = Math.abs(this.mouseDownX - pageX);
-        var dy = Math.abs(this.mouseDownY - pageY);
+    _getMouseMoveDistance: function(start, current) {
+        var dx = Math.abs(start.pageX - current.pageX);
+        var dy = Math.abs(start.pageY - current.pageY);
 
         return Math.round(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)));
-    },
-
-    /**
-     * Event handler to prevent default action on `selectstart` event.
-     * @param {Event} event - event object
-     * @returns {boolean} false
-     * @private
-     */
-    _onSelectStart: function(event) {
-        event.preventDefault();
-        return false;
     },
 
     /**
@@ -336,6 +239,7 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         ]);
         this.$container.append(this._renderChildren());
         this._resetContainerHeight();
+
         return this;
     }
 });

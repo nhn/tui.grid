@@ -27,7 +27,7 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
         this.isFixedRowHeight = options.isFixedRowHeight;
 
         this.inputPainters = this._createInputPainters(options.controller);
-        this.cellPainters = this._createCellPainters(options.controller);
+        this.cellPainters = this._createCellPainters(options.controller, options.domEventBus);
         this.rowPainter = this._createRowPainter();
     },
 
@@ -71,15 +71,17 @@ var PainterManager = tui.util.defineClass(/**@lends module:painter/manager.proto
      * Creates instances of cell painters and returns the object that stores them
      * using 'editType' as keys.
      * @param {module:painter/controller} controller - painter controller
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {Object} Key-value object
      * @private
      */
-    _createCellPainters: function(controller) {
+    _createCellPainters: function(controller, domEventBus) {
         var cellPainters = {
             dummy: new DummyCellPainter({
                 controller: controller
             }),
             normal: new CellPainter({
+                domEventBus: domEventBus,
                 controller: controller,
                 isFixedRowHeight: this.isFixedRowHeight,
                 editType: 'normal'

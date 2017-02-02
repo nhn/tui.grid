@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var attrNameConst = require('./common/constMap').attrName;
 var classNameConst = require('./common/classNameConst');
 

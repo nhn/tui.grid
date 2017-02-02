@@ -1,5 +1,5 @@
 /**
- * @fileoverview ResizeHandler for the Header
+ * @fileoverview ResizeHandle for the Header
  * @author NHN Ent. FE Development Team
  */
 'use strict';
@@ -9,6 +9,7 @@ var _ = require('underscore');
 var View = require('../../base/view');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
+var DragEventEmitter = require('../../event/dragEventEmitter');
 var attrNameConst = constMap.attrName;
 var frameConst = constMap.frame;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
@@ -16,25 +17,26 @@ var RESIZE_HANDLE_WIDTH = constMap.dimension.RESIZE_HANDLE_WIDTH;
 
 /**
  * Reside Handler class
- * @module view/layout/resizeHandler
+ * @module view/layout/resizeHandle
  * @extends module:base/view
  * @param {Object} options - Options
  * @ignore
  */
-var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.prototype */ {
+var ResizeHandle = View.extend(/**@lends module:view/layout/resizeHandle.prototype */ {
     initialize: function(options) {
-        this.setOwnProperties({
-            dimensionModel: options.dimensionModel,
+        _.assign(this, {
             columnModel: options.columnModel,
             coordColumnModel: options.coordColumnModel,
-            whichSide: options.whichSide || frameConst.R,
+            domEventBus: options.domEventBus,
+            headerHeight: options.headerHeight,
+            whichSide: options.whichSide || frameConst.R
+        });
 
-            isResizing: false,
-            $target: null,
-            differenceLeft: 0,
-            initialWidth: 0,
-            initialOffsetLeft: 0,
-            initialLeft: 0
+        this.dragEmitter = new DragEventEmitter({
+            type: 'resizeColumn',
+            cursor: 'col-resize',
+            domEventBus: this.domEventBus,
+            onDragMove: _.bind(this._onDragMove, this)
         });
 
         this.listenTo(this.coordColumnModel, 'columnWidthChanged', this._refreshHandlerPosition);
@@ -84,14 +86,13 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     _getResizeHandlerMarkup: function() {
         var columnData = this._getColumnData();
         var columnModelList = columnData.modelList;
-        var headerHeight = this.dimensionModel.get('headerHeight');
         var length = columnModelList.length;
         var resizeHandleMarkupList = _.map(columnModelList, function(columnModel, index) {
             return this.template({
                 lastClass: (index + 1 === length) ? classNameConst.COLUMN_RESIZE_HANDLE_LAST : '',
                 columnIndex: index,
                 columnName: columnModel.columnName,
-                height: headerHeight
+                height: this.headerHeight
             });
         }, this);
 
@@ -100,11 +101,11 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
 
     /**
      * Render
-     * @returns {module:view/layout/resizeHandler} This object
+     * @returns {module:view/layout/resizeHandle} This object
      */
     render: function() {
-        var headerHeight = this.dimensionModel.get('headerHeight'),
-            htmlStr = this._getResizeHandlerMarkup();
+        var headerHeight = this.headerHeight;
+        var htmlStr = this._getResizeHandlerMarkup();
 
         this.$el.empty().html(htmlStr).css({
             marginTop: -headerHeight,
@@ -135,21 +136,35 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
     },
 
     /**
-     * Returns whether resizing is in progress or not.
-     * @returns {boolean}
+     * Event handler for the 'mousedown' event
+     * @param {MouseEvent} ev - mouse event
      * @private
      */
-    _isResizing: function() {
-        return !!this.isResizing;
+    _onMouseDown: function(ev) {
+        var $target = $(ev.target);
+        var columnWidthList = this.coordColumnModel.getColumnWidthList(this.whichSide);
+        var columnIndex = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
+
+        this.dragEmitter.start(ev, {
+            width: columnWidthList[columnIndex],
+            columnIndex: this._getHandlerColumnIndex(columnIndex),
+            pageX: ev.pageX
+        });
     },
 
     /**
-     * Event handler for the 'mousedown' event
-     * @param {MouseEvent} mouseEvent - mouse event
+     * Event handler for dragmove event
+     * @param {module:event/gridEvent} ev - GridEvent
      * @private
      */
-    _onMouseDown: function(mouseEvent) {
-        this._startResizing($(mouseEvent.target));
+    _onDragMove: function(ev) {
+        var startData = ev.startData;
+        var diff = ev.pageX - startData.pageX;
+
+        ev.setData({
+            columnIndex: startData.columnIndex,
+            width: startData.width + diff
+        });
     },
 
     /**
@@ -159,48 +174,11 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      */
     _onDblClick: function(mouseEvent) {
         var $target = $(mouseEvent.target);
-        var index = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
+        var columnIndex = parseInt($target.attr(attrNameConst.COLUMN_INDEX), 10);
 
-        this.coordColumnModel.restoreColumnWidth(this._getHandlerColumnIndex(index));
-        this._refreshHandlerPosition();
-    },
-
-    /**
-     * Event handler for the 'mouseup' event
-     * @private
-     */
-    _onMouseUp: function() {
-        this._stopResizing();
-    },
-
-    /**
-     * Event handler for the 'mousemove' event
-     * @param {MouseEvent} mouseEvent - mouse event
-     * @private
-     */
-    _onMouseMove: function(mouseEvent) {
-        var width, index;
-
-        if (this._isResizing()) {
-            mouseEvent.preventDefault();
-
-            width = this._calculateWidth(mouseEvent.pageX);
-            index = parseInt(this.$target.attr(attrNameConst.COLUMN_INDEX), 10);
-
-            this.coordColumnModel.setColumnWidth(this._getHandlerColumnIndex(index), width);
-            this._refreshHandlerPosition();
-        }
-    },
-
-    /**
-     * Returns the width of the column based on given mouse position and the initial offset.
-     * @param {number} pageX - mouse x position
-     * @returns {number}
-     * @private
-     */
-    _calculateWidth: function(pageX) {
-        var difference = pageX - this.initialOffsetLeft - this.initialLeft;
-        return this.initialWidth + difference;
+        this.domEventBus.trigger('dblclick:resizeColumn', {
+            columnIndex: this._getHandlerColumnIndex(columnIndex)
+        });
     },
 
     /**
@@ -211,63 +189,7 @@ var ResizeHandler = View.extend(/**@lends module:view/layout/resizeHandler.proto
      */
     _getHandlerColumnIndex: function(index) {
         return (this.whichSide === frameConst.R) ? (index + this.columnModel.getVisibleColumnFixCount(true)) : index;
-    },
-
-    /**
-     * Start resizing
-     * @param {jQuery} $target - target element
-     * @private
-     */
-    _startResizing: function($target) {
-        var columnData = this._getColumnData();
-        var columnWidthList = columnData.widthList;
-
-        this.isResizing = true;
-        this.$target = $target;
-        this.initialLeft = parseInt($target.css('left').replace('px', ''), 10);
-        this.initialOffsetLeft = this.$el.offset().left;
-        this.initialWidth = columnWidthList[$target.attr(attrNameConst.COLUMN_INDEX)];
-        $('body').css('cursor', 'col-resize');
-        $(document)
-            .on('mousemove', $.proxy(this._onMouseMove, this))
-            .on('mouseup', $.proxy(this._onMouseUp, this));
-
-        // for IE8 and under
-        if ($target[0].setCapture) {
-            $target[0].setCapture();
-        }
-    },
-
-    /**
-     * Stop resizing
-     * @private
-     */
-    _stopResizing: function() {
-        // for IE8 and under
-        if (this.$target && this.$target[0].releaseCapture) {
-            this.$target[0].releaseCapture();
-        }
-
-        this.isResizing = false;
-        this.$target = null;
-        this.initialLeft = 0;
-        this.initialOffsetLeft = 0;
-        this.initialWidth = 0;
-
-        $('body').css('cursor', 'default');
-        $(document)
-            .unbind('mousemove', $.proxy(this._onMouseMove, this))
-            .unbind('mouseup', $.proxy(this._onMouseUp, this));
-    },
-
-    /**
-     * Destroy
-     */
-    destroy: function() {
-        this.stopListening();
-        this._stopResizing();
-        this.remove();
     }
 });
 
-module.exports = ResizeHandler;
+module.exports = ResizeHandle;

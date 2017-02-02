@@ -10,11 +10,12 @@ var View = require('../../base/view');
 var util = require('../../common/util');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
+var GridEvent = require('../../event/gridEvent');
+var DragEventEmitter = require('../../event/dragEventEmitter');
 var frameConst = constMap.frame;
 
 var DELAY_SYNC_CHECK = 10;
 var keyCodeMap = constMap.keyCode;
-var SEL_TYPE_COLUMN = constMap.selectionType.COLUMN;
 var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
@@ -31,17 +32,26 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
-        this.setOwnProperties({
+        _.assign(this, {
             renderModel: options.renderModel,
             coordColumnModel: options.coordColumnModel,
-            dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
             focusModel: options.focusModel,
             columnModel: options.columnModel,
             dataModel: options.dataModel,
-            viewFactory: options.viewFactory,
             coordRowModel: options.coordRowModel,
+
+            viewFactory: options.viewFactory,
+            domEventBus: options.domEventBus,
+
+            headerHeight: options.headerHeight,
             whichSide: options.whichSide || frameConst.R
+        });
+
+        this.dragEmitter = new DragEventEmitter({
+            type: 'header',
+            domEventBus: this.domEventBus,
+            onDragMove: _.bind(this._onDragMove, this)
         });
 
         this.listenTo(this.renderModel, 'change:scrollLeft', this._onScrollLeftChange)
@@ -142,6 +152,15 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         return _.pluck(selectedColumns, 'columnName');
     },
 
+    _onDragMove: function(gridEvent) {
+        var $target = $(gridEvent.target);
+
+        gridEvent.setData({
+            columnName: $target.closest('th').attr(ATTR_COLUMN_NAME),
+            isOnHeaderArea: $.contains(this.el, $target[0])
+        });
+    },
+
     /**
      * Returns an array of names of merged-column which contains every column name in the given array.
      * @param {Array.<String>} columnNames - an array of column names to test
@@ -197,150 +216,23 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
 
     /**
      * Mousedown event handler
-     * @param {jQuery.Event} event - MouseDown event
+     * @param {jQuery.Event} ev - MouseDown event
      * @private
      */
-    _onMouseDown: function(event) {
-        var columnName, columnNames;
+    _onMouseDown: function(ev) {
+        var $target = $(ev.target);
+        var columnName;
 
-        if (!this.selectionModel.isEnabled() || $(event.target).is('a.' + classNameConst.BTN_SORT)) {
+        if ($target.hasClass(classNameConst.BTN_SORT)) {
             return;
         }
 
-        columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
-        if (!columnName) {
-            return;
-        }
-
-        columnNames = this.columnModel.getUnitColumnNamesIfMerged(columnName);
-
-        if (!this._hasMetaColumn(columnNames)) {
-            this._controlStartAction(columnNames, event.pageX, event.pageY, event.shiftKey);
-        }
-    },
-
-    /**
-     * Control selection action when started
-     * @param {Array} columnNames - An array of column names
-     * @param {number} pageX - Mouse position X
-     * @param {number} pageY - Mouse position Y
-     * @param {boolean} shiftKey - Whether the shift-key is pressed.
-     * @private
-     */
-    _controlStartAction: function(columnNames, pageX, pageY, shiftKey) {
-        var columnModel = this.columnModel,
-            columnIndexes = _.map(columnNames, function(name) {
-                return columnModel.indexOfColumnName(name, true);
-            });
-
-        if (shiftKey) {
-            this._startColumnSelectionWithShiftKey(columnIndexes, pageX, pageY);
-        } else {
-            this._startColumnSelectionWithoutShiftKey(columnIndexes);
-        }
-        this._attachDragEvents();
-    },
-
-    /**
-     * Start column selection with shiftKey pressed
-     * @param {Array.<number>} columnIndexes - Indexes of columns
-     * @param {number} pageX - Mouse position X
-     * @param {number} pageY - Mouse position Y
-     * @private
-     */
-    _startColumnSelectionWithShiftKey: function(columnIndexes, pageX, pageY) {
-        var selectionModel = this.selectionModel;
-        var max = Math.max.apply(null, columnIndexes);
-
-        selectionModel.update(0, max, SEL_TYPE_COLUMN);
-        selectionModel.extendColumnSelection(columnIndexes, pageX, pageY);
-    },
-
-    /**
-     * Start column selection when shiftKey is not pressed
-     * @param {Array.<number>} columnIndexes - Indexes of columns
-     * @private
-     */
-    _startColumnSelectionWithoutShiftKey: function(columnIndexes) {
-        var selectionModel = this.selectionModel;
-        var minMax = util.getMinMax(columnIndexes);
-        var min = minMax.min;
-        var max = minMax.max;
-
-        selectionModel.setMinimumColumnRange([min, max]);
-        selectionModel.selectColumn(min);
-        selectionModel.update(0, max);
-    },
-
-    /**
-     * Attach mouse drag event
-     * @private
-     */
-    _attachDragEvents: function() {
-        $(document)
-            .on('mousemove', $.proxy(this._onMouseMove, this))
-            .on('mouseup', $.proxy(this._detachDragEvents, this))
-            .on('selectstart', $.proxy(this._onSelectStart, this));
-    },
-
-    /**
-     * Detach mouse drag event
-     * @private
-     */
-    _detachDragEvents: function() {
-        this.selectionModel.stopAutoScroll();
-        $(document)
-            .off('mousemove', this._onMouseMove)
-            .off('mouseup', this._detachDragEvents)
-            .off('selectstart', this._onSelectStart);
-    },
-
-    /**
-     * Mousemove event handler
-     * @param {jQuery.Event} event - MouseMove event
-     * @private
-     */
-    _onMouseMove: function(event) {
-        var columnModel = this.columnModel;
-        var isExtending = true;
-        var columnName = $(event.target).closest('th').attr(ATTR_COLUMN_NAME);
-        var columnNames, columnIndexes;
-
+        columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
         if (columnName) {
-            columnNames = columnModel.getUnitColumnNamesIfMerged(columnName);
-            columnIndexes = _.map(columnNames, function(name) {
-                return columnModel.indexOfColumnName(name, true);
+            this.dragEmitter.start(ev, {
+                columnName: columnName
             });
-        } else if ($.contains(this.el, event.target)) {
-            isExtending = false;
         }
-
-        if (isExtending) {
-            this.selectionModel.extendColumnSelection(columnIndexes, event.pageX, event.pageY);
-        }
-    },
-
-    /**
-     * Whether this columnNames array has a meta column name.
-     * @param {Array} columnNames - An array of column names
-     * @returns {boolean} Has a meta column name or not.
-     * @private
-     */
-    _hasMetaColumn: function(columnNames) {
-        return _.some(columnNames, function(name) {
-            return util.isMetaColumn(name);
-        });
-    },
-
-    /**
-     * Selectstart event handler
-     * @param {jQuery.Event} event - Mouse event
-     * @returns {boolean} false for preventDefault
-     * @private
-     */
-    _onSelectStart: function(event) {
-        event.preventDefault();
-        return false;
     },
 
     /**
@@ -415,22 +307,25 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     },
 
     /**
-     * 클릭 이벤트 핸들러
-     * @param {jQuery.Event} clickEvent 클릭이벤트
+     * Event handler for click event
+     * @param {jQuery.Event} ev - MouseEvent
      * @private
      */
-    _onClick: function(clickEvent) {
-        var $target = $(clickEvent.target);
+    _onClick: function(ev) {
+        var $target = $(ev.target);
         var columnName = $target.closest('th').attr(ATTR_COLUMN_NAME);
+        var eventData = new GridEvent(ev);
 
         if (columnName === '_button' && $target.is('input')) {
-            if ($target.prop('checked')) {
-                this.dataModel.checkAll();
-            } else {
-                this.dataModel.uncheckAll();
-            }
+            eventData.setData({
+                checked: $target.prop('checked')
+            });
+            this.domEventBus.trigger('click:headerCheck', eventData);
         } else if ($target.is('a.' + classNameConst.BTN_SORT)) {
-            this.dataModel.sortByField(columnName);
+            eventData.setData({
+                columnName: columnName
+            });
+            this.domEventBus.trigger('click:headerSort', eventData);
         }
     },
 
@@ -461,13 +356,13 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         this.$el.css({
-            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
+            height: this.headerHeight - TABLE_BORDER_WIDTH
         }).html(this.template({
             colGroup: this._getColGroupMarkup(),
             tBody: this._getTableBodyMarkup()
         }));
 
-        this._addChildren(this.viewFactory.createHeaderResizeHandler(this.whichSide));
+        this._addChildren(this.viewFactory.createHeaderResizeHandle(this.whichSide));
         this.$el.append(this._renderChildren());
         return this;
     },
@@ -495,7 +390,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _getTableBodyMarkup: function() {
         var hierarchyList = this._getColumnHierarchyList();
         var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-        var headerHeight = this.dimensionModel.get('headerHeight');
+        var headerHeight = this.headerHeight;
         var rowMarkupList = new Array(maxRowCount);
         var columnNameList = new Array(maxRowCount);
         var colSpanList = [];

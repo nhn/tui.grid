@@ -3,7 +3,7 @@
 var Clipboard = require('view/clipboard');
 var Model = require('base/model');
 
-describe('grid paste test', function() {
+xdescribe('grid paste test', function() {
     var clipboard;
 
     beforeEach(function() {
@@ -21,7 +21,6 @@ describe('grid paste test', function() {
     it('define', function() {
         expect(clipboard).toBeDefined();
     });
-
 
     describe('_getProcessClipBoardData', function() {
         it('one line', function() {

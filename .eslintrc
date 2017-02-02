@@ -7,9 +7,7 @@
     },
     "globals": {
         "tui": true,
-        "_": true,
-        "loadFixtures": true,
-        "Backbone": true
+        "loadFixtures": true
     },
     "rules": {
         //Possible Errors

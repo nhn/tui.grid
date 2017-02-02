@@ -11,7 +11,7 @@ var View = require('../base/view');
 var Router = require('./net-router');
 var util = require('../common/util');
 var formUtil = require('../common/formUtil');
-var GridEvent = require('../common/gridEvent');
+var GridEvent = require('../event/gridEvent');
 
 var renderStateMap = require('../common/constMap').renderState;
 var DELAY_FOR_LOADING_STATE = 200;
@@ -91,25 +91,25 @@ var DELAY_FOR_LOADING_STATE = 200;
  */
 var Net = View.extend(/**@lends module:addon/net.prototype */{
     initialize: function(options) {
-        var defaultOptions;
-
-        defaultOptions = {
+        var defaultOptions = {
             initialRequest: true,
-            api: {
-                readData: '',
-                createData: '',
-                updateData: '',
-                deleteData: '',
-                modifyData: '',
-                downloadExcel: '',
-                downloadExcelAll: ''
-            },
             perPage: 500,
             enableAjaxHistory: true
         };
-        options = $.extend(true, defaultOptions, options); // deep extend
+        var defaultApi = {
+            readData: '',
+            createData: '',
+            updateData: '',
+            deleteData: '',
+            modifyData: '',
+            downloadExcel: '',
+            downloadExcelAll: ''
+        };
 
-        this.setOwnProperties({
+        options = _.assign(defaultOptions, options);
+        options.api = _.assign(defaultApi, options.api);
+
+        _.assign(this, {
             // models
             dataModel: options.dataModel,
             toolbarModel: options.toolbarModel,
@@ -117,6 +117,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
 
             // extra objects
             router: null,
+            domEventBus: options.domEventBus,
             pagination: options.pagination,
 
             // configs
@@ -138,7 +139,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         this._initializePagination();
         this._showToolbarExcelBtns();
 
-        this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged, this);
+        this.listenTo(this.dataModel, 'sortChanged', this._onSortChanged);
+        this.listenTo(this.domEventBus, 'click:excel', this._onClickExcel);
 
         if (options.initialRequest) {
             if (!this.lastRequestedReadData) {
@@ -175,6 +177,16 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
     _onRouterRead: function(queryStr) {
         var data = util.toQueryObject(queryStr);
         this._requestReadData(data);
+    },
+
+    /**
+     * Event listener for 'click:excel' event on domEventBus
+     * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
+     */
+    _onClickExcel: function(gridEvent) {
+        var downloadType = (gridEvent.type === 'all') ? 'excelAll' : 'excel';
+        this.download(downloadType);
     },
 
     /**
@@ -685,7 +697,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         /**
          * Occurs before the http request is sent
          * @event tui.Grid#beforeRequest
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
         this.trigger('beforeRequest', eventData);
         if (eventData.isStopped()) {
@@ -739,7 +751,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         /**
          * Occurs when the response is received from the server
          * @event tui.Grid#reponse
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          * @property {number} httpStatus - HTTP status
          * @property {string} requestType - Request type
          * @property {string} requestParameter - Request parameters
@@ -753,7 +765,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             /**
              * Occurs after the response event, if the result is true
              * @event tui.Grid#successReponse
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} httpStatus - HTTP status
              * @property {string} requestType - Request type
              * @property {string} requestParameter - Request parameter
@@ -770,7 +782,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
             /**
              * Occurs after the response event, if the result is false
              * @event tui.Grid#failResponse
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} httpStatus - HTTP status
              * @property {string} requestType - Request type
              * @property {string} requestParameter - Request parameter
@@ -812,7 +824,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
         /**
          * Occurs after the response event, if the response is Error
          * @event tui.Grid#errorResponse
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          * @property {number} httpStatus - HTTP status
          * @property {string} requestType - Request type
          * @property {string} requestParameter - Request parameters

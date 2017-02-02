@@ -9,6 +9,7 @@ var _ = require('underscore');
 var View = require('./base/view');
 var ModelManager = require('./model/manager');
 var ViewFactory = require('./view/factory');
+var DomEventBus = require('./event/domEventBus');
 var DomState = require('./domState');
 var PublicEventEmitter = require('./publicEventEmitter');
 var PainterManager = require('./painter/manager');
@@ -153,17 +154,17 @@ tui = window.tui = tui || {};
  */
 tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     initialize: function(options) {
-        var domState = new DomState(this.$el);
-
         options = util.enableDeprecatedOptions(options);
+
         this.id = util.getUniqueKey();
-        this.modelManager = this._createModelManager(options, domState);
+        this.domState = new DomState(this.$el);
+        this.domEventBus = DomEventBus.create();
+        this.modelManager = this._createModelManager(options);
         this.painterManager = this._createPainterManager();
         this.componentHolder = this._createComponentHolder(options.pagination);
-        this.viewFactory = this._createViewFactory(domState, options);
+        this.viewFactory = this._createViewFactory(options);
         this.container = this.viewFactory.createContainer();
         this.publicEventEmitter = this._createPublicEventEmitter();
-        this.domState = domState;
 
         this.container.render();
         this.refreshLayout();
@@ -179,18 +180,17 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     /**
      * Creates core model and returns it.
      * @param {Object} options - Options set by user
-     * @param {module:domState} domState - domState
      * @returns {module:model/manager} - New model manager object
      * @private
      */
-    _createModelManager: function(options, domState) {
+    _createModelManager: function(options) {
         var modelOptions = _.assign({}, options, {
             gridId: this.id
         });
 
-        _.omit(modelOptions, 'el', 'singleClickEdit');
+        _.omit(modelOptions, 'el');
 
-        return new ModelManager(modelOptions, domState);
+        return new ModelManager(modelOptions, this.domState, this.domEventBus);
     },
 
     /**
@@ -210,26 +210,27 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
             gridId: this.id,
             selectType: this.modelManager.columnModel.get('selectType'),
             isFixedRowHeight: this.modelManager.dimensionModel.get('isFixedRowHeight'),
+            domEventBus: this.domEventBus,
             controller: controller
         });
     },
 
     /**
      * Creates a view factory.
-     * @param {module:domState} domState - dom state
      * @param {options} options - options
      * @returns {module:view/factory}
      * @private
      */
-    _createViewFactory: function(domState, options) {
+    _createViewFactory: function(options) {
         var viewOptions = _.pick(options, [
-            'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption', 'footer'
+            'resizeHandle', 'toolbar', 'footer'
         ]);
         var dependencies = {
             modelManager: this.modelManager,
             painterManager: this.painterManager,
             componentHolder: this.componentHolder,
-            domState: domState
+            domEventBus: this.domEventBus,
+            domState: this.domState
         };
 
         return new ViewFactory(_.assign(dependencies, viewOptions));
@@ -256,7 +257,7 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
         var emitter = new PublicEventEmitter(this);
 
         emitter.listenToFocusModel(this.modelManager.focusModel);
-        emitter.listenToContainerView(this.container);
+        emitter.listenToDomEventBus(this.domEventBus);
 
         return emitter;
     },
@@ -683,12 +684,14 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
      */
     use: function(name, options) {
         if (name === 'Net') {
-            options = $.extend({
+            options = _.assign({
+                domEventBus: this.domEventBus,
                 toolbarModel: this.modelManager.toolbarModel,
                 renderModel: this.modelManager.renderModel,
                 dataModel: this.modelManager.dataModel,
                 pagination: this.componentHolder.getInstance('pagination')
             }, options);
+
             this.addOn.Net = new NetAddOn(options);
             this.publicEventEmitter.listenToNetAddon(this.addOn.Net);
         }

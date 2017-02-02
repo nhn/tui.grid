@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
 var frameConst = require('../../common/constMap').frame;
@@ -17,7 +19,7 @@ var frameConst = require('../../common/constMap').frame;
 var LsideFrame = Frame.extend(/**@lends module:view/layout/frame-lside.prototype */{
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
+        _.assign(this, {
             whichSide: frameConst.L
         });
 

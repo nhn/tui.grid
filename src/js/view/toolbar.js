@@ -7,6 +7,7 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
+var GridEvent = require('../event/gridEvent');
 var classNameConst = require('../common/classNameConst');
 
 /**
@@ -18,8 +19,8 @@ var classNameConst = require('../common/classNameConst');
  */
 var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
     initialize: function(options) {
-        this.setOwnProperties({
-            gridId: options.gridId,
+        _.assign(this, {
+            domEventBus: options.domEventBus,
             toolbarModel: options.toolbarModel,
             dimensionModel: options.dimensionModel
         });
@@ -53,24 +54,24 @@ var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
 
     /**
      * Click event handler for excel download buttons
-     * @param  {MouseEvent} mouseEvent - MouseEvent object
+     * @param  {MouseEvent} ev - MouseEvent object
      * @private
      */
-    _onClickExcel: function(mouseEvent) {
-        var grid = tui.Grid.getInstanceById(this.gridId);
-        var net = grid.getAddOn('Net');
-        var $target;
+    _onClickExcel: function(ev) {
+        var $button = $(ev.target).closest('a');
+        var gridEvent, btnType;
 
-        mouseEvent.preventDefault();
+        if ($button.hasClass(classNameConst.BTN_EXCEL_PAGE)) {
+            btnType = 'page';
+        } else if ($button.hasClass(classNameConst.BTN_EXCEL_ALL)) {
+            btnType = 'all';
+        }
 
-        if (net) {
-            $target = $(mouseEvent.target).closest('a');
-
-            if ($target.hasClass(classNameConst.BTN_EXCEL_PAGE)) {
-                net.download('excel');
-            } else if ($target.hasClass(classNameConst.BTN_EXCEL_ALL)) {
-                net.download('excelAll');
-            }
+        if (btnType) {
+            ev.preventDefault();
+            gridEvent = new GridEvent(ev);
+            gridEvent.setData({type: btnType});
+            this.domEventBus.trigger('click:excel', gridEvent);
         }
     },
 

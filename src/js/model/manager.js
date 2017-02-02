@@ -18,6 +18,7 @@ var RenderModel = require('./renderer');
 var SmartRenderModel = require('./renderer-smart');
 var SelectionModel = require('./selection');
 var SummaryModel = require('./summary');
+var ClipboardModel = require('./clipboard');
 var util = require('../common/util');
 
 var defaultOptions = {
@@ -33,8 +34,10 @@ var defaultOptions = {
     minimumColumnWidth: 50,
     notUseSmartRendering: false,
     columnMerge: [],
+    copyOption: null,
     scrollX: true,
     scrollY: true,
+    singleClickEdit: false,
     useClientSort: true,
     toolbar: null
 };
@@ -47,25 +50,23 @@ var defaultOptions = {
  * @ignore
  */
 var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype */{
-    init: function(options, domState) {
+    init: function(options, domState, domEventBus) {
         options = $.extend(true, {}, defaultOptions, options);
 
         this.gridId = options.gridId;
 
         this.columnModel = this._createColumnModel(options);
-        this.dataModel = this._createDataModel(options, domState);
-        this.toolbarModel = this._createToolbarModel(options);
-        this.dimensionModel = this._createDimensionModel(options, domState);
+        this.dataModel = this._createDataModel(options, domState, domEventBus);
+        this.dimensionModel = this._createDimensionModel(options, domState, domEventBus);
         this.coordRowModel = this._createCoordRowModel(domState);
-        this.coordColumnModel = this._createCoordColumnModel();
-        this.focusModel = this._createFocusModel(domState);
+        this.focusModel = this._createFocusModel(options, domState, domEventBus);
+        this.coordColumnModel = this._createCoordColumnModel(domEventBus);
         this.renderModel = this._createRenderModel(options);
         this.coordConverterModel = this._createCoordConverterModel();
-        this.selectionModel = this._createSelectionModel();
+        this.selectionModel = this._createSelectionModel(domEventBus);
         this.summaryModel = this._createSummaryModel(options.footer);
-
-        // todo: remove dependency
-        this.focusModel.renderModel = this.renderModel;
+        this.toolbarModel = this._createToolbarModel(options);
+        this.clipboardModel = this._createClipboardModel(options, domEventBus);
     },
 
     /**
@@ -89,13 +90,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of data model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
+     * @param  {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:data/rowList} - A new instance
      * @private
      */
-    _createDataModel: function(options, domState) {
+    _createDataModel: function(options, domState, domEventBus) {
         return new RowListData([], {
             gridId: this.gridId,
             domState: domState,
+            domEventBus: domEventBus,
             columnModel: this.columnModel,
             useClientSort: options.useClientSort
         });
@@ -115,10 +118,11 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      * Creates an instance of dimension model and returns it.
      * @param  {Object} options - Options
      * @param  {module:domState} domState - domState
+     * @param  {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/dimension} - A new instance
      * @private
      */
-    _createDimensionModel: function(options, domState) {
+    _createDimensionModel: function(options, domState, domEventBus) {
         var dimensionModel;
         var attrs = {
             headerHeight: options.headerHeight,
@@ -142,7 +146,8 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         dimensionModel = new DimensionModel(attrs, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
-            domState: domState
+            domState: domState,
+            domEventBus: domEventBus
         });
 
         // The displayRowCount option is deprecated.
@@ -170,13 +175,15 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of coordColumn model and returns it
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/coordColumnModel}
      * @private
      */
-    _createCoordColumnModel: function() {
+    _createCoordColumnModel: function(domEventBus) {
         return new CoordColumnModel(null, {
             columnModel: this.columnModel,
-            dimensionModel: this.dimensionModel
+            dimensionModel: this.dimensionModel,
+            domEventBus: domEventBus
         });
     },
 
@@ -199,33 +206,39 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
 
     /**
      * Creates an instance of focus model and returns it.
+     * @param  {Object} options - options
      * @param  {module:domState} domState - DomState instance
+     * @param  {module:event/domState} domEventBus - Dom event bus
      * @returns {module:model/focus} - A new instance
      * @private
      */
-    _createFocusModel: function(domState) {
+    _createFocusModel: function(options, domState, domEventBus) {
         return new FocusModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
-            dimensionModel: this.dimensionModel,
-            renderModel: this.renderModel,
-            domState: domState
+            coordRowModel: this.coordRowModel,
+            domEventBus: domEventBus,
+            domState: domState,
+            singleClickEdit: options.singleClickEdit
         });
     },
 
     /**
      * Creates an instance of seleciton model and returns it.
+     * @param {module:event/domEventBus} domEventBus - domEventBus
      * @returns {module:model/selection} - A new instance
      * @private
      */
-    _createSelectionModel: function() {
+    _createSelectionModel: function(domEventBus) {
         return new SelectionModel(null, {
             columnModel: this.columnModel,
             dataModel: this.dataModel,
             dimensionModel: this.dimensionModel,
             coordConverterModel: this.coordConverterModel,
+            coordRowModel: this.coordRowModel,
             renderModel: this.renderModel,
-            focusModel: this.focusModel
+            focusModel: this.focusModel,
+            domEventBus: domEventBus
         });
     },
 
@@ -277,6 +290,24 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
         return new SummaryModel(null, {
             dataModel: this.dataModel,
             autoColumnNames: autoColumnNames
+        });
+    },
+
+    /**
+     * Creates an instance of clipboard model and returns it
+     * @param {Object} options - options
+     * @param {module:event/domEventBus} domEventBus - domEventBus
+     * @returns {module:model/clipboard}
+     * @private
+     */
+    _createClipboardModel: function(options, domEventBus) {
+        return new ClipboardModel(null, {
+            dataModel: this.dataModel,
+            selectionModel: this.selectionModel,
+            renderModel: this.renderModel,
+            focusModel: this.focusModel,
+            copyOption: options.copyOption,
+            domEventBus: domEventBus
         });
     },
 

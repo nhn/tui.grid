@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Frame = require('./frame');
 var classNameConst = require('../../common/classNameConst');
 var constMap = require('../../common/constMap');
@@ -19,7 +21,8 @@ var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var RsideFrame = Frame.extend(/**@lends module:view/layout/frame-rside.prototype */{
     initialize: function() {
         Frame.prototype.initialize.apply(this, arguments);
-        this.setOwnProperties({
+
+        _.assign(this, {
             whichSide: frameConst.R,
             $scrollBorder: null
         });

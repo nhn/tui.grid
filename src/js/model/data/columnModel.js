@@ -208,9 +208,7 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
     getVisibleMetaColumnCount: function() {
         var models = this.get('metaColumnModelList');
         var totalLength = models.length;
-        var hiddenLength = _.where(models, {
-            isHidden: true
-        }).length;
+        var hiddenLength = _.where(models, {isHidden: true}).length;
 
         return (totalLength - hiddenLength);
     },

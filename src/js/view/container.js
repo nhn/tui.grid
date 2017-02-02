@@ -7,7 +7,7 @@
 var _ = require('underscore');
 
 var View = require('../base/view');
-var GridEvent = require('../common/gridEvent');
+var GridEvent = require('../event/gridEvent');
 var attrNameConst = require('../common/constMap').attrName;
 var classNameConst = require('../common/classNameConst');
 
@@ -23,11 +23,10 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
         View.prototype.initialize.call(this);
 
         this.gridId = options.gridId;
-        this.singleClickEdit = options.singleClickEdit;
         this.dimensionModel = options.dimensionModel;
-        this.focusModel = options.focusModel;
         this.dataModel = options.dataModel;
         this.viewFactory = options.viewFactory;
+        this.domEventBus = options.domEventBus;
 
         this._createChildViews();
 
@@ -73,7 +72,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
      * @private
      */
     _onResizeWindow: function() {
-        this.dimensionModel.refreshLayout();
+        this.domEventBus.trigger('windowResize');
     },
 
     /**
@@ -94,13 +93,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * click 이벤트 핸들러
-     * @param {MouseEvent} mouseEvent 이벤트 객체
+     * Event handler for click event
+     * @param {MouseEvent} ev - Mouse event
      * @private
      */
-    _onClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent);
-        var $target = $(mouseEvent.target);
+    _onClick: function(ev) {
+        var eventData = new GridEvent(ev);
+        var $target = $(ev.target);
         var cellInfo;
 
         /**
@@ -108,27 +107,27 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The properties of the event object is the same as the native MouseEvent.
          * @api
          * @event tui.Grid#click
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
-        this.trigger('click', eventData);
+        this.domEventBus.trigger('click', eventData);
         if (eventData.isStopped()) {
             return;
         }
+
         if (this._isCellElement($target, true)) {
             cellInfo = this._getCellInfoFromElement($target.closest('td'));
-            if (!_.isNull(cellInfo.rowKey) && this.singleClickEdit && !$target.is('input, textarea')) {
-                this.focusModel.focusIn(cellInfo.rowKey, cellInfo.columnName);
-            }
+            cellInfo.isTargetInput = !$target.is('input, textarea');
 
             /**
              * Occurs when a mouse button is clicked on a table cell
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#clickCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data
+             * @property {boolean} isTargetInput - whether the target is the input(or textarea) element
              */
             this._triggerCellMouseEvent('clickCell', eventData, cellInfo);
         }
@@ -148,27 +147,29 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * The event object has all properties copied from the native MouseEvent.
          * @api
          * @event tui.Grid#dblclick
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
-        this.trigger('dblclick', eventData);
+        this.domEventBus.trigger('dblclick', eventData);
         if (eventData.isStopped()) {
             return;
         }
+
         if (this._isCellElement($target, true)) {
             /**
              * Occurs when a mouse button is double clicked on a table cell
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#dblclickCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data containing the target cell
              */
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
-            if (eventData.rowKey === null && !eventData.isStopped()) {
-                this.dataModel.append({}, {focus: true});
-            }
+            // @todo 2.0.0 에서 제거될 로직
+            // if (eventData.rowKey === null && !eventData.isStopped()) {
+            //     this.dataModel.append({}, {focus: true});
+            // }
         }
     },
 
@@ -188,7 +189,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#mouseoverCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data containing the target cell
@@ -213,7 +214,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * The event object has all properties copied from the native MouseEvent.
              * @api
              * @event tui.Grid#mouseoutCell
-             * @type {module:common/gridEvent}
+             * @type {module:event/gridEvent}
              * @property {number} rowKey - rowKey of the target cell
              * @property {string} columnName - columnName of the target cell
              * @property {Object} rowData - row data containing the target cell
@@ -236,7 +237,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             cellInfo = this._getCellInfoFromElement(cell);
         }
         _.extend(eventData, cellInfo);
-        this.trigger(eventName, eventData);
+        this.domEventBus.trigger(eventName, eventData);
     },
 
     /**
@@ -273,33 +274,31 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * mousedown 이벤트 핸들러
-     * @param {event} mouseEvent 이벤트 객체
+     * Event handler for 'mousedown' event
+     * @param {MouseEvent} mouseEvent - Mouse event
      * @private
      */
     _onMouseDown: function(mouseEvent) {
         var $target = $(mouseEvent.target);
         var eventData = new GridEvent(mouseEvent);
-        var focusModel = this.focusModel;
+        var shouldFocus = !$target.is('input, a, button, select, textarea');
 
         /**
          * Occurs when a mouse button is pressed on the Grid.
          * The properties of the event object is the same as the native MouseEvent.
          * @api
          * @event tui.Grid#mousedown
-         * @type {module:common/gridEvent}
+         * @type {module:event/gridEvent}
          */
-        this.trigger('mousedown', eventData);
-        if (eventData.isStopped()) {
-            return;
-        }
-        if (!$target.is('input, a, button, select, textarea')) {
+        this.domEventBus.trigger('mousedown', eventData);
+
+        if (shouldFocus) {
             mouseEvent.preventDefault();
 
             // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
             $target[0].unselectable = true;
 
-            focusModel.focusClipboard();
+            this.domEventBus.trigger('mousedown:focus', eventData);
         }
     },
 
@@ -315,13 +314,14 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .append(childElements);
 
         this._triggerChildrenAppended();
-        this.trigger('rendered');
+        // @todo 2.0.0 에서 제거될 코드
+        // this.trigger('rendered');
 
         return this;
     },
 
     /**
-     * 소멸자
+     * Destroy
      */
     destroy: function() {
         this.stopListening();

@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Model = require('../base/model');
 var util = require('../common/util');
 var constMap = require('../common/constMap');
@@ -46,6 +48,11 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
 
         this.listenTo(this.columnModel, 'columnModelChange', this.resetColumnWidths);
         this.listenTo(this.dimensionModel, 'change:width', this._onDimensionWidthChange);
+
+        if (options.domEventBus) {
+            this.listenTo(options.domEventBus, 'dragmove:resizeColumn', this._onDragResize);
+            this.listenTo(options.domEventBus, 'dblclick:resizeColumn', this._onDblClick);
+        }
         this.resetColumnWidths();
     },
 
@@ -85,6 +92,24 @@ var CoordColumn = Model.extend(/**@lends module:model/coordColumn.prototype */{
         this._minColumnWidthList = minWidthList;
 
         this._setColumnWidthVariables(this._calculateColumnWidth(widthList), true);
+    },
+
+    /**
+     * Event handler for dragmove event on domEventBus
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onDragResize: function(ev) {
+        this.setColumnWidth(ev.columnIndex, ev.width);
+    },
+
+    /**
+     * Event handler for dblclick event on domEventBus
+     * @param {module:event/gridEventd} ev - GridEvent
+     * @private
+     */
+    _onDblClick: function(ev) {
+        this.restoreColumnWidth(ev.columnIndex);
     },
 
     /**

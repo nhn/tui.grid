@@ -3,7 +3,7 @@
 var Collection = require('base/collection');
 var ColumnModel = require('model/data/columnModel');
 var DimensionModel = require('model/dimension');
-var ResizeHandler = require('view/layout/resizeHandler');
+var ResizeHandle = require('view/layout/resizeHandle');
 var CoordColumnModel = require('model/coordColumn');
 var DomState = require('domState');
 
@@ -11,7 +11,7 @@ var classNameConst = require('common/classNameConst');
 var ATTR_COLUMN_NAME = require('common/constMap').attrName.COLUMN_NAME;
 var frameConst = require('common/constMap').frame;
 
-describe('ResizeHandler', function() {
+describe('ResizeHandle', function() {
     var columnModel, dimensionModel, coordColumnModel, handler, $handles;
 
     function initialize() {
@@ -41,7 +41,7 @@ describe('ResizeHandler', function() {
 
     beforeEach(function() {
         initialize();
-        handler = new ResizeHandler({
+        handler = new ResizeHandle({
             columnModel: columnModel,
             dimensionModel: dimensionModel,
             coordColumnModel: coordColumnModel,
@@ -70,7 +70,7 @@ describe('ResizeHandler', function() {
         });
 
         it('height와 margin을 headerHeight값으로 설정한다.', function() {
-            dimensionModel.set('headerHeight', 50);
+            handler.headerHeight = 50;
             handler.render();
             expect(handler.$el.css('marginTop')).toBe('-50px');
             expect(handler.$el.height()).toBe(50);
@@ -115,69 +115,6 @@ describe('ResizeHandler', function() {
             handler._refreshHandlerPosition();
             expect($handles.eq(0).css('left')).toEqual('28px');
             expect($handles.eq(1).css('left')).toEqual('69px');
-        });
-    });
-
-    // TODO: 내부 구현을 테스트하지 말 것
-    describe('Mouse Event', function() {
-        var mouseEvent;
-
-        beforeEach(function() {
-            handler.render();
-            $handles = handler.$el.find('.' + classNameConst.COLUMN_RESIZE_HANDLE);
-            mouseEvent = {
-                target: $handles.eq(0).css('position', 'absolute').get(0),
-                preventDefault: function() {}
-            };
-        });
-
-        describe('onMouseDown', function() {
-            it('마우스 이동을 위해 현재 위치의 데이터를 저장한다.', function() {
-                handler._onMouseDown(mouseEvent);
-
-                expect(handler.isResizing).toBe(true);
-                expect(handler.$target.is($handles.eq(0))).toBe(true);
-                expect(handler.initialLeft).toBe(28);
-                expect(handler.initialOffsetLeft).toBe(0);
-                expect(handler.initialWidth).toBe(30);
-            });
-        });
-
-        describe('onMouseUp', function() {
-            it('onMouseDown에서 저장한 데이터를 초기화한다. ', function() {
-                handler._onMouseUp(mouseEvent);
-
-                expect(handler.isResizing).toBe(false);
-                expect(handler.$target).toBeNull();
-                expect(handler.initialLeft).toBe(0);
-                expect(handler.initialOffsetLeft).toBe(0);
-                expect(handler.initialWidth).toBe(0);
-            });
-        });
-
-        describe('_onMouseMove', function() {
-            it('_onMouseMove가 호출되면 핸들러의 left를 마우스 위치만큼 조정하고 columnwidth 값을 설정한다.', function() {
-                var $target = $handles.eq(0);
-
-                mouseEvent.pageX = 300;
-                handler._onMouseDown(mouseEvent);
-                handler._onMouseMove(mouseEvent);
-                expect($target.css('left')).toBe('300px');
-                expect(coordColumnModel.get('columnWidthList')[1]).toBe(302);
-            });
-        });
-
-        describe('_calculateWidth', function() {
-            beforeEach(function() {
-                handler.initialOffsetLeft = 10;
-                handler.initialLeft = 300;
-                handler.initialWidth = 300;
-            });
-            it('마우스 위치인 pageX 로부터 width 를 계산한다.', function() {
-                expect(handler._calculateWidth(200)).toBe(190);
-                expect(handler._calculateWidth(500)).toBe(490);
-                expect(handler._calculateWidth(11)).toBe(1);
-            });
         });
     });
 });

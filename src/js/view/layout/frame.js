@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var View = require('../../base/view');
 var frameConst = require('../../common/constMap').frame;
 
@@ -19,7 +21,7 @@ var Frame = View.extend(/**@lends module:view/layout/frame.prototype */{
     initialize: function(options) {
         View.prototype.initialize.call(this);
 
-        this.setOwnProperties({
+        _.assign(this, {
             viewFactory: options.viewFactory,
             renderModel: options.renderModel,
             dimensionModel: options.dimensionModel,

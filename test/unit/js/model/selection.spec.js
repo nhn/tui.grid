@@ -2,6 +2,7 @@
 
 var ModelManager = require('model/manager');
 var DomState = require('domState');
+var DomEventBus = require('event/domEventBus');
 
 describe('model/selection', function() {
     var modelManager, selection;
@@ -9,6 +10,7 @@ describe('model/selection', function() {
     beforeEach(function() {
         var $el = jasmine.getFixtures().set('<div />');
         var domState = new DomState($el);
+        var domEventBus = DomEventBus.create();
 
         modelManager = new ModelManager({
             columnModelList: [
@@ -54,7 +56,7 @@ describe('model/selection', function() {
                     }
                 }
             ]
-        }, domState);
+        }, domState, domEventBus);
 
         modelManager.dataModel.setRowList([
             {
@@ -265,37 +267,7 @@ describe('model/selection', function() {
             });
         });
 
-        describe('updateByMousePosition()', function() {
-            beforeEach(function() {
-                spyOn(selection.coordConverterModel, 'getIndexFromMousePosition').and.returnValue({
-                    row: 2,
-                    column: 2
-                });
-                spyOn(selection.dimensionModel, 'getOverflowFromMousePosition').and.returnValue({
-                    x: 0,
-                    y: 0
-                });
-            });
-            it('it should call the "setScrolling" method.', function() {
-                spyOn(selection, '_setScrolling');
-
-                selection.updateByMousePosition(2, 2);
-                expect(selection._setScrolling).toHaveBeenCalled();
-            });
-
-            it('mousePosition 위치만큼 selection 을 넓힌다.', function() {
-                selection.start(0, 0);
-                selection.update(1, 1);
-
-                selection.updateByMousePosition(2, 2);
-                expect(selection.get('range')).toEqual({
-                    row: [0, 2],
-                    column: [0, 2]
-                });
-            });
-        });
-
-        describe('extendColumnSelection', function() {
+        describe('_extendColumnSelection', function() {
             beforeEach(function() {
                 selection.selectColumn(2);
                 selection.update(0, 3);
@@ -311,8 +283,8 @@ describe('model/selection', function() {
                 });
                 it('with minimumColumnRange, should extend column selection to [0, 3].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    selection.setMinimumColumnRange([2, 3]);
-                    selection.extendColumnSelection([0, 1], null, null);
+                    selection.minimumColumnRange = [2, 3];
+                    selection._extendColumnSelection([0, 1], null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
                         row: [0, 2],
@@ -322,8 +294,8 @@ describe('model/selection', function() {
 
                 it('without minimumColumnRange, should extend column selection to [1, 2].', function() {
                     spyOn(selection, '_resetRangeAttribute');
-                    selection.unsetMinimumColumnRange();
-                    selection.extendColumnSelection([0, 1], null, null);
+                    selection.minimumColumnRange = null;
+                    selection._extendColumnSelection([0, 1], null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
                         row: [0, 2],
@@ -339,8 +311,8 @@ describe('model/selection', function() {
                         row: 0,
                         column: 1
                     });
-                    selection.setMinimumColumnRange([2, 3]);
-                    selection.extendColumnSelection(null, null, null);
+                    selection.minimumColumnRange = [2, 3];
+                    selection._extendColumnSelection(null, null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
                         row: [0, 2],
@@ -354,8 +326,8 @@ describe('model/selection', function() {
                         row: 0,
                         column: 1
                     });
-                    selection.unsetMinimumColumnRange();
-                    selection.extendColumnSelection(null, null, null);
+                    selection.minimumColumnRange = null;
+                    selection._extendColumnSelection(null, null, null);
 
                     expect(selection._resetRangeAttribute).toHaveBeenCalledWith({
                         row: [0, 2],
