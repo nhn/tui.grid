@@ -187,6 +187,7 @@ Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
      * 1: should be called in the next frame to use the text pasted into the textarea by native action)
      * 2: should prevent repetitive execution
      * @param {module:event/gridEvent} gridEvent - GridEvent
+     * @private
      */
     _triggerPasteEvent: function(gridEvent) {
         gridEvent.setData({text: this.$el.val()});

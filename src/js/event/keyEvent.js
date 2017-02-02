@@ -1,5 +1,5 @@
 /**
- * @fileoverview Drag event emitter
+ * @fileoverview Key event generator
  * @author NHN Ent. FE Development Lab
  */
 'use strict';

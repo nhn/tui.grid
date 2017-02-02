@@ -115,6 +115,7 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     /**
      * Event handler for key:move event
      * @param {module:event/gridEvent} ev - GridEvent
+     * @private
      */
     _onKeyMove: function(ev) {  // eslint-disable-line complexity
         var rowKey, columnName;

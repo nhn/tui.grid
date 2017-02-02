@@ -173,7 +173,6 @@ var CoordRow = Model.extend(/**@lends module:model/coordRow.prototype */{
      * @param {number} rowIdx - current row index
      * @param {Boolean} isDownDir - true: down, false: up
      * @returns {number}
-     * @private
      */
     getPageMovedIndex: function(rowIdx, isDownDir) {
         var curOffset = this.getOffsetAt(rowIdx);

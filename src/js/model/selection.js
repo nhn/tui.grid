@@ -460,6 +460,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {undefined|Array} columnIndexes - Column indexes
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse positino Y
+     * @private
      */
     _extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this.minimumColumnRange;
