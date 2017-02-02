@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var Collection = require('../base/collection');
 var Row = require('./row');
 
@@ -17,7 +19,7 @@ var Row = require('./row');
   */
 var RowList = Collection.extend(/**@lends module:model/rowList.prototype */{
     initialize: function(rawData, options) {
-        this.setOwnProperties({
+        _.assign(this, {
             dataModel: options.dataModel,
             columnModel: options.columnModel,
             focusModel: options.focusModel

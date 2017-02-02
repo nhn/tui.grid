@@ -7,12 +7,9 @@
 var _ = require('underscore');
 var Backbone = require('backbone');
 
-var common = require('./common');
-
 /**
  * Base class for Views
  * @module base/view
- * @mixes module:base/common
  * @ignore
  */
 var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
@@ -89,7 +86,5 @@ var View = Backbone.View.extend(/**@lends module:base/view.prototype */{
         }
     }
 });
-
-_.assign(View.prototype, common);
 
 module.exports = View;

@@ -4,6 +4,8 @@
  */
 'use strict';
 
+var _ = require('underscore');
+
 var ContainerView = require('./container');
 var ContentAreaView = require('./layout/content-area');
 var ToolbarView = require('./toolbar');
@@ -43,7 +45,6 @@ var ViewFactory = tui.util.defineClass({
         // view options
         this.footerOptions = options.footer;
         this.resizeHandle = options.resizeHandle;
-        this.copyOption = options.copyOption;
     },
 
     /**
@@ -134,15 +135,9 @@ var ViewFactory = tui.util.defineClass({
      */
     createClipboard: function() {
         return new ClipboardView({
-            columnModel: this.modelManager.columnModel,
-            dataModel: this.modelManager.dataModel,
-            dimensionModel: this.modelManager.dimensionModel,
-            selectionModel: this.modelManager.selectionModel,
+            clipboardModel: this.modelManager.clipboardModel,
             focusModel: this.modelManager.focusModel,
-            renderModel: this.modelManager.renderModel,
-            coordRowModel: this.modelManager.coordRowModel,
-            coordConverterModel: this.modelManager.coordConverterModel,
-            copyOption: this.copyOption
+            domEventBus: this.domEventBus
         });
     },
 
@@ -169,8 +164,8 @@ var ViewFactory = tui.util.defineClass({
     createHeader: function(whichSide) {
         return new HeaderView({
             whichSide: whichSide,
+            headerHeight: this.modelManager.dimensionModel.get('headerHeight'),
             renderModel: this.modelManager.renderModel,
-            dimensionModel: this.modelManager.dimensionModel,
             focusModel: this.modelManager.focusModel,
             selectionModel: this.modelManager.selectionModel,
             dataModel: this.modelManager.dataModel,

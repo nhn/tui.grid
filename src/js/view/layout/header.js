@@ -35,14 +35,16 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         _.assign(this, {
             renderModel: options.renderModel,
             coordColumnModel: options.coordColumnModel,
-            dimensionModel: options.dimensionModel,
             selectionModel: options.selectionModel,
             focusModel: options.focusModel,
             columnModel: options.columnModel,
             dataModel: options.dataModel,
+            coordRowModel: options.coordRowModel,
+
             viewFactory: options.viewFactory,
             domEventBus: options.domEventBus,
-            coordRowModel: options.coordRowModel,
+
+            headerHeight: options.headerHeight,
             whichSide: options.whichSide || frameConst.R
         });
 
@@ -354,7 +356,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         this._destroyChildren();
 
         this.$el.css({
-            height: this.dimensionModel.get('headerHeight') - TABLE_BORDER_WIDTH
+            height: this.headerHeight - TABLE_BORDER_WIDTH
         }).html(this.template({
             colGroup: this._getColGroupMarkup(),
             tBody: this._getTableBodyMarkup()
@@ -388,7 +390,7 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
     _getTableBodyMarkup: function() {
         var hierarchyList = this._getColumnHierarchyList();
         var maxRowCount = this._getHierarchyMaxRowCount(hierarchyList);
-        var headerHeight = this.dimensionModel.get('headerHeight');
+        var headerHeight = this.headerHeight;
         var rowMarkupList = new Array(maxRowCount);
         var columnNameList = new Array(maxRowCount);
         var colSpanList = [];

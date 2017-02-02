@@ -7,23 +7,6 @@ var View = require('base/view');
 describe('core.base', function() {
     var Class;
 
-    function testForSetOwnProperties(object) {
-        object.setOwnProperties({
-            value1: 1,
-            value2: 2,
-            value3: 3
-        });
-        expect(object.value1).toBe(1);
-        expect(object.value2).toBe(2);
-        expect(object.value3).toBe(3);
-        expect(object.value4).not.toBeDefined();
-
-        expect(object.hasOwnProperty('value1')).toBe(true);
-        expect(object.hasOwnProperty('value2')).toBe(true);
-        expect(object.hasOwnProperty('value3')).toBe(true);
-        expect(object.hasOwnProperty('value4')).toBe(false);
-    }
-
     Class = {};
     Class.Model = Model.extend({});
     Class.Collection = Collection.extend({
@@ -31,24 +14,12 @@ describe('core.base', function() {
     });
     Class.View = View.extend({});
 
-    describe('Model.Base', function() {
-        it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
-            var model = new Class.Model();
-            testForSetOwnProperties(model);
-        });
-    });
-
     describe('Collection.Base', function() {
         var collection;
 
         it('Collection 생성하면 length는 0이다.', function() {
             collection = new Class.Collection([], {});
             expect(collection.length).toBe(0);
-        });
-
-        it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
-            collection = new Class.Collection();
-            testForSetOwnProperties(collection);
         });
 
         it('clear()은 콜렉션 내 모델을 초기화 한다.', function() {
@@ -62,15 +33,10 @@ describe('core.base', function() {
         });
     });
 
-
     describe('View.Base', function() {
         var view;
         beforeEach(function() {
             view = new Class.View();
-        });
-
-        it('setOwnProperties()는 주어진 객체의 프라퍼티를 this로 복사한다.', function() {
-            testForSetOwnProperties(view);
         });
 
         it('_addChildren()는 자식 view _children에 저장한다.', function() {

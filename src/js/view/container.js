@@ -166,6 +166,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
              * @property {Object} rowData - row data containing the target cell
              */
             this._triggerCellMouseEvent('dblclickCell', eventData, $target.closest('td'));
+            // @todo 2.0.0 에서 제거될 로직
             // if (eventData.rowKey === null && !eventData.isStopped()) {
             //     this.dataModel.append({}, {focus: true});
             // }
@@ -313,6 +314,7 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
             .append(childElements);
 
         this._triggerChildrenAppended();
+        // @todo 2.0.0 에서 제거될 코드
         // this.trigger('rendered');
 
         return this;

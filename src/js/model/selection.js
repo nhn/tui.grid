@@ -1,6 +1,6 @@
 /**
  * @fileoverview Selection Model class
- * @author NHN Ent. FE Development Team
+ * @author NHN Ent. FE Development Lab
  */
 'use strict';
 
@@ -20,6 +20,8 @@ var typeConst = require('../common/constMap').selectionType;
  */
 var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     initialize: function(attr, options) {
+        var domEventBus;
+
         Model.prototype.initialize.apply(this, arguments);
 
         _.assign(this, {
@@ -28,6 +30,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             dimensionModel: options.dimensionModel,
             focusModel: options.focusModel,
             renderModel: options.renderModel,
+            coordRowModel: options.coordRowModel,
             coordConverterModel: options.coordConverterModel,
             domEventBus: options.domEventBus,
 
@@ -43,10 +46,15 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         this.listenTo(this.dataModel, 'paste', this._onPasteData);
 
         if (this.isEnabled() && options.domEventBus) {
-            this.listenTo(options.domEventBus, 'dragstart:header', this._onDragStartHeader);
-            this.listenTo(options.domEventBus, 'dragmove:header', this._onDragMoveHeader);
-            this.listenTo(options.domEventBus, 'dragmove:body', this._onDragMoveBody);
-            this.listenTo(options.domEventBus, 'mousedown:body', this._onMouseDownBody);
+            domEventBus = options.domEventBus;
+            this.listenTo(domEventBus, 'dragstart:header', this._onDragStartHeader);
+            this.listenTo(domEventBus, 'dragmove:header', this._onDragMoveHeader);
+            this.listenTo(domEventBus, 'dragmove:body', this._onDragMoveBody);
+            this.listenTo(domEventBus, 'dragend:body', this._onDragEndBody);
+            this.listenTo(domEventBus, 'mousedown:body', this._onMouseDownBody);
+            this.listenTo(domEventBus, 'key:move key:edit', this._onKeyMoveOrEdit);
+            this.listenTo(domEventBus, 'key:select', this._onKeySelect);
+            this.listenTo(domEventBus, 'key:delete', this._onKeyDelete);
         }
     },
 
@@ -78,7 +86,7 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         if (gridEvent.shiftKey) {
             this.update(0, columnRange[1], typeConst.COLUMN);
-            this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+            this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
         } else {
             this.minimumColumnWidth = columnRange;
             this.selectColumn(columnRange[0]);
@@ -103,7 +111,155 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
         if (columnNames.length) {
             columnRange = this._getColumnRangeWithNames(columnNames);
         }
-        this.extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+        this._extendColumnSelection(columnRange, gridEvent.pageX, gridEvent.pageY);
+    },
+
+    /**
+     * Event handler for key:move/key:edit fevent on domEventBus
+     * @private
+     */
+    _onKeyMoveOrEdit: function() {
+        this.end();
+    },
+
+    /**
+     * Event handler for key:select event on domEventBus
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onKeySelect: function(ev) { // eslint-disable-line complexity
+        var address = this._getRecentAddress();
+        var lastRowIndex = this.dataModel.length - 1;
+        var lastColummnIndex = this.columnModel.getVisibleColumnModelList().length - 1;
+
+        switch (ev.command) {
+            case 'up':
+                address.row -= 1;
+                break;
+            case 'down':
+                address.row += 1;
+                break;
+            case 'left':
+                address.column -= 1;
+                break;
+            case 'right':
+                address.column += 1;
+                break;
+            case 'pageUp':
+                address.row = this.coordRowModel.getPageMovedIndex(address.row, false);
+                break;
+            case 'pageDown':
+                address.row = this.coordRowModel.getPageMovedIndex(address.row, true);
+                break;
+            case 'firstColumn':
+                address.column = 0;
+                break;
+            case 'lastColumn':
+                address.column = lastColummnIndex;
+                break;
+            case 'firstCell':
+                address.row = 0;
+                address.column = 0;
+                break;
+            case 'lastCell':
+                address.row = lastRowIndex;
+                address.column = lastColummnIndex;
+                break;
+            case 'all':
+                this.selectAll();
+                address = null;
+                break;
+            default:
+                address = null;
+        }
+
+        if (address) {
+            this.update(address.row, address.column);
+            this._scrollTo(address.row, address.column);
+        }
+    },
+
+    /**
+     * Event handler for key:delete event on domEventBus
+     * @private
+     */
+    _onKeyDelete: function() {
+        var dataModel = this.dataModel;
+        var focused;
+
+        if (this.hasSelection()) {
+            dataModel.delRange(this.get('range'));
+        } else {
+            focused = this.focusModel.which();
+            dataModel.del(focused.rowKey, focused.columnName);
+        }
+    },
+
+    /**
+     * Return an address of recently extended cell
+     * @returns {{row: number, column:number}} index
+     * @private
+     */
+    _getRecentAddress: function() {
+        var focusedIndex = this.focusModel.indexOf();
+        var selectionRange = this.get('range');
+        var index = _.assign({}, focusedIndex);
+        var selectionRowRange, selectionColumnRange;
+
+        if (selectionRange) {
+            selectionRowRange = selectionRange.row;
+            selectionColumnRange = selectionRange.column;
+
+            index.row = selectionRowRange[0];
+            index.column = selectionColumnRange[0];
+
+            if (selectionRowRange[1] > focusedIndex.row) {
+                index.row = selectionRowRange[1];
+            }
+            if (selectionColumnRange[1] > focusedIndex.column) {
+                index.column = selectionColumnRange[1];
+            }
+        }
+        return index;
+    },
+
+    /**
+     * Returns whether the given address is valid
+     * @param {{row: number, column: number}} address - address
+     * @returns {boolean}
+     * @private
+     */
+    _isValidAddress: function(address) {
+        return !!this.dataModel.at(address.row) && !!this.columnModel.at(address.colummn);
+    },
+
+    /**
+     * Scrolls to the position of given address
+     * @param {number} rowIndex - row index
+     * @param {number} columnIndex - column index
+     * @private
+     */
+    _scrollTo: function(rowIndex, columnIndex) {
+        var row = this.dataModel.at(rowIndex);
+        var column = this.columnModel.at(columnIndex);
+        var rowKey, columnName, selectionType, scrollPosition;
+
+        if (!row || !column) {
+            return;
+        }
+
+        rowKey = row.get('rowKey');
+        columnName = column.columnName;
+        scrollPosition = this.coordConverterModel.getScrollPosition(rowKey, columnName);
+        if (scrollPosition) {
+            selectionType = this.getType();
+            if (selectionType === typeConst.COLUMN) {
+                delete scrollPosition.scrollTop;
+            } else if (selectionType === typeConst.ROW) {
+                delete scrollPosition.scrollLeft;
+            }
+            this.renderModel.set(scrollPosition);
+        }
     },
 
     /**
@@ -161,6 +317,14 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
         this.update(address.row, address.column);
         this._setScrolling(gridEvent.pageX, gridEvent.pageY);
+    },
+
+    /**
+     * Event handler for 'dragend:body' event on domEventBus
+     * @private
+     */
+    _onDragEndBody: function() {
+        this.stopAutoScroll();
     },
 
     /**
@@ -296,8 +460,9 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
      * @param {undefined|Array} columnIndexes - Column indexes
      * @param {number} pageX - Mouse position X
      * @param {number} pageY - Mouse positino Y
+     * @private
      */
-    extendColumnSelection: function(columnIndexes, pageX, pageY) {
+    _extendColumnSelection: function(columnIndexes, pageX, pageY) {
         var minimumColumnRange = this.minimumColumnRange;
         var index = this.coordConverterModel.getIndexFromMousePosition(pageX, pageY);
         var range = {

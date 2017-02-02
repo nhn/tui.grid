@@ -43,8 +43,8 @@ describe('Header', function() {
             expect(header.$el.find('tr').length).toEqual(1);
         });
 
-        it('el의 높이를 dimensionModel의 headerHeight값으로 설정한다.', function() {
-            modelManager.dimensionModel.set('headerHeight', 20);
+        it('height of $el should be headerHeight', function() {
+            header.headerHeight = 20;
             header.render();
 
             expect(header.$el.height()).toEqual(19);

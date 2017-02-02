@@ -22,19 +22,27 @@ var GridEvent = require('../event/gridEvent');
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     initialize: function(attrs, options) {
         var editEventName = options.singleClickEdit ? 'clickCell' : 'dblclickCell';
+        var domEventBus;
 
         Model.prototype.initialize.apply(this, arguments);
 
-        this.dataModel = options.dataModel;
-        this.columnModel = options.columnModel;
-        this.dimensionModel = options.dimensionModel;
-        this.domState = options.domState;
+        _.assign(this, {
+            dataModel: options.dataModel,
+            columnModel: options.columnModel,
+            coordRowModel: options.coordRowModel,
+            domEventBus: options.domEventBus,
+            domState: options.domState
+        });
 
         this.listenTo(this.dataModel, 'reset', this._onResetData);
+        this.listenTo(this.dataModel, 'add', this._onAddDataModel);
 
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, editEventName, this._onEditCellEvent);
-            this.listenTo(options.domEventBus, 'mousedown:focus', this._onMouseDownFocus);
+        if (this.domEventBus) {
+            domEventBus = this.domEventBus;
+            this.listenTo(domEventBus, editEventName, this._onMouseClickEdit);
+            this.listenTo(domEventBus, 'mousedown:focus', this._onMouseDownFocus);
+            this.listenTo(domEventBus, 'key:move', this._onKeyMove);
+            this.listenTo(domEventBus, 'key:edit', this._onKeyEdit);
         }
     },
 
@@ -79,17 +87,125 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
+     * Event handler for 'add' event on dataModel.
+     * @param  {module:model/data/rowList} dataModel - data model
+     * @param  {Object} options - options for appending. See {@link module:model/data/rowList#append}
+     * @private
+     */
+    _onAddDataModel: function(dataModel, options) {
+        if (options.focus) {
+            this.focusAt(options.at, 0);
+        }
+    },
+
+    /**
      * Event handler for 'clickCell' or 'dblclickCell' event on domEventBus
      * @param {module:event/gridEvent} ev - event data
      * @private
      */
-    _onEditCellEvent: function(ev) {
+    _onMouseClickEdit: function(ev) {
         var rowKey = ev.rowKey;
         var columnName = ev.columnName;
 
         if (!ev.isStopped() && !_.isNull(rowKey)) {
             this.focusIn(rowKey, columnName);
         }
+    },
+
+    /**
+     * Event handler for key:move event
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onKeyMove: function(ev) {  // eslint-disable-line complexity
+        var rowKey, columnName;
+
+        switch (ev.command) {
+            case 'up':
+                rowKey = this.prevRowKey();
+                break;
+            case 'down':
+                rowKey = this.nextRowKey();
+                break;
+            case 'left':
+                columnName = this.prevColumnName();
+                break;
+            case 'right':
+                columnName = this.nextColumnName();
+                break;
+            case 'pageUp':
+                rowKey = this._getPageMovedRowKey(false);
+                break;
+            case 'pageDown':
+                rowKey = this._getPageMovedRowKey(true);
+                break;
+            case 'firstColumn':
+                columnName = this.firstColumnName();
+                break;
+            case 'lastColumn':
+                columnName = this.lastColumnName();
+                break;
+            case 'firstCell':
+                rowKey = this.firstRowKey();
+                columnName = this.firstColumnName();
+                break;
+            case 'lastCell':
+                rowKey = this.lastRowKey();
+                columnName = this.lastColumnName();
+                break;
+            default:
+        }
+
+        rowKey = _.isUndefined(rowKey) ? this.get('rowKey') : rowKey;
+        columnName = columnName || this.get('columnName');
+
+        this.focus(rowKey, columnName, true);
+    },
+
+    /**
+     * Event handler for key:edit event
+     * @param {module:event/gridEvent} ev - GridEvent
+     * @private
+     */
+    _onKeyEdit: function(ev) {
+        var address;
+
+        switch (ev.command) {
+            case 'currentCell':
+                address = this.which();
+                break;
+            case 'nextCell':
+                address = this.nextAddress();
+                break;
+            case 'prevCell':
+                address = this.prevAddress();
+                break;
+            default:
+        }
+
+        if (address) {
+            this.focusIn(address.rowKey, address.columnName, true);
+        }
+    },
+
+    /**
+     * Returns the moved rowKey by page unit from current position
+     * @param {boolean} isDownDir - true: down, false: up
+     * @returns {number}
+     * @private
+     */
+    _getPageMovedRowKey: function(isDownDir) {
+        var rowIndex = this.dataModel.indexOfRowKey(this.get('rowKey'));
+        var prevPageRowIndex = this.coordRowModel.getPageMovedIndex(rowIndex, isDownDir);
+        var rowKey;
+
+        if (isDownDir) {
+            rowKey = this.nextRowKey(prevPageRowIndex - rowIndex);
+        } else {
+            rowKey = this.prevRowKey(rowIndex - prevPageRowIndex);
+        }
+
+        return rowKey;
     },
 
     /**
