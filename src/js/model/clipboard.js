@@ -24,12 +24,11 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
             selectionModel: options.selectionModel,
             renderModel: options.renderModel,
             focusModel: options.focusModel,
-            copyOption: options.copyOption
+            copyOption: options.copyOption,
+            domEventBus: options.domEventBus
         });
 
-        if (options.domEventBus) {
-            this.listenTo(options.domEventBus, 'key:clipboard', this._onKeyClipboard);
-        }
+        this.listenTo(options.domEventBus, 'key:clipboard', this._onKeyClipboard);
     },
 
     defaults: {
