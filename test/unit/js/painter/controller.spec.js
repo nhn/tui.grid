@@ -16,6 +16,48 @@ function create() {
 }
 
 describe('painter/controller', function() {
+    describe('setValueIfNotUsingViewMode', function() {
+        it('should call setValue if useViewMode:false', function() {
+            var controller = create();
+            var address = {
+                rowKey: 0,
+                columnName: 'c1'
+            };
+
+            controller.columnModel.set('columnModelList', [{
+                columnName: 'c1',
+                editOption: {
+                    useViewMode: false
+                }
+            }]);
+            spyOn(controller, 'setValue');
+
+            controller.setValueIfNotUsingViewMode(address, 'hi');
+
+            expect(controller.setValue).toHaveBeenCalledWith(address, 'hi');
+        });
+
+        it('should not call setValue if useViewMode:true', function() {
+            var controller = create();
+            var address = {
+                rowKey: 0,
+                columnName: 'c1'
+            };
+
+            controller.columnModel.set('columnModelList', [{
+                columnName: 'c1',
+                editOption: {
+                    useViewMode: true
+                }
+            }]);
+            spyOn(controller, 'setValue');
+
+            controller.setValueIfNotUsingViewMode(address, 'hi');
+
+            expect(controller.setValue).not.toHaveBeenCalled();
+        });
+    });
+
     describe('setValue()', function() {
         it('string value should be trimmed', function() {
             var controller = create();
