@@ -6,6 +6,10 @@ var Clipboard = require('model/clipboard');
 var Model = require('base/model');
 var DomEventBus = require('event/domEventBus');
 
+function deepEqual(a, b) {
+    return JSON.stringify(a) === JSON.stringify(b);
+}
+
 describe('grid paste test', function() {
     var clipboard;
 
@@ -136,21 +140,21 @@ describe('grid paste test', function() {
                 var data = [[1, 2], [3, 4]];
                 var result = clipboard._duplicateData(data, 5, 2);
 
-                expect(result).toEqual([[1, 2], [3, 4], [1, 2], [3, 4]]);
+                expect(deepEqual(result, [[1, 2], [3, 4], [1, 2], [3, 4]])).toBe(true);
             });
 
             it('when length of selection column range is multiple of data column length', function() {
                 var data = [[1, 2], [3, 4]];
                 var result = clipboard._duplicateData(data, 2, 5);
 
-                expect(result).toEqual([[1, 2, 1, 2], [3, 4, 3, 4]]);
+                expect(deepEqual(result, [[1, 2, 1, 2], [3, 4, 3, 4]])).toBe(true);
             });
 
             it('when length of selection range is multiple of data length', function() {
                 var data = [[1, 2], [3, 4]];
                 var result = clipboard._duplicateData(data, 5, 5);
 
-                expect(result).toEqual([[1, 2, 1, 2], [3, 4, 3, 4], [1, 2, 1, 2], [3, 4, 3, 4]]);
+                expect(deepEqual(result, [[1, 2, 1, 2], [3, 4, 3, 4], [1, 2, 1, 2], [3, 4, 3, 4]])).toBe(true);
             });
         });
 
@@ -159,14 +163,14 @@ describe('grid paste test', function() {
                 var data = [[1, 2], [3, 4]];
                 var result = clipboard._duplicateData(data, 3, 3);
 
-                expect(result).toEqual([[1, 2], [3, 4]]);
+                expect(deepEqual(result, [[1, 2], [3, 4]])).toBe(true);
             });
 
             it('if the length of selection range is smaller than data length', function() {
                 var data = [[1, 2], [3, 4]];
                 var result = clipboard._duplicateData(data, 1, 1);
 
-                expect(result).toEqual([[1, 2], [3, 4]]);
+                expect(deepEqual(result, [[1, 2], [3, 4]])).toBe(true);
             });
         });
     });

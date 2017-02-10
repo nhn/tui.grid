@@ -2,29 +2,38 @@
 
 var _ = require('underscore');
 
-var ModelManager = require('model/manager');
-var DomState = require('domState');
+var ColumnModel = require('model/data/columnModel');
+var DataModel = require('model/data/rowList');
 var DomEventBus = require('event/domEventBus');
+var SelectionModel = require('model/selection');
 
 function create() {
-    var domState = new DomState($('<div>'));
     var domEventBus = DomEventBus.create();
-    var columnModelList = [
-        {columnName: 'c1'},
-        {columnName: 'c2'},
-        {columnName: 'c3'},
-        {columnName: 'c4'},
-        {columnName: 'c5'}
-    ];
-    var modelManager = new ModelManager({columnModelList: columnModelList}, domState, domEventBus);
-    modelManager.dataModel.setRowList([
+    var columnModel = new ColumnModel({
+        columnModelList: [
+            {columnName: 'c1'},
+            {columnName: 'c2'},
+            {columnName: 'c3'},
+            {columnName: 'c4'},
+            {columnName: 'c5'}
+        ]
+    });
+    var dataModel = new DataModel(null, {
+        columnModel: columnModel
+    });
+
+    dataModel.setRowList([
         {}, {}, {}, {}, {}
     ]);
 
-    return modelManager.selectionModel;
+    return new SelectionModel(null, {
+        columnModel: columnModel,
+        dataModel: dataModel,
+        domEventBus: domEventBus
+    });
 }
 
-describe('model/selection', function() {
+describe('model/selection key events', function() {
     it('key:move event', function() {
         var selection = create();
         spyOn(selection, 'end');
@@ -42,8 +51,12 @@ describe('model/selection', function() {
     });
 
     describe('key:delete event', function() {
+        var selection;
+
+        beforeEach(function() {
+            selection = create();
+        });
         it('when range exist', function() {
-            var selection = create();
             var range = {
                 row: [1, 2],
                 column: [1, 2]
@@ -57,9 +70,13 @@ describe('model/selection', function() {
         });
 
         it('when range does not exist', function() {
-            var selection = create();
             spyOn(selection.dataModel, 'del');
-            selection.focusModel.focus(0, 'c1');
+            selection.focusModel = {
+                which: _.constant({
+                    rowKey: 0,
+                    columnName: 'c1'
+                })
+            };
 
             selection.domEventBus.trigger('key:delete');
 
@@ -141,8 +158,10 @@ describe('model/selection', function() {
 
         describe('move page', function() {
             beforeEach(function() {
-                selection.coordRowModel.getPageMovedIndex = function(rowIndex, isDownDir) {
-                    return isDownDir ? 4 : 0;
+                selection.coordRowModel = {
+                    getPageMovedIndex: function(rowIndex, isDownDir) {
+                        return isDownDir ? 4 : 0;
+                    }
                 };
             });
 
