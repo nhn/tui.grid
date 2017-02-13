@@ -47,12 +47,14 @@ tui = window.tui = tui || {};
  *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
  *          expand with content.
  *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
- *          area expands.
- *          to total height of rows.
+ *          area expands to total height of rows.
  *      @param {number} [options.displayRowCount=10] - Deprecated.
  *          <del>The number of rows to be shown in the table area.
  *          Total height of grid will be set based on this value.</del>
  *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
+ *      @param {Object} [options.copyOption] - Option object for clipboard copying
+ *      @param {boolean} [options.copyOption.useFormattedValue] - Whether to use formatted values or original values
+ *          as a string to be copied to the clipboard
  *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
  *          without server.
  *      @param {boolean} [options.singleClickEdit=false] - If set to true, editable cell in the view-mode will be
@@ -76,7 +78,6 @@ tui = window.tui = tui || {};
  *              Available values are 'left', 'center', 'right'.
  *          @param {string} [options.columnModelList.valign=middle] - Vertical alignment of the column content.
  *              Available values are 'top', 'middle', 'bottom'.
- *      @param {number} [options.valign=27] - The height of each rows.
  *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
  *              the column.
  *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
@@ -120,6 +121,10 @@ tui = window.tui = tui || {};
  *                  falsy(null|undefined|false), default UI will be shown.
  *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
  *                  as a key and event handler as a value for events on input element.
+ *              @param {Object} [options.columnModelList.copyOption] - Option object for clipboard copying.
+ *                  This option is column specific, and overrides the global copyOption.
+ *              @param {boolean} [options.columnModelList.copyOption.useFormattedValue] - Whether to use
+ *                  formatted values or original values as a string to be copied to the clipboard
  *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
  *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
  *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns
