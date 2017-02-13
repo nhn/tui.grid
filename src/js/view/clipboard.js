@@ -31,7 +31,6 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
             coordRowModel: options.coordRowModel,
             coordConverterModel: options.coordConverterModel,
             renderModel: options.renderModel,
-            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
             timeoutIdForKeyIn: 0,
             isLocked: false
         });
@@ -548,14 +547,24 @@ var Clipboard = View.extend(/**@lends module:view/clipboard.prototype */{
         var text;
 
         if (selectionModel.hasSelection()) {
-            text = this.selectionModel.getValuesToString(this.useFormattedValue);
-        } else if (this.useFormattedValue) {
+            text = this.selectionModel.getValuesToString();
+        } else if (this._isUsingFormattedValue(focused.columnName)) {
             text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
         } else {
             text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
 
         return text;
+    },
+
+    /**
+     * Returns the useFormattedValue of copyOption of given column
+     * @param {string} columnName - column name
+     * @returns {boolean}
+     * @private
+     */
+    _isUsingFormattedValue: function(columnName) {
+        return this.columnModel.getCopyOption(columnName).useFormattedValue;
     },
 
     /**

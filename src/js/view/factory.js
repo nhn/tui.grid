@@ -43,7 +43,6 @@ var ViewFactory = tui.util.defineClass({
         this.footerOptions = options.footer;
         this.singleClickEdit = options.singleClickEdit;
         this.resizeHandle = options.resizeHandle;
-        this.copyOption = options.copyOption;
     },
 
     /**
@@ -140,8 +139,7 @@ var ViewFactory = tui.util.defineClass({
             focusModel: this.modelManager.focusModel,
             renderModel: this.modelManager.renderModel,
             coordRowModel: this.modelManager.coordRowModel,
-            coordConverterModel: this.modelManager.coordConverterModel,
-            copyOption: this.copyOption
+            coordConverterModel: this.modelManager.coordConverterModel
         });
     },
 
