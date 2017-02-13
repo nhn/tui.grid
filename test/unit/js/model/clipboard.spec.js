@@ -27,6 +27,7 @@ describe('grid paste test', function() {
     beforeEach(function() {
         clipboard = new Clipboard(null, {
             dataModel: new Model(),
+            columnModel: new Model(),
             focusModel: new Model(),
             selectionModel: new Model(),
             renderModel: new Model(),
@@ -37,28 +38,13 @@ describe('grid paste test', function() {
     describe('key:clipboard event with copy command', function() {
         var SAMPLE_TEXT = 'sample text';
 
-        describe('if selection exists, set text attribute to values of selected cells', function() {
-            beforeEach(function() {
-                clipboard.focusModel.which = _.constant({});
-                clipboard.selectionModel.hasSelection = _.constant(true);
-                clipboard.selectionModel.getValuesToString =
-                    jasmine.createSpy('getValuesToString').and.returnValue(SAMPLE_TEXT);
-            });
+        it('if selection exists, set text attribute to values of selected cells', function() {
+            clipboard.focusModel.which = _.constant({});
+            clipboard.selectionModel.hasSelection = _.constant(true);
+            clipboard.selectionModel.getValuesToString = _.constant(SAMPLE_TEXT);
 
-            it('with fommatedValue', function() {
-                clipboard.copyOption = {useFormattedValue: true};
-                triggerCopyEvent('copy');
-
-                expect(clipboard.selectionModel.getValuesToString).toHaveBeenCalledWith(true);
-                expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
-            });
-
-            it('with original value', function() {
-                triggerCopyEvent('copy');
-
-                expect(clipboard.selectionModel.getValuesToString).toHaveBeenCalledWith(false);
-                expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
-            });
+            triggerCopyEvent('copy');
+            expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
         });
 
         describe('if selection does not exists, set text attribute to value of focused cell', function() {
@@ -80,16 +66,23 @@ describe('grid paste test', function() {
             });
 
             it('with fommatedValue', function() {
-                clipboard.copyOption = {useFormattedValue: true};
+                clipboard.columnModel.getCopyOption = jasmine.createSpy().and.returnValue({
+                    useFormattedValue: true
+                });
                 triggerCopyEvent('copy');
 
+                expect(clipboard.columnModel.getCopyOption).toHaveBeenCalledWith('c1');
                 expect(clipboard.renderModel.getCellData).toHaveBeenCalledWith(0, 'c1');
                 expect(clipboard.get('text')).toBe(SAMPLE_TEXT);
             });
 
             it('with original value', function() {
+                clipboard.columnModel.getCopyOption = jasmine.createSpy().and.returnValue({
+                    useFormattedValue: false
+                });
                 triggerCopyEvent('copy');
 
+                expect(clipboard.columnModel.getCopyOption).toHaveBeenCalledWith('c1');
                 expect(clipboard.dataModel.get).toHaveBeenCalledWith(0);
                 expect(rowDataMock.getValueString).toHaveBeenCalledWith('c1');
                 expect(clipboard.get('text')).toBe(SAMPLE_TEXT);

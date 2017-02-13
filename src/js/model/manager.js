@@ -39,8 +39,7 @@ var defaultOptions = {
     scrollY: true,
     singleClickEdit: false,
     useClientSort: true,
-    toolbar: null,
-    copyOption: null
+    toolbar: null
 };
 
 /**

@@ -109,6 +109,9 @@ describe('model/selection', function() {
 
             selection.start(0, 1);
             selection.update(2, 2);
+            selection.columnModel.set('copyOption', {
+                useFormattedValue: true
+            });
             selection.renderModel = {
                 getCellData: function(rowKey, columnName) {
                     var value = selection.dataModel.getValue(rowKey, columnName);
@@ -118,7 +121,7 @@ describe('model/selection', function() {
                 }
             };
 
-            expect(selection.getValuesToString(true)).toEqual(
+            expect(selection.getValuesToString()).toEqual(
                 '*0-2*\t*0-3*\n' +
                 '*1-2*\t*1-3*\n' +
                 '*2-2*\t*2-3*'
