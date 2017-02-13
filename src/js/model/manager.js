@@ -39,7 +39,8 @@ var defaultOptions = {
     scrollY: true,
     singleClickEdit: false,
     useClientSort: true,
-    toolbar: null
+    toolbar: null,
+    copyOption: null
 };
 
 /**
@@ -82,6 +83,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
             columnMerge: options.columnMerge,
+            copyOption: options.copyOption,
             columnModelList: options.columnModelList
         });
     },
@@ -302,6 +304,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
      */
     _createClipboardModel: function(options, domEventBus) {
         return new ClipboardModel(null, {
+            columnModel: this.columnModel,
             dataModel: this.dataModel,
             selectionModel: this.selectionModel,
             renderModel: this.renderModel,

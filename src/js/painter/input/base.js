@@ -29,7 +29,8 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
     events: {
         keydown: '_onKeyDown',
         focusin: '_onFocusIn',
-        focusout: '_onFocusOut'
+        focusout: '_onFocusOut',
+        change: '_onChange'
     },
 
     /**
@@ -76,6 +77,15 @@ var InputPainter = tui.util.defineClass(Painter, /**@lends module:painter/input/
         var address = this._getCellAddress($input);
 
         this.controller.executeCustomInputEventHandler(event, address);
+    },
+
+    /**
+     * Event handler for the 'change' event.
+     * This method is just a stub. Override this if necessary.
+     * @private
+     */
+    _onChange: function() {
+        // do nothing
     },
 
     /**

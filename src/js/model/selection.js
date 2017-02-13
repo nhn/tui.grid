@@ -607,18 +607,16 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
 
     /**
      * Returns the string value of all cells in the selection range as a single string.
-     * @param {Boolean} useFormattedValue - Whether using rendered value or data value
      * @returns {String}
      */
-    getValuesToString: function(useFormattedValue) {
-        var range = this.get('range');
+    getValuesToString: function() {
         var renderModel = this.renderModel;
-        var rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
-        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-        var columnNames = _.pluck(columnModelList, 'columnName');
+        var columnModel = this.columnModel;
+        var rowList = this._getRangeRowList();
+        var columnNames = this._getRangeColumnNames();
         var rowValues = _.map(rowList, function(row) {
             return _.map(columnNames, function(columnName) {
-                if (useFormattedValue) {
+                if (columnModel.getCopyOption(columnName).useFormattedValue) {
                     return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
                 }
                 return row.getValueString(columnName);
@@ -629,6 +627,29 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
             return rowValues[0];
         }
         return rowValues.join('\n');
+    },
+
+    /**
+     * Returns an array of selected row list
+     * @returns {Array.<module:model/data/row>}
+     * @private
+     */
+    _getRangeRowList: function() {
+        var rowRange = this.get('range').row;
+
+        return this.dataModel.slice(rowRange[0], rowRange[1] + 1);
+    },
+
+    /**
+     * Returns an array of selected column names
+     * @returns {Array.<string>}
+     * @private
+     */
+    _getRangeColumnNames: function() {
+        var columnRange = this.get('range').column;
+        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(columnRange[0], columnRange[1] + 1);
+
+        return _.pluck(columnModelList, 'columnName');
     },
 
     /**

@@ -157,6 +157,19 @@ var PainterController = tui.util.defineClass(/**@lends module:painter/controller
         }
 
         this.dataModel.setValue(address.rowKey, address.columnName, value);
+    },
+
+    /**
+     * Sets the value of the given cell, if the given column is not using view-mode.
+     * @param {{rowKey:String, columnName:String}} address - cell address
+     * @param {(Number|String|Boolean)} value - value
+     */
+    setValueIfNotUsingViewMode: function(address, value) {
+        var columnModel = this.columnModel.getColumnModel(address.columnName);
+
+        if (!tui.util.pick(columnModel, 'editOption', 'useViewMode')) {
+            this.setValue(address, value);
+        }
     }
 });
 

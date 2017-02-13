@@ -43,6 +43,17 @@ var SelectPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     ),
 
     /**
+     * Event handler for the 'change' event
+     * @param {Event} ev - DOM Event
+     */
+    _onChange: function(ev) {
+        var $target = $(ev.target);
+        var address = this._getCellAddress($target);
+
+        this.controller.setValueIfNotUsingViewMode(address, $target.val());
+    },
+
+    /**
      * Returns the value string of given data to display in the cell.
      * @param {Object} cellData - cell data
      * @implements {module:painter/input/base}

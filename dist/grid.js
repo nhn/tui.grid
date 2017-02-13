@@ -1,6 +1,6 @@
 /*!
- * bundle created at "Thu Feb 02 2017 16:53:28 GMT+0900 (KST)"
- * version: 1.7.2
+ * bundle created at "Mon Feb 13 2017 10:19:09 GMT+0900 (KST)"
+ * version: 1.8.0
  */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -97,12 +97,14 @@
 	 *      @param {boolean} [options.isFixedRowHeight=false] - If set to true, the height of each rows does not
 	 *          expand with content.
 	 *      @param {number} [options.bodyHeight] - The height of body area. If this value is empty, the height of body
-	 *          area expands.
-	 *          to total height of rows.
+	 *          area expands to total height of rows.
 	 *      @param {number} [options.displayRowCount=10] - Deprecated.
 	 *          <del>The number of rows to be shown in the table area.
 	 *          Total height of grid will be set based on this value.</del>
 	 *      @param {number} [options.minimumColumnWidth=50] - Minimum width of each columns.
+	 *      @param {Object} [options.copyOption] - Option object for clipboard copying
+	 *      @param {boolean} [options.copyOption.useFormattedValue] - Whether to use formatted values or original values
+	 *          as a string to be copied to the clipboard
 	 *      @param {boolean} [options.useClientSort=true] - If set to true, sorting will be executed by client itself
 	 *          without server.
 	 *      @param {boolean} [options.singleClickEdit=false] - If set to true, editable cell in the view-mode will be
@@ -126,7 +128,6 @@
 	 *              Available values are 'left', 'center', 'right'.
 	 *          @param {string} [options.columnModelList.valign=middle] - Vertical alignment of the column content.
 	 *              Available values are 'top', 'middle', 'bottom'.
-	 *      @param {number} [options.valign=27] - The height of each rows.
 	 *          @param {string} [options.columnModelList.className] - The name of the class to be used for all cells of
 	 *              the column.
 	 *          @param {string} [options.columnModelList.title] - The title of the column to be shown on the header.
@@ -170,6 +171,10 @@
 	 *                  falsy(null|undefined|false), default UI will be shown.
 	 *              @param {Object} [options.columnModelList.editOption.inputEvents] - The object that has an event name
 	 *                  as a key and event handler as a value for events on input element.
+	 *              @param {Object} [options.columnModelList.copyOption] - Option object for clipboard copying.
+	 *                  This option is column specific, and overrides the global copyOption.
+	 *              @param {boolean} [options.columnModelList.copyOption.useFormattedValue] - Whether to use
+	 *                  formatted values or original values as a string to be copied to the clipboard
 	 *          @param {Array} [options.columnModelList.relationList] - Specifies relation between this and other column.
 	 *              @param {array} [options.columnModelList.relationList.columnList] - Array of the names of target columns.
 	 *              @param {function} [options.columnModelList.relationList.isDisabled] - If returns true, target columns
@@ -273,7 +278,7 @@
 	     */
 	    _createViewFactory: function(domState, options) {
 	        var viewOptions = _.pick(options, [
-	            'singleClickEdit', 'resizeHandle', 'toolbar', 'copyOption', 'footer'
+	            'singleClickEdit', 'resizeHandle', 'toolbar', 'footer'
 	        ]);
 	        var dependencies = {
 	            modelManager: this.modelManager,
@@ -1219,7 +1224,8 @@
 	    scrollX: true,
 	    scrollY: true,
 	    useClientSort: true,
-	    toolbar: null
+	    toolbar: null,
+	    copyOption: null
 	};
 
 	/**
@@ -1264,6 +1270,7 @@
 	            columnFixCount: options.columnFixCount,
 	            selectType: options.selectType,
 	            columnMerge: options.columnMerge,
+	            copyOption: options.copyOption,
 	            columnModelList: options.columnModelList
 	        });
 	    },
@@ -1526,7 +1533,10 @@
 	        selectType: '',
 	        columnModelMap: {},
 	        relationListMap: {},
-	        columnMerge: []
+	        columnMerge: [],
+	        copyOption: {
+	            useFormattedValue: false
+	        }
 	    },
 
 	    /**
@@ -1925,6 +1935,17 @@
 	            }
 	        }
 	        return _.uniq(searchedNames);
+	    },
+
+	    /**
+	     * Returns the copy option of given column.
+	     * @param {string} columnName - column name
+	     * @returns {{useFormattedValue: boolean}}
+	     */
+	    getCopyOption: function(columnName) {
+	        var columnModel = this.getColumnModel(columnName);
+
+	        return _.extend({}, this.get('copyOption'), columnModel.copyOption);
 	    },
 
 	    /**
@@ -8215,18 +8236,16 @@
 
 	    /**
 	     * Returns the string value of all cells in the selection range as a single string.
-	     * @param {Boolean} useFormattedValue - Whether using rendered value or data value
 	     * @returns {String}
 	     */
-	    getValuesToString: function(useFormattedValue) {
-	        var range = this.get('range');
+	    getValuesToString: function() {
 	        var renderModel = this.renderModel;
-	        var rowList = this.dataModel.slice(range.row[0], range.row[1] + 1);
-	        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(range.column[0], range.column[1] + 1);
-	        var columnNames = _.pluck(columnModelList, 'columnName');
+	        var columnModel = this.columnModel;
+	        var rowList = this._getRangeRowList();
+	        var columnNames = this._getRangeColumnNames();
 	        var rowValues = _.map(rowList, function(row) {
 	            return _.map(columnNames, function(columnName) {
-	                if (useFormattedValue) {
+	                if (columnModel.getCopyOption(columnName).useFormattedValue) {
 	                    return renderModel.getCellData(row.get('rowKey'), columnName).formattedValue;
 	                }
 	                return row.getValueString(columnName);
@@ -8237,6 +8256,29 @@
 	            return rowValues[0];
 	        }
 	        return rowValues.join('\n');
+	    },
+
+	    /**
+	     * Returns an array of selected row list
+	     * @returns {Array.<module:model/data/row>}
+	     * @private
+	     */
+	    _getRangeRowList: function() {
+	        var rowRange = this.get('range').row;
+
+	        return this.dataModel.slice(rowRange[0], rowRange[1] + 1);
+	    },
+
+	    /**
+	     * Returns an array of selected column names
+	     * @returns {Array.<string>}
+	     * @private
+	     */
+	    _getRangeColumnNames: function() {
+	        var columnRange = this.get('range').column;
+	        var columnModelList = this.columnModel.getVisibleColumnModelList().slice(columnRange[0], columnRange[1] + 1);
+
+	        return _.pluck(columnModelList, 'columnName');
 	    },
 
 	    /**
@@ -8696,7 +8738,6 @@
 	        this.footerOptions = options.footer;
 	        this.singleClickEdit = options.singleClickEdit;
 	        this.resizeHandle = options.resizeHandle;
-	        this.copyOption = options.copyOption;
 	    },
 
 	    /**
@@ -8793,8 +8834,7 @@
 	            focusModel: this.modelManager.focusModel,
 	            renderModel: this.modelManager.renderModel,
 	            coordRowModel: this.modelManager.coordRowModel,
-	            coordConverterModel: this.modelManager.coordConverterModel,
-	            copyOption: this.copyOption
+	            coordConverterModel: this.modelManager.coordConverterModel
 	        });
 	    },
 
@@ -9952,7 +9992,6 @@
 	            coordRowModel: options.coordRowModel,
 	            coordConverterModel: options.coordConverterModel,
 	            renderModel: options.renderModel,
-	            useFormattedValue: !!tui.util.pick(options, 'copyOption', 'useFormattedValue'),
 	            timeoutIdForKeyIn: 0,
 	            isLocked: false
 	        });
@@ -10469,14 +10508,24 @@
 	        var text;
 
 	        if (selectionModel.hasSelection()) {
-	            text = this.selectionModel.getValuesToString(this.useFormattedValue);
-	        } else if (this.useFormattedValue) {
+	            text = this.selectionModel.getValuesToString();
+	        } else if (this._isUsingFormattedValue(focused.columnName)) {
 	            text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
 	        } else {
 	            text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
 	        }
 
 	        return text;
+	    },
+
+	    /**
+	     * Returns the useFormattedValue of copyOption of given column
+	     * @param {string} columnName - column name
+	     * @returns {boolean}
+	     * @private
+	     */
+	    _isUsingFormattedValue: function(columnName) {
+	        return this.columnModel.getCopyOption(columnName).useFormattedValue;
 	    },
 
 	    /**
@@ -14547,7 +14596,8 @@
 	    events: {
 	        keydown: '_onKeyDown',
 	        focusin: '_onFocusIn',
-	        focusout: '_onFocusOut'
+	        focusout: '_onFocusOut',
+	        change: '_onChange'
 	    },
 
 	    /**
@@ -14594,6 +14644,15 @@
 	        var address = this._getCellAddress($input);
 
 	        this.controller.executeCustomInputEventHandler(event, address);
+	    },
+
+	    /**
+	     * Event handler for the 'change' event.
+	     * This method is just a stub. Override this if necessary.
+	     * @private
+	     */
+	    _onChange: function() {
+	        // do nothing
 	    },
 
 	    /**
@@ -14770,6 +14829,17 @@
 	    ),
 
 	    /**
+	     * Event handler for the 'change' event
+	     * @param {Event} ev - DOM Event
+	     */
+	    _onChange: function(ev) {
+	        var $target = $(ev.target);
+	        var address = this._getCellAddress($target);
+
+	        this.controller.setValueIfNotUsingViewMode(address, $target.val());
+	    },
+
+	    /**
 	     * Returns the value string of given data to display in the cell.
 	     * @param {Object} cellData - cell data
 	     * @implements {module:painter/input/base}
@@ -14897,6 +14967,18 @@
 	    labelTemplate: _.template(
 	        '<label for="<%=id%>"><%=labelText%></label>'
 	    ),
+
+	    /**
+	     * Event handler for 'change' event
+	     * @param {Event} ev - DOM Event
+	     */
+	    _onChange: function(ev) {
+	        var $target = $(ev.target);
+	        var address = this._getCellAddress($target);
+	        var value = this._getCheckedValueString($target);
+
+	        this.controller.setValueIfNotUsingViewMode(address, value);
+	    },
 
 	    /**
 	     * Event handler for 'blur' event
@@ -15330,6 +15412,19 @@
 	        }
 
 	        this.dataModel.setValue(address.rowKey, address.columnName, value);
+	    },
+
+	    /**
+	     * Sets the value of the given cell, if the given column is not using view-mode.
+	     * @param {{rowKey:String, columnName:String}} address - cell address
+	     * @param {(Number|String|Boolean)} value - value
+	     */
+	    setValueIfNotUsingViewMode: function(address, value) {
+	        var columnModel = this.columnModel.getColumnModel(address.columnName);
+
+	        if (!tui.util.pick(columnModel, 'editOption', 'useViewMode')) {
+	            this.setValue(address, value);
+	        }
 	    }
 	});
 

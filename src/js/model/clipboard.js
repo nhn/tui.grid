@@ -20,6 +20,7 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
         Model.prototype.initialize.apply(this, arguments);
 
         _.assign(this, {
+            columnModel: options.columnModel,
             dataModel: options.dataModel,
             selectionModel: options.selectionModel,
             renderModel: options.renderModel,
@@ -135,18 +136,27 @@ var Clipboard = Model.extend(/**@lends module:model/clipboard.prototype*/{
     _getClipboardText: function() {
         var selectionModel = this.selectionModel;
         var focused = this.focusModel.which();
-        var useFormattedValue = _.result(this.copyOption, 'useFormattedValue', false);
         var text;
 
         if (selectionModel.hasSelection()) {
-            text = selectionModel.getValuesToString(useFormattedValue);
-        } else if (useFormattedValue) {
+            text = selectionModel.getValuesToString();
+        } else if (this._isUsingFormattedValue(focused.columnName)) {
             text = this.renderModel.getCellData(focused.rowKey, focused.columnName).formattedValue;
         } else {
             text = this.dataModel.get(focused.rowKey).getValueString(focused.columnName);
         }
 
         return text;
+    },
+
+    /**
+     * Returns the useFormattedValue of copyOption of given column
+     * @param {string} columnName - column name
+     * @returns {boolean}
+     * @private
+     */
+    _isUsingFormattedValue: function(columnName) {
+        return this.columnModel.getCopyOption(columnName).useFormattedValue;
     }
 });
 

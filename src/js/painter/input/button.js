@@ -82,6 +82,18 @@ var ButtonPainter = tui.util.defineClass(InputPainter, /**@lends module:painter/
     ),
 
     /**
+     * Event handler for 'change' event
+     * @param {Event} ev - DOM Event
+     */
+    _onChange: function(ev) {
+        var $target = $(ev.target);
+        var address = this._getCellAddress($target);
+        var value = this._getCheckedValueString($target);
+
+        this.controller.setValueIfNotUsingViewMode(address, value);
+    },
+
+    /**
      * Event handler for 'blur' event
      * @param {Event} event - event object
      * @override
