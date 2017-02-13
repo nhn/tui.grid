@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        <img src="img/toast-ui.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example1.html">1. Basic Example</a><div class="hidden" id="example1_sub"></div></li><li><a href="tutorial-example2.html">2. Using Relation List</a><div class="hidden" id="example2_sub"></div></li><li><a href="tutorial-example3.html">3. Using _extraData</a><div class="hidden" id="example3_sub"></div></li><li><a href="tutorial-example4.html">4. Applying Themes</a><div class="hidden" id="example4_sub"></div></li><li><a href="tutorial-example5.html">5. Using Date-Picker Component</a><div class="hidden" id="example5_sub"></div></li><li><a href="tutorial-example6.html">6. Using Footer with column summary</a><div class="hidden" id="example6_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="tui.Grid.html">Grid</a><div class="hidden" id="tui.Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.Grid.html#.applyTheme">applyTheme</a></li><li><a href="tui.Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="tui.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="tui.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="tui.Grid.html#appendRow">appendRow</a></li><li><a href="tui.Grid.html#blur">blur</a></li><li><a href="tui.Grid.html#check">check</a></li><li><a href="tui.Grid.html#checkAll">checkAll</a></li><li><a href="tui.Grid.html#clear">clear</a></li><li><a href="tui.Grid.html#destroy">destroy</a></li><li><a href="tui.Grid.html#disable">disable</a></li><li><a href="tui.Grid.html#disableCheck">disableCheck</a></li><li><a href="tui.Grid.html#disableRow">disableRow</a></li><li><a href="tui.Grid.html#enable">enable</a></li><li><a href="tui.Grid.html#enableCheck">enableCheck</a></li><li><a href="tui.Grid.html#enableRow">enableRow</a></li><li><a href="tui.Grid.html#focus">focus</a></li><li><a href="tui.Grid.html#focusAt">focusAt</a></li><li><a href="tui.Grid.html#focusIn">focusIn</a></li><li><a href="tui.Grid.html#focusInAt">focusInAt</a></li><li><a href="tui.Grid.html#getAddOn">getAddOn</a></li><li><a href="tui.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="tui.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="tui.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="tui.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="tui.Grid.html#getElement">getElement</a></li><li><a href="tui.Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="tui.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="tui.Grid.html#getPagination">getPagination</a></li><li><a href="tui.Grid.html#getRow">getRow</a></li><li><a href="tui.Grid.html#getRowAt">getRowAt</a></li><li><a href="tui.Grid.html#getRowCount">getRowCount</a></li><li><a href="tui.Grid.html#getRowList">getRowList</a></li><li><a href="tui.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="tui.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="tui.Grid.html#getValue">getValue</a></li><li><a href="tui.Grid.html#hideColumn">hideColumn</a></li><li><a href="tui.Grid.html#isChanged">isChanged</a></li><li><a href="tui.Grid.html#prependRow">prependRow</a></li><li><a href="tui.Grid.html#readyForKeyControl">readyForKeyControl</a></li><li><a href="tui.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="tui.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="tui.Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="tui.Grid.html#removeRow">removeRow</a></li><li><a href="tui.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="tui.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="tui.Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="tui.Grid.html#restore">restore</a></li><li><a href="tui.Grid.html#select">select</a></li><li><a href="tui.Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="tui.Grid.html#setColumnFixCount">setColumnFixCount</a></li><li><a href="tui.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="tui.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="tui.Grid.html#setDisplayRowCount">setDisplayRowCount</a></li><li><a href="tui.Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="tui.Grid.html#setRowList">setRowList</a></li><li><a href="tui.Grid.html#setSize">setSize</a></li><li><a href="tui.Grid.html#setValue">setValue</a></li><li><a href="tui.Grid.html#showColumn">showColumn</a></li><li><a href="tui.Grid.html#sort">sort</a></li><li><a href="tui.Grid.html#uncheck">uncheck</a></li><li><a href="tui.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="tui.Grid.html#unselect">unselect</a></li><li><a href="tui.Grid.html#unSort">unSort</a></li><li><a href="tui.Grid.html#use">use</a></li><li><a href="tui.Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="tui.Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="tui.Grid.html#event:click">click</a></li><li><a href="tui.Grid.html#event:clickCell">clickCell</a></li><li><a href="tui.Grid.html#event:dblclick">dblclick</a></li><li><a href="tui.Grid.html#event:dblclickCell">dblclickCell</a></li><li><a href="tui.Grid.html#event:errorResponse">errorResponse</a></li><li><a href="tui.Grid.html#event:failResponse">failResponse</a></li><li><a href="tui.Grid.html#event:mousedown">mousedown</a></li><li><a href="tui.Grid.html#event:mouseoutCell">mouseoutCell</a></li><li><a href="tui.Grid.html#event:mouseoverCell">mouseoverCell</a></li><li><a href="tui.Grid.html#event:reponse">reponse</a></li><li><a href="tui.Grid.html#event:selectRow">selectRow</a></li><li><a href="tui.Grid.html#event:successReponse">successReponse</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.html">tui</a><div class="hidden" id="tui_sub"></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+<section>
+    <header>
+        
+
+        <h2>3. Using _extraData</h2>
+    </header>
+
+    <ul id="example-nav" class="nav nav-tabs">
+        <li role="presentation" id="example-result-btn" class="active" onclick="showResult()">
+            <a href="#">Result</a>
+        </li>
+        <li role="presentation" id="example-js-btn" class="" onclick="showJs()">
+            <a href="#">JS</a>
+        </li>
+        <li role="presentation" id="example-html-btn" class="" onclick="showHtml()">
+            <a href="#">HTML</a>
+        </li>
+    </ul>
+
+    <article>
+        
+        <iframe id="example-result" width="100%" height="800" frameborder="0" src=tutorials/example3.html></iframe>
+        <div id="example-js" class="hidden"><pre class="prettyprint source">
+var grid = new tui.Grid({
+    el: $('#grid'),
+    selectType: 'radio',
+    columnFixIndex: 5,
+    displayRowCount: 10,
+    headerHeight: 50,
+    minimumColumnWidth: 20,
+    toolbar: null,
+    columnModelList : [
+        {
+            "title" : "&lt;b>주문번호&lt;/b>",
+            "columnName" : "productOrderNo",
+            "align" : "center",
+            "width" : 100
+        },
+        {
+            "title" : "&lt;b>상품가격&lt;/b>",
+            "columnName" : "productPrice",
+            "align" : "right",
+            "width" : 100,
+            "editType" : "textbox",
+            "editOption" : {
+                "checkPattern" :/[\d]+/g,
+                "maxLength" : 10
+            },
+            "afterContent" : " 원",
+            "formatter" : function(columnValue){
+                var sValue = String(columnValue) || "0";
+                return sValue.replace(/(\d)(?=(\d{3})+$)/gi, "$1,")+" 원";
+            }
+        },
+        {
+            "title" : "&lt;b>주문자&lt;/b>",
+            "columnName" : "orderer",
+            "align" : "center",
+            "width" : 100
+        },
+        {
+            "title" : "주문인 휴대폰",
+            "columnName" : "ordererPhone",
+            "align" : "center"
+        },
+        {
+            "title" : "&lt;b>수령인&lt;/b>",
+            "columnName" : "receiver",
+            "width" : 100,
+            "align" : "center"
+        },
+        {
+            "title" : "수령인 휴대폰",
+            "columnName" : "receiverPhone",
+            "align" : "center"
+        }
+    ]
+});
+grid.setRowList([{
+    "_extraData" : {
+        "rowState" : "DISABLED"     // 행 선택을 불가능하게 한다.
+    },
+    "productOrderNo": 97108832,
+    "productPrice": 785000,
+    "orderer": "정형돈",
+    "ordererPhone": "01011113456",
+    "receiver": "이효리",
+    "receiverPhone": "01032707979"
+}, {
+    "_extraData" : {
+        "rowState" : "DISABLED_CHECK"       // 행 선택은 가능하나 체크박스만 비활성화 시킨다.
+    },
+    "productOrderNo": 37593770,
+    "productPrice": 10000,
+    "orderer": "박명수",
+    "ordererPhone": "07088963041",
+    "receiver": "정준하",
+    "receiverPhone": "01032707979"
+}, {
+    "_extraData" : {
+        "rowState" : "CHECKED"      // 행을 체크한 상태로 렌더링한다.
+    },
+    "productOrderNo": 29221898,
+    "productPrice": 12490,
+    "orderer": "길",
+    "ordererPhone": "01011113456",
+    "receiver": "박명수",
+    "receiverPhone": "01099988444"
+}, {
+    "_extraData" : {
+        "rowSpan" : {       // 행 병합을 할 컬럼과 병합할 수를 지정한다.
+            "orderer" : 3,
+            "receiver" : 3
+        }
+    },
+    "productOrderNo": 71159901,
+    "productPrice": 785000,
+    "orderer": "박명수",
+    "ordererPhone": "01099988444",
+    "receiver": "하하",
+    "receiverPhone": "0809998877"
+}, {
+    "productOrderNo": 57986529,
+    "productPrice": 25000,
+    "orderer": "이효리",
+    "ordererPhone": "01093118520",
+    "receiver": "유재석",
+    "receiverPhone": "0809998877"
+}, {
+    "productOrderNo": 8144758,
+    "productPrice": 3500,
+    "orderer": "유재석",
+    "ordererPhone": "01032413241",
+    "receiver": "길",
+    "receiverPhone": "0189634100"
+}, {
+    "_extraData" : {
+        "className" : {     // 행에 디자인 클래스를 적용한다. (다중 적용 가능)
+            "row" : ["red"]
+        }
+    },
+    "productOrderNo": 82301523,
+    "productPrice": 12490,
+    "orderer": "길",
+    "ordererPhone": "07088963041",
+    "receiver": "이효리",
+    "receiverPhone": "01093118520"
+}, {
+    "_extraData" : {
+        "className" : {     // 특정 컬럼에만 디자인 클래스를 적용한다. (다중 적용 가능)
+            "column" : {
+                "orderer" : ["blue"]
+            }
+        }
+    },
+    "productOrderNo": 64918427,
+    "productPrice": 65000,
+    "orderer": "정형돈",
+    "ordererPhone": "01011113456",
+    "receiver": "정형돈",
+    "receiverPhone": "07088963041"
+}, {
+    "_extraData" : {
+        "rowSpan" : {
+            "orderer" : 2,
+            "receiver" : 2
+        }
+    },
+    "productOrderNo": 38857278,
+    "productPrice": 17000,
+    "orderer": "길",
+    "ordererPhone": "0189634100",
+    "receiver": "정준하",
+    "receiverPhone": "0189634100"
+}, {
+    "productOrderNo": 51874887,
+    "productPrice": 25000,
+    "orderer": "정준하",
+    "ordererPhone": "01011113456",
+    "receiver": "이효리",
+    "receiverPhone": "0809998877"
+}]);
+</pre></div>
+        <div id="example-html" class="hidden"><pre class="prettyprint source">
+&lt;div id="grid">&lt;/div>
+</pre></div>
+    </article>
+</section>
+
+<script>
+    var exampleResult = document.getElementById('example-result');
+    var exampleJs = document.getElementById('example-js');
+    var exampleHtml = document.getElementById('example-html');
+    var exampleResultBtn = document.getElementById('example-result-btn');
+    var exampleJsBtn = document.getElementById('example-js-btn');
+    var exampleHtmlBtn = document.getElementById('example-html-btn');
+
+    function setActive(el) {
+        el.className += ' active';
+    }
+
+    function setInactive(el) {
+        el.className = el.className.replace(/\s*active\s*/g, '');
+    }
+
+    function show(el) {
+        el.className = el.className.replace(/\s*hidden\s*/g, '');
+    }
+
+    function hide(el) {
+        el.className += ' hidden';
+    }
+
+    function showJs() {
+        hide(exampleHtml);
+        hide(exampleResult);
+        setInactive(exampleHtmlBtn);
+        setInactive(exampleResultBtn);
+
+        show(exampleJs);
+        setActive(exampleJsBtn);
+    }
+
+    function showHtml() {
+        hide(exampleJs);
+        hide(exampleResult);
+        setInactive(exampleJsBtn);
+        setInactive(exampleResultBtn);
+
+        show(exampleHtml);
+        setActive(exampleHtmlBtn);
+    }
+
+    function showResult() {
+        hide(exampleJs);
+        hide(exampleHtml);
+        setInactive(exampleJsBtn);
+        setInactive(exampleHtmlBtn);
+
+        show(exampleResult);
+        setActive(exampleResultBtn);
+    }
+</script>
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        showLnbExamples();
+    </script>
+
+</body>
+</html>

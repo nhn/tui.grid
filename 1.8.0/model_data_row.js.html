@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grid</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="">
+        <img src="img/toast-ui.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">Grid</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example1.html">1. Basic Example</a><div class="hidden" id="example1_sub"></div></li><li><a href="tutorial-example2.html">2. Using Relation List</a><div class="hidden" id="example2_sub"></div></li><li><a href="tutorial-example3.html">3. Using _extraData</a><div class="hidden" id="example3_sub"></div></li><li><a href="tutorial-example4.html">4. Applying Themes</a><div class="hidden" id="example4_sub"></div></li><li><a href="tutorial-example5.html">5. Using Date-Picker Component</a><div class="hidden" id="example5_sub"></div></li><li><a href="tutorial-example6.html">6. Using Footer with column summary</a><div class="hidden" id="example6_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-addon_net.html">addon/net</a><div class="hidden" id="module:addon/net_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="module-addon_net.html#download">download</a></li><li><a href="module-addon_net.html#readData">readData</a></li><li><a href="module-addon_net.html#reloadData">reloadData</a></li><li><a href="module-addon_net.html#request">request</a></li><li><a href="module-addon_net.html#setPerPage">setPerPage</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="tui.Grid.html">Grid</a><div class="hidden" id="tui.Grid_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="tui.Grid.html#.applyTheme">applyTheme</a></li><li><a href="tui.Grid.html#.getInstanceById">getInstanceById</a></li><li><a href="tui.Grid.html#addCellClassName">addCellClassName</a></li><li><a href="tui.Grid.html#addRowClassName">addRowClassName</a></li><li><a href="tui.Grid.html#appendRow">appendRow</a></li><li><a href="tui.Grid.html#blur">blur</a></li><li><a href="tui.Grid.html#check">check</a></li><li><a href="tui.Grid.html#checkAll">checkAll</a></li><li><a href="tui.Grid.html#clear">clear</a></li><li><a href="tui.Grid.html#destroy">destroy</a></li><li><a href="tui.Grid.html#disable">disable</a></li><li><a href="tui.Grid.html#disableCheck">disableCheck</a></li><li><a href="tui.Grid.html#disableRow">disableRow</a></li><li><a href="tui.Grid.html#enable">enable</a></li><li><a href="tui.Grid.html#enableCheck">enableCheck</a></li><li><a href="tui.Grid.html#enableRow">enableRow</a></li><li><a href="tui.Grid.html#focus">focus</a></li><li><a href="tui.Grid.html#focusAt">focusAt</a></li><li><a href="tui.Grid.html#focusIn">focusIn</a></li><li><a href="tui.Grid.html#focusInAt">focusInAt</a></li><li><a href="tui.Grid.html#getAddOn">getAddOn</a></li><li><a href="tui.Grid.html#getCheckedRowKeyList">getCheckedRowKeyList</a></li><li><a href="tui.Grid.html#getCheckedRowList">getCheckedRowList</a></li><li><a href="tui.Grid.html#getColumnModelList">getColumnModelList</a></li><li><a href="tui.Grid.html#getColumnValues">getColumnValues</a></li><li><a href="tui.Grid.html#getElement">getElement</a></li><li><a href="tui.Grid.html#getIndexOfRow">getIndexOfRow</a></li><li><a href="tui.Grid.html#getModifiedRowList">getModifiedRowList</a></li><li><a href="tui.Grid.html#getPagination">getPagination</a></li><li><a href="tui.Grid.html#getRow">getRow</a></li><li><a href="tui.Grid.html#getRowAt">getRowAt</a></li><li><a href="tui.Grid.html#getRowCount">getRowCount</a></li><li><a href="tui.Grid.html#getRowList">getRowList</a></li><li><a href="tui.Grid.html#getRowSpanData">getRowSpanData</a></li><li><a href="tui.Grid.html#getSelectedRowKey">getSelectedRowKey</a></li><li><a href="tui.Grid.html#getValue">getValue</a></li><li><a href="tui.Grid.html#hideColumn">hideColumn</a></li><li><a href="tui.Grid.html#isChanged">isChanged</a></li><li><a href="tui.Grid.html#prependRow">prependRow</a></li><li><a href="tui.Grid.html#readyForKeyControl">readyForKeyControl</a></li><li><a href="tui.Grid.html#refreshLayout">refreshLayout</a></li><li><a href="tui.Grid.html#removeCellClassName">removeCellClassName</a></li><li><a href="tui.Grid.html#removeCheckedRows">removeCheckedRows</a></li><li><a href="tui.Grid.html#removeRow">removeRow</a></li><li><a href="tui.Grid.html#removeRowClassName">removeRowClassName</a></li><li><a href="tui.Grid.html#replaceRowList">replaceRowList</a></li><li><a href="tui.Grid.html#resetColumnWidths">resetColumnWidths</a></li><li><a href="tui.Grid.html#restore">restore</a></li><li><a href="tui.Grid.html#select">select</a></li><li><a href="tui.Grid.html#setBodyHeight">setBodyHeight</a></li><li><a href="tui.Grid.html#setColumnFixCount">setColumnFixCount</a></li><li><a href="tui.Grid.html#setColumnModelList">setColumnModelList</a></li><li><a href="tui.Grid.html#setColumnValues">setColumnValues</a></li><li><a href="tui.Grid.html#setDisplayRowCount">setDisplayRowCount</a></li><li><a href="tui.Grid.html#setFooterColumnContent">setFooterColumnContent</a></li><li><a href="tui.Grid.html#setRowList">setRowList</a></li><li><a href="tui.Grid.html#setSize">setSize</a></li><li><a href="tui.Grid.html#setValue">setValue</a></li><li><a href="tui.Grid.html#showColumn">showColumn</a></li><li><a href="tui.Grid.html#sort">sort</a></li><li><a href="tui.Grid.html#uncheck">uncheck</a></li><li><a href="tui.Grid.html#uncheckAll">uncheckAll</a></li><li><a href="tui.Grid.html#unselect">unselect</a></li><li><a href="tui.Grid.html#unSort">unSort</a></li><li><a href="tui.Grid.html#use">use</a></li><li><a href="tui.Grid.html#validate">validate</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="tui.Grid.html#event:beforeRequest">beforeRequest</a></li><li><a href="tui.Grid.html#event:click">click</a></li><li><a href="tui.Grid.html#event:clickCell">clickCell</a></li><li><a href="tui.Grid.html#event:dblclick">dblclick</a></li><li><a href="tui.Grid.html#event:dblclickCell">dblclickCell</a></li><li><a href="tui.Grid.html#event:errorResponse">errorResponse</a></li><li><a href="tui.Grid.html#event:failResponse">failResponse</a></li><li><a href="tui.Grid.html#event:mousedown">mousedown</a></li><li><a href="tui.Grid.html#event:mouseoutCell">mouseoutCell</a></li><li><a href="tui.Grid.html#event:mouseoverCell">mouseoverCell</a></li><li><a href="tui.Grid.html#event:reponse">reponse</a></li><li><a href="tui.Grid.html#event:selectRow">selectRow</a></li><li><a href="tui.Grid.html#event:successReponse">successReponse</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Namespaces</h3><ul><li><a href="tui.html">tui</a><div class="hidden" id="tui_sub"></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @fileoverview Grid 의 Data Source 에 해당하는 Model 정의
+ * @author NHN Ent. FE Development Team
+ */
+'use strict';
+
+var _ = require('underscore');
+
+var Model = require('../../base/model');
+var ExtraDataManager = require('./extraDataManager');
+var util = require('../../common/util');
+var classNameConst = require('../../common/classNameConst');
+
+// Propertie names that indicate meta data
+var PRIVATE_PROPERTIES = [
+    '_button',
+    '_number',
+    '_extraData'
+];
+
+// Error code for validtaion
+var VALID_ERR_REQUIRED = 'REQUIRED';
+var VALID_ERR_TYPE_NUMBER = 'TYPE_NUMBER';
+
+/**
+ * Data 중 각 행의 데이터 모델 (DataSource)
+ * @module model/data/row
+ * @extends module:base/model
+ * @ignore
+ */
+var Row = Model.extend(/**@lends module:model/data/row.prototype */{
+    initialize: function() {
+        Model.prototype.initialize.apply(this, arguments);
+        this.extraDataManager = new ExtraDataManager(this.get('_extraData'));
+
+        this.columnModel = this.collection.columnModel;
+        this.validateMap = {};
+        this.on('change', this._onChange, this);
+    },
+
+    idAttribute: 'rowKey',
+
+    /**
+     * Overrides Backbone's parse method for extraData not to be null.
+     * @override
+     * @param  {object} data - initial data
+     * @returns {object} - parsed data
+     */
+    parse: function(data) {
+        if (!data._extraData) {
+            data._extraData = {};
+        }
+        return data;
+    },
+
+    /**
+     * Event handler for change event in _extraData.
+     * Reset _extraData value with cloned object to trigger 'change:_extraData' event.
+     * @private
+     */
+    _triggerExtraDataChangeEvent: function() {
+        this.trigger('extraDataChanged', this.get('_extraData'));
+    },
+
+    /**
+     * Event handler for 'change' event.
+     * Executes callback functions, sync rowspan data, and validate data.
+     * @private
+     */
+    _onChange: function() {
+        var publicChanged = _.omit(this.changed, PRIVATE_PROPERTIES);
+
+        if (this.isDuplicatedPublicChanged(publicChanged)) {
+            return;
+        }
+        _.each(publicChanged, function(value, columnName) {
+            var columnModel = this.columnModel.getColumnModel(columnName);
+            if (!columnModel) {
+                return;
+            }
+            if (!this._executeChangeBeforeCallback(columnName)) {
+                return;
+            }
+            this.collection.syncRowSpannedData(this, columnName, value);
+            this._executeChangeAfterCallback(columnName);
+            this.validateCell(columnName, true);
+        }, this);
+    },
+
+    /**
+     * Validate the cell data of given columnName and returns the error code.
+     * @param  {Object} columnName - Column name
+     * @returns {String} Error code
+     * @private
+     */
+    _validateCellData: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var value = this.get(columnName);
+        var errorCode = '';
+
+        if (columnModel.isRequired &amp;&amp; util.isBlank(value)) {
+            errorCode = VALID_ERR_REQUIRED;
+        } else if (columnModel.dataType === 'number' &amp;&amp; !_.isNumber(value)) {
+            errorCode = VALID_ERR_TYPE_NUMBER;
+        }
+        return errorCode;
+    },
+
+    /**
+     * Validate a cell of given columnName.
+     * If the data is invalid, add 'invalid' class name to the cell.
+     * @param {String} columnName - Target column name
+     * @param {Boolean} isDataChanged - True if data is changed (called by onChange handler)
+     * @returns {String} - Error code
+     */
+    validateCell: function(columnName, isDataChanged) {
+        var errorCode;
+
+        if (!isDataChanged &amp;&amp; (columnName in this.validateMap)) {
+            return this.validateMap[columnName];
+        }
+
+        errorCode = this._validateCellData(columnName);
+        if (errorCode) {
+            this.addCellClassName(columnName, classNameConst.CELL_INVALID);
+        } else {
+            this.removeCellClassName(columnName, classNameConst.CELL_INVALID);
+        }
+        this.validateMap[columnName] = errorCode;
+
+        return errorCode;
+    },
+
+    /**
+     * columnModel 에 정의된 changeCallback 을 수행할 때 전달핼 이벤트 객체를 생성한다.
+     * @param {String} columnName 컬럼명
+     * @returns {{rowKey: (number|string), columnName: string, columnData: *, instance: {object}}}
+     *          changeCallback 에 전달될 이벤트 객체
+     * @private
+     */
+    _createChangeCallbackEvent: function(columnName) {
+        return {
+            rowKey: this.get('rowKey'),
+            columnName: columnName,
+            value: this.get(columnName),
+            instance: tui.Grid.getInstanceById(this.collection.gridId)
+        };
+    },
+
+    /**
+     * columnModel 에 정의된 changeBeforeCallback 을 수행한다.
+     * changeBeforeCallback 의 결과가 false 일 때, 데이터를 복원후 false 를 반환한다.
+     * @param {String} columnName   컬럼명
+     * @returns {boolean} changeBeforeCallback 수행 결과값
+     * @private
+     */
+    _executeChangeBeforeCallback: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            changeEvent, obj;
+
+        if (columnModel.editOption &amp;&amp; columnModel.editOption.changeBeforeCallback) {
+            changeEvent = this._createChangeCallbackEvent(columnName);
+
+            if (columnModel.editOption.changeBeforeCallback(changeEvent) === false) {
+                obj = {};
+                obj[columnName] = this.previous(columnName);
+                this.set(obj);
+                this.trigger('restore', columnName);
+                return false;
+            }
+        }
+        return true;
+    },
+
+    /**
+     * columnModel 에 정의된 changeAfterCallback 을 수행한다.
+     * @param {String} columnName - 컬럼명
+     * @returns {boolean} changeAfterCallback 수행 결과값
+     * @private
+     */
+    _executeChangeAfterCallback: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            changeEvent;
+
+        if (columnModel.editOption &amp;&amp; columnModel.editOption.changeAfterCallback) {
+            changeEvent = this._createChangeCallbackEvent(columnName);
+            return !!(columnModel.editOption.changeAfterCallback(changeEvent));
+        }
+        return true;
+    },
+
+    /**
+     * Returns the Array of private property names
+     * @returns {array} An array of private property names
+     */
+    getPrivateProperties: function() {
+        return PRIVATE_PROPERTIES;
+    },
+
+    /**
+     * Returns the object that contains rowState info.
+     * @returns {{isDisabled: boolean, isDisabledCheck: boolean, isChecked: boolean}} rowState 정보
+     */
+    getRowState: function() {
+        return this.extraDataManager.getRowState();
+    },
+
+    /**
+     * Returns an array of all className, related with given columnName.
+     * @param {String} columnName - Column name
+     * @returns {Array.&lt;String>} - An array of classNames
+     */
+    getClassNameList: function(columnName) {
+        var columnModel = this.columnModel.getColumnModel(columnName),
+            isMetaColumn = util.isMetaColumn(columnName),
+            classNameList = this.extraDataManager.getClassNameList(columnName),
+            cellState = this.getCellState(columnName);
+
+        if (columnModel.className) {
+            classNameList.push(columnModel.className);
+        }
+        if (columnModel.isEllipsis) {
+            classNameList.push(classNameConst.CELL_ELLIPSIS);
+        }
+        if (columnModel.isRequired) {
+            classNameList.push(classNameConst.CELL_REQUIRED);
+        }
+        if (isMetaColumn) {
+            classNameList.push(classNameConst.CELL_HEAD);
+        } else if (cellState.isEditable) {
+            classNameList.push(classNameConst.CELL_EDITABLE);
+        }
+        if (cellState.isDisabled) {
+            classNameList.push(classNameConst.CELL_DISABLED);
+        }
+
+        return this._makeUniqueStringArray(classNameList);
+    },
+
+    /**
+     * Returns a new array, which splits all comma-separated strings in the targetList and removes duplicated item.
+     * @param  {Array} targetArray - Target array
+     * @returns {Array} - New array
+     */
+    _makeUniqueStringArray: function(targetArray) {
+        var singleStringArray = _.uniq(targetArray.join(' ').split(' '));
+        return _.without(singleStringArray, '');
+    },
+
+    /**
+     * Returns the state of the cell identified by a given column name.
+     * @param {String} columnName - column name
+     * @returns {{isEditable: boolean, isDisabled: boolean}}
+     */
+    getCellState: function(columnName) {
+        var notEditableTypeList = ['_number', 'normal'],
+            columnModel = this.columnModel,
+            isDisabled = this.collection.isDisabled,
+            isEditable = true,
+            editType = columnModel.getEditType(columnName),
+            rowState, relationResult;
+
+        relationResult = this.executeRelationCallbacksAll(['isDisabled', 'isEditable'])[columnName];
+        rowState = this.getRowState();
+
+        if (!isDisabled) {
+            if (columnName === '_button') {
+                isDisabled = rowState.isDisabledCheck;
+            } else {
+                isDisabled = rowState.isDisabled;
+            }
+            isDisabled = isDisabled || !!(relationResult &amp;&amp; relationResult.isDisabled);
+        }
+
+        if (_.contains(notEditableTypeList, editType)) {
+            isEditable = false;
+        } else {
+            isEditable = !(relationResult &amp;&amp; relationResult.isEditable === false);
+        }
+
+        return {
+            isEditable: isEditable,
+            isDisabled: isDisabled
+        };
+    },
+
+    /**
+     * Returns whether the cell identified by a given column name is editable.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
+    isEditable: function(columnName) {
+        var cellState = this.getCellState(columnName);
+
+        return !cellState.isDisabled &amp;&amp; cellState.isEditable;
+    },
+
+    /**
+     * Returns whether the cell identified by a given column name is disabled.
+     * @param {String} columnName - column name
+     * @returns {Boolean}
+     */
+    isDisabled: function(columnName) {
+        var cellState = this.getCellState(columnName);
+
+        return cellState.isDisabled;
+    },
+
+    /**
+     * getRowSpanData
+     * rowSpan 설정값을 반환한다.
+     * @param {String} [columnName] 인자가 존재하지 않을 경우, 행 전체의 rowSpanData 를 맵 형태로 반환한다.
+     * @returns {*|{count: number, isMainRow: boolean, mainRowKey: *}}   rowSpan 설정값
+     */
+    getRowSpanData: function(columnName) {
+        var isRowSpanEnable = this.collection.isRowSpanEnable(),
+            rowKey = this.get('rowKey');
+
+        return this.extraDataManager.getRowSpanData(columnName, rowKey, isRowSpanEnable);
+    },
+
+    /**
+     * Returns the _extraData.height
+     * @returns {number}
+     */
+    getHeight: function() {
+        return this.extraDataManager.getHeight();
+    },
+
+    /**
+     * Sets the height of the row
+     * @param {number} height - height
+     */
+    setHeight: function(height) {
+        this.extraDataManager.setHeight(height);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * rowSpanData를 설정한다.
+     * @param {string} columnName - 컬럼명
+     * @param {object} data - rowSpan 정보를 가진 객체
+     */
+    setRowSpanData: function(columnName, data) {
+        this.extraDataManager.setRowSpanData(columnName, data);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * rowState 를 설정한다.
+     * @param {string} rowState 해당 행의 상태값. 'DISABLED|DISABLED_CHECK|CHECKED' 중 하나를 설정한다.
+     * @param {boolean} silent 내부 change 이벤트 발생 여부
+     */
+    setRowState: function(rowState, silent) {
+        this.extraDataManager.setRowState(rowState);
+        if (!silent) {
+            this._triggerExtraDataChangeEvent();
+        }
+    },
+
+    /**
+     * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 설정한다.
+     * @param {String} columnName 컬럼 이름
+     * @param {String} className 지정할 디자인 클래스명
+     */
+    addCellClassName: function(columnName, className) {
+        this.extraDataManager.addCellClassName(columnName, className);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * rowKey에 해당하는 행 전체에 CSS className 을 설정한다.
+     * @param {String} className 지정할 디자인 클래스명
+     */
+    addClassName: function(className) {
+        this.extraDataManager.addClassName(className);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * rowKey 와 columnName 에 해당하는 Cell 에 CSS className 을 제거한다.
+     * @param {String} columnName 컬럼 이름
+     * @param {String} className 지정할 디자인 클래스명
+     */
+    removeCellClassName: function(columnName, className) {
+        this.extraDataManager.removeCellClassName(columnName, className);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * rowKey 에 해당하는 행 전체에 CSS className 을 제거한다.
+     * @param {String} className 지정할 디자인 클래스명
+     */
+    removeClassName: function(className) {
+        this.extraDataManager.removeClassName(className);
+        this._triggerExtraDataChangeEvent();
+    },
+
+    /**
+     * ctrl + c 로 복사 기능을 사용할 때 list 형태(select, button, checkbox)의 cell 의 경우, 해당 value 에 부합하는 text로 가공한다.
+     * List type 의 경우 데이터 값과 editOption.list 의 text 값이 다르기 때문에
+     * text 로 전환해서 반환할 때 처리를 하여 변환한다.
+     *
+     * @param {String} columnName   컬럼명
+     * @returns {String} text 형태로 가공된 문자열
+     * @private
+     */
+    _getListTypeVisibleText: function(columnName) {
+        var value = this.get(columnName);
+        var columnModel = this.columnModel.getColumnModel(columnName);
+        var resultOptionList, editOptionList, typeExpected, valueList;
+
+        if (tui.util.isExisty(tui.util.pick(columnModel, 'editOption', 'list'))) {
+            resultOptionList = this.executeRelationCallbacksAll(['optionListChange'])[columnName];
+            editOptionList = resultOptionList &amp;&amp; resultOptionList.optionList ?
+                    resultOptionList.optionList : columnModel.editOption.list;
+
+            typeExpected = typeof editOptionList[0].value;
+            valueList = util.toString(value).split(',');
+            if (typeExpected !== typeof valueList[0]) {
+                valueList = _.map(valueList, function(val) {
+                    return util.convertValueType(val, typeExpected);
+                });
+            }
+            _.each(valueList, function(val, index) {
+                var item = _.findWhere(editOptionList, {value: val});
+                valueList[index] = item &amp;&amp; item.value || '';
+            }, this);
+
+            return valueList.join(',');
+        }
+        return '';
+    },
+
+    /**
+     * Returns whether the given edit type is list type.
+     * @param {String} editType - edit type
+     * @returns {Boolean}
+     * @private
+     */
+    _isListType: function(editType) {
+        return _.contains(['select', 'radio', 'checkbox'], editType);
+    },
+
+    /**
+     * change 이벤트 발생시 동일한 changed 객체의 public 프라퍼티가 동일한 경우 중복 처리를 막기 위해 사용한다.
+     * 10ms 내에 같은 객체로 함수 호출이 일어나면 true를 반환한다.
+     * @param {object} publicChanged 비교할 객체
+     * @returns {boolean} 중복이면 true, 아니면 false
+     */
+    isDuplicatedPublicChanged: function(publicChanged) {
+        if (this._timeoutIdForChanged &amp;&amp; _.isEqual(this._lastPublicChanged, publicChanged)) {
+            return true;
+        }
+        clearTimeout(this._timeoutIdForChanged);
+        this._timeoutIdForChanged = setTimeout(_.bind(function() {
+            this._timeoutIdForChanged = null;
+        }, this), 10); // eslint-disable-line no-magic-numbers
+        this._lastPublicChanged = publicChanged;
+
+        return false;
+    },
+
+    /**
+     * Returns the text string to be used when copying the cell value to clipboard.
+     * @param {String} columnName - column name
+     * @returns {String}
+     */
+    getValueString: function(columnName) {
+        var editType = this.columnModel.getEditType(columnName);
+        var column = this.columnModel.getColumnModel(columnName);
+        var value = this.get(columnName);
+
+        if (this._isListType(editType)) {
+            if (tui.util.isExisty(tui.util.pick(column, 'editOption', 'list', 0, 'value'))) {
+                value = this._getListTypeVisibleText(columnName);
+            } else {
+                throw this.error('Check "' + columnName + '"\'s editOption.list property out in your ColumnModel.');
+            }
+        } else if (editType === 'password') {
+            value = '';
+        }
+
+        return util.toString(value);
+    },
+
+    /**
+     * 컬럼모델에 정의된 relation 들을 수행한 결과를 반환한다. (기존 affectOption)
+     * @param {Array} callbackNameList 반환값의 결과를 확인할 대상 callbackList.
+     *        (default : ['optionListChange', 'isDisabled', 'isEditable'])
+     * @returns {{}|{columnName: {attribute: *}}} row 의 columnName 에 적용될 속성값.
+     */
+    executeRelationCallbacksAll: function(callbackNameList) {
+        var rowData = this.attributes,
+            relationListMap = this.columnModel.get('relationListMap'),
+            result = {};
+
+        if (_.isEmpty(callbackNameList)) {
+            callbackNameList = ['optionListChange', 'isDisabled', 'isEditable'];
+        }
+
+        _.each(relationListMap, function(relationList, columnName) {
+            var value = rowData[columnName];
+
+            _.each(relationList, function(relation) {
+                this._executeRelationCallback(relation, callbackNameList, value, rowData, result);
+            }, this);
+        }, this);
+
+        return result;
+    },
+
+    /**
+     * Returns a name of attribute matching given callbackName.
+     * @param {string} callbackName - callback name
+     * @private
+     * @returns {string}
+     */
+    _getRelationResultAttrName: function(callbackName) {
+        switch (callbackName) {
+            case 'optionListChange':
+                return 'optionList';
+            case 'isDisabled':
+                return 'isDisabled';
+            case 'isEditable':
+                return 'isEditable';
+            default:
+                return '';
+        }
+    },
+
+    /**
+     * Executes relation callback
+     * @param {object} relation - relation object
+     *   @param {array} relation.columnList - target column list
+     *   @param {function} [relation.isDisabled] - callback function for isDisabled attribute
+     *   @param {function} [relation.isEditable] - callback function for isDisabled attribute
+     *   @param {function} [relation.optionListChange] - callback function for changing option list
+     * @param {array} callbackNameList - an array of callback names
+     * @param {(string|number)} value - cell value
+     * @param {object} rowData - all value of the row
+     * @param {object} result - object to store the result of callback functions
+     * @private
+     */
+    _executeRelationCallback: function(relation, callbackNameList, value, rowData, result) {
+        var rowState = this.getRowState(),
+            targetColumnNames = relation.columnList;
+
+        _.each(callbackNameList, function(callbackName) {
+            var attrName, callback;
+
+            if (!rowState.isDisabled || callbackName !== 'isDisabled') {
+                callback = relation[callbackName];
+                if (typeof callback === 'function') {
+                    attrName = this._getRelationResultAttrName(callbackName);
+                    if (attrName) {
+                        _.each(targetColumnNames, function(targetColumnName) {
+                            result[targetColumnName] = result[targetColumnName] || {};
+                            result[targetColumnName][attrName] = callback(value, rowData);
+                        }, this);
+                    }
+                }
+            }
+        }, this);
+    }
+}, {
+    privateProperties: PRIVATE_PROPERTIES
+});
+
+module.exports = Row;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="img/toast-ui.png" style="">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
