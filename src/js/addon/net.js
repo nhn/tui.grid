@@ -691,7 +691,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _ajax: function(options) {
-        var eventData = new GridEvent(options.data);
+        var gridEvent = new GridEvent(null, options.data);
         var params;
 
         /**
@@ -699,8 +699,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
          * @event tui.Grid#beforeRequest
          * @type {module:event/gridEvent}
          */
-        this.trigger('beforeRequest', eventData);
-        if (eventData.isStopped()) {
+        this.trigger('beforeRequest', gridEvent);
+        if (gridEvent.isStopped()) {
             return;
         }
 
@@ -741,7 +741,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      */
     _onSuccess: function(callback, options, responseData, status, jqXHR) {
         var message = responseData && responseData.message;
-        var eventData = new GridEvent({
+        var gridEvent = new GridEvent(null, {
             httpStatus: status,
             requestType: options.requestType,
             requestParameter: options.data,
@@ -757,8 +757,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
          * @property {string} requestParameter - Request parameters
          * @property {Object} responseData - response data
          */
-        this.trigger('response', eventData);
-        if (eventData.isStopped()) {
+        this.trigger('response', gridEvent);
+        if (gridEvent.isStopped()) {
             return;
         }
         if (responseData && responseData.result) {
@@ -771,8 +771,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
              * @property {string} requestParameter - Request parameter
              * @property {Object} responseData - response data
              */
-            this.trigger('successResponse', eventData);
-            if (eventData.isStopped()) {
+            this.trigger('successResponse', gridEvent);
+            if (gridEvent.isStopped()) {
                 return;
             }
             if (_.isFunction(callback)) {
@@ -788,8 +788,8 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
              * @property {string} requestParameter - Request parameter
              * @property {Object} responseData - response data
              */
-            this.trigger('failResponse', eventData);
-            if (eventData.isStopped()) {
+            this.trigger('failResponse', gridEvent);
+            if (gridEvent.isStopped()) {
                 return;
             }
             if (message) {
@@ -808,7 +808,7 @@ var Net = View.extend(/**@lends module:addon/net.prototype */{
      * @private
      */
     _onError: function(callback, options, jqXHR, status) {
-        var eventData = new GridEvent({
+        var eventData = new GridEvent(null, {
             httpStatus: status,
             requestType: options.requestType,
             requestParameter: options.data,

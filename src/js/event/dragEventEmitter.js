@@ -29,9 +29,8 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
      * @param {Object} data - start data (to be used in dragmove, dragend event)
      */
     start: function(ev, data) {
-        var gridEvent = new GridEvent();
+        var gridEvent = new GridEvent(ev, data);
 
-        gridEvent.setData(data);
         this.domEventBus.trigger('dragstart:' + this.type, gridEvent);
 
         if (!gridEvent.isStopped()) {
@@ -83,9 +82,11 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
      * @private
      */
     _onMouseMove: function(ev) {
-        var gridEvent = new GridEvent(ev);
-
-        gridEvent.setData({startData: this.startData});
+        var gridEvent = new GridEvent(ev, {
+            startData: this.startData,
+            pageX: ev.pageX,
+            pageY: ev.pageY
+        });
 
         if (_.isFunction(this.onDragMove)) {
             this.onDragMove(gridEvent);
@@ -102,9 +103,9 @@ var DragEventEmitter = tui.util.defineClass(/**@lends module:event/dragEventEmit
      * @private
      */
     _onMouseUp: function(ev) {
-        var gridEvent = new GridEvent(ev);
-
-        gridEvent.setData({startData: this.startData});
+        var gridEvent = new GridEvent(ev, {
+            startData: this.startData
+        });
 
         if (_.isFunction(this.onDragEnd)) {
             this.onDragEnd(gridEvent);

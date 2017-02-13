@@ -170,7 +170,10 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
      */
     _triggerMousedown: function(ev) {
         var startTime, endTime, hasPaused;
-        var gridEvent = new GridEvent(ev);
+        var gridEvent = new GridEvent(ev, {
+            pageX: ev.pageX,
+            pageY: ev.pageY
+        });
 
         startTime = (new Date()).getTime();
         this.domEventBus.trigger('mousedown:body', gridEvent);

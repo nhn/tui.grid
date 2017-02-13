@@ -290,17 +290,19 @@ var Selection = Model.extend(/**@lends module:model/selection.prototype */{
     _onMouseDownBody: function(gridEvent) {
         var address = this.coordConverterModel.getIndexFromMousePosition(gridEvent.pageX, gridEvent.pageY, true);
         var selType = this._getTypeByColumnIndex(address.column);
-        var rowIndex = address.row;
-        var columnIndex = address.column - this.columnModel.getVisibleMetaColumnCount();
+        var rowIndex, columnIndex;
 
         if (!selType) {
             return;
         }
 
+        rowIndex = address.row;
+        columnIndex = address.column - this.columnModel.getVisibleMetaColumnCount();
+
         if (gridEvent.shiftKey) {
             this.update(rowIndex, Math.max(columnIndex, 0));
         } else if (selType === typeConst.ROW) {
-            this.selectRow(address.row);
+            this.selectRow(rowIndex);
         } else {
             this.focusModel.focusAt(rowIndex, columnIndex);
             this.end();

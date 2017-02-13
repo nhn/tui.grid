@@ -69,8 +69,9 @@ var Toolbar = View.extend(/**@lends module:view/toolbar.prototype */{
 
         if (btnType) {
             ev.preventDefault();
-            gridEvent = new GridEvent(ev);
-            gridEvent.setData({type: btnType});
+            gridEvent = new GridEvent(ev, {
+                type: btnType
+            });
             this.domEventBus.trigger('click:excel', gridEvent);
         }
     },

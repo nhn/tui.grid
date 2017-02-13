@@ -134,13 +134,13 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * doubleClick 이벤트 핸들러
-     * @param {MouseEvent} mouseEvent 이벤트 객체
+     * Event handler for the dblclick event
+     * @param {MouseEvent} ev - MouseEvent
      * @private
      */
-    _onDblClick: function(mouseEvent) {
-        var eventData = new GridEvent(mouseEvent);
-        var $target = $(mouseEvent.target);
+    _onDblClick: function(ev) {
+        var eventData = new GridEvent(ev);
+        var $target = $(ev.target);
 
         /**
          * Occurs when a mouse button is double clicked on the Grid.
@@ -174,16 +174,16 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * mouseover 이벤트 발생시 실행될 핸들러
+     * Event listener for the mouseover event
+     * @param {MouseEvent} ev - MouseEvent
      * @private
-     * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
      */
-    _onMouseOver: function(mouseEvent) {
-        var $target = $(mouseEvent.target),
+    _onMouseOver: function(ev) {
+        var $target = $(ev.target),
             eventData;
 
         if (this._isCellElement($target)) {
-            eventData = new GridEvent(mouseEvent);
+            eventData = new GridEvent(ev);
             /**
              * Occurs when a mouse pointer is moved onto a table cell
              * The event object has all properties copied from the native MouseEvent.
@@ -199,16 +199,16 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
     },
 
     /**
-     * mouseout 이벤트 발생시 실행될 핸들러
+     * Event listener for the mouseout event
      * @private
-     * @param {MouseEvent} mouseEvent 마우스 이벤트 객체
+     * @param {MouseEvent} ev - MouseEvent
      */
-    _onMouseOut: function(mouseEvent) {
-        var $target = $(mouseEvent.target);
+    _onMouseOut: function(ev) {
+        var $target = $(ev.target);
         var eventData;
 
         if (this._isCellElement($target)) {
-            eventData = new GridEvent(mouseEvent);
+            eventData = new GridEvent(ev);
             /**
              * Occurs when a mouse pointer is moved off from a table cell
              * The event object has all properties copied from the native MouseEvent.
@@ -275,12 +275,12 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
 
     /**
      * Event handler for 'mousedown' event
-     * @param {MouseEvent} mouseEvent - Mouse event
+     * @param {MouseEvent} ev - Mouse event
      * @private
      */
-    _onMouseDown: function(mouseEvent) {
-        var $target = $(mouseEvent.target);
-        var eventData = new GridEvent(mouseEvent);
+    _onMouseDown: function(ev) {
+        var $target = $(ev.target);
+        var gridEvent = new GridEvent(ev);
         var shouldFocus = !$target.is('input, a, button, select, textarea');
 
         /**
@@ -290,15 +290,15 @@ var Container = View.extend(/**@lends module:view/container.prototype */{
          * @event tui.Grid#mousedown
          * @type {module:event/gridEvent}
          */
-        this.domEventBus.trigger('mousedown', eventData);
+        this.domEventBus.trigger('mousedown', gridEvent);
 
         if (shouldFocus) {
-            mouseEvent.preventDefault();
+            ev.preventDefault();
 
             // fix IE8 bug (cancelling event doesn't prevent focused element from losing foucs)
             $target[0].unselectable = true;
 
-            this.domEventBus.trigger('mousedown:focus', eventData);
+            this.domEventBus.trigger('mousedown:focus', gridEvent);
         }
     },
 

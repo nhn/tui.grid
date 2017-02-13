@@ -13,9 +13,14 @@ var _ = require('underscore');
  * @ignore
  */
 var GridEvent = tui.util.defineClass(/**@lends module:event/gridEvent.prototype */{
-    init: function(data) {
+    init: function(nativeEvent, data) {
         this._stopped = false;
-        this.setData(data);
+        if (nativeEvent) {
+            this.nativeEvent = nativeEvent;
+        }
+        if (data) {
+            this.setData(data);
+        }
     },
 
     /**

@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var FocusModel = require('model/focus');
@@ -111,7 +113,7 @@ describe('model/focus', function() {
             });
 
             spyOn(focusModel, 'focusIn');
-            domEventBus.trigger('clickCell', new GridEvent({
+            domEventBus.trigger('clickCell', new GridEvent(null, {
                 rowKey: 0,
                 columnName: 'c1'
             }));
