@@ -36,7 +36,8 @@ var defaultOptions = {
     scrollX: true,
     scrollY: true,
     useClientSort: true,
-    toolbar: null
+    toolbar: null,
+    copyOption: null
 };
 
 /**
@@ -81,6 +82,7 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             columnFixCount: options.columnFixCount,
             selectType: options.selectType,
             columnMerge: options.columnMerge,
+            copyOption: options.copyOption,
             columnModelList: options.columnModelList
         });
     },

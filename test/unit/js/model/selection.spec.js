@@ -138,17 +138,6 @@ describe('model/selection', function() {
                 );
                 selection.end();
             });
-
-            it('if useFormattedValue is true, use formatted value', function() {
-                selection.start(0, 1);
-                selection.update(2, 2);
-
-                expect(selection.getValuesToString(true)).toEqual(
-                    '*0-2*\t1\n' +
-                    '*1-2*\t2\n' +
-                    '*2-2*\t3'
-                );
-            });
         });
 
         describe('selectAll', function() {

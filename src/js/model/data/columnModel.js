@@ -38,7 +38,10 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
         selectType: '',
         columnModelMap: {},
         relationListMap: {},
-        columnMerge: []
+        columnMerge: [],
+        copyOption: {
+            useFormattedValue: false
+        }
     },
 
     /**
@@ -437,6 +440,17 @@ var ColumnModel = Model.extend(/**@lends module:model/data/columnModel.prototype
             }
         }
         return _.uniq(searchedNames);
+    },
+
+    /**
+     * Returns the copy option of given column.
+     * @param {string} columnName - column name
+     * @returns {{useFormattedValue: boolean}}
+     */
+    getCopyOption: function(columnName) {
+        var columnModel = this.getColumnModel(columnName);
+
+        return _.extend({}, this.get('copyOption'), columnModel.copyOption);
     },
 
     /**
