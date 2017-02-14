@@ -76,10 +76,8 @@ var PublicEventEmitter = tui.util.defineClass(/**@lends module:publicEventEmitte
             'click',
             'dblclick',
             'mousedown',
-            'clickCell',
-            'dblclickCell',
-            'mouseoverCell',
-            'mouseoutCell'
+            'mouseover',
+            'mouseout'
         ]);
     },
 

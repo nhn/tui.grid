@@ -21,7 +21,7 @@ var GridEvent = require('../event/gridEvent');
  */
 var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     initialize: function(attrs, options) {
-        var editEventName = options.singleClickEdit ? 'clickCell' : 'dblclickCell';
+        var editEventName = options.singleClickEdit ? 'click:cell' : 'dblclick:cell';
         var domEventBus;
 
         Model.prototype.initialize.apply(this, arguments);
@@ -99,17 +99,12 @@ var Focus = Model.extend(/**@lends module:model/focus.prototype */{
     },
 
     /**
-     * Event handler for 'clickCell' or 'dblclickCell' event on domEventBus
+     * Event handler for 'click:cell' or 'dblclick:cell' event on domEventBus
      * @param {module:event/gridEvent} ev - event data
      * @private
      */
     _onMouseClickEdit: function(ev) {
-        var rowKey = ev.rowKey;
-        var columnName = ev.columnName;
-
-        if (!ev.isStopped() && !_.isNull(rowKey)) {
-            this.focusIn(rowKey, columnName);
-        }
+        this.focusIn(ev.rowKey, ev.columnName);
     },
 
     /**

@@ -113,7 +113,7 @@ describe('model/focus', function() {
             });
 
             spyOn(focusModel, 'focusIn');
-            domEventBus.trigger('clickCell', new GridEvent(null, {
+            domEventBus.trigger('click:cell', new GridEvent(null, {
                 rowKey: 0,
                 columnName: 'c1'
             }));

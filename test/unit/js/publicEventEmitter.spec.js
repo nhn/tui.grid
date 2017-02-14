@@ -1,5 +1,6 @@
 'use strict';
 
+var Backbone = require('backbone');
 var PublicEventEmitter = require('publicEventEmitter');
 
 function testTrigger(target, publicObject, eventName, publicEventName) {
@@ -63,20 +64,12 @@ describe('publicEventEmitter', function() {
             testTrigger(target, publicObject, 'mousedown');
         });
 
-        it('should listen clickCell event', function() {
-            testTrigger(target, publicObject, 'clickCell');
-        });
-
-        it('should listen dblclickCell event', function() {
-            testTrigger(target, publicObject, 'dblclickCell');
-        });
-
         it('should listen mouseoverCell event', function() {
-            testTrigger(target, publicObject, 'mouseoverCell');
+            testTrigger(target, publicObject, 'mouseover');
         });
 
         it('should listen mouseoutCell event', function() {
-            testTrigger(target, publicObject, 'mouseoutCell');
+            testTrigger(target, publicObject, 'mouseout');
         });
     });
 

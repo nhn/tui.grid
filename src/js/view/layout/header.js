@@ -20,6 +20,9 @@ var ATTR_COLUMN_NAME = constMap.attrName.COLUMN_NAME;
 var CELL_BORDER_WIDTH = constMap.dimension.CELL_BORDER_WIDTH;
 var TABLE_BORDER_WIDTH = constMap.dimension.TABLE_BORDER_WIDTH;
 
+// Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
+var MIN_INTERVAL_FOR_PAUSED = 200;
+
 /**
  * Header Layout View
  * @module view/layout/header
@@ -223,6 +226,10 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
         var $target = $(ev.target);
         var columnName;
 
+        if (!this._triggerPublicMousedown(ev)) {
+            return;
+        }
+
         if ($target.hasClass(classNameConst.BTN_SORT)) {
             return;
         }
@@ -233,6 +240,27 @@ var Header = View.extend(/**@lends module:view/layout/header.prototype */{
                 columnName: columnName
             });
         }
+    },
+
+    /**
+     * Trigger mousedown:body event on domEventBus and returns the result
+     * @param {MouseEvent} ev - MouseEvent
+     * @returns {module:event/gridEvent}
+     * @private
+     */
+    _triggerPublicMousedown: function(ev) {
+        var startTime, endTime;
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($(ev.target)));
+        var paused;
+
+        startTime = (new Date()).getTime();
+        this.domEventBus.trigger('mousedown', gridEvent);
+        endTime = (new Date()).getTime();
+
+        // check if the model window (alert or confirm) was popped up
+        paused = (endTime - startTime) > MIN_INTERVAL_FOR_PAUSED;
+
+        return !gridEvent.isStopped() && !paused;
     },
 
     /**
