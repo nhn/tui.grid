@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <title>1. Basic Example</title>
+    <link rel="stylesheet" type="text/css" href="../dist/grid.css" />
+</head>
+<body>
+<div class="code-html">
+<div id="grid"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone.js"></script>
+<script type="text/javascript" src="https://rawgit.com/nhnent/tui.code-snippet/1.2.0/code-snippet.js"></script>
+<script type="text/javascript" src="https://rawgit.com/nhnent/tui.component.pagination/1.0.3/pagination.js"></script>
+<script type="text/javascript" src="../dist/grid.js"></script>
+<script type="text/javascript" src="./data/basic-dummy.js"></script>
+<script type="text/javascript" class="code-js">
+
+var grid = new tui.Grid({
+    el: $('#grid')
+});
+
+grid.setColumnModelList([
+    {
+        title: 'Name',
+        columnName: 'name'
+    },
+    {
+        title: 'Type',
+        columnName: 'type'
+    },
+    {
+        title: 'Debut',
+        columnName: 'debut'
+    },
+    {
+        title: 'Country',
+        columnName: 'country'
+    },
+    {
+        title: 'Genre',
+        columnName: 'genre'
+    }
+]);
+
+grid.setRowList(dummyRowList);
+</script>
+</html>
