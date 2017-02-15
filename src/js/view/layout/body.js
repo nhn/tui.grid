@@ -11,7 +11,6 @@ var DragEventEmitter = require('../../event/dragEventEmitter');
 var GridEvent = require('../../event/gridEvent');
 var constMap = require('../../common/constMap');
 var classNameConst = require('../../common/classNameConst');
-var attrNameConst = constMap.attrName;
 var frameConst = constMap.frame;
 
 // Minimum time (ms) to detect if an alert or confirm dialog has been displayed.
@@ -124,17 +123,6 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Test if given target element is dummy cell
-     * @param {jQuery} $target - target element
-     * @returns {boolean}
-     */
-    _isDummyCell: function($target) {
-        var $tr = $target.closest('tr');
-
-        return $tr.length && !$tr.attr(attrNameConst.ROW_KEY);
-    },
-
-    /**
      * Mousedown event handler
      * @param {MouseEvent} ev - MouseEvent
      * @private
@@ -143,13 +131,11 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
         var $target = $(ev.target);
         var isTargetInput = $target.is('input, teaxarea');
 
-        if (this._isDummyCell($target)) {
+        if (!this._triggerPublicMousedown(ev)) {
             return;
         }
 
-        if (!this._triggerMousedown(ev)) {
-            return;
-        }
+        this._triggerBodyMousedown(ev);
 
         if (isTargetInput && ev.shiftKey) {
             ev.preventDefault();
@@ -163,23 +149,46 @@ var Body = View.extend(/**@lends module:view/layout/body.prototype */{
     },
 
     /**
-     * Trigger mousedown:body event on domEventBus and returns the result
+     * Trigger mousedown event on domEventBus and returns the result
      * @param {MouseEvent} ev - MouseEvent
-     * @returns {boolean}
+     * @returns {module:event/gridEvent}
      * @private
      */
-    _triggerMousedown: function(ev) {
-        var startTime, endTime, hasPaused;
-        var gridEvent = new GridEvent(ev);
+    _triggerPublicMousedown: function(ev) {
+        var startTime, endTime;
+        var gridEvent = new GridEvent(ev, GridEvent.getTargetInfo($(ev.target)));
+        var result = true;
 
-        startTime = (new Date()).getTime();
+        if (gridEvent.targetType === GridEvent.targetTypeConst.DUMMY) {
+            result = false;
+        } else {
+            startTime = (new Date()).getTime();
+            this.domEventBus.trigger('mousedown', gridEvent);
+
+            if (gridEvent.isStopped()) {
+                result = false;
+            } else {
+                // check if the model window (alert or confirm) was popped up
+                endTime = (new Date()).getTime();
+                result = (endTime - startTime) <= MIN_INTERVAL_FOR_PAUSED;
+            }
+        }
+        return result;
+    },
+
+    /**
+     * Trigger mousedown:body event on domEventBus
+     * @param {MouseEvent} ev - MouseEvent
+     * @private
+     */
+    _triggerBodyMousedown: function(ev) {
+        var gridEvent = new GridEvent(ev, {
+            pageX: ev.pageX,
+            pageY: ev.pageY,
+            shiftKey: ev.shiftKey
+        });
+
         this.domEventBus.trigger('mousedown:body', gridEvent);
-        endTime = (new Date()).getTime();
-
-        // check if the model window (alert or confirm) was popped up
-        hasPaused = (endTime - startTime) > MIN_INTERVAL_FOR_PAUSED;
-
-        return !gridEvent.isStopped() && !hasPaused;
     },
 
     /**

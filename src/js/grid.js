@@ -649,23 +649,6 @@ tui.Grid = View.extend(/**@lends tui.Grid.prototype */{
     },
 
     /**
-     * Selects the row identified by the rowKey.
-     * @param {(number|string)} rowKey - The unique key of the row
-     */
-    select: function(rowKey) {
-        var firstColumn = this.modelManager.columnModel.at(0, true);
-
-        this.modelManager.focusModel.focus(rowKey, firstColumn.columnName);
-    },
-
-    /**
-     * Unselects selected rows.
-     */
-    unselect: function() {
-        this.modelManager.focusModel.unselect(true);
-    },
-
-    /**
      * Sets the count of fixed column.
      * @param {number} count - The count of column to be fixed
      */

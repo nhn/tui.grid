@@ -67,6 +67,34 @@ var util = {
     },
 
     /**
+     * Convert a string value to number.
+     * If the value cannot be converted to number, returns original value.
+     * @param {string} str - string value
+     * @returns {number|string}
+     */
+    strToNumber: function(str) {
+        var converted = Number(str);
+
+        return isNaN(converted) ? str : converted;
+    },
+
+    /**
+     * Omits all undefined or null properties of given object.
+     * @param {Object} obj - object
+     * @returns {Object}
+     */
+    pruneObject: function(obj) {
+        var pruned = {};
+        _.each(obj, function(value, key) {
+            if (!_.isUndefined(value) && !_.isNull(value)) {
+                pruned[key] = value;
+            }
+        });
+
+        return pruned;
+    },
+
+    /**
      * Returns the table height including height of rows and borders.
      * @memberof module:util
      * @param {number} rowCount - row count

@@ -1,5 +1,7 @@
 'use strict';
 
+var _ = require('underscore');
+
 var ColumnModelData = require('model/data/columnModel');
 var RowListData = require('model/data/rowList');
 var FocusModel = require('model/focus');
@@ -58,50 +60,6 @@ describe('model/focus', function() {
         }, options));
     }
 
-    describe('select()', function() {
-        var focusModel;
-
-        beforeEach(function() {
-            focusModel = create();
-        });
-
-        it('select 된 rowKey 를 저장한다.', function() {
-            focusModel.select(1);
-            expect(focusModel.get('rowKey')).toEqual(1);
-        });
-
-        it('select 시 select 이벤트를 발생하는지 확인한다.', function() {
-            var callback = jasmine.createSpy('callback'),
-                listenModel = new Model();
-            listenModel.listenToOnce(focusModel, 'select', callback);
-            focusModel.select(1);
-            expect(callback).toHaveBeenCalled();
-        });
-
-        it('If given row is already selected, do nothing (do not trigger select event)', function() {
-            var callback = jasmine.createSpy('callback'),
-                listenModel = new Model();
-
-            focusModel.select(1);
-            listenModel.listenToOnce(focusModel, 'select', callback);
-            spyOn(focusModel, 'unselect');
-
-            focusModel.select(1);
-
-            expect(focusModel.unselect).not.toHaveBeenCalled();
-            expect(callback).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('unselect()', function() {
-        it('저장된 rowKey 를 제거한다.', function() {
-            var focusModel = create();
-
-            focusModel.unselect();
-            expect(focusModel.get('rowKey')).toBeNull();
-        });
-    });
-
     describe('when singleClickEdit is true', function() {
         it('and clickCell event occurs, call focusIn() with given address', function() {
             var domEventBus = DomEventBus.create();
@@ -111,7 +69,7 @@ describe('model/focus', function() {
             });
 
             spyOn(focusModel, 'focusIn');
-            domEventBus.trigger('clickCell', new GridEvent({
+            domEventBus.trigger('click:cell', new GridEvent(null, {
                 rowKey: 0,
                 columnName: 'c1'
             }));
@@ -139,21 +97,60 @@ describe('model/focus', function() {
             focusModel.blur();
         });
 
-        it('지정된 rowKey, columnName 을 저장한다.', function() {
+        it('set rowKey and columnName', function() {
             focusModel.focus('1', 'c1');
+
             expect(focusModel.get('rowKey')).toEqual('1');
             expect(focusModel.get('columnName')).toEqual('c1');
         });
 
-        it('focus 이벤트를 발생한다.', function() {
-            var callback = jasmine.createSpy('callback'),
-                listenModel = new Model();
-            listenModel.listenToOnce(focusModel, 'focus', callback);
+        it('trigger focus event', function() {
+            var callback = jasmine.createSpy();
+            focusModel.on('focus', callback);
+
             focusModel.focus('1', 'c1', true);
+
             expect(callback).toHaveBeenCalledWith('1', 'c1', true);
         });
 
-        it('이전 focus 정보를 저장하는지 확인한다.', function() {
+        it('trigger focusChange event', function() {
+            var callback = jasmine.createSpy();
+            var argEvent;
+
+            focusModel.focus('1', 'c1', true);
+            focusModel.on('focusChange', callback);
+            focusModel.focus('2', 'c2', true);
+
+            argEvent = callback.calls.argsFor(0)[0];
+
+            expect(argEvent.prevRowKey).toBe('1');
+            expect(argEvent.prevColumnName).toBe('c1');
+            expect(argEvent.rowKey).toBe('2');
+            expect(argEvent.columnName).toBe('c2');
+        });
+
+        it('if callback of focusChange event invokes ev.stop(), do nothing', function() {
+            focusModel.on('focusChange', function(ev) {
+                ev.stop();
+            });
+            focusModel.focus('1', 'c1');
+
+            expect(focusModel.get('rowKey')).toBeNull();
+            expect(focusModel.get('columnName')).toBeNull();
+        });
+
+        it('if the target is the same as current cell, trigger nothing', function() {
+            var callback = jasmine.createSpy();
+
+            focusModel.focus('1', 'c1');
+            focusModel.on('focus', callback);
+            focusModel.on('focusChange', callback);
+            focusModel.focus('1', 'c1');
+
+            expect(callback).not.toHaveBeenCalled();
+        });
+
+        it('save previous rowKey and columnName', function() {
             focusModel.focus(0, 'c1');
             focusModel.focus(1, 'c2');
 
@@ -171,19 +168,21 @@ describe('model/focus', function() {
             focusModel = create();
         });
 
-        it('blur 한다.', function() {
+        it('clear rowKey and columnName', function() {
             focusModel.blur();
-            expect(focusModel.get('columnName')).toEqual('');
+            expect(focusModel.get('rowKey')).toBeNull();
+            expect(focusModel.get('columnName')).toBeNull();
         });
 
-        it('blur 이벤트를 발생한다.', function() {
-            var callback = jasmine.createSpy('callback'),
-                listenModel = new Model();
+        it('trigger blur event', function() {
+            var callback = jasmine.createSpy();
+            var listenModel = new Model();
 
             focusModel.focus(1, 'c1');
             listenModel.listenToOnce(focusModel, 'blur', callback);
+
             focusModel.blur();
-            expect(callback).toHaveBeenCalled();
+
             expect(callback).toHaveBeenCalledWith(1, 'c1');
         });
     });
@@ -203,8 +202,8 @@ describe('model/focus', function() {
             });
             focusModel.blur();
             expect(focusModel.which()).toEqual({
-                rowKey: 1,
-                columnName: ''
+                rowKey: null,
+                columnName: null
             });
         });
     });
