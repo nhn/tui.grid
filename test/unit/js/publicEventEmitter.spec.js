@@ -3,12 +3,13 @@
 var Backbone = require('backbone');
 var PublicEventEmitter = require('publicEventEmitter');
 
-function testTrigger(target, publicObject, eventName, publicEventName) {
-    var eventData = {},
-        callbackSpy = jasmine.createSpy('callback');
+function testTrigger(target, publicObject, eventName) {
+    var eventData = {};
+    var callbackSpy = jasmine.createSpy('callback');
 
-    publicObject.on(publicEventName || eventName, callbackSpy);
+    publicObject.on(eventName, callbackSpy);
     target.trigger(eventName, eventData);
+
     expect(callbackSpy).toHaveBeenCalledWith(eventData);
 }
 
@@ -79,7 +80,7 @@ describe('publicEventEmitter', function() {
         });
 
         it('should listen select event and trigger it as selectRow event', function() {
-            testTrigger(target, publicObject, 'select', 'selectRow');
+            testTrigger(target, publicObject, 'focusChange');
         });
     });
 });
