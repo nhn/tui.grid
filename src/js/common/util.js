@@ -357,43 +357,6 @@ var util = {
     },
 
     /**
-     * Converts deprecated option values to valid option values.
-     * (For toolbar option which is deprecated since 1.4.0)
-     * @param {Object} options - options (by user)
-     * @returns {Object} converted options
-     */
-    enableDeprecatedOptions: function(options) {
-        var toolbar = options.toolbar;
-        var toolbarDefault = {
-            hasControlPanel: true,
-            hasResizeHandler: true,
-            hasPagination: true
-        };
-
-        options = $.extend(true, {}, options);
-
-        if (_.isObject(toolbar)) {
-            _.defaults(toolbar, toolbarDefault);
-        } else {
-            toolbar = {};
-        }
-
-        if (!util.isOptionEnabled(options.pagination) && toolbar.hasPagination) {
-            options.pagination = true;
-        }
-        if (!util.isOptionEnabled(options.resizeHandle) && toolbar.hasResizeHandler) {
-            options.resizeHandle = true;
-        }
-        if (_.isObject(options.toolbar) && !toolbar.hasControlPanel) {
-            options.toolbar = false;
-        } else if (util.isOptionEnabled(options.toolbar)) {
-            options.toolbar = true;
-        }
-
-        return options;
-    },
-
-    /**
      * Outputs a warning message to the web console.
      * @param {string} message - message
      */

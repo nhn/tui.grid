@@ -320,21 +320,6 @@ var Dimension = Model.extend(/**@lends module:model/dimension.prototype */{
     },
 
     /**
-     * Set bodyHeight value based on the count of row.
-     * (This method is temporary and required only until the displayRowCount option is removed)
-     * @param {number} rowCount - row count
-     */
-    setBodyHeightWithRowCount: function(rowCount) {
-        var rowHeight = this.get('rowHeight');
-        var scrollXHeight = this.getScrollXHeight();
-
-        this.set({
-            isFixedHeight: true,
-            bodyHeight: (rowHeight + CELL_BORDER_WIDTH) * rowCount + scrollXHeight
-        });
-    },
-
-    /**
      * Returns the offset.top of body
      * @returns {number}
      */

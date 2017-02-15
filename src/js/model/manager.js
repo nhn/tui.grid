@@ -151,12 +151,6 @@ var ModelManager = tui.util.defineClass(/**@lends module:modelManager.prototype 
             domEventBus: domEventBus
         });
 
-        // The displayRowCount option is deprecated.
-        // This code should be removed after the option is removed.
-        if (_.isUndefined(options.bodyHeight) && options.displayRowCount) {
-            dimensionModel.setBodyHeightWithRowCount(options.displayRowCount);
-        }
-
         return dimensionModel;
     },
 
